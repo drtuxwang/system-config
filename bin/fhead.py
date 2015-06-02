@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Output the first n lines of a file..
+Output the first n lines of a file.
 """
 
 import sys
