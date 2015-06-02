@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# Flashgot terminal wrapper
+#
+
+sed -i "s/^echo -n.*/sleep 2/" "$3"
+exec xterm -fn -misc-fixed-bold-r-normal--18-*-iso8859-1 -fg "#000000" -bg "#ffffdd" -cr "#ff00ff" -ut -geometry 100x10 -T "$1" -e "$3"

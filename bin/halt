@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# Fast shutdown
+#
+
+echo s > /proc/sysrq-trigger # Sync all mounted filesystems
+sleep 0.25
+
+echo u > /proc/sysrq-trigger # Unmount filesystems and remount in read-only mode
+sleep 0.25
+
+if [ "$0" = /sbin/reboot ]; then
+    echo b > /proc/sysrq-trigger # Reboot the system
+else
+    echo o > /proc/sysrq-trigger # Power off the system
+fi
+sleep 1
+
+/sbin/poweroff

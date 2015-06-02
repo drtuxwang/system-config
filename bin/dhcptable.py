@@ -1,0 +1,194 @@
+#!/usr/bin/env python3
+"""
+Detect DHCP hosts on 192.168.1.0 subnet
+"""
+
+import sys
+if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
+if __name__ == "__main__":
+    sys.path = sys.path[1:] + sys.path[:1]
+
+import glob
+import os
+import re
+import signal
+import threading
+import time
+
+import syslib
+
+
+class Options(syslib.Dump):
+
+
+    def __init__(self, args):
+        self._arping = syslib.Command("arping", pathextra=[ "/sbin" ])
+        self._detect()
+
+
+    def _detect(self):
+        self._myip = "127.0.0.1"
+        self._mymac = "00:00:00:00:00:00"
+        self._subnet = "127.0.0"
+        if syslib.info.getSystem() == "linux":
+            os.environ["LANG"] = "en_GB"
+            ifconfig = syslib.Command(file="/sbin/ifconfig")
+            ifconfig.run(mode="batch")
+            self._arping.setFlags([ "-I", ifconfig.getOutput()[0].split()[0] ])
+            line = ifconfig.getOutput(" HWaddr ")
+            if line:
+                self._mymac = line[0].split()[-1]
+            for line in ifconfig.getOutput(" inet addr[a-z]*:"):
+                myip = line.split(":")[1].split()[0]
+                if myip not in ( "", "127.0.0.1" ):
+                    break
+        elif syslib.info.getSystem() == "sunos":
+            ifconfig = syslib.Command(file="/sbin/ifconfig", args=[ "-a" ])
+            ifconfig.run(filter="\tinet [^ ]+ netmask", mode="batch")
+            for line in ifconfig.getOutput():
+                myip = line.split()[1]
+                if myip not in ( "", "127.0.0.1" ):
+                    break
+        self._myip = myip
+        self._subnet = self._myip.rsplit(".", 1)[0]
+
+
+    def getArping(self):
+        """
+        Return arping Command class object.
+        """
+        return self._arping
+
+
+    def getMyip(self):
+        """
+        Return my IP address.
+        """
+        return self._myip
+
+
+    def getMymac(self):
+        """
+        Return my MAC address.
+        """
+        return self._mymac
+
+
+    def getSubnet(self):
+        """
+        Return subnet.
+        """
+        return self._subnet
+
+
+class ScanHost(syslib.Dump, threading.Thread):
+
+
+    def __init__ (self, options, ip):
+        self._options = options
+        threading.Thread.__init__(self)
+        self._ip = ip
+        self._output = ""
+
+
+    def run(self):
+        self._options.getArping().setArgs([ "-c", "1", self._ip ])
+        child = self._options.getArping().run(mode="child", error2output=True)
+        while True:
+            byte = child.stdout.read(1)
+            if not byte:
+                break
+            self._output += byte.decode("utf-8", "ignore")
+
+
+class ScanLan(syslib.Dump):
+
+
+    def __init__(self, options):
+        self._timeLimit = 0.1
+
+        self._options = options
+        self._avahiRdns = syslib.Command("avahi-resolve-address", check=False)
+        self._threads = []
+        self._bcast()
+        self._wait()
+        self._output()
+
+
+    def _bcast(self):
+        for host in range(1, 255):
+            ip = self._options.getSubnet() + "." + str(host)
+            thread = ScanHost(self._options, ip)
+            thread.start()
+            self._threads.append(thread)
+
+
+    def _wait(self):
+        time.sleep(self._timeLimit)
+
+
+    def _output(self):
+        for thread in self._threads:
+            if thread._ip == self._options.getMyip():
+                print("{0:>11s} [{1:s}]  0.000ms  {2:s}".format(thread._ip,
+                        self._options.getMymac(), self._reverseDNS(thread._ip)))
+            else:
+                for line in thread._output.split("\n"):
+                    if line.startswith("Unicast reply from " + thread._ip):
+                        mac, ping = line.split()[4:6]
+                        print("{0:>11s} {1:s}  {2:s}  {3:s}".format(thread._ip, mac, ping,
+                                                                    self._reverseDNS(thread._ip)))
+                        break
+        sys.stdout.flush()
+        sys.stderr.flush()
+        os._exit(0) # Kills threads
+
+
+    def _reverseDNS(self, ip):
+        if self._avahiRdns.isFound():
+            self._avahiRdns.setArgs([ ip ])
+            self._avahiRdns.run(mode="batch")
+            if self._avahiRdns.hasOutput():
+                return self._avahiRdns.getOutput()[0].split()[-1]
+        return "Unknown"
+
+
+class Main:
+
+
+    def __init__(self):
+        self._signals()
+        if os.name == "nt":
+            self._windowsArgv()
+        try:
+            options = Options(sys.argv)
+            ScanLan(options)
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+        sys.exit(0)
+
+
+    def _signals(self):
+        if hasattr(signal, "SIGPIPE"):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+
+    def _windowsArgv(self):
+        argv = []
+        for arg in sys.argv:
+            files = glob.glob(arg) # Fixes Windows globbing bug
+            if files:
+                argv.extend(files)
+            else:
+                argv.append(arg)
+        sys.argv = argv
+
+
+if __name__ == "__main__":
+    if "--pydoc" in sys.argv:
+        help(__name__)
+    else:
+        Main()

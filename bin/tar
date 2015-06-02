@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+# Wrapper for "tar" command
+#
+
+
+#
+# Function to return location of program
+#
+which() {
+    if [ "$1" = "`basename $0`" ]; then
+        PATH=`echo ":$PATH:" | sed -e "s@.*:\`dirname \"$0\"\`:@@"`
+    fi
+
+    for CDIR in `echo $PATH | sed -e "s/ /%20/g" -e "s/:/ /g"`; do
+        CMD=`echo "$CDIR/$1" | sed -e "s/%20/ /g"`
+        if [ -x "$CMD" -a ! -d "$CMD" ]; then
+            echo "$CMD" | sed -e "s@//*@/@g"; return
+        fi
+    done
+}
+
+
+#
+# Function to run Python version of tar
+#
+pytar() {
+    BIN_DIR=`dirname "$0"`
+    PY_MAIN=`basename "$0"`
+
+    if [ -x "$BIN_DIR/python3" ]; then
+        exec "$BIN_DIR/python3" "$BIN_DIR/pyld.py" $PY_MAIN "$@"
+    else
+        exec "$BIN_DIR/pyld.py" $PY_MAIN "$@"
+    fi
+}
+
+
+case $1 in
+*.tar|*.tar.gz|*.tar.bz2|*.tar.lzma|*.tar.xz|*.tar.7z|*.t[gblx]z)
+    pytar "$@";;
+*)
+    if [ -d "$1" ]; then
+        pytar "$@"
+    else
+        case `uname` in
+        NT)
+            TAR="tar.exe"
+            ;;
+        *)
+            TAR=`which tar`
+            ;;
+        esac
+    fi
+esac
+
+if [ ! "$TAR" ]; then
+    echo "***ERROR*** Cannot find required \"tar\" software." 1>&2
+    exit 1
+fi
+
+exec $TAR "$@"

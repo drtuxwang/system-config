@@ -1,0 +1,16 @@
+#
+# sh/ksh/bash/csh/tcsh shell initilization script
+#
+# . /opt/software/etc/setbin
+# source /opt/software/etc/setbin
+#
+if ( 1 ) then
+  setenv PATH /opt/software/bin:${PATH}
+  echo 'Prefixed PATH with "/opt/software/bin".'
+else
+  PATH=/opt/software/bin:$PATH; export
+  fi > /dev/null 2>&1
+  echo "Prefixed PATH with \"/opt/software/bin\"."
+  cat << endif > /dev/null 2>&1
+  endif
+endif

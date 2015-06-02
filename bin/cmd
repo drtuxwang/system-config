@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+# Wrapper for "wine cmd"
+#
+
+case `uname` in
+*NT*)
+    "$COMSPEC" "$@"
+    ;;
+*)
+    wine cmd "$@"
+    ;;
+esac

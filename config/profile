@@ -1,0 +1,301 @@
+#
+# $HOME/.profile for sh/ksh/bash shells
+#
+# 1) Create "$HOME/.profile-2bash" to auto switch to bash shell
+# 2) Create "$HOME/.profile-local" for local settings
+#
+
+##set -x
+
+if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
+    if [ ! "$BASH" -a -f $HOME/.profile-2bash -a -f /bin/bash ]; then
+        export ENV=$HOME/.profile; exec /bin/bash -l
+    fi
+    echo
+    echo "Processing Startup script ($HOME/.profile)"
+
+# Check terminal and login shell
+    export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
+    export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+    PS1="$MYUNAME@${MYHNAME}_$ "
+    if [ "$TERM" = "dumb" ]; then
+        MYTTY="/dev/???"
+    else
+        case $TERM in
+        ansi)
+            export TERM=vt100
+            ;;
+
+        iris*|xterm-*|rxvt*)
+            export TERM=xterm
+            ;;
+
+        xterm)
+            if [ "$BASH" -a -x /bin/echo ]; then
+                precmd() {
+                    prexec_interactive=1; \echo -e "\033]0;$MYHNAME:$PWD\007\c"
+                }
+                preexec() {
+                    if [ "$prexec_interactive" ]; then
+                        prexec_interactive=; \echo -e "\033]0;$MYHNAME: $BASH_COMMAND\007\c"
+                    fi
+                }
+                case $BASH_VERSION in
+                [12].*|3.0*)
+                    PROMPT_COMMAND="precmd"
+                    ;;
+
+                *)
+                    PROMPT_COMMAND="precmd"
+                    trap preexec DEBUG
+                    ;;
+                esac
+            fi;;
+        esac
+        MYTTY=`\tty 2> /dev/null`
+        (mesg y) > /dev/null 2>&1
+        if [ "$TMOUT" != 0 ]; then
+            export TMOUT=0
+        fi
+        stty erase  2> /dev/null
+        stty intr  2> /dev/null
+        stty susp  2> /dev/null
+    fi
+
+    if [ "$BASH" ]; then
+        echo "Running    Login shell /bin/bash (Bash Shell) on $MYTTY ($TERM)"
+    elif [ "`echo $0 | \grep \"ksh$\"`" ]; then
+        set -o emacs
+        alias -x __A=$(print '\020' 2> /dev/null) 2> /dev/null # up    = Last line
+        alias -x __B=$(print '\016' 2> /dev/null) 2> /dev/null # down  = Next line
+        alias -x __C=$(print '\006' 2> /dev/null) 2> /dev/null # right = Move right
+        alias -x __D=$(print '\002' 2> /dev/null) 2> /dev/null # left  = Move left
+        echo "Running    Login shell /bin/ksh (Korn Shell) on $MYTTY ($TERM)"
+    else
+        echo "Running    Login shell /bin/sh (Bourne Shell) on $MYTTY ($TERM)"
+    fi
+
+# Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
+    if [ ! "$BASE_PATH" ]; then
+        if [ ! "$MANPATH" ]; then
+            export MANPATH=/usr/share/man:/usr/share/catman:/usr/local/man:/usr/man
+        fi
+        if [ ! "$LM_LICENSE_FILE" ]; then
+            export LM_LICENSE_FILE=:
+        fi
+        export BASE_PATH=$PATH
+        export BASE_MANPATH=$MANPATH
+        export BASE_LM_LICENSE_FILE=$LM_LICENSE_FILE
+
+        case `uname` in
+        AIX)
+            echo "Storing    Default settings (PATH, MANPATH, LM_LICENSE_FILE, LIBPATH)"
+            if [ ! "$LIBPATH" ]; then
+                export LIBPATH=:
+            fi
+            export BASE_DSOPATH=$LIBPATH
+            ;;
+
+        *)
+            echo "Storing    Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
+            if [ ! "$LD_LIBRARY_PATH" ]; then
+                export LD_LIBRARY_PATH=:
+            fi
+            export BASE_DSOPATH=$LD_LIBRARY_PATH
+            ;;
+        esac
+    else
+        export PATH=$BASE_PATH
+        export MANPATH=$BASE_MANPATH
+        export LM_LICENSE_FILE=$BASE_LM_LICENSE_FILE
+
+        case `uname` in
+        AIX)
+            echo "Applying   Default settings (PATH, MANPATH, LM_LICENSE_FILE, LIBPATH)"
+            export LIBPATH=$BASE_LIBPATH
+            ;;
+
+        *)
+            echo "Applying   Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
+            export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
+            ;;
+        esac
+    fi
+
+# Applying PATH fixes for specific platforms
+    case `uname` in
+    AIX)
+        echo "Applying   PATH fixes for AIX"
+        export PATH=/usr/vac/bin:/usr/vacpp/bin:$PATH
+        ;;
+
+    HP-UX)
+        echo "Applying   PATH fixes for HP-UX"
+        export PATH=$PATH:/opt/fortran/bin:/opt/fortran90/bin
+        ;;
+
+    SunOS)
+        echo "Applying   PATH fixes for SunOS"
+        export OPENWINHOME=/usr/openwin; export MANPATH=/opt/SUNWspro/man:/usr/man:$MANPATH
+        # Fixes rsh path
+        PATH=/opt/SUNWspro/bin:/bin:/sbin:/usr/sbin:/usr/ucb:/usr/openwin/bin:/usr/ccs/bin:$PATH
+        if [ -d /opt/FSUNf90/bin ]; then
+            export PATH=/opt/FSUNf90/bin:$PATH
+        fi;;
+    esac
+
+# General stuff
+    rm()
+    {
+        if [ "`echo \" $@ \" | grep \" $HOME/* \"`" ]; then
+            echo "rm: Removing \"$HOME\" home directory is dangerous."
+        else
+            /bin/rm "$@"
+        fi
+    }
+    umask 027
+    mkdir $HOME/Desktop 2> /dev/null
+    chmod go= $HOME/Desktop .??*/* 2> /dev/null
+    export LC_COLLATE=C
+    export HISTFILE=
+    export PATH=$HOME/software/bin:/usr/local/bin`echo ":$PATH:" | sed -e "s@:$HOME/software/bin:@:@g" -e "s@:/usr/local/bin:@:@g" -e "s/:$//"`
+    export TMP=/tmp; export TMPDIR=$TMP; rm -rf $HOME/tmp 2> /dev/null
+    export WINEDITOR=vi
+    ENV=
+
+    case `uname` in
+    Darwin)
+        if [ -d "$HOME/.Spotlight-V100" ]; then
+            rm -rf $HOME/.Spotlight-V100; touch $HOME/.Spotlight-V100
+        fi
+        ;;
+
+    HP-UX)
+        alias df="bdf"
+        ;;
+
+    Linux)
+        if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]; then
+            alias ls="ls -C --time-style=long-iso --color=never"
+        else
+            alias ls="ls -C --color=never"
+        fi
+        # Defend against stubborn Linux distributions
+        if [ -f /etc/ksh.kshrc ]; then
+            alias test='return 2> /dev/null'
+        fi
+        unset CDPATH
+        unset command_not_found_handle
+        ;;
+    esac
+
+    if [ -x /usr/bin/vim ]; then
+        alias vi="vim -N -n -u NONE"
+    fi
+    if [ -x /usr/sbin/ping ]; then
+        alias ping="/usr/sbin/ping"
+    elif [ -x /usr/etc/ping ]; then
+        alias ping="/usr/etc/ping"
+    fi
+    if [ -f $HOME/.ssh/config ]; then
+        if [ "`ssh -version 2>&1 | grep \"^OpenSSH_\"`" ]; then
+            alias scp="scp -F $HOME/.ssh/config -o ServerAliveInterval=1799"
+        else
+            alias scp="scp -F $HOME/.ssh/config"
+        fi
+    fi
+
+    # mksrc, cdsrc, mkinst, cdinst, mktest, cdtest
+    if [ ! "$SRCDIR" ]; then
+        export SRCDIR=$HOME
+    fi
+    alias mksrc='export SRCDIR="$PWD"; echo New SRCDIR: $SRCDIR'; alias cdsrc='echo Using SRCDIR: $SRCDIR; cd "$SRCDIR"'
+    if [ ! "$INSTDIR" ]; then
+        export INSTDIR=$HOME
+    fi
+    alias mkinst='export INSTDIR="$PWD"; echo New INSTDIR: $INSTDIR'; alias cdinst='echo Using INSTDIR: $INSTDIR; cd "$INSTDIR"'
+    if [ ! "$TESTDIR" ]; then
+        export TESTDIR=$HOME
+    fi
+    alias mktest='export TESTDIR="$PWD"; echo New TESTDIR: $TESTDIR'; alias cdtest='echo Using TESTDIR: $TESTDIR; cd "$TESTDIR"'
+
+    alias df="df -k"
+    alias du="du -k"
+    alias ftp="ftp -i -v"
+    if [ "$BASH" ]; then
+        alias h="history 256"
+    else
+        alias h='fc -l 1 2> /dev/null | tail -256'
+    fi
+    alias ls="ls -C"
+    alias quota="quota -v"
+    alias resize='resize; eval `\resize`'
+    alias bye=exit
+    unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
+
+# Applying Dynamic Limit Removal (DLR)
+    echo "Applying   Dynamic Limit Removal (DLR)"
+    if [ "`uname`" != AIX -a -f /usr/bin/ulimit  ]; then
+        ULIMIT=/usr/bin/ulimit
+    else
+        ULIMIT=ulimit
+    fi
+    for LIMIT in `$ULIMIT -a | \cut -c1`; do
+        $ULIMIT -$LIMIT `$ULIMIT -${LIMIT} -H 2> /dev/null` 2> /dev/null
+    done
+
+# Applying local settings 
+    if [ -f $HOME/.profile-local ]; then
+        echo "Applying   Local settings ($HOME/.profile-local)"
+        . $HOME/.profile-local
+    fi
+    echo
+
+elif [ ! "$*" ]; then
+    case `uname` in
+    *NT*)
+        export MYHNAME=`uname -n | tr "^[A-Z]" "^[a-z]"`
+        export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+        case $TERM in
+        xterm)
+            precmd()
+            {
+                prexec_interactive=1; \echo -e "\033]0;$MYHNAME:$PWD\007\c"
+            }
+
+            preexec()
+            {
+                if [ "$prexec_interactive" ]; then
+                    prexec_interactive=; \echo -e "\033]0;$MYHNAME: $BASH_COMMAND\007\c"
+                fi
+            }
+            PROMPT_COMMAND="precmd"; trap preexec DEBUG;;
+        esac
+
+        export PATH=$HOME/software/bin:/usr/local/bin`echo ":$PATH:" | sed -e "s@:$HOME/software/bin:@:@g" -e "s@:/usr/local/bin:@:@g" -e "s/:$//"`
+        export PS1=$MYUNAME@$MYHNAME'_$ '
+        export HISTFILE=
+
+        # mksrc, cdsrc, mkinst, cdinst, mktest, cdtest
+        if [ ! "$SRCDIR" ]; then
+            export SRCDIR=$HOME
+        fi
+        alias mksrc='export SRCDIR="$PWD"; echo New SRCDIR: $SRCDIR'; alias cdsrc='echo Using SRCDIR: $SRCDIR; cd "$SRCDIR"'
+        if [ ! "$INSTDIR" ]; then
+            export INSTDIR=$HOME
+        fi
+        alias mkinst='export INSTDIR="$PWD"; echo New INSTDIR: $INSTDIR'; alias cdinst='echo Using INSTDIR: $INSTDIR; cd "$INSTDIR"'
+        if [ ! "$TESTDIR" ]; then
+            export TESTDIR=$HOME
+        fi
+        alias mktest='export TESTDIR="$PWD"; echo New TESTDIR: $TESTDIR'; alias cdtest='echo Using TESTDIR: $TESTDIR; cd "$TESTDIR"'
+
+        alias ftp="ftp -i"
+        alias h="history 256"
+        alias ls="ls -C --time-style=long-iso --color=never"
+        alias bye=exit
+        unalias cp cd.. d l ll la lsd mv p rm s star which 2> /dev/null
+        echo
+        ;;
+    esac
+fi

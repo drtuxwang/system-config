@@ -1,0 +1,212 @@
+#
+# $HOME/.login for csh/tcsh shells
+#
+# 1) Create "$HOME/.login-2bash" to auto switch to bash shell
+# 2) Create "$HOME/.login-local" for local settings
+#
+
+##set verbose
+
+if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
+    if ( -f $HOME/.login-2bash && -f /bin/bash ) then
+        setenv ENV $HOME/.profile; exec /bin/bash -l
+    endif
+    echo ""
+    echo "Processing Startup script ($HOME/.login)"
+
+# Check terminal and login shell
+    setenv MYHNAME `uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
+    setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+    set prompt="$MYUNAME@${MYHNAME}_% "
+    if ( "$TERM" == "dumb" ) then
+        setenv MYTTY "/dev/???"
+    else
+        switch ($TERM)
+        case ansi:
+            setenv TERM vt100
+            breaksw
+
+        case iris*:
+        case xterm-*:
+        case rxvt*:
+            setenv TERM xterm
+            breaksw
+
+        case xterm:
+            if ( $?tcsh && -x /bin/echo ) then
+                /bin/echo -e "\033]0;$MYUNAME@$MYHNAME\007\c"
+                alias precmd '/bin/echo -e "\033]0;${MYHNAME}:$cwd\007\c"'
+            endif
+            breaksw
+        endsw
+
+        setenv MYTTY `\tty`
+        (mesg y) >& /dev/null
+        set autologout=0
+        stty erase 
+        stty intr 
+        stty susp 
+    endif
+    if ( $?tcsh ) then
+        echo "Running    Login shell /bin/tcsh (TC Shell) on $MYTTY ($TERM)"
+    else
+        echo "Running    Login shell /bin/csh (C Shell) on $MYTTY ($TERM)"
+    endif
+
+# Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
+    if ( ! $?BASE_PATH ) then
+        if ( ! $?MANPATH ) then
+            setenv MANPATH /usr/share/man:/usr/share/catman:/usr/local/man:/usr/man
+        endif
+        if ( ! $?LM_LICENSE_FILE ) then
+            setenv LM_LICENSE_FILE :
+        endif
+        setenv BASE_PATH $PATH
+        setenv BASE_MANPATH $MANPATH
+        setenv BASE_LM_LICENSE_FILE $LM_LICENSE_FILE
+
+        switch (`uname`)
+        case AIX:
+            echo "Storing    Default settings (PATH, MANPATH, LM_LICENSE_FILE, LIBPATH)"
+            if ( ! $?LIBPATH ) then
+                setenv LIBPATH :
+            endif
+            setenv BASE_DSOPATH $LIBPATH
+            breaksw
+
+        default:
+            echo "Storing    Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
+            if ( ! $?LD_LIBRARY_PATH ) then
+                setenv LD_LIBRARY_PATH :
+            endif
+            setenv BASE_DSOPATH $LD_LIBRARY_PATH
+            breaksw
+        endsw
+    else
+        setenv PATH $BASE_PATH
+        setenv MANPATH $BASE_MANPATH
+        setenv LM_LICENSE_FILE $BASE_LM_LICENSE_FILE
+
+        switch (`uname`)
+        case AIX:
+            echo "Applying   Default settings (PATH, MANPATH, LM_LICENSE_FILE, LIBPATH)"
+            setenv LIBPATH $BASE_DSOPATH
+            breaksw
+
+        default:
+            echo "Applying   Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
+            setenv LD_LIBRARY_PATH $BASE_DSOPATH
+            breaksw
+        endsw
+    endif
+
+# Applying PATH fixes for specific platforms
+    switch (`uname`)
+    case AIX:
+        echo "Applying   PATH fixes for AIX"
+        setenv PATH /usr/vac/bin:/usr/vacpp/bin:${PATH}
+        breaksw
+
+    case HP-UX:
+        echo "Applying   PATH fixes for HP-UX"
+        setenv PATH ${PATH}:/opt/fortran/bin:/opt/fortran90/bin
+        breaksw
+
+    case SunOS:
+        echo "Applying   PATH fixes for SunOS"
+        setenv OPENWINHOME /usr/openwin
+        setenv MANPATH /opt/SUNWspro/man:/usr/man:${MANPATH}
+        # Fixes rsh path
+        setenv PATH /opt/SUNWspro/bin:/bin:/sbin:/usr/sbin:/usr/ucb:/usr/openwin/bin:/usr/ccs/bin:${PATH}
+        if ( -d /opt/FSUNf90/bin ) then
+            setenv PATH /opt/FSUNf90/bin:${PATH}
+        endif
+        breaksw
+    endsw
+
+# General stuff
+    umask 027
+    mkdir $HOME/Desktop >& /dev/null
+    chmod go= $HOME/Desktop .??*/* >& /dev/null
+    setenv LC_COLLATE C
+    setenv PATH $HOME/software/bin:/usr/local/bin`echo ":$PATH": | sed -e "s@:$HOME/software/bin:@:@g" -e "s@:/usr/local/bin:@:@g" -e 's/:$//'`
+    setenv TMP /tmp; setenv TMPDIR $TMP; rm -rf $HOME/tmp >& /dev/null
+    setenv WINEDITOR vi
+
+    switch (`uname`)
+    case Darwin:
+        if ( -d "$HOME/.Spotlight-V100" ) then
+            rm -rf $HOME/.Spotlight-V100; touch $HOME/.Spotlight-V100
+        endif
+        breaksw
+
+    case HP-UX:
+        alias df "bdf"
+        breaksw
+
+    case Linux:
+        if ( "`\ls --help |& \grep '^ *--time-style'`" != "" ) then
+            alias ls "ls -C --time-style=long-iso --color=never"
+        else
+            alias ls "ls -C --color=never"
+        endif
+        breaksw
+    endsw
+
+    if ( -x /usr/bin/vim ) then
+        alias vi "vim -N -n -u NONE"
+    endif
+    if ( -x /usr/sbin/ping ) then
+        alias ping "/usr/sbin/ping"
+    else if ( -x /usr/etc/ping ) then
+        alias ping "/usr/etc/ping"
+    endif
+    if ( -f "$HOME/.ssh/config" ) then
+        if ( "`\ssh -version |& \grep '^OpenSSH_'`" != "" ) then
+            alias scp "scp -F $HOME/.ssh/config -o ServerAliveInterval=1799"
+        else
+            alias scp "scp -F $HOME/.ssh/config"
+        endif
+    endif
+
+    # mksrc, cdsrc, mkinst, cdinst, mktest, cdtest
+    if ( ! $?SRCDIR ) then
+        setenv SRCDIR $HOME
+    endif
+    alias mksrc 'setenv SRCDIR "`pwd`"; echo New SRCDIR: $SRCDIR'; alias cdsrc 'echo Using SRCDIR: $SRCDIR; cd "$SRCDIR"'
+
+    if ( ! $?INSTDIR ) then
+        setenv INSTDIR $HOME
+    endif
+    alias mkinst 'setenv INSTDIR "`pwd`"; echo New INSTDIR: $INSTDIR'; alias cdinst 'echo Using INSTDIR: $INSTDIR; cd "$INSTDIR"'
+
+    if ( ! $?TESTDIR ) then
+        setenv TESTDIR $HOME
+    endif
+    alias mktest 'setenv TESTDIR "`pwd`"; echo New TESTDIR: $TESTDIR'; alias cdtest 'echo Using TESTDIR: $TESTDIR; cd "$TESTDIR"'
+
+    set history=256
+    alias df "df -k"
+    alias du "du -k"
+    alias ftp "ftp -i -v"
+    alias h history 256
+    alias ls "ls -C"
+    alias quota "quota -v"
+    alias bye exit
+    unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
+
+# Applying Dynamic Limit Removal (DLR)
+    echo "Applying   Dynamic Limit Removal (DLR)"
+    foreach LIMIT ( `limit | \egrep -v "unlimited|-" | \awk '{print $1}'` )
+        if ( "`limit $LIMIT unlimited`" == "" ) then
+            limit $LIMIT unlimited
+        endif
+    end
+
+# Applying local settings
+    if ( -f $HOME/.login-local ) then
+        echo "Applying   Local settings ($HOME/.login-local)"
+        source $HOME/.login-local
+    endif
+    echo ""
+endif

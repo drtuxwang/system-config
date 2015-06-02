@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=soffice
+Exec=soffice %f
+Type=Application
+NoDisplay=true
