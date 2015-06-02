@@ -24,7 +24,7 @@ class Options(syslib.Dump):
 
 
     def __init__(self, args):
-        self._parseArgs(argso[1:])
+        self._parseArgs(args[1:])
 
         self._ssh = syslib.Command("ssh")
         self._ssh.setFlags([ "-o", "StrictHostKeyChecking=no", "-o",
