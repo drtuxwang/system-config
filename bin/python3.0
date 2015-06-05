@@ -2,7 +2,7 @@
 #
 # Wrapper for "python"
 #
-VERSION=20150426
+VERSION=20150605
 
 #
 # Test for GNU Textutil POSIX 200112 bug
@@ -30,7 +30,13 @@ locate_python() {
         ;;
     esac
 
-    LOCATE=
+    LOCATE=`ls -1t $LOCAL/*/bin/$PYEXE 2> /dev/null | head -1`
+    if [ "$LOCATE" ]; then
+        # Create "$LOCAL/*/bin/python3" wrapper script to pick system Python
+        echo "$LOCATE"
+        return
+    fi
+
     case `uname` in
     Darwin)
         case `uname -m` in
