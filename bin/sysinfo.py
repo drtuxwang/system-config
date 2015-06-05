@@ -1628,11 +1628,6 @@ class Writer(syslib.Dump):
         print(line)
 
 
-    def _txt2xml(self, text):
-        return text.replace("&", "&amp;").replace("<", "&lt;").\
-                    replace(">", "&gt;").replace('"', "&quot;")
-
-
 class Main:
 
 
