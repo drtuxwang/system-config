@@ -108,7 +108,7 @@ class PythonChecker(syslib.Dump):
                 file += ".py"
             self._py2to3 = syslib.Command(file=file)
         self._py2to3.setFlags([ "--nofix=dict", "--nofix=future", "--nofix=imports",
-                                "--nofix=raise", "--nofix=unicode" ])
+                                "--nofix=raise", "--nofix=unicode", "--nofix=xrange" ])
         self._py2to3.setWrapper(syslib.Command(file=sys.executable))
 
 
