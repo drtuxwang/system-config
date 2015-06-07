@@ -94,12 +94,18 @@ class ScanHost(syslib.Dump, threading.Thread):
 
     def run(self):
         self._options.getArping().setArgs([ "-c", "1", self._ip ])
-        child = self._options.getArping().run(mode="child", error2output=True)
+        self._child = self._options.getArping().run(mode="child", error2output=True)
         while True:
-            byte = child.stdout.read(1)
+            byte = self._child.stdout.read(1)
             if not byte:
                 break
             self._output += byte.decode("utf-8", "ignore")
+
+
+    def kill(self):
+        if self._child:
+            self._child.kill()
+            self._child = None
 
 
 class ScanLan(syslib.Dump):
@@ -140,9 +146,9 @@ class ScanLan(syslib.Dump):
                         print("{0:>11s} {1:s}  {2:s}  {3:s}".format(thread._ip, mac, ping,
                                                                     self._reverseDNS(thread._ip)))
                         break
-        sys.stdout.flush()
-        sys.stderr.flush()
-        os._exit(0) # Kills threads
+
+        for thread in self._threads:
+            thread.kill()
 
 
     def _reverseDNS(self, ip):

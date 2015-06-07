@@ -90,6 +90,12 @@ class Profiler(syslib.Dump):
 
     def _profile(self, moduleFile, moduleArgs):
         statsFile = os.path.basename(moduleFile.rsplit(".",1)[0] + ".pstats")
+        if os.path.isfile(statsFile):
+            try:
+                os.remove(statsFile)
+            except OSError:
+                raise SystemExit(sys.argv[0] + ': Cannot remove old "' + statsFile + '" file.')
+
 
         python3 = syslib.Command(file=sys.executable)
         python3.setArgs([ "-m", "cProfile", "-o", statsFile ])

@@ -35,7 +35,7 @@ class Options(syslib.Dump):
         """
         Return command line.
         """
-        return self._args.command + self._args.args
+        return self._args.command + self._commandArgs
 
 
     def getSsh(self):
@@ -83,7 +83,20 @@ class Options(syslib.Dump):
         parser.add_argument("command", nargs=1, help="Command to run on all systems.")
         parser.add_argument("args", nargs="*", metavar="arg", help="Command argument.")
 
-        self._args = parser.parse_args(args)
+
+        myArgs = []
+        while len(args):
+            myArgs.append(args[0])
+            if not args[0].startswith("-"):
+                break
+            elif args[0] == "-subnet" and len(args) >= 2:
+                args = args[1:]
+                myArgs.append(args[0])
+            args = args[1:]
+
+        self._args = parser.parse_args(myArgs)
+
+        self._commandArgs = args[1:]
 
         if self._args.subnet and issubnet.match(self._args.subnet[0]):
             self._subnet = self._args.subnet[0]
@@ -108,13 +121,19 @@ class Remote(syslib.Dump, threading.Thread):
         ssh = self._options.getSsh()
         ssh.setArgs([ self._ip ] + [ "echo '=== " + self._ip + ": '`uname -s -n`' ==='; " +
                     ssh.args2cmd(self._options.getCommandLine()) ])
-        child = ssh.run(mode="child", error2output=True)
-        child.stdin.close()
+        self._child = ssh.run(mode="child", error2output=True)
+        self._child.stdin.close()
         while True:
-            byte = child.stdout.read(1)
+            byte = self._child.stdout.read(1)
             if not byte:
                 break
             self._output += byte.decode("utf-8", "ignore")
+
+
+    def kill(self):
+        if self._child:
+            self._child.kill()
+            self._child = None
 
 
 class Cluster(syslib.Dump):
@@ -176,9 +195,10 @@ class Cluster(syslib.Dump):
             if thread._output:
                 if not iserror.search(thread._output):
                     print(thread._output.rstrip("\r\n"))
-        sys.stdout.flush()
-        sys.stderr.flush()
-        os._exit(0) # Kills threads
+
+
+        for thread in self._threads:
+            thread.kill()
 
 
 class Main:

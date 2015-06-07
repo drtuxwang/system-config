@@ -5,8 +5,8 @@ System configuration detection tool.
 1996-2015 By Dr Colin Kong
 """
 
-RELEASE = "4.3.0"
-VERSION = 20150602
+RELEASE = "4.3.1"
+VERSION = 20150607
 
 import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -324,10 +324,6 @@ class Detect(syslib.Dump):
             self._system.detectLoader(self._writer)
         self._xwindows()
         print()
-
-        sys.stdout.flush()
-        sys.stderr.flush()
-        os._exit(0) # Kills threads
 
 
     def _networkInformation(self):
