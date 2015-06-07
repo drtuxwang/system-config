@@ -26,7 +26,6 @@ class Options(syslib.Dump):
 
         command = self._args.command[0]
         self._command = syslib.Command(command, pathextra=[ command ], args=self._commandArgs)
-        self.dump("debugX")
 
     def getCommand(self):
         """

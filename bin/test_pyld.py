@@ -137,7 +137,6 @@ class Test_Options(unittest.TestCase):
             options = pyld.Options(args)
         except SystemExit as exception:
             self.assertIsInstance(exception.args, tuple)
-            print("debugX ", exception.args)
             self.assertEqual(exception.args[0], 2)
 
         value = pyld.sys.stderr.getvalue()
