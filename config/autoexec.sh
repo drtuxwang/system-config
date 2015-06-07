@@ -26,7 +26,7 @@ setxkbmap -option terminate:ctrl_alt_bksp
 xset m 4,8
 xset r rate 500 25
 xset s blank s 0 # Use 300 for CRT
-(sleep 2; xset dpms 0 0 0) &
+(sleep 4; xset dpms 0 0 0) &
 
 rm -rf $HOME/.thumbnails $HOME/.gnome2/evince/ev-metadata.xml
 if [ "$GNOME_DESKTOP_SESSION_ID" -o "`echo \"$DESKTOP_SESSION\" | grep gnome`" ]; then
