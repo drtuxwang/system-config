@@ -167,7 +167,10 @@ class PythonChecker(syslib.Dump):
                     error = True
         elif not self._py2to3.isMatchOutput("No files need to be modified."):
             for line in self._py2to3.getOutput():
-                if line[:17] != "RefactoringTool: ":
+                if ": Generating grammar tables from " in line:
+                    # Ignore ": Generating grammar tables from /usr/lib/.../PatternGrammar.txt"
+                    pass
+                elif line[:17] != "RefactoringTool: ":
                     if line[:3] not in ("---", "+++"):
                         print(file, ": ", line, sep="")
                         error = True
