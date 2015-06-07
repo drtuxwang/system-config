@@ -35,7 +35,7 @@ class Options(syslib.Dump):
         parser = argparse.ArgumentParser(
                 description="Concatenate files and print on the standard output.")
 
-        parser.add_argument("files", nargs="+", metavar="file", help="File to view.")
+        parser.add_argument("files", nargs="*", metavar="file", help="File to view.")
 
         self._args = parser.parse_args(args)
 

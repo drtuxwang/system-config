@@ -105,9 +105,16 @@ class Options(syslib.Dump):
         elif len(self._args.args) and self._args.args[0].endswith(".deb"):
             self._dpkg = syslib.Command("dpkg-deb")
             self._dpkg.setArgs([ "-b", os.curdir, self._args.args[0] ])
-        else:
+        elif self._args.args:
             raise SystemExit(sys.argv[0] + ': Invalid Debian package name "' +
                              self._args.args[0] + '".')
+        else:
+            print("usage: deb.py [-h] [-l] [-s] [-L] [-d] [-P] [-S] [-i] [-I]", file=sys.stderr)
+            print("              [package.deb|package|arch [package.deb|package|arch ...]]",
+                    file=sys.stderr)
+            print("deb.py: error: the following arguments are required: package.deb",
+                    file=sys.stderr)
+            raise SystemExit(1)
 
 
 class Package(syslib.Dump):

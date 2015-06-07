@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "ntpdate" command
+Run daemon to update time once every 24 hours
 """
 
 import sys

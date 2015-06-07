@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Copy file to all target files.
+Copy a file to multiple target files.
 """
 
 import sys
@@ -41,7 +41,7 @@ class Options(syslib.Dump):
 
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Copy files and directories.")
+        parser = argparse.ArgumentParser(description="Copy a file to multiple target files.")
 
         parser.add_argument("source", nargs=1, help="Source file.")
         parser.add_argument("targets", nargs="+", metavar="target", help="Target file.")

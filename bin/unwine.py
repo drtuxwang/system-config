@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Shuts down WINE and all WIN32 applications
+Shuts down WINE and all Windows applications
 """
 
 import sys
