@@ -29,7 +29,7 @@ class Options(syslib.Dump):
         """
         Return list of ISO images.
         """
-        return self._args.image
+        return self._args.images
 
 
     def getViewFlag(self):
@@ -46,7 +46,7 @@ class Options(syslib.Dump):
         parser.add_argument("-v", dest="viewFlag", action="store_true",
                             help="Show contents of archive.")
 
-        parser.add_argument("image", nargs="+", metavar="image.iso", help="ISO image file.")
+        parser.add_argument("images", nargs="+", metavar="image.iso", help="ISO image file.")
 
         self._args = parser.parse_args(args)
 
