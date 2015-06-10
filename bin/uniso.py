@@ -29,7 +29,7 @@ class Options(syslib.Dump):
         """
         Return list of ISO images.
         """
-        return self._args.images
+        return self._args.image
 
 
     def getViewFlag(self):
