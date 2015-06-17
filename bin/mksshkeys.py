@@ -96,9 +96,9 @@ class SecureShell(syslib.Dump):
                 "umask 077; chmod -R go= $HOME/.ssh 2> /dev/null",
                 'PUBKEY="' + self._pubkey + '"',
                 "mkdir $HOME/.ssh 2> /dev/null",
-                'if [ ! r"`grep \"^$PUBKEY$\" $HOME/.ssh/authorized_keys" " 2> /dev/null`" ]; then',
-                '  echo "Adding public key to \"' + login + ':$HOME/.ssh/authorized_keys\"..."',
-                '  echo "$PUBKEY" >> $HOME/.ssh/authorized_keys',
+                'if [ ! "`grep \"^$PUBKEY$\" $HOME/.ssh/authorized_keys" " 2> /dev/null`" ]; then',
+                '    echo "Adding public key to \"' + login + ':$HOME/.ssh/authorized_keys\"..."',
+                '    echo "$PUBKEY" >> $HOME/.ssh/authorized_keys',
                 "fi")
             self._ssh.setArgs([ login, "/bin/sh" ])
             self._ssh.run(stdin=stdin)
@@ -124,9 +124,9 @@ class SecureShell(syslib.Dump):
 
         privateKey = os.path.join(self._sshdir, "id_rsa")
         if not os.path.isfile(privateKey):
-            print("\nGenerating 2048bit RSA private/public key pair...")
+            print("\nGenerating 4096bit RSA private/public key pair...")
             ssh_keygen = syslib.Command("ssh-keygen")
-            ssh_keygen.setArgs([ "-t", "rsa", "-b", "2048", "-f", privateKey, "-N", "" ])
+            ssh_keygen.setArgs([ "-t", "rsa", "-b", "4096", "-f", privateKey, "-N", "" ])
             ssh_keygen.run()
             if ssh_keygen.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(ssh_keygen.getExitcode()) +
