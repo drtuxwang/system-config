@@ -85,16 +85,23 @@ class Index(syslib.Dump):
 
 
     def _readFsums(self, ofile, directory):
-        try:
-            with open(os.path.join(directory, "..fsum"), errors="replace") as ifile:
-                 for line in ifile:
-                     checksum, file = line.rstrip("\r\n").split("  ", 1)
-                     print(checksum + "  " + os.path.join(directory, file), file=ofile)
-        except (IOError, ValueError):
-            pass
-        for file in glob.glob(os.path.join(directory, "*")):
-            if os.path.isdir(file) and not os.path.islink(file):
-                self._readFsums(ofile, file)
+        fsum = os.path.join(directory, "..fsum")
+        if directory and os.listdir(directory) == [ "..fsum" ]:
+            try:
+                os.remove(fsum)
+            except OSError:
+                pass
+        else:
+            try:
+                with open(fsum, errors="replace") as ifile:
+                    for line in ifile:
+                        checksum, file = line.rstrip("\r\n").split("  ", 1)
+                        print(checksum + "  " + os.path.join(directory, file), file=ofile)
+            except (IOError, ValueError):
+                pass
+            for file in glob.glob(os.path.join(directory, "*")):
+                if os.path.isdir(file) and not os.path.islink(file):
+                    self._readFsums(ofile, file)
 
 
     def _writeFsums(self, lines):
