@@ -31,11 +31,10 @@ class Options(syslib.Dump):
                 self._youtubedl = syslib.Command("youtube-dl", platform="Common", check=False)
 
         if self._args.viewFlag:
-            self._youtubedl.setArgs([ "--list-formats" ] + self._args.urls)
+            self._youtubedl.setArgs([ "--list-formats" ])
         elif self._args.format:
-            self._youtubedl.setArgs([ "--title", "--format" ] + self._args.format)
-        else:
-            self._youtubedl.setArgs(self._args.urls)
+            self._youtubedl.setArgs([ "--title", "--format", str(self._args.format[0]) ])
+        self._youtubedl.extendArgs(self._args.urls)
 
         self._setpython(self._youtubedl)
 
