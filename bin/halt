@@ -3,6 +3,9 @@
 # Fast shutdown
 #
 
+/sbin/poweroff &
+sleep 0.25
+
 echo s > /proc/sysrq-trigger # Sync all mounted filesystems
 sleep 0.25
 
