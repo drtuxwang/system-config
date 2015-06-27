@@ -361,6 +361,7 @@ bin/gpg                gpg wrapper (allowing non systems port)
 bin/gpg.py             (contains enhanced functions "gpg -h")
 
 bin/gqview             gqview wrapper (allowing non systems port)
+bin/gqview.bat         (uses gqview)
 bin/gqview.py          (uses geeqie)
 
 bin/graph              Generate multiple graph files with X/Y plots
