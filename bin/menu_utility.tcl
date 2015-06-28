@@ -20,6 +20,8 @@ frame .mainmenu -bg "#cccccc"
    pack .mainmenu.keyboard -side top
 
 # System tools
+   button .mainmenu.printer -width 10 -bg "#ffff00" -text "Printer" -command {exec system-config-printer &}
+   pack .mainmenu.printer -side top
    button .mainmenu.vbox -width 10 -bg "#ffff00" -text "VirtualBox" -command {exec VirtualBox &}
    pack .mainmenu.vbox -side top
 
