@@ -16,7 +16,7 @@ frame .mainmenu -bg "#cccccc"
    pack .mainmenu.calendar -side top
    button .mainmenu.ibus -width 10 -bg "#ffcc00" -text "Ibus Input" -command {exec ibus-daemon &}
    pack .mainmenu.ibus -side top
-   button .mainmenu.keyboard -width 10 -bg "#ffcc00" -text "Keyboard" -command {exec onboard &}
+   button .mainmenu.keyboard -width 10 -bg "#ffcc00" -text "Keyboard" -command {exec xvkbd &}
    pack .mainmenu.keyboard -side top
 
 # System tools
