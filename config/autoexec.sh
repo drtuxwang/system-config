@@ -3,7 +3,7 @@
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 PATH=$HOME/software/bin:$PATH; export PATH
 
-if [ "`lsmod | grep vboxvideo`" ]; then
+if [ "`lsmod | grep vboxguest`" ]; then
     (xrandr --dpi 96; sleep 1; xrandr -s 1280x960) &
 fi
 
@@ -23,6 +23,7 @@ xhost +si:localuser:$MYUNAME
 
 setxkbmap gb
 setxkbmap -option terminate:ctrl_alt_bksp
+xset b off
 xset m 4,8
 xset r rate 500 25
 xset s blank s 0 # Use 300 for CRT
