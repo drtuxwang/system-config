@@ -131,8 +131,11 @@ class Setmod(syslib.Dump):
                     except OSError:
                         print("Permission denied:", file + os.sep)
                     if recursiveFlag:
-                        self._setmod(options, glob.glob(os.path.join(file, ".*")) +
-                                     glob.glob(os.path.join(file, "*")))
+                        try:
+                            self._setmod(options,
+                                         [ os.path.join(file, x) for x in os.listdir(file) ])
+                        except PermissionError:
+                            pass
                 elif os.path.isfile(file):
                     try:
                         try:

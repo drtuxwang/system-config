@@ -58,9 +58,8 @@ class Link(syslib.Dump):
 
     def _linkFiles(self, sourceDir, targetDir, subdir=""):
         try:
-            sourceFiles = sorted(glob.glob(os.path.join(sourceDir, ".*")) +
-                                 glob.glob(os.path.join(sourceDir, "*")))
-        except OSError:
+            sourceFiles = sorted([ os.path.join(sourceDir, x) for x in os.listdir(sourceDir) ])
+        except PermissionError:
             return
         if not os.path.isdir(targetDir):
             print('Creating "' + targetDir + '" directory...')

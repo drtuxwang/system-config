@@ -123,13 +123,15 @@ class Mirror(syslib.Dump):
 
     def _mirror(self, sourceDir, targetDir):
         try:
-            sourceFiles = (glob.glob(os.path.join(sourceDir, ".*")) +
-                           glob.glob(os.path.join(sourceDir, "*")))
-        except OSError:
-            return
+            sourceFiles = [ os.path.join(sourceDir, x) for x in os.listdir(sourceDir) ]
+        except PermissionError:
+            raise SystemExit(sys.argv[0] + ': Cannot open "' + sourceDir + '" source directory.')
         if os.path.isdir(targetDir):
-            targetFiles = sorted(glob.glob(os.path.join(targetDir, ".*")) +
-                                 glob.glob(os.path.join(targetDir, "*")))
+            try:
+                targetFiles = [ os.path.join(targetDir, x) for x in os.listdir(targetDir) ]
+            except PermissionError:
+                raise SystemExit(sys.argv[0] + ': Cannot open "' + targetDir +
+                                 '" target directory.')
         else:
             targetFiles = []
             print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',

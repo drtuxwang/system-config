@@ -51,8 +51,10 @@ class Findzero(syslib.Dump):
     def _findzero(self, files):
         for file in sorted(files):
             if os.path.isdir(file):
-                self._findzero(glob.glob(os.path.join(file, ".*")) +
-                               glob.glob(os.path.join(file, "*")))
+                try:
+                    self._findzero([ os.path.join(file, x) for x in os.listdir(file) ])
+                except PermissionError:
+                    pass
             elif syslib.FileStat(file).getSize() == 0:
                 print(file)
 

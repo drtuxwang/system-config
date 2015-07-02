@@ -56,10 +56,15 @@ class Diff(syslib.Dump):
 
 
     def _diffdir(self, directory1, directory2):
-        files1 = sorted(glob.glob(os.path.join(directory1, ".*")) +
-                        glob.glob(os.path.join(directory1, "*")))
-        files2 = sorted(glob.glob(os.path.join(directory2, ".*")) +
-                        glob.glob(os.path.join(directory2, "*")))
+        try:
+            files1 = sorted([ os.path.join(directory1, x) for x in os.listdir(directory1) ])
+        except PermissionError:
+            raise SystemExit(sys.argv[0] + ': Cannot open "' + directory1 + '" directory.')
+
+        try:
+            files2 = sorted([ os.path.join(directory2, x) for x in os.listdir(directory2) ])
+        except PermissionError:
+            raise SystemExit(sys.argv[0] + ': Cannot open "' + directory2 + '" directory.')
 
         for file in files1:
             if os.path.isdir(file):

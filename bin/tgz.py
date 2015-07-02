@@ -81,9 +81,11 @@ class Pack(syslib.Dump):
                 self._archive.add(file, recursive=False)
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot add "' + file +'" file to archive.')
-            if os.path.isdir(file):
-                self._addfile(glob.glob(os.path.join(file, ".*")) +
-                              glob.glob(os.path.join(file, "*")))
+            if os.path.isdir(file) and not os.path.islink(file):
+                try:
+                    self._addfile([ os.path.join(file, x) for x in os.listdir(file) ])
+                except PermissionError:
+                    raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
 
 
 class Main:

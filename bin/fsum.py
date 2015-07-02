@@ -117,8 +117,11 @@ class Checksum(syslib.Dump):
             if os.path.isdir(file):
                 if not os.path.islink(file):
                     if options.getRecursiveFlag():
-                        self._calc(options, sorted(glob.glob(os.path.join(file, ".*")) +
-                                            glob.glob(os.path.join(file, "*"))))
+                        try:
+                            self._calc(options,
+                                       sorted([ os.path.join(file, x) for x in os.listdir(file) ]))
+                        except PermissionError:
+                            pass
             elif os.path.isfile(file) and not file.endswith("..fsum"):
                 fileStat = syslib.FileStat(file)
                 try:
@@ -181,8 +184,7 @@ class Checksum(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + fsumfile + '" checksum file.')
 
         if os.path.join(directory, "index.fsum") in files:
-            for file in self._extra(sorted(glob.glob(os.path.join(directory, ".*")) +
-                                    glob.glob(os.path.join(directory, "*"))), found):
+            for file in self._extra(directory, found):
                 print(file, "# EXTRA file found")
         if nmiss > 0:
             print("fsum: Cannot find", nmiss, "of", nfiles, "listed files.")
@@ -190,12 +192,19 @@ class Checksum(syslib.Dump):
             print("fsum: Mismatch in", nfail, "of", nfiles - nmiss, "computed checksums.")
 
 
-    def _extra(self, files, found):
+    def _extra(self, directory, found):
         extra = []
-        for file in files:
+        try:
+            if directory:
+                files = [ os.path.join(directory, x) for x in os.listdir(directory) ]
+            else:
+                files = [ os.path.join(directory, x) for x in os.listdir() ]
+        except PermissionError:
+            pass
+        else:
+            for file in files:
                 if os.path.isdir(file):
-                    extra.extend(self._extra(sorted(glob.glob(os.path.join(file, ".*")) +
-                                 glob.glob(os.path.join(file, "*"))), found))
+                    extra.extend(self._extra(file, found))
                 elif file not in found:
                     if not file.endswith("..fsum"):
                         extra.append(file)

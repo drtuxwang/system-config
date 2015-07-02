@@ -71,8 +71,11 @@ class Diskusage(syslib.Dump):
 
     def _usage(self, options, directory):
         size = 0
-        for file in sorted(glob.glob(os.path.join(directory, ".*")) +
-                           glob.glob(os.path.join(directory, "*"))):
+        try:
+            files = [ os.path.join(directory, x) for x in os.listdir(directory) ]
+        except PermissionError:
+            raise SystemExit(sys.argv[0] + ': Cannot open "' + directory + '" directory.')
+        for file in sorted(files):
             if not os.path.islink(file):
                 if os.path.isdir(file):
                     size += self._usage(options, file)

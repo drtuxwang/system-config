@@ -121,9 +121,8 @@ class Copy(syslib.Dump):
         elif os.path.isdir(source):
             print('Copying "' + source + '" directory...')
             try:
-                files = sorted(glob.glob(os.path.join(source, ".*")) +
-                               glob.glob(os.path.join(source, "*")))
-            except OSError:
+                files = sorted([ os.path.join(source, x) for x in os.listdir(source) ])
+            except PermissionError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + source + '" directory.')
             if not os.path.isdir(target):
                 try:

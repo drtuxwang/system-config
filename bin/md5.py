@@ -73,10 +73,12 @@ class Md5sum(syslib.Dump):
     def _calc(self, options, files):
         for file in files:
             if os.path.isdir(file):
-                if not os.path.islink(file):
-                    if options.getRecursiveFlag():
-                        self._calc(options, sorted(glob.glob(os.path.join(file, ".*")) +
-                                                   glob.glob(os.path.join(file, "*"))))
+                if not os.path.islink(file) and options.getRecursiveFlag():
+                    try:
+                        self._calc(options,
+                                   sorted([ os.path.join(file, x) for x in os.listdir(file) ]))
+                    except PermissionError:
+                        raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
             elif os.path.isfile(file):
                 md5sum = self._md5sum(file)
                 if not md5sum:
