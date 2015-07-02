@@ -38,7 +38,7 @@ class Options(syslib.Dump):
         if self._args.files:
             self._archiver.setArgs(self._args.files)
         else:
-            self._archiver.setArgs(glob.glob(".*") + glob.glob("*"))
+            self._archiver.setArgs(os.listdir())
 
         if "__main__.py" not in self._archiver.getArgs():
             raise SystemExit(sys.argv[0] + ': Cannot find "__main__.py" main program file.')

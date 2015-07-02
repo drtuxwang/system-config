@@ -54,7 +54,7 @@ class Options(syslib.Dump):
         if self._args.files:
             self._archiver.extendArgs(self._args.files)
         else:
-            self._archiver.extendArgs(glob.glob(".*") + glob.glob("*"))
+            self._archiver.extendArgs(os.listdir())
 
         self._setenv()
 

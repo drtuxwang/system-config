@@ -63,7 +63,7 @@ class Options(syslib.Dump):
         if self._args.files:
             self._files = self._args.files
         else:
-            self._files = glob.glob(".*") + glob.glob("*")
+            self._files = os.listdir()
 
 
 class Pack(syslib.Dump):

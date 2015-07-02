@@ -74,7 +74,7 @@ class Options(syslib.Dump):
         if self._args.files:
             self._files = self._args.files
         else:
-            self._files = sorted(glob.glob(".*") + glob.glob("*"))
+            self._files = sorted(os.listdir())
 
 
 class List(syslib.Dump):

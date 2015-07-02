@@ -64,7 +64,11 @@ class Finder(syslib.Dump):
     def _find(self, files):
         for file in sorted(files):
             if os.path.isdir(file) and not os.path.islink(file):
-                self._find(glob.glob(os.path.join(file, ".*")) + glob.glob(os.path.join(file, "*")))
+                try:
+                    self._find([ os.path.join(file, x) for x in os.listdir(file) ])
+                except PermissionError:
+                    raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
+
             elif self._ispattern.search(file):
                 print(file)
 

@@ -52,12 +52,16 @@ class Touch(syslib.Dump):
 
     def _toucher(self, directory):
         print(directory)
-        files = glob.glob(os.path.join(directory, ".*")) + glob.glob(os.path.join(directory, "*"))
-        self._touch.setArgs(files)
-        self._touch.run(mode="batch")
-        for file in files:
-            if os.path.isdir(file) and not os.path.islink(file):
-                self._toucher(file)
+        if os.path.isdir(directory):
+            try:
+                files = [ os.path.join(directory, x) for x in os.listdir(directory) ]
+                self._touch.setArgs(files)
+                self._touch.run(mode="batch")
+                for file in files:
+                    if os.path.isdir(file) and not os.path.islink(file):
+                        self._toucher(file)
+            except PermissionError:
+                raise SystemExit(sys.argv[0] + ': Cannot open "' + directory + '" directory.')
 
 
 class Main:
