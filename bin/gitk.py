@@ -25,12 +25,14 @@ class Options(syslib.Dump):
 
         self._env = {}
         if os.name == "nt":
-            os.environ["PATH"] = os.path.join(os.environ["PATH"], os.path.dirname(self._gitk.getFile()))
+            os.environ["PATH"] = os.path.join(os.environ["PATH"],
+                                              os.path.dirname(self._gitk.getFile()))
         else:
             gitHome = os.path.dirname(os.path.dirname(self._gitk.getFile()))
             if gitHome not in ( "/usr", "/usr/local" ):
                 self._env["GIT_EXEC_PATH"] = os.path.join(gitHome, "libexec", "git-core")
-                self._env["GIT_TEMPLATE_DIR"] = os.path.join(gitHome, "share", "git-core", "templates")
+                self._env["GIT_TEMPLATE_DIR"] = os.path.join(gitHome, "share",
+                                                             "git-core", "templates")
 
         self._config()
 
