@@ -352,7 +352,12 @@ bin/gimp.bat
 bin/gimp.py
 
 bin/git                git wrapper (allowing non systems port)
+bin/git.bat
 bin/git.py
+bin/git-bash.bat       git bash shell for Windows
+bin/gitk               gitk wrapper (allowing non systems port)
+bin/gitk.bat
+bin/gitk.py
 
 bin/gnome-mines        gnome-mines wrapper (allowing non systems port)
 bin/gnome-mines.py     (can pick using old gnomines name)
@@ -370,7 +375,7 @@ bin/graph.py           (uses gnuplot)
 bin/gz                 Compress a file in GZIP format
 bin/gz.py
 
-bin/halt               Fast shutdown using i"/proc/sysrq-trigger"
+bin/halt               Fast shutdown using "/proc/sysrq-trigger"
 
 bin/httpd              Start a simple Python HTTP server
 bin/httpd.bat
