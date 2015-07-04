@@ -107,7 +107,7 @@ class Setmod(syslib.Dump):
         #  linux/sunos   macos-x86/x86_64       macos-x86_64           macos-x86
         self._ExeMagics = ( b"\177ELF", b"\312\376\272\276", b"\317\372\355\376",
                             b"\316\372\355\376" )
-        self._isexeExt = re.compile("[.](bat|com|dll|exe|ms[ip]|psd|s[olh]|s[ol][.].*|tcl)$",
+        self._isexeExt = re.compile("[.](bat|cmd|com|dll|exe|ms[ip]|psd|s[olh]|s[ol][.].*|tcl)$",
                                     re.IGNORECASE)
         self._isnotExeExt = re.compile("[.](7z|[acfo]|ace|asr|avi|bak|blacklist|bmp|bz2|cpp|crt|"
                                        "css|dat|deb|diz|doc|docx|f77|f90|gif|gz|h|hlp|htm|html|"
