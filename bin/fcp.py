@@ -123,7 +123,7 @@ class Copy(syslib.Dump):
             try:
                 files = sorted([ os.path.join(source, x) for x in os.listdir(source) ])
             except PermissionError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + source + '" directory.')
+                raise SystemExit(sys.argv[0] + ': Cannot open "' + source + '" directory.')
             if not os.path.isdir(target):
                 try:
                     os.makedirs(target)
