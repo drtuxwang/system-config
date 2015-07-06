@@ -58,12 +58,12 @@ class Diff(syslib.Dump):
     def _diffdir(self, directory1, directory2):
         try:
             files1 = sorted([ os.path.join(directory1, x) for x in os.listdir(directory1) ])
-        except (FileNotFoundError, PermissionError):
+        except (FileNotFoundError, NotADirectoryError, PermissionError):
             raise SystemExit(sys.argv[0] + ': Cannot open "' + directory1 + '" directory.')
 
         try:
             files2 = sorted([ os.path.join(directory2, x) for x in os.listdir(directory2) ])
-        except (FileNotFoundError, PermissionError):
+        except (FileNotFoundError, NotADirectoryError, PermissionError):
             raise SystemExit(sys.argv[0] + ': Cannot open "' + directory2 + '" directory.')
 
         for file in files1:
