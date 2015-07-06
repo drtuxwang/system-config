@@ -34,7 +34,7 @@ class Options(syslib.Dump):
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Open files using default application.")
 
-        parser.add_argument("files", nargs=1, metavar="file", help="File to open.")
+        parser.add_argument("files", nargs="+", metavar="file", help="File to open.")
 
         self._args = parser.parse_args(args)
 
