@@ -9,8 +9,8 @@ RELEASE = "4.3.1"
 VERSION = 20150607
 
 import sys
-if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
+if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 if __name__ == "__main__":
     sys.path = sys.path[1:] + sys.path[:1]
 
