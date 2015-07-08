@@ -176,8 +176,7 @@ class Xhtml(syslib.Dump):
         yield ""
         for fileStat in fileStats:
             directory = fileStat.getFile()
-            file = sorted(os.listdir(directory))[0]
-            xhtmlFile = os.path.join(directory, file.rsplit(".", 1)[0]) + ".xhtml"
+            xhtmlFile = sorted(glob.glob(os.path.join(directory, "*.xhtml")))[0]
             yield '<a href="' + xhtmlFile + '" target="_blank">'
             yield directory + "</a>"
             yield "<br/>"
