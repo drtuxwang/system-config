@@ -35,7 +35,7 @@ class Options(syslib.Dump):
         """
         Return order method.
         """
-        return self._args.order[0]
+        return self._args.order
 
 
     def getResetFlag(self):
@@ -116,9 +116,10 @@ class Renumber(syslib.Dump):
 
 
     def _sorted(self, options, fileStats):
-        if options.getOrder() == "mtime":
+        order = options.getOrder()
+        if order() == "mtime":
             fileStats = sorted(fileStats, key=lambda s: s.getTime())
-        elif options.getOrder() == "ctime":
+        elif order() == "ctime":
             fileStats = sorted(fileStats, key=lambda s: s.getTimeCreate())
         else:
             fileStats = sorted(fileStats, key=lambda s: s.getFile())
