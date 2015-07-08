@@ -534,9 +534,13 @@ bin/pidgin.py
 bin/play               Play multimedia file/URL
 bin/play.py            (uses vlc and avprobe)
 
+bin/phtml              Generate XHTML files to view pictures
+bin/phtml.bat
+bin/phtml.py
+
 bin/plink              Create links to JPEG files
 bin/plink.py
-
+g
 bin/pmeg               Resize large picture images to mega-pixels limit
 bin/pmeg.py            (uses convert from ImageMagick)
 
