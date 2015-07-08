@@ -79,7 +79,7 @@ class Gallery(syslib.Dump):
         yield ""
         yield "<head>"
         yield ("<title>" + self._directory + "/" + file +
-               "(" + str(number) +"/" + str(self._nfiles)+ ")</title>")
+               "(" + str(number+1) +"/" + str(self._nfiles)+ ")</title>")
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>'
         yield "</head>"
         yield '<body bgcolor="#fffff1" text="#000000" link="#0000ff" vlink="#900090">'
