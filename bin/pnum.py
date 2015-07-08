@@ -117,9 +117,9 @@ class Renumber(syslib.Dump):
 
     def _sorted(self, options, fileStats):
         order = options.getOrder()
-        if order() == "mtime":
+        if order == "mtime":
             fileStats = sorted(fileStats, key=lambda s: s.getTime())
-        elif order() == "ctime":
+        elif order == "ctime":
             fileStats = sorted(fileStats, key=lambda s: s.getTimeCreate())
         else:
             fileStats = sorted(fileStats, key=lambda s: s.getFile())
