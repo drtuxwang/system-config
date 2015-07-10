@@ -76,8 +76,8 @@ class Unpack(syslib.Dump):
         for file in self._archive.getnames():
             print(file)
             if os.path.isabs(file):
-                raise SystemExit(sys.argv[0] + ": Unsafe to extract file with absolute outside "
-                                               "of current directory.")
+                raise SystemExit(sys.argv[0] + ": Unsafe to extract file with absolute path "
+                                               "outside of current directory.")
             elif file.startswith(os.pardir):
                 raise SystemExit(sys.argv[0] + ": Unsafe to extract file with relative path "
                                                "outside of current directory.")
