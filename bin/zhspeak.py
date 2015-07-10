@@ -7,7 +7,7 @@ Zhong Hua Speak Chinese TTS software.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-RELEASE = "3.0.5"
+RELEASE = "3.0.5-1"
 
 import sys
 if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
@@ -282,7 +282,7 @@ class Ogg123(syslib.Dump):
 
 class Avplay(Ogg123):
     """
-    Uses "avplay" from "liav-tools".
+    Uses "avplay" from "libav-tools".
     """
 
 
