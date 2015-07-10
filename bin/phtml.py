@@ -72,37 +72,27 @@ class Gallery(syslib.Dump):
         self._nfiles = len(self._files)
 
 
-    def _generate(self, number, file, back, next):
+    def _generate(self, number, file, next):
         yield ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
                '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">')
         yield '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'
         yield ""
         yield "<head>"
-        yield ("<title>" + self._directory + "/" + file +
-               "(" + str(number+1) +"/" + str(self._nfiles)+ ")</title>")
+        yield "<title>" + self._directory + "/" + file + "</title>"
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>'
         yield "</head>"
         yield '<body bgcolor="#fffff1" text="#000000" link="#0000ff" vlink="#900090">'
         yield ""
         yield '<table border="0" align="center">'
         yield "<tr>"
-        yield "  <td>"
-        if back:
-            yield '    <a href="' + back.rsplit(".", 1)[0] + ".xhtml" + '">'
-            yield '    &lt;&lt;&lt;</a>'
-        else:
-            yield "    ###"
+        yield '  <td valign="top">'
+        yield "  (" + str(number+1) +"/" + str(self._nfiles)+ ")"
         yield "  </td>"
         yield "  <td>"
-        yield '    <a href="' + file +'" target="_blank">'
+        yield '    <a href="' + next.rsplit(".", 1)[0] +'.xhtml">'
         yield '    <img src="' + file +'" height="' + str(self._height) + '"/></a>'
         yield "  </td>"
         yield "  <td>"
-        if next:
-            yield '    <a href="' + next.rsplit(".", 1)[0] + ".xhtml" + '">'
-            yield '    &gt;&gt;&gt;</a>'
-        else:
-            yield "    ###"
         yield "  </td>"
         yield "</tr>"
         yield "</table>"
@@ -116,19 +106,12 @@ class Gallery(syslib.Dump):
             for i in range(self._nfiles):
                 file = self._files[i]
 
-                if i == 0:
-                    back = None
-                else:
-                    back = self._files[i-1]
-                if i == self._nfiles - 1:
-                    next = None
-                else:
-                    next = self._files[i+1]
+                next = self._files[(i+1) % self._nfiles]
 
                 xhtmlFile = os.path.join(self._directory, file.rsplit(".", 1)[0]) + ".xhtml"
                 try:
                     with open(xhtmlFile, "w", newline="\n") as ofile:
-                        for line in self._generate(i, file, back, next):
+                        for line in self._generate(i, file, next):
                             print(line, file=ofile)
                 except IOError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + xhtmlFile + '" file.')
