@@ -48,7 +48,7 @@ class Options(syslib.Dump):
         parser.add_argument("-dpi", nargs=1, type=int, default=[ 300 ],
                             help="Selects DPI resolution (default is 300).")
 
-        parser.add_argument("files", nargs=1, metavar="file.pdf", help="PDF document file.")
+        parser.add_argument("files", nargs="+", metavar="file.pdf", help="PDF document file.")
 
         self._args = parser.parse_args(args)
 
