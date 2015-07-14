@@ -4,8 +4,8 @@
 #
 # 1996-2015 By Dr Colin Kong
 #
-VERSION=20150602
-RELEASE="2.6.40"
+VERSION=20150714
+RELEASE="2.6.40-1"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]; then
@@ -69,29 +69,6 @@ show_software()
         if [ "`echo \" $@ \" | egrep \" (location|value)=[^ ]\"`" ]; then
             write_output "$@"
         fi
-    fi
-}
-
-
-#
-# Show debugger info if found
-#
-show_debugger()
-{
-    if [ "$1" ]; then
-        DEBUGGER=$1
-        shift
-        for DIR in `echo $PATH | sed -e "s/:/ /g" -e "s/\/\//\//g"`; do
-            if [ -x "$DIR/$DEBUGGER" ]; then
-                if [ $# != 0 ]; then
-                    show_software name="Program Debugger" location="$DIR/$DEBUGGER $@"
-                    break
-                else
-                    show_software name="Program Debugger" location="$DIR/$DEBUGGER"
-                fi
-                break
-            fi
-        done
     fi
 }
 
