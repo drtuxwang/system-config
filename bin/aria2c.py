@@ -50,15 +50,27 @@ class Options(syslib.Dump):
 class Trickle(syslib.Command):
 
 
-   def __init__(self):
+   def __init__(self, mbits=None):
        super().__init__("trickle", check=False)
 
-       self._drate = 512
+       self._drate = 5
        if "HOME" in os.environ.keys():
-           file = os.path.join(os.environ["HOME"], ".config", "trickle.json")
+           file = os.path.join(os.environ["HOME"], ".config", "netnice.json")
            if not self._load(file):
                self._save(file)
-       self.setArgs([ "-d", str(self._drate), "-s" ])
+
+       if mbits:
+           self._drate = mbits
+
+       self.setRate(self._drate)
+
+
+   def setRate(self, mbits):
+       """
+       rate in megabits (mbits) is converted to Kilobytes (KB).
+       """
+       self._drate = mbits
+       self.setArgs([ "-d", str(self._drate*1000000/8192), "-s" ])
 
 
    def _load(self, file):
@@ -66,7 +78,7 @@ class Trickle(syslib.Command):
            try:
                with open(file) as ifile:
                    data = json.load(ifile)
-                   self._drate = data["trickle"]["download"]
+                   self._drate = data["netnice"]["download"]
            except (IOError, KeyError):
                pass
            else:
@@ -77,7 +89,7 @@ class Trickle(syslib.Command):
 
    def _save(self, file):
        data = {
-                  "trickle":
+                  "netnice":
                   {
                       "download": self._drate
                   }

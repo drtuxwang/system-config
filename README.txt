@@ -492,6 +492,9 @@ bin/myqsub.py
 bin/nautilus           nautilus wrapper (allowing non systems port)
 bin/nautilus.py
 
+bin/netnice            Run a command with limited network bandwidth (uses trickle)
+bin/netnice.py
+
 bin/normalize          normalize wrapper (allowing non systems port)
 bin/normalize.py
 
