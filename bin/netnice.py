@@ -70,6 +70,10 @@ class Options(syslib.Dump):
 
         self._args = parser.parse_args(myArgs)
 
+        if self._args.mbits[0] < 1:
+            raise SystemExit(sys.argv[0] + ": You must specific a positive integer for "
+                             "bandwidth limit.")
+
         self._commandArgs = args[len(myArgs):]
 
 
