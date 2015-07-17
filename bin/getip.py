@@ -49,8 +49,9 @@ class Getip(syslib.Dump):
 
     def run(self):
         for host in self._hosts:
-            ip = socket.gethostbyname(host)
-            if not ip:
+            try:
+                ip = socket.gethostbyname(host)
+            except socket.gaierror:
                 ip = ""
             print(host.lower() + ":", ip)
 
