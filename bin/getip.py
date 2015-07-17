@@ -13,6 +13,7 @@ import argparse
 import glob
 import os
 import signal
+import socket
 
 import syslib
 
@@ -44,51 +45,14 @@ class Getip(syslib.Dump):
 
     def __init__(self, hosts):
         self._hosts = hosts
-        self._ping = None
 
 
     def run(self):
         for host in self._hosts:
-            ip = self._getIpv4(host)
+            ip = socket.gethostbyname(host)
             if not ip:
                 ip = ""
             print(host.lower() + ":", ip)
-
-
-    def _getIpv4(self, host):
-        """
-        Return IPv4 address.
-
-        host = Hostname
-        """
-        if not self._ping:
-            if os.path.isfile("/usr/sbin/ping"):
-                self._ping = syslib.Command(file="/usr/sbin/ping")
-            elif os.path.isfile("/usr/etc/ping"):
-                self._ping = syslib.Command(file="/usr/etc/ping")
-            else:
-                self._ping = syslib.Command("ping")
-        if os.name == "nt":
-            self._ping.setArgs([ "-w", "4", "-n", "1", host ])
-            self._ping.run(filter="Minimum|TTL", mode="batch")
-            if self._ping.hasOutput():
-                return self._ping.stdout[0].split()[2].replace(":", "")
-        else:
-            if syslib.info.getSystem() == "linux":
-                self._ping.setArgs([ "-h" ])
-                self._ping.run(filter="[-]w ", mode="batch")
-                if self._ping.hasOutput():
-                    self._ping.setArgs([ "-w", "4", "-c", "1", host ])
-                else:
-                    self._ping.setArgs([ "-c", "1", host ])
-            elif syslib.info.getSystem() == "sunos":
-                self._ping.setArgs([ "-s", host, "64", "1" ])
-            else:
-                self._ping.setArgs([ "-w", "4", "-c", "1", host ])
-            self._ping.run(filter="\(.*\)", mode="batch")
-            if self._ping.hasOutput():
-                return self._ping.getOutput()[0].split("(")[1].split(")")[0]
-        return None
 
 
 class Main:
