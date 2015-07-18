@@ -210,6 +210,10 @@ bin/ffplay.py
 bin/ffprobe            ffprobe wrapper (allowing non systems port)
 bin/ffprobe.py
 
+bin/fget               Download http/https/ftp/file URLs
+bin/fget.bat
+bin/fget.py
+
 bin/fgrep.bat          Print lines matching a pattern
 bin/fgrep.py           (Windows only)
 
