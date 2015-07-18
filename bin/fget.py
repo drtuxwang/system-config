@@ -53,7 +53,7 @@ class Download(syslib.Dump):
     def _getFileStat(self, url, res):
         """
         url = URL to download
-        res = http.client.HTTPResponse object
+        res = http.client.HTTPResponse class object
 
         Returns (filename, size, time) tuple.
         """
