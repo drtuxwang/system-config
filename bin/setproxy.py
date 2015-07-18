@@ -36,7 +36,6 @@ class Proxy(syslib.Dump):
                         if isMatch.match(str(line)):
                             myproxy = line.split('"')[1][6:]
                             break
-                    ifile.close()
             except IOError:
                 pass
         print(myproxy)
