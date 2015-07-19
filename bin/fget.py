@@ -11,6 +11,7 @@ if __name__ == "__main__":
 
 import argparse
 import glob
+import json
 import os
 import signal
 import socket
@@ -50,20 +51,33 @@ class Download(syslib.Dump):
         self._urls = options.getUrls()
 
 
-    def _getFileStat(self, url, res):
+    def _checkFile(self, file, size, mtime):
         """
-        url = URL to download
-        res = http.client.HTTPResponse class object
+        Check existing file and return True if already downloaded.
+        """
+        fileStat = syslib.FileStat(file)
+        if fileStat.getSize() == size and fileStat.getTime() >= mtime:
+            return True
+        return False
+
+
+    def _getFileStat(self, url, conn):
+        """
+        url  = URL to download
+        conn = http.client.HTTPResponse class object
 
         Returns (filename, size, time) tuple.
         """
-        info = res.info()
+        info = conn.info()
+
         try:
             mtime = time.mktime(time.strptime(
                     info.get("Last-Modified"), "%a, %d %b %Y %H:%M:%S %Z"))
         except TypeError:
             # For directories
             file = "index.html"
+            if os.path.isfile(file):
+                file = "index-" + str(os.getpid()) + ".html"
             mtime = time.time()
         else:
             file = os.path.basename(url)
@@ -73,39 +87,93 @@ class Download(syslib.Dump):
         except TypeError:
             size = -1
 
-        if os.path.isfile(file):
-            file +=  "-" + str(os.getpid())
-
         return (file, size, mtime)
 
 
-    def _get(self, url):
+    def _checkResume(self, file, data):
+       """
+       Return "resume" or "skip" or "download"
+       """
+       try:
+           with open(file + ".part.json") as ifile:
+               jsonData = json.load(ifile)
+               host = jsonData["fget"]["lock"]["host"]
+               pid = jsonData["fget"]["lock"]["pid"]
+
+               if host == syslib.info.getHostname() and syslib.Task().haspid(pid):
+                   return("skip")
+               if jsonData["fget"]["data"] == data:
+                   return "resume"
+       except (IOError, KeyError):
+           pass
+
+       return "download"
+
+
+    def _writeResume(self, file, data):
+       jsonData = {
+                      "fget": {
+                          "lock": {
+                              "host": syslib.info.getHostname(),
+                              "pid": os.getpid()
+                          },
+                          "data": data
+                      }
+                  }
+
+       try:
+           with open(file+".part.json", "w", newline="\n") as ofile:
+               print(json.dumps(jsonData, indent=4, sort_keys=True), file=ofile)
+       except IOError:
+           pass
+
+
+    def _getUrl(self, url):
         print(url)
 
         try:
-            with urllib.request.urlopen(url) as ifile:
-                file, size, mtime = self._getFileStat(url, ifile)
-                tmpfile = file + ".part"
+            conn = urllib.request.urlopen(url)
+            file, size, mtime = self._getFileStat(url, conn)
+            if self._checkFile(file, size, mtime):
+                print("  => {0:s} [{1:d}/{2:d}]".format(file, size, size))
+                return
+            tmpfile = file + ".part"
 
+            data = { "size": size, "time": int(mtime) }
+            check = self._checkResume(file, data)
+
+            if check == "skip":
+                return
+            elif "Accept-Ranges" in conn.info().keys() and check == "resume":
+                tmpsize = syslib.FileStat(file + ".part").getSize()
+                req = urllib.request.Request(url, headers={"Range": "bytes="+str(tmpsize)+"-"})
+                conn = urllib.request.urlopen(req)
+                mode = "ab"
+            else:
                 tmpsize = 0
-                try:
-                    with open(tmpfile, "wb") as ofile:
-                        while True:
-                            chunk = ifile.read(self._chunkSize)
-                            if not chunk:
-                                break
-                            tmpsize += len(chunk)
-                            ofile.write(chunk)
-                            print("\r  => {0:s} [{1:d}/{2:d}]".format(file, tmpsize, size), end="")
-                except PermissionError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
-                print()
+                mode = "wb"
 
-                os.utime(tmpfile, (mtime, mtime))
-                try:
-                    os.rename(tmpfile, file)
-                except OSError:
-                    pass
+            self._writeResume(file, data)
+
+            try:
+                with open(tmpfile, mode) as ofile:
+                    while True:
+                        chunk = conn.read(self._chunkSize)
+                        if not chunk:
+                            break
+                        tmpsize += len(chunk)
+                        ofile.write(chunk)
+                        print("\r  => {0:s} [{1:d}/{2:d}]".format(file, tmpsize, size), end="")
+            except PermissionError:
+                raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
+            print()
+
+            os.utime(tmpfile, (mtime, mtime))
+            try:
+                os.rename(tmpfile, file)
+                os.remove(tmpfile + ".json")
+            except OSError:
+                pass
 
         except urllib.error.URLError as exception:
             reason = exception.reason
@@ -123,7 +191,7 @@ class Download(syslib.Dump):
 
     def run(self):
         for url in self._urls:
-            self._get(url)
+            self._getUrl(url)
 
 
 class Main:
