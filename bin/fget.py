@@ -92,7 +92,7 @@ class Download(syslib.Dump):
 
     def _checkResume(self, file, data):
        """
-       Return "resume" or "skip" or "download"
+       Return "download", "resume" or "skip"
        """
        try:
            with open(file + ".part.json") as ifile:
