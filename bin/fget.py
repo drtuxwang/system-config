@@ -101,7 +101,7 @@ class Download(syslib.Dump):
                pid = jsonData["fget"]["lock"]["pid"]
 
                if host == syslib.info.getHostname() and syslib.Task().haspid(pid):
-                   return("skip")
+                   return "skip"
                if jsonData["fget"]["data"] == data:
                    return "resume"
        except (IOError, KeyError):
