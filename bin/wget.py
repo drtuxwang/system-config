@@ -33,7 +33,7 @@ class Options(syslib.Dump):
                     not args[2].endswith(".part")):
                 self._output =  args[2]
                 if os.path.isfile(args[2]) or os.path.isfile(args[2] + ".part"):
-                    self._output +=  "-" + str(os.getpid())
+                    self._output = ("-"+str(os.getpid())+".").join(self._output.rsplit(".",1))
                 self._wget.extendArgs([ args[1], self._output + ".part" ])
                 args = args[2:]
                 continue
