@@ -14,6 +14,7 @@ import json
 import os
 import signal
 
+import netnice
 import syslib
 
 
@@ -23,10 +24,11 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._aria2c = syslib.Command("aria2c")
         self._aria2c.setArgs(args[1:])
-        trickle = Trickle()
-        if trickle.isFound():
-            self._aria2c.setWrapper(trickle)
         self._setLibraries(self._aria2c)
+
+        shaper = netnice.Shaper()
+        if shaper.isFound():
+            self._aria2c.setWrapper(shaper)
 
 
     def getAria2c(self):
@@ -45,60 +47,6 @@ class Options(syslib.Dump):
                             libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"])
                 else:
                     os.environ["LD_LIBRARY_PATH"] = libdir
-
-
-class Trickle(syslib.Command):
-
-
-   def __init__(self, mbits=None):
-       super().__init__("trickle", check=False)
-
-       self._drate = 5
-       if "HOME" in os.environ.keys():
-           file = os.path.join(os.environ["HOME"], ".config", "netnice.json")
-           if not self._load(file):
-               self._save(file)
-
-       if mbits:
-           self._drate = mbits
-
-       self.setRate(self._drate)
-
-
-   def setRate(self, mbits):
-       """
-       rate in megabits (mbits) is converted to Kilobytes (KB).
-       """
-       self._drate = mbits
-       self.setArgs([ "-d", str(self._drate*1000000/8192), "-s" ])
-
-
-   def _load(self, file):
-       if os.path.isfile(file):
-           try:
-               with open(file) as ifile:
-                   data = json.load(ifile)
-                   self._drate = data["netnice"]["download"]
-           except (IOError, KeyError):
-               pass
-           else:
-               return True
-
-       return False
-
-
-   def _save(self, file):
-       data = {
-                  "netnice":
-                  {
-                      "download": self._drate
-                  }
-              }
-       try:
-           with open(file, "w", newline="\n") as ofile:
-               print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
-       except IOError:
-           pass
 
 
 class Main:

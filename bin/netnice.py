@@ -34,10 +34,10 @@ class Options(syslib.Dump):
             else:
                 self._command = syslib.Command(command, args=self._commandArgs)
 
-        trickle = Trickle(self._args.mbits[0])
-        if not trickle.getFile():
+        shaper = Shaper(self._args.drate[0])
+        if not shaper.getFile():
             raise SystemExit(sys.argv[0] + ': Cannot find "trickle" command.')
-        self._command.setWrapper(trickle)
+        self._command.setWrapper(shaper)
 
 
     def getCommand(self):
@@ -52,8 +52,8 @@ class Options(syslib.Dump):
                 description="Run a command with limited network bandwidth.")
 
         parser.add_argument(
-                "-n", nargs=1, type=int, dest="mbits", default=[ 0 ],
-                help='Bandwith limit in mbits. Default is 5 or set in ".conifig/netnice.json".')
+                "-n", nargs=1, type=int, dest="drate", default=[ 0 ],
+                help='Download rate limit in KB. Default is 512 set in ".config/netnice.json".')
 
         parser.add_argument("command", nargs=1, help="Command to run.")
         parser.add_argument("args", nargs="*", metavar="arg", help="Command argument.")
@@ -70,37 +70,34 @@ class Options(syslib.Dump):
 
         self._args = parser.parse_args(myArgs)
 
-        if self._args.mbits[0] < 1:
+        if self._args.drate[0] < 0:
             raise SystemExit(sys.argv[0] + ": You must specific a positive integer for "
-                             "bandwidth limit.")
+                             "download rate limit.")
 
         self._commandArgs = args[len(myArgs):]
 
 
-class Trickle(syslib.Command):
+class Shaper(syslib.Command):
 
 
-   def __init__(self, mbits=None):
+   def __init__(self, drate=None):
        super().__init__("trickle", check=False)
 
-       self._drate = 5
+       self._drate = 512
        if "HOME" in os.environ.keys():
            file = os.path.join(os.environ["HOME"], ".config", "netnice.json")
            if not self._load(file):
                self._save(file)
 
-       if mbits:
-           self._drate = mbits
+       if drate:
+           self._drate = drate
 
        self.setRate(self._drate)
 
 
-   def setRate(self, mbits):
-       """
-       rate in megabits (mbits) is converted to Kilobytes (KB).
-       """
-       self._drate = mbits
-       self.setArgs([ "-d", str(self._drate*1000000/8192), "-s" ])
+   def setRate(self, drate):
+       self._drate = drate
+       self.setArgs([ "-d", str(self._drate), "-s" ])
 
 
    def _load(self, file):
