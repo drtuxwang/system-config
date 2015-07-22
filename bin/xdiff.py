@@ -59,7 +59,6 @@ class Options(syslib.Dump):
 
         self._args = parser.parse_args(args)
 
-        print("Usage: xdiff file1 file2")
 
 class Main:
 
