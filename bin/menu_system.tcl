@@ -17,7 +17,9 @@ frame .mainmenu -bg "#cccccc"
     button .mainmenu.xlock -width 10 -bg "#ffcc00" -text "Lock Screen" -command {exec xlock &}
     pack .mainmenu.xlock -side top
 
-# Logout
+# Kill
+    button .mainmenu.kill -width 10 -bg "#ffff00" -text "Kill Window" -command {exec xkill &}
+    pack .mainmenu.kill -side top
     button .mainmenu.logout -width 10 -bg "#ffff00" -text "Logout" -command {exec xlogout &}
     pack .mainmenu.logout -side top
     button .mainmenu.reboot -width 10 -bg "#ffff00" -text "Restart" -command {exec sudo /sbin/reboot &}
