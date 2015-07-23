@@ -90,7 +90,7 @@ class Backlight(syslib.Dump):
 
 
     def getBrightnessDefault(self):
-        return 15
+        return int(self.getBrightnessMax() / 8)
 
 
     def getBrightnessMax(self):
