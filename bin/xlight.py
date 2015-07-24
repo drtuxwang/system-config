@@ -41,7 +41,7 @@ class Options(syslib.Dump):
 
 
     def _getBacklight(self):
-        for backlight in ( BacklightIntel(), BacklightSetpci(), BacklightXrandr() ):
+        for backlight in ( BacklightIntel(), BacklightIntelSetpci(), BacklightXrandr() ):
             if backlight.detect():
                 return backlight
         raise SystemExit(sys.argv[0] + ': Cannot detect backlight device.')
@@ -64,8 +64,10 @@ class Backlight(syslib.Dump):
 
 
     def __init__(self):
-        self._device = "/sys/class/backlight/acpi_video0"
-        self._step = 5
+        self._device = self._getDevice()
+        self._max = self.getBrightnessMax()
+        self._default = self.getBrightnessDefault()
+        self._step = self.getBrightnessStep()
 
 
     def detect(self):
@@ -80,6 +82,10 @@ class Backlight(syslib.Dump):
         return False
 
 
+    def _getDevice(self):
+        return "/sys/class/backlight/acpi_video0"
+
+
     def getBrightness(self):
         try:
             with open(os.path.join(self._device, "brightness"), errors="replace") as ifile:
@@ -90,7 +96,7 @@ class Backlight(syslib.Dump):
 
 
     def getBrightnessDefault(self):
-        return int(self.getBrightnessMax() / 8)
+        return int(self._max / 8)
 
 
     def getBrightnessMax(self):
@@ -100,6 +106,10 @@ class Backlight(syslib.Dump):
         except (IOError, ValueError):
             brightness = 0
         return brightness
+
+
+    def getBrightnessStep(self):
+        return int(self._max / 24)
 
 
     def setBrightness(self, brightness):
@@ -113,31 +123,25 @@ class Backlight(syslib.Dump):
     def run(self, change):
         if change:
             if change == "+":
-                brightness = min(self.getBrightness() + self._step, self.getBrightnessMax())
+                brightness = min(self.getBrightness() + self._step, self._max)
             elif change == "-":
                 brightness = max(self.getBrightness()-self._step, 0)
             elif change == "=":
-                brightness = self.getBrightnessDefault()
+                brightness = self._default
             self.setBrightness(brightness)
         else:
             print("{0:3.1f} / {1:3.1f}".format(float(self.getBrightness() + 0.01),
-                                               float(self.getBrightnessMax() + 0.01)))
+                                               float(self._max + 0.01)))
 
 
 class BacklightIntel(Backlight):
 
 
-    def __init__(self):
-        self._device = "/sys/class/backlight/intel_backlight"
-        self._step = 5
+    def _getDevice(self):
+        return "/sys/class/backlight/intel_backlight"
 
 
-class BacklightSetpci(Backlight):
-
-
-    def __init__(self):
-        self._device = None
-        self._step = 1
+class BacklightIntelSetpci(Backlight):
 
 
     def detect(self):
@@ -151,6 +155,10 @@ class BacklightSetpci(Backlight):
         return False
 
 
+    def _getDevice(self):
+        return None
+
+
     def getBrightness(self):
         if syslib.info.getUsername() != "root":
              self._setpci.setWrapper(syslib.Command("sudo"))
@@ -162,12 +170,16 @@ class BacklightSetpci(Backlight):
             raise SystemExit(sys.argv[0] + ": Cannot detect current brightness setting.")
 
 
+    def getBrightnessDefault(self):
+        return 3
+
+
     def getBrightnessMax(self):
         return 15
 
 
-    def getBrightnessDefault(self):
-        return 3
+    def getBrightnessStep(self):
+        return 1
 
 
     def setBrightness(self, brightness):
@@ -176,11 +188,6 @@ class BacklightSetpci(Backlight):
 
 
 class BacklightXrandr(Backlight):
-
-
-    def __init__(self):
-        self._device = None
-        self._step = 0.1
 
 
     def detect(self):
@@ -193,6 +200,10 @@ class BacklightXrandr(Backlight):
             if self._screens:
                 return True
         return False
+
+
+    def _getDevice(self):
+        return None
 
 
     def getBrightness(self):
@@ -211,6 +222,10 @@ class BacklightXrandr(Backlight):
 
     def getBrightnessMax(self):
         return 0.999
+
+
+    def getBrightnessStep(self):
+        return 0.1
 
 
     def setBrightness(self, brightness):
