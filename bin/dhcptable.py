@@ -35,14 +35,14 @@ class Options(syslib.Dump):
             os.environ["LANG"] = "en_GB"
             ifconfig = syslib.Command(file="/sbin/ifconfig")
             ifconfig.run(mode="batch")
-            self._arping.setFlags([ "-I", ifconfig.getOutput()[0].split()[0] ])
-            line = ifconfig.getOutput(" HWaddr ")
-            if line:
-                self._mymac = line[0].split()[-1]
-            for line in ifconfig.getOutput(" inet addr[a-z]*:"):
-                myip = line.split(":")[1].split()[0]
-                if myip not in ( "", "127.0.0.1" ):
-                    break
+            for line in ifconfig.getOutput(" HWaddr | inet addr[a-z]*:"):
+                if " HWaddr " in line:
+                    self._arping.setFlags([ "-I", line.split()[0] ])
+                    self._mymac = line.split()[-1]
+                else:
+                    myip = line.split(":")[1].split()[0]
+                    if myip not in ( "", "127.0.0.1" ):
+                        break
         elif syslib.info.getSystem() == "sunos":
             ifconfig = syslib.Command(file="/sbin/ifconfig", args=[ "-a" ])
             ifconfig.run(filter="\tinet [^ ]+ netmask", mode="batch")
