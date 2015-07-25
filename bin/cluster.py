@@ -117,6 +117,10 @@ class Remote(syslib.Dump, threading.Thread):
         self._output = ""
 
 
+    def getOutput(self):
+        return self._output
+
+
     def run(self):
         ssh = self._options.getSsh()
         ssh.setArgs([ self._ip ] + [ "echo '=== " + self._ip + ": '`uname -s -n`' ==='; " +
@@ -160,7 +164,7 @@ class Cluster(syslib.Dump):
             bytes = 0
             alive = False
             for thread in self._threads:
-                bytes += len(thread._output)
+                bytes += len(thread.getOutput())
                 if thread.is_alive():
                     alive = True
             sys.stdout.write("\r  -> Received " + str(bytes) + " bytes...")
@@ -192,10 +196,9 @@ class Cluster(syslib.Dump):
                              "Permission denied.|protocol failure in circuit setup", re.IGNORECASE)
 
         for thread in self._threads:
-            if thread._output:
-                if not iserror.search(thread._output):
-                    print(thread._output.rstrip("\r\n"))
-
+            output = thread.getOutput()
+            if output and not iserror.search(output):
+                print(thread.getOutput().rstrip("\r\n"))
 
         for thread in self._threads:
             thread.kill()

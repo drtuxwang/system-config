@@ -92,6 +92,14 @@ class ScanHost(syslib.Dump, threading.Thread):
         self._output = ""
 
 
+    def getIp(self):
+        return self._ip
+
+
+    def getOutput(self):
+        return self._output
+
+
     def run(self):
         self._options.getArping().setArgs([ "-c", "1", self._ip ])
         self._child = self._options.getArping().run(mode="child", error2output=True)
@@ -112,17 +120,14 @@ class ScanLan(syslib.Dump):
 
 
     def __init__(self, options):
-        self._timeLimit = 0.1
+        self._timeLimit = 1
 
         self._options = options
         self._avahiRdns = syslib.Command("avahi-resolve-address", check=False)
         self._threads = []
-        self._bcast()
-        self._wait()
-        self._output()
 
 
-    def _bcast(self):
+    def _detect(self):
         for host in range(1, 255):
             ip = self._options.getSubnet() + "." + str(host)
             thread = ScanHost(self._options, ip)
@@ -130,21 +135,18 @@ class ScanLan(syslib.Dump):
             self._threads.append(thread)
 
 
-    def _wait(self):
-        time.sleep(self._timeLimit)
-
-
     def _output(self):
         for thread in self._threads:
-            if thread._ip == self._options.getMyip():
-                print("{0:>11s} [{1:s}]  0.000ms  {2:s}".format(thread._ip,
-                        self._options.getMymac(), self._reverseDNS(thread._ip)))
+            ip = thread.getIp()
+            if ip == self._options.getMyip():
+                print("{0:>11s} [{1:s}]  0.000ms  {2:s}".format(
+                        ip, self._options.getMymac(), self._reverseDNS(ip)))
             else:
-                for line in thread._output.split("\n"):
-                    if line.startswith("Unicast reply from " + thread._ip):
+                for line in thread.getOutput().split("\n"):
+                    if line.startswith("Unicast reply from " + ip):
                         mac, ping = line.split()[4:6]
-                        print("{0:>11s} {1:s}  {2:s}  {3:s}".format(thread._ip, mac, ping,
-                                                                    self._reverseDNS(thread._ip)))
+                        print("{0:>11s} {1:s}  {2:s}  {3:s}".format(
+                                ip, mac, ping, self._reverseDNS(ip)))
                         break
 
         for thread in self._threads:
@@ -160,6 +162,12 @@ class ScanLan(syslib.Dump):
         return "Unknown"
 
 
+    def run(self):
+        self._detect()
+        time.sleep(self._timeLimit)
+        self._output()
+
+
 class Main:
 
 
@@ -169,7 +177,7 @@ class Main:
             self._windowsArgv()
         try:
             options = Options(sys.argv)
-            ScanLan(options)
+            ScanLan(options).run()
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
