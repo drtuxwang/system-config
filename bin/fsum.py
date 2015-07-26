@@ -204,7 +204,8 @@ class Checksum(syslib.Dump):
         else:
             for file in files:
                 if os.path.isdir(file):
-                    extra.extend(self._extra(file, found))
+                    if not os.path.islink(file):
+                        extra.extend(self._extra(file, found))
                 elif file not in found:
                     if not file.endswith("..fsum"):
                         extra.append(file)
