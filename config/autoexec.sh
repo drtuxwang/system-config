@@ -19,8 +19,6 @@ for HOST in "" `xhost | grep "^INET:"`; do
 done
 xhost +si:localuser:$MYUNAME
 
-(sleep 1; menu) &
-
 setxkbmap gb
 setxkbmap -option terminate:ctrl_alt_bksp
 xset b off
@@ -40,6 +38,8 @@ for FILE in .recently-used.xbel .local/share/recently-used.xbel; do
     mkdir -p $FILE 2> /dev/null
 done
 myqsd 1
+
+menu
 
 if [ -f $HOME/.config/autoexec-local.sh ]; then
     . $HOME/.config/autoexec-local.sh
