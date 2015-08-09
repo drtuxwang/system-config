@@ -20,7 +20,7 @@ frame .mainmenu -bg "#cccccc"
 # Kill
     button .mainmenu.kill -width 10 -bg "#ffff00" -text "Kill Window" -command {exec xkill &}
     pack .mainmenu.kill -side top
-    button .mainmenu.logout -width 10 -bg "#ffff00" -text "Logout" -command {exec xlogout &}
+    button .mainmenu.logout -width 10 -bg "#ffff00" -text "Logout" -command {exec xlogout -force &}
     pack .mainmenu.logout -side top
     button .mainmenu.reboot -width 10 -bg "#ffff00" -text "Restart" -command {exec sudo /sbin/reboot &}
     pack .mainmenu.reboot -side top
