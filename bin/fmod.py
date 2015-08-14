@@ -111,7 +111,7 @@ class Setmod(syslib.Dump):
                                     re.IGNORECASE)
         self._isnotExeExt = re.compile("[.](7z|[acfo]|ace|asr|avi|bak|blacklist|bmp|bz2|cpp|crt|"
                                        "css|dat|deb|diz|doc|docx|f77|f90|gif|gz|h|hlp|htm|html|"
-                                       "ico|ini|installed|ism|iso|jar|java|jpg|jpeg|js|key|lic|"
+                                       "ico|ini|installed|ism|iso|jar|java|jpg|jpeg|js|json|key|lic|"
                                        "lib|list|log|mov|mp[34g]|mpeg|obj|od[fgst]|ogg|opt|pdf|"
                                        "png|ppt|pptx|rar|reg|rpm|swf|tar|txt|url|wsdl|xhtml|xls|"
                                        "xlsx|xml|xs[dl]|xvid|zip)$", re.IGNORECASE)

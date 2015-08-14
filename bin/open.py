@@ -76,7 +76,7 @@ class Open(syslib.Dump):
                                 "pptx", "xls", "xlsx" ):
                 self._spawn("soffice", file)
 
-            elif extension == "txt":
+            elif extension in ( "txt", "json" ):
                 self._spawn("xedit", file)
 
             else:
