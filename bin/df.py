@@ -67,7 +67,7 @@ class CommandThread(syslib.Dump, threading.Thread):
                 continue
             if not byte:
                 break
-            self._stdout += byte.decode("utf-8", "ignore")
+            self._stdout += byte.decode("utf-8", "replace")
 
 
     def kill(self):

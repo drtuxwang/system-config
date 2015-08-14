@@ -344,7 +344,7 @@ class Encoder(syslib.Dump):
 
         while True:
             byte = child.stdout.read(1)
-            line += byte.decode("utf-8", "ignore")
+            line += byte.decode("utf-8", "replace")
             if not byte:
                 break
             if byte in ( b"\n", b"\r" ):

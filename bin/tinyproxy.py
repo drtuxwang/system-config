@@ -38,7 +38,7 @@ class Options(syslib.Dump):
 
     def _createConfig(self):
         try:
-            with open("tinyproxy.conf", "w", encoding="utf-8", newline="\n") as ofile:
+            with open("tinyproxy.conf", "w", newline="\n") as ofile:
                 print("Port 8888", file=ofile)
                 print('PidFile "tinyproxy.pid"', file=ofile)
                 print('LogFile "tinyproxy.log"', file=ofile)

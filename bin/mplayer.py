@@ -56,8 +56,7 @@ class Options(syslib.Dump):
             os.chmod(configdir, int("700", 8))
             if not os.path.isfile(os.path.join(configdir, "config")):
                 try:
-                    with open(os.path.join(configdir, "config"), "w",
-                            encoding = "utf-8", newline = "\n") as ofile:
+                    with open(os.path.join(configdir, "config"), "w", newline = "\n") as ofile:
                         print("# Write your default config options here!\n", file=ofile)
                         print("prefer-ipv4 = yes", file=ofile)
                         print("\n[gnome-mplayer]", file=ofile)

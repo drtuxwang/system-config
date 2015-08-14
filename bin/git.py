@@ -50,7 +50,7 @@ class Options(syslib.Dump):
             file = os.path.join(os.environ["HOME"], ".gitconfig")
             if not os.path.isfile(file):
                 try:
-                    with open(file, "w", encoding="utf-8", newline="\n") as ofile:
+                    with open(file, "w", newline="\n") as ofile:
                         user = syslib.info.getUsername()
                         host = syslib.info.getHostname()
                         print("[user]", file=ofile)

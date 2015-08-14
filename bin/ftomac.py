@@ -48,10 +48,10 @@ class Fromdos(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
             print('Converting "' + file + '" file to "\\r" newline format...')
             try:
-                with open(file, encoding="utf-8") as ifile:
+                with open(file, errors="replace") as ifile:
                     tmpfile = file + "-tmp" + str(os.getpid())
                     try:
-                        with open(tmpfile, "w", encoding="utf-8", newline="\r") as ofile:
+                        with open(tmpfile, "w", newline="\r") as ofile:
                             for line in ifile:
                                 print(line.rstrip("\r\n"), file=ofile)
                     except IOError:

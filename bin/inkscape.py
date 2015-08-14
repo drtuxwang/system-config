@@ -50,8 +50,8 @@ class Options(syslib.Dump):
                     pass
                 else:
                     if not os.path.isfile(os.path.join(inkscapedir, "inkscape.cfg")):
-                        with open(os.path.join(inkscapedir, "inkscape.cfg"), "w",
-                                encoding = "utf-8", newline = "\n") as ofile:
+                        with open(os.path.join(inkscapedir, "inkscape.cfg"),
+                                  "w", newline = "\n") as ofile:
                             print("[AudioIO]", file=ofile)
                             print("PlaybackDevice=ALSA: pulse", file=ofile)
                             print("RecordingDevice=ALSA: pulse", file=ofile)

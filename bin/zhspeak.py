@@ -7,7 +7,7 @@ Zhong Hua Speak Chinese TTS software.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-RELEASE = "3.0.5-1"
+RELEASE = "3.0.5-2"
 
 import sys
 if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
@@ -200,7 +200,7 @@ class ChineseDictionary(syslib.Dump):
         try:
             with open(file, "rb") as ifile:
                 for line in ifile.readlines():
-                    line = line.decode("utf-8", "ignore")
+                    line = line.decode("utf-8", "replace")
                     if line.startswith("//") or line.startswith("$"):
                         continue
                     elif "\t" in line:
@@ -335,7 +335,7 @@ class Main:
 
     def _unicodeArgv(self):
         for i in range(len(sys.argv)):
-            sys.argv[i]=sys.argv[i].decode("utf-8", "ignore")
+            sys.argv[i]=sys.argv[i].decode("utf-8", "replace")
 
 
     def _windowsArgv(self):

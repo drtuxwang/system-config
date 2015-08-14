@@ -150,12 +150,10 @@ class Pack(syslib.Dump):
                     print(md5sum, image, sep="  ")
                     try:
                         if image.endswith(".iso"):
-                            with open(image[:-4] + ".md5", "w",
-                                    encoding = "utf-8", newline = "\n") as ofile:
+                            with open(image[:-4] + ".md5", "w", newline = "\n") as ofile:
                                 print(md5sum + "  " + image, file=ofile)
                         else:
-                            with open(image + ".md5", "w",
-                                    encoding = "utf-8", newline = "\n") as ofile:
+                            with open(image + ".md5", "w", newline = "\n") as ofile:
                                 print(md5sum + "  " + image, file=ofile)
                     except IOError:
                         return

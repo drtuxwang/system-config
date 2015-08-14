@@ -114,7 +114,7 @@ class Pack(syslib.Dump):
             print('Building "' + self._manifest + '" Java manifest file with "' +
                   main + '" main class.')
             try:
-                with open(self._manifest, "w", encoding="utf-8", newline="\n") as ofile:
+                with open(self._manifest, "w", newline="\n") as ofile:
                     print("Main-Class:", main, file=ofile)
             except IOError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' +

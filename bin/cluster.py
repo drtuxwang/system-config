@@ -131,7 +131,7 @@ class Remote(syslib.Dump, threading.Thread):
             byte = self._child.stdout.read(1)
             if not byte:
                 break
-            self._output += byte.decode("utf-8", "ignore")
+            self._output += byte.decode("utf-8", "replace")
 
 
     def kill(self):

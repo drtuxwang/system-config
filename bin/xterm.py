@@ -138,7 +138,7 @@ class Xterm(syslib.Dump):
             sshconfig = os.path.join(sshdir, "config")
             if not os.path.isfile(sshconfig):
                 try:
-                    with open(sshconfig, "w", encoding="utf-8", newline="\n") as ofile:
+                    with open(sshconfig, "w", newline="\n") as ofile:
                         print("Protocol 2\n", file=ofile)
                         print("#Host hostname", file=ofile)
                         print("#User username\n", file=ofile)

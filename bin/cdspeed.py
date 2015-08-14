@@ -197,7 +197,7 @@ class WriteXml(syslib.Dump):
 
     def __init__(self, file):
         try:
-            self._ofile = open(file, "w", encoding="utf-8", newline="\n")
+            self._ofile = open(file, "w", newline="\n")
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" XML file.')
 

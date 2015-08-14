@@ -43,7 +43,7 @@ class Options(syslib.Dump):
         if not os.path.isfile(xstartup):
             answer = input("Would you like to use GNOME(g), KDE(k) or XFCE(x)? ")
             try:
-                with open(xstartup, "w", encoding="utf-8", newline="\n") as ofile:
+                with open(xstartup, "w", newline="\n") as ofile:
                     print("#!/bin/sh", file=ofile)
                     if answer[0].lower() == "g":
                         print("unset DBUS_SESSION_BUS_ADDRESS", file=ofile)
