@@ -39,6 +39,7 @@ for FILE in .recently-used.xbel .local/share/recently-used.xbel; do
 done
 myqsd 1
 
+eval `/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg` 2> /dev/null
 menu
 
 if [ -f $HOME/.config/autoexec-local.sh ]; then
