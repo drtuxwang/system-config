@@ -63,14 +63,14 @@ class SecureShell(syslib.Dump):
 
 
     def _check(self, options):
+        config = []
         configfile = os.path.join(self._sshdir, "config")
         try:
             with open(configfile, errors="replace") as ifile:
-                config = []
                 for line in ifile:
                     config.append(line.strip())
         except IOError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + configfile + '" configuation file.')
+            pass
 
         for login in options.getLogins():
             if "@" in login:
@@ -96,7 +96,7 @@ class SecureShell(syslib.Dump):
                 "umask 077; chmod -R go= $HOME/.ssh 2> /dev/null",
                 'PUBKEY="' + self._pubkey + '"',
                 "mkdir $HOME/.ssh 2> /dev/null",
-                'if [ ! "`grep \"^$PUBKEY$\" $HOME/.ssh/authorized_keys" " 2> /dev/null`" ]; then',
+                'if [ ! "`grep \"^$PUBKEY$\" $HOME/.ssh/authorized_keys 2> /dev/null`" ]; then',
                 '    echo "Adding public key to \"' + login + ':$HOME/.ssh/authorized_keys\"..."',
                 '    echo "$PUBKEY" >> $HOME/.ssh/authorized_keys',
                 "fi")
@@ -168,34 +168,7 @@ class SecureShell(syslib.Dump):
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot update "' +
                                      file + '" authorised key file.')
-            if not os.path.isfile(file + "2"):
-                # Older systems uses "$HOME/.ssh/authorized_keys2"
-                try:
-                    os.symlink("authorized_keys", file + "2")
-                except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '2" link.')
 
-        privateKeyDsa = os.path.join(self._sshdir, "id_dsa")
-        if not os.path.islink(privateKeyDsa):
-            if os.path.isfile(privateKeyDsa):
-                try:
-                    os.remove(privateKeyDsa)
-                    os.remove(privateKeyDsa + ".pub")
-                except OSError:
-                    pass
-            try:
-                os.symlink("id_rsa", privateKeyDsa) # DSA keys are insecure
-            except OSError:
-                pass
-        configfile = os.path.join(self._sshdir, "config")
-        if not os.path.isfile(configfile):
-            print('Creating "$HOME/.ssh/config"...')
-            try:
-                with open(configfile, "w", newline="\n") as ofile:
-                    print("Protocol 2", file=ofile)
-            except IOError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' +
-                                 configfile + '" configuation file.')
         return pubkey
 
 
