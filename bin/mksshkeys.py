@@ -168,7 +168,34 @@ class SecureShell(syslib.Dump):
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot update "' +
                                      file + '" authorised key file.')
+            if not os.path.isfile(file + "2"):
+                # Older systems uses "$HOME/.ssh/authorized_keys2"
+                try:
+                    os.symlink("authorized_keys", file + "2")
+                except OSError:
+                    raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '2" link.')
 
+        privateKeyDsa = os.path.join(self._sshdir, "id_dsa")
+        if not os.path.islink(privateKeyDsa):
+            if os.path.isfile(privateKeyDsa):
+                try:
+                    os.remove(privateKeyDsa)
+                    os.remove(privateKeyDsa + ".pub")
+                except OSError:
+                    pass
+            try:
+                os.symlink("id_rsa", privateKeyDsa) # DSA keys are insecure
+            except OSError:
+                pass
+        configfile = os.path.join(self._sshdir, "config")
+        if not os.path.isfile(configfile):
+            print('Creating "$HOME/.ssh/config"...')
+            try:
+                with open(configfile, "w", newline="\n") as ofile:
+                    print("Protocol 2", file=ofile)
+            except IOError:
+                raise SystemExit(sys.argv[0] + ': Cannot create "' +
+                                 configfile + '" configuation file.')
         return pubkey
 
 
