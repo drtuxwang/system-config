@@ -231,8 +231,9 @@ class Print(syslib.Dump):
             del os.environ["LANG"] # Avoids locale problems
         if not hasattr(self, "_a2ps"):
             self._a2ps = syslib.Command("a2ps")
-            self._a2ps.setFlags([ "--media=A4", "--columns=1", "--header=", "--left-footer=",
-                                  "--footer=", "--right-footer=", "--output=-",
+            # Space in header and footer increase top/bottom margins
+            self._a2ps.setFlags([ "--media=A4", "--columns=1", "--header= ", "--left-footer=",
+                                  "--footer= ", "--right-footer=", "--output=-",
                                   "--highlight-level=none", "--quiet" ])
         chars = options.getChars()
 
