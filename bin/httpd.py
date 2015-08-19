@@ -14,6 +14,7 @@ import glob
 import http.server
 import os
 import signal
+import socket
 import socketserver
 
 import syslib
@@ -62,6 +63,17 @@ class Options(syslib.Dump):
                              "port number.")
 
 
+class MyTCPServer(socketserver.TCPServer):
+    """
+    Enable immediate port reuse.
+    """
+
+
+    def server_bind(self):
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.socket.bind(self.server_address)
+
+
 class WebServer(syslib.Dump):
 
 
@@ -78,7 +90,7 @@ class WebServer(syslib.Dump):
 
     def run(self):
         try:
-            httpd = socketserver.TCPServer(("", self._port), http.server.SimpleHTTPRequestHandler)
+            httpd = MyTCPServer(("", self._port), http.server.SimpleHTTPRequestHandler)
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot bind to address "localhost:' +
                              str(self._port) + '".')
