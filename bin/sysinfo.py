@@ -5,8 +5,8 @@ System configuration detection tool.
 1996-2015 By Dr Colin Kong
 """
 
-RELEASE = "4.3.1"
-VERSION = 20150607
+RELEASE = "4.4.0"
+VERSION = 20150825
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -1442,6 +1442,9 @@ class LinuxSystem(PosixSystem):
 
 
     def _getVirtualMachine(self):
+        if os.path.isdir("/sys/devices/xen"):
+            return "Xen"
+
         for line in self._devices.keys():
             if "RHEV" in line:
                 return "RHEV"
@@ -1449,6 +1452,8 @@ class LinuxSystem(PosixSystem):
                 return "VirtualBox"
             elif "VMWare" in line or "VMware" in line:
                 return "VMware"
+            elif " Xen " in line in line:
+                return "Xen"
 
         for file in (glob.glob("/sys/bus/scsi/devices/*/model") + [ "/proc/scsi/scsi" ] +
                     glob.glob("/proc/ide/hd?/model")):
