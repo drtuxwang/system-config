@@ -42,6 +42,8 @@ class Options(syslib.Dump):
                 self._chrome.run(mode="exec")
             elif args[1] == "-copy":
                 self._copy()
+            elif args[1] == "-reset":
+                self._reset()
                 raise SystemExit(0)
 
             if args[1] == "-restart":
