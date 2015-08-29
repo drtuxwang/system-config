@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "nhs" nhs
+Wrapper for Nifty Host Selector "nhs" command
 """
 
 import sys
