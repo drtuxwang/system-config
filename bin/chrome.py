@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for chromium-browser" and "google-chrome" command
+Wrapper for chromium" and "google-chrome" command
 
 Use "-copy" to copy profile to "/tmp"
 Use "-reset" to clean junk from profile
@@ -27,7 +27,7 @@ class Options(syslib.Dump):
 
 
     def __init__(self, args):
-        self._chrome = syslib.Command("chromium-browser", check=False)
+        self._chrome = syslib.Command("chromium", check=False)
         self._directory = "chromium"
         if not self._chrome.isFound():
             self._chrome = syslib.Command("google-chrome", check=False)
