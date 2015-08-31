@@ -266,14 +266,19 @@ class FlashPlayer(syslib.Dump):
 
 
     def __init__(self, chrome):
-        setflash = syslib.Command("setflash", check=False)
         self._plugin = None
         self._version = None
+
         file = os.path.join(os.path.dirname(chrome.getFile()), "PepperFlash",
                                             "libpepflashplayer.so")
         if os.path.isfile(file):
-            self._plugin = file
-            self._version = self._manifest(file)
+            self._detect(file)
+
+        setflash = syslib.Command("setflash", check=False)
+        if setflash.isFound():
+            setflash.run(mode="batch")
+            if setflash.hasOutput():
+                self._detect(setflash.getOutput()[0])
 
 
     def getPlugin(self):
@@ -290,19 +295,21 @@ class FlashPlayer(syslib.Dump):
         return self._version
 
 
-    def _manifest(self, file):
+    def _detect(self, file):
+        self._plugin = file
         try:
             with open(os.path.join(os.path.dirname(file), "manifest.json"),
                       errors="replace") as ifile:
                 for line in ifile:
                     if "version" in line:
                         try:
-                            return line.split('"')[3]
+                            self._version =  line.split('"')[3]
+                            return
                         except IndexError:
                             break
         except IOError:
             pass
-        return "0.0.0.0"
+        self._version = "0.0.0.0"
 
 
 class Main:
