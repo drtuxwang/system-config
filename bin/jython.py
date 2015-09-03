@@ -20,7 +20,7 @@ class Options(syslib.Dump):
 
 
     def __init__(self, args):
-        self._jython = syslib.Command(os.path.join("bin", "jython"), platform="Common")
+        self._jython = syslib.Command(os.path.join("bin", "jython"))
         self._jython.setArgs(args[1:])
 
 

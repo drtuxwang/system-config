@@ -23,12 +23,12 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        self._youtubedl = syslib.Command("youtube-dl", platform="Common", check=False)
+        self._youtubedl = syslib.Command("youtube-dl", check=False)
         if not self._youtubedl.isFound():
-            youtube = syslib.Command("youtube", platform="Common", args=args[1:], check=False)
+            youtube = syslib.Command("youtube", args=args[1:], check=False)
             if youtube.isFound():
                 youtube.run(mode="exec")
-                self._youtubedl = syslib.Command("youtube-dl", platform="Common", check=False)
+            self._youtubedl = syslib.Command("youtube-dl")
 
         if self._args.viewFlag:
             self._youtubedl.setArgs([ "--list-formats" ])
