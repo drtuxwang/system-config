@@ -211,8 +211,8 @@ class Options(syslib.Dump):
         if "HOME" in os.environ.keys():
             configdir = os.path.join(os.environ["HOME"], ".config", self._directory)
             if os.path.isdir(configdir):
-                keepList = ( "Extensions", "File System", "Local Storage", "Preferences",
-                             "Secure Preferences" )
+                keepList = ( "Extensions", "File System", "Local Extension Settings", "Local Storage",
+                             "Preferences", "Secure Preferences" )
                 for directory in glob.glob(os.path.join(configdir, "*")):
                      if os.path.isfile(os.path.join(directory, "Preferences")):
                          for file in glob.glob(os.path.join(directory, "*")):
