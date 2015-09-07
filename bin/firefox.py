@@ -201,9 +201,9 @@ class Options(syslib.Dump):
         if "HOME" in os.environ.keys():
             firefoxdir = os.path.join(os.environ["HOME"], ".mozilla", "firefox")
             if os.path.isdir(firefoxdir):
-                keepList = ( "adblockplus", "extensions", "extensions.json", "extensions.sqlite",
-                         "localstore.rdf", "mimeTypes.rdf", "permissions.sqlite", "prefs.js",
-                         "user.js", "xulstore.json" )
+                keepList = ( "adblockplus", "extensions", "extension-data", "extensions.json",
+                         "extensions.sqlite", "localstore.rdf", "mimeTypes.rdf",
+                         "permissions.sqlite", "prefs.js", "user.js", "xulstore.json" )
                 for directory in glob.glob(os.path.join(firefoxdir, "*")):
                     if os.path.isfile(os.path.join(directory, "prefs.js")):
                         for file in (glob.glob(os.path.join(directory, ".*")) +
