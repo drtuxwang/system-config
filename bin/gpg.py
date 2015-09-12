@@ -73,6 +73,8 @@ class Options(syslib.Dump):
                     if file.endswith(".gpg") or file.endswith(".pgp"):
                         self._gpg.setArgs([ file ])
                     else:
+                        if self._args.recipent:
+                            self._gpg.extendArgs([ "--recipient", self._args.recipent ])
                         self._gpg.extendArgs([ "--output=" + file + extension, "--encrypt", file ])
                 else:
                     self._gpg.setArgs(file)
@@ -133,6 +135,7 @@ class Options(syslib.Dump):
                             help="Show all public/private keys in keyring.")
 
         parser.add_argument("file", nargs="?", help="File to encrypt/decrypt.")
+        parser.add_argument("recipent", nargs="?", help="Recipient name or ID.")
 
         self._args = parser.parse_args(args)
 
