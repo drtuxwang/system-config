@@ -115,7 +115,7 @@ class Shaper(syslib.Command):
         return False
 
 
-   def _save(self, file):
+    def _save(self, file):
         data = {
                    "netnice":
                    {
