@@ -133,7 +133,7 @@ class Md5cd(syslib.Dump):
         dd = syslib.Command("dd", args=[ "if=" + device, "bs=" + str(2048*4096), "count=1",
                                          "of=" + tmpfile ])
         dd.run(mode="batch")
-        if dd.getError()[0].endswith("Permission denied"):
+        if dd.getError("Permission denied$"):
             raise SystemExit(sys.argv[0] +
                              ": Cannot read from CD/DVD device. Please check permissions.")
         elif not os.path.isfile(tmpfile):

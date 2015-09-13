@@ -2,7 +2,7 @@
 """
 Set CD/DVD drive speed.
 
-"$HOME/.config/cdspeed.xml" contains configuration for "cdspeed" utility
+"$HOME/.config/cdspeed.json" contain configuration information.
 """
 
 import sys
@@ -13,9 +13,9 @@ if __name__ == "__main__":
 
 import argparse
 import glob
+import json
 import os
 import signal
-import xml.dom.minidom
 
 import syslib
 
@@ -52,7 +52,7 @@ class Options(syslib.Dump):
                     os.mkdir(configdir)
                 except OSError:
                     return
-            configfile = os.path.join(configdir, "cdspeed.xml")
+            configfile = os.path.join(configdir, "cdspeed.json")
             if os.path.isfile(configfile):
                 config = Configuration(configfile)
                 speed = config.getSpeed(self._device)
@@ -92,125 +92,32 @@ class Configuration(syslib.Dump):
 
 
     def __init__(self, file=""):
+        self._data = { "cdspeed": {} }
         if file:
-            self._readxml(file)
-        else:
-            self._default()
-
-
-    def _addChild(self, node, child, indent=""):
-        if node.hasChildNodes():
-            node.lastChild.nodeValue = "\n" + indent
-        else:
-            node.appendChild(self._dom.createTextNode("\n" + indent))
-        node.appendChild(child)
-        node.appendChild(self._dom.createTextNode("\n" + indent[:-2]))
-
-
-    def _check(self, file):
-        self._version = ""
-        for node in self._dom.documentElement.childNodes:
-            if node.nodeName == "version":
-                self._version = node.getAttribute("value")
-                if self._version != "1.00":
-                    raise SystemExit(sys.argv[0] + ': Incompatibile version of "' + file +
-                                     '" configuration file.')
-                break
-
-
-    def _createDeviceProfile(self, name):
-        var = self._dom.createElement("profile")
-        var.setAttribute("name", device)
-        var.setAttribute("type", "cdrom")
-        return var
-
-
-    def _createSpeedVar(self, speed):
-        var = self._dom.createElement("var")
-        var.setAttribute("name", "speed")
-        var.setAttribute("value", speed)
-        return var
-
-
-    def _default(self):
-        self._dom = xml.dom.minidom.parseString("""\
-<cdspeed>
-    <version value = "1.00"/>
-</cdspeed>
-""")
-        self._version = "1.00"
-
-
-    def _readxml(self, file):
-        try:
-            self._dom = xml.dom.minidom.parse(file)
-        except IOError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" XML file.')
-        except xml.parsers.expat.ExpatError as exception:
-            raise SystemExit(sys.argv[0] + ': Invalid XML "' + file + ': ' + str(exception) + '".')
-        if self._dom.documentElement.nodeName != "cdspeed":
-            raise SystemExit(sys.argv[0] + ': Incorrect format of "' + file +
-                             '" configuration file.')
-        self._check(file)
+            try:
+                with open(file) as ifile:
+                    self._data = json.load(ifile)
+            except (IOError, KeyError):
+                pass
 
 
     def getSpeed(self, device):
-        for profile in self._dom.documentElement.childNodes:
-            if profile.nodeName == "profile":
-                if profile.getAttribute("type") == "cdrom":
-                    if profile.getAttribute("name") == device:
-                        for var in profile.childNodes:
-                            if var.nodeName == "var":
-                                if var.getAttribute("name") == "speed":
-                                    try:
-                                        return int(var.getAttribute("value"))
-                                    except ValueError:
-                                        return 0
-        return None
+        try:
+            return self._data["cdspeed"][device]
+        except KeyError:
+            return 0
 
 
     def setSpeed(self, device, speed):
-        for profile in self._dom.documentElement.childNodes:
-            if profile.nodeName == "profile":
-                if profile.getAttribute("type") == "cdrom":
-                    if profile.getAttribute("name") == device:
-                        for var in profile.childNodes:
-                            if var.nodeName == "var":
-                                if var.getAttribute("name") == "speed":
-                                    var.setAttribute("value", str(speed))
-                                    return
-                        self._addChild(profile, self._createSpeedVar(speed), indent="    ")
-                        return
-        profile = self._dom.createElement("profile")
-        profile.setAttribute("name", device)
-        profile.setAttribute("type", "cdrom")
-        self._addChild(self._dom.documentElement, profile, indent="  ")
-        self._addChild(profile, self._createSpeedVar(speed), indent="    ")
+        self._data["cdspeed"][device] = speed
 
 
     def write(self, file):
-        self._dom.writexml(WriteXml(file))
-
-
-class WriteXml(syslib.Dump):
-
-
-    def __init__(self, file):
         try:
-            self._ofile = open(file, "w", newline="\n")
+            with open(file, "w", newline="\n") as ofile:
+                print(json.dumps(self._data, indent=4, sort_keys=True), file=ofile)
         except IOError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" XML file.')
-
-
-    def __del__(self):
-        print(file=self._ofile)
-        self._ofile.close()
-
-
-    def write(self, text):
-        print(text, end="", file=self._ofile)
-        if text.startswith("<?xml version="):
-            print(file=self._ofile)
+            pass
 
 
 class Main:

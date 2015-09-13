@@ -55,7 +55,7 @@ class Options(syslib.Dump):
         """
         Return md5 flag.
         """
-        return self._args.md5Flag[0]
+        return self._args.md5Flag
 
 
     def getSpeed(self):
@@ -221,7 +221,7 @@ class Burner(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Error code ' + str(wodim.getExitcode()) +
                              ' received from "' + wodim.getFile() + '".')
 
-        if options.getMd5cdFlag():
+        if options.getMd5Flag():
             print("Verifying MD5 check sum of data CD/DVD:")
             dd = syslib.Command("dd")
             dd.setArgs([ "if=" + self._device, "bs=" + str(2048*360), "count=1", "of=/dev/null" ])
