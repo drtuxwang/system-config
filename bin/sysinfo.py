@@ -5,8 +5,8 @@ System configuration detection tool.
 1996-2015 By Dr Colin Kong
 """
 
-RELEASE = "4.4.0"
-VERSION = 20150825
+RELEASE = "4.4.1"
+VERSION = 20150915
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -188,7 +188,7 @@ class BatteryAcpi(syslib.Dump):
 
 class BatteryPower(BatteryAcpi):
     """
-    Uses "/sys/class/power_supply/BAT*".
+    Uses "/sys/class/power_supply/BAT*"
     """
 
 
@@ -205,18 +205,18 @@ class BatteryPower(BatteryAcpi):
         with open(self._state, errors="replace") as ifile:
             for line in ifile:
                 line = line.rstrip()
-                if line.startswith("POWER_SUPPLY_MANUFACTURER="):
+                if "_MANUFACTURER=" in line:
                     self._oem = self._isjunk.sub("", line)
-                elif line.startswith("POWER_SUPPLY_MODEL_NAME="):
+                elif "_MODEL_NAME=" in line:
                     self._name = self._isjunk.sub("", line)
-                elif line.startswith("POWER_SUPPLY_TECHNOLOGY="):
+                elif "_TECHNOLOGY=" in line:
                     self._type = self._isjunk.sub("", line)
-                elif line.startswith("POWER_SUPPLY_CHARGE_FULL_DESIGN="):
+                elif "_CHARGE_FULL_DESIGN=" in line or "_ENERGY_FULL_DESIGN=" in line:
                     try:
                         self._capacityMax = int(int(self._isjunk.sub("", line)) / 1000)
                     except ValueError:
                         pass
-                elif line.startswith("POWER_SUPPLY_VOLTAGE_MIN_DESIGN="):
+                elif "_VOLTAGE_MIN_DESIGN=" in line:
                     try:
                         self._voltage = int(int(self._isjunk.sub("", line)) / 1000)
                     except ValueError:
@@ -235,21 +235,21 @@ class BatteryPower(BatteryAcpi):
             with open(self._state, errors="replace") as ifile:
                 for line in ifile:
                     line = line.rstrip()
-                    if line.startswith("POWER_SUPPLY_PRESENT="):
+                    if "_PRESENT=" in line:
                         if self._isjunk.sub("", line) == "1":
                             self._isExist = True
-                    elif line.startswith("POWER_SUPPLY_STATUS="):
+                    elif "_STATUS=" in line:
                         state = self._isjunk.sub("", line)
                         if state == "Discharging":
                             self._charge = "-"
                         elif state == "Charging":
                             self._charge = "+"
-                    elif line.startswith("POWER_SUPPLY_CURRENT_NOW="):
+                    elif "_CURRENT_NOW=" in line or "_POWER_NOW=" in line:
                         try:
                             self._rate = abs(int(int(self._isjunk.sub("", line))) / 1000)
                         except ValueError:
                             pass
-                    elif line.startswith("POWER_SUPPLY_CHARGE_NOW="):
+                    elif "_CHARGE_NOW=" in line or "_ENERGY_NOW=" in line:
                         try:
                             self._capacity = int(int(self._isjunk.sub("", line)) / 1000)
                         except ValueError:
