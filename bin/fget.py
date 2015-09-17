@@ -104,7 +104,7 @@ class Download(syslib.Dump):
                    return "skip"
                if jsonData["fget"]["data"] == data:
                    return "resume"
-       except (IOError, KeyError):
+       except (IOError, KeyError, ValueError):
            pass
 
        return "download"

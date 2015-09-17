@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """
 Run a command with limited network bandwidth.
-
-"$HOME/.config/netnice.json" contain configuration information.
 """
 
 import sys
@@ -82,51 +80,52 @@ class Options(syslib.Dump):
 class Shaper(syslib.Command):
 
 
-    def __init__(self, drate=None):
-        super().__init__("trickle", check=False)
+   def __init__(self, drate=None):
+       super().__init__("trickle", check=False)
 
-        self._drate = 512
-        if "HOME" in os.environ.keys():
-            file = os.path.join(os.environ["HOME"], ".config", "netnice.json")
-            if not self._load(file):
-                self._save(file)
+       self._drate = 512
+       if "HOME" in os.environ.keys():
+           file = os.path.join(os.environ["HOME"], ".config", "netnice.json")
+           if not self._load(file):
+               self._save(file)
 
-        if drate:
-            self._drate = drate
+       if drate:
+           self._drate = drate
 
-        self.setRate(self._drate)
-
-
-    def setRate(self, drate):
-        self._drate = drate
-        self.setArgs([ "-d", str(self._drate), "-s" ])
-
-    def _load(self, file):
-        if os.path.isfile(file):
-            try:
-                with open(file) as ifile:
-                    data = json.load(ifile)
-                    self._drate = data["netnice"]["download"]
-            except (IOError, KeyError):
-                pass
-            else:
-                return True
-
-        return False
+       self.setRate(self._drate)
 
 
-    def _save(self, file):
-        data = {
-                   "netnice":
-                   {
-                       "download": self._drate
-                   }
-               }
-        try:
-            with open(file, "w", newline="\n") as ofile:
-                print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
-        except IOError:
-            pass
+   def setRate(self, drate):
+       self._drate = drate
+       self.setArgs([ "-d", str(self._drate), "-s" ])
+
+
+   def _load(self, file):
+       if os.path.isfile(file):
+           try:
+               with open(file) as ifile:
+                   data = json.load(ifile)
+                   self._drate = data["netnice"]["download"]
+           except (IOError, KeyError, ValueError):
+               pass
+           else:
+               return True
+
+       return False
+
+
+   def _save(self, file):
+       data = {
+                  "netnice":
+                  {
+                      "download": self._drate
+                  }
+              }
+       try:
+           with open(file, "w", newline="\n") as ofile:
+               print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
+       except IOError:
+           pass
 
 
 class Main:

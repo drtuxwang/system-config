@@ -123,7 +123,7 @@ class Options(syslib.Dump):
                 data[ "profile" ][ "per_host_zoom_levels" ] = {}
                 with open(file + "-new", "w", newline="\n") as ofile:
                     print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
-            except IOError:
+            except (IOError, KeyError, ValueError):
                 try:
                     os.remove(file + "-new")
                 except OSError:
