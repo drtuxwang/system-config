@@ -123,7 +123,7 @@ class Shaper(syslib.Command):
               }
        try:
            with open(file, "w", newline="\n") as ofile:
-               print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
+               print(json.dumps(data, indent=2, sort_keys=True), file=ofile)
        except IOError:
            pass
 

@@ -123,7 +123,7 @@ class Download(syslib.Dump):
 
        try:
            with open(file+".part.json", "w", newline="\n") as ofile:
-               print(json.dumps(jsonData, indent=4, sort_keys=True), file=ofile)
+               print(json.dumps(jsonData, indent=2, sort_keys=True), file=ofile)
        except IOError:
            pass
 

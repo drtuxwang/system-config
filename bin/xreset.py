@@ -85,7 +85,7 @@ class Configuration(syslib.Dump):
     def write(self, file):
         try:
             with open(file, "w", newline="\n") as ofile:
-                print(json.dumps(self._data, indent=4, sort_keys=True), file=ofile)
+                print(json.dumps(self._data, indent=2, sort_keys=True), file=ofile)
         except IOError:
             pass
 
