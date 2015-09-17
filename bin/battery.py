@@ -82,7 +82,6 @@ class BatteryAcpi(syslib.Dump):
         self._capacity = -1
         self._charge = "="
         self._rate = 0
-        self._voltage = -1
 
         try:
             with open(self._state, errors="replace") as ifile:
@@ -105,11 +104,6 @@ class BatteryAcpi(syslib.Dump):
                     elif line.startswith("remaining capacity:"):
                         try:
                             self._capacity = int(self._isjunk.sub("", line))
-                        except ValueError:
-                            pass
-                    elif line.startswith("present voltage:"):
-                        try:
-                            self._voltage = int(self._isjunk.sub("", line))
                         except ValueError:
                             pass
         except IOError:
@@ -180,9 +174,14 @@ class BatteryPower(BatteryAcpi):
                     self._name = self._isjunk.sub("", line)
                 elif "_TECHNOLOGY=" in line:
                     self._type = self._isjunk.sub("", line)
-                elif "_CHARGE_FULL_DESIGN=" in line or "_ENERGY_FULL_DESIGN=" in line:
+                elif "_CHARGE_FULL_DESIGN=" in line:
                     try:
                         self._capacityMax = int(int(self._isjunk.sub("", line)) / 1000)
+                    except ValueError:
+                        pass
+                elif "_ENERGY_FULL_DESIGN=" in line:
+                    try:
+                        self._capacityMax = int(int(self._isjunk.sub("", line)) / self._voltage)
                     except ValueError:
                         pass
                 elif "_VOLTAGE_MIN_DESIGN=" in line:
@@ -198,7 +197,6 @@ class BatteryPower(BatteryAcpi):
         self._capacity = -1
         self._charge = "="
         self._rate = 0
-        self._voltage = -1
 
         try:
             with open(self._state, errors="replace") as ifile:
@@ -213,19 +211,24 @@ class BatteryPower(BatteryAcpi):
                             self._charge = "-"
                         elif state == "Charging":
                             self._charge = "+"
-                    elif "_CURRENT_NOW=" in line or "_POWER_NOW=" in line:
+                    elif "_CURRENT_NOW=" in line:
                         try:
-                            self._rate = abs(int(int(self._isjunk.sub("", line))) / 1000)
+                            self._rate = abs(int(int(self._isjunk.sub("", line)) / 1000))
                         except ValueError:
                             pass
-                    elif "_CHARGE_NOW=" in line or "_ENERGY_NOW=" in line:
+                    elif "_POWER_NOW=" in line:
+                        try:
+                            self._rate = abs(int(int(self._isjunk.sub("", line)) / self._voltage))
+                        except ValueError:
+                            pass
+                    elif "_CHARGE_NOW=" in line:
                         try:
                             self._capacity = int(int(self._isjunk.sub("", line)) / 1000)
                         except ValueError:
                             pass
-                    elif line.startswith("POWER_SUPPLY_VOLTAGE_NOW="):
+                    elif "_ENERGY_NOW=" in line:
                         try:
-                            self._voltage = int(int(self._isjunk.sub("", line)) / 1000)
+                            self._capacity = int(int(self._isjunk.sub("", line)) / self._voltage)
                         except ValueError:
                             pass
         except IOError:
