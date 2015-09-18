@@ -20,19 +20,17 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         command = self._args.command[0]
-        self._command = syslib.Command(command, pathextra=[ command ], args=self._commandArgs)
+        self._command = syslib.Command(command, pathextra=[command], args=self._commandArgs)
 
     def getCommand(self):
         """
         Return Command class object.
         """
         return self._command
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Run GUI software and restore resolution.")
@@ -47,7 +45,6 @@ class Options(syslib.Dump):
 
 class Xrun(syslib.Dump):
 
-
     def __init__(self, options):
         self._command = options.getCommand()
 
@@ -60,12 +57,11 @@ class Xrun(syslib.Dump):
             self._resolution += 1
         self._dpi = "96"
 
-        xrdb = syslib.Command("xrdb", args=[ "-query" ], check=False)
+        xrdb = syslib.Command("xrdb", args=["-query"], check=False)
         if xrdb.isFound():
             xrdb.run(mode="batch", filter="^Xft.dpi:\t")
             if xrdb.hasOutput():
                 self._dpi = xrdb.getOutput()[0].split()[1]
-
 
     def run(self):
         self._command.run()
@@ -80,19 +76,18 @@ class Xrun(syslib.Dump):
         if resolution != self._resolution:
             time.sleep(1)
             if self._resolution != 0:
-                self._xrandr.setArgs([ "-s", "0" ])
+                self._xrandr.setArgs(["-s", "0"])
                 self._xrandr.run(mode="batch")
                 time.sleep(1)
-            self._xrandr.setArgs([ "-s", str(self._resolution) ])
+            self._xrandr.setArgs(["-s", str(self._resolution)])
             self._xrandr.run(mode="batch")
 
         time.sleep(1)
-        self._xrandr.setArgs([ "--dpi", self._dpi ])
+        self._xrandr.setArgs(["--dpi", self._dpi])
         self._xrandr.run(mode="batch")
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -107,16 +102,14 @@ class Main:
             sys.exit(exception)
         sys.exit(options.getCommand().getExitcode())
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

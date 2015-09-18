@@ -19,10 +19,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
@@ -30,10 +28,9 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Count number of lines and maximum columns used in file.")
+            description="Count number of lines and maximum columns used in file.")
 
         parser.add_argument("files", nargs="+", metavar="file", help="File to examine.")
 
@@ -41,7 +38,6 @@ class Options(syslib.Dump):
 
 
 class Count(syslib.Dump):
-
 
     def __init__(self, options):
         for file in options.getFiles():
@@ -61,14 +57,13 @@ class Count(syslib.Dump):
                                 lline = nlines
                 except IOError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
-                except UnicodeDecodeError: # Non text file
+                except UnicodeDecodeError:  # Non text file
                     continue
                 print("{0:s}: {1:d} lines (max length of {2:d} on line {3:d})".format(
-                        file, nlines, maxcols, lline))
+                      file, nlines, maxcols, lline))
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -83,16 +78,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

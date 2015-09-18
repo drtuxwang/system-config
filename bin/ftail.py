@@ -19,11 +19,9 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
 
-       self._parseArgs(args[1:])
-
+        self._parseArgs(args[1:])
 
     def getFiles(self):
         """
@@ -31,18 +29,16 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def getLines(self):
         """
         Return number of lines.
         """
         return self._lines
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Output the last n lines of a file.")
 
-        parser.add_argument("-n", nargs=1, type=int, dest="lines", default=[ 10 ], metavar="K",
+        parser.add_argument("-n", nargs=1, type=int, dest="lines", default=[10], metavar="K",
                             help='Output last K lines. Use "-n +K" to output starting with Kth.')
 
         parser.add_argument("files", nargs="+", metavar="file", help="File to search.")
@@ -57,7 +53,6 @@ class Options(syslib.Dump):
 
 class Tail(syslib.Dump):
 
-
     def __init__(self, options):
         if len(options.getFiles()) > 1:
             for file in options.getFiles():
@@ -68,7 +63,6 @@ class Tail(syslib.Dump):
         else:
             self._pipe(options, sys.stdin)
 
-
     def _file(self, options, file):
         try:
             with open(file, errors="replace") as ifile:
@@ -76,13 +70,12 @@ class Tail(syslib.Dump):
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
 
-
     def _pipe(self, options, pipe):
         if options.getLines() > 0:
             buffer = []
             for line in pipe:
                 line = line.rstrip("\r\n")
-                buffer = (buffer + [ line ])[-options.getLines():]
+                buffer = (buffer + [line])[-options.getLines():]
             for line in buffer:
                 try:
                     print(line)
@@ -102,7 +95,6 @@ class Tail(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -116,16 +108,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

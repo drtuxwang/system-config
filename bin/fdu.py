@@ -19,10 +19,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
@@ -30,13 +28,11 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def getSummaryFlag(self):
         """
         Return summary flag.
         """
         return self._args.summaryFlag
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Show file disk usage.")
@@ -44,14 +40,13 @@ class Options(syslib.Dump):
         parser.add_argument("-s", dest="summaryFlag", action="store_true",
                             help="Show summary only.")
 
-        parser.add_argument("files", nargs="*", default=[ os.curdir ], metavar="file",
+        parser.add_argument("files", nargs="*", default=[os.curdir], metavar="file",
                             help="File or directory.")
 
         self._args = parser.parse_args(args)
 
 
 class Diskusage(syslib.Dump):
-
 
     def __init__(self, options):
         for file in options.getFiles():
@@ -68,11 +63,10 @@ class Diskusage(syslib.Dump):
                 else:
                     print("{0:7d} {1:s}".format(0, file))
 
-
     def _usage(self, options, directory):
         size = 0
         try:
-            files = [ os.path.join(directory, x) for x in os.listdir(directory) ]
+            files = [os.path.join(directory, x) for x in os.listdir(directory)]
         except PermissionError:
             raise SystemExit(sys.argv[0] + ': Cannot open "' + directory + '" directory.')
         for file in sorted(files):
@@ -88,7 +82,6 @@ class Diskusage(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -102,16 +95,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

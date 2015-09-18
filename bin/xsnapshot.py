@@ -18,11 +18,10 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._desktop = self._getDesktop()
         if self._desktop == "gnome":
-            self._xsnap = syslib.Command("gnome-screenshot", flags=[ "--interactive" ])
+            self._xsnap = syslib.Command("gnome-screenshot", flags=["--interactive"])
         elif self._desktop == "kde":
             self._xsnap = syslib.Command("ksnapshot")
         elif self._desktop == "xfce":
@@ -31,13 +30,11 @@ class Options(syslib.Dump):
             self._xsnap = syslib.Command("true")
         self._xsnap.setArgs(args[1:])
 
-
     def getXsnap(self):
         """
         Return xsnap Command class object.
         """
         return self._xsnap
-
 
     def _getDesktop(self):
         keys = os.environ.keys()
@@ -59,7 +56,6 @@ class Options(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -73,16 +69,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

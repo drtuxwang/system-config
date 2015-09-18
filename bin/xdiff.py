@@ -19,16 +19,15 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._meld = syslib.Command("meld")
         files = self._args.files
         if os.path.isdir(files[0]) and os.path.isfile(files[1]):
-            self._meld.setArgs([ os.path.join(files[0], os.path.basename(files[1])), files[1] ])
+            self._meld.setArgs([os.path.join(files[0], os.path.basename(files[1])), files[1]])
         elif os.path.isfile(files[0]) and os.path.isdir(files[1]):
-            self._meld.setArgs([ files[0], os.path.join(files[1], os.path.basename(files[0])) ])
+            self._meld.setArgs([files[0], os.path.join(files[1], os.path.basename(files[0]))])
         elif os.path.isfile(files[0]) and os.path.isfile(files[1]):
             self._meld.setArgs(args[1:])
         else:
@@ -36,20 +35,17 @@ class Options(syslib.Dump):
 
         self._filter = "^$|: GtkWarning: |^  buttons =|^  gtk.main|recently-used.xbel"
 
-
     def getFilter(self):
         """
         Return filter pattern.
         """
         return self._filter
 
-
     def getMeld(self):
         """
         Return meld Command class object.
         """
         return self._meld
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Graphical file comparison and merge tool.")
@@ -61,7 +57,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -76,16 +71,14 @@ class Main:
             sys.exit(exception)
         sys.exit(options.getMeld().getExitcode())
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

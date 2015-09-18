@@ -22,7 +22,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -33,16 +32,14 @@ class Options(syslib.Dump):
             raise SystemExit(0)
 
         self._hdparm = syslib.Command(file="/sbin/hdparm",
-                                      args=[ "-E", str(self._speed), self._device ])
+                                      args=["-E", str(self._speed), self._device])
         print("Setting CD/DVD drive speed to ", self._speed, "X", sep="")
-
 
     def getHdparm(self):
         """
         Return hdparm Command class object.
         """
         return self._hdparm
-
 
     def _cdspeed(self):
         if "HOME" in os.environ.keys():
@@ -70,7 +67,6 @@ class Options(syslib.Dump):
             except OSError:
                 os.remove(configfile + "-new")
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Set CD/DVD drive speed.")
 
@@ -90,9 +86,8 @@ class Options(syslib.Dump):
 
 class Configuration(syslib.Dump):
 
-
     def __init__(self, file=""):
-        self._data = { "cdspeed": {} }
+        self._data = {"cdspeed": {}}
         if file:
             try:
                 with open(file) as ifile:
@@ -100,17 +95,14 @@ class Configuration(syslib.Dump):
             except (IOError, KeyError):
                 pass
 
-
     def getSpeed(self, device):
         try:
             return self._data["cdspeed"][device]
         except KeyError:
             return 0
 
-
     def setSpeed(self, device, speed):
         self._data["cdspeed"][device] = speed
-
 
     def write(self, file):
         try:
@@ -121,7 +113,6 @@ class Configuration(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -136,16 +127,14 @@ class Main:
             sys.exit(exception)
         sys.exit(options.getHdparm().getExitcode())
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

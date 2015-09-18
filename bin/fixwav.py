@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -27,13 +26,11 @@ class Options(syslib.Dump):
         if not self._normalize.isFound():
             self._normalize = syslib.Command("normalize")
 
-
     def getFiles(self):
         """
         Return list of files.
         """
         return self._args.files
-
 
     def getNormalize(self):
         """
@@ -41,13 +38,11 @@ class Options(syslib.Dump):
         """
         return self._normalize
 
-
     def getViewFlag(self):
         """
         Return view flag.
         """
         return self._args.viewFlag
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Normalize volume of wave files to 8 dB.")
@@ -61,7 +56,6 @@ class Options(syslib.Dump):
 
 
 class Normalize(syslib.Dump):
-
 
     def __init__(self, options):
         self._options = options
@@ -85,18 +79,16 @@ class Normalize(syslib.Dump):
                         break
             print()
 
-
     def _adjust(self, file):
-        self._normalize.setArgs([ "-q", "--amplitude=-8dBFS",
-                                  "--adjust-threshold=0.00009dBFS", file ])
+        self._normalize.setArgs(
+            ["-q", "--amplitude=-8dBFS", "--adjust-threshold=0.00009dBFS", file])
         self._normalize.run(mode="batch")
         if self._normalize.getExitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(self._normalize.getExitcode()) +
-                    ' received from "' + self._normalize.getFile() + '".')
-
+                             ' received from "' + self._normalize.getFile() + '".')
 
     def _view(self, file):
-        self._normalize.setArgs([ "-q", "--no-adjust", file ])
+        self._normalize.setArgs(["-q", "--no-adjust", file])
         self._normalize.run(mode="batch")
         if (len(self._normalize.getOutput()) != 1 or
                 len(self._normalize.getOutput()[0].split()) != 4):
@@ -111,7 +103,6 @@ class Normalize(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -125,16 +116,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

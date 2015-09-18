@@ -20,7 +20,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._columns = "100"
         self._invisFlag = False
@@ -47,10 +46,9 @@ class Options(syslib.Dump):
         else:
             self._terminal = Xterm(self)
         if len(args) == 1:
-            self._hosts = [ syslib.info.getHostname() ]
+            self._hosts = [syslib.info.getHostname()]
         else:
             self._hosts = args[1:]
-
 
     def getColumns(self):
         """
@@ -58,20 +56,17 @@ class Options(syslib.Dump):
         """
         return self._columns
 
-
     def getHosts(self):
         """
         Return list of hosts.
         """
         return self._hosts
 
-
     def getTerminal(self):
         """
         Return terminal Command class object.
         """
         return self._terminal
-
 
     def _getDesktop(self):
         if self._invisFlag:
@@ -96,35 +91,30 @@ class Options(syslib.Dump):
 
 class Xterm(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
         self._filter = "^$"
         self._myhost = syslib.info.getHostname()
         self._command()
 
-
     def _command(self):
         self._command = syslib.Command("xterm")
-        self._command.setArgs([ "-h" ])
+        self._command.setArgs(["-h"])
         self._command.run(mode="batch")
-        self._command.setFlags([ "-s", "-j", "-sb", "-sl", "4096",
-                                 "-cc", "33:48,35-38:48,40-58:48,63-255:48",
-                                 "-fn", "-misc-fixed-bold-r-normal--18-*-iso8859-1",
-                                 "-fg", "#000000", "-bg", "#ffffdd", "-cr", "#ff00ff",
-                                 "-ls", "-ut", "-geometry", self._options.getColumns() + "x24", ])
+        self._command.setFlags(["-s", "-j", "-sb", "-sl", "4096",
+                                "-cc", "33:48,35-38:48,40-58:48,63-255:48",
+                                "-fn", "-misc-fixed-bold-r-normal--18-*-iso8859-1",
+                                "-fg", "#000000", "-bg", "#ffffdd", "-cr", "#ff00ff",
+                                "-ls", "-ut", "-geometry", self._options.getColumns() + "x24"])
         if self._command.isMatchOutput(" -rightbar "):
             self._command.appendFlag("-rightbar")
         self._filter = "^$"
 
-
     def _getlabelFlags(self, host):
-        return [ "-T", host.split("@")[-1] + ":" ]
-
+        return ["-T", host.split("@")[-1] + ":"]
 
     def _getrunFlag(self):
         return "-e"
-
 
     def _ssh(self):
         if "HOME" in os.environ.keys():
@@ -149,7 +139,6 @@ class Xterm(syslib.Dump):
             except OSError:
                 return
 
-
     def run(self):
         ssh = None
         for host in self._options.getHosts():
@@ -157,20 +146,19 @@ class Xterm(syslib.Dump):
                 self._command.setArgs(self._getlabelFlags(host))
                 self._command.run(mode="background", filter=self._filter)
             else:
-                self._command.setArgs(self._getlabelFlags(host) + [ self._getrunFlag() ])
+                self._command.setArgs(self._getlabelFlags(host) + [self._getrunFlag()])
                 if not ssh:
                     ssh = syslib.Command("ssh")
-                    ssh.setFlags([ "-X", "-o", "ServerAliveInterval=300",
-                                   "-o", "ServerAliveCountMax=3" ])
+                    ssh.setFlags(["-X", "-o", "ServerAliveInterval=300",
+                                  "-o", "ServerAliveCountMax=3"])
                     self._ssh()
                 ssh.setWrapper(self._command)
-                ssh.setArgs([ host ])
+                ssh.setArgs([host])
                 ssh.run(mode="background", filter=self._filter)
 
 
 class XtermInvisible(Xterm):
 
-
     def run(self):
         ssh = None
         for host in self._options.getHosts():
@@ -181,10 +169,10 @@ class XtermInvisible(Xterm):
                 self._command.setArgs(self._getlabelFlags(host))
                 if not ssh:
                     ssh = syslib.Command("ssh")
-                    ssh.setFlags([ "-X", "-o", "ServerAliveInterval=300",
-                                   "-o", "ServerAliveCountMax=3" ])
+                    ssh.setFlags(["-X", "-o", "ServerAliveInterval=300",
+                                  "-o", "ServerAliveCountMax=3"])
                     self._ssh()
-                ssh.setArgs([ host, "xterm" ])
+                ssh.setArgs([host, "xterm"])
                 for arg in self._command.getFlags() + self._command.getArgs():
                     if "#" in arg:
                         ssh.appendArg('"' + arg + '"')
@@ -195,16 +183,13 @@ class XtermInvisible(Xterm):
 
 class GnomeTerminal(Xterm):
 
-
     def _command(self):
         self._command = syslib.Command("gnome-terminal")
-        self._command.setFlags([ "--geometry=" + self._options.getColumns() + "x24" ])
+        self._command.setFlags(["--geometry=" + self._options.getColumns() + "x24"])
         self._filter = "^$|: Gtk-WARNING"
 
-
     def _getlabelFlags(self, host):
-        return [ "--title=" + host.split("@")[-1] + ":" ]
-
+        return ["--title=" + host.split("@")[-1] + ":"]
 
     def _getrunFlag(self):
         return "-x"
@@ -212,11 +197,9 @@ class GnomeTerminal(Xterm):
 
 class Konsole(GnomeTerminal):
 
-
     def _command(self):
         self._command = syslib.Command("konsole")
-        self._command.setFlags([ "--geometry=" + self._options.getColumns() + "x24" ])
-
+        self._command.setFlags(["--geometry=" + self._options.getColumns() + "x24"])
 
     def _getrunFlag(self):
         return "-e"
@@ -224,18 +207,15 @@ class Konsole(GnomeTerminal):
 
 class XfceTerminal(GnomeTerminal):
 
-
     def _command(self):
         self._command = syslib.Command("xfce4-terminal")
-        self._command.setFlags([ "--geometry=" + self._options.getColumns() + "x24" ])
-
+        self._command.setFlags(["--geometry=" + self._options.getColumns() + "x24"])
 
     def _getlabelFlags(self, host):
-        return [ "--title=" ] # Must use empty to allow bash/tcsh title changing
+        return ["--title="]  # Must use empty to allow bash/tcsh title changing
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -250,16 +230,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

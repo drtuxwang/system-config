@@ -19,16 +19,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         if os.path.isfile("/usr/bin/vim"):
-            self._editor = syslib.Command(file="/usr/bin/vim", flags=[ "-N", "-n", "-u", "NONE" ])
+            self._editor = syslib.Command(file="/usr/bin/vim", flags=["-N", "-n", "-u", "NONE"])
         else:
             self._editor = syslib.Command("vi")
         self._speller = syslib.Command("fspell")
-
 
     def getEditor(self):
         """
@@ -36,20 +34,17 @@ class Options(syslib.Dump):
         """
         return self._editor
 
-
     def getFiles(self):
         """
         Return list of files.
         """
         return self._args.files
 
-
     def getSpeller(self):
         """
         Return speller Command class object.
         """
         return self._speller
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Edit multiple files.")
@@ -60,7 +55,6 @@ class Options(syslib.Dump):
 
 
 class Edit(syslib.Dump):
-
 
     def __init__(self, options):
         self._options = options
@@ -86,9 +80,8 @@ class Edit(syslib.Dump):
                 except OSError:
                     pass
 
-
     def _edit(self, file):
-        self._options.getEditor().setArgs([ file ])
+        self._options.getEditor().setArgs([file])
         sys.stdout.write("\033]0;" + syslib.info.getHostname() + ":" +
                          os.path.abspath(file) + "\007")
         sys.stdout.flush()
@@ -111,16 +104,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

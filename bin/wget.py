@@ -10,7 +10,6 @@ if __name__ == "__main__":
     sys.path = sys.path[1:] + sys.path[:1]
 
 import glob
-import json
 import os
 import signal
 
@@ -20,10 +19,9 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._wget = syslib.Command("wget")
-        self._wget.setFlags([ "--no-check-certificate", "--timestamping" ])
+        self._wget.setFlags(["--no-check-certificate", "--timestamping"])
 
         shaper = netnice.Shaper()
         if shaper.isFound():
@@ -31,12 +29,12 @@ class Options(syslib.Dump):
 
         self._output = ""
         while len(args) > 1:
-            if (len(args) > 2 and args[1] in ( "--output-document", "-O" ) and
+            if (len(args) > 2 and args[1] in ("--output-document", "-O") and
                     not args[2].endswith(".part")):
-                self._output =  args[2]
+                self._output = args[2]
                 if os.path.isfile(args[2]) or os.path.isfile(args[2] + ".part"):
-                    self._output = ("-"+str(os.getpid())+".").join(self._output.rsplit(".",1))
-                self._wget.extendArgs([ args[1], self._output + ".part" ])
+                    self._output = ("-"+str(os.getpid())+".").join(self._output.rsplit(".", 1))
+                self._wget.extendArgs([args[1], self._output + ".part"])
                 args = args[2:]
                 continue
             self._wget.appendArg(args[1])
@@ -44,20 +42,17 @@ class Options(syslib.Dump):
 
         self._setProxy()
 
-
     def getOutput(self):
         """
         Return output file.
         """
         return self._output
 
-
     def getWget(self):
         """
         Return wget Command class object.
         """
         return self._wget
-
 
     def _setProxy(self):
         setproxy = syslib.Command("setproxy", check=False)
@@ -73,11 +68,9 @@ class Options(syslib.Dump):
 
 class Download(syslib.Dump):
 
-
     def __init__(self, options):
         self._output = options.getOutput()
         self._wget = options.getWget()
-
 
     def run(self):
         if self._output:
@@ -95,7 +88,6 @@ class Download(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -109,16 +101,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

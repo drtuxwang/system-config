@@ -21,10 +21,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getSource(self):
         """
@@ -32,13 +30,11 @@ class Options(syslib.Dump):
         """
         return self._args.source[0]
 
-
     def getTargets(self):
         """
         Return target files.
         """
         return self._args.targets
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Copy a file to multiple target files.")
@@ -54,7 +50,6 @@ class Options(syslib.Dump):
 
 class Copy(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
 
@@ -62,14 +57,13 @@ class Copy(syslib.Dump):
         for target in options.getTargets():
             self._copy(source, target)
 
-
     def _copy(self, source, target):
 
             print('Copying to "' + target + '" file...')
             try:
                 shutil.copy2(source, target)
             except IOError as exception:
-                if exception.args != ( 95, "Operation not supported" ): # os.listxattr for ACL
+                if exception.args != (95, "Operation not supported"):  # os.listxattr for ACL
                     try:
                         with open(source, "rb"):
                             raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
@@ -86,7 +80,6 @@ class Copy(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -100,16 +93,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

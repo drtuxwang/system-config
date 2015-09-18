@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
@@ -31,13 +29,11 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def getPattern(self):
         """
         Return regular expression pattern.
         """
         return self._args.pattern[0]
-
 
     def getReplacement(self):
         """
@@ -45,10 +41,9 @@ class Options(syslib.Dump):
         """
         return self._args.replacement[0]
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Replace contents of multiple files.")
+            description="Replace contents of multiple files.")
 
         parser.add_argument("pattern", nargs=1, help="Regular expression.")
         parser.add_argument("replacement", nargs=1, help="Replacement for matches.")
@@ -58,7 +53,6 @@ class Options(syslib.Dump):
 
 
 class Replace(syslib.Dump):
-
 
     def __init__(self, options):
         try:
@@ -70,20 +64,17 @@ class Replace(syslib.Dump):
         self._replacement = options.getReplacement()
         self._files = options.getFiles()
 
-
     def run(self):
         for file in self._files:
             if os.path.isfile(file):
                 self._replace(file)
 
-
-    def _remove(self,*files):
+    def _remove(self, *files):
         for file in files:
             try:
                 os.remove(file)
             except OSError:
                 pass
-
 
     def _replace(self, file):
         newfile = file + "-new"
@@ -115,11 +106,10 @@ class Replace(syslib.Dump):
                 self._remove(newfile)
                 raise SystemExit(sys.argv[0] + ': Cannot update "' + file + '" file.')
         else:
-             self._remove(newfile)
+            self._remove(newfile)
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -134,16 +124,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

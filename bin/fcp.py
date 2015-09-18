@@ -21,10 +21,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getCopyLinkFlag(self):
         """
@@ -32,20 +30,17 @@ class Options(syslib.Dump):
         """
         return self._args.copyLinkFlag
 
-
     def getSources(self):
         """
         Return list of source files.
         """
         return self._args.sources
 
-
     def getTarget(self):
         """
         Return target file or directory.
         """
         return self._args.target[0]
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Copy files and directories.")
@@ -63,7 +58,6 @@ class Options(syslib.Dump):
 
 class Copy(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
         self._automount(options.getTarget(), 8)
@@ -73,7 +67,7 @@ class Copy(syslib.Dump):
                                  options.getTarget() + '" target directory.')
         for source in options.getSources():
             if os.path.isdir(source):
-                if os.path.isabs(source) or source.split(os.sep)[0] in ( os.curdir, os.pardir ):
+                if os.path.isabs(source) or source.split(os.sep)[0] in (os.curdir, os.pardir):
                     targetdir = options.getTarget()
                     self._copy(source, os.path.join(options.getTarget(), os.path.basename(source)))
                 else:
@@ -96,14 +90,12 @@ class Copy(syslib.Dump):
                                          directory + '" directory.')
                 self._copy(source, os.path.join(options.getTarget(), source))
 
-
     def _automount(self, directory, wait):
         if directory.startswith("/media/"):
             for i in range(0, wait * 10):
                 if os.path.isdir(directory):
                     break
                 time.sleep(0.1)
-
 
     def _copy(self, source, target):
         if self._options.getCopyLinkFlag() and os.path.islink(source):
@@ -121,7 +113,7 @@ class Copy(syslib.Dump):
         elif os.path.isdir(source):
             print('Copying "' + source + '" directory...')
             try:
-                files = sorted([ os.path.join(source, x) for x in os.listdir(source) ])
+                files = sorted([os.path.join(source, x) for x in os.listdir(source)])
             except PermissionError:
                 raise SystemExit(sys.argv[0] + ': Cannot open "' + source + '" directory.')
             if not os.path.isdir(target):
@@ -137,7 +129,7 @@ class Copy(syslib.Dump):
             try:
                 shutil.copy2(source, target)
             except IOError as exception:
-                if exception.args != ( 95, "Operation not supported" ): # os.listxattr for ACL
+                if exception.args != (95, "Operation not supported"):  # os.listxattr for ACL
                     try:
                         with open(source, "rb"):
                             raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
@@ -154,7 +146,6 @@ class Copy(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -168,16 +159,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -23,17 +23,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getUrls(self):
         """
         Return list of urls.
         """
         return self._args.urls
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Download http/https/ftp/file URLs.")
@@ -45,11 +42,9 @@ class Options(syslib.Dump):
 
 class Download(syslib.Dump):
 
-
     def __init__(self, options):
         self._chunkSize = 131072
         self._urls = options.getUrls()
-
 
     def _checkFile(self, file, size, mtime):
         """
@@ -59,7 +54,6 @@ class Download(syslib.Dump):
         if fileStat.getSize() == size and fileStat.getTime() >= mtime:
             return True
         return False
-
 
     def _getFileStat(self, url, conn):
         """
@@ -72,7 +66,7 @@ class Download(syslib.Dump):
 
         try:
             mtime = time.mktime(time.strptime(
-                    info.get("Last-Modified"), "%a, %d %b %Y %H:%M:%S %Z"))
+                info.get("Last-Modified"), "%a, %d %b %Y %H:%M:%S %Z"))
         except TypeError:
             # For directories
             file = "index.html"
@@ -89,44 +83,41 @@ class Download(syslib.Dump):
 
         return (file, size, mtime)
 
-
     def _checkResume(self, file, data):
-       """
-       Return "download", "resume" or "skip"
-       """
-       try:
-           with open(file + ".part.json") as ifile:
-               jsonData = json.load(ifile)
-               host = jsonData["fget"]["lock"]["host"]
-               pid = jsonData["fget"]["lock"]["pid"]
+        """
+        Return "download", "resume" or "skip"
+        """
+        try:
+            with open(file + ".part.json") as ifile:
+                jsonData = json.load(ifile)
+                host = jsonData["fget"]["lock"]["host"]
+                pid = jsonData["fget"]["lock"]["pid"]
 
-               if host == syslib.info.getHostname() and syslib.Task().haspid(pid):
-                   return "skip"
-               if jsonData["fget"]["data"] == data:
-                   return "resume"
-       except (IOError, KeyError, ValueError):
-           pass
+                if host == syslib.info.getHostname() and syslib.Task().haspid(pid):
+                    return "skip"
+                if jsonData["fget"]["data"] == data:
+                    return "resume"
+        except (IOError, KeyError, ValueError):
+            pass
 
-       return "download"
-
+        return "download"
 
     def _writeResume(self, file, data):
-       jsonData = {
-                      "fget": {
-                          "lock": {
-                              "host": syslib.info.getHostname(),
-                              "pid": os.getpid()
-                          },
-                          "data": data
-                      }
-                  }
+        jsonData = {
+            "fget": {
+                "lock": {
+                    "host": syslib.info.getHostname(),
+                    "pid": os.getpid()
+                },
+                "data": data
+            }
+        }
 
-       try:
-           with open(file+".part.json", "w", newline="\n") as ofile:
-               print(json.dumps(jsonData, indent=2, sort_keys=True), file=ofile)
-       except IOError:
-           pass
-
+        try:
+            with open(file+".part.json", "w", newline="\n") as ofile:
+                print(json.dumps(jsonData, indent=4, sort_keys=True), file=ofile)
+        except IOError:
+            pass
 
     def _getUrl(self, url):
         print(url)
@@ -139,7 +130,7 @@ class Download(syslib.Dump):
                 return
             tmpfile = file + ".part"
 
-            data = { "size": size, "time": int(mtime) }
+            data = {"size": size, "time": int(mtime)}
             check = self._checkResume(file, data)
 
             if check == "skip":
@@ -178,7 +169,7 @@ class Download(syslib.Dump):
         except urllib.error.URLError as exception:
             reason = exception.reason
             if type(reason) == socket.gaierror:
-                raise SystemExit(sys.argv[0] + ": " + reason.args[1] +".")
+                raise SystemExit(sys.argv[0] + ": " + reason.args[1] + ".")
             elif "Not Found" in reason:
                 raise SystemExit(sys.argv[0] + ": 404 Not Found.")
             elif "Permission denied" in reason:
@@ -188,14 +179,12 @@ class Download(syslib.Dump):
         except ValueError as exception:
             raise SystemExit(sys.argv[0] + ": " + exception.args[0])
 
-
     def run(self):
         for url in self._urls:
             self._getUrl(url)
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -210,16 +199,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

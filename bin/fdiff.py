@@ -19,27 +19,23 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Show summary of differences between two directories recursively.")
+            description="Show summary of differences between two directories recursively.")
 
         parser.add_argument("directories", nargs=2, metavar="directory",
                             help="Directory to compare.")
 
         self._args = parser.parse_args(args)
 
-
     def getDirectory1(self):
         """
         Return directory 1.
         """
         return self._args.directories[0]
-
 
     def getDirectory2(self):
         """
@@ -50,19 +46,17 @@ class Options(syslib.Dump):
 
 class Diff(syslib.Dump):
 
-
     def __init__(self, options):
         self._diffdir(options.getDirectory1(), options.getDirectory2())
 
-
     def _diffdir(self, directory1, directory2):
         try:
-            files1 = sorted([ os.path.join(directory1, x) for x in os.listdir(directory1) ])
+            files1 = sorted([os.path.join(directory1, x) for x in os.listdir(directory1)])
         except (FileNotFoundError, NotADirectoryError, PermissionError):
             raise SystemExit(sys.argv[0] + ': Cannot open "' + directory1 + '" directory.')
 
         try:
-            files2 = sorted([ os.path.join(directory2, x) for x in os.listdir(directory2) ])
+            files2 = sorted([os.path.join(directory2, x) for x in os.listdir(directory2)])
         except (FileNotFoundError, NotADirectoryError, PermissionError):
             raise SystemExit(sys.argv[0] + ': Cannot open "' + directory2 + '" directory.')
 
@@ -85,7 +79,6 @@ class Diff(syslib.Dump):
             elif os.path.isfile(file):
                 if not os.path.isfile(os.path.join(directory1, os.path.basename(file))):
                     print("only ", file)
-
 
     def _difffile(self, file1, file2):
         fileStat1 = syslib.FileStat(file1)
@@ -116,7 +109,6 @@ class Diff(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -130,16 +122,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

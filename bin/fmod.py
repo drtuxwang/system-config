@@ -20,7 +20,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -47,13 +46,11 @@ class Options(syslib.Dump):
             self._xmod = int("755", 8)
             self._fmod = int("644", 8)
 
-
     def getFiles(self):
         """
         Return list of files.
         """
         return self._args.files
-
 
     def getFmod(self):
         """
@@ -61,20 +58,17 @@ class Options(syslib.Dump):
         """
         return self._fmod
 
-
     def getRecursiveFlag(self):
         """
         Return recursive flag.
         """
         return self._args.recursiveFlag
 
-
     def getXmod(self):
         """
         Return executable permission mode.
         """
         return self._xmod
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Set file access mode.")
@@ -101,22 +95,20 @@ class Options(syslib.Dump):
 
 class Setmod(syslib.Dump):
 
-
     def __init__(self, options):
         #   127 ELF,      202 254 186 190      207 250 237 254      206 250 237 254
         #  linux/sunos   macos-x86/x86_64       macos-x86_64           macos-x86
-        self._ExeMagics = ( b"\177ELF", b"\312\376\272\276", b"\317\372\355\376",
-                            b"\316\372\355\376" )
+        self._ExeMagics = (b"\177ELF", b"\312\376\272\276", b"\317\372\355\376",
+                           b"\316\372\355\376")
         self._isexeExt = re.compile("[.](bat|cmd|com|dll|exe|ms[ip]|psd|s[olh]|s[ol][.].*|tcl)$",
                                     re.IGNORECASE)
         self._isnotExeExt = re.compile(
-                "[.](7z|[acfo]|ace|asr|avi|bak|blacklist|bmp|bz2|cpp|crt|css|dat|deb|diz|doc|"
-                "docx|f77|f90|gif|gz|h|hlp|htm|html|ico|ini|installed|ism|iso|jar|java|jpg|"
-                "jpeg|js|json|key|lic|lib|list|log|mov|mp[34g]|mpeg|obj|od[fgst]|ogg|opt|pdf|"
-                "png|ppt|pptx|rar|reg|rpm|swf|tar|txt|url|wsdl|xhtml|xls|xlsx|xml|xs[dl]|"
-                "xvid|zip)$", re.IGNORECASE)
+            "[.](7z|[acfo]|ace|asr|avi|bak|blacklist|bmp|bz2|cpp|crt|css|dat|deb|diz|doc|"
+            "docx|f77|f90|gif|gz|h|hlp|htm|html|ico|ini|installed|ism|iso|jar|java|jpg|"
+            "jpeg|js|json|key|lic|lib|list|log|mov|mp[34g]|mpeg|obj|od[fgst]|ogg|opt|pdf|"
+            "png|ppt|pptx|rar|reg|rpm|swf|tar|txt|url|wsdl|xhtml|xls|xlsx|xml|xs[dl]|"
+            "xvid|zip)$", re.IGNORECASE)
         self._setmod(options, options.getFiles())
-
 
     def _setmod(self, options, files):
         fmod = options.getFmod()
@@ -132,8 +124,7 @@ class Setmod(syslib.Dump):
                         print("Permission denied:", file + os.sep)
                     if recursiveFlag:
                         try:
-                            self._setmod(options,
-                                         [ os.path.join(file, x) for x in os.listdir(file) ])
+                            self._setmod(options, [os.path.join(file, x) for x in os.listdir(file)])
                         except PermissionError:
                             pass
                 elif os.path.isfile(file):
@@ -163,7 +154,6 @@ class Setmod(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -177,16 +167,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

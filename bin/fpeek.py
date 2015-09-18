@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -29,13 +28,11 @@ class Options(syslib.Dump):
         """
         return self._args.allFlag
 
-
     def getAsciiFlag(self):
         """
         Return ascii flag.
         """
         return self._args.asciiFlag
-
 
     def getFiles(self):
         """
@@ -43,10 +40,9 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Dump the first and last few bytes of a binary file.")
+            description="Dump the first and last few bytes of a binary file.")
 
         parser.add_argument("-a", dest="allFlag", action="store_true",
                             help="Show contents of the whole file.")
@@ -60,7 +56,6 @@ class Options(syslib.Dump):
 
 class Dump(syslib.Dump):
 
-
     def __init__(self, options):
         for file in options.getFiles():
             try:
@@ -70,19 +65,18 @@ class Dump(syslib.Dump):
                     if options.getAllFlag() or fileStat.getSize() < 128:
                         for position in range(1, fileStat.getSize() + 1, 16):
                             print("{0:07d}{1:s}".format(position,
-                                    self._format(options, ifile.read(16))))
+                                  self._format(options, ifile.read(16))))
                     else:
                         for position in range(1, 65, 16):
                             print("{0:07d}{1:s}".format(position,
-                                    self._format(options, ifile.read(16))))
+                                  self._format(options, ifile.read(16))))
                         print("...")
                         ifile.seek(fileStat.getSize() - 64)
                         for position in range(fileStat.getSize() - 63, fileStat.getSize() + 1, 16):
                             print("{0:07d}{1:s}".format(position,
-                                    self._format(options, ifile.read(16))))
+                                  self._format(options, ifile.read(16))))
             except IOError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
-
 
     def _format(self, options, data):
         if options.getAsciiFlag():
@@ -105,7 +99,6 @@ class Dump(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -119,16 +112,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
@@ -31,17 +29,14 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def getRecursiveFlag(self):
         """
         Return recursive flag.
         """
         return self._args.recursiveFlag
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Show files with same MD5 checksums.")
-
 
         parser.add_argument("-R", dest="recursiveFlag", action="store_true",
                             help="Recursive into sub-directories.")
@@ -54,7 +49,6 @@ class Options(syslib.Dump):
 
 class Md5same(syslib.Dump):
 
-
     def __init__(self, options):
         self._md5files = {}
         self._calc(options, options.getFiles())
@@ -63,14 +57,13 @@ class Md5same(syslib.Dump):
             if len(self._md5files[md5sum]) > 1:
                 print(syslib.Command().args2cmd(sorted(self._md5files[md5sum])))
 
-
     def _calc(self, options, files):
         for file in files:
             if os.path.isdir(file):
                 if not os.path.islink(file) and options.getRecursiveFlag():
                     try:
                         self._calc(options,
-                                   sorted([ os.path.join(file, x) for x in os.listdir(file) ]))
+                                   sorted([os.path.join(file, x) for x in os.listdir(file)]))
                     except PermissionError:
                         raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
             elif os.path.isfile(file):
@@ -80,8 +73,7 @@ class Md5same(syslib.Dump):
                 if md5sum in self._md5files.keys():
                     self._md5files[md5sum].append(file)
                 else:
-                    self._md5files[md5sum] = [ file ]
-
+                    self._md5files[md5sum] = [file]
 
     def _md5sum(self, file):
         try:
@@ -99,7 +91,6 @@ class Md5same(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -113,16 +104,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

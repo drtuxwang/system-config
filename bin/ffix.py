@@ -20,20 +20,17 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
-        if len(args) == 1 or  args[1] in ( "-h", "--h", "--help"):
+        if len(args) == 1 or args[1] in ("-h", "--h", "--help"):
             self._parseArgs(args[1:])
 
         self._files = args[1:]
-
 
     def getFiles(self):
         """
         Return list to files.
         """
         return self._files
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Remove horrible charcters in filename.")
@@ -44,7 +41,6 @@ class Options(syslib.Dump):
 
 
 class Ffix(syslib.Dump):
-
 
     def __init__(self, options):
         isbadChar = re.compile("^-|[ !\"$&`'()*<>?\[\]|]")
@@ -62,7 +58,6 @@ class Ffix(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -76,16 +71,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getOverwriteFlag(self):
         """
@@ -31,20 +29,17 @@ class Options(syslib.Dump):
         """
         return self._args.overwriteFlag
 
-
     def getSources(self):
         """
         Return list of source files.
         """
         return self._args.sources
 
-
     def getTarget(self):
         """
         Return target file or directory.
         """
         return self._args.target[0]
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Move or rename files.")
@@ -62,14 +57,12 @@ class Options(syslib.Dump):
 
 class Move(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
         if len(options.getSources()) > 1 or os.path.isdir(options.getTarget()):
             self._move()
         else:
             self._rename(options.getSources()[0], options.getTarget())
-
 
     def _move(self):
         if not os.path.isdir(self._options.getTarget()):
@@ -102,7 +95,6 @@ class Move(syslib.Dump):
                 else:
                     raise SystemExit(sys.argv[0] + ': Cannot move "' + source + '" source file.')
 
-
     def _cprm(self, source, target):
         if os.path.isdir(source):
             try:
@@ -117,7 +109,7 @@ class Move(syslib.Dump):
             try:
                 shutil.copy2(source, target)
             except IOError as exception:
-                if exception.args != ( 95, "Operation not supported" ): # os.listxattr for ACL
+                if exception.args != (95, "Operation not supported"):  # os.listxattr for ACL
                     raise SystemExit(sys.argv[0] + ': Cannot copy "' + source + '" source file.')
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + source + '" file.')
@@ -125,7 +117,6 @@ class Move(syslib.Dump):
                 os.remove(source)
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot move "' + source + '" source file.')
-
 
     def _rename(self, source, target):
         if os.path.isdir(source):
@@ -157,7 +148,6 @@ class Move(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -171,16 +161,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

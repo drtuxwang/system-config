@@ -19,12 +19,10 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._backlight = self._getBacklight()
-
 
     def getChange(self):
         """
@@ -32,20 +30,17 @@ class Options(syslib.Dump):
         """
         return self._args.change
 
-
     def getBacklight(self):
         """
         Return BacklightXXX class object.
         """
         return self._backlight
 
-
     def _getBacklight(self):
-        for backlight in ( BacklightIntel(), BacklightIntelSetpci(), BacklightXrandr() ):
+        for backlight in (BacklightIntel(), BacklightIntelSetpci(), BacklightXrandr()):
             if backlight.detect():
                 return backlight
         raise SystemExit(sys.argv[0] + ': Cannot detect backlight device.')
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Desktop screen backlight utility.")
@@ -62,13 +57,11 @@ class Options(syslib.Dump):
 
 class Backlight(syslib.Dump):
 
-
     def __init__(self):
         self._device = self._getDevice()
         self._max = self.getBrightnessMax()
         self._default = self.getBrightnessDefault()
         self._step = self.getBrightnessStep()
-
 
     def detect(self):
         file = os.path.join(self._device, "brightness")
@@ -81,10 +74,8 @@ class Backlight(syslib.Dump):
             return True
         return False
 
-
     def _getDevice(self):
         return "/sys/class/backlight/acpi_video0"
-
 
     def getBrightness(self):
         try:
@@ -94,10 +85,8 @@ class Backlight(syslib.Dump):
             brightness = 0
         return brightness
 
-
     def getBrightnessDefault(self):
         return int(self._max / 8)
-
 
     def getBrightnessMax(self):
         try:
@@ -107,10 +96,8 @@ class Backlight(syslib.Dump):
             brightness = 0
         return brightness
 
-
     def getBrightnessStep(self):
         return int(self._max / 24)
-
 
     def setBrightness(self, brightness):
         try:
@@ -118,7 +105,6 @@ class Backlight(syslib.Dump):
                 print(brightness, file=ofile)
         except IOError:
             pass
-
 
     def run(self, change):
         if change:
@@ -136,59 +122,50 @@ class Backlight(syslib.Dump):
 
 class BacklightIntel(Backlight):
 
-
     def _getDevice(self):
         return "/sys/class/backlight/intel_backlight"
 
 
 class BacklightIntelSetpci(Backlight):
 
-
     def detect(self):
         lspci = syslib.Command("lspci", check=False)
         if lspci.isFound():
-           lspci.run(filter="VGA.*Intel.*Atom", mode="batch")
-           if lspci.hasOutput():
-               self._setpci = syslib.Command("setpci",
-                                             flags = [ "-s", lspci.getOutput()[0].split()[0] ])
-               return True
+            lspci.run(filter="VGA.*Intel.*Atom", mode="batch")
+            if lspci.hasOutput():
+                self._setpci = syslib.Command(
+                    "setpci", flags=["-s", lspci.getOutput()[0].split()[0]])
+                return True
         return False
-
 
     def _getDevice(self):
         return None
 
-
     def getBrightness(self):
         if syslib.info.getUsername() != "root":
-             self._setpci.setWrapper(syslib.Command("sudo"))
-        self._setpci.setArgs([ "F4.B" ])
+            self._setpci.setWrapper(syslib.Command("sudo"))
+        self._setpci.setArgs(["F4.B"])
         self._setpci.run(mode="batch")
         try:
-            return int(int(self._setpci.getOutput()[0], 16) / 16) # From 0 - 15
+            return int(int(self._setpci.getOutput()[0], 16) / 16)  # From 0 - 15
         except (IndexError, ValueError):
             raise SystemExit(sys.argv[0] + ": Cannot detect current brightness setting.")
-
 
     def getBrightnessDefault(self):
         return 3
 
-
     def getBrightnessMax(self):
         return 15
-
 
     def getBrightnessStep(self):
         return 1
 
-
     def setBrightness(self, brightness):
-        self._setpci.setArgs([ "F4.B={0:x}".format(brightness*16 + 15) ])
+        self._setpci.setArgs(["F4.B={0:x}".format(brightness*16 + 15)])
         self._setpci.run(mode="exec")
 
 
 class BacklightXrandr(Backlight):
-
 
     def detect(self):
         self._xrandr = syslib.Command("xrandr", check=False)
@@ -201,13 +178,11 @@ class BacklightXrandr(Backlight):
                 return True
         return False
 
-
     def _getDevice(self):
         return None
 
-
     def getBrightness(self):
-        self._xrandr.setArgs([ "--verbose" ])
+        self._xrandr.setArgs(["--verbose"])
         self._xrandr.run(mode="batch")
         try:
             brightness = float(self._xrandr.getOutput("^\s+Brightness: ")[0].split()[1])
@@ -215,27 +190,22 @@ class BacklightXrandr(Backlight):
             brightness = 0
         return brightness
 
-
     def getBrightnessDefault(self):
         return 0.999
-
 
     def getBrightnessMax(self):
         return 0.999
 
-
     def getBrightnessStep(self):
         return 0.1
 
-
     def setBrightness(self, brightness):
         for screen in self._screens:
-            self._xrandr.setArgs([ "--output", screen, "--brightness", str(brightness) ])
+            self._xrandr.setArgs(["--output", screen, "--brightness", str(brightness)])
             self._xrandr.run()
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -250,16 +220,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

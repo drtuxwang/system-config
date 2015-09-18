@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -34,8 +33,7 @@ class Options(syslib.Dump):
             volume = 10
         else:
             volume = self._getvol()
-        self._pacmd.setArgs([ "set-sink-volume", "0", "0x{0:X}".format(volume * 0x1000) ])
-
+        self._pacmd.setArgs(["set-sink-volume", "0", "0x{0:X}".format(volume * 0x1000)])
 
     def getPacmd(self):
         """
@@ -43,16 +41,14 @@ class Options(syslib.Dump):
         """
         return self._pacmd
 
-
     def _getvol(self):
-        self._pacmd.setArgs([ "dump" ])
+        self._pacmd.setArgs(["dump"])
         self._pacmd.run(filter="^set-sink-volume", mode="batch")
         try:
             # From 0 - 15
             return int(int(self._pacmd.getOutput()[0].split()[2], 16) / 0x1000)
         except (IndexError, ValueError):
             raise SystemExit(sys.argv[0] + ": Cannot detect current Pulseaudio volume.")
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Desktop audio volume utility.")
@@ -69,7 +65,6 @@ class Options(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -83,16 +78,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

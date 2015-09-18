@@ -24,7 +24,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         # firefox10 etc
         self._firefox = syslib.Command(os.path.basename(args[0]).replace(".py", ""))
@@ -36,9 +35,9 @@ class Options(syslib.Dump):
             elif args[1] == "-copy":
                 updates = False
                 self._copy()
-                self._firefox.setFlags([ "-no-remote", "about:" ])
+                self._firefox.setFlags(["-no-remote", "about:"])
             elif args[1] == "-no-remote":
-                self._firefox.setFlags([ "-no-remote", "about:" ])
+                self._firefox.setFlags(["-no-remote", "about:"])
             elif args[1] == "-reset":
                 self._reset()
                 raise SystemExit(0)
@@ -53,16 +52,16 @@ class Options(syslib.Dump):
                 raise SystemExit
 
         self._firefox.setArgs(args[1:])
-        self._filter = ("^$|Failed to load module|: G[dt]k-WARNING |: G[dt]k-CRITICAL |:"
-                " GLib-GObject-|: GnomeUI-WARNING|^OpenGL Warning: | Pango-WARNING |"
-                "^WARNING: Application calling GLX |: libgnomevfs-WARNING |: wrong ELF class|"
-                "(child|parent) won, so we|processing deferred in-call|is not defined|"
-                "^failed to create drawable|None of the authentication protocols|"
-                "NOTE: child process received|: Not a directory|[/ ]thumbnails |"
-                ": Connection reset by peer|")
+        self._filter = (
+            "^$|Failed to load module|: G[dt]k-WARNING |: G[dt]k-CRITICAL |:"
+            " GLib-GObject-|: GnomeUI-WARNING|^OpenGL Warning: | Pango-WARNING |"
+            "^WARNING: Application calling GLX |: libgnomevfs-WARNING |: wrong ELF class|"
+            "(child|parent) won, so we|processing deferred in-call|is not defined|"
+            "^failed to create drawable|None of the authentication protocols|"
+            "NOTE: child process received|: Not a directory|[/ ]thumbnails |"
+            ": Connection reset by peer|")
         self._config()
         self._prefs(updates)
-
 
     def getFilter(self):
         """
@@ -70,13 +69,11 @@ class Options(syslib.Dump):
         """
         return self._filter
 
-
     def getFirefox(self):
         """
         Return Firefox Command class object.
         """
         return self._firefox
-
 
     def _config(self):
         if "HOME" in os.environ.keys():
@@ -117,7 +114,7 @@ class Options(syslib.Dump):
                 for file in glob.glob(os.path.join(firefoxdir, "*", "adblockplus", "patterns.ini")):
                     try:
                         with open(file, errors="replace") as ifile:
-                            with open(file + "-new", "w", newline = "\n") as ofile:
+                            with open(file + "-new", "w", newline="\n") as ofile:
                                 for line in ifile:
                                     if not ispattern.search(line):
                                         print(line, end="", file=ofile)
@@ -139,7 +136,7 @@ class Options(syslib.Dump):
                             with open(file + "-new", "w", newline="\n") as ofile:
                                 for line in ifile:
                                     print(line.replace('"fullscreen"', '"maximized"'),
-                                            end = "", file = ofile)
+                                          end="", file=ofile)
                     except IOError:
                         try:
                             os.remove(file + "-new")
@@ -155,9 +152,8 @@ class Options(syslib.Dump):
                 setmod = syslib.Command("setmod", check=False)
                 if setmod.isFound():
                     # Fix permissions if owner and updated
-                    setmod.setArgs([ "wa", os.path.dirname(self._firefox.getFile()) ])
+                    setmod.setArgs(["wa", os.path.dirname(self._firefox.getFile())])
                     setmod.run(mode="daemon")
-
 
     def _copy(self):
         if "HOME" in os.environ.keys():
@@ -177,18 +173,18 @@ class Options(syslib.Dump):
             os.umask(int("077", 8))
             firefoxdir = os.path.join(os.environ["HOME"], ".mozilla", "firefox")
             mypid = os.getpid()
-            os.setpgid(mypid, mypid) # New PGID
-            newhome = os.path.join("/tmp",
-                    "firefox-" + syslib.info.getUsername() + "." + str(mypid))
+            os.setpgid(mypid, mypid)  # New PGID
+            newhome = os.path.join(
+                "/tmp", "firefox-" + syslib.info.getUsername() + "." + str(mypid))
             os.environ["TMPDIR"] = newhome
             print('Creating copy of Firefox profile in "' + newhome + '"...')
 
             if not os.path.isdir(newhome):
                 try:
                     shutil.copytree(firefoxdir, os.path.join(newhome, ".mozilla", "firefox"))
-                except (IOError, shutil.Error): # Ignore "lock" file error
+                except (IOError, shutil.Error):  # Ignore "lock" file error
                     pass
-            for directory in ( "Desktop", ".cups" ):
+            for directory in ("Desktop", ".cups"):
                 try:
                     os.symlink(os.path.join(os.environ["HOME"], directory),
                                os.path.join(newhome, directory))
@@ -196,14 +192,13 @@ class Options(syslib.Dump):
                     pass
             os.environ["HOME"] = newhome
 
-
     def _reset(self):
         if "HOME" in os.environ.keys():
             firefoxdir = os.path.join(os.environ["HOME"], ".mozilla", "firefox")
             if os.path.isdir(firefoxdir):
-                keepList = ( "adblockplus", "extensions", "extension-data", "extensions.json",
-                         "extensions.sqlite", "localstore.rdf", "mimeTypes.rdf",
-                         "permissions.sqlite", "prefs.js", "user.js", "xulstore.json" )
+                keepList = ("adblockplus", "extensions", "extension-data", "extensions.json",
+                            "extensions.sqlite", "localstore.rdf", "mimeTypes.rdf",
+                            "permissions.sqlite", "prefs.js", "user.js", "xulstore.json")
                 for directory in glob.glob(os.path.join(firefoxdir, "*")):
                     if os.path.isfile(os.path.join(directory, "prefs.js")):
                         for file in (glob.glob(os.path.join(directory, ".*")) +
@@ -224,7 +219,6 @@ class Options(syslib.Dump):
                             except OSError:
                                 pass
 
-
     def _prefs(self, updates):
         if "HOME" in os.environ.keys():
             firefoxdir = os.path.join(os.environ["HOME"], ".mozilla", "firefox")
@@ -238,16 +232,16 @@ class Options(syslib.Dump):
                             if (not updates and
                                     'user_pref("app.update.enabled", false);\n' not in lines):
                                 print('user_pref("app.update.enabled", false);', file=ofile)
-                            for setting in ( '"extensions.blocklist.enabled", false',
-                                    '"full-screen-api.approval-required", false',
-                                    '"layout.spellcheckDefault", 2',
-                                    '"media.fragmented-mp4.exposed", true',
-                                    '"media.fragmented-mp4.ffmpeg.enabled", true',
-                                    '"media.fragmented-mp4.gmp.enabled", true',
-                                    '"media.gstreamer.enabled", false',
-                                    '"media.mediasource.enabled", true',
-                                    '"media.mediasource.mp4.enabled", true',
-                                    '"plugins.click_to_play", true' ):
+                            for setting in ('"extensions.blocklist.enabled", false',
+                                            '"full-screen-api.approval-required", false',
+                                            '"layout.spellcheckDefault", 2',
+                                            '"media.fragmented-mp4.exposed", true',
+                                            '"media.fragmented-mp4.ffmpeg.enabled", true',
+                                            '"media.fragmented-mp4.gmp.enabled", true',
+                                            '"media.gstreamer.enabled", false',
+                                            '"media.mediasource.enabled", true',
+                                            '"media.mediasource.mp4.enabled", true',
+                                            '"plugins.click_to_play", true'):
                                 if 'user_pref(' + setting + ');\n' not in lines:
                                     print('user_pref(' + setting + ');', file=ofile)
                     except IOError:
@@ -255,7 +249,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -270,16 +263,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

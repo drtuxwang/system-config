@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -31,13 +30,12 @@ class Options(syslib.Dump):
             self._youtubedl = syslib.Command("youtube-dl")
 
         if self._args.viewFlag:
-            self._youtubedl.setArgs([ "--list-formats" ])
+            self._youtubedl.setArgs(["--list-formats"])
         elif self._args.format:
-            self._youtubedl.setArgs([ "--title", "--format", str(self._args.format[0]) ])
+            self._youtubedl.setArgs(["--title", "--format", str(self._args.format[0])])
         self._youtubedl.extendArgs(self._args.urls)
 
         self._setpython(self._youtubedl)
-
 
     def getYoutubedl(self):
         """
@@ -45,13 +43,11 @@ class Options(syslib.Dump):
         """
         return self._youtubedl
 
-
-    def _setpython(self, command): # Must use system Python
+    def _setpython(self, command):  # Must use system Python
         if os.path.isfile("/usr/bin/python3"):
             command.setWrapper(syslib.Command(file="/usr/bin/python3"))
         elif os.path.isfile("/usr/bin/python"):
             command.setWrapper(syslib.Command(file="/usr/bin/python"))
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Youtube video downloader.")
@@ -68,7 +64,6 @@ class Options(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -82,16 +77,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

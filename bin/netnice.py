@@ -20,7 +20,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -39,21 +38,19 @@ class Options(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Cannot find "trickle" command.')
         self._command.setWrapper(shaper)
 
-
     def getCommand(self):
         """
         Return command Command class object.
         """
         return self._command
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Run a command with limited network bandwidth.")
+            description="Run a command with limited network bandwidth.")
 
         parser.add_argument(
-                "-n", nargs=1, type=int, dest="drate", default=[ 0 ],
-                help='Download rate limit in KB. Default is 512 set in ".config/netnice.json".')
+            "-n", nargs=1, type=int, dest="drate", default=[0],
+            help='Download rate limit in KB. Default is 512 set in ".config/netnice.json".')
 
         parser.add_argument("command", nargs=1, help="Command to run.")
         parser.add_argument("args", nargs="*", metavar="arg", help="Command argument.")
@@ -79,57 +76,51 @@ class Options(syslib.Dump):
 
 class Shaper(syslib.Command):
 
+    def __init__(self, drate=None):
+        super().__init__("trickle", check=False)
 
-   def __init__(self, drate=None):
-       super().__init__("trickle", check=False)
+        self._drate = 512
+        if "HOME" in os.environ.keys():
+            file = os.path.join(os.environ["HOME"], ".config", "netnice.json")
+            if not self._load(file):
+                self._save(file)
 
-       self._drate = 512
-       if "HOME" in os.environ.keys():
-           file = os.path.join(os.environ["HOME"], ".config", "netnice.json")
-           if not self._load(file):
-               self._save(file)
+        if drate:
+            self._drate = drate
 
-       if drate:
-           self._drate = drate
+        self.setRate(self._drate)
 
-       self.setRate(self._drate)
+    def setRate(self, drate):
+        self._drate = drate
+        self.setArgs(["-d", str(self._drate), "-s"])
 
+    def _load(self, file):
+        if os.path.isfile(file):
+            try:
+                with open(file) as ifile:
+                    data = json.load(ifile)
+                    self._drate = data["netnice"]["download"]
+            except (IOError, KeyError, ValueError):
+                pass
+            else:
+                return True
 
-   def setRate(self, drate):
-       self._drate = drate
-       self.setArgs([ "-d", str(self._drate), "-s" ])
+        return False
 
-
-   def _load(self, file):
-       if os.path.isfile(file):
-           try:
-               with open(file) as ifile:
-                   data = json.load(ifile)
-                   self._drate = data["netnice"]["download"]
-           except (IOError, KeyError, ValueError):
-               pass
-           else:
-               return True
-
-       return False
-
-
-   def _save(self, file):
-       data = {
-                  "netnice":
-                  {
-                      "download": self._drate
-                  }
-              }
-       try:
-           with open(file, "w", newline="\n") as ofile:
-               print(json.dumps(data, indent=2, sort_keys=True), file=ofile)
-       except IOError:
-           pass
+    def _save(self, file):
+        data = {
+            "netnice": {
+                "download": self._drate
+            }
+        }
+        try:
+            with open(file, "w", newline="\n") as ofile:
+                print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
+        except IOError:
+            pass
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -144,16 +135,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

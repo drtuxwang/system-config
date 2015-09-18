@@ -20,7 +20,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -35,17 +34,16 @@ class Options(syslib.Dump):
 
         host = self._args.host[0]
         if syslib.info.getSystem() == "macos":
-            self._ping.setArgs([ "-t", "4", "-c", "3", host ])
+            self._ping.setArgs(["-t", "4", "-c", "3", host])
         elif syslib.info.getSystem() == "linux":
-            self._ping.setArgs([ "-w", "4", "-c", "3", host ])
+            self._ping.setArgs(["-w", "4", "-c", "3", host])
         elif syslib.info.getSystem() == "sunos":
-            self._ping.setArgs([ "-s", host, "64", "3" ])
+            self._ping.setArgs(["-s", host, "64", "3"])
         elif os.name == "nt":
-            self._ping.setArgs([ "-w", "4", "-n", "3", host ])
+            self._ping.setArgs(["-w", "4", "-n", "3", host])
             self._filter = "Minimum|TTL"
         else:
-            self._ping.setArgs([ "-w", "4", "-c", "3", host ])
-
+            self._ping.setArgs(["-w", "4", "-c", "3", host])
 
     def getFilter(self):
         """
@@ -53,13 +51,11 @@ class Options(syslib.Dump):
         """
         return self._filter
 
-
     def getPing(self):
         """
         Return ping Command class object.
         """
         return self._ping
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Ping a host until a connection is made.")
@@ -70,7 +66,6 @@ class Options(syslib.Dump):
 
 
 class Ping(syslib.Dump):
-
 
     def __init__(self, options):
         ping = options.getPing()
@@ -83,7 +78,6 @@ class Ping(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -98,16 +92,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

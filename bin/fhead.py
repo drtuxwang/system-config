@@ -19,10 +19,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
@@ -30,18 +28,16 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def getLines(self):
         """
         Return number of lines.
         """
         return self._args.lines[0]
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Output the first n lines of a file.")
 
-        parser.add_argument("-n", nargs=1, type=int, dest="lines", default=[ 10 ],
+        parser.add_argument("-n", nargs=1, type=int, dest="lines", default=[10],
                             metavar="K", help="Output first K lines.")
 
         parser.add_argument("files", nargs="+", metavar="file", help="File to search.")
@@ -53,9 +49,7 @@ class Options(syslib.Dump):
                              "number of lines.")
 
 
-
 class Head(syslib.Dump):
-
 
     def __init__(self, options):
         if len(options.getFiles()) > 1:
@@ -67,14 +61,12 @@ class Head(syslib.Dump):
         else:
             self._pipe(options, sys.stdin)
 
-
     def _file(self, options, file):
         try:
             with open(file, errors="replace") as ifile:
                 self._pipe(options, ifile)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
-
 
     def _pipe(self, options, pipe):
         for i in range(options.getLines()):
@@ -89,7 +81,6 @@ class Head(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -103,16 +94,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

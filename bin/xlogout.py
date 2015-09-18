@@ -19,10 +19,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getForceFlag(self):
         """
@@ -30,10 +28,8 @@ class Options(syslib.Dump):
         """
         return self._args.forceFlag
 
-
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(
-                description="Logout from X-windows desktop.")
+        parser = argparse.ArgumentParser(description="Logout from X-windows desktop.")
 
         parser.add_argument("-force", dest="forceFlag", action="store_true",
                             help="Force login without confirmation.")
@@ -43,7 +39,6 @@ class Options(syslib.Dump):
 
 class Logout(syslib.Dump):
 
-
     def __init__(self, options):
         self._forceFlag = options.getForceFlag()
         self._pid = 0
@@ -52,7 +47,6 @@ class Logout(syslib.Dump):
                 self._pid = int(os.path.basename(os.environ["SESSION_MANAGER"]))
             except ValueError:
                 pass
-
 
     def run(self):
         if not self._forceFlag:
@@ -65,11 +59,10 @@ class Logout(syslib.Dump):
             except KeyboardInterrupt:
                 sys.exit(114)
 
-        syslib.Task().killpids([ self._pid ])
+        syslib.Task().killpids([self._pid])
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -84,16 +77,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

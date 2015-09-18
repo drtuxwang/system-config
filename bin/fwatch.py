@@ -19,21 +19,18 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._inotifywait = syslib.Command("inotifywait")
-        self._inotifywait.setFlags([ "-e", "create,modify,move,delete", "-mr" ])
+        self._inotifywait.setFlags(["-e", "create,modify,move,delete", "-mr"])
         self._inotifywait.setArgs(self._args.directories)
-
 
     def getInotifywait(self):
         """
         Return inotifywait Command class object.
         """
         return self._inotifywait
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Watch file system events.")
@@ -45,7 +42,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -60,16 +56,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

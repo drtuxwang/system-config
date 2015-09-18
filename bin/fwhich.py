@@ -19,15 +19,13 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         if os.name == "nt":
-            self._extensions = os.environ["PATHEXT"].lower().split(os.pathsep) + [ ".py", "" ]
+            self._extensions = os.environ["PATHEXT"].lower().split(os.pathsep) + [".py", ""]
         else:
-            self._extensions = [ "" ]
-
+            self._extensions = [""]
 
     def getAllFlag(self):
         """
@@ -35,20 +33,17 @@ class Options(syslib.Dump):
         """
         return self._args.allFlag
 
-
     def getExtensions(self):
         """
         Return list of executable extensions.
         """
         return self._extensions
 
-
     def getPrograms(self):
         """
         Return list of programs.
         """
         return self._args.programs
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Locate a program file.")
@@ -63,13 +58,11 @@ class Options(syslib.Dump):
 
 class Which(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
         self._path = os.environ["PATH"]
         for program in options.getPrograms():
             self._locate(program)
-
 
     def _locate(self, program):
         found = []
@@ -93,7 +86,6 @@ class Which(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -107,16 +99,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

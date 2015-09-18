@@ -20,17 +20,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
         Return list of files.
         """
         return self._args.files
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Replace symbolic link to files with copies.")
@@ -42,7 +39,6 @@ class Options(syslib.Dump):
 
 
 class Copylink(syslib.Dump):
-
 
     def __init__(self, options):
         for file in options.getFiles():
@@ -60,23 +56,21 @@ class Copylink(syslib.Dump):
             elif not os.path.exists(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
 
-
     def _copy(self, file, link, target):
-         try:
-             os.remove(file)
-         except OSError:
-             raise SystemExit(sys.argv[0] + ': Cannot remove "' + file + '" link.')
-         try:
-             shutil.copy2(target, file)
-         except IOError as exception:
-             if exception.args != ( 95, "Operation not supported" ): # os.listxattr for ACL
-                 raise SystemExit(sys.argv[0] + ': Cannot copy "' + target + '" file.')
-         except OSError:
-             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+        try:
+            os.remove(file)
+        except OSError:
+            raise SystemExit(sys.argv[0] + ': Cannot remove "' + file + '" link.')
+        try:
+            shutil.copy2(target, file)
+        except IOError as exception:
+            if exception.args != (95, "Operation not supported"):  # os.listxattr for ACL
+                raise SystemExit(sys.argv[0] + ': Cannot copy "' + target + '" file.')
+        except OSError:
+            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -91,16 +85,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

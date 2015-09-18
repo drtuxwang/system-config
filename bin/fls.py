@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
@@ -31,13 +29,11 @@ class Options(syslib.Dump):
         """
         return self._files
 
-
     def getOrder(self):
         """
         Return display order.
         """
         return self._args.order
-
 
     def getRecursiveFlag(self):
         """
@@ -45,13 +41,11 @@ class Options(syslib.Dump):
         """
         return self._args.recursiveFlag
 
-
     def getReverseFlag(self):
         """
         Return reverse flag.
         """
         return self._args.reverseFlag
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Show full list of files.")
@@ -79,10 +73,8 @@ class Options(syslib.Dump):
 
 class List(syslib.Dump):
 
-
     def __init__(self, options):
         self._list(options, options.getFiles())
-
 
     def _list(self, options, files):
         fileStats = []
@@ -101,7 +93,6 @@ class List(syslib.Dump):
                            glob.glob(fileStat.getFile() + "*")))
         return
 
-
     def _sorted(self, options, fileStats):
         order = options.getOrder()
         if order == "ctime":
@@ -118,7 +109,6 @@ class List(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -132,16 +122,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

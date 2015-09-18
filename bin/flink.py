@@ -19,17 +19,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getDirectories(self):
         """
         Return list of directories.
         """
         return self._args.directories
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Recursively link all files.")
@@ -41,24 +38,22 @@ class Options(syslib.Dump):
 
         for directory in self._args.directories:
             if not os.path.isdir(directory):
-                 raise SystemExit(sys.argv[0] + ': Source directory "' + directory +
-                                  '" does not exist.')
+                raise SystemExit(sys.argv[0] + ': Source directory "' + directory +
+                                 '" does not exist.')
             elif os.path.samefile(directory, os.getcwd()):
-                 raise SystemExit(sys.argv[0] + ': Source directory "' + directory +
-                                  '" cannot be current directory.')
+                raise SystemExit(sys.argv[0] + ': Source directory "' + directory +
+                                 '" cannot be current directory.')
 
 
 class Link(syslib.Dump):
-
 
     def __init__(self, options):
         for directory in options.getDirectories():
             self._linkFiles(directory, ".")
 
-
     def _linkFiles(self, sourceDir, targetDir, subdir=""):
         try:
-            sourceFiles = sorted([ os.path.join(sourceDir, x) for x in os.listdir(sourceDir) ])
+            sourceFiles = sorted([os.path.join(sourceDir, x) for x in os.listdir(sourceDir)])
         except PermissionError:
             return
         if not os.path.isdir(targetDir):
@@ -92,7 +87,6 @@ class Link(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -106,16 +100,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -19,10 +19,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
@@ -30,10 +28,9 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Concatenate files and print on the standard output.")
+            description="Concatenate files and print on the standard output.")
 
         parser.add_argument("files", nargs="*", metavar="file", help="File to view.")
 
@@ -42,7 +39,6 @@ class Options(syslib.Dump):
 
 class Cat(syslib.Dump):
 
-
     def __init__(self, options):
         if len(options.getFiles()) == 0:
             self._pipe(sys.stdin.buffer)
@@ -50,14 +46,12 @@ class Cat(syslib.Dump):
             for file in options.getFiles():
                 self._file(file)
 
-
     def _file(self, file):
         try:
             with open(file, "rb") as ifile:
                 self._pipe(ifile)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
-
 
     def _pipe(self, pipe):
         while True:
@@ -68,7 +62,6 @@ class Cat(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -83,16 +76,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

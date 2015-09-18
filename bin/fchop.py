@@ -19,10 +19,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFile(self):
         """
@@ -30,13 +28,11 @@ class Options(syslib.Dump):
         """
         return self._args.file[0]
 
-
     def getMaxSize(self):
         """
         Return max size of file part.
         """
         return self._maxSize
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Chop up a file into chunks.")
@@ -61,7 +57,6 @@ class Options(syslib.Dump):
 
 class Chop(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
         self._cacheSize = 131072
@@ -81,10 +76,9 @@ class Chop(syslib.Dump):
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + options.getFile() + '" file.')
 
-
     def _copy(self, ifile, ofile):
         chunks, lchunk = divmod(self._options.getMaxSize(), self._cacheSize)
-        for i in [ self._cacheSize ]*chunks + [ lchunk ]:
+        for i in [self._cacheSize]*chunks + [lchunk]:
             chunk = ifile.read(i)
             if not chunk:
                 break
@@ -92,7 +86,6 @@ class Chop(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -107,16 +100,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

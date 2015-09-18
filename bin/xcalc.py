@@ -18,7 +18,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._desktop = self._getDesktop()
         if self._desktop == "gnome":
@@ -32,13 +31,11 @@ class Options(syslib.Dump):
         else:
             self._xcalc = syslib.Command("xcalc")
 
-
     def getXcalc(self):
         """
         Return calculator Command class object.
         """
         return self._xcalc
-
 
     def _getDesktop(self):
         keys = os.environ.keys()
@@ -60,7 +57,6 @@ class Options(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -74,16 +70,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

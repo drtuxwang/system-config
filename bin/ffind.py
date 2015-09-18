@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getDirectories(self):
         """
@@ -31,13 +29,11 @@ class Options(syslib.Dump):
         """
         return self._args.directories
 
-
     def getPattern(self):
         """
         Return regular expression pattern.
         """
         return self._args.pattern[0]
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Find file or directory.")
@@ -51,7 +47,6 @@ class Options(syslib.Dump):
 
 class Finder(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
         try:
@@ -60,25 +55,22 @@ class Finder(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Invalid regular expression "' +
                              options.getPattern() + '".')
 
-
     def _find(self, files):
         for file in sorted(files):
             if os.path.isdir(file) and not os.path.islink(file):
                 try:
-                    self._find([ os.path.join(file, x) for x in os.listdir(file) ])
+                    self._find([os.path.join(file, x) for x in os.listdir(file)])
                 except PermissionError:
                     raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
 
             elif self._ispattern.search(file):
                 print(file)
 
-
     def run(self):
         self._find(self._options.getDirectories())
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -93,16 +85,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getCheckFlag(self):
         """
@@ -31,13 +29,11 @@ class Options(syslib.Dump):
         """
         return self._args.checkFlag
 
-
     def getCreateFlag(self):
         """
         Return create flag.
         """
         return self._args.createFlag
-
 
     def getFiles(self):
         """
@@ -45,13 +41,11 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def getRecursiveFlag(self):
         """
         Return recursive flag.
         """
         return self._args.recursiveFlag
-
 
     def getUpdateFile(self):
         """
@@ -62,10 +56,9 @@ class Options(syslib.Dump):
         else:
             return None
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Calculate checksum using MD5, file size and file modification time.")
+            description="Calculate checksum using MD5, file size and file modification time.")
 
         parser.add_argument("-R", dest="recursiveFlag", action="store_true",
                             help="Recursive into sub-directories.")
@@ -83,7 +76,6 @@ class Options(syslib.Dump):
 
 
 class Checksum(syslib.Dump):
-
 
     def __init__(self, options):
         if options.getCheckFlag():
@@ -103,14 +95,13 @@ class Checksum(syslib.Dump):
                                 line = line.rstrip("\r\n")
                                 md5sum, size, mtime, file = self._getfsum(line)
                                 if file:
-                                    self._cache[( file, size, mtime )] = md5sum
+                                    self._cache[(file, size, mtime)] = md5sum
                             except IndexError:
                                 pass
                 except IOError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' +
                                      updateFile + '" checksum file.')
             self._calc(options, options.getFiles())
-
 
     def _calc(self, options, files):
         for file in files:
@@ -119,13 +110,13 @@ class Checksum(syslib.Dump):
                     if options.getRecursiveFlag():
                         try:
                             self._calc(options,
-                                       sorted([ os.path.join(file, x) for x in os.listdir(file) ]))
+                                       sorted([os.path.join(file, x) for x in os.listdir(file)]))
                         except PermissionError:
                             pass
             elif os.path.isfile(file) and not file.endswith("..fsum"):
                 fileStat = syslib.FileStat(file)
                 try:
-                    md5sum = self._cache[( file, fileStat.getSize(), fileStat.getTime() )]
+                    md5sum = self._cache[(file, fileStat.getSize(), fileStat.getTime())]
                 except KeyError:
                     md5sum = self._md5sum(file)
                 if not md5sum:
@@ -136,12 +127,11 @@ class Checksum(syslib.Dump):
                     try:
                         with open(file + ".fsum", "w", newline="\n") as ofile:
                             print("{0:s}/{1:010d}/{2:d}  {3:s}".format(md5sum, fileStat.getSize(),
-                                    fileStat.getTime(), os.path.basename(file)), file=ofile)
+                                  fileStat.getTime(), os.path.basename(file)), file=ofile)
                         fileStat = syslib.FileStat(file)
                         os.utime(file + ".fsum", (fileStat.getTime(), fileStat.getTime()))
                     except (IOError, OSError):
                         raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '.fsum" file.')
-
 
     def _check(self, files):
         found = []
@@ -191,14 +181,13 @@ class Checksum(syslib.Dump):
         if nfail > 0:
             print("fsum: Mismatch in", nfail, "of", nfiles - nmiss, "computed checksums.")
 
-
     def _extra(self, directory, found):
         extra = []
         try:
             if directory:
-                files = [ os.path.join(directory, x) for x in os.listdir(directory) ]
+                files = [os.path.join(directory, x) for x in os.listdir(directory)]
             else:
-                files = [ os.path.join(directory, x) for x in os.listdir() ]
+                files = [os.path.join(directory, x) for x in os.listdir()]
         except PermissionError:
             pass
         else:
@@ -211,18 +200,16 @@ class Checksum(syslib.Dump):
                         extra.append(file)
         return extra
 
-
     def _getfsum(self, line):
-       i = line.find("  ")
-       try:
-           md5sum, size, mtime = line[:i].split("/")
-           size = int(size)
-           mtime = int(mtime)
-           file = line[i+2 :]
-           return (md5sum, size, mtime, file)
-       except ValueError:
-           return ("", -1, -1, "")
-
+        i = line.find("  ")
+        try:
+            md5sum, size, mtime = line[:i].split("/")
+            size = int(size)
+            mtime = int(mtime)
+            file = line[i+2:]
+            return (md5sum, size, mtime, file)
+        except ValueError:
+            return ("", -1, -1, "")
 
     def _md5sum(self, file):
         try:
@@ -240,7 +227,6 @@ class Checksum(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -254,16 +240,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

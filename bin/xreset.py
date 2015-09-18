@@ -22,7 +22,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -43,14 +42,12 @@ class Options(syslib.Dump):
                 try:
                     device, mode = setting.split("=")
                 except ValueError:
-                    raise SystemExit(sys.argv[0] + ': Invalid "' + setting +'" settings.')
+                    raise SystemExit(sys.argv[0] + ': Invalid "' + setting + '" settings.')
                 self._config.set(device, mode)
             self._config.write(configfile)
 
-
     def getSettings(self):
         return self._config.get()
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Reset to default screen resolution.")
@@ -63,9 +60,8 @@ class Options(syslib.Dump):
 
 class Configuration(syslib.Dump):
 
-
     def __init__(self, file=""):
-        self._data = { "xreset": {} }
+        self._data = {"xreset": {}}
         if file:
             try:
                 with open(file) as ifile:
@@ -73,54 +69,48 @@ class Configuration(syslib.Dump):
             except (IOError, KeyError, ValueError):
                 pass
 
-
     def get(self):
         return self._data["xreset"].items()
-
 
     def set(self, device, mode):
         self._data["xreset"][device] = mode
 
-
     def write(self, file):
         try:
             with open(file, "w", newline="\n") as ofile:
-                print(json.dumps(self._data, indent=2, sort_keys=True), file=ofile)
+                print(json.dumps(self._data, indent=4, sort_keys=True), file=ofile)
         except IOError:
             pass
 
 
 class Xreset(syslib.Dump):
 
-
     def __init__(self, options):
         self._xrandr = syslib.Command("xrandr")
         self._dpi = "96"
         self._settings = options.getSettings()
 
-
     def run(self):
-        self._xrandr.setArgs([ "-s", "0" ])
+        self._xrandr.setArgs(["-s", "0"])
         self._xrandr.run(mode="batch")
-        self._xrandr.setArgs([ "--dpi", self._dpi ])
+        self._xrandr.setArgs(["--dpi", self._dpi])
         self._xrandr.run(mode="batch")
 
-        for device,mode in self._settings:
-            self._xrandr.setArgs([ "--output", device, "--auto" ])
+        for device, mode in self._settings:
+            self._xrandr.setArgs(["--output", device, "--auto"])
             self._xrandr.run(mode="batch")
-            self._xrandr.setArgs([ "--output", device, "--mode", mode ])
+            self._xrandr.setArgs(["--output", device, "--mode", mode])
             self._xrandr.run(mode="batch")
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
         if os.name == "nt":
             self._windowsArgv()
         try:
-            options =  Options(sys.argv)
+            options = Options(sys.argv)
             Xreset(options).run()
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
@@ -128,16 +118,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

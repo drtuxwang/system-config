@@ -19,17 +19,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
         Return list of files.
         """
         return self._args.files
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Unicode sort lines of a file.")
@@ -41,7 +38,6 @@ class Options(syslib.Dump):
 
 
 class Sort(syslib.Dump):
-
 
     def __init__(self, options):
         self._lines = []
@@ -59,14 +55,12 @@ class Sort(syslib.Dump):
                 self._lines.append(line.rstrip("\r\n"))
         self._lines = sorted(self._lines)
 
-
     def print(self):
         for line in self._lines:
             print(line)
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -81,16 +75,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

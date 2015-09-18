@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
@@ -31,13 +29,11 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def getIgnoreCaseFlag(self):
         """
         Return ignore case flag.
         """
         return self._args.ignoreCaseFlag
-
 
     def getInvertFlag(self):
         """
@@ -45,20 +41,17 @@ class Options(syslib.Dump):
         """
         return self._args.invertFlag
 
-
     def getNumberFlag(self):
         """
         Return line number flag.
         """
         return self._args.numberFlag
 
-
     def getPattern(self):
         """
         Return regular expression pattern.
         """
         return self._args.pattern[0]
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Print lines matching a pattern.")
@@ -78,7 +71,6 @@ class Options(syslib.Dump):
 
 class Grep:
 
-
     def __init__(self, options):
         try:
             if options.getIgnoreCaseFlag():
@@ -96,14 +88,12 @@ class Grep:
         else:
             self._pipe(options, sys.stdin)
 
-
     def _file(self, options, file, prefix=""):
         try:
             with open(file, errors="replace") as ifile:
                 self._pipe(options, ifile, prefix)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
-
 
     def _pipe(self, options, pipe, prefix=""):
         number = 0
@@ -133,7 +123,6 @@ class Grep:
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -147,16 +136,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:
