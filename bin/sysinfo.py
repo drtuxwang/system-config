@@ -5,8 +5,8 @@ System configuration detection tool.
 1996-2015 By Dr Colin Kong
 """
 
-RELEASE = "4.4.2"
-VERSION = 20150917
+RELEASE = "4.4.3"
+VERSION = 20150918
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -31,13 +31,11 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._releaseDate = str(VERSION)[:4] + "-" + str(VERSION)[4:6] + "-" + str(VERSION)[6:]
         self._releaseVersion = RELEASE
 
         self._system = self._getSystem()
-
 
     def getReleaseDate(self):
         """
@@ -45,20 +43,17 @@ class Options(syslib.Dump):
         """
         return self._releaseDate
 
-
     def getReleaseVersion(self):
         """
         Return release version.
         """
         return self._releaseVersion
 
-
     def getSystem(self):
         """
         Return operating syslib.
         """
         return self._system
-
 
     def _getSystem(self):
         name = syslib.info.getSystem()
@@ -74,7 +69,6 @@ class BatteryAcpi(syslib.Dump):
     """
     Uses "/proc/acpi/battery/BAT*"
     """
-
 
     def __init__(self, directory):
         self._device = os.path.basename(directory)
@@ -106,7 +100,6 @@ class BatteryAcpi(syslib.Dump):
                     except ValueError:
                         pass
         self.check()
-
 
     def check(self):
         self._isExist = False
@@ -140,41 +133,32 @@ class BatteryAcpi(syslib.Dump):
         except IOError:
             return
 
-
     def isExist(self):
         """
         Return exist flag.
         """
         return self._isExist
 
-
     def getCapacity(self):
         return self._capacity
-
 
     def getCapacityMax(self):
         return self._capacityMax
 
-
     def getCharge(self):
         return self._charge
-
 
     def getName(self):
         return self._name
 
-
     def getOem(self):
         return self._oem
-
 
     def getRate(self):
         return self._rate
 
-
     def getType(self):
         return self._type
-
 
     def getVoltage(self):
         return self._voltage
@@ -184,7 +168,6 @@ class BatteryPower(BatteryAcpi):
     """
     Uses "/sys/class/power_supply/BAT*"
     """
-
 
     def __init__(self, directory):
         self._device = os.path.basename(directory)
@@ -221,7 +204,6 @@ class BatteryPower(BatteryAcpi):
                     except ValueError:
                         pass
         self.check()
-
 
     def check(self):
         self._isExist = False
@@ -268,13 +250,11 @@ class BatteryPower(BatteryAcpi):
 
 class CommandThread(syslib.Dump, threading.Thread):
 
-
-    def __init__ (self, command):
+    def __init__(self, command):
         threading.Thread.__init__(self)
         self._child = None
         self._command = command
         self._stdout = ""
-
 
     def run(self):
         self._child = self._command.run(mode="child")
@@ -287,12 +267,10 @@ class CommandThread(syslib.Dump, threading.Thread):
                 break
             self._stdout += byte.decode("utf-8", "replace")
 
-
     def kill(self):
         if self._child:
             self._child.kill()
             self._child = None
-
 
     def getOutput(self):
         """
@@ -303,14 +281,12 @@ class CommandThread(syslib.Dump, threading.Thread):
 
 class Detect(syslib.Dump):
 
-
     def __init__(self, options):
         self._author = ("Sysinfo " + options.getReleaseVersion() +
                         " (" + options.getReleaseDate() + ")")
 
         self._system = options.getSystem()
         self._writer = Writer(options)
-
 
     def run(self):
         timestamp = time.strftime("%Y-%m-%d-%H:%M:%S")
@@ -322,12 +298,11 @@ class Detect(syslib.Dump):
         self._processors()
         self._systemStatus()
         if self._system.hasDevices():
-           self._system.detectDevices(self._writer)
+            self._system.detectDevices(self._writer)
         if self._system.hasLoader():
             self._system.detectLoader(self._writer)
         self._xwindows()
         print()
-
 
     def _networkInformation(self):
         info = self._system.getNetInfo()
@@ -346,7 +321,6 @@ class Detect(syslib.Dump):
             else:
                 self._writer.output(name="Net IPv4 DNS", value=address)
 
-
     def _operatingSystem(self):
         info = self._system.getOsInfo()
         self._writer.output(name="OS Type", value=info["OS Type"])
@@ -355,7 +329,6 @@ class Detect(syslib.Dump):
                             comment=info["OS Kernel X"])
         self._writer.output(name="OS Patch", value=info["OS Patch"],
                             comment=info["OS Patch X"])
-
 
     def _processors(self):
         info = self._system.getCpuInfo()
@@ -373,7 +346,6 @@ class Detect(syslib.Dump):
             self._writer.output(name="CPU L" + level + " Cache", value=info["CPU Cache"][level],
                                 comment="KB")
 
-
     def _systemStatus(self):
         info = self._system.getSysInfo()
         self._writer.output(name="System Platform", value=info["System Platform"],
@@ -385,44 +357,44 @@ class Detect(syslib.Dump):
         self._writer.output(name="System Load", value=info["System Load"],
                             comment="average over last 1min, 5min & 15min")
 
-
     def _xwindows(self):
-        xwininfo = syslib.Command("xwininfo", pathextra=[ "/usr/bin/X11", "/usr/openwin/bin" ],
-                                  args=[ "-root" ], check=False)
+        xwininfo = syslib.Command("xwininfo", pathextra=["/usr/bin/X11", "/usr/openwin/bin"],
+                                  args=["-root"], check=False)
         if xwininfo.isFound():
             xwininfo.run(mode="batch")
             if xwininfo.hasOutput():
-                xset = syslib.Command("xset", pathextra=[ "/usr/bin/X11", "/usr/openwin/bin" ],
-                                      args=[ "-q" ], check=False)
+                xset = syslib.Command("xset", pathextra=["/usr/bin/X11", "/usr/openwin/bin"],
+                                      args=["-q"], check=False)
                 if xset.isFound():
                     xset.run(mode="batch")
                     try:
                         for line in xset.getOutput():
                             if "Standby:" in line and "Suspend:" in line and "Off:" in line:
                                 junk, standby, junk, suspend, junk, off = (line + " ").replace(
-                                        " 0 ", " Off ").split()
-                                self._writer.output(name="X-Display Power",
-                                        value=standby + " " + suspend + " " + off,
-                                        comment="DPMS Standby Suspend Off")
+                                    " 0 ", " Off ").split()
+                                self._writer.output(
+                                    name="X-Display Power", value=standby + " " + suspend + " " +
+                                    off, comment="DPMS Standby Suspend Off")
                                 break
                         for line in xset.getOutput():
                             if "auto repeat delay:" in line and "repeat rate:" in line:
-                                self._writer.output(name="X-Keyboard Repeat",
-                                        value=line.split()[3],
-                                        comment=line.split()[6] + " characters per second")
+                                self._writer.output(
+                                    name="X-Keyboard Repeat", value=line.split()[3],
+                                    comment=line.split()[6] + " characters per second")
                                 break
                         for line in xset.getOutput():
                             if "acceleration:" in line and "threshold:" in line:
-                                self._writer.output(name="X-Mouse Speed",
-                                        value=line.split()[1], comment="acceleration factor")
+                                self._writer.output(
+                                    name="X-Mouse Speed", value=line.split()[1],
+                                    comment="acceleration factor")
                                 break
                         for line in xset.getOutput():
                             if "timeout:" in line and "cycle:" in line:
                                 timeout = int(line.split()[1])
                                 if timeout:
-                                    self._writer.output(name="X-Screensaver",
-                                            value=str(timeout), comment =
-                                            "no power saving for LCD but can keep CPU busy")
+                                    self._writer.output(
+                                        name="X-Screensaver", value=str(timeout),
+                                        comment="no power saving for LCD but can keep CPU busy")
                                 break
                     except (IndexError, ValueError):
                         pass
@@ -434,22 +406,22 @@ class Detect(syslib.Dump):
                         try:
                             if " connected " in line:
                                 screen, junk, resolution, *junk, width, junk, height = line.replace(
-                                        "mm", "").split()
-                                if width in ( "0", "160") and height in( "0", "90"):
+                                    "mm", "").split()
+                                if width in ("0", "160") and height in ("0", "90"):
                                     self._writer.output(name='X-Windows Screen',
-                                                        value = screen, comment = resolution)
+                                                        value=screen, comment=resolution)
                                 else:
                                     size = math.sqrt(float(width)**2 + float(height)**2) / 25.4
                                     comment = '{0:s}, {1:s}mm x {2:s}mm, {3:3.1f}"'.format(
-                                            resolution, width, height, size)
-                                    self._writer.output(name="X-Windows Screen", value=screen,
-                                                        comment=comment)
+                                        resolution, width, height, size)
+                                    self._writer.output(
+                                        name="X-Windows Screen", value=screen, comment=comment)
                         except (IndexError, ValueError):
                             pass
 
                 if "DISPLAY" in os.environ.keys():
-                    width="???"
-                    height="???"
+                    width = "???"
+                    height = "???"
                     try:
                         for line in xwininfo.getOutput():
                             if "Width:" in line:
@@ -467,16 +439,15 @@ class Detect(syslib.Dump):
 
 class OperatingSystem(syslib.Dump):
 
-
     def detectLoader(self, writer):
-        ldd = syslib.Command("ldd", args=[ "/bin/sh" ], check=False)
+        ldd = syslib.Command("ldd", args=["/bin/sh"], check=False)
         if ldd.isFound():
             ldd.run(filter="libc.*=>", mode="batch")
             if ldd.hasOutput():
                 try:
                     glibc = ldd.getOutput()[0].split()[2]
                     version = syslib.info.strings(glibc, "GNU C Library").split(
-                            "version")[1].replace(",", " ").split()[0]
+                        "version")[1].replace(",", " ").split()[0]
                 except IndexError:
                     pass
                 else:
@@ -498,14 +469,11 @@ class OperatingSystem(syslib.Dump):
             if loaders:
                 writer.output(name="LSB " + str(version) + ".x Loader", location=" ".join(loaders))
 
-
     def hasDevices(self):
         return False
 
-
     def hasLoader(self):
         return False
-
 
     def getFqdn(self):
         """
@@ -519,23 +487,21 @@ class OperatingSystem(syslib.Dump):
         else:
             return fqdn + "."
 
-
     def getNetInfo(self):
         """
         Return network information dictionary.
         """
-        info ={}
+        info = {}
         info["Net FQDN"] = self.getFqdn()
         info["Net IPvx Address"] = []
         info["Net IPvx DNS"] = []
         return info
 
-
     def getOsInfo(self):
         """
         Return operating system information dictionary.
         """
-        info ={}
+        info = {}
         info["OS Type"] = syslib.info.getSystem()
         info["OS Name"] = "Unknown"
         info["OS Kernel"] = "Unknown"
@@ -544,12 +510,11 @@ class OperatingSystem(syslib.Dump):
         info["OS Patch X"] = ""
         return info
 
-
     def getCpuInfo(self):
         """
         Return CPU information dictionary.
         """
-        info ={}
+        info = {}
         info["CPU Type"] = syslib.info.getMachine()
         info["CPU Addressability"] = "Unknown"
         info["CPU Addressability X"] = ""
@@ -568,12 +533,11 @@ class OperatingSystem(syslib.Dump):
             info["CPU Type"] = "x86"
         return info
 
-
     def getSysInfo(self):
         """
         Return system information dictionary.
         """
-        info ={}
+        info = {}
         info["System Platform"] = syslib.info.getPlatform()
         info["System Platform X"] = ""
         info["System Memory"] = "Unknown"
@@ -582,13 +546,11 @@ class OperatingSystem(syslib.Dump):
         info["System Load"] = "Unknown"
         return info
 
-
     def _hasValue(self, values, word):
         for key in values.keys():
             if word in str(values[key][0]):
                 return True
         return False
-
 
     def _isitset(self, values, name):
         if name in values.keys():
@@ -599,12 +561,11 @@ class OperatingSystem(syslib.Dump):
 
 class PosixSystem(OperatingSystem):
 
-
     def detectDevices(self, writer):
         mount = syslib.Command("mount", check=False)
         if mount.isFound():
             mount.run(filter=":", mode="batch")
-            df = syslib.Command("df", flags=[ "-k" ], check=False)
+            df = syslib.Command("df", flags=["-k"], check=False)
             for line in sorted(mount.getOutput()):
                 try:
                     device, junk, directory = line.split()[:3]
@@ -612,10 +573,10 @@ class PosixSystem(OperatingSystem):
                     continue
                 size = "??? KB"
                 if df.isFound():
-                    df.setArgs([ directory ])
+                    df.setArgs([directory])
                     thread = CommandThread(df)
                     thread.start()
-                    endTime = time.time() + 1 # One second delay limit
+                    endTime = time.time() + 1  # One second delay limit
                     while thread.is_alive():
                         if time.time() > endTime:
                             thread.kill()
@@ -627,10 +588,8 @@ class PosixSystem(OperatingSystem):
                 writer.output(name="Disk nfs", device="/dev/???", value=size,
                               comment=device + " on " + directory)
 
-
     def hasDevices(self):
         return True
-
 
     def getFqdn(self):
         """
@@ -649,7 +608,6 @@ class PosixSystem(OperatingSystem):
             pass
         return super().getFqdn()
 
-
     def getNetInfo(self):
         """
         Return network information dictionary.
@@ -665,7 +623,6 @@ class PosixSystem(OperatingSystem):
             pass
         return info
 
-
     def getOsInfo(self):
         """
         Return operating system information dictionary.
@@ -675,14 +632,12 @@ class PosixSystem(OperatingSystem):
         info["OS Kernel X"] = syslib.info.getSystem()
         return info
 
-
     def getCpuInfo(self):
         """
         Return CPU information dictionary.
         """
         info = super().getCpuInfo()
         return info
-
 
     def getSysInfo(self):
         """
@@ -703,11 +658,10 @@ class PosixSystem(OperatingSystem):
 
 class LinuxSystem(PosixSystem):
 
-
     def __init__(self):
         self._devices = {}
-        lspci = syslib.Command("lspci", pathextra=[ "/sbin" ], args=[ "-k" ], check=False)
-        modinfo = syslib.Command("modinfo", pathextra=[ "/sbin" ], check=False)
+        lspci = syslib.Command("lspci", pathextra=["/sbin"], args=["-k"], check=False)
+        modinfo = syslib.Command("modinfo", pathextra=["/sbin"], check=False)
         if lspci.isFound():
             lspci.run(mode="batch")
             if not lspci.hasOutput():
@@ -717,7 +671,7 @@ class LinuxSystem(PosixSystem):
                 if "Kernel driver in use:" in line:
                     driver = line.split()[-1]
                     if modinfo.isFound():
-                        modinfo.setArgs([ driver ])
+                        modinfo.setArgs([driver])
                         modinfo.run(filter="^(version|vermagic):", mode="batch")
                         if modinfo.hasOutput():
                             self._devices[device] = (driver + " driver " +
@@ -733,12 +687,13 @@ class LinuxSystem(PosixSystem):
                                 with open("/proc/driver/nvidia/version", errors="replace") as ifile:
                                     for line in ifile:
                                         if "Kernel Module " in line:
-                                            self._devices[device] = ("nvidia driver " +
-                                                    line.split("Kernel Module ")[1].split()[0])
+                                            self._devices[device] = (
+                                                "nvidia driver " +
+                                                line.split("Kernel Module ")[1].split()[0])
                             except IOError:
                                 pass
                         elif "VirtualBox" in line and modinfo.isFound():
-                            modinfo.setArgs([ "vboxvideo" ])
+                            modinfo.setArgs(["vboxvideo"])
                             modinfo.run(filter="^(version|vermagic):", mode="batch")
                             if modinfo.hasOutput():
                                 self._devices[device] = ("vboxvideo driver " +
@@ -746,7 +701,6 @@ class LinuxSystem(PosixSystem):
                                 continue
                     else:
                         self._devices[device] = ""
-
 
     def detectDevices(self, writer):
 
@@ -773,7 +727,7 @@ class LinuxSystem(PosixSystem):
                             for line in ifile:
                                 if line.startswith("name: "):
                                     name = model + " " + line.rstrip(
-                                            "\r\n").replace("name: ", "", 1)
+                                        "\r\n").replace("name: ", "", 1)
                     except (IOError, IndexError):
                         continue
                     device = "/dev/snd/pcmC" + card + "D" + os.path.dirname(file).split("pcm")[-1]
@@ -812,7 +766,7 @@ class LinuxSystem(PosixSystem):
         # Battery detection
         batteries = []
         if os.path.isdir("/sys/class/power_supply"):
-            for directory in glob.glob("/sys/class/power_supply/BAT*"): # New kernels
+            for directory in glob.glob("/sys/class/power_supply/BAT*"):  # New kernels
                 batteries.append(BatteryPower(directory))
         else:
             for directory in glob.glob("/proc/acpi/battery/BAT*"):
@@ -820,16 +774,15 @@ class LinuxSystem(PosixSystem):
         for battery in batteries:
             if battery.isExist():
                 model = (
-                        battery.getOem() + " " + battery.getName() + " " + battery.getType() +
-                        " " + str(battery.getCapacityMax()) + "mAh/" + str(battery.getVoltage()) +
-                        "mV")
+                    battery.getOem() + " " + battery.getName() + " " + battery.getType() + " " +
+                    str(battery.getCapacityMax()) + "mAh/" + str(battery.getVoltage()) + "mV")
                 if battery.getCharge() == "-":
-                    state="-"
+                    state = "-"
                     if battery.getRate() > 0:
                         state += str(battery.getRate()) + "mA"
                         if battery.getVoltage() > 0:
                             mywatts = "{0:4.2f}".format(
-                                    float(battery.getRate()*battery.getVoltage()) / 1000000)
+                                float(battery.getRate()*battery.getVoltage()) / 1000000)
                             state += ", " + str(mywatts) + "W"
                         hours = "{0:3.1f}".format(float(battery.getCapacity()) / battery.getRate())
                         state += ", " + str(hours) + "h"
@@ -838,7 +791,7 @@ class LinuxSystem(PosixSystem):
                     if battery.getRate() > 0:
                         state += str(battery.getRate()) + "mA"
                         if battery.getVoltage() > 0:
-                            mywatts = "{0:4.2f}".format(float(battery.getRate()*
+                            mywatts = "{0:4.2f}".format(float(battery.getRate() *
                                                         battery.getVoltage()) / 1000000)
                             state += ", " + str(mywatts) + "W"
                 else:
@@ -861,7 +814,7 @@ class LinuxSystem(PosixSystem):
             except IOError:
                 pass
         if os.path.isdir("/sys/bus/scsi/devices"):
-            for file in sorted(glob.glob("/sys/block/sr*/device")): # New kernels
+            for file in sorted(glob.glob("/sys/block/sr*/device")):  # New kernels
                 try:
                     id = os.path.basename(os.readlink(file))
                 except OSError:
@@ -900,7 +853,7 @@ class LinuxSystem(PosixSystem):
 
         # Disk device detection
         uuids = {}
-        for file in  glob.glob("/dev/disk/by-uuid/*"):
+        for file in glob.glob("/dev/disk/by-uuid/*"):
             try:
                 uuids["/dev/" + os.path.basename(os.readlink(file))] = file
             except OSError:
@@ -939,7 +892,7 @@ class LinuxSystem(PosixSystem):
                                     except IndexError:
                                         size = "???"
                                     writer.output(name="Disk device", device="/dev/" + hdx,
-                                                  value=size + " KB", comment = model)
+                                                  value=size + " KB", comment=model)
                                 elif hdx in partition:
                                     size, hdxn = partition.split()[2:4]
                                     device = "/dev/" + hdxn
@@ -959,7 +912,7 @@ class LinuxSystem(PosixSystem):
             except IOError:
                 pass
         if os.path.isdir("/sys/bus/scsi/devices"):
-            for file in sorted(glob.glob("/sys/block/sd*/device")): # New kernels
+            for file in sorted(glob.glob("/sys/block/sd*/device")):  # New kernels
                 try:
                     id = os.path.basename(os.readlink(file))
                 except OSError:
@@ -992,7 +945,7 @@ class LinuxSystem(PosixSystem):
                         for line2 in mount.getOutput():
                             try:
                                 if (line2.startswith(device + " ") or
-                                    line2.startswith(uuids[device] + " ")):
+                                        line2.startswith(uuids[device] + " ")):
                                     try:
                                         mountPoint, junk, mountType = line2.split()[2:5]
                                         comment = mountType + " on " + mountPoint
@@ -1050,9 +1003,9 @@ class LinuxSystem(PosixSystem):
         # Ethernet device detection
         for line in sorted(self._devices.keys()):
             if "Ethernet controller: " in line:
-                model = line.split("Ethernet controller: ")[1].replace("Semiconductor ", "").\
-                                                               replace("Co., ", "").\
-                        replace("Ltd. ", "").replace("PCI Express ", "")
+                model = line.split("Ethernet controller: ")[1].replace(
+                    "Semiconductor ", "").replace("Co., ", "").replace(
+                    "Ltd. ", "").replace("PCI Express ", "")
                 writer.output(name="Ethernet device", device="/dev/???", value=model,
                               comment=self._devices[line])
 
@@ -1116,10 +1069,8 @@ class LinuxSystem(PosixSystem):
                 pass
             writer.output(name="Video device", device="/dev/" + device, value="???")
 
-
     def hasLoader(self):
         return True
-
 
     def getNetInfo(self):
         """
@@ -1129,13 +1080,12 @@ class LinuxSystem(PosixSystem):
         env = {}
         if "LANG" not in os.environ.keys():
             env["LANG"] = "en_US"
-        ifconfig = syslib.Command(file="/sbin/ifconfig", args=[ "-a" ])
+        ifconfig = syslib.Command(file="/sbin/ifconfig", args=["-a"])
         ifconfig.run(env=env, filter="inet[6]? addr", mode="batch")
         isjunk = re.compile(".*inet[6]? addr[a-z]*:")
         for line in ifconfig.getOutput():
             info["Net IPvx Address"].append(isjunk.sub(" ", line).split()[0])
         return info
-
 
     def getOsInfo(self):
         """
@@ -1202,8 +1152,8 @@ class LinuxSystem(PosixSystem):
         elif os.path.isfile("/etc/debian_version"):
             try:
                 with open("/etc/debian_version", errors="replace") as ifile:
-                    info["OS Name"] = "Debian " + ifile.readline().rstrip("\r\n").\
-                                                  split("=")[-1].replace('"', '')
+                    info["OS Name"] = "Debian " + ifile.readline().rstrip(
+                        "\r\n").split("=")[-1].replace('"', '')
             except IOError:
                 pass
             return info
@@ -1220,7 +1170,7 @@ class LinuxSystem(PosixSystem):
             except (IOError, IndexError):
                 pass
             return info
-        dpkg = syslib.Command("dpkg", check=False, args=[ "--list" ])
+        dpkg = syslib.Command("dpkg", check=False, args=["--list"])
         if dpkg.isFound():
             dpkg.run(mode="batch")
             for line in dpkg.getOutput():
@@ -1248,7 +1198,6 @@ class LinuxSystem(PosixSystem):
                     pass
             return info
         return info
-
 
     def getCpuInfo(self):
         """
@@ -1285,7 +1234,8 @@ class LinuxSystem(PosixSystem):
             if syslib.info.getMachine() == "x86_64":
                 for line in lines:
                     if line.startswith("address size"):
-                       info["CPU Addressability X"] = line.split(":")[1].split()[0] + "bit physical"
+                        info["CPU Addressability X"] = line.split(
+                            ":")[1].split()[0] + "bit physical"
         except (IOError, IndexError):
             pass
 
@@ -1335,8 +1285,8 @@ class LinuxSystem(PosixSystem):
             try:
                 with open("/sys/devices/system/cpu/cpu0/topology/thread_siblings_list",
                           errors="replace") as ifile:
-                    cpuCores = int(threads/(int(ifile.readline().rstrip("\r\n").\
-                                                split("-")[-1]) + 1))
+                    cpuCores = int(threads/(int(ifile.readline().rstrip(
+                        "\r\n").split("-")[-1]) + 1))
             except (IOError, ValueError):
                 coresPerSocket = None
                 if "Dual Core" in info["CPU Model"]:
@@ -1392,10 +1342,10 @@ class LinuxSystem(PosixSystem):
             try:
                 with open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq",
                           errors="replace") as ifile:
-                     info["CPU Clocks"] = str(int(int(ifile.readline()) / 1000 + 0.5))
+                    info["CPU Clocks"] = str(int(int(ifile.readline()) / 1000 + 0.5))
                 with open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq",
                           errors="replace") as ifile:
-                     info["CPU Clocks"] += " " + str(int(int(ifile.readline()) / 1000 + 0.5))
+                    info["CPU Clocks"] += " " + str(int(int(ifile.readline()) / 1000 + 0.5))
             except (IOError, ValueError):
                 info["CPU Clocks"] = "Unknown"
         for cache in sorted(glob.glob("/sys/devices/system/cpu/cpu0/cache/index*")):
@@ -1422,7 +1372,6 @@ class LinuxSystem(PosixSystem):
                     break
         return info
 
-
     def getSysInfo(self):
         """
         Return system information dictionary.
@@ -1443,7 +1392,6 @@ class LinuxSystem(PosixSystem):
             pass
         return info
 
-
     def _getVirtualMachine(self):
         if os.path.isdir("/sys/devices/xen"):
             return "Xen"
@@ -1458,8 +1406,8 @@ class LinuxSystem(PosixSystem):
             elif " Xen " in line in line:
                 return "Xen"
 
-        for file in (glob.glob("/sys/bus/scsi/devices/*/model") + [ "/proc/scsi/scsi" ] +
-                    glob.glob("/proc/ide/hd?/model")):
+        for file in (glob.glob("/sys/bus/scsi/devices/*/model") + ["/proc/scsi/scsi"] +
+                     glob.glob("/proc/ide/hd?/model")):
             try:
                 with open(file, errors="replace") as ifile:
                     for line in ifile:
@@ -1476,15 +1424,13 @@ class LinuxSystem(PosixSystem):
 
 class WindowsSystem(OperatingSystem):
 
-
     def __init__(self):
         pathextra = []
         if "WINDIR" in os.environ.keys():
             pathextra.append(os.path.join(os.environ["WINDIR"], "system32"))
-        self._ipconfig = syslib.Command("ipconfig", pathextra=pathextra, args=[ "-all" ])
+        self._ipconfig = syslib.Command("ipconfig", pathextra=pathextra, args=["-all"])
         # Except for WIndows XP Home
         self._systeminfo = syslib.Command("systeminfo", pathextra=pathextra, check=False)
-
 
     def getFqdn(self):
         """
@@ -1500,12 +1446,11 @@ class WindowsSystem(OperatingSystem):
                 return fqdn + "."
         return super().getFqdn()
 
-
     def getNetInfo(self):
         """
         Return network information dictionary.
         """
-        info ={}
+        info = {}
         info["Net FQDN"] = self.getFqdn()
         if not self._ipconfig.hasOutput():
             self._ipconfig.run(mode="batch")
@@ -1521,7 +1466,6 @@ class WindowsSystem(OperatingSystem):
                     break
                 (info["Net IPvx DNS"]).append(line.split()[-1])
         return info
-
 
     def getOsInfo(self):
         """
@@ -1541,7 +1485,6 @@ class WindowsSystem(OperatingSystem):
         else:
             info["OS Patch X"] = patchNumber
         return info
-
 
     def getCpuInfo(self):
         """
@@ -1568,7 +1511,6 @@ class WindowsSystem(OperatingSystem):
         info["CPU Clock"] = str(self._isitset(values, "~MHz"))
         return info
 
-
     def getSysInfo(self):
         """
         Return system information dictionary.
@@ -1590,10 +1532,9 @@ class WindowsSystem(OperatingSystem):
         info["System Load"] = "Unknown"
         return info
 
-
     def _regRead(self, hive, path):
         subkeys = []
-        values ={}
+        values = {}
         try:
             key = winreg.OpenKey(hive, path)
         except WindowsError:
@@ -1604,16 +1545,14 @@ class WindowsSystem(OperatingSystem):
                 subkeys.append(winreg.EnumKey(key, i))
             for i in range(nvalues):
                 name, value, type = winreg.EnumValue(key, i)
-                values[ name ] = [ value, type ]
+                values[name] = [value, type]
         return subkeys, values
 
 
 class Writer(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
-
 
     def output(self, name, architecture="", comment="", device="", location="", value=""):
         line = " {0:19s}".format(name + ":")
@@ -1634,7 +1573,6 @@ class Writer(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -1648,16 +1586,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

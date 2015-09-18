@@ -3,7 +3,7 @@
 MyQS, My Queuing System batch job execution.
 """
 
-RELEASE = "2.6.0"
+RELEASE = "2.6.1"
 
 import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -21,13 +21,12 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._release = RELEASE
         if len(args) != 3:
             raise SystemExit(sys.argv[0] +
                              ': Cannot be started manually. Please run "myqsd" command.')
-        elif args[1] not in ( "-jobid", "-spawn" ):
+        elif args[1] not in ("-jobid", "-spawn"):
             raise SystemExit(sys.argv[0] +
                              ': Cannot be started manually. Please run "myqsd" command.')
         self._mode = args[1][1:]
@@ -35,13 +34,11 @@ class Options(syslib.Dump):
                                      "myqs", syslib.info.getHostname())
         self._jobid = args[2]
 
-
     def getJobid(self):
         """
         Return job ID.
         """
         return self._jobid
-
 
     def getMode(self):
         """
@@ -49,13 +46,11 @@ class Options(syslib.Dump):
         """
         return self._mode
 
-
     def getMyqsdir(self):
         """
         Return myqs directory.
         """
         return self._myqsdir
-
 
     def getRelease(self):
         """
@@ -65,7 +60,6 @@ class Options(syslib.Dump):
 
 
 class Job(syslib.Dump):
-
 
     def __init__(self, options):
         self._myqsdir = options.getMyqsdir()
@@ -78,13 +72,12 @@ class Job(syslib.Dump):
         else:
             self._start(options)
 
-
     def _spawn(self, options):
         try:
             with open(os.path.join(self._myqsdir, self._jobid + ".r"), "a",
-                      newline = "\n") as ofile:
+                      newline="\n") as ofile:
                 mypid = os.getpid()
-                os.setpgid(mypid, mypid) # New PGID
+                os.setpgid(mypid, mypid)  # New PGID
                 pgid = os.getpgid(mypid)
                 print("PGID=" + str(pgid) + "\nSTART=" + str(time.time()), file=ofile)
         except IOError:
@@ -116,7 +109,6 @@ class Job(syslib.Dump):
         self._sh(command)
         command.run(mode="exec")
 
-
     def _sh(self, command):
         try:
             with open(command.getFile(), errors="replace") as ifile:
@@ -126,7 +118,6 @@ class Job(syslib.Dump):
                     command.setWrapper(sh)
         except IOError:
             pass
-
 
     def _start(self, options):
         try:
@@ -144,9 +135,9 @@ class Job(syslib.Dump):
             os.chdir(os.environ["HOME"])
         renice = syslib.Command("renice", check=False)
         if renice.isFound():
-            renice.setArgs([ "100", str(os.getpid()) ])
+            renice.setArgs(["100", str(os.getpid())])
             renice.run(mode="batch")
-        myqexec = syslib.Command(file=__file__, args=[ "-spawn", self._jobid ])
+        myqexec = syslib.Command(file=__file__, args=["-spawn", self._jobid])
         myqexec.run()
         print("-"*80)
         print("MyQS FINISH =", time.strftime("%Y-%m-%d-%H:%M:%S"))
@@ -158,7 +149,6 @@ class Job(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -173,16 +163,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

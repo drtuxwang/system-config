@@ -4,7 +4,7 @@ MyQS, My Queuing System batch job statistics.
 
 """
 
-RELEASE = "2.6.0"
+RELEASE = "2.6.1"
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -23,12 +23,10 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._release = RELEASE
 
         self._parseArgs(args[1:])
-
 
     def getRelease(self):
         """
@@ -36,20 +34,17 @@ class Options(syslib.Dump):
         """
         return self._release
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="MyQS v" + self._release + ", My Queuing System batch job submission.")
+            description="MyQS v" + self._release + ", My Queuing System batch job submission.")
 
         self._args = parser.parse_args(args)
 
 
 class Sorter(syslib.Dump):
 
-
     def __init__(self, x, *args):
         self._x = x
-
 
     def __cmp__(self, y):
         cmp = int(x.split("/")[-1][:-2]) - int(y.split("/")[-1][:-2])
@@ -63,18 +58,16 @@ class Sorter(syslib.Dump):
 
 class Stats(syslib.Dump):
 
-
     def __init__(self, options):
         hostname = syslib.info.getHostname()
         print('\nMyQS', options.getRelease(),
-                ', My Queuing System batch job statistics on HOST "' + hostname + '".\n')
+              ', My Queuing System batch job statistics on HOST "' + hostname + '".\n')
         if "HOME" not in os.environ.keys():
             raise SystemExit(sys.argv[0] + ": Cannot determine home directory.")
         self._myqsdir = os.path.join(os.environ["HOME"], ".config",
                                      "myqs", syslib.info.getHostname())
         self._showjobs()
         self._myqsd()
-
 
     def _myqsd(self):
         lockfile = os.path.join(self._myqsdir, "myqsd.pid")
@@ -92,7 +85,6 @@ class Stats(syslib.Dump):
         except IOError:
             pass
         print('MyQS batch job scheduler not running. Run "myqsd" command.')
-
 
     def _showjobs(self):
         print("JOBID  QUEUENAME  JOBNAME                                     CPUS  STATE  TIME")
@@ -130,16 +122,18 @@ class Stats(syslib.Dump):
                     else:
                         if syslib.Task().haspgid(pgid):
                             if os.path.isdir(info["DIRECTORY"]):
-                                logfile = os.path.join(info["DIRECTORY"],
-                                        os.path.basename(info["COMMAND"]) + ".o" + str(jobid))
+                                logfile = os.path.join(
+                                    info["DIRECTORY"], os.path.basename(info["COMMAND"]) +
+                                    ".o" + str(jobid))
                             else:
-                                logfile = os.path.join(os.environ["HOME"],
-                                        os.path.basename(info["COMMAND"]) + ".o" + str(jobid))
+                                logfile = os.path.join(
+                                    os.environ["HOME"], os.path.basename(info["COMMAND"]) +
+                                    ".o" + str(jobid))
                             try:
                                 with open(logfile, errors="replace") as ifile:
                                     output = []
                                     for line in ifile:
-                                        output = (output + [ line.rstrip() ])[-5:]
+                                        output = (output + [line.rstrip()])[-5:]
                             except IOError:
                                 pass
                         else:
@@ -155,7 +149,6 @@ class Stats(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -169,16 +162,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

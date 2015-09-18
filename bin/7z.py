@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         if os.name == "nt":
             self._archiver = syslib.Command("7z.dll", check=False)
@@ -37,17 +36,17 @@ class Options(syslib.Dump):
         self._parseArgs(args[1:])
 
         if self._args.split:
-            self._archiver.extendFlags([ "-v" + str(self._args.split[0]) + "b" ])
+            self._archiver.extendFlags(["-v" + str(self._args.split[0]) + "b"])
 
         if self._args.threads[0] == "1":
-            self._archiver.setFlags([ "a", "-m0=lzma", "-mmt=" + str(self._args.threads[0]),
-                                      "-mx=9", "-ms=on", "-y" ])
+            self._archiver.setFlags(["a", "-m0=lzma", "-mmt=" + str(self._args.threads[0]),
+                                     "-mx=9", "-ms=on", "-y"])
         else:
-            self._archiver.setFlags([ "a", "-m0=lzma2", "-mmt=" + str(self._args.threads[0]),
-                                      "-mx=9", "-ms=on", "-y" ])
+            self._archiver.setFlags(["a", "-m0=lzma2", "-mmt=" + str(self._args.threads[0]),
+                                     "-mx=9", "-ms=on", "-y"])
 
         if os.path.isdir(self._args.archive[0]):
-            self._archiver.setArgs([ os.path.abspath(self._args.archive[0]) + ".7z" ])
+            self._archiver.setArgs([os.path.abspath(self._args.archive[0]) + ".7z"])
         else:
             self._archiver.setArgs(self._args.archive)
 
@@ -58,20 +57,18 @@ class Options(syslib.Dump):
 
         self._setenv()
 
-
     def getArchiver(self):
         """
         Return archiver Command class object.
         """
         return self._archiver
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Make a compressed archive in 7z format.")
 
         parser.add_argument("-split", nargs=1, type=int, metavar="bytes",
                             help="Split archive into chucks with selected size.")
-        parser.add_argument("-threads", nargs=1, type=int, default=[ 2 ],
+        parser.add_argument("-threads", nargs=1, type=int, default=[2],
                             help="Threads are faster but decrease quality. Default is 2.")
         parser.add_argument("archive", nargs=1, metavar="file.7z|file.bin|file.exe|directory",
                             help="Archive file or directory.")
@@ -86,14 +83,12 @@ class Options(syslib.Dump):
             raise SystemExit(sys.argv[0] + ": You must specific a positive integer for "
                              "number of threads.")
 
-
     def _setenv(self):
         if "LANG" in os.environ.keys():
-            del os.environ["LANG"] # Avoids locale problems
+            del os.environ["LANG"]  # Avoids locale problems
 
 
 class Pack(syslib.Dump):
-
 
     def __init__(self, options):
         os.umask(int("022", 8))
@@ -105,11 +100,10 @@ class Pack(syslib.Dump):
         archiver.run()
         if archiver.getExitcode():
             print(sys.argv[0] + ': Error code ' + str(archiver.getExitcode()) + ' received from "' +
-                  archiver.getFile() + '".', file = sys.stderr)
+                  archiver.getFile() + '".', file=sys.stderr)
             raise SystemExit(archiver.getExitcode())
         if sfx:
             self._makeSfx(archive, sfx)
-
 
     def _checkSfx(self, archiver, archive):
         sfx = ""
@@ -125,7 +119,6 @@ class Pack(syslib.Dump):
                     raise SystemExit(sys.argv[0] + ': Cannot find "' + sfx + '" SFX file.')
                 archiver.run(mode="exec")
         return sfx
-
 
     def _makeSfx(self, archive, sfx):
         print("Adding SFX code")
@@ -145,7 +138,6 @@ class Pack(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Cannot rename "' + archive +
                              '-sfx" file to "' + archive + '".')
 
-
     def _copy(self, ifile, ofile):
         while True:
             chunk = ifile.read(131072)
@@ -155,7 +147,6 @@ class Pack(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -170,16 +161,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

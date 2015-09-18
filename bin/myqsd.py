@@ -3,7 +3,7 @@
 MyQS, My Queuing System batch job scheduler daemon
 """
 
-RELEASE = "2.6.0"
+RELEASE = "2.6.1"
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -22,7 +22,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._release = RELEASE
 
@@ -31,13 +30,11 @@ class Options(syslib.Dump):
         self._myqsdir = os.path.join(os.environ["HOME"], ".config", "myqs",
                                      syslib.info.getHostname())
 
-
     def getDaemonFlag(self):
         """
         Return daemon flag.
         """
         return self._args.daemonFlag
-
 
     def getMyqsdir(self):
         """
@@ -45,24 +42,21 @@ class Options(syslib.Dump):
         """
         return self._myqsdir
 
-
     def getSlots(self):
         """
         Return CPU core slots.
         """
         return self._args.slots[0]
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="MyQS v" + self._release +
-                            ", My Queuing System batch scheduler daemon.")
+            description="MyQS v" + self._release + ", My Queuing System batch scheduler daemon.")
 
-        parser.add_argument("-daemon", dest="daemonFlag", action="store_true",
-                            help="Start batch job daemon.")
+        parser.add_argument(
+            "-daemon", dest="daemonFlag", action="store_true", help="Start batch job daemon.")
 
-        parser.add_argument("slots", nargs=1, type=int,
-                            help="The maximum number of CPU execution slots to create.")
+        parser.add_argument(
+            "slots", nargs=1, type=int, help="The maximum number of CPU execution slots to create.")
 
         self._args = parser.parse_args(args)
 
@@ -72,7 +66,6 @@ class Options(syslib.Dump):
 
 
 class Lock(syslib.Dump):
-
 
     def __init__(self, file):
         self._file = file
@@ -86,10 +79,8 @@ class Lock(syslib.Dump):
         except IOError:
             pass
 
-
     def check(self):
         return syslib.Task().haspid(self._pid)
-
 
     def create(self):
         try:
@@ -111,9 +102,8 @@ class Lock(syslib.Dump):
         except IOError:
             return
 
-
     def remove(self):
-        syslib.Task().killpids([ self._pid ])
+        syslib.Task().killpids([self._pid])
         try:
             os.remove(self._file)
         except OSError:
@@ -121,7 +111,6 @@ class Lock(syslib.Dump):
 
 
 class Daemon(syslib.Dump):
-
 
     def __init__(self, options):
         self._myqsdir = options.getMyqsdir()
@@ -134,10 +123,9 @@ class Daemon(syslib.Dump):
         else:
             self._startDaemon(options)
 
-
     def _restart(self, options):
         for file in sorted(glob.glob(os.path.join(self._myqsdir, "*.r")),
-                           key = lambda s: os.path.basename(s)[-2]):
+                           key=lambda s: os.path.basename(s)[-2]):
             try:
                 with open(os.path.join(file), errors="replace") as ifile:
                     info = {}
@@ -157,7 +145,6 @@ class Daemon(syslib.Dump):
                     print('Batch job with jobid "' + jobid +
                           '" being requeued after system restart...')
                     os.rename(file, file[:-2] + ".q")
-
 
     def _scheduleJob(self, options):
         running = 0
@@ -186,9 +173,9 @@ class Daemon(syslib.Dump):
 
         free = self._slots - running
         if free > 0:
-            for queue in ( "express", "normal" ):
+            for queue in ("express", "normal"):
                 for file in sorted(glob.glob(os.path.join(self._myqsdir, "*.q")),
-                        key = lambda s: int(os.path.basename(s)[:-2])):
+                                   key=lambda s: int(os.path.basename(s)[:-2])):
                     try:
                         with open(file, errors="replace") as ifile:
                             info = {}
@@ -204,26 +191,24 @@ class Daemon(syslib.Dump):
                                 if free >= int(info["NCPUS"]):
                                     jobid = os.path.basename(file)[:-2]
                                     if os.path.isdir(info["DIRECTORY"]):
-                                        logfile = os.path.join(info["DIRECTORY"],
-                                                os.path.basename(info["COMMAND"]) + ".o" + jobid)
+                                        logfile = os.path.join(info["DIRECTORY"], os.path.basename(
+                                            info["COMMAND"]) + ".o" + jobid)
                                     else:
-                                        logfile = os.path.join(os.environ["HOME"],
-                                                os.path.basename(info["COMMAND"]) + ".o" + jobid)
+                                        logfile = os.path.join(os.environ["HOME"], os.path.basename(
+                                            info["COMMAND"]) + ".o" + jobid)
                                     try:
                                         os.rename(file, file[:-2] + ".r")
                                     except OSError:
                                         continue
-                                    myqexec = syslib.Command("myqexec", args=[ "-jobid", jobid ])
+                                    myqexec = syslib.Command("myqexec", args=["-jobid", jobid])
                                     myqexec.run(logfile=logfile, mode="daemon")
                                     return
-
 
     def _schedulerDaemon(self, options):
         Lock(os.path.join(self._myqsdir, "myqsd.pid")).create()
         while True:
             self._scheduleJob(options)
             time.sleep(2)
-
 
     def _startDaemon(self, options):
         if not os.path.isdir(self._myqsdir):
@@ -239,13 +224,11 @@ class Daemon(syslib.Dump):
         else:
             self._restart(options)
         print("Starting MyQS batch job scheduler...")
-        myqsd = syslib.Command(file=__file__, args=[ "-daemon", str(self._slots) ])
+        myqsd = syslib.Command(file=__file__, args=["-daemon", str(self._slots)])
         myqsd.run(mode="daemon")
 
 
-
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -260,16 +243,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

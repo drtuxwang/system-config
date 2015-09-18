@@ -3,7 +3,7 @@
 MyQS, My Queuing System batch job submission.
 """
 
-RELEASE = "2.6.0"
+RELEASE = "2.6.1"
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -22,12 +22,10 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._release = RELEASE
 
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
@@ -35,13 +33,11 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def getNcpus(self):
         """
         Return number of CPU slots.
         """
         return self._args.ncpus[0]
-
 
     def getQueue(self):
         """
@@ -49,14 +45,13 @@ class Options(syslib.Dump):
         """
         return self._args.queue[0]
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="MyQS v" + self._release + ", My Queuing System batch job submission.")
+            description="MyQS v" + self._release + ", My Queuing System batch job submission.")
 
-        parser.add_argument("-n", nargs=1, type=int, dest="ncpus", default=[ 1 ],
+        parser.add_argument("-n", nargs=1, type=int, dest="ncpus", default=[1],
                             help="Select CPU core slots to reserve for job. Default is 1.")
-        parser.add_argument("-q", nargs=1, dest="queue", default=[ "normal" ],
+        parser.add_argument("-q", nargs=1, dest="queue", default=["normal"],
                             help='Select "normal" or "express" queue. Default is "normal".')
 
         parser.add_argument("files", nargs="+", metavar="batch.sh", help="Batch job file.")
@@ -66,13 +61,12 @@ class Options(syslib.Dump):
         if self._args.ncpus[0] < 1:
             raise SystemExit(sys.argv[0] + ": You must specific a positive integer for "
                              "the number of cpus.")
-        elif self._args.queue[0] not in ( "normal", "express" ):
+        elif self._args.queue[0] not in ("normal", "express"):
             raise SystemExit(sys.argv[0] + ': Cannot submit to non-existent queue "' +
                              self._args.queue[0] + '".')
 
 
 class Submit(syslib.Dump):
-
 
     def __init__(self, options):
         if "HOME" not in os.environ.keys():
@@ -90,7 +84,6 @@ class Submit(syslib.Dump):
         self._submit(options)
         os.remove(lockfile)
         self._myqsd()
-
 
     def _lastjob(self):
         lastjob = os.path.join(self._myqsdir, "myqs.last")
@@ -113,7 +106,6 @@ class Submit(syslib.Dump):
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot update "' + lastjob + '" MyQS lastjob file.')
         return jobid
-
 
     def _lock(self):
         while True:
@@ -141,7 +133,6 @@ class Submit(syslib.Dump):
                 return lockfile
             time.sleep(1)
 
-
     def _myqsd(self):
         lockfile = os.path.join(self._myqsdir, "myqsd.pid")
         try:
@@ -158,7 +149,6 @@ class Submit(syslib.Dump):
         except IOError:
             pass
         print('MyQS batch job scheduler not running. Run "myqsd" command.')
-
 
     def _submit(self, options):
         tmpfile = os.path.join(self._myqsdir, "newjob.tmp")
@@ -180,13 +170,11 @@ class Submit(syslib.Dump):
             except IOError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + tmpfile + '" temporary file.')
             os.rename(tmpfile, os.path.join(self._myqsdir, str(jobid) + ".q"))
-            print("Batch job with jobid", jobid,
-                    "has been submitted into MyQS.")
+            print("Batch job with jobid", jobid, "has been submitted into MyQS.")
             time.sleep(0.5)
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -201,16 +189,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

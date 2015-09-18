@@ -3,7 +3,7 @@
 Quick commandline E-mailer.
 """
 
-RELEASE = "2.5.0"
+RELEASE = "2.5.1"
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -23,7 +23,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._release = RELEASE
 
@@ -31,7 +30,7 @@ class Options(syslib.Dump):
 
         os.umask(int("077", 8))
 
-        self._sendmail = syslib.Command("sendmail", flags=[ "-t" ], pathextra=[ "/usr/lib" ])
+        self._sendmail = syslib.Command("sendmail", flags=["-t"], pathextra=["/usr/lib"])
         self._editor = syslib.Command("hedit", check=False)
         if "HOME" not in os.environ.keys():
             raise SystemExit(sys.argv[0] + ": Cannot determine home directory.")
@@ -39,9 +38,8 @@ class Options(syslib.Dump):
                                                      "." + str(os.getpid()))
         if not self._editor.isFound():
             self._editor = syslib.Command("vi",)
-        self._editor.setArgs([ self._tmpfile ])
+        self._editor.setArgs([self._tmpfile])
         self._myAddress = self._address()
-
 
     def getAddresses(self):
         """
@@ -49,13 +47,11 @@ class Options(syslib.Dump):
         """
         return self._args.addresses
 
-
     def getEditor(self):
         """
         Return editor Command class object.
         """
         return self._editor
-
 
     def getMyAddress(self):
         """
@@ -63,13 +59,11 @@ class Options(syslib.Dump):
         """
         return self._myAddress
 
-
     def getRelease(self):
         """
         Return release version.
         """
         return self._release
-
 
     def getSendmail(self):
         """
@@ -77,13 +71,11 @@ class Options(syslib.Dump):
         """
         return self._sendmail
 
-
     def getTmpfile(self):
         """
         Return tmpfile.
         """
         return self._tmpfile
-
 
     def _address(self):
         file = os.path.join(os.environ["HOME"], ".address")
@@ -102,10 +94,9 @@ class Options(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" configuration file.')
         return myAddress
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Qwikmail v" + self._release + ", Quick commandline E-mailer.")
+            description="Qwikmail v" + self._release + ", Quick commandline E-mailer.")
 
         parser.add_argument("addresses", nargs="+", metavar="address", help="E-mail addresses.")
 
@@ -113,7 +104,6 @@ class Options(syslib.Dump):
 
 
 class Mailer(syslib.Dump):
-
 
     def __init__(self, options):
         self._malias = syslib.Command("malias", check=False)
@@ -131,14 +121,12 @@ class Mailer(syslib.Dump):
                 if answer.lower() == "y":
                     break
 
-
     def _create(self, options):
         subject = input("Subject: ")
         addresses = self._mailAlias(options.getAddresses())
-        self._email = [ "Subject: " + subject, "To: " + ", ".join(addresses),
-                        "From: " + options.getMyAddress(), "Reply-to: " + options.getMyAddress(),
-                        "X-Mailer: Qwikmail v" + options.getRelease(), "" ]
-
+        self._email = ["Subject: " + subject, "To: " + ", ".join(addresses),
+                       "From: " + options.getMyAddress(), "Reply-to: " + options.getMyAddress(),
+                       "X-Mailer: Qwikmail v" + options.getRelease(), ""]
 
     def _edit(self, options):
         try:
@@ -158,13 +146,11 @@ class Mailer(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Cannot read "' +
                              options.getTmpfile() + '" temporary file.')
 
-
     def _header(self):
         for line in self._email:
             print(line)
             if not line:
                 break
-
 
     def _mailAlias(self, addresses):
         if self._malias.isFound():
@@ -172,7 +158,6 @@ class Mailer(syslib.Dump):
             self._malias.run(mode="batch")
             addresses = self._malias.getOutput()
         return addresses
-
 
     def _send(self, options):
         print("Sending E-mail...")
@@ -189,7 +174,6 @@ class Mailer(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Error code ' + str(sendmail.getExitcode()) +
                              ' received from "' + sendmail.getFile() + '".')
 
-
     def _update(self):
         isemail = re.compile("(To|Cc|Bcc): ", re.IGNORECASE)
         for i in range(len(self._email)):
@@ -197,11 +181,10 @@ class Mailer(syslib.Dump):
                 return
             elif isemail.match(self._email[i]):
                 self._email[i] = (self._email[i].split()[0] + " " +
-                                  ", ".join(self._mailAlias([ isemail.sub("", self._email[i]) ])))
+                                  ", ".join(self._mailAlias([isemail.sub("", self._email[i])])))
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -216,16 +199,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

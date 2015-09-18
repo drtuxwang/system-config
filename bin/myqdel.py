@@ -3,7 +3,7 @@
 MyQS, My Queuing System batch job deletion.
 """
 
-RELEASE = "2.6.0"
+RELEASE = "2.6.1"
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -21,12 +21,10 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._release = RELEASE
 
         self._parseArgs(args[1:])
-
 
     def getForceFlag(self):
         """
@@ -34,17 +32,15 @@ class Options(syslib.Dump):
         """
         return self._args.forceFlag
 
-
     def getJobids(self):
         """
         Return list of job IDs.
         """
         return self._jobids
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="MyQS v" + self._release + ", My Queuing System batch job deletion.")
+            description="MyQS v" + self._release + ", My Queuing System batch job deletion.")
 
         parser.add_argument("-k", action="store_true", dest="forceFlag",
                             help="Force termination of running jobs.")
@@ -62,7 +58,6 @@ class Options(syslib.Dump):
 
 
 class Delete(syslib.Dump):
-
 
     def __init__(self, options):
         if "HOME" not in os.environ.keys():
@@ -112,7 +107,6 @@ class Delete(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -126,16 +120,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -33,7 +33,6 @@ class Dump(object):
     This class provides a "dump()" method for printing all object attributes.
     """
 
-
     def dump(self, prefix="self."):
         """
         Dump object recursively.
@@ -44,7 +43,6 @@ class Dump(object):
             prefix += "."
 
         self._dumpAttributes(prefix, [])
-
 
     def dumpValue(self, prefix, dumped, value):
         """
@@ -61,7 +59,6 @@ class Dump(object):
         else:
             print(prefix, "=", value)
 
-
     def _dumpAttributes(self, prefix, dumped):
         """
         Dump all attributes.
@@ -77,13 +74,12 @@ class Dump(object):
             print(prefix, self)
             for attribute in sorted(self.__dict__.keys()):
                 value = self.__dict__[attribute]
-                if type(value) in ( dict, list, tuple, set ) and self._hasContainer(value):
+                if type(value) in (dict, list, tuple, set) and self._hasContainer(value):
                     self._dumpContainer(prefix, dumped, attribute, value)
                 else:
                     self.dumpValue(prefix + attribute, dumped, value)
         else:
             print(prefix, str(self).replace(">", " reference " + str(nref) + ">"))
-
 
     def _dumpContainer(self, prefix, dumped, name, data):
         """
@@ -119,7 +115,6 @@ class Dump(object):
         else:
             raise NotImplementedError
 
-
     def _hasContainer(self, data):
         """
         Returns True if data is container and contains dumpable object, dict, list,
@@ -130,14 +125,13 @@ class Dump(object):
         if type(data) == dict:
             for key in data.keys():
                 value = data[key]
-                if self._isDumpable(value) or type(value) in ( dict, list, value, set):
+                if self._isDumpable(value) or type(value) in (dict, list, value, set):
                     return True
-        elif type(data) in ( list, tuple, set ):
+        elif type(data) in (list, tuple, set):
             for value in data:
                 if self._isDumpable(value):
                     return True
         return False
-
 
     def _isDumpable(self, data):
         """
@@ -154,7 +148,6 @@ class Background:
     This class starts a command as a background process.
     """
 
-
     def __init__(self):
         filter = os.environ["_SYSTEM_BG"]
         del os.environ["_SYSTEM_BG"]
@@ -163,7 +156,6 @@ class Background:
             Command(file=sys.argv[1], args=sys.argv[2:]).run(filter=filter)
         except SyslibError:
             pass
-
 
     def _signalIgnore(self, signal, frame):
         pass
@@ -182,7 +174,6 @@ class Command(Dump):
     self._stderr   = Stderr for batch process
     self._exitcode = Exitcode
     """
-
 
     def __init__(self, program="", cmd="", file="", flags=None, args=None, pathextra=[],
                  platform="", check=True):
@@ -225,7 +216,6 @@ class Command(Dump):
             else:
                 self._locate(pathextra, platform, check)
 
-
     def run(
             self, directory=None, env=None, filter="", logfile="", mode="interactive",
             replace=("", ""), pipes=(), stdin=[], error2output=False, outputFile="",
@@ -245,7 +235,7 @@ class Command(Dump):
         mode         = "interactive" - Run interactively with optional filtering/replacement.
         replace      = (str1, str2)  - Replace all occurance of str1 with str2
                                        (interactive mode only).
-        pipes        = [ Command ]   - Command class objects to form execution pipe
+        pipes        = [Command]     - Command class objects to form execution pipe
                                        (not child, exec or filtered background modes).
         stdin        = <lines>       - Stdin input text (interactive and batch only).
         error2output = True          - Send stderr to stdout
@@ -295,10 +285,9 @@ class Command(Dump):
                 if filter:
                     os.environ["_SYSTEM_BG"] = filter
                     if env is None:
-                        child = subprocess.Popen([ sys.executable, __file__ ] + cmdline,
-                                                 shell=pipe)
+                        child = subprocess.Popen([sys.executable, __file__] + cmdline, shell=pipe)
                     else:
-                        child = subprocess.Popen([ sys.executable, __file__ ] + cmdline,
+                        child = subprocess.Popen([sys.executable, __file__] + cmdline,
                                                  shell=pipe, env=env)
                     del os.environ["_SYSTEM_BG"]
                 elif env is None:
@@ -309,7 +298,7 @@ class Command(Dump):
                 self._oserror(exception)
 
         elif mode == "exec":
-            if os.name == "nt": # Avoids Windows execvpn exit status bug
+            if os.name == "nt":  # Avoids Windows execvpn exit status bug
                 stdoutWrite = sys.stdout.buffer.write
                 stderrWrite = sys.stderr.buffer.write
                 try:
@@ -332,7 +321,7 @@ class Command(Dump):
                     exitcode = child.wait()
                 except OSError:
                     exitcode = 1
-                raise SystemExit(exitcode) # Here we are exiting as exec fails on Windows
+                raise SystemExit(exitcode)  # Here we are exiting as exec fails on Windows
             try:
                 if env == {}:
                     os.execvpe(cmdline[0], cmdline, os.environ)
@@ -344,10 +333,9 @@ class Command(Dump):
         elif mode == "daemon":
             os.environ["_SYSTEM_DM"] = logfile
             if env is None:
-                child = subprocess.Popen([ sys.executable, __file__ ] + cmdline, shell=pipe)
+                child = subprocess.Popen([sys.executable, __file__] + cmdline, shell=pipe)
             else:
-                child = subprocess.Popen([ sys.executable, __file__ ] + cmdline,
-                                         shell=pipe, env=env)
+                child = subprocess.Popen([sys.executable, __file__] + cmdline, shell=pipe, env=env)
             del os.environ["_SYSTEM_DM"]
 
         elif mode == "interactive" and not filter and replace == ("", "") and not stdin:
@@ -383,7 +371,7 @@ class Command(Dump):
             child.stdin.close()
             isfilter = re.compile(filter)
 
-            if mode in ( "background", "interactive" ):
+            if mode in ("background", "interactive"):
                 while True:
                     try:
                         line = child.stdout.readline().decode("utf-8", "replace")
@@ -460,7 +448,6 @@ class Command(Dump):
         if directory:
             os.chdir(pwd)
 
-
     def args2cmd(self, args):
         """
         Join arguments list into command string.
@@ -468,7 +455,6 @@ class Command(Dump):
         args = List of arguments
         """
         return subprocess.list2cmdline(args)
-
 
     def cmd2args(self, cmd):
         """
@@ -503,7 +489,7 @@ class Command(Dump):
                 quoted = not quoted
             elif char == 1:
                 arg.append('"')
-            elif char in ( ' ', '\t' ):
+            elif char in (' ', '\t'):
                 if quoted:
                     arg.append(char)
                 else:
@@ -515,13 +501,11 @@ class Command(Dump):
 
         return args
 
-
     def isFound(self):
         """
         Return True if file is defined.
         """
         return self._file != ""
-
 
     def getProgram(self):
         """
@@ -529,20 +513,17 @@ class Command(Dump):
         """
         return self._program
 
-
     def getFile(self):
         """
         Return file location.
         """
         return self._file
 
-
     def getFlags(self):
         """
         Return list of flags.
         """
         return self._flags
-
 
     def setFlags(self, flags):
         """
@@ -552,7 +533,6 @@ class Command(Dump):
         """
         self._flags = flags
 
-
     def appendFlag(self, flag):
         """
         Append to command line flags
@@ -560,7 +540,6 @@ class Command(Dump):
         flag = Flag
         """
         self._flags.append(flag)
-
 
     def extendFlags(self, flags):
         """
@@ -570,13 +549,11 @@ class Command(Dump):
         """
         self._flags.extend(flags)
 
-
     def getArgs(self):
         """
         Return list of arguments.
         """
         return self._args
-
 
     def setArgs(self, args):
         """
@@ -586,7 +563,6 @@ class Command(Dump):
         """
         self._args = args
 
-
     def appendArg(self, arg):
         """
         Append to command line arguments
@@ -595,7 +571,6 @@ class Command(Dump):
         """
         self._args.append(arg)
 
-
     def extendArgs(self, args):
         """
         Extend command line arguments
@@ -603,7 +578,6 @@ class Command(Dump):
         args = List of arguments
         """
         self._args.extend(args)
-
 
     def setWrapper(self, command):
         """
@@ -615,7 +589,6 @@ class Command(Dump):
             raise SyslibError(sys.argv[0] + ': Cannot set blank wrapper program for "' +
                               self._file + '" program.')
         self._wrapper = command.getCommandLine()
-
 
     def getCommandLine(self):
         """
@@ -632,14 +605,13 @@ class Command(Dump):
                 if line.startswith("#!/"):
                     wrapper = line.replace("#!/usr/bin/env ", "").split()
                     if wrapper[0].startswith("python"):
-                        return [ sys.executable, self._file ] + self._flags + self._args
+                        return [sys.executable, self._file] + self._flags + self._args
                     elif wrapper:
-                        return ([ Command(wrapper[0].split("/")[-1],
-                                args = wrapper[1:]).getCommandLine() ] + self._wrapper +
-                                [ self._file ] + self._flags + self._args)
+                        return ([Command(wrapper[0].split("/")[-1],
+                                args=wrapper[1:]).getCommandLine()] + self._wrapper +
+                                [self._file] + self._flags+self._args)
 
-        return self._wrapper + [ self._file ] + self._flags + self._args
-
+        return self._wrapper + [self._file] + self._flags + self._args
 
     def getExitcode(self):
         """
@@ -647,13 +619,11 @@ class Command(Dump):
         """
         return self._exitcode
 
-
     def hasOutput(self):
         """
         Return True if stdout used.
         """
         return self._stdout != []
-
 
     def isMatchOutput(self, pattern):
         """
@@ -666,7 +636,6 @@ class Command(Dump):
             if ispattern.search(line):
                 return True
         return False
-
 
     def getOutput(self, pattern=""):
         """
@@ -684,13 +653,11 @@ class Command(Dump):
                 stdout.append(line)
         return stdout
 
-
     def hasError(self):
         """
         Return True if stderr used.
         """
         return self._stderr != []
-
 
     def isMatchError(self, pattern):
         """
@@ -702,7 +669,6 @@ class Command(Dump):
         for line in self._stderr:
             if ispattern.search(line):
                 return True
-
 
     def getError(self, pattern=""):
         """
@@ -720,7 +686,6 @@ class Command(Dump):
                 stderr.append(line)
         return stderr
 
-
     def _checkGlibc(self, files):
         hasGlibc = re.compile("-glibc_\d+[.]\d+([.]\d+)?")
         nfiles = []
@@ -728,12 +693,11 @@ class Command(Dump):
             if hasGlibc.search(file):
                 version = file.split("-glibc_")[1].split("-")[0].split("/")[0]
                 if (distutils.version.LooseVersion(self._getGlibc()) >=
-                           distutils.version.LooseVersion(version)):
+                        distutils.version.LooseVersion(version)):
                     nfiles.append(file)
             else:
                 nfiles.append(file)
         return nfiles
-
 
     def _getGlibc(self):
         """
@@ -742,7 +706,7 @@ class Command(Dump):
         """
         if "glibc" not in _cache.keys():
             if _cache["osname"] == "linux":
-                ldd = Command("ldd", args=[ "--version" ], check=False)
+                ldd = Command("ldd", args=["--version"], check=False)
                 if ldd.isFound():
                     ldd.run(filter="^ldd ", mode="batch")
                     _cache["glibc"] = ldd.getOutput()[0].split()[-1]
@@ -753,52 +717,47 @@ class Command(Dump):
 
         return _cache["glibc"]
 
-
     def _locate(self, pathextra, platform, check):
         if not platform:
             platform = info.getPlatform()
 
-        if platform in ( "windows-x86_64", "windows-x86" ):
-            extensions = [ "", ".py" ]
+        if platform in ("windows-x86_64", "windows-x86"):
+            extensions = ["", ".py"]
             if "PATHEXT" in os.environ.keys():
                 extensions.extend(os.environ["PATHEXT"].lower().split(os.pathsep))
         else:
-            extensions = [ "" ]
+            extensions = [""]
 
         directory = os.path.dirname(os.path.abspath(sys.argv[0]))
         if os.path.basename(directory) == "bin":
             directory = os.path.dirname(directory)
             files = []
 
-            if platform in ( "linux-x86_64", "linux-x86" ):
+            if platform in ("linux-x86_64", "linux-x86"):
                 if platform == "linux-x86_64":
                     files = self._checkGlibc(glob.glob(os.path.join(directory, "*",
-                            "linux64_*-x86*", self._program)))
+                                             "linux64_*-x86*", self._program)))
                 if not files:
                     files = self._checkGlibc(glob.glob(os.path.join(directory, "*",
-                            "linux_*-x86*", self._program)))
+                                             "linux_*-x86*", self._program)))
 
-            elif platform in ( "macos-x86_64", "macos-x86"):
+            elif platform in ("macos-x86_64", "macos-x86"):
                 if platform == "macos-x86_64":
-                    files = glob.glob(os.path.join(directory, "*" ,
-                                                   "macos64_*-x86*", self._program))
+                    files = glob.glob(os.path.join(directory, "*", "macos64_*-x86*", self._program))
                 if not files:
-                    files = glob.glob(os.path.join(directory, "*" ,
-                                                   "macos_*-x86*", self._program))
+                    files = glob.glob(os.path.join(directory, "*", "macos_*-x86*", self._program))
 
-            elif platform in ( "sunos-x86_64", "sunos-x86" ):
+            elif platform in ("sunos-x86_64", "sunos-x86"):
                 if platform == "sunos-x86_64":
-                    files = glob.glob(os.path.join(directory, "*",
-                                                   "sunos64_*-x86*", self._program))
+                    files = glob.glob(os.path.join(directory, "*", "sunos64_*-x86*", self._program))
                 if not files:
-                    files = glob.glob(os.path.join(directory, "*",
-                                                   "sunos_*-x86*", self._program))
+                    files = glob.glob(os.path.join(directory, "*", "sunos_*-x86*", self._program))
 
-            elif platform in ( "windows-x86_64", "windows-x86" ):
-                if platform in ( "windows-x86_64" ):
+            elif platform in ("windows-x86_64", "windows-x86"):
+                if platform in ("windows-x86_64"):
                     for extension in extensions:
                         files = glob.glob(os.path.join(directory, "*",
-                                "windows64_*-x86*", self._program + extension))
+                                          "windows64_*-x86*", self._program + extension))
                         if files:
                             break
                 if not files:
@@ -812,9 +771,9 @@ class Command(Dump):
             if not files:
                 for extension in extensions:
                     files = glob.glob(os.path.join(directory, "????*",
-                                                   self._program + extension))
+                                      self._program + extension))
                     if files:
-                       break
+                        break
 
             self._file = info.newest(files)
             if self._file:
@@ -829,16 +788,16 @@ class Command(Dump):
 
         # Prevent recursion
         program = os.path.basename(self._program)
-        if os.path.basename(sys.argv[0]) in ( program, program + ".py" ):
+        if os.path.basename(sys.argv[0]) in (program, program + ".py"):
             mydir = os.path.dirname(sys.argv[0])
             if mydir in paths:
                 paths = paths[paths.index(mydir) + 1:]
 
         # Search PATH
         if sys.argv[0].endswith(".py"):
-            mynames = ( sys.argv[0][:-3], sys.argv[0] )
+            mynames = (sys.argv[0][:-3], sys.argv[0])
         else:
-            mynames = ( sys.argv[0], sys.argv[0] + ".py" )
+            mynames = (sys.argv[0], sys.argv[0] + ".py")
         for directory in pathextra + paths:
             if os.path.isdir(directory):
                 for extension in extensions:
@@ -849,7 +808,6 @@ class Command(Dump):
                             return
         if check:
             raise SyslibError(sys.argv[0] + ': Cannot find required "' + program + '" software.')
-
 
     def _oserror(self, exception):
         if "No such file" in exception.args[1]:
@@ -864,7 +822,6 @@ class Daemon:
     This class starts a command as a daemon de-coupled from the current process.
     """
 
-
     def __init__(self):
         self._bufferSize = 131072
 
@@ -872,7 +829,7 @@ class Daemon:
         del os.environ["_SYSTEM_DM"]
         mypid = os.getpid()
         if os.name == "posix":
-            os.setpgid(mypid, mypid) # New PGID
+            os.setpgid(mypid, mypid)  # New PGID
         try:
             child = Command(file=sys.argv[1],
                             args=sys.argv[2:]).run(mode="child", error2output=True)
@@ -888,7 +845,6 @@ class Daemon:
         else:
             self._runWait(child)
 
-
     def _runLog(self, child, logfile):
         try:
             with open(logfile, "ab") as ofile:
@@ -897,10 +853,9 @@ class Daemon:
                     if not byte:
                         break
                     ofile.write(byte)
-                    ofile.flush() # Unbuffered
+                    ofile.flush()  # Unbuffered
         except IOError:
             pass
-
 
     def _runWait(self, child):
         while child.stdout.read(self._bufferSize):
@@ -924,7 +879,6 @@ class FileStat(Dump):
     self._ctime = Time of creation
     """
 
-
     def __init__(self, file="", size=None):
         """
         file = filename
@@ -935,16 +889,15 @@ class FileStat(Dump):
             self._file = file
             try:
                 (self._mode, self._ino, self._dev, self._nlink, self._uid, self._gid,
-                        self._size, self._atime, self._mtime, self._ctime) = os.stat(file)
+                    self._size, self._atime, self._mtime, self._ctime) = os.stat(file)
             except (OSError, TypeError):
                 if not os.path.islink:
                     raise SyslibError(sys.argv[0] + ': Cannot find "' + file + '" file status.')
                 (self._mode, self._ino, self._dev, self._nlink, self._uid, self._gid, self._size,
-                        self._atime, self._mtime, self._ctime) = [ 0 ] * 10
+                    self._atime, self._mtime, self._ctime) = [0] * 10
             else:
-                if size != None:
+                if size is not None:
                     self._size = size
-
 
     def dumpValue(self, prefix, dumped, value):
         """
@@ -959,13 +912,11 @@ class FileStat(Dump):
         else:
             super().dumpValue(prefix, dumped, value)
 
-
     def getFile(self):
         """
         Return filename
         """
         return self._file
-
 
     def getGroupid(self):
         """
@@ -973,13 +924,11 @@ class FileStat(Dump):
         """
         return self._gid
 
-
     def getInodeDevice(self):
         """
         Return device inode resides on
         """
         return self._dev
-
 
     def getInodeNumber(self):
         """
@@ -987,13 +936,11 @@ class FileStat(Dump):
         """
         return self._ino
 
-
     def getNumberlinks(self):
         """
         Return number of links to the inode
         """
         return self._nlink
-
 
     def getMode(self):
         """
@@ -1001,13 +948,11 @@ class FileStat(Dump):
         """
         return self._mode
 
-
     def getSize(self):
         """
         Return size in bytes of a file
         """
         return self._size
-
 
     def getUserid(self):
         """
@@ -1015,13 +960,11 @@ class FileStat(Dump):
         """
         return self._uid
 
-
     def getTime(self):
         """
         Return time of last modification
         """
         return self._mtime
-
 
     def getTimeAccess(self):
         """
@@ -1029,13 +972,11 @@ class FileStat(Dump):
         """
         return self._atime
 
-
     def getTimeCreate(self):
         """
         Return time of creation.
         """
         return self._ctime
-
 
     def getTimeLocal(self):
         """
@@ -1049,7 +990,6 @@ class SystemInfo(Dump):
     This class determines system information.
     The "__name__.info" object is a instance of SystemInfo.
     """
-
 
     def __init__(self):
         self._islabel = re.compile("(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
@@ -1104,7 +1044,7 @@ class SystemInfo(Dump):
                     if arch == "x86_64":
                         _cache["machine"] = "x86_64"
                     elif arch == "i386":
-                        sysctl = Command(file="/usr/sbin/sysctl", args=[ "-a" ])
+                        sysctl = Command(file="/usr/sbin/sysctl", args=["-a"])
                         sysctl.run(filter="hw.cpu64bit_capable: 1", mode="batch")
                         if sysctl.hasOutput():
                             _cache["machine"] = "x86_64"
@@ -1132,13 +1072,11 @@ class SystemInfo(Dump):
 
             _cache["platform"] = _cache["osname"] + "-" + _cache["machine"]
 
-
     def idnaHost(self, host):
         """
         Return hostname in IDNA format.
         """
         return str(host.encode("idna"))[2:-1]
-
 
     def newest(self, files):
         """
@@ -1159,7 +1097,6 @@ class SystemInfo(Dump):
                     nfileStat = FileStat(nfile)
         return nfile
 
-
     def oldest(self, files):
         """
         Return oldest file or directory.
@@ -1178,7 +1115,6 @@ class SystemInfo(Dump):
                     nfile = file
                     nfileStat = FileStat(nfile)
         return nfile
-
 
     def strings(self, file, pattern):
         """
@@ -1207,7 +1143,6 @@ class SystemInfo(Dump):
             pass
         return ""
 
-
     def isenvName(self, name):
         """
         Return True if valid Environmental variable name.
@@ -1215,7 +1150,6 @@ class SystemInfo(Dump):
         name = Environmental variable name
         """
         return self._isenvName.match(name)
-
 
     def ishost(self, host):
         """
@@ -1232,13 +1166,11 @@ class SystemInfo(Dump):
             return False
         return all(self._islabel.match(label) for label in host.rstrip(".").split("."))
 
-
     def getSystem(self):
         """
         Return system name (ie "linux", "windows")
         """
         return _cache["osname"]
-
 
     def getKernel(self):
         """
@@ -1246,20 +1178,17 @@ class SystemInfo(Dump):
         """
         return _cache["kernel"]
 
-
     def getMachine(self):
         """
         Return machine type (ie "x86", "x86_64")
         """
         return _cache["machine"]
 
-
     def getPlatform(self):
         """
         Return platform name (ie "linux-x86_64", "windows-x86_64)
         """
         return _cache["platform"]
-
 
     def getHostname(self):
         """
@@ -1269,16 +1198,15 @@ class SystemInfo(Dump):
             _cache["hostname"] = socket.gethostname()
         return _cache["hostname"].split(".")[0].lower()
 
-
     def getUsername(self):
         """
         Return my username.
         """
         if "username" not in _cache.keys():
             _cache["username"] = "Unknown"
-            for environment in ( "LOGNAME", "USER", "USERNAME" ):
+            for environment in ("LOGNAME", "USER", "USERNAME"):
                 if environment in os.environ.keys():
-                    _cache["username"] = os.environ[ environment ]
+                    _cache["username"] = os.environ[environment]
         return _cache["username"]
 
 
@@ -1289,13 +1217,11 @@ class SyslibError(Dump, Exception):
     self.args = Arguments
     """
 
-
     def __init__(self, message):
         """
         message = Error message
         """
-        self.args = ( message, )
-
+        self.args = (message,)
 
     def getArgs(self):
         """
@@ -1311,7 +1237,6 @@ class Task(Dump):
     self._process  = Dictionary containing process information
     """
 
-
     def __init__(self, user=""):
         """
         user = Username or "<all>"
@@ -1319,49 +1244,48 @@ class Task(Dump):
         self._process = {}
         if not user:
             user = info.getUsername()
-        ps =  self._getps()
+        ps = self._getps()
         ps.run(mode="batch")
         if ps.getProgram() == "tasklist":
-            indice = [ 0 ]
+            indice = [0]
             position = 0
             for column in ps.getOutput()[2].split():
                 position += len(column) + 1
                 indice.append(position)
             for line in ps.getOutput()[3:]:
                 process = {}
-                process[ "USER" ] = line[indice[6]:indice[7]-1].strip()
-                if "\\" in process[ "USER" ]:
-                    process[ "USER" ] = process[ "USER" ].split("\\")[1]
-                if user in ( process[ "USER" ], "<all>" ):
+                process["USER"] = line[indice[6]:indice[7]-1].strip()
+                if "\\" in process["USER"]:
+                    process["USER"] = process["USER"].split("\\")[1]
+                if user in (process["USER"], "<all>"):
                     pid = int(line[indice[1]:indice[2]-1])
-                    process[ "PPID" ] = 1
-                    process[ "PGID" ] = pid
-                    process[ "PRI" ] = "?"
-                    process[ "NICE" ] = "?"
-                    process[ "TTY" ] = line[indice[2]:indice[3]-1].strip().replace("Tcp#", "")
-                    process[ "MEMORY" ] = int(line[indice[4]:indice[5]-1].strip().replace(
-                                              ",", "").replace(".", "").replace(" K", ""))
-                    process[ "CPUTIME" ] = line[indice[7]:indice[8]-1].strip()
-                    process[ "ETIME" ] = "?"
-                    process[ "COMMAND" ] = line[indice[0]:indice[1]-1].strip()
-                    self._process[ pid ] = process
+                    process["PPID"] = 1
+                    process["PGID"] = pid
+                    process["PRI"] = "?"
+                    process["NICE"] = "?"
+                    process["TTY"] = line[indice[2]:indice[3]-1].strip().replace("Tcp#", "")
+                    process["MEMORY"] = int(line[indice[4]:indice[5]-1].strip().replace(
+                                            ",", "").replace(".", "").replace(" K", ""))
+                    process["CPUTIME"] = line[indice[7]:indice[8]-1].strip()
+                    process["ETIME"] = "?"
+                    process["COMMAND"] = line[indice[0]:indice[1]-1].strip()
+                    self._process[pid] = process
         else:
             for line in ps.getOutput()[1:]:
                 process = {}
-                process[ "USER" ] = line.split()[0]
-                if user in ( process[ "USER" ], "<all>" ):
+                process["USER"] = line.split()[0]
+                if user in (process["USER"], "<all>"):
                     pid = int(line.split()[1])
-                    process[ "PPID" ] = int(line.split()[2])
-                    process[ "PGID" ] = int(line.split()[3])
-                    process[ "PRI" ] = line.split()[4]
-                    process[ "NICE" ] = line.split()[5]
-                    process[ "TTY" ] = line.split()[6]
-                    process[ "MEMORY" ] = int(line.split()[7])
-                    process[ "CPUTIME" ] = line.split()[8]
-                    process[ "ETIME" ] = line.split()[9]
-                    process[ "COMMAND" ] = " ".join(line.split()[10:])
-                    self._process[ pid ] = process
-
+                    process["PPID"] = int(line.split()[2])
+                    process["PGID"] = int(line.split()[3])
+                    process["PRI"] = line.split()[4]
+                    process["NICE"] = line.split()[5]
+                    process["TTY"] = line.split()[6]
+                    process["MEMORY"] = int(line.split()[7])
+                    process["CPUTIME"] = line.split()[8]
+                    process["ETIME"] = line.split()[9]
+                    process["COMMAND"] = " ".join(line.split()[10:])
+                    self._process[pid] = process
 
     def pgid2pids(self, pgid):
         """
@@ -1369,15 +1293,14 @@ class Task(Dump):
 
         pgid = Process group ID
         """
-        if type(pgid) != type(0):
+        if not isinstance(pgid, int):
             raise SyslibError(sys.argv[0] + ': "' + __name__ +
                               '.Task" invalid pgid type "' + str(pgid) + '".')
         pids = []
         for pid in self.getPids():
-            if self._process[ pid ][ "PGID" ] == pgid:
+            if self._process[pid]["PGID"] == pgid:
                 pids.append(pid)
         return sorted(pids)
-
 
     def pname2pids(self, pname):
         """
@@ -1391,10 +1314,9 @@ class Task(Dump):
         else:
             isexist = re.compile("^(|[^ ]+/)" + pname + "( |$)")
         for pid in self.getPids():
-            if isexist.search(self._process[ pid ][ "COMMAND" ]):
+            if isexist.search(self._process[pid]["COMMAND"]):
                 pids.append(pid)
         return sorted(pids)
-
 
     def killpids(self, pids, signal="KILL"):
         """
@@ -1403,19 +1325,18 @@ class Task(Dump):
         pids   = List of process IDs
         signal = Signal name to send ("CONT", "KILL", "STOP", "TERM")
         """
-        if signal not in ( "CONT", "KILL", "STOP", "TERM" ):
+        if signal not in ("CONT", "KILL", "STOP", "TERM"):
             raise SyslibError(sys.argv[0] + ': Invalid "' + signal + '" signal name.')
         kill = self._getkill()
         if info.getSystem() != "windows":
-            kill.setFlags([ "-" + signal ])
+            kill.setFlags(["-" + signal])
         for pid in pids:
             if info.getSystem() == "windows":
-                kill.extendArgs([ "/pid", str(pid) ])
+                kill.extendArgs(["/pid", str(pid)])
             else:
                 kill.appendArg(str(pid))
         if kill.getArgs():
             kill.run(mode="batch")
-
 
     def killpgid(self, pgid, signal="KILL"):
         """
@@ -1425,10 +1346,9 @@ class Task(Dump):
         signal = Signal name to send ("CONT", "KILL", "STOP", "TERM")
         """
         if info.getSystem() == "windows":
-            self.killpids([ pgid ], signal=signal)
+            self.killpids([pgid], signal=signal)
         else:
-            self.killpids([ -pgid ], signal=signal)
-
+            self.killpids([-pgid], signal=signal)
 
     def killpname(self, pname, signal="KILL"):
         """
@@ -1439,18 +1359,16 @@ class Task(Dump):
         """
         self.killpids(self.pname2pids(pname), signal=signal)
 
-
     def haspgid(self, pgid):
         """
         Return True if process with <pgid> process group ID exists.
 
         pgid = Process group ID
         """
-        if type(pgid) != type(0):
+        if not isinstance(pgid, int):
             raise SyslibError(sys.argv[0] + ': "' + __name__ +
                               '.Task" invalid pgid type "' + str(pgid) + '".')
         return self.pgid2pids(pgid) != []
-
 
     def haspid(self, pid):
         """
@@ -1458,11 +1376,10 @@ class Task(Dump):
 
         pid = Process ID
         """
-        if type(pid) != type(0):
+        if not isinstance(pid, int):
             raise SyslibError(sys.argv[0] + ': "' + __name__ +
                               '.Task" invalid pid type "' + str(pid) + '".')
         return pid in self._process.keys()
-
 
     def haspname(self, pname):
         """
@@ -1472,7 +1389,6 @@ class Task(Dump):
         """
         return self.pname2pids(pname) != []
 
-
     def getAncestorPids(self, pid):
         """
         Return list of ancestor process IDs.
@@ -1481,11 +1397,10 @@ class Task(Dump):
         """
         apids = []
         if pid in self._process.keys():
-            ppid = self._process[ pid ][ "PPID" ]
+            ppid = self._process[pid]["PPID"]
             if ppid in self._process.keys():
-                apids.extend([ ppid ] + self.getAncestorPids(ppid))
+                apids.extend([ppid] + self.getAncestorPids(ppid))
         return apids
-
 
     def getDescendantPids(self, ppid):
         """
@@ -1496,10 +1411,9 @@ class Task(Dump):
         dpids = []
         if ppid in self._process.keys():
             for pid in sorted(self._process.keys()):
-                if self._process[ pid ][ "PPID" ] == ppid:
-                    dpids.extend([ pid ] + self.getDescendantPids(pid))
+                if self._process[pid]["PPID"] == ppid:
+                    dpids.extend([pid] + self.getDescendantPids(pid))
         return dpids
-
 
     def getOrphanPids(self, pgid):
         """
@@ -1509,12 +1423,11 @@ class Task(Dump):
         """
         pids = []
         for pid in sorted(self._process.keys()):
-            if self._process[ pid ][ "PGID" ] == pgid:
-                if self._process[ pid ][ "PPID" ] == 1:
+            if self._process[pid]["PGID"] == pgid:
+                if self._process[pid]["PPID"] == 1:
                     if pid != pgid:
                         pids.append(pid)
         return pids
-
 
     def getPids(self):
         """
@@ -1522,31 +1435,28 @@ class Task(Dump):
         """
         return sorted(self._process.keys())
 
-
     def getProcess(self, pid):
         """
         Return process dictionary.
         """
         return self._process[pid]
 
-
     def _getkill(self):
         if "kill" not in _cache.keys():
             if _cache["osname"] == "windows":
-                _cache["kill"] = Command("taskkill", flags=[ "/f" ])
+                _cache["kill"] = Command("taskkill", flags=["/f"])
             else:
-                _cache["kill"] = Command("kill", flags=[ "-KILL" ])
+                _cache["kill"] = Command("kill", flags=["-KILL"])
         return _cache["kill"]
-
 
     def _getps(self):
         if "ps" not in _cache.keys():
             osname = _cache["osname"]
             if osname == "windows":
-                _cache["ps"] = Command("tasklist", flags=[ "/v" ])
+                _cache["ps"] = Command("tasklist", flags=["/v"])
             else:
                 _cache["ps"] = Command("ps", flags=[
-                        "-o", "ruser pid ppid pgid pri nice tty vsz time etime args", "-e" ])
+                    "-o", "ruser pid ppid pgid pri nice tty vsz time etime args", "-e"])
                 if osname == "linux":
                     if "COLUMNS" not in os.environ.keys():
                         os.environ["COLUMNS"] = "1024"       # Fix Linux ps width
@@ -1557,7 +1467,6 @@ class Main:
     """
     This class is the main program.
     """
-
 
     def __init__(self):
         self._signals()
@@ -1571,7 +1480,6 @@ class Main:
         except (SyslibError, SystemExit) as exception:
             sys.exit(exception)
         sys.exit(0)
-
 
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
