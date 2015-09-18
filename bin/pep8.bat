@@ -1,2 +1,2 @@
 @echo off
-"%~dp0python3.bat" "%~dp0\pyld.py" pep8 %*
+"%~dp0python3.bat" pep8 %*
