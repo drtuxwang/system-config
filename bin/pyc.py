@@ -92,8 +92,8 @@ class PythonChecker(syslib.Dump):
 
     def __init__(self):
         if os.name == "nt":
-            self._py2to3 = syslib.Command(file=os.path.join(os.path.dirname(sys.executable),
-                                                            "Tools", "Scripts", "2to3.py"))
+            self._py2to3 = syslib.Command(
+                file=os.path.join(os.path.dirname(sys.executable), "Tools", "Scripts", "2to3.py"))
         else:
             file = os.path.join(os.path.dirname(sys.executable), "2to3")
             if os.path.isfile(file + ".py"):
@@ -102,6 +102,9 @@ class PythonChecker(syslib.Dump):
         self._py2to3.setFlags(["--nofix=dict", "--nofix=future", "--nofix=imports",
                                "--nofix=raise", "--nofix=unicode", "--nofix=xrange"])
         self._py2to3.setWrapper(syslib.Command(file=sys.executable))
+
+        self._pep8 = syslib.Command("pep8", flags=[ "--max-line-length=100" ])
+
 
     def _check(self, file):
         error = False
@@ -122,18 +125,12 @@ class PythonChecker(syslib.Dump):
                         if not line.startswith("#!/usr/bin/env python"):
                             print(file, ': ? line 1 should be "#!/usr/bin/env python".', sep="")
                             error = True
-                    if len(line) > 100:
-                        print(file + ": line", n, "contains more than 100 characters. "
-                              "Please use continuation line.")
                         error = True
                     if "except:" in line:
                         if not '"except:' in line:
                             print(file, ': ? line ', n,
                                   ' contains exception with no name "except:".', sep="")
                             error = True
-                    if line.endswith(" "):
-                        print(file, ": ? line ", n, " contains space at end of line.", sep="")
-                        error = True
                     if "\t" in line:
                         print(file, ": ? line ", n, " contains tab instead of spaces.", sep="")
                         error = True
@@ -141,6 +138,14 @@ class PythonChecker(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" Python module file.')
         if self._python3(file):
             error = True
+
+        self._pep8.setArgs([ file ])
+        self._pep8.run(mode="batch")
+        if self._pep8.hasOutput():
+            for line in self._pep8.getOutput():
+                print(line.replace(":", ": ? line ", 1))
+            error = True
+
         return error
 
     def _python3(self, file):
