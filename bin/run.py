@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -43,20 +42,17 @@ class Options(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot create "' +
                                  self._logFile + '" logfile file.')
 
-
     def getLogFile(self):
         """
         Return log file.
         """
         return self._args.logFile
 
-
     def getCommand(self):
         """
         Return command Command class object.
         """
         return self._command
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Run a command immune to terminal hangups.")
@@ -76,7 +72,6 @@ class Options(syslib.Dump):
 
         self._commandArgs = args[len(myArgs):]
 
-
     def _sh(self, command):
         try:
             with open(command.getFile(), errors="replace") as ifile:
@@ -89,7 +84,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -104,16 +98,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

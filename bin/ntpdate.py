@@ -19,14 +19,12 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
-        self._ntpdate = syslib.Command("ntpdate", pathextra=[ "/usr/sbin" ])
-        self._ntpdate.setArgs([ "pool.ntp.org" ])
+        self._ntpdate = syslib.Command("ntpdate", pathextra=["/usr/sbin"])
+        self._ntpdate.setArgs(["pool.ntp.org"])
 
         if len(args) == 1 or args[1] != "-u":
             self._ntpdate.run(mode="exec")
-
 
     def getNtpdate(self):
         """
@@ -36,7 +34,6 @@ class Options(syslib.Dump):
 
 
 class Update(syslib.Dump):
-
 
     def __init__(self, options):
         while True:
@@ -48,7 +45,6 @@ class Update(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -63,16 +59,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -18,25 +18,22 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._thunderbird = syslib.Command("thunderbird")
         if len(args) > 1:
             self._thunderbird.setArgs(args[1:])
-            if args[1] in ( "-v", "-version", "--version" ):
+            if args[1] in ("-v", "-version", "--version"):
                 self._thunderbird.run(mode="exec")
 
         self._filter = "^added$|profile-after-change|mail-startup-done"
 
         self._config()
 
-
     def getFilter(self):
         """
         Return filter pattern.
         """
         return self._filter
-
 
     def getThunderbird(self):
         """
@@ -53,7 +50,6 @@ class Options(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -67,16 +63,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

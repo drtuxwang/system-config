@@ -19,19 +19,16 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._ssh = syslib.Command("ssh")
-
 
     def getLogins(self):
         """
         Return list of logins.
         """
         return self._args.logins
-
 
     def getSsh(self):
         """
@@ -41,16 +38,15 @@ class Options(syslib.Dump):
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Create SSH keys and setup access to remote systems.")
+            description="Create SSH keys and setup access to remote systems.")
 
-        parser.add_argument("logins", nargs="+", metavar="[user]@host",
-                            help="Remote login.")
+        parser.add_argument(
+            "logins", nargs="+", metavar="[user]@host", help="Remote login.")
 
         self._args = parser.parse_args(args)
 
 
 class SecureShell(syslib.Dump):
-
 
     def __init__(self, options):
         self._ssh = options.getSsh()
@@ -60,7 +56,6 @@ class SecureShell(syslib.Dump):
         self._sshdir = os.path.join(os.environ["HOME"], ".ssh")
         self._pubkey = self._config()
         self._check(options)
-
 
     def _check(self, options):
         config = []
@@ -78,9 +73,9 @@ class SecureShell(syslib.Dump):
                 rhost = login.split("@")[1]
                 if "Host " + rhost not in config:
                     print('Adding "' + login + '" to "$HOME/.ssh/config"...')
-                    config.extend([ "", "Host " + rhost, "User " + ruser ])
+                    config.extend(["", "Host " + rhost, "User " + ruser])
                     try:
-                        with open(configfile + "-new", "w", newline = "\n") as ofile:
+                        with open(configfile + "-new", "w", newline="\n") as ofile:
                             for line in config:
                                 print(line, file=ofile)
                     except IOError:
@@ -100,12 +95,11 @@ class SecureShell(syslib.Dump):
                 '    echo "Adding public key to \"' + login + ':$HOME/.ssh/authorized_keys\"..."',
                 '    echo "$PUBKEY" >> $HOME/.ssh/authorized_keys',
                 "fi")
-            self._ssh.setArgs([ login, "/bin/sh" ])
+            self._ssh.setArgs([login, "/bin/sh"])
             self._ssh.run(stdin=stdin)
             if self._ssh.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ssh.getExitcode()) +
                                  ' received from "' + self._ssh.getFile() + '".')
-
 
     def _config(self):
         os.umask(int("077", 8))
@@ -126,7 +120,7 @@ class SecureShell(syslib.Dump):
         if not os.path.isfile(privateKey):
             print("\nGenerating 4096bit RSA private/public key pair...")
             ssh_keygen = syslib.Command("ssh-keygen")
-            ssh_keygen.setArgs([ "-t", "rsa", "-b", "4096", "-f", privateKey, "-N", "" ])
+            ssh_keygen.setArgs(["-t", "rsa", "-b", "4096", "-f", privateKey, "-N", ""])
             ssh_keygen.run()
             if ssh_keygen.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(ssh_keygen.getExitcode()) +
@@ -140,7 +134,7 @@ class SecureShell(syslib.Dump):
                 pubkey = ifile.readline().strip()
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' +
-                    os.path.join(self._sshdir, "id_rsa.pub") + '" public key file.')
+                             os.path.join(self._sshdir, "id_rsa.pub") + '" public key file.')
 
         if pubkey:
             file = os.path.join(self._sshdir, "authorized_keys")
@@ -174,7 +168,6 @@ class SecureShell(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -188,16 +181,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

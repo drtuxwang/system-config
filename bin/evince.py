@@ -18,7 +18,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._evince = syslib.Command("evince")
         self._evince.setArgs(args[1:])
@@ -31,20 +30,17 @@ class Options(syslib.Dump):
         self._config()
         self._setenv()
 
-
     def getEvince(self):
         """
         Return evince Command class object.
         """
         return self._evince
 
-
     def getFilter(self):
         """
         Return filter pattern.
         """
         return self._filter
-
 
     def _config(self):
         if "HOME" in os.environ.keys():
@@ -55,12 +51,11 @@ class Options(syslib.Dump):
                 except OSError:
                     pass
 
-
     def _setenv(self):
-        if "LC_PAPER" not in os.environ.keys(): # Default to A4
+        if "LC_PAPER" not in os.environ.keys():  # Default to A4
             os.environ["LC_PAPER"] = "en_GB.UTF-8"
         if "PRINTER" not in os.environ.keys():
-            lpstat = syslib.Command("lpstat", args=[ "-d" ], check=False)
+            lpstat = syslib.Command("lpstat", args=["-d"], check=False)
             if lpstat.isFound():
                 lpstat.run(filter="^system default destination: ", mode="batch")
                 if lpstat.hasOutput():
@@ -68,7 +63,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -83,16 +77,14 @@ class Main:
             sys.exit(exception)
         sys.exit(options.getEvince().getExitcode())
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

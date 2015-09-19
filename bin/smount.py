@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         if len(args) == 1:
             mount = syslib.Command("mount")
@@ -34,13 +33,13 @@ class Options(syslib.Dump):
         self._parseArgs(args[1:])
 
         id = syslib.Command("id")
-        id.setArgs([ "-u" ])
+        id.setArgs(["-u"])
         id.run(mode="batch")
         if id.getExitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(id.getExitcode()) +
                              ' received from "' + id.getFile() + '".')
         uid = id.getOutput()[0]
-        id.setArgs([ "-g" ])
+        id.setArgs(["-g"])
         id.run(mode="batch")
         if id.getExitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(id.getExitcode()) +
@@ -48,9 +47,8 @@ class Options(syslib.Dump):
         gid = id.getOutput()[0]
 
         self._sshfs = syslib.Command("sshfs")
-        self._sshfs.setArgs([ "-o", "uid=" + uid + ",gid=" + gid + ",nonempty,reconnect" ] +
+        self._sshfs.setArgs(["-o", "uid=" + uid + ",gid=" + gid + ",nonempty,reconnect"] +
                             self._args.remote + self._args.local)
-
 
     def getSshfs(self):
         """
@@ -58,10 +56,9 @@ class Options(syslib.Dump):
         """
         return self._sshfs
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Securely mount a file system using SSH protocol.")
+            description="Securely mount a file system using SSH protocol.")
 
         parser.add_argument("remote", nargs=1, metavar="user@host:/remotepath",
                             help="Remote directory.")
@@ -72,7 +69,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -87,16 +83,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

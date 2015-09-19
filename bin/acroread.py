@@ -18,16 +18,13 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._acroread = syslib.Command(os.path.join("bin", "acroread"))
         self._acroread.setArgs(args[1:])
         self._filter = (
-                "^$|Failed to load module:|wrong ELF class:| Gdk-WARNING | Gtk-CRITICAL |"
-                " Gtk-WARNING |: Failed to load module|: too many arguments|"
-                ": unexpected operator|dirname[: ]")
+            "^$|Failed to load module:|wrong ELF class:| Gdk-WARNING | Gtk-CRITICAL | Gtk-WARNING "
+            "|: Failed to load module|: too many arguments|: unexpected operator|dirname[: ]")
         self._setenv()
-
 
     def getFilter(self):
         """
@@ -35,26 +32,23 @@ class Options(syslib.Dump):
         """
         return self._filter
 
-
     def getAcroread(self):
         """
         Return acroread Command class object.
         """
         return self._acroread
 
-
     def _setenv(self):
         keys = os.environ.keys()
-        if "GTK_MODULES" in keys: # Fix Linux "gnomebreakpad" problems
+        if "GTK_MODULES" in keys:  # Fix Linux "gnomebreakpad" problems
             del os.environ["GTK_MODULES"]
-        if "LANG" in keys: # Fix Linux "gnomebreakpad" problems
+        if "LANG" in keys:  # Fix Linux "gnomebreakpad" problems
             del os.environ["LANG"]
-        if "LC_CTYPE" in keys: # Fix Linux "gnomebreakpad" problems
+        if "LC_CTYPE" in keys:  # Fix Linux "gnomebreakpad" problems
             del os.environ["LC_CTYPE"]
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -69,16 +63,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

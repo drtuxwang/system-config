@@ -19,13 +19,11 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._vinagre = syslib.Command("vinagre")
         self._vinagre.setArgs(args[1:])
         self._filter = "^$| CRITICAL | Gtk-WARNING "
         self._config()
-
 
     def getFilter(self):
         """
@@ -33,13 +31,11 @@ class Options(syslib.Dump):
         """
         return self._filter
 
-
     def getVinagre(self):
         """
         Return vinagre Command class object.
         """
         return self._vinagre
-
 
     def _config(self):
         if "HOME" in os.environ.keys():
@@ -52,7 +48,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -67,16 +62,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

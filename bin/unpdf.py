@@ -19,14 +19,12 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._gs = syslib.Command("gs")
-        self._gs.setFlags([ "-dNOPAUSE", "-dBATCH", "-dSAFER", "-sDEVICE=jpeg",
-                            "-r" + str(self._args.dpi[0]) ])
-
+        self._gs.setFlags(["-dNOPAUSE", "-dBATCH", "-dSAFER", "-sDEVICE=jpeg",
+                           "-r" + str(self._args.dpi[0])])
 
     def getFiles(self):
         """
@@ -34,18 +32,16 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def getGs(self):
         """
         Return gs Command class object.
         """
         return self._gs
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Unpack PDF file into series of JPG files.")
 
-        parser.add_argument("-dpi", nargs=1, type=int, default=[ 300 ],
+        parser.add_argument("-dpi", nargs=1, type=int, default=[300],
                             help="Selects DPI resolution (default is 300).")
 
         parser.add_argument("files", nargs="+", metavar="file.pdf", help="PDF document file.")
@@ -57,7 +53,6 @@ class Options(syslib.Dump):
 
 
 class Unpacker(syslib.Dump):
-
 
     def __init__(self, options):
         gs = options.getGs()
@@ -72,8 +67,8 @@ class Unpacker(syslib.Dump):
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + directory + '" directory.')
             print('Unpacking "' + directory + os.sep + '*.jpg" file...')
-            gs.setArgs([ "-sOutputFile=" + directory + os.sep + "%08d.jpg", "-c",
-                         "save", "pop", "-f", file ])
+            gs.setArgs(["-sOutputFile=" + directory + os.sep + "%08d.jpg", "-c",
+                        "save", "pop", "-f", file])
             gs.run(filter="Ghostscript|^Copyright|WARRANTY:|^Processing")
             if gs.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(gs.getExitcode()) +
@@ -81,7 +76,6 @@ class Unpacker(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -96,16 +90,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

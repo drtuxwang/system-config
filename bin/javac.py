@@ -18,11 +18,9 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._javac = syslib.Command(os.path.join("bin", "javac"))
         self._javac.setArgs(args[1:])
-
 
     def getJavac(self):
         """
@@ -32,7 +30,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -47,16 +44,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

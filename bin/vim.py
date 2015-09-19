@@ -18,7 +18,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._vim = syslib.Command("vim")
         self._vim.setArgs(args[1:])
@@ -28,13 +27,11 @@ class Options(syslib.Dump):
         else:
             self._file = None
 
-
     def getFile(self):
         """
         Return file.
         """
         return self._file
-
 
     def getVim(self):
         """
@@ -44,7 +41,6 @@ class Options(syslib.Dump):
 
 
 class Edit(syslib.Dump):
-
 
     def __init__(self, options):
         if options.getFile():
@@ -56,18 +52,16 @@ class Edit(syslib.Dump):
         else:
             self._edit(options)
 
-
     def _edit(self, options):
         vim = options.getVim()
         vim.run()
         if vim.getExitcode():
             print(sys.argv[0] + ': Error code ' + str(vim.getExitcode()) + ' received from "' +
-                  vim.getFile() + '".', file = sys.stderr)
+                  vim.getFile() + '".', file=sys.stderr)
             raise SystemExit(vim.getExitcode())
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -82,16 +76,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)   # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

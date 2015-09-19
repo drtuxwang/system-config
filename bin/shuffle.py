@@ -20,17 +20,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getWords(self):
         """
         Return list of words.
         """
         return self._args.words
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Print arguments in random order.")
@@ -42,7 +39,6 @@ class Options(syslib.Dump):
 
 class Shuffle(syslib.Dump):
 
-
     def __init__(self, list):
         random.shuffle(list)
         for item in list:
@@ -50,7 +46,6 @@ class Shuffle(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -65,16 +60,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -18,15 +18,12 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._audacity = syslib.Command("audacity")
         self._audacity.setArgs(args[1:])
-        self._filter = (
-                "^$|^HCK OnTimer|: Gtk-WARNING | LIBDBUSMENU-GLIB-WARNING |"
-                "^ALSA lib |alsa.c|^Cannot connect to server socket|^jack server")
+        self._filter = ("^$|^HCK OnTimer|: Gtk-WARNING | LIBDBUSMENU-GLIB-WARNING |"
+                        "^ALSA lib |alsa.c|^Cannot connect to server socket|^jack server")
         self._config()
-
 
     def getAudacity(self):
         """
@@ -34,13 +31,11 @@ class Options(syslib.Dump):
         """
         return self._audacity
 
-
     def getFilter(self):
         """
         Return filter pattern.
         """
         return self._filter
-
 
     def _config(self):
         if "HOME" in os.environ.keys():
@@ -53,14 +48,13 @@ class Options(syslib.Dump):
                 else:
                     if not os.path.isfile(os.path.join(audacitydir, "audacity.cfg")):
                         with open(os.path.join(audacitydir, "audacity.cfg"),
-                                  "w", newline = "\n") as ofile:
+                                  "w", newline="\n") as ofile:
                             print("[AudioIO]", file=ofile)
                             print("PlaybackDevice=ALSA: pulse", file=ofile)
                             print("RecordingDevice=ALSA: pulse", file=ofile)
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -75,16 +69,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

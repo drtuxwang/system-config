@@ -20,7 +20,6 @@ import syslib
 
 class Proxy(syslib.Dump):
 
-
     def __init__(self):
         myip = self._getmyip()
         myproxy = ""
@@ -40,29 +39,27 @@ class Proxy(syslib.Dump):
                 pass
         print(myproxy)
 
-
     def _getmyip(self):
         myip = ""
         if syslib.info.getSystem() == "linux":
             os.environ["LANG"] = "en_GB"
-            ifconfig = syslib.Command(file="/sbin/ifconfig", args=[ "-a" ])
+            ifconfig = syslib.Command(file="/sbin/ifconfig", args=["-a"])
             ifconfig.run(filter=" inet addr[a-z]*:", mode="batch")
             for line in ifconfig.getOutput():
                 myip = line.split(":")[1].split()[0]
-                if myip not in ( "", "127.0.0.1" ):
+                if myip not in ("", "127.0.0.1"):
                     break
         elif syslib.info.getSystem() == "sunos":
-            ifconfig = syslib.Command(file="/sbin/ifconfig", args=[ "-a" ])
+            ifconfig = syslib.Command(file="/sbin/ifconfig", args=["-a"])
             ifconfig.run(filter="\tinet [^ ]+ netmask", mode="batch")
             for line in ifconfig.getOutput():
                 myip = line.split()[1]
-                if myip not in ( "", "127.0.0.1" ):
+                if myip not in ("", "127.0.0.1"):
                     break
         return myip
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -76,16 +73,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

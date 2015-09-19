@@ -21,10 +21,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getMirrors(self):
         """
@@ -32,17 +30,15 @@ class Options(syslib.Dump):
         """
         return self._mirrors
 
-
     def getRemoveFlag(self):
         """
         Return remove flag.
         """
         return self._args.removeFlag
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Copy all files/directory inside a directory into mirror directory.")
+            description="Copy all files/directory inside a directory into mirror directory.")
 
         parser.add_argument("-rm", dest="removeFlag", action="store_true",
                             help="Delete obsolete files in target directory.")
@@ -60,12 +56,11 @@ class Options(syslib.Dump):
         for i in range(0, len(directories), 2):
             if not os.path.isdir(directories[i]):
                 raise SystemExit(
-                        sys.argv[0] + ': Source directory "' + directories[i] + '" does not exist.')
-            self._mirrors.append([ directories[i], directories[i+1] ])
+                    sys.argv[0] + ': Source directory "' + directories[i] + '" does not exist.')
+            self._mirrors.append([directories[i], directories[i+1]])
 
 
 class Mirror(syslib.Dump):
-
 
     def __init__(self, options):
         self._size = 0
@@ -76,14 +71,12 @@ class Mirror(syslib.Dump):
             self._mirror(mirror[0], mirror[1])
         print("[", self._size, ",", int(time.time()) - self._start, "]", sep="")
 
-
     def _automount(self, directory, wait):
         if directory.startswith("/media/"):
             for i in range(wait * 10):
                 if os.path.isdir(directory):
                     break
                 time.sleep(0.1)
-
 
     def _reportOldFiles(self, sourceDir, sourceFiles, targetFiles):
         for targetFile in targetFiles:
@@ -95,7 +88,6 @@ class Mirror(syslib.Dump):
                 else:
                     print('**WARNING** No source for "' + targetFile + '" file.')
 
-
     def _removeOldFiles(self, sourceDir, sourceFiles, targetFiles):
         for targetFile in targetFiles:
             if os.path.join(sourceDir, os.path.basename(targetFile)) not in sourceFiles:
@@ -106,7 +98,7 @@ class Mirror(syslib.Dump):
                         raise SystemExit(sys.argv[0] + ': Cannot remove "' + targetFile + '" link.')
                 elif os.path.isdir(targetFile):
                     print('[', self._size, ',', int(time.time()) - self._start, '] Removing "',
-                          targetFile, '" directory.', sep = "")
+                          targetFile, '" directory.', sep="")
                     try:
                         shutil.rmtree(targetFile)
                     except OSError:
@@ -114,28 +106,27 @@ class Mirror(syslib.Dump):
                                          targetFile + '" directory.')
                 else:
                     print('[', self._size, ',', int(time.time()) - self._start, '] Removing "',
-                          targetFile, '" file.', sep = "")
+                          targetFile, '" file.', sep="")
                     try:
                         os.remove(targetFile)
                     except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot remove "' + targetFile + '" file.')
 
-
     def _mirror(self, sourceDir, targetDir):
         try:
-            sourceFiles = [ os.path.join(sourceDir, x) for x in os.listdir(sourceDir) ]
+            sourceFiles = [os.path.join(sourceDir, x) for x in os.listdir(sourceDir)]
         except PermissionError:
             raise SystemExit(sys.argv[0] + ': Cannot open "' + sourceDir + '" source directory.')
         if os.path.isdir(targetDir):
             try:
-                targetFiles = [ os.path.join(targetDir, x) for x in os.listdir(targetDir) ]
+                targetFiles = [os.path.join(targetDir, x) for x in os.listdir(targetDir)]
             except PermissionError:
-                raise SystemExit(sys.argv[0] + ': Cannot open "' + targetDir +
-                                 '" target directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot open "' + targetDir + '" target directory.')
         else:
             targetFiles = []
             print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
-                  targetDir, '" directory...', sep = "")
+                  targetDir, '" directory...', sep="")
             try:
                 os.mkdir(targetDir)
                 os.chmod(targetDir, syslib.FileStat(sourceDir).getMode())
@@ -153,7 +144,7 @@ class Mirror(syslib.Dump):
                         if targetLink == sourceLink:
                             continue
                     print('[', self._size, ',', int(time.time()) - self._start, '] Updating "',
-                          targetFile, '" link...', sep = "")
+                          targetFile, '" link...', sep="")
                     try:
                         if os.path.isdir(targetFile) and not os.path.islink(targetFile):
                             shutil.rmtree(targetFile)
@@ -163,7 +154,7 @@ class Mirror(syslib.Dump):
                         raise SystemExit(sys.argv[0] + ': Cannot remove "' + targetFile + '" link.')
                 else:
                     print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
-                          targetFile, '" link...', sep = "")
+                          targetFile, '" link...', sep="")
                 try:
                     os.symlink(sourceLink, targetFile)
                 except OSError:
@@ -182,20 +173,20 @@ class Mirror(syslib.Dump):
                     if sourceFileStat.getSize() == targetFileStat.getSize():
                         # Allow FAT16/FAT32/NTFS 1h daylight saving and 1 sec rounding error
                         if (abs(sourceFileStat.getTime() - targetFileStat.getTime()) in
-                                ( 0, 1, 3599, 3600, 3601 )):
+                                (0, 1, 3599, 3600, 3601)):
                             continue
                     self._size += int((sourceFileStat.getSize() + 1023) / 1024)
                     print('[', self._size, ',', int(time.time()) - self._start, '] Updating "',
-                          targetFile, '" file...', sep = "")
+                          targetFile, '" file...', sep="")
                 else:
                     sourceFileStat = syslib.FileStat(sourceFile)
                     self._size += int((sourceFileStat.getSize() + 1023) / 1024)
                     print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
-                          targetFile, '" file...', sep = "")
+                          targetFile, '" file...', sep="")
                 try:
                     shutil.copy2(sourceFile, targetFile)
                 except IOError as exception:
-                    if exception.args != ( 95, "Operation not supported" ): # os.listxattr for ACL
+                    if exception.args != (95, "Operation not supported"):  # os.listxattr for ACL
                         try:
                             with open(sourceFile):
                                 raise SystemExit(sys.argv[0] +
@@ -223,7 +214,6 @@ class Mirror(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -237,16 +227,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

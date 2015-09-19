@@ -19,17 +19,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getDirectories(self):
         """
         Return list of directories.
         """
         return self._args.directories
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Check JPEG picture files.")
@@ -42,19 +39,17 @@ class Options(syslib.Dump):
 
 class Check(syslib.Dump):
 
-
     def __init__(self, options):
         self._directories = options.getDirectories()
 
-
     def run(self):
         errors = []
-        jpeginfo = syslib.Command("jpeginfo", flags=[ "--info", "--check" ])
+        jpeginfo = syslib.Command("jpeginfo", flags=["--info", "--check"])
         for directory in self._directories:
             if os.path.isdir(directory):
                 files = []
                 for file in glob.glob(os.path.join(directory, "*.*")):
-                    if file.split(".")[-1].lower() in ( "jpg", "jpeg" ):
+                    if file.split(".")[-1].lower() in ("jpg", "jpeg"):
                         files.append(file)
                 if files:
                     jpeginfo.setArgs(files)
@@ -72,7 +67,6 @@ class Check(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -86,16 +80,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

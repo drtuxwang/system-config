@@ -19,19 +19,16 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._title = " ".join(args[1:])
-
 
     def getTitle(self):
         """
         Return title of files.
         """
         return self._title
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Rename window title.")
@@ -43,10 +40,9 @@ class Options(syslib.Dump):
 
 class Title(syslib.Dump):
 
-
     def __init__(self, options):
         term = self._getterm()
-        if term in [ "xterm", "xvt100" ]:
+        if term in ["xterm", "xvt100"]:
             sys.stdout.write("\033]0;" + options.getTitle() + "\007")
         elif term.startswith("iris-ansi"):
             sys.stdout.write("\033P3.y" + options.getTitle() + "\033\\")
@@ -54,16 +50,14 @@ class Title(syslib.Dump):
         else:
             raise SystemExit(sys.argv[0] + ': Unsupported "' + term + '" terminal type.')
 
-
     def _getterm(self):
         term = "Unkown"
         if "TERM" in os.environ.keys():
-            term = os.environ[ "TERM" ]
+            term = os.environ["TERM"]
         return term
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -78,16 +72,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

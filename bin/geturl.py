@@ -21,16 +21,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._aria2c = syslib.Command("aria2c")
-        self._aria2c.setFlags([ "--file-allocation=none", "--remote-time=true" ])
+        self._aria2c.setFlags(["--file-allocation=none", "--remote-time=true"])
         self._setLibraries(self._aria2c)
 
         self._setProxy()
-
 
     def getThreads(self):
         """
@@ -38,18 +36,16 @@ class Options(syslib.Dump):
         """
         return self._args.threads[0]
 
-
     def getUrls(self):
         """
         Return list of urls.
         """
         return self._args.urls
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Multi-threaded download accelerator.")
 
-        parser.add_argument("-threads", nargs=1, type=int, default=[ 4 ],
+        parser.add_argument("-threads", nargs=1, type=int, default=[4],
                             help="Number of threads. Default is 4.")
 
         parser.add_argument("urls", nargs="+", metavar="url|file.url",
@@ -61,13 +57,11 @@ class Options(syslib.Dump):
             raise SystemExit(sys.argv[0] + ": You must specific a positive integer for "
                              "number of threads.")
 
-
     def getAria2c(self):
         """
         Return aria2c Command class object.
         """
         return self._aria2c
-
 
     def _setLibraries(self, command):
         libdir = os.path.join(os.path.dirname(command.getFile()), "lib")
@@ -75,10 +69,9 @@ class Options(syslib.Dump):
             if syslib.info.getSystem() == "linux":
                 if "LD_LIBRARY_PATH" in os.environ.keys():
                     os.environ["LD_LIBRARY_PATH"] = (
-                            libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"])
+                        libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"])
                 else:
                     os.environ["LD_LIBRARY_PATH"] = libdir
-
 
     def _setProxy(self):
         setproxy = syslib.Command("setproxy", check=False)
@@ -87,15 +80,13 @@ class Options(syslib.Dump):
             if setproxy.hasOutput():
                 proxy = setproxy.getOutput()[0].strip()
                 if proxy:
-                    self._aria2c.extendFlags([ "--all-proxy=http://" + proxy ])
+                    self._aria2c.extendFlags(["--all-proxy=http://" + proxy])
 
 
 class Geturl(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
-
 
     def run(self):
         os.umask(int("022", 8))
@@ -106,8 +97,8 @@ class Geturl(syslib.Dump):
             if url.endswith(".url") and os.path.isfile(url):
                 directory = url[:-4]
                 filesRemote = []
-                aria2c.setArgs([ "--max-concurrent-downloads=" + str(self._options.getThreads()),
-                                 "--dir=" + directory, "-Z" ])
+                aria2c.setArgs(["--max-concurrent-downloads=" + str(self._options.getThreads()),
+                                "--dir=" + directory, "-Z"])
                 try:
                     with open(url, errors="replace") as ifile:
                         for line in ifile:
@@ -123,8 +114,8 @@ class Geturl(syslib.Dump):
             elif os.path.isdir(url):
                 raise SystemExit(sys.argv[0] + ': Cannot process "' + url + '" directory.')
             else:
-                aria2c.setArgs([ "--split=" + str(self._options.getThreads()) ])
-                filesRemote = [ url ]
+                aria2c.setArgs(["--split=" + str(self._options.getThreads())])
+                filesRemote = [url]
             if filesLocal:
                 if not os.path.isdir(directory):
                     try:
@@ -149,7 +140,6 @@ class Geturl(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -163,16 +153,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

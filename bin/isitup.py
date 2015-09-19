@@ -20,7 +20,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -34,20 +33,19 @@ class Options(syslib.Dump):
         host = self._args.host[0]
         self._filter = "min/avg/max"
         if syslib.info.getSystem() == "linux":
-            self._ping.setArgs([ "-h" ])
+            self._ping.setArgs(["-h"])
             self._ping.run(filter="[-]w ", mode="batch")
             if self._ping.hasOutput():
-                self._ping.setArgs([ "-w", "4", "-c", "3", host ])
+                self._ping.setArgs(["-w", "4", "-c", "3", host])
             else:
-                self._ping.setArgs([ "-c", "3", host ])
+                self._ping.setArgs(["-c", "3", host])
         elif syslib.info.getSystem() == "sunos":
-            self._ping.setArgs([ "-s", host, "64", "3" ])
+            self._ping.setArgs(["-s", host, "64", "3"])
         elif os.name == "nt":
-            self._ping.setArgs([ "-w", "4", "-n", "3", host ])
+            self._ping.setArgs(["-w", "4", "-n", "3", host])
             self._filter = "Minimum|TTL"
         else:
-            self._ping.setArgs([ "-w", "4", "-c", "3", host ])
-
+            self._ping.setArgs(["-w", "4", "-c", "3", host])
 
     def getFilter(self):
         """
@@ -55,13 +53,11 @@ class Options(syslib.Dump):
         """
         return self._filter
 
-
     def getHost(self):
         """
         Return host.
         """
         return self._args.host[0]
-
 
     def getPing(self):
         """
@@ -69,13 +65,11 @@ class Options(syslib.Dump):
         """
         return self._ping
 
-
     def getRepeatFlag(self):
         """
         Return repeat flag.
         """
         return self._args.repeatFlag
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Checks whether a host is up.")
@@ -90,7 +84,6 @@ class Options(syslib.Dump):
 
 class Isitup(syslib.Dump):
 
-
     def __init__(self, options):
         stat = ""
         while options.getRepeatFlag():
@@ -101,7 +94,6 @@ class Isitup(syslib.Dump):
             time.sleep(5)
         print(self._ping(options))
 
-
     def _ping(self, options):
         options.getPing().run(filter=options.getFilter(), mode="batch")
         if options.getPing().hasOutput():
@@ -111,7 +103,6 @@ class Isitup(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -126,16 +117,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

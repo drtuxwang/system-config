@@ -18,7 +18,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._pbsetup = syslib.Command("pbsetup.run", check=False)
         if not self._pbsetup.isFound():
@@ -26,13 +25,11 @@ class Options(syslib.Dump):
         self._pbsetup.setArgs(args[1:])
         self._filter = ": wrong ELF class:|: Gtk-WARNING "
 
-
     def getFilter(self):
         """
         Return filter pattern.
         """
         return self._filter
-
 
     def getPbsetup(self):
         """
@@ -42,7 +39,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -57,16 +53,14 @@ class Main:
             sys.exit(exception)
         sys.exit(options.getPbsetup().getExitcode())
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

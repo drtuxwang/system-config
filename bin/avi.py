@@ -20,13 +20,11 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._audioCodec = "libmp3lame"
         self._videoCodec = "libxvid"
-
 
     def getAudioCodec(self):
         """
@@ -34,13 +32,11 @@ class Options(syslib.Dump):
         """
         return self._audioCodec
 
-
     def getAudioQuality(self):
         """
         Return audio quality.
         """
         return self._args.audioQuality[0]
-
 
     def getAudioVolume(self):
         """
@@ -48,13 +44,11 @@ class Options(syslib.Dump):
         """
         return self._args.audioVolume[0]
 
-
     def getFiles(self):
         """
         Return list of files.
         """
         return self._files
-
 
     def getFileNew(self):
         """
@@ -62,13 +56,11 @@ class Options(syslib.Dump):
         """
         return self._fileNew
 
-
     def getFlags(self):
         """
         Return extra flags.
         """
         return self._args.flags
-
 
     def getNoskipFlag(self):
         """
@@ -76,13 +68,11 @@ class Options(syslib.Dump):
         """
         return self._args.noskipFlag
 
-
     def getRunTime(self):
         """
         Return run time.
         """
         return self._args.runTime[0]
-
 
     def getStartTime(self):
         """
@@ -90,13 +80,11 @@ class Options(syslib.Dump):
         """
         return self._args.startTime[0]
 
-
     def getThreads(self):
         """
         Return threads.
         """
         return self._args.threads[0]
-
 
     def getVideoCodec(self):
         """
@@ -104,13 +92,11 @@ class Options(syslib.Dump):
         """
         return self._videoCodec
 
-
     def getVideoCrop(self):
         """
         Return video cropping.
         """
         return self._args.videoCrop[0]
-
 
     def getVideoQuality(self):
         """
@@ -118,13 +104,11 @@ class Options(syslib.Dump):
         """
         return self._args.videoQuality[0]
 
-
     def getVideoRate(self):
         """
         Return video rate.
         """
         return self._args.videoRate[0]
-
 
     def getVideoSize(self):
         """
@@ -132,30 +116,29 @@ class Options(syslib.Dump):
         """
         return self._args.videoSize[0]
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Encode AVI video using avconv (libxvid/libmp3lame).")
+            description="Encode AVI video using avconv (libxvid/libmp3lame).")
 
         parser.add_argument("-noskip", dest="noskipFlag", action="store_true",
                             help="Disable skipping of encoding when codecs same.")
-        parser.add_argument("-vq", nargs=1, dest="videoQuality", default=[ None ],
+        parser.add_argument("-vq", nargs=1, dest="videoQuality", default=[None],
                             help="Video quality (1=best, 31=worse). Default is 4.")
-        parser.add_argument("-vfps", nargs=1, dest="videoRate",default=[ None ],
+        parser.add_argument("-vfps", nargs=1, dest="videoRate", default=[None],
                             help="Select frames per second.")
-        parser.add_argument("-vcrop", nargs=1, dest="videoCrop",default=[ None ], metavar="w:h:x:y",
+        parser.add_argument("-vcrop", nargs=1, dest="videoCrop", default=[None], metavar="w:h:x:y",
                             help="Crop video to W x H with x, y offset from top left.")
-        parser.add_argument("-vsize", nargs=1, dest="videoSize", default=[ None ], metavar="x:y",
+        parser.add_argument("-vsize", nargs=1, dest="videoSize", default=[None], metavar="x:y",
                             help="Resize video to width:height in pixels.")
-        parser.add_argument("-aq", nargs=1, dest="audioQuality", default=[ None ],
+        parser.add_argument("-aq", nargs=1, dest="audioQuality", default=[None],
                             help="Select audio bitrate in kbps (128kbps default).")
-        parser.add_argument("-avol", nargs=1, dest="audioVolume", default=[ None ],
+        parser.add_argument("-avol", nargs=1, dest="audioVolume", default=[None],
                             help='Select audio volume adjustment in dB (ie "-5", "5").')
-        parser.add_argument("-start", nargs=1, dest="startTime", default=[ None ],
+        parser.add_argument("-start", nargs=1, dest="startTime", default=[None],
                             help="Start encoding at time n seconds.")
-        parser.add_argument("-time", nargs=1, dest="runTime", default=[ None ],
+        parser.add_argument("-time", nargs=1, dest="runTime", default=[None],
                             help="Stop encoding after n seconds.")
-        parser.add_argument("-threads", nargs=1, default=[ "2" ],
+        parser.add_argument("-threads", nargs=1, default=["2"],
                             help="Threads are faster but decrease quality. Default is 2.")
         parser.add_argument("-flags", nargs=1, default=[],
                             help='Supply additional flags to avconv.')
@@ -178,59 +161,55 @@ class Options(syslib.Dump):
 
 class Encoder(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
         self._avconv = syslib.Command("avconv", flags=options.getFlags())
         self._tempfiles = []
 
-
     def _config(self, file):
         media = Media(file)
-        self._avconv.setArgs([ "-i", file ])
+        self._avconv.setArgs(["-i", file])
 
         if media.hasVideo():
             if (not media.hasVideoCodec("mpeg4") or self._options.getCideoCrop() or
                     self._options.vfps or self._options.getVideoSize() or self._options.vq or
                     self._options.noskip or len(self._options.getFiles()) > 1):
-                self._avconv.extendArgs([ "-c:v", self._options.getVideoCodec(), "-flags",
-                                          "+mv4+aic", "-mbd", "rd", "-g", "300", "-trellis", "2" ])
+                self._avconv.extendArgs(["-c:v", self._options.getVideoCodec(), "-flags",
+                                         "+mv4+aic", "-mbd", "rd", "-g", "300", "-trellis", "2"])
                 if self._options.getVideoQuality():
-                    self._avconv.extendArgs([ "-qscale:v", self._options.getVideoQuality() ])
+                    self._avconv.extendArgs(["-qscale:v", self._options.getVideoQuality()])
                 else:
-                    self._avconv.extendArgs([ "-qscale:v", "4" ])
+                    self._avconv.extendArgs(["-qscale:v", "4"])
                 if self._options.getVideoRate():
-                    self._avconv.extendArgs([ "-r:v", self._options.getVideoRate() ])
+                    self._avconv.extendArgs(["-r:v", self._options.getVideoRate()])
                 if self._options.getVideoCrop():
-                    self._avconv.extendArgs([ "-vf", "crop=" + self._options.getVideoCrop() ])
+                    self._avconv.extendArgs(["-vf", "crop=" + self._options.getVideoCrop()])
                 if self._options.getVideoSize():
-                    self._avconv.extendArgs([ "-vf", "scale=" + self._options.getVideoSize() ])
+                    self._avconv.extendArgs(["-vf", "scale=" + self._options.getVideoSize()])
             else:
-                self._avconv.extendArgs([ "-c:v", "copy" ])
+                self._avconv.extendArgs(["-c:v", "copy"])
 
         if media.hasAudio:
             if (not media.hasAudioCodec("mp3") or self._options.getAudioQuality() or
                     self._options.getAudioVolume() or self._options.getNoskipFlag() or
                     len(self._options.getFiles()) > 1):
-                self._avconv.extendArgs([ "-c:a", self._options.getAudioCodec() ])
+                self._avconv.extendArgs(["-c:a", self._options.getAudioCodec()])
                 if self._options.getAudioQuality():
-                    self._avconv.extendArgs([ "-b:a", self._options.getAudioQuality() + "K" ])
+                    self._avconv.extendArgs(["-b:a", self._options.getAudioQuality() + "K"])
                 else:
-                    self._avconv.extendArgs([ "-b:a", "128K" ])
+                    self._avconv.extendArgs(["-b:a", "128K"])
                 if self._options.getAudioVolume():
-                    self._avconv.extendArgs([ "-af", "volume=" +
-                                              self._options.getAudioVolume() + "dB" ])
+                    self._avconv.extendArgs([
+                        "-af", "volume=" + self._options.getAudioVolume() + "dB"])
             else:
-                self._avconv.extendArgs([ "-c:a", "copy" ])
+                self._avconv.extendArgs(["-c:a", "copy"])
 
         if self._options.getStartTime():
-            self._avconv.extendArgs([ "-ss", self._options.getStartTime() ])
+            self._avconv.extendArgs(["-ss", self._options.getStartTime()])
         if self._options.getRunTime():
-            self._avconv.extendArgs([ "-t", self._options.getRunTime() ])
-        self._avconv.extendArgs([ "-threads", self._options.getThreads() ] +
-                                  self._options.getFlags())
+            self._avconv.extendArgs(["-t", self._options.getRunTime()])
+        self._avconv.extendArgs(["-threads", self._options.getThreads()] + self._options.getFlags())
         return media
-
 
     def _configImages(self, files):
         convert = syslib.Command("convert")
@@ -240,34 +219,33 @@ class Encoder(syslib.Dump):
             frame += 1
             tmpfile = "frame{0:08d}".format(frame) + extension
             self._tempfiles.append(tmpfile)
-            convert.setArgs([ file, tmpfile ])
+            convert.setArgs([file, tmpfile])
             convert.run()
         if self._options.getVideoRate():
-            self._avconv.setArgs([ "-r", self._options.getVideoRate() ])
+            self._avconv.setArgs(["-r", self._options.getVideoRate()])
         else:
-            self._avconv.setArgs([ "-r", "2" ])
-        self._avconv.extendArgs([ "-i", "frame%8d" + extension, "-c:v",
-                                  self._options.getVideoCodec(), "-pix_fmt", "yuv420p" ])
+            self._avconv.setArgs(["-r", "2"])
+        self._avconv.extendArgs(["-i", "frame%8d" + extension,
+                                 "-c:v", self._options.getVideoCodec(), "-pix_fmt", "yuv420p"])
         if self._options.getVideoCrop():
-            self._avconv.extendArgs([ "-vf", "crop=" + self._options.getVideoCrop() ])
+            self._avconv.extendArgs(["-vf", "crop=" + self._options.getVideoCrop()])
         if self._options.getVideoSize():
-            self._avconv.extendArgs([ "-vf", "scale=" + self._options.getVideoSize() ])
+            self._avconv.extendArgs(["-vf", "scale=" + self._options.getVideoSize()])
         else:
-            convert.setArgs([ "-verbose", tmpfile, "/dev/null" ])
+            convert.setArgs(["-verbose", tmpfile, "/dev/null"])
             convert.run(mode="batch")
             try:
                 # Must be multiple of 2 in x and y resolutions
                 x, y = convert.getOutput()[0].split()[2].split("x")
-                self._avconv.extendArgs([ "-vf", "scale=" + str(int(int(x)/2)*2) + ":" +
-                                          str(int(int(y)/2)*2) ])
+                self._avconv.extendArgs([
+                    "-vf", "scale=" + str(int(int(x)/2)*2) + ":" + str(int(int(y)/2)*2)])
             except (IndexError, ValueError):
                 pass
         if self._options.getStartTime():
-            self._avconv.extendArgs([ "-ss", self._options.getStartTime() ])
+            self._avconv.extendArgs(["-ss", self._options.getStartTime()])
         if self._options.getrunTime():
-            self._avconv.extendArgs([ "-t", self._options.getRunTime() ])
-        self._avconv.extendArgs([ "-threads", "1" ] + self._options.getFlags())
-
+            self._avconv.extendArgs(["-t", self._options.getRunTime()])
+        self._avconv.extendArgs(["-threads", "1"] + self._options.getFlags())
 
     def __del__(self):
         for file in self._tempfiles:
@@ -276,30 +254,28 @@ class Encoder(syslib.Dump):
             except OSError:
                 pass
 
-
     def _allImages(self, files):
         for file in files:
             extension = file.split(".")[-1]
-            if extension not in ( "bmp", "gif", "jpg", "jpeg", "png", "tif", "tiff" ):
+            if extension not in ("bmp", "gif", "jpg", "jpeg", "png", "tif", "tiff"):
                 return False
         return True
-
 
     def _run(self):
         child = self._avconv.run(mode="child", error2output=True)
         line = ""
         ispattern = re.compile(
-                "^$| version |^ *(built |configuration:|lib|Metadata:|Duration:|compatible_brands:|"
-                "Stream|concat:|Program|service|lastkeyframe)|^(In|Out)put | : |^Press|^Truncating|"
-                "bitstream (filter|malformed)|Buffer queue|buffer underflow|message repeated|^\[|"
-                "p11-kit:")
+            "^$| version |^ *(built |configuration:|lib|Metadata:|Duration:|compatible_brands:|"
+            "Stream|concat:|Program|service|lastkeyframe)|^(In|Out)put | : |^Press|^Truncating|"
+            "bitstream (filter|malformed)|Buffer queue|buffer underflow|message repeated|^\[|"
+            "p11-kit:")
         init = False
         while True:
             byte = child.stdout.read(1)
             line += byte.decode("utf-8", "replace")
             if not byte:
                 break
-            if byte in ( b"\n", b"\r" ):
+            if byte in (b"\n", b"\r"):
                 if not ispattern.search(line):
                     sys.stdout.write(line)
                     sys.stdout.flush()
@@ -313,13 +289,12 @@ class Encoder(syslib.Dump):
         if exitcode:
             sys.exit(exitcode)
 
-
     def run(self):
         if self._options.getFileNew():
             print()
             if self._allImages(self._options.getFiles()):
                 self._configImages(self._options.getFiles())
-                self._avconv.extendArgs([ "-f", "mp4", "-y", self._options.getFileNew() ])
+                self._avconv.extendArgs(["-f", "mp4", "-y", self._options.getFileNew()])
                 self._run()
             else:
                 if len(self._options.getFiles()) == 1:
@@ -329,49 +304,48 @@ class Encoder(syslib.Dump):
                     for file in self._options.getFiles():
                         media = self._config(file)
                         if media.hasVideo():
-                            self._avconv.extendArgs([ "-bsf:v", "h264_mp4toannexb" ])
-                        self._avconv.extendArgs([ "-f", "mpegts", "-y", file + extension ])
+                            self._avconv.extendArgs(["-bsf:v", "h264_mp4toannexb"])
+                        self._avconv.extendArgs(["-f", "mpegts", "-y", file + extension])
                         self._tempfiles.append(file + extension)
                         self._run()
-                    self._avconv.setArgs([ "-i", "concat:" + "|".join(self._tempfiles),
-                                           "-c", "copy" ])
+                    self._avconv.setArgs([
+                        "-i", "concat:" + "|".join(self._tempfiles), "-c", "copy"])
                     if media.hasAudio():
-                        self._avconv.extendArgs([ "-bsf:a", "aac_adtstoasc" ])
+                        self._avconv.extendArgs(["-bsf:a", "aac_adtstoasc"])
                 if self._options.getStartTime():
-                    self._avconv.extendArgs([ "-ss", self._options.getStartTime() ])
+                    self._avconv.extendArgs(["-ss", self._options.getStartTime()])
                 if self._options.getRunTime():
-                    self._avconv.extendArgs([ "-t", self._options.getRunTime() ])
-                self._avconv.extendArgs([ "-metadata", "title=", "-f", "mp4", "-y",
-                                          self._options.getFileNew() ])
+                    self._avconv.extendArgs(["-t", self._options.getRunTime()])
+                self._avconv.extendArgs([
+                    "-metadata", "title=", "-f", "mp4", "-y", self._options.getFileNew()])
                 self._run()
             Media(self._options.getFileNew()).print()
         else:
             for file in self._options.getFiles():
                 if not file.endswith(".avi"):
                     print()
-                    if self._allImages([ file ]):
-                        self._configImages([ file ])
+                    if self._allImages([file]):
+                        self._configImages([file])
                     else:
                         self._config(file)
                         if self._options.getStartTime():
-                            self._avconv.extendArgs([ "-ss", self._options.getStartTime() ])
+                            self._avconv.extendArgs(["-ss", self._options.getStartTime()])
                         if self._options.getRunTime():
-                            self._avconv.extendArgs([ "-t", self._options.getRunTime() ])
+                            self._avconv.extendArgs(["-t", self._options.getRunTime()])
                     fileNew = file.rsplit(".", 1)[0] + ".mp4"
-                    self._avconv.extendArgs([ "-f", "mp4", "-y", fileNew ])
+                    self._avconv.extendArgs(["-f", "mp4", "-y", fileNew])
                     self._run()
                     Media(fileNew).print()
 
 
 class Media(syslib.Dump):
 
-
     def __init__(self, file):
         self._file = file
         self._length = "0"
         self._stream = {}
         self._type = "Unknown"
-        avprobe = syslib.Command("avprobe", args=[ file ])
+        avprobe = syslib.Command("avprobe", args=[file])
         avprobe.run(mode="batch", error2output=True)
         number = 0
         isjunk = re.compile("^ *Stream #[^ ]*: ")
@@ -387,25 +361,20 @@ class Media(syslib.Dump):
         except IndexError:
             raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
 
-
     def getDuration(self):
         return self._duration
-
 
     def getStream(self):
         for key in sorted(self._stream.keys()):
             yield (key, self._stream[key])
-
 
     def getStreamAudio(self):
         for key in sorted(self._stream.keys()):
             if self._stream[key].startswith("Audio: "):
                 yield (key, self._stream[key])
 
-
     def getType(self):
         return self._type
-
 
     def hasAudio(self):
         for key in self._stream.keys():
@@ -413,13 +382,11 @@ class Media(syslib.Dump):
                 return True
         return False
 
-
     def hasAudioCodec(self, codec):
         for key in self._stream.keys():
             if self._stream[key].startswith("Audio: " + codec):
                 return True
         return False
-
 
     def hasVideo(self):
         for key in self._stream.keys():
@@ -427,17 +394,14 @@ class Media(syslib.Dump):
                 return True
         return False
 
-
     def hasVideoCodec(self, codec):
         for key in self._stream.keys():
             if self._stream[key].startswith("Video: " + codec):
                 return True
         return False
 
-
     def isvalid(self):
         return self._type != "Unknown"
-
 
     def print(self):
         if self.isvalid():
@@ -448,7 +412,6 @@ class Media(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -463,16 +426,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getCheckFlag(self):
         """
@@ -31,20 +29,17 @@ class Options(syslib.Dump):
         """
         return self._args.checkFlag
 
-
     def getFiles(self):
         """
         Return list of files.
         """
         return self._args.files
 
-
     def getRecursiveFlag(self):
         """
         Return recursive flag.
         """
         return self._args.recursiveFlag
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Calculate MD5 checksums of files.")
@@ -62,13 +57,11 @@ class Options(syslib.Dump):
 
 class Md5sum(syslib.Dump):
 
-
     def __init__(self, options):
         if options.getCheckFlag():
             self._check(options.getFiles())
         else:
             self._calc(options, options.getFiles())
-
 
     def _calc(self, options, files):
         for file in files:
@@ -76,7 +69,7 @@ class Md5sum(syslib.Dump):
                 if not os.path.islink(file) and options.getRecursiveFlag():
                     try:
                         self._calc(options,
-                                   sorted([ os.path.join(file, x) for x in os.listdir(file) ]))
+                                   sorted([os.path.join(file, x) for x in os.listdir(file)]))
                     except PermissionError:
                         raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
             elif os.path.isfile(file):
@@ -84,7 +77,6 @@ class Md5sum(syslib.Dump):
                 if not md5sum:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
                 print(md5sum, file, sep="  ")
-
 
     def _check(self, files):
         found = []
@@ -117,7 +109,6 @@ class Md5sum(syslib.Dump):
         if nfail > 0:
             print("md5: Mismatch in", nfail, "of", nfiles - nmiss, "computed checksums.")
 
-
     def _md5sum(self, file):
         try:
             with open(file, "rb") as ifile:
@@ -134,7 +125,6 @@ class Md5sum(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -148,16 +138,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

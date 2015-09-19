@@ -18,19 +18,17 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._wine = syslib.Command("wine")
         if len(args) > 1:
             if args[1].endswith(".bat"):
-                self._wine.setFlags([ "cmd", "/c" ])
+                self._wine.setFlags(["cmd", "/c"])
             elif args[1].endswith(".msi"):
-                self._wine.setFlags([ "cmd", "/c", "start" ])
+                self._wine.setFlags(["cmd", "/c", "start"])
         self._wine.setArgs(args[1:])
 
         self._signalTrap()
         os.environ["WINEDEBUG"] = "-all"
-
 
     def getWine(self):
         """
@@ -38,10 +36,8 @@ class Options(syslib.Dump):
         """
         return self._wine
 
-
     def _signalIgnore(self, signal, frame):
         pass
-
 
     def _signalTrap(self):
         signal.signal(signal.SIGINT, self._signalIgnore)
@@ -49,7 +45,6 @@ class Options(syslib.Dump):
 
 
 class Wine(syslib.Dump):
-
 
     def __init__(self, options):
         self._wine = options.getWine()
@@ -61,7 +56,6 @@ class Wine(syslib.Dump):
                 break
             self._resolution += 1
 
-
     def run(self):
         self._wine.run()
         self._xrandr.run(filter="^  ", mode="batch")
@@ -71,12 +65,11 @@ class Wine(syslib.Dump):
                 break
             resolution += 1
         if resolution != self._resolution:
-            self._xrandr.setArgs([ "-s", str(self._resolution) ])
+            self._xrandr.setArgs(["-s", str(self._resolution)])
             self._xrandr.run(mode="batch")
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -91,16 +84,14 @@ class Main:
             sys.exit(exception)
         sys.exit(options.getWine().getExitcode())
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

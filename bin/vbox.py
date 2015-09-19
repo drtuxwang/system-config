@@ -19,10 +19,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getMode(self):
         """
@@ -30,13 +28,11 @@ class Options(syslib.Dump):
         """
         return self._args.mode
 
-
     def getMachines(self):
         """
         Return list of virtual machines.
         """
         return self._args.machines
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="VirtualBox virtual machine manager.")
@@ -56,7 +52,6 @@ class Options(syslib.Dump):
 
 class VBoxManage(syslib.Dump):
 
-
     def __init__(self, options):
         self._vboxmanage = syslib.Command("VBoxManage")
         mode = options.getMode()
@@ -71,43 +66,39 @@ class VBoxManage(syslib.Dump):
         else:
             self._start(machines)
 
-
     def _poweroff(self, machines):
         for machine in machines:
-            self._vboxmanage.setArgs([ "controlvm", machine, "poweroff" ])
+            self._vboxmanage.setArgs(["controlvm", machine, "poweroff"])
             self._vboxmanage.run()
             if self._vboxmanage.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' +
                                  str(self._vboxmanage.getExitcode()) + ' received from "' +
                                  self._vboxmanage.getFile() + '".')
-
 
     def _shutdown(self, machines):
         for machine in machines:
-            self._vboxmanage.setArgs([ "controlvm", machine, "acpipowerbutton" ])
+            self._vboxmanage.setArgs(["controlvm", machine, "acpipowerbutton"])
             self._vboxmanage.run()
             if self._vboxmanage.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' +
                                  str(self._vboxmanage.getExitcode()) + ' received from "' +
                                  self._vboxmanage.getFile() + '".')
-
 
     def _start(self, machines):
         for machine in machines:
-            self._vboxmanage.setArgs([ "startvm", machine, "--type", "headless" ])
+            self._vboxmanage.setArgs(["startvm", machine, "--type", "headless"])
             self._vboxmanage.run()
             if self._vboxmanage.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' +
                                  str(self._vboxmanage.getExitcode()) + ' received from "' +
                                  self._vboxmanage.getFile() + '".')
 
-
     def _view(self):
-        self._vboxmanage.setArgs([ "list", "vms" ])
+        self._vboxmanage.setArgs(["list", "vms"])
         self._vboxmanage.run(filter='^".*"', mode="batch")
         if self._vboxmanage.hasOutput():
             lines = sorted(self._vboxmanage.getOutput())
-            self._vboxmanage.setArgs([ "list", "runningvms" ])
+            self._vboxmanage.setArgs(["list", "runningvms"])
             self._vboxmanage.run(filter='^".*"', mode="batch")
             for line in lines:
                 if line in self._vboxmanage.getOutput():
@@ -117,7 +108,6 @@ class VBoxManage(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -132,16 +122,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

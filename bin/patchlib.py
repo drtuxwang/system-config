@@ -22,7 +22,6 @@ class Patcher:
     self._testCase = TestCase class object
     """
 
-
     def __init__(self, testCase):
         """
         testCase = TestCase class object
@@ -35,7 +34,6 @@ class Patcher:
         self._stderr = sys.stderr
         sys.stderr = io.StringIO()
 
-
     def __del__(self):
         if type(sys.stdout) == "io.StringIO":
             print(sys.stdout.getvalue(), end="", file=sys.stdout)
@@ -44,7 +42,6 @@ class Patcher:
         if type(sys.stderr) == "io.StringIO":
             print(sys.stderr.getvalue(), end="", file=sys.stderr)
             sys.stderr = self._stderr
-
 
     def setDict(self, handle, dictionary):
         """
@@ -57,7 +54,6 @@ class Patcher:
         patcher.start()
         self._testCase.addCleanup(patcher.stop)
 
-
     def setFile(self, file, data):
         """
         Create temp file.
@@ -66,7 +62,6 @@ class Patcher:
         data = Binary data
         """
         Patch_File(self._testCase).create(file, data)
-
 
     def setMethod(self, handle, method, mock=None):
         """
@@ -82,7 +77,6 @@ class Patcher:
             patcher = unittest.mock.patch.object(handle, method, return_value=mock)
         patcher.start()
         self._testCase.addCleanup(patcher.stop)
-
 
     def setSystem(self, system):
         """
@@ -100,13 +94,11 @@ class Patch_File:
     self._testCase = TestCase class object
     """
 
-
     def __init__(self, testCase):
         """
         testCase = TestCase class object
         """
         self._testCase = testCase
-
 
     def create(self, file, data):
         """
@@ -120,7 +112,6 @@ class Patch_File:
 
         with open(file, "wb") as ofile:
             ofile.write(data)
-
 
     def _delete(self):
         try:
@@ -136,13 +127,11 @@ class Patch_os:
     self._testCase = TestCase class object
     """
 
-
     def __init__(self, testCase):
         """
         testCase = TestCase class object
         """
         self._testCase = testCase
-
 
     def setSystem(self, system):
         """
@@ -165,18 +154,15 @@ class Patch_os:
             os.path.pathsep = ";"
         self._testCase.addCleanup(self._unsetSystem)
 
-        patcher = unittest.mock.patch.object(os.path, "join",
-                                             side_effect = self.mocked_os_path_join)
+        patcher = unittest.mock.patch.object(os.path, "join", side_effect=self.mocked_os_path_join)
         patcher.start()
         self._testCase.addCleanup(patcher.stop)
-
 
     def mocked_os_path_join(self, *args):
         """
         Mocked "os.path.join()" pretending to be another operating system.
         """
         return os.sep.join(args)
-
 
     def _unsetSystem(self):
         if os.sep != self._os_sep:
@@ -191,4 +177,3 @@ class Patch_os:
 
 if __name__ == "__main__":
     help(__name__)
-

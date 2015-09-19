@@ -19,17 +19,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
         Return list of files.
         """
         return self._args.files
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Open files using default application.")
@@ -41,10 +38,8 @@ class Options(syslib.Dump):
 
 class Open(syslib.Dump):
 
-
     def __init__(self, options):
         self._files = options.getFiles()
-
 
     def run(self):
         for file in self._files:
@@ -53,44 +48,33 @@ class Open(syslib.Dump):
 
             if os.path.isdir(file):
                 self._spawn("xdesktop", file)
-
-            elif prefix in ( "http", "https", "ftp" ):
+            elif prefix in ("http", "https", "ftp"):
                 self._spawn("firefox", file)
-
             elif not os.path.isfile(file):
                 print(file + ": cannot find file.")
-
-            elif extension in ( "mp3", "ogg", "wav" ):
+            elif extension in ("mp3", "ogg", "wav"):
                 self._spawn("audacity", file)
-
-            elif extension in ( "eps", "ps", "pdf" ):
+            elif extension in ("eps", "ps", "pdf"):
                 self._spawn("evince", file)
-
-            elif extension in ( "htm", "html", "xhtml" ):
+            elif extension in ("htm", "html", "xhtml"):
                 self._spawn("firefox", file)
-
-            elif extension in ( "jpg", "jpeg", "png" ):
+            elif extension in ("jpg", "jpeg", "png"):
                 self._spawn("gimp", file)
-
-            elif extension in ( "doc", "docx", "odf", "odg", "ods", "odt", "ppt",
-                                "pptx", "xls", "xlsx" ):
+            elif extension in ("doc", "docx", "odf", "odg", "ods", "odt", "ppt",
+                               "pptx", "xls", "xlsx"):
                 self._spawn("soffice", file)
-
-            elif extension in ( "txt", "json" ):
+            elif extension in ("txt", "json"):
                 self._spawn("xedit", file)
-
             else:
                 print(file + ": unknown file extension.")
 
-
     def _spawn(self, program, file):
         print(file + ': opening with "' + program + '"...')
-        program = syslib.Command(program, args=[ file ])
+        program = syslib.Command(program, args=[file])
         program.run(mode="daemon")
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -105,16 +89,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

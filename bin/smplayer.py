@@ -19,12 +19,11 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._smplayer = syslib.Command("smplayer")
         if len(args) > 1:
             if args[1].endswith(".ram"):
-                self._smplayer.setFlags([ "-playlist" ]) # Avoid "avisynth.dll" error
+                self._smplayer.setFlags(["-playlist"])  # Avoid "avisynth.dll" error
 
         self._smplayer.setArgs(args[1:])
 
@@ -35,20 +34,17 @@ class Options(syslib.Dump):
             self._config()
             self._config2()
 
-
     def getFilter(self):
         """
         Return filter pattern.
         """
         return self._filter
 
-
     def getSmplayer(self):
         """
         Return smplayer Command class object.
         """
         return self._smplayer
-
 
     def _config(self):
         configdir = os.path.join(os.environ["HOME"], ".config", "smplayer")
@@ -124,10 +120,9 @@ class Options(syslib.Dump):
         except IOError:
             pass
 
-
     def _config2(self):
         configdir = os.path.join(os.environ["HOME"], ".config", "smplayer")
-        expiry = 2592000 # 30 days
+        expiry = 2592000  # 30 days
         mytime = time.time()
 
         for directory in glob.glob(os.path.join(configdir, "file_settings", "*")):
@@ -145,12 +140,11 @@ class Options(syslib.Dump):
                 self._remove(file)
             if empty:
                 try:
-                   os.rmdir(directory)
+                    os.rmdir(directory)
                 except OSError:
-                   pass
+                    pass
 
-
-    def _remove(self,*files):
+    def _remove(self, *files):
         for file in files:
             try:
                 os.remove(file)
@@ -159,7 +153,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -174,16 +167,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

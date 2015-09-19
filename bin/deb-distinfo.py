@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getPackagesFile(self):
         """
@@ -31,17 +29,15 @@ class Options(syslib.Dump):
         """
         return self._args.packagesFile[0]
 
-
     def getPackageNames(self):
         """
         Return list of package names.
         """
         return self._args.packageNames
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Show information about packages in Debian packages list file.")
+            description="Show information about packages in Debian packages list file.")
 
         parser.add_argument("packagesFile", nargs=1, metavar="distribution.package",
                             help="Debian package list file.")
@@ -52,11 +48,9 @@ class Options(syslib.Dump):
 
 class Info(syslib.Dump):
 
-
     def __init__(self, options):
         self._readDistributionPackages(options.getPackagesFile())
         self._showDistributionPackages(options.getPackageNames())
-
 
     def _readDistributionPackages(self, packagesFile):
         self._packages = {}
@@ -68,14 +62,13 @@ class Info(syslib.Dump):
                     line = line.rstrip("\r\n")
                     if line.startswith("Package: "):
                         name = line.replace("Package: ", "")
-                        lines = [ line ]
+                        lines = [line]
                     elif line:
                         lines.append(line)
                     else:
                         self._packages[name] = lines
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + packagesFile + '" packages file.')
-
 
     def _showDistributionPackages(self, packageNames):
         for name in packageNames:
@@ -86,7 +79,6 @@ class Info(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -101,16 +93,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

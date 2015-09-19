@@ -18,13 +18,11 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._unetbootin = syslib.Command("unetbootin")
         self._unetbootin.setArgs(args[1:])
         self._filter = "^$|recently-used.xbel|^Fontconfig "
         self._setLibraries(self._unetbootin)
-
 
     def getFilter(self):
         """
@@ -32,13 +30,11 @@ class Options(syslib.Dump):
         """
         return self._filter
 
-
     def getUnetbootin(self):
         """
         Return unetbootin Command class object.
         """
         return self._unetbootin
-
 
     def _setLibraries(self, command):
         libdir = os.path.join(os.path.dirname(command.getFile()), "lib")
@@ -46,13 +42,12 @@ class Options(syslib.Dump):
             if syslib.info.getSystem() == "linux":
                 if "LD_LIBRARY_PATH" in os.environ.keys():
                     os.environ["LD_LIBRARY_PATH"] = (
-                            libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"])
+                        libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"])
                 else:
                     os.environ["LD_LIBRARY_PATH"] = libdir
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -67,16 +62,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -18,11 +18,10 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._soffice = syslib.Command(os.path.join("program", "soffice"))
         self._soffice.setArgs(args[1:])
-        if args[1:] == [ "--version" ]:
+        if args[1:] == ["--version"]:
             self._soffice.run(mode="exec")
         self._filter = ("^$|: GLib-CRITICAL |: GLib-GObject-WARNING |: Gtk-WARNING |"
                         ": wrong ELF class:|: Could not find a Java Runtime|"
@@ -31,13 +30,11 @@ class Options(syslib.Dump):
         self._config()
         self._setenv()
 
-
     def getFilter(self):
         """
         Return filter pattern.
         """
         return self._filter
-
 
     def getSoffice(self):
         """
@@ -45,22 +42,19 @@ class Options(syslib.Dump):
         """
         return self._soffice
 
-
     def _config(self):
-        for file in glob.glob(".~lock.*#"): # Remove stupid lock files
+        for file in glob.glob(".~lock.*#"):  # Remove stupid lock files
             try:
                 os.remove(file)
             except OSError:
                 pass
 
-
     def _setenv(self):
         if "GTK_MODULES" in os.environ.keys():
-            del os.environ["GTK_MODULES"]           # Fix Linux "gnomebreakpad" problems
+            del os.environ["GTK_MODULES"]  # Fix Linux "gnomebreakpad" problems
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -75,16 +69,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

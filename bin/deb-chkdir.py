@@ -19,10 +19,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getDistributions(self):
         """
@@ -30,10 +28,9 @@ class Options(syslib.Dump):
         """
         return self._args.distributions
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description='Check debian directory for old, unused or missing ".deb" packages.')
+            description='Check debian directory for old, unused or missing ".deb" packages.')
 
         parser.add_argument("distributions", nargs="+", metavar="directory",
                             help="Distribution directory.")
@@ -43,12 +40,10 @@ class Options(syslib.Dump):
 
 class Package(syslib.Dump):
 
-
     def __init__(self, file, time, version):
         self._file = file
         self._time = time
         self._version = version
-
 
     def getFile(self):
         """
@@ -56,13 +51,11 @@ class Package(syslib.Dump):
         """
         return self._file
 
-
     def getTime(self):
         """
         Return package time stamp.
         """
         return self._time
-
 
     def getVersion(self):
         """
@@ -73,7 +66,6 @@ class Package(syslib.Dump):
 
 class CheckDistributions(syslib.Dump):
 
-
     def __init__(self, options):
         for distribution in options.getDistributions():
             packagesFiles = self._checkFiles(distribution)
@@ -81,7 +73,6 @@ class CheckDistributions(syslib.Dump):
                 packagesWhiteList = self._readDistributionWhitelist(distribution + ".whitelist")
                 packagesUsed = self._checkUsed(distribution)
                 self._compare(packagesFiles, packagesWhiteList, packagesUsed)
-
 
     def _checkFiles(self, distribution):
         try:
@@ -105,7 +96,6 @@ class CheckDistributions(syslib.Dump):
                 packages[name] = Package(file, fileStat.getTime(), version)
         return packages
 
-
     def _checkUsed(self, distribution):
         packages = {}
         try:
@@ -118,7 +108,7 @@ class CheckDistributions(syslib.Dump):
                         raise SystemExit(sys.argv[0] + ': Cannot read corrupt "' + file +
                                          '" package list file.')
                     packages[name] = Package(os.path.join(
-                            distribution, name + "_" + version + "_*.deb"), -1, version)
+                        distribution, name + "_" + version + "_*.deb"), -1, version)
         except IOError:
             pass
 
@@ -139,7 +129,6 @@ class CheckDistributions(syslib.Dump):
             pass
         return packages
 
-
     def _readDistributionWhitelist(self, file):
         packages = {}
         try:
@@ -155,7 +144,6 @@ class CheckDistributions(syslib.Dump):
             pass
         return packages
 
-
     def _compare(self, packagesFiles, packagesWhiteList, packagesUsed):
         namesFiles = sorted(packagesFiles.keys())
         namesWhiteList = sorted(packagesWhiteList.keys())
@@ -163,21 +151,20 @@ class CheckDistributions(syslib.Dump):
 
         for name in namesFiles:
             if name not in namesUsed:
-               if (name in namesWhiteList and
-                       packagesWhiteList[name] in ( "*", packagesFiles[name] )):
-                   continue
-               print("rm", packagesFiles[name].getFile(), "# Unused")
+                if (name in namesWhiteList and packagesWhiteList[name] in (
+                        "*", packagesFiles[name])):
+                    continue
+                print("rm", packagesFiles[name].getFile(), "# Unused")
             elif packagesFiles[name].getVersion() != packagesUsed[name].getVersion():
-               print("rm", packagesFiles[name].getFile(), "# Unused")
-               print("# ", packagesUsed[name].getFile(), "Missing")
+                print("rm", packagesFiles[name].getFile(), "# Unused")
+                print("# ", packagesUsed[name].getFile(), "Missing")
 
         for name in namesUsed:
             if name not in namesFiles:
-               print("# ", packagesUsed[name].getFile(), "Missing")
+                print("# ", packagesUsed[name].getFile(), "Missing")
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -192,7 +179,6 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
@@ -200,7 +186,7 @@ class Main:
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

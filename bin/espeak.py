@@ -18,19 +18,16 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._espeak = syslib.Command("espeak")
         self._espeak.setArgs(args[1:])
         self._filter = ": Connection refused"
-
 
     def getEspeak(self):
         """
         Return espeak Command class object.
         """
         return self._espeak
-
 
     def getFilter(self):
         """
@@ -40,7 +37,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -55,16 +51,14 @@ class Main:
             sys.exit(exception)
         sys.exit(options.getEspeak().getExitcode())
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

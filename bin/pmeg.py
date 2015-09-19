@@ -20,12 +20,10 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._convert = syslib.Command("convert")
-
 
     def getConvert(self):
         """
@@ -33,13 +31,11 @@ class Options(syslib.Dump):
         """
         return self._convert
 
-
     def getDirectories(self):
         """
         Return list of directories.
         """
         return self._args.directories
-
 
     def getMegs(self):
         """
@@ -47,12 +43,11 @@ class Options(syslib.Dump):
         """
         return self._args.megs[0]
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Resize large picture images to mega-pixels limit.")
+            description="Resize large picture images to mega-pixels limit.")
 
-        parser.add_argument("-megs", nargs=1, type=float, default=[ 9 ],
+        parser.add_argument("-megs", nargs=1, type=float, default=[9],
                             help="Select mega-pixels. Default is 9.")
 
         parser.add_argument("directories", nargs="+", metavar="directory",
@@ -71,15 +66,14 @@ class Options(syslib.Dump):
 
 class Remeg(syslib.Dump):
 
-
     def __init__(self, options):
         self._convert = options.getConvert()
         megs = options.getMegs()
 
         for directory in options.getDirectories():
             for file in sorted(glob.glob(os.path.join(directory, "*"))):
-                if (file.split(".")[-1].lower() in ( "bmp", "gif", "jpg", "jpeg", "png", "pcx",
-                        "svg", "tif", "tiff" )):
+                if (file.split(".")[-1].lower() in (
+                        "bmp", "gif", "jpg", "jpeg", "png", "pcx", "svg", "tif", "tiff")):
                     ix, iy = self._imagesize(options, file)
                     imegs = ix * iy / 1000000
                     print("{0:s}: {1:d} x {2:d} ({3:4.2f})".format(file, ix, iy, imegs), end="")
@@ -89,9 +83,9 @@ class Remeg(syslib.Dump):
                     if ox < ix and oy < iy:
                         print(" => {0:d} x {1:d} ({2:4.2f})".format(ox, oy, ox * oy / 1000000),
                               end="")
-                        self._convert.setArgs([ "-verbose", "-size", str(ox) + "x" + str(oy),
-                                                "-resize", str(ox) + "x" + str(oy) + "!",
-                                                file, file ])
+                        self._convert.setArgs(["-verbose", "-size", str(ox) + "x" + str(oy),
+                                               "-resize", str(ox) + "x" + str(oy) + "!",
+                                               file, file])
                         self._convert.run(mode="batch")
                         if self._convert.getExitcode():
                             raise SystemExit(sys.argv[0] + ': Error code ' +
@@ -99,9 +93,8 @@ class Remeg(syslib.Dump):
                                              self._convert.getFile() + '".')
                     print()
 
-
     def _imagesize(self, options, file):
-        self._convert.setArgs([ "-verbose", file, "/dev/null" ])
+        self._convert.setArgs(["-verbose", file, "/dev/null"])
         self._convert.run(filter="^" + file + "=>", mode="batch", error2output=True)
         if not self._convert.hasOutput():
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" picture file.')
@@ -113,7 +106,6 @@ class Remeg(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -128,16 +120,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

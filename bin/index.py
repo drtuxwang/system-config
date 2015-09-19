@@ -21,10 +21,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._archive = os.path.basename(os.getcwd())
-
 
     def getArchive(self):
         """
@@ -35,15 +33,12 @@ class Options(syslib.Dump):
 
 class Index(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
-
 
     def run(self):
         self._coreFind()
         self._checksum()
-
 
     def _checksum(self):
         print('Generating "index.fsum"...')
@@ -57,36 +52,34 @@ class Index(syslib.Dump):
         files = glob.glob("*")
         if "index.fsum" in files:
             files.remove("index.fsum")
-            fsum.setArgs([ "-R", "-update=index.fsum" ] + files)
+            fsum.setArgs(["-R", "-update=index.fsum"] + files)
         else:
-            fsum.setArgs([ "-R" ] + files)
+            fsum.setArgs(["-R"] + files)
         fsum.run(mode="batch")
 
         self._writeFsums(fsum.getOutput())
         timeNew = 0
         try:
             with open("index.fsum", "w", newline="\n") as ofile:
-               for line in fsum.getOutput():
-                   timeNew = max(timeNew, int(line.split(" ", 1)[0].rsplit("/", 1)[-1]))
-                   print(line, file=ofile)
+                for line in fsum.getOutput():
+                    timeNew = max(timeNew, int(line.split(" ", 1)[0].rsplit("/", 1)[-1]))
+                    print(line, file=ofile)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot create "index.fsum" file.')
         os.utime("index.fsum", (timeNew, timeNew))
 
-
     def _coreFind(self, directory=""):
         for file in sorted(glob.glob(os.path.join(directory, ".*")) +
-                glob.glob(os.path.join(directory, "*"))):
+                           glob.glob(os.path.join(directory, "*"))):
             if not os.path.islink(file):
                 if os.path.isdir(file):
                     self._coreFind(file)
                 elif os.path.basename(file) == "core" or os.path.basename(file).startswith("core."):
                     raise SystemExit(sys.argv[0] + ': Found "' + file + '" crash dump file.')
 
-
     def _readFsums(self, ofile, directory):
         fsum = os.path.join(directory, "..fsum")
-        if directory and os.listdir(directory) == [ "..fsum" ]:
+        if directory and os.listdir(directory) == ["..fsum"]:
             try:
                 os.remove(fsum)
             except OSError:
@@ -103,7 +96,6 @@ class Index(syslib.Dump):
                 if os.path.isdir(file) and not os.path.islink(file):
                     self._readFsums(ofile, file)
 
-
     def _writeFsums(self, lines):
         fsums = {}
         for line in lines:
@@ -117,7 +109,7 @@ class Index(syslib.Dump):
         for directory in sorted(fsums.keys()):
             depth = directory.count(os.sep)
             if depth not in directories.keys():
-                directories[depth] = [ directory ]
+                directories[depth] = [directory]
             directories[depth].append(directory)
 
         for depth in sorted(directories.keys(), reverse=True):
@@ -138,7 +130,6 @@ class Index(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -152,16 +143,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

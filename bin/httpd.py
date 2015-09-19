@@ -22,7 +22,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -35,20 +34,17 @@ class Options(syslib.Dump):
         except ValueError:
             raise SystemExit(sys.argv[0] + ': Invalid port number "' + args[2] + '".')
 
-
     def getDirectory(self):
         """
         Return directory.
         """
         return self._args.directory[0]
 
-
     def getPort(self):
         """
         Return port.
         """
         return self._args.port[0]
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Start a simple Python HTTP server.")
@@ -68,14 +64,12 @@ class MyTCPServer(socketserver.TCPServer):
     Enable immediate port reuse.
     """
 
-
     def server_bind(self):
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind(self.server_address)
 
 
 class WebServer(syslib.Dump):
-
 
     def __init__(self, options):
         try:
@@ -87,7 +81,6 @@ class WebServer(syslib.Dump):
         self._port = options.getPort()
         self._mineTypes()
 
-
     def run(self):
         try:
             httpd = MyTCPServer(("", self._port), http.server.SimpleHTTPRequestHandler)
@@ -98,13 +91,11 @@ class WebServer(syslib.Dump):
         print('Serving "' + os.getcwd() + '" at "http://localhost:' + str(self._port) + '"...')
         httpd.serve_forever()
 
-
     def _mineTypes(self):
         http.server.SimpleHTTPRequestHandler.extensions_map[".log"] = "text/plain"
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -119,16 +110,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

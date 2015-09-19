@@ -21,17 +21,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getListFiles(self):
         """
         Return list of installed packages files.
         """
         return self._args.listFiles
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description='Check whether installed debian packages in '
@@ -45,19 +42,16 @@ class Options(syslib.Dump):
 
 class Package(syslib.Dump):
 
-
     def __init__(self, version="0", depends=[], url=""):
         self._version = version
         self._depends = depends
         self._url = url
-
 
     def getDepends(self):
         """
         Return list of required dependent packages.
         """
         return self._depends
-
 
     def setDepends(self, depends):
         """
@@ -67,13 +61,11 @@ class Package(syslib.Dump):
         """
         self._depends = depends
 
-
     def getUrl(self):
         """
         Return package url.
         """
         return self._url
-
 
     def setUrl(self, url):
         """
@@ -83,13 +75,11 @@ class Package(syslib.Dump):
         """
         self._url = url
 
-
     def getVersion(self):
         """
         Return version.
         """
         return self._version
-
 
     def setVersion(self, version):
         """
@@ -101,7 +91,6 @@ class Package(syslib.Dump):
 
 
 class CheckUpdates(syslib.Dump):
-
 
     def __init__(self, options):
         ispattern = re.compile("[.]debs-?.*$")
@@ -115,7 +104,6 @@ class CheckUpdates(syslib.Dump):
                         self._readDistributionPinPackages(distribution + ".pinlist")
                         self._readDistributionBlacklist(distribution + ".blacklist")
                         self._checkDistributionUpdates(distribution, listFile)
-
 
     def _readDistributionPackages(self, packagesFile):
         packages = {}
@@ -142,7 +130,6 @@ class CheckUpdates(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Cannot open "' + packagesFile + '" packages file.')
         return packages
 
-
     def _readDistributionPinPackages(self, pinFile):
         packagesCache = {}
         try:
@@ -160,7 +147,6 @@ class CheckUpdates(syslib.Dump):
         except IOError:
             pass
 
-
     def _readDistributionBlacklist(self, file):
         try:
             with open(file, errors="replace") as ifile:
@@ -175,7 +161,6 @@ class CheckUpdates(syslib.Dump):
                                     del self._packages[name]
         except IOError:
             return
-
 
     def _checkDistributionUpdates(self, distribution, listFile):
         try:
@@ -212,7 +197,6 @@ class CheckUpdates(syslib.Dump):
         if os.path.getsize(urlfile) == 0:
             os.remove(urlfile)
 
-
     def _depends(self, versions, depends):
         names = []
         for name in depends:
@@ -223,7 +207,6 @@ class CheckUpdates(syslib.Dump):
                     names.extend(self._depends(versions, self._packages[name].getDepends()))
         return names
 
-
     def _local(self, distribution, url):
         file = os.path.join(distribution, os.path.basename(url))
         if os.path.isfile(file):
@@ -232,7 +215,6 @@ class CheckUpdates(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -247,24 +229,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
-
 
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

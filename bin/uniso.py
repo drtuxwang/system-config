@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getImages(self):
         """
@@ -31,17 +29,15 @@ class Options(syslib.Dump):
         """
         return self._args.images
 
-
     def getViewFlag(self):
         """
         Return view flag.
         """
         return self._args.viewFlag
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Unpack a portable CD/DVD archive in ISO9660 format.")
+            description="Unpack a portable CD/DVD archive in ISO9660 format.")
 
         parser.add_argument("-v", dest="viewFlag", action="store_true",
                             help="Show contents of archive.")
@@ -53,38 +49,36 @@ class Options(syslib.Dump):
 
 class Unpack(syslib.Dump):
 
-
     def __init__(self, options):
         os.umask(int("022", 8))
         viewFlag = options.getViewFlag()
 
         if viewFlag:
-            archiver = syslib.Command("7z", flags=[ "l" ])
-            isoinfo = syslib.Command("isoinfo", flags=[ "-d", "-i" ])
+            archiver = syslib.Command("7z", flags=["l"])
+            isoinfo = syslib.Command("isoinfo", flags=["-d", "-i"])
         else:
-            archiver = syslib.Command("7z", flags=[ "x", "-y" ])
+            archiver = syslib.Command("7z", flags=["x", "-y"])
 
         for image in options.getImages():
             if not os.path.isfile(image):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + image + '" ISO9660 file.')
-            archiver.setArgs([ image ])
+            archiver.setArgs([image])
             archiver.run()
             if archiver.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(archiver.getExitcode()) +
                                  ' received from "' + archiver.getFile() + '".')
             if viewFlag:
-                isoinfo.setArgs([ image ])
+                isoinfo.setArgs([image])
                 isoinfo.run()
                 if isoinfo.getExitcode():
                     raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.getExitcode()) +
                                      ' received from "' + isoinfo.getFile() + '".')
                 self._isosize(image, syslib.FileStat(image).getSize())
 
-
     def _isosize(self, image, size):
         if size > 734003200:
             print("\n*** {0:s}: {1:4.2f} MB ({2:5.3f} salesman's GB) ***\n".format(
-                    image, size/1048576., size/1000000000.))
+                  image, size/1048576., size/1000000000.))
             if size > 9400000000:
                 sys.stderr.write("**WARNING** This ISO image file does not fit onto "
                                  "9.4GB/240min Duel Layer DVD media.\n")
@@ -104,7 +98,7 @@ class Unpack(syslib.Dump):
             minutes, remainder = divmod(size, 734003200 / 80)
             seconds = remainder * 4800 / 734003200.
             print("\n*** {0:s}: {1:4.2f} MB ({2:.0f} min {3:05.2f} sec) ***\n".format(
-                    image, size/1048576., minutes, seconds))
+                  image, size/1048576., minutes, seconds))
             if size > 681574400:
                 sys.stderr.write("**WARNING** This ISO image file does not fit onto "
                                  "650MB/74min CD media.\n")
@@ -112,7 +106,6 @@ class Unpack(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -127,16 +120,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

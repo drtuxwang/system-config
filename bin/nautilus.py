@@ -18,18 +18,16 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._nautilus = syslib.Command("nautilus")
         if len(args) == 1:
-          if "DESKTOP_STARTUP_ID" not in os.environ.keys():
-            self._nautilus.setArgs([ os.getcwd() ])
+            if "DESKTOP_STARTUP_ID" not in os.environ.keys():
+                self._nautilus.setArgs([os.getcwd()])
         else:
-          self._nautilus.setArgs(args[1:])
+            self._nautilus.setArgs(args[1:])
         self._filter = ("^$|^Initializing nautilus|: Gtk-WARNING |: Gtk-CRITICAL | "
                         "GLib.*CRITICAL |^Shutting down")
         self._config()
-
 
     def getFilter(self):
         """
@@ -37,13 +35,11 @@ class Options(syslib.Dump):
         """
         return self._filter
 
-
     def getNautilus(self):
         """
         Return nautilus Command class object.
         """
         return self._nautilus
-
 
     def _config(self):
         if "HOME" in os.environ.keys():
@@ -87,15 +83,14 @@ class Options(syslib.Dump):
                         print('\n# xdg-open (ie "xdg-mime default vlc.desktop '
                               'x-scheme-handler/rtsp"', file=ofile)
                         print("[Default Applications]", file=ofile)
-                        print("x-scheme-handler/mms=vlc.desktop",file= ofile)
-                        print("x-scheme-handler/mms=vlc.desktop",file= ofile)
-                        print("x-scheme-handler/rtsp=vlc.desktop",file= ofile)
+                        print("x-scheme-handler/mms=vlc.desktop", file=ofile)
+                        print("x-scheme-handler/mms=vlc.desktop", file=ofile)
+                        print("x-scheme-handler/rtsp=vlc.desktop", file=ofile)
                 except IOError:
                     return
             self._userapp("application/vnd.oasis.opendocument.text", "soffice")
             self._userapp("image/jpeg", "gqview")
             self._userapp("text/html", "chrome")
-
 
     def _userapp(self, mimeType, appName):
         file = os.path.join(self._configdir, appName + "-userapp.desktop")
@@ -126,7 +121,6 @@ class Options(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -140,16 +134,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

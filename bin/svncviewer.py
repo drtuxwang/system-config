@@ -20,7 +20,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -28,7 +27,7 @@ class Options(syslib.Dump):
             remoteHost, remotePort = self._args.server[0].split(":")
         except ValueError:
             raise SystemExit(
-                    sys.argv[0] + ': You must specific a single ":" in VNC server location.')
+                sys.argv[0] + ': You must specific a single ":" in VNC server location.')
 
         try:
             if int(remotePort) < 101:
@@ -45,8 +44,7 @@ class Options(syslib.Dump):
         else:
             localPort = remotePort
             print('Starting "vncviewer" connection to "localhost:' + localPort + '"...')
-        self._vncviewer.setArgs([ ":" + localPort ])
-
+        self._vncviewer.setArgs([":" + localPort])
 
     def getVncviewer(self):
         """
@@ -54,24 +52,22 @@ class Options(syslib.Dump):
         """
         return self._vncviewer
 
-
     def _getport(self, remoteHost, remotePort):
-        lsof = syslib.Command("lsof", args=[ "-i", "tcp:5901-5999" ])
+        lsof = syslib.Command("lsof", args=["-i", "tcp:5901-5999"])
         lsof.run(mode="batch")
         for localPort in range(5901, 6000):
             if not lsof.isMatchOutput(":" + str(localPort) + "[ -]"):
-                ssh = syslib.Command("ssh", args=[ "-f", "-L", str(localPort) + ":localhost:" +
-                                     remotePort, remoteHost, "sleep", "64" ])
+                ssh = syslib.Command("ssh", args=["-f", "-L", str(localPort) + ":localhost:" +
+                                     remotePort, remoteHost, "sleep", "64"])
                 print('Starting "ssh" port forwarding from "localhost:' + str(localPort) +
                       '" to "' + remoteHost + ":" + remotePort + '"...')
                 ssh.run()
                 return str(localPort)
         raise SystemExit(sys.argv[0] + ": Cannot find unused local port in range 5901-5999.")
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Securely connect to VNC server using SSH protocol.")
+            description="Securely connect to VNC server using SSH protocol.")
 
         parser.add_argument("server", nargs=1, metavar="[[user]@host]:port",
                             help="VNC server location.")
@@ -80,7 +76,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -95,16 +90,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:
@@ -117,4 +110,3 @@ if __name__ == "__main__":
         help(__name__)
     else:
         Main()
-

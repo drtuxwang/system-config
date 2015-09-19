@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
 
         if os.name == "nt":
@@ -27,21 +26,20 @@ class Options(syslib.Dump):
         else:
             self._archiver = syslib.Command("unace")
 
-        if len(args) > 1 and args[1] in ( "v", "t", "x" ):
+        if len(args) > 1 and args[1] in ("v", "t", "x"):
             self._archiver.setArgs(args[1:])
             self._archiver.run(mode="exec")
 
         self._parseArgs(args[1:])
 
         if self._args.viewFlag:
-            self._archiver.setFlags([ "v" ])
+            self._archiver.setFlags(["v"])
         elif self._args.testFlag:
-            self._archiver.setFlags([ "t", "-y" ])
+            self._archiver.setFlags(["t", "-y"])
         elif os.name == "nt":
-            self._archiver.setFlags([ "x", "-y", "-o" ])
+            self._archiver.setFlags(["x", "-y", "-o"])
         else:
-            self._archiver.setFlags([ "x", "-y", "-o", "-y" ])
-
+            self._archiver.setFlags(["x", "-y", "-o", "-y"])
 
     def getArchiver(self):
         """
@@ -49,13 +47,11 @@ class Options(syslib.Dump):
         """
         return self._archiver
 
-
     def getArchives(self):
         """
         Return list of archives files.
         """
         return self._args.archives
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Unpack a compressed archive in ACE format.")
@@ -71,25 +67,22 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-
 class Unpack(syslib.Dump):
-
 
     def __init__(self, options):
         os.umask(int("022", 8))
         archiver = options.getArchiver()
 
         for archive in options.getArchives():
-            archiver.setArgs([ archive ])
+            archiver.setArgs([archive])
             archiver.run()
             if archiver.getExitcode():
                 print(sys.argv[0] + ': Error code ' + str(archiver.getExitcode()) +
-                      ' received from "' + archiver.getFile() + '".', file = sys.stderr)
+                      ' received from "' + archiver.getFile() + '".', file=sys.stderr)
                 raise SystemExit(archiver.getExitcode())
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -104,16 +97,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

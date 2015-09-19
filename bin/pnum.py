@@ -19,10 +19,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getDirectories(self):
         """
@@ -30,13 +28,11 @@ class Options(syslib.Dump):
         """
         return self._args.directories
 
-
     def getOrder(self):
         """
         Return order method.
         """
         return self._args.order
-
 
     def getResetFlag(self):
         """
@@ -44,17 +40,15 @@ class Options(syslib.Dump):
         """
         return self._args.resetFlag
 
-
     def getStart(self):
         """
         Return start number.
         """
         return self._args.start[0]
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Renumber picture files into a numerical series.")
+            description="Renumber picture files into a numerical series.")
 
         parser.add_argument("-ctime", action="store_const", const="ctime", dest="order",
                             default="file", help="Sort using file creation time.")
@@ -62,7 +56,7 @@ class Options(syslib.Dump):
                             default="file", help="Sort using file modification time.")
         parser.add_argument("-noreset", dest="resetFlag", action="store_false",
                             help="Use same number sequence for all directories.")
-        parser.add_argument("-start", nargs=1, type=int, default=[ 1 ],
+        parser.add_argument("-start", nargs=1, type=int, default=[1],
                             help="Select number to start from.")
 
         parser.add_argument("directories", nargs="+", metavar="directory",
@@ -72,12 +66,11 @@ class Options(syslib.Dump):
 
         for directory in self._args.directories:
             if not os.path.isdir(directory):
-                 raise SystemExit(sys.argv[0] + ': Picture directory "' + directory +
-                                  '" does not exist.')
+                raise SystemExit(
+                    sys.argv[0] + ': Picture directory "' + directory + '" does not exist.')
 
 
 class Renumber(syslib.Dump):
-
 
     def __init__(self, options):
         startdir = os.getcwd()
@@ -91,14 +84,14 @@ class Renumber(syslib.Dump):
                 os.chdir(directory)
                 fileStats = []
                 for file in glob.glob("*.*"):
-                    if (file.split(".")[-1].lower() in ( "bmp", "gif", "jpg", "jpeg", "png",
-                            "pcx", "svg", "tif", "tiff" )):
+                    if (file.split(".")[-1].lower() in (
+                            "bmp", "gif", "jpg", "jpeg", "png", "pcx", "svg", "tif", "tiff")):
                         fileStats.append(syslib.FileStat(file))
                 newfiles = []
                 mypid = os.getpid()
                 for fileStat in self._sorted(options, fileStats):
-                    newfile = "pic{0:05d}.{1:s}".format(number,
-                            fileStat.getFile().split(".")[-1].lower().replace("jpeg", "jpg"))
+                    newfile = "pic{0:05d}.{1:s}".format(
+                        number, fileStat.getFile().split(".")[-1].lower().replace("jpeg", "jpg"))
                     newfiles.append(newfile)
                     try:
                         os.rename(fileStat.getFile(), str(mypid) + "-" + newfile)
@@ -114,7 +107,6 @@ class Renumber(syslib.Dump):
                                          file + '" image file.')
                 os.chdir(startdir)
 
-
     def _sorted(self, options, fileStats):
         order = options.getOrder()
         if order == "mtime":
@@ -127,7 +119,6 @@ class Renumber(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -142,16 +133,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

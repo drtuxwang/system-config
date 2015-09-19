@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._et = syslib.Command("et.x86", check=False)
         if not os.path.isfile(self._et.getFile()):
@@ -33,20 +32,17 @@ class Options(syslib.Dump):
         self._punkbuster()
         self._et.setArgs(args[1:])
 
-
     def getEt(self):
         """
         Return et Command class object.
         """
         return self._et
 
-
     def getLogfile(self):
         """
         Return logfile location.
         """
         return self._logfile
-
 
     def _punkbuster(self):
         if "HOME" in os.environ.keys():
@@ -73,7 +69,6 @@ class Options(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + etkey +
                                  '" key file (see http://www.etkey.net).')
 
-
     def _config(self):
         os.chdir(os.path.dirname(self._et.getFile()))
         if "HOME" in os.environ.keys():
@@ -85,18 +80,17 @@ class Options(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot find SDL sound interface library.')
             os.environ["ETSDL_SDL_LIB"] = etsdl[0]
             if "LD_PRELOAD" in os.environ.keys():
-                os.environ["LD_PRELOAD"] = (os.environ["LD_PRELOAD"] + os.pathsep +
-                        os.path.join(os.getcwd(), "et-sdl-sound-r29", "et-sdl-sound.so"))
+                os.environ["LD_PRELOAD"] = (os.environ["LD_PRELOAD"] + os.pathsep + os.path.join(
+                    os.getcwd(), "et-sdl-sound-r29", "et-sdl-sound.so"))
             else:
-                os.environ["LD_PRELOAD"] = os.path.join(os.getcwd(),
-                        "et-sdl-sound-r29", "et-sdl-sound.so")
+                os.environ["LD_PRELOAD"] = os.path.join(
+                    os.getcwd(), "et-sdl-sound-r29", "et-sdl-sound.so")
             if not os.path.isdir(os.path.join(os.environ["HOME"], ".etwolf")):
                 os.mkdir(os.path.join(os.environ["HOME"], ".etwolf"))
             self._logfile = os.path.join(os.environ["HOME"], ".etwolf", "etwolf.log")
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -108,7 +102,6 @@ class Main:
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
         sys.exit(0)
-
 
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):

@@ -19,18 +19,16 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._batterys = []
         if os.path.isdir("/sys/class/power_supply"):
-            for directory in glob.glob("/sys/class/power_supply/BAT*"): # New kernels
+            for directory in glob.glob("/sys/class/power_supply/BAT*"):  # New kernels
                 self._batterys.append(BatteryPower(directory))
         else:
             for directory in glob.glob("/proc/acpi/battery/BAT*"):
                 self._batterys.append(BatteryAcpi(directory))
         if not self._batterys:
             raise SystemExit(sys.argv[0] + ": Cannot find any battery device.")
-
 
     def getBatterys(self):
         """
@@ -43,7 +41,6 @@ class BatteryAcpi(syslib.Dump):
     """
     Uses "/proc/acpi/battery/BAT*"
     """
-
 
     def __init__(self, directory):
         self._device = os.path.basename(directory)
@@ -75,7 +72,6 @@ class BatteryAcpi(syslib.Dump):
                     except ValueError:
                         pass
         self.check()
-
 
     def check(self):
         self._isExist = False
@@ -109,41 +105,32 @@ class BatteryAcpi(syslib.Dump):
         except IOError:
             return
 
-
     def isExist(self):
         """
         Return exist flag.
         """
         return self._isExist
 
-
     def getCapacity(self):
         return self._capacity
-
 
     def getCapacityMax(self):
         return self._capacityMax
 
-
     def getCharge(self):
         return self._charge
-
 
     def getName(self):
         return self._name
 
-
     def getOem(self):
         return self._oem
-
 
     def getRate(self):
         return self._rate
 
-
     def getType(self):
         return self._type
-
 
     def getVoltage(self):
         return self._voltage
@@ -153,7 +140,6 @@ class BatteryPower(BatteryAcpi):
     """
     Uses "/sys/class/power_supply/BAT*"
     """
-
 
     def __init__(self, directory):
         self._device = os.path.basename(directory)
@@ -190,7 +176,6 @@ class BatteryPower(BatteryAcpi):
                     except ValueError:
                         pass
         self.check()
-
 
     def check(self):
         self._isExist = False
@@ -237,18 +222,16 @@ class BatteryPower(BatteryAcpi):
 
 class Monitor(syslib.Dump):
 
-
     def __init__(self, options):
         for battery in options.getBatterys():
             if battery.isExist():
                 self._show(battery)
 
-
     def _show(self, battery):
         model = (battery.getOem() + " " + battery.getName() + " " + battery.getType() + " " +
                  str(battery.getCapacityMax()) + "mAh/" + str(battery.getVoltage()) + "mV")
         if battery.getCharge() == "-":
-            state="-"
+            state = "-"
             if battery.getRate() > 0:
                 state += str(battery.getRate()) + "mA"
                 if battery.getVoltage() > 0:
@@ -273,7 +256,6 @@ class Monitor(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -287,16 +269,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

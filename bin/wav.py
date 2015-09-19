@@ -20,12 +20,10 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._audioCodec = "pcm_s16le"
-
 
     def getAudioCodec(self):
         """
@@ -33,13 +31,11 @@ class Options(syslib.Dump):
         """
         return self._audioCodec
 
-
     def getAudioQuality(self):
         """
         Return audio quality.
         """
         return self._args.audioQuality[0]
-
 
     def getAudioVolume(self):
         """
@@ -47,13 +43,11 @@ class Options(syslib.Dump):
         """
         return self._args.audioVolume[0]
 
-
     def getFiles(self):
         """
         Return list of files.
         """
         return self._files
-
 
     def getFileNew(self):
         """
@@ -61,13 +55,11 @@ class Options(syslib.Dump):
         """
         return self._fileNew
 
-
     def getFlags(self):
         """
         Return extra flags
         """
         return self._args.flags
-
 
     def getNoskipFlag(self):
         """
@@ -75,13 +67,11 @@ class Options(syslib.Dump):
         """
         return self._args.noskipFlag[0]
 
-
     def getRunTime(self):
         """
         Return run time.
         """
         return self._args.runTime[0]
-
 
     def getStartTime(self):
         """
@@ -89,34 +79,30 @@ class Options(syslib.Dump):
         """
         return self._args.startTime[0]
 
-
     def getThreads(self):
         """
         Return threads.
         """
         return self._args.threads[0]
 
-
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(
-                description="Encode WAV audio using avconv (pcm_s16le).")
+        parser = argparse.ArgumentParser(description="Encode WAV audio using avconv (pcm_s16le).")
 
         parser.add_argument("-noskip", dest="noskipFlag", action="store_true",
                             help="Disable skipping of encoding when codecs same.")
-        parser.add_argument("-avol", nargs=1, dest="audioVolume", default=[ None ],
+        parser.add_argument("-avol", nargs=1, dest="audioVolume", default=[None],
                             help='Select audio volume adjustment in dB (ie "-5", "5").')
-        parser.add_argument("-start", nargs=1, dest="startTime", default=[ None ],
+        parser.add_argument("-start", nargs=1, dest="startTime", default=[None],
                             help="Start encoding at time n seconds.")
-        parser.add_argument("-time", nargs=1, dest="runTime", default=[ None ],
+        parser.add_argument("-time", nargs=1, dest="runTime", default=[None],
                             help="Stop encoding after n seconds.")
-        parser.add_argument("-threads", nargs=1, default=[ "2" ],
+        parser.add_argument("-threads", nargs=1, default=["2"],
                             help="Threads are faster but decrease quality. Default is 2.")
         parser.add_argument("-flags", nargs=1, default=[],
                             help='Supply additional flags to avconv.')
 
-        parser.add_argument("files", nargs="+", metavar="file",
-                            help='Multimedia file. A target ".wav" file can '
-                                 'be given as the first file.')
+        parser.add_argument("files", nargs="+", metavar="file", help='Multimedia file. A target '
+                            '".wav" file can be given as the first file.')
 
         self._args = parser.parse_args(args)
 
@@ -130,14 +116,11 @@ class Options(syslib.Dump):
             self._files = self._args.files
 
 
-
 class Encoder(syslib.Dump):
-
 
     def __init__(self, options):
         self._options = options
         self._avconv = syslib.Command("avconv", flags=options.getFlags())
-
 
     def run(self):
         if self._options.getFileNew():
@@ -149,13 +132,14 @@ class Encoder(syslib.Dump):
                 number = 0
                 for file in self._options.getFiles():
                     media = Media(file)
-                    args.extend([ "-i", file ])
+                    args.extend(["-i", file])
                     for stream, information in media.getStreamAudio():
                         maps += "[" + str(number) + ":" + str(stream) + "] "
                     number += 1
-                self._avconv.setArgs(args + [ "-filter_complex", maps + "concat=n=" + str(number) +
-                        ":v=0:a=1 [out]", "-map", "[out]" ] + self._avconv.getArgs()[2:])
-            self._avconv.extendArgs([ "-f", "wav", "-y", self._options.getFileNew() ])
+                self._avconv.setArgs(args + ["-filter_complex", maps + "concat=n=" +
+                                     str(number) + ":v=0:a=1 [out]", "-map", "[out]"] +
+                                     self._avconv.getArgs()[2:])
+            self._avconv.extendArgs(["-f", "wav", "-y", self._options.getFileNew()])
             self._run()
             Media(self._options.getFileNew()).print()
         else:
@@ -164,31 +148,29 @@ class Encoder(syslib.Dump):
                     print()
                     self._config(file)
                     fileNew = file.rsplit(".", 1)[0] + ".wav"
-                    self._avconv.extendArgs([ "-f", "wav", "-y", fileNew ])
+                    self._avconv.extendArgs(["-f", "wav", "-y", fileNew])
                     self._run()
                     Media(fileNew).print()
 
-
     def _config(self, file):
         media = Media(file)
-        self._avconv.setArgs([ "-i", file ])
+        self._avconv.setArgs(["-i", file])
         if media.hasAudio:
             if (not media.hasAudioCodec("wav") or self._options.getAudioVolume() or
                     self._options.getNoskipFlag() or len(self._options.getFiles()) > 1):
-                self._avconv.extendArgs([ "-c:a", self._options.getAudioCodec() ])
+                self._avconv.extendArgs(["-c:a", self._options.getAudioCodec()])
                 if self._options.getAudioVolume():
-                    self._avconv.extendArgs([ "-af", "volume=" +
-                                              self._options.getAudioVolume() + "dB" ])
+                    self._avconv.extendArgs(["-af", "volume=" +
+                                            self._options.getAudioVolume() + "dB"])
             else:
-                self._avconv.extendArgs([ "-c:a", "copy" ])
+                self._avconv.extendArgs(["-c:a", "copy"])
         if self._options.getStartTime():
-            self._avconv.extendArgs([ "-ss", self._options.getStartTime() ])
+            self._avconv.extendArgs(["-ss", self._options.getStartTime()])
         if self._options.getRunTime():
-            self._avconv.extendArgs([ "-t", self._options.getRunTime() ])
-        self._avconv.extendArgs([ "-threads", self._options.getThreads() ] +
+            self._avconv.extendArgs(["-t", self._options.getRunTime()])
+        self._avconv.extendArgs(["-threads", self._options.getThreads()] +
                                 self._options.getFlags())
         return media
-
 
     def _run(self):
         child = self._avconv.run(mode="child", error2output=True)
@@ -205,7 +187,7 @@ class Encoder(syslib.Dump):
             line += byte.decode("utf-8", "replace")
             if not byte:
                 break
-            if byte in ( b"\n", b"\r" ):
+            if byte in (b"\n", b"\r"):
                 if not ispattern.search(line):
                     sys.stdout.write(line)
                     sys.stdout.flush()
@@ -223,13 +205,12 @@ class Encoder(syslib.Dump):
 
 class Media(syslib.Dump):
 
-
     def __init__(self, file):
         self._file = file
         self._length = "0"
         self._stream = {}
         self._type = "Unknown"
-        avprobe = syslib.Command("avprobe", args=[ file ])
+        avprobe = syslib.Command("avprobe", args=[file])
         avprobe.run(mode="batch", error2output=True)
         number = 0
         isjunk = re.compile("^ *Stream #[^ ]*: ")
@@ -245,7 +226,6 @@ class Media(syslib.Dump):
         except IndexError:
             raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
 
-
     def print(self):
         if self.isvalid():
             print(self._file + "    = Type: ", self._type, "(" + self._length + "),",
@@ -253,29 +233,23 @@ class Media(syslib.Dump):
             for stream, information in self.getStream():
                 print(self._file + "[" + str(stream) + "] =", information)
 
-
     def isvalid(self):
         return self._type != "Unknown"
-
 
     def getDuration(self):
         return self._duration
 
-
     def getStream(self):
         for key in sorted(self._stream.keys()):
             yield (key, self._stream[key])
-
 
     def getStreamAudio(self):
         for key in sorted(self._stream.keys()):
             if self._stream[key].startswith("Audio: "):
                 yield (key, self._stream[key])
 
-
     def getType(self):
         return self._type
-
 
     def hasAudio(self):
         for key in self._stream.keys():
@@ -283,20 +257,17 @@ class Media(syslib.Dump):
                 return True
         return False
 
-
     def hasAudioCodec(self, codec):
         for key in self._stream.keys():
             if self._stream[key].startswith("Audio: " + codec):
                 return True
         return False
 
-
     def hasVideo(self):
         for key in self._stream.keys():
             if self._stream[key].startswith("Video: "):
                 return True
         return False
-
 
     def hasVideoCodec(self, codec):
         for key in self._stream.keys():
@@ -306,7 +277,6 @@ class Media(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -321,16 +291,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -21,7 +21,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -43,20 +42,17 @@ class Options(syslib.Dump):
         else:
             self._month = int(time.strftime("%m"))
 
-
     def getMonth(self):
         """
         Return month of files.
         """
         return self._month
 
-
     def getYear(self):
         """
         Return year of files.
         """
         return self._year
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Displays month or year calendar.")
@@ -69,7 +65,6 @@ class Options(syslib.Dump):
 
 class Calendar(syslib.Dump):
 
-
     def __init__(self, options):
         if options.getMonth() == 0:
             print(calendar.TextCalendar(6).formatyear(options.getYear()))
@@ -78,7 +73,6 @@ class Calendar(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -93,16 +87,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

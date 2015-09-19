@@ -19,21 +19,18 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._clamscan = syslib.Command("clamscan")
-        self._clamscan.setFlags([ "-r" ])
+        self._clamscan.setFlags(["-r"])
         self._clamscan.setArgs(self._args.files)
-
 
     def getClamscan(self):
         """
         Return clamscan Command class object.
         """
         return self._clamscan
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Run ClamAV anti-virus scanner.")
@@ -45,10 +42,8 @@ class Options(syslib.Dump):
 
 class Clam(syslib.Dump):
 
-
     def __init__(self, options):
         self._clamscan = options.getClamscan()
-
 
     def run(self):
         self._clamscan.run()
@@ -68,7 +63,6 @@ class Clam(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -82,16 +76,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

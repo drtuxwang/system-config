@@ -17,19 +17,16 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._vuescan = syslib.Command("vuescan")
         self._vuescan.setArgs(args[1:])
         self._filter = "^$|: LIBDBUSMENU-|: Gtk-WARNING"
-
 
     def getFilter(self):
         """
         Return filter pattern.
         """
         return self._filter
-
 
     def getVuescan(self):
         """
@@ -39,7 +36,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -51,7 +47,6 @@ class Main:
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
         sys.exit(0)
-
 
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):

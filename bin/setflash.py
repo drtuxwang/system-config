@@ -18,14 +18,12 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._flash = syslib.Command("libpepflashplayer.so", check=False)
         if not self._flash.isFound():
             setflash = syslib.Command("setflash", check=False)
             if setflash.isFound():
                 setflash.run(mode="exec")
-
 
     def getLibrary(self):
         """
@@ -35,7 +33,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -50,16 +47,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -19,19 +19,17 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
-        sound = args[0][:-3] + ".ogg" # Replace ".py" with ".ogg"
+        sound = args[0][:-3] + ".ogg"  # Replace ".py" with ".ogg"
         if not os.path.isfile(sound):
             raise SystemExit(sys.argv[0] + ': Cannot find "' + sound + '" file.')
         self._bell = syslib.Command("ogg123", check=False)
         if not self._bell.isFound():
-            self._bell = syslib.Command("cvlc", flags=[ "--play-and-exit" ], check=False)
+            self._bell = syslib.Command("cvlc", flags=["--play-and-exit"], check=False)
             if not self._bell.isFound():
                 raise SystemExit(sys.argv[0] + ': Cannot find required "ogg123" or'
                                  ' "cvlc" software.')
-        self._bell.setArgs([ sound ])
-
+        self._bell.setArgs([sound])
 
     def getBell(self):
         """
@@ -41,7 +39,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -56,16 +53,14 @@ class Main:
             sys.exit(exception)
         sys.exit(options.getBell().getExitcode())
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

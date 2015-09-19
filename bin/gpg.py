@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._config()
 
@@ -32,30 +31,30 @@ class Options(syslib.Dump):
 
         self._parseArgs(args[1:])
 
-        self._gpg.setFlags([ "--openpgp", "-z", "0" ])
+        self._gpg.setFlags(["--openpgp", "-z", "0"])
 
         if self._args.add:
-            self._gpg.setArgs([ "--import", self._args.add[0] ])
+            self._gpg.setArgs(["--import", self._args.add[0]])
 
         elif self._args.makeFlag:
-            self._gpg.setArgs([ "--gen-key" ])
+            self._gpg.setArgs(["--gen-key"])
 
         elif self._args.passwd:
-            self._gpg.setArgs([ "--edit-key", self._args.passwd[0], "passwd" ])
+            self._gpg.setArgs(["--edit-key", self._args.passwd[0], "passwd"])
 
         elif self._args.pub:
-            self._gpg.setArgs([ "--openpgp", "--export", "--armor", self._args.pub[0] ])
+            self._gpg.setArgs(["--openpgp", "--export", "--armor", self._args.pub[0]])
 
         elif self._args.trust:
-            self._gpg.setArgs([ "--sign-key", self._args.trust[0] ])
+            self._gpg.setArgs(["--sign-key", self._args.trust[0]])
 
         elif self._args.viewFlag:
-            self._gpg.setArgs([ "--list-keys" ])
+            self._gpg.setArgs(["--list-keys"])
             self._gpg.run()
             if self._gpg.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(self._gpg.getExitcode()) +
                                  ' received from "' + self._gpg.getFile() + '".')
-            self._gpg.setArgs([ "--list-secret-keys" ])
+            self._gpg.setArgs(["--list-secret-keys"])
 
         else:
             extension = ".gpg"
@@ -63,7 +62,7 @@ class Options(syslib.Dump):
                 self._gpg.appendArg("--armor")
                 extension = ".asc"
             if self._args.recipient:
-                self._gpg.extendArgs([ "--batch", "--recipient", self._args.recipient[0] ])
+                self._gpg.extendArgs(["--batch", "--recipient", self._args.recipient[0]])
             if self._args.signFlag:
                 self._gpg.appendArg("--sign")
 
@@ -71,14 +70,13 @@ class Options(syslib.Dump):
                 file = self._args.file
                 if os.path.isfile(file):
                     if file.endswith(".gpg") or file.endswith(".pgp"):
-                        self._gpg.setArgs([ file ])
+                        self._gpg.setArgs([file])
                     else:
                         if self._args.recipent:
-                            self._gpg.extendArgs([ "--recipient", self._args.recipent ])
-                        self._gpg.extendArgs([ "--output=" + file + extension, "--encrypt", file ])
+                            self._gpg.extendArgs(["--recipient", self._args.recipent])
+                        self._gpg.extendArgs(["--output=" + file + extension, "--encrypt", file])
                 else:
                     self._gpg.setArgs(file)
-
 
     def _config(self):
         if "HOME" in os.environ.keys():
@@ -94,17 +92,15 @@ class Options(syslib.Dump):
             except OSError:
                 return
 
-
     def _setLibraries(self, command):
         libdir = os.path.join(os.path.dirname(command.getFile()), "lib")
         if os.path.isdir(libdir):
             if syslib.info.getSystem() == "linux":
                 if "LD_LIBRARY_PATH" in os.environ.keys():
                     os.environ["LD_LIBRARY_PATH"] = (
-                            libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"])
+                        libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"])
                 else:
                     os.environ["LD_LIBRARY_PATH"] = libdir
-
 
     def getGpg(self):
         """
@@ -112,10 +108,9 @@ class Options(syslib.Dump):
         """
         return self._gpg
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Make an encrypted archive in gpg (pgp compatible) format.")
+            description="Make an encrypted archive in gpg (pgp compatible) format.")
 
         parser.add_argument("-a", dest="asciiFlag", action="store_true",
                             help="Select ASCII text encrypted output.")
@@ -142,7 +137,6 @@ class Options(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -156,16 +150,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

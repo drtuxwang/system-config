@@ -19,22 +19,20 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._archiver = syslib.Command("unrar")
-        if args[1] in ( "l", "t", "x" ):
+        if args[1] in ("l", "t", "x"):
             self._archiver.setArgs(args[1:])
             self._archiver.run(mode="exec")
 
         if self._args.viewFlag:
-            self._archiver.setFlags([ "l", "-std" ])
+            self._archiver.setFlags(["l", "-std"])
         elif self._args.testFlag:
-            self._archiver.setFlags([ "t", "-std" ])
+            self._archiver.setFlags(["t", "-std"])
         else:
-            self._archiver.setFlags([ "x", "-std" ])
-
+            self._archiver.setFlags(["x", "-std"])
 
     def getArchiver(self):
         """
@@ -42,13 +40,11 @@ class Options(syslib.Dump):
         """
         return self._archiver
 
-
     def getArchives(self):
         """
         Return list of archives files.
         """
         return self._args.archives
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Unpack a compressed archive in RAR format.")
@@ -66,22 +62,20 @@ class Options(syslib.Dump):
 
 class Unpack(syslib.Dump):
 
-
     def __init__(self, options):
         os.umask(int("022", 8))
         archiver = options.getArchiver()
 
         for archive in options.getArchives():
-            archiver.setArgs([ archive ])
+            archiver.setArgs([archive])
             archiver.run()
             if archiver.getExitcode():
                 print(sys.argv[0] + ': Error code ' + str(archiver.getExitcode()) +
-                      ' received from "' + archiver.getFile() + '".', file = sys.stderr)
+                      ' received from "' + archiver.getFile() + '".', file=sys.stderr)
                 raise SystemExit(archiver.getExitcode())
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -96,16 +90,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

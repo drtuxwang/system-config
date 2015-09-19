@@ -19,10 +19,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getArch(self):
         """
@@ -30,13 +28,11 @@ class Options(syslib.Dump):
         """
         return self._arch
 
-
     def getArchSub(self):
         """
         Return sub architecture.
         """
         return self._archSub
-
 
     def getDpkg(self):
         """
@@ -44,13 +40,11 @@ class Options(syslib.Dump):
         """
         return self._dpkg
 
-
     def getMode(self):
         """
         Return operation mode.
         """
         return self._args.mode
-
 
     def getPackageNames(self):
         """
@@ -58,10 +52,9 @@ class Options(syslib.Dump):
         """
         return self._packageNames
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Make a compressed archive in DEB format or query database/files.")
+            description="Make a compressed archive in DEB format or query database/files.")
 
         parser.add_argument("-l", action="store_const", const="list", dest="mode",
                             default="dpkg", help="Show all installed packages (optional arch).")
@@ -87,7 +80,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
         self._dpkg = syslib.Command("dpkg")
-        self._dpkg.setArgs([ "--print-architecture" ])
+        self._dpkg.setArgs(["--print-architecture"])
         self._dpkg.run(mode="batch")
         if len(self._dpkg.getOutput()) != 1:
             raise SystemExit(sys.argv[0] + ': Cannot detect default architecture of packages.')
@@ -101,31 +94,29 @@ class Options(syslib.Dump):
         elif self._args.mode == "depends":
             self._packageNames = self._args.args
         elif self._args.option:
-            self._dpkg.setArgs([ self._args.option ] + self._args.args)
+            self._dpkg.setArgs([self._args.option] + self._args.args)
         elif len(self._args.args) and self._args.args[0].endswith(".deb"):
             self._dpkg = syslib.Command("dpkg-deb")
-            self._dpkg.setArgs([ "-b", os.curdir, self._args.args[0] ])
+            self._dpkg.setArgs(["-b", os.curdir, self._args.args[0]])
         elif self._args.args:
             raise SystemExit(sys.argv[0] + ': Invalid Debian package name "' +
                              self._args.args[0] + '".')
         else:
             print("usage: deb.py [-h] [-l] [-s] [-L] [-d] [-P] [-S] [-i] [-I]", file=sys.stderr)
             print("              [package.deb|package|arch [package.deb|package|arch ...]]",
-                    file=sys.stderr)
+                  file=sys.stderr)
             print("deb.py: error: the following arguments are required: package.deb",
-                    file=sys.stderr)
+                  file=sys.stderr)
             raise SystemExit(1)
 
 
 class Package(syslib.Dump):
-
 
     def __init__(self, version, size, depends, description):
         self._version = version
         self._size = size
         self._depends = depends
         self._description = description
-
 
     def appendDepends(self, name):
         """
@@ -135,13 +126,11 @@ class Package(syslib.Dump):
         """
         self._depends.append(name)
 
-
     def getDepends(self):
         """
         Return depends.
         """
         return self._depends
-
 
     def setDepends(self, names):
         """
@@ -151,13 +140,11 @@ class Package(syslib.Dump):
         """
         self._depends = names
 
-
     def getDescription(self):
         """
         Return description.
         """
         return self._description
-
 
     def setDescription(self, description):
         """
@@ -167,13 +154,11 @@ class Package(syslib.Dump):
         """
         self._description = description
 
-
     def getSize(self):
         """
         Return size.
         """
         return self._size
-
 
     def setSize(self, size):
         """
@@ -183,13 +168,11 @@ class Package(syslib.Dump):
         """
         self._size = size
 
-
     def getVersion(self):
         """
         Return version.
         """
         return self._version
-
 
     def setVersion(self, version):
         """
@@ -202,7 +185,6 @@ class Package(syslib.Dump):
 
 class PackageManger(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
         self._readDpkgStatus()
@@ -212,10 +194,9 @@ class PackageManger(syslib.Dump):
             self._showPackagesInfo()
         elif mode == "depends":
             for packagename in options.getPackageNames():
-                self._showDependentPackages([ packagename ], checked=[])
+                self._showDependentPackages([packagename], checked=[])
         else:
             options.getDpkg().run(mode="exec")
-
 
     def _readDpkgStatus(self):
         namesAll = []
@@ -263,7 +244,6 @@ class PackageManger(syslib.Dump):
                         depends.append(depend + ":" + name.split(":")[-1])
                 self._packages[name].setDepends(depends)
 
-
     def _showPackagesInfo(self):
         for name in sorted(self._packages.keys()):
             if self._options.getArchSub():
@@ -272,9 +252,8 @@ class PackageManger(syslib.Dump):
             elif ":" in name:
                 continue
             print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(name.split(":")[0],
-                    self._packages[name].getVersion(), self._packages[name].getSize(),
-                    self._packages[name].getDescription()))
-
+                  self._packages[name].getVersion(), self._packages[name].getSize(),
+                  self._packages[name].getDescription()))
 
     def _showDependentPackages(self, names, checked=[], ident=""):
         keys = sorted(self.getPackages().keys())
@@ -285,10 +264,9 @@ class PackageManger(syslib.Dump):
                     if name in self._packages[key].getDepends():
                         if key not in checked:
                             checked.append(key)
-                            checked.extend(self._showDependentPackages([ key ],
+                            checked.extend(self._showDependentPackages([key],
                                            checked, ident + "  "))
         return checked
-
 
     def _showDependentPackages(self, names, checked=[], ident=""):
         keys = sorted(self._packages.keys())
@@ -299,11 +277,10 @@ class PackageManger(syslib.Dump):
                     if name in self._packages[key].getDepends():
                         if key not in checked:
                             checked.append(key)
-                            self._showDependentPackages([ key ], checked, ident + "  ")
+                            self._showDependentPackages([key], checked, ident + "  ")
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -318,16 +295,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

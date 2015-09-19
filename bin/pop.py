@@ -20,12 +20,10 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._setpop(self._args.words)
-
 
     def getPop(self):
         """
@@ -33,13 +31,11 @@ class Options(syslib.Dump):
         """
         return self._pop
 
-
     def getTimeDelay(self):
         """
         Return time delay in minutes.
         """
         return self._args.timeDelay[0]
-
 
     def getWaitFlag(self):
         """
@@ -47,19 +43,17 @@ class Options(syslib.Dump):
         """
         return self._args.waitFlag
 
-
     def _setpop(self, args):
         self._pop = syslib.Command("pop.jar")
         self._pop.setArgs(args)
         self._pop.setWrapper(syslib.Command("java"))
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Send popup message to display.")
 
         parser.add_argument("-wait", dest="waitFlag", action="store_true",
                             help="Wait for popup window to close.")
-        parser.add_argument("-time", nargs=1, type=int, dest="timeDelay", default=[ 0 ],
+        parser.add_argument("-time", nargs=1, type=int, dest="timeDelay", default=[0],
                             help="Delay popup in minutes.")
 
         parser.add_argument("words", nargs="+", metavar="word",
@@ -72,7 +66,6 @@ class Options(syslib.Dump):
 
 
 class Message(syslib.Dump):
-
 
     def __init__(self, options):
         time.sleep(60 * options.getTimeDelay())
@@ -92,7 +85,6 @@ class Message(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -106,16 +98,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

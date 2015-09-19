@@ -20,12 +20,10 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._icedax = syslib.Command("icedax")
-
 
     def getDevice(self):
         """
@@ -33,13 +31,11 @@ class Options(syslib.Dump):
         """
         return self._args.device[0]
 
-
     def getIcedax(self):
         """
         Return icedax Command class object.
         """
         return self._icedax
-
 
     def getSpeed(self):
         """
@@ -47,18 +43,16 @@ class Options(syslib.Dump):
         """
         return self._args.speed[0]
 
-
     def getTracks(self):
         """
         Return list of track numbers.
         """
         return self._tracks
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Rip CD audio tracks as WAVE sound files.")
 
-        parser.add_argument("-speed", nargs=1, type=int, default=[ 8 ],
+        parser.add_argument("-speed", nargs=1, type=int, default=[8],
                             help="Select CD spin speed.")
         parser.add_argument("-tracks", nargs=1, metavar="n[,n...]",
                             help="Select CD tracks to rip.")
@@ -85,20 +79,18 @@ class Options(syslib.Dump):
 
 class Cdrom(syslib.Dump):
 
-
     def __init__(self):
         self._devices = {}
         for directory in glob.glob("/sys/block/sr*/device"):
             device = "/dev/" + os.path.basename(os.path.dirname(directory))
             model = ""
-            for file in ( "vendor", "model" ):
+            for file in ("vendor", "model"):
                 try:
                     with open(os.path.join(directory, file), errors="replace") as ifile:
                         model += " " + ifile.readline().strip()
                 except IOError:
                     continue
-            self._devices[ device ] = model
-
+            self._devices[device] = model
 
     def device(self, mount):
         if mount == "cdrom":
@@ -113,7 +105,6 @@ class Cdrom(syslib.Dump):
         except IndexError:
             return ""
 
-
     def getDevices(self):
         """
         Return list of devices
@@ -122,7 +113,6 @@ class Cdrom(syslib.Dump):
 
 
 class RipCd(syslib.Dump):
-
 
     def __init__(self, options):
         self._icedax = options.getIcedax()
@@ -137,10 +127,9 @@ class RipCd(syslib.Dump):
             if mode == "rip":
                 self._rip(options)
 
-
     def _rip(self, options):
-        self._icedax.setFlags([ "-vtrackid", "-paranoia", "-S=" + str(self._speed),
-                                "-K", "dsp", "-H" ])
+        self._icedax.setFlags(["-vtrackid", "-paranoia", "-S=" + str(self._speed),
+                               "-K", "dsp", "-H"])
         tee = syslib.Command("tee")
         try:
             with open("00.log", "w", newline="\n") as ofile:
@@ -153,7 +142,7 @@ class RipCd(syslib.Dump):
         except (IndexError, ValueError):
             raise SystemExit(sys.argv[0] + ': Unable to detect the number of audio tracks.')
         if not self._tracks:
-            self._tracks = [ str(i) for i in range(1, int(ntracks) + 1) ]
+            self._tracks = [str(i) for i in range(1, int(ntracks) + 1)]
 
         for track in self._tracks:
             istrack = re.compile("^.* " + track + "[.]\( *")
@@ -182,10 +171,10 @@ class RipCd(syslib.Dump):
             except IOError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + warnfile + '" file.')
             wavfile = track.zfill(2) + ".wav"
-            self._icedax.setArgs([ "verbose-level=disable", "track=" + track, "dev=" +
-                                   self._device, wavfile, "2>&1" ])
-            tee.setArgs([ "-a", logfile ])
-            self._icedax.run(pipes=[ tee ])
+            self._icedax.setArgs(["verbose-level=disable", "track=" + track, "dev=" +
+                                  self._device, wavfile, "2>&1"])
+            tee.setArgs(["-a", logfile])
+            self._icedax.run(pipes=[tee])
             if self._icedax.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(self._icedax.getExitcode()) +
                                  ' received from "' + self._icedax.getFile() + '".')
@@ -193,7 +182,6 @@ class RipCd(syslib.Dump):
                 self._pregap(wavfile)
             if not self._hasprob(logfile):
                 os.remove(warnfile)
-
 
     def _hasprob(self, logfile):
         with open(logfile, errors="replace") as ifile:
@@ -204,7 +192,6 @@ class RipCd(syslib.Dump):
                         ifile.close()
                         return True
         return False
-
 
     def _pregap(self, wavfile):
         size = syslib.FileStat(wavfile).getSize()
@@ -220,7 +207,6 @@ class RipCd(syslib.Dump):
                         ifile.truncate(newsize)
                     break
 
-
     def _scan(self):
         cdrom = Cdrom()
         print("Scanning for CD/DVD devices...")
@@ -228,10 +214,9 @@ class RipCd(syslib.Dump):
         for key in sorted(devices.keys()):
             print("  {0:10s}  {1:s}".format(key, devices[key]))
 
-
     def _toc(self, options):
-        self._icedax.setArgs([ "-info-only", "--no-infofile", "verbose-level=toc",
-                               "dev=" + self._device, "speed=" + str(self._speed) ])
+        self._icedax.setArgs(["-info-only", "--no-infofile", "verbose-level=toc",
+                              "dev=" + self._device, "speed=" + str(self._speed)])
         self._icedax.run(mode="batch")
         self._toc = self._icedax.getError("[.]\(.*:.*\)")
         if not self._toc:
@@ -244,7 +229,6 @@ class RipCd(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -259,16 +243,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

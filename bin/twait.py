@@ -20,7 +20,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -33,13 +32,11 @@ class Options(syslib.Dump):
 
         self._command = syslib.Command(self._args.command[0], args=self._commandArgs)
 
-
     def getCommand(self):
         """
         Return command Command class object.
         """
         return self._command
-
 
     def getPid(self):
         """
@@ -47,20 +44,17 @@ class Options(syslib.Dump):
         """
         return self._pid
 
-
     def getPname(self):
         """
         Return process command name.
         """
         return self._pname
 
-
     def getUser(self):
         """
         Return user name.
         """
         return self._args.user
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Wait for task to finish then launch command.")
@@ -78,7 +72,6 @@ class Options(syslib.Dump):
 
 class Waitfor(syslib.Dump):
 
-
     def __init__(self, options):
         user = options.getUser()
         pname = options.getPname()
@@ -95,7 +88,6 @@ class Waitfor(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -109,16 +101,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

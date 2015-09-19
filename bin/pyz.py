@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -27,13 +26,13 @@ class Options(syslib.Dump):
             self._archiver = syslib.Command("pkzip32.exe", check=False)
             if self._archiver.isFound():
                 self._archiver.setFlags(
-                        [ "-add", "-maximum", "-recurse", "-path", self._args.archive[0] + "-zip" ])
+                    ["-add", "-maximum", "-recurse", "-path", self._args.archive[0] + "-zip"])
             else:
                 self._archiver = syslib.Command(
-                        "zip", flags=[ "-r", "-9", self._args.archive[0] + "-zip" ])
+                    "zip", flags=["-r", "-9", self._args.archive[0] + "-zip"])
         else:
             self._archiver = syslib.Command(
-                    "zip", flags=[ "-r", "-9", self._args.archive[0] + "-zip" ])
+                "zip", flags=["-r", "-9", self._args.archive[0] + "-zip"])
 
         if self._args.files:
             self._archiver.setArgs(self._args.files)
@@ -43,13 +42,11 @@ class Options(syslib.Dump):
         if "__main__.py" not in self._archiver.getArgs():
             raise SystemExit(sys.argv[0] + ': Cannot find "__main__.py" main program file.')
 
-
     def getArchive(self):
         """
         Return archive location.
         """
         return self._args.archive
-
 
     def getArchiver(self):
         """
@@ -57,10 +54,9 @@ class Options(syslib.Dump):
         """
         return self._archiver
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Make a Python3 ZIP Application in PYZ format.")
+            description="Make a Python3 ZIP Application in PYZ format.")
 
         parser.add_argument("archive", nargs=1, metavar="file.pyz", help="Archive file.")
         parser.add_argument("files", nargs="*", metavar="file", help="File to archive.")
@@ -70,17 +66,15 @@ class Options(syslib.Dump):
 
 class Pack(syslib.Dump):
 
-
     def __init__(self, options):
         archiver = options.getArchiver()
 
         archiver.run()
         if archiver.getExitcode():
             print(sys.argv[0] + ': Error code ' + str(archiver.getExitcode()) + ' received from "' +
-                  archiver.getFile() + '".', file = sys.stderr)
+                  archiver.getFile() + '".', file=sys.stderr)
             raise SystemExit(archiver.getExitcode())
         self._makePyz(options.getArchive())
-
 
     def _makePyz(self, archive):
         try:
@@ -97,7 +91,6 @@ class Pack(syslib.Dump):
             pass
         os.chmod(archive, int("755", 8))
 
-
     def _copy(self, ifile, ofile):
         while True:
             chunk = ifile.read(131072)
@@ -107,7 +100,6 @@ class Pack(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -122,16 +114,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

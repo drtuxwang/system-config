@@ -22,14 +22,12 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._ssh = syslib.Command("ssh")
-        self._ssh.setFlags([ "-o", "StrictHostKeyChecking=no", "-o",
-                             "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes" ])
-
+        self._ssh.setFlags(["-o", "StrictHostKeyChecking=no", "-o",
+                            "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes"])
 
     def getCommandLine(self):
         """
@@ -37,13 +35,11 @@ class Options(syslib.Dump):
         """
         return self._args.command + self._commandArgs
 
-
     def getSsh(self):
         """
         Return ssh Command class object.
         """
         return self._ssh
-
 
     def getSubnet(self):
         """
@@ -51,26 +47,24 @@ class Options(syslib.Dump):
         """
         return self._subnet
 
-
     def _getmyip(self):
         myip = ""
         if syslib.info.getSystem() == "linux":
             os.environ["LANG"] = "en_GB"
-            ifconfig = syslib.Command(file="/sbin/ifconfig", args=[ "-a" ])
+            ifconfig = syslib.Command(file="/sbin/ifconfig", args=["-a"])
             ifconfig.run(filter=" inet addr[a-z]*:", mode="batch")
             for line in ifconfig.getOutput():
                 myip = line.split(":")[1].split()[0]
-                if myip not in ( "", "127.0.0.1" ):
+                if myip not in ("", "127.0.0.1"):
                     break
         elif syslib.info.getSystem() == "sunos":
-            ifconfig = syslib.Command(file="/sbin/ifconfig", args=[ "-a" ])
+            ifconfig = syslib.Command(file="/sbin/ifconfig", args=["-a"])
             ifconfig.run(filter="\tinet [^ ]+ netmask", mode="batch")
             for line in ifconfig.getOutput():
                 myip = line.split()[1]
-                if myip not in ( "", "127.0.0.1" ):
+                if myip not in ("", "127.0.0.1"):
                     break
         return myip
-
 
     def _parseArgs(self, args):
         issubnet = re.compile("^\d{1,3}[.]\d{1,3}[.]\d{1,3}[.]0$")
@@ -82,7 +76,6 @@ class Options(syslib.Dump):
 
         parser.add_argument("command", nargs=1, help="Command to run on all systems.")
         parser.add_argument("args", nargs="*", metavar="arg", help="Command argument.")
-
 
         myArgs = []
         while len(args):
@@ -109,22 +102,19 @@ class Options(syslib.Dump):
 
 class Remote(syslib.Dump, threading.Thread):
 
-
-    def __init__ (self, options, ip):
+    def __init__(self, options, ip):
         self._options = options
         threading.Thread.__init__(self)
         self._ip = ip
         self._output = ""
 
-
     def getOutput(self):
         return self._output
 
-
     def run(self):
         ssh = self._options.getSsh()
-        ssh.setArgs([ self._ip ] + [ "echo '=== " + self._ip + ": '`uname -s -n`' ==='; " +
-                    ssh.args2cmd(self._options.getCommandLine()) ])
+        ssh.setArgs([self._ip] + ["echo '=== " + self._ip + ": '`uname -s -n`' ==='; " +
+                    ssh.args2cmd(self._options.getCommandLine())])
         self._child = ssh.run(mode="child", error2output=True)
         self._child.stdin.close()
         while True:
@@ -133,7 +123,6 @@ class Remote(syslib.Dump, threading.Thread):
                 break
             self._output += byte.decode("utf-8", "replace")
 
-
     def kill(self):
         if self._child:
             self._child.kill()
@@ -141,7 +130,6 @@ class Remote(syslib.Dump, threading.Thread):
 
 
 class Cluster(syslib.Dump):
-
 
     def __init__(self, options):
         self._waitMax = 64
@@ -153,10 +141,9 @@ class Cluster(syslib.Dump):
         self._allreduce()
         self._output()
 
-
     def _allreduce(self):
         print('\rAllreduce from subnet "' + self._options.getSubnet() + '.0"...')
-        obytes= 0
+        obytes = 0
         same = 0
         alive = True
 
@@ -179,7 +166,6 @@ class Cluster(syslib.Dump):
             time.sleep(self._waitTime)
         print()
 
-
     def _bcast(self):
         print('Bcast to subnet "' + self._options.getSubnet() + '.0"...')
         for host in range(1, 255):
@@ -189,7 +175,6 @@ class Cluster(syslib.Dump):
             thread = Remote(self._options, ip)
             thread.start()
             self._threads.append(thread)
-
 
     def _output(self):
         iserror = re.compile("Command not supported|Network is unreachable|No route to host|"
@@ -206,7 +191,6 @@ class Cluster(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -220,16 +204,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

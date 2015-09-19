@@ -19,18 +19,16 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._espeak = syslib.Command("espeak")
-        self._espeak.setFlags([ "-a128", "-k30", "-ven+f2", "-s60", "-x" ])
+        self._espeak.setFlags(["-a128", "-k30", "-ven+f2", "-s60", "-x"])
         if self._args.voice:
             self._espeak.appendFlag("-v" + self._args.voice[0])
-        self._espeak.setArgs([ " ".join(self._args.words) ])
+        self._espeak.setArgs([" ".join(self._args.words)])
 
         self._filter = "^ALSA lib|: Connection refused|^Cannot connect|^jack server"
-
 
     def getEspeak(self):
         """
@@ -38,13 +36,11 @@ class Options(syslib.Dump):
         """
         return self._espeak
 
-
     def getFilter(self):
         """
         Return filter pattern.
         """
         return self._filter
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Speak words using Espeak TTS engine.")
@@ -60,7 +56,6 @@ class Options(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -74,16 +69,14 @@ class Main:
             sys.exit(exception)
         sys.exit(options.getEspeak().getExitcode())
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

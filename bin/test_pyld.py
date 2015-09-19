@@ -25,7 +25,6 @@ class Test_Options(unittest.TestCase):
     This class tests Options class.
     """
 
-
     def setUp(self):
         """
         Setup test harness.
@@ -33,105 +32,96 @@ class Test_Options(unittest.TestCase):
         self.maxDiff = None
         self._patcher = patchlib.Patcher(self)
 
-
     def test_dump(self):
         """
         Test object dumping does not fail.
         """
-        args = [ "arg0", "moduleX" ]
+        args = ["arg0", "moduleX"]
         options = pyld.Options(args)
         options.dump("options.")
-
 
     def test_getDumpFlag_Default(self):
         """
         Test default dumpFlag.
         """
-        args = [ "arg0", "moduleX" ]
+        args = ["arg0", "moduleX"]
         options = pyld.Options(args)
 
         value = options.getDumpFlag()
         self.assertIsInstance(value, bool)
         self.assertFalse(value)
-
 
     def test_getDumpFlag_pyldv(self):
         """
         Test "-pyldv" does not set dumpFlag.
         """
-        args = [ "arg0", "moduleX", "-pyldv" ]
+        args = ["arg0", "moduleX", "-pyldv"]
         options = pyld.Options(args)
 
         value = options.getDumpFlag()
         self.assertIsInstance(value, bool)
         self.assertFalse(value)
-
 
     def test_getDumpFlag_pyldverbose(self):
         """
         Test "-pyldverbose" does not set dumpFlag.
         """
-        args = [ "arg0", "moduleX", "-pyldverbose" ]
+        args = ["arg0", "moduleX", "-pyldverbose"]
         options = pyld.Options(args)
 
         value = options.getDumpFlag()
         self.assertIsInstance(value, bool)
         self.assertFalse(value)
 
-
     def test_getDumpFlag_pyldvv(self):
         """
         Test "-pyldvv" sets dump flag.
         """
-        args = [ "arg0", "moduleX", "-pyldvv" ]
+        args = ["arg0", "moduleX", "-pyldvv"]
         options = pyld.Options(args)
 
         value = options.getDumpFlag()
         self.assertIsInstance(value, bool)
         self.assertTrue(value)
-
 
     def test_getDumpFlag_pyldvvv(self):
         """
         Test "-pyldvvv" sets dump flag.
         """
-        args = [ "arg0", "moduleX", "-pyldvvv" ]
+        args = ["arg0", "moduleX", "-pyldvvv"]
         options = pyld.Options(args)
 
         value = options.getDumpFlag()
         self.assertIsInstance(value, bool)
         self.assertTrue(value)
 
-
     def test_getLibraryPath_Default(self):
         """
         Test default library path.
         """
-        args = [ "arg0", "moduleX" ]
+        args = ["arg0", "moduleX"]
         options = pyld.Options(args)
 
         value = options.getLibraryPath()
         self.assertIsInstance(value, list)
         self.assertListEqual(value, [])
 
-
     def test_getLibraryPath_pyldpath(self):
         """
         Test "-pyldpath libpath1:libpath2" sets library path.
         """
-        args = [ "arg0", "moduleX", "-pyldpath", "pathX" + os.path.pathsep + "pathY" ]
+        args = ["arg0", "moduleX", "-pyldpath", "pathX" + os.path.pathsep + "pathY"]
         options = pyld.Options(args)
 
         value = options.getLibraryPath()
         self.assertIsInstance(value, list)
-        self.assertListEqual(value, [ "pathX", "pathY" ])
-
+        self.assertListEqual(value, ["pathX", "pathY"])
 
     def test_getLibraryPath_pyldpathError(self):
         """
         Test "-pyldpath" without 2nd argument raise exception and exit status 2.
         """
-        args = [ "arg0", "moduleX", "-pyldpath", "-pyldv" ]
+        args = ["arg0", "moduleX", "-pyldpath", "-pyldv"]
 
         try:
             options = pyld.Options(args)
@@ -142,183 +132,168 @@ class Test_Options(unittest.TestCase):
         value = pyld.sys.stderr.getvalue()
         self.assertIsInstance(value, str)
         self.assertIn(os.path.basename(sys.argv[0]) +
-                ": error: argument -pyldpath: expected 1 argument", value)
-
+                      ": error: argument -pyldpath: expected 1 argument", value)
 
     def test_getModule_Value(self):
         """
         Test module name is passed correctly.
         """
-        args = [ "arg0", "moduleX" ]
+        args = ["arg0", "moduleX"]
         options = pyld.Options(args)
 
         value = options.getModule()
         self.assertIsInstance(value, str)
         self.assertEqual(value, "moduleX")
 
-
     def test_getModuleArgs_Default(self):
         """
         Test module arguments default is empty.
         """
-        args = [ "arg0", "moduleX" ]
+        args = ["arg0", "moduleX"]
         options = pyld.Options(args)
 
         value = options.getModuleArgs()
         self.assertIsInstance(value, list)
         self.assertListEqual(value, [])
 
-
     def test_getModulesArgs_Value(self):
         """
         Test module arguments are passed correctly.
         """
-        args = [ "arg0", "moduleX", "moduleYarg1", "moduleYarg2" ]
+        args = ["arg0", "moduleX", "moduleYarg1", "moduleYarg2"]
         options = pyld.Options(args)
 
         value = options.getModuleArgs()
         self.assertIsInstance(value, list)
-        self.assertListEqual(value, [ "moduleYarg1", "moduleYarg2" ])
-
+        self.assertListEqual(value, ["moduleYarg1", "moduleYarg2"])
 
     def test_getModulesArgs_pyldpath(self):
         """
         Test that "-pyldpath" does not get passed into module arguments.
         """
-        args = [ "arg0", "moduleX", "-pyldpath", "pathX" + os.path.pathsep + "pathY",
-                 "moduleYarg1", "moduleYarg2" ]
+        args = ["arg0", "moduleX", "-pyldpath", "pathX" + os.path.pathsep + "pathY",
+                "moduleYarg1", "moduleYarg2"]
         options = pyld.Options(args)
 
         value = options.getModuleArgs()
         self.assertIsInstance(value, list)
-        self.assertListEqual(value, [ "moduleYarg1", "moduleYarg2" ])
-
+        self.assertListEqual(value, ["moduleYarg1", "moduleYarg2"])
 
     def test_getModulesArgs_pyldv(self):
         """
         Test that "-pyldv" does not get passed into module arguments.
         """
-        args = [ "arg0", "moduleX", "-pyldv", "moduleYarg1", "moduleYarg2" ]
+        args = ["arg0", "moduleX", "-pyldv", "moduleYarg1", "moduleYarg2"]
         options = pyld.Options(args)
 
         value = options.getModuleArgs()
         self.assertIsInstance(value, list)
-        self.assertListEqual(value, [ "moduleYarg1", "moduleYarg2" ])
-
+        self.assertListEqual(value, ["moduleYarg1", "moduleYarg2"])
 
     def test_getModulesArgs_pyldverbose(self):
         """
         Test that "-pyldverbose" does not get passed into module arguments.
         """
-        args = [ "arg0", "moduleX", "-pyldverbose", "moduleYarg1", "moduleYarg2" ]
+        args = ["arg0", "moduleX", "-pyldverbose", "moduleYarg1", "moduleYarg2"]
         options = pyld.Options(args)
 
         value = options.getModuleArgs()
         self.assertIsInstance(value, list)
-        self.assertListEqual(value, [ "moduleYarg1", "moduleYarg2" ])
-
+        self.assertListEqual(value, ["moduleYarg1", "moduleYarg2"])
 
     def test_getModulesArgs_pyldvv(self):
         """
         Test that "-pyldvv" does not get passed into module arguments.
         """
-        args = [ "arg0", "moduleX", "-pyldvv", "moduleYarg1", "moduleYarg2" ]
+        args = ["arg0", "moduleX", "-pyldvv", "moduleYarg1", "moduleYarg2"]
         options = pyld.Options(args)
 
         value = options.getModuleArgs()
         self.assertIsInstance(value, list)
-        self.assertListEqual(value, [ "moduleYarg1", "moduleYarg2" ])
-
+        self.assertListEqual(value, ["moduleYarg1", "moduleYarg2"])
 
     def test_getModulesArgs_pyldvvv(self):
         """
         Test that "-pyldvvv" does not get passed into module arguments.
         """
-        args = [ "arg0", "moduleX", "-pyldvvv", "moduleYarg1", "moduleYarg2" ]
+        args = ["arg0", "moduleX", "-pyldvvv", "moduleYarg1", "moduleYarg2"]
         options = pyld.Options(args)
 
         value = options.getModuleArgs()
         self.assertIsInstance(value, list)
-        self.assertListEqual(value, [ "moduleYarg1", "moduleYarg2" ])
-
+        self.assertListEqual(value, ["moduleYarg1", "moduleYarg2"])
 
     def test_getModuleDir_Value(self):
         """
         Test module directory is correctly detected.
         """
-        args = [ os.path.join("myDir", "myFile"), os.path.join("moduleDir", "moduleX") ]
+        args = [os.path.join("myDir", "myFile"), os.path.join("moduleDir", "moduleX")]
         options = pyld.Options(args)
 
         value = options.getModuleDir()
         self.assertIsInstance(value, str)
         self.assertEqual(value, "myDir")
 
-
     def test_getVerboseFlag_Default(self):
         """
         Test verbose flag default.
         """
-        args = [ "arg0", "moduleX" ]
+        args = ["arg0", "moduleX"]
         options = pyld.Options(args)
 
         value = options.getVerboseFlag()
         self.assertIsInstance(value, bool)
         self.assertFalse(value)
 
-
     def test_getVerboseFlag_pyldv(self):
         """
         Test "-pyldv" sets verbose flag.
         """
-        args = [ "arg0", "moduleX", "-pyldv" ]
+        args = ["arg0", "moduleX", "-pyldv"]
         options = pyld.Options(args)
 
         value = options.getVerboseFlag()
         self.assertIsInstance(value, bool)
         self.assertTrue(value)
-
 
     def test_getVerboseFlag_pyldverbose(self):
         """
         Test "-pyldverbose" sets verbose flag.
         """
-        args = [ "arg0", "moduleX", "-pyldverbose" ]
+        args = ["arg0", "moduleX", "-pyldverbose"]
         options = pyld.Options(args)
 
         value = options.getVerboseFlag()
         self.assertIsInstance(value, bool)
         self.assertTrue(value)
-
 
     def test_getVerboseFlag_pyldvv(self):
         """
         Test "-pyldvv" sets verbose flag.
         """
-        args = [ "arg0", "moduleX", "-pyldvv" ]
+        args = ["arg0", "moduleX", "-pyldvv"]
         options = pyld.Options(args)
 
         value = options.getVerboseFlag()
         self.assertIsInstance(value, bool)
         self.assertTrue(value)
-
 
     def test_getVerboseFlag_pyldvvv(self):
         """
         Test "-pyldvvv" sets verbose flag.
         """
-        args = [ "arg0", "moduleX", "-pyldvvv" ]
+        args = ["arg0", "moduleX", "-pyldvvv"]
         options = pyld.Options(args)
 
         value = options.getVerboseFlag()
         self.assertIsInstance(value, bool)
         self.assertTrue(value)
 
-
     def test_help_h(self):
         """
         Test "-h" displays help.
         """
-        args = [ "arg0", "-h" ]
+        args = ["arg0", "-h"]
 
         try:
             options = pyld.Options(args)
@@ -327,13 +302,12 @@ class Test_Options(unittest.TestCase):
             self.assertIsInstance(value, str)
             self.assertIn("positional arguments:", value)
             self.assertIn("optional arguments:", value)
-
 
     def test_help_help(self):
         """
         Test "--h" displays help.
         """
-        args = [ "arg0", "--h" ]
+        args = ["arg0", "--h"]
 
         try:
             options = pyld.Options(args)
@@ -342,13 +316,12 @@ class Test_Options(unittest.TestCase):
             self.assertIsInstance(value, str)
             self.assertIn("positional arguments:", value)
             self.assertIn("optional arguments:", value)
-
 
     def test_help_help2(self):
         """
         Test "--help" displays help.
         """
-        args = [ "arg0", "--help" ]
+        args = ["arg0", "--help"]
 
         try:
             options = pyld.Options(args)
@@ -358,12 +331,11 @@ class Test_Options(unittest.TestCase):
             self.assertIn("positional arguments:", value)
             self.assertIn("optional arguments:", value)
 
-
     def test_init_FlagsNone(self):
         """
         Test argparse error exit status 2 when no arguments are supplied.
         """
-        args = [ "arg0" ]
+        args = ["arg0"]
         try:
             options = pyld.Options(args)
         except SystemExit as exception:
@@ -375,14 +347,13 @@ class Test_Options(unittest.TestCase):
         value = pyld.sys.stderr.getvalue()
         self.assertIsInstance(value, str)
         self.assertIn(os.path.basename(sys.argv[0]) +
-                ": error: the following arguments are required: module, arg", value)
+                      ": error: the following arguments are required: module, arg", value)
 
 
 class Test_PythonLoader(unittest.TestCase):
     """
     This class tests PythonLoader class.
     """
-
 
     def setUp(self):
         """
@@ -395,10 +366,9 @@ class Test_PythonLoader(unittest.TestCase):
         self._options.mock_getDumpFlag(False)
         self._options.mock_getLibraryPath([])
         self._options.mock_getModule("arg0")
-        self._options.mock_getModuleArgs([ "args1", "args2" ])
+        self._options.mock_getModuleArgs(["args1", "args2"])
         self._options.mock_getModuleDir("directory")
         self._options.mock_getVerboseFlag(False)
-
 
     def test_dump(self):
         """
@@ -406,7 +376,6 @@ class Test_PythonLoader(unittest.TestCase):
         """
         pythonLoader = pyld.PythonLoader(self._options)
         pythonLoader.dump("pythonLoader.")
-
 
     def test_run_dumpFlag(self):
         """
@@ -426,7 +395,6 @@ class Test_PythonLoader(unittest.TestCase):
 
         self.assertTrue(pythonLoader.dump.called)
 
-
     def test_run_importError(self):
         """
         Test run failure when module does not exist
@@ -439,7 +407,6 @@ class Test_PythonLoader(unittest.TestCase):
             pass
         else:
             raise AssertionError('"arg0" module name should raise an exception.')
-
 
     def test_run_importMain(self):
         """
@@ -457,12 +424,11 @@ class Test_PythonLoader(unittest.TestCase):
         else:
             raise AssertionError('"test_pyld.Main() should raise an exception.')
 
-
     def test_run_libraryPath(self):
         """
         Test run with "-libpath" sets Python system path.
         """
-        self._options.mock_getLibraryPath([ "directory1", "directory2" ])
+        self._options.mock_getLibraryPath(["directory1", "directory2"])
 
         pythonLoader = pyld.PythonLoader(self._options)
         try:
@@ -474,7 +440,6 @@ class Test_PythonLoader(unittest.TestCase):
 
         self.assertIn("directory1", sys.path)
         self.assertIn("directory2", sys.path)
-
 
     def test_run_pyldverboseFlag(self):
         """
@@ -494,7 +459,6 @@ class Test_PythonLoader(unittest.TestCase):
         self.assertIsInstance(value, str)
         self.assertIn("sys.argv =", value)
 
-
     def test_getOptions(self):
         """
         Test options is set correctly.
@@ -505,7 +469,6 @@ class Test_PythonLoader(unittest.TestCase):
         self.assertIsInstance(value, unittest.mock.MagicMock)
         self.assertEqual(value, self._options)
 
-
     def test_getSysArgv(self):
         """
         Test getting Python system arguments (faked by pyld).
@@ -514,7 +477,7 @@ class Test_PythonLoader(unittest.TestCase):
 
         value = pythonLoader.getSysArgv()
         self.assertIsInstance(value, list)
-        self.assertListEqual(value, [ os.path.join("directory", "arg0.py"), "args1", "args2" ])
+        self.assertListEqual(value, [os.path.join("directory", "arg0.py"), "args1", "args2"])
 
 
 if __name__ == "__main__":

@@ -21,10 +21,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getArchives(self):
         """
@@ -32,18 +30,16 @@ class Options(syslib.Dump):
         """
         return self._args.archives
 
-
     def getViewFlag(self):
         """
         Return view flag.
         """
         return self._args.viewFlag
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Unpack a compressed archive in "
-                            "TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.")
+            description="Unpack a compressed archive in "
+                        "TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.")
 
         parser.add_argument("-v", dest="viewFlag", action="store_true",
                             help="Show contents of archive.")
@@ -58,11 +54,10 @@ class Options(syslib.Dump):
         isarchive = re.compile("[.](tar|tar[.](gz|bz2|lzma|xz|7z)|t[gblx]z)$")
         for archive in self._args.archives:
             if not isarchive.search(archive):
-                raise SystemExit(sys.argv[0] + ': Unsupported "' + archive +'" archive format.')
+                raise SystemExit(sys.argv[0] + ': Unsupported "' + archive + '" archive format.')
 
 
 class Unpack(syslib.Dump):
-
 
     def __init__(self, options):
         os.umask(int("022", 8))
@@ -77,31 +72,28 @@ class Unpack(syslib.Dump):
             else:
                 self._unpack(archive)
 
-
     def _unpack(self, archive):
         if archive.endswith(".tar.7z"):
             p7zip = syslib.Command("7za")
-            p7zip.setArgs([ "x", "-y", "-so", archive ])
-            self._tar.setArgs([ "xfv", "-" ])
-            p7zip.run(pipes=[ self._tar ])
+            p7zip.setArgs(["x", "-y", "-so", archive])
+            self._tar.setArgs(["xfv", "-"])
+            p7zip.run(pipes=[self._tar])
         else:
-            self._tar.setArgs([ "xfv", archive ])
+            self._tar.setArgs(["xfv", archive])
             self._tar.run()
-
 
     def _view(self, archive):
         if archive.endswith(".tar.7z"):
             p7zip = syslib.Command("7za")
-            p7zip.setArgs([ "x", "-y", "-so", archive ])
-            self._tar.setArgs([ "tfv", "-" ])
-            p7zip.run(pipes=[ self._tar ])
+            p7zip.setArgs(["x", "-y", "-so", archive])
+            self._tar.setArgs(["tfv", "-"])
+            p7zip.run(pipes=[self._tar])
         else:
-            self._tar.setArgs([ "tfv", archive ])
+            self._tar.setArgs(["tfv", archive])
             self._tar.run()
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -116,16 +108,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

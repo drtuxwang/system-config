@@ -19,14 +19,12 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._directories = []
         for directory in args[1:]:
             self._directories.append(os.path.abspath(directory))
-
 
     def getDirectorys(self):
         """
@@ -37,10 +35,9 @@ class Options(syslib.Dump):
         print("\nsumount - Securely unmount a file system using ssh protocol\n")
         print("Usage: sumount /localpath1 [/locapath2 [...]]")
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Unmount file system securely mounted with SSH protocol.")
+            description="Unmount file system securely mounted with SSH protocol.")
 
         parser.add_argument("directories", nargs="+", metavar="localpath",
                             help="Local directory.")
@@ -49,12 +46,10 @@ class Options(syslib.Dump):
 
 class Unmount(syslib.Dump):
 
-
     def __init__(self, options):
         self._directories = options.getDirectorys()
         self._mount = syslib.Command("mount")
         self._fusermount = syslib.Command("fusermount")
-
 
     def run(self):
         for directory in self._directories:
@@ -63,13 +58,12 @@ class Unmount(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': "' + directory + '" is not a mount point.')
             elif self._mount.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(self._mount.getExitcode()) +
-                                     ' received from "' + self._mount.getFile() + '".')
-            self._fusermount.setArgs([ "-u", directory ])
+                                 ' received from "' + self._mount.getFile() + '".')
+            self._fusermount.setArgs(["-u", directory])
             self._fusermount.run()
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -84,16 +78,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

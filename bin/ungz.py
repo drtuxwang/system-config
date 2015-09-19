@@ -19,21 +19,18 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._gzip = syslib.Command("gzip")
-        self._gzip.setFlags([ "-d" ])
+        self._gzip.setFlags(["-d"])
         self._gzip.setArgs(self._args.archives)
-
 
     def getGzip(self):
         """
         Return gzip Command class object.
         """
         return self._gzip
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Uncompress a file in GZIP format.")
@@ -44,7 +41,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -59,16 +55,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

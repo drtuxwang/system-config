@@ -18,32 +18,29 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._config()
         if os.name == "nt":
             self._mplayer = syslib.Command("mplayer.exe")
         else:
             self._mplayer = syslib.Command("mplayer")
-        self._mplayer.setFlags([ "-msglevel", "all=0", "-alang", "en", "-slang",
-                                 "en", "-monitoraspect", "4:3" ])
+        self._mplayer.setFlags([
+            "-msglevel", "all=0", "-alang", "en", "-slang", "en", "-monitoraspect", "4:3"])
         if syslib.Task().haspname("pulseaudio"):
-            self._mplayer.extendFlags([ "-ao", "pulse" ])
+            self._mplayer.extendFlags(["-ao", "pulse"])
         else:
-            self._mplayer.extendFlags([ "-ao", "alsa" ])
+            self._mplayer.extendFlags(["-ao", "alsa"])
         self._mplayer.setArgs(args[1:])
         if len(self._mplayer.getArgs()):
-            if self._mplayer.getArgs()[0].split(".")[-1] in ( ".asf", ".asx", ".ram" ):
-                self._mplayer.appendFlag("-playlist") # Avoid "avisynth.dll" error
+            if self._mplayer.getArgs()[0].split(".")[-1] in (".asf", ".asx", ".ram"):
+                self._mplayer.appendFlag("-playlist")  # Avoid "avisynth.dll" error
         self._setLibraries(self._mplayer)
-
 
     def getMplayer(self):
         """
         Return mplayer Command class object.
         """
         return self._mplayer
-
 
     def _config(self):
         if "HOME" in os.environ.keys():
@@ -56,7 +53,7 @@ class Options(syslib.Dump):
             os.chmod(configdir, int("700", 8))
             if not os.path.isfile(os.path.join(configdir, "config")):
                 try:
-                    with open(os.path.join(configdir, "config"), "w", newline = "\n") as ofile:
+                    with open(os.path.join(configdir, "config"), "w", newline="\n") as ofile:
                         print("# Write your default config options here!\n", file=ofile)
                         print("prefer-ipv4 = yes", file=ofile)
                         print("\n[gnome-mplayer]", file=ofile)
@@ -67,7 +64,6 @@ class Options(syslib.Dump):
                 except IOError:
                     return
 
-
     def _setLibraries(self, command):
         libdir = os.path.join(os.path.dirname(command.getFile()), "lib")
         if os.path.isdir(libdir):
@@ -75,12 +71,11 @@ class Options(syslib.Dump):
                 os.environ["LD_LIBRARY_PATH"] = libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"]
             else:
                 os.environ["LD_LIBRARY_PATH"] = libdir
-            if self._mplayer.flags[-1] in ( "pulse", "alsa" ):
+            if self._mplayer.flags[-1] in ("pulse", "alsa"):
                 self._mplayer.flags[-1] = "esd"
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -95,16 +90,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

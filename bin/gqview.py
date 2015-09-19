@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._gqview = syslib.Command("geeqie", check=False)
         if self._gqview.isFound():
@@ -28,17 +27,15 @@ class Options(syslib.Dump):
             self._gqview = syslib.Command("gqview")
             self._configGqview()
         if len(args) == 1:
-            self._gqview.setArgs([ os.curdir ])
+            self._gqview.setArgs([os.curdir])
         else:
             self._gqview.setArgs(args[1:])
-
 
     def getGqview(self):
         """
         Return gqview Command class object.
         """
         return self._gqview
-
 
     def _configGeeqie(self):
         if "HOME" in os.environ.keys():
@@ -56,8 +53,8 @@ class Options(syslib.Dump):
                     os.mkdir(file)
                 except (IOError, OSError):
                     pass
-            for file in ( os.path.join(os.environ["HOME"], ".local", "share", "geeqie"),
-                          os.path.join(os.environ["HOME"], ".cache", "geeqie", "thumbnails") ):
+            for file in (os.path.join(os.environ["HOME"], ".local", "share", "geeqie"),
+                         os.path.join(os.environ["HOME"], ".cache", "geeqie", "thumbnails")):
                 if not os.path.isfile(file):
                     try:
                         if os.path.isdir(file):
@@ -67,7 +64,6 @@ class Options(syslib.Dump):
                     except (IOError, OSError):
                         pass
 
-
     def _configGqview(self):
         if "HOME" in os.environ.keys():
             configdir = os.path.join(os.environ["HOME"], ".gqview")
@@ -76,7 +72,7 @@ class Options(syslib.Dump):
                     os.makedirs(configdir)
                 except OSError:
                     return
-            for directory in ( "collections", "history", "metadata", "thumbnails" ):
+            for directory in ("collections", "history", "metadata", "thumbnails"):
                 file = os.path.join(configdir, directory)
                 if not os.path.isfile(file):
                     try:
@@ -98,7 +94,6 @@ class Options(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -113,16 +108,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

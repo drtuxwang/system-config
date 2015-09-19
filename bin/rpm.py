@@ -18,7 +18,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._rpm = syslib.Command("rpm")
         if len(args) == 1 or args[1] != "-l":
@@ -27,13 +26,11 @@ class Options(syslib.Dump):
 
         self._mode = "show_packages_info"
 
-
     def getMode(self):
         """
         Return operation mode.
         """
         return self._mode
-
 
     def getRpm(self):
         """
@@ -44,19 +41,16 @@ class Options(syslib.Dump):
 
 class Package(syslib.Dump):
 
-
     def __init__(self, version, size, description):
         self._version = version
         self._size = size
         self._description = description
-
 
     def getDescription(self):
         """
         Return package description.
         """
         return self._description
-
 
     def setDescription(self, description):
         """
@@ -66,13 +60,11 @@ class Package(syslib.Dump):
         """
         self._description = description
 
-
     def getSize(self):
         """
         Return package size.
         """
         return self._size
-
 
     def setSize(self, size):
         """
@@ -82,13 +74,11 @@ class Package(syslib.Dump):
         """
         self._size = size
 
-
     def getVersion(self):
         """
         Return package version.
         """
         return self._version
-
 
     def setVersion(self, version):
         """
@@ -101,17 +91,15 @@ class Package(syslib.Dump):
 
 class PackageManger(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
         self._readRpmStatus()
 
         self._showPackagesInfo()
 
-
     def _readRpmStatus(self):
         rpm = self._options.getRpm()
-        rpm.setArgs([ "-a", "-q", "-i" ])
+        rpm.setArgs(["-a", "-q", "-i"])
         rpm.run(mode="batch")
         name = ""
         self._packages = {}
@@ -133,7 +121,6 @@ class PackageManger(syslib.Dump):
                 package = Package("", "0", "")
         return
 
-
     def _showPackagesInfo(self):
         for name in sorted(self._packages.keys()):
             print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(name.split(":")[0],
@@ -142,7 +129,6 @@ class PackageManger(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -157,16 +143,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

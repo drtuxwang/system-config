@@ -20,13 +20,11 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._convert = syslib.Command("convert")
         self._tesseract = syslib.Command("tesseract")
-
 
     def getConvert(self):
         """
@@ -34,20 +32,17 @@ class Options(syslib.Dump):
         """
         return self._convert
 
-
     def getFiles(self):
         """
         Return list of files.
         """
         return self._args.files
 
-
     def getTesseract(self):
         """
         Return tesseract Command class object.
         """
         return self._tesseract
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Convert image file to text using OCR.")
@@ -58,7 +53,6 @@ class Options(syslib.Dump):
 
 
 class Ocr(syslib.Dump):
-
 
     def __init__(self, options):
         self._tesseract = options.getTesseract()
@@ -71,9 +65,9 @@ class Ocr(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" image file.')
             ext = file.split(".")[-1].lower()
             name = file.rsplit(".", 1)[0]
-            if ext in ( "bmp", "jpg", "jpeg", "png", "pcx" ):
+            if ext in ("bmp", "jpg", "jpeg", "png", "pcx"):
                 print('Converting "' + file + '" to "' + name + ".txt" + '"...')
-                convert.setArgs([ file, tmpfile ])
+                convert.setArgs([file, tmpfile])
                 convert.run()
                 if convert.getExitcode():
                     raise SystemExit(sys.argv[0] + ': Error code ' + str(convert.getExitcode()) +
@@ -83,15 +77,14 @@ class Ocr(syslib.Dump):
                     os.remove(tmpfile)
                 except OSError:
                     pass
-            elif ext in ( "tif", "tiff" ):
+            elif ext in ("tif", "tiff"):
                 print('Converting "' + file + '" to "' + name + ".txt" + '"...')
                 self._ocr(options, file, name)
             else:
                 raise SystemExit(sys.argv[0] + ': Cannot OCR non image file "' + file + '".')
 
-
     def _ocr(self, options, file, name):
-        self._tesseract.setArgs([ file, name ])
+        self._tesseract.setArgs([file, name])
         self._tesseract.run(filter="^Tesseract")
         if self._tesseract.getExitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(self._tesseract.getExitcode()) +
@@ -99,7 +92,6 @@ class Ocr(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -114,16 +106,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

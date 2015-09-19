@@ -19,17 +19,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         ssh = syslib.Command("ssh")
 
         self._rsync = syslib.Command("rsync")
-        self._rsync.setFlags([ "-l", "-p", "-r", "-t", "-v", "-z", "-e",
-                               ssh.getFile(), "--delete" ])
-        self._rsync.setArgs([ self._args.source[0], self._args.target[0] ])
-
+        self._rsync.setFlags(["-l", "-p", "-r", "-t", "-v", "-z", "-e", ssh.getFile(), "--delete"])
+        self._rsync.setArgs([self._args.source[0], self._args.target[0]])
 
     def getRsync(self):
         """
@@ -37,10 +34,9 @@ class Options(syslib.Dump):
         """
         return self._rsync
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Securely synchronize file system using SSH protocol.")
+            description="Securely synchronize file system using SSH protocol.")
 
         parser.add_argument("source", nargs=1, metavar="[[user1@]host1:]source",
                             help="Source location.")
@@ -51,7 +47,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -66,16 +61,14 @@ class Main:
             sys.exit(exception)
         sys.exit(options.getRsync().getExitcode())
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

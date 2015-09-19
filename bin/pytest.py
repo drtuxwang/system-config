@@ -27,13 +27,11 @@ class Options(syslib.Dump):
     self._verboseFlag = Verbose flag
     """
 
-
     def __init__(self, args):
         """
         args = Python test commandline arguments
         """
         self._parseArgs(args[1:])
-
 
     def getDumpFlag(self):
         """
@@ -41,20 +39,17 @@ class Options(syslib.Dump):
         """
         return self._dumpFlag
 
-
     def getFiles(self):
         """
         Return list of test modules
         """
         return self._files
 
-
     def getVerboseFlag(self):
         """
         Return verbose flag.
         """
         return self._verboseFlag
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Run Python unittests in module files.")
@@ -79,7 +74,6 @@ class Options(syslib.Dump):
 
 class ArgparseActionVerbose(argparse.Action):
 
-
     def __call__(self, parser, args, values, option_string=None):
         # option_string must be "-v", "-vv" or "-vvv"
         setattr(args, self.dest, len(option_string[1:]))
@@ -94,7 +88,6 @@ class ModuleTest(syslib.Dump):
     self._python3 = Python3 Command class object
     """
 
-
     def __init__(self, options, file):
         """
         file    = Python module file
@@ -103,15 +96,14 @@ class ModuleTest(syslib.Dump):
         self._options = options
         self._file = file
         self._python3 = syslib.Command(file=sys.executable)
-        self._python3.setFlags([ "-m", "unittest", "-v", "-b" ])
-
+        self._python3.setFlags(["-m", "unittest", "-v", "-b"])
 
     def run(self):
         """
         Run unittest test discovery on Python module.
         """
         directory = os.path.dirname(self._file)
-        self._python3.setArgs([ os.path.basename(self._file) ])
+        self._python3.setArgs([os.path.basename(self._file)])
         self._python3.run(directory=directory, mode="batch", error2output=True)
 
         if self._python3.getExitcode():
@@ -127,7 +119,6 @@ class ModuleTest(syslib.Dump):
                 for line in self._python3.getOutput():
                     print(line)
 
-
     def getTests(self):
         """
         Return the number of tests ran.
@@ -136,7 +127,6 @@ class ModuleTest(syslib.Dump):
             return int(self._python3.getOutput()[-3].split()[1])
         except (IndexError, ValueError):
             return 0
-
 
     def getFailures(self):
         """
@@ -150,7 +140,6 @@ class ModuleTest(syslib.Dump):
                     pass
         return 0
 
-
     def getErrors(self):
         """
         Return the number of test code errors.
@@ -162,7 +151,6 @@ class ModuleTest(syslib.Dump):
                 except (IndexError, ValueError):
                     pass
         return 0
-
 
     def getExitError(self):
         """
@@ -178,13 +166,11 @@ class PythonTest(syslib.Dump):
     self._options = Options class object
     """
 
-
     def __init__(self, options):
         """
         options = Options class object
         """
         self._options = options
-
 
     def run(self):
         """
@@ -221,7 +207,6 @@ class PythonTest(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -235,16 +220,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

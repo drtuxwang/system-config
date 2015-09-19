@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFile(self):
         """
@@ -31,13 +29,11 @@ class Options(syslib.Dump):
         """
         return self._args.file[0]
 
-
     def getModuleArgs(self):
         """
         Return module args.
         """
         return self._moduleArgs
-
 
     def getLines(self):
         """
@@ -45,11 +41,10 @@ class Options(syslib.Dump):
         """
         return self._args.lines[0]
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Profile Python 3.x program.")
 
-        parser.add_argument("-n", nargs=1, type=int, dest="lines", default=[ 20 ],
+        parser.add_argument("-n", nargs=1, type=int, dest="lines", default=[20],
                             metavar="K", help="Output first K lines.")
 
         parser.add_argument("file", nargs=1, metavar="file[.py]|file.pstats",
@@ -72,10 +67,8 @@ class Options(syslib.Dump):
 
 class Profiler(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
-
 
     def run(self):
         file = self._options.getFile()
@@ -87,18 +80,16 @@ class Profiler(syslib.Dump):
 
         self._show(file, self._options.getLines())
 
-
     def _profile(self, moduleFile, moduleArgs):
-        statsFile = os.path.basename(moduleFile.rsplit(".",1)[0] + ".pstats")
+        statsFile = os.path.basename(moduleFile.rsplit(".", 1)[0] + ".pstats")
         if os.path.isfile(statsFile):
             try:
                 os.remove(statsFile)
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot remove old "' + statsFile + '" file.')
 
-
         python3 = syslib.Command(file=sys.executable)
-        python3.setArgs([ "-m", "cProfile", "-o", statsFile ])
+        python3.setArgs(["-m", "cProfile", "-o", statsFile])
 
         if os.path.isfile(moduleFile):
             command = syslib.Command(file=moduleFile)
@@ -106,19 +97,17 @@ class Profiler(syslib.Dump):
             try:
                 command = syslib.Command(moduleFile)
             except syslib.SyslibError:
-                raise SystemExit(
-                        sys.argv[0] + ': Cannot find "' + moduleFile + '" module file')
+                raise SystemExit(sys.argv[0] + ': Cannot find "' + moduleFile + '" module file')
         command.setArgs(moduleArgs)
         command.setWrapper(python3)
         command.run()
 
-        print("pyprof:", command.args2cmd([ command.getFile() ] + moduleArgs))
+        print("pyprof:", command.args2cmd([command.getFile()] + moduleArgs))
         return statsFile
-
 
     def _show(self, statsFile, lines):
         try:
-            stats =  pstats.Stats(statsFile)
+            stats = pstats.Stats(statsFile)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + statsFile + '" file.')
 
@@ -126,7 +115,6 @@ class Profiler(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -141,16 +129,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -20,9 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
-        self._df = syslib.Command("df", args=args[1:], pathextra=[ "/bin" ])
+        self._df = syslib.Command("df", args=args[1:], pathextra=["/bin"])
 
         while len(args) > 1:
             if not args[1].startswith("-"):
@@ -33,13 +32,11 @@ class Options(syslib.Dump):
 
         self._mounts = args[1:]
 
-
     def getDf(self):
         """
         Return df Command class object.
         """
         return self._df
-
 
     def getMounts(self):
         """
@@ -50,13 +47,11 @@ class Options(syslib.Dump):
 
 class CommandThread(syslib.Dump, threading.Thread):
 
-
-    def __init__ (self, command):
+    def __init__(self, command):
         threading.Thread.__init__(self)
         self._child = None
         self._command = command
         self._stdout = ""
-
 
     def run(self):
         self._child = self._command.run(mode="child")
@@ -69,12 +64,10 @@ class CommandThread(syslib.Dump, threading.Thread):
                 break
             self._stdout += byte.decode("utf-8", "replace")
 
-
     def kill(self):
         if self._child:
             self._child.kill()
             self._child = None
-
 
     def getOutput(self):
         """
@@ -85,17 +78,15 @@ class CommandThread(syslib.Dump, threading.Thread):
 
 class DiskReport(syslib.Dump):
 
-
     def __init__(self, options):
         self._df = options.getDf()
         self._mounts = options.getMounts()
         if not self._mounts:
             self._detect()
 
-
     def run(self):
         devices = {}
-        for file in  glob.glob("/dev/disk/by-uuid/*"):
+        for file in glob.glob("/dev/disk/by-uuid/*"):
             try:
                 devices[file] = "/dev/" + os.path.basename(os.readlink(file))
             except OSError:
@@ -103,10 +94,10 @@ class DiskReport(syslib.Dump):
 
         print("Filesystem       1K-blocks       Used  Available Use% Mounted on")
         for mount in self._mounts:
-            self._df.setArgs([ mount ])
+            self._df.setArgs([mount])
             thread = CommandThread(self._df)
             thread.start()
-            endTime = time.time() + 1 # One second delay limit
+            endTime = time.time() + 1  # One second delay limit
             while thread.is_alive():
                 if time.time() > endTime:
                     thread.kill()
@@ -117,14 +108,13 @@ class DiskReport(syslib.Dump):
                 continue
 
             if blocks != "0":
-                if device in devices.keys(): # Map UUID to device
+                if device in devices.keys():  # Map UUID to device
                     device = devices[device]
                 if len(device) > 15:
                     print(device)
                     device = ""
-                print("{0:15s} {1:>10s} {2:>10s} {3:>10s} {4:>4s} {5:s}".\
+                print("{0:15s} {1:>10s} {2:>10s} {3:>10s} {4:>4s} {5:s}".
                       format(device, blocks, used, avail, ratio, directory))
-
 
     def _detect(self):
         mount = syslib.Command("mount")
@@ -140,7 +130,6 @@ class DiskReport(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -154,16 +143,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -18,17 +18,15 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._eclipse = syslib.Command("eclipse")
         if len(args) == 1:
             java = syslib.Command(os.path.join("bin", "java"))
-            self._eclipse.setArgs([ "-vm", java.getFile(), "-vmargs", "-Xms2048m", "-Xmx2048m",
-                                    "-XX:PermSize=8192m", "-XX:MaxPermSize=8192m",
-                                    "-XX:-UseCompressedOops" ])
+            self._eclipse.setArgs([
+                "-vm", java.getFile(), "-vmargs", "-Xms2048m", "-Xmx2048m", "-XX:PermSize=8192m",
+                "-XX:MaxPermSize=8192m", "-XX:-UseCompressedOops"])
         else:
             self._eclipse.setArgs(args[1:])
-
 
     def getEclipse(self):
         """
@@ -38,7 +36,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -53,16 +50,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

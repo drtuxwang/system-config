@@ -26,7 +26,6 @@ class Options(syslib.Dump):
     self._verboseFlag     = Verbose flag
     """
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -35,13 +34,11 @@ class Options(syslib.Dump):
             if file.endswith(".py"):
                 self._modules.append(PythonModule(file[:-3]))
 
-
     def getDumpFlag(self):
         """
         Return dump objects flag.
         """
         return self._dumpFlag
-
 
     def getModules(self):
         """
@@ -49,13 +46,11 @@ class Options(syslib.Dump):
         """
         return self._modules
 
-
     def getNoskipFlag(self):
         """
         Return noskip flag.
         """
         return self._args.noskipFlag
-
 
     def getVerboseFlag(self):
         """
@@ -63,10 +58,9 @@ class Options(syslib.Dump):
         """
         return self._verboseFlag
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description='Check and compile Python 3.x modules to ".pyc" byte code.')
+            description='Check and compile Python 3.x modules to ".pyc" byte code.')
 
         parser.add_argument("-v", "-vv", "-vvv", nargs=0, action=ArgparseActionVerbose,
                             dest="verbosity", default=0, help="Select verbosity level 1, 2 or 3.")
@@ -86,7 +80,6 @@ class Options(syslib.Dump):
 
 class ArgparseActionVerbose(argparse.Action):
 
-
     def __call__(self, parser, args, values, option_string=None):
         # option_string must be "-v", "-vv" or "-vvv"
         setattr(args, self.dest, len(option_string[1:]))
@@ -97,7 +90,6 @@ class PythonChecker(syslib.Dump):
     This class checks Python source code for 3.x compatibility and common mistakes.
     """
 
-
     def __init__(self):
         if os.name == "nt":
             self._py2to3 = syslib.Command(file=os.path.join(os.path.dirname(sys.executable),
@@ -107,10 +99,9 @@ class PythonChecker(syslib.Dump):
             if os.path.isfile(file + ".py"):
                 file += ".py"
             self._py2to3 = syslib.Command(file=file)
-        self._py2to3.setFlags([ "--nofix=dict", "--nofix=future", "--nofix=imports",
-                                "--nofix=raise", "--nofix=unicode", "--nofix=xrange" ])
+        self._py2to3.setFlags(["--nofix=dict", "--nofix=future", "--nofix=imports",
+                               "--nofix=raise", "--nofix=unicode", "--nofix=xrange"])
         self._py2to3.setWrapper(syslib.Command(file=sys.executable))
-
 
     def _check(self, file):
         error = False
@@ -123,11 +114,11 @@ class PythonChecker(syslib.Dump):
                     if n == 1:
                         if not line.startswith("#!/"):
                             return 0
-                        elif "python" not in line: # Not Python program
+                        elif "python" not in line:  # Not Python program
                             return 0
                         elif "python3" in line:
-                            self._py2to3.extendFlags([ "--nofix=input", "--nofix=print",
-                                                       "--print-function" ])
+                            self._py2to3.extendFlags(
+                                ["--nofix=input", "--nofix=print", "--print-function"])
                         if not line.startswith("#!/usr/bin/env python"):
                             print(file, ': ? line 1 should be "#!/usr/bin/env python".', sep="")
                             error = True
@@ -152,10 +143,9 @@ class PythonChecker(syslib.Dump):
             error = True
         return error
 
-
     def _python3(self, file):
         error = False
-        self._py2to3.setArgs([ file ])
+        self._py2to3.setArgs([file])
         self._py2to3.run(mode="batch", error2output=True)
         if self._py2to3.isMatchOutput("^RefactoringTool: Can't parse "):
             for line in self._py2to3.getOutput():
@@ -176,7 +166,6 @@ class PythonChecker(syslib.Dump):
                         error = True
         return error
 
-
     def run(self, file):
         if not os.path.isdir(file):
             if not os.path.isfile(file):
@@ -191,7 +180,6 @@ class PythonCompiler(syslib.Dump):
     This class check & compiles Python source code into ".pyc" (works like make).
     """
 
-
     def __init__(self, options):
         """
         options = Options class object
@@ -200,7 +188,6 @@ class PythonCompiler(syslib.Dump):
         self._checker = PythonChecker()
         if "PYTHONDONTWRITEBYTECODE" in os.environ.keys():
             del os.environ["PYTHONDONTWRITEBYTECODE"]
-
 
     def run(self):
         """
@@ -218,7 +205,7 @@ class PythonCompiler(syslib.Dump):
                 print("\nChecking", module.getSource())
             if self._options.getNoskipFlag() or not module.checkTarget():
                 source = module.getSource()
-                print('\nCompiling "' + source +'"...')
+                print('\nCompiling "' + source + '"...')
                 if self._checker.run(source):
                     errors += 1
                 else:
@@ -228,7 +215,6 @@ class PythonCompiler(syslib.Dump):
         print()
         if errors > 0:
             raise SystemExit("Total errors encountered: " + str(errors) + ".")
-
 
     def _buildTarget(self, module):
         try:
@@ -244,7 +230,6 @@ class PythonModule(syslib.Dump):
     This class deals with Python module files.
     """
 
-
     def __init__(self, module):
         """
         module = Module name
@@ -253,7 +238,6 @@ class PythonModule(syslib.Dump):
         self._source = module + ".py"
         self._target = os.path.join(os.path.dirname(module), "__pycache__",
                                     os.path.basename(module) + extension)
-
 
     def checkTarget(self):
         """
@@ -264,7 +248,6 @@ class PythonModule(syslib.Dump):
                 return True
         return False
 
-
     def updateTarget(self):
         """
         Set target file modification time to source file.
@@ -272,13 +255,11 @@ class PythonModule(syslib.Dump):
         timeNew = syslib.FileStat(self._source).getTime()
         os.utime(self._target, (timeNew, timeNew))
 
-
     def getSource(self):
         """
         Return source file location.
         """
         return self._source
-
 
     def getTarget(self):
         """
@@ -288,7 +269,6 @@ class PythonModule(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -303,16 +283,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

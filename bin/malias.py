@@ -20,7 +20,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -28,7 +27,7 @@ class Options(syslib.Dump):
         if "HOME" in os.environ.keys():
             try:
                 with open(os.path.join(os.environ["HOME"], ".address"), errors="replace") as ifile:
-                     self._domainName = ifile.readline().strip().split("@")[-1]
+                    self._domainName = ifile.readline().strip().split("@")[-1]
             except IOError:
                 pass
         if not self._domainName:
@@ -37,13 +36,11 @@ class Options(syslib.Dump):
             if domainName.hasOutput():
                 self._domainName = domainName.getOutput()[0]
 
-
     def getAliases(self):
         """
         Return list of aliases.
         """
         return self._args.aliases
-
 
     def getDomainName(self):
         """
@@ -61,7 +58,6 @@ class Options(syslib.Dump):
 
 class Address(syslib.Dump):
 
-
     def __init__(self):
         self._names = []
         self._book = {}
@@ -77,7 +73,6 @@ class Address(syslib.Dump):
                                 self._names.append(name)
             except IOError:
                 pass
-
 
     def match(self, domainname, aliases):
         addresses = []
@@ -100,7 +95,6 @@ class Address(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -114,16 +108,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

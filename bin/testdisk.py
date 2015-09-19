@@ -19,7 +19,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -31,16 +30,15 @@ class Options(syslib.Dump):
         device = self._args.device[0]
         if not os.path.exists(device):
             raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + device + '" disk or disk image file.')
+                sys.argv[0] + ': Cannot find "' + device + '" disk or disk image file.')
         try:
             with open(self._args.device[0], "rb") as ifile:
                 pass
         except IOError:
             raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + device + '" disk or disk image file.')
+                sys.argv[0] + ': Cannot read "' + device + '" disk or disk image file.')
 
-        self._command.setArgs([ device ])
-
+        self._command.setArgs([device])
 
     def getCommand(self):
         """
@@ -48,14 +46,12 @@ class Options(syslib.Dump):
         """
         return self._command
 
-
     def _photorec(self):
         self._command = syslib.Command("photorec_static", check=False)
         if not self._command.isFound():
-            self._command = syslib.Command("testdisk", flags=[ "-rec" ], check=False)
+            self._command = syslib.Command("testdisk", flags=["-rec"], check=False)
             if not self._command.isFound():
                 self._command = syslib.Command("photorec_static")
-
 
     def _testdisk(self):
         self._command = syslib.Command("testdisk_static", check=False)
@@ -63,7 +59,6 @@ class Options(syslib.Dump):
             self._command = syslib.Command("testdisk", check=False)
             if not self._command.isFound():
                 self._command = syslib.Command("testdisk_static")
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Fix disk or recovery deleted file.")
@@ -79,7 +74,6 @@ class Options(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -93,16 +87,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

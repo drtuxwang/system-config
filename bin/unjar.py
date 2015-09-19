@@ -19,16 +19,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
         self._archiver = syslib.Command("jar")
         if self._args.viewFlag:
-            self._archiver.setFlags([ "tfv" ])
+            self._archiver.setFlags(["tfv"])
         else:
-            self._archiver.setFlags([ "xfv" ])
-
+            self._archiver.setFlags(["xfv"])
 
     def getArchiver(self):
         """
@@ -36,17 +34,15 @@ class Options(syslib.Dump):
         """
         return self._archiver
 
-
     def getArchives(self):
         """
         Return list of archive files.
         """
         return self._args.archives
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Unpack a compressed JAVA archive in JAR format.")
+            description="Unpack a compressed JAVA archive in JAR format.")
 
         parser.add_argument("-v", dest="viewFlag", action="store_true",
                             help="Show contents of archive.")
@@ -59,13 +55,12 @@ class Options(syslib.Dump):
 
 class Unpack(syslib.Dump):
 
-
     def __init__(self, options):
         os.umask(int("022", 8))
         archiver = options.getArchiver()
 
         for archive in options.getArchives():
-            archiver.setArgs([ archive ])
+            archiver.setArgs([archive])
             archiver.run()
             if archiver.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(archiver.getExitcode()) +
@@ -73,7 +68,6 @@ class Unpack(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -88,16 +82,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

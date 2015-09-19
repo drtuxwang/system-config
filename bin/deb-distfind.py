@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getPackagesFile(self):
         """
@@ -31,13 +29,11 @@ class Options(syslib.Dump):
         """
         return self._args.packagesFile[0]
 
-
     def getPatterns(self):
         """
         Return list of regular expression search patterns.
         """
         return self._args.patterns
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Search for packages that match regular "
@@ -53,12 +49,10 @@ class Options(syslib.Dump):
 
 class Package(syslib.Dump):
 
-
     def __init__(self, version, size, description):
         self._version = version
         self._size = size
         self._description = description
-
 
     def getDescription(self):
         """
@@ -66,13 +60,11 @@ class Package(syslib.Dump):
         """
         return self._description
 
-
     def setDescription(self, description):
         """
         Set package description.
         """
         self._description = description
-
 
     def getSize(self):
         """
@@ -80,20 +72,17 @@ class Package(syslib.Dump):
         """
         return self._size
 
-
     def setSize(self, size):
         """
         Set package size.
         """
         self._size = size
 
-
     def getVersion(self):
         """
         Return version.
         """
         return self._version
-
 
     def setVersion(self, version):
         """
@@ -106,11 +95,9 @@ class Package(syslib.Dump):
 
 class Search(syslib.Dump):
 
-
     def __init__(self, options):
         self._readDistributionPackages(options.getPackagesFile())
         self._searchDistributionPackages(options.getPatterns())
-
 
     def _readDistributionPackages(self, packagesFile):
         self._packages = {}
@@ -137,7 +124,6 @@ class Search(syslib.Dump):
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + packagesFile + '" packages file.')
 
-
     def _searchDistributionPackages(self, patterns):
         for pattern in patterns:
             ispattern = re.compile(pattern, re.IGNORECASE)
@@ -150,7 +136,6 @@ class Search(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -165,16 +150,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

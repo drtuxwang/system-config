@@ -19,10 +19,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getDirectory(self):
         """
@@ -30,17 +28,14 @@ class Options(syslib.Dump):
         """
         return self._args.directory[0]
 
-
     def getHeight(self):
         """
         Return hieght in pixels.
         """
         return self._args.height
 
-
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(
-                description="Generate XHTML files to view pictures.")
+        parser = argparse.ArgumentParser(description="Generate XHTML files to view pictures.")
 
         parser.add_argument("-height", type=int,
                             default=600, help="Select picture height in pixels (default 600).")
@@ -59,18 +54,16 @@ class Options(syslib.Dump):
 
 class Gallery(syslib.Dump):
 
-
     def __init__(self, directory, height):
         self._directory = directory
         self._height = height
         try:
             self._files = [
-                    x for x in sorted(os.listdir(directory)) if x.split(".")[-1].lower() in (
-                    "bmp", "gif", "jpg", "jpeg", "png", "pcx", "svg", "tif", "tiff" ) ]
+                x for x in sorted(os.listdir(directory)) if x.split(".")[-1].lower() in (
+                    "bmp", "gif", "jpg", "jpeg", "png", "pcx", "svg", "tif", "tiff")]
         except PermissionError:
             raise SystemExit(sys.argv[0] + ': Cannot open "' + directory + '" directory.')
         self._nfiles = len(self._files)
-
 
     def _generate(self, number, file, next):
         yield ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
@@ -86,11 +79,11 @@ class Gallery(syslib.Dump):
         yield '<table border="0" align="center">'
         yield "<tr>"
         yield '  <td valign="top">'
-        yield "  (" + str(number+1) +"/" + str(self._nfiles)+ ")"
+        yield "  (" + str(number+1) + "/" + str(self._nfiles) + ")"
         yield "  </td>"
         yield "  <td>"
-        yield '    <a href="' + next.rsplit(".", 1)[0] +'.xhtml">'
-        yield '    <img src="' + file +'" height="' + str(self._height) + '"/></a>'
+        yield '    <a href="' + next.rsplit(".", 1)[0] + '.xhtml">'
+        yield '    <img src="' + file + '" height="' + str(self._height) + '"/></a>'
         yield "  </td>"
         yield "  <td>"
         yield "  </td>"
@@ -98,7 +91,6 @@ class Gallery(syslib.Dump):
         yield "</table>"
         yield ""
         yield "</body></html>"
-
 
     def create(self):
         if self._files:
@@ -128,15 +120,13 @@ class Gallery(syslib.Dump):
 
 class Xhtml(syslib.Dump):
 
-
     def __init__(self, options):
         self._height = options.getHeight()
         self._directory = options.getDirectory()
 
-
     def _find(self, directory=""):
         if directory:
-            directories = [ directory ]
+            directories = [directory]
         else:
             directories = []
 
@@ -144,7 +134,6 @@ class Xhtml(syslib.Dump):
             if os.path.isdir(file):
                 directories.extend(self._find(file))
         return directories
-
 
     def _generate(self, fileStats):
         yield ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
@@ -165,7 +154,6 @@ class Xhtml(syslib.Dump):
             yield "<br/>"
             yield ""
         yield "</body></html>"
-
 
     def create(self):
         try:
@@ -191,7 +179,6 @@ class Xhtml(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -205,16 +192,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

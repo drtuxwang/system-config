@@ -21,10 +21,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
@@ -32,20 +30,17 @@ class Options(syslib.Dump):
         """
         return self._args.files
 
-
     def getShuffleFlag(self):
         """
         Return shuffle flag.
         """
         return self._args.shuffleFlag
 
-
     def getViewFlag(self):
         """
         Return view flag.
         """
         return self._args.viewFlag
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Play multimedia file/URL.")
@@ -62,10 +57,8 @@ class Options(syslib.Dump):
 
 class Play(syslib.Dump):
 
-
     def __init__(self, options):
         self._options = options
-
 
     def run(self):
         files = self._options.getFiles()
@@ -76,7 +69,6 @@ class Play(syslib.Dump):
             if self._options.getShuffleFlag():
                 random.shuffle(files)
             self._play(files)
-
 
     def _play(self, files):
         vlc = syslib.Command("vlc", args=files)
@@ -89,7 +81,6 @@ class Play(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Error code ' + str(vlc.getExitcode()) +
                              ' received from "' + vlc.getFile() + '".')
 
-
     def _view(self, files):
         for file in files:
             if os.path.isfile(file):
@@ -98,13 +89,12 @@ class Play(syslib.Dump):
 
 class Media(syslib.Dump):
 
-
     def __init__(self, file):
         self._file = file
         self._length = "0"
         self._stream = {}
         self._type = "Unknown"
-        avprobe = syslib.Command("avprobe", args=[ file ])
+        avprobe = syslib.Command("avprobe", args=[file])
         avprobe.run(mode="batch", error2output=True)
         number = 0
 
@@ -121,15 +111,12 @@ class Media(syslib.Dump):
         except IndexError:
             raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
 
-
     def getStream(self):
         for key in sorted(self._stream.keys()):
             yield (key, self._stream[key])
 
-
     def getType(self):
         return self._type
-
 
     def hasAudio(self):
         for key in self._stream.keys():
@@ -137,13 +124,11 @@ class Media(syslib.Dump):
                 return True
         return False
 
-
     def hasAudioCodec(self, codec):
         for key in self._stream.keys():
             if self._stream[key].startswith("Audio: " + codec):
                 return True
         return False
-
 
     def hasVideo(self):
         for key in self._stream.keys():
@@ -151,17 +136,14 @@ class Media(syslib.Dump):
                 return True
         return False
 
-
     def hasVideoCodec(self, codec):
         for key in self._stream.keys():
             if self._stream[key].startswith("Video: " + codec):
                 return True
         return False
 
-
     def isvalid(self):
         return self._type != "Unknown"
-
 
     def print(self):
         if self.isvalid():
@@ -172,7 +154,6 @@ class Media(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -187,16 +168,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

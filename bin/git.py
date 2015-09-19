@@ -18,26 +18,23 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._git = syslib.Command(os.path.join("bin", "git"))
         self._git.setArgs(args[1:])
 
         self._env = {}
         gitHome = os.path.dirname(os.path.dirname(self._git.getFile()))
-        if gitHome not in ( "/usr", "/usr/local" ):
+        if gitHome not in ("/usr", "/usr/local"):
             self._env["GIT_EXEC_PATH"] = os.path.join(gitHome, "libexec", "git-core")
             self._env["GIT_TEMPLATE_DIR"] = os.path.join(gitHome, "share", "git-core", "templates")
 
         self._config()
-
 
     def getEnv(self):
         """
         Return dictionary of environments.
         """
         return self._env
-
 
     def getGit(self):
         """
@@ -62,7 +59,6 @@ class Options(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -76,16 +72,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

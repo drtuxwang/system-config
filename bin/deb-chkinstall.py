@@ -21,7 +21,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
 
@@ -31,13 +30,11 @@ class Options(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Invalid "' + listFile + '" installed list filename.')
         self._distribution = ispattern.sub("", listFile)
 
-
     def getDistribution(self):
         """
         Return distribution name.
         """
         return self._distribution
-
 
     def getListFile(self):
         """
@@ -45,13 +42,11 @@ class Options(syslib.Dump):
         """
         return self._args.listFile[0]
 
-
     def getPackageNames(self):
         """
         Return list of package names.
         """
         return self._args.packageNames
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description='Check installation dependencies of '
@@ -67,20 +62,17 @@ class Options(syslib.Dump):
 
 class Package(syslib.Dump):
 
-
     def __init__(self, depends=[], url=""):
         self._checkedFlag = False
         self._installedFlag = False
         self._depends = depends
         self._url = url
 
-
     def getCheckedFlag(self):
         """
         Return packaged checked flag.
         """
         return self._checkedFlag
-
 
     def setCheckedFlag(self, checkedFlag):
         """
@@ -90,13 +82,11 @@ class Package(syslib.Dump):
         """
         self._checkedFlag = checkedFlag
 
-
     def getDepends(self):
         """
         Return list of required dependent packages.
         """
         return self._depends
-
 
     def setDepends(self, names):
         """
@@ -106,13 +96,11 @@ class Package(syslib.Dump):
         """
         self._depends = names
 
-
     def getInstalledFlag(self):
         """
         Return package installed flag.
         """
         return self._installedFlag
-
 
     def setInstalledFlag(self, installedFlag):
         """
@@ -122,13 +110,11 @@ class Package(syslib.Dump):
         """
         self._installedFlag = installedFlag
 
-
     def getUrl(self):
         """
         Return package url.
         """
         return self._url
-
 
     def setUrl(self, url):
         """
@@ -141,14 +127,12 @@ class Package(syslib.Dump):
 
 class CheckInstall(syslib.Dump):
 
-
     def __init__(self, options):
         self._packages = self._readDistributionPackages(options.getDistribution() + ".packages")
         self._readDistributionPinPackages(options.getDistribution() + ".pinlist")
         self._readDistributionInstalled(options.getListFile())
         self._checkDistributionInstall(options.getDistribution(), options.getListFile(),
                                        options.getPackageNames())
-
 
     def _readDistributionPackages(self, packagesFile):
         packages = {}
@@ -173,7 +157,6 @@ class CheckInstall(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Cannot open "' + packagesFile + '" packages file.')
         return packages
 
-
     def _readDistributionPinPackages(self, pinFile):
         packagesCache = {}
         try:
@@ -191,7 +174,6 @@ class CheckInstall(syslib.Dump):
         except IOError:
             pass
 
-
     def _readDistributionInstalled(self, installedFile):
         try:
             with open(installedFile, errors="replace") as ifile:
@@ -203,7 +185,6 @@ class CheckInstall(syslib.Dump):
                             self._packages[name].setInstalledFlag(True)
         except IOError:
             return
-
 
     def _checkPackageInstall(self, distribution, ofile, indent, name):
         if name in self._packages:
@@ -223,7 +204,6 @@ class CheckInstall(syslib.Dump):
                     elif not self._packages[name].getInstalledFlag():
                         self._checkPackageInstall(distribution, ofile, indent + "  ", i)
 
-
     def _checkDistributionInstall(self, distribution, listFile, names):
         urlfile = os.path.basename(distribution) + listFile.split(".debs")[-1] + ".url"
         try:
@@ -236,7 +216,6 @@ class CheckInstall(syslib.Dump):
         if os.path.getsize(urlfile) == 0:
             os.remove(urlfile)
 
-
     def _local(self, distribution, url):
         file = os.path.join(distribution, os.path.basename(url))
         if os.path.isfile(file):
@@ -245,7 +224,6 @@ class CheckInstall(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -260,16 +238,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -27,7 +27,6 @@ class Options:
     self._verboseFlag = Verbose flag
     """
 
-
     def dump(self, prefix="self."):
         """
         Dump object recursively.
@@ -43,7 +42,6 @@ class Options:
         print(prefix + "_moduleDir =", self._moduleDir)
         print(prefix + "_verboseFlag =", self._verboseFlag)
 
-
     def __init__(self, args):
         """
         args = Python loader commandline arguments
@@ -52,13 +50,11 @@ class Options:
 
         self._moduleDir = os.path.dirname(args[0])
 
-
     def getDumpFlag(self):
         """
         Return dump objects flag.
         """
         return self._dumpFlag
-
 
     def getLibraryPath(self):
         """
@@ -66,13 +62,11 @@ class Options:
         """
         return self._libraryPath
 
-
     def getModule(self):
         """
         Return module name containing "Main(args)" class
         """
         return self._args.module[0]
-
 
     def getModuleArgs(self):
         """
@@ -80,13 +74,11 @@ class Options:
         """
         return self._moduleArgs
 
-
     def getModuleDir(self):
         """
         Return main module directory.
         """
         return self._moduleDir
-
 
     def getVerboseFlag(self):
         """
@@ -94,10 +86,9 @@ class Options:
         """
         return self._verboseFlag
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Load Python main program as module (must have Main class).")
+            description="Load Python main program as module (must have Main class).")
 
         parser.add_argument("-pyldv", "-pyldvv", "-pyldvvv", nargs=0, action=ArgparseActionVerbose,
                             dest="verbosity", default=0, help="Select verbosity level 1, 2 or 3.")
@@ -112,7 +103,7 @@ class Options:
         pyArgs = []
         modArgs = []
         while len(args):
-            if args[0] in ( "-pyldv", "-pyldvv", "-pyldvvv", "-pyldverbose", "-pyldpath"  ):
+            if args[0] in ("-pyldv", "-pyldvv", "-pyldvvv", "-pyldverbose", "-pyldpath"):
                 pyArgs.append(args[0])
                 if args[0] == "-pyldpath" and len(args) >= 2:
                     args = args[1:]
@@ -137,7 +128,6 @@ class Options:
 
 class ArgparseActionVerbose(argparse.Action):
 
-
     def __call__(self, parser, args, values, option_string=None):
         # option_string must be "-pyldv", "-pyldvv" or "-pldyvvv"
         setattr(args, self.dest, len(option_string[5:]))
@@ -151,7 +141,6 @@ class PythonLoader:
     self._sysArgv = Modified Python system arguments
     """
 
-
     def dump(self, prefix="self."):
         """
         Dump object recursively.
@@ -163,15 +152,13 @@ class PythonLoader:
         self._options.dump(prefix + "_options")
         print(prefix + "_sysArgv =", self._sysArgv)
 
-
     def __init__(self, options):
         """
         options = Options class object
         """
         self._options = options
-        self._sysArgv = [ os.path.join(options.getModuleDir(),
-                          options.getModule() + ".py") ] + options.getModuleArgs()
-
+        self._sysArgv = [os.path.join(options.getModuleDir(),
+                         options.getModule() + ".py")] + options.getModuleArgs()
 
     def run(self):
         """
@@ -201,13 +188,11 @@ class PythonLoader:
         main = __import__(module)
         main.Main()
 
-
     def getOptions(self):
         """
         Return Options class object.
         """
         return self._options
-
 
     def getSysArgv(self):
         """
@@ -217,7 +202,6 @@ class PythonLoader:
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -232,16 +216,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

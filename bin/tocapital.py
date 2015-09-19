@@ -19,10 +19,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getWords(self):
         """
@@ -30,10 +28,9 @@ class Options(syslib.Dump):
         """
         return self._args.words
 
-
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Print arguments wth first letter in upper case.")
+            description="Print arguments wth first letter in upper case.")
 
         parser.add_argument("words", nargs="+", metavar="word", help="A word.")
 
@@ -41,7 +38,6 @@ class Options(syslib.Dump):
 
 
 class Capital(syslib.Dump):
-
 
     def __init__(self, words):
         cwords = []
@@ -54,7 +50,6 @@ class Capital(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -69,16 +64,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

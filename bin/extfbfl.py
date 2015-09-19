@@ -21,10 +21,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFile(self):
         """
@@ -34,7 +32,7 @@ class Options(syslib.Dump):
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-                description="Extract Facebook friends list from saved HTML file.")
+            description="Extract Facebook friends list from saved HTML file.")
 
         parser.add_argument("file", nargs=1, help="HTML file.")
 
@@ -43,11 +41,9 @@ class Options(syslib.Dump):
 
 class Extract(syslib.Dump):
 
-
     def __init__(self, options):
         self._profiles = {}
         self._readHtml(options.getFile())
-
 
     def _readHtml(self, file):
         isjunk = re.compile("(&amp;|[?])ref=pb$|[?&]fref=.*|&amp;.*")
@@ -57,15 +53,14 @@ class Extract(syslib.Dump):
                     for block in line.split('href="'):
                         if "://www.facebook.com/" in block:
                             if "hc_location=friends_tab" in block.split('"')[0]:
-                                url = isjunk.sub("", block.split('"')[0]).\
-                                                     replace("?hc_location=friend_browser", "")
-                                uid = int(block.split("user.php?id=")[1].split('"')[0].\
-                                          split("&")[0])
+                                url = isjunk.sub("", block.split('"')[0]).replace(
+                                    "?hc_location=friend_browser", "")
+                                uid = int(block.split("user.php?id=")[1].split(
+                                    '"')[0].split("&")[0])
                                 name = block.split(">")[1].split("<")[0]
                                 self._profiles[uid] = Profile(name, url)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" HTML file.')
-
 
     def write(self):
         file = time.strftime("facebook-%Y%m%d.csv", time.localtime())
@@ -80,28 +75,25 @@ class Extract(syslib.Dump):
                         print(uid, end="", file=ofile)
                     if " " in self._profiles[uid].getName():
                         print(',"' + self._profiles[uid].getName() + '",' +
-                              self._profiles[uid].getUrl(), file = ofile)
+                              self._profiles[uid].getUrl(), file=ofile)
                     else:
                         print(',' + self._profiles[uid].getName() + ',' +
-                              self._profiles[uid].getUrl(), file = ofile)
+                              self._profiles[uid].getUrl(), file=ofile)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" CSV file.')
 
 
 class Profile(syslib.Dump):
 
-
     def __init__(self, name, url):
         self._name = name
         self._url = url
-
 
     def getName(self):
         """
         Return name.
         """
         return self._name
-
 
     def getUrl(self):
         """
@@ -111,7 +103,6 @@ class Profile(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -126,16 +117,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -18,18 +18,16 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         if syslib.info.getSystem() == "sunos":
             if os.path.isfile("/bin/prstat"):
                 self._top = syslib.Command(file="/bin/prstat")
             else:
                 self._top = syslib.Command("prstat")
-            self._top.setArgs([ "10" ])
+            self._top.setArgs(["10"])
         else:
             self._top = syslib.Command("top")
         self._top.setArgs(args[1:])
-
 
     def getTop(self):
         """
@@ -39,7 +37,6 @@ class Options(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -54,16 +51,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

@@ -18,7 +18,6 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._jar = syslib.Command(os.path.join("bin", "jar"))
 
@@ -31,8 +30,7 @@ class Options(syslib.Dump):
         self._jarFile = args[1]
         self._manifest = args[1][:-4]+".manifest"
         self._files = args[2:]
-        self._jar.setFlags([ "cfvm", args[1], self._manifest ])
-
+        self._jar.setFlags(["cfvm", args[1], self._manifest])
 
     def getFiles(self):
         """
@@ -40,20 +38,17 @@ class Options(syslib.Dump):
         """
         return self._files
 
-
     def getJar(self):
         """
         Return jar Command class object.
         """
         return self._jar
 
-
     def getJarFile(self):
         """
         Return jar file location.
         """
         return self._jarFile
-
 
     def getManifest(self):
         """
@@ -63,7 +58,6 @@ class Options(syslib.Dump):
 
 
 class Pack(syslib.Dump):
-
 
     def __init__(self, options):
         self._jar = options.getJar()
@@ -80,7 +74,6 @@ class Pack(syslib.Dump):
         print('Building "' + self._jarFile + '" Java archive file.')
         self._jar.run(mode="exec")
 
-
     def _compile(self, source):
         target = source[:-5]+".class"
         if not os.path.isfile(source):
@@ -93,7 +86,7 @@ class Pack(syslib.Dump):
                     raise SystemExit(sys.argv[0] + ': Cannot remove "' +
                                      target + '" Java class file.')
         if not os.path.isfile(target):
-            javac = syslib.Command("javac", args=[ source ])
+            javac = syslib.Command("javac", args=[source])
             print('Building "' + target + '" Java class file.')
             javac.run(mode="batch", error2output=True)
             if javac.getExitcode():
@@ -103,7 +96,6 @@ class Pack(syslib.Dump):
                 print("  " + line)
             if not os.path.isfile(target):
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" Java class file.')
-
 
     def _createManifest(self, options):
         if not os.path.isfile(self._manifest):
@@ -123,7 +115,6 @@ class Pack(syslib.Dump):
 
 class Main:
 
-
     def __init__(self):
         self._signals()
         if os.name == "nt":
@@ -137,16 +128,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

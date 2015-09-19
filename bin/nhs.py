@@ -18,12 +18,10 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._nhs = syslib.Command("nhs")
         self._nhs.setArgs(args[1:])
         self._config()
-
 
     def getCommand(self):
         """
@@ -31,14 +29,12 @@ class Options(syslib.Dump):
         """
         return self._nhs
 
-
     def _config(self):
         if "HOME" in os.environ.keys():
             os.environ["HOME"] = os.path.join(os.environ["HOME"], ".nhs")
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -53,16 +49,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

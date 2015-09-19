@@ -20,10 +20,8 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getArchive(self):
         """
@@ -31,13 +29,11 @@ class Options(syslib.Dump):
         """
         return self._archive
 
-
     def getFiles(self):
         """
         Return list of files.
         """
         return self._files
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Make a compressed archive in TAR.BZ2 format.")
@@ -50,9 +46,9 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
         if os.path.isdir(self._args.archive[0]):
-             self._archive = os.path.abspath(self._args.archive[0]) + ".tar.bz2"
+            self._archive = os.path.abspath(self._args.archive[0]) + ".tar.bz2"
         else:
-             self._archive = self._args.archive[0]
+            self._archive = self._args.archive[0]
         if not self._archive.endswith(".tar.bz2") and not self._archive.endswith(".tbz"):
             raise SystemExit(sys.argv[0] + ': Unsupported "' + self._archive + '" archive format.')
 
@@ -64,7 +60,6 @@ class Options(syslib.Dump):
 
 class Pack(syslib.Dump):
 
-
     def __init__(self, options):
         try:
             self._archive = tarfile.open(options.getArchive(), "w:bz2")
@@ -72,7 +67,6 @@ class Pack(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Cannot create "' +
                              options.getArchive() + '" archive file.')
         self._addfile(options.getFiles())
-
 
     def _addfile(self, files):
         for file in sorted(files):
@@ -83,13 +77,12 @@ class Pack(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot add "' + file + '" file to archive.')
             if os.path.isdir(file) and not os.path.islink(file):
                 try:
-                    self._addfile([ os.path.join(file, x) for x in os.listdir(file) ])
+                    self._addfile([os.path.join(file, x) for x in os.listdir(file)])
                 except PermissionError:
                     raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -104,16 +97,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

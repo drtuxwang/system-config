@@ -20,17 +20,14 @@ import syslib
 
 class Options(syslib.Dump):
 
-
     def __init__(self, args):
         self._parseArgs(args[1:])
-
 
     def getFiles(self):
         """
         Return list of files.
         """
         return self._args.files
-
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Extracts http references from a HTML file.")
@@ -41,7 +38,6 @@ class Options(syslib.Dump):
 
 
 class Extract(syslib.Dump):
-
 
     def __init__(self, options):
         urls = []
@@ -56,7 +52,6 @@ class Extract(syslib.Dump):
         for url in sorted(set(urls)):
             print(url)
 
-
     def _extract(self, file):
         try:
             with open(file, errors="replace") as ifile:
@@ -66,7 +61,7 @@ class Extract(syslib.Dump):
                     for token in self._isiFrame.sub("href=", line).split():
                         if self._isUrl.match(token) and not self._isIgnore.search(token):
                             url = token[5:].split(">")[0]
-                            for quote in ( '"', "'"):
+                            for quote in ('"', "'"):
                                 if quote in url:
                                     url = url.split(quote)[1]
                             urls.append(url)
@@ -76,7 +71,6 @@ class Extract(syslib.Dump):
 
 
 class Main:
-
 
     def __init__(self):
         self._signals()
@@ -91,16 +85,14 @@ class Main:
             sys.exit(exception)
         sys.exit(0)
 
-
     def _signals(self):
         if hasattr(signal, "SIGPIPE"):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-
     def _windowsArgv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg) # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:
