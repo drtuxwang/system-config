@@ -103,8 +103,7 @@ class PythonChecker(syslib.Dump):
                                "--nofix=raise", "--nofix=unicode", "--nofix=xrange"])
         self._py2to3.setWrapper(syslib.Command(file=sys.executable))
 
-        self._pep8 = syslib.Command("pep8", flags=[ "--max-line-length=100" ])
-
+        self._pep8 = syslib.Command("pep8", flags=["--max-line-length=100"])
 
     def _check(self, file):
         error = False
@@ -125,7 +124,6 @@ class PythonChecker(syslib.Dump):
                         if not line.startswith("#!/usr/bin/env python"):
                             print(file, ': ? line 1 should be "#!/usr/bin/env python".', sep="")
                             error = True
-                        error = True
                     if "except:" in line:
                         if not '"except:' in line:
                             print(file, ': ? line ', n,
@@ -139,7 +137,7 @@ class PythonChecker(syslib.Dump):
         if self._python3(file):
             error = True
 
-        self._pep8.setArgs([ file ])
+        self._pep8.setArgs([file])
         self._pep8.run(mode="batch")
         if self._pep8.hasOutput():
             for line in self._pep8.getOutput():
