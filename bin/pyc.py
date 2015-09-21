@@ -155,6 +155,9 @@ class PythonChecker(syslib.Dump):
                 if line.startswith("RefactoringTool: Can't parse"):
                     print(file, ": ", line[17:], sep="")
                     error = True
+                elif ": Generating grammar tables from " in line:
+                    # Ignore ": Generating grammar tables from /usr/lib/.../PatternGrammar.txt"
+                    pass
                 elif line[:17] != "RefactoringTool: ":
                     print(file, ": ", line, sep="")
                     error = True
