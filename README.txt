@@ -499,6 +499,9 @@ bin/nautilus.py
 bin/netnice            Run a command with limited network bandwidth (uses trickle)
 bin/netnice.py
 
+bin/nhs                nhs wrapper (allowing non systems port)
+bin/nhs.py
+
 bin/normalize          normalize wrapper (allowing non systems port)
 bin/normalize.py
 
@@ -510,6 +513,9 @@ bin/ocr.py             (uses tesseract)
 
 bin/ogg                Encode OGG audio using avconv (libvorbis)
 bin/ogg.py
+
+bin/onall              onall wrapper (allowing non systems port)
+bin/onall.py
 
 bin/open               Open files using default application
 bin/open.py            (hardwired application list)
@@ -530,6 +536,10 @@ bin/pcunix.bat         Start PCUNIX on Windows
 
 bin/pdf                Create PDF file from text/images/postscript/PDF files
 bin/pdf.py
+
+bin/pep8               pep8 wrapper (allowing non systems port)
+bin/pep8.bat
+bin/pep8.py
 
 bin/pframe             Resize/rotate picture images to fit digital photo frames
 bin/pframe.py
