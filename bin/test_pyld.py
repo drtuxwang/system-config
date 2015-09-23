@@ -123,11 +123,10 @@ class Test_Options(unittest.TestCase):
         """
         args = ["arg0", "moduleX", "-pyldpath", "-pyldv"]
 
-        try:
+        with self.assertRaises(SystemExit) as context:
             options = pyld.Options(args)
-        except SystemExit as exception:
-            self.assertIsInstance(exception.args, tuple)
-            self.assertEqual(exception.args[0], 2)
+        self.assertIsInstance(context.exception.args, tuple)
+        self.assertEqual(context.exception.args[0], 2)
 
         value = pyld.sys.stderr.getvalue()
         self.assertIsInstance(value, str)
@@ -295,13 +294,13 @@ class Test_Options(unittest.TestCase):
         """
         args = ["arg0", "-h"]
 
-        try:
+        with self.assertRaises(SystemExit) as context:
             options = pyld.Options(args)
-        except SystemExit as exception:
-            value = pyld.sys.stdout.getvalue()
-            self.assertIsInstance(value, str)
-            self.assertIn("positional arguments:", value)
-            self.assertIn("optional arguments:", value)
+
+        value = pyld.sys.stdout.getvalue()
+        self.assertIsInstance(value, str)
+        self.assertIn("positional arguments:", value)
+        self.assertIn("optional arguments:", value)
 
     def test_help_help(self):
         """
@@ -309,13 +308,13 @@ class Test_Options(unittest.TestCase):
         """
         args = ["arg0", "--h"]
 
-        try:
+        with self.assertRaises(SystemExit) as context:
             options = pyld.Options(args)
-        except SystemExit as exception:
-            value = pyld.sys.stdout.getvalue()
-            self.assertIsInstance(value, str)
-            self.assertIn("positional arguments:", value)
-            self.assertIn("optional arguments:", value)
+
+        value = pyld.sys.stdout.getvalue()
+        self.assertIsInstance(value, str)
+        self.assertIn("positional arguments:", value)
+        self.assertIn("optional arguments:", value)
 
     def test_help_help2(self):
         """
@@ -323,26 +322,24 @@ class Test_Options(unittest.TestCase):
         """
         args = ["arg0", "--help"]
 
-        try:
+        with self.assertRaises(SystemExit) as context:
             options = pyld.Options(args)
-        except SystemExit as exception:
-            value = pyld.sys.stdout.getvalue()
-            self.assertIsInstance(value, str)
-            self.assertIn("positional arguments:", value)
-            self.assertIn("optional arguments:", value)
+
+        value = pyld.sys.stdout.getvalue()
+        self.assertIsInstance(value, str)
+        self.assertIn("positional arguments:", value)
+        self.assertIn("optional arguments:", value)
 
     def test_init_FlagsNone(self):
         """
         Test argparse error exit status 2 when no arguments are supplied.
         """
         args = ["arg0"]
-        try:
+
+        with self.assertRaises(SystemExit) as context:
             options = pyld.Options(args)
-        except SystemExit as exception:
-            self.assertIsInstance(exception.args, tuple)
-            self.assertEqual(exception.args[0], 2)
-        else:
-            raise AssertionError("No flags should raise an exception.")
+        self.assertIsInstance(context.exception.args, tuple)
+        self.assertEqual(context.exception.args[0], 2)
 
         value = pyld.sys.stderr.getvalue()
         self.assertIsInstance(value, str)
@@ -386,12 +383,8 @@ class Test_PythonLoader(unittest.TestCase):
 
         pythonLoader = pyld.PythonLoader(self._options)
 
-        try:
+        with self.assertRaises(ImportError) as context:
             pythonLoader.run()
-        except ImportError:
-            pass
-        else:
-            raise AssertionError('"arg0" module name should raise an exception.')
 
         self.assertTrue(pythonLoader.dump.called)
 
@@ -401,12 +394,8 @@ class Test_PythonLoader(unittest.TestCase):
         """
         pythonLoader = pyld.PythonLoader(self._options)
 
-        try:
+        with self.assertRaises(ImportError) as context:
             pythonLoader.run()
-        except ImportError:
-            pass
-        else:
-            raise AssertionError('"arg0" module name should raise an exception.')
 
     def test_run_importMain(self):
         """
@@ -416,13 +405,10 @@ class Test_PythonLoader(unittest.TestCase):
 
         pythonLoader = pyld.PythonLoader(self._options)
 
-        try:
+        with self.assertRaises(AttributeError) as context:
             pythonLoader.run()
-        except AttributeError as exception:
-            self.assertIsInstance(exception.args, tuple)
-            self.assertIn("has no attribute 'Main'", exception.args[0])
-        else:
-            raise AssertionError('"test_pyld.Main() should raise an exception.')
+        self.assertIsInstance(context.exception.args, tuple)
+        self.assertIn("has no attribute 'Main'", context.exception.args[0])
 
     def test_run_libraryPath(self):
         """
@@ -431,13 +417,9 @@ class Test_PythonLoader(unittest.TestCase):
         self._options.mock_getLibraryPath(["directory1", "directory2"])
 
         pythonLoader = pyld.PythonLoader(self._options)
-        try:
-            pythonLoader.run()
-        except ImportError:
-            pass
-        else:
-            raise AssertionError('"arg0" module name should raise an exception.')
 
+        with self.assertRaises(ImportError) as context:
+            pythonLoader.run()
         self.assertIn("directory1", sys.path)
         self.assertIn("directory2", sys.path)
 
@@ -448,12 +430,9 @@ class Test_PythonLoader(unittest.TestCase):
         self._options.mock_getVerboseFlag(True)
 
         pythonLoader = pyld.PythonLoader(self._options)
-        try:
+
+        with self.assertRaises(ImportError) as context:
             pythonLoader.run()
-        except ImportError:
-            pass
-        else:
-            raise AssertionError('"arg0" module name should raise an exception.')
 
         value = pyld.sys.stdout.getvalue()
         self.assertIsInstance(value, str)
