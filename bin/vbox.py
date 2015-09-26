@@ -44,7 +44,7 @@ class Options(syslib.Dump):
         parser.add_argument("-v", action="store_const", const="view", dest="mode",
                             default="start", help="List virtual machine.")
 
-        parser.add_argument("machines", nargs="*", metavar="machine",
+        parser.add_argument("machines", nargs="+", metavar="machine",
                             help="Virtual machine.")
 
         self._args = parser.parse_args(args)
