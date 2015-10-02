@@ -241,6 +241,7 @@ class Options(syslib.Dump):
                                             '"media.gstreamer.enabled", false',
                                             '"media.mediasource.enabled", true',
                                             '"media.mediasource.mp4.enabled", true',
+                                            '"media.mediasource.webm.enabled", true',
                                             '"plugins.click_to_play", true'):
                                 if 'user_pref(' + setting + ');\n' not in lines:
                                     print('user_pref(' + setting + ');', file=ofile)
