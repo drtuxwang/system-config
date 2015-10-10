@@ -44,7 +44,7 @@ class Open(syslib.Dump):
     def run(self):
         for file in self._files:
             prefix = file.split(":", 1)[0]
-            extension = file.rsplit(".", 1)[-1]
+            extension = file.rsplit(".", 1)[-1].lower()
 
             if os.path.isdir(file):
                 self._spawn("xdesktop", file)
