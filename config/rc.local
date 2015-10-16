@@ -8,8 +8,8 @@ PATH=/usr/local/bin:$PATH; export PATH
 
 if [ "`diff /boot/grub/grub.cfg /boot/grub/grub.cfg-ok`" ]; then
     cp -p /boot/grub/grub.cfg-ok /boot/grub/grub.cfg
-    (cd /boot; ln -sf vmlinuz-`uname -r` vmlinuz)
-    (cd /boot; ln -sf initrd.img-`uname -r` initrd.img)
+    (cd /boot; ln -sf `ls -1t vmlinuz-* | head -1` vmlinuz)
+    (cd /boot; ln -sf `ls -1t initrd.img-* | head -1` initrd.img)
 fi
 
 if [ "`lsmod | grep ^vbox`" ]; then

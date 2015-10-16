@@ -171,17 +171,17 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
 
     # mksrc, cdsrc, mkinst, cdinst, mktest, cdtest
     if ( ! $?SRCDIR ) then
-        setenv SRCDIR $HOME
+        setenv SRCDIR "`pwd`"
     endif
     alias mksrc 'setenv SRCDIR "`pwd`"; echo New SRCDIR: $SRCDIR'; alias cdsrc 'echo Using SRCDIR: $SRCDIR; cd "$SRCDIR"'
 
     if ( ! $?INSTDIR ) then
-        setenv INSTDIR $HOME
+        setenv INSTDIR "`pwd`"
     endif
     alias mkinst 'setenv INSTDIR "`pwd`"; echo New INSTDIR: $INSTDIR'; alias cdinst 'echo Using INSTDIR: $INSTDIR; cd "$INSTDIR"'
 
     if ( ! $?TESTDIR ) then
-        setenv TESTDIR $HOME
+        setenv TESTDIR "`pwd`"
     endif
     alias mktest 'setenv TESTDIR "`pwd`"; echo New TESTDIR: $TESTDIR'; alias cdtest 'echo Using TESTDIR: $TESTDIR; cd "$TESTDIR"'
 
