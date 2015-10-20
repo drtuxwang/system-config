@@ -137,13 +137,15 @@ class CheckUpdates(syslib.Dump):
                 for line in ifile:
                     columns = line.split()
                     if len(columns) != 0:
-                        name = columns[0]
-                        if name[:1] != "#":
+                        pattern = columns[0]
+                        if pattern[:1] != "#":
                             file = os.path.join(os.path.dirname(pinFile), columns[1]) + ".packages"
                             if file not in packagesCache.keys():
                                 packagesCache[file] = self._readDistributionPackages(file)
-                            if name in packagesCache[file].keys():
-                                self._packages[name] = copy.copy(packagesCache[file][name])
+                            ispattern = re.compile(pattern+"$")
+                            for key, value in packagesCache[file].items():
+                                if ispattern.match(key):
+                                    self._packages[key] = copy.copy(packagesCache[file][key])
         except IOError:
             pass
 
