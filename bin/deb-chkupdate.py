@@ -186,7 +186,7 @@ class CheckUpdates(syslib.Dump):
                     if name in self._packages:
                         if self._packages[name].getVersion() != version:
                             file = self._local(distribution, self._packages[name].getUrl())
-                            print(file, "(Replaces", value + ")")
+                            print(file, "(Replaces", version + ")")
                             print(file, file=ofile)
                             for name in sorted(
                                     self._depends(versions, self._packages[name].getDepends())):
