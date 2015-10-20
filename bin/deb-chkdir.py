@@ -121,7 +121,7 @@ class CheckDistributions(syslib.Dump):
                     except ValueError:
                         raise SystemExit(sys.argv[0] + ': Cannot read corrupt "' + file +
                                          '" package list file.')
-                    if name in packages.keys():
+                    if name in packages:
                         if (packages[name].getFile() ==
                                 os.path.join(distribution, name + "_" + version + "_*.deb")):
                             del packages[name]

@@ -2,7 +2,7 @@
 """
 Python system interaction Library
 
-Version 5.1 (2015-09-18)
+Version 5.1 (2015-10-20)
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -72,12 +72,11 @@ class Dump(object):
 
         if nref == 1:
             print(prefix, self)
-            for attribute in sorted(self.__dict__.keys()):
-                value = self.__dict__[attribute]
+            for key, value in sorted(self.__dict__.items()):
                 if type(value) in (dict, list, tuple, set) and self._hasContainer(value):
-                    self._dumpContainer(prefix, dumped, attribute, value)
+                    self._dumpContainer(prefix, dumped, key, value)
                 else:
-                    self.dumpValue(prefix + attribute, dumped, value)
+                    self.dumpValue(prefix + key, dumped, value)
         else:
             print(prefix, str(self).replace(">", " reference " + str(nref) + ">"))
 
@@ -94,8 +93,8 @@ class Dump(object):
 
         if dataT == dict:
             print(prefix + name, "<dict object at", hex(id(self)) + ">")
-            for key in sorted(data.keys()):
-                self.dumpValue(prefix + name + "[" + str(key) + "]", dumped, data[key])
+            for key, value in sorted(data.items()):
+                self.dumpValue(prefix + name + "[" + str(key) + "]", dumped, value)
 
         elif dataT == list:
             print(prefix + name, "<list object at", hex(id(self)) + ">")
@@ -123,8 +122,7 @@ class Dump(object):
         data = Python data object
         """
         if type(data) == dict:
-            for key in data.keys():
-                value = data[key]
+            for key, value in data.items():
                 if self._isDumpable(value) or type(value) in (dict, list, value, set):
                     return True
         elif type(data) in (list, tuple, set):
@@ -271,12 +269,12 @@ class Command(Dump):
 
         if env is not None:
             env = copy.copy(env)
-            for key in os.environ.keys():
-                if key not in env.keys():
+            for key in os.environ:
+                if key not in env:
                     env[key] = os.environ[key]
                 elif env[key] is None:
                     del env[key]
-            for key in env.keys():
+            for key in env:
                 if env[key] is None:
                     del env[key]
 
@@ -708,7 +706,7 @@ class Command(Dump):
         Return glibc version string
         (based on glibc version used to compile "ldd" or return "0.0" for non Linux)
         """
-        if "glibc" not in _cache.keys():
+        if "glibc" not in _cache:
             if _cache["osname"] == "linux":
                 ldd = Command("ldd", args=["--version"], check=False)
                 if ldd.isFound():
@@ -727,7 +725,7 @@ class Command(Dump):
 
         if platform in ("windows-x86_64", "windows-x86"):
             extensions = ["", ".py"]
-            if "PATHEXT" in os.environ.keys():
+            if "PATHEXT" in os.environ:
                 extensions.extend(os.environ["PATHEXT"].lower().split(os.pathsep))
         else:
             extensions = [""]
@@ -998,18 +996,18 @@ class SystemInfo(Dump):
     def __init__(self):
         self._islabel = re.compile("(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
 
-        if "osname" not in _cache.keys():
+        if "osname" not in _cache:
             _cache["osname"] = "Unknown"
             _cache["machine"] = "Unknown"
 
             if os.name == "nt":
                 _cache["osname"] = "windows"
                 self._isenvName = re.compile("^\w+$", re.IGNORECASE)
-                if "PROCESSOR_ARCHITECTURE" in os.environ.keys():
+                if "PROCESSOR_ARCHITECTURE" in os.environ:
                     if os.environ["PROCESSOR_ARCHITECTURE"] == "AMD64":
                         _cache["machine"] = "x86_64"
-                    elif ("PROCESSOR_ARCHITEW6432" in os.environ.keys() and
-                            os.environ["PROCESSOR_ARCHITEW6432"] == "AMD64"):
+                    elif ("PROCESSOR_ARCHITEW6432" in os.environ and
+                          os.environ["PROCESSOR_ARCHITEW6432"] == "AMD64"):
                         _cache["machine"] = "x86_64"
                     elif os.environ["PROCESSOR_ARCHITECTURE"] == "x86":
                         _cache["machine"] = "x86"
@@ -1201,7 +1199,7 @@ class SystemInfo(Dump):
         """
         Return my hostname.
         """
-        if "hostname" not in _cache.keys():
+        if "hostname" not in _cache:
             _cache["hostname"] = socket.gethostname()
         return _cache["hostname"].split(".")[0].lower()
 
@@ -1209,10 +1207,10 @@ class SystemInfo(Dump):
         """
         Return my username.
         """
-        if "username" not in _cache.keys():
+        if "username" not in _cache:
             _cache["username"] = "Unknown"
             for environment in ("LOGNAME", "USER", "USERNAME"):
-                if environment in os.environ.keys():
+                if environment in os.environ:
                     _cache["username"] = os.environ[environment]
         return _cache["username"]
 
@@ -1403,9 +1401,9 @@ class Task(Dump):
         pid = Process ID
         """
         apids = []
-        if pid in self._process.keys():
+        if pid in self._process:
             ppid = self._process[pid]["PPID"]
-            if ppid in self._process.keys():
+            if ppid in self._process:
                 apids.extend([ppid] + self.getAncestorPids(ppid))
         return apids
 
@@ -1416,9 +1414,9 @@ class Task(Dump):
         pid = Parent process ID
         """
         dpids = []
-        if ppid in self._process.keys():
-            for pid in sorted(self._process.keys()):
-                if self._process[pid]["PPID"] == ppid:
+        if ppid in self._process:
+            for pid, process in sorted(self._process.items()):
+                if process["PPID"] == ppid:
                     dpids.extend([pid] + self.getDescendantPids(pid))
         return dpids
 
@@ -1429,9 +1427,9 @@ class Task(Dump):
         pgid = Process group ID
         """
         pids = []
-        for pid in sorted(self._process.keys()):
-            if self._process[pid]["PGID"] == pgid:
-                if self._process[pid]["PPID"] == 1:
+        for pid, process in sorted(self._process.items()):
+            if process["PGID"] == pgid:
+                if process["PPID"] == 1:
                     if pid != pgid:
                         pids.append(pid)
         return pids
@@ -1449,7 +1447,7 @@ class Task(Dump):
         return self._process[pid]
 
     def _getkill(self):
-        if "kill" not in _cache.keys():
+        if "kill" not in _cache:
             if _cache["osname"] == "windows":
                 _cache["kill"] = Command("taskkill", flags=["/f"])
             else:
@@ -1457,7 +1455,7 @@ class Task(Dump):
         return _cache["kill"]
 
     def _getps(self):
-        if "ps" not in _cache.keys():
+        if "ps" not in _cache:
             osname = _cache["osname"]
             if osname == "windows":
                 _cache["ps"] = Command("tasklist", flags=["/v"])
@@ -1465,7 +1463,7 @@ class Task(Dump):
                 _cache["ps"] = Command("ps", flags=[
                     "-o", "ruser pid ppid pgid pri nice tty vsz time etime args", "-e"])
                 if osname == "linux":
-                    if "COLUMNS" not in os.environ.keys():
+                    if "COLUMNS" not in os.environ:
                         os.environ["COLUMNS"] = "1024"       # Fix Linux ps width
         return _cache["ps"]
 
@@ -1480,9 +1478,9 @@ class Main:
         try:
             if sys.version_info < (3, 0):
                 self._unicodeArgv()
-            if "_SYSTEM_BG" in os.environ.keys():
+            if "_SYSTEM_BG" in os.environ:
                 Background()
-            elif "_SYSTEM_DM" in os.environ.keys():
+            elif "_SYSTEM_DM" in os.environ:
                 Daemon()
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)

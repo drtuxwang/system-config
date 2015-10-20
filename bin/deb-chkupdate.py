@@ -140,7 +140,7 @@ class CheckUpdates(syslib.Dump):
                         pattern = columns[0]
                         if pattern[:1] != "#":
                             file = os.path.join(os.path.dirname(pinFile), columns[1]) + ".packages"
-                            if file not in packagesCache.keys():
+                            if file not in packagesCache:
                                 packagesCache[file] = self._readDistributionPackages(file)
                             ispattern = re.compile(pattern+"$")
                             for key, value in packagesCache[file].items():
@@ -157,7 +157,7 @@ class CheckUpdates(syslib.Dump):
                     if len(columns) != 0:
                         name = columns[0]
                         if name[:1] != "#":
-                            if name in self._packages.keys():
+                            if name in self._packages:
                                 if (columns[1] == "*" or
                                         columns[1] == self._packages[name].getVersion()):
                                     del self._packages[name]
@@ -182,15 +182,15 @@ class CheckUpdates(syslib.Dump):
         urlfile = os.path.basename(distribution) + listFile.split(".debs")[-1]+".url"
         try:
             with open(urlfile, "w", newline="\n") as ofile:
-                for name in sorted(versions.keys()):
-                    if name in self._packages.keys():
-                        if self._packages[name].getVersion() != versions[name]:
+                for name, version in sorted(versions.items()):
+                    if name in self._packages:
+                        if self._packages[name].getVersion() != version:
                             file = self._local(distribution, self._packages[name].getUrl())
-                            print(file, "(Replaces", versions[name] + ")")
+                            print(file, "(Replaces", value + ")")
                             print(file, file=ofile)
-                            for name in sorted(self._depends(versions,
-                                                             self._packages[name].getDepends())):
-                                if name in self._packages.keys():
+                            for name in sorted(
+                                    self._depends(versions, self._packages[name].getDepends())):
+                                if name in self._packages:
                                     file = self._local(distribution, self._packages[name].getUrl())
                                     print("  " + file, "(New dependency)")
                                     print("  " + file, file=ofile)
@@ -202,10 +202,10 @@ class CheckUpdates(syslib.Dump):
     def _depends(self, versions, depends):
         names = []
         for name in depends:
-            if name not in versions.keys():
+            if name not in versions:
                 versions[name] = ""
                 names.append(name)
-                if name in self._packages.keys():
+                if name in self._packages:
                     names.extend(self._depends(versions, self._packages[name].getDepends()))
         return names
 

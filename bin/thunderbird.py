@@ -42,7 +42,7 @@ class Options(syslib.Dump):
         return self._thunderbird
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             thunderbirddir = os.path.join(os.environ["HOME"], ".thunderbird")
             if os.path.isdir(thunderbirddir):
                 os.chmod(thunderbirddir, int("700", 8))

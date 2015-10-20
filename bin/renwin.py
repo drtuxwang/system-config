@@ -52,7 +52,7 @@ class Title(syslib.Dump):
 
     def _getterm(self):
         term = "Unkown"
-        if "TERM" in os.environ.keys():
+        if "TERM" in os.environ:
             term = os.environ["TERM"]
         return term
 

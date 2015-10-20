@@ -30,7 +30,7 @@ class Options(syslib.Dump):
         return self._dsmj
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             directory = os.path.join(os.environ["HOME"], ".dsmj")
             try:
                 if not os.path.isdir(directory):

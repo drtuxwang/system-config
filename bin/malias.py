@@ -24,7 +24,7 @@ class Options(syslib.Dump):
         self._parseArgs(args[1:])
 
         self._domainName = ""
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             try:
                 with open(os.path.join(os.environ["HOME"], ".address"), errors="replace") as ifile:
                     self._domainName = ifile.readline().strip().split("@")[-1]
@@ -61,7 +61,7 @@ class Address(syslib.Dump):
     def __init__(self):
         self._names = []
         self._book = {}
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             try:
                 with open(os.path.join(os.environ["HOME"], ".mailrc"), errors="replace") as ifile:
                     iscomment = re.compile("^( |\t)*#")

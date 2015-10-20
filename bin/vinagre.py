@@ -38,7 +38,7 @@ class Options(syslib.Dump):
         return self._vinagre
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             file = os.path.join(os.environ["HOME"], ".local", "share", "vinagre", "history")
             if os.path.isfile(file):
                 try:

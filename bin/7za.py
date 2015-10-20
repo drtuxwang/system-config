@@ -84,7 +84,7 @@ class Options(syslib.Dump):
                              "number of threads.")
 
     def _setenv(self):
-        if "LANG" in os.environ.keys():
+        if "LANG" in os.environ:
             del os.environ["LANG"]  # Avoids locale problems
 
 

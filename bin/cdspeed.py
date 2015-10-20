@@ -42,7 +42,7 @@ class Options(syslib.Dump):
         return self._hdparm
 
     def _cdspeed(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             configdir = os.path.join(os.environ["HOME"], ".config")
             if not os.path.isdir(configdir):
                 try:

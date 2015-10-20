@@ -38,7 +38,7 @@ class Options(syslib.Dump):
         return self._gqview
 
     def _configGeeqie(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             configdir = os.path.join(os.environ["HOME"], ".config", "geeqie")
             if not os.path.isdir(configdir):
                 try:
@@ -65,7 +65,7 @@ class Options(syslib.Dump):
                         pass
 
     def _configGqview(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             configdir = os.path.join(os.environ["HOME"], ".gqview")
             if not os.path.isdir(configdir):
                 try:

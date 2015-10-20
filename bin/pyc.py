@@ -189,7 +189,7 @@ class PythonCompiler(syslib.Dump):
         """
         self._options = options
         self._checker = PythonChecker()
-        if "PYTHONDONTWRITEBYTECODE" in os.environ.keys():
+        if "PYTHONDONTWRITEBYTECODE" in os.environ:
             del os.environ["PYTHONDONTWRITEBYTECODE"]
 
     def run(self):

@@ -43,7 +43,7 @@ class Options(syslib.Dump):
         return self._git
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             file = os.path.join(os.environ["HOME"], ".gitconfig")
             if not os.path.isfile(file):
                 try:

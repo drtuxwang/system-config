@@ -35,7 +35,7 @@ class Options(syslib.Dump):
         return self._ftp
 
     def _netrc(self, host):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             netrc = os.path.join(os.environ["HOME"], ".netrc")
             umask = os.umask(int("077", 8))
             try:

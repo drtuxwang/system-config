@@ -62,7 +62,7 @@ class Options(syslib.Dump):
                                           "--ppapi-flash-version=" + flashPlayer.getVersion()])
 
         # Suid sandbox workaround
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             if syslib.FileStat(os.path.join(os.path.dirname(self._chrome.getFile()),
                                "chrome-sandbox")).getMode() != 104755:
                 self._chrome.extendFlags(["--test-type", "--disable-setuid-sandbox"])
@@ -86,7 +86,7 @@ class Options(syslib.Dump):
         return self._chrome
 
     def _config(self, args):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             adobe = os.path.join(os.environ["HOME"], ".adobe", "Flash_Player", "AssetCache")
             macromedia = os.path.join(os.environ["HOME"], ".macromedia",
                                       "Flash_Player", "macromedia.com")
@@ -168,7 +168,7 @@ class Options(syslib.Dump):
                         pass
 
     def _copy(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             task = syslib.Task()
             for directory in glob.glob(
                     os.path.join("/tmp", "chrome-" + syslib.info.getUsername() + ".*")):
@@ -200,7 +200,7 @@ class Options(syslib.Dump):
             os.environ["HOME"] = newhome
 
     def _reset(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             configdir = os.path.join(os.environ["HOME"], ".config", self._directory)
             if os.path.isdir(configdir):
                 keepList = ("Extensions", "File System", "Local Extension Settings",
@@ -228,7 +228,7 @@ class Options(syslib.Dump):
                             continue
 
     def _restart(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             configdir = os.path.join(os.environ["HOME"], ".config", "google-chrome")
             try:
                 pid = os.readlink(os.path.join(configdir, "SingletonLock")).split("-")[1]
@@ -241,7 +241,7 @@ class Options(syslib.Dump):
         if os.path.isdir(libdir):
             if syslib.info.getSystem() == "linux":
                 if not os.path.isfile("/usr/lib/libnss3.so.1d"):  # use workaround
-                    if "LD_LIBRARY_PATH" in os.environ.keys():
+                    if "LD_LIBRARY_PATH" in os.environ:
                         os.environ["LD_LIBRARY_PATH"] = (
                             libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"])
                     else:

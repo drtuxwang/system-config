@@ -112,33 +112,33 @@ class Media(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
 
     def getStream(self):
-        for key in sorted(self._stream.keys()):
-            yield (key, self._stream[key])
+        for key, value in sorted(self._stream.items()):
+            yield (key, value)
 
     def getType(self):
         return self._type
 
     def hasAudio(self):
-        for key in self._stream.keys():
-            if self._stream[key].startswith("Audio: "):
+        for value in self._stream.values():
+            if value.startswith("Audio: "):
                 return True
         return False
 
     def hasAudioCodec(self, codec):
-        for key in self._stream.keys():
-            if self._stream[key].startswith("Audio: " + codec):
+        for value in self._stream.values():
+            if value.startswith("Audio: " + codec):
                 return True
         return False
 
     def hasVideo(self):
-        for key in self._stream.keys():
-            if self._stream[key].startswith("Video: "):
+        for value in self._stream.values():
+            if value.startswith("Video: "):
                 return True
         return False
 
     def hasVideoCodec(self, codec):
-        for key in self._stream.keys():
-            if self._stream[key].startswith("Video: " + codec):
+        for value in self._stream.values():
+            if value.startswith("Video: " + codec):
                 return True
         return False
 

@@ -122,10 +122,9 @@ class PackageManger(syslib.Dump):
         return
 
     def _showPackagesInfo(self):
-        for name in sorted(self._packages.keys()):
+        for name, package in sorted(self._packages.items()):
             print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(name.split(":")[0],
-                  self._packages[name].getVersion(), self._packages[name].getSize(),
-                  self._packages[name].getDescription()))
+                  package.getVersion(), package.getSize(), package.getDescription()))
 
 
 class Main:

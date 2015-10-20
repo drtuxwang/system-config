@@ -38,7 +38,7 @@ class Options(syslib.Dump):
         return self._filter
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             audacitydir = os.path.join(os.environ["HOME"], ".audacity-data")
             if not os.path.isdir(audacitydir):
                 try:

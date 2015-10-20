@@ -234,10 +234,10 @@ class PackageManger(syslib.Dump):
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "/var/lib/dpkg/status" file.')
 
-        for name in self._packages.keys():
+        for name, value in self._packages.items():
             if ":" in name:
                 depends = []
-                for depend in self._packages[name].getDepends():
+                for depend in value.getDepends():
                     if depend.split(":")[0] in namesAll:
                         depends.append(depend)
                     else:
@@ -245,15 +245,14 @@ class PackageManger(syslib.Dump):
                 self._packages[name].setDepends(depends)
 
     def _showPackagesInfo(self):
-        for name in sorted(self._packages.keys()):
+        for name, package in sorted(self._packages.items()):
             if self._options.getArchSub():
                 if not name.endswith(self._options.getArchSub()):
                     continue
             elif ":" in name:
                 continue
             print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(name.split(":")[0],
-                  self._packages[name].getVersion(), self._packages[name].getSize(),
-                  self._packages[name].getDescription()))
+                  package.getVersion(), package.getSize(), package.getDescription()))
 
     def _showDependentPackages(self, names, checked=[], ident=""):
         keys = sorted(self.getPackages().keys())

@@ -42,7 +42,7 @@ class Options(syslib.Dump):
         return self._gimp
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             if os.path.isdir(os.path.join(os.environ["HOME"], ".thumbnails")):
                 try:
                     shutil.rmtree(os.path.join(os.environ["HOME"], ".thumbnails"))

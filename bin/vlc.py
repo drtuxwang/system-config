@@ -37,7 +37,7 @@ class Options(syslib.Dump):
         return self._vlc
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             file = os.path.join(os.environ["HOME"], ".config", "vlc", "vlc-qt-interface.conf")
             try:
                 with open(file, errors="replace") as ifile:

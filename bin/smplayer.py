@@ -30,7 +30,7 @@ class Options(syslib.Dump):
         self._filter = ("^Debug: |^Failed to load module: |^Preferences::load|^Warning: |"
                         "^global_init|^main: |: wrong ELF class:|^This is SMPlayer")
 
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             self._config()
             self._config2()
 

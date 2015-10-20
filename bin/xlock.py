@@ -39,7 +39,7 @@ class Options(syslib.Dump):
             self._xlock = syslib.Command("xlock", args=["-allowroot", "+nolock", "-mode",
                                          "blank", "-fg", "red", "-bg", "black", "-timeout", "10"])
         self._xlock.setArgs(args[1:])
-        if "VNCDESKTOP" in os.environ.keys():
+        if "VNCDESKTOP" in os.environ:
             os.environ["DISPLAY"] = ":0"
 
     def getXlock(self):

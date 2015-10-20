@@ -3,7 +3,7 @@
 MyQS, My Queuing System batch job execution.
 """
 
-RELEASE = "2.6.1"
+RELEASE = "2.6.2"
 
 import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -65,7 +65,7 @@ class Job(syslib.Dump):
         self._myqsdir = options.getMyqsdir()
         self._jobid = options.getJobid()
 
-        if "HOME" not in os.environ.keys():
+        if "HOME" not in os.environ:
             raise SystemExit(sys.argv[0] + ": Cannot determine home directory.")
         if options.getMode() == "spawn":
             self._spawn(options)

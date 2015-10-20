@@ -3,7 +3,7 @@
 MyQS, My Queuing System batch job scheduler daemon
 """
 
-RELEASE = "2.6.1"
+RELEASE = "2.6.2"
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -116,7 +116,7 @@ class Daemon(syslib.Dump):
         self._myqsdir = options.getMyqsdir()
         self._slots = options.getSlots()
 
-        if "HOME" not in os.environ.keys():
+        if "HOME" not in os.environ:
             raise SystemExit(sys.argv[0] + ": Cannot determine home directory.")
         if options.getDaemonFlag():
             self._schedulerDaemon(options)
@@ -135,7 +135,7 @@ class Daemon(syslib.Dump):
                             info[line.split("=")[0]] = line.split("=", 1)[1]
             except IOError:
                 continue
-            if "PGID" in info.keys():
+            if "PGID" in info:
                 try:
                     pgid = int(info["PGID"])
                 except ValueError:
@@ -158,14 +158,14 @@ class Daemon(syslib.Dump):
                             info[line.split("=")[0]] = line.split("=", 1)[1]
             except IOError:
                 continue
-            if "PGID" in info.keys():
+            if "PGID" in info:
                 if not syslib.Task().haspgid(int(info["PGID"])):
                     time.sleep(0.5)
                     try:
                         os.remove(file)
                     except OSError:
                         continue
-            if "NCPUS" in info.keys():
+            if "NCPUS" in info:
                 try:
                     running += int(info["NCPUS"])
                 except ValueError:
@@ -185,9 +185,9 @@ class Daemon(syslib.Dump):
                                     info[line.split("=")[0]] = line.split("=", 1)[1]
                     except IOError:
                         continue
-                    if "QUEUE" in info.keys():
+                    if "QUEUE" in info:
                         if info["QUEUE"] == queue:
-                            if "NCPUS" in info.keys():
+                            if "NCPUS" in info:
                                 if free >= int(info["NCPUS"]):
                                     jobid = os.path.basename(file)[:-2]
                                     if os.path.isdir(info["DIRECTORY"]):

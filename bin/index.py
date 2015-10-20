@@ -101,14 +101,14 @@ class Index(syslib.Dump):
         for line in lines:
             checksum, file = line.split("  ", 1)
             directory = os.path.dirname(file)
-            if directory not in fsums.keys():
+            if directory not in fsums:
                 fsums[directory] = []
             fsums[os.path.dirname(file)].append(checksum + "  " + os.path.basename(file))
 
         directories = {}
         for directory in sorted(fsums.keys()):
             depth = directory.count(os.sep)
-            if depth not in directories.keys():
+            if depth not in directories:
                 directories[depth] = [directory]
             directories[depth].append(directory)
 

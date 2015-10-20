@@ -213,7 +213,7 @@ class Encode(syslib.Dump):
             os.rename(file + "-new", file)
 
     def _text(self, options, file):
-        if "LANG" in os.environ.keys():
+        if "LANG" in os.environ:
             del os.environ["LANG"]  # Avoids locale problems
         if not hasattr(self, "_a2ps"):
             self._a2ps = syslib.Command("a2ps")

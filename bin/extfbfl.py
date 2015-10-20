@@ -68,17 +68,15 @@ class Extract(syslib.Dump):
         try:
             with open(file, "w", newline="\n") as ofile:
                 print("uid,name,profile_url", file=ofile)
-                for uid in sorted(self._profiles.keys()):
+                for uid, profile in sorted(self._profiles.items()):
                     if uid < 0:
                         print("???", end="", file=ofile)
                     else:
                         print(uid, end="", file=ofile)
-                    if " " in self._profiles[uid].getName():
-                        print(',"' + self._profiles[uid].getName() + '",' +
-                              self._profiles[uid].getUrl(), file=ofile)
+                    if " " in profile.getName():
+                        print(',"' + profile.getName() + '",' + profile.getUrl(), file=ofile)
                     else:
-                        print(',' + self._profiles[uid].getName() + ',' +
-                              self._profiles[uid].getUrl(), file=ofile)
+                        print(',' + profile.getName() + ',' + profile.getUrl(), file=ofile)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" CSV file.')
 

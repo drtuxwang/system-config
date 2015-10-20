@@ -76,7 +76,7 @@ class Options(syslib.Dump):
         return self._firefox
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             adobe = os.path.join(os.environ["HOME"], ".adobe", "Flash_Player", "AssetCache")
             macromedia = os.path.join(os.environ["HOME"], ".macromedia",
                                       "Flash_Player", "macromedia.com")
@@ -156,7 +156,7 @@ class Options(syslib.Dump):
                     setmod.run(mode="daemon")
 
     def _copy(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             task = syslib.Task()
             for directory in glob.glob(os.path.join("/tmp",
                                        "firefox-" + syslib.info.getUsername() + ".*")):
@@ -193,7 +193,7 @@ class Options(syslib.Dump):
             os.environ["HOME"] = newhome
 
     def _reset(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             firefoxdir = os.path.join(os.environ["HOME"], ".mozilla", "firefox")
             if os.path.isdir(firefoxdir):
                 keepList = ("adblockplus", "extensions", "extension-data", "extensions.json",
@@ -220,7 +220,7 @@ class Options(syslib.Dump):
                                 pass
 
     def _prefs(self, updates):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             firefoxdir = os.path.join(os.environ["HOME"], ".mozilla", "firefox")
             if os.path.isdir(firefoxdir):
                 for file in glob.glob(os.path.join(firefoxdir, "*", "prefs.js")):

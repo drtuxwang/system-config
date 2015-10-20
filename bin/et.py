@@ -45,7 +45,7 @@ class Options(syslib.Dump):
         return self._logfile
 
     def _punkbuster(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             pbdir = os.path.join(os.environ["HOME"], ".etwolf", "pb")
             linkdir = os.path.join(os.path.dirname(self._et.getFile()), "pb")
             if not os.path.islink(pbdir):
@@ -71,7 +71,7 @@ class Options(syslib.Dump):
 
     def _config(self):
         os.chdir(os.path.dirname(self._et.getFile()))
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             os.environ["SDL_AUDIODRIVER"] = "pulse"
             etsdl = (glob.glob("/usr/lib/i386-linux-gnu/libSDL-*so*") +
                      glob.glob("/usr/lib32/libSDL-*so*") +
@@ -79,7 +79,7 @@ class Options(syslib.Dump):
             if not etsdl:
                 raise SystemExit(sys.argv[0] + ': Cannot find SDL sound interface library.')
             os.environ["ETSDL_SDL_LIB"] = etsdl[0]
-            if "LD_PRELOAD" in os.environ.keys():
+            if "LD_PRELOAD" in os.environ:
                 os.environ["LD_PRELOAD"] = (os.environ["LD_PRELOAD"] + os.pathsep + os.path.join(
                     os.getcwd(), "et-sdl-sound-r29", "et-sdl-sound.so"))
             else:

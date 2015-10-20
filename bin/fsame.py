@@ -53,9 +53,9 @@ class Md5same(syslib.Dump):
         self._md5files = {}
         self._calc(options, options.getFiles())
 
-        for md5sum in sorted(self._md5files.keys()):
-            if len(self._md5files[md5sum]) > 1:
-                print(syslib.Command().args2cmd(sorted(self._md5files[md5sum])))
+        for md5sum, md5file in sorted(self._md5files.items()):
+            if len(md5file) > 1:
+                print(syslib.Command().args2cmd(sorted(md5file)))
 
     def _calc(self, options, files):
         for file in files:
@@ -70,7 +70,7 @@ class Md5same(syslib.Dump):
                 md5sum = self._md5sum(file)
                 if not md5sum:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
-                if md5sum in self._md5files.keys():
+                if md5sum in self._md5files:
                     self._md5files[md5sum].append(file)
                 else:
                     self._md5files[md5sum] = [file]

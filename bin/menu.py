@@ -30,12 +30,12 @@ class Options(syslib.Dump):
         return self._menu
 
     def _config(self, args):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             os.chdir(os.environ["HOME"])
 
     def _setenv(self, args):
         directory = os.path.dirname(os.path.abspath(args[0]))
-        if "BASE_PATH" in os.environ.keys():
+        if "BASE_PATH" in os.environ:
             os.environ["PATH"] = directory + os.pathsep + os.environ["BASE_PATH"]
         elif directory not in os.environ["PATH"].split(os.pathsep):
             os.environ["PATH"] = directory + os.pathsep + os.environ["PATH"]

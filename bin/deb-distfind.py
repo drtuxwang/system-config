@@ -127,12 +127,11 @@ class Search(syslib.Dump):
     def _searchDistributionPackages(self, patterns):
         for pattern in patterns:
             ispattern = re.compile(pattern, re.IGNORECASE)
-            for name in sorted(self._packages.keys()):
+            for name, package in sorted(self._packages.items()):
                 if (ispattern.search(name) or
                         ispattern.search(self._packages[name].getDescription())):
                     print("{0:25s} {1:15s} {2:5d}KB {3:s}".format(name.split(":")[0],
-                          self._packages[name].getVersion(), self._packages[name].getSize(),
-                          self._packages[name].getDescription()))
+                          package.getVersion(), package.getSize(), package.getDescription()))
 
 
 class Main:

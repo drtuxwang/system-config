@@ -144,8 +144,8 @@ class RipDvd(syslib.Dump):
         cdrom = Cdrom()
         print("Scanning for CD/DVD devices...")
         devices = cdrom.getDevices()
-        for key in sorted(devices.keys()):
-            print("  {0:10s}  {1:s}".format(key, devices[key]))
+        for key, value in sorted(devices.items()):
+            print("  {0:10s}  {1:s}".format(key, value))
 
 
 class Main:

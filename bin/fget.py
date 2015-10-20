@@ -135,7 +135,7 @@ class Download(syslib.Dump):
 
             if check == "skip":
                 return
-            elif "Accept-Ranges" in conn.info().keys() and check == "resume":
+            elif "Accept-Ranges" in conn.info() and check == "resume":
                 tmpsize = syslib.FileStat(file + ".part").getSize()
                 req = urllib.request.Request(url, headers={"Range": "bytes="+str(tmpsize)+"-"})
                 conn = urllib.request.urlopen(req)

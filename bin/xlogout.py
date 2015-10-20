@@ -42,7 +42,7 @@ class Logout(syslib.Dump):
     def __init__(self, options):
         self._forceFlag = options.getForceFlag()
         self._pid = 0
-        if "SESSION_MANAGER" in os.environ.keys():
+        if "SESSION_MANAGER" in os.environ:
             try:
                 self._pid = int(os.path.basename(os.environ["SESSION_MANAGER"]))
             except ValueError:

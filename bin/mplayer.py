@@ -43,7 +43,7 @@ class Options(syslib.Dump):
         return self._mplayer
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             configdir = os.path.join(os.environ["HOME"], ".mplayer")
             if not os.path.isdir(configdir):
                 try:
@@ -67,7 +67,7 @@ class Options(syslib.Dump):
     def _setLibraries(self, command):
         libdir = os.path.join(os.path.dirname(command.getFile()), "lib")
         if os.path.isdir(libdir):
-            if "LD_LIBRARY_PATH" in os.environ.keys():
+            if "LD_LIBRARY_PATH" in os.environ:
                 os.environ["LD_LIBRARY_PATH"] = libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"]
             else:
                 os.environ["LD_LIBRARY_PATH"] = libdir

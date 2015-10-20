@@ -72,7 +72,7 @@ class Info(syslib.Dump):
 
     def _showDistributionPackages(self, packageNames):
         for name in packageNames:
-            if name in self._packages.keys():
+            if name in self._packages:
                 for line in self._packages[name]:
                     print(line)
                 print()

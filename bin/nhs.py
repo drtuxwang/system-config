@@ -30,7 +30,7 @@ class Options(syslib.Dump):
         return self._nhs
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             os.environ["HOME"] = os.path.join(os.environ["HOME"], ".nhs")
 
 

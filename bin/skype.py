@@ -25,7 +25,7 @@ class Options(syslib.Dump):
         self._setLibraries(self._skype)
 
         # Prevent creation of "fontconfig" directory
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             os.chdir(os.path.dirname(os.environ["HOME"]))
 
     def getFilter(self):
@@ -44,7 +44,7 @@ class Options(syslib.Dump):
         libdir = os.path.join(os.path.dirname(command.getFile()), "lib")
         if os.path.isdir(libdir):
             if syslib.info.getSystem() == "linux":
-                if "LD_LIBRARY_PATH" in os.environ.keys():
+                if "LD_LIBRARY_PATH" in os.environ:
                     os.environ["LD_LIBRARY_PATH"] = (
                         libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"])
                 else:

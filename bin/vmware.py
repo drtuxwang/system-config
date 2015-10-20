@@ -37,7 +37,7 @@ class Options(syslib.Dump):
         return self._vmplayer
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             configfile = os.path.join(os.environ["HOME"], ".vmware", "config")
             if os.path.isfile(configfile):
                 try:

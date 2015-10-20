@@ -3,7 +3,7 @@
 Quick commandline E-mailer.
 """
 
-RELEASE = "2.5.1"
+RELEASE = "2.5.2"
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -32,7 +32,7 @@ class Options(syslib.Dump):
 
         self._sendmail = syslib.Command("sendmail", flags=["-t"], pathextra=["/usr/lib"])
         self._editor = syslib.Command("hedit", check=False)
-        if "HOME" not in os.environ.keys():
+        if "HOME" not in os.environ:
             raise SystemExit(sys.argv[0] + ": Cannot determine home directory.")
         self._tmpfile = os.sep + os.path.join("tmp", "qmail-" + syslib.info.getUsername() +
                                                      "." + str(os.getpid()))

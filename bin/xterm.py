@@ -117,7 +117,7 @@ class Xterm(syslib.Dump):
         return "-e"
 
     def _ssh(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             sshdir = os.path.join(os.environ["HOME"], ".ssh")
             if not os.path.isdir(sshdir):
                 try:

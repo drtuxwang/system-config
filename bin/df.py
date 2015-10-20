@@ -108,7 +108,7 @@ class DiskReport(syslib.Dump):
                 continue
 
             if blocks != "0":
-                if device in devices.keys():  # Map UUID to device
+                if device in devices:  # Map UUID to device
                     device = devices[device]
                 if len(device) > 15:
                     print(device)

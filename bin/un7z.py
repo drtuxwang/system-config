@@ -48,7 +48,7 @@ class Options(syslib.Dump):
         return self._args.archives
 
     def _setenv(self):
-        if "LANG" in os.environ.keys():
+        if "LANG" in os.environ:
             del os.environ["LANG"]  # Avoids locale problems
 
     def _parseArgs(self, args):

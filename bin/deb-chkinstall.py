@@ -167,7 +167,7 @@ class CheckInstall(syslib.Dump):
                         pattern = columns[0]
                         if pattern[:1] != "#":
                             file = os.path.join(os.path.dirname(pinFile), columns[1]) + ".packages"
-                            if file not in packagesCache.keys():
+                            if file not in packagesCache:
                                 packagesCache[file] = self._readDistributionPackages(file)
                             ispattern = re.compile(pattern+"$")
                             for key, value in packagesCache[file].items():
@@ -198,7 +198,7 @@ class CheckInstall(syslib.Dump):
                 print(indent + file)
                 print(indent + file, file=ofile)
             for i in self._packages[name].getDepends():
-                if i in self._packages.keys():
+                if i in self._packages:
                     if self._packages[i].getInstalledFlag():
                         print(indent + "  " + self._packages[i].getUrl(), "[Installed]")
                     elif self._packages[i].getCheckedFlag():

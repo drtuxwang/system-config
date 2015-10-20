@@ -37,7 +37,7 @@ class Options(syslib.Dump):
         return self._inkscape
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             inkscapedir = os.path.join(os.environ["HOME"], ".inkscape-data")
             if not os.path.isdir(inkscapedir):
                 try:

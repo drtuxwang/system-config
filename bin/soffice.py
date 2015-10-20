@@ -50,7 +50,7 @@ class Options(syslib.Dump):
                 pass
 
     def _setenv(self):
-        if "GTK_MODULES" in os.environ.keys():
+        if "GTK_MODULES" in os.environ:
             del os.environ["GTK_MODULES"]  # Fix Linux "gnomebreakpad" problems
 
 

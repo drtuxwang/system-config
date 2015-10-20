@@ -21,7 +21,7 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._nautilus = syslib.Command("nautilus")
         if len(args) == 1:
-            if "DESKTOP_STARTUP_ID" not in os.environ.keys():
+            if "DESKTOP_STARTUP_ID" not in os.environ:
                 self._nautilus.setArgs([os.getcwd()])
         else:
             self._nautilus.setArgs(args[1:])
@@ -42,7 +42,7 @@ class Options(syslib.Dump):
         return self._nautilus
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             self._configdir = os.path.join(os.environ["HOME"], ".local", "share", "applications")
             if not os.path.isdir(self._configdir):
                 try:

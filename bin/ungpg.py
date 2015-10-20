@@ -40,7 +40,7 @@ class Options(syslib.Dump):
         return self._gpg
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             os.umask(int("077", 8))
             gpgdir = os.path.join(os.environ["HOME"], ".gnupg")
             if not os.path.isdir(gpgdir):
@@ -52,7 +52,7 @@ class Options(syslib.Dump):
                 os.chmod(gpgdir, int("700", 8))
             except OSError:
                 return
-        if "DISPLAY" in os.environ.keys():
+        if "DISPLAY" in os.environ:
             os.environ["DISPLAY"] = ""
 
     def _parseArgs(self, args):
@@ -68,7 +68,7 @@ class Options(syslib.Dump):
         libdir = os.path.join(os.path.dirname(command.getFile()), "lib")
         if os.path.isdir(libdir):
             if syslib.info.getSystem() == "linux":
-                if "LD_LIBRARY_PATH" in os.environ.keys():
+                if "LD_LIBRARY_PATH" in os.environ:
                     os.environ["LD_LIBRARY_PATH"] = (
                         libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"])
                 else:

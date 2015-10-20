@@ -80,7 +80,7 @@ class Shaper(syslib.Command):
         super().__init__("trickle", check=False)
 
         self._drate = 512
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             file = os.path.join(os.environ["HOME"], ".config", "netnice.json")
             if not self._load(file):
                 self._save(file)

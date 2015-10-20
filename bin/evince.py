@@ -43,7 +43,7 @@ class Options(syslib.Dump):
         return self._filter
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             file = os.path.join(os.environ["HOME"], ".gnome2", "evince", "print-settings")
             if os.path.isfile(file):
                 try:
@@ -52,9 +52,9 @@ class Options(syslib.Dump):
                     pass
 
     def _setenv(self):
-        if "LC_PAPER" not in os.environ.keys():  # Default to A4
+        if "LC_PAPER" not in os.environ:  # Default to A4
             os.environ["LC_PAPER"] = "en_GB.UTF-8"
-        if "PRINTER" not in os.environ.keys():
+        if "PRINTER" not in os.environ:
             lpstat = syslib.Command("lpstat", args=["-d"], check=False)
             if lpstat.isFound():
                 lpstat.run(filter="^system default destination: ", mode="batch")

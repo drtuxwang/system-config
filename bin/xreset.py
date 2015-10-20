@@ -25,7 +25,7 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        if "HOME" not in os.environ.keys():
+        if "HOME" not in os.environ:
             raise SystemExit(sys.argv[0] + ": Cannot determine home directory.")
 
         configdir = os.path.join(os.environ["HOME"], ".config")

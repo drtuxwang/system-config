@@ -51,7 +51,7 @@ class SecureShell(syslib.Dump):
     def __init__(self, options):
         self._ssh = options.getSsh()
 
-        if "HOME" not in os.environ.keys():
+        if "HOME" not in os.environ:
             raise SystemExit(sys.argv[0] + ": Cannot determine HOME directory.")
         self._sshdir = os.path.join(os.environ["HOME"], ".ssh")
         self._pubkey = self._config()

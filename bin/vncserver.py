@@ -61,7 +61,7 @@ class Options(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot create ".vnc/xstartup" file.')
             os.chmod(xstartup, int("755", 8) & ~self._umask)
         directory = os.path.dirname(self._vncserver.getFile())
-        if "PATH" in os.environ.keys() and directory not in os.environ["PATH"].split(os.pathsep):
+        if "PATH" in os.environ and directory not in os.environ["PATH"].split(os.pathsep):
             os.environ["PATH"] = directory + os.pathsep + os.environ["PATH"]
 
 

@@ -23,7 +23,7 @@ class Proxy(syslib.Dump):
     def __init__(self):
         myip = self._getmyip()
         myproxy = ""
-        if "http_proxy" in os.environ.keys():
+        if "http_proxy" in os.environ:
             if os.environ["http_proxy"].startswith("http://"):
                 myproxy = os.environ["http_proxy"][7:]
             del(os.environ["http_proxy"])

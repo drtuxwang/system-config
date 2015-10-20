@@ -3,7 +3,7 @@
 MyQS, My Queuing System batch job deletion.
 """
 
-RELEASE = "2.6.1"
+RELEASE = "2.6.2"
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -60,7 +60,7 @@ class Options(syslib.Dump):
 class Delete(syslib.Dump):
 
     def __init__(self, options):
-        if "HOME" not in os.environ.keys():
+        if "HOME" not in os.environ:
             raise SystemExit(sys.argv[0] + ": Cannot determine home directory.")
         self._myqsdir = os.path.join(os.environ["HOME"], ".config",
                                      "myqs", syslib.info.getHostname())
@@ -90,7 +90,7 @@ class Delete(syslib.Dump):
                                     line = line.strip()
                                     if "=" in line:
                                         info[line.split("=")[0]] = line.split("=", 1)[1]
-                                if "PGID" in info.keys():
+                                if "PGID" in info:
                                     try:
                                         pgid = int(info["PGID"])
                                     except ValueError:

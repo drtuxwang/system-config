@@ -5,8 +5,8 @@ System configuration detection tool.
 1996-2015 By Dr Colin Kong
 """
 
-RELEASE = "4.4.3"
-VERSION = 20150918
+RELEASE = "4.4.4"
+VERSION = 20151020
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -342,9 +342,8 @@ class Detect(syslib.Dump):
                             comment=info["CPU Threads X"])
         self._writer.output(name="CPU Clock", value=info["CPU Clock"], comment="MHz")
         self._writer.output(name="CPU Clocks", value=info["CPU Clocks"], comment="MHz")
-        for level in sorted(info["CPU Cache"].keys()):
-            self._writer.output(name="CPU L" + level + " Cache", value=info["CPU Cache"][level],
-                                comment="KB")
+        for key, value in sorted(info["CPU Cache"].items()):
+            self._writer.output(name="CPU L" + key + " Cache", value=value, comment="KB")
 
     def _systemStatus(self):
         info = self._system.getSysInfo()
@@ -419,7 +418,7 @@ class Detect(syslib.Dump):
                         except (IndexError, ValueError):
                             pass
 
-                if "DISPLAY" in os.environ.keys():
+                if "DISPLAY" in os.environ:
                     width = "???"
                     height = "???"
                     try:
@@ -547,13 +546,13 @@ class OperatingSystem(syslib.Dump):
         return info
 
     def _hasValue(self, values, word):
-        for key in values.keys():
-            if word in str(values[key][0]):
+        for key, value in values.items():
+            if word in str(value[0]):
                 return True
         return False
 
     def _isitset(self, values, name):
-        if name in values.keys():
+        if name in values:
             return values[name][0]
         else:
             return "Unknown"
@@ -1001,34 +1000,34 @@ class LinuxSystem(PosixSystem):
         super().detectDevices(writer)
 
         # Ethernet device detection
-        for line in sorted(self._devices.keys()):
+        for line, device in sorted(self._devices.items()):
             if "Ethernet controller: " in line:
                 model = line.split("Ethernet controller: ")[1].replace(
                     "Semiconductor ", "").replace("Co., ", "").replace(
                     "Ltd. ", "").replace("PCI Express ", "")
                 writer.output(name="Ethernet device", device="/dev/???", value=model,
-                              comment=self._devices[line])
+                              comment=device)
 
         # Firewire device detection
-        for line in sorted(self._devices.keys()):
+        for line, device in sorted(self._devices.items()):
             if "FireWire (IEEE 1394): " in line:
                 model = line.split("FireWire (IEEE 1394): ")[1]
                 writer.output(name="Firewire device", device="/dev/???", value=model,
-                              comment=self._devices[line])
+                              comment=device)
 
         # Graphics device detection
-        for line in sorted(self._devices.keys()):
+        for line, device in sorted(self._devices.items()):
             if "VGA compatible controller: " in line:
                 model = line.split("VGA compatible controller: ")[1].strip()
                 writer.output(name="Graphics device", device="/dev/???", value=model,
-                              comment=self._devices[line])
+                              comment=device)
 
         # InifiniBand device detection
-        for line in sorted(self._devices.keys()):
+        for line, device in sorted(self._devices.items()):
             if "InfiniBand: " in line:
                 model = line.split("InfiniBand: ")[1].replace("InfiniHost", "InifiniBand")
                 writer.output(name="InifiniBand device", device="/dev/???", value=model,
-                              comment=self._devices[line])
+                              comment=device)
 
         # Input device detection
         info = {}
@@ -1047,15 +1046,15 @@ class LinuxSystem(PosixSystem):
                     info[device] = os.path.basename(file).split("-")[1].replace("_", " ")
             except (IndexError, OSError):
                 continue
-        for device in sorted(info.keys()):
-            writer.output(name="Input device", device=device, value=info[device])
+        for key, value in sorted(info.items()):
+            writer.output(name="Input device", device=key, value=value)
 
         # Network device detection
-        for line in sorted(self._devices.keys()):
+        for line, device in sorted(self._devices.items()):
             if "Network controller: " in line:
                 model = line.split(": ", 1)[1].split(" (")[0]
                 writer.output(name="Network device", device="/dev/???", value=model,
-                              comment=self._devices[line])
+                              comment=device)
 
         # Video device detection
         for directory in sorted(glob.glob("/sys/class/video4linux/*")):
@@ -1078,7 +1077,7 @@ class LinuxSystem(PosixSystem):
         """
         info = super().getNetInfo()
         env = {}
-        if "LANG" not in os.environ.keys():
+        if "LANG" not in os.environ:
             env["LANG"] = "en_US"
         ifconfig = syslib.Command(file="/sbin/ifconfig", args=["-a"])
         ifconfig.run(env=env, filter="inet[6]? addr", mode="batch")
@@ -1396,7 +1395,7 @@ class LinuxSystem(PosixSystem):
         if os.path.isdir("/sys/devices/xen"):
             return "Xen"
 
-        for line in self._devices.keys():
+        for line in self._devices:
             if "RHEV" in line:
                 return "RHEV"
             elif "VirtualBox" in line:
@@ -1426,7 +1425,7 @@ class WindowsSystem(OperatingSystem):
 
     def __init__(self):
         pathextra = []
-        if "WINDIR" in os.environ.keys():
+        if "WINDIR" in os.environ:
             pathextra.append(os.path.join(os.environ["WINDIR"], "system32"))
         self._ipconfig = syslib.Command("ipconfig", pathextra=pathextra, args=["-all"])
         # Except for WIndows XP Home

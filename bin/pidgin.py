@@ -31,7 +31,7 @@ class Options(syslib.Dump):
         return self._pidgin
 
     def _config(self):
-        if "HOME" in os.environ.keys():
+        if "HOME" in os.environ:
             configdir = os.path.join(os.environ["HOME"], ".purple")
             configfile = os.path.join(configdir, "prefs.xml")
             try:
