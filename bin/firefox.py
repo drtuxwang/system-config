@@ -235,6 +235,7 @@ class Options(syslib.Dump):
                             for setting in ('"extensions.blocklist.enabled", false',
                                             '"full-screen-api.approval-required", false',
                                             '"layout.spellcheckDefault", 2',
+                                            '"media.autoplay.enabled", false',
                                             '"media.fragmented-mp4.exposed", true',
                                             '"media.fragmented-mp4.ffmpeg.enabled", true',
                                             '"media.fragmented-mp4.gmp.enabled", true',
