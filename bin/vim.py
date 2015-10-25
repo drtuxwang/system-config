@@ -44,11 +44,15 @@ class Edit(syslib.Dump):
 
     def __init__(self, options):
         if options.getFile():
-            sys.stdout.write("\033]0;" + syslib.info.getHostname() + ":" +
-                             os.path.abspath(options.getFile()) + "\007")
-            sys.stdout.flush()
-            self._edit(options)
-            sys.stdout.write("\033]0;" + syslib.info.getHostname() + ":\007")
+            try:
+                sys.stdout.write("\033]0;" + syslib.info.getHostname() + ":" +
+                                 os.path.abspath(options.getFile()) + "\007")
+            except OSError:
+                pass
+            else:
+                sys.stdout.flush()
+                self._edit(options)
+                sys.stdout.write("\033]0;" + syslib.info.getHostname() + ":\007")
         else:
             self._edit(options)
 
