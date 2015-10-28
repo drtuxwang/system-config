@@ -43,7 +43,7 @@ class Options(syslib.Dump):
 class Ffix(syslib.Dump):
 
     def __init__(self, options):
-        isbadChar = re.compile("^-|[ !\"$&`'()*<>?\[\]|]")
+        isbadChar = re.compile("^-|[ !\"$&`'()*<>?\[\]\\\\|]")
         for file in options.getFiles():
             newfile = isbadChar.sub("_", file)
             if newfile != file:
