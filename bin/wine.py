@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Wrapper for "wine" command
+
+Use "-reset" to clean ".wine" junk
 """
 
 import sys
@@ -12,6 +14,7 @@ if __name__ == "__main__":
 import glob
 import os
 import signal
+import shutil
 
 import syslib
 
@@ -20,11 +23,15 @@ class Options(syslib.Dump):
 
     def __init__(self, args):
         self._wine = syslib.Command("wine")
+
         if len(args) > 1:
             if args[1].endswith(".bat"):
                 self._wine.setFlags(["cmd", "/c"])
             elif args[1].endswith(".msi"):
                 self._wine.setFlags(["cmd", "/c", "start"])
+            elif args[1] == "-reset":
+                self._reset()
+                raise SystemExit(0)
         self._wine.setArgs(args[1:])
 
         self._signalTrap()
@@ -35,6 +42,16 @@ class Options(syslib.Dump):
         Return wine Command class object.
         """
         return self._wine
+
+    def _reset(self):
+        if "HOME" in os.environ:
+            directory = os.path.join(os.environ["HOME"], ".wine")
+            if os.path.isdir(directory):
+                print('Removing "{0:s}"...'.format(directory))
+                try:
+                    shutil.rmtree(directory)
+                except OSError:
+                    pass
 
     def _signalIgnore(self, signal, frame):
         pass
