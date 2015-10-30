@@ -31,7 +31,15 @@ class Options(syslib.Dump):
 
     def _config(self):
         if "HOME" in os.environ:
-            os.environ["HOME"] = os.path.join(os.environ["HOME"], ".nhs")
+            home = os.environ["HOME"]
+            if os.path.basename(home) != ".nhs":
+                home = os.path.join(home, ".nhs")
+                try:
+                    os.mkdir(home)
+                except OSError:
+                    pass
+                else:
+                    os.environ["HOME"] = home
 
 
 class Main:
