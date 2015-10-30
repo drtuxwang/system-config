@@ -33,7 +33,8 @@ class Options(syslib.Dump):
         else:
             raise SystemExit(sys.argv[0] + ": Cannot compare two directories.")
 
-        self._filter = "^$|: GtkWarning: |^  buttons =|^  gtk.main|recently-used.xbel"
+        self._filter = ("^$|: GtkWarning: |: Gtk-CRITICAL |^  buttons =|^  gtk.main|"
+                        "recently-used.xbel")
 
     def getFilter(self):
         """
