@@ -4,7 +4,7 @@ Python system interaction Library
 
 2006-2015 By Dr Colin Kong
 
-Version 5.1 (2015-10-20)
+Version 5.1.1 (2015-10-31)
 """
 
 import sys
@@ -73,7 +73,7 @@ class Dump(object):
         if nref == 1:
             print(prefix, self)
             for key, value in sorted(self.__dict__.items()):
-                value = self.__dict__[attribute]
+                value = self.__dict__[key]
                 if type(value) in (dict, list, tuple, set) and self._hasContainer(value):
                     self._dumpContainer(prefix, dumped, key, value)
                 else:

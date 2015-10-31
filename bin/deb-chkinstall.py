@@ -170,7 +170,8 @@ class CheckInstall(syslib.Dump):
                             if file not in packagesCache:
                                 packagesCache[file] = self._readDistributionPackages(file)
                             try:
-                                ispattern = re.compile(pattern.replace("?", ".").replace("*", ".*")+"$")
+                                ispattern = re.compile(
+                                    pattern.replace("?", ".").replace("*", ".*")+"$")
                             except sre_constants.error:
                                 continue
                             for key, value in packagesCache[file].items():

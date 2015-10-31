@@ -94,13 +94,13 @@ class Media(syslib.Dump):
         self._length = "0"
         self._stream = {}
         self._type = "Unknown"
-        avprobe = syslib.Command("avprobe", args=[file])
-        avprobe.run(mode="batch", error2output=True)
+        ffprobe = syslib.Command("ffprobe", args=[file])
+        ffprobe.run(mode="batch", error2output=True)
         number = 0
 
         isjunk = re.compile("^ *Stream #[^ ]*: ")
         try:
-            for line in avprobe.getOutput():
+            for line in ffprobe.getOutput():
                 if line.strip().startswith("Duration:"):
                     self._length = line.replace(",", "").split()[1]
                 elif line.strip().startswith("Stream #0"):

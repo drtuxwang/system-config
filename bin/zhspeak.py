@@ -7,7 +7,7 @@ Zhong Hua Speak Chinese TTS software.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-RELEASE = "3.0.6"
+RELEASE = "3.0.7"
 
 import sys
 if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
@@ -145,7 +145,7 @@ class Chinese(syslib.Dump):
                 break
         else:
             raise SystemExit(sys.argv[0] + ': Cannot find "ogg123" (vorbis-tools),'
-                             ' "avplay" (libav-tools) or "ffplay" (ffmpeg).')
+                             ' "ffplay" (libav-tools) or "avplay" (ffmpeg).')
 
     def text2speech(self, phrases):
         for phrase in phrases:
@@ -263,12 +263,12 @@ class Ogg123(syslib.Dump):
 
 class Avplay(Ogg123):
     """
-    Uses "avplay" from "libav-tools".
+    Uses "ffplay" from "libav-tools".
     """
 
     def __init__(self, oggdir):
         self._oggdir = oggdir
-        self._player = syslib.Command("avplay", check=False)
+        self._player = syslib.Command("ffplay", check=False)
         self._player.setFlags(["-nodisp", "-autoexit", "-i"])
 
     def run(self, files):
