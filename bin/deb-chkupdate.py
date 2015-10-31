@@ -142,7 +142,10 @@ class CheckUpdates(syslib.Dump):
                             file = os.path.join(os.path.dirname(pinFile), columns[1]) + ".packages"
                             if file not in packagesCache:
                                 packagesCache[file] = self._readDistributionPackages(file)
-                            ispattern = re.compile(pattern.replace("?",".").replace("*",".*")+"$")
+                            try:
+                                ispattern = re.compile(pattern.replace("?",".").replace("*",".*")+"$")
+                            except sre_constants.error:
+                                continue
                             for key, value in packagesCache[file].items():
                                 if ispattern.match(key):
                                     self._packages[key] = copy.copy(packagesCache[file][key])
