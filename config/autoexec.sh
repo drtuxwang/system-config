@@ -3,12 +3,6 @@
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 PATH=$HOME/software/bin:$PATH; export PATH
 
-if [ "`lsmod | grep vboxguest`" ]; then
-    xrandr --newmode "1280x960" 102.10 1280 1360 1496 1712 960 961 964 994 # gtf 1280 960 60
-    xrandr --addmode VGA-0 1280x960
-    (xrandr --dpi 96; sleep 1; xrandr -s 1280x960) &
-fi
-
 if [ -x /usr/bin/ibus-daemon ]; then
     GTK_IM_MODULE=ibus; export GTK_IM_MODULE
     QT_IM_MODULE=ibus; export QT_IM_MODULE
