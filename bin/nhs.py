@@ -34,12 +34,12 @@ class Options(syslib.Dump):
             home = os.environ["HOME"]
             if os.path.basename(home) != ".nhs":
                 home = os.path.join(home, ".nhs")
-                try:
-                    os.mkdir(home)
-                except OSError:
-                    pass
-                else:
-                    os.environ["HOME"] = home
+                if not os.path.isdir(home):
+                    try:
+                        os.mkdir(home)
+                    except OSError:
+                        return
+                os.environ["HOME"] = home
 
 
 class Main:
