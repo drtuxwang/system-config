@@ -234,6 +234,10 @@ class Options(syslib.Dump):
                                 print('user_pref("app.update.enabled", false);', file=ofile)
                             for setting in ('"extensions.blocklist.enabled", false',
                                             '"full-screen-api.approval-required", false',
+                                            '"geo.enabled", false',
+                                            '"image.animation_mode", "none"',
+                                            '"keyword.enabled", false',
+                                            '"layout.frames.force_resizability", true',
                                             '"layout.spellcheckDefault", 2',
                                             '"media.autoplay.enabled", false',
                                             '"media.fragmented-mp4.exposed", true',
@@ -243,6 +247,7 @@ class Options(syslib.Dump):
                                             '"media.mediasource.enabled", true',
                                             '"media.mediasource.mp4.enabled", true',
                                             '"media.mediasource.webm.enabled", true',
+                                            '"nglayout.initialpaint.delay", 0',
                                             '"plugins.click_to_play", true'):
                                 if 'user_pref(' + setting + ');\n' not in lines:
                                     print('user_pref(' + setting + ');', file=ofile)
