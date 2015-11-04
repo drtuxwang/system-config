@@ -35,19 +35,14 @@ class Options(syslib.Dump):
             self._youtubedl.setArgs(["--title", "--format", str(self._args.format[0])])
         self._youtubedl.extendArgs(self._args.urls)
 
-        self._setpython(self._youtubedl)
+        if os.path.isfile("/usr/bin/python"):
+            self._youtubedl.setWrapper(syslib.Command(file="/usr/bin/python"))
 
     def getYoutubedl(self):
         """
         Return youtubedl Command class object.
         """
         return self._youtubedl
-
-    def _setpython(self, command):  # Must use system Python
-        if os.path.isfile("/usr/bin/python3"):
-            command.setWrapper(syslib.Command(file="/usr/bin/python3"))
-        elif os.path.isfile("/usr/bin/python"):
-            command.setWrapper(syslib.Command(file="/usr/bin/python"))
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description="Youtube video downloader.")
