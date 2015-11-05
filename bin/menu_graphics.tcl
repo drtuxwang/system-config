@@ -11,8 +11,6 @@ frame .mainmenu -bg "#cccccc"
     pack .mainmenu.geeqie -side top
     button .mainmenu.inkscape -width 10 -bg "#ffcc00" -text "Inkscape" -command {exec inkscape &}
     pack .mainmenu.inkscape -side top
-    button .mainmenu.vuescan -width 10 -bg "#ffcc00" -text "Vuescan" -command {exec vuescan &}
-    pack .mainmenu.vuescan -side top
     button .mainmenu.xsane -width 10 -bg "#ffcc00" -text "Xsane" -command {exec xsane &}
     pack .mainmenu.xsane -side top
     button .mainmenu.screenshot -width 10 -bg "#ffff00" -text ScreenShot -command {exec xsnapshot &}
