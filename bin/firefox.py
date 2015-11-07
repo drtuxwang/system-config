@@ -261,6 +261,7 @@ class Options(syslib.Dump):
                                             '"content.notify.ontimer", true',
                                             '"dom.event.contextmenu.enabled", false',
                                             '"dom.max_script_run_time", 20',
+                                            '"dom.push.enable", false',
                                             '"extensions.blocklist.enabled", false',
                                             '"full-screen-api.approval-required", false',
                                             '"geo.enabled", false',
