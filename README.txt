@@ -834,10 +834,7 @@ bin/vncviewer.bat
 bin/vncviewer.py
 
 bin/vplay              Play AVI/FLV/MP4 video files in directory.
-bin/cplay.py           (uses vlc)
-
-bin/vuescan            vuescan wrapper (allowing non systems port)
-bin/vuescan.py
+bin/vplay.py           (uses vlc)
 
 bin/wav                Encode WAV audio using avconv (pcm_s16le).
 bin/wav.py
