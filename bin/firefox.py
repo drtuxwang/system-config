@@ -32,12 +32,13 @@ class Options(syslib.Dump):
         while len(args) > 1:
             if not args[1].startswith("-"):
                 break
-            elif args[1] == "-copy":
-                updates = False
-                self._copy()
-                self._firefox.setFlags(["-no-remote", "about:"])
-            elif args[1] == "-no-remote":
-                self._firefox.setFlags(["-no-remote", "about:"])
+            elif args[1] in ("-copy", "-no-remote"):
+                if args[1] == "-copy":
+                   updates = False
+                   self._copy()
+                self._firefox.setFlags(["-no-remote"])
+                if "about:" not in args:
+                    self._firefox.appendFlag("about:")
             elif args[1] == "-reset":
                 self._reset()
                 raise SystemExit(0)
