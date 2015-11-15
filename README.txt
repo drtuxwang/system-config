@@ -11,7 +11,6 @@ etc/setbin.ps1   Windows Power shell initialization
 config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
 config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
 config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
-config/gnupg.vim                Copy to "$HOME/.vim/plugin" for GPG encryption/decryption
 config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
 config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
 config/mimeapps.list            Copy to "$HOME/.local/share/applications" for Mime definitions
