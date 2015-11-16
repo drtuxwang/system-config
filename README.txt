@@ -417,6 +417,9 @@ bin/java.py            (Java run time)
 bin/javac              javac wrapper (allowing non systems port)
 bin/javac.py           (Java compiler)
 
+bin/json               JSON file indenting (display on screen)
+bin/json.py
+
 bin/juniper            Connect to Juniper Network Connect VPN
 bin/juniper.py
 
