@@ -548,6 +548,11 @@ bin/pidgin             pidgin wrapper (allowing non systems port)
 bin/pidgin.bat
 bin/pidgin.py
 
+bin/pip                Wrapper to select "umask 022"
+bin/pip.py
+bin/pip3
+bin/pip3.py
+
 bin/play               Play multimedia file/URL
 bin/play.py            (uses vlc and avprobe)
 
