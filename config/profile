@@ -190,7 +190,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     esac
 
     if [ -x /usr/bin/vim ]; then
-        alias vi="vim -N -i NONE -n"
+        alias vi="vim -N -n"
     fi
     if [ -x /usr/sbin/ping ]; then
         alias ping="/usr/sbin/ping"

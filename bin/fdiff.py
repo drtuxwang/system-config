@@ -5,8 +5,8 @@ Show summary of differences between two directories recursively.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -24,10 +24,10 @@ class Options(syslib.Dump):
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-            description="Show summary of differences between two directories recursively.")
+            description='Show summary of differences between two directories recursively.')
 
-        parser.add_argument("directories", nargs=2, metavar="directory",
-                            help="Directory to compare.")
+        parser.add_argument('directories', nargs=2, metavar='directory',
+                            help='Directory to compare.')
 
         self._args = parser.parse_args(args)
 
@@ -65,43 +65,43 @@ class Diff(syslib.Dump):
                 if os.path.isdir(os.path.join(directory2, os.path.basename(file))):
                     self._diffdir(file, os.path.join(directory2, os.path.basename(file)))
                 else:
-                    print("only ", file + os.sep)
+                    print('only ', file + os.sep)
             elif os.path.isfile(file):
                 if os.path.isfile(os.path.join(directory2, os.path.basename(file))):
                     self._difffile(file, os.path.join(directory2, os.path.basename(file)))
                 else:
-                    print("only ", file)
+                    print('only ', file)
 
         for file in files2:
             if os.path.isdir(file):
                 if not os.path.isdir(os.path.join(directory1, os.path.basename(file))):
-                    print("only ", file + os.sep)
+                    print('only ', file + os.sep)
             elif os.path.isfile(file):
                 if not os.path.isfile(os.path.join(directory1, os.path.basename(file))):
-                    print("only ", file)
+                    print('only ', file)
 
     def _difffile(self, file1, file2):
         fileStat1 = syslib.FileStat(file1)
         fileStat2 = syslib.FileStat(file2)
 
         if (fileStat1.getSize() != fileStat2.getSize()):
-            print("diff ", file1 + "  " + file2)
+            print('diff ', file1 + '  ' + file2)
         elif (fileStat1.getTime() != fileStat2.getTime()):
             try:
-                ifile1 = open(file1, "rb")
+                ifile1 = open(file1, 'rb')
             except IOError:
-                print("diff ", file1 + "  " + file2)
+                print('diff ', file1 + '  ' + file2)
                 return
             try:
-                ifile2 = open(file2, "rb")
+                ifile2 = open(file2, 'rb')
             except IOError:
-                print("diff ", file1 + "  " + file2)
+                print('diff ', file1 + '  ' + file2)
                 return
             for i in range(0, fileStat1.getSize(), 131072):
                 chunk1 = ifile1.read(131072)
                 chunk2 = ifile2.read(131072)
                 if chunk1 != chunk2:
-                    print("diff ", file1 + "  " + file2)
+                    print('diff ', file1 + '  ' + file2)
                     return
             ifile1.close()
             ifile2.close()
@@ -111,7 +111,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -123,7 +123,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -137,8 +137,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

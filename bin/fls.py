@@ -5,8 +5,8 @@ Show full list of files.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -48,20 +48,20 @@ class Options(syslib.Dump):
         return self._args.reverseFlag
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Show full list of files.")
+        parser = argparse.ArgumentParser(description='Show full list of files.')
 
-        parser.add_argument("-R", dest="recursiveFlag", action="store_true",
-                            help="Show directories recursively.")
-        parser.add_argument("-s", action="store_const", const="size", dest="order",
-                            default="name", help="Sort by size of file.")
-        parser.add_argument("-t", action="store_const", const="mtime", dest="order",
-                            default="name", help="Sort by modification time of file.")
-        parser.add_argument("-c", action="store_const", const="ctime", dest="order",
-                            default="name", help="Sort by creation time of file.")
-        parser.add_argument("-r", dest="reverseFlag", action="store_true",
-                            help="Reverse order.")
+        parser.add_argument('-R', dest='recursiveFlag', action='store_true',
+                            help='Show directories recursively.')
+        parser.add_argument('-s', action='store_const', const='size', dest='order',
+                            default='name', help='Sort by size of file.')
+        parser.add_argument('-t', action='store_const', const='mtime', dest='order',
+                            default='name', help='Sort by modification time of file.')
+        parser.add_argument('-c', action='store_const', const='ctime', dest='order',
+                            default='name', help='Sort by creation time of file.')
+        parser.add_argument('-r', dest='reverseFlag', action='store_true',
+                            help='Reverse order.')
 
-        parser.add_argument("files", nargs="*", metavar="file", help="File or directory.")
+        parser.add_argument('files', nargs='*', metavar='file', help='File or directory.')
 
         self._args = parser.parse_args(args)
 
@@ -86,20 +86,20 @@ class List(syslib.Dump):
             elif os.path.isfile(file):
                 fileStats.append(syslib.FileStat(file))
         for fileStat in self._sorted(options, fileStats):
-            print("{0:10d} [{1:s}] {2:s}".format(fileStat.getSize(), fileStat.getTimeLocal(),
+            print('{0:10d} [{1:s}] {2:s}'.format(fileStat.getSize(), fileStat.getTimeLocal(),
                                                  fileStat.getFile()))
             if options.getRecursiveFlag() and fileStat.getFile().endswith(os.sep):
-                self._list(options, sorted(glob.glob(fileStat.getFile() + ".*") +
-                           glob.glob(fileStat.getFile() + "*")))
+                self._list(options, sorted(glob.glob(fileStat.getFile() + '.*') +
+                           glob.glob(fileStat.getFile() + '*')))
         return
 
     def _sorted(self, options, fileStats):
         order = options.getOrder()
-        if order == "ctime":
+        if order == 'ctime':
             fileStats = sorted(fileStats, key=lambda s: s.getTimeCreate())
-        elif order == "mtime":
+        elif order == 'mtime':
             fileStats = sorted(fileStats, key=lambda s: s.getTime())
-        elif order == "size":
+        elif order == 'size':
             fileStats = sorted(fileStats, key=lambda s: s.getSize())
         if options.getReverseFlag():
             return reversed(fileStats)
@@ -111,7 +111,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -123,7 +123,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -137,8 +137,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

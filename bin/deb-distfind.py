@@ -5,8 +5,8 @@ Search for packages that match regular expression in Debian package file.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -36,13 +36,13 @@ class Options(syslib.Dump):
         return self._args.patterns
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Search for packages that match regular "
-                                                     "expression in Debian package file.")
+        parser = argparse.ArgumentParser(description='Search for packages that match regular '
+                                                     'expression in Debian package file.')
 
-        parser.add_argument("packagesFile", nargs=1, metavar="distribution.package",
-                            help="Debian package file.")
-        parser.add_argument("patterns", nargs="+", metavar="pattern",
-                            help="Regular expression.")
+        parser.add_argument('packagesFile', nargs=1, metavar='distribution.package',
+                            help='Debian package file.')
+        parser.add_argument('patterns', nargs='+', metavar='pattern',
+                            help='Regular expression.')
 
         self._args = parser.parse_args(args)
 
@@ -101,26 +101,26 @@ class Search(syslib.Dump):
 
     def _readDistributionPackages(self, packagesFile):
         self._packages = {}
-        name = ""
-        package = Package("", -1, "")
+        name = ''
+        package = Package('', -1, '')
         try:
-            with open(packagesFile, errors="replace") as ifile:
+            with open(packagesFile, errors='replace') as ifile:
                 for line in ifile:
-                    line = line.rstrip("\r\n")
-                    if line.startswith("Package: "):
-                        name = line.replace("Package: ", "")
-                    elif line.startswith("Version: "):
-                        package.setVersion(line.replace("Version: ", "", 1).split(":")[-1])
-                    elif line.startswith("Installed-Size: "):
+                    line = line.rstrip('\r\n')
+                    if line.startswith('Package: '):
+                        name = line.replace('Package: ', '')
+                    elif line.startswith('Version: '):
+                        package.setVersion(line.replace('Version: ', '', 1).split(':')[-1])
+                    elif line.startswith('Installed-Size: '):
                         try:
-                            package.setSize(int(line.replace("Installed-Size: ", "", 1)))
+                            package.setSize(int(line.replace('Installed-Size: ', '', 1)))
                         except ValueError:
                             raise SystemExit(sys.argv[0] + ': Package "' + name +
                                              '" in "/var/lib/dpkg/info" has non integer size.')
-                    elif line.startswith("Description: "):
-                        package.setDescription(line.replace("Description: ", "", 1))
+                    elif line.startswith('Description: '):
+                        package.setDescription(line.replace('Description: ', '', 1))
                         self._packages[name] = package
-                        package = Package("", "0", "")
+                        package = Package('', '0', '')
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + packagesFile + '" packages file.')
 
@@ -130,7 +130,7 @@ class Search(syslib.Dump):
             for name, package in sorted(self._packages.items()):
                 if (ispattern.search(name) or
                         ispattern.search(self._packages[name].getDescription())):
-                    print("{0:25s} {1:15s} {2:5d}KB {3:s}".format(name.split(":")[0],
+                    print('{0:25s} {1:15s} {2:5d}KB {3:s}'.format(name.split(':')[0],
                           package.getVersion(), package.getSize(), package.getDescription()))
 
 
@@ -138,7 +138,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -150,7 +150,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -164,8 +164,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

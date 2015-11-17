@@ -5,8 +5,8 @@ Replace symbolic link to files with copies.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -30,10 +30,10 @@ class Options(syslib.Dump):
         return self._args.files
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Replace symbolic link to files with copies.")
+        parser = argparse.ArgumentParser(description='Replace symbolic link to files with copies.')
 
-        parser.add_argument("files", nargs="+", metavar="file",
-                            help="Symbolic link to file.")
+        parser.add_argument('files', nargs='+', metavar='file',
+                            help='Symbolic link to file.')
 
         self._args = parser.parse_args(args)
 
@@ -49,10 +49,10 @@ class Copylink(syslib.Dump):
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" link.')
                 target = os.path.join(os.path.dirname(file), link)
                 if os.path.isfile(target):
-                    print("Copy file:", file, "->", target)
+                    print('Copy file:', file, '->', target)
                     self._copy(file, link, target)
                 elif not os.path.isdir(target):
-                    print("Null link:", file, "->", link)
+                    print('Null link:', file, '->', link)
             elif not os.path.exists(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
 
@@ -64,7 +64,7 @@ class Copylink(syslib.Dump):
         try:
             shutil.copy2(target, file)
         except IOError as exception:
-            if exception.args != (95, "Operation not supported"):  # os.listxattr for ACL
+            if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
                 raise SystemExit(sys.argv[0] + ': Cannot copy "' + target + '" file.')
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
@@ -74,7 +74,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -86,7 +86,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -100,8 +100,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

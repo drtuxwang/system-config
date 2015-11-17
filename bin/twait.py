@@ -5,8 +5,8 @@ Wait for task to finish then launch command.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -24,7 +24,7 @@ class Options(syslib.Dump):
         self._parseArgs(args[1:])
 
         self._pid = 0
-        self._pname = ""
+        self._pname = ''
         try:
             self._pid = int(self._args.task[0])
         except ValueError:
@@ -57,14 +57,14 @@ class Options(syslib.Dump):
         return self._args.user
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Wait for task to finish then launch command.")
+        parser = argparse.ArgumentParser(description='Wait for task to finish then launch command.')
 
-        parser.add_argument("-a", dest="user", action="store_const", const="<all>", default="",
-                            help="Monitor any user's process.")
+        parser.add_argument('-a', dest='user', action='store_const', const='<all>', default='',
+                            help='Monitor any user"s process.')
 
-        parser.add_argument("task", nargs=1, metavar="pid|pname", help="Process ID or name.")
-        parser.add_argument("command", nargs=1, help="Command name.")
-        parser.add_argument("commandArgs", nargs="*", metavar="arg", help="Command arguments.")
+        parser.add_argument('task', nargs=1, metavar='pid|pname', help='Process ID or name.')
+        parser.add_argument('command', nargs=1, help='Command name.')
+        parser.add_argument('commandArgs', nargs='*', metavar='arg', help='Command arguments.')
 
         self._args = parser.parse_args(args[:2])
         self._commandArgs = args[2:]
@@ -83,14 +83,14 @@ class Waitfor(syslib.Dump):
             pid = options.getPid()
             while pid in syslib.Task(user).getPids():
                 time.sleep(1)
-        options.getCommand().run(mode="exec")
+        options.getCommand().run(mode='exec')
 
 
 class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -102,7 +102,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -116,8 +116,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

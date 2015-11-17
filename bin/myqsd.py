@@ -3,12 +3,12 @@
 MyQS, My Queuing System batch job scheduler daemon
 """
 
-RELEASE = "2.6.2"
+RELEASE = '2.6.3'
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -27,7 +27,7 @@ class Options(syslib.Dump):
 
         self._parseArgs(args[1:])
 
-        self._myqsdir = os.path.join(os.environ["HOME"], ".config", "myqs",
+        self._myqsdir = os.path.join(os.environ['HOME'], '.config', 'myqs',
                                      syslib.info.getHostname())
 
     def getDaemonFlag(self):
@@ -50,19 +50,19 @@ class Options(syslib.Dump):
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-            description="MyQS v" + self._release + ", My Queuing System batch scheduler daemon.")
+            description='MyQS v' + self._release + ', My Queuing System batch scheduler daemon.')
 
         parser.add_argument(
-            "-daemon", dest="daemonFlag", action="store_true", help="Start batch job daemon.")
+            '-daemon', dest='daemonFlag', action='store_true', help='Start batch job daemon.')
 
         parser.add_argument(
-            "slots", nargs=1, type=int, help="The maximum number of CPU execution slots to create.")
+            'slots', nargs=1, type=int, help='The maximum number of CPU execution slots to create.')
 
         self._args = parser.parse_args(args)
 
         if self._args.slots[0] < 1:
-            raise SystemExit(sys.argv[0] + ": You must specific a positive integer for "
-                             "the number of slots.")
+            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
+                             'the number of slots.')
 
 
 class Lock(syslib.Dump):
@@ -71,7 +71,7 @@ class Lock(syslib.Dump):
         self._file = file
         self._pid = -1
         try:
-            with open(self._file, errors="replace") as ifile:
+            with open(self._file, errors='replace') as ifile:
                 try:
                     self._pid = int(ifile.readline().strip())
                 except (IOError, ValueError):
@@ -84,21 +84,21 @@ class Lock(syslib.Dump):
 
     def create(self):
         try:
-            with open(self._file, "w", newline="\n") as ofile:
+            with open(self._file, 'w', newline='\n') as ofile:
                 print(os.getpid(), file=ofile)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot create "' +
                              self._file + '" MyQS scheduler lock file.')
         time.sleep(1)
         try:
-            with open(self._file, errors="replace") as ifile:
+            with open(self._file, errors='replace') as ifile:
                 try:
                     pid = int(ifile.readline().strip())
                 except (IOError, ValueError):
                     raise SystemExit(0)
                 else:
                     if not syslib.Task().haspid(os.getpid()):
-                        raise SystemExit(sys.argv[0] + ': Cannot obtain MyQS scheduler lock file.')
+                        raise SystemExit(sys.argv[0] + ": Cannot obtain MyQS scheduler lock file.")
         except IOError:
             return
 
@@ -116,96 +116,96 @@ class Daemon(syslib.Dump):
         self._myqsdir = options.getMyqsdir()
         self._slots = options.getSlots()
 
-        if "HOME" not in os.environ:
-            raise SystemExit(sys.argv[0] + ": Cannot determine home directory.")
+        if 'HOME' not in os.environ:
+            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
         if options.getDaemonFlag():
             self._schedulerDaemon(options)
         else:
             self._startDaemon(options)
 
     def _restart(self, options):
-        for file in sorted(glob.glob(os.path.join(self._myqsdir, "*.r")),
+        for file in sorted(glob.glob(os.path.join(self._myqsdir, '*.r')),
                            key=lambda s: os.path.basename(s)[-2]):
             try:
-                with open(os.path.join(file), errors="replace") as ifile:
+                with open(os.path.join(file), errors='replace') as ifile:
                     info = {}
                     for line in ifile:
                         line = line.strip()
-                        if "=" in line:
-                            info[line.split("=")[0]] = line.split("=", 1)[1]
+                        if '=' in line:
+                            info[line.split('=')[0]] = line.split('=', 1)[1]
             except IOError:
                 continue
-            if "PGID" in info:
+            if 'PGID' in info:
                 try:
-                    pgid = int(info["PGID"])
+                    pgid = int(info['PGID'])
                 except ValueError:
                     pass
                 if not syslib.Task().haspgid(pgid):
                     jobid = os.path.basename(file)[:-2]
                     print('Batch job with jobid "' + jobid +
                           '" being requeued after system restart...')
-                    os.rename(file, file[:-2] + ".q")
+                    os.rename(file, file[:-2] + '.q')
 
     def _scheduleJob(self, options):
         running = 0
-        for file in glob.glob(os.path.join(self._myqsdir, "*.r")):
+        for file in glob.glob(os.path.join(self._myqsdir, '*.r')):
             try:
-                with open(file, errors="replace") as ifile:
+                with open(file, errors='replace') as ifile:
                     info = {}
                     for line in ifile:
                         line = line.strip()
-                        if "=" in line:
-                            info[line.split("=")[0]] = line.split("=", 1)[1]
+                        if '=' in line:
+                            info[line.split('=')[0]] = line.split('=', 1)[1]
             except IOError:
                 continue
-            if "PGID" in info:
-                if not syslib.Task().haspgid(int(info["PGID"])):
+            if 'PGID' in info:
+                if not syslib.Task().haspgid(int(info['PGID'])):
                     time.sleep(0.5)
                     try:
                         os.remove(file)
                     except OSError:
                         continue
-            if "NCPUS" in info:
+            if 'NCPUS' in info:
                 try:
-                    running += int(info["NCPUS"])
+                    running += int(info['NCPUS'])
                 except ValueError:
                     pass
 
         free = self._slots - running
         if free > 0:
-            for queue in ("express", "normal"):
-                for file in sorted(glob.glob(os.path.join(self._myqsdir, "*.q")),
+            for queue in ('express', 'normal'):
+                for file in sorted(glob.glob(os.path.join(self._myqsdir, '*.q')),
                                    key=lambda s: int(os.path.basename(s)[:-2])):
                     try:
-                        with open(file, errors="replace") as ifile:
+                        with open(file, errors='replace') as ifile:
                             info = {}
                             for line in ifile:
                                 line = line.strip()
-                                if "=" in line:
-                                    info[line.split("=")[0]] = line.split("=", 1)[1]
+                                if '=' in line:
+                                    info[line.split('=')[0]] = line.split('=', 1)[1]
                     except IOError:
                         continue
-                    if "QUEUE" in info:
-                        if info["QUEUE"] == queue:
-                            if "NCPUS" in info:
-                                if free >= int(info["NCPUS"]):
+                    if 'QUEUE' in info:
+                        if info['QUEUE'] == queue:
+                            if 'NCPUS' in info:
+                                if free >= int(info['NCPUS']):
                                     jobid = os.path.basename(file)[:-2]
-                                    if os.path.isdir(info["DIRECTORY"]):
-                                        logfile = os.path.join(info["DIRECTORY"], os.path.basename(
-                                            info["COMMAND"]) + ".o" + jobid)
+                                    if os.path.isdir(info['DIRECTORY']):
+                                        logfile = os.path.join(info['DIRECTORY'], os.path.basename(
+                                            info['COMMAND']) + '.o' + jobid)
                                     else:
-                                        logfile = os.path.join(os.environ["HOME"], os.path.basename(
-                                            info["COMMAND"]) + ".o" + jobid)
+                                        logfile = os.path.join(os.environ['HOME'], os.path.basename(
+                                            info['COMMAND']) + '.o' + jobid)
                                     try:
-                                        os.rename(file, file[:-2] + ".r")
+                                        os.rename(file, file[:-2] + '.r')
                                     except OSError:
                                         continue
-                                    myqexec = syslib.Command("myqexec", args=["-jobid", jobid])
-                                    myqexec.run(logfile=logfile, mode="daemon")
+                                    myqexec = syslib.Command('myqexec', args=['-jobid', jobid])
+                                    myqexec.run(logfile=logfile, mode='daemon')
                                     return
 
     def _schedulerDaemon(self, options):
-        Lock(os.path.join(self._myqsdir, "myqsd.pid")).create()
+        Lock(os.path.join(self._myqsdir, 'myqsd.pid')).create()
         while True:
             self._scheduleJob(options)
             time.sleep(2)
@@ -217,22 +217,22 @@ class Daemon(syslib.Dump):
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot created "' +
                                  self._myqsdir + '" directory.')
-        lock = Lock(os.path.join(self._myqsdir, "myqsd.pid"))
+        lock = Lock(os.path.join(self._myqsdir, 'myqsd.pid'))
         if lock.check():
-            print("Stopping MyQS batch job scheduler...")
+            print('Stopping MyQS batch job scheduler...')
             lock.remove()
         else:
             self._restart(options)
-        print("Starting MyQS batch job scheduler...")
-        myqsd = syslib.Command(file=__file__, args=["-daemon", str(self._slots)])
-        myqsd.run(mode="daemon")
+        print('Starting MyQS batch job scheduler...')
+        myqsd = syslib.Command(file=__file__, args=['-daemon', str(self._slots)])
+        myqsd.run(mode='daemon')
 
 
 class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -244,7 +244,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -258,8 +258,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

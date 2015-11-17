@@ -5,8 +5,8 @@ Unpack an encrypted archive in gpg (pgp compatible) format.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -22,7 +22,7 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        self._gpg = syslib.Command("gpg")
+        self._gpg = syslib.Command('gpg')
 
         self._config()
         self._setLibraries(self._gpg)
@@ -40,39 +40,39 @@ class Options(syslib.Dump):
         return self._gpg
 
     def _config(self):
-        if "HOME" in os.environ:
-            os.umask(int("077", 8))
-            gpgdir = os.path.join(os.environ["HOME"], ".gnupg")
+        if 'HOME' in os.environ:
+            os.umask(int('077', 8))
+            gpgdir = os.path.join(os.environ['HOME'], '.gnupg')
             if not os.path.isdir(gpgdir):
                 try:
                     os.mkdir(gpgdir)
                 except OSError:
                     return
             try:
-                os.chmod(gpgdir, int("700", 8))
+                os.chmod(gpgdir, int('700', 8))
             except OSError:
                 return
-        if "DISPLAY" in os.environ:
-            os.environ["DISPLAY"] = ""
+        if 'DISPLAY' in os.environ:
+            os.environ['DISPLAY'] = ''
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-            description="Unpack an encrypted archive in gpg (pgp compatible) format.")
+            description='Unpack an encrypted archive in gpg (pgp compatible) format.')
 
-        parser.add_argument("files", nargs="+", metavar="file.gpg|file.pgp",
-                            help="GPG/PGP encrypted file.")
+        parser.add_argument('files', nargs='+', metavar='file.gpg|file.pgp',
+                            help='GPG/PGP encrypted file.')
 
         self._args = parser.parse_args(args)
 
     def _setLibraries(self, command):
-        libdir = os.path.join(os.path.dirname(command.getFile()), "lib")
+        libdir = os.path.join(os.path.dirname(command.getFile()), 'lib')
         if os.path.isdir(libdir):
-            if syslib.info.getSystem() == "linux":
-                if "LD_LIBRARY_PATH" in os.environ:
-                    os.environ["LD_LIBRARY_PATH"] = (
-                        libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"])
+            if syslib.info.getSystem() == 'linux':
+                if 'LD_LIBRARY_PATH' in os.environ:
+                    os.environ['LD_LIBRARY_PATH'] = (
+                        libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
                 else:
-                    os.environ["LD_LIBRARY_PATH"] = libdir
+                    os.environ['LD_LIBRARY_PATH'] = libdir
 
 
 class Ungpg(syslib.Dump):
@@ -94,7 +94,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -106,7 +106,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -120,8 +120,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

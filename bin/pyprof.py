@@ -5,8 +5,8 @@ Profile Python 3.x program.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -42,20 +42,20 @@ class Options(syslib.Dump):
         return self._args.lines[0]
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Profile Python 3.x program.")
+        parser = argparse.ArgumentParser(description='Profile Python 3.x program.')
 
-        parser.add_argument("-n", nargs=1, type=int, dest="lines", default=[20],
-                            metavar="K", help="Output first K lines.")
+        parser.add_argument('-n', nargs=1, type=int, dest='lines', default=[20],
+                            metavar='K', help='Output first K lines.')
 
-        parser.add_argument("file", nargs=1, metavar="file[.py]|file.pstats",
-                            help="Python module or pstats file.")
+        parser.add_argument('file', nargs=1, metavar='file[.py]|file.pstats',
+                            help='Python module or pstats file.')
 
         myArgs = []
         while len(args):
             myArgs.append(args[0])
-            if not args[0].startswith("-"):
+            if not args[0].startswith('-'):
                 break
-            elif args[0] == "-n" and len(args) >= 2:
+            elif args[0] == '-n' and len(args) >= 2:
                 args = args[1:]
                 myArgs.append(args[0])
             args = args[1:]
@@ -73,15 +73,15 @@ class Profiler(syslib.Dump):
     def run(self):
         file = self._options.getFile()
 
-        if not file.endswith(".pstats"):
-            if not file.endswith(".py"):
-                file = file + ".py"
+        if not file.endswith('.pstats'):
+            if not file.endswith('.py'):
+                file = file + '.py'
             file = self._profile(file, self._options.getModuleArgs())
 
         self._show(file, self._options.getLines())
 
     def _profile(self, moduleFile, moduleArgs):
-        statsFile = os.path.basename(moduleFile.rsplit(".", 1)[0] + ".pstats")
+        statsFile = os.path.basename(moduleFile.rsplit('.', 1)[0] + '.pstats')
         if os.path.isfile(statsFile):
             try:
                 os.remove(statsFile)
@@ -89,7 +89,7 @@ class Profiler(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot remove old "' + statsFile + '" file.')
 
         python3 = syslib.Command(file=sys.executable)
-        python3.setArgs(["-m", "cProfile", "-o", statsFile])
+        python3.setArgs(['-m', 'cProfile', '-o', statsFile])
 
         if os.path.isfile(moduleFile):
             command = syslib.Command(file=moduleFile)
@@ -102,7 +102,7 @@ class Profiler(syslib.Dump):
         command.setWrapper(python3)
         command.run()
 
-        print("pyprof:", command.args2cmd([command.getFile()] + moduleArgs))
+        print('pyprof:', command.args2cmd([command.getFile()] + moduleArgs))
         return statsFile
 
     def _show(self, statsFile, lines):
@@ -111,14 +111,14 @@ class Profiler(syslib.Dump):
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + statsFile + '" file.')
 
-        stats.strip_dirs().sort_stats("tottime", "cumtime").print_stats(lines)
+        stats.strip_dirs().sort_stats('tottime', 'cumtime').print_stats(lines)
 
 
 class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -130,7 +130,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -144,8 +144,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

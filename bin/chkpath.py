@@ -5,8 +5,8 @@ Check PATH and return correct settings.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -22,7 +22,7 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        self._path = os.environ["PATH"]
+        self._path = os.environ['PATH']
 
     def getPath(self):
         """
@@ -31,7 +31,7 @@ class Options(syslib.Dump):
         return self._path
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Check PATH and return correct settings.")
+        parser = argparse.ArgumentParser(description='Check PATH and return correct settings.')
 
         self._args = parser.parse_args(args)
 
@@ -44,13 +44,13 @@ class Chkpath(syslib.Dump):
         for directory in options.getPath().split(os.pathsep):
             if directory:
                 if not os.path.isdir(directory):
-                    print(directory + ": fail")
+                    print(directory + ': fail')
                 elif directory in path:
-                    print(directory + ": repeat")
+                    print(directory + ': repeat')
                 else:
-                    print(directory + ": ok")
+                    print(directory + ': ok')
                     path.append(directory)
-        print("\nThe correct PATH should be:")
+        print('\nThe correct PATH should be:')
         print(os.pathsep.join(path))
 
 
@@ -58,7 +58,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -70,7 +70,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -84,8 +84,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

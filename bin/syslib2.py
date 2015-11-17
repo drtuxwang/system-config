@@ -2,15 +2,15 @@
 """
 Python system interaction Library
 
-Version 5.1 (2015-10-20)
+Version 5.1.2 (2015-11-17)
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys
 if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 2.7, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 2.7, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import collections
@@ -18,7 +18,7 @@ import copy
 import distutils.version
 import glob
 import os
-if os.name == "nt":
+if os.name == 'nt':
     import platform
 import re
 import shutil
@@ -30,17 +30,17 @@ import time
 
 class Dump(object):
     """
-    This class provides a "dump()" method for printing all object attributes.
+    This class provides a 'dump()' method for printing all object attributes.
     """
 
-    def dump(self, prefix="self."):
+    def dump(self, prefix='self.'):
         """
         Dump object recursively.
 
-        prefix = Object address (ie "myobject.subobject.")
+        prefix = Object address (ie 'myobject.subobject.')
         """
-        if not prefix.endswith("."):
-            prefix += "."
+        if not prefix.endswith('.'):
+            prefix += '.'
 
         self._dumpAttributes(prefix, [])
 
@@ -48,22 +48,22 @@ class Dump(object):
         """
         Print attribute value.
 
-        prefix = Object address (ie "myobject.subobject")
+        prefix = Object address (ie 'myobject.subobject')
         dumped = List of dumped object addresses
         value  = Python dumpable or basic object
         """
         if self._isDumpable(value):
-            value._dumpAttributes(prefix + ".", dumped)
+            value._dumpAttributes(prefix + '.', dumped)
         elif type(value) == str:
-            print(prefix, '= "' + value.replace("\\", "\\\\").replace('"', '\\"') + '"')
+            print(prefix, '= "' + value.replace('\\', '\\\\').replace('"i', '\\"') + '"')
         else:
-            print(prefix, "=", value)
+            print(prefix, '=', value)
 
     def _dumpAttributes(self, prefix, dumped):
         """
         Dump all attributes.
 
-        prefix = Object address (ie "myobject.subobject.")
+        prefix = Object address (ie 'myobject.subobject.')
         dumped = List of dumped object addresses
         """
         address = hex(id(self))
@@ -78,13 +78,13 @@ class Dump(object):
                 else:
                     self.dumpValue(prefix + key, dumped, value)
         else:
-            print(prefix, str(self).replace(">", " reference " + str(nref) + ">"))
+            print(prefix, str(self).replace('>', ' reference ' + str(nref) + '>'))
 
     def _dumpContainer(self, prefix, dumped, name, data):
         """
         Dumps contents of dict, list, tuple or set object.
 
-        prefix = Object address (ie "myobject.subobject.")
+        prefix = Object address (ie 'myobject.subobject.')
         dumped = List of dumped object addresses
         name   = Python attribute name
         data   = Python dict, list, tuple or set object
@@ -92,24 +92,24 @@ class Dump(object):
         dataT = type(data)
 
         if dataT == dict:
-            print(prefix + name, "<dict object at", hex(id(self)) + ">")
+            print(prefix + name, '<dict object at', hex(id(self)) + '>')
             for key, value in sorted(data.items()):
-                self.dumpValue(prefix + name + "[" + str(key) + "]", dumped, value)
+                self.dumpValue(prefix + name + '[' + str(key) + ']', dumped, value)
 
         elif dataT == list:
-            print(prefix + name, "<list object at", hex(id(self)) + ">")
+            print(prefix + name, '<list object at', hex(id(self)) + '>')
             for i in range(len(data)):
-                self.dumpValue(prefix + name + "[" + str(i) + "]", dumped, data[i])
+                self.dumpValue(prefix + name + '[' + str(i) + ']', dumped, data[i])
 
         elif dataT == tuple:
-            print(prefix + name, "<tuple object at", hex(id(self)) + ">")
+            print(prefix + name, '<tuple object at', hex(id(self)) + '>')
             for i in range(len(data)):
-                self.dumpValue(prefix + name + "[" + str(i) + "]", dumped, data[i])
+                self.dumpValue(prefix + name + '[' + str(i) + ']', dumped, data[i])
 
         elif dataT == set:
-            print(prefix + name, "<set object at", hex(id(self)) + ">")
+            print(prefix + name, '<set object at', hex(id(self)) + '>')
             for item in data:
-                self.dumpValue(prefix + name + "[]", dumped, item)
+                self.dumpValue(prefix + name + '[]', dumped, item)
 
         else:
             raise NotImplementedError
@@ -133,12 +133,12 @@ class Dump(object):
 
     def _isDumpable(self, data):
         """
-        Return True if data has "dump()" method.
+        Return True if data has 'dump()' method.
 
         data = Any Python data object
         """
-        return (hasattr(data.__class__, "dump") and
-                isinstance(getattr(data.__class__, "dump"), collections.Callable))
+        return (hasattr(data.__class__, 'dump') and
+                isinstance(getattr(data.__class__, 'dump'), collections.Callable))
 
 
 class Background:
@@ -147,8 +147,8 @@ class Background:
     """
 
     def __init__(self):
-        filter = os.environ["_SYSTEM_BG"]
-        del os.environ["_SYSTEM_BG"]
+        filter = os.environ['_SYSTEM_BG']
+        del os.environ['_SYSTEM_BG']
         signal.signal(signal.SIGINT, self._signalIgnore)
         try:
             Command(file=sys.argv[1], args=sys.argv[2:]).run(filter=filter)
@@ -173,16 +173,16 @@ class Command(Dump):
     self._exitcode = Exitcode
     """
 
-    def __init__(self, program="", cmd="", file="", flags=None, args=None, pathextra=[],
-                 platform="", check=True):
+    def __init__(self, program='', cmd='', file='', flags=None, args=None, pathextra=[],
+                 platform='', check=True):
         """
-        program   = Command program name (ie "evince", "bin/acroread")
+        program   = Command program name (ie 'evince', 'bin/acroread')
         file      = Optional command file location (avoids searching)
         flags     = Optional command flags list
         args      = Optional command arguments list
         cmd       = Program and args list supplied as command string
         pathextra = Optional extra PATH to prefix in search
-        platform  = Optional platform (ie "windows-x86_64" for WINE)
+        platform  = Optional platform (ie 'windows-x86_64' for WINE)
         check     = Whether to stop if command file not found
         """
         self._program = program
@@ -203,20 +203,20 @@ class Command(Dump):
         else:
             self._args = args
 
-        self._stdout = ""
-        self._stderr = ""
+        self._stdout = ''
+        self._stderr = ''
         self._exitcode = 0
 
         if self._program and not file:
             if (os.sep in self._program and os.path.isfile(self._program) and
-                    not sys.argv[0].endswith(self._program + ".py")):
+                    not sys.argv[0].endswith(self._program + '.py')):
                 self._file = self._program
             else:
                 self._locate(pathextra, platform, check)
 
     def run(
-            self, directory=None, env=None, filter="", logfile="", mode="interactive",
-            replace=("", ""), pipes=(), stdin=[], error2output=False, outputFile="",
+            self, directory=None, env=None, filter='', logfile='', mode='interactive',
+            replace=('', ''), pipes=(), stdin=[], error2output=False, outputFile='',
             append=False):
         """
         directory    = <directory>   - Directory to run command in
@@ -224,13 +224,13 @@ class Command(Dump):
                                        (not for unfiltered interactive)
         filter       = <pattern>     - Regular expression filtering/selection.
         logfile      = <file>        - Redirect stdout/stderr to log file (daemon mode only).
-        mode         = "batch"       - Run as a batch process and return output matching filter.
-        mode         = "background"  - Run as background process with optional filtering.
-        mode         = "child"       - Return child process object with stdin, stdout
+        mode         = 'batch'       - Run as a batch process and return output matching filter.
+        mode         = 'background'  - Run as background process with optional filtering.
+        mode         = 'child'       - Return child process object with stdin, stdout
                                        and stderr pipes.
-        mode         = "daemon"      - Run as a background daemon and log or forget all output.
-        mode         = "exec"        - Run as replacement of current process.
-        mode         = "interactive" - Run interactively with optional filtering/replacement.
+        mode         = 'daemon'      - Run as a background daemon and log or forget all output.
+        mode         = 'exec'        - Run as replacement of current process.
+        mode         = 'interactive' - Run interactively with optional filtering/replacement.
         replace      = (str1, str2)  - Replace all occurance of str1 with str2
                                        (interactive mode only).
         pipes        = [Command]     - Command class objects to form execution pipe
@@ -262,7 +262,7 @@ class Command(Dump):
             pipe = True
             cmdline = subprocess.list2cmdline(self.getCommandLine())
             for cmd in pipes:
-                cmdline += " | " + subprocess.list2cmdline(cmd.getCommandLine())
+                cmdline += ' | ' + subprocess.list2cmdline(cmd.getCommandLine())
         else:
             pipe = False
             cmdline = self.getCommandLine()
@@ -278,16 +278,16 @@ class Command(Dump):
                 if env[key] is None:
                     del env[key]
 
-        if mode == "background":
+        if mode == 'background':
             try:
                 if filter:
-                    os.environ["_SYSTEM_BG"] = filter
+                    os.environ['_SYSTEM_BG'] = filter
                     if env is None:
                         child = subprocess.Popen([sys.executable, __file__] + cmdline, shell=pipe)
                     else:
                         child = subprocess.Popen([sys.executable, __file__] + cmdline,
                                                  shell=pipe, env=env)
-                    del os.environ["_SYSTEM_BG"]
+                    del os.environ['_SYSTEM_BG']
                 elif env is None:
                     child = subprocess.Popen(cmdline, shell=pipe)
                 else:
@@ -295,8 +295,8 @@ class Command(Dump):
             except OSError as exception:
                 self._oserror(exception)
 
-        elif mode == "exec":
-            if os.name == "nt":  # Avoids Windows execvpn exit status bug
+        elif mode == 'exec':
+            if os.name == 'nt':  # Avoids Windows execvpn exit status bug
                 if sys.version_info < (3, 0):
                     stdoutWrite = sys.stdout.write
                     stderrWrite = sys.stderr.write
@@ -332,15 +332,15 @@ class Command(Dump):
             except OSError as exception:
                 self._oserror(exception)
 
-        elif mode == "daemon":
-            os.environ["_SYSTEM_DM"] = logfile
+        elif mode == 'daemon':
+            os.environ['_SYSTEM_DM'] = logfile
             if env is None:
                 child = subprocess.Popen([sys.executable, __file__] + cmdline, shell=pipe)
             else:
                 child = subprocess.Popen([sys.executable, __file__] + cmdline, shell=pipe, env=env)
-            del os.environ["_SYSTEM_DM"]
+            del os.environ['_SYSTEM_DM']
 
-        elif mode == "interactive" and not filter and replace == ("", "") and not stdin:
+        elif mode == 'interactive' and not filter and replace == ('', '') and not stdin:
             try:
                 if env is None:
                     self._exitcode = subprocess.call(cmdline, shell=pipe)
@@ -361,22 +361,22 @@ class Command(Dump):
                                              stderr=stderr, stdin=subprocess.PIPE, env=env)
             except OSError as exception:
                 self._oserror(exception)
-            if mode == "child":
+            if mode == 'child':
                 if directory:
                     os.chdir(pwd)
                 return child
             for line in stdin:
                 try:
-                    child.stdin.write(line.encode("utf-8") + b"\n")
+                    child.stdin.write(line.encode('utf-8') + b'\n')
                 except IOError:
                     break
             child.stdin.close()
             isfilter = re.compile(filter)
 
-            if mode in ("background", "interactive"):
+            if mode in ('background', 'interactive'):
                 while True:
                     try:
-                        line = child.stdout.readline().decode("utf-8", "replace")
+                        line = child.stdout.readline().decode('utf-8', 'replace')
                     except (IOError, KeyboardInterrupt):
                         break
                     if not line:
@@ -389,7 +389,7 @@ class Command(Dump):
                                               self._file + '" program.')
                 while True:
                     try:
-                        line = child.stderr.readline().decode("utf-8", "replace")
+                        line = child.stderr.readline().decode('utf-8', 'replace')
                     except (IOError, KeyboardInterrupt):
                         break
                     if not line:
@@ -397,17 +397,17 @@ class Command(Dump):
                     if not filter or not isfilter.search(line):
                         sys.stdout.write(line.replace(replace[0], replace[1]))
 
-            elif mode == "batch":
+            elif mode == 'batch':
                 if outputFile:
                     if append:
                         try:
-                            ofile = open(outputFile, "ab")
+                            ofile = open(outputFile, 'ab')
                         except IOError:
                             raise SyslibError(sys.argv[0] + ': Cannot append to "' +
                                               outputFile + '" output file.')
                     else:
                         try:
-                            ofile = open(outputFile, "wb")
+                            ofile = open(outputFile, 'wb')
                         except IOError:
                             raise SyslibError(sys.argv[0] + ': Cannot create "' +
                                               outputFile + '" output file.')
@@ -423,23 +423,23 @@ class Command(Dump):
                 else:
                     while True:
                         try:
-                            line = child.stdout.readline().decode("utf-8", "replace")
+                            line = child.stdout.readline().decode('utf-8', 'replace')
                         except (IOError, KeyboardInterrupt):
                             break
                         if not line:
                             break
                         if isfilter.search(line):
-                            self._stdout.append(line.rstrip("\r\n"))
+                            self._stdout.append(line.rstrip('\r\n'))
                 if not error2output:
                     while True:
                         try:
-                            line = child.stderr.readline().decode("utf-8", "replace")
+                            line = child.stderr.readline().decode('utf-8', 'replace')
                         except (IOError, KeyboardInterrupt):
                             break
                         if not line:
                             break
                         if isfilter.search(line):
-                            self._stderr.append(line.rstrip("\r\n"))
+                            self._stderr.append(line.rstrip('\r\n'))
 
             else:
                 raise SyslibError(sys.argv[0] +
@@ -463,15 +463,15 @@ class Command(Dump):
         Split command string into arguments list.
         """
         chars = []
-        backslashs = ""
+        backslashs = ''
 
         for char in cmd:
             if char == '\\':
                 backslashs += char
             elif char == '"' and backslashs:
                 nbackslashs = len(backslashs)
-                chars.extend(["\\"] * (nbackslashs//2))
-                backslashs = ""
+                chars.extend(['\\'] * (nbackslashs//2))
+                backslashs = ''
                 if nbackslashs % 2:
                     chars.append(1)
                 else:
@@ -479,13 +479,13 @@ class Command(Dump):
             else:
                 if backslashs:
                     chars.extend(list(backslashs))
-                    backslashs = ""
+                    backslashs = ''
                 chars.append(char)
 
         args = []
         arg = []
         quoted = False
-        chars.append(" ")
+        chars.append(' ')
         for char in chars:
             if char == '"':
                 quoted = not quoted
@@ -507,7 +507,7 @@ class Command(Dump):
         """
         Return True if file is defined.
         """
-        return self._file != ""
+        return self._file != ''
 
     def getProgram(self):
         """
@@ -585,7 +585,7 @@ class Command(Dump):
         """
         Set wrapper program for command.
 
-        command = Wrapper program's Command class object
+        command = Wrapper program"s Command class object
         """
         if not command.isFound():
             raise SyslibError(sys.argv[0] + ': Cannot set blank wrapper program for "' +
@@ -596,20 +596,20 @@ class Command(Dump):
         """
         Return the command line as a list.
         """
-        if os.name == "nt":
+        if os.name == 'nt':
             try:
-                ifile = open(self._file, "rb")
+                ifile = open(self._file, 'rb')
             except IOError:
                 pass
             else:
-                line = ifile.readline().decode("utf-8", "replace").rstrip("\r\n")
+                line = ifile.readline().decode('utf-8', 'replace').rstrip('\r\n')
                 ifile.close()
-                if line.startswith("#!/"):
-                    wrapper = line.replace("#!/usr/bin/env ", "").split()
-                    if wrapper[0].startswith("python"):
+                if line.startswith('#!/'):
+                    wrapper = line.replace('#!/usr/bin/env ', '').split()
+                    if wrapper[0].startswith('python'):
                         return [sys.executable, self._file] + self._flags + self._args
                     elif wrapper:
-                        return ([Command(wrapper[0].split("/")[-1],
+                        return ([Command(wrapper[0].split('/')[-1],
                                 args=wrapper[1:]).getCommandLine()] + self._wrapper +
                                 [self._file] + self._flags+self._args)
 
@@ -639,13 +639,13 @@ class Command(Dump):
                 return True
         return False
 
-    def getOutput(self, pattern=""):
+    def getOutput(self, pattern=''):
         """
         Return list of lines in stdout that match pattern. If no pattern return all.
 
         pattern = Regular expression
         """
-        if pattern == "":
+        if pattern == '':
             return self._stdout
 
         stdout = []
@@ -672,13 +672,13 @@ class Command(Dump):
             if ispattern.search(line):
                 return True
 
-    def getError(self, pattern=""):
+    def getError(self, pattern=''):
         """
         Return list of lines in stderr that match pattern. If no pattern return all.
 
         pattern = Regular expression
         """
-        if pattern == "":
+        if pattern == '':
             return self._stderr
 
         stderr = []
@@ -689,11 +689,11 @@ class Command(Dump):
         return stderr
 
     def _checkGlibc(self, files):
-        hasGlibc = re.compile("-glibc_\d+[.]\d+([.]\d+)?")
+        hasGlibc = re.compile('-glibc_\d+[.]\d+([.]\d+)?')
         nfiles = []
         for file in files:
             if hasGlibc.search(file):
-                version = file.split("-glibc_")[1].split("-")[0].split("/")[0]
+                version = file.split('-glibc_')[1].split('-')[0].split('/')[0]
                 if (distutils.version.LooseVersion(self._getGlibc()) >=
                         distutils.version.LooseVersion(version)):
                     nfiles.append(file)
@@ -704,75 +704,75 @@ class Command(Dump):
     def _getGlibc(self):
         """
         Return glibc version string
-        (based on glibc version used to compile "ldd" or return "0.0" for non Linux)
+        (based on glibc version used to compile 'ldd' or return '0.0' for non Linux)
         """
-        if "glibc" not in _cache:
-            if _cache["osname"] == "linux":
-                ldd = Command("ldd", args=["--version"], check=False)
+        if 'glibc' not in _cache:
+            if _cache['osname'] == 'linux':
+                ldd = Command('ldd', args=['--version'], check=False)
                 if ldd.isFound():
-                    ldd.run(filter="^ldd ", mode="batch")
-                    _cache["glibc"] = ldd.getOutput()[0].split()[-1]
+                    ldd.run(filter='^ldd ', mode='batch')
+                    _cache['glibc'] = ldd.getOutput()[0].split()[-1]
                 else:
                     raise SyslibError(sys.argv[0] + ': Cannot find "ldd" command.')
             else:
-                _cache["glibc"] = "0.0"
+                _cache['glibc'] = '0.0'
 
-        return _cache["glibc"]
+        return _cache['glibc']
 
     def _locate(self, pathextra, platform, check):
         if not platform:
             platform = info.getPlatform()
 
-        if platform in ("windows-x86_64", "windows-x86"):
-            extensions = ["", ".py"]
-            if "PATHEXT" in os.environ:
-                extensions.extend(os.environ["PATHEXT"].lower().split(os.pathsep))
+        if platform in ('windows-x86_64', 'windows-x86'):
+            extensions = ['', '.py']
+            if 'PATHEXT' in os.environ:
+                extensions.extend(os.environ['PATHEXT'].lower().split(os.pathsep))
         else:
-            extensions = [""]
+            extensions = ['']
 
         directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-        if os.path.basename(directory) == "bin":
+        if os.path.basename(directory) == 'bin':
             directory = os.path.dirname(directory)
             files = []
 
-            if platform in ("linux-x86_64", "linux-x86"):
-                if platform == "linux-x86_64":
-                    files = self._checkGlibc(glob.glob(os.path.join(directory, "*",
-                                             "linux64_*-x86*", self._program)))
+            if platform in ('linux-x86_64', 'linux-x86'):
+                if platform == 'linux-x86_64':
+                    files = self._checkGlibc(glob.glob(os.path.join(directory, '*',
+                                             'linux64_*-x86*', self._program)))
                 if not files:
-                    files = self._checkGlibc(glob.glob(os.path.join(directory, "*",
-                                             "linux_*-x86*", self._program)))
+                    files = self._checkGlibc(glob.glob(os.path.join(directory, '*',
+                                             'linux_*-x86*', self._program)))
 
-            elif platform in ("macos-x86_64", "macos-x86"):
-                if platform == "macos-x86_64":
-                    files = glob.glob(os.path.join(directory, "*", "macos64_*-x86*", self._program))
+            elif platform in ('macos-x86_64', 'macos-x86'):
+                if platform == 'macos-x86_64':
+                    files = glob.glob(os.path.join(directory, '*', 'macos64_*-x86*', self._program))
                 if not files:
-                    files = glob.glob(os.path.join(directory, "*", "macos_*-x86*", self._program))
+                    files = glob.glob(os.path.join(directory, '*', 'macos_*-x86*', self._program))
 
-            elif platform in ("sunos-x86_64", "sunos-x86"):
-                if platform == "sunos-x86_64":
-                    files = glob.glob(os.path.join(directory, "*", "sunos64_*-x86*", self._program))
+            elif platform in ('sunos-x86_64', 'sunos-x86'):
+                if platform == 'sunos-x86_64':
+                    files = glob.glob(os.path.join(directory, '*', 'sunos64_*-x86*', self._program))
                 if not files:
-                    files = glob.glob(os.path.join(directory, "*", "sunos_*-x86*", self._program))
+                    files = glob.glob(os.path.join(directory, '*', 'sunos_*-x86*', self._program))
 
-            elif platform in ("windows-x86_64", "windows-x86"):
-                if platform in ("windows-x86_64"):
+            elif platform in ('windows-x86_64', 'windows-x86'):
+                if platform in ('windows-x86_64'):
                     for extension in extensions:
-                        files = glob.glob(os.path.join(directory, "*",
-                                          "windows64_*-x86*", self._program + extension))
+                        files = glob.glob(os.path.join(directory, '*',
+                                          'windows64_*-x86*', self._program + extension))
                         if files:
                             break
                 if not files:
                     for extension in extensions:
-                        files = glob.glob(os.path.join(directory, "*",
-                                                       "windows_*-x86*", self._program + extension))
+                        files = glob.glob(os.path.join(directory, '*',
+                                                       'windows_*-x86*', self._program + extension))
                         if files:
                             break
 
             # Search directories with 4 or more characters as fall back for local port
             if not files:
                 for extension in extensions:
-                    files = glob.glob(os.path.join(directory, "????*",
+                    files = glob.glob(os.path.join(directory, '????*',
                                       self._program + extension))
                     if files:
                         break
@@ -783,23 +783,23 @@ class Command(Dump):
 
         # Shake PATH to make it unique
         paths = []
-        for path in os.environ["PATH"].split(os.pathsep):
+        for path in os.environ['PATH'].split(os.pathsep):
             if path:
                 if path not in paths:
                     paths.append(path)
 
         # Prevent recursion
         program = os.path.basename(self._program)
-        if os.path.basename(sys.argv[0]) in (program, program + ".py"):
+        if os.path.basename(sys.argv[0]) in (program, program + '.py'):
             mydir = os.path.dirname(sys.argv[0])
             if mydir in paths:
                 paths = paths[paths.index(mydir) + 1:]
 
         # Search PATH
-        if sys.argv[0].endswith(".py"):
+        if sys.argv[0].endswith('.py'):
             mynames = (sys.argv[0][:-3], sys.argv[0])
         else:
-            mynames = (sys.argv[0], sys.argv[0] + ".py")
+            mynames = (sys.argv[0], sys.argv[0] + '.py')
         for directory in pathextra + paths:
             if os.path.isdir(directory):
                 for extension in extensions:
@@ -812,9 +812,9 @@ class Command(Dump):
             raise SyslibError(sys.argv[0] + ': Cannot find required "' + program + '" software.')
 
     def _oserror(self, exception):
-        if "No such file" in exception.args[1]:
+        if 'No such file' in exception.args[1]:
             raise SyslibError(sys.argv[0] + ': Cannot find "' + self._file + '" program.')
-        elif "Permission denied" in exception.args:
+        elif 'Permission denied' in exception.args:
             raise SyslibError(sys.argv[0] + ': Cannot execute "' + self._file + '" program.')
         raise SyslibError(sys.argv[0] + ': Error in calling "' + self._file + '" program.')
 
@@ -827,18 +827,18 @@ class Daemon:
     def __init__(self):
         self._bufferSize = 131072
 
-        logfile = os.environ["_SYSTEM_DM"]
-        del os.environ["_SYSTEM_DM"]
+        logfile = os.environ['_SYSTEM_DM']
+        del os.environ['_SYSTEM_DM']
         mypid = os.getpid()
-        if os.name == "posix":
+        if os.name == 'posix':
             os.setpgid(mypid, mypid)  # New PGID
         try:
             child = Command(file=sys.argv[1],
-                            args=sys.argv[2:]).run(mode="child", error2output=True)
+                            args=sys.argv[2:]).run(mode='child', error2output=True)
         except OSError as exception:
-            if "No such file" in exception.args[1]:
+            if 'No such file' in exception.args[1]:
                 raise SyslibError(sys.argv[0] + ': Cannot find "' + sys.argv[1] + '" program.')
-            elif "Permission denied" in exception.args:
+            elif 'Permission denied' in exception.args:
                 raise SyslibError(sys.argv[0] + ': Cannot execute "' + sys.argv[1] + '" program.')
             raise SyslibError(sys.argv[0] + ': Error in calling "' + sys.argv[1] + '" program.')
         child.stdin.close()
@@ -849,7 +849,7 @@ class Daemon:
 
     def _runLog(self, child, logfile):
         try:
-            with open(logfile, "ab") as ofile:
+            with open(logfile, 'ab') as ofile:
                 while True:
                     byte = child.stdout.read(1)
                     if not byte:
@@ -881,7 +881,7 @@ class FileStat(Dump):
     self._ctime = Time of creation
     """
 
-    def __init__(self, file="", size=None):
+    def __init__(self, file='', size=None):
         """
         file = filename
 
@@ -903,14 +903,14 @@ class FileStat(Dump):
 
     def dumpValue(self, prefix, dumped, value):
         """
-        Print contents of object (overrides default for "_mode")
+        Print contents of object (overrides default for '_mode')
 
-        prefix = Object address (ie "myobject.subobject")
+        prefix = Object address (ie 'myobject.subobject')
         dumped = List of dumped object addresses
         value  = Python dumpable or basic object
         """
-        if prefix.endswith("._mode"):
-            print(prefix, "=", oct(value))
+        if prefix.endswith('._mode'):
+            print(prefix, '=', oct(value))
         else:
             super().dumpValue(prefix, dumped, value)
 
@@ -982,106 +982,106 @@ class FileStat(Dump):
 
     def getTimeLocal(self):
         """
-        Return time of last modification in full ISO local time format (ie "2011-12-31-12:30:28")
+        Return time of last modification in full ISO local time format (ie '2011-12-31-12:30:28')
         """
-        return time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime(self._mtime))
+        return time.strftime('%Y-%m-%d-%H:%M:%S', time.localtime(self._mtime))
 
 
 class SystemInfo(Dump):
     """
     This class determines system information.
-    The "__name__.info" object is a instance of SystemInfo.
+    The '__name__.info' object is a instance of SystemInfo.
     """
 
     def __init__(self):
-        self._islabel = re.compile("(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
+        self._islabel = re.compile('(?!-)[A-Z\d-]{1,63}(?<!-)$', re.IGNORECASE)
 
-        if "osname" not in _cache:
-            _cache["osname"] = "Unknown"
-            _cache["machine"] = "Unknown"
+        if 'osname' not in _cache:
+            _cache['osname'] = 'Unknown'
+            _cache['machine'] = 'Unknown'
 
-            if os.name == "nt":
-                _cache["osname"] = "windows"
-                self._isenvName = re.compile("^\w+$", re.IGNORECASE)
-                if "PROCESSOR_ARCHITECTURE" in os.environ:
-                    if os.environ["PROCESSOR_ARCHITECTURE"] == "AMD64":
-                        _cache["machine"] = "x86_64"
-                    elif ("PROCESSOR_ARCHITEW6432" in os.environ and
-                          os.environ["PROCESSOR_ARCHITEW6432"] == "AMD64"):
-                        _cache["machine"] = "x86_64"
-                    elif os.environ["PROCESSOR_ARCHITECTURE"] == "x86":
-                        _cache["machine"] = "x86"
+            if os.name == 'nt':
+                _cache['osname'] = 'windows'
+                self._isenvName = re.compile('^\w+$', re.IGNORECASE)
+                if 'PROCESSOR_ARCHITECTURE' in os.environ:
+                    if os.environ['PROCESSOR_ARCHITECTURE'] == 'AMD64':
+                        _cache['machine'] = 'x86_64'
+                    elif ('PROCESSOR_ARCHITEW6432' in os.environ and
+                            os.environ['PROCESSOR_ARCHITEW6432'] == 'AMD64'):
+                        _cache['machine'] = 'x86_64'
+                    elif os.environ['PROCESSOR_ARCHITECTURE'] == 'x86':
+                        _cache['machine'] = 'x86'
                     # This is ok but avoid platform module for other things
-                    _cache["kernel"] = platform.version()
+                    _cache['kernel'] = platform.version()
 
-            elif os.name == "posix":
-                osname, _cache["hostname"], _cache["kernel"], release, arch = os.uname()
-                _cache["osname"] = osname.replace("-", "").lower()
-                self._isenvName = re.compile("^[A-Z_]\w*$", re.IGNORECASE)
+            elif os.name == 'posix':
+                osname, _cache['hostname'], _cache['kernel'], release, arch = os.uname()
+                _cache['osname'] = osname.replace('-', '').lower()
+                self._isenvName = re.compile('^[A-Z_]\w*$', re.IGNORECASE)
 
-                if _cache["osname"].startswith("cygwin"):
-                    if arch == "x86_64":
-                        _cache["machine"] = "x86_64"
-                    elif re.search("i.86", arch):
-                        if "WOW64" in _cache["osname"]:
-                            _cache["machine"] = "x86_64"
+                if _cache['osname'].startswith('cygwin'):
+                    if arch == 'x86_64':
+                        _cache['machine'] = 'x86_64'
+                    elif re.search('i.86', arch):
+                        if 'WOW64' in _cache['osname']:
+                            _cache['machine'] = 'x86_64'
                         else:
-                            _cache["machine"] = "x86"
-                    _cache["osname"] = "windows"
-                    registryKey = ("/proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/"
-                                   "Microsoft/Windows NT/CurrentVersion")
+                            _cache['machine'] = 'x86'
+                    _cache['osname'] = 'windows'
+                    registryKey = ('/proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/'
+                                   'Microsoft/Windows NT/CurrentVersion')
                     try:
-                        with open(os.path.join(registryKey, "CurrentVersion"),
-                                  errors="replace") as ifile:
-                            _cache["kernel"] = ifile.readline()
-                        with open(os.path.join(registryKey, "CurrentBuildNumber"),
-                                  errors="replace") as ifile:
-                            _cache["kernel"] += "." + ifile.readline()
+                        with open(os.path.join(registryKey, 'CurrentVersion'),
+                                  errors='replace') as ifile:
+                            _cache['kernel'] = ifile.readline()
+                        with open(os.path.join(registryKey, 'CurrentBuildNumber'),
+                                  errors='replace') as ifile:
+                            _cache['kernel'] += '.' + ifile.readline()
                     except IOError:
                         raise SyslibError(sys.argv[0] + ': Error reading "' +
                                           registryKey + '" registry key.')
 
-                elif _cache["osname"] == "Darwin":
-                    _cache["osname"] = "macos"
-                    if arch == "x86_64":
-                        _cache["machine"] = "x86_64"
-                    elif arch == "i386":
-                        sysctl = Command(file="/usr/sbin/sysctl", args=["-a"])
-                        sysctl.run(filter="hw.cpu64bit_capable: 1", mode="batch")
+                elif _cache['osname'] == 'Darwin':
+                    _cache['osname'] = 'macos'
+                    if arch == 'x86_64':
+                        _cache['machine'] = 'x86_64'
+                    elif arch == 'i386':
+                        sysctl = Command(file='/usr/sbin/sysctl', args=['-a'])
+                        sysctl.run(filter='hw.cpu64bit_capable: 1', mode='batch')
                         if sysctl.hasOutput():
-                            _cache["machine"] = "x86_64"
+                            _cache['machine'] = 'x86_64'
                         else:
-                            _cache["machine"] = "x86"
+                            _cache['machine'] = 'x86'
 
-                elif _cache["osname"] == "linux":
-                    if arch == "ppc64":
-                        _cache["machine"] = "power64"
-                    elif arch == "sparc64":
-                        _cache["machine"] = "sparc64"
-                    elif arch == "x86_64":
-                        _cache["machine"] = "x86_64"
-                    elif re.search("i.86", arch):
-                        _cache["machine"] = "x86"
+                elif _cache['osname'] == 'linux':
+                    if arch == 'ppc64':
+                        _cache['machine'] = 'power64'
+                    elif arch == 'sparc64':
+                        _cache['machine'] = 'sparc64'
+                    elif arch == 'x86_64':
+                        _cache['machine'] = 'x86_64'
+                    elif re.search('i.86', arch):
+                        _cache['machine'] = 'x86'
 
-                elif _cache["osname"] == "sunOS":
-                    if arch == "i86pc":
-                        if os.path.isdir("/lib/amd64"):
-                            _cache["machine"] = "x86_64"
+                elif _cache['osname'] == 'sunOS':
+                    if arch == 'i86pc':
+                        if os.path.isdir('/lib/amd64'):
+                            _cache['machine'] = 'x86_64'
                         else:
-                            _cache["machine"] = "x86"
+                            _cache['machine'] = 'x86'
                     else:
-                        _cache["machine"] = "sparc64"
+                        _cache['machine'] = 'sparc64'
 
-            _cache["platform"] = _cache["osname"] + "-" + _cache["machine"]
+            _cache['platform'] = _cache['osname'] + '-' + _cache['machine']
 
     def idnaHost(self, host):
         """
         Return hostname in IDNA format.
         """
         if sys.version_info < (3, 0):
-            return host.decode("utf-8", "replace").encode("idna")
+            return host.decode('utf-8', 'replace').encode('idna')
         else:
-            return str(host.encode("idna"))[2:-1]
+            return str(host.encode('idna'))[2:-1]
 
     def newest(self, files):
         """
@@ -1089,7 +1089,7 @@ class SystemInfo(Dump):
 
         files = List of files
         """
-        nfile = ""
+        nfile = ''
         for file in files:
             if os.path.isfile(file) or os.path.isdir(file):
                 if nfile:
@@ -1108,7 +1108,7 @@ class SystemInfo(Dump):
 
         files = List of files
         """
-        nfile = ""
+        nfile = ''
         for file in files:
             if os.path.isfile(file) or os.path.isdir(file):
                 if nfile:
@@ -1127,8 +1127,8 @@ class SystemInfo(Dump):
         """
         isMatch = re.compile(pattern)
         try:
-            with open(file, "rb") as ifile:
-                string = ""
+            with open(file, 'rb') as ifile:
+                string = ''
                 while True:
                     data = ifile.read(4096)
                     if len(data) == 0:
@@ -1140,13 +1140,13 @@ class SystemInfo(Dump):
                             if len(string) >= 4:
                                 if isMatch.search(string):
                                     return string
-                            string = ""
+                            string = ''
             if len(string) >= 4:
                 if isMatch.search(string):
                     return string
         except IOError:
             pass
-        return ""
+        return ''
 
     def isenvName(self, name):
         """
@@ -1160,59 +1160,59 @@ class SystemInfo(Dump):
         """
         Return True if host is a valid hostname, hostname.domain, FQDN or IP v4 address.
 
-        Host label characters must be alphanumeric or "-"
+        Host label characters must be alphanumeric or '-'
         Host label must have 1-63 characters
-        Host label cannot start or end with "-"
+        Host label cannot start or end with '-'
         FQDN has max of 255 characters
         Uses Internationalized Domain Names in Applications (IDNA) coding
         """
         host = self.idnaHost(host)
         if len(host) > 255:
             return False
-        return all(self._islabel.match(label) for label in host.rstrip(".").split("."))
+        return all(self._islabel.match(label) for label in host.rstrip('.').split('.'))
 
     def getSystem(self):
         """
-        Return system name (ie "linux", "windows")
+        Return system name (ie 'linux', 'windows')
         """
-        return _cache["osname"]
+        return _cache['osname']
 
     def getKernel(self):
         """
-        Return system kernel version (ie "2.6.32-431.el6.x86_64", "6.1.7601")
+        Return system kernel version (ie '2.6.32-431.el6.x86_64', '6.1.7601')
         """
-        return _cache["kernel"]
+        return _cache['kernel']
 
     def getMachine(self):
         """
-        Return machine type (ie "x86", "x86_64")
+        Return machine type (ie 'x86', 'x86_64')
         """
-        return _cache["machine"]
+        return _cache['machine']
 
     def getPlatform(self):
         """
-        Return platform name (ie "linux-x86_64", "windows-x86_64)
+        Return platform name (ie 'linux-x86_64', 'windows-x86_64)
         """
-        return _cache["platform"]
+        return _cache['platform']
 
     def getHostname(self):
         """
         Return my hostname.
         """
-        if "hostname" not in _cache:
-            _cache["hostname"] = socket.gethostname()
-        return _cache["hostname"].split(".")[0].lower()
+        if 'hostname' not in _cache:
+            _cache['hostname'] = socket.gethostname()
+        return _cache['hostname'].split('.')[0].lower()
 
     def getUsername(self):
         """
         Return my username.
         """
-        if "username" not in _cache:
-            _cache["username"] = "Unknown"
-            for environment in ("LOGNAME", "USER", "USERNAME"):
+        if 'username' not in _cache:
+            _cache['username'] = 'Unknown'
+            for environment in ('LOGNAME', 'USER', 'USERNAME'):
                 if environment in os.environ:
-                    _cache["username"] = os.environ[environment]
-        return _cache["username"]
+                    _cache['username'] = os.environ[environment]
+        return _cache['username']
 
 
 class SyslibError(Dump, Exception):
@@ -1242,16 +1242,16 @@ class Task(Dump):
     self._process  = Dictionary containing process information
     """
 
-    def __init__(self, user=""):
+    def __init__(self, user=''):
         """
-        user = Username or "<all>"
+        user = Username or '<all>'
         """
         self._process = {}
         if not user:
             user = info.getUsername()
         ps = self._getps()
-        ps.run(mode="batch")
-        if ps.getProgram() == "tasklist":
+        ps.run(mode='batch')
+        if ps.getProgram() == 'tasklist':
             indice = [0]
             position = 0
             for column in ps.getOutput()[2].split():
@@ -1259,37 +1259,37 @@ class Task(Dump):
                 indice.append(position)
             for line in ps.getOutput()[3:]:
                 process = {}
-                process["USER"] = line[indice[6]:indice[7]-1].strip()
-                if "\\" in process["USER"]:
-                    process["USER"] = process["USER"].split("\\")[1]
-                if user in (process["USER"], "<all>"):
+                process['USER'] = line[indice[6]:indice[7]-1].strip()
+                if '\\' in process['USER']:
+                    process['USER'] = process['USER'].split('\\')[1]
+                if user in (process['USER'], '<all>'):
                     pid = int(line[indice[1]:indice[2]-1])
-                    process["PPID"] = 1
-                    process["PGID"] = pid
-                    process["PRI"] = "?"
-                    process["NICE"] = "?"
-                    process["TTY"] = line[indice[2]:indice[3]-1].strip().replace("Tcp#", "")
-                    process["MEMORY"] = int(line[indice[4]:indice[5]-1].strip().replace(
-                                            ",", "").replace(".", "").replace(" K", ""))
-                    process["CPUTIME"] = line[indice[7]:indice[8]-1].strip()
-                    process["ETIME"] = "?"
-                    process["COMMAND"] = line[indice[0]:indice[1]-1].strip()
+                    process['PPID'] = 1
+                    process['PGID'] = pid
+                    process['PRI'] = '?'
+                    process['NICE'] = '?'
+                    process['TTY'] = line[indice[2]:indice[3]-1].strip().replace('Tcp#', '')
+                    process['MEMORY'] = int(line[indice[4]:indice[5]-1].strip().replace(
+                                            ',', '').replace('.', '').replace(' K', ''))
+                    process['CPUTIME'] = line[indice[7]:indice[8]-1].strip()
+                    process['ETIME'] = '?'
+                    process['COMMAND'] = line[indice[0]:indice[1]-1].strip()
                     self._process[pid] = process
         else:
             for line in ps.getOutput()[1:]:
                 process = {}
-                process["USER"] = line.split()[0]
-                if user in (process["USER"], "<all>"):
+                process['USER'] = line.split()[0]
+                if user in (process['USER'], '<all>'):
                     pid = int(line.split()[1])
-                    process["PPID"] = int(line.split()[2])
-                    process["PGID"] = int(line.split()[3])
-                    process["PRI"] = line.split()[4]
-                    process["NICE"] = line.split()[5]
-                    process["TTY"] = line.split()[6]
-                    process["MEMORY"] = int(line.split()[7])
-                    process["CPUTIME"] = line.split()[8]
-                    process["ETIME"] = line.split()[9]
-                    process["COMMAND"] = " ".join(line.split()[10:])
+                    process['PPID'] = int(line.split()[2])
+                    process['PGID'] = int(line.split()[3])
+                    process['PRI'] = line.split()[4]
+                    process['NICE'] = line.split()[5]
+                    process['TTY'] = line.split()[6]
+                    process['MEMORY'] = int(line.split()[7])
+                    process['CPUTIME'] = line.split()[8]
+                    process['ETIME'] = line.split()[9]
+                    process['COMMAND'] = ' '.join(line.split()[10:])
                     self._process[pid] = process
 
     def pgid2pids(self, pgid):
@@ -1303,7 +1303,7 @@ class Task(Dump):
                               '.Task" invalid pgid type "' + str(pgid) + '".')
         pids = []
         for pid in self.getPids():
-            if self._process[pid]["PGID"] == pgid:
+            if self._process[pid]['PGID'] == pgid:
                 pids.append(pid)
         return sorted(pids)
 
@@ -1314,53 +1314,53 @@ class Task(Dump):
         pname = Program name
         """
         pids = []
-        if info.getSystem() == "windows":
-            isexist = re.compile("^" + pname + "([.]exe|$)")
+        if info.getSystem() == 'windows':
+            isexist = re.compile('^' + pname + '([.]exe|$)')
         else:
-            isexist = re.compile("^(|[^ ]+/)" + pname + "( |$)")
+            isexist = re.compile('^(|[^ ]+/)' + pname + '( |$)')
         for pid in self.getPids():
-            if isexist.search(self._process[pid]["COMMAND"]):
+            if isexist.search(self._process[pid]['COMMAND']):
                 pids.append(pid)
         return sorted(pids)
 
-    def killpids(self, pids, signal="KILL"):
+    def killpids(self, pids, signal='KILL'):
         """
         Kill processes by process ID list.
 
         pids   = List of process IDs
-        signal = Signal name to send ("CONT", "KILL", "STOP", "TERM")
+        signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
-        if signal not in ("CONT", "KILL", "STOP", "TERM"):
+        if signal not in ('CONT', 'KILL', 'STOP', 'TERM'):
             raise SyslibError(sys.argv[0] + ': Invalid "' + signal + '" signal name.')
         kill = self._getkill()
-        if info.getSystem() != "windows":
-            kill.setFlags(["-" + signal])
+        if info.getSystem() != 'windows':
+            kill.setFlags(['-' + signal])
         for pid in pids:
-            if info.getSystem() == "windows":
-                kill.extendArgs(["/pid", str(pid)])
+            if info.getSystem() == 'windows':
+                kill.extendArgs(['/pid', str(pid)])
             else:
                 kill.appendArg(str(pid))
         if kill.getArgs():
-            kill.run(mode="batch")
+            kill.run(mode='batch')
 
-    def killpgid(self, pgid, signal="KILL"):
+    def killpgid(self, pgid, signal='KILL'):
         """
         Kill processes by process group ID.
 
         pgids  = List of process group ID
-        signal = Signal name to send ("CONT", "KILL", "STOP", "TERM")
+        signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
-        if info.getSystem() == "windows":
+        if info.getSystem() == 'windows':
             self.killpids([pgid], signal=signal)
         else:
             self.killpids([-pgid], signal=signal)
 
-    def killpname(self, pname, signal="KILL"):
+    def killpname(self, pname, signal='KILL'):
         """
         Kill all processes with program name.
 
         pname  = Program name
-        signal = Signal name to send ("CONT", "KILL", "STOP", "TERM")
+        signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
         self.killpids(self.pname2pids(pname), signal=signal)
 
@@ -1402,7 +1402,7 @@ class Task(Dump):
         """
         apids = []
         if pid in self._process:
-            ppid = self._process[pid]["PPID"]
+            ppid = self._process[pid]['PPID']
             if ppid in self._process:
                 apids.extend([ppid] + self.getAncestorPids(ppid))
         return apids
@@ -1416,7 +1416,7 @@ class Task(Dump):
         dpids = []
         if ppid in self._process:
             for pid, process in sorted(self._process.items()):
-                if process["PPID"] == ppid:
+                if process['PPID'] == ppid:
                     dpids.extend([pid] + self.getDescendantPids(pid))
         return dpids
 
@@ -1428,8 +1428,8 @@ class Task(Dump):
         """
         pids = []
         for pid, process in sorted(self._process.items()):
-            if process["PGID"] == pgid:
-                if process["PPID"] == 1:
+            if process['PGID'] == pgid:
+                if process['PPID'] == 1:
                     if pid != pgid:
                         pids.append(pid)
         return pids
@@ -1447,25 +1447,25 @@ class Task(Dump):
         return self._process[pid]
 
     def _getkill(self):
-        if "kill" not in _cache:
-            if _cache["osname"] == "windows":
-                _cache["kill"] = Command("taskkill", flags=["/f"])
+        if 'kill' not in _cache:
+            if _cache['osname'] == 'windows':
+                _cache['kill'] = Command('taskkill', flags=['/f'])
             else:
-                _cache["kill"] = Command("kill", flags=["-KILL"])
-        return _cache["kill"]
+                _cache['kill'] = Command('kill', flags=['-KILL'])
+        return _cache['kill']
 
     def _getps(self):
-        if "ps" not in _cache:
-            osname = _cache["osname"]
-            if osname == "windows":
-                _cache["ps"] = Command("tasklist", flags=["/v"])
+        if 'ps' not in _cache:
+            osname = _cache['osname']
+            if osname == 'windows':
+                _cache['ps'] = Command('tasklist', flags=['/v'])
             else:
-                _cache["ps"] = Command("ps", flags=[
-                    "-o", "ruser pid ppid pgid pri nice tty vsz time etime args", "-e"])
-                if osname == "linux":
-                    if "COLUMNS" not in os.environ:
-                        os.environ["COLUMNS"] = "1024"       # Fix Linux ps width
-        return _cache["ps"]
+                _cache['ps'] = Command('ps', flags=[
+                    '-o', 'ruser pid ppid pgid pri nice tty vsz time etime args', '-e'])
+                if osname == 'linux':
+                    if 'COLUMNS' not in os.environ:
+                        os.environ['COLUMNS'] = '1024'       # Fix Linux ps width
+        return _cache['ps']
 
 
 class Main:
@@ -1478,9 +1478,9 @@ class Main:
         try:
             if sys.version_info < (3, 0):
                 self._unicodeArgv()
-            if "_SYSTEM_BG" in os.environ:
+            if '_SYSTEM_BG' in os.environ:
                 Background()
-            elif "_SYSTEM_DM" in os.environ:
+            elif '_SYSTEM_DM' in os.environ:
                 Daemon()
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
@@ -1489,20 +1489,20 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _unicodeArgv(self):
         for i in range(len(sys.argv)):
-            sys.argv[i] = sys.argv[i].decode("utf-8", "replace")
+            sys.argv[i] = sys.argv[i].decode('utf-8', 'replace')
 
 
 # Caching dictionary for this module
 _cache = {}
 info = SystemInfo()
 
-if __name__ == "__main__":
-    if len(sys.argv) == 1 or "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if len(sys.argv) == 1 or '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

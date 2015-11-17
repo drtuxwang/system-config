@@ -5,8 +5,8 @@ Run Python unittests in module files.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -52,14 +52,14 @@ class Options(syslib.Dump):
         return self._verboseFlag
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Run Python unittests in module files.")
+        parser = argparse.ArgumentParser(description='Run Python unittests in module files.')
 
-        parser.add_argument("-v", "-vv", "-vvv", nargs=0, action=ArgparseActionVerbose,
-                            dest="verbosity", default=0, help="Select verbosity level 1, 2 or 3.")
-        parser.add_argument("-verbose", action="store_const", const=1, dest="verbosity",
-                            default=0, help="Select verbosity level 1.")
-        parser.add_argument("files", nargs="+", metavar="test_file.py",
-                            help="Python unittest module file.")
+        parser.add_argument('-v', '-vv', '-vvv', nargs=0, action=ArgparseActionVerbose,
+                            dest='verbosity', default=0, help='Select verbosity level 1, 2 or 3.')
+        parser.add_argument('-verbose', action='store_const', const=1, dest='verbosity',
+                            default=0, help='Select verbosity level 1.')
+        parser.add_argument('files', nargs='+', metavar='test_file.py',
+                            help='Python unittest module file.')
 
         self._args = parser.parse_args(args)
 
@@ -68,14 +68,14 @@ class Options(syslib.Dump):
 
         self._files = []
         for file in self._args.files:
-            if file.startswith("test_") and file.endswith(".py"):
+            if file.startswith('test_') and file.endswith('.py'):
                 self._files.append(file)
 
 
 class ArgparseActionVerbose(argparse.Action):
 
     def __call__(self, parser, args, values, option_string=None):
-        # option_string must be "-v", "-vv" or "-vvv"
+        # option_string must be '-v', '-vv' or '-vvv'
         setattr(args, self.dest, len(option_string[1:]))
 
 
@@ -96,7 +96,7 @@ class ModuleTest(syslib.Dump):
         self._options = options
         self._file = file
         self._python3 = syslib.Command(file=sys.executable)
-        self._python3.setFlags(["-m", "unittest", "-v", "-b"])
+        self._python3.setFlags(['-m', 'unittest', '-v', '-b'])
 
     def run(self):
         """
@@ -104,7 +104,7 @@ class ModuleTest(syslib.Dump):
         """
         directory = os.path.dirname(self._file)
         self._python3.setArgs([os.path.basename(self._file)])
-        self._python3.run(directory=directory, mode="batch", error2output=True)
+        self._python3.run(directory=directory, mode='batch', error2output=True)
 
         if self._python3.getExitcode():
             for line in self._python3.getOutput():
@@ -133,9 +133,9 @@ class ModuleTest(syslib.Dump):
         Return the number of test failures.
         """
         for line in reversed(self._python3.getOutput()):
-            if line.startswith("FAILED (") and "failures=" in line:
+            if line.startswith('FAILED (') and 'failures=' in line:
                 try:
-                    return int(line.split("failures=")[1].split(",")[0].split(")")[0])
+                    return int(line.split('failures=')[1].split(',')[0].split(')')[0])
                 except (IndexError, ValueError):
                     pass
         return 0
@@ -145,9 +145,9 @@ class ModuleTest(syslib.Dump):
         Return the number of test code errors.
         """
         for line in reversed(self._python3.getOutput()):
-            if line.startswith("FAILED (") and "errors=" in line:
+            if line.startswith('FAILED (') and 'errors=' in line:
                 try:
-                    return int(line.split("errors=")[1].split(")")[0])
+                    return int(line.split('errors=')[1].split(')')[0])
                 except (IndexError, ValueError):
                     pass
         return 0
@@ -177,7 +177,7 @@ class PythonTest(syslib.Dump):
         Run all test suites
         """
         if self._options.getDumpFlag():
-            self.dump("pytest.")
+            self.dump('pytest.')
 
         startTime = time.time()
         tests = 0
@@ -196,11 +196,11 @@ class PythonTest(syslib.Dump):
             errors += moduleTest.getErrors()
             exitErrors += moduleTest.getExitError()
 
-        print("\nUnit Test runs      =", tests)
-        print("Unit Test failures  =", failures)
-        print("Testing code errors =", errors)
-        print("Exit code errors    =", exitErrors)
-        print("Total elapsed time  = {0:5.3f}s".format(time.time() - startTime))
+        print('\nUnit Test runs      =', tests)
+        print('Unit Test failures  =', failures)
+        print('Testing code errors =', errors)
+        print('Exit code errors    =', exitErrors)
+        print('Total elapsed time  = {0:5.3f}s'.format(time.time() - startTime))
         if failures + errors + exitErrors:
             raise SystemExit(1)
 
@@ -209,7 +209,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -221,7 +221,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -235,8 +235,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

@@ -5,8 +5,8 @@ Graphical file comparison and merge tool.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -22,7 +22,7 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        self._meld = syslib.Command("meld")
+        self._meld = syslib.Command('meld')
         files = self._args.files
         if os.path.isdir(files[0]) and os.path.isfile(files[1]):
             self._meld.setArgs([os.path.join(files[0], os.path.basename(files[1])), files[1]])
@@ -31,10 +31,10 @@ class Options(syslib.Dump):
         elif os.path.isfile(files[0]) and os.path.isfile(files[1]):
             self._meld.setArgs(args[1:])
         else:
-            raise SystemExit(sys.argv[0] + ": Cannot compare two directories.")
+            raise SystemExit(sys.argv[0] + ': Cannot compare two directories.')
 
-        self._filter = ("^$|: GtkWarning: |: Gtk-CRITICAL |^  buttons =|^  gtk.main|"
-                        "recently-used.xbel")
+        self._filter = ('^$|: GtkWarning: |: Gtk-CRITICAL |^  buttons =|^  gtk.main|'
+                        'recently-used.xbel')
 
     def getFilter(self):
         """
@@ -49,10 +49,10 @@ class Options(syslib.Dump):
         return self._meld
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Graphical file comparison and merge tool.")
+        parser = argparse.ArgumentParser(description='Graphical file comparison and merge tool.')
 
-        parser.add_argument("files", nargs=2, metavar="file",
-                            help="File to compare.")
+        parser.add_argument('files', nargs=2, metavar='file',
+                            help='File to compare.')
 
         self._args = parser.parse_args(args)
 
@@ -61,7 +61,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -73,7 +73,7 @@ class Main:
         sys.exit(options.getMeld().getExitcode())
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -87,8 +87,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

@@ -5,8 +5,8 @@ Copy all files/directory inside a directory into mirror directory.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -38,20 +38,20 @@ class Options(syslib.Dump):
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-            description="Copy all files/directory inside a directory into mirror directory.")
+            description='Copy all files/directory inside a directory into mirror directory.')
 
-        parser.add_argument("-rm", dest="removeFlag", action="store_true",
-                            help="Delete obsolete files in target directory.")
+        parser.add_argument('-rm', dest='removeFlag', action='store_true',
+                            help='Delete obsolete files in target directory.')
 
-        parser.add_argument("directories", nargs="+", metavar="sourceDir targetDir",
-                            help="Source and target directory pairs.")
+        parser.add_argument('directories', nargs='+', metavar='sourceDir targetDir',
+                            help='Source and target directory pairs.')
 
         self._args = parser.parse_args(args)
 
         directories = self._args.directories
         if len(directories) % 2:
-            raise SystemExit(sys.argv[0] + ": Source and target directory pair has missing "
-                                           "target directory.")
+            raise SystemExit(sys.argv[0] + ': Source and target directory pair has missing '
+                                           'target directory.')
         self._mirrors = []
         for i in range(0, len(directories), 2):
             if not os.path.isdir(directories[i]):
@@ -69,10 +69,10 @@ class Mirror(syslib.Dump):
         for mirror in options.getMirrors():
             self._automount(mirror[1], 8)
             self._mirror(mirror[0], mirror[1])
-        print("[", self._size, ",", int(time.time()) - self._start, "]", sep="")
+        print('[', self._size, ',', int(time.time()) - self._start, ']', sep='')
 
     def _automount(self, directory, wait):
-        if directory.startswith("/media/"):
+        if directory.startswith('/media/'):
             for i in range(wait * 10):
                 if os.path.isdir(directory):
                     break
@@ -98,15 +98,15 @@ class Mirror(syslib.Dump):
                         raise SystemExit(sys.argv[0] + ': Cannot remove "' + targetFile + '" link.')
                 elif os.path.isdir(targetFile):
                     print('[', self._size, ',', int(time.time()) - self._start, '] Removing "',
-                          targetFile, '" directory.', sep="")
+                          targetFile, '" directory.', sep='')
                     try:
                         shutil.rmtree(targetFile)
                     except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot remove "' +
-                                         targetFile + '" directory.')
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot remove "' + targetFile + '" directory.')
                 else:
                     print('[', self._size, ',', int(time.time()) - self._start, '] Removing "',
-                          targetFile, '" file.', sep="")
+                          targetFile, '" file.', sep='')
                     try:
                         os.remove(targetFile)
                     except OSError:
@@ -126,7 +126,7 @@ class Mirror(syslib.Dump):
         else:
             targetFiles = []
             print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
-                  targetDir, '" directory...', sep="")
+                  targetDir, '" directory...', sep='')
             try:
                 os.mkdir(targetDir)
                 os.chmod(targetDir, syslib.FileStat(sourceDir).getMode())
@@ -144,7 +144,7 @@ class Mirror(syslib.Dump):
                         if targetLink == sourceLink:
                             continue
                     print('[', self._size, ',', int(time.time()) - self._start, '] Updating "',
-                          targetFile, '" link...', sep="")
+                          targetFile, '" link...', sep='')
                     try:
                         if os.path.isdir(targetFile) and not os.path.islink(targetFile):
                             shutil.rmtree(targetFile)
@@ -154,7 +154,7 @@ class Mirror(syslib.Dump):
                         raise SystemExit(sys.argv[0] + ': Cannot remove "' + targetFile + '" link.')
                 else:
                     print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
-                          targetFile, '" link...', sep="")
+                          targetFile, '" link...', sep='')
                 try:
                     os.symlink(sourceLink, targetFile)
                 except OSError:
@@ -177,23 +177,23 @@ class Mirror(syslib.Dump):
                             continue
                     self._size += int((sourceFileStat.getSize() + 1023) / 1024)
                     print('[', self._size, ',', int(time.time()) - self._start, '] Updating "',
-                          targetFile, '" file...', sep="")
+                          targetFile, '" file...', sep='')
                 else:
                     sourceFileStat = syslib.FileStat(sourceFile)
                     self._size += int((sourceFileStat.getSize() + 1023) / 1024)
                     print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
-                          targetFile, '" file...', sep="")
+                          targetFile, '" file...', sep='')
                 try:
                     shutil.copy2(sourceFile, targetFile)
                 except IOError as exception:
-                    if exception.args != (95, "Operation not supported"):  # os.listxattr for ACL
+                    if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
                         try:
                             with open(sourceFile):
-                                raise SystemExit(sys.argv[0] +
-                                                 ': Cannot create "' + targetFile + '" file.')
+                                raise SystemExit(
+                                    sys.argv[0] + ': Cannot create "' + targetFile + '" file.')
                         except IOError:
-                            raise SystemExit(sys.argv[0] +
-                                             ': Cannot create "' + targetFile + '" file.')
+                            raise SystemExit(
+                                sys.argv[0] + ': Cannot create "' + targetFile + '" file.')
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + sourceFile + '" file.')
 
@@ -216,7 +216,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -228,7 +228,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -242,8 +242,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

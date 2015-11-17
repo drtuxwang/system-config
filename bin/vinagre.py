@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Wrapper for "vinagre" command
+Wrapper for 'vinagre' command
 """
 
 import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import glob
@@ -20,9 +20,9 @@ import syslib
 class Options(syslib.Dump):
 
     def __init__(self, args):
-        self._vinagre = syslib.Command("vinagre")
+        self._vinagre = syslib.Command('vinagre')
         self._vinagre.setArgs(args[1:])
-        self._filter = "^$| CRITICAL | Gtk-WARNING "
+        self._filter = '^$| CRITICAL | Gtk-WARNING '
         self._config()
 
     def getFilter(self):
@@ -38,8 +38,8 @@ class Options(syslib.Dump):
         return self._vinagre
 
     def _config(self):
-        if "HOME" in os.environ:
-            file = os.path.join(os.environ["HOME"], ".local", "share", "vinagre", "history")
+        if 'HOME' in os.environ:
+            file = os.path.join(os.environ['HOME'], '.local', 'share', 'vinagre', 'history')
             if os.path.isfile(file):
                 try:
                     os.remove(file)
@@ -51,11 +51,11 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
-            options.getVinagre().run(filter=options.getFilter(), mode="background")
+            options.getVinagre().run(filter=options.getFilter(), mode='background')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -63,7 +63,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -77,8 +77,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

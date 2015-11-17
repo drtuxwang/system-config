@@ -5,8 +5,8 @@ Output the last n lines of a file.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -36,16 +36,16 @@ class Options(syslib.Dump):
         return self._lines
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Output the last n lines of a file.")
+        parser = argparse.ArgumentParser(description='Output the last n lines of a file.')
 
-        parser.add_argument("-n", nargs=1, type=int, dest="lines", default=[10], metavar="K",
+        parser.add_argument('-n', nargs=1, type=int, dest='lines', default=[10], metavar='K',
                             help='Output last K lines. Use "-n +K" to output starting with Kth.')
 
-        parser.add_argument("files", nargs="+", metavar="file", help="File to search.")
+        parser.add_argument('files', nargs='+', metavar='file', help='File to search.')
 
         self._args = parser.parse_args(args)
 
-        if " -n +" in " " + " ".join(args):
+        if ' -n +' in ' ' + ' '.join(args):
             self._lines = -self._args.lines[0]
         else:
             self._lines = self._args.lines[0]
@@ -56,7 +56,7 @@ class Tail(syslib.Dump):
     def __init__(self, options):
         if len(options.getFiles()) > 1:
             for file in options.getFiles():
-                print("==>", file, "<==")
+                print('==>', file, '<==')
                 self._file(options, file)
         elif len(options.getFiles()) == 1:
             self._file(options, options.getFiles()[0])
@@ -65,7 +65,7 @@ class Tail(syslib.Dump):
 
     def _file(self, options, file):
         try:
-            with open(file, errors="replace") as ifile:
+            with open(file, errors='replace') as ifile:
                 self._pipe(options, ifile)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
@@ -74,7 +74,7 @@ class Tail(syslib.Dump):
         if options.getLines() > 0:
             buffer = []
             for line in pipe:
-                line = line.rstrip("\r\n")
+                line = line.rstrip('\r\n')
                 buffer = (buffer + [line])[-options.getLines():]
             for line in buffer:
                 try:
@@ -88,7 +88,7 @@ class Tail(syslib.Dump):
                     break
             for line in pipe:
                 try:
-                    print(line.rstrip("\r\n"))
+                    print(line.rstrip('\r\n'))
                 except IOError:
                     raise SystemExit(0)
 
@@ -97,7 +97,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -109,7 +109,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -123,8 +123,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

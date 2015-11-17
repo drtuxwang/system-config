@@ -5,8 +5,8 @@ JAVA launcher
 
 import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import glob
@@ -19,10 +19,10 @@ import syslib
 class Options(syslib.Dump):
 
     def __init__(self, args):
-        self._java = syslib.Command(os.path.join("bin", "java"))
+        self._java = syslib.Command(os.path.join('bin', 'java'))
         if len(args) > 1:
-            if args[1].endswith(".jar"):
-                self._java.setFlags(["-jar"])
+            if args[1].endswith('.jar'):
+                self._java.setFlags(['-jar'])
         self._java.setArgs(args[1:])
 
     def getJava(self):
@@ -36,11 +36,11 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
-            options.getJava().run(mode="exec")
+            options.getJava().run(mode='exec')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -48,7 +48,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -62,8 +62,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

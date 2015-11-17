@@ -5,8 +5,8 @@ Rename window title.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -22,7 +22,7 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        self._title = " ".join(args[1:])
+        self._title = ' '.join(args[1:])
 
     def getTitle(self):
         """
@@ -31,9 +31,9 @@ class Options(syslib.Dump):
         return self._title
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Rename window title.")
+        parser = argparse.ArgumentParser(description='Rename window title.')
 
-        parser.add_argument("words", nargs="+", metavar="word", help="A word.")
+        parser.add_argument('words', nargs='+', metavar='word', help='A word.')
 
         self._args = parser.parse_args(args)
 
@@ -42,18 +42,18 @@ class Title(syslib.Dump):
 
     def __init__(self, options):
         term = self._getterm()
-        if term in ["xterm", "xvt100"]:
-            sys.stdout.write("\033]0;" + options.getTitle() + "\007")
-        elif term.startswith("iris-ansi"):
-            sys.stdout.write("\033P3.y" + options.getTitle() + "\033\\")
-            sys.stdout.write("\033P1.y" + options.getTitle() + "\033\\")
+        if term in ['xterm', 'xvt100']:
+            sys.stdout.write('\033]0;' + options.getTitle() + '\007')
+        elif term.startswith('iris-ansi'):
+            sys.stdout.write('\033P3.y' + options.getTitle() + '\033\\')
+            sys.stdout.write('\033P1.y' + options.getTitle() + '\033\\')
         else:
             raise SystemExit(sys.argv[0] + ': Unsupported "' + term + '" terminal type.')
 
     def _getterm(self):
-        term = "Unkown"
-        if "TERM" in os.environ:
-            term = os.environ["TERM"]
+        term = 'Unkown'
+        if 'TERM' in os.environ:
+            term = os.environ['TERM']
         return term
 
 
@@ -61,7 +61,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -73,7 +73,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -87,8 +87,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

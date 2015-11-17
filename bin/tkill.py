@@ -5,8 +5,8 @@ Kill tasks by process ID or name.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -35,12 +35,12 @@ class Options(syslib.Dump):
         return self._args.task[0]
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Kill tasks by process ID or name.")
+        parser = argparse.ArgumentParser(description='Kill tasks by process ID or name.')
 
-        parser.add_argument("-f", dest="forceFlag", action="store_true",
-                            help="Force termination of tasks.")
+        parser.add_argument('-f', dest='forceFlag', action='store_true',
+                            help='Force termination of tasks.')
 
-        parser.add_argument("task", nargs=1, metavar="pid|keyword", help="Process ID or keyword.")
+        parser.add_argument('task', nargs=1, metavar='pid|keyword', help='Process ID or keyword.')
 
         self._args = parser.parse_args(args)
 
@@ -60,16 +60,16 @@ class Kill(syslib.Dump):
             else:
                 pids = []
         else:
-            pids = task.pname2pids(".*" + keyword + ".*")
+            pids = task.pname2pids('.*' + keyword + '.*')
 
-        print("RUSER      PID  PPID  PGID PRI  NI TTY      MEMORY  CPUTIME     ELAPSED COMMAND")
+        print('RUSER      PID  PPID  PGID PRI  NI TTY      MEMORY  CPUTIME     ELAPSED COMMAND')
         for pid in pids:
             process = task.getProcess(pid)
-            print("{0:8s} {1:5d} {2:5d} {3:5d} {4:>3s} {5:>3s} {6:7s} {7:7d} {8:>8s} "
-                  "{9:>11s} {10:s}".format(
-                      process["USER"].split()[0], pid, process["PPID"],
-                      process["PGID"], process["PRI"], process["NICE"], process["TTY"],
-                      process["MEMORY"], process["CPUTIME"], process["ETIME"], process["COMMAND"]))
+            print('{0:8s} {1:5d} {2:5d} {3:5d} {4:>3s} {5:>3s} {6:7s} {7:7d} {8:>8s} '
+                  '{9:>11s} {10:s}'.format(
+                      process['USER'].split()[0], pid, process['PPID'],
+                      process['PGID'], process['PRI'], process['NICE'], process['TTY'],
+                      process['MEMORY'], process['CPUTIME'], process['ETIME'], process['COMMAND']))
         print()
         return pids
 
@@ -79,23 +79,23 @@ class Kill(syslib.Dump):
         apids = task.getAncestorPids(mypid)
         for pid in pids:
             if pid == mypid:
-                print("Process", pid, "is my own process ID")
+                print('Process', pid, 'is my own process ID')
             elif pid in apids:
-                print("Process", pid, "is my ancestor process")
+                print('Process', pid, 'is my ancestor process')
             else:
                 if not options.getForceFlag():
-                    answer = input("Kill process " + str(pid) + " (y/n): ")
-                    if answer not in ("y", "Y"):
+                    answer = input('Kill process ' + str(pid) + ' (y/n): ')
+                    if answer not in ('y', 'Y'):
                         continue
                 task.killpids([pid])
-                print("Process", pid, "killed")
+                print('Process', pid, 'killed')
 
 
 class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -107,7 +107,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -121,8 +121,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

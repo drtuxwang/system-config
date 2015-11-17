@@ -5,8 +5,8 @@ Extract Facebook friends list from saved HTML file.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -32,9 +32,9 @@ class Options(syslib.Dump):
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-            description="Extract Facebook friends list from saved HTML file.")
+            description='Extract Facebook friends list from saved HTML file.')
 
-        parser.add_argument("file", nargs=1, help="HTML file.")
+        parser.add_argument('file', nargs=1, help='HTML file.')
 
         self._args = parser.parse_args(args)
 
@@ -46,34 +46,34 @@ class Extract(syslib.Dump):
         self._readHtml(options.getFile())
 
     def _readHtml(self, file):
-        isjunk = re.compile("(&amp;|[?])ref=pb$|[?&]fref=.*|&amp;.*")
+        isjunk = re.compile('(&amp;|[?])ref=pb$|[?&]fref=.*|&amp;.*')
         try:
-            with open(file, errors="replace") as ifile:
+            with open(file, errors='replace') as ifile:
                 for line in ifile:
                     for block in line.split('href="'):
-                        if "://www.facebook.com/" in block:
-                            if "hc_location=friends_tab" in block.split('"')[0]:
-                                url = isjunk.sub("", block.split('"')[0]).replace(
-                                    "?hc_location=friend_browser", "")
-                                uid = int(block.split("user.php?id=")[1].split(
-                                    '"')[0].split("&")[0])
-                                name = block.split(">")[1].split("<")[0]
+                        if '://www.facebook.com/' in block:
+                            if 'hc_location=friends_tab' in block.split("'")[0]:
+                                url = isjunk.sub('', block.split("'")[0]).replace(
+                                    '?hc_location=friend_browser', '')
+                                uid = int(block.split('user.php?id=')[1].split(
+                                    '"')[0].split('&')[0])
+                                name = block.split('>')[1].split('<')[0]
                                 self._profiles[uid] = Profile(name, url)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" HTML file.')
 
     def write(self):
-        file = time.strftime("facebook-%Y%m%d.csv", time.localtime())
+        file = time.strftime('facebook-%Y%m%d.csv', time.localtime())
         print('Writing "' + file + '" with', len(self._profiles.keys()), 'friends...')
         try:
-            with open(file, "w", newline="\n") as ofile:
-                print("uid,name,profile_url", file=ofile)
+            with open(file, 'w', newline='\n') as ofile:
+                print('uid,name,profile_url', file=ofile)
                 for uid, profile in sorted(self._profiles.items()):
                     if uid < 0:
-                        print("???", end="", file=ofile)
+                        print('???', end='', file=ofile)
                     else:
-                        print(uid, end="", file=ofile)
-                    if " " in profile.getName():
+                        print(uid, end='', file=ofile)
+                    if ' ' in profile.getName():
                         print(',"' + profile.getName() + '",' + profile.getUrl(), file=ofile)
                     else:
                         print(',' + profile.getName() + ',' + profile.getUrl(), file=ofile)
@@ -104,7 +104,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -116,7 +116,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -130,8 +130,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

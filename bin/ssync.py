@@ -5,8 +5,8 @@ Securely synchronize file system using SSH protocol.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -22,10 +22,10 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        ssh = syslib.Command("ssh")
+        ssh = syslib.Command('ssh')
 
-        self._rsync = syslib.Command("rsync")
-        self._rsync.setFlags(["-l", "-p", "-r", "-t", "-v", "-z", "-e", ssh.getFile(), "--delete"])
+        self._rsync = syslib.Command('rsync')
+        self._rsync.setFlags(['-l', '-p', '-r', '-t', '-v', '-z', '-e', ssh.getFile(), '--delete'])
         self._rsync.setArgs([self._args.source[0], self._args.target[0]])
 
     def getRsync(self):
@@ -36,12 +36,12 @@ class Options(syslib.Dump):
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-            description="Securely synchronize file system using SSH protocol.")
+            description='Securely synchronize file system using SSH protocol.')
 
-        parser.add_argument("source", nargs=1, metavar="[[user1@]host1:]source",
-                            help="Source location.")
-        parser.add_argument("target", nargs=1, metavar="[[user1@]host1:]target",
-                            help="Target location.")
+        parser.add_argument('source', nargs=1, metavar='[[user1@]host1:]source',
+                            help='Source location.')
+        parser.add_argument('target', nargs=1, metavar='[[user1@]host1:]target',
+                            help='Target location.')
 
         self._args = parser.parse_args(args)
 
@@ -50,11 +50,11 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
-            options.getRsync().run(filter="^$")
+            options.getRsync().run(filter='^$')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -62,7 +62,7 @@ class Main:
         sys.exit(options.getRsync().getExitcode())
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -76,8 +76,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

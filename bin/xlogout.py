@@ -5,8 +5,8 @@ Shutdown X-windows
 
 import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -29,10 +29,10 @@ class Options(syslib.Dump):
         return self._args.forceFlag
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Logout from X-windows desktop.")
+        parser = argparse.ArgumentParser(description='Logout from X-windows desktop.')
 
-        parser.add_argument("-force", dest="forceFlag", action="store_true",
-                            help="Force login without confirmation.")
+        parser.add_argument('-force', dest='forceFlag', action='store_true',
+                            help='Force login without confirmation.')
 
         self._args = parser.parse_args(args)
 
@@ -42,17 +42,17 @@ class Logout(syslib.Dump):
     def __init__(self, options):
         self._forceFlag = options.getForceFlag()
         self._pid = 0
-        if "SESSION_MANAGER" in os.environ:
+        if 'SESSION_MANAGER' in os.environ:
             try:
-                self._pid = int(os.path.basename(os.environ["SESSION_MANAGER"]))
+                self._pid = int(os.path.basename(os.environ['SESSION_MANAGER']))
             except ValueError:
                 pass
 
     def run(self):
         if not self._forceFlag:
             try:
-                answer = input("Do you really want to logout of X-session? (y/n) [n] ")
-                if answer.lower() != "y":
+                answer = input('Do you really want to logout of X-session? (y/n) [n] ')
+                if answer.lower() != 'y':
                     raise SystemExit(1)
             except EOFError:
                 pass
@@ -66,7 +66,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -78,7 +78,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -92,8 +92,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

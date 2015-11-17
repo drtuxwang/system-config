@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Mock module for "pyld.py" module
+Mock module for 'pyld.py' module
 """
 
 import sys
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import unittest.mock
@@ -36,5 +36,5 @@ class Mock_Options(unittest.mock.MagicMock):
         self.getVerboseFlag = unittest.mock.MagicMock(return_value=verboseFlag)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     help(__name__)

@@ -5,8 +5,8 @@ Show information about packages in Debian packages list file.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -37,11 +37,11 @@ class Options(syslib.Dump):
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-            description="Show information about packages in Debian packages list file.")
+            description='Show information about packages in Debian packages list file.')
 
-        parser.add_argument("packagesFile", nargs=1, metavar="distribution.package",
-                            help="Debian package list file.")
-        parser.add_argument("packageNames", nargs="+", metavar="package", help="Package name.")
+        parser.add_argument('packagesFile', nargs=1, metavar='distribution.package',
+                            help='Debian package list file.')
+        parser.add_argument('packageNames', nargs='+', metavar='package', help='Package name.')
 
         self._args = parser.parse_args(args)
 
@@ -54,14 +54,14 @@ class Info(syslib.Dump):
 
     def _readDistributionPackages(self, packagesFile):
         self._packages = {}
-        name = ""
+        name = ''
         lines = []
         try:
-            with open(packagesFile, errors="replace") as ifile:
+            with open(packagesFile, errors='replace') as ifile:
                 for line in ifile:
-                    line = line.rstrip("\r\n")
-                    if line.startswith("Package: "):
-                        name = line.replace("Package: ", "")
+                    line = line.rstrip('\r\n')
+                    if line.startswith('Package: '):
+                        name = line.replace('Package: ', '')
                         lines = [line]
                     elif line:
                         lines.append(line)
@@ -82,7 +82,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -94,7 +94,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -108,8 +108,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

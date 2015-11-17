@@ -5,8 +5,8 @@ Make a compressed archive in TAR.LZMA format.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -22,10 +22,10 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        self._tar = syslib.Command("tar")
-        self._tar.setFlags(["cfva", self._archive] + self._files)
+        self._tar = syslib.Command('tar')
+        self._tar.setFlags(['cfva', self._archive] + self._files)
 
-        os.environ["XZ_OPT"] = "-9 -e"
+        os.environ['XZ_OPT'] = '-9 -e'
 
     def getTar(self):
         """
@@ -35,20 +35,20 @@ class Options(syslib.Dump):
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-            description="Make a compressed archive in TAR.LZMA format.")
+            description='Make a compressed archive in TAR.LZMA format.')
 
-        parser.add_argument("archive", nargs=1, metavar="file.tar.lzma|file.tlz",
-                            help="Archive file.")
-        parser.add_argument("files", nargs="*", metavar="file",
-                            help="File or directory.")
+        parser.add_argument('archive', nargs=1, metavar='file.tar.lzma|file.tlz',
+                            help='Archive file.')
+        parser.add_argument('files', nargs='*', metavar='file',
+                            help='File or directory.')
 
         self._args = parser.parse_args(args)
 
         if os.path.isdir(self._args.archive[0]):
-            self._archive = os.path.abspath(self._args.archive[0]) + ".tar.lzma"
+            self._archive = os.path.abspath(self._args.archive[0]) + '.tar.lzma'
         else:
             self._archive = self._args.archive[0]
-        if not self._archive.endswith(".tar.lzma") and not self._archive.endswith(".tlz"):
+        if not self._archive.endswith('.tar.lzma') and not self._archive.endswith('.tlz'):
             raise SystemExit(sys.argv[0] + ': Unsupported "' + self._archive + '" archive format.')
 
         if self._args.files:
@@ -61,11 +61,11 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
-            options.getTar().run(mode="exec")
+            options.getTar().run(mode='exec')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -73,7 +73,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -87,8 +87,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

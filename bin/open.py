@@ -5,8 +5,8 @@ Open files using default application.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -29,9 +29,9 @@ class Options(syslib.Dump):
         return self._args.files
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Open files using default application.")
+        parser = argparse.ArgumentParser(description='Open files using default application.')
 
-        parser.add_argument("files", nargs="+", metavar="file", help="File to open.")
+        parser.add_argument('files', nargs='+', metavar='file', help='File to open.')
 
         self._args = parser.parse_args(args)
 
@@ -43,42 +43,42 @@ class Open(syslib.Dump):
 
     def run(self):
         for file in self._files:
-            prefix = file.split(":", 1)[0]
-            extension = file.rsplit(".", 1)[-1].lower()
+            prefix = file.split(':', 1)[0]
+            extension = file.rsplit('.', 1)[-1].lower()
 
             if os.path.isdir(file):
-                self._spawn("xdesktop", file)
-            elif prefix in ("http", "https", "ftp"):
-                self._spawn("firefox", file)
+                self._spawn('xdesktop', file)
+            elif prefix in ('http', 'https', 'ftp'):
+                self._spawn('firefox', file)
             elif not os.path.isfile(file):
-                print(file + ": cannot find file.")
-            elif extension in ("mp3", "ogg", "wav"):
-                self._spawn("audacity", file)
-            elif extension in ("eps", "ps", "pdf"):
-                self._spawn("evince", file)
-            elif extension in ("htm", "html", "xhtml"):
-                self._spawn("firefox", file)
-            elif extension in ("jpg", "jpeg", "png"):
-                self._spawn("gimp", file)
-            elif extension in ("doc", "docx", "odf", "odg", "ods", "odt", "ppt",
-                               "pptx", "xls", "xlsx"):
-                self._spawn("soffice", file)
-            elif extension in ("txt", "json"):
-                self._spawn("xedit", file)
+                print(file + ': cannot find file.')
+            elif extension in ('mp3', 'ogg', 'wav'):
+                self._spawn('audacity', file)
+            elif extension in ('eps', 'ps', 'pdf'):
+                self._spawn('evince', file)
+            elif extension in ('htm', 'html', 'xhtml'):
+                self._spawn('firefox', file)
+            elif extension in ('jpg', 'jpeg', 'png'):
+                self._spawn('gimp', file)
+            elif extension in ('doc', 'docx', 'odf', 'odg', 'ods', 'odt', 'ppt',
+                               'pptx', 'xls', 'xlsx'):
+                self._spawn('soffice', file)
+            elif extension in ('txt', 'json'):
+                self._spawn('xedit', file)
             else:
-                print(file + ": unknown file extension.")
+                print(file + ': unknown file extension.')
 
     def _spawn(self, program, file):
         print(file + ': opening with "' + program + '"...')
         program = syslib.Command(program, args=[file])
-        program.run(mode="daemon")
+        program.run(mode='daemon')
 
 
 class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -90,7 +90,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -104,8 +104,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

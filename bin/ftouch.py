@@ -5,8 +5,8 @@ Modify access times of all files in directory recursively.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -30,10 +30,10 @@ class Options(syslib.Dump):
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-            description="Modify access times of all files in directory recursively.")
+            description='Modify access times of all files in directory recursively.')
 
-        parser.add_argument("directories", nargs="+", metavar="directory",
-                            help="Directory containing files to touch.")
+        parser.add_argument('directories', nargs='+', metavar='directory',
+                            help='Directory containing files to touch.')
 
         self._args = parser.parse_args(args)
 
@@ -41,7 +41,7 @@ class Options(syslib.Dump):
 class Touch(syslib.Dump):
 
     def __init__(self, options):
-        self._touch = syslib.Command("touch", flags=["-a"])
+        self._touch = syslib.Command('touch', flags=['-a'])
         for directory in options.getDirectories():
             self._toucher(directory)
 
@@ -51,7 +51,7 @@ class Touch(syslib.Dump):
             try:
                 files = [os.path.join(directory, x) for x in os.listdir(directory)]
                 self._touch.setArgs(files)
-                self._touch.run(mode="batch")
+                self._touch.run(mode='batch')
                 for file in files:
                     if os.path.isdir(file) and not os.path.islink(file):
                         self._toucher(file)
@@ -63,7 +63,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -75,7 +75,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -89,8 +89,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

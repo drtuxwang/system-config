@@ -5,8 +5,8 @@ Fix disk or recovery deleted files.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -32,7 +32,7 @@ class Options(syslib.Dump):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + device + '" disk or disk image file.')
         try:
-            with open(self._args.device[0], "rb") as ifile:
+            with open(self._args.device[0], 'rb') as ifile:
                 pass
         except IOError:
             raise SystemExit(
@@ -47,26 +47,26 @@ class Options(syslib.Dump):
         return self._command
 
     def _photorec(self):
-        self._command = syslib.Command("photorec_static", check=False)
+        self._command = syslib.Command('photorec_static', check=False)
         if not self._command.isFound():
-            self._command = syslib.Command("testdisk", flags=["-rec"], check=False)
+            self._command = syslib.Command('testdisk', flags=['-rec'], check=False)
             if not self._command.isFound():
-                self._command = syslib.Command("photorec_static")
+                self._command = syslib.Command('photorec_static')
 
     def _testdisk(self):
-        self._command = syslib.Command("testdisk_static", check=False)
+        self._command = syslib.Command('testdisk_static', check=False)
         if not self._command.isFound():
-            self._command = syslib.Command("testdisk", check=False)
+            self._command = syslib.Command('testdisk', check=False)
             if not self._command.isFound():
-                self._command = syslib.Command("testdisk_static")
+                self._command = syslib.Command('testdisk_static')
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Fix disk or recovery deleted file.")
+        parser = argparse.ArgumentParser(description='Fix disk or recovery deleted file.')
 
-        parser.add_argument("-rec", dest="recoverFlag", action="store_true",
-                            help="Recover deleted files.")
+        parser.add_argument('-rec', dest='recoverFlag', action='store_true',
+                            help='Recover deleted files.')
 
-        parser.add_argument("device", nargs=1, metavar="device|device.img",
+        parser.add_argument('device', nargs=1, metavar='device|device.img',
                             help='Device or device image (Use "dd").')
 
         self._args = parser.parse_args(args)
@@ -76,11 +76,11 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
-            options.getCommand().run(mode="exec")
+            options.getCommand().run(mode='exec')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -88,7 +88,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -102,8 +102,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

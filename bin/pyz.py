@@ -5,8 +5,8 @@ Make a Python3 ZIP Application in PYZ format.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -22,24 +22,24 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        if os.name == "nt":
-            self._archiver = syslib.Command("pkzip32.exe", check=False)
+        if os.name == 'nt':
+            self._archiver = syslib.Command('pkzip32.exe', check=False)
             if self._archiver.isFound():
                 self._archiver.setFlags(
-                    ["-add", "-maximum", "-recurse", "-path", self._args.archive[0] + "-zip"])
+                    ['-add', '-maximum', '-recurse', '-path', self._args.archive[0] + '-zip'])
             else:
                 self._archiver = syslib.Command(
-                    "zip", flags=["-r", "-9", self._args.archive[0] + "-zip"])
+                    'zip', flags=['-r', '-9', self._args.archive[0] + '-zip'])
         else:
             self._archiver = syslib.Command(
-                "zip", flags=["-r", "-9", self._args.archive[0] + "-zip"])
+                'zip', flags=['-r', '-9', self._args.archive[0] + '-zip'])
 
         if self._args.files:
             self._archiver.setArgs(self._args.files)
         else:
             self._archiver.setArgs(os.listdir())
 
-        if "__main__.py" not in self._archiver.getArgs():
+        if '__main__.py' not in self._archiver.getArgs():
             raise SystemExit(sys.argv[0] + ': Cannot find "__main__.py" main program file.')
 
     def getArchive(self):
@@ -56,10 +56,10 @@ class Options(syslib.Dump):
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-            description="Make a Python3 ZIP Application in PYZ format.")
+            description='Make a Python3 ZIP Application in PYZ format.')
 
-        parser.add_argument("archive", nargs=1, metavar="file.pyz", help="Archive file.")
-        parser.add_argument("files", nargs="*", metavar="file", help="File to archive.")
+        parser.add_argument('archive', nargs=1, metavar='file.pyz', help='Archive file.')
+        parser.add_argument('files', nargs='*', metavar='file', help='File to archive.')
 
         self._args = parser.parse_args(args)
 
@@ -78,18 +78,18 @@ class Pack(syslib.Dump):
 
     def _makePyz(self, archive):
         try:
-            with open(archive, "wb") as ofile:
-                ofile.write(b"#!/usr/bin/env python3\n")
-                with open(archive + "-zip", "rb") as ifile:
+            with open(archive, 'wb') as ofile:
+                ofile.write(b'#!/usr/bin/env python3\n')
+                with open(archive + '-zip', 'rb') as ifile:
                     self._copy(ifile, ofile)
         except IOError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' + archive +
-                             '" Python3 ZIP Application.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + archive + '" Python3 ZIP Application.')
         try:
-            os.remove(archive + "-zip")
+            os.remove(archive + '-zip')
         except OSError:
             pass
-        os.chmod(archive, int("755", 8))
+        os.chmod(archive, int('755', 8))
 
     def _copy(self, ifile, ofile):
         while True:
@@ -103,7 +103,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -115,7 +115,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -129,8 +129,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

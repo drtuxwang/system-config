@@ -5,8 +5,8 @@ Run a command with limited network bandwidth.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -46,21 +46,21 @@ class Options(syslib.Dump):
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(
-            description="Run a command with limited network bandwidth.")
+            description='Run a command with limited network bandwidth.')
 
         parser.add_argument(
-            "-n", nargs=1, type=int, dest="drate", default=[0],
+            '-n', nargs=1, type=int, dest='drate', default=[0],
             help='Download rate limit in KB. Default is 512 set in ".config/netnice.json".')
 
-        parser.add_argument("command", nargs=1, help="Command to run.")
-        parser.add_argument("args", nargs="*", metavar="arg", help="Command argument.")
+        parser.add_argument('command', nargs=1, help='Command to run.')
+        parser.add_argument('args', nargs='*', metavar='arg', help='Command argument.')
 
         myArgs = []
         while len(args):
             myArgs.append(args[0])
-            if not args[0].startswith("-"):
+            if not args[0].startswith('-'):
                 break
-            elif args[0] == "-n" and len(args) >= 2:
+            elif args[0] == '-n' and len(args) >= 2:
                 args = args[1:]
                 myArgs.append(args[0])
             args = args[1:]
@@ -68,8 +68,8 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(myArgs)
 
         if self._args.drate[0] < 0:
-            raise SystemExit(sys.argv[0] + ": You must specific a positive integer for "
-                             "download rate limit.")
+            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
+                             'download rate limit.')
 
         self._commandArgs = args[len(myArgs):]
 
@@ -77,11 +77,11 @@ class Options(syslib.Dump):
 class Shaper(syslib.Command):
 
     def __init__(self, drate=None):
-        super().__init__("trickle", check=False)
+        super().__init__('trickle', check=False)
 
         self._drate = 512
-        if "HOME" in os.environ:
-            file = os.path.join(os.environ["HOME"], ".config", "netnice.json")
+        if 'HOME' in os.environ:
+            file = os.path.join(os.environ['HOME'], '.config', 'netnice.json')
             if not self._load(file):
                 self._save(file)
 
@@ -92,14 +92,14 @@ class Shaper(syslib.Command):
 
     def setRate(self, drate):
         self._drate = drate
-        self.setArgs(["-d", str(self._drate), "-s"])
+        self.setArgs(['-d', str(self._drate), '-s'])
 
     def _load(self, file):
         if os.path.isfile(file):
             try:
                 with open(file) as ifile:
                     data = json.load(ifile)
-                    self._drate = data["netnice"]["download"]
+                    self._drate = data['netnice']['download']
             except (IOError, KeyError, ValueError):
                 pass
             else:
@@ -109,12 +109,12 @@ class Shaper(syslib.Command):
 
     def _save(self, file):
         data = {
-            "netnice": {
-                "download": self._drate
+            'netnice': {
+                'download': self._drate
             }
         }
         try:
-            with open(file, "w", newline="\n") as ofile:
+            with open(file, 'w', newline='\n') as ofile:
                 print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
         except IOError:
             pass
@@ -124,7 +124,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -136,7 +136,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -150,8 +150,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

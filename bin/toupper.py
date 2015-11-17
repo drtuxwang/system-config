@@ -5,8 +5,8 @@ Print arguments in upper case.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -29,9 +29,9 @@ class Options(syslib.Dump):
         return self._args.words
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Print arguments in upper case.")
+        parser = argparse.ArgumentParser(description='Print arguments in upper case.')
 
-        parser.add_argument("words", nargs="+", metavar="word", help="A word.")
+        parser.add_argument('words', nargs='+', metavar='word', help='A word.')
 
         self._args = parser.parse_args(args)
 
@@ -39,14 +39,14 @@ class Options(syslib.Dump):
 class Upper(syslib.Dump):
 
     def __init__(self, words):
-        print(" ".join(words).upper())
+        print(' '.join(words).upper())
 
 
 class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -58,7 +58,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -72,8 +72,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

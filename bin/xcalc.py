@@ -5,8 +5,8 @@ Wrapper for GNOME/KDE/XFCE calculator
 
 import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import glob
@@ -20,16 +20,16 @@ class Options(syslib.Dump):
 
     def __init__(self, args):
         self._desktop = self._getDesktop()
-        if self._desktop == "gnome":
-            self._xcalc = syslib.Command("gcalctool", check=False)
+        if self._desktop == 'gnome':
+            self._xcalc = syslib.Command('gcalctool', check=False)
             if not self._xcalc.isFound():
-                self._xcalc = syslib.Command("xcalc")
-        elif self._desktop == "kde":
-            self._xcalc = syslib.Command("kcalc", check=False)
+                self._xcalc = syslib.Command('xcalc')
+        elif self._desktop == 'kde':
+            self._xcalc = syslib.Command('kcalc', check=False)
             if not self._xcalc.isFound():
-                self._xcalc = syslib.Command("xcalc")
+                self._xcalc = syslib.Command('xcalc')
         else:
-            self._xcalc = syslib.Command("xcalc")
+            self._xcalc = syslib.Command('xcalc')
 
     def getXcalc(self):
         """
@@ -39,31 +39,31 @@ class Options(syslib.Dump):
 
     def _getDesktop(self):
         keys = os.environ.keys()
-        if "XDG_MENU_PREFIX" in keys and os.environ["XDG_MENU_PREFIX"] == "xfce-":
-            return "xfce"
-        if "XDG_CURRENT_DESKTOP" in keys and os.environ["XDG_CURRENT_DESKTOP"] == "XFCE":
-            return "xfce"
-        if "XDG_DATA_DIRS" in keys and "/xfce" in os.environ["XDG_DATA_DIRS"]:
-            return "xfce"
-        if "DESKTOP_SESSION" in keys:
-            if "gnome" in os.environ["DESKTOP_SESSION"]:
-                return "gnome"
-            if "kde" in os.environ["DESKTOP_SESSION"]:
-                return "kde"
-        if "GNOME_DESKTOP_SESSION_ID" in keys:
-            return "gnome"
-        return "Unknown"
+        if 'XDG_MENU_PREFIX' in keys and os.environ['XDG_MENU_PREFIX'] == 'xfce-':
+            return 'xfce'
+        if 'XDG_CURRENT_DESKTOP' in keys and os.environ['XDG_CURRENT_DESKTOP'] == 'XFCE':
+            return 'xfce'
+        if 'XDG_DATA_DIRS' in keys and '/xfce' in os.environ['XDG_DATA_DIRS']:
+            return 'xfce'
+        if 'DESKTOP_SESSION' in keys:
+            if 'gnome' in os.environ['DESKTOP_SESSION']:
+                return 'gnome'
+            if 'kde' in os.environ['DESKTOP_SESSION']:
+                return 'kde'
+        if 'GNOME_DESKTOP_SESSION_ID' in keys:
+            return 'gnome'
+        return 'Unknown'
 
 
 class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
-            options.getXcalc().run(mode="exec")
+            options.getXcalc().run(mode='exec')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -71,7 +71,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -85,8 +85,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

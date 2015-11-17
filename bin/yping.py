@@ -5,8 +5,8 @@ Ping a host until a connection is made.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -23,27 +23,27 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        if os.path.isfile("/usr/sbin/ping"):
-            self._ping = syslib.Command(file="/usr/sbin/ping")
-        elif os.path.isfile("/usr/etc/ping"):
-            self._ping = syslib.Command(file="/usr/etc/ping")
+        if os.path.isfile('/usr/sbin/ping'):
+            self._ping = syslib.Command(file='/usr/sbin/ping')
+        elif os.path.isfile('/usr/etc/ping'):
+            self._ping = syslib.Command(file='/usr/etc/ping')
         else:
-            self._ping = syslib.Command("ping")
+            self._ping = syslib.Command('ping')
 
-        self._filter = "min/avg/max"
+        self._filter = 'min/avg/max'
 
         host = self._args.host[0]
-        if syslib.info.getSystem() == "macos":
-            self._ping.setArgs(["-t", "4", "-c", "3", host])
-        elif syslib.info.getSystem() == "linux":
-            self._ping.setArgs(["-w", "4", "-c", "3", host])
-        elif syslib.info.getSystem() == "sunos":
-            self._ping.setArgs(["-s", host, "64", "3"])
-        elif os.name == "nt":
-            self._ping.setArgs(["-w", "4", "-n", "3", host])
-            self._filter = "Minimum|TTL"
+        if syslib.info.getSystem() == 'macos':
+            self._ping.setArgs(['-t', '4', '-c', '3', host])
+        elif syslib.info.getSystem() == 'linux':
+            self._ping.setArgs(['-w', '4', '-c', '3', host])
+        elif syslib.info.getSystem() == 'sunos':
+            self._ping.setArgs(['-s', host, '64', '3'])
+        elif os.name == 'nt':
+            self._ping.setArgs(['-w', '4', '-n', '3', host])
+            self._filter = 'Minimum|TTL'
         else:
-            self._ping.setArgs(["-w", "4", "-c", "3", host])
+            self._ping.setArgs(['-w', '4', '-c', '3', host])
 
     def getFilter(self):
         """
@@ -58,9 +58,9 @@ class Options(syslib.Dump):
         return self._ping
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Ping a host until a connection is made.")
+        parser = argparse.ArgumentParser(description='Ping a host until a connection is made.')
 
-        parser.add_argument("host", nargs=1, help="Host name or IP address.")
+        parser.add_argument('host', nargs=1, help='Host name or IP address.')
 
         self._args = parser.parse_args(args)
 
@@ -70,7 +70,7 @@ class Ping(syslib.Dump):
     def __init__(self, options):
         ping = options.getPing()
         while True:
-            ping.run(filter=options.getFilter(), mode="batch")
+            ping.run(filter=options.getFilter(), mode='batch')
             if ping.hasOutput():
                 break
             time.sleep(5)
@@ -81,7 +81,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -93,7 +93,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -107,8 +107,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

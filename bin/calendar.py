@@ -5,8 +5,8 @@ Print large monthly calendar.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -36,10 +36,10 @@ class Options(syslib.Dump):
         return self._args.year[0]
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Print large monthly calendar.")
+        parser = argparse.ArgumentParser(description='Print large monthly calendar.')
 
-        parser.add_argument("year", nargs=1, type=int, help="Select year.")
-        parser.add_argument("month", nargs=1, type=int, help="Select month.")
+        parser.add_argument('year', nargs=1, type=int, help='Select year.')
+        parser.add_argument('month', nargs=1, type=int, help='Select month.')
 
         self._args = parser.parse_args(args)
 
@@ -55,38 +55,38 @@ class Options(syslib.Dump):
 class Calendar(syslib.Dump):
 
     def __init__(self, options):
-        print("\n                  [ ", calendar.month_name[options.getMonth()] + " ",
-              options.getYear(), " ]\n")
+        print('\n                  [ ', calendar.month_name[options.getMonth()] + ' ',
+              options.getYear(), ' ]\n')
         for line in calendar.TextCalendar(6).formatmonth(
                 options.getYear(), options.getMonth()).split(os.linesep)[1:]:
-            print("  __________________________________________________  ", line)
+            print('  __________________________________________________  ', line)
         print()
-        print("  ____________________________________________________________________________ ")
-        print(" |          |          |          |          |          |          |          |")
-        print(" |          |          |          |          |          |          |          |")
-        print(" | Sunday   | Monday   | Tuesday  | Wednesday| Thursday | Friday   | Saturday |")
-        print(" |          |          |          |          |          |          |          |")
-        print(" |__________|__________|__________|__________|__________|__________|__________|")
+        print('  ____________________________________________________________________________ ')
+        print(' |          |          |          |          |          |          |          |')
+        print(' |          |          |          |          |          |          |          |')
+        print(' | Sunday   | Monday   | Tuesday  | Wednesday| Thursday | Friday   | Saturday |')
+        print(' |          |          |          |          |          |          |          |')
+        print(' |__________|__________|__________|__________|__________|__________|__________|')
         for week in calendar.Calendar(6).monthdays2calendar(options.getYear(), options.getMonth()):
-            print(" |          |          |          |          |          |          |          |")
-            line = ""
+            print(' |          |          |          |          |          |          |          |')
+            line = ''
             for day in week:
                 if day[0] == 0:
-                    line += " |         "
+                    line += ' |         '
                 else:
-                    line += " | " + str(day[0]).ljust(8)
-            line += " |"
+                    line += ' | ' + str(day[0]).ljust(8)
+            line += ' |'
             print(line)
             for i in range(5):
-                print(" |" + 7*"          |")
-            print(" |" + 7*"__________|")
+                print(' |' + 7*'          |')
+            print(' |' + 7*'__________|')
 
 
 class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -98,7 +98,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -112,8 +112,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

@@ -5,8 +5,8 @@ Unpack PDF file into series of JPG files.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -22,9 +22,9 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        self._gs = syslib.Command("gs")
-        self._gs.setFlags(["-dNOPAUSE", "-dBATCH", "-dSAFER", "-sDEVICE=jpeg",
-                           "-r" + str(self._args.dpi[0])])
+        self._gs = syslib.Command('gs')
+        self._gs.setFlags(['-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=jpeg',
+                           '-r' + str(self._args.dpi[0])])
 
     def getFiles(self):
         """
@@ -39,17 +39,17 @@ class Options(syslib.Dump):
         return self._gs
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Unpack PDF file into series of JPG files.")
+        parser = argparse.ArgumentParser(description='Unpack PDF file into series of JPG files.')
 
-        parser.add_argument("-dpi", nargs=1, type=int, default=[300],
-                            help="Selects DPI resolution (default is 300).")
+        parser.add_argument('-dpi', nargs=1, type=int, default=[300],
+                            help='Selects DPI resolution (default is 300).')
 
-        parser.add_argument("files", nargs="+", metavar="file.pdf", help="PDF document file.")
+        parser.add_argument('files', nargs='+', metavar='file.pdf', help='PDF document file.')
 
         self._args = parser.parse_args(args)
 
         if self._args.dpi[0] < 50:
-            raise SystemExit(sys.argv[0] + ": DPI resolution must be at least 50.")
+            raise SystemExit(sys.argv[0] + ': DPI resolution must be at least 50.')
 
 
 class Unpacker(syslib.Dump):
@@ -67,9 +67,9 @@ class Unpacker(syslib.Dump):
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + directory + '" directory.')
             print('Unpacking "' + directory + os.sep + '*.jpg" file...')
-            gs.setArgs(["-sOutputFile=" + directory + os.sep + "%08d.jpg", "-c",
-                        "save", "pop", "-f", file])
-            gs.run(filter="Ghostscript|^Copyright|WARRANTY:|^Processing")
+            gs.setArgs(['-sOutputFile=' + directory + os.sep + '%08d.jpg', '-c',
+                        'save', 'pop', '-f', file])
+            gs.run(filter='Ghostscript|^Copyright|WARRANTY:|^Processing')
             if gs.getExitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(gs.getExitcode()) +
                                  ' received from "' + gs.getFile() + '".')
@@ -79,7 +79,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -91,7 +91,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -105,8 +105,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

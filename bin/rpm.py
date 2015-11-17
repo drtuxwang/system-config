@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Wrapper for "rpm" command (adds "rpm -l")
+Wrapper for 'rpm' command (adds 'rpm -l')
 """
 
 import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import glob
@@ -19,12 +19,12 @@ import syslib
 class Options(syslib.Dump):
 
     def __init__(self, args):
-        self._rpm = syslib.Command("rpm")
-        if len(args) == 1 or args[1] != "-l":
+        self._rpm = syslib.Command('rpm')
+        if len(args) == 1 or args[1] != '-l':
             self._rpm.setArgs(sys.argv[1:])
-            self._rpm.run(mode="exec")
+            self._rpm.run(mode='exec')
 
-        self._mode = "show_packages_info"
+        self._mode = 'show_packages_info'
 
     def getMode(self):
         """
@@ -99,31 +99,31 @@ class PackageManger(syslib.Dump):
 
     def _readRpmStatus(self):
         rpm = self._options.getRpm()
-        rpm.setArgs(["-a", "-q", "-i"])
-        rpm.run(mode="batch")
-        name = ""
+        rpm.setArgs(['-a', '-q', '-i'])
+        rpm.run(mode='batch')
+        name = ''
         self._packages = {}
-        package = Package("", -1, "")
+        package = Package('', -1, '')
 
         for line in rpm.getOutput():
-            if line.startswith("Name "):
+            if line.startswith('Name '):
                 name = line.split()[2]
-            elif line.startswith("Version "):
+            elif line.startswith('Version '):
                 package.setVersion(line.split()[2])
-            elif line.startswith("Size "):
+            elif line.startswith('Size '):
                 try:
                     package.setSize(int((int(line.split()[2]) + 1023) / 1024))
                 except ValueError:
                     raise SystemExit(sys.argv[0] + ': Package "' + name + '" has non integer size.')
-            elif line.startswith("Summary "):
-                package.setDescription(line.split(": ")[1])
+            elif line.startswith('Summary '):
+                package.setDescription(line.split(': ')[1])
                 self._packages[name] = package
-                package = Package("", "0", "")
+                package = Package('', '0', '')
         return
 
     def _showPackagesInfo(self):
         for name, package in sorted(self._packages.items()):
-            print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(name.split(":")[0],
+            print('{0:35s} {1:15s} {2:5d}KB {3:s}'.format(name.split(':')[0],
                   package.getVersion(), package.getSize(), package.getDescription()))
 
 
@@ -131,7 +131,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -143,7 +143,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -157,8 +157,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

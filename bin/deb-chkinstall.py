@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Check installation dependencies of packages against ".debs" list file.
+Check installation dependencies of packages against '.debs' list file.
 """
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -25,10 +25,10 @@ class Options(syslib.Dump):
         self._parseArgs(args[1:])
 
         listFile = self._args.listFile[0]
-        ispattern = re.compile("[.]debs-?.*$")
+        ispattern = re.compile('[.]debs-?.*$')
         if not ispattern.search(listFile):
             raise SystemExit(sys.argv[0] + ': Invalid "' + listFile + '" installed list filename.')
-        self._distribution = ispattern.sub("", listFile)
+        self._distribution = ispattern.sub('', listFile)
 
     def getDistribution(self):
         """
@@ -49,20 +49,20 @@ class Options(syslib.Dump):
         return self._args.packageNames
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description='Check installation dependencies of '
-                                                     'packages against ".debs" list file.')
+        parser = argparse.ArgumentParser(
+            description='Check installation dependencies of packages against ".debs" list file.')
 
-        parser.add_argument("listFile", nargs=1, metavar="distribution.debs",
-                            help="Debian installed packages list file.")
-        parser.add_argument("packageNames", nargs="+", metavar="package",
-                            help="Debian package name.")
+        parser.add_argument('listFile', nargs=1, metavar='distribution.debs',
+                            help='Debian installed packages list file.')
+        parser.add_argument('packageNames', nargs='+', metavar='package',
+                            help='Debian package name.')
 
         self._args = parser.parse_args(args)
 
 
 class Package(syslib.Dump):
 
-    def __init__(self, depends=[], url=""):
+    def __init__(self, depends=[], url=''):
         self._checkedFlag = False
         self._installedFlag = False
         self._depends = depends
@@ -128,28 +128,28 @@ class Package(syslib.Dump):
 class CheckInstall(syslib.Dump):
 
     def __init__(self, options):
-        self._packages = self._readDistributionPackages(options.getDistribution() + ".packages")
-        self._readDistributionPinPackages(options.getDistribution() + ".pinlist")
+        self._packages = self._readDistributionPackages(options.getDistribution() + '.packages')
+        self._readDistributionPinPackages(options.getDistribution() + '.pinlist')
         self._readDistributionInstalled(options.getListFile())
         self._checkDistributionInstall(options.getDistribution(), options.getListFile(),
                                        options.getPackageNames())
 
     def _readDistributionPackages(self, packagesFile):
         packages = {}
-        name = ""
+        name = ''
         package = Package()
         try:
-            with open(packagesFile, errors="replace") as ifile:
+            with open(packagesFile, errors='replace') as ifile:
                 for line in ifile:
-                    line = line.rstrip("\r\n")
-                    if line.startswith("Package: "):
-                        name = line.replace("Package: ", "")
-                    elif line.startswith("Depends: "):
+                    line = line.rstrip('\r\n')
+                    if line.startswith('Package: '):
+                        name = line.replace('Package: ', '')
+                    elif line.startswith('Depends: '):
                         depends = []
-                        for i in line.replace("Depends: ", "").split(", "):
+                        for i in line.replace('Depends: ', '').split(', '):
                             depends.append(i.split()[0])
                         package.setDepends(depends)
-                    elif line.startswith("Filename: "):
+                    elif line.startswith('Filename: '):
                         package.setUrl(line[10:])
                         packages[name] = package
                         package = Package()
@@ -160,18 +160,18 @@ class CheckInstall(syslib.Dump):
     def _readDistributionPinPackages(self, pinFile):
         packagesCache = {}
         try:
-            with open(pinFile, errors="replace") as ifile:
+            with open(pinFile, errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     if len(columns) != 0:
                         pattern = columns[0]
-                        if pattern[:1] != "#":
-                            file = os.path.join(os.path.dirname(pinFile), columns[1]) + ".packages"
+                        if pattern[:1] != '#':
+                            file = os.path.join(os.path.dirname(pinFile), columns[1]) + '.packages'
                             if file not in packagesCache:
                                 packagesCache[file] = self._readDistributionPackages(file)
                             try:
                                 ispattern = re.compile(
-                                    pattern.replace("?", ".").replace("*", ".*")+"$")
+                                    pattern.replace('?', '.').replace('*', '.*')+'$')
                             except sre_constants.error:
                                 continue
                             for key, value in packagesCache[file].items():
@@ -182,11 +182,11 @@ class CheckInstall(syslib.Dump):
 
     def _readDistributionInstalled(self, installedFile):
         try:
-            with open(installedFile, errors="replace") as ifile:
+            with open(installedFile, errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     name = columns[0]
-                    if name[:1] != "#":
+                    if name[:1] != '#':
                         if name in self._packages:
                             self._packages[name].setInstalledFlag(True)
         except IOError:
@@ -196,7 +196,7 @@ class CheckInstall(syslib.Dump):
         if name in self._packages:
             self._packages[name].setCheckedFlag(True)
             if self._packages[name].getInstalledFlag():
-                print(indent + self._packages[name].getUrl(), "[Installed]")
+                print(indent + self._packages[name].getUrl(), '[Installed]')
             else:
                 file = self._local(distribution, self._packages[name].getUrl())
                 print(indent + file)
@@ -204,17 +204,17 @@ class CheckInstall(syslib.Dump):
             for i in self._packages[name].getDepends():
                 if i in self._packages:
                     if self._packages[i].getInstalledFlag():
-                        print(indent + "  " + self._packages[i].getUrl(), "[Installed]")
+                        print(indent + '  ' + self._packages[i].getUrl(), '[Installed]')
                     elif self._packages[i].getCheckedFlag():
-                        print(indent + "  " + self._packages[i].getUrl())
+                        print(indent + '  ' + self._packages[i].getUrl())
                     elif not self._packages[name].getInstalledFlag():
-                        self._checkPackageInstall(distribution, ofile, indent + "  ", i)
+                        self._checkPackageInstall(distribution, ofile, indent + '  ', i)
 
     def _checkDistributionInstall(self, distribution, listFile, names):
-        urlfile = os.path.basename(distribution) + listFile.split(".debs")[-1] + ".url"
+        urlfile = os.path.basename(distribution) + listFile.split('.debs')[-1] + '.url'
         try:
-            with open(urlfile, "w", newline="\n") as ofile:
-                indent = ""
+            with open(urlfile, 'w', newline='\n') as ofile:
+                indent = ''
                 for i in names:
                     self._checkPackageInstall(distribution, ofile, indent, i)
         except IOError:
@@ -225,7 +225,7 @@ class CheckInstall(syslib.Dump):
     def _local(self, distribution, url):
         file = os.path.join(distribution, os.path.basename(url))
         if os.path.isfile(file):
-            return "file://" + os.path.abspath(file)
+            return 'file://' + os.path.abspath(file)
         return url
 
 
@@ -233,7 +233,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -245,7 +245,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -259,8 +259,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

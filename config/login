@@ -154,7 +154,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     endsw
 
     if ( -x /usr/bin/vim ) then
-        alias vi "vim -N -i NONE -n"
+        alias vi "vim -N -n"
     endif
     if ( -x /usr/sbin/ping ) then
         alias ping "/usr/sbin/ping"

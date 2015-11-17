@@ -5,8 +5,8 @@ Play multimedia file/URL.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -43,14 +43,14 @@ class Options(syslib.Dump):
         return self._args.viewFlag
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Play multimedia file/URL.")
+        parser = argparse.ArgumentParser(description='Play multimedia file/URL.')
 
-        parser.add_argument("-s", dest="shuffleFlag", action="store_true",
-                            help="Shuffle order of the media files.")
-        parser.add_argument("-v", dest="viewFlag", action="store_true",
-                            help="View information.")
-        parser.add_argument("files", nargs="+", metavar="file",
-                            help="Multimedia fiel or URL.")
+        parser.add_argument('-s', dest='shuffleFlag', action='store_true',
+                            help='Shuffle order of the media files.')
+        parser.add_argument('-v', dest='viewFlag', action='store_true',
+                            help='View information.')
+        parser.add_argument('files', nargs='+', metavar='file',
+                            help='Multimedia fiel or URL.')
 
         self._args = parser.parse_args(args)
 
@@ -71,12 +71,12 @@ class Play(syslib.Dump):
             self._play(files)
 
     def _play(self, files):
-        vlc = syslib.Command("vlc", args=files)
-        vlc.run(mode="background",
-                filter="^$|Use 'cvlc'|may be inaccurate|"
-                       ": Failed to resize display|: call to |: Locale not supported |"
-                       "fallback 'C' locale|^xdg-screensaver:|: cannot estimate delay:|"
-                       "Failed to open VDPAU backend ")
+        vlc = syslib.Command('vlc', args=files)
+        vlc.run(mode='background',
+                filter='^$|Use "cvlc"|may be inaccurate|'
+                       ': Failed to resize display|: call to |: Locale not supported |'
+                       'fallback "C" locale|^xdg-screensaver:|: cannot estimate delay:|'
+                       'Failed to open VDPAU backend ')
         if vlc.getExitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(vlc.getExitcode()) +
                              ' received from "' + vlc.getFile() + '".')
@@ -91,23 +91,23 @@ class Media(syslib.Dump):
 
     def __init__(self, file):
         self._file = file
-        self._length = "0"
+        self._length = '0'
         self._stream = {}
-        self._type = "Unknown"
-        ffprobe = syslib.Command("ffprobe", args=[file])
-        ffprobe.run(mode="batch", error2output=True)
+        self._type = 'Unknown'
+        ffprobe = syslib.Command('ffprobe', args=[file])
+        ffprobe.run(mode='batch', error2output=True)
         number = 0
 
-        isjunk = re.compile("^ *Stream #[^ ]*: ")
+        isjunk = re.compile('^ *Stream #[^ ]*: ')
         try:
             for line in ffprobe.getOutput():
-                if line.strip().startswith("Duration:"):
-                    self._length = line.replace(",", "").split()[1]
-                elif line.strip().startswith("Stream #0"):
-                    self._stream[number] = isjunk.sub("", line)
+                if line.strip().startswith('Duration:'):
+                    self._length = line.replace(',', '').split()[1]
+                elif line.strip().startswith('Stream #0'):
+                    self._stream[number] = isjunk.sub('', line)
                     number += 1
-                elif line.strip().startswith("Input #"):
-                    self._type = line.replace(", from", "").split()[2]
+                elif line.strip().startswith('Input #'):
+                    self._type = line.replace(', from', '').split()[2]
         except IndexError:
             raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
 
@@ -120,44 +120,44 @@ class Media(syslib.Dump):
 
     def hasAudio(self):
         for value in self._stream.values():
-            if value.startswith("Audio: "):
+            if value.startswith('Audio: '):
                 return True
         return False
 
     def hasAudioCodec(self, codec):
         for value in self._stream.values():
-            if value.startswith("Audio: " + codec):
+            if value.startswith('Audio: ' + codec):
                 return True
         return False
 
     def hasVideo(self):
         for value in self._stream.values():
-            if value.startswith("Video: "):
+            if value.startswith('Video: '):
                 return True
         return False
 
     def hasVideoCodec(self, codec):
         for value in self._stream.values():
-            if value.startswith("Video: " + codec):
+            if value.startswith('Video: ' + codec):
                 return True
         return False
 
     def isvalid(self):
-        return self._type != "Unknown"
+        return self._type != 'Unknown'
 
     def print(self):
         if self.isvalid():
-            print(self._file + "    = Type: ", self._type, "(" + self._length + "),",
-                  str(syslib.FileStat(self._file).getSize()) + " bytes")
+            print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
+                  str(syslib.FileStat(self._file).getSize()) + ' bytes')
             for stream, information in self.getStream():
-                print(self._file + "[" + str(stream) + "] =", information)
+                print(self._file + '[' + str(stream) + '] =', information)
 
 
 class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -169,7 +169,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -183,8 +183,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

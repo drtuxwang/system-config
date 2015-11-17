@@ -5,8 +5,8 @@ Copy a file to multiple target files.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -37,10 +37,10 @@ class Options(syslib.Dump):
         return self._args.targets
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Copy a file to multiple target files.")
+        parser = argparse.ArgumentParser(description='Copy a file to multiple target files.')
 
-        parser.add_argument("source", nargs=1, help="Source file.")
-        parser.add_argument("targets", nargs="+", metavar="target", help="Target file.")
+        parser.add_argument('source', nargs=1, help='Source file.')
+        parser.add_argument('targets', nargs='+', metavar='target', help='Target file.')
 
         self._args = parser.parse_args(args)
 
@@ -58,31 +58,30 @@ class Copy(syslib.Dump):
             self._copy(source, target)
 
     def _copy(self, source, target):
-
-            print('Copying to "' + target + '" file...')
-            try:
-                shutil.copy2(source, target)
-            except IOError as exception:
-                if exception.args != (95, "Operation not supported"):  # os.listxattr for ACL
-                    try:
-                        with open(source, "rb"):
-                            raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
-                    except IOError:
+        print('Copying to "' + target + '" file...')
+        try:
+            shutil.copy2(source, target)
+        except IOError as exception:
+            if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
+                try:
+                    with open(source, 'rb'):
                         raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
-                    except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot read "' + source + '" file.')
-            except shutil.Error as exception:
-                if "are the same file" in exception.args[0]:
-                    raise SystemExit(sys.argv[0] + ': Cannot copy to same "' + target + '" file.')
-                else:
-                    raise SystemExit(sys.argv[0] + ': Cannot copy to "' + target + '" file.')
+                except IOError:
+                    raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
+                except OSError:
+                    raise SystemExit(sys.argv[0] + ': Cannot read "' + source + '" file.')
+        except shutil.Error as exception:
+            if 'are the same file' in exception.args[0]:
+                raise SystemExit(sys.argv[0] + ': Cannot copy to same "' + target + '" file.')
+            else:
+                raise SystemExit(sys.argv[0] + ': Cannot copy to "' + target + '" file.')
 
 
 class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -94,7 +93,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -108,8 +107,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

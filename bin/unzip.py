@@ -5,8 +5,8 @@ Unpack a compressed archive in ZIP format.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -22,29 +22,29 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        if os.name == "nt":
-            self._archiver = syslib.Command("pkzip32.exe", check=False)
+        if os.name == 'nt':
+            self._archiver = syslib.Command('pkzip32.exe', check=False)
             if not self._archiver.isFound():
-                self._archiver = syslib.Command("unzip")
+                self._archiver = syslib.Command('unzip')
         else:
-            self._archiver = syslib.Command("unzip")
+            self._archiver = syslib.Command('unzip')
 
-        if args[1] in ("view", "test"):
+        if args[1] in ('view', 'test'):
             self._archiver.setArgs(args[1:])
-            self._archiver.run(mode="exec")
+            self._archiver.run(mode='exec')
 
-        if os.path.basename(self._archiver.getFile()) == "pkzip32.exe":
+        if os.path.basename(self._archiver.getFile()) == 'pkzip32.exe':
             if self._args.viewFlag:
-                self._archiver.setFlags(["-view"])
+                self._archiver.setFlags(['-view'])
             elif self._args.testFlag:
-                self._archiver.setFlags(["-test"])
+                self._archiver.setFlags(['-test'])
             else:
-                self._archiver.setFlags(["-extract", "-directories"])
+                self._archiver.setFlags(['-extract', '-directories'])
         else:
             if self._args.viewFlag:
-                self._archiver.setFlags(["-v"])
+                self._archiver.setFlags(['-v'])
             elif self._args.testFlag:
-                self._archiver.setFlags(["-t"])
+                self._archiver.setFlags(['-t'])
 
     def getArchiver(self):
         """
@@ -59,15 +59,15 @@ class Options(syslib.Dump):
         return self._args.archives
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Unpack a compressed archive in ZIP format.")
+        parser = argparse.ArgumentParser(description='Unpack a compressed archive in ZIP format.')
 
-        parser.add_argument("-v", dest="viewFlag", action="store_true",
-                            help="Show contents of archive.")
-        parser.add_argument("-test", dest="testFlag", action="store_true",
-                            help="Test archive data only.")
+        parser.add_argument('-v', dest='viewFlag', action='store_true',
+                            help='Show contents of archive.')
+        parser.add_argument('-test', dest='testFlag', action='store_true',
+                            help='Test archive data only.')
 
-        parser.add_argument("archives", nargs="+", metavar="file.zip",
-                            help="Archive file.")
+        parser.add_argument('archives', nargs='+', metavar='file.zip',
+                            help='Archive file.')
 
         self._args = parser.parse_args(args)
 
@@ -75,7 +75,7 @@ class Options(syslib.Dump):
 class Unpack(syslib.Dump):
 
     def __init__(self, options):
-        os.umask(int("022", 8))
+        os.umask(int('022', 8))
         archiver = options.getArchiver()
         for archive in options.getArchives():
             archiver.setArgs([archive])
@@ -90,7 +90,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -102,7 +102,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -116,8 +116,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

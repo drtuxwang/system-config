@@ -5,8 +5,8 @@ Chop up a file into chunks.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -35,24 +35,24 @@ class Options(syslib.Dump):
         return self._maxSize
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Chop up a file into chunks.")
+        parser = argparse.ArgumentParser(description='Chop up a file into chunks.')
 
-        parser.add_argument("file", nargs=1, help="File to break up.")
-        parser.add_argument("size", nargs=1, metavar="bytes|nMB",
-                            help="Maximum chunk size to break up.")
+        parser.add_argument('file', nargs=1, help='File to break up.')
+        parser.add_argument('size', nargs=1, metavar='bytes|nMB',
+                            help='Maximum chunk size to break up.')
 
         self._args = parser.parse_args(args)
 
         try:
             size = self._args.size[0]
-            if size.endswith("MB"):
+            if size.endswith('MB'):
                 self._maxSize = int(size[:-2]) * 1024**2
             else:
                 self._maxSize = int(size)
         except ValueError:
-            raise SystemExit(sys.argv[0] + ": You must specific an integer for chunksize.")
+            raise SystemExit(sys.argv[0] + ': You must specific an integer for chunksize.')
         if self._maxSize < 1:
-            raise SystemExit(sys.argv[0] + ": You must specific a positive integer for chunksize.")
+            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for chunksize.')
 
 
 class Chop(syslib.Dump):
@@ -62,13 +62,13 @@ class Chop(syslib.Dump):
         self._cacheSize = 131072
 
         try:
-            with open(options.getFile(), "rb") as ifile:
+            with open(options.getFile(), 'rb') as ifile:
                 for part in range(int(syslib.FileStat(
                         options.getFile()).getSize()/options.getMaxSize() + 1)):
                     try:
-                        file = options.getFile() + "." + str(part + 1).zfill(3)
-                        with open(file, "wb") as ofile:
-                            print(file + "...")
+                        file = options.getFile() + '.' + str(part + 1).zfill(3)
+                        with open(file, 'wb') as ofile:
+                            print(file + '...')
                             self._copy(ifile, ofile)
                     except IOError:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' +
@@ -89,7 +89,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -101,7 +101,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -115,8 +115,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

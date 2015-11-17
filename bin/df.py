@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Wrapper for "df" command
+Wrapper for 'df' command
 """
 
 import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import glob
@@ -21,13 +21,13 @@ import syslib
 class Options(syslib.Dump):
 
     def __init__(self, args):
-        self._df = syslib.Command("df", args=args[1:], pathextra=["/bin"])
+        self._df = syslib.Command('df', args=args[1:], pathextra=['/bin'])
 
         while len(args) > 1:
-            if not args[1].startswith("-"):
+            if not args[1].startswith('-'):
                 break
-            elif args[1] != "-k":
-                self._df.run(mode="exec")
+            elif args[1] != '-k':
+                self._df.run(mode='exec')
             args = args[1:]
 
         self._mounts = args[1:]
@@ -51,10 +51,10 @@ class CommandThread(syslib.Dump, threading.Thread):
         threading.Thread.__init__(self)
         self._child = None
         self._command = command
-        self._stdout = ""
+        self._stdout = ''
 
     def run(self):
-        self._child = self._command.run(mode="child")
+        self._child = self._command.run(mode='child')
         while True:
             try:
                 byte = self._child.stdout.read(1)
@@ -62,7 +62,7 @@ class CommandThread(syslib.Dump, threading.Thread):
                 continue
             if not byte:
                 break
-            self._stdout += byte.decode("utf-8", "replace")
+            self._stdout += byte.decode('utf-8', 'replace')
 
     def kill(self):
         if self._child:
@@ -86,13 +86,13 @@ class DiskReport(syslib.Dump):
 
     def run(self):
         devices = {}
-        for file in glob.glob("/dev/disk/by-uuid/*"):
+        for file in glob.glob('/dev/disk/by-uuid/*'):
             try:
-                devices[file] = "/dev/" + os.path.basename(os.readlink(file))
+                devices[file] = '/dev/' + os.path.basename(os.readlink(file))
             except OSError:
                 pass
 
-        print("Filesystem       1K-blocks       Used  Available Use% Mounted on")
+        print('Filesystem       1K-blocks       Used  Available Use% Mounted on')
         for mount in self._mounts:
             self._df.setArgs([mount])
             thread = CommandThread(self._df)
@@ -107,24 +107,24 @@ class DiskReport(syslib.Dump):
             except (IndexError, ValueError):
                 continue
 
-            if blocks != "0":
+            if blocks != '0':
                 if device in devices:  # Map UUID to device
                     device = devices[device]
                 if len(device) > 15:
                     print(device)
-                    device = ""
-                print("{0:15s} {1:>10s} {2:>10s} {3:>10s} {4:>4s} {5:s}".
+                    device = ''
+                print('{0:15s} {1:>10s} {2:>10s} {3:>10s} {4:>4s} {5:s}'.
                       format(device, blocks, used, avail, ratio, directory))
 
     def _detect(self):
-        mount = syslib.Command("mount")
-        mount.run(mode="batch")
+        mount = syslib.Command('mount')
+        mount.run(mode='batch')
         for line in mount.getOutput():
             try:
-                device, junk, directory, info = line.split(" ", 3)
+                device, junk, directory, info = line.split(' ', 3)
             except IndexError:
                 continue
-            if "none" not in info:
+            if 'none' not in info:
                 self._mounts.append(directory)
 
 
@@ -132,7 +132,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -144,7 +144,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -158,8 +158,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

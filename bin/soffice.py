@@ -5,8 +5,8 @@ LibreOffice launcher
 
 import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import glob
@@ -19,14 +19,14 @@ import syslib
 class Options(syslib.Dump):
 
     def __init__(self, args):
-        self._soffice = syslib.Command(os.path.join("program", "soffice"))
+        self._soffice = syslib.Command(os.path.join('program', 'soffice'))
         self._soffice.setArgs(args[1:])
-        if args[1:] == ["--version"]:
-            self._soffice.run(mode="exec")
-        self._filter = ("^$|: GLib-CRITICAL |: GLib-GObject-WARNING |: Gtk-WARNING |"
-                        ": wrong ELF class:|: Could not find a Java Runtime|"
-                        ": failed to read path from javaldx|^Failed to load module:|"
-                        "unary operator expected|: unable to get gail version number|gtk printer")
+        if args[1:] == ['--version']:
+            self._soffice.run(mode='exec')
+        self._filter = ('^$|: GLib-CRITICAL |: GLib-GObject-WARNING |: Gtk-WARNING |'
+                        ': wrong ELF class:|: Could not find a Java Runtime|'
+                        ': failed to read path from javaldx|^Failed to load module:|'
+                        'unary operator expected|: unable to get gail version number|gtk printer')
         self._config()
         self._setenv()
 
@@ -43,26 +43,26 @@ class Options(syslib.Dump):
         return self._soffice
 
     def _config(self):
-        for file in glob.glob(".~lock.*#"):  # Remove stupid lock files
+        for file in glob.glob('.~lock.*#'):  # Remove stupid lock files
             try:
                 os.remove(file)
             except OSError:
                 pass
 
     def _setenv(self):
-        if "GTK_MODULES" in os.environ:
-            del os.environ["GTK_MODULES"]  # Fix Linux "gnomebreakpad" problems
+        if 'GTK_MODULES' in os.environ:
+            del os.environ['GTK_MODULES']  # Fix Linux 'gnomebreakpad' problems
 
 
 class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
-            options.getSoffice().run(filter=options.getFilter(), mode="background")
+            options.getSoffice().run(filter=options.getFilter(), mode='background')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -70,7 +70,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -84,8 +84,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

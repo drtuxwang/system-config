@@ -5,8 +5,8 @@ Patch library module for modifying Python objects & class object generators
 
 import sys
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import collections
@@ -35,12 +35,12 @@ class Patcher:
         sys.stderr = io.StringIO()
 
     def __del__(self):
-        if type(sys.stdout) == "io.StringIO":
-            print(sys.stdout.getvalue(), end="", file=sys.stdout)
+        if type(sys.stdout) == 'io.StringIO':
+            print(sys.stdout.getvalue(), end='', file=sys.stdout)
             sys.stdout = self._stdout
 
-        if type(sys.stderr) == "io.StringIO":
-            print(sys.stderr.getvalue(), end="", file=sys.stderr)
+        if type(sys.stderr) == 'io.StringIO':
+            print(sys.stderr.getvalue(), end='', file=sys.stderr)
             sys.stderr = self._stderr
 
     def setDict(self, handle, dictionary):
@@ -82,7 +82,7 @@ class Patcher:
         """
         Patch Python built-in objects to pretend to be another operating system.
 
-        system = Operating System (ie "linux", "windows")
+        system = Operating System (ie 'linux', 'windows')
         """
         Patch_os(self._testCase).setSystem(system)
 
@@ -110,7 +110,7 @@ class Patch_File:
         self._file = file
         self._testCase.addCleanup(self._delete)
 
-        with open(file, "wb") as ofile:
+        with open(file, 'wb') as ofile:
             ofile.write(data)
 
     def _delete(self):
@@ -122,7 +122,7 @@ class Patch_File:
 
 class Patch_os:
     """
-    This class patches Python built-in "os" module objects.
+    This class patches Python built-in 'os' module objects.
 
     self._testCase = TestCase class object
     """
@@ -135,32 +135,32 @@ class Patch_os:
 
     def setSystem(self, system):
         """
-        Patch Pythion built-in "os" module object to pretend to be another operating system
+        Patch Pythion built-in 'os' module object to pretend to be another operating system
 
-        system = Operating System (ie "linux", "windows")
+        system = Operating System (ie 'linux', 'windows')
         """
 
         self._os_sep = os.sep
         self._os_pathsep = os.pathsep
         self._os_path_pathsep = os.path.pathsep
 
-        if system == "linux":
-            os.sep = "/"
-            os.pathsep = ":"
-            os.path.pathsep = ":"
-        elif system == "windows":
-            os.sep = "\\"
-            os.pathsep = ";"
-            os.path.pathsep = ";"
+        if system == 'linux':
+            os.sep = '/'
+            os.pathsep = ':'
+            os.path.pathsep = ':'
+        elif system == 'windows':
+            os.sep = '\\'
+            os.pathsep = ';'
+            os.path.pathsep = ';'
         self._testCase.addCleanup(self._unsetSystem)
 
-        patcher = unittest.mock.patch.object(os.path, "join", side_effect=self.mocked_os_path_join)
+        patcher = unittest.mock.patch.object(os.path, 'join', side_effect=self.mocked_os_path_join)
         patcher.start()
         self._testCase.addCleanup(patcher.stop)
 
     def mocked_os_path_join(self, *args):
         """
-        Mocked "os.path.join()" pretending to be another operating system.
+        Mocked 'os.path.join()' pretending to be another operating system.
         """
         return os.sep.join(args)
 
@@ -175,5 +175,5 @@ class Patch_os:
             os.path.pathsep = self._os_path_pathsep
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     help(__name__)

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Converts file to "\r\n" newline format.
+Converts file to '\r\n' newline format.
 """
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -31,7 +31,7 @@ class Options(syslib.Dump):
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description='Converts file to "\\r\\n" newline format.')
 
-        parser.add_argument("files", nargs="+", metavar="file", help="File to change.")
+        parser.add_argument('files', nargs='+', metavar='file', help='File to change.')
 
         self._args = parser.parse_args(args)
 
@@ -44,18 +44,18 @@ class Fromdos(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
             print('Converting "' + file + '" file to "\\r\\n" newline format...')
             try:
-                with open(file, errors="replace") as ifile:
-                    tmpfile = file + "-tmp" + str(os.getpid())
+                with open(file, errors='replace') as ifile:
+                    tmpfile = file + '-tmp' + str(os.getpid())
                     try:
-                        with open(tmpfile, "w", newline="\r\n") as ofile:
+                        with open(tmpfile, 'w', newline='\r\n') as ofile:
                             for line in ifile:
-                                print(line.rstrip("\r\n"), file=ofile)
+                                print(line.rstrip('\r\n'), file=ofile)
                     except IOError:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
                     except UnicodeDecodeError:
                         os.remove(tmpfile)
-                        raise SystemExit(sys.argv[0] + ': Cannot convert "' +
-                                         file + '" binary file.')
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot convert "' + file + '" binary file.')
             except IOError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
             try:
@@ -69,7 +69,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -81,7 +81,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -95,8 +95,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

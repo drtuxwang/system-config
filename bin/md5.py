@@ -5,8 +5,8 @@ Calculate MD5 checksums of files.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -42,14 +42,14 @@ class Options(syslib.Dump):
         return self._args.recursiveFlag
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Calculate MD5 checksums of files.")
+        parser = argparse.ArgumentParser(description='Calculate MD5 checksums of files.')
 
-        parser.add_argument("-R", dest="recursiveFlag", action="store_true",
-                            help="Recursive into sub-directories.")
-        parser.add_argument("-c", dest="checkFlag", action="store_true",
-                            help="Check checksums against files.")
+        parser.add_argument('-R', dest='recursiveFlag', action='store_true',
+                            help='Recursive into sub-directories.')
+        parser.add_argument('-c', dest='checkFlag', action='store_true',
+                            help='Check checksums against files.')
 
-        parser.add_argument("files", nargs="+", metavar="file|file.md5",
+        parser.add_argument('files', nargs='+', metavar='file|file.md5',
                             help='File to checksum or ".md5" checksum file.')
 
         self._args = parser.parse_args(args)
@@ -76,7 +76,7 @@ class Md5sum(syslib.Dump):
                 md5sum = self._md5sum(file)
                 if not md5sum:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
-                print(md5sum, file, sep="  ")
+                print(md5sum, file, sep='  ')
 
     def _check(self, files):
         found = []
@@ -88,7 +88,7 @@ class Md5sum(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + md5file + '" md5sum file.')
             else:
                 try:
-                    with open(md5file, errors="replace") as ifile:
+                    with open(md5file, errors='replace') as ifile:
                         for line in ifile:
                             md5sum = line[:32]
                             file = line.rstrip()[34:]
@@ -97,21 +97,21 @@ class Md5sum(syslib.Dump):
                                 nfiles += 1
                                 test = self._md5sum(file)
                                 if not test:
-                                    print(file, "# FAILED open or read")
+                                    print(file, '# FAILED open or read')
                                     nmiss += 1
                                 elif test != md5sum:
-                                    print(file, "# FAILED checksum")
+                                    print(file, '# FAILED checksum')
                                     nfail += 1
                 except IOError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + md5file + '" md5sum file.')
         if nmiss > 0:
-            print("md5: Cannot find", nmiss, "of", nfiles, "listed files.")
+            print('md5: Cannot find', nmiss, 'of', nfiles, 'listed files.')
         if nfail > 0:
-            print("md5: Mismatch in", nfail, "of", nfiles - nmiss, "computed checksums.")
+            print('md5: Mismatch in', nfail, 'of', nfiles - nmiss, 'computed checksums.')
 
     def _md5sum(self, file):
         try:
-            with open(file, "rb") as ifile:
+            with open(file, 'rb') as ifile:
                 md5 = hashlib.md5()
                 while True:
                     chunk = ifile.read(131072)
@@ -127,7 +127,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -139,7 +139,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -153,8 +153,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

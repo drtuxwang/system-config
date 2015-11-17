@@ -5,8 +5,8 @@ Unicode sort lines of a file.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -29,10 +29,10 @@ class Options(syslib.Dump):
         return self._args.files
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Unicode sort lines of a file.")
+        parser = argparse.ArgumentParser(description='Unicode sort lines of a file.')
 
-        parser.add_argument("files", nargs=1, metavar="file",
-                            help="File contents to sort.")
+        parser.add_argument('files', nargs=1, metavar='file',
+                            help='File contents to sort.')
 
         self._args = parser.parse_args(args)
 
@@ -44,15 +44,15 @@ class Sort(syslib.Dump):
         if len(options.getFiles()):
             for file in options.getFiles():
                 try:
-                    with open(file, errors="replace") as ifile:
+                    with open(file, errors='replace') as ifile:
                         for line in ifile:
-                            line = line.rstrip("\r\n")
+                            line = line.rstrip('\r\n')
                             self._lines.append(line)
                 except IOError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
         else:
             for line in sys.stdin:
-                self._lines.append(line.rstrip("\r\n"))
+                self._lines.append(line.rstrip('\r\n'))
         self._lines = sorted(self._lines)
 
     def print(self):
@@ -64,7 +64,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -76,7 +76,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -90,8 +90,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

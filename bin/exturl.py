@@ -5,8 +5,8 @@ Extracts http references from a HTML file.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -30,9 +30,9 @@ class Options(syslib.Dump):
         return self._args.files
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Extracts http references from a HTML file.")
+        parser = argparse.ArgumentParser(description='Extracts http references from a HTML file.')
 
-        parser.add_argument("files", nargs="+", metavar="file", help="HTML file.")
+        parser.add_argument('files', nargs='+', metavar='file', help='HTML file.')
 
         self._args = parser.parse_args(args)
 
@@ -41,9 +41,9 @@ class Extract(syslib.Dump):
 
     def __init__(self, options):
         urls = []
-        self._isiFrame = re.compile("<iframe.*src=", re.IGNORECASE)
-        self._isIgnore = re.compile("mailto:|#", re.IGNORECASE)
-        self._isUrl = re.compile("href=.*[\"'>]|onclick=.*\(", re.IGNORECASE)
+        self._isiFrame = re.compile('<iframe.*src=', re.IGNORECASE)
+        self._isIgnore = re.compile('mailto:|#', re.IGNORECASE)
+        self._isUrl = re.compile('href=.*[\'">]|onclick=.*\(', re.IGNORECASE)
 
         for file in options.getFiles():
             if not os.path.isfile(file):
@@ -54,19 +54,19 @@ class Extract(syslib.Dump):
 
     def _extract(self, file):
         try:
-            with open(file, errors="replace") as ifile:
+            with open(file, errors='replace') as ifile:
                 urls = []
                 for line in ifile:
                     line = line.strip()
-                    for token in self._isiFrame.sub("href=", line).split():
+                    for token in self._isiFrame.sub('href=', line).split():
                         if self._isUrl.match(token) and not self._isIgnore.search(token):
-                            url = token[5:].split(">")[0]
+                            url = token[5:].split('>')[0]
                             for quote in ('"', "'"):
                                 if quote in url:
                                     url = url.split(quote)[1]
                             urls.append(url)
         except IOError:
-            raise SystemExit(sys.argv[0] + ': Cannot read " + file + " HTML file.')
+            raise SystemExit(sys.argv[0] + ': Cannot read ' + file + ' HTML file.')
         return urls
 
 
@@ -74,7 +74,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -86,7 +86,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -100,8 +100,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

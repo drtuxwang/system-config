@@ -5,8 +5,8 @@ Move or rename files.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -42,15 +42,15 @@ class Options(syslib.Dump):
         return self._args.target[0]
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Move or rename files.")
+        parser = argparse.ArgumentParser(description='Move or rename files.')
 
-        parser.add_argument("-f", dest="overwriteFlag", action="store_true",
-                            help="Overwrite files.")
+        parser.add_argument('-f', dest='overwriteFlag', action='store_true',
+                            help='Overwrite files.')
 
-        parser.add_argument("sources", nargs="+", metavar="source",
-                            help="Source file or directory.")
-        parser.add_argument("target", nargs=1, metavar="target",
-                            help="Target file or directory.")
+        parser.add_argument('sources', nargs='+', metavar='source',
+                            help='Source file or directory.')
+        parser.add_argument('target', nargs=1, metavar='target',
+                            help='Target file or directory.')
 
         self._args = parser.parse_args(args)
 
@@ -66,32 +66,32 @@ class Move(syslib.Dump):
 
     def _move(self):
         if not os.path.isdir(self._options.getTarget()):
-            raise SystemExit(sys.argv[0] + ': Cannot find "' +
-                             self._options.getTarget() + '" target directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "' + self._options.getTarget() + '" target directory.')
         for source in self._options.getSources():
             if os.path.isdir(source):
                 print('Moving "' + source + '" directory...')
             elif os.path.isfile(source):
                 print('Moving "' + source + '" file...')
             else:
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + source +
-                                 '" source file or directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + source + '" source file or directory.')
             target = os.path.join(self._options.getTarget(), os.path.basename(source))
             if os.path.isdir(target):
-                raise SystemExit(sys.argv[0] + ': Cannot safely overwrite "' +
-                                 target + '" target directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot safely overwrite "' + target + '" target directory.')
             elif os.path.isfile(target):
                 if not self._options.getOverwriteFlag():
-                    raise SystemExit(sys.argv[0] + ': Cannot safely overwrite "' +
-                                     target + '" target file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot safely overwrite "' + target + '" target file.')
             try:
                 os.rename(source, target)
             except OSError as exception:
-                if "Invalid cross-device link" in exception.args:
+                if 'Invalid cross-device link' in exception.args:
                     self._cprm(source, target)
                 elif os.path.isdir(source):
-                    raise SystemExit(sys.argv[0] + ': Cannot move "' +
-                                     source + '" source directory.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot move "' + source + '" source directory.')
                 else:
                     raise SystemExit(sys.argv[0] + ': Cannot move "' + source + '" source file.')
 
@@ -109,7 +109,7 @@ class Move(syslib.Dump):
             try:
                 shutil.copy2(source, target)
             except IOError as exception:
-                if exception.args != (95, "Operation not supported"):  # os.listxattr for ACL
+                if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
                     raise SystemExit(sys.argv[0] + ': Cannot copy "' + source + '" source file.')
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + source + '" file.')
@@ -124,19 +124,19 @@ class Move(syslib.Dump):
         elif os.path.isfile(source):
             print('Renaming "' + source + '" file...')
         else:
-            raise SystemExit(sys.argv[0] + ': Cannot find "' + source +
-                             '" source file or directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "' + source + '" source file or directory.')
         if os.path.isdir(target):
-            raise SystemExit(sys.argv[0] + ': Cannot safely overwrite "' +
-                             target + '" target directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot safely overwrite "' + target + '" target directory.')
         elif os.path.isfile(target):
             if not self._options.getOverwriteFlag():
-                raise SystemExit(sys.argv[0] + ': Cannot safely overwrite "' +
-                                 target + '" target file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot safely overwrite "' + target + '" target file.')
 
         try:
             # Workaround Windows rename bug
-            if syslib.info.getSystem() == "windows" and os.path.isfile(target):
+            if syslib.info.getSystem() == 'windows' and os.path.isfile(target):
                 os.remove(target)
             os.rename(source, target)
         except OSError:
@@ -150,7 +150,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -162,7 +162,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -176,8 +176,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

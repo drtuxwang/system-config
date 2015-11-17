@@ -5,8 +5,8 @@ Show file disk usage.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -35,13 +35,13 @@ class Options(syslib.Dump):
         return self._args.summaryFlag
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Show file disk usage.")
+        parser = argparse.ArgumentParser(description='Show file disk usage.')
 
-        parser.add_argument("-s", dest="summaryFlag", action="store_true",
-                            help="Show summary only.")
+        parser.add_argument('-s', dest='summaryFlag', action='store_true',
+                            help='Show summary only.')
 
-        parser.add_argument("files", nargs="*", default=[os.curdir], metavar="file",
-                            help="File or directory.")
+        parser.add_argument('files', nargs='*', default=[os.curdir], metavar='file',
+                            help='File or directory.')
 
         self._args = parser.parse_args(args)
 
@@ -51,17 +51,17 @@ class Diskusage(syslib.Dump):
     def __init__(self, options):
         for file in options.getFiles():
             if os.path.islink(file):
-                print("{0:7d} {1:s}".format(0, file))
+                print('{0:7d} {1:s}'.format(0, file))
             else:
                 if os.path.isdir(file):
                     size = self._usage(options, file)
                     if options.getSummaryFlag():
-                        print("{0:7d} {1:s}".format(size, file))
+                        print('{0:7d} {1:s}'.format(size, file))
                 elif os.path.isfile(file):
                     size = int((syslib.FileStat(file).getSize() + 1023) / 1024)
-                    print("{0:7d} {1:s}".format(size, file))
+                    print('{0:7d} {1:s}'.format(size, file))
                 else:
-                    print("{0:7d} {1:s}".format(0, file))
+                    print('{0:7d} {1:s}'.format(0, file))
 
     def _usage(self, options, directory):
         size = 0
@@ -76,7 +76,7 @@ class Diskusage(syslib.Dump):
                 else:
                     size += int((syslib.FileStat(file).getSize() + 1023) / 1024)
         if not options.getSummaryFlag():
-            print("{0:7d} {1:s}".format(size, directory))
+            print('{0:7d} {1:s}'.format(size, directory))
         return size
 
 
@@ -84,7 +84,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -96,7 +96,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -110,8 +110,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

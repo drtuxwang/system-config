@@ -5,8 +5,8 @@ Play MP3/OGG/WAV audio files in directory.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -42,14 +42,14 @@ class Options(syslib.Dump):
         return self._args.viewFlag
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Play MP3/OGG/WAV audio files in directory.")
+        parser = argparse.ArgumentParser(description='Play MP3/OGG/WAV audio files in directory.')
 
-        parser.add_argument("-s", dest="shuffleFlag", action="store_true",
-                            help="Shuffle order of the media files.")
-        parser.add_argument("-v", dest="viewFlag", action="store_true",
-                            help="View information.")
-        parser.add_argument("directories", nargs="+", metavar="directory",
-                            help="Audio directory.")
+        parser.add_argument('-s', dest='shuffleFlag', action='store_true',
+                            help='Shuffle order of the media files.')
+        parser.add_argument('-v', dest='viewFlag', action='store_true',
+                            help='View information.')
+        parser.add_argument('directories', nargs='+', metavar='directory',
+                            help='Audio directory.')
 
         self._args = parser.parse_args(args)
 
@@ -57,14 +57,14 @@ class Options(syslib.Dump):
 class Play(syslib.Dump):
 
     def __init__(self, options):
-        self._play = syslib.Command("play")
+        self._play = syslib.Command('play')
 
         if options.getViewFlag():
-            self._play.setFlags(["-v"])
+            self._play.setFlags(['-v'])
         for directory in options.getDirectories():
             if not os.path.isdir(directory):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + directory + '" media directory.')
-            files = self._getfiles(directory, "*.mp3", "*.ogg", "*.wav")
+            files = self._getfiles(directory, '*.mp3', '*.ogg', '*.wav')
             if options.getShuffleFlag():
                 random.shuffle(files)
             self._play.extendArgs(files)
@@ -86,7 +86,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -98,7 +98,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -112,8 +112,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

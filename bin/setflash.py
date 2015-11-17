@@ -5,8 +5,8 @@ Locate newest Pepper Flash library.
 
 import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ": Requires Python version (>= 3.0, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import glob
@@ -19,11 +19,11 @@ import syslib
 class Options(syslib.Dump):
 
     def __init__(self, args):
-        self._flash = syslib.Command("libpepflashplayer.so", check=False)
+        self._flash = syslib.Command('libpepflashplayer.so', check=False)
         if not self._flash.isFound():
-            setflash = syslib.Command("setflash", check=False)
+            setflash = syslib.Command('setflash', check=False)
             if setflash.isFound():
-                setflash.run(mode="exec")
+                setflash.run(mode='exec')
 
     def getLibrary(self):
         """
@@ -36,7 +36,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -48,7 +48,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -62,8 +62,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

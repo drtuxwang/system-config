@@ -5,8 +5,8 @@ Compress a file in GZIP format.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -22,8 +22,8 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        self._gzip = syslib.Command("gzip")
-        self._gzip.setFlags(["-9"])
+        self._gzip = syslib.Command('gzip')
+        self._gzip.setFlags(['-9'])
         self._gzip.setArgs(self._args.files)
 
     def getGzip(self):
@@ -33,10 +33,10 @@ class Options(syslib.Dump):
         return self._gzip
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Compress a file in GZIP format.")
+        parser = argparse.ArgumentParser(description='Compress a file in GZIP format.')
 
-        parser.add_argument("files", nargs=1, metavar="file",
-                            help='File to compresss to "file.gz".')
+        parser.add_argument(
+            'files', nargs=1, metavar='file', help='File to compresss to "file.gz".')
 
         self._args = parser.parse_args(args)
 
@@ -45,11 +45,11 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
-            options.getGzip().run(mode="exec")
+            options.getGzip().run(mode='exec')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -57,7 +57,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -71,8 +71,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

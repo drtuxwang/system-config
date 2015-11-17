@@ -5,8 +5,8 @@ Displays month or year calendar.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -30,7 +30,7 @@ class Options(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Invalid "' + str(self._year) +
                                  '" year. Use 2-9999.')
         else:
-            self._year = int(time.strftime("%Y"))
+            self._year = int(time.strftime('%Y'))
 
         if self._args.month:
             self._month = self._args.month
@@ -40,7 +40,7 @@ class Options(syslib.Dump):
         elif self._args.year:
             self._month = 0
         else:
-            self._month = int(time.strftime("%m"))
+            self._month = int(time.strftime('%m'))
 
     def getMonth(self):
         """
@@ -55,10 +55,10 @@ class Options(syslib.Dump):
         return self._year
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Displays month or year calendar.")
+        parser = argparse.ArgumentParser(description='Displays month or year calendar.')
 
-        parser.add_argument("year", nargs="?", type=int, help="Select year.")
-        parser.add_argument("month", nargs="?", type=int, help="Select month.")
+        parser.add_argument('year', nargs='?', type=int, help='Select year.')
+        parser.add_argument('month', nargs='?', type=int, help='Select month.')
 
         self._args = parser.parse_args(args)
 
@@ -76,7 +76,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -88,7 +88,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -102,8 +102,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

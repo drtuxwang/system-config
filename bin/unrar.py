@@ -5,8 +5,8 @@ Unpack a compressed archive in RAR format.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -22,17 +22,17 @@ class Options(syslib.Dump):
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        self._archiver = syslib.Command("unrar")
-        if args[1] in ("l", "t", "x"):
+        self._archiver = syslib.Command('unrar')
+        if args[1] in ('l', 't', 'x'):
             self._archiver.setArgs(args[1:])
-            self._archiver.run(mode="exec")
+            self._archiver.run(mode='exec')
 
         if self._args.viewFlag:
-            self._archiver.setFlags(["l", "-std"])
+            self._archiver.setFlags(['l', '-std'])
         elif self._args.testFlag:
-            self._archiver.setFlags(["t", "-std"])
+            self._archiver.setFlags(['t', '-std'])
         else:
-            self._archiver.setFlags(["x", "-std"])
+            self._archiver.setFlags(['x', '-std'])
 
     def getArchiver(self):
         """
@@ -47,15 +47,15 @@ class Options(syslib.Dump):
         return self._args.archives
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Unpack a compressed archive in RAR format.")
+        parser = argparse.ArgumentParser(description='Unpack a compressed archive in RAR format.')
 
-        parser.add_argument("-v", dest="viewFlag", action="store_true",
-                            help="Show contents of archive.")
-        parser.add_argument("-test", dest="testFlag", action="store_true",
-                            help="Test archive data only.")
+        parser.add_argument('-v', dest='viewFlag', action='store_true',
+                            help='Show contents of archive.')
+        parser.add_argument('-test', dest='testFlag', action='store_true',
+                            help='Test archive data only.')
 
-        parser.add_argument("archives", nargs="+", metavar="file.rar",
-                            help="Archive file.")
+        parser.add_argument('archives', nargs='+', metavar='file.rar',
+                            help='Archive file.')
 
         self._args = parser.parse_args(args)
 
@@ -63,7 +63,7 @@ class Options(syslib.Dump):
 class Unpack(syslib.Dump):
 
     def __init__(self, options):
-        os.umask(int("022", 8))
+        os.umask(int('022', 8))
         archiver = options.getArchiver()
 
         for archive in options.getArchives():
@@ -79,7 +79,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -91,7 +91,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -105,8 +105,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

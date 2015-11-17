@@ -5,8 +5,8 @@ Break reminder timer.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -24,12 +24,12 @@ class Options(syslib.Dump):
         self._parseArgs(args[1:])
 
         if self._args.guiFlag:
-            xterm = syslib.Command("xterm")
+            xterm = syslib.Command('xterm')
             xterm.setArgs([
-                "-fn", "-misc-fixed-bold-r-normal--18-*-iso8859-1", "-fg", "#000000",
-                "-bg", "#ffffdd", "-cr", "#880000", "-geometry", "15x3", "-ut", "+sb",
-                "-e", sys.argv[0]] + args[2:])
-            xterm.run(mode="daemon")
+                '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', '#000000',
+                '-bg', '#ffffdd', '-cr', '#880000', '-geometry', '15x3', '-ut', '+sb',
+                '-e', sys.argv[0]] + args[2:])
+            xterm.run(mode='daemon')
             raise SystemExit(0)
 
         self._setpop()
@@ -47,41 +47,41 @@ class Options(syslib.Dump):
         return self._args.time[0]
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Break reminder timer.")
+        parser = argparse.ArgumentParser(description='Break reminder timer.')
 
-        parser.add_argument("-g", dest="guiFlag", action="store_true", help="Start GUI.")
+        parser.add_argument('-g', dest='guiFlag', action='store_true', help='Start GUI.')
 
-        parser.add_argument("time", nargs=1, type=int, help="Time between breaks in minutes.")
+        parser.add_argument('time', nargs=1, type=int, help='Time between breaks in minutes.')
 
         self._args = parser.parse_args(args)
 
         if self._args.time[0] < 1:
-            raise SystemExit(sys.argv[0] + ": You must specific a positive integer for "
-                             "break time.")
+            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
+                             'break time.')
 
     def _setpop(self):
-        self._pop = syslib.Command("notify-send")
-        self._pop.setFlags(["-t", "10000"])  # 10 seconds display time
+        self._pop = syslib.Command('notify-send')
+        self._pop.setFlags(['-t', '10000'])  # 10 seconds display time
 
 
 class StopWatch(syslib.Dump):
 
     def __init__(self, options):
         self._options = options
-        self._bell = syslib.Command("bell")
+        self._bell = syslib.Command('bell')
         self._limit = options.getTime() * 60
         self._reset()
 
     def run(self):
         while True:
             try:
-                sys.stdout.write("\033]11;#ffffdd\007")
+                sys.stdout.write('\033]11;#ffffdd\007')
                 while True:
                     if self._elapsed >= self._limit + self._alarm:
                         self._alert()
                     time.sleep(1)
                     self._elapsed = int(time.time()) - self._start
-                    sys.stdout.write(" \r " + time.strftime("%H:%M ") +
+                    sys.stdout.write(' \r ' + time.strftime('%H:%M ') +
                                      str(self._limit-self._elapsed))
                     sys.stdout.flush()
             except KeyboardInterrupt:
@@ -90,12 +90,12 @@ class StopWatch(syslib.Dump):
 
     def _alert(self):
         if self._alarm < 601:
-            sys.stdout.write("\033]11;#ff8888\007")
+            sys.stdout.write('\033]11;#ff8888\007')
             sys.stdout.flush()
-            self._bell.run(mode="batch")  # Avoids defunct process
-            self._options.getPop().setArgs([time.strftime("%H:%M") + ": break time reminder"])
+            self._bell.run(mode='batch')  # Avoids defunct process
+            self._options.getPop().setArgs([time.strftime('%H:%M') + ': break time reminder'])
             # Avoids defunct process
-            self._options.getPop().run(mode="batch")
+            self._options.getPop().run(mode='batch')
         self._alarm += 60  # One minute reminder
 
     def _reset(self):
@@ -108,7 +108,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -120,7 +120,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -134,8 +134,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

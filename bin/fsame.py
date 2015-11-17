@@ -5,8 +5,8 @@ Show files with same MD5 checksums.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -36,12 +36,12 @@ class Options(syslib.Dump):
         return self._args.recursiveFlag
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Show files with same MD5 checksums.")
+        parser = argparse.ArgumentParser(description='Show files with same MD5 checksums.')
 
-        parser.add_argument("-R", dest="recursiveFlag", action="store_true",
-                            help="Recursive into sub-directories.")
+        parser.add_argument('-R', dest='recursiveFlag', action='store_true',
+                            help='Recursive into sub-directories.')
 
-        parser.add_argument("files", nargs="+", metavar="file|file.md5",
+        parser.add_argument('files', nargs='+', metavar='file|file.md5',
                             help='File to checksum or ".md5" checksum file.')
 
         self._args = parser.parse_args(args)
@@ -62,8 +62,8 @@ class Md5same(syslib.Dump):
             if os.path.isdir(file):
                 if not os.path.islink(file) and options.getRecursiveFlag():
                     try:
-                        self._calc(options,
-                                   sorted([os.path.join(file, x) for x in os.listdir(file)]))
+                        self._calc(
+                            options, sorted([os.path.join(file, x) for x in os.listdir(file)]))
                     except PermissionError:
                         raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
             elif os.path.isfile(file):
@@ -77,7 +77,7 @@ class Md5same(syslib.Dump):
 
     def _md5sum(self, file):
         try:
-            with open(file, "rb") as ifile:
+            with open(file, 'rb') as ifile:
                 md5 = hashlib.md5()
                 while True:
                     chunk = ifile.read(131072)
@@ -93,7 +93,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -105,7 +105,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -119,8 +119,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

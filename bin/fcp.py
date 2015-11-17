@@ -5,8 +5,8 @@ Copy files and directories.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -43,15 +43,15 @@ class Options(syslib.Dump):
         return self._args.target[0]
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Copy files and directories.")
+        parser = argparse.ArgumentParser(description='Copy files and directories.')
 
-        parser.add_argument("-f", dest="copyLinkFlag", action="store_true",
-                            help="Follow links and copy file/directory.")
+        parser.add_argument('-f', dest='copyLinkFlag', action='store_true',
+                            help='Follow links and copy file/directory.')
 
-        parser.add_argument("sources", nargs="+", metavar="source",
-                            help="Source file or directory.")
-        parser.add_argument("target", nargs=1, metavar="target",
-                            help="Target file or directory.")
+        parser.add_argument('sources', nargs='+', metavar='source',
+                            help='Source file or directory.')
+        parser.add_argument('target', nargs=1, metavar='target',
+                            help='Target file or directory.')
 
         self._args = parser.parse_args(args)
 
@@ -63,8 +63,8 @@ class Copy(syslib.Dump):
         self._automount(options.getTarget(), 8)
         if len(options.getSources()) > 1:
             if not os.path.isdir(options.getTarget()):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' +
-                                 options.getTarget() + '" target directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + options.getTarget() + '" target directory.')
         for source in options.getSources():
             if os.path.isdir(source):
                 if os.path.isabs(source) or source.split(os.sep)[0] in (os.curdir, os.pardir):
@@ -77,8 +77,8 @@ class Copy(syslib.Dump):
                             os.makedirs(targetdir)
                             os.chmod(targetdir, syslib.FileStat(source).getMode())
                         except OSError:
-                            raise SystemExit(sys.argv[0] + ': Cannot create "' +
-                                             targetdir + '" directory.')
+                            raise SystemExit(
+                                sys.argv[0] + ': Cannot create "' + targetdir + '" directory.')
                     self._copy(source, os.path.join(options.getTarget(), source))
             else:
                 directory = os.path.join(options.getTarget(), os.path.dirname(source))
@@ -86,12 +86,12 @@ class Copy(syslib.Dump):
                     try:
                         os.makedirs(directory)
                     except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot create "' +
-                                         directory + '" directory.')
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot create "' + directory + '" directory.')
                 self._copy(source, os.path.join(options.getTarget(), source))
 
     def _automount(self, directory, wait):
-        if directory.startswith("/media/"):
+        if directory.startswith('/media/'):
             for i in range(0, wait * 10):
                 if os.path.isdir(directory):
                     break
@@ -129,16 +129,16 @@ class Copy(syslib.Dump):
             try:
                 shutil.copy2(source, target)
             except IOError as exception:
-                if exception.args != (95, "Operation not supported"):  # os.listxattr for ACL
+                if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
                     try:
-                        with open(source, "rb"):
+                        with open(source, 'rb'):
                             raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
                     except IOError:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
                     except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot read "' + source + '" file.')
             except shutil.Error as exception:
-                if "are the same file" in exception.args[0]:
+                if 'are the same file' in exception.args[0]:
                     raise SystemExit(sys.argv[0] + ': Cannot copy to same "' + target + '" file.')
                 else:
                     raise SystemExit(sys.argv[0] + ': Cannot copy to "' + target + '" file.')
@@ -148,7 +148,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -160,7 +160,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -174,8 +174,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

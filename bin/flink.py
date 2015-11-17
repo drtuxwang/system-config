@@ -5,8 +5,8 @@ Recursively link all files.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -29,17 +29,17 @@ class Options(syslib.Dump):
         return self._args.directories
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Recursively link all files.")
+        parser = argparse.ArgumentParser(description='Recursively link all files.')
 
-        parser.add_argument("directories", nargs="+", metavar="directory",
-                            help="Directory containing files to link.")
+        parser.add_argument('directories', nargs='+', metavar='directory',
+                            help='Directory containing files to link.')
 
         self._args = parser.parse_args(args)
 
         for directory in self._args.directories:
             if not os.path.isdir(directory):
-                raise SystemExit(sys.argv[0] + ': Source directory "' + directory +
-                                 '" does not exist.')
+                raise SystemExit(
+                    sys.argv[0] + ': Source directory "' + directory + '" does not exist.')
             elif os.path.samefile(directory, os.getcwd()):
                 raise SystemExit(sys.argv[0] + ': Source directory "' + directory +
                                  '" cannot be current directory.')
@@ -49,9 +49,9 @@ class Link(syslib.Dump):
 
     def __init__(self, options):
         for directory in options.getDirectories():
-            self._linkFiles(directory, ".")
+            self._linkFiles(directory, '.')
 
-    def _linkFiles(self, sourceDir, targetDir, subdir=""):
+    def _linkFiles(self, sourceDir, targetDir, subdir=''):
         try:
             sourceFiles = sorted([os.path.join(sourceDir, x) for x in os.listdir(sourceDir)])
         except PermissionError:
@@ -89,7 +89,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -101,7 +101,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -115,8 +115,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

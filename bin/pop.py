@@ -5,8 +5,8 @@ Send popup message to display.
 
 import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import argparse
@@ -44,25 +44,25 @@ class Options(syslib.Dump):
         return self._args.waitFlag
 
     def _setpop(self, args):
-        self._pop = syslib.Command("pop.jar")
+        self._pop = syslib.Command('pop.jar')
         self._pop.setArgs(args)
-        self._pop.setWrapper(syslib.Command("java"))
+        self._pop.setWrapper(syslib.Command('java'))
 
     def _parseArgs(self, args):
-        parser = argparse.ArgumentParser(description="Send popup message to display.")
+        parser = argparse.ArgumentParser(description='Send popup message to display.')
 
-        parser.add_argument("-wait", dest="waitFlag", action="store_true",
-                            help="Wait for popup window to close.")
-        parser.add_argument("-time", nargs=1, type=int, dest="timeDelay", default=[0],
-                            help="Delay popup in minutes.")
+        parser.add_argument('-wait', dest='waitFlag', action='store_true',
+                            help='Wait for popup window to close.')
+        parser.add_argument('-time', nargs=1, type=int, dest='timeDelay', default=[0],
+                            help='Delay popup in minutes.')
 
-        parser.add_argument("words", nargs="+", metavar="word",
-                            help="A word.")
+        parser.add_argument('words', nargs='+', metavar='word',
+                            help='A word.')
 
         self._args = parser.parse_args(args)
 
         if self._args.timeDelay[0] < 0:
-            raise SystemExit(sys.argv[0] + ": You must specific a positive integer for delay time.")
+            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for delay time.')
 
 
 class Message(syslib.Dump):
@@ -77,8 +77,8 @@ class Message(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(pop.getExitcode()) +
                                  ' received from "' + pop.getFile() + '".')
         else:
-            pop.run(mode="background")
-        bell = syslib.Command("bell", check=False)
+            pop.run(mode='background')
+        bell = syslib.Command('bell', check=False)
         if bell.isFound():
             bell.run()
 
@@ -87,7 +87,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -99,7 +99,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -113,8 +113,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()

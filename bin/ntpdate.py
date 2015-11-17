@@ -5,8 +5,8 @@ Run daemon to update time once every 24 hours
 
 import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
-if __name__ == "__main__":
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 import glob
@@ -20,11 +20,11 @@ import syslib
 class Options(syslib.Dump):
 
     def __init__(self, args):
-        self._ntpdate = syslib.Command("ntpdate", pathextra=["/usr/sbin"])
-        self._ntpdate.setArgs(["pool.ntp.org"])
+        self._ntpdate = syslib.Command('ntpdate', pathextra=['/usr/sbin'])
+        self._ntpdate.setArgs(['pool.ntp.org'])
 
-        if len(args) == 1 or args[1] != "-u":
-            self._ntpdate.run(mode="exec")
+        if len(args) == 1 or args[1] != '-u':
+            self._ntpdate.run(mode='exec')
 
     def getNtpdate(self):
         """
@@ -37,9 +37,9 @@ class Update(syslib.Dump):
 
     def __init__(self, options):
         while True:
-            options.getNtpdate().run(mode="batch")
+            options.getNtpdate().run(mode='batch')
             if not options.getNtpdate().hasError():
-                print("NTP Time updated =", time.strftime("%Y-%m-%d-%H:%M:%S"))
+                print('NTP Time updated =', time.strftime('%Y-%m-%d-%H:%M:%S'))
                 time.sleep(86340)
             time.sleep(60)
 
@@ -48,7 +48,7 @@ class Main:
 
     def __init__(self):
         self._signals()
-        if os.name == "nt":
+        if os.name == 'nt':
             self._windowsArgv()
         try:
             options = Options(sys.argv)
@@ -60,7 +60,7 @@ class Main:
         sys.exit(0)
 
     def _signals(self):
-        if hasattr(signal, "SIGPIPE"):
+        if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _windowsArgv(self):
@@ -74,8 +74,8 @@ class Main:
         sys.argv = argv
 
 
-if __name__ == "__main__":
-    if "--pydoc" in sys.argv:
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()
