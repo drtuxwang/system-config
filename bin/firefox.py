@@ -34,8 +34,8 @@ class Options(syslib.Dump):
                 break
             elif args[1] in ("-copy", "-no-remote"):
                 if args[1] == "-copy":
-                   updates = False
-                   self._copy()
+                    updates = False
+                    self._copy()
                 self._firefox.setFlags(["-no-remote"])
                 if "about:" not in args:
                     self._firefox.appendFlag("about:")
