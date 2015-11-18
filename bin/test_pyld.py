@@ -463,5 +463,5 @@ if __name__ == '__main__':
     if '--pydoc' in sys.argv:
         help(__name__)
     else:
-        print("\n" + __file__ + ":unittest.main(verbosity=2, buffer=True):")
+        print('\n' + __file__ + ':unittest.main(verbosity=2, buffer=True):')
         unittest.main(verbosity=2, buffer=True)

@@ -1123,7 +1123,7 @@ class LinuxSystem(PosixSystem):
                 pass
             else:
                 if lines and lines[-1].startswith('DISTRIB_DESCRIPTION='):
-                    info['OS Name'] = lines[-1].split('=')[1].replace("'", "")
+                    info['OS Name'] = lines[-1].split('=')[1].replace("'", '')
                     return info
                 else:
                     id = None
@@ -1152,7 +1152,7 @@ class LinuxSystem(PosixSystem):
             try:
                 with open('/etc/debian_version', errors='replace') as ifile:
                     info['OS Name'] = 'Debian ' + ifile.readline().rstrip(
-                        '\r\n').split('=')[-1].replace("'", "")
+                        '\r\n').split('=')[-1].replace("'", '')
             except IOError:
                 pass
             return info
