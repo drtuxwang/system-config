@@ -18,7 +18,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._df = syslib.Command('df', args=args[1:], pathextra=['/bin'])
@@ -45,7 +45,7 @@ class Options(syslib.Dump):
         return self._mounts
 
 
-class CommandThread(syslib.Dump, threading.Thread):
+class CommandThread(threading.Thread):
 
     def __init__(self, command):
         threading.Thread.__init__(self)
@@ -76,7 +76,7 @@ class CommandThread(syslib.Dump, threading.Thread):
         return self._stdout
 
 
-class DiskReport(syslib.Dump):
+class DiskReport:
 
     def __init__(self, options):
         self._df = options.getDf()

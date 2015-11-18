@@ -19,7 +19,7 @@ import shutil
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._wine = syslib.Command('wine')
@@ -61,7 +61,7 @@ class Options(syslib.Dump):
         signal.signal(signal.SIGTERM, self._signalIgnore)
 
 
-class Wine(syslib.Dump):
+class Wine:
 
     def __init__(self, options):
         self._wine = options.getWine()

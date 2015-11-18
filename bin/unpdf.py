@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -52,7 +52,7 @@ class Options(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': DPI resolution must be at least 50.')
 
 
-class Unpacker(syslib.Dump):
+class Unpacker:
 
     def __init__(self, options):
         gs = options.getGs()

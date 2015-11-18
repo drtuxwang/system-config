@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -38,7 +38,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Package(syslib.Dump):
+class Package:
 
     def __init__(self, file, time, version):
         self._file = file
@@ -64,7 +64,7 @@ class Package(syslib.Dump):
         return self._version
 
 
-class CheckDistributions(syslib.Dump):
+class CheckDistributions:
 
     def __init__(self, options):
         for distribution in options.getDistributions():

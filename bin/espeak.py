@@ -16,7 +16,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._espeak = syslib.Command('espeak')

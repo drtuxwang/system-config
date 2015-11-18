@@ -19,7 +19,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -99,7 +99,7 @@ class Options(syslib.Dump):
             self._image = self._args.volume[0] + '.iso'
 
 
-class Pack(syslib.Dump):
+class Pack:
 
     def __init__(self, options):
         image = options.getImage()

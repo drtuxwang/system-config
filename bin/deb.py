@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -110,7 +110,7 @@ class Options(syslib.Dump):
             raise SystemExit(1)
 
 
-class Package(syslib.Dump):
+class Package:
 
     def __init__(self, version, size, depends, description):
         self._version = version
@@ -183,7 +183,7 @@ class Package(syslib.Dump):
         self._version = version
 
 
-class PackageManger(syslib.Dump):
+class PackageManger:
 
     def __init__(self, options):
         self._options = options

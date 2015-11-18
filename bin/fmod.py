@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -93,7 +93,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Setmod(syslib.Dump):
+class Setmod:
 
     def __init__(self, options):
         #   127 ELF,      202 254 186 190      207 250 237 254      206 250 237 254

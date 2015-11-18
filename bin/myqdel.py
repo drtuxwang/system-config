@@ -19,7 +19,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._release = RELEASE
@@ -57,7 +57,7 @@ class Options(syslib.Dump):
             self._jobids.append(jobid)
 
 
-class Delete(syslib.Dump):
+class Delete:
 
     def __init__(self, options):
         if 'HOME' not in os.environ:

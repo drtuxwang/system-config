@@ -16,7 +16,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         if len(args) != 2 or not os.path.isdir(args[1]):
@@ -36,7 +36,7 @@ class Options(syslib.Dump):
         return self._directory
 
 
-class Chroot(syslib.Dump):
+class Chroot:
 
     def __init__(self, directory):
         self._chroot = syslib.Command('/usr/sbin/chroot')

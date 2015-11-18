@@ -18,7 +18,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
     """
     This class handles Python loader commandline options.
 
@@ -79,7 +79,7 @@ class ArgparseActionVerbose(argparse.Action):
         setattr(args, self.dest, len(option_string[1:]))
 
 
-class ModuleTest(syslib.Dump):
+class ModuleTest:
     """
     This class deals with Python module unit testing
 
@@ -159,7 +159,7 @@ class ModuleTest(syslib.Dump):
         return min(self._python3.getExitcode(), 1)
 
 
-class PythonTest(syslib.Dump):
+class PythonTest:
     """
     This class performs Python unit testing
 
@@ -177,7 +177,7 @@ class PythonTest(syslib.Dump):
         Run all test suites
         """
         if self._options.getDumpFlag():
-            self.dump('pytest.')
+            syslib.Dump().list('pytest', self)
 
         startTime = time.time()
         tests = 0

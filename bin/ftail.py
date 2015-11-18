@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
 
@@ -51,7 +51,7 @@ class Options(syslib.Dump):
             self._lines = self._args.lines[0]
 
 
-class Tail(syslib.Dump):
+class Tail:
 
     def __init__(self, options):
         if len(options.getFiles()) > 1:

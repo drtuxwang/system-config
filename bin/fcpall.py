@@ -19,7 +19,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -48,7 +48,7 @@ class Options(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Cannot find "' + self._args.source + '" file.')
 
 
-class Copy(syslib.Dump):
+class Copy:
 
     def __init__(self, options):
         self._options = options

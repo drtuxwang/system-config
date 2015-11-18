@@ -4,7 +4,7 @@ Python system interaction Library
 
 2006-2015 By Dr Colin Kong
 
-Version 5.1.2 (2015-11-17)
+Version 5.2.0 (2015-11-18)
 """
 
 import sys
@@ -17,6 +17,10 @@ import collections
 import copy
 import distutils.version
 import glob
+try:
+    import jsonpickle
+except ImportError:
+    pass
 import os
 if os.name == 'nt':
     import platform
@@ -28,118 +32,30 @@ import subprocess
 import time
 
 
-class Dump(object):
+class Dump:
     """
-    This class provides a 'dump()' method for printing all object attributes.
+    This class dumps object attributes recursively.
     """
 
-    def dump(self, prefix='self.'):
+    def show(self, name, obj):
         """
-        Dump object recursively.
+        Dump object attributes recursively as compact JSON.
 
-        prefix = Object address (ie 'myobject.subobject.')
+        name = Name of object (ie "myobject.subobject")
+        obj  = Object to dump
         """
-        if not prefix.endswith('.'):
-            prefix += '.'
+        jsonpickle.set_encoder_options('json', indent=None, sort_keys=True)
+        print('"' + name, '": ', jsonpickle.encode(obj))
 
-        self._dumpAttributes(prefix, [])
-
-    def dumpValue(self, prefix, dumped, value):
+    def list(self, name, obj):
         """
-        Print attribute value.
+        List object attributes recursively as expanded JSON.
 
-        prefix = Object address (ie 'myobject.subobject')
-        dumped = List of dumped object addresses
-        value  = Python dumpable or basic object
+        name = Name of object (ie "myobject.subobject")
+        obj  = Object to dump
         """
-        if self._isDumpable(value):
-            value._dumpAttributes(prefix + '.', dumped)
-        elif type(value) == str:
-            print(prefix, '= "' + value.replace('\\', '\\\\').replace('"', '\\"') + '"')
-        else:
-            print(prefix, '=', value)
-
-    def _dumpAttributes(self, prefix, dumped):
-        """
-        Dump all attributes.
-
-        prefix = Object address (ie 'myobject.subobject.')
-        dumped = List of dumped object addresses
-        """
-        address = hex(id(self))
-        dumped.append(address)
-        nref = dumped.count(address)
-
-        if nref == 1:
-            print(prefix, self)
-            for key, value in sorted(self.__dict__.items()):
-                value = self.__dict__[key]
-                if type(value) in (dict, list, tuple, set) and self._hasContainer(value):
-                    self._dumpContainer(prefix, dumped, key, value)
-                else:
-                    self.dumpValue(prefix + key, dumped, value)
-        else:
-            print(prefix, str(self).replace('>', ' reference ' + str(nref) + '>'))
-
-    def _dumpContainer(self, prefix, dumped, name, data):
-        """
-        Dumps contents of dict, list, tuple or set object.
-
-        prefix = Object address (ie 'myobject.subobject.')
-        dumped = List of dumped object addresses
-        name   = Python attribute name
-        data   = Python dict, list, tuple or set object
-        """
-        dataT = type(data)
-
-        if dataT == dict:
-            print(prefix + name, '<dict object at', hex(id(self)) + '>')
-            for key, value in sorted(data.items()):
-                self.dumpValue(prefix + name + '[' + str(key) + ']', dumped, value)
-
-        elif dataT == list:
-            print(prefix + name, '<list object at', hex(id(self)) + '>')
-            for i in range(len(data)):
-                self.dumpValue(prefix + name + '[' + str(i) + ']', dumped, data[i])
-
-        elif dataT == tuple:
-            print(prefix + name, '<tuple object at', hex(id(self)) + '>')
-            for i in range(len(data)):
-                self.dumpValue(prefix + name + '[' + str(i) + ']', dumped, data[i])
-
-        elif dataT == set:
-            print(prefix + name, '<set object at', hex(id(self)) + '>')
-            for item in data:
-                self.dumpValue(prefix + name + '[]', dumped, item)
-
-        else:
-            raise NotImplementedError
-
-    def _hasContainer(self, data):
-        """
-        Returns True if data is container and contains dumpable object, dict, list,
-        tuple or set object.
-
-        data = Python data object
-        """
-        if type(data) == dict:
-            for key, value in data.items():
-                if self._isDumpable(value) or type(value) in (dict, list, value, set):
-                    return True
-        elif type(data) in (list, tuple, set):
-            for value in data:
-                if self._isDumpable(value):
-                    return True
-        return False
-
-    def _isDumpable(self, data):
-        """
-        Return True if data has 'dump()' method.
-
-        data = Any Python data object
-        """
-        return (hasattr(data.__class__, 'dump') and
-                isinstance(getattr(data.__class__, 'dump'), collections.Callable))
+        jsonpickle.set_encoder_options('json', indent=4, sort_keys=True)
+        print('"' + name, '": ', jsonpickle.encode(obj))
 
 
 class Background:
@@ -160,7 +76,7 @@ class Background:
         pass
 
 
-class Command(Dump):
+class Command:
     """
     This class contains a command which consists of file, flags and args.
 
@@ -861,7 +777,7 @@ class Daemon:
             pass
 
 
-class FileStat(Dump):
+class FileStat:
     """
     This class contains file status information.
 
@@ -897,19 +813,6 @@ class FileStat(Dump):
             else:
                 if size is not None:
                     self._size = size
-
-    def dumpValue(self, prefix, dumped, value):
-        """
-        Print contents of object (overrides default for '_mode')
-
-        prefix = Object address (ie 'myobject.subobject')
-        dumped = List of dumped object addresses
-        value  = Python dumpable or basic object
-        """
-        if prefix.endswith('._mode'):
-            print(prefix, '=', oct(value))
-        else:
-            super().dumpValue(prefix, dumped, value)
 
     def getFile(self):
         """
@@ -984,7 +887,7 @@ class FileStat(Dump):
         return time.strftime('%Y-%m-%d-%H:%M:%S', time.localtime(self._mtime))
 
 
-class SystemInfo(Dump):
+class SystemInfo:
     """
     This class determines system information.
     The '__name__.info' object is a instance of SystemInfo.
@@ -1209,7 +1112,7 @@ class SystemInfo(Dump):
         return _cache['username']
 
 
-class SyslibError(Dump, Exception):
+class SyslibError(Exception):
     """
     This class handles module exception errors.
 
@@ -1229,7 +1132,7 @@ class SyslibError(Dump, Exception):
         return self.args
 
 
-class Task(Dump):
+class Task:
     """
     This class handles system processess.
 

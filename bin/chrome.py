@@ -23,7 +23,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._chrome = syslib.Command('chrome')
@@ -248,7 +248,7 @@ class Options(syslib.Dump):
                         os.environ['LD_LIBRARY_PATH'] = libdir
 
 
-class FlashPlayer(syslib.Dump):
+class FlashPlayer:
 
     def __init__(self, chrome):
         self._plugin = None

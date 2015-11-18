@@ -17,7 +17,7 @@ import shutil
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._gqview = syslib.Command('geeqie', check=False)

@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         if len(args) == 1 or args[1] in ('-h', '--h', '--help'):
@@ -40,7 +40,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Ffix(syslib.Dump):
+class Ffix:
 
     def __init__(self, options):
         isbadChar = re.compile('^-|[ !\'$&`"()*<>?\[\]\\\\|]')

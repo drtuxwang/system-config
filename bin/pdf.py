@@ -21,7 +21,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -90,7 +90,7 @@ class Options(syslib.Dump):
             self._files = self._args.files
 
 
-class Encode(syslib.Dump):
+class Encode:
 
     def __init__(self, options):
         tmpfile = (os.sep + os.path.join('tmp', 'pdf-' + syslib.info.getUsername() + '.' +

@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -77,7 +77,7 @@ class Options(syslib.Dump):
             self._tracks = None
 
 
-class Cdrom(syslib.Dump):
+class Cdrom:
 
     def __init__(self):
         self._devices = {}
@@ -112,7 +112,7 @@ class Cdrom(syslib.Dump):
         return self._devices
 
 
-class RipCd(syslib.Dump):
+class RipCd:
 
     def __init__(self, options):
         self._icedax = options.getIcedax()

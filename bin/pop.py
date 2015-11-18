@@ -18,7 +18,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -65,7 +65,7 @@ class Options(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for delay time.')
 
 
-class Message(syslib.Dump):
+class Message:
 
     def __init__(self, options):
         time.sleep(60 * options.getTimeDelay())

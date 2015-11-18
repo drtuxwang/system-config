@@ -18,7 +18,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -70,7 +70,7 @@ class Options(syslib.Dump):
         self._commandArgs = args[2:]
 
 
-class Waitfor(syslib.Dump):
+class Waitfor:
 
     def __init__(self, options):
         user = options.getUser()

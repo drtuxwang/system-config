@@ -27,20 +27,25 @@ class Options:
     self._verboseFlag = Verbose flag
     """
 
-    def dump(self, prefix='self.'):
+    def dump(self):
         """
         Dump object recursively.
         """
-        if not prefix.endswith('.'):
-            prefix += '.'
-
-        print(prefix, self)
-        print(prefix + '_args.module =', self._args.module)
-        print(prefix + '_dumpFlag =', self._dumpFlag)
-        print(prefix + '_libraryPath =', self._libraryPath)
-        print(prefix + '_moduleArgs =', self._moduleArgs)
-        print(prefix + '_moduleDir =', self._moduleDir)
-        print(prefix + '_verboseFlag =', self._verboseFlag)
+        print('    "_options": {')
+        print('        "_args": {')
+        print('            "args":', str(self._args.args), ',')
+        print('            "libpath":', str(self._args.libpath) + ',')
+        print('            "module":' + str(self._args.module) + ',')
+        print('            "py/object": "argparse.Namespace",')
+        print('            "verbosity":', self._args.verbosity)
+        print('        },')
+        print('        "_dumpFlag":', str(self._dumpFlag) + ',')
+        print('        "_libraryPath":', str(self._libraryPath) + ',')
+        print('        "_moduleArgs":', str(self._moduleArgs) + ',')
+        print('        "_moduleDir": "', self._moduleDir, '",')
+        print('        "_verboseFlag":', str(self._verboseFlag) + ',')
+        print('        "py/object": "__main__.Options"')
+        print('    },')
 
     def __init__(self, args):
         """
@@ -141,16 +146,15 @@ class PythonLoader:
     self._sysArgv = Modified Python system arguments
     """
 
-    def dump(self, prefix='self.'):
+    def dump(self):
         """
         Dump object recursively.
         """
-        if not prefix.endswith('.'):
-            prefix += '.'
-
-        print(prefix, self)
-        self._options.dump(prefix + '_options')
-        print(prefix + '_sysArgv =', self._sysArgv)
+        print('"pyloader": {')
+        self._options.dump()
+        print('    "_sysArgv":', self._sysArgv, ',')
+        print('    "py/object": "__main__.PythonLoader"')
+        print('}')
 
     def __init__(self, options):
         """
@@ -165,7 +169,7 @@ class PythonLoader:
         Load main module and run 'Main()' class
         """
         if self._options.getDumpFlag():
-            self.dump('pyloader.')
+            self.dump()
         if self._options.getLibraryPath():
             sys.path = self._options.getLibraryPath() + sys.path
             if self._options.getVerboseFlag():

@@ -19,7 +19,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -83,7 +83,7 @@ class Options(syslib.Dump):
                     self._aria2c.extendFlags(['--all-proxy=http://' + proxy])
 
 
-class Geturl(syslib.Dump):
+class Geturl:
 
     def __init__(self, options):
         self._options = options

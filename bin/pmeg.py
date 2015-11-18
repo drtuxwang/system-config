@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -64,7 +64,7 @@ class Options(syslib.Dump):
                     sys.argv[0] + ': Image directory "' + directory + '" does not exist.')
 
 
-class Remeg(syslib.Dump):
+class Remeg:
 
     def __init__(self, options):
         self._convert = options.getConvert()

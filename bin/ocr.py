@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -52,7 +52,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Ocr(syslib.Dump):
+class Ocr:
 
     def __init__(self, options):
         self._tesseract = options.getTesseract()

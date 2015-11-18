@@ -20,7 +20,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._release = RELEASE
@@ -66,7 +66,7 @@ class Options(syslib.Dump):
                              self._args.queue[0] + '".')
 
 
-class Submit(syslib.Dump):
+class Submit:
 
     def __init__(self, options):
         if 'HOME' not in os.environ:

@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -70,7 +70,7 @@ class Options(syslib.Dump):
                     sys.argv[0] + ': Picture directory "' + directory + '" does not exist.')
 
 
-class Renumber(syslib.Dump):
+class Renumber:
 
     def __init__(self, options):
         startdir = os.getcwd()

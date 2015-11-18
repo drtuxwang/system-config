@@ -17,7 +17,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._ntpdate = syslib.Command('ntpdate', pathextra=['/usr/sbin'])
@@ -33,7 +33,7 @@ class Options(syslib.Dump):
         return self._ntpdate
 
 
-class Update(syslib.Dump):
+class Update:
 
     def __init__(self, options):
         while True:

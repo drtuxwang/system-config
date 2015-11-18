@@ -25,7 +25,7 @@ import time
 import syslib2 as syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._release = RELEASE
@@ -133,7 +133,7 @@ class Options(syslib.Dump):
         return xclip.getOutput()
 
 
-class Chinese(syslib.Dump):
+class Chinese:
 
     def __init__(self, options):
         self._options = options
@@ -167,7 +167,7 @@ class Chinese(syslib.Dump):
                             time.sleep(0.25)
 
 
-class ChineseDictionary(syslib.Dump):
+class ChineseDictionary:
 
     def __init__(self, options):
         self._options = options
@@ -217,7 +217,7 @@ class ChineseDictionary(syslib.Dump):
         yield sounds
 
 
-class Espeak(syslib.Dump):
+class Espeak:
 
     def __init__(self, options):
         self._options = options
@@ -240,7 +240,7 @@ class Espeak(syslib.Dump):
                              ' received from "' + self._espeak.getFile() + '".')
 
 
-class Ogg123(syslib.Dump):
+class Ogg123:
     """
     Uses 'ogg123' from 'vorbis-tools'.
     """

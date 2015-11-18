@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._batterys = []
@@ -37,7 +37,7 @@ class Options(syslib.Dump):
         return self._batterys
 
 
-class BatteryAcpi(syslib.Dump):
+class BatteryAcpi:
     """
     Uses '/proc/acpi/battery/BAT*'
     """
@@ -220,7 +220,7 @@ class BatteryPower(BatteryAcpi):
             return
 
 
-class Monitor(syslib.Dump):
+class Monitor:
 
     def __init__(self, options):
         for battery in options.getBatterys():

@@ -17,7 +17,7 @@ import netnice
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._wget = syslib.Command('wget')
@@ -66,7 +66,7 @@ class Options(syslib.Dump):
                     os.environ['https_proxy'] = 'http://' + proxy
 
 
-class Download(syslib.Dump):
+class Download:
 
     def __init__(self, options):
         self._output = options.getOutput()

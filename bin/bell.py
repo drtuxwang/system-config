@@ -17,7 +17,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         sound = args[0][:-3] + '.ogg'  # Replace '.py' with '.ogg'

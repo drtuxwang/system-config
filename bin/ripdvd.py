@@ -18,12 +18,11 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-        self.dump('options.')
         self._vlc = syslib.Command('vlc')
 
     def getDevice(self):
@@ -73,7 +72,7 @@ class Options(syslib.Dump):
                 sys.argv[0] + ': Cannot find "' + self._args.device[0] + '" DVD device.')
 
 
-class Cdrom(syslib.Dump):
+class Cdrom:
 
     def __init__(self):
         self._devices = {}
@@ -108,7 +107,7 @@ class Cdrom(syslib.Dump):
         return self._devices
 
 
-class RipDvd(syslib.Dump):
+class RipDvd:
 
     def __init__(self, options):
         self._vlc = options.getVlc()

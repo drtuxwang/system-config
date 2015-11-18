@@ -19,7 +19,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -87,7 +87,7 @@ class Options(syslib.Dump):
             self._image = 'file.iso'
 
 
-class Cdrom(syslib.Dump):
+class Cdrom:
 
     def __init__(self):
         self._devices = {}
@@ -122,7 +122,7 @@ class Cdrom(syslib.Dump):
         return self._devices
 
 
-class Readcd(syslib.Dump):
+class Readcd:
 
     def __init__(self, options):
         device = options.getDevice()

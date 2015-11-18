@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -44,7 +44,7 @@ class Options(syslib.Dump):
         return self._args.directories[1]
 
 
-class Diff(syslib.Dump):
+class Diff:
 
     def __init__(self, options):
         self._diffdir(options.getDirectory1(), options.getDirectory2())

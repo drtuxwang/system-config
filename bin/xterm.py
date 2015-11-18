@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._columns = '100'
@@ -89,7 +89,7 @@ class Options(syslib.Dump):
         return 'Unknown'
 
 
-class Xterm(syslib.Dump):
+class Xterm:
 
     def __init__(self, options):
         self._options = options

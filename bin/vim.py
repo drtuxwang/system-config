@@ -16,7 +16,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._vim = syslib.Command('vim')
@@ -40,7 +40,7 @@ class Options(syslib.Dump):
         return self._vim
 
 
-class Edit(syslib.Dump):
+class Edit:
 
     def __init__(self, options):
         if options.getFile():

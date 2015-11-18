@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -75,7 +75,7 @@ class Options(syslib.Dump):
                     os.environ['LD_LIBRARY_PATH'] = libdir
 
 
-class Ungpg(syslib.Dump):
+class Ungpg:
 
     def __init__(self, options):
         gpg = options.getGpg()

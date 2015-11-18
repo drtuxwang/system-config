@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -52,7 +52,7 @@ class Options(syslib.Dump):
                 sys.argv[0] + ': Cannot find "' + self._args.directory[0] + '" directory.')
 
 
-class Gallery(syslib.Dump):
+class Gallery:
 
     def __init__(self, directory, height):
         self._directory = directory
@@ -118,7 +118,7 @@ class Gallery(syslib.Dump):
         return None
 
 
-class Xhtml(syslib.Dump):
+class Xhtml:
 
     def __init__(self, options):
         self._height = options.getHeight()

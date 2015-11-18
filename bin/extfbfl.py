@@ -19,7 +19,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -39,7 +39,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Extract(syslib.Dump):
+class Extract:
 
     def __init__(self, options):
         self._profiles = {}
@@ -81,7 +81,7 @@ class Extract(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" CSV file.')
 
 
-class Profile(syslib.Dump):
+class Profile:
 
     def __init__(self, name, url):
         self._name = name

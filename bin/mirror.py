@@ -19,7 +19,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -60,7 +60,7 @@ class Options(syslib.Dump):
             self._mirrors.append([directories[i], directories[i+1]])
 
 
-class Mirror(syslib.Dump):
+class Mirror:
 
     def __init__(self, options):
         self._size = 0

@@ -29,7 +29,7 @@ if os.name == 'nt':
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._releaseDate = str(VERSION)[:4] + '-' + str(VERSION)[4:6] + '-' + str(VERSION)[6:]
@@ -65,7 +65,7 @@ class Options(syslib.Dump):
             return OperatingSystem()
 
 
-class BatteryAcpi(syslib.Dump):
+class BatteryAcpi:
     """
     Uses '/proc/acpi/battery/BAT*'
     """
@@ -248,7 +248,7 @@ class BatteryPower(BatteryAcpi):
             return
 
 
-class CommandThread(syslib.Dump, threading.Thread):
+class CommandThread(threading.Thread):
 
     def __init__(self, command):
         threading.Thread.__init__(self)
@@ -279,7 +279,7 @@ class CommandThread(syslib.Dump, threading.Thread):
         return self._stdout
 
 
-class Detect(syslib.Dump):
+class Detect:
 
     def __init__(self, options):
         self._author = ('Sysinfo ' + options.getReleaseVersion() +
@@ -436,7 +436,7 @@ class Detect(syslib.Dump):
                         pass
 
 
-class OperatingSystem(syslib.Dump):
+class OperatingSystem:
 
     def detectLoader(self, writer):
         ldd = syslib.Command('ldd', args=['/bin/sh'], check=False)
@@ -1548,7 +1548,7 @@ class WindowsSystem(OperatingSystem):
         return subkeys, values
 
 
-class Writer(syslib.Dump):
+class Writer:
 
     def __init__(self, options):
         self._options = options

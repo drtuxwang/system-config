@@ -18,7 +18,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -64,7 +64,7 @@ class Options(syslib.Dump):
         self._pop.setFlags(['-t', '10000'])  # 10 seconds display time
 
 
-class StopWatch(syslib.Dump):
+class StopWatch:
 
     def __init__(self, options):
         self._options = options

@@ -16,7 +16,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._jar = syslib.Command(os.path.join('bin', 'jar'))
@@ -57,7 +57,7 @@ class Options(syslib.Dump):
         return self._manifest
 
 
-class Pack(syslib.Dump):
+class Pack:
 
     def __init__(self, options):
         self._jar = options.getJar()

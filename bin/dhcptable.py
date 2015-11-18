@@ -19,7 +19,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._arping = syslib.Command('arping', pathextra=['/sbin'])
@@ -76,7 +76,7 @@ class Options(syslib.Dump):
         return self._subnet
 
 
-class ScanHost(syslib.Dump, threading.Thread):
+class ScanHost(threading.Thread):
 
     def __init__(self, options, ip):
         self._options = options
@@ -105,7 +105,7 @@ class ScanHost(syslib.Dump, threading.Thread):
             self._child = None
 
 
-class ScanLan(syslib.Dump):
+class ScanLan:
 
     def __init__(self, options):
         self._timeLimit = 1

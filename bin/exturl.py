@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -37,7 +37,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Extract(syslib.Dump):
+class Extract:
 
     def __init__(self, options):
         urls = []

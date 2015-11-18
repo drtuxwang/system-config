@@ -20,7 +20,7 @@ import socketserver
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -69,7 +69,7 @@ class MyTCPServer(socketserver.TCPServer):
         self.socket.bind(self.server_address)
 
 
-class WebServer(syslib.Dump):
+class WebServer:
 
     def __init__(self, options):
         try:

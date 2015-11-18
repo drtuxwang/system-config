@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -53,7 +53,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Unpack(syslib.Dump):
+class Unpack:
 
     def __init__(self, options):
         os.umask(int('022', 8))

@@ -21,7 +21,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -99,7 +99,7 @@ class Options(syslib.Dump):
                 raise SystemExit(sys.argv[0] + ': Cannot detect default printer.')
 
 
-class Print(syslib.Dump):
+class Print:
 
     def __init__(self, options):
         self._tmpfile = os.sep + os.path.join(

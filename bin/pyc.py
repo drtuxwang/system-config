@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
     """
     self._args.noskipFlag = No compile skip flag
     self._dumpFlag        = Dump objects flag
@@ -85,7 +85,7 @@ class ArgparseActionVerbose(argparse.Action):
         setattr(args, self.dest, len(option_string[1:]))
 
 
-class PythonChecker(syslib.Dump):
+class PythonChecker:
     """
     This class checks Python source code for 3.x compatibility and common mistakes.
     """
@@ -177,7 +177,7 @@ class PythonChecker(syslib.Dump):
         return 0
 
 
-class PythonCompiler(syslib.Dump):
+class PythonCompiler:
     """
     This class check & compiles Python source code into '.pyc' (works like make).
     """
@@ -196,7 +196,7 @@ class PythonCompiler(syslib.Dump):
         Compiles Python with verbose error messages
         """
         if self._options.getDumpFlag():
-            self.dump('pyc.')
+            syslib.Dump().list('pyc', self)
 
         self._umask = os.umask(int('022', 8))
         errors = 0
@@ -227,7 +227,7 @@ class PythonCompiler(syslib.Dump):
         return 0
 
 
-class PythonModule(syslib.Dump):
+class PythonModule:
     """
     This class deals with Python module files.
     """

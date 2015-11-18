@@ -19,7 +19,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._archive = os.path.basename(os.getcwd())
@@ -31,7 +31,7 @@ class Options(syslib.Dump):
         return self._archive
 
 
-class Index(syslib.Dump):
+class Index:
 
     def __init__(self, options):
         self._options = options

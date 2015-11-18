@@ -20,7 +20,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -84,7 +84,7 @@ class Options(syslib.Dump):
             self._speed = 0
 
 
-class Configuration(syslib.Dump):
+class Configuration:
 
     def __init__(self, file=''):
         self._data = {'cdspeed': {}}

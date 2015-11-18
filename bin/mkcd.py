@@ -18,7 +18,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
 
@@ -103,7 +103,7 @@ class Options(syslib.Dump):
         signal.signal(signal.SIGTERM, self._signalIgnore)
 
 
-class Burner(syslib.Dump):
+class Burner:
 
     def __init__(self, options):
         self._device = options.getDevice()
@@ -228,7 +228,7 @@ class Burner(syslib.Dump):
                 pass
 
 
-class Cdrom(syslib.Dump):
+class Cdrom:
 
     def __init__(self):
         self._devices = {}

@@ -20,7 +20,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -100,7 +100,7 @@ class Options(syslib.Dump):
             self._subnet = myip.rsplit('.', 1)[0]
 
 
-class Remote(syslib.Dump, threading.Thread):
+class Remote(threading.Thread):
 
     def __init__(self, options, ip):
         self._options = options
@@ -129,7 +129,7 @@ class Remote(syslib.Dump, threading.Thread):
             self._child = None
 
 
-class Cluster(syslib.Dump):
+class Cluster:
 
     def __init__(self, options):
         self._waitMax = 64

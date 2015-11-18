@@ -19,7 +19,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._release = RELEASE
@@ -56,7 +56,7 @@ class Options(syslib.Dump):
         return self._release
 
 
-class Job(syslib.Dump):
+class Job:
 
     def __init__(self, options):
         self._myqsdir = options.getMyqsdir()

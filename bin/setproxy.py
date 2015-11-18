@@ -18,7 +18,7 @@ import urllib.request
 import syslib
 
 
-class Proxy(syslib.Dump):
+class Proxy:
 
     def __init__(self):
         myip = self._getmyip()

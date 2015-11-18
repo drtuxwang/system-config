@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -71,7 +71,7 @@ class Options(syslib.Dump):
             self._files = sorted(os.listdir())
 
 
-class List(syslib.Dump):
+class List:
 
     def __init__(self, options):
         self._list(options, options.getFiles())

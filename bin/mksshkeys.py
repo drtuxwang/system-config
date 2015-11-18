@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -46,7 +46,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class SecureShell(syslib.Dump):
+class SecureShell:
 
     def __init__(self, options):
         self._ssh = options.getSsh()

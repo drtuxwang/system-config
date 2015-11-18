@@ -19,7 +19,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -56,7 +56,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Copy(syslib.Dump):
+class Copy:
 
     def __init__(self, options):
         self._options = options

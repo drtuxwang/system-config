@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -78,7 +78,7 @@ class Options(syslib.Dump):
             self._xrange = ''
 
 
-class Graph(syslib.Dump):
+class Graph:
 
     def __init__(self, options):
         self._gnuplot = options.getGnuplot()

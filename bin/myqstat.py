@@ -21,7 +21,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._release = RELEASE
@@ -41,7 +41,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Sorter(syslib.Dump):
+class Sorter:
 
     def __init__(self, x, *args):
         self._x = x
@@ -56,7 +56,7 @@ class Sorter(syslib.Dump):
             return 0
 
 
-class Stats(syslib.Dump):
+class Stats:
 
     def __init__(self, options):
         hostname = syslib.info.getHostname()

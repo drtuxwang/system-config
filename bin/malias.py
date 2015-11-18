@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -56,7 +56,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Address(syslib.Dump):
+class Address:
 
     def __init__(self):
         self._names = []

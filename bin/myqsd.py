@@ -20,7 +20,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._release = RELEASE
@@ -65,7 +65,7 @@ class Options(syslib.Dump):
                              'the number of slots.')
 
 
-class Lock(syslib.Dump):
+class Lock:
 
     def __init__(self, file):
         self._file = file
@@ -110,7 +110,7 @@ class Lock(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Cannot remove "' + self._file + '" lock file.')
 
 
-class Daemon(syslib.Dump):
+class Daemon:
 
     def __init__(self, options):
         self._myqsdir = options.getMyqsdir()

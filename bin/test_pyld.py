@@ -38,7 +38,7 @@ class Test_Options(unittest.TestCase):
         """
         args = ['arg0', 'moduleX']
         options = pyld.Options(args)
-        options.dump('options.')
+        options.dump()
 
     def test_getDumpFlag_Default(self):
         """
@@ -372,7 +372,7 @@ class Test_PythonLoader(unittest.TestCase):
         Test object dumping does not fail.
         """
         pythonLoader = pyld.PythonLoader(self._options)
-        pythonLoader.dump('pythonLoader.')
+        pythonLoader.dump()
 
     def test_run_dumpFlag(self):
         """
@@ -408,7 +408,7 @@ class Test_PythonLoader(unittest.TestCase):
         with self.assertRaises(AttributeError) as context:
             pythonLoader.run()
         self.assertIsInstance(context.exception.args, tuple)
-        self.assertIn('has no attribute "Main"', context.exception.args[0])
+        self.assertIn("has no attribute 'Main'", context.exception.args[0])
 
     def test_run_libraryPath(self):
         """

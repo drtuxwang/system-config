@@ -19,7 +19,7 @@ import xml.sax
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -47,7 +47,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class XmlDataHandler(syslib.Dump, xml.sax.ContentHandler):
+class XmlDataHandler(xml.sax.ContentHandler):
 
     def __init__(self, view):
         self._elements = []

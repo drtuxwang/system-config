@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -52,7 +52,7 @@ class Options(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': Invalid "' + str(month) + '" month. Use 1-12.')
 
 
-class Calendar(syslib.Dump):
+class Calendar:
 
     def __init__(self, options):
         print('\n                  [ ', calendar.month_name[options.getMonth()] + ' ',

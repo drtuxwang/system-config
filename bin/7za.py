@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         if os.name == 'nt':
@@ -88,7 +88,7 @@ class Options(syslib.Dump):
             del os.environ['LANG']  # Avoids locale problems
 
 
-class Pack(syslib.Dump):
+class Pack:
 
     def __init__(self, options):
         os.umask(int('022', 8))

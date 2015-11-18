@@ -20,7 +20,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -58,7 +58,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Configuration(syslib.Dump):
+class Configuration:
 
     def __init__(self, file=''):
         self._data = {'xreset': {}}
@@ -83,7 +83,7 @@ class Configuration(syslib.Dump):
             pass
 
 
-class Xreset(syslib.Dump):
+class Xreset:
 
     def __init__(self, options):
         self._xrandr = syslib.Command('xrandr')

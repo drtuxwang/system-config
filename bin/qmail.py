@@ -21,7 +21,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._release = RELEASE
@@ -103,7 +103,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Mailer(syslib.Dump):
+class Mailer:
 
     def __init__(self, options):
         self._malias = syslib.Command('malias', check=False)

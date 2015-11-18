@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -45,7 +45,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Finder(syslib.Dump):
+class Finder:
 
     def __init__(self, options):
         self._options = options

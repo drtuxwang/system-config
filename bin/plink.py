@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -45,7 +45,7 @@ class Options(syslib.Dump):
                                  '" cannot be current directory.')
 
 
-class Link(syslib.Dump):
+class Link:
 
     def __init__(self, options):
         for directory in options.getDirectorys():

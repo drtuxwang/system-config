@@ -18,7 +18,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -120,7 +120,7 @@ class Options(syslib.Dump):
             self._files = self._args.files
 
 
-class Encoder(syslib.Dump):
+class Encoder:
 
     def __init__(self, options):
         self._options = options
@@ -212,7 +212,7 @@ class Encoder(syslib.Dump):
             sys.exit(exitcode)
 
 
-class Media(syslib.Dump):
+class Media:
 
     def __init__(self, file):
         self._file = file

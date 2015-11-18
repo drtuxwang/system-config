@@ -17,7 +17,7 @@ import netnice
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._aria2c = syslib.Command('aria2c')

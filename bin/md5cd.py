@@ -19,7 +19,7 @@ import time
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -58,7 +58,7 @@ class Options(syslib.Dump):
                 sys.argv[0] + ': Cannot find "' + self._args.device[0] + '" CD/DVD device.')
 
 
-class Cdrom(syslib.Dump):
+class Cdrom:
 
     def __init__(self):
         self._devices = {}
@@ -93,7 +93,7 @@ class Cdrom(syslib.Dump):
         return self._devices
 
 
-class Md5cd(syslib.Dump):
+class Md5cd:
 
     def __init__(self, options):
         device = options.getDevice()

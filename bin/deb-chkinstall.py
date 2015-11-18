@@ -19,7 +19,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -60,7 +60,7 @@ class Options(syslib.Dump):
         self._args = parser.parse_args(args)
 
 
-class Package(syslib.Dump):
+class Package:
 
     def __init__(self, depends=[], url=''):
         self._checkedFlag = False
@@ -125,7 +125,7 @@ class Package(syslib.Dump):
         self._url = url
 
 
-class CheckInstall(syslib.Dump):
+class CheckInstall:
 
     def __init__(self, options):
         self._packages = self._readDistributionPackages(options.getDistribution() + '.packages')

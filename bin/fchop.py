@@ -17,7 +17,7 @@ import signal
 import syslib
 
 
-class Options(syslib.Dump):
+class Options:
 
     def __init__(self, args):
         self._parseArgs(args[1:])
@@ -55,7 +55,7 @@ class Options(syslib.Dump):
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for chunksize.')
 
 
-class Chop(syslib.Dump):
+class Chop:
 
     def __init__(self, options):
         self._options = options
