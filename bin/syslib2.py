@@ -45,7 +45,7 @@ class Dump:
         obj  = Object to dump
         """
         jsonpickle.set_encoder_options('json', indent=None, sort_keys=True)
-        print('"' + name, '": ', jsonpickle.encode(obj))
+        print('"' + name, '": ', jsonpickle.encode(obj, unpicklable=False))
 
     def list(self, name, obj):
         """
@@ -55,7 +55,7 @@ class Dump:
         obj  = Object to dump
         """
         jsonpickle.set_encoder_options('json', indent=4, sort_keys=True)
-        print('"' + name, '": ', jsonpickle.encode(obj))
+        print('"' + name, '": ', jsonpickle.encode(obj, unpicklable=False))
 
 
 class Background:

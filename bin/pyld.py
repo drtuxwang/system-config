@@ -36,15 +36,13 @@ class Options:
         print('            "args":', str(self._args.args), ',')
         print('            "libpath":', str(self._args.libpath) + ',')
         print('            "module":' + str(self._args.module) + ',')
-        print('            "py/object": "argparse.Namespace",')
         print('            "verbosity":', self._args.verbosity)
         print('        },')
         print('        "_dumpFlag":', str(self._dumpFlag) + ',')
         print('        "_libraryPath":', str(self._libraryPath) + ',')
         print('        "_moduleArgs":', str(self._moduleArgs) + ',')
         print('        "_moduleDir": "', self._moduleDir, '",')
-        print('        "_verboseFlag":', str(self._verboseFlag) + ',')
-        print('        "py/object": "__main__.Options"')
+        print('        "_verboseFlag":', self._verboseFlag)
         print('    },')
 
     def __init__(self, args):
@@ -152,8 +150,7 @@ class PythonLoader:
         """
         print('"pyloader": {')
         self._options.dump()
-        print('    "_sysArgv":', self._sysArgv, ',')
-        print('    "py/object": "__main__.PythonLoader"')
+        print('    "_sysArgv":', self._sysArgv)
         print('}')
 
     def __init__(self, options):
