@@ -1,7 +1,8 @@
 #!/bin/sh
 
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-PATH=$HOME/software/bin:$PATH; export PATH
+PATH="$HOME/software/bin:/opt/software/bin:$PATH"; export PATH
+
 
 if [ -x /usr/bin/ibus-daemon ]; then
     GTK_IM_MODULE=ibus; export GTK_IM_MODULE
