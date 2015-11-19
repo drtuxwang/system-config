@@ -381,7 +381,7 @@ class Test_PythonLoader(unittest.TestCase):
 
         pythonLoader = pyld.PythonLoader(self._options)
 
-        with self.assertRaises(ImportError) as context:
+        with self.assertRaises(FileNotFoundError) as context:
             pythonLoader.run()
 
         self.assertTrue(pythonLoader.dump.called)
@@ -392,14 +392,15 @@ class Test_PythonLoader(unittest.TestCase):
         """
         pythonLoader = pyld.PythonLoader(self._options)
 
-        with self.assertRaises(ImportError) as context:
+        with self.assertRaises(FileNotFoundError) as context:
             pythonLoader.run()
 
     def test_run_importMain(self):
         """
-        Test run loads module and calls 'Main()'. We use this module as the tets module.
+        Test run loads module and calls 'Main()'. We use this module as the test module.
         """
         self._options.mock_getModule('test_pyld')
+        self._options.mock_getModuleDir(os.curdir)
 
         pythonLoader = pyld.PythonLoader(self._options)
 
@@ -416,7 +417,7 @@ class Test_PythonLoader(unittest.TestCase):
 
         pythonLoader = pyld.PythonLoader(self._options)
 
-        with self.assertRaises(ImportError) as context:
+        with self.assertRaises(FileNotFoundError) as context:
             pythonLoader.run()
         self.assertIn('directory1', sys.path)
         self.assertIn('directory2', sys.path)
@@ -429,7 +430,7 @@ class Test_PythonLoader(unittest.TestCase):
 
         pythonLoader = pyld.PythonLoader(self._options)
 
-        with self.assertRaises(ImportError) as context:
+        with self.assertRaises(FileNotFoundError) as context:
             pythonLoader.run()
 
         value = pyld.sys.stdout.getvalue()
