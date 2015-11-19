@@ -5,6 +5,7 @@ Load Python main program as module (must have Main class).
 
 import argparse
 import glob
+import importlib.machinery
 import os
 import signal
 import sys
@@ -186,7 +187,8 @@ class PythonLoader:
             print()
 
         os.environ['PYTHONDONTWRITEBYTECODE'] = '1'
-        main = __import__(module)
+        main = importlib.machinery.SourceFileLoader(
+            "module.name", os.path.join(directory, module) + '.py').load_module()
         main.Main()
 
     def getOptions(self):
