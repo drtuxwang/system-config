@@ -325,6 +325,9 @@ bin/fwhich             Locate a program file
 bin/fwhich.bat
 bin/fwhich.py
 
+bin/fwrapper           Create wrapper to run script/executable
+bin/fwrapper.py
+
 bin/fzero              Zero device or create zero file
 bin/fzero.bat
 bin/fzero.py
