@@ -28,7 +28,7 @@ class Options:
                                               os.path.dirname(self._gitk.getFile()))
         else:
             gitHome = os.path.dirname(os.path.dirname(self._gitk.getFile()))
-            if gitHome not in ('/usr', '/usr/local'):
+            if gitHome not in ('/usr', '/usr/local', '/opt/software'):
                 self._env['GIT_EXEC_PATH'] = os.path.join(gitHome, 'libexec', 'git-core')
                 self._env['GIT_TEMPLATE_DIR'] = os.path.join(gitHome, 'share',
                                                              'git-core', 'templates')

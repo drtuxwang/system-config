@@ -158,7 +158,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     chmod go= $HOME/Desktop .??*/* 2> /dev/null
     export LC_COLLATE=C
     export HISTFILE=
-    export PATH="$HOME/software/bin:/opt/software/bin:$PATH:"
+    export PATH="$HOME/software/bin:/opt/software/bin:$PATH"
     export TMP=/tmp; export TMPDIR=$TMP; rm -rf $HOME/tmp 2> /dev/null
     export WINEDITOR=vi
     ENV=
@@ -272,8 +272,8 @@ elif [ ! "$*" ]; then
             PROMPT_COMMAND="precmd"; trap preexec DEBUG;;
         esac
 
-        export PATH="$HOME/software/bin:/opt/software/bin:/usr/local/bin:$PATH:"
         export PS1=$MYUNAME@$MYHNAME'_$ '
+        export PATH="$HOME/software/bin:/opt/software/bin:/usr/local/bin:$PATH"
         export HISTFILE=
 
         # mksrc, cdsrc, mkinst, cdinst, mktest, cdtest
