@@ -5,19 +5,17 @@ Set CD/DVD drive speed.
 '$HOME/.config/cdspeed.json' contain configuration information.
 """
 
-import sys
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
-if __name__ == '__main__':
-    sys.path = sys.path[1:] + sys.path[:1]
-
 import argparse
 import glob
 import json
 import os
 import signal
+import sys
 
 import syslib
+
+if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
 
 class Options:

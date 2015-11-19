@@ -3,16 +3,14 @@
 Patch library module for modifying Python objects & class object generators
 """
 
-import sys
-if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
-if __name__ == '__main__':
-    sys.path = sys.path[1:] + sys.path[:1]
-
 import collections
 import io
 import os
+import sys
 import unittest.mock
+
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 
 class Patcher:

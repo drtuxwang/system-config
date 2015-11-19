@@ -3,21 +3,19 @@
 Test module for 'pyld.py' module
 """
 
-import sys
-if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
-if __name__ == '__main__':
-    sys.path = sys.path[1:] + sys.path[:1]
-
 import glob
 import os
 import signal
+import sys
 import unittest
 import unittest.mock
 
 import mock_pyld
 import patchlib
 import pyld
+
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 
 class Test_Options(unittest.TestCase):

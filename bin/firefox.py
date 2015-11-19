@@ -7,19 +7,17 @@ Use '-no-remote' to avoid using current instance
 Use '-reset' to clean junk from profile
 """
 
-import sys
-if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
-if __name__ == '__main__':
-    sys.path = sys.path[1:] + sys.path[:1]
-
 import glob
 import os
 import re
 import shutil
 import signal
+import sys
 
 import syslib
+
+if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
 
 
 class Options:

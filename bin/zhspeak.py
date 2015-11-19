@@ -7,22 +7,20 @@ Zhong Hua Speak Chinese TTS software.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-RELEASE = '3.0.8'
-
-import sys
-if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 2.7, < 4.0).')
-if __name__ == '__main__':
-    sys.path = sys.path[1:] + sys.path[:1]
-
 import argparse
 import glob
 import os
 import re
 import signal
+import sys
 import time
 
 import syslib2 as syslib
+
+RELEASE = '3.0.9'
+
+if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 2.7, < 4.0).')
 
 
 class Options:

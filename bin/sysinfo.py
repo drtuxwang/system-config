@@ -5,15 +5,6 @@ System configuration detection tool.
 1996-2015 By Dr Colin Kong
 """
 
-RELEASE = '4.4.5'
-VERSION = 20151117
-
-import sys
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
-if __name__ == '__main__':
-    sys.path = sys.path[1:] + sys.path[:1]
-
 import argparse
 import glob
 import math
@@ -21,12 +12,19 @@ import os
 import re
 import signal
 import socket
+import sys
 import threading
 import time
-if os.name == 'nt':
-    import winreg
 
 import syslib
+
+RELEASE = '4.4.6'
+VERSION = 20151119
+
+if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if os.name == 'nt':
+    import winreg
 
 
 class Options:
@@ -1222,8 +1220,8 @@ class LinuxSystem(PosixSystem):
             if syslib.info.getMachine() == 'Power':
                 for line in lines:
                     if line.startswith('cpu'):
-                        info['CPU Model'] = 'PowerPC_' + isspace.sub(' ',
-                                            line.split(': ')[1].split(' ')[0].strip())
+                        info['CPU Model'] = 'PowerPC_' + isspace.sub(
+                            ' ', line.split(': ')[1].split(' ')[0].strip())
                         break
             if info['CPU Model'] == 'Unknown':
                 for line in lines:

@@ -4,32 +4,30 @@ Python system interaction Library
 
 2006-2015 By Dr Colin Kong
 
-Version 5.2.0 (2015-11-18)
+Version 5.2.1 (2015-11-19)
 """
-
-import sys
-if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
-if __name__ == '__main__':
-    sys.path = sys.path[1:] + sys.path[:1]
 
 import collections
 import copy
 import distutils.version
 import glob
-try:
-    import jsonpickle
-except ImportError:
-    pass
 import os
-if os.name == 'nt':
-    import platform
 import re
 import shutil
 import signal
 import socket
 import subprocess
+import sys
 import time
+
+if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+try:
+    import jsonpickle
+except ImportError:
+    pass
+if os.name == 'nt':
+    import platform
 
 
 class Dump:
@@ -355,8 +353,8 @@ class Command:
                             self._stderr.append(line.rstrip('\r\n'))
 
             else:
-                raise SyslibError(sys.argv[0] +
-                                  ': "syslib.Command()" invalid run mode "' + mode + '".')
+                raise SyslibError(
+                    sys.argv[0] + ': "syslib.Command()" invalid run mode "' + mode + '".')
 
             self._exitcode = child.wait()
 

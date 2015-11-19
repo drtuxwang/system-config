@@ -3,20 +3,18 @@
 Detect DHCP hosts on 192.168.1.0 subnet
 """
 
-import sys
-if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
-if __name__ == '__main__':
-    sys.path = sys.path[1:] + sys.path[:1]
-
 import glob
 import os
 import re
 import signal
+import sys
 import threading
 import time
 
 import syslib
+
+if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
 
 class Options:

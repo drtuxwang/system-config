@@ -3,17 +3,15 @@
 Wrapper for GIT revision control system
 """
 
-import sys
-if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
-if __name__ == '__main__':
-    sys.path = sys.path[1:] + sys.path[:1]
-
 import glob
 import os
 import signal
+import sys
 
 import syslib
+
+if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
 
 class Options:

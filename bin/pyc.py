@@ -3,19 +3,17 @@
 Check and compile Python 3.x modules to '.pyc' byte code.
 """
 
-import sys
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
-if __name__ == '__main__':
-    sys.path = sys.path[1:] + sys.path[:1]
-
 import argparse
 import glob
 import os
 import py_compile
 import signal
+import sys
 
 import syslib
+
+if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
 
 class Options:
@@ -126,7 +124,7 @@ class PythonChecker:
                         print(file + ': line', n, 'contains more than 100 characters. '
                               'Please use continuation line.')
                         error = True
-                    if 'except:' in line and not '"except:' in line:
+                    if 'except:' in line and '"except:' not in line:
                         print(file, ': ? line ', n,
                               ' contains exception with no name "except:".', sep='')
                         error = True
