@@ -18,12 +18,6 @@ class Options:
     def __init__(self, args):
         self._parseArgs(args[1:])
 
-    def getDirectory(self):
-        """
-        Return of directory.
-        """
-        return self._args.directory[0]
-
     def getFiles(self):
         """
         Return list of files.
@@ -33,22 +27,26 @@ class Options:
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description='Create wrapper to run script/executable.')
 
-        parser.add_argument('directory', nargs=1, help='Directory to create wrapper.')
         parser.add_argument('files', nargs='+', metavar='file', help='Script/executable to wrap.')
 
         self._args = parser.parse_args(args)
-
-        directory = self._args.directory[0]
-        if not os.path.isdir(directory):
-            raise SystemExit(
-                sys.argv[0] + ': Wrapper directory "' + directory + '" does not exist.')
 
 
 class Wrap:
 
     def __init__(self, options):
-        self._directory = options.getDirectory()
         self._files = options.getFiles()
+
+    def _create(self, source, target):
+        try:
+            with open(target, 'w', newline='\n') as ofile:
+                print('#!/bin/sh', file=ofile)
+                print('# fwrapper generated script', file=ofile)
+                print('PATH="' + os.path.dirname(source) + ':$PATH"; export PATH', file=ofile)
+                print('exec "' + source + '" "$@"', file=ofile)
+            os.chmod(target, int('755', 8))
+        except IOError:
+            raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" wrapper file.')
 
     def run(self):
         for file in self._files:
@@ -56,19 +54,13 @@ class Wrap:
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
             source = os.path.abspath(file)
 
-            target = os.path.join(self._directory, os.path.basename(source))
-            if os.path.isfile(target):
-                raise SystemExit(sys.argv[0] + ': Wrapper "' + target + '" already exists.')
+            target = os.path.basename(file)
+            if os.path.exists(target):
+                print('Skipping "', target, '" wrapper for "', source, '"...', sep='')
+            else:
+                print('Creating "', target, '" wrapper for "', source, '"...', sep='')
+                self._create(source, target)
 
-            try:
-                with open(target, 'w', newline='\n') as ofile:
-                    print('#!/bin/sh', file=ofile)
-                    print('PATH="' + os.path.dirname(source) + ':$PATH"; export PATH', file=ofile)
-                    print('exec "' + source + '" "$@"', file=ofile)
-                os.chmod(target, int('755', 8))
-            except IOError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" wrapper file.')
-                
 
 class Main:
 
