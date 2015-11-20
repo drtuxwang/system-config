@@ -343,6 +343,9 @@ bin/gcc.py
 bin/gedit              gedit wrapper (allowing non systems port)
 bin/gedit.py
 
+bin/gem                Wrapper to select "umask 022"
+bin/gem.py
+
 bin/getip              Get the IP number of hosts
 bin/getip.bat
 bin/getip.py
@@ -543,7 +546,7 @@ bin/pcunix.bat         Start PCUNIX on Windows
 bin/pdf                Create PDF file from text/images/postscript/PDF files
 bin/pdf.py
 
-bin/pep8               pep8 wrapper (allowing non systems port)
+bin/pep8               pep8 wrapper
 bin/pep8.bat
 bin/pep8.py
 
