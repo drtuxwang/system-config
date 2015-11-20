@@ -1,9 +1,9 @@
 #!/bin/sh
 
-PATH=/usr/local/bin:$PATH; export PATH
+PATH="/opt/software/bin:$PATH"; export PATH
 
-/usr/local/bin/ntpdate -u > /dev/null 2>&1 < /dev/null &
-/usr/local/bin/xlight -reset &
+ntpdate -u > /dev/null 2>&1 < /dev/null &
+xlight -reset &
 (rmdir /media/*/* /media/*; rm /media/*) &
 
 if [ "`diff /boot/grub/grub.cfg /boot/grub/grub.cfg-ok`" ]; then
@@ -17,5 +17,7 @@ if [ "`lsmod | grep ^vbox`" ]; then
     modprobe vboxsf
     mount -t vboxsf -o uid=owner,gid=users shared /shared
 fi
+
+##/sbin/ifconfig eth0 mtu 1100
 
 exit 0
