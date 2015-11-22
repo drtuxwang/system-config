@@ -278,15 +278,15 @@ elif [ ! "$*" ]; then
 
         # mksrc, cdsrc, mkinst, cdinst, mktest, cdtest
         if [ ! "$SRCDIR" ]; then
-            export SRCDIR=$HOME
+            export SRCDIR=$PWD
         fi
         alias mksrc='export SRCDIR="$PWD"; echo New SRCDIR: $SRCDIR'; alias cdsrc='echo Using SRCDIR: $SRCDIR; cd "$SRCDIR"'
         if [ ! "$INSTDIR" ]; then
-            export INSTDIR=$HOME
+            export INSTDIR=$PWD
         fi
         alias mkinst='export INSTDIR="$PWD"; echo New INSTDIR: $INSTDIR'; alias cdinst='echo Using INSTDIR: $INSTDIR; cd "$INSTDIR"'
         if [ ! "$TESTDIR" ]; then
-            export TESTDIR=$HOME
+            export TESTDIR=$PWD
         fi
         alias mktest='export TESTDIR="$PWD"; echo New TESTDIR: $TESTDIR'; alias cdtest='echo Using TESTDIR: $TESTDIR; cd "$TESTDIR"'
 
