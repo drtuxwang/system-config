@@ -42,8 +42,7 @@ class Wrap:
             with open(target, 'w', newline='\n') as ofile:
                 print('#!/bin/sh', file=ofile)
                 print('# fwrapper generated script', file=ofile)
-                print('PATH=`echo "$PATH" | sed -e "s@\\`dirname \\"$0\\"\\`@' +
-                      os.path.dirname(source) + '@"` export PATH', file=ofile)
+                print('PATH="' + os.path.dirname(source) + ':$PATH"; export PATH', file=ofile)
                 print('exec "' + source + '" "$@"', file=ofile)
             os.chmod(target, int('755', 8))
         except IOError:

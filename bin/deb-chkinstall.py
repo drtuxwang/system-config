@@ -9,6 +9,7 @@ import glob
 import os
 import re
 import signal
+import sre_constants
 import sys
 
 import syslib
