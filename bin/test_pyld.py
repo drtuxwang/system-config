@@ -124,7 +124,7 @@ class Test_Options(unittest.TestCase):
         with self.assertRaises(SystemExit) as context:
             options = pyld.Options(args)
         self.assertIsInstance(context.exception.args, tuple)
-        self.assertEqual(context.exception.args[0], 2)
+        self.assertEqual(2, context.exception.args[0])
 
         value = pyld.sys.stderr.getvalue()
         self.assertIsInstance(value, str)
@@ -140,7 +140,7 @@ class Test_Options(unittest.TestCase):
 
         value = options.getModule()
         self.assertIsInstance(value, str)
-        self.assertEqual(value, 'moduleX')
+        self.assertEqual('moduleX', value)
 
     def test_getModuleArgs_Default(self):
         """
@@ -229,7 +229,7 @@ class Test_Options(unittest.TestCase):
 
         value = options.getModuleDir()
         self.assertIsInstance(value, str)
-        self.assertEqual(value, 'myDir')
+        self.assertEqual('myDir', value)
 
     def test_getVerboseFlag_Default(self):
         """
@@ -337,7 +337,7 @@ class Test_Options(unittest.TestCase):
         with self.assertRaises(SystemExit) as context:
             options = pyld.Options(args)
         self.assertIsInstance(context.exception.args, tuple)
-        self.assertEqual(context.exception.args[0], 2)
+        self.assertEqual(2, context.exception.args[0])
 
         value = pyld.sys.stderr.getvalue()
         self.assertIsInstance(value, str)
