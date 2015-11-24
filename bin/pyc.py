@@ -134,7 +134,7 @@ class PythonChecker:
                     if '\t' in line:
                         print(file, ': ? line ', n, ' contains tab instead of spaces.', sep='')
                         error = True
-        except (IOError):
+        except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" Python module file.')
         if self._python3(file):
             error = True
