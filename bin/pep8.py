@@ -36,7 +36,7 @@ class Main:
             self._windowsArgv()
         try:
             options = Options(sys.argv)
-            options.getPep8().run()
+            options.getPep8().run(mode='exec')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
