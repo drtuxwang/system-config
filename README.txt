@@ -225,7 +225,7 @@ bin/firefox            firefox wrapper (allowing non systems port)
 bin/firefox.bat        (supports "-copy", "-no-remote" and "-reset" enhancements)
 bin/firefox.py
 
-bin/fixwav             Normalize volume of wave files to 8 dB
+bin/fixwav             Normalize volume of wave files (-16.0dB rms mean volume)
 bin/fixwav.py          (uses normalize-audio)
 
 bin/flashgot-term      Firefox Flashgot terminal startup script

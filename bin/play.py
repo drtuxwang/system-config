@@ -71,7 +71,7 @@ class Play:
     def _play(self, files):
         vlc = syslib.Command('vlc', args=files)
         vlc.run(mode='background',
-                filter='^$|Use "cvlc"|may be inaccurate|'
+                filter="^$|Use 'cvlc'|may be inaccurate|"
                        ': Failed to resize display|: call to |: Locale not supported |'
                        'fallback "C" locale|^xdg-screensaver:|: cannot estimate delay:|'
                        'Failed to open VDPAU backend ')
