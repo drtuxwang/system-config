@@ -265,7 +265,7 @@ class Options:
                                             '"full-screen-api.approval-required", false',
                                             '"geo.enabled", false',
                                             '"image.animation_mode", "none"',
-                                            '"keyword.enabled", false',
+                                            '"keyword.enabled", true',
                                             '"layout.frames.force_resizability", true',
                                             '"layout.spellcheckDefault", 2',
                                             '"loop.throttled", false',
