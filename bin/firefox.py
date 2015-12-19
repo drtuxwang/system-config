@@ -272,7 +272,7 @@ class Options:
                                             '"media.autoplay.enabled", false',
                                             '"media.fragmented-mp4.exposed", true',
                                             '"media.fragmented-mp4.ffmpeg.enabled", true',
-                                            '"media.fragmented-mp4.gmp.enabled", true',
+                                            '"media.fragmented-mp4.gmp.enabled", false',
                                             '"media.gstreamer.enabled", false',
                                             '"media.mediasource.enabled", true',
                                             '"media.mediasource.mp4.enabled", true',
