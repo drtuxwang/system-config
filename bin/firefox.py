@@ -288,6 +288,7 @@ class Options:
                                             '"print.print_edge_right", 20',
                                             '"print.print_edge_top", 20',
                                             '"plugins.click_to_play", true',
+                                            '"reader.parse-on-load.enabled", false',
                                             '"security.dialog_enable_delay", 0',
                                             '"toolkit.telemetry.enabled", false',
                                             '"toolkit.storage.synchronous", 0',
