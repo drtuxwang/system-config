@@ -35,22 +35,14 @@ class Options:
         """
         return self._args.timeDelay[0]
 
-    def getWaitFlag(self):
-        """
-        Return wait flag.
-        """
-        return self._args.waitFlag
-
     def _setpop(self, args):
-        self._pop = syslib.Command('pop.jar')
+        self._pop = syslib.Command('notify-send')
+        self._pop.setFlags(['--expire-time=0'])
         self._pop.setArgs(args)
-        self._pop.setWrapper(syslib.Command('java'))
 
     def _parseArgs(self, args):
         parser = argparse.ArgumentParser(description='Send popup message to display.')
 
-        parser.add_argument('-wait', dest='waitFlag', action='store_true',
-                            help='Wait for popup window to close.')
         parser.add_argument('-time', nargs=1, type=int, dest='timeDelay', default=[0],
                             help='Delay popup in minutes.')
 
@@ -66,19 +58,20 @@ class Options:
 class Message:
 
     def __init__(self, options):
-        time.sleep(60 * options.getTimeDelay())
-        pop = options.getPop()
+        self._bell = syslib.Command('bell', check=False)
+        self._pop = options.getPop()
+        self._delay = 60 * options.getTimeDelay()
 
-        if options.getWaitFlag():
-            pop.run()
-            if pop.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(pop.getExitcode()) +
-                                 ' received from "' + pop.getFile() + '".')
-        else:
-            pop.run(mode='background')
-        bell = syslib.Command('bell', check=False)
-        if bell.isFound():
-            bell.run()
+    def run(self):
+        time.sleep(self._delay)
+
+        if self._bell.isFound():
+            self._bell.run(mode='background')
+
+        self._pop.run()
+        if self._pop.getExitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(pop.getExitcode()) +
+                             ' received from "' + self._pop.getFile() + '".')
 
 
 class Main:
@@ -89,7 +82,7 @@ class Main:
             self._windowsArgv()
         try:
             options = Options(sys.argv)
-            Message(options)
+            Message(options).run()
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
