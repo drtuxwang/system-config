@@ -15,7 +15,8 @@ config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Ge
 config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
 config/mimeapps.list            Copy to "$HOME/.local/share/applications" for Mime definitions
 config/profile                  Copy to "$HOME/.profile" for ksh/bash shells (translated ".login")
-config/rc.local                 Copy to "/etc/rc.local" for Ubuntu & Debian VMs
+config/rc.local                 Copy to "/etc/rc.local" for auto running commands
+config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
 config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
 
 bin/7z                 Make a compressed archive in 7z format
