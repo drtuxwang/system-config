@@ -3,7 +3,6 @@
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 PATH="$HOME/software/bin:/opt/software/bin:$PATH"; export PATH
 
-
 if [ -x /usr/bin/ibus-daemon ]; then
     GTK_IM_MODULE=ibus; export GTK_IM_MODULE
     QT_IM_MODULE=ibus; export QT_IM_MODULE
