@@ -12,12 +12,6 @@ if [ "`diff /boot/grub/grub.cfg /boot/grub/grub.cfg-ok`" ]; then
     (cd /boot; ln -sf `ls -1t initrd.img-* | head -1` initrd.img)
 fi
 
-if [ "`lsmod | grep ^vbox`" ]; then
-    ln -sf /opt/VBoxGuestAdditions-*/lib/VBoxGuestAdditions /usr/lib
-    modprobe vboxsf
-    mount -t vboxsf -o uid=owner,gid=users shared /shared
-fi
-
 if [ -f /etc/rc.mount ]; then
     . /etc/rc.mount
 fi

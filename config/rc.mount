@@ -6,5 +6,6 @@
 
 ##mount -t ext4 -o noatime,data=ordered UUID=77a96930-d8a7-4ed0-88bd-37bcc7d65d0d /data2
 ##mount -t btrfs -o noatime UUID=86fa246c-fdac-46a7-81f5-7f4fa15e5397 /data2
+##mount -t btrfs -o noatime UUID=2af4f3d3-b4a7-4806-bcd5-476332bd3e1c /data2
 
 exit 0
