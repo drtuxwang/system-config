@@ -807,6 +807,7 @@ class LinuxSystem(PosixSystem):
                                 break
             except IOError:
                 pass
+
         if os.path.isdir('/sys/bus/scsi/devices'):
             for file in sorted(glob.glob('/sys/block/sr*/device')):  # New kernels
                 try:
@@ -866,16 +867,15 @@ class LinuxSystem(PosixSystem):
         lsblk = syslib.Command('lsblk', args=['-l'], check=False)
         if lsblk.isFound():
             lsblk.run(mode='batch')
-            lines = "\n".join(lsblk.getOutput()).replace(
-                '\nswap', '').replace('\nluks-', '').split('\n')
-            for line in lines:
+            for line in lsblk.getOutput():
                 if ' crypt ' in line:
-                    device = '/dev/' + line.split()[0]
                     crypts.append(device)
                     if '[SWAP]' in line:
                         swaps.append(device)
                     else:
-                        uuids[device] = '/dev/mapper/luks-' + line.split('part')[1].split()[0]
+                        uuids[device] = '/dev/mapper/' + line.split()[0]
+                else:
+                    device = '/dev/' + line.split()[0]
 
         mount = syslib.Command('mount', check=False)
         if mount.isFound():
@@ -923,6 +923,7 @@ class LinuxSystem(PosixSystem):
                                                   value=size + ' KB', comment=comment)
             except IOError:
                 pass
+
         if os.path.isdir('/sys/bus/scsi/devices'):
             for file in sorted(glob.glob('/sys/block/sd*/device')):  # New kernels
                 try:
@@ -1054,6 +1055,7 @@ class LinuxSystem(PosixSystem):
                     info[device] = os.path.basename(file).replace('-event', '').replace('-', ' ')
             except OSError:
                 continue
+
         isjunk = re.compile('/usb-\w{4}_\w{4}-')
         for file in glob.glob('/dev/input/by-id/*event*'):
             try:
