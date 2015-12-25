@@ -18,8 +18,8 @@ import time
 
 import syslib
 
-RELEASE = '4.4.6'
-VERSION = 20151119
+RELEASE = '4.5.0'
+VERSION = 20151225
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -674,7 +674,6 @@ class LinuxSystem(PosixSystem):
                             self._devices[device] = (driver + ' driver ' +
                                                      modinfo.getOutput()[0].split()[1])
                             continue
-                    self._devices[device] = driver + ' driver'
                 elif not line.startswith('\t'):
                     device = line.replace('(', '').replace(')', '')
                     if 'VGA compatible controller: ' in line:
@@ -699,9 +698,7 @@ class LinuxSystem(PosixSystem):
                     else:
                         self._devices[device] = ''
 
-    def detectDevices(self, writer):
-
-        # Audio device detection
+    def _detectAudio(self, writer):
         lines = []
         ispattern = re.compile(' ?\d+ ')
         try:
@@ -760,7 +757,7 @@ class LinuxSystem(PosixSystem):
                             writer.output(name='Audio device', device=device, value=model,
                                           comment='SPK')
 
-        # Battery detection
+    def _detectBattery(self, writer):
         batteries = []
         if os.path.isdir('/sys/class/power_supply'):
             for directory in glob.glob('/sys/class/power_supply/BAT*'):  # New kernels
@@ -797,7 +794,7 @@ class LinuxSystem(PosixSystem):
                               value=str(battery.getCapacity()) + 'mAh',
                               comment=model + ' [' + state + ']')
 
-        # CD device detection
+    def _detectCD(self, writer):
         for directory in sorted(glob.glob('/proc/ide/hd*')):
             try:
                 with open(os.path.join(directory, 'driver'), errors='replace') as ifile:
@@ -848,13 +845,37 @@ class LinuxSystem(PosixSystem):
             except IOError:
                 pass
 
-        # Disk device detection
+    def _detectDisk(self, writer):
+        swaps = []
+        try:
+            with open('/proc/swaps', errors='replace') as ifile:
+                for line in ifile:
+                    if line.startswith('/dev/'):
+                        swaps.append(line.split()[0])
+        except IOError:
+            pass
+
         uuids = {}
         for file in glob.glob('/dev/disk/by-uuid/*'):
             try:
                 uuids['/dev/' + os.path.basename(os.readlink(file))] = file
             except OSError:
                 pass
+
+        crypts = []
+        lsblk = syslib.Command('lsblk', args=['-l'], check=False)
+        if lsblk.isFound():
+            lsblk.run(mode='batch')
+            lines = "\n".join(lsblk.getOutput()).replace(
+                '\nswap', '').replace('\nluks-', '').split('\n')
+            for line in lines:
+                if ' crypt ' in line:
+                    device = '/dev/' + line.split()[0]
+                    crypts.append(device)
+                    if '[SWAP]' in line:
+                        swaps.append(device)
+                    else:
+                        uuids[device] = '/dev/mapper/luks-' + line.split('part')[1].split()[0]
 
         mount = syslib.Command('mount', check=False)
         if mount.isFound():
@@ -866,14 +887,7 @@ class LinuxSystem(PosixSystem):
                     partitions.append(line.rstrip('\r\n'))
         except IOError:
             pass
-        swaps = []
-        try:
-            with open('/proc/swaps', errors='replace') as ifile:
-                for line in ifile:
-                    if line.startswith('/dev/'):
-                        swaps.append(line.split()[0])
-        except IOError:
-            pass
+
         for directory in sorted(glob.glob('/proc/ide/hd*')):
             try:
                 with open(os.path.join(directory, 'driver'), errors='replace') as ifile:
@@ -896,14 +910,15 @@ class LinuxSystem(PosixSystem):
                                     comment = ''
                                     if device in swaps:
                                         comment = 'swap'
-                                    for line2 in mount.getOutput():
-                                        if line2.startswith(device + ' '):
-                                            try:
-                                                mountPoint, junk, mountType = line2.split()[2:5]
-                                                comment = mountType + ' on ' + mountPoint
-                                            except (IndexError, ValueError):
-                                                comment = '??? on ???'
-                                            break
+                                    else:
+                                        for line2 in mount.getOutput():
+                                            if line2.startswith(device + ' '):
+                                                try:
+                                                    mountPoint, junk, mountType = line2.split()[2:5]
+                                                    comment = mountType + ' on ' + mountPoint
+                                                except (IndexError, ValueError):
+                                                    comment = '??? on ???'
+                                                break
                                     writer.output(name='Disk device', device=device,
                                                   value=size + ' KB', comment=comment)
             except IOError:
@@ -939,18 +954,21 @@ class LinuxSystem(PosixSystem):
                         comment = ''
                         if device in swaps:
                             comment = 'swap'
-                        for line2 in mount.getOutput():
-                            try:
-                                if (line2.startswith(device + ' ') or
-                                        line2.startswith(uuids[device] + ' ')):
-                                    try:
-                                        mountPoint, junk, mountType = line2.split()[2:5]
-                                        comment = mountType + ' on ' + mountPoint
-                                    except (IndexError, ValueError):
-                                        comment = '??? on ???'
-                                    break
-                            except KeyError:
-                                pass
+                        else:
+                            for line2 in mount.getOutput():
+                                try:
+                                    if (line2.startswith(device + ' ') or
+                                            line2.startswith(uuids[device] + ' ')):
+                                        try:
+                                            mountPoint, junk, mountType = line2.split()[2:5]
+                                            comment = mountType + ' on ' + mountPoint
+                                        except (IndexError, ValueError):
+                                            comment = '??? on ???'
+                                        break
+                                except KeyError:
+                                    pass
+                        if device in crypts:
+                            comment = 'crypt:' + comment
                         writer.output(name='Disk device', device=device, value=size + ' KB',
                                       comment=comment)
         else:
@@ -979,14 +997,16 @@ class LinuxSystem(PosixSystem):
                                         comment = ''
                                         if device in swaps:
                                             comment = 'swap'
-                                        for line2 in mount.getOutput():
-                                            if line2.startswith(device + ' '):
-                                                try:
-                                                    mountPoint, junk, mountType = line2.split()[2:5]
-                                                    comment = mountType + ' on ' + mountPoint
-                                                except (IndexError, ValueError):
-                                                    comment = '??? on ???'
-                                                break
+                                        else:
+                                            for line2 in mount.getOutput():
+                                                if line2.startswith(device + ' '):
+                                                    try:
+                                                        mountPoint, junk, mountType = line2.split(
+                                                            )[2:5]
+                                                        comment = mountType + ' on ' + mountPoint
+                                                    except (IndexError, ValueError):
+                                                        comment = '??? on ???'
+                                                    break
                                         writer.output(name='Disk device', device=device,
                                                       value=size + ' KB', comment=comment)
                             model = '???'
@@ -994,9 +1014,7 @@ class LinuxSystem(PosixSystem):
             except IOError:
                 pass
 
-        # Disk mounts detection
-        super().detectDevices(writer)
-
+    def _detectEthernet(self, writer):
         # Ethernet device detection
         for line, device in sorted(self._devices.items()):
             if 'Ethernet controller: ' in line:
@@ -1006,28 +1024,28 @@ class LinuxSystem(PosixSystem):
                 writer.output(name='Ethernet device', device='/dev/???', value=model,
                               comment=device)
 
-        # Firewire device detection
+    def _detectFirewire(self, writer):
         for line, device in sorted(self._devices.items()):
             if 'FireWire (IEEE 1394): ' in line:
                 model = line.split('FireWire (IEEE 1394): ')[1]
                 writer.output(name='Firewire device', device='/dev/???', value=model,
                               comment=device)
 
-        # Graphics device detection
+    def _detectGraphics(self, writer):
         for line, device in sorted(self._devices.items()):
             if 'VGA compatible controller: ' in line:
                 model = line.split('VGA compatible controller: ')[1].strip()
                 writer.output(name='Graphics device', device='/dev/???', value=model,
                               comment=device)
 
-        # InifiniBand device detection
+    def _detectInifiniBand(self, writer):
         for line, device in sorted(self._devices.items()):
             if 'InfiniBand: ' in line:
                 model = line.split('InfiniBand: ')[1].replace('InfiniHost', 'InifiniBand')
                 writer.output(name='InifiniBand device', device='/dev/???', value=model,
                               comment=device)
 
-        # Input device detection
+    def _detectInput(self, writer):
         info = {}
         for file in glob.glob('/dev/input/by-path/*event*'):
             try:
@@ -1047,14 +1065,14 @@ class LinuxSystem(PosixSystem):
         for key, value in sorted(info.items()):
             writer.output(name='Input device', device=key, value=value)
 
-        # Network device detection
+    def _detectNetwork(self, writer):
         for line, device in sorted(self._devices.items()):
             if 'Network controller: ' in line:
                 model = line.split(': ', 1)[1].split(' (')[0]
                 writer.output(name='Network device', device='/dev/???', value=model,
                               comment=device)
 
-        # Video device detection
+    def _detectVideo(self, writer):
         for directory in sorted(glob.glob('/sys/class/video4linux/*')):
             device = os.path.basename(directory)
             try:
@@ -1065,6 +1083,23 @@ class LinuxSystem(PosixSystem):
             except IOError:
                 pass
             writer.output(name='Video device', device='/dev/' + device, value='???')
+
+    def detectDevices(self, writer):
+        self._detectAudio(writer)
+        self._detectBattery(writer)
+        self._detectCD(writer)
+        self._detectDisk(writer)
+
+        # Disk mounts detection
+        super().detectDevices(writer)
+
+        self._detectEthernet(writer)
+        self._detectFirewire(writer)
+        self._detectGraphics(writer)
+        self._detectInifiniBand(writer)
+        self._detectInput(writer)
+        self._detectNetwork(writer)
+        self._detectVideo(writer)
 
     def hasLoader(self):
         return True
