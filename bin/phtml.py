@@ -146,9 +146,11 @@ class Xhtml:
         yield ''
         for fileStat in fileStats:
             directory = fileStat.getFile()
-            xhtmlFile = sorted(glob.glob(os.path.join(directory, '*.xhtml')))[0]
+            files = glob.glob(os.path.join(directory, '*.xhtml'))
+            nfiles = len(files)
+            xhtmlFile = sorted(files)[0]
             yield '<a href="' + xhtmlFile + '" target="_blank">'
-            yield directory + '</a>'
+            yield '{0:s} ({1:d})</a>'.format(directory, nfiles)
             yield '<br/>'
             yield ''
         yield '</body></html>'
