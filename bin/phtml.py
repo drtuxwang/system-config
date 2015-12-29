@@ -72,7 +72,7 @@ class Gallery:
         yield '<title>' + self._directory + '/' + file + '</title>'
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>'
         yield '</head>'
-        yield '<body bgcolor="#fffff1" text="#000000" link="#0000ff vlink="#900090">'
+        yield '<body bgcolor="#fffff1" text="#000000" link="#0000ff" vlink="#900090">'
         yield ''
         yield '<table border="0" align="center">'
         yield '<tr>'
