@@ -3,6 +3,7 @@
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 PATH="$HOME/software/bin:/opt/software/bin:$PATH"; export PATH
 
+
 if [ -x /usr/bin/ibus-daemon ]; then
     GTK_IM_MODULE=ibus; export GTK_IM_MODULE
     QT_IM_MODULE=ibus; export QT_IM_MODULE
@@ -18,7 +19,7 @@ xhost +si:localuser:$MYUNAME
 setxkbmap gb
 setxkbmap -option terminate:ctrl_alt_bksp
 xset b off
-xset m 4,8
+xset m 4,16
 xset r rate 500 25
 xset s blank s 0 # Use 300 for CRT
 (sleep 4; xset dpms 0 0 0) &
