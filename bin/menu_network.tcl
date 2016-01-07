@@ -16,8 +16,8 @@ frame .mainmenu -bg "#cccccc"
     pack .mainmenu.radiotuner -side top
     button .mainmenu.skype -width 10 -bg "#ffff00" -text "Skype" -command {exec skype &}
     pack .mainmenu.skype -side top
-    button .mainmenu.webex -width 10 -bg "#ffff00" -text "Webex" -command {cd /; exec firefox -copy https://www.webex.co.uk/login/attend-a-meeting &}
-    pack .mainmenu.webex -side top
+    button .mainmenu.zoom -width 10 -bg "#ffff00" -text "Zoom" -command {exec zoom &}
+    pack .mainmenu.zoom -side top
 
 # Menus
     button .mainmenu.menu_linux -width 10 -bg "#00ff00" -text "Linux" -command {exec menu_linux.tcl &}
