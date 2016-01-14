@@ -26,11 +26,11 @@ class Options:
             self._archiver.run(mode='exec')
 
         if self._args.viewFlag:
-            self._archiver.setFlags(['l'])
+            self._archiver.setFlags(['l', '-std'])
         elif self._args.testFlag:
-            self._archiver.setFlags(['t'])
+            self._archiver.setFlags(['t', '-std'])
         else:
-            self._archiver.setFlags(['x'])
+            self._archiver.setFlags(['x', '-std'])
 
     def getArchiver(self):
         """
