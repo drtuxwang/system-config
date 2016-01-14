@@ -6,7 +6,6 @@ Show full list of files.
 import argparse
 import glob
 import os
-import re
 import signal
 import sys
 
