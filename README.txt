@@ -9,6 +9,7 @@ etc/setbin.bat   Windows Command prompt initialization
 etc/setbin.ps1   Windows Power shell initialization
 
 config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
+config/config                   Copy to "$HOME/.ssh/config"
 config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
 config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
 config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie

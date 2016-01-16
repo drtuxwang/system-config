@@ -1,0 +1,9 @@
+Protocol 2
+ForwardAgent no
+ForwardX11 no
+GSSAPIAuthentication no
+PubkeyAuthentication yes
+UseRoaming no
+
+#Host hostname
+#User username
