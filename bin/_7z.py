@@ -106,7 +106,7 @@ class Pack(object):
         archiver.run()
         if archiver.get_exitcode():
             print(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
-                  ' received from "' + archiver.getFile() + '".', file=sys.stderr)
+                  ' received from "' + archiver.get_file() + '".', file=sys.stderr)
             raise SystemExit(archiver.get_exitcode())
         if sfx:
             self._make_sfx(archive, sfx)
@@ -115,11 +115,11 @@ class Pack(object):
         sfx = ''
         file = os.path.basename(archive)
         if '.bin' in file or '.exe' in file:
-            sfx = os.path.join(os.path.dirname(archiver.getFile()), '7zCon.sfx')
+            sfx = os.path.join(os.path.dirname(archiver.get_file()), '7zCon.sfx')
             if '.exe' in file and syslib.info.get_system() != 'windows':
-                sfx = os.path.join(os.path.dirname(archiver.getFile()), '7zCon.exe')
+                sfx = os.path.join(os.path.dirname(archiver.get_file()), '7zCon.exe')
             if not os.path.isfile(sfx):
-                archiver = syslib.Command(archiver.getProgram(), args=archiver.getArgs(),
+                archiver = syslib.Command(archiver.get_program(), args=archiver.get_args(),
                                           check=False)
                 if not archiver.is_found():
                     raise SystemExit(sys.argv[0] + ': Cannot find "' + sfx + '" SFX file.')
