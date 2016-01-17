@@ -100,14 +100,14 @@ class Pack(object):
         os.umask(int('022', 8))
         archiver = options.get_archiver()
 
-        archive = archiver.getArgs()[0]
+        archive = archiver.get_args()[0]
         sfx = self._check_sfx(archiver, archive)
 
         archiver.run()
-        if archiver.getExitcode():
-            print(sys.argv[0] + ': Error code ' + str(archiver.getExitcode()) + ' received from "' +
-                  archiver.getFile() + '".', file=sys.stderr)
-            raise SystemExit(archiver.getExitcode())
+        if archiver.get_exitcode():
+            print(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
+                  ' received from "' + archiver.getFile() + '".', file=sys.stderr)
+            raise SystemExit(archiver.get_exitcode())
         if sfx:
             self._make_sfx(archive, sfx)
 
