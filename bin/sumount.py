@@ -14,17 +14,22 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._directories = []
         for directory in args[1:]:
             self._directories.append(os.path.abspath(directory))
 
-    def getDirectorys(self):
+    def get_directories(self):
         """
         Return list of directories.
         """
@@ -33,7 +38,7 @@ class Options:
         print('\nsumount - Securely unmount a file system using ssh protocol\n')
         print('Usage: sumount /localpath1 [/locapath2 [...]]')
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Unmount file system securely mounted with SSH protocol.')
 
@@ -42,31 +47,37 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Unmount:
+class Unmount(object):
+    """
+    Unmount class
+    """
 
     def __init__(self, options):
-        self._directories = options.getDirectorys()
+        self._directories = options.get_directories()
         self._mount = syslib.Command('mount')
         self._fusermount = syslib.Command('fusermount')
 
     def run(self):
         for directory in self._directories:
             self._mount.run(filter=' ' + directory + ' type fuse.sshfs ', mode='batch')
-            if not self._mount.hasOutput():
+            if not self._mount.has_output():
                 raise SystemExit(sys.argv[0] + ': "' + directory + '" is not a mount point.')
-            elif self._mount.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(self._mount.getExitcode()) +
-                                 ' received from "' + self._mount.getFile() + '".')
-            self._fusermount.setArgs(['-u', directory])
+            elif self._mount.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(self._mount.get_exitcode()) +
+                                 ' received from "' + self._mount.get_file() + '".')
+            self._fusermount.set_args(['-u', directory])
             self._fusermount.run()
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Unmount(options).run()
@@ -80,7 +91,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -15,21 +15,26 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._setpop(self._args.words)
 
-    def getPop(self):
+    def get_pop(self):
         """
         Return pop Command class object.
         """
         return self._pop
 
-    def getTimeDelay(self):
+    def get_time_delay(self):
         """
         Return time delay in minutes.
         """
@@ -37,10 +42,10 @@ class Options:
 
     def _setpop(self, args):
         self._pop = syslib.Command('notify-send')
-        self._pop.setFlags(['--expire-time=0'])
-        self._pop.setArgs(args)
+        self._pop.set_flags(['--expire-time=0'])
+        self._pop.set_args(args)
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Send popup message to display.')
 
         parser.add_argument('-time', nargs=1, type=int, dest='timeDelay', default=[0],
@@ -55,31 +60,37 @@ class Options:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for delay time.')
 
 
-class Message:
+class Message(object):
+    """
+    Message class
+    """
 
     def __init__(self, options):
         self._bell = syslib.Command('bell', check=False)
-        self._pop = options.getPop()
-        self._delay = 60 * options.getTimeDelay()
+        self._pop = options.get_pop()
+        self._delay = 60 * options.get_time_delay()
 
     def run(self):
         time.sleep(self._delay)
 
-        if self._bell.isFound():
+        if self._bell.is_found():
             self._bell.run(mode='background')
 
         self._pop.run()
-        if self._pop.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(pop.getExitcode()) +
-                             ' received from "' + self._pop.getFile() + '".')
+        if self._pop.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(pop.get_exitcode()) +
+                             ' received from "' + self._pop.get_file() + '".')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Message(options).run()
@@ -93,7 +104,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

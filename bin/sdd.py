@@ -14,11 +14,16 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         source = self._args.source[0]
         target = self._args.target[0]
@@ -43,19 +48,19 @@ class Options:
             self._command1 = syslib.Command('dd', args=['if=' + device])
             self._command2 = syslib.Command('ssh', args=[host, 'cat - > ' + file])
 
-    def getCommand1(self):
+    def get_command_1(self):
         """
         Return command1 Command class object.
         """
         return self._command1
 
-    def getCommand2(self):
+    def get_command_2(self):
         """
         Return command2 Command class object.
         """
         return self._command2
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Securely backup/restore partitions using SSH protocol.')
 
@@ -67,26 +72,29 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getCommand1().run(pipes=[options.getCommand2()])
+            options.get_command_1().run(pipes=[options.get_command_2()])
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
-        sys.exit(options.getCommand1().getExitcode())
+        sys.exit(options.get_command_1().get_exitcode())
 
     def _signals(self):
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

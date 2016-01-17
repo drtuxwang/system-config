@@ -6,7 +6,6 @@ Securely connect to VNC server using SSH protocol.
 import argparse
 import glob
 import os
-import re
 import signal
 import sys
 
@@ -15,11 +14,16 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         try:
             remoteHost, remotePort = self._args.server[0].split(':')
@@ -42,9 +46,9 @@ class Options:
         else:
             localPort = remotePort
             print('Starting "vncviewer" connection to "localhost:' + localPort + '"...')
-        self._vncviewer.setArgs([':' + localPort])
+        self._vncviewer.set_args([':' + localPort])
 
-    def getVncviewer(self):
+    def get_vncviewer(self):
         """
         Return vncviewer Command class object.
         """
@@ -54,7 +58,7 @@ class Options:
         lsof = syslib.Command('lsof', args=['-i', 'tcp:5901-5999'])
         lsof.run(mode='batch')
         for localPort in range(5901, 6000):
-            if not lsof.isMatchOutput(':' + str(localPort) + '[ -]'):
+            if not lsof.is_match_output(':' + str(localPort) + '[ -]'):
                 ssh = syslib.Command('ssh', args=['-f', '-L', str(localPort) + ':localhost:' +
                                      remotePort, remoteHost, 'sleep', '64'])
                 print('Starting "ssh" port forwarding from "localhost:' + str(localPort) +
@@ -63,7 +67,7 @@ class Options:
                 return str(localPort)
         raise SystemExit(sys.argv[0] + ': Cannot find unused local port in range 5901-5999.')
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Securely connect to VNC server using SSH protocol.')
 
@@ -73,15 +77,18 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getVncviewer().run(mode='daemon')
+            options.get_vncviewer().run(mode='daemon')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -92,7 +99,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

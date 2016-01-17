@@ -19,13 +19,18 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         # firefox10 etc
         self._firefox = syslib.Command(os.path.basename(args[0]).replace('.py', ''))
-        updates = os.access(self._firefox.getFile(), os.W_OK)
+        updates = os.access(self._firefox.get_file(), os.W_OK)
 
         while len(args) > 1:
             if not args[1].startswith('-'):
@@ -34,9 +39,9 @@ class Options:
                 if args[1] == '-copy':
                     updates = False
                     self._copy()
-                self._firefox.setFlags(['-no-remote'])
+                self._firefox.set_flags(['-no-remote'])
                 if 'about:' not in args:
-                    self._firefox.appendFlag('about:')
+                    self._firefox.append_flag('about:')
             elif args[1] == '-reset':
                 self._reset()
                 raise SystemExit(0)
@@ -47,10 +52,10 @@ class Options:
         # Avoids 'exo-helper-1 firefox http://' problem of clicking text in XFCE
         if len(args) > 1:
             ppid = os.getppid()
-            if ppid != 1 and 'exo-helper' in syslib.Task().getProcess(ppid)['COMMAND']:
+            if ppid != 1 and 'exo-helper' in syslib.Task().get_process(ppid)['COMMAND']:
                 raise SystemExit
 
-        self._firefox.setArgs(args[1:])
+        self._firefox.set_args(args[1:])
         self._filter = (
             '^$|Failed to load module|: G[dt]k-WARNING |: G[dt]k-CRITICAL |:'
             ' GLib-GObject-|: GnomeUI-WARNING|^OpenGL Warning: | Pango-WARNING |'
@@ -62,13 +67,13 @@ class Options:
         self._config()
         self._prefs(updates)
 
-    def getFilter(self):
+    def get_filter(self):
         """
         Return filter patern.
         """
         return self._filter
 
-    def getFirefox(self):
+    def get_firefox(self):
         """
         Return Firefox Command class object.
         """
@@ -108,8 +113,8 @@ class Options:
                         os.remove(file)
                     except OSError:
                         continue
-                ispattern = re.compile('^(lastDownload|lastSuccess|lastCheck|expires|'
-                                       'softExpiration)=\d*')
+                ispattern = re.compile(
+                    r'^(lastDownload|lastSuccess|lastCheck|expires|softExpiration)=\d*')
                 for file in glob.glob(os.path.join(firefoxdir, '*', 'adblockplus', 'patterns.ini')):
                     try:
                         with open(file, errors='replace') as ifile:
@@ -147,18 +152,18 @@ class Options:
                         except OSError:
                             pass
 
-            if os.path.isfile(self._firefox.getFile() + '-bin'):
+            if os.path.isfile(self._firefox.get_file() + '-bin'):
                 setmod = syslib.Command('setmod', check=False)
-                if setmod.isFound():
+                if setmod.is_found():
                     # Fix permissions if owner and updated
-                    setmod.setArgs(['wa', os.path.dirname(self._firefox.getFile())])
+                    setmod.set_args(['wa', os.path.dirname(self._firefox.get_file())])
                     setmod.run(mode='daemon')
 
     def _copy(self):
         if 'HOME' in os.environ:
             task = syslib.Task()
-            for directory in glob.glob(os.path.join('/tmp',
-                                       'firefox-' + syslib.info.getUsername() + '.*')):
+            for directory in glob.glob(
+                    os.path.join('/tmp', 'firefox-' + syslib.info.get_username() + '.*')):
                 try:
                     if not task.pgid2pids(int(directory.split('.')[-1])):
                         print('Removing copy of Firefox profile in "' + directory + '"...')
@@ -174,7 +179,7 @@ class Options:
             mypid = os.getpid()
             os.setpgid(mypid, mypid)  # New PGID
             newhome = os.path.join(
-                '/tmp', 'firefox-' + syslib.info.getUsername() + '.' + str(mypid))
+                '/tmp', 'firefox-' + syslib.info.get_username() + '.' + str(mypid))
             os.environ['TMPDIR'] = newhome
             print('Creating copy of Firefox profile in "' + newhome + '"...')
 
@@ -299,15 +304,18 @@ class Options:
                         pass
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getFirefox().run(filter=options.getFilter(), mode='background')
+            options.get_firefox().run(filter=options.get_filter(), mode='background')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -318,7 +326,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

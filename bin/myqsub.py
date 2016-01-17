@@ -12,38 +12,43 @@ import time
 
 import syslib
 
-RELEASE = '2.6.4'
+RELEASE = '2.7.0'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._release = RELEASE
 
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getNcpus(self):
+    def get_ncpus(self):
         """
         Return number of CPU slots.
         """
         return self._args.ncpus[0]
 
-    def getQueue(self):
+    def get_queue(self):
         """
         Return queue name.
         """
         return self._args.queue[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='MyQS v' + self._release + ', My Queuing System batch job submission.')
 
@@ -64,13 +69,16 @@ class Options:
                              self._args.queue[0] + '".')
 
 
-class Submit:
+class Submit(object):
+    """
+    Submit class
+    """
 
     def __init__(self, options):
         if 'HOME' not in os.environ:
             raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
         self._myqsdir = os.path.join(os.environ['HOME'], '.config',
-                                     'myqs', syslib.info.getHostname())
+                                     'myqs', syslib.info.get_hostname())
         if not os.path.isdir(self._myqsdir):
             try:
                 os.makedirs(self._myqsdir)
@@ -150,10 +158,10 @@ class Submit:
 
     def _submit(self, options):
         tmpfile = os.path.join(self._myqsdir, 'newjob.tmp')
-        queue = options.getQueue()
-        ncpus = options.getNcpus()
+        queue = options.get_queue()
+        ncpus = options.get_ncpus()
 
-        for file in options.getFiles():
+        for file in options.get_files():
             if not os.path.isfile(file):
                 print('MyQS cannot find "' + file + '" batch file.')
                 return
@@ -172,12 +180,15 @@ class Submit:
             time.sleep(0.5)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Submit(options)
@@ -191,7 +202,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

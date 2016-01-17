@@ -13,44 +13,52 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._rpm = syslib.Command('rpm')
         if len(args) == 1 or args[1] != '-l':
-            self._rpm.setArgs(sys.argv[1:])
+            self._rpm.set_args(sys.argv[1:])
             self._rpm.run(mode='exec')
 
         self._mode = 'show_packages_info'
 
-    def getMode(self):
+    def get_mode(self):
         """
         Return operation mode.
         """
         return self._mode
 
-    def getRpm(self):
+    def get_rpm(self):
         """
         Return rpm Command class object.
         """
         return self._rpm
 
 
-class Package:
+class Package(object):
+    """
+    Package class
+    """
 
     def __init__(self, version, size, description):
         self._version = version
         self._size = size
         self._description = description
 
-    def getDescription(self):
+    def get_description(self):
         """
         Return package description.
         """
         return self._description
 
-    def setDescription(self, description):
+    def set_description(self, description):
         """
         Set package description.
 
@@ -58,13 +66,13 @@ class Package:
         """
         self._description = description
 
-    def getSize(self):
+    def get_size(self):
         """
         Return package size.
         """
         return self._size
 
-    def setSize(self, size):
+    def set_size(self, size):
         """
         Set package size.
 
@@ -72,13 +80,13 @@ class Package:
         """
         self._size = size
 
-    def getVersion(self):
+    def get_version(self):
         """
         Return package version.
         """
         return self._version
 
-    def setVersion(self, version):
+    def set_version(self, version):
         """
         Set package version.
 
@@ -87,50 +95,56 @@ class Package:
         self._version = version
 
 
-class PackageManger:
+class PackageManger(object):
+    """
+    Package manager class
+    """
 
     def __init__(self, options):
         self._options = options
-        self._readRpmStatus()
+        self._read_rpm_status()
 
-        self._showPackagesInfo()
+        self._show_packages_info()
 
-    def _readRpmStatus(self):
-        rpm = self._options.getRpm()
-        rpm.setArgs(['-a', '-q', '-i'])
+    def _read_rpm_status(self):
+        rpm = self._options.get_rpm()
+        rpm.set_args(['-a', '-q', '-i'])
         rpm.run(mode='batch')
         name = ''
         self._packages = {}
         package = Package('', -1, '')
 
-        for line in rpm.getOutput():
+        for line in rpm.get_output():
             if line.startswith('Name '):
                 name = line.split()[2]
             elif line.startswith('Version '):
-                package.setVersion(line.split()[2])
+                package.set_version(line.split()[2])
             elif line.startswith('Size '):
                 try:
-                    package.setSize(int((int(line.split()[2]) + 1023) / 1024))
+                    package.set_size(int((int(line.split()[2]) + 1023) / 1024))
                 except ValueError:
                     raise SystemExit(sys.argv[0] + ': Package "' + name + '" has non integer size.')
             elif line.startswith('Summary '):
-                package.setDescription(line.split(': ')[1])
+                package.set_description(line.split(': ')[1])
                 self._packages[name] = package
                 package = Package('', '0', '')
         return
 
-    def _showPackagesInfo(self):
+    def _show_packages_info(self):
         for name, package in sorted(self._packages.items()):
             print('{0:35s} {1:15s} {2:5d}KB {3:s}'.format(name.split(':')[0],
-                  package.getVersion(), package.getSize(), package.getDescription()))
+                  package.get_version(), package.get_size(), package.get_description()))
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             PackageManger(options)
@@ -144,7 +158,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

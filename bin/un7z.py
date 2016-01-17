@@ -14,32 +14,37 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._archiver = syslib.Command('7za', check=False)
-        if self._archiver.isFound():
+        if self._archiver.is_found():
             self._archiver = syslib.Command('7z')
 
         if self._args.viewFlag:
-            self._archiver.setFlags(['l'])
+            self._archiver.set_flags(['l'])
         elif self._args.testFlag:
-            self._archiver.setFlags(['t'])
+            self._archiver.set_flags(['t'])
         else:
-            self._archiver.setFlags(['x', '-y'])
+            self._archiver.set_flags(['x', '-y'])
 
         self._setenv()
 
-    def getArchiver(self):
+    def get_archiver(self):
         """
         Return archiver Command class object.
         """
         return self._archiver
 
-    def getArchives(self):
+    def get_archives(self):
         """
         Return list of archive files.
         """
@@ -49,7 +54,7 @@ class Options:
         if 'LANG' in os.environ:
             del os.environ['LANG']  # Avoids locale problems
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Unpack a compressed archive in 7Z format.')
 
         parser.add_argument('-v', dest='viewFlag', action='store_true',
@@ -63,34 +68,40 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Unpack:
+class Unpack(object):
+    """
+    Unpack class
+    """
 
     def __init__(self, options):
         os.umask(int('022', 8))
-        archiver = options.getArchiver()
+        archiver = options.get_archiver()
 
         if os.name == 'nt':
-            for archive in options.getArchives():
-                archiver.setArgs([archive])
+            for archive in options.get_archives():
+                archiver.set_args([archive])
                 archiver.run()
-                if archiver.getExitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(archiver.getExitcode()) +
-                                     ' received from "' + archiver.getFile() + '".')
+                if archiver.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
+                                     ' received from "' + archiver.get_file() + '".')
         else:
-            for archive in options.getArchives():
-                archiver.setArgs([archive])
+            for archive in options.get_archives():
+                archiver.set_args([archive])
                 archiver.run(replace=('\\', '/'))
-                if archiver.getExitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(archiver.getExitcode()) +
-                                     ' received from "' + archiver.getFile() + '".')
+                if archiver.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
+                                     ' received from "' + archiver.get_file() + '".')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Unpack(options)
@@ -104,7 +115,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

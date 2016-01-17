@@ -14,11 +14,16 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         if self._args.recoverFlag:
             self._photorec()
@@ -36,9 +41,9 @@ class Options:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + device + '" disk or disk image file.')
 
-        self._command.setArgs([device])
+        self._command.set_args([device])
 
-    def getCommand(self):
+    def get_command(self):
         """
         Return command Command class object.
         """
@@ -46,19 +51,19 @@ class Options:
 
     def _photorec(self):
         self._command = syslib.Command('photorec_static', check=False)
-        if not self._command.isFound():
+        if not self._command.is_found():
             self._command = syslib.Command('testdisk', flags=['-rec'], check=False)
-            if not self._command.isFound():
+            if not self._command.is_found():
                 self._command = syslib.Command('photorec_static')
 
     def _testdisk(self):
         self._command = syslib.Command('testdisk_static', check=False)
-        if not self._command.isFound():
+        if not self._command.is_found():
             self._command = syslib.Command('testdisk', check=False)
-            if not self._command.isFound():
+            if not self._command.is_found():
                 self._command = syslib.Command('testdisk_static')
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Fix disk or recovery deleted file.')
 
         parser.add_argument('-rec', dest='recoverFlag', action='store_true',
@@ -70,15 +75,18 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getCommand().run(mode='exec')
+            options.get_command().run(mode='exec')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -89,7 +97,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

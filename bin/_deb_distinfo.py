@@ -6,7 +6,6 @@ Show information about packages in Debian packages list file.
 import argparse
 import glob
 import os
-import re
 import signal
 import sys
 
@@ -15,47 +14,55 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getPackagesFile(self):
+    def get_packages_file(self):
         """
         Return packages file location.
         """
-        return self._args.packagesFile[0]
+        return self._args.packages_file[0]
 
-    def getPackageNames(self):
+    def get_package_names(self):
         """
         Return list of package names.
         """
-        return self._args.packageNames
+        return self._args.package_names
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Show information about packages in Debian packages list file.')
 
-        parser.add_argument('packagesFile', nargs=1, metavar='distribution.package',
+        parser.add_argument('packages_file', nargs=1, metavar='distribution.package',
                             help='Debian package list file.')
-        parser.add_argument('packageNames', nargs='+', metavar='package', help='Package name.')
+        parser.add_argument('package_names', nargs='+', metavar='package', help='Package name.')
 
         self._args = parser.parse_args(args)
 
 
-class Info:
+class Info(object):
+    """
+    Information class
+    """
 
     def __init__(self, options):
-        self._readDistributionPackages(options.getPackagesFile())
-        self._showDistributionPackages(options.getPackageNames())
+        self._read_distribution_packages(options.get_packages_file())
+        self._show_distribution_packages(options.get_package_names())
 
-    def _readDistributionPackages(self, packagesFile):
+    def _read_distribution_packages(self, packages_file):
         self._packages = {}
         name = ''
         lines = []
         try:
-            with open(packagesFile, errors='replace') as ifile:
+            with open(packages_file, errors='replace') as ifile:
                 for line in ifile:
                     line = line.rstrip('\r\n')
                     if line.startswith('Package: '):
@@ -66,22 +73,25 @@ class Info:
                     else:
                         self._packages[name] = lines
         except IOError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + packagesFile + '" packages file.')
+            raise SystemExit(sys.argv[0] + ': Cannot read "' + packages_file + '" packages file.')
 
-    def _showDistributionPackages(self, packageNames):
-        for name in packageNames:
+    def _show_distribution_packages(self, package_names):
+        for name in package_names:
             if name in self._packages:
                 for line in self._packages[name]:
                     print(line)
                 print()
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Info(options)
@@ -95,7 +105,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

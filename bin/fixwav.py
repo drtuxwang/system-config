@@ -14,35 +14,40 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._ffmpeg = syslib.Command('ffmpeg', check=False)
-        if not self._ffmpeg.isFound():
+        if not self._ffmpeg.is_found():
             self._ffmpeg = syslib.Command('ffmpeg')
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getNormalize(self):
+    def get_normalize(self):
         """
         Return ffmpeg Command class object.
         """
         return self._ffmpeg
 
-    def getViewFlag(self):
+    def get_view_flag(self):
         """
         Return view flag.
         """
         return self._args.viewFlag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Normalize volume of wave files (-16.0dB rms mean volume).')
 
@@ -54,20 +59,23 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Normalize:
+class Normalize(object):
+    """
+    Normalize class
+    """
 
     def __init__(self, options):
         self._options = options
-        self._ffmpeg = options.getNormalize()
+        self._ffmpeg = options.get_normalize()
 
-        for file in options.getFiles():
+        for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
             elif file[-4:] != '.wav':
                 raise SystemExit(sys.argv[0] + ': Cannot handle "' + file + '" non-wave file.')
             volume, pvolume = self._view(file)
             sys.stdout.write(file + ': ' + volume + ' dB (' + pvolume + ' dB peak)')
-            if not options.getViewFlag():
+            if not options.get_view_flag():
                 for npass in range(4):
                     self._adjust(file, volume)
                     sys.stdout.write(' ' + str(npass) + '>> ')
@@ -81,13 +89,13 @@ class Normalize:
         change = -16 - float(volume)
         fileNew = file + '-new'
 
-        self._ffmpeg.setArgs(
+        self._ffmpeg.set_args(
             ['-i', file, '-af', 'volume=' + str(change) + 'dB', '-y', '-f', 'wav', fileNew])
         self._ffmpeg.run(mode='batch')
-        if self._ffmpeg.getExitcode():
+        if self._ffmpeg.get_exitcode():
             syslib.Dump().list('debugX', self._ffmpeg)
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ffmpeg.getExitcode()) +
-                             ' received from "' + self._ffmpeg.getFile() + '".')
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ffmpeg.get_exitcode()) +
+                             ' received from "' + self._ffmpeg.get_file() + '".')
         try:
             os.rename(fileNew, file)
         except OSError:
@@ -95,24 +103,27 @@ class Normalize:
             raise SystemExit(sys.argv[0] + ': Cannot update "' + file + '" file.')
 
     def _view(self, file):
-        self._ffmpeg.setArgs(['-i', file, "-af", "volumedetect", "-f", "null", "/dev/null"])
+        self._ffmpeg.set_args(['-i', file, "-af", "volumedetect", "-f", "null", "/dev/null"])
         self._ffmpeg.run(filter=' (mean|max)_volume: .* dB$', mode='batch', error2output=True)
-        if (len(self._ffmpeg.getOutput()) != 2):
+        if (len(self._ffmpeg.get_output()) != 2):
             raise SystemExit(sys.argv[0] + ': Cannot read corrupt "' + file + '" wave file.')
-        elif self._ffmpeg.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ffmpeg.getExitcode()) +
-                             ' received from "' + self._ffmpeg.getFile() + '".')
-        volume = self._ffmpeg.getOutput()[0].split()[-2]
-        pvolume = self._ffmpeg.getOutput()[1].split()[-2]
+        elif self._ffmpeg.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ffmpeg.get_exitcode()) +
+                             ' received from "' + self._ffmpeg.get_file() + '".')
+        volume = self._ffmpeg.get_output()[0].split()[-2]
+        pvolume = self._ffmpeg.get_output()[1].split()[-2]
         return (volume, pvolume)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Normalize(options)
@@ -126,7 +137,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

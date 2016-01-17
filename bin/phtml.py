@@ -14,25 +14,30 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getDirectory(self):
+    def get_directory(self):
         """
         Return list of directory.
         """
         return self._args.directory[0]
 
-    def getHeight(self):
+    def get_height(self):
         """
         Return hieght in pixels.
         """
         return self._args.height
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Generate XHTML files to view pictures.')
 
         parser.add_argument('-height', type=int,
@@ -50,7 +55,10 @@ class Options:
                 sys.argv[0] + ': Cannot find "' + self._args.directory[0] + '" directory.')
 
 
-class Gallery:
+class Gallery(object):
+    """
+    Gallery class
+    """
 
     def __init__(self, directory, height):
         self._directory = directory
@@ -106,7 +114,7 @@ class Gallery:
                 except IOError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + xhtmlFile + '" file.')
 
-                fileTime = syslib.FileStat(os.path.join(self._directory, file)).getTime()
+                fileTime = syslib.FileStat(os.path.join(self._directory, file)).get_time()
                 os.utime(xhtmlFile, (fileTime, fileTime))
                 directoryTime = max(directoryTime, fileTime)
 
@@ -116,11 +124,14 @@ class Gallery:
         return None
 
 
-class Xhtml:
+class Xhtml(object):
+    """
+    Xhtml class
+    """
 
     def __init__(self, options):
-        self._height = options.getHeight()
-        self._directory = options.getDirectory()
+        self._height = options.get_height()
+        self._directory = options.get_directory()
 
     def _find(self, directory=''):
         if directory:
@@ -145,7 +156,7 @@ class Xhtml:
         yield '<body bgcolor="#fffff1" text="#000000" link="#0000ff" vlink="#900090">'
         yield ''
         for fileStat in fileStats:
-            directory = fileStat.getFile()
+            directory = fileStat.get_file()
             files = glob.glob(os.path.join(directory, '*.xhtml'))
             nfiles = len(files)
             xhtmlFile = sorted(files)[0]
@@ -167,7 +178,7 @@ class Xhtml:
             gallery = Gallery(directory, self._height)
             if gallery.create():
                 fileStats.append(syslib.FileStat(directory))
-        fileStats = sorted(fileStats, key=lambda s: s.getTime(), reverse=True)
+        fileStats = sorted(fileStats, key=lambda s: s.get_time(), reverse=True)
 
         try:
             with open('index.xhtml', 'w', newline='\n') as ofile:
@@ -177,12 +188,15 @@ class Xhtml:
             raise SystemExit(sys.argv[0] + ': Cannot create "index.xhtml" file.')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Xhtml(options).create()
@@ -196,7 +210,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

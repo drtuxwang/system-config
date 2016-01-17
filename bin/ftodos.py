@@ -14,19 +14,24 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Converts file to "\\r\\n" newline format.')
 
         parser.add_argument('files', nargs='+', metavar='file', help='File to change.')
@@ -34,10 +39,13 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Fromdos:
+class ToDos(object):
+    """
+    To DOS format class
+    """
 
     def __init__(self, options):
-        for file in options.getFiles():
+        for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
             print('Converting "' + file + '" file to "\\r\\n" newline format...')
@@ -63,15 +71,18 @@ class Fromdos:
                 raise SystemExit(sys.argv[0] + ': Cannot update "' + file + '" file.')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            Fromdos(options)
+            ToDos(options)
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -82,7 +93,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

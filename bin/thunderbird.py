@@ -13,13 +13,18 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._thunderbird = syslib.Command('thunderbird')
         if len(args) > 1:
-            self._thunderbird.setArgs(args[1:])
+            self._thunderbird.set_args(args[1:])
             if args[1] in ('-v', '-version', '--version'):
                 self._thunderbird.run(mode='exec')
 
@@ -27,13 +32,13 @@ class Options:
 
         self._config()
 
-    def getFilter(self):
+    def get_filter(self):
         """
         Return filter pattern.
         """
         return self._filter
 
-    def getThunderbird(self):
+    def get_thunderbird(self):
         """
         Return thunderbird Command class object.
         """
@@ -46,15 +51,18 @@ class Options:
                 os.chmod(thunderbirddir, int('700', 8))
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getThunderbird().run(filter=options.getFilter(), mode='background')
+            options.get_thunderbird().run(filter=options.get_filter(), mode='background')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -65,7 +73,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -15,11 +15,16 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         if os.path.isfile('/usr/sbin/ping'):
             self._ping = syslib.Command(file='/usr/sbin/ping')
@@ -30,46 +35,46 @@ class Options:
 
         host = self._args.host[0]
         self._filter = 'min/avg/max'
-        if syslib.info.getSystem() == 'linux':
-            self._ping.setArgs(['-h'])
+        if syslib.info.get_system() == 'linux':
+            self._ping.set_args(['-h'])
             self._ping.run(filter='[-]w ', mode='batch')
-            if self._ping.hasOutput():
-                self._ping.setArgs(['-w', '4', '-c', '3', host])
+            if self._ping.has_output():
+                self._ping.set_args(['-w', '4', '-c', '3', host])
             else:
-                self._ping.setArgs(['-c', '3', host])
-        elif syslib.info.getSystem() == 'sunos':
-            self._ping.setArgs(['-s', host, '64', '3'])
+                self._ping.set_args(['-c', '3', host])
+        elif syslib.info.get_system() == 'sunos':
+            self._ping.set_args(['-s', host, '64', '3'])
         elif os.name == 'nt':
-            self._ping.setArgs(['-w', '4', '-n', '3', host])
+            self._ping.set_args(['-w', '4', '-n', '3', host])
             self._filter = 'Minimum|TTL'
         else:
-            self._ping.setArgs(['-w', '4', '-c', '3', host])
+            self._ping.set_args(['-w', '4', '-c', '3', host])
 
-    def getFilter(self):
+    def get_filter(self):
         """
         Return filter pattern.
         """
         return self._filter
 
-    def getHost(self):
+    def get_host(self):
         """
         Return host.
         """
         return self._args.host[0]
 
-    def getPing(self):
+    def get_ping(self):
         """
         Return ping Command class object.
         """
         return self._ping
 
-    def getRepeatFlag(self):
+    def get_repeat_flag(self):
         """
         Return repeat flag.
         """
         return self._args.repeatFlag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Checks whether a host is up.')
 
         parser.add_argument('-f', dest='repeatFlag', action='store_true',
@@ -80,11 +85,14 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Isitup:
+class Isitup(object):
+    """
+    Is host up class
+    """
 
     def __init__(self, options):
         stat = ''
-        while options.getRepeatFlag():
+        while options.get_repeat_flag():
             test = self._ping(options)
             if test != stat:
                 print(time.strftime('%Y-%m-%d-%H:%M:%S') + ': ' + test)
@@ -93,19 +101,22 @@ class Isitup:
         print(self._ping(options))
 
     def _ping(self, options):
-        options.getPing().run(filter=options.getFilter(), mode='batch')
-        if options.getPing().hasOutput():
-            return options.getHost() + ' is alive'
+        options.get_ping().run(filter=options.get_filter(), mode='batch')
+        if options.get_ping().has_output():
+            return options.get_host() + ' is alive'
         else:
-            return options.getHost() + ' is dead'
+            return options.get_host() + ' is dead'
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Isitup(options)
@@ -119,7 +130,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

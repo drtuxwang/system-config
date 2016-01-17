@@ -14,16 +14,21 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._wget = syslib.Command('wget')
-        self._wget.setFlags(['--no-check-certificate', '--timestamping'])
+        self._wget.set_flags(['--no-check-certificate', '--timestamping'])
 
         shaper = netnice.Shaper()
-        if shaper.isFound():
-            self._wget.setWrapper(shaper)
+        if shaper.is_found():
+            self._wget.set_wrapper(shaper)
 
         self._output = ''
         while len(args) > 1:
@@ -32,49 +37,52 @@ class Options:
                 self._output = args[2]
                 if os.path.isfile(args[2]) or os.path.isfile(args[2] + '.part'):
                     self._output = ('-'+str(os.getpid())+'.').join(self._output.rsplit('.', 1))
-                self._wget.extendArgs([args[1], self._output + '.part'])
+                self._wget.extend_args([args[1], self._output + '.part'])
                 args = args[2:]
                 continue
-            self._wget.appendArg(args[1])
+            self._wget.append_arg(args[1])
             args = args[1:]
 
-        self._setProxy()
+        self._set_proxy()
 
-    def getOutput(self):
+    def get_output(self):
         """
         Return output file.
         """
         return self._output
 
-    def getWget(self):
+    def get_wget(self):
         """
         Return wget Command class object.
         """
         return self._wget
 
-    def _setProxy(self):
+    def _set_proxy(self):
         setproxy = syslib.Command('setproxy', check=False)
-        if setproxy.isFound():
+        if setproxy.is_found():
             setproxy.run(mode='batch')
-            if not setproxy.getExitcode() and setproxy.hasOutput():
-                proxy = setproxy.getOutput()[0].strip()
+            if not setproxy.get_exitcode() and setproxy.has_output():
+                proxy = setproxy.get_output()[0].strip()
                 if proxy:
                     os.environ['ftp_proxy'] = 'http://' + proxy
                     os.environ['http_proxy'] = 'http://' + proxy
                     os.environ['https_proxy'] = 'http://' + proxy
 
 
-class Download:
+class Download(object):
+    """
+    Download class
+    """
 
     def __init__(self, options):
-        self._output = options.getOutput()
-        self._wget = options.getWget()
+        self._output = options.get_output()
+        self._wget = options.get_wget()
 
     def run(self):
         if self._output:
             self._wget.run()
-            if self._wget.getExitcode():
-                raise SystemExit(self._wget.getExitcode())
+            if self._wget.get_exitcode():
+                raise SystemExit(self._wget.get_exitcode())
             try:
                 os.rename(self._output + '.part', self._output)
             except OSError:
@@ -84,12 +92,15 @@ class Download:
             self._wget.run(mode='exec')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Download(options).run()
@@ -103,7 +114,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

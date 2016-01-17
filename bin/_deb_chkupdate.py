@@ -17,19 +17,24 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getListFiles(self):
+    def get_list_files(self):
         """
         Return list of installed packages files.
         """
         return self._args.listFiles
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Check whether installed debian packages in '
                                                      '".debs" list have updated versions.')
 
@@ -39,20 +44,23 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Package:
+class Package(object):
+    """
+    Package class
+    """
 
     def __init__(self, version='0', depends=[], url=''):
         self._version = version
         self._depends = depends
         self._url = url
 
-    def getDepends(self):
+    def get_depends(self):
         """
         Return list of required dependent packages.
         """
         return self._depends
 
-    def setDepends(self, depends):
+    def set_depends(self, depends):
         """
         Set list of required dependent packages.
 
@@ -60,13 +68,13 @@ class Package:
         """
         self._depends = depends
 
-    def getUrl(self):
+    def get_url(self):
         """
         Return package url.
         """
         return self._url
 
-    def setUrl(self, url):
+    def set_url(self, url):
         """
         Set package url.
 
@@ -74,13 +82,13 @@ class Package:
         """
         self._url = url
 
-    def getVersion(self):
+    def get_version(self):
         """
         Return version.
         """
         return self._version
 
-    def setVersion(self, version):
+    def set_version(self, version):
         """
         Set package version.
 
@@ -89,22 +97,26 @@ class Package:
         self._version = version
 
 
-class CheckUpdates:
+class CheckUpdates(object):
+    """
+    Check updates class
+    """
 
     def __init__(self, options):
         ispattern = re.compile('[.]debs-?.*$')
-        for listFile in options.getListFiles():
-            if syslib.FileStat(listFile).getSize() > 0:
+        for listFile in options.get_list_files():
+            if syslib.FileStat(listFile).get_size() > 0:
                 if os.path.isfile(listFile):
                     if ispattern.search(listFile):
                         distribution = ispattern.sub('', listFile)
                         print('\nChecking "' + listFile + '" list file...')
-                        self._packages = self._readDistributionPackages(distribution + '.packages')
-                        self._readDistributionPinPackages(distribution + '.pinlist')
-                        self._readDistributionBlacklist(distribution + '.blacklist')
-                        self._checkDistributionUpdates(distribution, listFile)
+                        self._packages = self._read_distribution_packages(
+                            distribution + '.packages')
+                        self._read_distribution_pin_packages(distribution + '.pinlist')
+                        self._read_distribution_blacklist(distribution + '.blacklist')
+                        self._check_distribution_updates(distribution, listFile)
 
-    def _readDistributionPackages(self, packagesFile):
+    def _read_distribution_packages(self, packagesFile):
         packages = {}
         name = ''
         package = Package()
@@ -115,21 +127,21 @@ class CheckUpdates:
                     if line.startswith('Package: '):
                         name = line.replace('Package: ', '')
                     elif line.startswith('Version: '):
-                        package.setVersion(line.replace('Version: ', '').split(':')[-1])
+                        package.set_version(line.replace('Version: ', '').split(':')[-1])
                     elif line.startswith('Depends: '):
                         depends = []
                         for i in line.replace('Depends: ', '').split(', '):
                             depends.append(i.split()[0])
-                        package.setDepends(depends)
+                        package.set_depends(depends)
                     elif line.startswith('Filename: '):
-                        package.setUrl(line[10:])
+                        package.set_url(line[10:])
                         packages[name] = package
                         package = Package()
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot open "' + packagesFile + '" packages file.')
         return packages
 
-    def _readDistributionPinPackages(self, pinFile):
+    def _read_distribution_pin_packages(self, pinFile):
         packagesCache = {}
         try:
             with open(pinFile, errors='replace') as ifile:
@@ -140,7 +152,7 @@ class CheckUpdates:
                         if pattern[:1] != '#':
                             file = os.path.join(os.path.dirname(pinFile), columns[1]) + '.packages'
                             if file not in packagesCache:
-                                packagesCache[file] = self._readDistributionPackages(file)
+                                packagesCache[file] = self._read_distribution_packages(file)
                             try:
                                 ispattern = re.compile(
                                     pattern.replace('?', '.').replace('*', '.*')+'$')
@@ -152,7 +164,7 @@ class CheckUpdates:
         except IOError:
             pass
 
-    def _readDistributionBlacklist(self, file):
+    def _read_distribution_blacklist(self, file):
         try:
             with open(file, errors='replace') as ifile:
                 for line in ifile:
@@ -162,12 +174,12 @@ class CheckUpdates:
                         if name[:1] != '#':
                             if name in self._packages:
                                 if (columns[1] == '*' or
-                                        columns[1] == self._packages[name].getVersion()):
+                                        columns[1] == self._packages[name].get_version()):
                                     del self._packages[name]
         except IOError:
             return
 
-    def _checkDistributionUpdates(self, distribution, listFile):
+    def _check_distribution_updates(self, distribution, listFile):
         try:
             with open(listFile, errors='replace') as ifile:
                 versions = {}
@@ -187,14 +199,14 @@ class CheckUpdates:
             with open(urlfile, 'w', newline='\n') as ofile:
                 for name, version in sorted(versions.items()):
                     if name in self._packages:
-                        if self._packages[name].getVersion() != version:
-                            file = self._local(distribution, self._packages[name].getUrl())
+                        if self._packages[name].get_version() != version:
+                            file = self._local(distribution, self._packages[name].get_url())
                             print(file, '(Replaces', version + ')')
                             print(file, file=ofile)
                             for name in sorted(
-                                    self._depends(versions, self._packages[name].getDepends())):
+                                    self._depends(versions, self._packages[name].get_depends())):
                                 if name in self._packages:
-                                    file = self._local(distribution, self._packages[name].getUrl())
+                                    file = self._local(distribution, self._packages[name].get_url())
                                     print('  ' + file, '(New dependency)')
                                     print('  ' + file, file=ofile)
         except IOError:
@@ -209,7 +221,7 @@ class CheckUpdates:
                 versions[name] = ''
                 names.append(name)
                 if name in self._packages:
-                    names.extend(self._depends(versions, self._packages[name].getDepends()))
+                    names.extend(self._depends(versions, self._packages[name].get_depends()))
         return names
 
     def _local(self, distribution, url):
@@ -219,12 +231,15 @@ class CheckUpdates:
         return url
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             CheckUpdates(options)
@@ -238,7 +253,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

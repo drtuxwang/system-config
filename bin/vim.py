@@ -13,62 +13,73 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._vim = syslib.Command('vim')
-        self._vim.setArgs(args[1:])
+        self._vim.set_args(args[1:])
 
         if len(args) > 1 and args[-1] != 'NONE':
             self._file = args[-1]
         else:
             self._file = None
 
-    def getFile(self):
+    def get_file(self):
         """
         Return file.
         """
         return self._file
 
-    def getVim(self):
+    def get_vim(self):
         """
         Return vim Command class object.
         """
         return self._vim
 
 
-class Edit:
+class Edit(object):
+    """
+    Edit class
+    """
 
     def __init__(self, options):
-        if options.getFile():
+        if options.get_file():
             try:
-                sys.stdout.write('\033]0;' + syslib.info.getHostname() + ':' +
-                                 os.path.abspath(options.getFile()) + '\007')
+                sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':' +
+                                 os.path.abspath(options.get_file()) + '\007')
             except OSError:
                 pass
             else:
                 sys.stdout.flush()
                 self._edit(options)
-                sys.stdout.write('\033]0;' + syslib.info.getHostname() + ':\007')
+                sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':\007')
         else:
             self._edit(options)
 
     def _edit(self, options):
-        vim = options.getVim()
-        vim.run()
-        if vim.getExitcode():
-            print(sys.argv[0] + ': Error code ' + str(vim.getExitcode()) + ' received from "' +
-                  vim.getFile() + '".', file=sys.stderr)
-            raise SystemExit(vim.getExitcode())
+        command = options.get_vim()
+        command.run()
+        if command.get_exitcode():
+            print(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) + ' received from "' +
+                  command.get_file() + '".', file=sys.stderr)
+            raise SystemExit(command.get_exitcode())
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Edit(options)
@@ -82,10 +93,10 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
-            files = glob.glob(arg)   # Fixes Windows globbing bug
+            files = glob.glob(arg)  # Fixes Windows globbing bug
             if files:
                 argv.extend(files)
             else:

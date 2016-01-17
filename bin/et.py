@@ -14,21 +14,26 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._et = syslib.Command('et.x86', check=False)
-        if not os.path.isfile(self._et.getFile()):
+        if not os.path.isfile(self._et.get_file()):
             self._et = syslib.Command('et')
-            self._et.setArgs(args[1:])
+            self._et.set_args(args[1:])
             self._et.run(mode='exec')
         xrun = syslib.Command('xrun', check=False)
-        if xrun.isFound():
-            self._et.setWrapper(xrun)
+        if xrun.is_found():
+            self._et.set_wrapper(xrun)
         self._config()
         self._punkbuster()
-        self._et.setArgs(args[1:])
+        self._et.set_args(args[1:])
 
     def getEt(self):
         """
@@ -36,7 +41,7 @@ class Options:
         """
         return self._et
 
-    def getLogfile(self):
+    def get_logfile(self):
         """
         Return logfile location.
         """
@@ -45,7 +50,7 @@ class Options:
     def _punkbuster(self):
         if 'HOME' in os.environ:
             pbdir = os.path.join(os.environ['HOME'], '.etwolf', 'pb')
-            linkdir = os.path.join(os.path.dirname(self._et.getFile()), 'pb')
+            linkdir = os.path.join(os.path.dirname(self._et.get_file()), 'pb')
             if not os.path.islink(pbdir):
                 if os.path.isdir(pbdir):
                     try:
@@ -68,7 +73,7 @@ class Options:
                                  '" key file (see http://www.etkey.net).')
 
     def _config(self):
-        os.chdir(os.path.dirname(self._et.getFile()))
+        os.chdir(os.path.dirname(self._et.get_file()))
         if 'HOME' in os.environ:
             os.environ['SDL_AUDIODRIVER'] = 'pulse'
             etsdl = (glob.glob('/usr/lib/i386-linux-gnu/libSDL-*so*') +
@@ -88,13 +93,16 @@ class Options:
             self._logfile = os.path.join(os.environ['HOME'], '.etwolf', 'etwolf.log')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         try:
             options = Options(sys.argv)
-            options.getEt().run(logfile=options.getLogfile(), mode='daemon')
+            options.getEt().run(logfile=options.get_logfile(), mode='daemon')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:

@@ -4,10 +4,7 @@ Generate 'index.xhtml' & 'index.fsum' files plus '..fsum' cache files
 """
 
 import glob
-import hashlib
 import os
-import re
-import shutil
 import signal
 import sys
 
@@ -16,33 +13,41 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._archive = os.path.basename(os.getcwd())
 
-    def getArchive(self):
+    def get_archive(self):
         """
         Return archive directory.
         """
         return self._archive
 
 
-class Index:
+class Index(object):
+    """
+    Index class
+    """
 
     def __init__(self, options):
         self._options = options
 
     def run(self):
-        self._coreFind()
+        self._core_find()
         self._checksum()
 
     def _checksum(self):
         print('Generating "index.fsum"...')
         try:
             with open('index.fsum', 'a', newline='\n') as ofile:
-                self._readFsums(ofile, '')
+                self._read_fsums(ofile, '')
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot create "index.fsum" file.')
 
@@ -50,32 +55,32 @@ class Index:
         files = glob.glob('*')
         if 'index.fsum' in files:
             files.remove('index.fsum')
-            fsum.setArgs(['-R', '-update=index.fsum'] + files)
+            fsum.set_args(['-R', '-update=index.fsum'] + files)
         else:
-            fsum.setArgs(['-R'] + files)
+            fsum.set_args(['-R'] + files)
         fsum.run(mode='batch')
 
-        self._writeFsums(fsum.getOutput())
+        self._write_fsums(fsum.get_output())
         timeNew = 0
         try:
             with open('index.fsum', 'w', newline='\n') as ofile:
-                for line in fsum.getOutput():
+                for line in fsum.get_output():
                     timeNew = max(timeNew, int(line.split(' ', 1)[0].rsplit('/', 1)[-1]))
                     print(line, file=ofile)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot create "index.fsum" file.')
         os.utime('index.fsum', (timeNew, timeNew))
 
-    def _coreFind(self, directory=''):
+    def _core_find(self, directory=''):
         for file in sorted(glob.glob(os.path.join(directory, '.*')) +
                            glob.glob(os.path.join(directory, '*'))):
             if not os.path.islink(file):
                 if os.path.isdir(file):
-                    self._coreFind(file)
+                    self._core_find(file)
                 elif os.path.basename(file) == 'core' or os.path.basename(file).startswith('core.'):
                     raise SystemExit(sys.argv[0] + ': Found "' + file + '" crash dump file.')
 
-    def _readFsums(self, ofile, directory):
+    def _read_fsums(self, ofile, directory):
         fsum = os.path.join(directory, '..fsum')
         if directory and os.listdir(directory) == ['..fsum']:
             try:
@@ -92,9 +97,9 @@ class Index:
                 pass
             for file in glob.glob(os.path.join(directory, '*')):
                 if os.path.isdir(file) and not os.path.islink(file):
-                    self._readFsums(ofile, file)
+                    self._read_fsums(ofile, file)
 
-    def _writeFsums(self, lines):
+    def _write_fsums(self, lines):
         fsums = {}
         for line in lines:
             checksum, file = line.split('  ', 1)
@@ -126,12 +131,15 @@ class Index:
                     os.utime(directory, (timeNew, timeNew))
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Index(options).run()
@@ -145,7 +153,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

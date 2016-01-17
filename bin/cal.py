@@ -5,20 +5,26 @@ Displays month or year calendar.
 
 import argparse
 import glob
-import calendar
 import os
 import signal
 import sys
 import time
 
+import calendar
+
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         if self._args.year:
             self._year = self._args.year
@@ -38,19 +44,19 @@ class Options:
         else:
             self._month = int(time.strftime('%m'))
 
-    def getMonth(self):
+    def get_month(self):
         """
         Return month of files.
         """
         return self._month
 
-    def getYear(self):
+    def get_year(self):
         """
         Return year of files.
         """
         return self._year
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Displays month or year calendar.')
 
         parser.add_argument('year', nargs='?', type=int, help='Select year.')
@@ -59,21 +65,27 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Calendar:
+class Calendar(object):
+    """
+    Calendar class
+    """
 
     def __init__(self, options):
-        if options.getMonth() == 0:
-            print(calendar.TextCalendar(6).formatyear(options.getYear()))
+        if options.get_month() == 0:
+            print(calendar.TextCalendar(6).formatyear(options.get_year()))
         else:
-            print(calendar.TextCalendar(6).formatmonth(options.getYear(), options.getMonth()))
+            print(calendar.TextCalendar(6).formatmonth(options.get_year(), options.get_month()))
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Calendar(options)
@@ -87,7 +99,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -15,25 +15,30 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getRecursiveFlag(self):
+    def get_recursive_flag(self):
         """
         Return recursive flag.
         """
         return self._args.recursiveFlag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Show files with same MD5 checksums.')
 
         parser.add_argument('-R', dest='recursiveFlag', action='store_true',
@@ -45,11 +50,14 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Md5same:
+class Md5sum(object):
+    """
+    Md5sum class
+    """
 
     def __init__(self, options):
         self._md5files = {}
-        self._calc(options, options.getFiles())
+        self._calc(options, options.get_files())
 
         for md5sum, md5file in sorted(self._md5files.items()):
             if len(md5file) > 1:
@@ -58,7 +66,7 @@ class Md5same:
     def _calc(self, options, files):
         for file in files:
             if os.path.isdir(file):
-                if not os.path.islink(file) and options.getRecursiveFlag():
+                if not os.path.islink(file) and options.get_recursive_flag():
                     try:
                         self._calc(
                             options, sorted([os.path.join(file, x) for x in os.listdir(file)]))
@@ -87,15 +95,18 @@ class Md5same:
         return md5.hexdigest()
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            Md5same(options)
+            Md5sum(options)
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -106,7 +117,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

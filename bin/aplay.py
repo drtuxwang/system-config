@@ -15,31 +15,36 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getDirectories(self):
+    def get_directories(self):
         """
         Return list of directories.
         """
         return self._args.directories
 
-    def getShuffleFlag(self):
+    def get_shuffle_flag(self):
         """
         Return shuffle flag.
         """
         return self._args.shuffleFlag
 
-    def getViewFlag(self):
+    def get_view_flag(self):
         """
         Return view flag.
         """
         return self._args.viewFlag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Play MP3/OGG/WAV audio files in directory.')
 
         parser.add_argument('-s', dest='shuffleFlag', action='store_true',
@@ -52,26 +57,23 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Play:
+class Play(object):
+    """
+    Main class
+    """
 
     def __init__(self, options):
         self._play = syslib.Command('play')
 
-        if options.getViewFlag():
-            self._play.setFlags(['-v'])
-        for directory in options.getDirectories():
+        if options.get_view_flag():
+            self._play.set_flags(['-v'])
+        for directory in options.get_directories():
             if not os.path.isdir(directory):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + directory + '" media directory.')
             files = self._getfiles(directory, '*.mp3', '*.ogg', '*.wav')
-            if options.getShuffleFlag():
+            if options.get_shuffle_flag():
                 random.shuffle(files)
-            self._play.extendArgs(files)
-
-    def run(self):
-        self._play.run()
-        if self._play.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._play.getExitcode()) +
-                             ' received from "' + self._play.getFile() + '".')
+            self._play.extend_args(files)
 
     def _getfiles(self, directory, *patterns):
         files = []
@@ -79,13 +81,22 @@ class Play:
             files.extend(glob.glob(os.path.join(directory, pattern)))
         return sorted(files)
 
+    def run(self):
+        self._play.run()
+        if self._play.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._play.get_exitcode()) +
+                             ' received from "' + self._play.get_file() + '".')
 
-class Main:
+
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Play(options).run()
@@ -99,7 +110,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

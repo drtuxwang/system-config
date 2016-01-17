@@ -6,7 +6,6 @@ Rip Video DVD title to file.
 import argparse
 import glob
 import os
-import re
 import signal
 import sys
 
@@ -15,39 +14,44 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._vlc = syslib.Command('vlc')
 
-    def getDevice(self):
+    def get_device(self):
         """
         Return device location.
         """
         return self._args.device[0]
 
-    def getVlc(self):
+    def get_vlc(self):
         """
         Return vlc Command class object.
         """
         return self._vlc
 
-    def getSpeed(self):
+    def get_speed(self):
         """
         Return DVD speed.
         """
         return self._args.speed[0]
 
-    def getTitle(self):
+    def get_title(self):
         """
         Return DVD title.
         """
         return self._args.title[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Rip Video DVD title to file.')
 
         parser.add_argument('-speed', nargs=1, type=int, default=[8],
@@ -70,7 +74,10 @@ class Options:
                 sys.argv[0] + ': Cannot find "' + self._args.device[0] + '" DVD device.')
 
 
-class Cdrom:
+class Cdrom(object):
+    """
+    CDROM class
+    """
 
     def __init__(self):
         self._devices = {}
@@ -98,32 +105,35 @@ class Cdrom:
         except IndexError:
             return ''
 
-    def getDevices(self):
+    def get_devices(self):
         """
         Return list of devices
         """
         return self._devices
 
 
-class RipDvd:
+class RipDvd(object):
+    """
+    Rip DVD class
+    """
 
     def __init__(self, options):
-        self._vlc = options.getVlc()
-        self._device = options.getDevice()
-        self._speed = options.getSpeed()
-        self._title = options.getTitle()
+        self._vlc = options.get_vlc()
+        self._device = options.get_device()
+        self._speed = options.get_speed()
+        self._title = options.get_title()
 
         if self._device == 'scan':
             self._scan()
         else:
-            self._cdspeed(self._device, options.getSpeed())
+            self._cdspeed(self._device, options.get_speed())
             self._rip(options)
 
     def _cdspeed(self, device, speed):
         cdspeed = syslib.Command('cdspeed', flags=[device], check=False)
-        if cdspeed.isFound():
+        if cdspeed.is_found():
             if speed:
-                cdspeed.setArgs([str(speed)])
+                cdspeed.set_args([str(speed)])
             # If CD/DVD spin speed change fails its okay
             cdspeed.run()
         elif speed:
@@ -132,25 +142,28 @@ class RipDvd:
 
     def _rip(self, options):
         file = 'title-' + str(self._title).zfill(2) + '.mpg'
-        self._vlc.setArgs(['dvdsimple:/' + self._device + ':#' + str(self._title),
-                           '--sout', '#standard{access=file,mux=ts,dst=' + file + '}',
-                           'vlc://quit'])
+        self._vlc.set_args(
+            ['dvdsimple:/' + self._device + ':#' + str(self._title), '--sout',
+             '#standard{access=file,mux=ts,dst=' + file + '}', 'vlc://quit'])
         self._vlc.run()
 
     def _scan(self):
         cdrom = Cdrom()
         print('Scanning for CD/DVD devices...')
-        devices = cdrom.getDevices()
+        devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
             print('  {0:10s}  {1:s}'.format(key, value))
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             RipDvd(options)
@@ -164,7 +177,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -15,19 +15,24 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getLocation(self):
+    def get_location(self):
         """
         Return location.
         """
         return self._args.location[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Zero device or create zero file.')
 
         parser.add_argument('location', nargs=1, metavar='device|directory',
@@ -43,14 +48,17 @@ class Options:
             raise SystemExit(sys.argv[0] + ': Cannot find "' + location + '" device or directory.')
 
 
-class Zerofile:
+class Zerofile(object):
+    """
+    Find zero sized file class
+    """
 
     def __init__(self, options):
-        if os.path.isdir(options.getLocation()):
-            file = os.path.join(options.getLocation(), 'fzero.tmp')
+        if os.path.isdir(options.get_location()):
+            file = os.path.join(options.get_location(), 'fzero.tmp')
             print('Creating "' + file + '" zero file...')
         else:
-            file = options.getLocation()
+            file = options.get_location()
             print('Zeroing "' + file + '" device...')
         startTime = time.time()
         chunk = 16384 * b'\0'
@@ -69,12 +77,15 @@ class Zerofile:
         print(', {0:4.2f} seconds, {1:.0f} MB/s'.format(elapsedTime, size / elapsedTime))
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Zerofile(options)
@@ -88,7 +99,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

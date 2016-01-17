@@ -22,9 +22,9 @@ config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for Li
 
 bin/7z                 Make a compressed archive in 7z format
 bin/7z.bat             (uses p7zip or 7zip)
-bin/7z.py
+bin/_7z.py
 bin/7za
-bin/7za.py
+bin/_7za.py
 
 bin/acroread           acroread wrapper (allowing non systems port)
 bin/acroread.py
@@ -40,7 +40,7 @@ bin/aplay              Play MP3/OGG/WAV audio files in directory
 bin/aplay.py           (uses vlc)
 
 bin/aria2c             aria2c wrapper (allowing non systems port)
-bin/aria2c.py          (bandwidth 512KB limit default using "trickle", "$HOME/.config/trickle.json)
+bin/aria2c.py          (bandwidth 512KB limit default using "trickle", "$HOME/.config/netnice.json)
 
 bin/audacity           audacity wrapper (allowing non systems port)
 bin/audacity.bat
@@ -76,7 +76,7 @@ bin/cal.bat
 bin/cal.py
 bin/calendar           Print large monthly calendar
 bin/calendar.bat
-bin/calendar.py
+bin/_calendar.py
 
 bin/cdinst.bat         Windows command prompt batch file to "cd %INSTDIR%"
 
@@ -99,6 +99,8 @@ bin/chrome.py
 bin/chroot             chroot wrapper (allowing non systems port)
 bin/chroot.py          (creates /shared mount automatically)
 
+bin/ck_desktop.py      Desktop environment module
+
 bin/clam               Run ClamAV anti-virus scanner
 bin/clam.bat
 bin/clam.py
@@ -114,17 +116,17 @@ bin/cpuz.py
 
 bin/deb                Debian package management tools
 bin/deb-chkdir         (support offline repository searching and update checks)
-bin/deb-chkdir.py
+bin/_deb_chkdir.py
 bin/deb-chkinstall
-bin/deb-chkinstall.py
+bin/_deb_chkinstall.py
 bin/deb-chkupdate
-bin/deb-chkupdate.py
+bin/_deb_chkupdate.py
 bin/deb-distfind
-bin/deb-distfind.py
+bin/_deb_distfind.py
 bin/deb-distget
-bin/deb-distget.py
+bin/_deb_distget.py
 bin/deb-distinfo
-bin/deb-distinfo.py
+bin/_deb_distinfo.py
 bin/deb.py
 
 bin/df                 df wrapper (allowing non systems port)
@@ -372,7 +374,7 @@ bin/gitk.bat
 bin/gitk.py
 
 bin/gnome-mines        gnome-mines wrapper (allowing non systems port)
-bin/gnome-mines.py     (can pick using old gnomines name)
+bin/_gnome_mines.py    (can pick using old gnomines name)
 
 bin/gpg                gpg wrapper (allowing non systems port)
 bin/gpg.py             (contains enhanced functions "gpg -h")
@@ -426,7 +428,7 @@ bin/javac              javac wrapper (allowing non systems port)
 bin/javac.py           (Java compiler)
 
 bin/json               JSON file indenting (display on screen)
-bin/json.py
+bin/_json.py
 
 bin/juniper            Connect to Juniper Network Connect VPN
 bin/juniper.py
@@ -573,7 +575,7 @@ bin/phtml.py
 
 bin/plink              Create links to JPEG files
 bin/plink.py
-g
+
 bin/pmeg               Resize large picture images to mega-pixels limit
 bin/pmeg.py            (uses convert from ImageMagick)
 
@@ -601,7 +603,7 @@ bin/pyprof.py
 
 bin/pytest             Run Python unittests in module files
 bin/pytest.bat
-bin/pytest.py
+bin/_pytest.py
 
 bin/python             Python startup (allowing non systems port)
 bin/python.bat
@@ -856,7 +858,7 @@ bin/wav                Encode WAV audio using avconv (pcm_s16le).
 bin/wav.py
 
 bin/wget               wget wrapper (allowing non systems port)
-bin/wget.py
+bin/wget.py            (bandwidth 512KB limit default using "trickle", "$HOME/.config/netnice.json)
 
 bin/wine               wine wrapper (allowing non systems port)
 bin/wine.py

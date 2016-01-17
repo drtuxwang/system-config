@@ -20,8 +20,13 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._chrome = syslib.Command('chrome')
@@ -29,7 +34,7 @@ class Options:
 
         if len(args) > 1:
             if args[1] == '-version':
-                self._chrome.setArgs(['-version'])
+                self._chrome.set_args(['-version'])
                 self._chrome.run(mode='exec')
             elif args[1] == '-copy':
                 self._copy()
@@ -40,44 +45,44 @@ class Options:
             if args[1] == '-restart':
                 self._restart()
                 args = args[1:]
-            self._chrome.setArgs(args[1:])
+            self._chrome.set_args(args[1:])
 
         # Avoids 'exo-helper-1 chrome http://' problem of clicking text in XFCE
         if len(args) > 1:
             ppid = os.getppid()
-            if ppid != 1 and 'exo-helper' in syslib.Task().getProcess(ppid)['COMMAND']:
+            if ppid != 1 and 'exo-helper' in syslib.Task().get_process(ppid)['COMMAND']:
                 raise SystemExit
 
-        if '--disable-background-mode' not in self._chrome.getArgs():
-            self._chrome.extendFlags(['--disable-background-mode', '--disable-geolocation',
-                                      '--disk-cache-size=0'])
+        if '--disable-background-mode' not in self._chrome.get_args():
+            self._chrome.extend_flags(['--disable-background-mode', '--disable-geolocation',
+                                       '--disk-cache-size=0'])
 
         # Get flash player
-        if '--ppapi-flash-path=' not in ''.join(self._chrome.getArgs()):
+        if '--ppapi-flash-path=' not in ''.join(self._chrome.get_args()):
             flashPlayer = FlashPlayer(self._chrome)
-            if flashPlayer.getVersion():
-                self._chrome.extendFlags(['--ppapi-flash-path=' + flashPlayer.getPlugin(),
-                                          '--ppapi-flash-version=' + flashPlayer.getVersion()])
+            if flashPlayer.get_version():
+                self._chrome.extend_flags(['--ppapi-flash-path=' + flashPlayer.get_plugin(),
+                                           '--ppapi-flash-version=' + flashPlayer.get_version()])
 
         # Suid sandbox workaround
         if 'HOME' in os.environ:
-            if syslib.FileStat(os.path.join(os.path.dirname(self._chrome.getFile()),
-                               'chrome-sandbox')).getMode() != 104755:
-                self._chrome.extendFlags(['--test-type', '--disable-setuid-sandbox'])
+            if syslib.FileStat(os.path.join(os.path.dirname(
+                    self._chrome.get_file()), 'chrome-sandbox')).get_mode() != 104755:
+                self._chrome.extend_flags(['--test-type', '--disable-setuid-sandbox'])
 
         self._filter = ('^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
                         ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
                         'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|')
         self._config(args)
-        self._setLibraries(self._chrome)
+        self._set_libraries(self._chrome)
 
-    def getFilter(self):
+    def get_filter(self):
         """
         Return filter pattern.
         """
         return self._filter
 
-    def getChrome(self):
+    def get_chrome(self):
         """
         Return chrome Command class object.
         """
@@ -135,7 +140,7 @@ class Options:
                         except OSError:
                             pass
                 ispattern = re.compile('^(lastDownload|lastSuccess|lastCheck|'
-                                       'expires|softExpiration)=\d*')
+                                       r'expires|softExpiration)=\d*')
                 for file in glob.glob(os.path.join(configdir, 'File System', '*', 'p', '00', '*')):
                     try:
                         with open(file, errors='replace') as ifile:
@@ -169,7 +174,7 @@ class Options:
         if 'HOME' in os.environ:
             task = syslib.Task()
             for directory in glob.glob(
-                    os.path.join('/tmp', 'chrome-' + syslib.info.getUsername() + '.*')):
+                    os.path.join('/tmp', 'chrome-' + syslib.info.get_username() + '.*')):
                 try:
                     if not task.pgid2pids(int(directory.split('.')[-1])):
                         print('Removing copy of Chrome profile in "' + directory + '"...')
@@ -183,7 +188,8 @@ class Options:
             configdir = os.path.join(os.environ['HOME'], '.config', self._directory)
             mypid = os.getpid()
             os.setpgid(mypid, mypid)  # New PGID
-            newhome = os.path.join('/tmp', 'chrome-' + syslib.info.getUsername() + '.' + str(mypid))
+            newhome = os.path.join(
+                '/tmp', 'chrome-' + syslib.info.get_username() + '.' + str(mypid))
             print('Creating copy of Chrome profile in "' + newhome + '"...')
             if not os.path.isdir(newhome):
                 try:
@@ -234,10 +240,10 @@ class Options:
             except (IndexError, OSError):
                 pass
 
-    def _setLibraries(self, command):
-        libdir = os.path.join(os.path.dirname(command.getFile()), 'lib')
+    def _set_libraries(self, command):
+        libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir):
-            if syslib.info.getSystem() == 'linux':
+            if syslib.info.get_system() == 'linux':
                 if not os.path.isfile('/usr/lib/libnss3.so.1d'):  # use workaround
                     if 'LD_LIBRARY_PATH' in os.environ:
                         os.environ['LD_LIBRARY_PATH'] = (
@@ -246,30 +252,33 @@ class Options:
                         os.environ['LD_LIBRARY_PATH'] = libdir
 
 
-class FlashPlayer:
+class FlashPlayer(object):
+    """
+    Flash player class
+    """
 
     def __init__(self, chrome):
         self._plugin = None
         self._version = None
 
         file = os.path.join(os.path.dirname(
-            chrome.getFile()), 'PepperFlash', 'libpepflashplayer.so')
+            chrome.get_file()), 'PepperFlash', 'libpepflashplayer.so')
         if os.path.isfile(file):
             self._detect(file)
 
         setflash = syslib.Command('setflash', check=False)
-        if setflash.isFound():
+        if setflash.is_found():
             setflash.run(mode='batch')
-            if setflash.hasOutput():
-                self._detect(setflash.getOutput()[0])
+            if setflash.has_output():
+                self._detect(setflash.get_output()[0])
 
-    def getPlugin(self):
+    def get_plugin(self):
         """
         Return plugin location.
         """
         return self._plugin
 
-    def getVersion(self):
+    def get_version(self):
         """
         Return version of files.
         """
@@ -292,15 +301,18 @@ class FlashPlayer:
         self._version = '0.0.0.0'
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getChrome().run(filter=options.getFilter(), mode='background')
+            options.get_chrome().run(filter=options.get_filter(), mode='background')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -311,7 +323,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

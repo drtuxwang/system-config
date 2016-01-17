@@ -14,19 +14,24 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getDirectories(self):
+    def get_directories(self):
         """
         Return list of files.
         """
         return self._args.directories
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Modify access times of all files in directory recursively.')
 
@@ -36,11 +41,14 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Touch:
+class Touch(object):
+    """
+    Touch file class
+    """
 
     def __init__(self, options):
         self._touch = syslib.Command('touch', flags=['-a'])
-        for directory in options.getDirectories():
+        for directory in options.get_directories():
             self._toucher(directory)
 
     def _toucher(self, directory):
@@ -48,7 +56,7 @@ class Touch:
         if os.path.isdir(directory):
             try:
                 files = [os.path.join(directory, x) for x in os.listdir(directory)]
-                self._touch.setArgs(files)
+                self._touch.set_args(files)
                 self._touch.run(mode='batch')
                 for file in files:
                     if os.path.isdir(file) and not os.path.islink(file):
@@ -57,12 +65,15 @@ class Touch:
                 raise SystemExit(sys.argv[0] + ': Cannot open "' + directory + '" directory.')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Touch(options)
@@ -76,7 +87,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

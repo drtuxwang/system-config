@@ -14,31 +14,36 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getAllFlag(self):
+    def get_all_flag(self):
         """
         Return all flag.
         """
         return self._args.allFlag
 
-    def getAsciiFlag(self):
+    def get_ascii_flag(self):
         """
         Return ascii flag.
         """
         return self._args.asciiFlag
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Dump the first and last few bytes of a binary file.')
 
@@ -52,16 +57,19 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Dump:
+class Dump(object):
+    """
+    Dump class
+    """
 
     def __init__(self, options):
-        for file in options.getFiles():
+        for file in options.get_files():
             try:
                 with open(file, 'rb') as ifile:
                     print('\nFile:', file)
                     fileStat = syslib.FileStat(file)
-                    if options.getAllFlag() or fileStat.getSize() < 128:
-                        for position in range(1, fileStat.getSize() + 1, 16):
+                    if options.get_all_flag() or fileStat.get_size() < 128:
+                        for position in range(1, fileStat.get_size() + 1, 16):
                             print('{0:07d}{1:s}'.format(position,
                                   self._format(options, ifile.read(16))))
                     else:
@@ -69,15 +77,16 @@ class Dump:
                             print('{0:07d}{1:s}'.format(position,
                                   self._format(options, ifile.read(16))))
                         print('...')
-                        ifile.seek(fileStat.getSize() - 64)
-                        for position in range(fileStat.getSize() - 63, fileStat.getSize() + 1, 16):
+                        ifile.seek(fileStat.get_size() - 64)
+                        for position in range(
+                                fileStat.get_size() - 63, fileStat.get_size() + 1, 16):
                             print('{0:07d}{1:s}'.format(position,
                                   self._format(options, ifile.read(16))))
             except IOError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
 
     def _format(self, options, data):
-        if options.getAsciiFlag():
+        if options.get_ascii_flag():
             line = ' '
             for byte in data:
                 if byte > 31 and byte < 127:
@@ -95,12 +104,15 @@ class Dump:
         return line
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Dump(options)
@@ -114,7 +126,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

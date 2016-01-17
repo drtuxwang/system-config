@@ -14,37 +14,42 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getDirectories(self):
+    def get_directories(self):
         """
         Return list of directories.
         """
         return self._args.directories
 
-    def getOrder(self):
+    def get_order(self):
         """
         Return order method.
         """
         return self._args.order
 
-    def getResetFlag(self):
+    def get_reset_flag(self):
         """
         Return per directory number reset flag
         """
         return self._args.resetFlag
 
-    def getStart(self):
+    def get_start(self):
         """
         Return start number.
         """
         return self._args.start[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Renumber picture files into a numerical series.')
 
@@ -68,16 +73,19 @@ class Options:
                     sys.argv[0] + ': Picture directory "' + directory + '" does not exist.')
 
 
-class Renumber:
+class Renumber(object):
+    """
+    Re-number images class
+    """
 
     def __init__(self, options):
         startdir = os.getcwd()
-        resetFlag = options.getResetFlag()
-        number = options.getStart()
+        resetFlag = options.get_reset_flag()
+        number = options.get_start()
 
-        for directory in options.getDirectories():
+        for directory in options.get_directories():
             if resetFlag:
-                number = options.getStart()
+                number = options.get_start()
             if os.path.isdir(directory):
                 os.chdir(directory)
                 fileStats = []
@@ -89,12 +97,12 @@ class Renumber:
                 mypid = os.getpid()
                 for fileStat in self._sorted(options, fileStats):
                     newfile = 'pic{0:05d}.{1:s}'.format(
-                        number, fileStat.getFile().split('.')[-1].lower().replace('jpeg', 'jpg'))
+                        number, fileStat.get_file().split('.')[-1].lower().replace('jpeg', 'jpg'))
                     newfiles.append(newfile)
                     try:
-                        os.rename(fileStat.getFile(), str(mypid) + '-' + newfile)
+                        os.rename(fileStat.get_file(), str(mypid) + '-' + newfile)
                     except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot rename "' + fileStat.getFile() +
+                        raise SystemExit(sys.argv[0] + ': Cannot rename "' + fileStat.get_file() +
                                          '" image file.')
                     number += 1
                 for file in newfiles:
@@ -106,22 +114,25 @@ class Renumber:
                 os.chdir(startdir)
 
     def _sorted(self, options, fileStats):
-        order = options.getOrder()
+        order = options.get_order()
         if order == 'mtime':
-            fileStats = sorted(fileStats, key=lambda s: s.getTime())
+            fileStats = sorted(fileStats, key=lambda s: s.get_time())
         elif order == 'ctime':
-            fileStats = sorted(fileStats, key=lambda s: s.getTimeCreate())
+            fileStats = sorted(fileStats, key=lambda s: s.get_time_create())
         else:
-            fileStats = sorted(fileStats, key=lambda s: s.getFile())
+            fileStats = sorted(fileStats, key=lambda s: s.get_file())
         return fileStats
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Renumber(options)
@@ -135,7 +146,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

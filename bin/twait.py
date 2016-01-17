@@ -15,11 +15,16 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._pid = 0
         self._pname = ''
@@ -28,33 +33,33 @@ class Options:
         except ValueError:
             self._pname = self._args.task[0]
 
-        self._command = syslib.Command(self._args.command[0], args=self._commandArgs)
+        self._command = syslib.Command(self._args.command[0], args=self._command_args)
 
-    def getCommand(self):
+    def get_command(self):
         """
         Return command Command class object.
         """
         return self._command
 
-    def getPid(self):
+    def get_pid(self):
         """
         Return process ID.
         """
         return self._pid
 
-    def getPname(self):
+    def get_pname(self):
         """
         Return process command name.
         """
         return self._pname
 
-    def getUser(self):
+    def get_user(self):
         """
         Return user name.
         """
         return self._args.user
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Wait for task to finish then launch command.')
 
         parser.add_argument('-a', dest='user', action='store_const', const='<all>', default='',
@@ -65,31 +70,37 @@ class Options:
         parser.add_argument('commandArgs', nargs='*', metavar='arg', help='Command arguments.')
 
         self._args = parser.parse_args(args[:2])
-        self._commandArgs = args[2:]
+        self._command_args = args[2:]
 
 
-class Waitfor:
+class Waitfor(object):
+    """
+    Wait class
+    """
 
     def __init__(self, options):
-        user = options.getUser()
-        pname = options.getPname()
+        user = options.get_user()
+        pname = options.get_pname()
 
         if pname:
             while syslib.Task(user).haspname(pname):
                 time.sleep(1)
         else:
-            pid = options.getPid()
-            while pid in syslib.Task(user).getPids():
+            pid = options.get_pid()
+            while pid in syslib.Task(user).get_pids():
                 time.sleep(1)
-        options.getCommand().run(mode='exec')
+        options.get_command().run(mode='exec')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Waitfor(options)
@@ -103,7 +114,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -14,25 +14,30 @@ import xml.sax
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getViewFlag(self):
+    def get_view_flag(self):
         """
         Return view flag.
         """
         return self._args.viewFlag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Check XML file for errors.')
 
         parser.add_argument('-v', dest='viewFlag', action='store_true',
@@ -44,21 +49,24 @@ class Options:
 
 
 class XmlDataHandler(xml.sax.ContentHandler):
+    """
+    XML data handler class
+    """
 
     def __init__(self, view):
         self._elements = []
         self._nelement = 0
-        self._viewFlag = view
+        self._view_flag = view
 
     def startElement(self, name, attrs):
         self._nelement += 1
         self._elements.append(name + '(' + str(self._nelement) + ')')
-        if self._viewFlag:
+        if self._view_flag:
             for (key, value) in attrs.items():
                 print('.'.join(self._elements + [key]), "='", value, "'", sep='')
 
     def characters(self, text):
-        if self._viewFlag:
+        if self._view_flag:
             print('.'.join(self._elements + ['text']), "='" +
                   text.replace('\\', '\\\\').replace('\n', '\\n'), "'", sep='')
 
@@ -67,10 +75,13 @@ class XmlDataHandler(xml.sax.ContentHandler):
 
 
 class XmlChecker():
+    """
+    XML checker class
+    """
 
     def __init__(self, options):
-        handler = XmlDataHandler(options.getViewFlag())
-        for file in options.getFiles():
+        handler = XmlDataHandler(options.get_view_flag())
+        for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" XML file.')
             try:
@@ -104,12 +115,15 @@ class XmlChecker():
             print(sys.argv[0], ': Cannot parse "', file, '" XML file.', sep='')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             XmlChecker(options)
@@ -123,7 +137,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

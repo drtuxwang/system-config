@@ -22,19 +22,24 @@ RELEASE = '3.0.9'
 if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 2.7, < 4.0).')
 
+# pylint: disable=no-self-use,redefined-variable-type,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._release = RELEASE
 
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-        self._speakDir = os.path.abspath(os.path.join(os.path.dirname(args[0]),
-                                                      os.pardir, 'zhspeak-data'))
-        if not os.path.isdir(self._speakDir):
+        self._speak_dir = os.path.abspath(os.path.join(
+            os.path.dirname(args[0]), os.pardir, 'zhspeak-data'))
+        if not os.path.isdir(self._speak_dir):
             zhspeak = syslib.Command('zhspeak', args=args[1:], check=False)
-            if not zhspeak.isFound():
+            if not zhspeak.is_found():
                 raise SystemExit(sys.argv[0] + ': Cannot find "zhspeak-data" directory.')
             zhspeak.run(mode='exec')
 
@@ -52,37 +57,37 @@ class Options:
         else:
             self._language = Espeak(self)
 
-    def getDialect(self):
+    def get_dialect(self):
         """
         Return dialect.
         """
         return self._args.dialect
 
-    def getLanguage(self):
+    def get_language(self):
         """
         Return language Command class object
         """
         return self._language
 
-    def getPhrases(self):
+    def get_phrases(self):
         """
         Return phrases
         """
         return self._phrases
 
-    def getSoundFlag(self):
+    def get_sound_flag(self):
         """
         Return sound flag.
         """
         return self._args.soundFlag
 
-    def getSpeakDir(self):
+    def get_speak_dir(self):
         """
         Return speak directory
         """
-        return self._speakDir
+        return self._speak_dir
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Zhong Hua Speak v' + self._release + ', Chinese TTS software.')
 
@@ -117,70 +122,79 @@ class Options:
     def _xclip(self):
         isxclip = re.compile(os.sep + 'python.* zhspeak .*-xclip')
         task = syslib.Task()
-        for pid in task.getPids():
+        for pid in task.get_pids():
             if pid != os.getpid():
-                if isxclip.search(task.getProcess(pid)['COMMAND']):
+                if isxclip.search(task.get_process(pid)['COMMAND']):
                     # Kill old zhspeak clipboard
-                    task.killpids([pid] + task.getDescendantPids(pid))
+                    task.killpids([pid] + task.get_descendant_pids(pid))
         xclip = syslib.Command('xclip')
-        xclip.setArgs(['-out', '-selection', '-c', 'test'])
+        xclip.set_args(['-out', '-selection', '-c', 'test'])
         xclip.run(mode='batch')
-        if xclip.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(xclip.getExitcode()) +
-                             ' received from "' + xclip.getFile() + '".')
-        return xclip.getOutput()
+        if xclip.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(xclip.get_exitcode()) +
+                             ' received from "' + xclip.get_file() + '".')
+        return xclip.get_output()
 
 
-class Chinese:
+class Chinese(object):
+    """
+    Chinese class
+    """
 
     def __init__(self, options):
         self._options = options
-        self._oggDir = os.path.join(options.getSpeakDir(), options.getDialect() + '_ogg')
+        self._ogg_dir = os.path.join(options.get_speak_dir(), options.get_dialect() + '_ogg')
         self._dictionary = ChineseDictionary(self._options)
-        for Player in (Ogg123, Avplay, Ffplay):
-            self._oggPlayer = Player(self._oggDir)
-            if self._oggPlayer.hasPlayer():
+        for player in (Ogg123, Avplay, Ffplay):
+            self._ogg_player = player(self._ogg_dir)
+            if self._ogg_player.has_player():
                 break
         else:
             raise SystemExit(sys.argv[0] + ': Cannot find "ogg123" (vorbis-tools),'
                              ' "ffplay" (libav-tools) or "avplay" (ffmpeg).')
 
     def text2speech(self, phrases):
+        """
+        Text to speech conversion
+        """
         for phrase in phrases:
-            for sounds in self._dictionary.mapSpeech(phrase):
+            for sounds in self._dictionary.map_speech(phrase):
                 print(' '.join(sounds))
-                if self._options.getSoundFlag():
+                if self._options.get_sound_flag():
                     files = []
                     for sound in sounds:
-                        if os.path.isfile(os.path.join(self._oggDir, sound + '.ogg')):
+                        if os.path.isfile(os.path.join(self._ogg_dir, sound + '.ogg')):
                             files.append(sound + '.ogg')
                     if files:
                         # Pause after every 100 words if no punctuation marks
                         for i in range(0, len(files), 10):
-                            exitcode = self._oggPlayer.run(files[i:i + 10])
+                            exitcode = self._ogg_player.run(files[i:i + 10])
                             if exitcode:
                                 raise SystemExit(
                                     sys.argv[0] + ': Error code ' + str(exitcode) +
-                                    ' received from "' + self._oggPlayer.getPlayer() + '".')
+                                    ' received from "' + self._ogg_player.get_player() + '".')
                             time.sleep(0.25)
 
 
-class ChineseDictionary:
+class ChineseDictionary(object):
+    """
+    Chinese dictionary class
+    """
 
     def __init__(self, options):
         self._options = options
         self._isjunk = re.compile('[()| ]')
-        self._issound = re.compile('[A-Z]$|[a-z]+\d+')
+        self._issound = re.compile(r'[A-Z]$|[a-z]+\d+')
         self._mappings = {}
-        self._maxBlock = 0
-        self._readmap(os.path.join(options.getSpeakDir(), 'en_list'))
-        if (options.getDialect() == 'zhy'):
-            self._readmap(os.path.join(options.getSpeakDir(), 'zhy_list'))
-            self._readmap(os.path.join(options.getSpeakDir(), 'zhy_listck'))
+        self._max_block = 0
+        self._readmap(os.path.join(options.get_speak_dir(), 'en_list'))
+        if options.get_dialect() == 'zhy':
+            self._readmap(os.path.join(options.get_speak_dir(), 'zhy_list'))
+            self._readmap(os.path.join(options.get_speak_dir(), 'zhy_listck'))
         else:
-            self._readmap(os.path.join(options.getSpeakDir(), 'zh_list'))
-            self._readmap(os.path.join(options.getSpeakDir(), 'zh_listx'))
-            self._readmap(os.path.join(options.getSpeakDir(), 'zh_listck'))
+            self._readmap(os.path.join(options.get_speak_dir(), 'zh_list'))
+            self._readmap(os.path.join(options.get_speak_dir(), 'zh_listx'))
+            self._readmap(os.path.join(options.get_speak_dir(), 'zh_listck'))
 
     def _readmap(self, file):
         try:
@@ -194,15 +208,18 @@ class ChineseDictionary:
                         self._mappings[text] = []
                         for match in self._issound.finditer(sounds):
                             self._mappings[text].append(match.group())
-                        self._maxBlock = max(self._maxBlock, len(text))
+                        self._max_block = max(self._max_block, len(text))
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" dialect file.')
 
-    def mapSpeech(self, text):
+    def map_speech(self, text):
+        """
+        Map Speech
+        """
         i = 0
         sounds = []
         while i < len(text):
-            for blocksize in range(self._maxBlock, 0, -1):
+            for blocksize in range(self._max_block, 0, -1):
                 if text[i:i + blocksize] in self._mappings:
                     sounds.extend(self._mappings[text[i:i + blocksize]])
                     i += blocksize
@@ -215,27 +232,33 @@ class ChineseDictionary:
         yield sounds
 
 
-class Espeak:
+class Espeak(object):
+    """
+    Espeak class
+    """
 
     def __init__(self, options):
         self._options = options
         self._espeak = syslib.Command('espeak')
-        self._espeak.setFlags(['-a256', '-k30', '-v' + options.getDialect() + '+f2', '-s120'])
+        self._espeak.set_flags(['-a256', '-k30', '-v' + options.get_dialect() + '+f2', '-s120'])
 
     def text2speech(self, text):
-        if not self._options.getSoundFlag():
-            self._espeak.setArgs([' '.join(text)])
-            self._espeak.extendFlags(['-x', '-q'])
+        """
+        Text to speech conversion
+        """
+        if not self._options.get_sound_flag():
+            self._espeak.set_args([' '.join(text)])
+            self._espeak.extend_flags(['-x', '-q'])
             self._espeak.run(filter=': Connection refused')
         else:
             # Break at '.' and ','
             for phrase in re.sub(r'[^\s\w-]', '.', '.'.join(text)).split('.'):
                 if phrase:
-                    self._espeak.setArgs([phrase])
+                    self._espeak.set_args([phrase])
                     self._espeak.run(mode='batch')
-        if self._espeak.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._espeak.getExitcode()) +
-                             ' received from "' + self._espeak.getFile() + '".')
+        if self._espeak.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._espeak.get_exitcode()) +
+                             ' received from "' + self._espeak.get_file() + '".')
 
 
 class Ogg123:
@@ -245,32 +268,46 @@ class Ogg123:
 
     def __init__(self, oggdir):
         self._oggdir = oggdir
+        self._config()
+
+    def _config(self):
         self._player = syslib.Command('ogg123', check=False)
 
+    def has_player(self):
+        """
+        Return true if player found
+        """
+        return self._player.is_found()
+
+    def get_player(self):
+        """
+        Return player file location
+        """
+        return self._player.get_file()
+
     def run(self, files):
-        self._player.setArgs(files)
+        """
+        Run player
+        """
+        self._player.set_args(files)
         self._player.run(directory=self._oggdir, mode='batch')
-        return self._player.getExitcode()
-
-    def hasPlayer(self):
-        return self._player.isFound()
-
-    def getPlayer(self):
-        return self._player.getFile()
+        return self._player.get_exitcode()
 
 
 class Avplay(Ogg123):
     """
-    Uses 'ffplay' from 'libav-tools'.
+    Uses 'avplay' from 'libav-tools'.
     """
 
-    def __init__(self, oggdir):
-        self._oggdir = oggdir
+    def _config(self):
         self._player = syslib.Command('ffplay', check=False)
-        self._player.setFlags(['-nodisp', '-autoexit', '-i'])
+        self._player.set_flags(['-nodisp', '-autoexit', '-i'])
 
     def run(self, files):
-        self._player.setArgs(['concat:' + '|'.join(files)])
+        """
+        Run player
+        """
+        self._player.set_args(['concat:' + '|'.join(files)])
         self._player.run(directory=self._oggdir, mode='batch', filter='p11-kit:')
 
 
@@ -279,23 +316,25 @@ class Ffplay(Avplay):
     Uses 'ffplay' from 'ffmpeg'.
     """
 
-    def __init__(self, oggdir):
-        self._oggdir = oggdir
+    def _config(self):
         self._player = syslib.Command('ffplay', check=False)
-        self._player.setFlags(['-nodisp', '-autoexit', '-i'])
+        self._player.set_flags(['-nodisp', '-autoexit', '-i'])
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             if sys.version_info < (3, 0):
-                self._unicodeArgv()
+                self._unicode_argv()
             options = Options(sys.argv)
-            options.getLanguage().text2speech(options.getPhrases())
+            options.get_language().text2speech(options.get_phrases())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -306,11 +345,11 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _unicodeArgv(self):
+    def _unicode_argv(self):
         for i in range(len(sys.argv)):
             sys.argv[i] = sys.argv[i].decode('utf-8', 'replace')
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

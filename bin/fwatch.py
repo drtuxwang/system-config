@@ -14,23 +14,28 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._inotifywait = syslib.Command('inotifywait')
-        self._inotifywait.setFlags(['-e', 'create,modify,move,delete', '-mr'])
-        self._inotifywait.setArgs(self._args.directories)
+        self._inotifywait.set_flags(['-e', 'create,modify,move,delete', '-mr'])
+        self._inotifywait.set_args(self._args.directories)
 
-    def getInotifywait(self):
+    def get_inotifywait(self):
         """
         Return inotifywait Command class object.
         """
         return self._inotifywait
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Watch file system events.')
 
         parser.add_argument('directories', nargs='+', metavar='directory',
@@ -39,15 +44,18 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getInotifywait().run(mode='exec')
+            options.get_inotifywait().run(mode='exec')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -58,7 +66,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

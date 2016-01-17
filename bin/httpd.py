@@ -17,11 +17,16 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         directory = self._args.directory[0]
         if not os.path.isdir(directory):
@@ -32,19 +37,19 @@ class Options:
         except ValueError:
             raise SystemExit(sys.argv[0] + ': Invalid port number "' + args[2] + '".')
 
-    def getDirectory(self):
+    def get_directory(self):
         """
         Return directory.
         """
         return self._args.directory[0]
 
-    def getPort(self):
+    def get_port(self):
         """
         Return port.
         """
         return self._args.port[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Start a simple Python HTTP server.')
 
         parser.add_argument('directory', nargs=1, help='Directory to serve.')
@@ -67,19 +72,28 @@ class MyTCPServer(socketserver.TCPServer):
         self.socket.bind(self.server_address)
 
 
-class WebServer:
+class WebServer(object):
+    """
+    Web server class
+    """
 
     def __init__(self, options):
         try:
-            os.chdir(options.getDirectory())
+            os.chdir(options.get_directory())
         except OSError:
             raise SystemExit(
-                sys.argv[0] + ': Cannot change to "' + options.getDirectory() + '" directory.')
+                sys.argv[0] + ': Cannot change to "' + options.get_directory() + '" directory.')
 
-        self._port = options.getPort()
-        self._mineTypes()
+        self._port = options.get_port()
+        self._mine_types()
+
+    def _mine_types(self):
+        http.server.SimpleHTTPRequestHandler.extensions_map['.log'] = 'text/plain'
 
     def run(self):
+        """
+        Start server
+        """
         try:
             httpd = MyTCPServer(('', self._port), http.server.SimpleHTTPRequestHandler)
         except OSError:
@@ -89,16 +103,16 @@ class WebServer:
         print('Serving "' + os.getcwd() + '" at "http://localhost:' + str(self._port) + '"...')
         httpd.serve_forever()
 
-    def _mineTypes(self):
-        http.server.SimpleHTTPRequestHandler.extensions_map['.log'] = 'text/plain'
 
-
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             WebServer(options).run()
@@ -112,7 +126,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

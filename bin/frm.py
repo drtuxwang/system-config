@@ -15,25 +15,30 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getRecursiveFlag(self):
+    def get_recursive_flag(self):
         """
         Return recursive flag.
         """
         return self._args.recursiveFlag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Remove files or directories.')
 
         parser.add_argument('-R', dest='recursiveFlag', action='store_true',
@@ -44,11 +49,14 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Remove:
+class Remove(object):
+    """
+    Remove class
+    """
 
     def __init__(self, options):
         self._options = options
-        for file in options.getFiles():
+        for file in options.get_files():
             if os.path.isfile(file):
                 self._rmfile(file)
             elif os.path.isdir(file):
@@ -64,7 +72,7 @@ class Remove:
             raise SystemExit(sys.argv[0] + ': Cannot remove "' + file + '" file.')
 
     def _rmdir(self, directory):
-        if self._options.getRecursiveFlag():
+        if self._options.get_recursive_flag():
             print('Removing "' + directory + '" directory recursively...')
             try:
                 shutil.rmtree(directory)
@@ -74,12 +82,15 @@ class Remove:
             print(sys.argv[0] + ': Ignoring "' + directory + '" directory.')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Remove(options)
@@ -93,7 +104,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

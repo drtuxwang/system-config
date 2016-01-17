@@ -15,39 +15,44 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._icedax = syslib.Command('icedax')
 
-    def getDevice(self):
+    def get_device(self):
         """
         Return device location.
         """
         return self._args.device[0]
 
-    def getIcedax(self):
+    def get_icedax(self):
         """
         Return icedax Command class object.
         """
         return self._icedax
 
-    def getSpeed(self):
+    def get_speed(self):
         """
         Return CD speed.
         """
         return self._args.speed[0]
 
-    def getTracks(self):
+    def get_tracks(self):
         """
         Return list of track numbers.
         """
         return self._tracks
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Rip CD audio tracks as WAVE sound files.')
 
         parser.add_argument('-speed', nargs=1, type=int, default=[8],
@@ -75,7 +80,10 @@ class Options:
             self._tracks = None
 
 
-class Cdrom:
+class Cdrom(object):
+    """
+    CDROM class
+    """
 
     def __init__(self):
         self._devices = {}
@@ -103,20 +111,23 @@ class Cdrom:
         except IndexError:
             return ''
 
-    def getDevices(self):
+    def get_devices(self):
         """
         Return list of devices
         """
         return self._devices
 
 
-class RipCd:
+class RipCd(object):
+    """
+    Rip CD class
+    """
 
     def __init__(self, options):
-        self._icedax = options.getIcedax()
-        self._device = options.getDevice()
-        self._speed = options.getSpeed()
-        self._tracks = options.getTracks()
+        self._icedax = options.get_icedax()
+        self._device = options.get_device()
+        self._speed = options.get_speed()
+        self._tracks = options.get_tracks()
 
         if self._device == 'scan':
             self._scan()
@@ -126,8 +137,8 @@ class RipCd:
                 self._rip(options)
 
     def _rip(self, options):
-        self._icedax.setFlags(['-vtrackid', '-paranoia', '-S=' + str(self._speed),
-                               '-K', 'dsp', '-H'])
+        self._icedax.set_flags(['-vtrackid', '-paranoia', '-S=' + str(self._speed),
+                                '-K', 'dsp', '-H'])
         tee = syslib.Command('tee')
         try:
             with open('00.log', 'w', newline='\n') as ofile:
@@ -143,7 +154,7 @@ class RipCd:
             self._tracks = [str(i) for i in range(1, int(ntracks) + 1)]
 
         for track in self._tracks:
-            istrack = re.compile('^.* ' + track + '[.]\( *')
+            istrack = re.compile(r'^.* ' + track + '[.]\( *')
             length = 'Unknown'
             for line in self._toc:
                 if istrack.search(line):
@@ -169,13 +180,13 @@ class RipCd:
             except IOError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + warnfile + '" file.')
             wavfile = track.zfill(2) + '.wav'
-            self._icedax.setArgs(['verbose-level=disable', 'track=' + track, 'dev=' +
-                                  self._device, wavfile, '2>&1'])
-            tee.setArgs(['-a', logfile])
+            self._icedax.set_args(['verbose-level=disable', 'track=' + track, 'dev=' +
+                                   self._device, wavfile, '2>&1'])
+            tee.set_args(['-a', logfile])
             self._icedax.run(pipes=[tee])
-            if self._icedax.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(self._icedax.getExitcode()) +
-                                 ' received from "' + self._icedax.getFile() + '".')
+            if self._icedax.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(self._icedax.get_exitcode()) +
+                                 ' received from "' + self._icedax.get_file() + '".')
             if os.path.isfile(wavfile):
                 self._pregap(wavfile)
             if not self._hasprob(logfile):
@@ -192,7 +203,7 @@ class RipCd:
         return False
 
     def _pregap(self, wavfile):
-        size = syslib.FileStat(wavfile).getSize()
+        size = syslib.FileStat(wavfile).get_size()
         with open(wavfile, 'rb+') as ifile:
             ifile.seek(size - 2097152)
             data = ifile.read(2097152)
@@ -208,30 +219,33 @@ class RipCd:
     def _scan(self):
         cdrom = Cdrom()
         print('Scanning for CD/DVD devices...')
-        devices = cdrom.getDevices()
+        devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
             print('  {0:10s}  {1:s}'.format(key, value))
 
     def _toc(self, options):
-        self._icedax.setArgs(['-info-only', '--no-infofile', 'verbose-level=toc',
-                              'dev=' + self._device, 'speed=' + str(self._speed)])
+        self._icedax.set_args(['-info-only', '--no-infofile', 'verbose-level=toc',
+                               'dev=' + self._device, 'speed=' + str(self._speed)])
         self._icedax.run(mode='batch')
-        self._toc = self._icedax.getError('[.]\(.*:.*\)')
+        self._toc = self._icedax.get_error(r'[.]\(.*:.*\)')
         if not self._toc:
             raise SystemExit(sys.argv[0] + ': Cannot find Audio CD media. Please check drive.')
-        if self._icedax.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._icedax.getExitcode()) +
-                             ' received from "' + self._icedax.getFile() + '".')
-        for line in self._icedax.getError('[.]\(.*:.*\)|^CD'):
+        if self._icedax.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._icedax.get_exitcode()) +
+                             ' received from "' + self._icedax.get_file() + '".')
+        for line in self._icedax.get_error(r'[.]\(.*:.*\)|^CD'):
             print(line)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             RipCd(options)
@@ -245,7 +259,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

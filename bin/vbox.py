@@ -14,25 +14,30 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getMode(self):
+    def get_mode(self):
         """
         Return operation mode.
         """
         return self._args.mode
 
-    def getMachines(self):
+    def get_machines(self):
         """
         Return list of virtual machines.
         """
         return self._args.machines
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='VirtualBox virtual machine manager.')
 
         parser.add_argument('-p', action='store_const', const='poweroff', dest='mode',
@@ -48,12 +53,15 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class VBoxManage:
+class VBoxManage(object):
+    """
+    VirtualBox Manger class
+    """
 
     def __init__(self, options):
         self._vboxmanage = syslib.Command('VBoxManage')
-        mode = options.getMode()
-        machines = options.getMachines()
+        mode = options.get_mode()
+        machines = options.get_machines()
 
         if mode == 'view':
             self._view()
@@ -66,51 +74,54 @@ class VBoxManage:
 
     def _poweroff(self, machines):
         for machine in machines:
-            self._vboxmanage.setArgs(['controlvm', machine, 'poweroff'])
+            self._vboxmanage.set_args(['controlvm', machine, 'poweroff'])
             self._vboxmanage.run()
-            if self._vboxmanage.getExitcode():
+            if self._vboxmanage.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(self._vboxmanage.getExitcode()) +
-                    ' received from "' + self._vboxmanage.getFile() + '".')
+                    sys.argv[0] + ': Error code ' + str(self._vboxmanage.get_exitcode()) +
+                    ' received from "' + self._vboxmanage.get_file() + '".')
 
     def _shutdown(self, machines):
         for machine in machines:
-            self._vboxmanage.setArgs(['controlvm', machine, 'acpipowerbutton'])
+            self._vboxmanage.set_args(['controlvm', machine, 'acpipowerbutton'])
             self._vboxmanage.run()
-            if self._vboxmanage.getExitcode():
+            if self._vboxmanage.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(self._vboxmanage.getExitcode()) +
-                    ' received from "' + self._vboxmanage.getFile() + '".')
+                    sys.argv[0] + ': Error code ' + str(self._vboxmanage.get_exitcode()) +
+                    ' received from "' + self._vboxmanage.get_file() + '".')
 
     def _start(self, machines):
         for machine in machines:
-            self._vboxmanage.setArgs(['startvm', machine, '--type', 'headless'])
+            self._vboxmanage.set_args(['startvm', machine, '--type', 'headless'])
             self._vboxmanage.run()
-            if self._vboxmanage.getExitcode():
+            if self._vboxmanage.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(self._vboxmanage.getExitcode()) +
-                    ' received from "' + self._vboxmanage.getFile() + '".')
+                    sys.argv[0] + ': Error code ' + str(self._vboxmanage.get_exitcode()) +
+                    ' received from "' + self._vboxmanage.get_file() + '".')
 
     def _view(self):
-        self._vboxmanage.setArgs(['list', 'vms'])
+        self._vboxmanage.set_args(['list', 'vms'])
         self._vboxmanage.run(filter='^".*"', mode='batch')
-        if self._vboxmanage.hasOutput():
-            lines = sorted(self._vboxmanage.getOutput())
-            self._vboxmanage.setArgs(['list', 'runningvms'])
+        if self._vboxmanage.has_output():
+            lines = sorted(self._vboxmanage.get_output())
+            self._vboxmanage.set_args(['list', 'runningvms'])
             self._vboxmanage.run(filter='^".*"', mode='batch')
             for line in lines:
-                if line in self._vboxmanage.getOutput():
+                if line in self._vboxmanage.get_output():
                     print('[Run]', line)
                 else:
                     print('[Off]', line)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             VBoxManage(options)
@@ -124,7 +135,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

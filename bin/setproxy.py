@@ -15,8 +15,13 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Proxy:
+
+class Proxy(object):
+    """
+    Proxy class
+    """
 
     def __init__(self):
         myip = self._getmyip()
@@ -39,30 +44,33 @@ class Proxy:
 
     def _getmyip(self):
         myip = ''
-        if syslib.info.getSystem() == 'linux':
+        if syslib.info.get_system() == 'linux':
             os.environ['LANG'] = 'en_GB'
             ifconfig = syslib.Command(file='/sbin/ifconfig', args=['-a'])
             ifconfig.run(filter=' inet addr[a-z]*:', mode='batch')
-            for line in ifconfig.getOutput():
+            for line in ifconfig.get_output():
                 myip = line.split(':')[1].split()[0]
                 if myip not in ('', '127.0.0.1'):
                     break
-        elif syslib.info.getSystem() == 'sunos':
+        elif syslib.info.get_system() == 'sunos':
             ifconfig = syslib.Command(file='/sbin/ifconfig', args=['-a'])
             ifconfig.run(filter='\tinet [^ ]+ netmask', mode='batch')
-            for line in ifconfig.getOutput():
+            for line in ifconfig.get_output():
                 myip = line.split()[1]
                 if myip not in ('', '127.0.0.1'):
                     break
         return myip
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             Proxy()
         except (EOFError, KeyboardInterrupt):
@@ -75,7 +83,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

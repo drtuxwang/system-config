@@ -14,25 +14,30 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFile(self):
+    def get_file(self):
         """
         Return file.
         """
         return self._args.file[0]
 
-    def getMaxSize(self):
+    def get_max_size(self):
         """
         Return max size of file part.
         """
-        return self._maxSize
+        return self._max_size
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Chop up a file into chunks.')
 
         parser.add_argument('file', nargs=1, help='File to break up.')
@@ -44,27 +49,30 @@ class Options:
         try:
             size = self._args.size[0]
             if size.endswith('MB'):
-                self._maxSize = int(size[:-2]) * 1024**2
+                self._max_size = int(size[:-2]) * 1024**2
             else:
-                self._maxSize = int(size)
+                self._max_size = int(size)
         except ValueError:
             raise SystemExit(sys.argv[0] + ': You must specific an integer for chunksize.')
-        if self._maxSize < 1:
+        if self._max_size < 1:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for chunksize.')
 
 
-class Chop:
+class Chop(object):
+    """
+    Chop class
+    """
 
     def __init__(self, options):
         self._options = options
-        self._cacheSize = 131072
+        self._cache_size = 131072
 
         try:
-            with open(options.getFile(), 'rb') as ifile:
+            with open(options.get_file(), 'rb') as ifile:
                 for part in range(int(syslib.FileStat(
-                        options.getFile()).getSize()/options.getMaxSize() + 1)):
+                        options.get_file()).get_size()/options.get_max_size() + 1)):
                     try:
-                        file = options.getFile() + '.' + str(part + 1).zfill(3)
+                        file = options.get_file() + '.' + str(part + 1).zfill(3)
                         with open(file, 'wb') as ofile:
                             print(file + '...')
                             self._copy(ifile, ofile)
@@ -72,23 +80,26 @@ class Chop:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' +
                                          str(part + 1).zfill(3) + '" file.')
         except IOError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + options.getFile() + '" file.')
+            raise SystemExit(sys.argv[0] + ': Cannot read "' + options.get_file() + '" file.')
 
     def _copy(self, ifile, ofile):
-        chunks, lchunk = divmod(self._options.getMaxSize(), self._cacheSize)
-        for i in [self._cacheSize]*chunks + [lchunk]:
+        chunks, lchunk = divmod(self._options.get_max_size(), self._cache_size)
+        for i in [self._cache_size]*chunks + [lchunk]:
             chunk = ifile.read(i)
             if not chunk:
                 break
             ofile.write(chunk)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Chop(options)
@@ -102,7 +113,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

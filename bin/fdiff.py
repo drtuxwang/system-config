@@ -14,13 +14,18 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Show summary of differences between two directories recursively.')
 
@@ -29,23 +34,26 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def getDirectory1(self):
+    def get_directory_1(self):
         """
         Return directory 1.
         """
         return self._args.directories[0]
 
-    def getDirectory2(self):
+    def get_directory_2(self):
         """
         Return directory 2.
         """
         return self._args.directories[1]
 
 
-class Diff:
+class Diff(object):
+    """
+    Difference class
+    """
 
     def __init__(self, options):
-        self._diffdir(options.getDirectory1(), options.getDirectory2())
+        self._diffdir(options.get_directory_1(), options.get_directory_2())
 
     def _diffdir(self, directory1, directory2):
         try:
@@ -82,9 +90,9 @@ class Diff:
         fileStat1 = syslib.FileStat(file1)
         fileStat2 = syslib.FileStat(file2)
 
-        if (fileStat1.getSize() != fileStat2.getSize()):
+        if (fileStat1.get_size() != fileStat2.get_size()):
             print('diff ', file1 + '  ' + file2)
-        elif (fileStat1.getTime() != fileStat2.getTime()):
+        elif (fileStat1.get_time() != fileStat2.get_time()):
             try:
                 ifile1 = open(file1, 'rb')
             except IOError:
@@ -95,7 +103,7 @@ class Diff:
             except IOError:
                 print('diff ', file1 + '  ' + file2)
                 return
-            for i in range(0, fileStat1.getSize(), 131072):
+            for i in range(0, fileStat1.get_size(), 131072):
                 chunk1 = ifile1.read(131072)
                 chunk2 = ifile2.read(131072)
                 if chunk1 != chunk2:
@@ -105,12 +113,15 @@ class Diff:
             ifile2.close()
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Diff(options)
@@ -124,7 +135,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

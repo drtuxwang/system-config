@@ -14,54 +14,59 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         if os.name == 'nt':
             self._archiver = syslib.Command('7z.dll', check=False)
         else:
             self._archiver = syslib.Command('7z.so', check=False)
-        if self._archiver.isFound():
+        if self._archiver.is_found():
             self._archiver = syslib.Command('7z')
         else:
             self._archiver = syslib.Command('7za')
 
         if len(args) > 1 and args[1] in ('a', '-bd', 'l', 't', 'x'):
-            self._archiver.setArgs(args[1:])
+            self._archiver.set_args(args[1:])
             self._archiver.run(mode='exec')
 
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         if self._args.split:
-            self._archiver.extendFlags(['-v' + str(self._args.split[0]) + 'b'])
+            self._archiver.extend_flags(['-v' + str(self._args.split[0]) + 'b'])
 
         if self._args.threads[0] == '1':
-            self._archiver.setFlags(['a', '-m0=lzma', '-mmt=' + str(self._args.threads[0]),
-                                     '-mx=9', '-ms=on', '-y'])
+            self._archiver.set_flags(
+                ['a', '-m0=lzma', '-mmt=' + str(self._args.threads[0]), '-mx=9', '-ms=on', '-y'])
         else:
-            self._archiver.setFlags(['a', '-m0=lzma2', '-mmt=' + str(self._args.threads[0]),
-                                     '-mx=9', '-ms=on', '-y'])
+            self._archiver.set_flags(
+                ['a', '-m0=lzma2', '-mmt=' + str(self._args.threads[0]), '-mx=9', '-ms=on', '-y'])
 
         if os.path.isdir(self._args.archive[0]):
-            self._archiver.setArgs([os.path.abspath(self._args.archive[0]) + '.7z'])
+            self._archiver.set_args([os.path.abspath(self._args.archive[0]) + '.7z'])
         else:
-            self._archiver.setArgs(self._args.archive)
+            self._archiver.set_args(self._args.archive)
 
         if self._args.files:
-            self._archiver.extendArgs(self._args.files)
+            self._archiver.extend_args(self._args.files)
         else:
-            self._archiver.extendArgs(os.listdir())
+            self._archiver.extend_args(os.listdir())
 
         self._setenv()
 
-    def getArchiver(self):
+    def get_archiver(self):
         """
         Return archiver Command class object.
         """
         return self._archiver
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Make a compressed archive in 7z format.')
 
         parser.add_argument('-split', nargs=1, type=int, metavar='bytes',
@@ -86,14 +91,17 @@ class Options:
             del os.environ['LANG']  # Avoids locale problems
 
 
-class Pack:
+class Pack(object):
+    """
+    Pack class
+    """
 
     def __init__(self, options):
         os.umask(int('022', 8))
-        archiver = options.getArchiver()
+        archiver = options.get_archiver()
 
         archive = archiver.getArgs()[0]
-        sfx = self._checkSfx(archiver, archive)
+        sfx = self._check_sfx(archiver, archive)
 
         archiver.run()
         if archiver.getExitcode():
@@ -101,24 +109,24 @@ class Pack:
                   archiver.getFile() + '".', file=sys.stderr)
             raise SystemExit(archiver.getExitcode())
         if sfx:
-            self._makeSfx(archive, sfx)
+            self._make_sfx(archive, sfx)
 
-    def _checkSfx(self, archiver, archive):
+    def _check_sfx(self, archiver, archive):
         sfx = ''
         file = os.path.basename(archive)
         if '.bin' in file or '.exe' in file:
             sfx = os.path.join(os.path.dirname(archiver.getFile()), '7zCon.sfx')
-            if '.exe' in file and syslib.info.getSystem() != 'windows':
+            if '.exe' in file and syslib.info.get_system() != 'windows':
                 sfx = os.path.join(os.path.dirname(archiver.getFile()), '7zCon.exe')
             if not os.path.isfile(sfx):
                 archiver = syslib.Command(archiver.getProgram(), args=archiver.getArgs(),
                                           check=False)
-                if not archiver.isFound():
+                if not archiver.is_found():
                     raise SystemExit(sys.argv[0] + ': Cannot find "' + sfx + '" SFX file.')
                 archiver.run(mode='exec')
         return sfx
 
-    def _makeSfx(self, archive, sfx):
+    def _make_sfx(self, archive, sfx):
         print('Adding SFX code')
         with open(archive + '-sfx', 'wb') as ofile:
             try:
@@ -144,12 +152,15 @@ class Pack:
             ofile.write(chunk)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Pack(options)
@@ -163,7 +174,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

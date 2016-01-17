@@ -12,19 +12,24 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getDirectorys(self):
+    def get_directories(self):
         """
         Return list of directories.
         """
         return self._args.directories
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Create links to JPEG files.')
 
         parser.add_argument('directories', nargs='+', metavar='directory',
@@ -41,10 +46,13 @@ class Options:
                                  '" cannot be current directory.')
 
 
-class Link:
+class Link(object):
+    """
+    Link class
+    """
 
     def __init__(self, options):
-        for directory in options.getDirectorys():
+        for directory in options.get_directories():
             for file in sorted(glob.glob(os.path.join(directory, '*'))):
                 if (file.split('.')[-1].lower() in (
                         'bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff')):
@@ -56,12 +64,15 @@ class Link:
                             raise SystemExit(sys.argv[0] + ': Cannot create "' + link + '" link.')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Link(options)
@@ -75,7 +86,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

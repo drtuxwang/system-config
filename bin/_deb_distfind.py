@@ -15,25 +15,30 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getPackagesFile(self):
+    def get_packages_file(self):
         """
         Return packages file location.
         """
         return self._args.packagesFile[0]
 
-    def getPatterns(self):
+    def get_patterns(self):
         """
         Return list of regular expression search patterns.
         """
         return self._args.patterns
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Search for packages that match regular '
                                                      'expression in Debian package file.')
 
@@ -45,20 +50,23 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Package:
+class Package(object):
+    """
+    Package class
+    """
 
     def __init__(self, version, size, description):
         self._version = version
         self._size = size
         self._description = description
 
-    def getDescription(self):
+    def get_description(self):
         """
         Return description.
         """
         return self._description
 
-    def setDescription(self, description):
+    def set_description(self, description):
         """
         Set package description.
         """
@@ -70,19 +78,19 @@ class Package:
         """
         return self._size
 
-    def setSize(self, size):
+    def set_size(self, size):
         """
         Set package size.
         """
         self._size = size
 
-    def getVersion(self):
+    def get_version(self):
         """
         Return version.
         """
         return self._version
 
-    def setVersion(self, version):
+    def set_version(self, version):
         """
         Set package version.
 
@@ -91,13 +99,16 @@ class Package:
         self._version = version
 
 
-class Search:
+class Search(object):
+    """
+    Search class
+    """
 
     def __init__(self, options):
-        self._readDistributionPackages(options.getPackagesFile())
-        self._searchDistributionPackages(options.getPatterns())
+        self._read_distribution_packages(options.get_packages_file())
+        self._search_distribution_packages(options.get_patterns())
 
-    def _readDistributionPackages(self, packagesFile):
+    def _read_distribution_packages(self, packagesFile):
         self._packages = {}
         name = ''
         package = Package('', -1, '')
@@ -108,36 +119,39 @@ class Search:
                     if line.startswith('Package: '):
                         name = line.replace('Package: ', '')
                     elif line.startswith('Version: '):
-                        package.setVersion(line.replace('Version: ', '', 1).split(':')[-1])
+                        package.set_version(line.replace('Version: ', '', 1).split(':')[-1])
                     elif line.startswith('Installed-Size: '):
                         try:
-                            package.setSize(int(line.replace('Installed-Size: ', '', 1)))
+                            package.set_size(int(line.replace('Installed-Size: ', '', 1)))
                         except ValueError:
                             raise SystemExit(sys.argv[0] + ': Package "' + name +
                                              '" in "/var/lib/dpkg/info" has non integer size.')
                     elif line.startswith('Description: '):
-                        package.setDescription(line.replace('Description: ', '', 1))
+                        package.set_description(line.replace('Description: ', '', 1))
                         self._packages[name] = package
                         package = Package('', '0', '')
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + packagesFile + '" packages file.')
 
-    def _searchDistributionPackages(self, patterns):
+    def _search_distribution_packages(self, patterns):
         for pattern in patterns:
             ispattern = re.compile(pattern, re.IGNORECASE)
             for name, package in sorted(self._packages.items()):
                 if (ispattern.search(name) or
-                        ispattern.search(self._packages[name].getDescription())):
+                        ispattern.search(self._packages[name].get_description())):
                     print('{0:25s} {1:15s} {2:5d}KB {3:s}'.format(name.split(':')[0],
-                          package.getVersion(), package.getSize(), package.getDescription()))
+                          package.get_version(), package.getSize(), package.get_description()))
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Search(options)
@@ -151,7 +165,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

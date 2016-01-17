@@ -15,44 +15,46 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
     """
     This class handles Python loader commandline options.
 
-    self._dumpFlag    = Dump objects flag
+    self._dump_flag    = Dump objects flag
     self._files       = List of Python test module files
-    self._verboseFlag = Verbose flag
+    self._verbose_flag = Verbose flag
     """
 
     def __init__(self, args):
         """
         args = Python test commandline arguments
         """
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getDumpFlag(self):
+    def get_dump_flag(self):
         """
         Return dump objects flag.
         """
-        return self._dumpFlag
+        return self._dump_flag
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of test modules
         """
         return self._files
 
-    def getVerboseFlag(self):
+    def get_verbose_flag(self):
         """
         Return verbose flag.
         """
-        return self._verboseFlag
+        return self._verbose_flag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Run Python unittests in module files.')
 
-        parser.add_argument('-v', '-vv', '-vvv', nargs=0, action=ArgparseActionVerbose,
+        parser.add_argument('-v', '-vv', '-vvv', nargs=0, action=ArgparseVerboseAction,
                             dest='verbosity', default=0, help='Select verbosity level 1, 2 or 3.')
         parser.add_argument('-verbose', action='store_const', const=1, dest='verbosity',
                             default=0, help='Select verbosity level 1.')
@@ -61,8 +63,8 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-        self._verboseFlag = self._args.verbosity >= 1
-        self._dumpFlag = self._args.verbosity >= 2
+        self._verbose_flag = self._args.verbosity >= 1
+        self._dump_flag = self._args.verbosity >= 2
 
         self._files = []
         for file in self._args.files:
@@ -70,14 +72,17 @@ class Options:
                 self._files.append(file)
 
 
-class ArgparseActionVerbose(argparse.Action):
+class ArgparseVerboseAction(argparse.Action):
+    """
+    Arg parser verbose action handler class
+    """
 
     def __call__(self, parser, args, values, option_string=None):
         # option_string must be '-v', '-vv' or '-vvv'
         setattr(args, self.dest, len(option_string[1:]))
 
 
-class ModuleTest:
+class ModuleTest(object):
     """
     This class deals with Python module unit testing
 
@@ -94,43 +99,43 @@ class ModuleTest:
         self._options = options
         self._file = file
         self._python3 = syslib.Command(file=sys.executable)
-        self._python3.setFlags(['-m', 'unittest', '-v', '-b'])
+        self._python3.set_flags(['-m', 'unittest', '-v', '-b'])
 
     def run(self):
         """
         Run unittest test discovery on Python module.
         """
         directory = os.path.dirname(self._file)
-        self._python3.setArgs([os.path.basename(self._file)])
+        self._python3.set_args([os.path.basename(self._file)])
         self._python3.run(directory=directory, mode='batch', error2output=True)
 
-        if self._python3.getExitcode():
-            for line in self._python3.getOutput():
+        if self._python3.get_exitcode():
+            for line in self._python3.get_output():
                 print(line, file=sys.stderr)
-        elif self._options.getVerboseFlag():
-            for line in self._python3.getOutput():
+        elif self._options.get_verbose_flag():
+            for line in self._python3.get_output():
                 print(line)
         else:
             try:
-                print(self._python3.getOutput()[-3])
+                print(self._python3.get_output()[-3])
             except (IndexError, ValueError):
-                for line in self._python3.getOutput():
+                for line in self._python3.get_output():
                     print(line)
 
-    def getTests(self):
+    def get_tests(self):
         """
         Return the number of tests ran.
         """
         try:
-            return int(self._python3.getOutput()[-3].split()[1])
+            return int(self._python3.get_output()[-3].split()[1])
         except (IndexError, ValueError):
             return 0
 
-    def getFailures(self):
+    def get_failures(self):
         """
         Return the number of test failures.
         """
-        for line in reversed(self._python3.getOutput()):
+        for line in reversed(self._python3.get_output()):
             if line.startswith('FAILED (') and 'failures=' in line:
                 try:
                     return int(line.split('failures=')[1].split(',')[0].split(')')[0])
@@ -138,11 +143,11 @@ class ModuleTest:
                     pass
         return 0
 
-    def getErrors(self):
+    def get_errors(self):
         """
         Return the number of test code errors.
         """
-        for line in reversed(self._python3.getOutput()):
+        for line in reversed(self._python3.get_output()):
             if line.startswith('FAILED (') and 'errors=' in line:
                 try:
                     return int(line.split('errors=')[1].split(')')[0])
@@ -150,14 +155,14 @@ class ModuleTest:
                     pass
         return 0
 
-    def getExitError(self):
+    def get_exit_error(self):
         """
         Return exit code errors.
         """
-        return min(self._python3.getExitcode(), 1)
+        return min(self._python3.get_exitcode(), 1)
 
 
-class PythonTest:
+class PythonTest(object):
     """
     This class performs Python unit testing
 
@@ -174,7 +179,7 @@ class PythonTest:
         """
         Run all test suites
         """
-        if self._options.getDumpFlag():
+        if self._options.get_dump_flag():
             syslib.Dump().list('pytest', self)
 
         startTime = time.time()
@@ -182,17 +187,17 @@ class PythonTest:
         failures = 0
         errors = 0
         exitErrors = 0
-        for file in self._options.getFiles():
+        for file in self._options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" Python module file.')
             print('\nRunning "' + os.path.abspath(file) + '"...')
 
             moduleTest = ModuleTest(self._options, file)
             moduleTest.run()
-            tests += moduleTest.getTests()
-            failures += moduleTest.getFailures()
-            errors += moduleTest.getErrors()
-            exitErrors += moduleTest.getExitError()
+            tests += moduleTest.get_tests()
+            failures += moduleTest.get_failures()
+            errors += moduleTest.get_errors()
+            exitErrors += moduleTest.get_exit_error()
 
         print('\nUnit Test runs      =', tests)
         print('Unit Test failures  =', failures)
@@ -203,12 +208,15 @@ class PythonTest:
             raise SystemExit(1)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             PythonTest(options).run()
@@ -222,7 +230,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -7,7 +7,6 @@ import argparse
 import glob
 import os
 import re
-import shutil
 import signal
 import sys
 import textwrap
@@ -18,53 +17,58 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         os.umask(int('077', 8))
 
-    def getChars(self):
+    def get_chars(self):
         """
         Return characters per line.
         """
         return self._args.chars[0]
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getPages(self):
+    def get_pages(self):
         """
         Return pages per page.
         """
         return self._args.pages[0]
 
-    def getPrinter(self):
+    def get_printer(self):
         """
         Return printer name.
         """
         return self._printer
 
-    def getViewFlag(self):
+    def get_view_flag(self):
         """
         Return view flag.
         """
         return self._args.viewFlag
 
-    def _getDefaultPrinter(self):
+    def _get_default_printer(self):
         lpstat = syslib.Command('lpstat', args=['-d'], check=False)
-        if lpstat.isFound():
+        if lpstat.is_found():
             lpstat.run(filter='^system default destination: ', mode='batch')
-            if lpstat.hasOutput():
-                return lpstat.getOutput()[0].split()[-1]
+            if lpstat.has_output():
+                return lpstat.get_output()[0].split()[-1]
         return None
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Sends text/images/postscript/PDF to printer.')
 
         parser.add_argument('-chars', nargs=1, type=int, default=[100],
@@ -92,23 +96,26 @@ class Options:
         if self._args.printer:
             self._printer = self._args.printer[0]
         else:
-            self._printer = self._getDefaultPrinter()
+            self._printer = self._get_default_printer()
             if not self._printer:
                 raise SystemExit(sys.argv[0] + ': Cannot detect default printer.')
 
 
-class Print:
+class Print(object):
+    """
+    Print class
+    """
 
     def __init__(self, options):
         self._tmpfile = os.sep + os.path.join(
-            'tmp', 'fprint-' + syslib.info.getUsername() + '.' + str(os.getpid()))
-        if options.getViewFlag():
+            'tmp', 'fprint-' + syslib.info.get_username() + '.' + str(os.getpid()))
+        if options.get_view_flag():
             evince = syslib.Command('evince')
         else:
-            lp = syslib.Command('lp', flags=['-o', 'number-up=' + str(options.getPages()),
-                                             '-d', options.getPrinter()])
+            lp = syslib.Command('lp', flags=['-o', 'number-up=' + str(options.get_pages()),
+                                             '-d', options.get_printer()])
 
-        for file in options.getFiles():
+        for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
             ext = file.split('.')[-1].lower()
@@ -120,52 +127,52 @@ class Print:
                 message = self._postscript(options, file)
             else:
                 message = self._text(options, file)
-            if options.getViewFlag():
+            if options.get_view_flag():
                 print('Spooling', message, 'to printer previewer')
-                evince.setArgs([self._tmpfile])
+                evince.set_args([self._tmpfile])
                 evince.run()
             else:
-                print('Spooling ', message, ' to printer "', options.getPrinter(), '"', sep='')
-                lp.setArgs([self._tmpfile])
+                print('Spooling ', message, ' to printer "', options.get_printer(), '"', sep='')
+                lp.set_args([self._tmpfile])
                 lp.run()
-                if lp.getExitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(lp.getExitcode()) +
-                                     ' received from "' + lp.getFile() + '".')
+                if lp.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(lp.get_exitcode()) +
+                                     ' received from "' + lp.get_file() + '".')
             os.remove(self._tmpfile)
 
     def _image(self, file):
         if not hasattr(self, '_convert'):
             self._convert = syslib.Command('convert')
 
-        self._convert.setArgs(['-verbose', file, '/dev/null'])
+        self._convert.set_args(['-verbose', file, '/dev/null'])
         self._convert.run(filter='^' + file + ' ', mode='batch', error2output=True)
-        if not self._convert.hasOutput():
+        if not self._convert.has_output():
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" image file.')
-        x, y = self._convert.getOutput()[0].split('+')[0].split()[-1].split('x')
+        x, y = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
 
         if int(x) > int(y):
-            self._convert.setArgs(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40',
+            self._convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40',
                                    '-rotate', '90'])
         else:
-            self._convert.setArgs(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40'])
-        self._convert.extendArgs([file, 'ps:' + self._tmpfile])
+            self._convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40'])
+        self._convert.extend_args([file, 'ps:' + self._tmpfile])
         self._convert.run(mode='batch')
-        if self._convert.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._convert.getExitcode()) +
-                                           ' received from "' + self._convert.getFile() + '".')
+        if self._convert.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._convert.get_exitcode()) +
+                                           ' received from "' + self._convert.get_file() + '".')
 
         return 'IMAGE file "' + file + '"'
 
     def _pdf(self, file):
         gs = syslib.Command('gs')
-        gs.setFlags(['-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pswrite',
+        gs.set_flags(['-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pswrite',
                      '-sPAPERSIZE=a4', '-r300x300'])
-        gs.setArgs(['-sOutputFile=' + self._tmpfile, '-c', 'save', 'pop', '-f', file])
+        gs.set_args(['-sOutputFile=' + self._tmpfile, '-c', 'save', 'pop', '-f', file])
         gs.run(mode='batch')
-        if gs.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(gs.getExitcode()) +
-                             ' received from "' + gs.getFile() + '".')
-        self._postscriptFix(self._tmpfile)
+        if gs.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(gs.get_exitcode()) +
+                             ' received from "' + gs.get_file() + '".')
+        self._postscript_fix(self._tmpfile)
         return 'PDF file "' + file + '"'
 
     def _postscript(self, options, file):
@@ -178,12 +185,12 @@ class Print:
                 except IOError:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' + self._tmpfile + '" temporary file.')
-                self._postscriptFix(self._tmpfile)
+                self._postscript_fix(self._tmpfile)
                 return 'Postscript file "' + file + '"'
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" postscript file.')
 
-    def _postscriptFix(self, file):
+    def _postscript_fix(self, file):
         scaling = None
         try:
             with open(self._tmpfile, errors='replace') as ifile:
@@ -216,14 +223,14 @@ class Print:
         if not hasattr(self, '_a2ps'):
             self._a2ps = syslib.Command('a2ps')
             # Space in header and footer increase top/bottom margins
-            self._a2ps.setFlags(['--media=A4', '--columns=1', '--header= ', '--left-footer=',
-                                 '--footer= ', '--right-footer=', '--output=-',
-                                 '--highlight-level=none', '--quiet'])
-        chars = options.getChars()
+            self._a2ps.set_flags(
+                ['--media=A4', '--columns=1', '--header= ', '--left-footer=', '--footer= ',
+                 '--right-footer=', '--output=-', '--highlight-level=none', '--quiet'])
+        chars = options.get_chars()
 
-        self._a2ps.setArgs(['--portrait', '--chars-per-line=' + str(chars),
-                            '--left-title=' + time.strftime('%Y-%m-%d-%H:%M:%S'),
-                            '--center-title=' + os.path.basename(file)])
+        self._a2ps.set_args(['--portrait', '--chars-per-line=' + str(chars),
+                             '--left-title=' + time.strftime('%Y-%m-%d-%H:%M:%S'),
+                             '--center-title=' + os.path.basename(file)])
 
         isnotPrintable = re.compile('[\000-\037\200-\277]')
         try:
@@ -240,18 +247,21 @@ class Print:
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" text file.')
         self._a2ps.run(mode='batch', stdin=stdin, outputFile=self._tmpfile)
-        if self._a2ps.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._a2ps.getExitcode()) +
-                             ' received from "' + self._a2ps.getFile() + '".')
+        if self._a2ps.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._a2ps.get_exitcode()) +
+                             ' received from "' + self._a2ps.get_file() + '".')
         return 'text file "' + file + '" with ' + str(chars) + ' columns'
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Print(options)
@@ -265,7 +275,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

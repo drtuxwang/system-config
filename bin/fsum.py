@@ -15,37 +15,42 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getCheckFlag(self):
+    def get_check_flag(self):
         """
         Return check flag.
         """
         return self._args.checkFlag
 
-    def getCreateFlag(self):
+    def get_create_flag(self):
         """
         Return create flag.
         """
         return self._args.createFlag
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getRecursiveFlag(self):
+    def get_recursive_flag(self):
         """
         Return recursive flag.
         """
         return self._args.recursiveFlag
 
-    def getUpdateFile(self):
+    def get_update_file(self):
         """
         Return update file.
         """
@@ -54,7 +59,7 @@ class Options:
         else:
             return None
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Calculate checksum using MD5, file size and file modification time.')
 
@@ -73,14 +78,17 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Checksum:
+class Checksum(object):
+    """
+    Check sum class
+    """
 
     def __init__(self, options):
-        if options.getCheckFlag():
-            self._check(options.getFiles())
+        if options.get_check_flag():
+            self._check(options.get_files())
         else:
             self._cache = {}
-            updateFile = options.getUpdateFile()
+            updateFile = options.get_update_file()
 
             if updateFile:
                 if not os.path.isfile(updateFile):
@@ -99,13 +107,13 @@ class Checksum:
                 except IOError:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot read "' + updateFile + '" checksum file.')
-            self._calc(options, options.getFiles())
+            self._calc(options, options.get_files())
 
     def _calc(self, options, files):
         for file in files:
             if os.path.isdir(file):
                 if not os.path.islink(file):
-                    if options.getRecursiveFlag():
+                    if options.get_recursive_flag():
                         try:
                             self._calc(options,
                                        sorted([os.path.join(file, x) for x in os.listdir(file)]))
@@ -114,20 +122,20 @@ class Checksum:
             elif os.path.isfile(file) and not file.endswith('..fsum'):
                 fileStat = syslib.FileStat(file)
                 try:
-                    md5sum = self._cache[(file, fileStat.getSize(), fileStat.getTime())]
+                    md5sum = self._cache[(file, fileStat.get_size(), fileStat.get_time())]
                 except KeyError:
                     md5sum = self._md5sum(file)
                 if not md5sum:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
-                print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(md5sum, fileStat.getSize(),
-                                                           fileStat.getTime(), file))
-                if options.getCreateFlag():
+                print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(md5sum, fileStat.get_size(),
+                                                           fileStat.get_time(), file))
+                if options.get_create_flag():
                     try:
                         with open(file + '.fsum', 'w', newline='\n') as ofile:
-                            print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(md5sum, fileStat.getSize(),
-                                  fileStat.getTime(), os.path.basename(file)), file=ofile)
+                            print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(md5sum, fileStat.get_size(),
+                                  fileStat.get_time(), os.path.basename(file)), file=ofile)
                         fileStat = syslib.FileStat(file)
-                        os.utime(file + '.fsum', (fileStat.getTime(), fileStat.getTime()))
+                        os.utime(file + '.fsum', (fileStat.get_time(), fileStat.get_time()))
                     except (IOError, OSError):
                         raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '.fsum" file.')
 
@@ -156,13 +164,13 @@ class Checksum:
                                 if not os.path.isfile(file):
                                     print(file, '# FAILED open or read')
                                     nmiss += 1
-                                elif size != fileStat.getSize():
+                                elif size != fileStat.get_size():
                                     print(file, '# FAILED checksize')
                                     nfail += 1
                                 elif self._md5sum(file) != md5sum:
                                     print(file, '# FAILED checksum')
                                     nfail += 1
-                                elif mtime != fileStat.getTime():
+                                elif mtime != fileStat.get_time():
                                     print(file, '# FAILED checkdate')
                                     nfail += 1
                             except TypeError:
@@ -223,12 +231,15 @@ class Checksum:
         return md5.hexdigest()
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Checksum(options)
@@ -242,7 +253,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

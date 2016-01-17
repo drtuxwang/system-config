@@ -15,59 +15,64 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
 
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         if self._args.image != 'scan':
-            self._deviceDetect()
-        self._signalTrap()
+            self._device_detect()
+        self._signal_trap()
 
-    def getDevice(self):
+    def get_device(self):
         """
         Return device location.
         """
         return self._device
 
-    def getEraseFlag(self):
+    def get_erase_flag(self):
         """
         Return erase flag.
         """
         return self._args.eraseFlag
 
-    def getImage(self):
+    def get_image(self):
         """
         Return ISO/BIN image file or audio directory.
         """
         return self._args.image[0]
 
-    def getMd5Flag(self):
+    def get_md5_flag(self):
         """
         Return md5 flag.
         """
         return self._args.md5Flag
 
-    def getSpeed(self):
+    def get_speed(self):
         """
         Return CD speed.
         """
         return self._args.speed[0]
 
-    def _deviceDetect(self):
+    def _device_detect(self):
         if self._args.device:
             self._device = self._args.device[0]
         else:
             cdrom = Cdrom()
-            if not cdrom.getDevices().keys():
+            if not cdrom.get_devices().keys():
                 raise SystemExit(sys.argv[0] + ': Cannot find any CD/DVD device.')
-            self._device = sorted(cdrom.getDevices().keys())[0]
+            self._device = sorted(cdrom.get_devices().keys())[0]
         if not os.path.exists(self._device) and not os.path.isdir(self._image):
             raise SystemExit(sys.argv[0] + ': Cannot find "' + self._device + '" CD/DVD device.')
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Make data/audio/video CD/DVD using CD/DVD writer.')
 
@@ -93,67 +98,70 @@ class Options:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + self._args.image[0] + '" CD/DVD device.')
 
-    def _signalIgnore(self, signal, frame):
+    def _signal_ignore(self, signal, frame):
         pass
 
-    def _signalTrap(self):
+    def _signal_trap(self):
         signal.signal(signal.SIGINT, self._signalIgnore)
         signal.signal(signal.SIGTERM, self._signalIgnore)
 
 
-class Burner:
+class Burner(object):
+    """
+    CD/DVD burner class
+    """
 
     def __init__(self, options):
-        self._device = options.getDevice()
-        self._speed = options.getSpeed()
-        self._image = options.getImage()
+        self._device = options.get_device()
+        self._speed = options.get_speed()
+        self._image = options.get_image()
 
         if self._image == 'scan':
             self._scan()
         elif os.path.isdir(self._image):
-            self._trackAtOnceAudio(options)
+            self._track_at_once_audio(options)
         elif self._image.endswith('.bin'):
-            self._diskAtOnceData(options)
+            self._disk_at_once_data(options)
         else:
-            self._trackAtOnceData(options)
+            self._track_at_once_data(options)
 
     def _eject(self):
         eject = syslib.Command('eject', check=False)
-        if eject.isFound():
+        if eject.is_found():
             time.sleep(1)
             eject.run(mode='batch')
-            if eject.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(eject.getExitcode()) +
-                                 ' received from "' + eject.getFile() + '".')
+            if eject.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(eject.get_exitcode()) +
+                                 ' received from "' + eject.get_file() + '".')
 
     def _scan(self):
         cdrom = Cdrom()
         print('Scanning for CD/DVD devices...')
-        devices = cdrom.getDevices()
+        devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
             print('  {0:10s}  {1:s}'.format(key, value))
 
-    def _diskAtOnceData(self, options):
+    def _disk_at_once_data(self, options):
         cdrdao = syslib.Command('cdrdao')
-        if options.getEraseFlag():
-            cdrdao.setArgs(['blank', '--blank-mode', 'minimal', '--device', self._device,
-                            '--speed', str(self._speed)])
+        if options.get_erase_flag():
+            cdrdao.set_args(['blank', '--blank-mode', 'minimal', '--device', self._device,
+                             '--speed', str(self._speed)])
             cdrdao.run()
-            if cdrdao.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(cdrdao.getExitcode()) +
-                                 ' received from "' + cdrdao.getFile() + '".')
-        cdrdao.setFlags(['write', '--device', self._device, '--speed', str(self._speed)])
+            if cdrdao.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(cdrdao.get_exitcode()) +
+                                 ' received from "' + cdrdao.get_file() + '".')
+        cdrdao.set_flags(['write', '--device', self._device, '--speed', str(self._speed)])
         if os.path.isfile(self._files[0][:-4]+'.toc'):
-            cdrdao.setArgs([self._files[0][:-4]+'.toc'])
+            cdrdao.set_args([self._files[0][:-4]+'.toc'])
         else:
-            cdrdao.setArgs([self._files[0][:-4]+'.cue'])
+            cdrdao.set_args([self._files[0][:-4]+'.cue'])
         cdrdao.run()
-        if cdrdao.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(cdrdao.getExitcode()) +
-                             ' received from "' + cdrdao.getFile() + '".')
+        if cdrdao.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(cdrdao.get_exitcode()) +
+                             ' received from "' + cdrdao.get_file() + '".')
         self._eject()
 
-    def _trackAtOnceAudio(self, options):
+    def _track_at_once_audio(self, options):
         files = glob.glob(os.path.join(self._image[0], '*.wav'))
 
         wodim = syslib.Command('wodim')
@@ -162,62 +170,62 @@ class Burner:
         if answer.lower() != 'y':
             raise SystemExit(1)
         print('Using AUDIO mode for WAVE files (Audio tracks detected)...')
-        wodim.setArgs(['-v', '-shorttrack', '-audio', '-pad', '-copy', 'dev=' + self._device,
-                       'speed=' + str(self._speed), 'driveropts=burnfree'] + files)
+        wodim.set_args(['-v', '-shorttrack', '-audio', '-pad', '-copy', 'dev=' + self._device,
+                        'speed=' + str(self._speed), 'driveropts=burnfree'] + files)
         wodim.run()
-        if wodim.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(wodim.getExitcode()) +
-                             ' received from "' + wodim.getFile() + '".')
+        if wodim.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(wodim.get_exitcode()) +
+                             ' received from "' + wodim.get_file() + '".')
 
         time.sleep(1)
         icedax = syslib.Command('icedax', check=False)
-        if icedax.isFound():
-            icedax.setArgs(['-info-only', '--no-infofile', 'verbose-level=toc',
-                            'dev=' + self._device, 'speed=' + self._speed])
+        if icedax.is_found():
+            icedax.set_args(['-info-only', '--no-infofile', 'verbose-level=toc',
+                             'dev=' + self._device, 'speed=' + self._speed])
             icedax.run(mode='batch')
-            toc = icedax.getError('[.]\(.*:.*\)|^CD')
+            toc = icedax.get_error(r'[.]\(.*:.*\)|^CD')
             if not toc:
                 raise SystemExit(sys.argv[0] + ': Cannot find Audio CD media. Please check drive.')
-            elif icedax.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(icedax.getExitcode()) +
-                                 ' received from "' + icedax.getFile() + '".')
+            elif icedax.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(icedax.get_exitcode()) +
+                                 ' received from "' + icedax.get_file() + '".')
             for line in toc:
                 print(line)
         self._eject()
 
-    def _trackAtOnceData(self, options):
-        file = options.getImage()
+    def _track_at_once_data(self, options):
+        file = options.get_image()
 
         wodim = syslib.Command('wodim')
         print('If your media is a rewrite-able CD/DVD its contents will be deleted.')
         answer = input('Do you really want to burn data to this CD/DVD disk? (y/n) [n] ')
         if answer.lower() != 'y':
             raise SystemExit(1)
-        wodim.setFlags(['-v', '-shorttrack', '-eject'])
-        if syslib.FileStat(file).getSize() < 2097152:  # Pad to avoid dd read problem
-            wodim.appendArg('-pad')
-        wodim.setArgs([
+        wodim.set_flags(['-v', '-shorttrack', '-eject'])
+        if syslib.FileStat(file).get_size() < 2097152:  # Pad to avoid dd read problem
+            wodim.append_arg('-pad')
+        wodim.set_args([
             'dev=' + self._device, 'speed=' + str(self._speed), 'driveropts=burnfree', file])
         wodim.run()
-        if wodim.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(wodim.getExitcode()) +
-                             ' received from "' + wodim.getFile() + '".')
+        if wodim.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(wodim.get_exitcode()) +
+                             ' received from "' + wodim.get_file() + '".')
 
-        if options.getMd5Flag():
+        if options.get_md5_flag():
             print('Verifying MD5 check sum of data CD/DVD:')
             dd = syslib.Command('dd')
-            dd.setArgs(['if=' + self._device, 'bs=' + str(2048*360), 'count=1', 'of=/dev/null'])
+            dd.set_args(['if=' + self._device, 'bs=' + str(2048*360), 'count=1', 'of=/dev/null'])
             for i in range(10):
                 time.sleep(1)
                 dd.run(mode='batch')
-                if dd.hasOutput():
+                if dd.has_output():
                     time.sleep(1)
                     break
             md5cd = syslib.Command('md5cd', args=[self._device])
             md5cd.run()
-            if md5cd.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(md5cd.getExitcode()) +
-                                 ' received from "' + md5cd.getFile() + '".')
+            if md5cd.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(md5cd.get_exitcode()) +
+                                 ' received from "' + md5cd.get_file() + '".')
             try:
                 with open(self._files[0][:-4] + '.md5', errors='replace') as ifile:
                     for line in ifile:
@@ -226,7 +234,10 @@ class Burner:
                 pass
 
 
-class Cdrom:
+class Cdrom(object):
+    """
+    CDROM class
+    """
 
     def __init__(self):
         self._devices = {}
@@ -254,19 +265,22 @@ class Cdrom:
         except IndexError:
             return ''
 
-    def getDevices(self):
+    def get_devices(self):
         """
         Return list of devices.
         """
         return self._devices
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Burner(options)
@@ -280,7 +294,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

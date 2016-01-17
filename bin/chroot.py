@@ -13,45 +13,53 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         if len(args) != 2 or not os.path.isdir(args[1]):
             chroot = syslib.Command('chroot', args=args[1:])
             chroot.run(mode='exec')
-        elif syslib.info.getUsername() != 'root':
+        elif syslib.info.get_username() != 'root':
             sudo = syslib.Command('sudo', args=['python3', args[0], os.path.abspath(args[1])])
             sudo.run(mode='exec')
         if not os.path.isfile(os.path.join(args[1], 'bin', 'bash')):
             raise SystemExit(sys.argv[0] + ': Cannot find "/bin/bash" in chroot directory.')
         self._directory = os.path.abspath(args[1])
 
-    def getDirectory(self):
+    def get_directory(self):
         """
         Return directory.
         """
         return self._directory
 
 
-class Chroot:
+class Chroot(object):
+    """
+    Change root class
+    """
 
     def __init__(self, directory):
         self._chroot = syslib.Command('/usr/sbin/chroot')
-        self._chroot.setArgs([directory, '/bin/bash', '-l'])
+        self._chroot.set_args([directory, '/bin/bash', '-l'])
         self._directory = directory
         self._mount = syslib.Command('mount')
         self._mountpoints = []
-        self._mountDir('-o', 'bind', '/dev', os.path.join(self._directory, 'dev'))
-        self._mountDir('-o', 'bind', '/proc', os.path.join(self._directory, 'proc'))
+        self._mount_dir('-o', 'bind', '/dev', os.path.join(self._directory, 'dev'))
+        self._mount_dir('-o', 'bind', '/proc', os.path.join(self._directory, 'proc'))
         if os.path.isdir('/shared') and os.path.isdir(os.path.join(self._directory, 'shared')):
-            self._mountDir('-o', 'bind', '/shared', os.path.join(self._directory, 'shared'))
-        self._mountDir('-t', 'tmpfs', '-o', 'size=256m,noatime,nosuid,nodev', 'tmpfs',
-                       os.path.join(self._directory, 'tmp'))
+            self._mount_dir('-o', 'bind', '/shared', os.path.join(self._directory, 'shared'))
+        self._mount_dir('-t', 'tmpfs', '-o', 'size=256m,noatime,nosuid,nodev', 'tmpfs',
+                        os.path.join(self._directory, 'tmp'))
         if (os.path.isdir('/var/run/dbus') and
                 os.path.isdir(os.path.join(self._directory, 'var/run/dbus'))):
-            self._mountDir('-o', 'bind', '/var/run/dbus',
-                           os.path.join(self._directory, 'var/run/dbus'))
+            self._mount_dir('-o', 'bind', '/var/run/dbus',
+                            os.path.join(self._directory, 'var/run/dbus'))
 
     def _getterm(self):
         term = 'Unkown'
@@ -59,32 +67,39 @@ class Chroot:
             term = os.environ['TERM']
         return term
 
-    def _mountDir(self, *args):
-        self._mount.setArgs(list(args))
+    def _mount_dir(self, *args):
+        self._mount.set_args(list(args))
         self._mount.run()
         self._mountpoints.append(args[-1])
 
     def run(self):
+        """
+        Start session
+        """
         print('Chroot "' + self._directory + '" starting...')
         if self._getterm() in ['xterm', 'xvt100']:
-            sys.stdout.write('\033]0;' + syslib.info.getHostname() + ':' + self._directory + '\007')
+            sys.stdout.write(
+                '\033]0;' + syslib.info.get_hostname() + ':' + self._directory + '\007')
             sys.stdout.flush()
         self._chroot.run()
         if self._getterm() in ['xterm', 'xvt100']:
-            sys.stdout.write('\033]0;' + syslib.info.getHostname() + ':\007')
+            sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':\007')
         syslib.Command('umount', args=['-l'] + self._mountpoints).run()
         print('Chroot "' + self._directory + '" finished!')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            Chroot(options.getDirectory()).run()
+            Chroot(options.get_directory()).run()
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -95,7 +110,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

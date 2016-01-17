@@ -12,19 +12,24 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getDirectories(self):
+    def get_directories(self):
         """
         Return list of directories.
         """
         return self._args.directories
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Recursively link all files.')
 
         parser.add_argument('directories', nargs='+', metavar='directory',
@@ -41,13 +46,16 @@ class Options:
                                  '" cannot be current directory.')
 
 
-class Link:
+class Link(object):
+    """
+    Link class
+    """
 
     def __init__(self, options):
-        for directory in options.getDirectories():
-            self._linkFiles(directory, '.')
+        for directory in options.get_directories():
+            self._link_files(directory, '.')
 
-    def _linkFiles(self, sourceDir, targetDir, subdir=''):
+    def _link_files(self, sourceDir, targetDir, subdir=''):
         try:
             sourceFiles = sorted([os.path.join(sourceDir, x) for x in os.listdir(sourceDir)])
         except PermissionError:
@@ -62,7 +70,7 @@ class Link:
         for sourceFile in sorted(sourceFiles):
             targetFile = os.path.join(targetDir, os.path.basename(sourceFile))
             if os.path.isdir(sourceFile):
-                self._linkFiles(sourceFile, targetFile, os.path.join(os.pardir, subdir))
+                self._link_files(sourceFile, targetFile, os.path.join(os.pardir, subdir))
             else:
                 if os.path.islink(targetFile):
                     print('Updating "' + targetFile + '" link...')
@@ -81,12 +89,15 @@ class Link:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + targetFile + '" link.')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Link(options)
@@ -100,7 +111,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

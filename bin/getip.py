@@ -15,19 +15,24 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getHosts(self):
+    def get_hosts(self):
         """
         Return list of hosts.
         """
         return self._args.hosts
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Get the IP number of hosts.')
 
         parser.add_argument('hosts', nargs='+', metavar='host', help='Host name.')
@@ -35,7 +40,10 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Getip:
+class Getip(object):
+    """
+    Get IP address class
+    """
 
     def __init__(self, hosts):
         self._hosts = hosts
@@ -49,15 +57,18 @@ class Getip:
             print(host.lower() + ':', ip)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            Getip(options.getHosts()).run()
+            Getip(options.get_hosts()).run()
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -68,7 +79,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

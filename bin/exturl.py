@@ -15,19 +15,24 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Extracts http references from a HTML file.')
 
         parser.add_argument('files', nargs='+', metavar='file', help='HTML file.')
@@ -35,15 +40,18 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Extract:
+class Extract(object):
+    """
+    Extract class
+    """
 
     def __init__(self, options):
         urls = []
-        self._isiFrame = re.compile('<iframe.*src=', re.IGNORECASE)
-        self._isIgnore = re.compile('mailto:|#', re.IGNORECASE)
-        self._isUrl = re.compile('href=.*[\'">]|onclick=.*\(', re.IGNORECASE)
+        self._is_iframe = re.compile('<iframe.*src=', re.IGNORECASE)
+        self._is_ignore = re.compile('mailto:|#', re.IGNORECASE)
+        self._is_url = re.compile(r'href=.*[\'">]|onclick=.*\(', re.IGNORECASE)
 
-        for file in options.getFiles():
+        for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" HTML file.')
             urls.extend(self._extract(file))
@@ -56,8 +64,8 @@ class Extract:
                 urls = []
                 for line in ifile:
                     line = line.strip()
-                    for token in self._isiFrame.sub('href=', line).split():
-                        if self._isUrl.match(token) and not self._isIgnore.search(token):
+                    for token in self._is_iframe.sub('href=', line).split():
+                        if self._is_url.match(token) and not self._is_ignore.search(token):
                             url = token[5:].split('>')[0]
                             for quote in ('"', "'"):
                                 if quote in url:
@@ -68,12 +76,15 @@ class Extract:
         return urls
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Extract(options)
@@ -87,7 +98,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

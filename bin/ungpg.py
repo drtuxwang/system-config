@@ -15,23 +15,23 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
 
-class Options:
+class Options(object):
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._gpg = syslib.Command('gpg')
 
         self._config()
-        self._setLibraries(self._gpg)
+        self._set_libraries(self._gpg)
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getGpg(self):
+    def get_gpg(self):
         """
         Return gpg Command class object.
         """
@@ -53,7 +53,7 @@ class Options:
         if 'DISPLAY' in os.environ:
             os.environ['DISPLAY'] = ''
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Unpack an encrypted archive in gpg (pgp compatible) format.')
 
@@ -62,10 +62,10 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def _setLibraries(self, command):
-        libdir = os.path.join(os.path.dirname(command.getFile()), 'lib')
+    def _set_libraries(self, command):
+        libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir):
-            if syslib.info.getSystem() == 'linux':
+            if syslib.info.get_system() == 'linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
                     os.environ['LD_LIBRARY_PATH'] = (
                         libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
@@ -73,27 +73,27 @@ class Options:
                     os.environ['LD_LIBRARY_PATH'] = libdir
 
 
-class Ungpg:
+class Ungpg(object):
 
     def __init__(self, options):
-        gpg = options.getGpg()
+        gpg = options.get_gpg()
 
-        for file in options.getFiles():
+        for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
-            gpg.setArgs([file])
+            gpg.set_args([file])
             gpg.run()
-            if gpg.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(gpg.getExitcode()) +
-                                 ' received from "' + gpg.getFile() + '".')
+            if gpg.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(gpg.get_exitcode()) +
+                                 ' received from "' + gpg.get_file() + '".')
 
 
-class Main:
+class Main(object):
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Ungpg(options)
@@ -107,7 +107,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

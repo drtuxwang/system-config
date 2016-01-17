@@ -11,13 +11,18 @@ import time
 
 import syslib
 
-RELEASE = '2.6.4'
+RELEASE = '2.7.0'
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._release = RELEASE
@@ -26,46 +31,49 @@ class Options:
                              ': Cannot be started manually. Please run "myqsd" command.')
         self._mode = args[1][1:]
         self._myqsdir = os.path.join(os.environ['HOME'], '.config',
-                                     'myqs', syslib.info.getHostname())
+                                     'myqs', syslib.info.get_hostname())
         self._jobid = args[2]
 
-    def getJobid(self):
+    def get_jobid(self):
         """
         Return job ID.
         """
         return self._jobid
 
-    def getMode(self):
+    def get_mode(self):
         """
         Return operation mode.
         """
         return self._mode
 
-    def getMyqsdir(self):
+    def get_myqsdir(self):
         """
         Return myqs directory.
         """
         return self._myqsdir
 
-    def getRelease(self):
+    def get_release(self):
         """
         Return release version.
         """
         return self._release
 
 
-class Job:
+class Job(object):
+    """
+    Job class
+    """
 
     def __init__(self, options):
-        self._myqsdir = options.getMyqsdir()
-        self._jobid = options.getJobid()
+        self._myqsdir = options.get_myqsdir()
+        self._jobid = options.get_jobid()
 
         if 'HOME' not in os.environ:
             raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
-        if options.getMode() == 'spawn':
+        if options.get_mode() == 'spawn':
             self._spawn(options)
         else:
-            self._start(options)
+            self._start()
 
     def _spawn(self, options):
         try:
@@ -88,7 +96,7 @@ class Job:
         except IOError:
             return
 
-        print('\nMyQS v' + options.getRelease() + ', My Queuing System batch job exec.\n')
+        print('\nMyQS v' + options.get_release() + ', My Queuing System batch job exec.\n')
         print('MyQS JOBID  =', self._jobid)
         print('MyQS QUEUE  =', info['QUEUE'])
         print('MyQS NCPUS  =', info['NCPUS'])
@@ -106,15 +114,15 @@ class Job:
 
     def _sh(self, command):
         try:
-            with open(command.getFile(), errors='replace') as ifile:
+            with open(command.get_file(), errors='replace') as ifile:
                 line = ifile.readline().rstrip()
                 if line == '#!/bin/sh':
-                    sh = syslib.Command(file='/bin/sh')
-                    command.setWrapper(sh)
+                    shell = syslib.Command(file='/bin/sh')
+                    command.set_wrapper(shell)
         except IOError:
             pass
 
-    def _start(self, options):
+    def _start(self):
         try:
             with open(os.path.join(self._myqsdir, self._jobid + '.r'), errors='replace') as ifile:
                 info = {}
@@ -129,8 +137,8 @@ class Job:
         else:
             os.chdir(os.environ['HOME'])
         renice = syslib.Command('renice', check=False)
-        if renice.isFound():
-            renice.setArgs(['100', str(os.getpid())])
+        if renice.is_found():
+            renice.set_args(['100', str(os.getpid())])
             renice.run(mode='batch')
         myqexec = syslib.Command(file=__file__, args=['-spawn', self._jobid])
         myqexec.run()
@@ -143,12 +151,15 @@ class Job:
             pass
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Job(options)
@@ -162,7 +173,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

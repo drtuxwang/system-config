@@ -9,32 +9,36 @@ import os
 import shutil
 import signal
 import sys
-import time
 
 import syslib
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getSource(self):
+    def get_source(self):
         """
         Return source file.
         """
         return self._args.source[0]
 
-    def getTargets(self):
+    def get_targets(self):
         """
         Return target files.
         """
         return self._args.targets
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Copy a file to multiple target files.')
 
         parser.add_argument('source', nargs=1, help='Source file.')
@@ -46,13 +50,16 @@ class Options:
             raise SystemExit(sys.argv[0] + ': Cannot find "' + self._args.source + '" file.')
 
 
-class Copy:
+class Copy(object):
+    """
+    Copy class
+    """
 
     def __init__(self, options):
         self._options = options
 
-        source = options.getSource()
-        for target in options.getTargets():
+        source = options.get_source()
+        for target in options.get_targets():
             self._copy(source, target)
 
     def _copy(self, source, target):
@@ -75,12 +82,15 @@ class Copy:
                 raise SystemExit(sys.argv[0] + ': Cannot copy to "' + target + '" file.')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Copy(options)
@@ -94,7 +104,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

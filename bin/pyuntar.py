@@ -13,25 +13,30 @@ import tarfile
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getArchives(self):
+    def get_archives(self):
         """
         Return list of archives.
         """
         return self._args.archives
 
-    def getViewFlag(self):
+    def get_view_flag(self):
         """
         Return view flag.
         """
         return self._args.viewFlag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Unpack an archive in TAR format.')
 
         parser.add_argument('-v', dest='viewFlag', action='store_true',
@@ -46,18 +51,21 @@ class Options:
                 raise SystemExit(sys.argv[0] + ': Unsupported "' + archive + '" archive format.')
 
 
-class Unpack:
+class Unpack(object):
+    """
+    Unpack class
+    """
 
     def __init__(self, options):
         os.umask(int('022', 8))
-        for archive in options.getArchives():
+        for archive in options.get_archives():
             if archive.endswith('.tar'):
                 print(archive + ':')
                 try:
                     self._archive = tarfile.open(archive, 'r:')
                 except IOError:
                     raise SystemExit(sys.argv[0] + ': Cannot open "' + archive + '" archive file.')
-                if options.getViewFlag():
+                if options.get_view_flag():
                     self._view()
                 else:
                     self._unpack()
@@ -85,12 +93,15 @@ class Unpack:
         self._archive.list()
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Unpack(options)
@@ -104,7 +115,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -14,25 +14,30 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getSummaryFlag(self):
+    def get_summary_flag(self):
         """
         Return summary flag.
         """
         return self._args.summaryFlag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Show file disk usage.')
 
         parser.add_argument('-s', dest='summaryFlag', action='store_true',
@@ -44,19 +49,22 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Diskusage:
+class Diskusage(object):
+    """
+    Disk usage class
+    """
 
     def __init__(self, options):
-        for file in options.getFiles():
+        for file in options.get_files():
             if os.path.islink(file):
                 print('{0:7d} {1:s}'.format(0, file))
             else:
                 if os.path.isdir(file):
                     size = self._usage(options, file)
-                    if options.getSummaryFlag():
+                    if options.get_summary_flag():
                         print('{0:7d} {1:s}'.format(size, file))
                 elif os.path.isfile(file):
-                    size = int((syslib.FileStat(file).getSize() + 1023) / 1024)
+                    size = int((syslib.FileStat(file).get_size() + 1023) / 1024)
                     print('{0:7d} {1:s}'.format(size, file))
                 else:
                     print('{0:7d} {1:s}'.format(0, file))
@@ -72,18 +80,21 @@ class Diskusage:
                 if os.path.isdir(file):
                     size += self._usage(options, file)
                 else:
-                    size += int((syslib.FileStat(file).getSize() + 1023) / 1024)
-        if not options.getSummaryFlag():
+                    size += int((syslib.FileStat(file).get_size() + 1023) / 1024)
+        if not options.get_summary_flag():
             print('{0:7d} {1:s}'.format(size, directory))
         return size
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Diskusage(options)
@@ -97,7 +108,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

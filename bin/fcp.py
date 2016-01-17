@@ -16,31 +16,36 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getCopyLinkFlag(self):
+    def get_copy_link_flag(self):
         """
         Return copy link flag.
         """
         return self._args.copyLinkFlag
 
-    def getSources(self):
+    def get_sources(self):
         """
         Return list of source files.
         """
         return self._args.sources
 
-    def getTarget(self):
+    def get_target(self):
         """
         Return target file or directory.
         """
         return self._args.target[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Copy files and directories.')
 
         parser.add_argument('-f', dest='copyLinkFlag', action='store_true',
@@ -54,39 +59,42 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Copy:
+class Copy(object):
+    """
+    Copy class
+    """
 
     def __init__(self, options):
         self._options = options
-        self._automount(options.getTarget(), 8)
-        if len(options.getSources()) > 1:
-            if not os.path.isdir(options.getTarget()):
+        self._automount(options.get_target(), 8)
+        if len(options.get_sources()) > 1:
+            if not os.path.isdir(options.get_target()):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + options.getTarget() + '" target directory.')
-        for source in options.getSources():
+                    sys.argv[0] + ': Cannot find "' + options.get_target() + '" target directory.')
+        for source in options.get_sources():
             if os.path.isdir(source):
                 if os.path.isabs(source) or source.split(os.sep)[0] in (os.curdir, os.pardir):
-                    targetdir = options.getTarget()
-                    self._copy(source, os.path.join(options.getTarget(), os.path.basename(source)))
+                    targetdir = options.get_target()
+                    self._copy(source, os.path.join(options.get_target(), os.path.basename(source)))
                 else:
-                    targetdir = os.path.dirname(os.path.join(options.getTarget(), source))
+                    targetdir = os.path.dirname(os.path.join(options.get_target(), source))
                     if not os.path.isdir(targetdir):
                         try:
                             os.makedirs(targetdir)
-                            os.chmod(targetdir, syslib.FileStat(source).getMode())
+                            os.chmod(targetdir, syslib.FileStat(source).get_mode())
                         except OSError:
                             raise SystemExit(
                                 sys.argv[0] + ': Cannot create "' + targetdir + '" directory.')
-                    self._copy(source, os.path.join(options.getTarget(), source))
+                    self._copy(source, os.path.join(options.get_target(), source))
             else:
-                directory = os.path.join(options.getTarget(), os.path.dirname(source))
+                directory = os.path.join(options.get_target(), os.path.dirname(source))
                 if not os.path.isdir(directory):
                     try:
                         os.makedirs(directory)
                     except OSError:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' + directory + '" directory.')
-                self._copy(source, os.path.join(options.getTarget(), source))
+                self._copy(source, os.path.join(options.get_target(), source))
 
     def _automount(self, directory, wait):
         if directory.startswith('/media/'):
@@ -96,7 +104,7 @@ class Copy:
                 time.sleep(0.1)
 
     def _copy(self, source, target):
-        if self._options.getCopyLinkFlag() and os.path.islink(source):
+        if self._options.get_copy_link_flag() and os.path.islink(source):
             print('Copying "' + source + '" link...')
             sourceLink = os.readlink(source)
             if os.path.islink(target) or os.path.isfile(target):
@@ -117,7 +125,7 @@ class Copy:
             if not os.path.isdir(target):
                 try:
                     os.makedirs(target)
-                    os.chmod(target, syslib.FileStat(source).getMode())
+                    os.chmod(target, syslib.FileStat(source).get_mode())
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" directory.')
             for file in files:
@@ -142,12 +150,15 @@ class Copy:
                     raise SystemExit(sys.argv[0] + ': Cannot copy to "' + target + '" file.')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Copy(options)
@@ -161,7 +172,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

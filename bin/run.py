@@ -14,21 +14,26 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         command = self._args.command[0]
         if os.path.isfile(command):
-            self._command = syslib.Command(file=os.path.abspath(command), args=self._commandArgs)
+            self._command = syslib.Command(file=os.path.abspath(command), args=self._command_args)
         else:
             file = os.path.join(os.path.dirname(args[0]), command)
             if os.path.isfile(file):
-                self._command = syslib.Command(file=file, args=self._commandArgs)
+                self._command = syslib.Command(file=file, args=self._command_args)
             else:
-                self._command = syslib.Command(command, args=self._commandArgs)
+                self._command = syslib.Command(command, args=self._command_args)
 
         self._sh(self._command)
 
@@ -40,19 +45,19 @@ class Options:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + self._logFile + '" logfile file.')
 
-    def getLogFile(self):
+    def get_log_file(self):
         """
         Return log file.
         """
         return self._args.logFile
 
-    def getCommand(self):
+    def get_command(self):
         """
         Return command Command class object.
         """
         return self._command
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Run a command immune to terminal hangups.')
 
         parser.add_argument('-q', action='store_const', const='', dest='logFile',
@@ -68,28 +73,31 @@ class Options:
                 break
         self._args = parser.parse_args(myArgs)
 
-        self._commandArgs = args[len(myArgs):]
+        self._command_args = args[len(myArgs):]
 
     def _sh(self, command):
         try:
-            with open(command.getFile(), errors='replace') as ifile:
+            with open(command.get_file(), errors='replace') as ifile:
                 line = ifile.readline().rstrip('\r\n')
                 if line == '#!/bin/sh':
                     sh = syslib.Command(file='/bin/sh')
-                    command.setWrapper(sh)
+                    command.set_wrapper(sh)
         except IOError:
             pass
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getCommand().run(logfile=options.getLogFile(), mode='daemon')
+            options.get_command().run(logfile=options.get_log_file(), mode='daemon')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -100,7 +108,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -13,19 +13,24 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getWords(self):
+    def get_words(self):
         """
         Return list of words.
         """
         return self._args.words
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Print arguments in random order.')
 
         parser.add_argument('words', nargs='+', metavar='word', help='A word.')
@@ -33,23 +38,29 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Shuffle:
+class Shuffle(object):
+    """
+    Shuffle class
+    """
 
-    def __init__(self, list):
-        random.shuffle(list)
-        for item in list:
+    def __init__(self, items):
+        random.shuffle(items)
+        for item in items:
             print(item)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            Shuffle(options.getWords())
+            Shuffle(options.get_words())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
@@ -60,7 +71,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

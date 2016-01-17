@@ -16,43 +16,48 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getDaoFlag(self):
+    def get_disk_at_once_flag(self):
         """
         Return dao flag
         """
         return self._args.daoFlag
 
-    def getDevice(self):
+    def get_device(self):
         """
         Return device location.
         """
         return self._args.device[0]
 
-    def getMd5Flag(self):
+    def get_md5_flag(self):
         """
         Return md5 flag.
         """
         return self._args.md5Flag
 
-    def getImage(self):
+    def get_image(self):
         """
         Return ISO/BIN image location.
         """
         return self._image
 
-    def getSpeed(self):
+    def get_speed(self):
         """
         Return CD/DVD speed.
         """
         return self._args.speed[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Copy CD/DVD data as a portable ISO/BIN image file.')
 
@@ -85,7 +90,10 @@ class Options:
             self._image = 'file.iso'
 
 
-class Cdrom:
+class Cdrom(object):
+    """
+    CDROM class
+    """
 
     def __init__(self):
         self._devices = {}
@@ -113,22 +121,25 @@ class Cdrom:
         except IndexError:
             return ''
 
-    def getDevices(self):
+    def get_devices(self):
         """
         Return list of devices
         """
         return self._devices
 
 
-class Readcd:
+class Readcd(object):
+    """
+    Read CD class
+    """
 
     def __init__(self, options):
-        device = options.getDevice()
+        device = options.get_device()
         if device == 'scan':
             self._scan()
         else:
-            speed = options.getSpeed()
-            file = options.getImage()
+            speed = options.get_speed()
+            file = options.get_image()
 
             self._cdspeed(device, speed)
             if os.path.isfile(file):
@@ -137,30 +148,30 @@ class Readcd:
                 except OSError:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot over write "' + file + '" CD/DVD image file.')
-            if options.getDaoFlag():
+            if options.get_disk_at_once_flag():
                 self._dao(device, speed, file)
             else:
                 self._tao(device, file)
             if options.getMd5sumFlag():
                 print('Creating MD5 check sum of ISO file.')
-                md5sum = self._md5sum(options.getFile())
-                if (not md5sum):
+                md5sum = self._md5sum(options.get_file())
+                if not md5sum:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
                 else:
-                    print(md5sum, options.getFile(), sep='  ')
+                    print(md5sum, options.get_file(), sep='  ')
             time.sleep(1)
             eject = syslib.Command('eject', check=False)
-            if eject.isFound():
+            if eject.is_found():
                 eject.run(mode='batch')
-                if eject.getExitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(eject.getExitcode()) +
-                                     ' received from "' + eject.getFile() + '".')
+                if eject.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(eject.get_exitcode()) +
+                                     ' received from "' + eject.get_file() + '".')
 
     def _cdspeed(self, device, speed):
         cdspeed = syslib.Command('cdspeed', flags=[device], check=False)
-        if cdspeed.isFound():
+        if cdspeed.is_found():
             if speed:
-                cdspeed.setArgs([str(speed)])
+                cdspeed.set_args([str(speed)])
             cdspeed.run()
         elif speed:
             hdparm = syslib.Command(file='/sbin/hdparm', args=['-E', str(speed), device])
@@ -172,14 +183,14 @@ class Readcd:
         if speed:
             cdrdao.extend(['--speed', speed])
         if file.endswith('.bin'):
-            cdrdao.setArgs(['--datafile', file, file[:-4] + '.toc'])
+            cdrdao.set_args(['--datafile', file, file[:-4] + '.toc'])
         else:
-            cdrdao.setArgs(['--datafile', file, file + '.toc'])
-        cdrdao.setWrapper(nice)
+            cdrdao.set_args(['--datafile', file, file + '.toc'])
+        cdrdao.set_wrapper(nice)
         cdrdao.run()
-        if cdrdao.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(cdrdao.getExitcode()) +
-                             ' received from "' + cdrdao.getFile() + '".')
+        if cdrdao.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(cdrdao.get_exitcode()) +
+                             ' received from "' + cdrdao.get_file() + '".')
 
     def _md5sum(self, file):
         try:
@@ -197,56 +208,56 @@ class Readcd:
     def _scan(self):
         cdrom = Cdrom()
         print('Scanning for CD/DVD devices...')
-        devices = cdrom.getDevices()
+        devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
             print('  {0:10s}  {1:s}'.format(key, value))
 
     def _tao(self, device, file):
         isoinfo = syslib.Command('isoinfo')
         nice = syslib.Command('nice', args=['-20'])
-        dd = syslib.Command('dd', args=['if=' + device, 'bs=' + str(2048*4096),
-                            'count=1', 'of=' + file])
+        dd = syslib.Command(
+            'dd', args=['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + file])
         dd.run(mode='batch')
-        if dd.getError()[0].endswith('Permission denied'):
+        if dd.get_error()[0].endswith('Permission denied'):
             raise SystemExit(sys.argv[0] + ': Cannot read from CD/DVD device. '
                                            'Please check permissions.')
         elif not os.path.isfile(file):
             raise SystemExit(sys.argv[0] + ': Cannot find CD/DVD media. Please check drive.')
-        elif dd.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(dd.getExitcode()) +
-                             ' received from "' + dd.getFile() + '".')
+        elif dd.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(dd.get_exitcode()) +
+                             ' received from "' + dd.get_file() + '".')
 
-        isoinfo.setArgs(['-d', '-i', file])
+        isoinfo.set_args(['-d', '-i', file])
         isoinfo.run(filter='^Volume size is: ', mode='batch')
-        if not isoinfo.hasOutput():
+        if not isoinfo.has_output():
             raise SystemExit(sys.argv[0] + ': Cannot find TOC on CD/DVD media. '
                                            'Disk not recognised.')
-        elif isoinfo.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.getExitcode()) +
-                             ' received from "' + isoinfo.getFile() + '".')
-        blocks = int(isoinfo.getOutput()[0].split()[-1])
+        elif isoinfo.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.get_exitcode()) +
+                             ' received from "' + isoinfo.get_file() + '".')
+        blocks = int(isoinfo.get_output()[0].split()[-1])
         isoinfo.run(filter=' id: $')
-        if isoinfo.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.getExitcode()) +
-                             ' received from "' + isoinfo.getFile() + '".')
+        if isoinfo.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.get_exitcode()) +
+                             ' received from "' + isoinfo.get_file() + '".')
 
         print('Creating ISO image file "' + file + '"...')
-        dd.setArgs(['if=' + device, 'bs=2048', 'count=' + str(blocks), 'of=' + file])
-        dd.setWrapper(nice)
+        dd.set_args(['if=' + device, 'bs=2048', 'count=' + str(blocks), 'of=' + file])
+        dd.set_wrapper(nice)
         dd.run(filter='Input/output error| records (in|out)$')
         if not os.path.isfile(file):
             raise SystemExit(sys.argv[0] + ': Cannot find CD/DVD media. Please check drive.')
-        pad = int(blocks * 2048 - syslib.FileStat(file).getSize())
+        pad = int(blocks * 2048 - syslib.FileStat(file).get_size())
         if pad > 0 and pad < 16777216:
             print(pad, 'bytes flushing from CD/DVD prefetch bug...')
             with open(file, 'ab') as ofile:
                 ofile.write(b'\0' * pad)
-        self._isosize(file, syslib.FileStat(file).getSize())
+        self._isosize(file, syslib.FileStat(file).get_size())
 
     def _isosize(self, image, size):
         if size > 734003200:
             print('\n*** {0:s}: {1:4.2f} MB ({2:5.3f} salesman"s GB) ***\n'.format(
-                  image, size/1048576, size/1000000000))
+                image, size/1048576, size/1000000000))
             if size > 9400000000:
                 sys.stderr.write('**WARNING** This ISO image file does not fit onto '
                                  '9.4GB/240min Duel Layer DVD media.\n')
@@ -266,19 +277,22 @@ class Readcd:
             minutes, remainder = divmod(size, 734003200 / 80)
             seconds = remainder * 4800 / 734003200.
             print('\n*** {0:s}: {1:4.2f} MB ({2:.0f} min {3:05.2f} sec) ***\n'.format(
-                  image, size/1048576, minutes, seconds))
+                image, size/1048576, minutes, seconds))
             if size > 681574400:
                 sys.stderr.write('**WARNING** This ISO image file does not fit onto '
                                  '650MB/74min CD media.\n')
                 sys.stderr.write('        ==> Please use 700MB/80min CD media instead.\n')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Readcd(options)
@@ -292,7 +306,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

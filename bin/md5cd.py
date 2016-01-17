@@ -16,27 +16,32 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         os.umask(int('077', 8))
 
-    def getDevice(self):
+    def get_device(self):
         """
         Return device location.
         """
         return self._args.device[0]
 
-    def getSpeed(self):
+    def get_speed(self):
         """
         Return CD speed.
         """
         return self._args.speed[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Calculate MD5 checksums for CD/DVD data disk.')
 
@@ -56,7 +61,10 @@ class Options:
                 sys.argv[0] + ': Cannot find "' + self._args.device[0] + '" CD/DVD device.')
 
 
-class Cdrom:
+class Cdrom(object):
+    """
+    CDROM class
+    """
 
     def __init__(self):
         self._devices = {}
@@ -84,29 +92,32 @@ class Cdrom:
         except IndexError:
             return ''
 
-    def getDevices(self):
+    def get_devices(self):
         """
         Return list of devices
         """
         return self._devices
 
 
-class Md5cd:
+class Md5cd(object):
+    """
+    Md5sum class
+    """
 
     def __init__(self, options):
-        device = options.getDevice()
+        device = options.get_device()
 
         if device == 'scan':
             self._scan()
         else:
-            self._cdspeed(device, options.getSpeed())
+            self._cdspeed(device, options.get_speed())
             self._md5tao(device)
 
     def _cdspeed(self, device, speed):
         cdspeed = syslib.Command('cdspeed', flags=[device], check=False)
-        if cdspeed.isFound():
+        if cdspeed.is_found():
             if speed:
-                cdspeed.setArgs([str(speed)])
+                cdspeed.set_args([str(speed)])
             # If CD/DVD spin speed change fails its okay
             cdspeed.run()
         elif speed:
@@ -117,28 +128,28 @@ class Md5cd:
         isoinfo = syslib.Command('isoinfo')
         nice = syslib.Command('nice', args=['-20'])
         tmpfile = os.sep + os.path.join(
-            'tmp', 'fprint-' + syslib.info.getUsername() + '.' + str(os.getpid()))
+            'tmp', 'fprint-' + syslib.info.get_username() + '.' + str(os.getpid()))
         dd = syslib.Command(
             'dd', args=['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + tmpfile])
         dd.run(mode='batch')
-        if dd.getError('Permission denied$'):
+        if dd.get_error('Permission denied$'):
             raise SystemExit(sys.argv[0] +
                              ': Cannot read from CD/DVD device. Please check permissions.')
         elif not os.path.isfile(tmpfile):
             raise SystemExit(sys.argv[0] + ': Cannot find CD/DVD media. Please check drive.')
 
-        isoinfo.setArgs(['-d', '-i', tmpfile])
+        isoinfo.set_args(['-d', '-i', tmpfile])
         isoinfo.run(filter='^Volume size is: ', mode='batch')
-        if not isoinfo.hasOutput():
+        if not isoinfo.has_output():
             raise SystemExit(sys.argv[0] +
                              ': Cannot find TOC on CD/DVD media. Disk not recognised.')
-        elif isoinfo.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.getExitcode()) +
-                             ' received from "' + isoinfo.getFile() + '".')
-        blocks = int(isoinfo.getOutput()[0].split()[-1])
+        elif isoinfo.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.get_exitcode()) +
+                             ' received from "' + isoinfo.get_file() + '".')
+        blocks = int(isoinfo.get_output()[0].split()[-1])
 
-        dd.setArgs(['if=' + device, 'bs=2048', 'count=' + str(blocks)])
-        dd.setWrapper(nice)
+        dd.set_args(['if=' + device, 'bs=2048', 'count=' + str(blocks)])
+        dd.set_wrapper(nice)
         child = dd.run(mode='child')
         child.stdin.close()
         size = 0
@@ -157,26 +168,29 @@ class Md5cd:
         time.sleep(1)
 
         eject = syslib.Command('eject', check=False)
-        if eject.isFound():
+        if eject.is_found():
             eject.run(mode='batch')
-            if eject.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(eject.getExitcode()) +
-                                 ' received from "' + eject.getFile() + '".')
+            if eject.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(eject.get_exitcode()) +
+                                 ' received from "' + eject.get_file() + '".')
 
     def _scan(self):
         cdrom = Cdrom()
         print('Scanning for CD/DVD devices...')
-        devices = cdrom.getDevices()
+        devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
             print('  {0:10s}  {1:s}'.format(key, value))
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Md5cd(options)
@@ -190,7 +204,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

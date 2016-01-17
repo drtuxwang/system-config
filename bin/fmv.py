@@ -15,31 +15,36 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getOverwriteFlag(self):
+    def get_overwrite_flag(self):
         """
         Return overwrite flag.
         """
         return self._args.overwriteFlag
 
-    def getSources(self):
+    def get_sources(self):
         """
         Return list of source files.
         """
         return self._args.sources
 
-    def getTarget(self):
+    def get_target(self):
         """
         Return target file or directory.
         """
         return self._args.target[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Move or rename files.')
 
         parser.add_argument('-f', dest='overwriteFlag', action='store_true',
@@ -53,20 +58,24 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Move:
+class Move(object):
+    """
+    Move class
+    """
 
     def __init__(self, options):
         self._options = options
-        if len(options.getSources()) > 1 or os.path.isdir(options.getTarget()):
+        if len(options.get_sources()) > 1 or os.path.isdir(options.get_target()):
             self._move()
         else:
-            self._rename(options.getSources()[0], options.getTarget())
+            self._rename(options.get_sources()[0], options.get_target())
 
     def _move(self):
-        if not os.path.isdir(self._options.getTarget()):
+        if not os.path.isdir(self._options.get_target()):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + self._options.getTarget() + '" target directory.')
-        for source in self._options.getSources():
+                sys.argv[0] + ': Cannot find "' + self._options.get_target() +
+                '" target directory.')
+        for source in self._options.get_sources():
             if os.path.isdir(source):
                 print('Moving "' + source + '" directory...')
             elif os.path.isfile(source):
@@ -74,12 +83,12 @@ class Move:
             else:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + source + '" source file or directory.')
-            target = os.path.join(self._options.getTarget(), os.path.basename(source))
+            target = os.path.join(self._options.get_target(), os.path.basename(source))
             if os.path.isdir(target):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot safely overwrite "' + target + '" target directory.')
             elif os.path.isfile(target):
-                if not self._options.getOverwriteFlag():
+                if not self._options.get_overwrite_flag():
                     raise SystemExit(
                         sys.argv[0] + ': Cannot safely overwrite "' + target + '" target file.')
             try:
@@ -128,13 +137,13 @@ class Move:
             raise SystemExit(
                 sys.argv[0] + ': Cannot safely overwrite "' + target + '" target directory.')
         elif os.path.isfile(target):
-            if not self._options.getOverwriteFlag():
+            if not self._options.get_overwrite_flag():
                 raise SystemExit(
                     sys.argv[0] + ': Cannot safely overwrite "' + target + '" target file.')
 
         try:
             # Workaround Windows rename bug
-            if syslib.info.getSystem() == 'windows' and os.path.isfile(target):
+            if syslib.info.get_system() == 'windows' and os.path.isfile(target):
                 os.remove(target)
             os.rename(source, target)
         except OSError:
@@ -144,12 +153,15 @@ class Move:
                 raise SystemExit(sys.argv[0] + ': Cannot rename "' + source + '" source file.')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Move(options)
@@ -163,7 +175,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -4,8 +4,8 @@ Shutdown X-windows
 """
 
 import argparse
+import glob
 import os
-import shutil
 import signal
 import sys
 
@@ -14,19 +14,24 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getForceFlag(self):
+    def get_force_flag(self):
         """
         Return force flag.
         """
         return self._args.forceFlag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Logout from X-windows desktop.')
 
         parser.add_argument('-force', dest='forceFlag', action='store_true',
@@ -35,10 +40,13 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Logout:
+class Logout(object):
+    """
+    Log out class
+    """
 
     def __init__(self, options):
-        self._forceFlag = options.getForceFlag()
+        self._force_flag = options.get_force_flag()
         self._pid = 0
         if 'SESSION_MANAGER' in os.environ:
             try:
@@ -47,7 +55,10 @@ class Logout:
                 pass
 
     def run(self):
-        if not self._forceFlag:
+        """
+        Start log out process
+        """
+        if not self._force_flag:
             try:
                 answer = input('Do you really want to logout of X-session? (y/n) [n] ')
                 if answer.lower() != 'y':
@@ -60,12 +71,15 @@ class Logout:
         syslib.Task().killpids([self._pid])
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Logout(options).run()
@@ -79,7 +93,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

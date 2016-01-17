@@ -13,19 +13,24 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._gitk = syslib.Command(os.path.join('bin', 'gitk'))
-        self._gitk.setArgs(args[1:])
+        self._gitk.set_args(args[1:])
 
         self._env = {}
         if os.name == 'nt':
             os.environ['PATH'] = os.path.join(os.environ['PATH'],
-                                              os.path.dirname(self._gitk.getFile()))
+                                              os.path.dirname(self._gitk.get_file()))
         else:
-            gitHome = os.path.dirname(os.path.dirname(self._gitk.getFile()))
+            gitHome = os.path.dirname(os.path.dirname(self._gitk.get_file()))
             if gitHome not in ('/usr', '/usr/local', '/opt/software'):
                 self._env['GIT_EXEC_PATH'] = os.path.join(gitHome, 'libexec', 'git-core')
                 self._env['GIT_TEMPLATE_DIR'] = os.path.join(gitHome, 'share',
@@ -33,13 +38,13 @@ class Options:
 
         self._config()
 
-    def getEnv(self):
+    def get_env(self):
         """
         Return dictionary of environments.
         """
         return self._env
 
-    def getGitk(self):
+    def get_gitk(self):
         """
         Return gitk Command class object.
         """
@@ -51,8 +56,8 @@ class Options:
             if not os.path.isfile(file):
                 try:
                     with open(file, 'w', newline='\n') as ofile:
-                        user = syslib.info.getUsername()
-                        host = syslib.info.getHostname()
+                        user = syslib.info.get_username()
+                        host = syslib.info.get_hostname()
                         print('[user]', file=ofile)
                         print('        name =', user, file=ofile)
                         print('        email =', user + '@' + host, file=ofile)
@@ -60,15 +65,18 @@ class Options:
                     pass
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getGitk().run(mode='exec', env=options.getEnv())
+            options.get_gitk().run(mode='exec', env=options.get_env())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -79,7 +87,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

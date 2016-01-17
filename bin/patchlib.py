@@ -12,8 +12,10 @@ import unittest.mock
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Patcher:
+
+class Patcher(object):
     """
     This class patches Python objects and class object generators.
 
@@ -41,7 +43,7 @@ class Patcher:
             print(sys.stderr.getvalue(), end='', file=sys.stderr)
             sys.stderr = self._stderr
 
-    def setDict(self, handle, dictionary):
+    def set_dict(self, handle, dictionary):
         """
         Patch dictionary value
 
@@ -52,7 +54,7 @@ class Patcher:
         patcher.start()
         self._testCase.addCleanup(patcher.stop)
 
-    def setFile(self, file, data):
+    def set_file(self, file, data):
         """
         Create temp file.
 
@@ -61,7 +63,7 @@ class Patcher:
         """
         Patch_File(self._testCase).create(file, data)
 
-    def setMethod(self, handle, method, mock=None):
+    def set_method(self, handle, method, mock=None):
         """
         Patch method of object or class object generator method
 
@@ -76,16 +78,16 @@ class Patcher:
         patcher.start()
         self._testCase.addCleanup(patcher.stop)
 
-    def setSystem(self, system):
+    def set_system(self, system):
         """
         Patch Python built-in objects to pretend to be another operating system.
 
         system = Operating System (ie 'linux', 'windows')
         """
-        Patch_os(self._testCase).setSystem(system)
+        Patch_os(self._testCase).set_system(system)
 
 
-class Patch_File:
+class Patch_File(object):
     """
     This class patches file system with a temp file.
 
@@ -118,7 +120,7 @@ class Patch_File:
             pass
 
 
-class Patch_os:
+class Patch_os(object):
     """
     This class patches Python built-in 'os' module objects.
 
@@ -131,7 +133,7 @@ class Patch_os:
         """
         self._testCase = testCase
 
-    def setSystem(self, system):
+    def set_system(self, system):
         """
         Patch Pythion built-in 'os' module object to pretend to be another operating system
 
@@ -162,7 +164,7 @@ class Patch_os:
         """
         return os.sep.join(args)
 
-    def _unsetSystem(self):
+    def _unset_system(self):
         if os.sep != self._os_sep:
             os.sep = self._os_sep
 

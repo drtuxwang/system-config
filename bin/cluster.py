@@ -17,29 +17,34 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._ssh = syslib.Command('ssh')
-        self._ssh.setFlags(['-o', 'StrictHostKeyChecking=no', '-o',
-                            'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes'])
+        self._ssh.set_flags(['-o', 'StrictHostKeyChecking=no', '-o',
+                             'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes'])
 
-    def getCommandLine(self):
+    def get_command_line(self):
         """
         Return command line.
         """
-        return self._args.command + self._commandArgs
+        return self._args.command + self._command_args
 
-    def getSsh(self):
+    def get_ssh(self):
         """
         Return ssh Command class object.
         """
         return self._ssh
 
-    def getSubnet(self):
+    def get_subnet(self):
         """
         Return subnet.
         """
@@ -47,25 +52,25 @@ class Options:
 
     def _getmyip(self):
         myip = ''
-        if syslib.info.getSystem() == 'linux':
+        if syslib.info.get_system() == 'linux':
             os.environ['LANG'] = 'en_GB'
             ifconfig = syslib.Command(file='/sbin/ifconfig', args=['-a'])
             ifconfig.run(filter=' inet addr[a-z]*:', mode='batch')
-            for line in ifconfig.getOutput():
+            for line in ifconfig.get_output():
                 myip = line.split(':')[1].split()[0]
                 if myip not in ('', '127.0.0.1'):
                     break
-        elif syslib.info.getSystem() == 'sunos':
+        elif syslib.info.get_system() == 'sunos':
             ifconfig = syslib.Command(file='/sbin/ifconfig', args=['-a'])
             ifconfig.run(filter='\tinet [^ ]+ netmask', mode='batch')
-            for line in ifconfig.getOutput():
+            for line in ifconfig.get_output():
                 myip = line.split()[1]
                 if myip not in ('', '127.0.0.1'):
                     break
         return myip
 
-    def _parseArgs(self, args):
-        issubnet = re.compile('^\d{1,3}[.]\d{1,3}[.]\d{1,3}[.]0$')
+    def _parse_args(self, args):
+        issubnet = re.compile(r'^\d{1,3}[.]\d{1,3}[.]\d{1,3}[.]0$')
 
         parser = argparse.ArgumentParser(description='Run command on a subnet in parallel.\n')
 
@@ -87,7 +92,7 @@ class Options:
 
         self._args = parser.parse_args(myArgs)
 
-        self._commandArgs = args[1:]
+        self._command_args = args[1:]
 
         if self._args.subnet and issubnet.match(self._args.subnet[0]):
             self._subnet = self._args.subnet[0]
@@ -99,6 +104,9 @@ class Options:
 
 
 class Remote(threading.Thread):
+    """
+    Remote class
+    """
 
     def __init__(self, options, ip):
         self._options = options
@@ -106,13 +114,13 @@ class Remote(threading.Thread):
         self._ip = ip
         self._output = ''
 
-    def getOutput(self):
+    def get_output(self):
         return self._output
 
     def run(self):
-        ssh = self._options.getSsh()
-        ssh.setArgs([self._ip] + ['echo "=== ' + self._ip + ': "`uname -s -n`" ==="; ' +
-                    ssh.args2cmd(self._options.getCommandLine())])
+        ssh = self._options.get_ssh()
+        ssh.set_args([self._ip] + ['echo "=== ' + self._ip + ': "`uname -s -n`" ==="; ' +
+                     ssh.args2cmd(self._options.get_command_line())])
         self._child = ssh.run(mode='child', error2output=True)
         self._child.stdin.close()
         while True:
@@ -127,11 +135,14 @@ class Remote(threading.Thread):
             self._child = None
 
 
-class Cluster:
+class Cluster(object):
+    """
+    Cluster class
+    """
 
     def __init__(self, options):
-        self._waitMax = 64
-        self._waitTime = 0.1
+        self._wait_max = 64
+        self._wait_time = 0.1
 
         self._options = options
         self._threads = []
@@ -140,7 +151,7 @@ class Cluster:
         self._output()
 
     def _allreduce(self):
-        print('\rAllreduce from subnet "' + self._options.getSubnet() + '.0"...')
+        print('\rAllreduce from subnet "' + self._options.get_subnet() + '.0"...')
         obytes = 0
         same = 0
         alive = True
@@ -149,25 +160,25 @@ class Cluster:
             bytes = 0
             alive = False
             for thread in self._threads:
-                bytes += len(thread.getOutput())
+                bytes += len(thread.get_output())
                 if thread.is_alive():
                     alive = True
             sys.stdout.write('\r  -> Received ' + str(bytes) + ' bytes...')
             sys.stdout.flush()
             if bytes == obytes:
                 same += 1
-                if same > self._waitMax:
+                if same > self._wait_max:
                     break
             else:
                 same = 0
                 obytes = bytes
-            time.sleep(self._waitTime)
+            time.sleep(self._wait_time)
         print()
 
     def _bcast(self):
-        print('Bcast to subnet "' + self._options.getSubnet() + '.0"...')
+        print('Bcast to subnet "' + self._options.get_subnet() + '.0"...')
         for host in range(1, 255):
-            ip = self._options.getSubnet() + '.' + str(host)
+            ip = self._options.get_subnet() + '.' + str(host)
             sys.stdout.write('\r  -> ' + str(ip) + '...')
             sys.stdout.flush()
             thread = Remote(self._options, ip)
@@ -179,20 +190,23 @@ class Cluster:
                              'Permission denied.|protocol failure in circuit setup', re.IGNORECASE)
 
         for thread in self._threads:
-            output = thread.getOutput()
+            output = thread.get_output()
             if output and not iserror.search(output):
-                print(thread.getOutput().rstrip('\r\n'))
+                print(thread.get_output().rstrip('\r\n'))
 
         for thread in self._threads:
             thread.kill()
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Cluster(options)
@@ -206,7 +220,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

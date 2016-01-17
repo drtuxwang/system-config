@@ -15,11 +15,16 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         if os.path.isfile('/usr/sbin/ping'):
             self._ping = syslib.Command(file='/usr/sbin/ping')
@@ -31,31 +36,31 @@ class Options:
         self._filter = 'min/avg/max'
 
         host = self._args.host[0]
-        if syslib.info.getSystem() == 'macos':
-            self._ping.setArgs(['-t', '4', '-c', '3', host])
-        elif syslib.info.getSystem() == 'linux':
-            self._ping.setArgs(['-w', '4', '-c', '3', host])
-        elif syslib.info.getSystem() == 'sunos':
-            self._ping.setArgs(['-s', host, '64', '3'])
+        if syslib.info.get_system() == 'macos':
+            self._ping.set_args(['-t', '4', '-c', '3', host])
+        elif syslib.info.get_system() == 'linux':
+            self._ping.set_args(['-w', '4', '-c', '3', host])
+        elif syslib.info.get_system() == 'sunos':
+            self._ping.set_args(['-s', host, '64', '3'])
         elif os.name == 'nt':
-            self._ping.setArgs(['-w', '4', '-n', '3', host])
+            self._ping.set_args(['-w', '4', '-n', '3', host])
             self._filter = 'Minimum|TTL'
         else:
-            self._ping.setArgs(['-w', '4', '-c', '3', host])
+            self._ping.set_args(['-w', '4', '-c', '3', host])
 
-    def getFilter(self):
+    def get_filter(self):
         """
         Return filter pattern.
         """
         return self._filter
 
-    def getPing(self):
+    def get_ping(self):
         """
         Return ping Command class object.
         """
         return self._ping
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Ping a host until a connection is made.')
 
         parser.add_argument('host', nargs=1, help='Host name or IP address.')
@@ -63,24 +68,30 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Ping:
+class Ping(object):
+    """
+    Ping class
+    """
 
     def __init__(self, options):
-        ping = options.getPing()
+        ping = options.get_ping()
         while True:
-            ping.run(filter=options.getFilter(), mode='batch')
-            if ping.hasOutput():
+            ping.run(filter=options.get_filter(), mode='batch')
+            if ping.has_output():
                 break
             time.sleep(5)
-        print(ping.getOutput()[-1].strip())
+        print(ping.get_output()[-1].strip())
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Ping(options)
@@ -94,7 +105,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

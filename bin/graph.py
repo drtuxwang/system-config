@@ -14,45 +14,50 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._gnuplot = syslib.Command('gnuplot')
 
-    def getFile(self):
+    def get_file(self):
         """
         Return file.
         """
         return self._args.file[0]
 
-    def getGnuplot(self):
+    def get_gnuplot(self):
         """
         Return gnuplot Command class object.
         """
         return self._gnuplot
 
-    def getMode(self):
+    def get_mode(self):
         """
         Return operation mode.
         """
         return self._args.mode
 
-    def getXcol(self):
+    def get_xcol(self):
         """
         Return X column.
         """
         return self._args.xcol[0]
 
-    def getXrange(self):
+    def get_xrange(self):
         """
         Return X range.
         """
         return self._xrange
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Generate multiple graph files with X/Y plots.')
 
@@ -76,14 +81,17 @@ class Options:
             self._xrange = ''
 
 
-class Graph:
+class Graph(object):
+    """
+    Graph class
+    """
 
     def __init__(self, options):
-        self._gnuplot = options.getGnuplot()
-        self._file = options.getFile()
-        self._mode = options.getMode()
-        self._xcol = options.getXcol()
-        self._xrange = options.getXrange()
+        self._gnuplot = options.get_gnuplot()
+        self._file = options.get_file()
+        self._mode = options.get_mode()
+        self._xcol = options.get_xcol()
+        self._xrange = options.get_xrange()
 
         self._labels(options)
         self._graph(options)
@@ -123,10 +131,10 @@ class Graph:
                 self._writefile(self._file + '_' + self._labels[column] + '.plt', stdin)
                 print('Plotting "' + output + '"...')
                 self._gnuplot.run(stdin=stdin)
-                if self._gnuplot.getExitcode():
+                if self._gnuplot.get_exitcode():
                     raise SystemExit(
-                        sys.argv[0] + ': Error code ' + str(self._gnuplot.getExitcode()) +
-                        ' received from "' + self._gnuplot.getFile() + '".')
+                        sys.argv[0] + ': Error code ' + str(self._gnuplot.get_exitcode()) +
+                        ' received from "' + self._gnuplot.get_file() + '".')
 
     def _writefile(self, file, lines):
         try:
@@ -138,12 +146,15 @@ class Graph:
         return 0
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Graph(options)
@@ -157,7 +168,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

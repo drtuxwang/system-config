@@ -18,19 +18,24 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getUrls(self):
+    def get_urls(self):
         """
         Return list of urls.
         """
         return self._args.urls
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Download http/https/ftp/file URLs.')
 
         parser.add_argument('urls', nargs='+', metavar='url', help='http/https/ftp/file URL.')
@@ -38,22 +43,25 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Download:
+class Download(object):
+    """
+    Download class
+    """
 
     def __init__(self, options):
         self._chunkSize = 131072
-        self._urls = options.getUrls()
+        self._urls = options.get_urls()
 
-    def _checkFile(self, file, size, mtime):
+    def _check_file(self, file, size, mtime):
         """
         Check existing file and return True if already downloaded.
         """
         fileStat = syslib.FileStat(file)
-        if fileStat.getSize() == size and fileStat.getTime() >= mtime:
+        if fileStat.get_size() == size and fileStat.get_time() >= mtime:
             return True
         return False
 
-    def _getFileStat(self, url, conn):
+    def _get_file_stat(self, url, conn):
         """
         url  = URL to download
         conn = http.client.HTTPResponse class object
@@ -81,7 +89,7 @@ class Download:
 
         return (file, size, mtime)
 
-    def _checkResume(self, file, data):
+    def _check_resume(self, file, data):
         """
         Return 'download', 'resume' or 'skip'
         """
@@ -91,7 +99,7 @@ class Download:
                 host = jsonData['fget']['lock']['host']
                 pid = jsonData['fget']['lock']['pid']
 
-                if host == syslib.info.getHostname() and syslib.Task().haspid(pid):
+                if host == syslib.info.get_hostname() and syslib.Task().haspid(pid):
                     return 'skip'
                 if jsonData['fget']['data'] == data:
                     return 'resume'
@@ -100,11 +108,11 @@ class Download:
 
         return 'download'
 
-    def _writeResume(self, file, data):
+    def _write_resume(self, file, data):
         jsonData = {
             'fget': {
                 'lock': {
-                    'host': syslib.info.getHostname(),
+                    'host': syslib.info.get_hostname(),
                     'pid': os.getpid()
                 },
                 'data': data
@@ -117,24 +125,24 @@ class Download:
         except IOError:
             pass
 
-    def _getUrl(self, url):
+    def _get_url(self, url):
         print(url)
 
         try:
             conn = urllib.request.urlopen(url)
-            file, size, mtime = self._getFileStat(url, conn)
-            if self._checkFile(file, size, mtime):
+            file, size, mtime = self._get_file_stat(url, conn)
+            if self._check_file(file, size, mtime):
                 print('  => {0:s} [{1:d}/{2:d}]'.format(file, size, size))
                 return
             tmpfile = file + '.part'
 
             data = {'size': size, 'time': int(mtime)}
-            check = self._checkResume(file, data)
+            check = self._check_resume(file, data)
 
             if check == 'skip':
                 return
             elif 'Accept-Ranges' in conn.info() and check == 'resume':
-                tmpsize = syslib.FileStat(file + '.part').getSize()
+                tmpsize = syslib.FileStat(file + '.part').get_size()
                 req = urllib.request.Request(url, headers={'Range': 'bytes='+str(tmpsize)+'-'})
                 conn = urllib.request.urlopen(req)
                 mode = 'ab'
@@ -142,7 +150,7 @@ class Download:
                 tmpsize = 0
                 mode = 'wb'
 
-            self._writeResume(file, data)
+            self._write_resume(file, data)
 
             try:
                 with open(tmpfile, mode) as ofile:
@@ -179,15 +187,18 @@ class Download:
 
     def run(self):
         for url in self._urls:
-            self._getUrl(url)
+            self._get_url(url)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Download(options).run()
@@ -201,7 +212,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

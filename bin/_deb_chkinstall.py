@@ -17,11 +17,16 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         listFile = self._args.listFile[0]
         ispattern = re.compile('[.]debs-?.*$')
@@ -29,25 +34,25 @@ class Options:
             raise SystemExit(sys.argv[0] + ': Invalid "' + listFile + '" installed list filename.')
         self._distribution = ispattern.sub('', listFile)
 
-    def getDistribution(self):
+    def get_distribution(self):
         """
         Return distribution name.
         """
         return self._distribution
 
-    def getListFile(self):
+    def get_list_file(self):
         """
         Return installed packages list file.
         """
         return self._args.listFile[0]
 
-    def getPackageNames(self):
+    def get_package_names(self):
         """
         Return list of package names.
         """
         return self._args.packageNames
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Check installation dependencies of packages against ".debs" list file.')
 
@@ -59,35 +64,38 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Package:
+class Package(object):
+    """
+    Package class
+    """
 
     def __init__(self, depends=[], url=''):
-        self._checkedFlag = False
-        self._installedFlag = False
+        self._checked_flag = False
+        self._installed_flag = False
         self._depends = depends
         self._url = url
 
-    def getCheckedFlag(self):
+    def get_checked_flag(self):
         """
         Return packaged checked flag.
         """
-        return self._checkedFlag
+        return self._checked_flag
 
-    def setCheckedFlag(self, checkedFlag):
+    def set_checked_flag(self, checkedFlag):
         """
         Set package checked flag.
 
         checkedFlag = Package checked flag
         """
-        self._checkedFlag = checkedFlag
+        self._checked_flag = checkedFlag
 
-    def getDepends(self):
+    def get_depends(self):
         """
         Return list of required dependent packages.
         """
         return self._depends
 
-    def setDepends(self, names):
+    def set_depends(self, names):
         """
         Set package dependency list.
 
@@ -95,27 +103,27 @@ class Package:
         """
         self._depends = names
 
-    def getInstalledFlag(self):
+    def get_installed_flag(self):
         """
         Return package installed flag.
         """
-        return self._installedFlag
+        return self._installed_flag
 
-    def setInstalledFlag(self, installedFlag):
+    def set_installed_flag(self, installedFlag):
         """
         Set package installed flag.
 
         installedFlag = Package installed flag
         """
-        self._installedFlag = installedFlag
+        self._installed_flag = installedFlag
 
-    def getUrl(self):
+    def get_url(self):
         """
         Return package url.
         """
         return self._url
 
-    def setUrl(self, url):
+    def set_url(self, url):
         """
         Set package url.
 
@@ -124,16 +132,19 @@ class Package:
         self._url = url
 
 
-class CheckInstall:
+class CheckInstall(object):
+    """
+    Check install class
+    """
 
     def __init__(self, options):
-        self._packages = self._readDistributionPackages(options.getDistribution() + '.packages')
-        self._readDistributionPinPackages(options.getDistribution() + '.pinlist')
-        self._readDistributionInstalled(options.getListFile())
-        self._checkDistributionInstall(options.getDistribution(), options.getListFile(),
-                                       options.getPackageNames())
+        self._packages = self._read_distribution_packages(options.get_distribution() + '.packages')
+        self._read_distribution_pin_packages(options.get_distribution() + '.pinlist')
+        self._read_distribution_installed(options.get_list_file())
+        self._check_distribution_install(
+            options.get_distribution(), options.get_list_file(), options.get_package_names())
 
-    def _readDistributionPackages(self, packagesFile):
+    def _read_distribution_packages(self, packagesFile):
         packages = {}
         name = ''
         package = Package()
@@ -147,16 +158,16 @@ class CheckInstall:
                         depends = []
                         for i in line.replace('Depends: ', '').split(', '):
                             depends.append(i.split()[0])
-                        package.setDepends(depends)
+                        package.set_depends(depends)
                     elif line.startswith('Filename: '):
-                        package.setUrl(line[10:])
+                        package.set_url(line[10:])
                         packages[name] = package
                         package = Package()
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot open "' + packagesFile + '" packages file.')
         return packages
 
-    def _readDistributionPinPackages(self, pinFile):
+    def _read_distribution_pin_packages(self, pinFile):
         packagesCache = {}
         try:
             with open(pinFile, errors='replace') as ifile:
@@ -167,7 +178,7 @@ class CheckInstall:
                         if pattern[:1] != '#':
                             file = os.path.join(os.path.dirname(pinFile), columns[1]) + '.packages'
                             if file not in packagesCache:
-                                packagesCache[file] = self._readDistributionPackages(file)
+                                packagesCache[file] = self._read_distribution_packages(file)
                             try:
                                 ispattern = re.compile(
                                     pattern.replace('?', '.').replace('*', '.*')+'$')
@@ -179,7 +190,7 @@ class CheckInstall:
         except IOError:
             pass
 
-    def _readDistributionInstalled(self, installedFile):
+    def _read_distribution_installed(self, installedFile):
         try:
             with open(installedFile, errors='replace') as ifile:
                 for line in ifile:
@@ -187,35 +198,35 @@ class CheckInstall:
                     name = columns[0]
                     if name[:1] != '#':
                         if name in self._packages:
-                            self._packages[name].setInstalledFlag(True)
+                            self._packages[name].set_installed_flag(True)
         except IOError:
             return
 
-    def _checkPackageInstall(self, distribution, ofile, indent, name):
+    def _check_package_install(self, distribution, ofile, indent, name):
         if name in self._packages:
-            self._packages[name].setCheckedFlag(True)
-            if self._packages[name].getInstalledFlag():
-                print(indent + self._packages[name].getUrl(), '[Installed]')
+            self._packages[name].set_checked_flag(True)
+            if self._packages[name].get_installed_flag():
+                print(indent + self._packages[name].get_url(), '[Installed]')
             else:
-                file = self._local(distribution, self._packages[name].getUrl())
+                file = self._local(distribution, self._packages[name].get_url())
                 print(indent + file)
                 print(indent + file, file=ofile)
-            for i in self._packages[name].getDepends():
+            for i in self._packages[name].get_depends():
                 if i in self._packages:
-                    if self._packages[i].getInstalledFlag():
-                        print(indent + '  ' + self._packages[i].getUrl(), '[Installed]')
-                    elif self._packages[i].getCheckedFlag():
-                        print(indent + '  ' + self._packages[i].getUrl())
-                    elif not self._packages[name].getInstalledFlag():
-                        self._checkPackageInstall(distribution, ofile, indent + '  ', i)
+                    if self._packages[i].get_installed_flag():
+                        print(indent + '  ' + self._packages[i].get_url(), '[Installed]')
+                    elif self._packages[i].get_checked_flag():
+                        print(indent + '  ' + self._packages[i].get_url())
+                    elif not self._packages[name].get_installed_flag():
+                        self._check_package_install(distribution, ofile, indent + '  ', i)
 
-    def _checkDistributionInstall(self, distribution, listFile, names):
+    def _check_distribution_install(self, distribution, listFile, names):
         urlfile = os.path.basename(distribution) + listFile.split('.debs')[-1] + '.url'
         try:
             with open(urlfile, 'w', newline='\n') as ofile:
                 indent = ''
                 for i in names:
-                    self._checkPackageInstall(distribution, ofile, indent, i)
+                    self._check_package_install(distribution, ofile, indent, i)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot create "' + urlfile + '" file.')
         if os.path.getsize(urlfile) == 0:
@@ -228,12 +239,15 @@ class CheckInstall:
         return url
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             CheckInstall(options)
@@ -247,7 +261,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

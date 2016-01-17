@@ -14,11 +14,16 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         if os.path.isfile('/usr/bin/vim'):
             self._editor = syslib.Command(file='/usr/bin/vim', flags=['-N', '-n', '-u', 'NONE'])
@@ -26,25 +31,25 @@ class Options:
             self._editor = syslib.Command('vi')
         self._speller = syslib.Command('fspell')
 
-    def getEditor(self):
+    def get_editor(self):
         """
         Return editor Command class object.
         """
         return self._editor
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getSpeller(self):
+    def get_speller(self):
         """
         Return speller Command class object.
         """
         return self._speller
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Edit multiple files.')
 
         parser.add_argument('files', nargs='+', metavar='file', help='File to edit.')
@@ -52,12 +57,15 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Edit:
+class Edit(object):
+    """
+    Edit class
+    """
 
     def __init__(self, options):
         self._options = options
-        files = options.getFiles()
-        speller = options.getSpeller()
+        files = options.get_files()
+        speller = options.get_speller()
 
         self._edit(files[0])
 
@@ -71,7 +79,7 @@ class Edit:
             elif answer.startswith('q'):
                 break
             elif answer.startswith('s'):
-                speller.setArgs(files[:1])
+                speller.set_args(files[:1])
                 speller.run()
                 try:
                     os.remove(files[0]+'.bak')
@@ -79,20 +87,23 @@ class Edit:
                     pass
 
     def _edit(self, file):
-        self._options.getEditor().setArgs([file])
-        sys.stdout.write('\033]0;' + syslib.info.getHostname() + ':' +
+        self._options.get_editor().set_args([file])
+        sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':' +
                          os.path.abspath(file) + '\007')
         sys.stdout.flush()
-        self._options.getEditor().run()
-        sys.stdout.write('\033]0;' + syslib.info.getHostname() + ':' + os.getcwd() + '\007')
+        self._options.get_editor().run()
+        sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':' + os.getcwd() + '\007')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Edit(options)
@@ -106,7 +117,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -7,7 +7,6 @@ import argparse
 import glob
 import os
 import re
-import shutil
 import signal
 import sys
 import textwrap
@@ -18,43 +17,48 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getChars(self):
+    def get_chars(self):
         """
         Return characters per line.
         """
         return self._args.chars[0]
 
-    def getArchive(self):
+    def get_archive(self):
         """
         Return PDF archive file.
         """
         return self._archive
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._files
 
-    def getPages(self):
+    def get_pages(self):
         """
         Return pages per page.
         """
         return self._args.pages[0]
 
-    def getPaper(self):
+    def get_paper(self):
         """
         Return paper size.
         """
         return self._args.paper[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Create PDF file from text/images/postscript/PDF files.')
 
@@ -88,30 +92,33 @@ class Options:
             self._files = self._args.files
 
 
-class Encode:
+class Encode(object):
+    """
+    Encode class
+    """
 
     def __init__(self, options):
-        tmpfile = (os.sep + os.path.join('tmp', 'pdf-' + syslib.info.getUsername() + '.' +
+        tmpfile = (os.sep + os.path.join('tmp', 'pdf-' + syslib.info.get_username() + '.' +
                                                 str(os.getpid())) + '-')
         self._tempfiles = []
-        if options.getPages() != 1:
-            self._psnup = syslib.Command('psnup', args=['-p' + options.getPaper(), '-m5',
-                                         '-' + str(options.getPages())])
+        if options.get_pages() != 1:
+            self._psnup = syslib.Command('psnup', args=['-p' + options.get_paper(), '-m5',
+                                         '-' + str(options.get_pages())])
         gs = syslib.Command('gs')
-        gs.setFlags(['-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pdfwrite',
-                     '-sPAPERSIZE=' + options.getPaper().lower()])
-        gs.setArgs(['-sOutputFile=' + options.getArchive(), '-c', '.setpdfwrite'])
+        gs.set_flags(['-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pdfwrite',
+                     '-sPAPERSIZE=' + options.get_paper().lower()])
+        gs.set_args(['-sOutputFile=' + options.get_archive(), '-c', '.setpdfwrite'])
 
-        for file in options.getFiles():
+        for file in options.get_files():
             print('Packing', file)
-            if not options.getArchive():
-                gs.setArgs([
+            if not options.get_archive():
+                gs.set_args([
                     '-sOutputFile=' + file.rsplit('.', 1)[0] + '.pdf', '-c', '.setpdfwrite'])
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
             ext = file.split('.')[-1].lower()
             if ext == 'pdf':
-                gs.extendArgs(['-f', file])
+                gs.extend_args(['-f', file])
             else:
                 self._tmpfile = tmpfile + str(len(self._tempfiles) + 1)
                 if ext in ('bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff'):
@@ -122,10 +129,10 @@ class Encode:
                 else:
                     self._text(options, file)
                 self._tempfiles.append(self._tmpfile)
-                gs.extendArgs(['-f', self._tmpfile])
-            if not options.getArchive():
+                gs.extend_args(['-f', self._tmpfile])
+            if not options.get_archive():
                 gs.run()
-        if options.getArchive():
+        if options.get_archive():
             gs.run()
 
     def __del__(self):
@@ -141,25 +148,25 @@ class Encode:
         # Imagemagick low quality method A4 = 595x842, rotate/resize to 545x790 and add 20x20 border
         tmpfile = self._tmpfile + '.png'
 
-        self._convert.setArgs(['-verbose', file, '/dev/null'])
+        self._convert.set_args(['-verbose', file, '/dev/null'])
         self._convert.run(filter='^' + file + ' ', mode='batch', error2output=True)
-        if not self._convert.hasOutput():
+        if not self._convert.has_output():
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" image file.')
-        x, y = self._convert.getOutput()[0].split('+')[0].split()[-1].split('x')
+        x, y = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
         if int(x) > int(y):
-            self._convert.setArgs(['-page', 'a4', '-rotate', '90', file, 'ps:' + self._tmpfile])
+            self._convert.set_args(['-page', 'a4', '-rotate', '90', file, 'ps:' + self._tmpfile])
         else:
-            self._convert.setArgs(['-page', 'a4', file, 'ps:' + self._tmpfile])
+            self._convert.set_args(['-page', 'a4', file, 'ps:' + self._tmpfile])
         self._convert.run(mode='batch')
-        if self._convert.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._convert.getExitcode()) +
-                             ' received from "' + self._convert.getFile() + '".')
+        if self._convert.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._convert.get_exitcode()) +
+                             ' received from "' + self._convert.get_file() + '".')
         return 'IMAGE file "' + file + '"'
 
     def _postscript(self, options, file):
         try:
             with open(file, 'rb') as ifile:
-                if options.getPages() == 1:
+                if options.get_pages() == 1:
                     try:
                         with open(self._tmpfile, 'wb') as ofile:
                             for line in ifile:
@@ -167,24 +174,24 @@ class Encode:
                     except IOError:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' + self._tmpfile +
                                          '" temporary file.')
-                    self._postscriptFix(self._tmpfile)
+                    self._postscript_fix(self._tmpfile)
                     return 'Postscript file "' + file + '"'
                 else:
                     stdin = []
                     for line in ifile:
                         stdin.append(line.rstrip('\r\n' + chr(4)) + '\n')
                     self._psnup.run(mode='batch', stdin=stdin, outputFile=self._tmpfile)
-                    if self._psnup.getExitcode():
+                    if self._psnup.get_exitcode():
                         raise SystemExit(
-                            sys.argv[0] + ': Error code ' + str(self._psnup.getExitcode()) +
-                            ' received from "' + self._psnup.getFile() + '".')
-                    self._postscriptFix(self._tmpfile)
-                    return ('Postscript file "' + file + '" with ' + str(options.getPages()) +
+                            sys.argv[0] + ': Error code ' + str(self._psnup.get_exitcode()) +
+                            ' received from "' + self._psnup.get_file() + '".')
+                    self._postscript_fix(self._tmpfile)
+                    return ('Postscript file "' + file + '" with ' + str(options.get_pages()) +
                             ' pages per page')
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" postscript file.')
 
-    def _postscriptFix(self, file):
+    def _postscript_fix(self, file):
         scaling = None
         try:
             with open(self._tmpfile, errors='replace') as ifile:
@@ -216,12 +223,12 @@ class Encode:
         if not hasattr(self, '_a2ps'):
             self._a2ps = syslib.Command('a2ps')
             self._a2ps = syslib.Command('a2ps')
-            self._a2ps.setFlags([
+            self._a2ps.set_flags([
                 '--media=A4', '--columns=1', '--header=', '--left-footer=', '--footer=',
                 '--right-footer=', '--output=-', '--highlight-level=none', '--quiet'])
-        chars = options.getChars()
+        chars = options.get_chars()
 
-        self._a2ps.setArgs([
+        self._a2ps.set_args([
             '--portrait', '--chars-per-line=' + str(chars), '--left-title=' +
             time.strftime('%Y-%m-%d-%H:%M:%S'), '--center-title=' + os.path.basename(file)])
 
@@ -239,27 +246,30 @@ class Encode:
                         stdin.extend(lines)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" text file.')
-        if options.getPages() == 1:
+        if options.get_pages() == 1:
             self._a2ps.run(mode='batch', stdin=stdin, outputFile=self._tmpfile)
-            if self._a2ps.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(self._a2ps.getExitcode()) +
-                                 ' received from "' + self._a2ps.getFile() + '".')
+            if self._a2ps.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(self._a2ps.get_exitcode()) +
+                                 ' received from "' + self._a2ps.get_file() + '".')
             return 'text file "' + file + '" with ' + str(chars) + ' columns'
         else:
             self._a2ps.run(mode='batch', pipes=[self._psnup], stdin=stdin, outputFile=self._tmpfile)
-            if self._a2ps.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(self._a2ps.getExitcode()) +
-                                 ' received from "' + self._a2ps.getFile() + '".')
+            if self._a2ps.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(self._a2ps.get_exitcode()) +
+                                 ' received from "' + self._a2ps.get_file() + '".')
             return ('text file "' + file + '" with ' + str(chars) + ' columns and ' +
-                    str(options.getPages()) + ' pages per page')
+                    str(options.get_pages()) + ' pages per page')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Encode(options)
@@ -273,7 +283,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

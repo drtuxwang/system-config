@@ -14,23 +14,28 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._aspell = syslib.Command('aspell')
-        self._aspell.setFlags(['-c'])
-        self._aspell.setArgs(self._args.files)
+        self._aspell.set_flags(['-c'])
+        self._aspell.set_args(self._args.files)
 
-    def getAspell(self):
+    def get_aspell(self):
         """
         Return aspell Command class object.
         """
         return self._aspell
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Check spelling of file.')
 
         parser.add_argument('files', nargs='+', metavar='file', help='File to spell check.')
@@ -38,15 +43,18 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getAspell().run(mode='exec')
+            options.get_aspell().run(mode='exec')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -57,7 +65,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

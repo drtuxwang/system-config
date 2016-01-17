@@ -12,32 +12,40 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._path = os.environ['PATH']
 
-    def getPath(self):
+    def get_path(self):
         """
         Return search path.
         """
         return self._path
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Check PATH and return correct settings.')
 
         self._args = parser.parse_args(args)
 
 
-class Chkpath:
+class Chkpath(object):
+    """
+    Check path class
+    """
 
     def __init__(self, options):
         path = []
         print()
-        for directory in options.getPath().split(os.pathsep):
+        for directory in options.get_path().split(os.pathsep):
             if directory:
                 if not os.path.isdir(directory):
                     print(directory + ': fail')
@@ -50,12 +58,15 @@ class Chkpath:
         print(os.pathsep.join(path))
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Chkpath(options)
@@ -69,7 +80,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

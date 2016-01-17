@@ -16,31 +16,36 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getShuffleFlag(self):
+    def get_shuffle_flag(self):
         """
         Return shuffle flag.
         """
         return self._args.shuffleFlag
 
-    def getViewFlag(self):
+    def get_view_flag(self):
         """
         Return view flag.
         """
         return self._args.viewFlag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Play multimedia file/URL.')
 
         parser.add_argument('-s', dest='shuffleFlag', action='store_true',
@@ -53,18 +58,21 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Play:
+class Play(object):
+    """
+    Play class
+    """
 
     def __init__(self, options):
         self._options = options
 
     def run(self):
-        files = self._options.getFiles()
+        files = self._options.get_files()
 
-        if self._options.getViewFlag():
+        if self._options.get_view_flag():
             self._view(files)
         else:
-            if self._options.getShuffleFlag():
+            if self._options.get_shuffle_flag():
                 random.shuffle(files)
             self._play(files)
 
@@ -75,9 +83,9 @@ class Play:
                        ': Failed to resize display|: call to |: Locale not supported |'
                        'fallback "C" locale|^xdg-screensaver:|: cannot estimate delay:|'
                        'Failed to open VDPAU backend ')
-        if vlc.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(vlc.getExitcode()) +
-                             ' received from "' + vlc.getFile() + '".')
+        if vlc.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(vlc.get_exitcode()) +
+                             ' received from "' + vlc.get_file() + '".')
 
     def _view(self, files):
         for file in files:
@@ -85,7 +93,10 @@ class Play:
                 Media(file).print()
 
 
-class Media:
+class Media(object):
+    """
+    Media class
+    """
 
     def __init__(self, file):
         self._file = file
@@ -98,7 +109,7 @@ class Media:
 
         isjunk = re.compile('^ *Stream #[^ ]*: ')
         try:
-            for line in ffprobe.getOutput():
+            for line in ffprobe.get_output():
                 if line.strip().startswith('Duration:'):
                     self._length = line.replace(',', '').split()[1]
                 elif line.strip().startswith('Stream #0'):
@@ -109,32 +120,32 @@ class Media:
         except IndexError:
             raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
 
-    def getStream(self):
+    def get_stream(self):
         for key, value in sorted(self._stream.items()):
             yield (key, value)
 
-    def getType(self):
+    def get_type(self):
         return self._type
 
-    def hasAudio(self):
+    def has_audio(self):
         for value in self._stream.values():
             if value.startswith('Audio: '):
                 return True
         return False
 
-    def hasAudioCodec(self, codec):
+    def has_audio_codec(self, codec):
         for value in self._stream.values():
             if value.startswith('Audio: ' + codec):
                 return True
         return False
 
-    def hasVideo(self):
+    def has_video(self):
         for value in self._stream.values():
             if value.startswith('Video: '):
                 return True
         return False
 
-    def hasVideoCodec(self, codec):
+    def has_video_codec(self, codec):
         for value in self._stream.values():
             if value.startswith('Video: ' + codec):
                 return True
@@ -146,17 +157,20 @@ class Media:
     def print(self):
         if self.isvalid():
             print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
-                  str(syslib.FileStat(self._file).getSize()) + ' bytes')
-            for stream, information in self.getStream():
+                  str(syslib.FileStat(self._file).get_size()) + ' bytes')
+            for stream, information in self.get_stream():
                 print(self._file + '[' + str(stream) + '] =', information)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Play(options).run()
@@ -170,7 +184,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

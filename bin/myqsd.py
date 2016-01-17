@@ -12,41 +12,46 @@ import time
 
 import syslib
 
-RELEASE = '2.6.4'
+RELEASE = '2.7.0'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._release = RELEASE
 
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._myqsdir = os.path.join(os.environ['HOME'], '.config', 'myqs',
-                                     syslib.info.getHostname())
+                                     syslib.info.get_hostname())
 
-    def getDaemonFlag(self):
+    def get_daemon_flag(self):
         """
         Return daemon flag.
         """
         return self._args.daemonFlag
 
-    def getMyqsdir(self):
+    def get_myqsdir(self):
         """
         Return myqs directory.
         """
         return self._myqsdir
 
-    def getSlots(self):
+    def get_slots(self):
         """
         Return CPU core slots.
         """
         return self._args.slots[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='MyQS v' + self._release + ', My Queuing System batch scheduler daemon.')
 
@@ -63,7 +68,10 @@ class Options:
                              'the number of slots.')
 
 
-class Lock:
+class Lock(object):
+    """
+    Lock class
+    """
 
     def __init__(self, file):
         self._file = file
@@ -78,9 +86,15 @@ class Lock:
             pass
 
     def check(self):
+        """
+        Return True if lock exists
+        """
         return syslib.Task().haspid(self._pid)
 
     def create(self):
+        """
+        Create lock file
+        """
         try:
             with open(self._file, 'w', newline='\n') as ofile:
                 print(os.getpid(), file=ofile)
@@ -91,7 +105,7 @@ class Lock:
         try:
             with open(self._file, errors='replace') as ifile:
                 try:
-                    pid = int(ifile.readline().strip())
+                    int(ifile.readline().strip())
                 except (IOError, ValueError):
                     raise SystemExit(0)
                 else:
@@ -101,6 +115,9 @@ class Lock:
             return
 
     def remove(self):
+        """
+        Remove lock file
+        """
         syslib.Task().killpids([self._pid])
         try:
             os.remove(self._file)
@@ -108,20 +125,23 @@ class Lock:
             raise SystemExit(sys.argv[0] + ': Cannot remove "' + self._file + '" lock file.')
 
 
-class Daemon:
+class Daemon(object):
+    """
+    Daemon class
+    """
 
     def __init__(self, options):
-        self._myqsdir = options.getMyqsdir()
-        self._slots = options.getSlots()
+        self._myqsdir = options.get_myqsdir()
+        self._slots = options.get_slots()
 
         if 'HOME' not in os.environ:
             raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
-        if options.getDaemonFlag():
-            self._schedulerDaemon(options)
+        if options.get_daemon_flag():
+            self._scheduler_daemon()
         else:
-            self._startDaemon(options)
+            self._start_daemon()
 
-    def _restart(self, options):
+    def _restart(self):
         for file in sorted(glob.glob(os.path.join(self._myqsdir, '*.r')),
                            key=lambda s: os.path.basename(s)[-2]):
             try:
@@ -144,7 +164,7 @@ class Daemon:
                           '" being requeued after system restart...')
                     os.rename(file, file[:-2] + '.q')
 
-    def _scheduleJob(self, options):
+    def _schedule_job(self):
         running = 0
         for file in glob.glob(os.path.join(self._myqsdir, '*.r')):
             try:
@@ -169,46 +189,49 @@ class Daemon:
                 except ValueError:
                     pass
 
-        free = self._slots - running
-        if free > 0:
-            for queue in ('express', 'normal'):
-                for file in sorted(glob.glob(os.path.join(self._myqsdir, '*.q')),
-                                   key=lambda s: int(os.path.basename(s)[:-2])):
-                    try:
-                        with open(file, errors='replace') as ifile:
-                            info = {}
-                            for line in ifile:
-                                line = line.strip()
-                                if '=' in line:
-                                    info[line.split('=')[0]] = line.split('=', 1)[1]
-                    except IOError:
-                        continue
-                    if 'QUEUE' in info:
-                        if info['QUEUE'] == queue:
-                            if 'NCPUS' in info:
-                                if free >= int(info['NCPUS']):
-                                    jobid = os.path.basename(file)[:-2]
-                                    if os.path.isdir(info['DIRECTORY']):
-                                        logfile = os.path.join(info['DIRECTORY'], os.path.basename(
-                                            info['COMMAND']) + '.o' + jobid)
-                                    else:
-                                        logfile = os.path.join(os.environ['HOME'], os.path.basename(
-                                            info['COMMAND']) + '.o' + jobid)
-                                    try:
-                                        os.rename(file, file[:-2] + '.r')
-                                    except OSError:
-                                        continue
-                                    myqexec = syslib.Command('myqexec', args=['-jobid', jobid])
-                                    myqexec.run(logfile=logfile, mode='daemon')
-                                    return
+        free_slots = self._slots - running
+        if free_slots > 0:
+            self._attempt(free_slots)
 
-    def _schedulerDaemon(self, options):
+    def _attempt(self, free_slots):
+        for queue in ('express', 'normal'):
+            for file in sorted(glob.glob(os.path.join(self._myqsdir, '*.q')),
+                               key=lambda s: int(os.path.basename(s)[:-2])):
+                try:
+                    with open(file, errors='replace') as ifile:
+                        info = {}
+                        for line in ifile:
+                            line = line.strip()
+                            if '=' in line:
+                                info[line.split('=')[0]] = line.split('=', 1)[1]
+                except IOError:
+                    continue
+                if 'QUEUE' in info:
+                    if info['QUEUE'] == queue:
+                        if 'NCPUS' in info:
+                            if free_slots >= int(info['NCPUS']):
+                                jobid = os.path.basename(file)[:-2]
+                                if os.path.isdir(info['DIRECTORY']):
+                                    logfile = os.path.join(info['DIRECTORY'], os.path.basename(
+                                        info['COMMAND']) + '.o' + jobid)
+                                else:
+                                    logfile = os.path.join(os.environ['HOME'], os.path.basename(
+                                        info['COMMAND']) + '.o' + jobid)
+                                try:
+                                    os.rename(file, file[:-2] + '.r')
+                                except OSError:
+                                    continue
+                                myqexec = syslib.Command('myqexec', args=['-jobid', jobid])
+                                myqexec.run(logfile=logfile, mode='daemon')
+                                return
+
+    def _scheduler_daemon(self):
         Lock(os.path.join(self._myqsdir, 'myqsd.pid')).create()
         while True:
-            self._scheduleJob(options)
+            self._schedule_job()
             time.sleep(2)
 
-    def _startDaemon(self, options):
+    def _start_daemon(self):
         if not os.path.isdir(self._myqsdir):
             try:
                 os.makedirs(self._myqsdir)
@@ -220,18 +243,21 @@ class Daemon:
             print('Stopping MyQS batch job scheduler...')
             lock.remove()
         else:
-            self._restart(options)
+            self._restart()
         print('Starting MyQS batch job scheduler...')
         myqsd = syslib.Command(file=__file__, args=['-daemon', str(self._slots)])
         myqsd.run(mode='daemon')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Daemon(options)
@@ -245,7 +271,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

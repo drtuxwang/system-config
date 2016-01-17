@@ -12,57 +12,50 @@ import time
 
 import syslib
 
-RELEASE = '2.6.4'
+RELEASE = '2.7.0'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._release = RELEASE
 
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getRelease(self):
+    def get_release(self):
         """
         Return release version.
         """
         return self._release
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='MyQS v' + self._release + ', My Queuing System batch job submission.')
 
         self._args = parser.parse_args(args)
 
 
-class Sorter:
-
-    def __init__(self, x, *args):
-        self._x = x
-
-    def __cmp__(self, y):
-        cmp = int(x.split('/')[-1][:-2]) - int(y.split('/')[-1][:-2])
-        if cmp > 0:
-            return 1
-        elif cmp < 0:
-            return -1
-        else:
-            return 0
-
-
-class Stats:
+class Stats(object):
+    """
+    Stats class
+    """
 
     def __init__(self, options):
-        hostname = syslib.info.getHostname()
-        print('\nMyQS', options.getRelease(),
+        hostname = syslib.info.get_hostname()
+        print('\nMyQS', options.get_release(),
               ', My Queuing System batch job statistics on HOST "' + hostname + '".\n')
         if 'HOME' not in os.environ:
             raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
         self._myqsdir = os.path.join(os.environ['HOME'], '.config',
-                                     'myqs', syslib.info.getHostname())
+                                     'myqs', syslib.info.get_hostname())
         self._showjobs()
         self._myqsd()
 
@@ -109,47 +102,53 @@ class Stats:
                     info[line.strip().split('=')[0]] = line.split('=', 1)[1]
             ifile.close()
             if 'NCPUS' in info:
-                output = []
-                if 'START' in info:
-                    try:
-                        etime = str(int((time.time()-float(info['START']))/60.))
-                        pgid = int(info['PGID'])
-                    except ValueError:
-                        etime = '0'
-                    else:
-                        if syslib.Task().haspgid(pgid):
-                            if os.path.isdir(info['DIRECTORY']):
-                                logfile = os.path.join(
-                                    info['DIRECTORY'], os.path.basename(info['COMMAND']) +
-                                    '.o' + str(jobid))
-                            else:
-                                logfile = os.path.join(
-                                    os.environ['HOME'], os.path.basename(info['COMMAND']) +
-                                    '.o' + str(jobid))
-                            try:
-                                with open(logfile, errors='replace') as ifile:
-                                    output = []
-                                    for line in ifile:
-                                        output = (output + [line.rstrip()])[-5:]
-                            except IOError:
-                                pass
-                        else:
-                            state = 'STOP'
-                else:
-                    etime = '-'
-                print('{0:5d}  {1:9s}  {2:42s}  {3:>3s}   {4:5s} {5:>5s}'.format(
-                      jobid, info['QUEUE'], info['COMMAND'], info['NCPUS'], state, etime))
-                for line in output:
-                    print(line)
+                self._show_details(info, jobid, state)
         print()
 
+    def _show_details(self, info, jobid, state):
+        output = []
+        if 'START' in info:
+            try:
+                etime = str(int((time.time()-float(info['START']))/60.))
+                pgid = int(info['PGID'])
+            except ValueError:
+                etime = '0'
+            else:
+                if syslib.Task().haspgid(pgid):
+                    if os.path.isdir(info['DIRECTORY']):
+                        logfile = os.path.join(
+                            info['DIRECTORY'], os.path.basename(info['COMMAND']) +
+                            '.o' + str(jobid))
+                    else:
+                        logfile = os.path.join(
+                            os.environ['HOME'], os.path.basename(info['COMMAND']) +
+                            '.o' + str(jobid))
+                    try:
+                        with open(logfile, errors='replace') as ifile:
+                            output = []
+                            for line in ifile:
+                                output = (output + [line.rstrip()])[-5:]
+                    except IOError:
+                        pass
+                else:
+                    state = 'STOP'
+        else:
+            etime = '-'
+        print('{0:5d}  {1:9s}  {2:42s}  {3:>3s}   {4:5s} {5:>5s}'.format(
+            jobid, info['QUEUE'], info['COMMAND'], info['NCPUS'], state, etime))
+        for line in output:
+            print(line)
 
-class Main:
+
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Stats(options)
@@ -163,7 +162,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

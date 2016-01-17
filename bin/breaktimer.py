@@ -15,15 +15,20 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         if self._args.guiFlag:
             xterm = syslib.Command('xterm')
-            xterm.setArgs([
+            xterm.set_args([
                 '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', '#000000',
                 '-bg', '#ffffdd', '-cr', '#880000', '-geometry', '15x3', '-ut', '+sb',
                 '-e', sys.argv[0]] + args[2:])
@@ -32,19 +37,19 @@ class Options:
 
         self._setpop()
 
-    def getPop(self):
+    def get_pop(self):
         """
         Return pop Command class object.
         """
         return self._pop
 
-    def getTime(self):
+    def get_time(self):
         """
         Return time limit.
         """
         return self._args.time[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Break reminder timer.')
 
         parser.add_argument('-g', dest='guiFlag', action='store_true', help='Start GUI.')
@@ -59,15 +64,18 @@ class Options:
 
     def _setpop(self):
         self._pop = syslib.Command('notify-send')
-        self._pop.setFlags(['-t', '10000'])  # 10 seconds display time
+        self._pop.set_flags(['-t', '10000'])  # 10 seconds display time
 
 
-class StopWatch:
+class StopWatch(object):
+    """
+    Stop watch class
+    """
 
     def __init__(self, options):
         self._options = options
         self._bell = syslib.Command('bell')
-        self._limit = options.getTime() * 60
+        self._limit = options.get_time() * 60
         self._reset()
 
     def run(self):
@@ -91,9 +99,9 @@ class StopWatch:
             sys.stdout.write('\033]11;#ff8888\007')
             sys.stdout.flush()
             self._bell.run(mode='batch')  # Avoids defunct process
-            self._options.getPop().setArgs([time.strftime('%H:%M') + ': break time reminder'])
+            self._options.get_pop().set_args([time.strftime('%H:%M') + ': break time reminder'])
             # Avoids defunct process
-            self._options.getPop().run(mode='batch')
+            self._options.get_pop().run(mode='batch')
         self._alarm += 60  # One minute reminder
 
     def _reset(self):
@@ -102,12 +110,15 @@ class StopWatch:
         self._start = int(time.time())
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             StopWatch(options).run()
@@ -121,7 +132,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

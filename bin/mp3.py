@@ -15,75 +15,80 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-        self._audioCodec = 'libmp3lame'
+        self._audio_codec = 'libmp3lame'
 
-    def getAudioCodec(self):
+    def get_audio_codec(self):
         """
         Return audio codec.
         """
-        return self._audioCodec
+        return self._audio_codec
 
-    def getAudioQuality(self):
+    def get_audio_quality(self):
         """
         Return audio quality.
         """
         return self._args.audioQuality[0]
 
-    def getAudioVolume(self):
+    def get_audio_volume(self):
         """
         Return audio volume.
         """
         return self._args.audioVolume[0]
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._files
 
-    def getFileNew(self):
+    def get_file_new(self):
         """
         Return new file location.
         """
-        return self._fileNew
+        return self._file_new
 
-    def getFlags(self):
+    def get_flags(self):
         """
         Return extra flags
         """
         return self._args.flags
 
-    def getNoskipFlag(self):
+    def get_noskip_flag(self):
         """
         Return noskip flag.
         """
         return self._args.noskipFlag
 
-    def getRunTime(self):
+    def get_run_time(self):
         """
         Return run time.
         """
         return self._args.runTime[0]
 
-    def getStartTime(self):
+    def get_start_time(self):
         """
         Return start time.
         """
         return self._args.startTime[0]
 
-    def getThreads(self):
+    def get_threads(self):
         """
         Return threads.
         """
         return self._args.threads[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Encode MP3 audio using ffmpeg (libmp3lame).')
 
@@ -109,74 +114,77 @@ class Options:
         self._args = parser.parse_args(args)
 
         if self._args.files[0].endswith('.mp3'):
-            self._fileNew = self._args.files[0]
+            self._file_new = self._args.files[0]
             self._files = self._args.files[1:]
-            if self._fileNew in self._args.files[1:]:
+            if self._file_new in self._args.files[1:]:
                 raise SystemExit(sys.argv[0] + ': The input and output files must be different.')
         else:
-            self._fileNew = ''
+            self._file_new = ''
             self._files = self._args.files
 
 
-class Encoder:
+class Encoder(object):
+    """
+    Encoder class
+    """
 
     def __init__(self, options):
         self._options = options
-        self._ffmpeg = syslib.Command('ffmpeg', flags=options.getFlags())
+        self._ffmpeg = syslib.Command('ffmpeg', flags=options.get_flags())
 
     def run(self):
-        if self._options.getFileNew():
+        if self._options.get_file_new():
             print()
-            self._config(self._options.getFiles()[0])
-            if len(self._options.getFiles()) > 1:
+            self._config(self._options.get_files()[0])
+            if len(self._options.get_files()) > 1:
                 args = []
                 maps = ''
                 number = 0
-                for file in self._options.getFiles():
+                for file in self._options.get_files():
                     media = Media(file)
                     args.extend(['-i', file])
-                    for stream, information in media.getStreamAudio():
+                    for stream, information in media.get_stream_audio():
                         maps += '[' + str(number) + ':' + str(stream) + '] '
                     number += 1
-                self._ffmpeg.setArgs(args + [
+                self._ffmpeg.set_args(args + [
                     '-filter_complex', maps + 'concat=n=' + str(number) + ':v=0:a=1 [out]',
-                    '-map', '[out]'] + self._ffmpeg.getArgs()[2:])
-            self._ffmpeg.extendArgs(['-f', 'mp3', '-y', self._options.getFileNew()])
+                    '-map', '[out]'] + self._ffmpeg.get_args()[2:])
+            self._ffmpeg.extend_args(['-f', 'mp3', '-y', self._options.get_file_new()])
             self._run()
-            Media(self._options.getFileNew()).print()
+            Media(self._options.get_file_new()).print()
         else:
-            for file in self._options.getFiles():
+            for file in self._options.get_files():
                 if not file.endswith('.mp3'):
                     print()
                     self._config(file)
                     fileNew = file.rsplit('.', 1)[0] + '.mp3'
-                    self._ffmpeg.extendArgs(['-f', 'mp3', '-y', fileNew])
+                    self._ffmpeg.extend_args(['-f', 'mp3', '-y', fileNew])
                     self._run()
                     Media(fileNew).print()
 
     def _config(self, file):
         media = Media(file)
-        self._ffmpeg.setArgs(['-i', file])
+        self._ffmpeg.set_args(['-i', file])
         if media.hasAudio:
-            if (not media.hasAudioCodec('mp3') or self._options.getAudioQuality() or
-                    self._options.getAudioVolume() or self._options.getNoskipFlag() or
-                    len(self._options.getFiles()) > 1):
-                self._ffmpeg.extendArgs(['-c:a', self._options.getAudioCodec()])
-                if self._options.getAudioQuality():
-                    self._ffmpeg.extendArgs(['-b:a', self._options.getAudioQuality() + 'K'])
+            if (not media.has_audio_codec('mp3') or self._options.get_audio_quality() or
+                    self._options.get_audio_volume() or self._options.get_noskip_flag() or
+                    len(self._options.get_files()) > 1):
+                self._ffmpeg.extend_args(['-c:a', self._options.get_audio_codec()])
+                if self._options.get_audio_quality():
+                    self._ffmpeg.extend_args(['-b:a', self._options.get_audio_quality() + 'K'])
                 else:
-                    self._ffmpeg.extendArgs(['-b:a', '128K'])
-                if self._options.getAudioVolume():
-                    self._ffmpeg.extendArgs([
-                        '-af', 'volume=' + self._options.getAudioVolume() + 'dB'])
+                    self._ffmpeg.extend_args(['-b:a', '128K'])
+                if self._options.get_audio_volume():
+                    self._ffmpeg.extend_args([
+                        '-af', 'volume=' + self._options.get_audio_volume() + 'dB'])
             else:
-                self._ffmpeg.extendArgs(['-c:a', 'copy'])
-        if self._options.getStartTime():
-            self._ffmpeg.extendArgs(['-ss', self._options.getStartTime()])
-        if self._options.getRunTime():
-            self._ffmpeg.extendArgs(['-t', self._options.getRunTime()])
-        self._ffmpeg.extendArgs([
-            '-vn', '-threads', self._options.getThreads()] + self._options.getFlags())
+                self._ffmpeg.extend_args(['-c:a', 'copy'])
+        if self._options.get_start_time():
+            self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
+        if self._options.get_run_time():
+            self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
+        self._ffmpeg.extend_args([
+            '-vn', '-threads', self._options.get_threads()] + self._options.get_flags())
         return media
 
     def _run(self):
@@ -185,7 +193,7 @@ class Encoder:
         ispattern = re.compile(
             '^$| version |^ *(built |configuration:|lib|Metadata:|Duration:|compatible_brands:|'
             'Stream|concat:|Program|service|lastkeyframe)|^(In|Out)put | : |^Press|^Truncating|'
-            'bitstream (filter|malformed)|Buffer queue|buffer underflow|message repeated|^\[|'
+            r'bitstream (filter|malformed)|Buffer queue|buffer underflow|message repeated|^\[|'
             'p11-kit:|^Codec AVOption threads')
         init = False
 
@@ -210,7 +218,10 @@ class Encoder:
             sys.exit(exitcode)
 
 
-class Media:
+class Media(object):
+    """
+    Media class
+    """
 
     def __init__(self, file):
         self._file = file
@@ -222,7 +233,7 @@ class Media:
         number = 0
         isjunk = re.compile('^ *Stream #[^ ]*: ')
         try:
-            for line in ffprobe.getOutput():
+            for line in ffprobe.get_output():
                 if line.strip().startswith('Duration:'):
                     self._length = line.replace(',', '').split()[1]
                 elif line.strip().startswith('Stream #0'):
@@ -236,59 +247,62 @@ class Media:
     def print(self):
         if self.isvalid():
             print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
-                  str(syslib.FileStat(self._file).getSize()) + ' bytes')
-            for stream, information in self.getStream():
+                  str(syslib.FileStat(self._file).get_size()) + ' bytes')
+            for stream, information in self.get_stream():
                 print(self._file + '[' + str(stream) + '] =', information)
 
     def isvalid(self):
         return self._type != 'Unknown'
 
-    def getDuration(self):
+    def get_duration(self):
         return self._duration
 
-    def getStream(self):
+    def get_stream(self):
         for key, value in sorted(self._stream.items()):
             yield (key, value)
 
-    def getStreamAudio(self):
+    def get_stream_audio(self):
         for key, value in sorted(self._stream.items()):
             if value.startswith('Audio: '):
                 yield (key, value)
 
-    def getType(self):
+    def get_type(self):
         return self._type
 
-    def hasAudio(self):
+    def has_audio(self):
         for value in self._stream.values():
             if value.startswith('Audio: '):
                 return True
         return False
 
-    def hasAudioCodec(self, codec):
+    def has_audio_codec(self, codec):
         for value in self._stream.values():
             if value.startswith('Audio: ' + codec):
                 return True
         return False
 
-    def hasVideo(self):
+    def has_video(self):
         for value in self._stream.values():
             if value.startswith('Video: '):
                 return True
         return False
 
-    def hasVideoCodec(self, codec):
+    def has_video_codec(self, codec):
         for value in self._stream.values():
             if value.startswith('Video: ' + codec):
                 return True
         return False
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Encoder(options).run()
@@ -302,7 +316,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

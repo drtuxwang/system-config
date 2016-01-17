@@ -15,31 +15,36 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFile(self):
+    def get_file(self):
         """
         Return list of file.
         """
         return self._args.file[0]
 
-    def getModuleArgs(self):
+    def get_module_args(self):
         """
         Return module args.
         """
-        return self._moduleArgs
+        return self._module_args
 
-    def getLines(self):
+    def get_lines(self):
         """
         Return number of lines.
         """
         return self._args.lines[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Profile Python 3.x program.')
 
         parser.add_argument('-n', nargs=1, type=int, dest='lines', default=[20],
@@ -60,23 +65,26 @@ class Options:
 
         self._args = parser.parse_args(myArgs)
 
-        self._moduleArgs = args[1:]
+        self._module_args = args[1:]
 
 
-class Profiler:
+class Profiler(object):
+    """
+    Profiler class
+    """
 
     def __init__(self, options):
         self._options = options
 
     def run(self):
-        file = self._options.getFile()
+        file = self._options.get_file()
 
         if not file.endswith('.pstats'):
             if not file.endswith('.py'):
                 file = file + '.py'
-            file = self._profile(file, self._options.getModuleArgs())
+            file = self._profile(file, self._options.get_module_args())
 
-        self._show(file, self._options.getLines())
+        self._show(file, self._options.get_lines())
 
     def _profile(self, moduleFile, moduleArgs):
         statsFile = os.path.basename(moduleFile.rsplit('.', 1)[0] + '.pstats')
@@ -87,7 +95,7 @@ class Profiler:
                 raise SystemExit(sys.argv[0] + ': Cannot remove old "' + statsFile + '" file.')
 
         python3 = syslib.Command(file=sys.executable)
-        python3.setArgs(['-m', 'cProfile', '-o', statsFile])
+        python3.set_args(['-m', 'cProfile', '-o', statsFile])
 
         if os.path.isfile(moduleFile):
             command = syslib.Command(file=moduleFile)
@@ -96,11 +104,11 @@ class Profiler:
                 command = syslib.Command(moduleFile)
             except syslib.SyslibError:
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + moduleFile + '" module file')
-        command.setArgs(moduleArgs)
-        command.setWrapper(python3)
+        command.set_args(moduleArgs)
+        command.set_wrapper(python3)
         command.run()
 
-        print('pyprof:', command.args2cmd([command.getFile()] + moduleArgs))
+        print('pyprof:', command.args2cmd([command.get_file()] + moduleArgs))
         return statsFile
 
     def _show(self, statsFile, lines):
@@ -112,12 +120,15 @@ class Profiler:
         stats.strip_dirs().sort_stats('tottime', 'cumtime').print_stats(lines)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Profiler(options).run()
@@ -131,7 +142,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

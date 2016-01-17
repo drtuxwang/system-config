@@ -14,11 +14,16 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._pacmd = syslib.Command('pacmd')
 
@@ -31,24 +36,24 @@ class Options:
             volume = 10
         else:
             volume = self._getvol()
-        self._pacmd.setArgs(['set-sink-volume', '0', '0x{0:X}'.format(volume * 0x1000)])
+        self._pacmd.set_args(['set-sink-volume', '0', '0x{0:X}'.format(volume * 0x1000)])
 
-    def getPacmd(self):
+    def get_pacmd(self):
         """
         Return pacmd Command class object.
         """
         return self._pacmd
 
     def _getvol(self):
-        self._pacmd.setArgs(['dump'])
+        self._pacmd.set_args(['dump'])
         self._pacmd.run(filter='^set-sink-volume', mode='batch')
         try:
             # From 0 - 15
-            return int(int(self._pacmd.getOutput()[0].split()[2], 16) / 0x1000)
+            return int(int(self._pacmd.get_output()[0].split()[2], 16) / 0x1000)
         except (IndexError, ValueError):
             raise SystemExit(sys.argv[0] + ': Cannot detect current Pulseaudio volume.')
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Desktop audio volume utility.')
 
         parser.add_argument('-dec', action='store_const', const='-', dest='change',
@@ -61,15 +66,18 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getPacmd().run(mode='exec')
+            options.get_pacmd().run(mode='exec')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -80,7 +88,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -15,34 +15,39 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         command = self._args.command[0]
         if os.path.isfile(command):
-            self._command = syslib.Command(file=os.path.abspath(command), args=self._commandArgs)
+            self._command = syslib.Command(file=os.path.abspath(command), args=self._command_args)
         else:
             file = os.path.join(os.path.dirname(args[0]), command)
             if os.path.isfile(file):
-                self._command = syslib.Command(file=file, args=self._commandArgs)
+                self._command = syslib.Command(file=file, args=self._command_args)
             else:
-                self._command = syslib.Command(command, args=self._commandArgs)
+                self._command = syslib.Command(command, args=self._command_args)
 
         shaper = Shaper(self._args.drate[0])
-        if not shaper.getFile():
+        if not shaper.get_file():
             raise SystemExit(sys.argv[0] + ': Cannot find "trickle" command.')
-        self._command.setWrapper(shaper)
+        self._command.set_wrapper(shaper)
 
-    def getCommand(self):
+    def get_command(self):
         """
         Return command Command class object.
         """
         return self._command
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Run a command with limited network bandwidth.')
 
@@ -69,10 +74,13 @@ class Options:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
                              'download rate limit.')
 
-        self._commandArgs = args[len(myArgs):]
+        self._command_args = args[len(myArgs):]
 
 
 class Shaper(syslib.Command):
+    """
+    Sharper class
+    """
 
     def __init__(self, drate=None):
         super().__init__('trickle', check=False)
@@ -86,11 +94,11 @@ class Shaper(syslib.Command):
         if drate:
             self._drate = drate
 
-        self.setRate(self._drate)
+        self.set_rate(self._drate)
 
-    def setRate(self, drate):
+    def set_rate(self, drate):
         self._drate = drate
-        self.setArgs(['-d', str(self._drate), '-s'])
+        self.set_args(['-d', str(self._drate), '-s'])
 
     def _load(self, file):
         if os.path.isfile(file):
@@ -118,15 +126,18 @@ class Shaper(syslib.Command):
             pass
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getCommand().run()
+            options.get_command().run()
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -137,7 +148,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

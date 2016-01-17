@@ -14,25 +14,30 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getForceFlag(self):
+    def get_force_flag(self):
         """
         Return force flag.
         """
         return self._args.forceFlag
 
-    def getKeyword(self):
+    def get_keyword(self):
         """
         Return process ID or keyword.
         """
         return self._args.task[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Kill tasks by process ID or name.')
 
         parser.add_argument('-f', dest='forceFlag', action='store_true',
@@ -43,7 +48,10 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Kill:
+class Kill(object):
+    """
+    Kill class
+    """
 
     def __init__(self, options):
         pids = self._filter(options)
@@ -51,7 +59,7 @@ class Kill:
 
     def _filter(self, options):
         task = syslib.Task()
-        keyword = options.getKeyword()
+        keyword = options.get_keyword()
         if keyword.isdigit():
             if task.haspid(int(keyword)):
                 pids = [int(keyword)]
@@ -62,7 +70,7 @@ class Kill:
 
         print('RUSER      PID  PPID  PGID PRI  NI TTY      MEMORY  CPUTIME     ELAPSED COMMAND')
         for pid in pids:
-            process = task.getProcess(pid)
+            process = task.get_process(pid)
             print('{0:8s} {1:5d} {2:5d} {3:5d} {4:>3s} {5:>3s} {6:7s} {7:7d} {8:>8s} '
                   '{9:>11s} {10:s}'.format(
                       process['USER'].split()[0], pid, process['PPID'],
@@ -74,14 +82,14 @@ class Kill:
     def _ykill(self, options, pids):
         task = syslib.Task()
         mypid = os.getpid()
-        apids = task.getAncestorPids(mypid)
+        apids = task.get_ancestor_pids(mypid)
         for pid in pids:
             if pid == mypid:
                 print('Process', pid, 'is my own process ID')
             elif pid in apids:
                 print('Process', pid, 'is my ancestor process')
             else:
-                if not options.getForceFlag():
+                if not options.get_force_flag():
                     answer = input('Kill process ' + str(pid) + ' (y/n): ')
                     if answer not in ('y', 'Y'):
                         continue
@@ -89,12 +97,15 @@ class Kill:
                 print('Process', pid, 'killed')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Kill(options)
@@ -108,7 +119,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

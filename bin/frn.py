@@ -13,31 +13,36 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getPattern(self):
+    def get_pattern(self):
         """
         Return regular expression pattern.
         """
         return self._args.pattern[0]
 
-    def getReplacement(self):
+    def get_replacement(self):
         """
         Return replacement.
         """
         return self._args.replacement[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Rename file/directory by replacing some characters.')
 
@@ -48,25 +53,28 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Rename:
+class Rename(object):
+    """
+    Rename class
+    """
 
     def __init__(self, options):
         try:
-            self._isMatch = re.compile(options.getPattern())
+            self._is_match = re.compile(options.get_pattern())
         except re.error:
             raise SystemExit(sys.argv[0] + ': Invalid regular expression "' +
-                             options.getPattern() + '".')
+                             options.get_pattern() + '".')
 
-        self._replacement = options.getReplacement()
-        self._files = options.getFiles()
+        self._replacement = options.get_replacement()
+        self._files = options.get_files()
 
     def run(self):
         for file in self._files:
             if os.sep in file:
-                newfile = os.path.join(os.path.dirname(file),
-                                       self._isMatch.sub(self._replacement, os.path.basename(file)))
+                newfile = os.path.join(os.path.dirname(file), self._is_match.sub(
+                    self._replacement, os.path.basename(file)))
             else:
-                newfile = self._isMatch.sub(self._replacement, file)
+                newfile = self._is_match.sub(self._replacement, file)
             if newfile != file:
                 print('Renaming "' + file + '" to "' + newfile + '"...')
                 if os.path.isfile(newfile):
@@ -78,12 +86,15 @@ class Rename:
                     raise SystemExit(sys.argv[0] + ': Cannot rename to "' + newfile + '" file.')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Rename(options).run()
@@ -97,7 +108,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

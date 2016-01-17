@@ -14,38 +14,43 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._rpm2cpio = syslib.Command('rpm2cpio')
         self._cpio = syslib.Command('cpio')
         if self._args.viewFlag:
-            self._cpio.setArgs(['-idmt', '--no-absolute-filenames'])
+            self._cpio.set_args(['-idmt', '--no-absolute-filenames'])
         else:
-            self._cpio.setArgs(['-idmv', '--no-absolute-filenames'])
+            self._cpio.set_args(['-idmv', '--no-absolute-filenames'])
 
-    def getArchives(self):
+    def get_archives(self):
         """
         Return list of archive files.
         """
         return self._args.archives
 
-    def getCpio(self):
+    def get_cpio(self):
         """
         Return cpio Command class object.
         """
         return self._cpio
 
-    def getRpm2cpio(self):
+    def get_rpm2cpio(self):
         """
         Return rpm2cpio Command class object.
         """
         return self._rpm2cpio
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Unpack a compressed archive in RPM format.')
 
         parser.add_argument('-v', dest='viewFlag', action='store_true',
@@ -57,30 +62,36 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Unpack:
+class Unpack(object):
+    """
+    Unpack class
+    """
 
     def __init__(self, options):
         os.umask(int('022', 8))
-        cpio = options.getCpio()
-        rpm2cpio = options.getRpm2cpio()
+        cpio = options.get_cpio()
+        rpm2cpio = options.get_rpm2cpio()
 
-        for archive in options.getArchives():
+        for archive in options.get_archives():
             if not os.path.isfile(archive):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + archive + '" archive file.')
             print(archive + ':')
-            rpm2cpio.setArgs([archive])
+            rpm2cpio.set_args([archive])
             rpm2cpio.run(pipes=[cpio])
-            if rpm2cpio.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(rpm2cpio.getExitcode()) +
-                                 ' received from "' + rpm2cpio.getFile() + '".')
+            if rpm2cpio.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(rpm2cpio.get_exitcode()) +
+                                 ' received from "' + rpm2cpio.get_file() + '".')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Unpack(options)
@@ -94,7 +105,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

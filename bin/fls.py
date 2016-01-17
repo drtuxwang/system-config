@@ -14,37 +14,42 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._files
 
-    def getOrder(self):
+    def get_order(self):
         """
         Return display order.
         """
         return self._args.order
 
-    def getRecursiveFlag(self):
+    def get_recursive_flag(self):
         """
         Return recursive flag.
         """
         return self._args.recursiveFlag
 
-    def getReverseFlag(self):
+    def get_reverse_flag(self):
         """
         Return reverse flag.
         """
         return self._args.reverseFlag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Show full list of files.')
 
         parser.add_argument('-R', dest='recursiveFlag', action='store_true',
@@ -68,10 +73,13 @@ class Options:
             self._files = sorted(os.listdir())
 
 
-class List:
+class List(object):
+    """
+    List class
+    """
 
     def __init__(self, options):
-        self._list(options, options.getFiles())
+        self._list(options, options.get_files())
 
     def _list(self, options, files):
         fileStats = []
@@ -83,33 +91,36 @@ class List:
             elif os.path.isfile(file):
                 fileStats.append(syslib.FileStat(file))
         for fileStat in self._sorted(options, fileStats):
-            print('{0:10d} [{1:s}] {2:s}'.format(fileStat.getSize(), fileStat.getTimeLocal(),
-                                                 fileStat.getFile()))
-            if options.getRecursiveFlag() and fileStat.getFile().endswith(os.sep):
-                self._list(options, sorted(glob.glob(fileStat.getFile() + '.*') +
-                           glob.glob(fileStat.getFile() + '*')))
+            print('{0:10d} [{1:s}] {2:s}'.format(fileStat.get_size(), fileStat.get_time_local(),
+                                                 fileStat.get_file()))
+            if options.get_recursive_flag() and fileStat.get_file().endswith(os.sep):
+                self._list(options, sorted(glob.glob(fileStat.get_file() + '.*') +
+                           glob.glob(fileStat.get_file() + '*')))
         return
 
     def _sorted(self, options, fileStats):
-        order = options.getOrder()
+        order = options.get_order()
         if order == 'ctime':
-            fileStats = sorted(fileStats, key=lambda s: s.getTimeCreate())
+            fileStats = sorted(fileStats, key=lambda s: s.get_time_create())
         elif order == 'mtime':
-            fileStats = sorted(fileStats, key=lambda s: s.getTime())
+            fileStats = sorted(fileStats, key=lambda s: s.get_time())
         elif order == 'size':
-            fileStats = sorted(fileStats, key=lambda s: s.getSize())
-        if options.getReverseFlag():
+            fileStats = sorted(fileStats, key=lambda s: s.get_size())
+        if options.get_reverse_flag():
             return reversed(fileStats)
         else:
             return fileStats
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             List(options)
@@ -123,7 +134,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

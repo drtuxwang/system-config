@@ -15,38 +15,43 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-        self._domainName = ''
+        self._domain_name = ''
         if 'HOME' in os.environ:
             try:
                 with open(os.path.join(os.environ['HOME'], '.address'), errors='replace') as ifile:
-                    self._domainName = ifile.readline().strip().split('@')[-1]
+                    self._domain_name = ifile.readline().strip().split('@')[-1]
             except IOError:
                 pass
-        if not self._domainName:
+        if not self._domain_name:
             domainName = syslib.Command('domainname')
             domainName.run(mode='batch')
-            if domainName.hasOutput():
-                self._domainName = domainName.getOutput()[0]
+            if domainName.has_output():
+                self._domain_name = domainName.get_output()[0]
 
-    def getAliases(self):
+    def get_aliases(self):
         """
         Return list of aliases.
         """
         return self._args.aliases
 
-    def getDomainName(self):
+    def get_domain_name(self):
         """
         Return domain name.
         """
-        return self._domainName
+        return self._domain_name
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Look up mail aliases in ".mailrc" file.')
 
         parser.add_argument('aliases', nargs='+', metavar='alias', help='E-mail alias.')
@@ -54,7 +59,10 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Address:
+class Address(object):
+    """
+    Address class
+    """
 
     def __init__(self):
         self._names = []
@@ -91,15 +99,18 @@ class Address:
         print(','.join(addresses))
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            Address().match(options.getDomainName(), options.getAliases())
+            Address().match(options.get_domain_name(), options.get_aliases())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -110,7 +121,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

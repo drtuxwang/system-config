@@ -13,23 +13,28 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._audacity = syslib.Command('audacity')
-        self._audacity.setArgs(args[1:])
+        self._audacity.set_args(args[1:])
         self._filter = ('^$|^HCK OnTimer|: Gtk-WARNING | LIBDBUSMENU-GLIB-WARNING |'
                         '^ALSA lib |alsa.c|^Cannot connect to server socket|^jack server')
         self._config()
 
-    def getAudacity(self):
+    def get_audacity(self):
         """
         Return audacity Command class object.
         """
         return self._audacity
 
-    def getFilter(self):
+    def get_filter(self):
         """
         Return filter pattern.
         """
@@ -52,15 +57,18 @@ class Options:
                             print('RecordingDevice=ALSA: pulse', file=ofile)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getAudacity().run(filter=options.getFilter(), mode='background')
+            options.get_audacity().run(filter=options.get_filter(), mode='background')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -71,7 +79,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

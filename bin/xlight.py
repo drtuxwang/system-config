@@ -14,33 +14,38 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-        self._backlight = self._getBacklight()
+        self._backlight = self._get_backlight()
 
-    def getChange(self):
+    def get_change(self):
         """
         Return change.
         """
         return self._args.change
 
-    def getBacklight(self):
+    def get_backlight(self):
         """
         Return BacklightXXX class object.
         """
         return self._backlight
 
-    def _getBacklight(self):
+    def _get_backlight(self):
         for backlight in (BacklightIntel(), BacklightIntelSetpci(), BacklightXrandr()):
             if backlight.detect():
                 return backlight
         raise SystemExit(sys.argv[0] + ": Cannot detect backlight device.")
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Desktop screen backlight utility.')
 
         parser.add_argument('-dec', action='store_const', const='-', dest='change',
@@ -53,18 +58,21 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Backlight:
+class Backlight(object):
+    """
+    Backlight class
+    """
 
     def __init__(self):
-        self._device = self._getDevice()
-        self._max = self.getBrightnessMax()
-        self._default = self.getBrightnessDefault()
-        self._step = self.getBrightnessStep()
+        self._device = self._get_device()
+        self._max = self.get_brightness_max()
+        self._default = self.get_brightness_default()
+        self._step = self.get_brightness_step()
 
     def detect(self):
         file = os.path.join(self._device, 'brightness')
         if os.path.isfile(file):
-            if syslib.info.getUsername() != 'root':
+            if syslib.info.get_username() != 'root':
                 try:
                     os.chmod(file, int('666', 8))
                 except OSError:
@@ -72,10 +80,10 @@ class Backlight:
             return True
         return False
 
-    def _getDevice(self):
+    def _get_device(self):
         return '/sys/class/backlight/acpi_video0'
 
-    def getBrightness(self):
+    def get_brightness(self):
         try:
             with open(os.path.join(self._device, 'brightness'), errors='replace') as ifile:
                 brightness = int(ifile.readline())
@@ -83,10 +91,10 @@ class Backlight:
             brightness = 0
         return brightness
 
-    def getBrightnessDefault(self):
+    def get_brightness_default(self):
         return int(self._max / 8)
 
-    def getBrightnessMax(self):
+    def get_brightness_max(self):
         try:
             with open(os.path.join(self._device, 'max_brightness'), errors='replace') as ifile:
                 brightness = int(ifile.readline())
@@ -94,10 +102,10 @@ class Backlight:
             brightness = 0
         return brightness
 
-    def getBrightnessStep(self):
+    def get_brightness_step(self):
         return int(self._max / 24)
 
-    def setBrightness(self, brightness):
+    def set_brightness(self, brightness):
         try:
             with open(os.path.join(self._device, 'brightness'), 'w', newline='\n') as ofile:
                 print(brightness, file=ofile)
@@ -107,111 +115,123 @@ class Backlight:
     def run(self, change):
         if change:
             if change == '+':
-                brightness = min(self.getBrightness() + self._step, self._max)
+                brightness = min(self.get_brightness() + self._step, self._max)
             elif change == '-':
-                brightness = max(self.getBrightness()-self._step, 0)
+                brightness = max(self.get_brightness()-self._step, 0)
             elif change == '=':
                 brightness = self._default
-            self.setBrightness(brightness)
+            self.set_brightness(brightness)
         else:
-            print('{0:3.1f} / {1:3.1f}'.format(float(self.getBrightness() + 0.01),
+            print('{0:3.1f} / {1:3.1f}'.format(float(self.get_brightness() + 0.01),
                                                float(self._max + 0.01)))
 
 
 class BacklightIntel(Backlight):
+    """
+    Backlight intel class
+    """
 
-    def _getDevice(self):
+    def _get_device(self):
         return '/sys/class/backlight/intel_backlight'
 
 
 class BacklightIntelSetpci(Backlight):
+    """
+    Backlight Intel (setpci) class
+    """
 
     def detect(self):
         lspci = syslib.Command('lspci', check=False)
-        if lspci.isFound():
+        if lspci.is_found():
             lspci.run(filter='VGA.*Intel.*Atom', mode='batch')
-            if lspci.hasOutput():
+            if lspci.has_output():
                 self._setpci = syslib.Command(
-                    'setpci', flags=['-s', lspci.getOutput()[0].split()[0]])
+                    'setpci', flags=['-s', lspci.get_output()[0].split()[0]])
                 return True
         return False
 
-    def _getDevice(self):
+    def _get_device(self):
         return None
 
-    def getBrightness(self):
-        if syslib.info.getUsername() != 'root':
-            self._setpci.setWrapper(syslib.Command('sudo'))
-        self._setpci.setArgs(['F4.B'])
+    def get_brightness(self):
+        if syslib.info.get_username() != 'root':
+            self._setpci.set_wrapper(syslib.Command('sudo'))
+        self._setpci.set_args(['F4.B'])
         self._setpci.run(mode='batch')
         try:
-            return int(int(self._setpci.getOutput()[0], 16) / 16)  # From 0 - 15
+            return int(int(self._setpci.get_output()[0], 16) / 16)  # From 0 - 15
         except (IndexError, ValueError):
             raise SystemExit(sys.argv[0] + ': Cannot detect current brightness setting.')
 
-    def getBrightnessDefault(self):
+    def get_brightness_default(self):
         return 3
 
-    def getBrightnessMax(self):
+    def get_brightness_max(self):
         return 15
 
-    def getBrightnessStep(self):
+    def get_brightness_step(self):
         return 1
 
-    def setBrightness(self, brightness):
-        self._setpci.setArgs(['F4.B={0:x}'.format(brightness*16 + 15)])
+    def set_brightness(self, brightness):
+        self._setpci.set_args(['F4.B={0:x}'.format(brightness*16 + 15)])
         self._setpci.run(mode='exec')
 
 
 class BacklightXrandr(Backlight):
+    """
+    Backlight xrandr class
+    """
 
     def detect(self):
         self._xrandr = syslib.Command('xrandr', check=False)
-        if self._xrandr.isFound():
+        if self._xrandr.is_found():
             self._xrandr.run(mode='batch')
             self._screens = []
-            for line in self._xrandr.getOutput('^[^ ]* connected '):
+            for line in self._xrandr.get_output('^[^ ]* connected '):
                 self._screens.append(line.split()[0])
             if self._screens:
                 return True
         return False
 
-    def _getDevice(self):
+    def _get_device(self):
         return None
 
-    def getBrightness(self):
-        self._xrandr.setArgs(['--verbose'])
+    def get_brightness(self):
+        self._xrandr.set_args(['--verbose'])
         self._xrandr.run(mode='batch')
         try:
-            brightness = float(self._xrandr.getOutput('^\s+Brightness: ')[0].split()[1])
+            brightness = float(self._xrandr.get_output(r'^\s+Brightness: ')[0].split()[1])
         except (IndexError, ValueError):
             brightness = 0
         return brightness
 
-    def getBrightnessDefault(self):
+    def get_brightness_default(self):
         return 0.999
 
-    def getBrightnessMax(self):
+    def get_brightness_max(self):
         return 0.999
 
-    def getBrightnessStep(self):
+    def get_brightness_step(self):
         return 0.1
 
-    def setBrightness(self, brightness):
+    def set_brightness(self, brightness):
         for screen in self._screens:
-            self._xrandr.setArgs(['--output', screen, '--brightness', str(brightness)])
+            self._xrandr.set_args(['--output', screen, '--brightness', str(brightness)])
             self._xrandr.run()
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getBacklight().run(options.getChange())
+            options.get_backlight().run(options.get_change())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -222,7 +242,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

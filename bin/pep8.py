@@ -13,30 +13,38 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._pep8 = syslib.Command('pep8')
-        self._pep8.setFlags(["--max-line-length=100"])
-        self._pep8.setArgs(args[1:])
+        self._pep8.set_flags(["--max-line-length=100"])
+        self._pep8.set_args(args[1:])
 
-    def getPep8(self):
+    def get_pep8(self):
         """
         Return pep8 Command class object.
         """
         return self._pep8
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getPep8().run(mode='exec')
+            options.get_pep8().run(mode='exec')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -47,7 +55,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)   # Fixes Windows globbing bug

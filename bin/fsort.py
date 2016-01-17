@@ -14,19 +14,24 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Unicode sort lines of a file.')
 
         parser.add_argument('files', nargs=1, metavar='file',
@@ -35,12 +40,15 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Sort:
+class Sort(object):
+    """
+    Sort class
+    """
 
     def __init__(self, options):
         self._lines = []
-        if len(options.getFiles()):
-            for file in options.getFiles():
+        if len(options.get_files()):
+            for file in options.get_files():
                 try:
                     with open(file, errors='replace') as ifile:
                         for line in ifile:
@@ -58,12 +66,15 @@ class Sort:
             print(line)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Sort(options).print()
@@ -77,7 +88,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

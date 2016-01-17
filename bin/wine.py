@@ -16,26 +16,31 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._wine = syslib.Command('wine')
 
         if len(args) > 1:
             if args[1].endswith('.bat'):
-                self._wine.setFlags(['cmd', '/c'])
+                self._wine.set_flags(['cmd', '/c'])
             elif args[1].endswith('.msi'):
-                self._wine.setFlags(['cmd', '/c', 'start'])
+                self._wine.set_flags(['cmd', '/c', 'start'])
             elif args[1] == '-reset':
                 self._reset()
                 raise SystemExit(0)
-        self._wine.setArgs(args[1:])
+        self._wine.set_args(args[1:])
 
-        self._signalTrap()
+        self._signal_trap()
         os.environ['WINEDEBUG'] = '-all'
 
-    def getWine(self):
+    def get_wine(self):
         """
         Return wine Command class object.
         """
@@ -51,22 +56,25 @@ class Options:
                 except OSError:
                     pass
 
-    def _signalIgnore(self, signal, frame):
+    def _signal_ignore(self, signal, frame):
         pass
 
-    def _signalTrap(self):
+    def _signal_trap(self):
         signal.signal(signal.SIGINT, self._signalIgnore)
         signal.signal(signal.SIGTERM, self._signalIgnore)
 
 
-class Wine:
+class Wine(object):
+    """
+    Wine class
+    """
 
     def __init__(self, options):
-        self._wine = options.getWine()
+        self._wine = options.get_wine()
         self._xrandr = syslib.Command('xrandr')
         self._xrandr.run(filter='^  ', mode='batch')
         self._resolution = 0
-        for line in self._xrandr.getOutput():
+        for line in self._xrandr.get_output():
             if '*' in line:
                 break
             self._resolution += 1
@@ -75,21 +83,24 @@ class Wine:
         self._wine.run()
         self._xrandr.run(filter='^  ', mode='batch')
         resolution = 0
-        for line in self._xrandr.getOutput():
+        for line in self._xrandr.get_output():
             if '*' in line:
                 break
             resolution += 1
         if resolution != self._resolution:
-            self._xrandr.setArgs(['-s', str(self._resolution)])
+            self._xrandr.set_args(['-s', str(self._resolution)])
             self._xrandr.run(mode='batch')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Wine(options).run()
@@ -97,13 +108,13 @@ class Main:
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
-        sys.exit(options.getWine().getExitcode())
+        sys.exit(options.get_wine().get_exitcode())
 
     def _signals(self):
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

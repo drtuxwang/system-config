@@ -14,16 +14,21 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._smplayer = syslib.Command('smplayer')
         if len(args) > 1:
             if args[1].endswith('.ram'):
-                self._smplayer.setFlags(['-playlist'])  # Avoid 'avisynth.dll' error
+                self._smplayer.set_flags(['-playlist'])  # Avoid 'avisynth.dll' error
 
-        self._smplayer.setArgs(args[1:])
+        self._smplayer.set_args(args[1:])
 
         self._filter = ('^Debug: |^Failed to load module: |^Preferences::load|^Warning: |'
                         '^global_init|^main: |: wrong ELF class:|^This is SMPlayer')
@@ -32,13 +37,13 @@ class Options:
             self._config()
             self._config2()
 
-    def getFilter(self):
+    def get_filter(self):
         """
         Return filter pattern.
         """
         return self._filter
 
-    def getSmplayer(self):
+    def get_smplayer(self):
         """
         Return smplayer Command class object.
         """
@@ -71,7 +76,7 @@ class Options:
                     print('[%General]', file=ofile)
                     print('use_double_buffer=false', file=ofile)
                     print('[history]', file=ofile)
-                    print('recents\max_items=0', file=ofile)
+                    print(r'recents\max_items=0', file=ofile)
                     print('[performance]', file=ofile)
                     print('hard_frame_drop=true', file=ofile)
                     print('cache_for_streams=100', file=ofile)
@@ -126,7 +131,7 @@ class Options:
         for directory in glob.glob(os.path.join(configdir, 'file_settings', '*')):
             empty = True
             for file in glob.glob(os.path.join(directory, '*')):
-                if mytime - syslib.FileStat(file).getTime() < expiry:
+                if mytime - syslib.FileStat(file).get_time() < expiry:
                     try:
                         with open(file, errors='replace') as ifile:
                             ifile.readline()
@@ -150,15 +155,18 @@ class Options:
                 pass
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getSmplayer().run(filter=options.getFilter(), mode='background')
+            options.get_smplayer().run(filter=options.get_filter(), mode='background')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -169,7 +177,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

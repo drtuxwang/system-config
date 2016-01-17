@@ -12,19 +12,24 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Create wrapper to run script/executable.')
 
         parser.add_argument('files', nargs='+', metavar='file', help='Script/executable to wrap.')
@@ -32,10 +37,13 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Wrap:
+class Wrap(object):
+    """
+    Wrap class
+    """
 
     def __init__(self, options):
-        self._files = options.getFiles()
+        self._files = options.get_files()
 
     def _create(self, source, target):
         try:
@@ -63,12 +71,15 @@ class Wrap:
                 self._create(source, target)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Wrap(options).run()
@@ -82,7 +93,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

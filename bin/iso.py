@@ -16,64 +16,69 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._genisoimage = syslib.Command('genisoimage')
-        self._genisoimage.setFlags(['-version'])
+        self._genisoimage.set_flags(['-version'])
         self._genisoimage.run(mode='batch')
-        if self._genisoimage.getExitcode():
+        if self._genisoimage.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(self._genisoimage.getExitcode()) +
-                ' received from "' + self._genisoimage.getFile() + '".')
-        self._genisoimage.setFlags([
+                sys.argv[0] + ': Error code ' + str(self._genisoimage.get_exitcode()) +
+                ' received from "' + self._genisoimage.get_file() + '".')
+        self._genisoimage.set_flags([
             '-iso-level', '3', '-joliet-long', '-rational-rock', '-appid', 'GENISOIMAGE-' +
-            self._genisoimage.getOutput()[0].split()[1]])
+            self._genisoimage.get_output()[0].split()[1]])
         if self._args.followFlag:
-            self._genisoimage.appendFlag('-follow-links')
+            self._genisoimage.append_flag('-follow-links')
 
         self._isoinfo = syslib.Command('isoinfo')
 
-    def getDirectory(self):
+    def get_directory(self):
         """
         Return directory.
         """
         return self._args.directory[0]
 
-    def getGenisoimage(self):
+    def get_genisoimage(self):
         """
         Return genisoimage Command class object.
         """
         return self._genisoimage
 
-    def getImage(self):
+    def get_image(self):
         """
         Return ISO image location.
         """
         return self._image
 
-    def getIsoinfo(self):
+    def get_isoinfo(self):
         """
         Return isoinfo Command class object.
         """
         return self._isoinfo
 
-    def getMd5Flag(self):
+    def get_md5_flag(self):
         """
         Return md5sum flag.
         """
         return self._args.md5Flag
 
-    def getVolume(self):
+    def get_volume(self):
         """
         Return volume name.
         """
         return self._args.volume[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Make a portable CD/DVD archive in ISO9660 format.')
 
@@ -97,10 +102,13 @@ class Options:
             self._image = self._args.volume[0] + '.iso'
 
 
-class Pack:
+class Pack(object):
+    """
+    Pack class
+    """
 
     def __init__(self, options):
-        image = options.getImage()
+        image = options.get_image()
 
         print('Creating portable CD/DVD image file: ' + image + '...')
         print('Adding ISO9660 Level 3 standard file syslib...')
@@ -111,29 +119,29 @@ class Pack:
         print('   ==> Directory and file names limit is 255 characters for ROCK RIDGE.')
         print('   ==> Directory and file names limit is 103 characters for JOLIET.')
 
-        self._genisoimage = options.getGenisoimage()
+        self._genisoimage = options.get_genisoimage()
         self._windisk(options)
         self._bootimg(options)
-        self._genisoimage.setArgs(['-volid', re.sub(r'[^\w,.+-]', '_', options.getVolume())[:32],
-                                   '-o', image, options.getDirectory()])
+        self._genisoimage.set_args(['-volid', re.sub(r'[^\w,.+-]', '_', options.get_volume())[:32],
+                                    '-o', image, options.get_directory()])
         self._genisoimage.run()
-        if self._genisoimage.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._genisoimage.getExitcode()) +
-                             ' received from "' + self._genisoimage.getFile() + '".')
+        if self._genisoimage.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._genisoimage.get_exitcode()) +
+                             ' received from "' + self._genisoimage.get_file() + '".')
 
         if os.path.isfile(image):
             print()
-            isoinfo = options.getIsoinfo()
-            isoinfo.setArgs(['-d', '-i', image])
+            isoinfo = options.get_isoinfo()
+            isoinfo.set_args(['-d', '-i', image])
             isoinfo.run(filter=' id: $')
-            if isoinfo.getExitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.getExitcode()) +
-                                 ' received from "' + isoinfo.getFile() + '".')
-            self._isosize(image, syslib.FileStat(image).getSize())
-            if options.getMd5Flag():
+            if isoinfo.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.get_exitcode()) +
+                                 ' received from "' + isoinfo.get_file() + '".')
+            self._isosize(image, syslib.FileStat(image).get_size())
+            if options.get_md5_flag():
                 print('Creating MD5 check sum of ISO file.')
                 md5sum = self._md5sum(image)
-                if (not md5sum):
+                if not md5sum:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + image + '" file.')
                 else:
                     print(md5sum, image, sep='  ')
@@ -148,28 +156,28 @@ class Pack:
                         return
 
     def _bootimg(self, options):
-        files = (glob.glob(os.path.join(options.getDirectory(), '*.img')) +
-                 glob.glob(os.path.join(options.getDirectory(), '*.bin')) +
-                 glob.glob(os.path.join(options.getDirectory(), 'isolinux', '*.bin')))
+        files = (glob.glob(os.path.join(options.get_directory(), '*.img')) +
+                 glob.glob(os.path.join(options.get_directory(), '*.bin')) +
+                 glob.glob(os.path.join(options.get_directory(), 'isolinux', '*.bin')))
         if files:
             bootimg = syslib.info.newest(files)
             print('Adding Eltorito boot image "' + bootimg + '"...')
             if 'isolinux' in bootimg:
-                self._genisoimage.extendFlags([
+                self._genisoimage.extend_flags([
                     '-eltorito-boot', os.path.join('isolinux', os.path.basename(bootimg)),
                     '-no-emul-boot', '-boot-info-table'])
-            elif syslib.FileStat(bootimg).getSize() == 2048:
-                self._genisoimage.extendFlags([
+            elif syslib.FileStat(bootimg).get_size() == 2048:
+                self._genisoimage.extend_flags([
                     '-eltorito-boot', os.path.basename(bootimg), '-no-emul-boot',
                     '-boot-load-size', '4', '-hide', 'boot.catalog'])
             else:
-                self._genisoimage.extendFlags([
+                self._genisoimage.extend_flags([
                     '-eltorito-boot', os.path.basename(bootimg), '-hide', 'boot.catalog'])
 
     def _isosize(self, image, size):
         if size > 734003200:
             print('\n*** {0:s}: {1:4.2f} MB ({2:5.3f} salesman"s GB) ***\n'.format(
-                  image, size/1048576., size/1000000000.))
+                image, size/1048576., size/1000000000.))
             if size > 9400000000:
                 sys.stderr.write('**WARNING** This ISO image file does not fit onto '
                                  '9.4GB/240min Duel Layer DVD media.\n')
@@ -189,7 +197,7 @@ class Pack:
             minutes, remainder = divmod(size, 734003200 / 80)
             seconds = remainder * 4800 / 734003200.
             print('\n*** {0:s}: {1:4.2f} MB ({2:.0f} min {3:05.2f} sec) ***\n'.format(
-                  image, size/1048576., minutes, seconds))
+                image, size/1048576., minutes, seconds))
             if size > 681574400:
                 sys.stderr.write('**WARNING** This ISO image file does not fit onto'
                                  ' 650MB/74min CD media.\n')
@@ -210,30 +218,33 @@ class Pack:
 
     def _windisk(self, options):
         if os.name == 'nt':
-            self._genisoimage.extendFlags(['-file-mode', '444'])
+            self._genisoimage.extend_flags(['-file-mode', '444'])
         else:
-            df = syslib.Command('df', args=[options.getDirectory()], check=False)
+            df = syslib.Command('df', args=[options.get_directory()], check=False)
             mount = syslib.Command('mount', check=False)
-            if df.isFound() and mount.isFound():
+            if df.is_found() and mount.is_found():
                 df.run(mode='batch')
-                if df.getExitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(df.getExitcode()) +
-                                     ' received from "' + df.getFile() + '".')
-                if len(df.getOutput()) > 1:
-                    mount.run(filter='^' + df.getOutput()[1].split()[0] +
+                if df.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(df.get_exitcode()) +
+                                     ' received from "' + df.get_file() + '".')
+                if len(df.get_output()) > 1:
+                    mount.run(filter='^' + df.get_output()[1].split()[0] +
                               ' .* (fuseblk|vfat|ntfs) ', mode='batch')
-                    if mount.hasOutput():
+                    if mount.has_output():
                         print('Using mode 444 for all plain files (' +
-                              mount.getOutput()[0].split()[4] + ' disk detected)...')
-                        self._genisoimage.extendFlags(['-file-mode', '444'])
+                              mount.get_output()[0].split()[4] + ' disk detected)...')
+                        self._genisoimage.extend_flags(['-file-mode', '444'])
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Pack(options)
@@ -247,7 +258,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

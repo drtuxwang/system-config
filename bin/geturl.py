@@ -6,7 +6,6 @@ Multi-threaded download accelerator.
 import argparse
 import glob
 import os
-import re
 import shutil
 import signal
 import sys
@@ -16,31 +15,36 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._aria2c = syslib.Command('aria2c')
-        self._aria2c.setFlags(['--file-allocation=none', '--remote-time=true'])
-        self._setLibraries(self._aria2c)
+        self._aria2c.set_flags(['--file-allocation=none', '--remote-time=true'])
+        self._set_libraries(self._aria2c)
 
-        self._setProxy()
+        self._set_proxy()
 
-    def getThreads(self):
+    def get_threads(self):
         """
         Return number of threads.
         """
         return self._args.threads[0]
 
-    def getUrls(self):
+    def get_urls(self):
         """
         Return list of urls.
         """
         return self._args.urls
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Multi-threaded download accelerator.')
 
         parser.add_argument('-threads', nargs=1, type=int, default=[4],
@@ -55,47 +59,50 @@ class Options:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
                              'number of threads.')
 
-    def getAria2c(self):
+    def get_aria2c(self):
         """
         Return aria2c Command class object.
         """
         return self._aria2c
 
-    def _setLibraries(self, command):
-        libdir = os.path.join(os.path.dirname(command.getFile()), 'lib')
+    def _set_libraries(self, command):
+        libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir):
-            if syslib.info.getSystem() == 'linux':
+            if syslib.info.get_system() == 'linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
                     os.environ['LD_LIBRARY_PATH'] = (
                         libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
                 else:
                     os.environ['LD_LIBRARY_PATH'] = libdir
 
-    def _setProxy(self):
+    def _set_proxy(self):
         setproxy = syslib.Command('setproxy', check=False)
         if setproxy:
             setproxy.run(mode='batch')
-            if setproxy.hasOutput():
-                proxy = setproxy.getOutput()[0].strip()
+            if setproxy.has_output():
+                proxy = setproxy.get_output()[0].strip()
                 if proxy:
-                    self._aria2c.extendFlags(['--all-proxy=http://' + proxy])
+                    self._aria2c.extend_flags(['--all-proxy=http://' + proxy])
 
 
-class Geturl:
+class Geturl(object):
+    """
+    Get URL class
+    """
 
     def __init__(self, options):
         self._options = options
 
     def run(self):
         os.umask(int('022', 8))
-        aria2c = self._options.getAria2c()
+        aria2c = self._options.get_aria2c()
 
-        for url in self._options.getUrls():
+        for url in self._options.get_urls():
             filesLocal = []
             if url.endswith('.url') and os.path.isfile(url):
                 directory = url[:-4]
                 filesRemote = []
-                aria2c.setArgs(['--max-concurrent-downloads=' + str(self._options.getThreads()),
+                aria2c.set_args(['--max-concurrent-downloads=' + str(self._options.get_threads()),
                                 '--dir=' + directory, '-Z'])
                 try:
                     with open(url, errors='replace') as ifile:
@@ -112,7 +119,7 @@ class Geturl:
             elif os.path.isdir(url):
                 raise SystemExit(sys.argv[0] + ': Cannot process "' + url + '" directory.')
             else:
-                aria2c.setArgs(['--split=' + str(self._options.getThreads())])
+                aria2c.set_args(['--split=' + str(self._options.get_threads())])
                 filesRemote = [url]
             if filesLocal:
                 if not os.path.isdir(directory):
@@ -129,19 +136,22 @@ class Geturl:
                         raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
             if filesRemote:
                 for file in filesRemote:
-                    aria2c.appendArg(file.replace('https://', 'http://'))
+                    aria2c.append_arg(file.replace('https://', 'http://'))
                 aria2c.run()
-                if aria2c.getExitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(aria2c.getExitcode()) +
-                                     ' received from "' + aria2c.getFile() + '".')
+                if aria2c.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(aria2c.get_exitcode()) +
+                                     ' received from "' + aria2c.get_file() + '".')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Geturl(options).run()
@@ -155,7 +165,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

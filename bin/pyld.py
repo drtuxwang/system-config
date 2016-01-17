@@ -15,17 +15,19 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
 if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
     """
     This class handles Python loader commandline options.
 
     self._args.module = Module name containing 'Main(args)' class
-    self._dumpFlag    = Dump objects flag
-    self._libraryPath = Python library path for debug modules
-    self._moduleArgs  = Arguments for 'Main(args)' class
-    self._moduleDir   = Directory containing Python modules
-    self._verboseFlag = Verbose flag
+    self._dump_flag    = Dump objects flag
+    self._library_path = Python library path for debug modules
+    self._module_args  = Arguments for 'Main(args)' class
+    self._module_dir   = Directory containing Python modules
+    self._verbose_flag = Verbose flag
     """
 
     def dump(self):
@@ -39,62 +41,62 @@ class Options:
         print('            "module":' + str(self._args.module) + ',')
         print('            "verbosity":', self._args.verbosity)
         print('        },')
-        print('        "_dumpFlag":', str(self._dumpFlag) + ',')
-        print('        "_libraryPath":', str(self._libraryPath) + ',')
-        print('        "_moduleArgs":', str(self._moduleArgs) + ',')
-        print('        "_moduleDir": "', self._moduleDir, '",')
-        print('        "_verboseFlag":', self._verboseFlag)
+        print('        "_dumpFlag":', str(self._dump_flag) + ',')
+        print('        "_libraryPath":', str(self._library_path) + ',')
+        print('        "_moduleArgs":', str(self._module_args) + ',')
+        print('        "_moduleDir": "', self._module_dir, '",')
+        print('        "_verboseFlag":', self._verbose_flag)
         print('    },')
 
     def __init__(self, args):
         """
         args = Python loader commandline arguments
         """
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-        self._moduleDir = os.path.dirname(args[0])
+        self._module_dir = os.path.dirname(args[0])
 
-    def getDumpFlag(self):
+    def get_dump_flag(self):
         """
         Return dump objects flag.
         """
-        return self._dumpFlag
+        return self._dump_flag
 
-    def getLibraryPath(self):
+    def get_library_path(self):
         """
         Return Python library path for debug modules.
         """
-        return self._libraryPath
+        return self._library_path
 
-    def getModule(self):
+    def get_module(self):
         """
         Return module name containing 'Main(args)' class
         """
         return self._args.module[0]
 
-    def getModuleArgs(self):
+    def get_module_args(self):
         """
         Return main module arguments.
         """
-        return self._moduleArgs
+        return self._module_args
 
-    def getModuleDir(self):
+    def get_module_dir(self):
         """
         Return main module directory.
         """
-        return self._moduleDir
+        return self._module_dir
 
-    def getVerboseFlag(self):
+    def get_verbose_flag(self):
         """
         Return verbose flag.
         """
-        return self._verboseFlag
+        return self._verbose_flag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Load Python main program as module (must have Main class).')
 
-        parser.add_argument('-pyldv', '-pyldvv', '-pyldvvv', nargs=0, action=ArgparseActionVerbose,
+        parser.add_argument('-pyldv', '-pyldvv', '-pyldvvv', nargs=0, action=ArgparseVerboseAction,
                             dest='verbosity', default=0, help='Select verbosity level 1, 2 or 3.')
         parser.add_argument('-pyldverbose', action='store_const', const=1, dest='verbosity',
                             default=0, help='Select verbosity level 1.')
@@ -104,45 +106,48 @@ class Options:
         parser.add_argument('module', nargs=1, help='Module to run.')
         parser.add_argument('args', nargs='*', metavar='arg', help='Module argument.')
 
-        pyArgs = []
-        modArgs = []
+        py_args = []
+        mod_args = []
         while len(args):
             if args[0] in ('-pyldv', '-pyldvv', '-pyldvvv', '-pyldverbose', '-pyldpath'):
-                pyArgs.append(args[0])
+                py_args.append(args[0])
                 if args[0] == '-pyldpath' and len(args) >= 2:
                     args = args[1:]
-                    pyArgs.append(args[0])
+                    py_args.append(args[0])
             elif args[0].startswith('-pyldpath='):
-                pyArgs.append(args[0])
+                py_args.append(args[0])
             else:
-                modArgs.append(args[0])
+                mod_args.append(args[0])
             args = args[1:]
-        pyArgs.extend(modArgs[:1])
+        py_args.extend(mod_args[:1])
 
-        self._args = parser.parse_args(pyArgs)
+        self._args = parser.parse_args(py_args)
 
-        self._verboseFlag = self._args.verbosity >= 1
-        self._dumpFlag = self._args.verbosity >= 2
-        self._moduleArgs = modArgs[1:]
+        self._verbose_flag = self._args.verbosity >= 1
+        self._dump_flag = self._args.verbosity >= 2
+        self._module_args = mod_args[1:]
         if self._args.libpath:
-            self._libraryPath = self._args.libpath[0].split(os.path.pathsep)
+            self._library_path = self._args.libpath[0].split(os.path.pathsep)
         else:
-            self._libraryPath = []
+            self._library_path = []
 
 
-class ArgparseActionVerbose(argparse.Action):
+class ArgparseVerboseAction(argparse.Action):
+    """
+    Arg parser verbose action handler class
+    """
 
     def __call__(self, parser, args, values, option_string=None):
         # option_string must be '-pyldv', '-pyldvv' or '-pldyvvv'
         setattr(args, self.dest, len(option_string[5:]))
 
 
-class PythonLoader:
+class PythonLoader(object):
     """
     This class handles Python loading
 
     self._options = Options class object
-    self._sysArgv = Modified Python system arguments
+    self._sys_argv = Modified Python system arguments
     """
 
     def dump(self):
@@ -151,7 +156,7 @@ class PythonLoader:
         """
         print('"pyloader": {')
         self._options.dump()
-        print('    "_sysArgv":', self._sysArgv)
+        print('    "_sysArgv":', self._sys_argv)
         print('}')
 
     def __init__(self, options):
@@ -159,30 +164,33 @@ class PythonLoader:
         options = Options class object
         """
         self._options = options
-        self._sysArgv = [os.path.join(options.getModuleDir(),
-                         options.getModule() + '.py')] + options.getModuleArgs()
+
+        name = options.get_module()
+        if name.startswith('_'):
+            name = name[1:].replace('_', '-')
+        self._sys_argv = [os.path.join(options.get_module_dir(), name)] + options.get_module_args()
 
     def run(self):
         """
         Load main module and run 'Main()' class
         """
-        if self._options.getDumpFlag():
+        if self._options.get_dump_flag():
             self.dump()
-        if self._options.getLibraryPath():
-            sys.path = self._options.getLibraryPath() + sys.path
-            if self._options.getVerboseFlag():
+        if self._options.get_library_path():
+            sys.path = self._options.get_library_path() + sys.path
+            if self._options.get_verbose_flag():
                 print('sys.path =', sys.path)
 
-        directory = self._options.getModuleDir()
+        directory = self._options.get_module_dir()
         if directory not in sys.path:
             sys.path.append(directory)
 
-        module = self._options.getModule()
+        module = self._options.get_module()
         if module.endswith('.py'):
             module = module[:-3]
 
-        sys.argv = self._sysArgv
-        if self._options.getVerboseFlag():
+        sys.argv = self._sys_argv
+        if self._options.get_verbose_flag():
             print('sys.argv =', sys.argv)
             print()
 
@@ -191,25 +199,28 @@ class PythonLoader:
             "module.name", os.path.join(directory, module) + '.py').load_module()
         main.Main()
 
-    def getOptions(self):
+    def get_options(self):
         """
         Return Options class object.
         """
         return self._options
 
-    def getSysArgv(self):
+    def get_sys_argv(self):
         """
         Return list sysArgv.
         """
-        return self._sysArgv
+        return self._sys_argv
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             PythonLoader(options).run()
@@ -223,7 +234,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

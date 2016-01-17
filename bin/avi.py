@@ -15,106 +15,111 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-        self._audioCodec = 'libmp3lame'
-        self._videoCodec = 'libxvid'
+        self._audio_codec = 'libmp3lame'
+        self._video_codec = 'libxvid'
 
-    def getAudioCodec(self):
+    def get_audio_codec(self):
         """
         Return audio codec.
         """
-        return self._audioCodec
+        return self._audio_codec
 
-    def getAudioQuality(self):
+    def get_audio_quality(self):
         """
         Return audio quality.
         """
         return self._args.audioQuality[0]
 
-    def getAudioVolume(self):
+    def get_audio_volume(self):
         """
         Return audio volume.
         """
         return self._args.audioVolume[0]
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._files
 
-    def getFileNew(self):
+    def get_file_new(self):
         """
         Return new file location.
         """
-        return self._fileNew
+        return self._file_new
 
-    def getFlags(self):
+    def get_flags(self):
         """
         Return extra flags.
         """
         return self._args.flags
 
-    def getNoskipFlag(self):
+    def get_noskip_flag(self):
         """
         Return noskip flag.
         """
         return self._args.noskipFlag
 
-    def getRunTime(self):
+    def get_run_time(self):
         """
         Return run time.
         """
         return self._args.runTime[0]
 
-    def getStartTime(self):
+    def get_start_time(self):
         """
         Return start time.
         """
         return self._args.startTime[0]
 
-    def getThreads(self):
+    def get_threads(self):
         """
         Return threads.
         """
         return self._args.threads[0]
 
-    def getVideoCodec(self):
+    def get_video_codec(self):
         """
         Return video codec.
         """
-        return self._videoCodec
+        return self._video_codec
 
-    def getVideoCrop(self):
+    def get_video_crop(self):
         """
         Return video cropping.
         """
         return self._args.videoCrop[0]
 
-    def getVideoQuality(self):
+    def get_video_quality(self):
         """
         Return video quality.
         """
         return self._args.videoQuality[0]
 
-    def getVideoRate(self):
+    def get_video_rate(self):
         """
         Return video rate.
         """
         return self._args.videoRate[0]
 
-    def getVideoSize(self):
+    def get_video_size(self):
         """
         Return video size.
         """
         return self._args.videoSize[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Encode AVI video using ffmpeg (libxvid/libmp3lame).')
 
@@ -148,68 +153,72 @@ class Options:
         self._args = parser.parse_args(args)
 
         if self._args.files[0].endswith('.avi'):
-            self._fileNew = self._args.files[0]
+            self._file_new = self._args.files[0]
             self._files = self._args.files[1:]
-            if self._fileNew in self._args.files[1:]:
+            if self._file_new in self._args.files[1:]:
                 raise SystemExit(sys.argv[0] + ': The input and output files must be different.')
         else:
-            self._fileNew = ''
+            self._file_new = ''
             self._files = self._args.files
 
 
-class Encoder:
+class Encoder(object):
+    """
+    Encoder class
+    """
 
     def __init__(self, options):
         self._options = options
-        self._ffmpeg = syslib.Command('ffmpeg', flags=options.getFlags())
+        self._ffmpeg = syslib.Command('ffmpeg', flags=options.get_flags())
         self._tempfiles = []
 
     def _config(self, file):
         media = Media(file)
-        self._ffmpeg.setArgs(['-i', file])
+        self._ffmpeg.set_args(['-i', file])
 
-        if media.hasVideo():
-            if (not media.hasVideoCodec('mpeg4') or self._options.getCideoCrop() or
-                    self._options.vfps or self._options.getVideoSize() or self._options.vq or
-                    self._options.noskip or len(self._options.getFiles()) > 1):
-                self._ffmpeg.extendArgs(['-c:v', self._options.getVideoCodec(), '-flags',
-                                         '+mv4+aic', '-mbd', 'rd', '-g', '300', '-trellis', '2'])
-                if self._options.getVideoQuality():
-                    self._ffmpeg.extendArgs(['-qscale:v', self._options.getVideoQuality()])
+        if media.has_video():
+            if (not media.has_video_codec('mpeg4') or self._options.getCideoCrop() or
+                    self._options.vfps or self._options.get_video_size() or self._options.vq or
+                    self._options.noskip or len(self._options.get_files()) > 1):
+                self._ffmpeg.extend_args(['-c:v', self._options.get_video_codec(), '-flags',
+                                          '+mv4+aic', '-mbd', 'rd', '-g', '300', '-trellis', '2'])
+                if self._options.get_video_quality():
+                    self._ffmpeg.extend_args(['-qscale:v', self._options.get_video_quality()])
                 else:
-                    self._ffmpeg.extendArgs(['-qscale:v', '4'])
-                if self._options.getVideoRate():
-                    self._ffmpeg.extendArgs(['-r:v', self._options.getVideoRate()])
-                if self._options.getVideoCrop():
-                    self._ffmpeg.extendArgs(['-vf', 'crop=' + self._options.getVideoCrop()])
-                if self._options.getVideoSize():
-                    self._ffmpeg.extendArgs(['-vf', 'scale=' + self._options.getVideoSize()])
+                    self._ffmpeg.extend_args(['-qscale:v', '4'])
+                if self._options.get_video_rate():
+                    self._ffmpeg.extend_args(['-r:v', self._options.get_video_rate()])
+                if self._options.get_video_crop():
+                    self._ffmpeg.extend_args(['-vf', 'crop=' + self._options.get_video_crop()])
+                if self._options.get_video_size():
+                    self._ffmpeg.extend_args(['-vf', 'scale=' + self._options.get_video_size()])
             else:
-                self._ffmpeg.extendArgs(['-c:v', 'copy'])
+                self._ffmpeg.extend_args(['-c:v', 'copy'])
 
         if media.hasAudio:
-            if (not media.hasAudioCodec('mp3') or self._options.getAudioQuality() or
-                    self._options.getAudioVolume() or self._options.getNoskipFlag() or
-                    len(self._options.getFiles()) > 1):
-                self._ffmpeg.extendArgs(['-c:a', self._options.getAudioCodec()])
-                if self._options.getAudioQuality():
-                    self._ffmpeg.extendArgs(['-b:a', self._options.getAudioQuality() + 'K'])
+            if (not media.has_audio_codec('mp3') or self._options.get_audio_quality() or
+                    self._options.get_audio_volume() or self._options.get_noskip_flag() or
+                    len(self._options.get_files()) > 1):
+                self._ffmpeg.extend_args(['-c:a', self._options.get_audio_codec()])
+                if self._options.get_audio_quality():
+                    self._ffmpeg.extend_args(['-b:a', self._options.get_audio_quality() + 'K'])
                 else:
-                    self._ffmpeg.extendArgs(['-b:a', '128K'])
-                if self._options.getAudioVolume():
-                    self._ffmpeg.extendArgs([
-                        '-af', 'volume=' + self._options.getAudioVolume() + 'dB'])
+                    self._ffmpeg.extend_args(['-b:a', '128K'])
+                if self._options.get_audio_volume():
+                    self._ffmpeg.extend_args([
+                        '-af', 'volume=' + self._options.get_audio_volume() + 'dB'])
             else:
-                self._ffmpeg.extendArgs(['-c:a', 'copy'])
+                self._ffmpeg.extend_args(['-c:a', 'copy'])
 
-        if self._options.getStartTime():
-            self._ffmpeg.extendArgs(['-ss', self._options.getStartTime()])
-        if self._options.getRunTime():
-            self._ffmpeg.extendArgs(['-t', self._options.getRunTime()])
-        self._ffmpeg.extendArgs(['-threads', self._options.getThreads()] + self._options.getFlags())
+        if self._options.get_start_time():
+            self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
+        if self._options.get_run_time():
+            self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
+        self._ffmpeg.extend_args(
+            ['-threads', self._options.get_threads()] + self._options.get_flags())
         return media
 
-    def _configImages(self, files):
+    def _config_images(self, files):
         convert = syslib.Command('convert')
         extension = '-tmpfile' + str(os.getpid()) + '.png'
         frame = 0
@@ -217,33 +226,33 @@ class Encoder:
             frame += 1
             tmpfile = 'frame{0:08d}'.format(frame) + extension
             self._tempfiles.append(tmpfile)
-            convert.setArgs([file, tmpfile])
+            convert.set_args([file, tmpfile])
             convert.run()
-        if self._options.getVideoRate():
-            self._ffmpeg.setArgs(['-r', self._options.getVideoRate()])
+        if self._options.get_video_rate():
+            self._ffmpeg.set_args(['-r', self._options.get_video_rate()])
         else:
-            self._ffmpeg.setArgs(['-r', '2'])
-        self._ffmpeg.extendArgs(['-i', 'frame%8d' + extension,
-                                 '-c:v', self._options.getVideoCodec(), '-pix_fmt', 'yuv420p'])
-        if self._options.getVideoCrop():
-            self._ffmpeg.extendArgs(['-vf', 'crop=' + self._options.getVideoCrop()])
-        if self._options.getVideoSize():
-            self._ffmpeg.extendArgs(['-vf', 'scale=' + self._options.getVideoSize()])
+            self._ffmpeg.set_args(['-r', '2'])
+        self._ffmpeg.extend_args(['-i', 'frame%8d' + extension,
+                                  '-c:v', self._options.get_video_codec(), '-pix_fmt', 'yuv420p'])
+        if self._options.get_video_crop():
+            self._ffmpeg.extend_args(['-vf', 'crop=' + self._options.get_video_crop()])
+        if self._options.get_video_size():
+            self._ffmpeg.extend_args(['-vf', 'scale=' + self._options.get_video_size()])
         else:
-            convert.setArgs(['-verbose', tmpfile, '/dev/null'])
+            convert.set_args(['-verbose', tmpfile, '/dev/null'])
             convert.run(mode='batch')
             try:
                 # Must be multiple of 2 in x and y resolutions
-                x, y = convert.getOutput()[0].split()[2].split('x')
-                self._ffmpeg.extendArgs([
+                x, y = convert.get_output()[0].split()[2].split('x')
+                self._ffmpeg.extend_args([
                     '-vf', 'scale=' + str(int(int(x)/2)*2) + ':' + str(int(int(y)/2)*2)])
             except (IndexError, ValueError):
                 pass
-        if self._options.getStartTime():
-            self._ffmpeg.extendArgs(['-ss', self._options.getStartTime()])
+        if self._options.get_start_time():
+            self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
         if self._options.getrunTime():
-            self._ffmpeg.extendArgs(['-t', self._options.getRunTime()])
-        self._ffmpeg.extendArgs(['-threads', '1'] + self._options.getFlags())
+            self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
+        self._ffmpeg.extend_args(['-threads', '1'] + self._options.get_flags())
 
     def __del__(self):
         for file in self._tempfiles:
@@ -252,7 +261,7 @@ class Encoder:
             except OSError:
                 pass
 
-    def _allImages(self, files):
+    def _all_images(self, files):
         for file in files:
             extension = file.split('.')[-1]
             if extension not in ('bmp', 'gif', 'jpg', 'jpeg', 'png', 'tif', 'tiff'):
@@ -265,7 +274,7 @@ class Encoder:
         ispattern = re.compile(
             '^$| version |^ *(built |configuration:|lib|Metadata:|Duration:|compatible_brands:|'
             'Stream|concat:|Program|service|lastkeyframe)|^(In|Out)put | : |^Press|^Truncating|'
-            'bitstream (filter|malformed)|Buffer queue|buffer underflow|message repeated|^\[|'
+            r'bitstream (filter|malformed)|Buffer queue|buffer underflow|message repeated|^\[|'
             'p11-kit:')
         init = False
         while True:
@@ -288,55 +297,58 @@ class Encoder:
             sys.exit(exitcode)
 
     def run(self):
-        if self._options.getFileNew():
+        if self._options.get_file_new():
             print()
-            if self._allImages(self._options.getFiles()):
-                self._configImages(self._options.getFiles())
-                self._ffmpeg.extendArgs(['-f', 'mp4', '-y', self._options.getFileNew()])
+            if self._all_images(self._options.get_files()):
+                self._config_images(self._options.get_files())
+                self._ffmpeg.extend_args(['-f', 'mp4', '-y', self._options.get_file_new()])
                 self._run()
             else:
-                if len(self._options.getFiles()) == 1:
-                    self._config(self._options.getFiles()[0])
+                if len(self._options.get_files()) == 1:
+                    self._config(self._options.get_files()[0])
                 else:
                     extension = '-tmpfile' + str(os.getpid()) + '.ts'
-                    for file in self._options.getFiles():
+                    for file in self._options.get_files():
                         media = self._config(file)
-                        if media.hasVideo():
-                            self._ffmpeg.extendArgs(['-bsf:v', 'h264_mp4toannexb'])
-                        self._ffmpeg.extendArgs(['-f', 'mpegts', '-y', file + extension])
+                        if media.has_video():
+                            self._ffmpeg.extend_args(['-bsf:v', 'h264_mp4toannexb'])
+                        self._ffmpeg.extend_args(['-f', 'mpegts', '-y', file + extension])
                         self._tempfiles.append(file + extension)
                         self._run()
-                    self._ffmpeg.setArgs([
+                    self._ffmpeg.set_args([
                         '-i', 'concat:' + '|'.join(self._tempfiles), '-c', 'copy'])
-                    if media.hasAudio():
-                        self._ffmpeg.extendArgs(['-bsf:a', 'aac_adtstoasc'])
-                if self._options.getStartTime():
-                    self._ffmpeg.extendArgs(['-ss', self._options.getStartTime()])
-                if self._options.getRunTime():
-                    self._ffmpeg.extendArgs(['-t', self._options.getRunTime()])
-                self._ffmpeg.extendArgs([
-                    '-metadata', 'title=', '-f', 'mp4', '-y', self._options.getFileNew()])
+                    if media.has_audio():
+                        self._ffmpeg.extend_args(['-bsf:a', 'aac_adtstoasc'])
+                if self._options.get_start_time():
+                    self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
+                if self._options.get_run_time():
+                    self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
+                self._ffmpeg.extend_args([
+                    '-metadata', 'title=', '-f', 'mp4', '-y', self._options.get_file_new()])
                 self._run()
-            Media(self._options.getFileNew()).print()
+            Media(self._options.get_file_new()).print()
         else:
-            for file in self._options.getFiles():
+            for file in self._options.get_files():
                 if not file.endswith('.avi'):
                     print()
-                    if self._allImages([file]):
-                        self._configImages([file])
+                    if self._all_images([file]):
+                        self._config_images([file])
                     else:
                         self._config(file)
-                        if self._options.getStartTime():
-                            self._ffmpeg.extendArgs(['-ss', self._options.getStartTime()])
-                        if self._options.getRunTime():
-                            self._ffmpeg.extendArgs(['-t', self._options.getRunTime()])
+                        if self._options.get_start_time():
+                            self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
+                        if self._options.get_run_time():
+                            self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
                     fileNew = file.rsplit('.', 1)[0] + '.mp4'
-                    self._ffmpeg.extendArgs(['-f', 'mp4', '-y', fileNew])
+                    self._ffmpeg.extend_args(['-f', 'mp4', '-y', fileNew])
                     self._run()
                     Media(fileNew).print()
 
 
-class Media:
+class Media(object):
+    """
+    Media class
+    """
 
     def __init__(self, file):
         self._file = file
@@ -348,7 +360,7 @@ class Media:
         number = 0
         isjunk = re.compile('^ *Stream #[^ ]*: ')
         try:
-            for line in ffprobe.getOutput():
+            for line in ffprobe.get_output():
                 if line.strip().startswith('Duration:'):
                     self._length = line.replace(',', '').split()[1]
                 elif line.strip().startswith('Stream #0'):
@@ -359,40 +371,40 @@ class Media:
         except IndexError:
             raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
 
-    def getDuration(self):
+    def get_duration(self):
         return self._duration
 
-    def getStream(self):
+    def get_stream(self):
         for key, value in sorted(self._stream.items()):
             yield (key, value)
 
-    def getStreamAudio(self):
+    def get_stream_audio(self):
         for key, value in sorted(self._stream.items()):
             if value.startswith('Audio: '):
                 yield (key, value)
 
-    def getType(self):
+    def get_type(self):
         return self._type
 
-    def hasAudio(self):
+    def has_audio(self):
         for value in self._stream.values():
             if value.startswith('Audio: '):
                 return True
         return False
 
-    def hasAudioCodec(self, codec):
+    def has_audio_codec(self, codec):
         for value in self._stream.values():
             if value.startswith('Audio: ' + codec):
                 return True
         return False
 
-    def hasVideo(self):
+    def has_video(self):
         for value in self._stream.values():
             if value.startswith('Video: '):
                 return True
         return False
 
-    def hasVideoCodec(self, codec):
+    def has_video_codec(self, codec):
         for value in self._stream.values():
             if value.startswith('Video: ' + codec):
                 return True
@@ -404,17 +416,20 @@ class Media:
     def print(self):
         if self.isvalid():
             print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
-                  str(syslib.FileStat(self._file).getSize()) + ' bytes')
-            for stream, information in self.getStream():
+                  str(syslib.FileStat(self._file).get_size()) + ' bytes')
+            for stream, information in self.get_stream():
                 print(self._file + '[' + str(stream) + '] =', information)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Encoder(options).run()
@@ -428,7 +443,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

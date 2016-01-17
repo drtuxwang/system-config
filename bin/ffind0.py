@@ -5,7 +5,6 @@ Find zero sized files.
 
 import argparse
 import glob
-import re
 import os
 import signal
 import sys
@@ -15,19 +14,24 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getDirectories(self):
+    def get_directories(self):
         """
         Return list of directories.
         """
         return self._args.directories
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Find zero sized files.')
 
         parser.add_argument('directories', nargs='+', metavar='directory',
@@ -36,10 +40,13 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Findzero:
+class Findzero(object):
+    """
+    Find zero class
+    """
 
     def __init__(self, options):
-        self._findzero(options.getDirectories())
+        self._findzero(options.get_directories())
 
     def _findzero(self, files):
         for file in sorted(files):
@@ -48,16 +55,19 @@ class Findzero:
                     self._findzero([os.path.join(file, x) for x in os.listdir(file)])
                 except PermissionError:
                     pass
-            elif syslib.FileStat(file).getSize() == 0:
+            elif syslib.FileStat(file).get_size() == 0:
                 print(file)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Findzero(options)
@@ -71,7 +81,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -10,18 +10,22 @@ import json
 import os
 import signal
 import sys
-import time
 
 import syslib
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         if 'HOME' not in os.environ:
             raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
@@ -44,10 +48,10 @@ class Options:
                 self._config.set(device, mode)
             self._config.write(configfile)
 
-    def getSettings(self):
+    def get_settings(self):
         return self._config.get()
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Reset to default screen resolution.')
 
         parser.add_argument('settings', nargs='*', metavar='device=mode',
@@ -56,7 +60,10 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Configuration:
+class Configuration(object):
+    """
+    Configuration class
+    """
 
     def __init__(self, file=''):
         self._data = {'xreset': {}}
@@ -81,32 +88,38 @@ class Configuration:
             pass
 
 
-class Xreset:
+class Xreset(object):
+    """
+    Xreset class
+    """
 
     def __init__(self, options):
         self._xrandr = syslib.Command('xrandr')
         self._dpi = '96'
-        self._settings = options.getSettings()
+        self._settings = options.get_settings()
 
     def run(self):
-        self._xrandr.setArgs(['-s', '0'])
+        self._xrandr.set_args(['-s', '0'])
         self._xrandr.run(mode='batch')
-        self._xrandr.setArgs(['--dpi', self._dpi])
+        self._xrandr.set_args(['--dpi', self._dpi])
         self._xrandr.run(mode='batch')
 
         for device, mode in self._settings:
-            self._xrandr.setArgs(['--output', device, '--auto'])
+            self._xrandr.set_args(['--output', device, '--auto'])
             self._xrandr.run(mode='batch')
-            self._xrandr.setArgs(['--output', device, '--mode', mode])
+            self._xrandr.set_args(['--output', device, '--mode', mode])
             self._xrandr.run(mode='batch')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Xreset(options).run()
@@ -120,7 +133,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

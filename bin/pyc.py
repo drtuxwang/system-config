@@ -15,52 +15,54 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
     """
     self._args.noskipFlag = No compile skip flag
-    self._dumpFlag        = Dump objects flag
+    self._dump_flag        = Dump objects flag
     self._modules         = List of module names
-    self._verboseFlag     = Verbose flag
+    self._verbose_flag     = Verbose flag
     """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._modules = []
         for file in self._args.files:
             if file.endswith('.py'):
                 self._modules.append(PythonModule(file[:-3]))
 
-    def getDumpFlag(self):
+    def get_dump_flag(self):
         """
         Return dump objects flag.
         """
-        return self._dumpFlag
+        return self._dump_flag
 
-    def getModules(self):
+    def get_modules(self):
         """
         Return list of PythonModule class objects.
         """
         return self._modules
 
-    def getNoskipFlag(self):
+    def get_noskip_flag(self):
         """
         Return noskip flag.
         """
         return self._args.noskipFlag
 
-    def getVerboseFlag(self):
+    def get_verbose_flag(self):
         """
         Return verbose flag.
         """
-        return self._verboseFlag
+        return self._verbose_flag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Check and compile Python 3.x modules to ".pyc" byte code.')
 
-        parser.add_argument('-v', '-vv', '-vvv', nargs=0, action=ArgparseActionVerbose,
+        parser.add_argument('-v', '-vv', '-vvv', nargs=0, action=ArgparseVerboseAction,
                             dest='verbosity', default=0, help='Select verbosity level 1, 2 or 3.')
         parser.add_argument('-verbose', action='store_const', const=1, dest='verbosity',
                             default=0, help='Select verbosity level 1.')
@@ -72,18 +74,21 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-        self._verboseFlag = self._args.verbosity >= 1
-        self._dumpFlag = self._args.verbosity >= 2
+        self._verbose_flag = self._args.verbosity >= 1
+        self._dump_flag = self._args.verbosity >= 2
 
 
-class ArgparseActionVerbose(argparse.Action):
+class ArgparseVerboseAction(argparse.Action):
+    """
+    Arg parser verbose action handler class
+    """
 
     def __call__(self, parser, args, values, option_string=None):
         # option_string must be '-v', '-vv' or '-vvv'
         setattr(args, self.dest, len(option_string[1:]))
 
 
-class PythonChecker:
+class PythonChecker(object):
     """
     This class checks Python source code for 3.x compatibility and common mistakes.
     """
@@ -97,9 +102,9 @@ class PythonChecker:
             if os.path.isfile(file + '.py'):
                 file += '.py'
             self._py2to3 = syslib.Command(file=file)
-        self._py2to3.setFlags(['--nofix=dict', '--nofix=future', '--nofix=imports',
+        self._py2to3.set_flags(['--nofix=dict', '--nofix=future', '--nofix=imports',
                                '--nofix=raise', '--nofix=unicode', '--nofix=xrange'])
-        self._py2to3.setWrapper(syslib.Command(file=sys.executable))
+        self._py2to3.set_wrapper(syslib.Command(file=sys.executable))
 
     def _check(self, file):
         error = False
@@ -115,7 +120,7 @@ class PythonChecker:
                         elif 'python' not in line:  # Not Python program
                             return 0
                         elif 'python3' in line:
-                            self._py2to3.extendFlags(
+                            self._py2to3.extend_flags(
                                 ['--nofix=input', '--nofix=print', '--print-function'])
                         if not line.startswith('#!/usr/bin/env python'):
                             print(file, ': ? line 1 should be "#!/usr/bin/env python".', sep='')
@@ -142,10 +147,10 @@ class PythonChecker:
 
     def _python3(self, file):
         error = False
-        self._py2to3.setArgs([file])
+        self._py2to3.set_args([file])
         self._py2to3.run(mode='batch', error2output=True)
-        if self._py2to3.isMatchOutput('^RefactoringTool: Can"t parse '):
-            for line in self._py2to3.getOutput():
+        if self._py2to3.is_match_output('^RefactoringTool: Can"t parse '):
+            for line in self._py2to3.get_output():
                 if line.startswith('RefactoringTool: Can"t parse'):
                     print(file, ': ', line[17:], sep='')
                     error = True
@@ -155,8 +160,8 @@ class PythonChecker:
                 elif line[:17] != 'RefactoringTool: ':
                     print(file, ': ', line, sep='')
                     error = True
-        elif not self._py2to3.isMatchOutput('No files need to be modified.'):
-            for line in self._py2to3.getOutput():
+        elif not self._py2to3.is_match_output('No files need to be modified.'):
+            for line in self._py2to3.get_output():
                 if ': Generating grammar tables from ' in line:
                     # Ignore ': Generating grammar tables from /usr/lib/.../PatternGrammar.txt'
                     pass
@@ -175,7 +180,7 @@ class PythonChecker:
         return 0
 
 
-class PythonCompiler:
+class PythonCompiler(object):
     """
     This class check & compiles Python source code into '.pyc' (works like make).
     """
@@ -193,39 +198,39 @@ class PythonCompiler:
         """
         Compiles Python with verbose error messages
         """
-        if self._options.getDumpFlag():
+        if self._options.get_dump_flag():
             syslib.Dump().list('pyc', self)
 
         self._umask = os.umask(int('022', 8))
         errors = 0
 
-        verboseFlag = self._options.getVerboseFlag()
-        for module in self._options.getModules():
+        verboseFlag = self._options.get_verbose_flag()
+        for module in self._options.get_modules():
             if verboseFlag:
-                print('\nChecking', module.getSource())
-            if self._options.getNoskipFlag() or not module.checkTarget():
-                source = module.getSource()
+                print('\nChecking', module.get_source())
+            if self._options.get_noskip_flag() or not module.check_target():
+                source = module.get_source()
                 print('\nCompiling "' + source + '"...')
                 if self._checker.run(source):
                     errors += 1
                 else:
-                    if self._buildTarget(module):
+                    if self._build_target(module):
                         errors += 1
 
         print()
         if errors > 0:
             raise SystemExit('Total errors encountered: ' + str(errors) + '.')
 
-    def _buildTarget(self, module):
+    def _build_target(self, module):
         try:
-            py_compile.compile(module.getSource())
+            py_compile.compile(module.get_source())
         except py_compile.PyCompileError as exception:
             return 1
-        module.updateTarget()
+        module.update_target()
         return 0
 
 
-class PythonModule:
+class PythonModule(object):
     """
     This class deals with Python module files.
     """
@@ -239,41 +244,44 @@ class PythonModule:
         self._target = os.path.join(os.path.dirname(module), '__pycache__',
                                     os.path.basename(module) + extension)
 
-    def checkTarget(self):
+    def check_target(self):
         """
         Return True if '.pyc' exists.
         """
         if os.path.isfile(self._target):
-            if syslib.FileStat(self._target).getTime() == syslib.FileStat(self._source).getTime():
+            if syslib.FileStat(self._target).get_time() == syslib.FileStat(self._source).get_time():
                 return True
         return False
 
-    def updateTarget(self):
+    def update_target(self):
         """
         Set target file modification time to source file.
         """
-        timeNew = syslib.FileStat(self._source).getTime()
+        timeNew = syslib.FileStat(self._source).get_time()
         os.utime(self._target, (timeNew, timeNew))
 
-    def getSource(self):
+    def get_source(self):
         """
         Return source file location.
         """
         return self._source
 
-    def getTarget(self):
+    def get_target(self):
         """
         Return target file location.
         """
         return self._target
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             sys.exit(PythonCompiler(options).run())
@@ -287,7 +295,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

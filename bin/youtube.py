@@ -14,28 +14,33 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._youtubedl = syslib.Command('youtube-dl', check=False)
-        if not self._youtubedl.isFound():
+        if not self._youtubedl.is_found():
             youtube = syslib.Command('youtube', args=args[1:], check=False)
-            if youtube.isFound():
+            if youtube.is_found():
                 youtube.run(mode='exec')
             self._youtubedl = syslib.Command('youtube-dl')
 
         if self._args.viewFlag:
-            self._youtubedl.setArgs(['--list-formats'])
+            self._youtubedl.set_args(['--list-formats'])
         elif self._args.format:
-            self._youtubedl.setArgs(['--title', '--format', str(self._args.format[0])])
-        self._youtubedl.extendArgs(self._args.urls)
+            self._youtubedl.set_args(['--title', '--format', str(self._args.format[0])])
+        self._youtubedl.extend_args(self._args.urls)
 
         self._setpython(self._youtubedl)
 
-    def getYoutubedl(self):
+    def get_youtubedl(self):
         """
         Return youtubedl Command class object.
         """
@@ -43,11 +48,11 @@ class Options:
 
     def _setpython(self, command):  # Must use system Python
         if os.path.isfile('/usr/bin/python3'):
-            command.setWrapper(syslib.Command(file='/usr/bin/python3'))
+            command.set_wrapper(syslib.Command(file='/usr/bin/python3'))
         elif os.path.isfile('/usr/bin/python'):
-            command.setWrapper(syslib.Command(file='/usr/bin/python'))
+            command.set_wrapper(syslib.Command(file='/usr/bin/python'))
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Youtube video downloader.')
 
         parser.add_argument('-f', nargs=1, type=int, dest='format', metavar='code',
@@ -60,15 +65,18 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
-            options.getYoutubedl().run()
+            options.get_youtubedl().run()
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -79,7 +87,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -15,33 +15,38 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._convert = syslib.Command('convert')
 
-    def getConvert(self):
+    def get_convert(self):
         """
         Return convert Command class object.
         """
         return self._convert
 
-    def getDirectories(self):
+    def get_directories(self):
         """
         Return list of directories.
         """
         return self._args.directories
 
-    def getMegs(self):
+    def get_megs(self):
         """
         Return mega-pixels.
         """
         return self._args.megs[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Resize large picture images to mega-pixels limit.')
 
@@ -62,13 +67,16 @@ class Options:
                     sys.argv[0] + ': Image directory "' + directory + '" does not exist.')
 
 
-class Remeg:
+class Remeg(object):
+    """
+    Change metai-pixels class
+    """
 
     def __init__(self, options):
-        self._convert = options.getConvert()
-        megs = options.getMegs()
+        self._convert = options.get_convert()
+        megs = options.get_megs()
 
-        for directory in options.getDirectories():
+        for directory in options.get_directories():
             for file in sorted(glob.glob(os.path.join(directory, '*'))):
                 if (file.split('.')[-1].lower() in (
                         'bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff')):
@@ -81,34 +89,37 @@ class Remeg:
                     if ox < ix and oy < iy:
                         print(' => {0:d} x {1:d} ({2:4.2f})'.format(ox, oy, ox * oy / 1000000),
                               end='')
-                        self._convert.setArgs(['-verbose', '-size', str(ox) + 'x' + str(oy),
-                                               '-resize', str(ox) + 'x' + str(oy) + '!',
-                                               file, file])
+                        self._convert.set_args(['-verbose', '-size', str(ox) + 'x' + str(oy),
+                                                '-resize', str(ox) + 'x' + str(oy) + '!',
+                                                file, file])
                         self._convert.run(mode='batch')
-                        if self._convert.getExitcode():
+                        if self._convert.get_exitcode():
                             raise SystemExit(
-                                sys.argv[0] + ': Error code ' + str(self._convert.getExitcode()) +
-                                ' received from "' + self._convert.getFile() + '".')
+                                sys.argv[0] + ': Error code ' + str(self._convert.get_exitcode()) +
+                                ' received from "' + self._convert.get_file() + '".')
                     print()
 
     def _imagesize(self, options, file):
-        self._convert.setArgs(['-verbose', file, '/dev/null'])
+        self._convert.set_args(['-verbose', file, '/dev/null'])
         self._convert.run(filter='^' + file + '=>', mode='batch', error2output=True)
-        if not self._convert.hasOutput():
+        if not self._convert.has_output():
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" picture file.')
-        elif self._convert.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._convert.getExitcode()) +
-                             ' received from "' + self._convert.getFile() + '".')
-        x, y = self._convert.getOutput()[0].split('+')[0].split()[-1].split('x')
+        elif self._convert.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._convert.get_exitcode()) +
+                             ' received from "' + self._convert.get_file() + '".')
+        x, y = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
         return (int(x), int(y))
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Remeg(options)
@@ -122,7 +133,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -16,25 +16,30 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getMirrors(self):
+    def get_mirrors(self):
         """
         Return list of mirroring directory pair tuples.
         """
         return self._mirrors
 
-    def getRemoveFlag(self):
+    def get_remove_flag(self):
         """
         Return remove flag.
         """
         return self._args.removeFlag
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Copy all files/directory inside a directory into mirror directory.')
 
@@ -58,13 +63,16 @@ class Options:
             self._mirrors.append([directories[i], directories[i+1]])
 
 
-class Mirror:
+class Mirror(object):
+    """
+    Mirroring class
+    """
 
     def __init__(self, options):
         self._size = 0
         self._start = int(time.time())
         self._options = options
-        for mirror in options.getMirrors():
+        for mirror in options.get_mirrors():
             self._automount(mirror[1], 8)
             self._mirror(mirror[0], mirror[1])
         print('[', self._size, ',', int(time.time()) - self._start, ']', sep='')
@@ -76,7 +84,7 @@ class Mirror:
                     break
                 time.sleep(0.1)
 
-    def _reportOldFiles(self, sourceDir, sourceFiles, targetFiles):
+    def _report_old_files(self, sourceDir, sourceFiles, targetFiles):
         for targetFile in targetFiles:
             if os.path.join(sourceDir, os.path.basename(targetFile)) not in sourceFiles:
                 if os.path.islink(targetFile):
@@ -86,7 +94,7 @@ class Mirror:
                 else:
                     print('**WARNING** No source for "' + targetFile + '" file.')
 
-    def _removeOldFiles(self, sourceDir, sourceFiles, targetFiles):
+    def _remove_old_files(self, sourceDir, sourceFiles, targetFiles):
         for targetFile in targetFiles:
             if os.path.join(sourceDir, os.path.basename(targetFile)) not in sourceFiles:
                 if os.path.islink(targetFile):
@@ -127,7 +135,7 @@ class Mirror:
                   targetDir, '" directory...', sep='')
             try:
                 os.mkdir(targetDir)
-                os.chmod(targetDir, syslib.FileStat(sourceDir).getMode())
+                os.chmod(targetDir, syslib.FileStat(sourceDir).get_mode())
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + targetDir + '" directory.')
 
@@ -168,17 +176,17 @@ class Mirror:
                 elif os.path.isfile(targetFile):
                     sourceFileStat = syslib.FileStat(sourceFile)
                     targetFileStat = syslib.FileStat(targetFile)
-                    if sourceFileStat.getSize() == targetFileStat.getSize():
+                    if sourceFileStat.get_size() == targetFileStat.get_size():
                         # Allow FAT16/FAT32/NTFS 1h daylight saving and 1 sec rounding error
-                        if (abs(sourceFileStat.getTime() - targetFileStat.getTime()) in
+                        if (abs(sourceFileStat.get_time() - targetFileStat.get_time()) in
                                 (0, 1, 3599, 3600, 3601)):
                             continue
-                    self._size += int((sourceFileStat.getSize() + 1023) / 1024)
+                    self._size += int((sourceFileStat.get_size() + 1023) / 1024)
                     print('[', self._size, ',', int(time.time()) - self._start, '] Updating "',
                           targetFile, '" file...', sep='')
                 else:
                     sourceFileStat = syslib.FileStat(sourceFile)
-                    self._size += int((sourceFileStat.getSize() + 1023) / 1024)
+                    self._size += int((sourceFileStat.get_size() + 1023) / 1024)
                     print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
                           targetFile, '" file...', sep='')
                 try:
@@ -195,8 +203,8 @@ class Mirror:
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + sourceFile + '" file.')
 
-        sourceTime = syslib.FileStat(sourceDir).getTime()
-        targetTime = syslib.FileStat(targetDir).getTime()
+        sourceTime = syslib.FileStat(sourceDir).get_time()
+        targetTime = syslib.FileStat(targetDir).get_time()
         if sourceTime != targetTime:
             try:
                 os.utime(targetDir, (sourceTime, sourceTime))
@@ -204,18 +212,21 @@ class Mirror:
                 raise SystemExit(sys.argv[0] + ': Cannot update "' +
                                  targetDir + '" directory modification time.')
 
-        if self._options.getRemoveFlag():
-            self._removeOldFiles(sourceDir, sourceFiles, targetFiles)
+        if self._options.get_remove_flag():
+            self._remove_old_files(sourceDir, sourceFiles, targetFiles)
         else:
-            self._reportOldFiles(sourceDir, sourceFiles, targetFiles)
+            self._report_old_files(sourceDir, sourceFiles, targetFiles)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Mirror(options)
@@ -229,7 +240,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

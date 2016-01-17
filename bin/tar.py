@@ -16,25 +16,30 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getArchive(self):
+    def get_archive(self):
         """
         Return archive location.
         """
         return self._archive
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._files
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Make a compressed archive in TAR format.')
 
         parser.add_argument('archive', nargs=1,
@@ -60,31 +65,34 @@ class Options:
             self._files = os.listdir()
 
 
-class Pack:
+class Pack(object):
+    """
+    Pack class
+    """
 
     def __init__(self, options):
-        if options.getArchive().endswith('.tar'):
+        if options.get_archive().endswith('.tar'):
             try:
-                self._archive = tarfile.open(options.getArchive(), 'w:')
+                self._archive = tarfile.open(options.get_archive(), 'w:')
             except IOError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' +
-                                 options.getArchive() + '" archive file.')
-            self._addfile(options.getFiles())
+                                 options.get_archive() + '" archive file.')
+            self._addfile(options.get_files())
             self._archive.close()
         else:
             tar = syslib.Command('tar')
-            archive = options.getArchive()
+            archive = options.get_archive()
             if archive.endswith('.tar.7z'):
-                tar.setAargs(['cfv', '-'] + options.getFiles())
+                tar.set_args(['cfv', '-'] + options.get_files())
                 p7zip = syslib.Command('7za')
-                p7zip.setArgs(['a', '-mx=9', '-y', '-si', archive()])
+                p7zip.set_args(['a', '-mx=9', '-y', '-si', archive()])
                 tar.run(pipes=[p7zip])
             elif archive.endswith('.txz') or archive.endswith('.tar.xz'):
-                tar.setArgs(['cfvJ', archive] + options.getFiles())
+                tar.set_args(['cfvJ', archive] + options.get_files())
                 os.environ['XZ_OPT'] = '-9 -e'
                 tar.run(mode='exec')
             else:
-                tar.setArgs(['cfva', archive] + options.getFiles())
+                tar.set_args(['cfva', archive] + options.get_files())
                 os.environ['GZIP'] = '-9'
                 os.environ['BZIP2'] = '-9'
                 os.environ['XZ_OPT'] = '-9 -e'
@@ -106,12 +114,15 @@ class Pack:
                     raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Pack(options)
@@ -125,7 +136,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

@@ -6,7 +6,6 @@ Convert image file to text using OCR.
 import argparse
 import glob
 import os
-import re
 import signal
 import sys
 
@@ -15,34 +14,39 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._convert = syslib.Command('convert')
         self._tesseract = syslib.Command('tesseract')
 
-    def getConvert(self):
+    def get_convert(self):
         """
         Return convert Command class object.
         """
         return self._convert
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getTesseract(self):
+    def get_tesseract(self):
         """
         Return tesseract Command class object.
         """
         return self._tesseract
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Convert image file to text using OCR.')
 
         parser.add_argument('files', nargs=1, metavar='file', help='Image file to analyse.')
@@ -50,27 +54,30 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Ocr:
+class Ocr(object):
+    """
+    OCR class
+    """
 
     def __init__(self, options):
-        self._tesseract = options.getTesseract()
-        convert = options.getConvert()
+        self._tesseract = options.get_tesseract()
+        convert = options.get_convert()
 
-        tmpfile = os.sep + os.path.join('tmp', 'ocr-' + syslib.info.getUsername() +
+        tmpfile = os.sep + os.path.join('tmp', 'ocr-' + syslib.info.get_username() +
                                         str(os.getpid()) + '.tif')
-        for file in options.getFiles():
+        for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" image file.')
             ext = file.split('.')[-1].lower()
             name = file.rsplit('.', 1)[0]
             if ext in ('bmp', 'jpg', 'jpeg', 'png', 'pcx'):
                 print('Converting "' + file + '" to "' + name + '.txt' + '"...')
-                convert.setArgs([file, tmpfile])
+                convert.set_args([file, tmpfile])
                 convert.run()
-                if convert.getExitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(convert.getExitcode()) +
-                                     ' received from "' + convert.getFile() + '".')
-                self._ocr(options, tmpfile, name)
+                if convert.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(convert.get_exitcode()) +
+                                     ' received from "' + convert.get_file() + '".')
+                self._ocr(tmpfile, name)
                 try:
                     os.remove(tmpfile)
                 except OSError:
@@ -81,20 +88,23 @@ class Ocr:
             else:
                 raise SystemExit(sys.argv[0] + ': Cannot OCR non image file "' + file + '".')
 
-    def _ocr(self, options, file, name):
-        self._tesseract.setArgs([file, name])
+    def _ocr(self, file, name):
+        self._tesseract.set_args([file, name])
         self._tesseract.run(filter='^Tesseract')
-        if self._tesseract.getExitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._tesseract.getExitcode()) +
-                             ' received from "' + self._tesseract.getFile() + '".')
+        if self._tesseract.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._tesseract.get_exitcode()) +
+                             ' received from "' + self._tesseract.get_file() + '".')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Ocr(options)
@@ -108,7 +118,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

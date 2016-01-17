@@ -8,25 +8,29 @@ import glob
 import os
 import signal
 import sys
-import time
 
 import syslib
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._ftp = syslib.Command('ftp')
-        self._ftp.setArgs(['-i', self._args.host[0]])
+        self._ftp.set_args(['-i', self._args.host[0]])
 
         self._netrc(self._args.host[0])
 
-    def getFtp(self):
+    def get_ftp(self):
         """
         Return ftp Command class object.
         """
@@ -45,7 +49,7 @@ class Options:
                                  '" configuration file.')
             os.umask(umask)
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Automatic connection to FTP server anonymously.')
 
@@ -54,15 +58,18 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         self._signals()
         try:
             options = Options(sys.argv)
-            options.getFtp().run(mode='exec')
+            options.get_ftp().run(mode='exec')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
@@ -73,7 +80,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

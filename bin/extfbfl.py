@@ -16,19 +16,24 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFile(self):
+    def get_file(self):
         """
         Return html file.
         """
         return self._args.file[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Extract Facebook friends list from saved HTML file.')
 
@@ -37,13 +42,16 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Extract:
+class Extract(object):
+    """
+    Extract class
+    """
 
     def __init__(self, options):
         self._profiles = {}
-        self._readHtml(options.getFile())
+        self._read_html(options.get_file())
 
-    def _readHtml(self, file):
+    def _read_html(self, file):
         isjunk = re.compile('(&amp;|[?])ref=pb$|[?&]fref=.*|&amp;.*')
         try:
             with open(file, errors='replace') as ifile:
@@ -71,39 +79,45 @@ class Extract:
                         print('???', end='', file=ofile)
                     else:
                         print(uid, end='', file=ofile)
-                    if ' ' in profile.getName():
-                        print(',"' + profile.getName() + '",' + profile.getUrl(), file=ofile)
+                    if ' ' in profile.get_name():
+                        print(',"' + profile.get_name() + '",' + profile.get_url(), file=ofile)
                     else:
-                        print(',' + profile.getName() + ',' + profile.getUrl(), file=ofile)
+                        print(',' + profile.get_name() + ',' + profile.get_url(), file=ofile)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" CSV file.')
 
 
-class Profile:
+class Profile(object):
+    """
+    Profile class
+    """
 
     def __init__(self, name, url):
         self._name = name
         self._url = url
 
-    def getName(self):
+    def get_name(self):
         """
         Return name.
         """
         return self._name
 
-    def getUrl(self):
+    def get_url(self):
         """
         Return url.
         """
         return self._url
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Extract(options).write()
@@ -117,7 +131,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

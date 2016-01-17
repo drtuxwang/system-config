@@ -13,25 +13,30 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getMonth(self):
+    def get_month(self):
         """
         Return month of files.
         """
         return self._args.month[0]
 
-    def getYear(self):
+    def get_year(self):
         """
         Return year of files.
         """
         return self._args.year[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Print large monthly calendar.')
 
         parser.add_argument('year', nargs=1, type=int, help='Select year.')
@@ -48,13 +53,16 @@ class Options:
             raise SystemExit(sys.argv[0] + ': Invalid "' + str(month) + '" month. Use 1-12.')
 
 
-class Calendar:
+class Calendar(object):
+    """
+    Calendar class
+    """
 
     def __init__(self, options):
-        print('\n                  [ ', calendar.month_name[options.getMonth()] + ' ',
-              options.getYear(), ' ]\n')
+        print('\n                  [ ', calendar.month_name[options.get_month()] + ' ',
+              options.get_year(), ' ]\n')
         for line in calendar.TextCalendar(6).formatmonth(
-                options.getYear(), options.getMonth()).split(os.linesep)[1:]:
+                options.get_year(), options.get_month()).split(os.linesep)[1:]:
             print('  __________________________________________________  ', line)
         print()
         print('  ____________________________________________________________________________ ')
@@ -63,7 +71,8 @@ class Calendar:
         print(' | Sunday   | Monday   | Tuesday  | Wednesday| Thursday | Friday   | Saturday |')
         print(' |          |          |          |          |          |          |          |')
         print(' |__________|__________|__________|__________|__________|__________|__________|')
-        for week in calendar.Calendar(6).monthdays2calendar(options.getYear(), options.getMonth()):
+        for week in calendar.Calendar(6).monthdays2calendar(
+                options.get_year(), options.get_month()):
             print(' |          |          |          |          |          |          |          |')
             line = ''
             for day in week:
@@ -78,12 +87,15 @@ class Calendar:
             print(' |' + 7*'__________|')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Calendar(options)
@@ -97,7 +109,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

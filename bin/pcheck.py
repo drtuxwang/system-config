@@ -14,19 +14,24 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getDirectories(self):
+    def get_directories(self):
         """
         Return list of directories.
         """
         return self._args.directories
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Check JPEG picture files.')
 
         parser.add_argument('directories', nargs='+', metavar='directory',
@@ -35,10 +40,13 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Check:
+class Check(object):
+    """
+    Check class
+    """
 
     def __init__(self, options):
-        self._directories = options.getDirectories()
+        self._directories = options.get_directories()
 
     def run(self):
         errors = []
@@ -50,9 +58,9 @@ class Check:
                     if file.split('.')[-1].lower() in ('jpg', 'jpeg'):
                         files.append(file)
                 if files:
-                    jpeginfo.setArgs(files)
+                    jpeginfo.set_args(files)
                     jpeginfo.run(mode='batch')
-                    for line in jpeginfo.getOutput():
+                    for line in jpeginfo.get_output():
                         if '[ERROR]' in line:
                             errors.append(line)
                         else:
@@ -63,12 +71,15 @@ class Check:
             raise SystemExit('Total errors encountered: ' + str(len(errors)) + '.')
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Check(options).run()
@@ -82,7 +93,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

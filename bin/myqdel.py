@@ -11,32 +11,37 @@ import sys
 
 import syslib
 
-RELEASE = '2.6.4'
+RELEASE = '2.7.0'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._release = RELEASE
 
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getForceFlag(self):
+    def get_force_flag(self):
         """
         Return force flag.
         """
         return self._args.forceFlag
 
-    def getJobids(self):
+    def get_jobids(self):
         """
         Return list of job IDs.
         """
         return self._jobids
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='MyQS v' + self._release + ', My Queuing System batch job deletion.')
 
@@ -55,60 +60,70 @@ class Options:
             self._jobids.append(jobid)
 
 
-class Delete:
+class Delete(object):
+    """
+    Delete class
+    """
 
     def __init__(self, options):
+        self._force_flag = options.get_force_flag()
+
         if 'HOME' not in os.environ:
             raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
         self._myqsdir = os.path.join(os.environ['HOME'], '.config',
-                                     'myqs', syslib.info.getHostname())
-        for jobid in options.getJobids():
+                                     'myqs', syslib.info.get_hostname())
+        for jobid in options.get_jobids():
             if not glob.glob(os.path.join(self._myqsdir, jobid + '.[qr]')):
                 print('MyQS cannot delete batch job with jobid', jobid, 'as it does no exist.')
             else:
-                file = os.path.join(self._myqsdir, jobid + '.q')
-                if os.path.isfile(file):
-                    try:
-                        os.remove(file)
-                    except OSError:
-                        pass
+                self._remove(jobid)
+
+    def _remove(self, jobid):
+        file = os.path.join(self._myqsdir, jobid + '.q')
+        if os.path.isfile(file):
+            try:
+                os.remove(file)
+            except OSError:
+                pass
+            else:
+                print('Batch job with jobid', jobid, 'has been deleted from MyQS.')
+                return
+        file = os.path.join(self._myqsdir, jobid + '.r')
+        if os.path.isfile(file):
+            try:
+                with open(file, errors='replace') as ifile:
+                    if not self._force_flag():
+                        print('MyQS cannot delete batch job with jobid', jobid, 'as it is running.')
                     else:
+                        info = {}
+                        for line in ifile:
+                            line = line.strip()
+                            if '=' in line:
+                                info[line.split('=')[0]] = line.split('=', 1)[1]
+                        if 'PGID' in info:
+                            try:
+                                pgid = int(info['PGID'])
+                            except ValueError:
+                                return
+                            syslib.Task().killpgid(pgid, signal='TERM')
+                        try:
+                            os.remove(file)
+                        except OSError:
+                            pass
                         print('Batch job with jobid', jobid, 'has been deleted from MyQS.')
-                        continue
-                file = os.path.join(self._myqsdir, jobid + '.r')
-                if os.path.isfile(file):
-                    try:
-                        with open(file, errors='replace') as ifile:
-                            if not options.getForceFlag():
-                                print('MyQS cannot delete batch job with jobid', jobid,
-                                      'as it is running.')
-                            else:
-                                info = {}
-                                for line in ifile:
-                                    line = line.strip()
-                                    if '=' in line:
-                                        info[line.split('=')[0]] = line.split('=', 1)[1]
-                                if 'PGID' in info:
-                                    try:
-                                        pgid = int(info['PGID'])
-                                    except ValueError:
-                                        continue
-                                    syslib.Task().killpgid(pgid, signal='TERM')
-                                try:
-                                    os.remove(file)
-                                except OSError:
-                                    pass
-                                print('Batch job with jobid', jobid, 'has been deleted from MyQS.')
-                    except IOError:
-                        continue
+            except IOError:
+                pass
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Delete(options)
@@ -122,7 +137,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

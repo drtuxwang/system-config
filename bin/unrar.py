@@ -14,37 +14,42 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
         self._archiver = syslib.Command('unrar')
         if args[1] in ('l', 't', 'x'):
-            self._archiver.setArgs(args[1:])
+            self._archiver.set_args(args[1:])
             self._archiver.run(mode='exec')
 
         if self._args.viewFlag:
-            self._archiver.setFlags(['l'])
+            self._archiver.set_flags(['l', '-std'])
         elif self._args.testFlag:
-            self._archiver.setFlags(['t'])
+            self._archiver.set_flags(['t', '-std'])
         else:
-            self._archiver.setFlags(['x'])
+            self._archiver.set_flags(['x', '-std'])
 
-    def getArchiver(self):
+    def get_archiver(self):
         """
         Return archiver Command class object.
         """
         return self._archiver
 
-    def getArchives(self):
+    def get_archives(self):
         """
         Return list of archives files.
         """
         return self._args.archives
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Unpack a compressed archive in RAR format.')
 
         parser.add_argument('-v', dest='viewFlag', action='store_true',
@@ -58,27 +63,33 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Unpack:
+class Unpack(object):
+    """
+    Unpack class
+    """
 
     def __init__(self, options):
         os.umask(int('022', 8))
-        archiver = options.getArchiver()
+        archiver = options.get_archiver()
 
-        for archive in options.getArchives():
-            archiver.setArgs([archive])
+        for archive in options.get_archives():
+            archiver.set_args([archive])
             archiver.run()
-            if archiver.getExitcode():
-                print(sys.argv[0] + ': Error code ' + str(archiver.getExitcode()) +
-                      ' received from "' + archiver.getFile() + '".', file=sys.stderr)
-                raise SystemExit(archiver.getExitcode())
+            if archiver.get_exitcode():
+                print(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
+                      ' received from "' + archiver.get_file() + '".', file=sys.stderr)
+                raise SystemExit(archiver.get_exitcode())
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Unpack(options)
@@ -92,7 +103,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug

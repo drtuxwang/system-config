@@ -15,43 +15,48 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
 
-class Options:
+
+class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
-        self._parseArgs(args[1:])
+        self._parse_args(args[1:])
 
-    def getFiles(self):
+    def get_files(self):
         """
         Return list of files.
         """
         return self._args.files
 
-    def getIgnoreCaseFlag(self):
+    def get_ignore_case_flag(self):
         """
         Return ignore case flag.
         """
         return self._args.ignoreCaseFlag
 
-    def getInvertFlag(self):
+    def get_invert_flag(self):
         """
         Return invert regular expression flag.
         """
         return self._args.invertFlag
 
-    def getNumberFlag(self):
+    def get_number_flag(self):
         """
         Return line number flag.
         """
         return self._args.numberFlag
 
-    def getPattern(self):
+    def get_pattern(self):
         """
         Return regular expression pattern.
         """
         return self._args.pattern[0]
 
-    def _parseArgs(self, args):
+    def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Print lines matching a pattern.')
 
         parser.add_argument('-i', dest='ignoreCaseFlag', action='store_true',
@@ -67,22 +72,25 @@ class Options:
         self._args = parser.parse_args(args)
 
 
-class Grep:
+class Grep(object):
+    """
+    Grep class
+    """
 
     def __init__(self, options):
         try:
-            if options.getIgnoreCaseFlag():
-                self._isMatch = re.compile(options.getPattern(), re.IGNORECASE)
+            if options.get_ignore_case_flag():
+                self._is_match = re.compile(options.get_pattern(), re.IGNORECASE)
             else:
-                self._isMatch = re.compile(options.getPattern())
+                self._is_match = re.compile(options.get_pattern())
         except re.error:
             raise SystemExit(
-                sys.argv[0] + ': Invalid regular expression "' + options.getPattern() + '".')
-        if len(options.getFiles()) > 1:
-            for file in options.getFiles():
+                sys.argv[0] + ': Invalid regular expression "' + options.get_pattern() + '".')
+        if len(options.get_files()) > 1:
+            for file in options.get_files():
                 self._file(options, file, prefix=file + ':')
-        elif len(options.getFiles()) == 1:
-            self._file(options, options.getFiles()[0])
+        elif len(options.get_files()) == 1:
+            self._file(options, options.get_files()[0])
         else:
             self._pipe(options, sys.stdin)
 
@@ -95,12 +103,12 @@ class Grep:
 
     def _pipe(self, options, pipe, prefix=''):
         number = 0
-        if options.getInvertFlag():
+        if options.get_invert_flag():
             for line in pipe:
                 line = line.rstrip('\r\n')
                 number += 1
-                if not self._isMatch.search(line):
-                    if options.getNumberFlag():
+                if not self._is_match.search(line):
+                    if options.get_number_flag():
                         line = str(number) + ':' + line
                     try:
                         print(prefix + line)
@@ -110,8 +118,8 @@ class Grep:
             for line in pipe:
                 line = line.rstrip('\r\n')
                 number += 1
-                if self._isMatch.search(line):
-                    if options.getNumberFlag():
+                if self._is_match.search(line):
+                    if options.get_number_flag():
                         line = str(number) + ':' + line
                     try:
                         print(prefix + line)
@@ -119,12 +127,15 @@ class Grep:
                         raise SystemExit(0)
 
 
-class Main:
+class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()
         if os.name == 'nt':
-            self._windowsArgv()
+            self._windows_argv()
         try:
             options = Options(sys.argv)
             Grep(options)
@@ -138,7 +149,7 @@ class Main:
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-    def _windowsArgv(self):
+    def _windows_argv(self):
         argv = []
         for arg in sys.argv:
             files = glob.glob(arg)  # Fixes Windows globbing bug
