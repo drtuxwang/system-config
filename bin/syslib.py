@@ -4,7 +4,7 @@ Python system interaction Library
 
 2006-2015 By Dr Colin Kong
 
-Version 5.3.0 (2016-01-17)
+Version 5.3.1 (2016-01-18)
 """
 
 import copy
@@ -131,7 +131,7 @@ class Command(object):
 
         if self._program and not file:
             if (os.sep in self._program and os.path.isfile(self._program) and
-                    not sys.argv[0].endswith(self._program + '.py')):
+                    not sys.argv[0].endswith(self._program)):
                 self._file = self._program
             else:
                 self._locate(pathextra, platform, check)

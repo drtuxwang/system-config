@@ -180,7 +180,7 @@ class Encode(object):
                     stdin = []
                     for line in ifile:
                         stdin.append(line.rstrip('\r\n' + chr(4)) + '\n')
-                    self._psnup.run(mode='batch', stdin=stdin, outputFile=self._tmpfile)
+                    self._psnup.run(mode='batch', stdin=stdin, output_file=self._tmpfile)
                     if self._psnup.get_exitcode():
                         raise SystemExit(
                             sys.argv[0] + ': Error code ' + str(self._psnup.get_exitcode()) +
@@ -247,13 +247,14 @@ class Encode(object):
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" text file.')
         if options.get_pages() == 1:
-            self._a2ps.run(mode='batch', stdin=stdin, outputFile=self._tmpfile)
+            self._a2ps.run(mode='batch', stdin=stdin, output_file=self._tmpfile)
             if self._a2ps.get_exitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(self._a2ps.get_exitcode()) +
                                  ' received from "' + self._a2ps.get_file() + '".')
             return 'text file "' + file + '" with ' + str(chars) + ' columns'
         else:
-            self._a2ps.run(mode='batch', pipes=[self._psnup], stdin=stdin, outputFile=self._tmpfile)
+            self._a2ps.run(
+                mode='batch', pipes=[self._psnup], stdin=stdin, output_file=self._tmpfile)
             if self._a2ps.get_exitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(self._a2ps.get_exitcode()) +
                                  ' received from "' + self._a2ps.get_file() + '".')

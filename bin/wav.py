@@ -162,7 +162,7 @@ class Encoder(object):
     def _config(self, file):
         media = Media(file)
         self._ffmpeg.set_args(['-i', file])
-        if media.hasAudio:
+        if media.has_audio:
             if (not media.has_audio_codec('wav') or self._options.get_audio_volume() or
                     self._options.get_noskip_flag() or len(self._options.get_files()) > 1):
                 self._ffmpeg.extend_args(['-c:a', self._options.get_audio_codec()])

@@ -242,7 +242,7 @@ class Encoder(object):
             else:
                 self._ffmpeg.extend_args(['-c:v', 'copy'])
 
-        if media.hasAudio:
+        if media.has_audio:
             if (not media.has_audio_codec('aac') or self._options.get_audio_quality() or
                     self._options.get_audio_volume() or self._options.get_noskip_flag()):
                 self._ffmpeg.extend_args(['-c:a', self._options.get_audio_codec()])

@@ -246,7 +246,7 @@ class Print(object):
                         stdin.extend(lines)
         except IOError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" text file.')
-        self._a2ps.run(mode='batch', stdin=stdin, outputFile=self._tmpfile)
+        self._a2ps.run(mode='batch', stdin=stdin, output_file=self._tmpfile)
         if self._a2ps.get_exitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(self._a2ps.get_exitcode()) +
                              ' received from "' + self._a2ps.get_file() + '".')

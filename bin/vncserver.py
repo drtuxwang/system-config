@@ -56,10 +56,15 @@ class Options(object):
                         print('    gnome &', file=ofile)
                         print('fi', file=ofile)
                     elif answer[0].lower() == 'k':
-                        print('SESSION_MANAGER=; startkde &', file=ofile)
+                        print('SESSION_MANAGER=', file=ofile)
+                        print('startkde &', file=ofile)
                     elif answer[0].lower() == 'x':
-                        print('unset SESSION_MANAGER DBUS_SESSION_BUS_ADDRESS; startxfce4 &',
-                              file=ofile)
+                        print('unset SESSION_MANAGER DBUS_SESSION_BUS_ADDRESS', file=ofile)
+                        print('if [ -x "/usr/bin/vglrun" ]; then', file=ofile)
+                        print('    vglrun startxfce4 &', file=ofile)
+                        print('else', file=ofile)
+                        print('    startxfce4 &', file=ofile)
+                        print('fi', file=ofile)
             except IOError:
                 raise SystemExit(sys.argv[0] + ': Cannot create ".vnc/xstartup" file.')
             os.chmod(xstartup, int('755', 8) & ~self._umask)

@@ -2,7 +2,7 @@
 """
 Python system interaction Library
 
-Version 5.3.0 (2016-01-17)
+V7ersion 5.3.1 (2016-01-18)
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -130,7 +130,7 @@ class Command(object):
 
         if self._program and not file:
             if (os.sep in self._program and os.path.isfile(self._program) and
-                    not sys.argv[0].endswith(self._program + '.py')):
+                    not sys.argv[0].endswith(self._program)):
                 self._file = self._program
             else:
                 self._locate(pathextra, platform, check)
