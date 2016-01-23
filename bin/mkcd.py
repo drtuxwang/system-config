@@ -69,7 +69,7 @@ class Options(object):
             if not cdrom.get_devices().keys():
                 raise SystemExit(sys.argv[0] + ': Cannot find any CD/DVD device.')
             self._device = sorted(cdrom.get_devices().keys())[0]
-        if not os.path.exists(self._device) and not os.path.isdir(self._image):
+        if not os.path.exists(self._device) and not os.path.isdir(self.get_image()):
             raise SystemExit(sys.argv[0] + ': Cannot find "' + self._device + '" CD/DVD device.')
 
     def _parse_args(self, args):
@@ -102,8 +102,8 @@ class Options(object):
         pass
 
     def _signal_trap(self):
-        signal.signal(signal.SIGINT, self._signalIgnore)
-        signal.signal(signal.SIGTERM, self._signalIgnore)
+        signal.signal(signal.SIGINT, self._signal_ignore)
+        signal.signal(signal.SIGTERM, self._signal_ignore)
 
 
 class Burner(object):
@@ -119,7 +119,7 @@ class Burner(object):
         if self._image == 'scan':
             self._scan()
         elif os.path.isdir(self._image):
-            self._track_at_once_audio(options)
+            self._track_at_once_audio()
         elif self._image.endswith('.bin'):
             self._disk_at_once_data(options)
         else:
@@ -161,7 +161,7 @@ class Burner(object):
                              ' received from "' + cdrdao.get_file() + '".')
         self._eject()
 
-    def _track_at_once_audio(self, options):
+    def _track_at_once_audio(self):
         files = glob.glob(os.path.join(self._image[0], '*.wav'))
 
         wodim = syslib.Command('wodim')

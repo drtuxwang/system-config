@@ -22,7 +22,7 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
+    def __init__(self):
         self._batterys = []
         if os.path.isdir('/sys/class/power_supply'):
             for directory in glob.glob('/sys/class/power_supply/BAT*'):  # New kernels
@@ -270,7 +270,7 @@ class Main(object):
         if os.name == 'nt':
             self._windows_argv()
         try:
-            options = Options(sys.argv)
+            options = Options()
             Monitor(options)
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)

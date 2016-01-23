@@ -122,19 +122,19 @@ class SecureShell(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + self._sshdir + '" configuration directory.')
 
-        privateKey = os.path.join(self._sshdir, 'id_rsa')
-        if not os.path.isfile(privateKey):
+        private_key = os.path.join(self._sshdir, 'id_rsa')
+        if not os.path.isfile(private_key):
             print('\nGenerating 4096bit RSA private/public key pair...')
             ssh_keygen = syslib.Command('ssh-keygen')
-            ssh_keygen.set_args(['-t', 'rsa', '-b', '4096', '-f', privateKey, '-N', ''])
+            ssh_keygen.set_args(['-t', 'rsa', '-b', '4096', '-f', private_key, '-N', ''])
             ssh_keygen.run()
             if ssh_keygen.get_exitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(ssh_keygen.get_exitcode()) +
                                  ' received from "' + ssh_keygen.get_file() + '".')
-            sshAdd = syslib.Command('ssh-add', check=False)
-            if sshAdd.is_found():
+            ssh_add = syslib.Command('ssh-add', check=False)
+            if ssh_add.is_found():
                 # When SSH_AUTH_SOCK agent is used
-                sshAdd.run(mode='batch')
+                ssh_add.run(mode='batch')
         try:
             with open(os.path.join(self._sshdir, 'id_rsa.pub'), errors='replace') as ifile:
                 pubkey = ifile.readline().strip()

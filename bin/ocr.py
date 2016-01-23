@@ -84,7 +84,7 @@ class Ocr(object):
                     pass
             elif ext in ('tif', 'tiff'):
                 print('Converting "' + file + '" to "' + name + '.txt' + '"...')
-                self._ocr(options, file, name)
+                self._ocr(file, name)
             else:
                 raise SystemExit(sys.argv[0] + ': Cannot OCR non image file "' + file + '".')
 

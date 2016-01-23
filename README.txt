@@ -517,9 +517,6 @@ bin/pep8               pep8 wrapper
 bin/pep8.bat
 bin/pep8.py
 
-bin/pframe             Resize/rotate picture images to fit digital photo frames
-bin/pframe.py
-
 bin/pidgin             pidgin wrapper (allowing non systems port)
 bin/pidgin.bat
 bin/pidgin.py
