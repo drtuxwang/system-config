@@ -60,7 +60,7 @@ class Options(object):
         """
         return self._ncsvc
 
-    def _certificate(self):
+    def _config(self):
         configdir = '/root/.juniper_networks'
         if not os.path.isdir(configdir):
             try:
@@ -71,7 +71,7 @@ class Options(object):
 
     def _openssl(self):
         os.umask(int('077', 8))
-        self._certificate()
+        self._config()
         print('Creating "' + self._certificate + '" certificate...')
         openssl = syslib.Command('openssl')
         openssl.set_args(['s_client', '-connect', self._server + ':443'])
@@ -105,7 +105,7 @@ class Options(object):
         if not self._username:
             self._username = input('Username: ').strip()
         self._ncsvc.set_args(['-u', self._username, '-h', self._server, '-r', self._domain,
-                             '-f', self._certificate, '-L', '1'])
+                              '-f', self._certificate, '-L', '1'])
         if os.path.isfile('/etc/jnpr-nc-resolv.conf'):
             try:
                 os.rename('/etc/jnpr-nc-resolv.conf', '/etc/resolv.conf')
@@ -133,10 +133,10 @@ class NetworkConnect(object):
         time.sleep(4)
 
     def _signal_trap(self):
-        signal.signal(signal.SIGINT, self._termNetworkConnect)
-        signal.signal(signal.SIGTERM, self._termNetworkConnect)
+        signal.signal(signal.SIGINT, self._xterm_network_connect)
+        signal.signal(signal.SIGTERM, self._xterm_network_connect)
 
-    def _term_network_connect(self, signal, frame):
+    def _xterm_network_connect(self, signal, frame):
         print('\nTerminating...')
 
 

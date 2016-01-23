@@ -11,10 +11,10 @@ import sys
 
 import syslib
 
-RELEASE = '2.7.0'
+RELEASE = '2.7.1'
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -111,7 +111,7 @@ class Delete(object):
                         except OSError:
                             pass
                         print('Batch job with jobid', jobid, 'has been deleted from MyQS.')
-            except IOError:
+            except OSError:
                 pass
 
 

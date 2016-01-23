@@ -12,8 +12,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -138,7 +138,7 @@ class Setmod(object):
                         try:
                             with open(file, 'rb') as ifile:
                                 magic = ifile.read(4)
-                        except IOError:
+                        except OSError:
                             os.chmod(file, fmod)
                             with open(file, 'rb') as ifile:
                                 magic = ifile.read(4)

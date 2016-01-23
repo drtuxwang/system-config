@@ -6,6 +6,7 @@ Reset to default screen resolution.
 """
 
 import argparse
+import glob
 import json
 import os
 import signal
@@ -49,6 +50,9 @@ class Options(object):
             self._config.write(configfile)
 
     def get_settings(self):
+        """
+        Return settings
+        """
         return self._config.get()
 
     def _parse_args(self, args):
@@ -71,20 +75,29 @@ class Configuration(object):
             try:
                 with open(file) as ifile:
                     self._data = json.load(ifile)
-            except (IOError, KeyError, ValueError):
+            except (OSError, KeyError, ValueError):
                 pass
 
     def get(self):
+        """
+        Return device mode
+        """
         return self._data['xreset'].items()
 
     def set(self, device, mode):
+        """
+        Set device mode
+        """
         self._data['xreset'][device] = mode
 
     def write(self, file):
+        """
+        Write file
+        """
         try:
             with open(file, 'w', newline='\n') as ofile:
                 print(json.dumps(self._data, indent=4, sort_keys=True), file=ofile)
-        except IOError:
+        except OSError:
             pass
 
 
@@ -99,6 +112,9 @@ class Xreset(object):
         self._settings = options.get_settings()
 
     def run(self):
+        """
+        Run commands
+        """
         self._xrandr.set_args(['-s', '0'])
         self._xrandr.run(mode='batch')
         self._xrandr.set_args(['--dpi', self._dpi])

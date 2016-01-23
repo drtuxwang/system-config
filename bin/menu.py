@@ -22,7 +22,7 @@ class Options(object):
     """
 
     def __init__(self, args):
-        self._config(args)
+        self._config()
         self._setenv(args)
         self._menu = syslib.Command('menu_main.tcl')
 
@@ -32,7 +32,7 @@ class Options(object):
         """
         return self._menu
 
-    def _config(self, args):
+    def _config(self):
         if 'HOME' in os.environ:
             os.chdir(os.environ['HOME'])
 

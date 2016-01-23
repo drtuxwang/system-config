@@ -69,6 +69,9 @@ class Rename(object):
         self._files = options.get_files()
 
     def run(self):
+        """
+        Start change
+        """
         for file in self._files:
             if os.sep in file:
                 newfile = os.path.join(os.path.dirname(file), self._is_match.sub(

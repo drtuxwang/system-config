@@ -2,7 +2,7 @@
 """
 Python system interaction Library
 
-V7ersion 5.3.1 (2016-01-18)
+Version 5.3.2 (2016-01-20)
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -845,7 +845,7 @@ class FileStat(object):
         """
         return self._ino
 
-    def get_numberlinks(self):
+    def get_number_links(self):
         """
         Return number of links to the inode
         """

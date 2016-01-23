@@ -12,8 +12,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -59,9 +59,9 @@ class Md5sum(object):
         self._md5files = {}
         self._calc(options, options.get_files())
 
-        for md5sum, md5file in sorted(self._md5files.items()):
-            if len(md5file) > 1:
-                print(syslib.Command().args2cmd(sorted(md5file)))
+        for _, files in sorted(self._md5files.items()):
+            if files:
+                print(syslib.Command().args2cmd(sorted(files)))
 
     def _calc(self, options, files):
         for file in files:
@@ -90,7 +90,7 @@ class Md5sum(object):
                     if not chunk:
                         break
                     md5.update(chunk)
-        except (IOError, TypeError):
+        except (OSError, TypeError):
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
         return md5.hexdigest()
 

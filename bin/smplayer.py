@@ -62,7 +62,7 @@ class Options(object):
             with open(os.path.join(configdir, 'smplayer.ini'), errors='replace') as ifile:
                 for line in ifile:
                     lines.append(line.rstrip('\r\n'))
-        except IOError:
+        except OSError:
             pass
 
         if 'use_single_instance=false' not in lines or 'cache_for_streams=100' not in lines:
@@ -82,7 +82,7 @@ class Options(object):
                     print('cache_for_streams=100', file=ofile)
                     print('[mplayer_info]', file=ofile)
                     print('mplayer_user_supplied_version=20372', file=ofile)
-            except IOError:
+            except OSError:
                 return
 
         configfile = os.path.join(os.environ['HOME'], '.config', 'smplayer', 'smplayer.ini')
@@ -91,14 +91,14 @@ class Options(object):
                 lines = []
                 for line in ifile:
                     lines.append(line.rstrip('\r\n'))
-        except IOError:
+        except OSError:
             try:
                 with open(configfile, 'w', newline='\n') as ofile:
                     print('[gui]', file=ofile)
                     print('reported_mplayer_is_old=true\n', file=ofile)
                     print('[instances]', file=ofile)
                     print('use_single_instance=false\n', file=ofile)
-            except IOError:
+            except OSError:
                 return
 
         try:
@@ -120,7 +120,7 @@ class Options(object):
                     os.rename(configfile + '-new', configfile)
                 except OSError:
                     os.remove(configfile + '-new')
-        except IOError:
+        except OSError:
             pass
 
     def _config2(self):
@@ -138,7 +138,7 @@ class Options(object):
                             if ifile.readline().rstrip('\r\n') != 'current_sec=0':
                                 empty = False
                                 continue
-                    except IOError:
+                    except OSError:
                         pass
                 self._remove(file)
             if empty:

@@ -182,29 +182,29 @@ class PythonTest(object):
         if self._options.get_dump_flag():
             syslib.Dump().list('pytest', self)
 
-        startTime = time.time()
+        start_time = time.time()
         tests = 0
         failures = 0
         errors = 0
-        exitErrors = 0
+        exit_errors = 0
         for file in self._options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" Python module file.')
             print('\nRunning "' + os.path.abspath(file) + '"...')
 
-            moduleTest = ModuleTest(self._options, file)
-            moduleTest.run()
-            tests += moduleTest.get_tests()
-            failures += moduleTest.get_failures()
-            errors += moduleTest.get_errors()
-            exitErrors += moduleTest.get_exit_error()
+            module_test = ModuleTest(self._options, file)
+            module_test.run()
+            tests += module_test.get_tests()
+            failures += module_test.get_failures()
+            errors += module_test.get_errors()
+            exit_errors += module_test.get_exit_error()
 
         print('\nUnit Test runs      =', tests)
         print('Unit Test failures  =', failures)
         print('Testing code errors =', errors)
-        print('Exit code errors    =', exitErrors)
-        print('Total elapsed time  = {0:5.3f}s'.format(time.time() - startTime))
-        if failures + errors + exitErrors:
+        print('Exit code errors    =', exit_errors)
+        print('Total elapsed time  = {0:5.3f}s'.format(time.time() - start_time))
+        if failures + errors + exit_errors:
             raise SystemExit(1)
 
 

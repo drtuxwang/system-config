@@ -22,9 +22,9 @@ class Options(object):
     """
 
     def __init__(self, args):
-        self._runxpcs = syslib.Command('runxpcs',
-                                       pathextra=[syslib.info.newest(glob.glob('/opt/pcs*'))])
-        self._runxpcs.setArgs = args[1:]
+        self._runxpcs = syslib.Command(
+            'runxpcs', pathextra=[syslib.info.newest(glob.glob('/opt/pcs*'))])
+        self._runxpcs.set_args = args[1:]
         os.umask(int('077', 8))
         syslib.Task().killpname('xpcs')
 

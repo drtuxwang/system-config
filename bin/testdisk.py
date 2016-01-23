@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -35,9 +35,9 @@ class Options(object):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + device + '" disk or disk image file.')
         try:
-            with open(self._args.device[0], 'rb') as ifile:
+            with open(self._args.device[0], 'rb'):
                 pass
-        except IOError:
+        except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + device + '" disk or disk image file.')
 

@@ -2,7 +2,7 @@
 """
 System configuration detection tool.
 
-1996-2015 By Dr Colin Kong
+1996-2016 By Dr Colin Kong
 """
 
 import glob
@@ -17,11 +17,11 @@ import time
 
 import syslib
 
-RELEASE = '4.6.0'
-VERSION = 20160117
+RELEASE = '4.6.1'
+VERSION = 20160120
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=import-error,wrong-import-position
 
@@ -141,7 +141,7 @@ class BatteryAcpi(object):
                             self._capacity = int(self._isjunk.sub('', line))
                         except ValueError:
                             pass
-        except IOError:
+        except OSError:
             return
 
     def is_exist(self):
@@ -279,7 +279,7 @@ class BatteryPower(BatteryAcpi):
                             self._capacity = int(int(self._isjunk.sub('', line)) / self._voltage)
                         except ValueError:
                             pass
-        except IOError:
+        except OSError:
             return
 
 
@@ -400,10 +400,8 @@ class Detect(object):
                     try:
                         for line in xset.get_output():
                             if 'Standby:' in line and 'Suspend:' in line and 'Off:' in line:
-                                columns = (line + ' ').replace(' 0 ', ' Off ').split()
-                                standby = columns[1]
-                                suspend = columns[3]
-                                off = columns[5]
+                                _, standby, _, suspend, _, off = (line + ' ').replace(
+                                    ' 0 ', ' Off ').split()
                                 self._writer.output(
                                     name='X-Display Power', value=standby + ' ' + suspend + ' ' +
                                     off, comment='DPMS Standby Suspend Off')
@@ -437,11 +435,8 @@ class Detect(object):
                     for line in xrandr.get_output():
                         try:
                             if ' connected ' in line:
-                                columns = line.replace('mm', '').split()
-                                screen = columns[0]
-                                resolution = columns[2]
-                                width = columns[-3]
-                                height = columns[-1]
+                                screen, _, resolution, *_, width, _, height = line.replace(
+                                    'mm', '').split()
                                 if width in ('0', '160') and height in ('0', '90'):
                                     self._writer.output(name="X-Windows Screen",
                                                         value=screen, comment=resolution)
@@ -640,9 +635,7 @@ class PosixSystem(OperatingSystem):
             command = syslib.Command('df', flags=['-k'], check=False)
             for line in sorted(mount.get_output()):
                 try:
-                    columns = line.split()
-                    device = columns[0]
-                    directory = columns[2]
+                    device, _, directory = line.split()[:3]
                 except IndexError:
                     continue
                 size = '??? KB'
@@ -678,7 +671,7 @@ class PosixSystem(OperatingSystem):
                         if fqdn.endswith('.'):
                             return fqdn
                         return fqdn + '.'
-        except (IOError, IndexError):
+        except (IndexError, OSError):
             pass
         return super().get_fqdn()
 
@@ -693,7 +686,7 @@ class PosixSystem(OperatingSystem):
                 for line in ifile:
                     if ispattern.match(line):
                         info['Net IPvx DNS'].append(line.split()[1])
-        except (IOError, IndexError):
+        except (IndexError, OSError):
             pass
         return info
 
@@ -725,7 +718,7 @@ class PosixSystem(OperatingSystem):
                 info['System Uptime'] = ','.join(uptime.get_output()[0].split(
                     ',')[:2]).split('up ')[1].strip()
                 info['System Load'] = uptime.get_output()[0].split(': ')[-1]
-            except (IOError, IndexError):
+            except (IndexError, OSError):
                 pass
         return info
 
@@ -767,7 +760,7 @@ class LinuxSystem(PosixSystem):
                                             self._devices[device] = (
                                                 'nvidia driver ' +
                                                 line.split('Kernel Module ')[1].split()[0])
-                            except IOError:
+                            except OSError:
                                 pass
                         elif 'VirtualBox' in line and modinfo.is_found():
                             modinfo.set_args(['vboxvideo'])
@@ -787,7 +780,7 @@ class LinuxSystem(PosixSystem):
                 for line in ifile:
                     if ispattern.match(line):
                         lines.append(line.rstrip('\r\n'))
-        except IOError:
+        except OSError:
             pass
         if lines:
             for line in lines:
@@ -803,7 +796,7 @@ class LinuxSystem(PosixSystem):
                                 if line.startswith('name: '):
                                     name = model + ' ' + line.rstrip(
                                         '\r\n').replace('name: ', '', 1)
-                    except (IOError, IndexError):
+                    except (IndexError, OSError):
                         continue
                     device = '/dev/snd/pcmC' + card + 'D' + os.path.dirname(file).split('pcm')[-1]
                     if os.path.exists(device):
@@ -887,7 +880,7 @@ class LinuxSystem(PosixSystem):
                                 writer.output(name='CD device', device='/dev/' +
                                               os.path.basename(directory), value=model)
                                 break
-            except IOError:
+            except OSError:
                 pass
 
         if os.path.isdir('/sys/bus/scsi/devices'):
@@ -904,7 +897,7 @@ class LinuxSystem(PosixSystem):
                         with open(os.path.join('/sys/bus/scsi/devices', identity, 'model'),
                                   errors='replace') as ifile:
                             model += ' ' + ifile.readline().strip()
-                except IOError:
+                except OSError:
                     model = '???'
                 device = '/dev/' + os.path.basename(os.path.dirname(file))
                 writer.output(name='CD device', device=device, value=model)
@@ -925,7 +918,7 @@ class LinuxSystem(PosixSystem):
                             writer.output(name='CD device', device=device, value=model)
                             model = '???'
                             unit += 1
-            except IOError:
+            except OSError:
                 pass
 
     def _detect_disk(self, writer):
@@ -935,7 +928,7 @@ class LinuxSystem(PosixSystem):
                 for line in ifile:
                     if line.startswith('/dev/'):
                         swaps.append(line.split()[0])
-        except IOError:
+        except OSError:
             pass
 
         uuids = {}
@@ -968,7 +961,7 @@ class LinuxSystem(PosixSystem):
             with open('/proc/partitions', errors='replace') as ifile:
                 for line in ifile:
                     partitions.append(line.rstrip('\r\n'))
-        except IOError:
+        except OSError:
             pass
 
         for directory in sorted(glob.glob('/proc/ide/hd*')):
@@ -997,16 +990,14 @@ class LinuxSystem(PosixSystem):
                                         for line2 in mount.get_output():
                                             if line2.startswith(device + ' '):
                                                 try:
-                                                    columns = line2.split()
-                                                    mount_point = columns[2]
-                                                    mount_type = columns[4]
+                                                    mount_point, _, mount_type = line2.split()[2:]
                                                     comment = mount_type + ' on ' + mount_point
                                                 except (IndexError, ValueError):
                                                     comment = '??? on ???'
                                                 break
                                     writer.output(name='Disk device', device=device,
                                                   value=size + ' KB', comment=comment)
-            except IOError:
+            except OSError:
                 pass
 
         if os.path.isdir('/sys/bus/scsi/devices'):
@@ -1023,7 +1014,7 @@ class LinuxSystem(PosixSystem):
                         with open(os.path.join('/sys/bus/scsi/devices', identity, 'model'),
                                   errors='replace') as ifile:
                             model += ' ' + ifile.readline().strip()
-                except IOError:
+                except OSError:
                     model = '???'
                 sdx = os.path.basename(os.path.dirname(file))
                 for partition in partitions:
@@ -1046,9 +1037,7 @@ class LinuxSystem(PosixSystem):
                                     if (line2.startswith(device + ' ') or
                                             line2.startswith(uuids[device] + ' ')):
                                         try:
-                                            columns = line2.split()
-                                            mount_point = columns[2]
-                                            mount_type = columns[4]
+                                            mount_point, _, mount_type = line2.split()[2:]
                                             comment = mount_type + ' on ' + mount_point
                                         except (IndexError, ValueError):
                                             comment = '??? on ???'
@@ -1089,9 +1078,8 @@ class LinuxSystem(PosixSystem):
                                             for line2 in mount.get_output():
                                                 if line2.startswith(device + ' '):
                                                     try:
-                                                        columns = line2.split()
-                                                        mount_point = columns[2]
-                                                        mount_type = columns[4]
+                                                        mount_point, _, mount_type = line2.split(
+                                                            )[2:]
                                                         comment = mount_type + ' on ' + mount_point
                                                     except (IndexError, ValueError):
                                                         comment = '??? on ???'
@@ -1100,7 +1088,7 @@ class LinuxSystem(PosixSystem):
                                                       value=size + ' KB', comment=comment)
                             model = '???'
                             unit += 1
-            except IOError:
+            except OSError:
                 pass
 
     def _detect_ethernet(self, writer):
@@ -1170,7 +1158,7 @@ class LinuxSystem(PosixSystem):
                     writer.output(name='Video device', device='/dev/' + device,
                                   value=ifile.readline().rstrip('\r\n'))
                     continue
-            except IOError:
+            except OSError:
                 pass
             writer.output(name='Video device', device='/dev/' + device, value='???')
 
@@ -1224,7 +1212,7 @@ class LinuxSystem(PosixSystem):
             try:
                 with open('/etc/redhat-release', errors='replace') as ifile:
                     info['OS Name'] = ifile.readline().rstrip('\r\n')
-            except IOError:
+            except OSError:
                 pass
             return info
         elif os.path.isfile('/etc/SuSE-release'):
@@ -1239,7 +1227,7 @@ class LinuxSystem(PosixSystem):
                             except IndexError:
                                 pass
                 return info
-            except IOError:
+            except OSError:
                 info['OS Name'] = 'Unknown'
             return info
         elif os.path.isfile('/etc/lsb-release'):
@@ -1248,7 +1236,7 @@ class LinuxSystem(PosixSystem):
                     lines = []
                     for line in ifile:
                         lines.append(line.rstrip('\r\n'))
-            except IOError:
+            except OSError:
                 pass
             else:
                 if lines and lines[-1].startswith('DISTRIB_DESCRIPTION='):
@@ -1266,14 +1254,14 @@ class LinuxSystem(PosixSystem):
             try:
                 with open('/etc/kanotix-version', errors='replace') as ifile:
                     info['OS Name'] = 'Kanotix ' + ifile.readline().rstrip('\r\n').split()[1]
-            except (IOError, IndexError):
+            except (IndexError, OSError):
                 pass
             return info
         elif os.path.isfile('/etc/knoppix-version'):
             try:
                 with open('/etc/knoppix-version', errors='replace') as ifile:
                     info['OS Name'] = 'Knoppix ' + ifile.readline().rstrip('\r\n').split()[0]
-            except (IOError, IndexError):
+            except (IndexError, OSError):
                 pass
             return info
         elif os.path.isfile('/etc/debian_version'):
@@ -1281,7 +1269,7 @@ class LinuxSystem(PosixSystem):
                 with open('/etc/debian_version', errors='replace') as ifile:
                     info['OS Name'] = 'Debian ' + ifile.readline().rstrip(
                         '\r\n').split('=')[-1].replace("'", '')
-            except IOError:
+            except OSError:
                 pass
             return info
         elif os.path.isfile('/etc/DISTRO_SPECS'):
@@ -1294,7 +1282,7 @@ class LinuxSystem(PosixSystem):
                         elif line.startswith('DISTRO_VERSION') and identity:
                             info['OS Name'] = identity + ' ' + line.rstrip('\r\n').split('=')[1]
                             return info
-            except (IOError, IndexError):
+            except (IndexError, OSError):
                 pass
             return info
         dpkg = syslib.Command('dpkg', check=False, args=['--list'])
@@ -1344,7 +1332,7 @@ class LinuxSystem(PosixSystem):
                 lines = []
                 for line in ifile:
                     lines.append(line.rstrip('\r\n'))
-        except IOError:
+        except OSError:
             pass
         try:
             if syslib.info.get_machine() == 'Power':
@@ -1363,7 +1351,7 @@ class LinuxSystem(PosixSystem):
                     if line.startswith('address size'):
                         info['CPU Addressability X'] = line.split(
                             ':')[1].split()[0] + 'bit physical'
-        except (IOError, IndexError):
+        except (IndexError, OSError):
             pass
 
         try:
@@ -1389,7 +1377,7 @@ class LinuxSystem(PosixSystem):
                         line = ifile.readline().rstrip('\r\n')
                         if line not in found:
                             found.append(line)
-                except IOError:
+                except OSError:
                     pass
             if found:
                 sockets = len(found)
@@ -1414,7 +1402,7 @@ class LinuxSystem(PosixSystem):
                           errors='replace') as ifile:
                     cpu_cores = int(threads/(int(ifile.readline().rstrip(
                         '\r\n').split('-')[-1]) + 1))
-            except (IOError, ValueError):
+            except (OSError, ValueError):
                 cores_per_socket = None
                 if 'Dual Core' in info['CPU Model']:
                     cores_per_socket = 2
@@ -1441,7 +1429,7 @@ class LinuxSystem(PosixSystem):
             with open('/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq',
                       errors='replace') as ifile:
                 info['CPU Clock'] = str(int(int(ifile.readline().rstrip('\r\n')) / 1000 + 0.5))
-        except (IOError, ValueError):
+        except (OSError, ValueError):
             for line in lines:
                 if line.startswith('cpu MHz'):
                     try:
@@ -1465,7 +1453,7 @@ class LinuxSystem(PosixSystem):
                     found.append(str(int(int(clock) / 1000 + 0.5)))
                 if found:
                     info['CPU Clocks'] = ' '.join(found)
-        except (IOError, ValueError):
+        except (OSError, ValueError):
             try:
                 with open('/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq',
                           errors='replace') as ifile:
@@ -1473,7 +1461,7 @@ class LinuxSystem(PosixSystem):
                 with open('/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq',
                           errors='replace') as ifile:
                     info['CPU Clocks'] += ' ' + str(int(int(ifile.readline()) / 1000 + 0.5))
-            except (IOError, ValueError):
+            except (OSError, ValueError):
                 info['CPU Clocks'] = 'Unknown'
         for cache in sorted(glob.glob('/sys/devices/system/cpu/cpu0/cache/index*')):
             try:
@@ -1487,7 +1475,7 @@ class LinuxSystem(PosixSystem):
                     level += 'i'
                 with open(os.path.join(cache, 'size'), errors='replace') as ifile:
                     info['CPU Cache'][level] = str(int(ifile.readline().rstrip('\r\nK')))
-            except (IOError, ValueError):
+            except (OSError, ValueError):
                 pass
         if not info['CPU Cache']:
             for line in lines:
@@ -1515,7 +1503,7 @@ class LinuxSystem(PosixSystem):
                                                                 1024 + 0.5))
                 except (IndexError, ValueError):
                     pass
-        except IOError:
+        except OSError:
             pass
         return info
 
@@ -1544,7 +1532,7 @@ class LinuxSystem(PosixSystem):
                             return 'VirtualBox'
                         elif 'VMWare ' in line or 'VMware ' in line:
                             return 'VMware'
-            except IOError:
+            except OSError:
                 pass
         return None
 
@@ -1715,8 +1703,6 @@ class Main(object):
 
     def __init__(self):
         self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
             options = Options()
             Detect(options).run()
@@ -1729,16 +1715,6 @@ class Main(object):
     def _signals(self):
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':

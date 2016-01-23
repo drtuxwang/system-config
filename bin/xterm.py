@@ -115,7 +115,7 @@ class Xterm(object):
                         print('Protocol 2\n', file=ofile)
                         print('#Host hostname', file=ofile)
                         print('#User username\n', file=ofile)
-                except IOError:
+                except OSError:
                     return
             try:
                 os.chmod(sshconfig, int('600', 8))

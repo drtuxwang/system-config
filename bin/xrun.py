@@ -70,6 +70,9 @@ class Xrun(object):
                 self._dpi = xrdb.get_output()[0].split()[1]
 
     def run(self):
+        """
+        Run command
+        """
         self._command.run()
         self._xrandr.run(filter='^  ', mode='batch')
         resolution = 0

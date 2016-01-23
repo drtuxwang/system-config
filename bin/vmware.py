@@ -46,7 +46,7 @@ class Options(object):
                 try:
                     with open(configfile, errors='replace') as ifile:
                         configdata = ifile.readlines()
-                except IOError:
+                except OSError:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot read "' + configfile + '" configuration file.')
                 if 'xkeymap.nokeycodeMap = true\n' in configdata:
@@ -54,7 +54,7 @@ class Options(object):
                     return
                 try:
                     ofile = open(configfile, 'ab')
-                except IOError:
+                except OSError:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot modify "' + configfile + '" configuration file.')
             else:
@@ -62,12 +62,12 @@ class Options(object):
                 if not os.path.isdir(configdir):
                     try:
                         os.mkdir(configdir)
-                    except IOError:
+                    except OSError:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' + configdir + '" directory.')
                 try:
                     ofile = open(configfile, 'w', newline='\n')
-                except IOError:
+                except OSError:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' + configfile + '" configuration file.')
             # Workaround VMWare Player 2.5 keymap bug

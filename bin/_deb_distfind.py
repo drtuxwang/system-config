@@ -12,8 +12,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -30,7 +30,7 @@ class Options(object):
         """
         Return packages file location.
         """
-        return self._args.packagesFile[0]
+        return self._args.packages_file[0]
 
     def get_patterns(self):
         """
@@ -42,7 +42,7 @@ class Options(object):
         parser = argparse.ArgumentParser(description='Search for packages that match regular '
                                                      'expression in Debian package file.')
 
-        parser.add_argument('packagesFile', nargs=1, metavar='distribution.package',
+        parser.add_argument('packages_file', nargs=1, metavar='distribution.package',
                             help='Debian package file.')
         parser.add_argument('patterns', nargs='+', metavar='pattern',
                             help='Regular expression.')
@@ -72,7 +72,7 @@ class Package(object):
         """
         self._description = description
 
-    def getSize(self):
+    def get_size(self):
         """
         Return size.
         """
@@ -108,12 +108,12 @@ class Search(object):
         self._read_distribution_packages(options.get_packages_file())
         self._search_distribution_packages(options.get_patterns())
 
-    def _read_distribution_packages(self, packagesFile):
+    def _read_distribution_packages(self, packages_file):
         self._packages = {}
         name = ''
         package = Package('', -1, '')
         try:
-            with open(packagesFile, errors='replace') as ifile:
+            with open(packages_file, errors='replace') as ifile:
                 for line in ifile:
                     line = line.rstrip('\r\n')
                     if line.startswith('Package: '):
@@ -130,8 +130,8 @@ class Search(object):
                         package.set_description(line.replace('Description: ', '', 1))
                         self._packages[name] = package
                         package = Package('', '0', '')
-        except IOError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + packagesFile + '" packages file.')
+        except OSError:
+            raise SystemExit(sys.argv[0] + ': Cannot read "' + packages_file + '" packages file.')
 
     def _search_distribution_packages(self, patterns):
         for pattern in patterns:
@@ -139,8 +139,9 @@ class Search(object):
             for name, package in sorted(self._packages.items()):
                 if (ispattern.search(name) or
                         ispattern.search(self._packages[name].get_description())):
-                    print('{0:25s} {1:15s} {2:5d}KB {3:s}'.format(name.split(':')[0],
-                          package.get_version(), package.getSize(), package.get_description()))
+                    print('{0:25s} {1:15s} {2:5d}KB {3:s}'.format(
+                        name.split(':')[0], package.get_version(), package.get_size(),
+                        package.get_description()))
 
 
 class Main(object):

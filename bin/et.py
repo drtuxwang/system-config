@@ -35,7 +35,7 @@ class Options(object):
         self._punkbuster()
         self._et.set_args(args[1:])
 
-    def getEt(self):
+    def get_et(self):
         """
         Return et Command class object.
         """
@@ -102,7 +102,7 @@ class Main(object):
         self._signals()
         try:
             options = Options(sys.argv)
-            options.getEt().run(logfile=options.get_logfile(), mode='daemon')
+            options.get_et().run(logfile=options.get_logfile(), mode='daemon')
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:

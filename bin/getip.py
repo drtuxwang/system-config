@@ -49,12 +49,15 @@ class Getip(object):
         self._hosts = hosts
 
     def run(self):
+        """
+        Determin IP address
+        """
         for host in self._hosts:
             try:
-                ip = socket.gethostbyname(host)
+                ip_address = socket.gethostbyname(host)
             except socket.gaierror:
-                ip = ''
-            print(host.lower() + ':', ip)
+                ip_address = ''
+            print(host.lower() + ':', ip_address)
 
 
 class Main(object):

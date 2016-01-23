@@ -10,8 +10,8 @@ import signal
 import sys
 import tarfile
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -64,7 +64,7 @@ class Unpack(object):
             print(archive + ':')
             try:
                 self._archive = tarfile.open(archive, 'r:gz')
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot open "' + archive + '" archive file.')
             if options.get_view_flag():
                 self._view()
@@ -82,7 +82,7 @@ class Unpack(object):
                                                'outside of current directory.')
             try:
                 self._archive.extract(self._archive.getmember(file))
-            except (IOError, OSError):
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Unable to create "' + file + '" extracted.')
             if not os.path.isfile(file):
                 if not os.path.isdir(file):

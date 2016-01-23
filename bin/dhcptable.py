@@ -3,7 +3,6 @@
 Detect DHCP hosts on 192.168.1.0 subnet
 """
 
-import glob
 import os
 import signal
 import sys
@@ -23,7 +22,7 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
+    def __init__(self):
         self._arping = syslib.Command('arping', pathextra=['/sbin'])
         self._detect()
 
@@ -87,15 +86,25 @@ class ScanHost(threading.Thread):
         self._options = options
         threading.Thread.__init__(self)
         self._ip = ip
+        self._child = None
         self._output = ''
 
     def get_ip(self):
+        """
+        Return IP address
+        """
         return self._ip
 
     def get_output(self):
+        """
+        Return output
+        """
         return self._output
 
     def run(self):
+        """
+        Start thread
+        """
         self._options.get_arping().set_args(['-c', '1', self._ip])
         self._child = self._options.get_arping().run(mode='child', error2output=True)
         while True:
@@ -105,6 +114,9 @@ class ScanHost(threading.Thread):
             self._output += byte.decode('utf-8', 'replace')
 
     def kill(self):
+        """
+        Kill thread
+        """
         if self._child:
             self._child.kill()
             self._child = None
@@ -124,37 +136,40 @@ class ScanLan(object):
 
     def _detect(self):
         for host in range(1, 255):
-            ip = self._options.get_subnet() + '.' + str(host)
-            thread = ScanHost(self._options, ip)
+            ip_address = self._options.get_subnet() + '.' + str(host)
+            thread = ScanHost(self._options, ip_address)
             thread.start()
             self._threads.append(thread)
 
     def _output(self):
         for thread in self._threads:
-            ip = thread.get_ip()
-            if ip == self._options.get_myip():
+            ip_address = thread.get_ip()
+            if ip_address == self._options.get_myip():
                 print('{0:>11s} [{1:s}]  0.000ms  {2:s}'.format(
-                    ip, self._options.get_mymac(), self._reverse_dns(ip)))
+                    ip_address, self._options.get_mymac(), self._reverse_dns(ip_address)))
             else:
                 for line in thread.get_output().split('\n'):
-                    if line.startswith('Unicast reply from ' + ip):
+                    if line.startswith('Unicast reply from ' + ip_address):
                         mac, ping = line.split()[4:6]
                         print('{0:>11s} {1:s}  {2:s}  {3:s}'.format(
-                            ip, mac, ping, self._reverse_dns(ip)))
+                            ip_address, mac, ping, self._reverse_dns(ip_address)))
                         break
 
         for thread in self._threads:
             thread.kill()
 
-    def _reverse_dns(self, ip):
+    def _reverse_dns(self, ip_address):
         if self._avahi_rdns.is_found():
-            self._avahi_rdns.set_args([ip])
+            self._avahi_rdns.set_args([ip_address])
             self._avahi_rdns.run(mode='batch')
             if self._avahi_rdns.has_output():
                 return self._avahi_rdns.get_output()[0].split()[-1]
         return 'Unknown'
 
     def run(self):
+        """
+        Start scan
+        """
         self._detect()
         time.sleep(self._time_limit)
         self._output()
@@ -167,10 +182,8 @@ class Main(object):
 
     def __init__(self):
         self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
+            options = Options()
             ScanLan(options).run()
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
@@ -181,16 +194,6 @@ class Main(object):
     def _signals(self):
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':

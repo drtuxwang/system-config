@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -77,11 +77,11 @@ class CheckDistributions(object):
 
     def __init__(self, options):
         for distribution in options.get_distributions():
-            packagesFiles = self._check_files(distribution)
-            if packagesFiles and os.path.isfile(distribution + '.debs'):
-                packagesWhiteList = self._read_distribution_whitelist(distribution + '.whitelist')
-                packagesUsed = self._check_used(distribution)
-                self._compare(packagesFiles, packagesWhiteList, packagesUsed)
+            packages_files = self._check_files(distribution)
+            if packages_files and os.path.isfile(distribution + '.debs'):
+                packages_white_list = self._read_distribution_whitelist(distribution + '.whitelist')
+                packages_used = self._check_used(distribution)
+                self._compare(packages_files, packages_white_list, packages_used)
 
     def _check_files(self, distribution):
         try:
@@ -91,18 +91,18 @@ class CheckDistributions(object):
         packages = {}
         for file in files:
             name = os.path.basename(file).split('_')[0]
-            fileStat = syslib.FileStat(file)
+            file_stat = syslib.FileStat(file)
             version = os.path.basename(file).split('_')[1]
             if name in packages:
-                if fileStat.get_time() > packages[name].get_time():
+                if file_stat.get_time() > packages[name].get_time():
                     print('rm', packages[name].get_file())
                     print('# ', file)
-                    packages[name] = Package(file, fileStat.get_time(), version)
+                    packages[name] = Package(file, file_stat.get_time(), version)
                 else:
                     print('rm', file)
                     print('# ', packages[name].get_file())
             else:
-                packages[name] = Package(file, fileStat.get_time(), version)
+                packages[name] = Package(file, file_stat.get_time(), version)
         return packages
 
     def _check_used(self, distribution):
@@ -118,7 +118,7 @@ class CheckDistributions(object):
                                          '" package list file.')
                     packages[name] = Package(os.path.join(
                         distribution, name + '_' + version + '_*.deb'), -1, version)
-        except IOError:
+        except OSError:
             pass
 
         try:
@@ -134,7 +134,7 @@ class CheckDistributions(object):
                         if (packages[name].get_file() ==
                                 os.path.join(distribution, name + '_' + version + '_*.deb')):
                             del packages[name]
-        except IOError:
+        except OSError:
             pass
         return packages
 
@@ -149,28 +149,28 @@ class CheckDistributions(object):
                             packages[name] = version
                         except (IndexError, ValueError):
                             pass
-        except IOError:
+        except OSError:
             pass
         return packages
 
-    def _compare(self, packagesFiles, packagesWhiteList, packagesUsed):
-        namesFiles = sorted(packagesFiles.keys())
-        namesWhiteList = sorted(packagesWhiteList.keys())
-        namesUsed = packagesUsed.keys()
+    def _compare(self, packages_files, packages_white_list, packages_used):
+        names_files = sorted(packages_files.keys())
+        names_white_list = sorted(packages_white_list.keys())
+        names_used = packages_used.keys()
 
-        for name in namesFiles:
-            if name not in namesUsed:
-                if (name in namesWhiteList and packagesWhiteList[name] in (
-                        '*', packagesFiles[name])):
+        for name in names_files:
+            if name not in names_used:
+                if (name in names_white_list and packages_white_list[name] in (
+                        '*', packages_files[name])):
                     continue
-                print('rm', packagesFiles[name].get_file(), '# Unused')
-            elif packagesFiles[name].get_version() != packagesUsed[name].get_version():
-                print('rm', packagesFiles[name].get_file(), '# Unused')
-                print('# ', packagesUsed[name].get_file(), 'Missing')
+                print('rm', packages_files[name].get_file(), '# Unused')
+            elif packages_files[name].get_version() != packages_used[name].get_version():
+                print('rm', packages_files[name].get_file(), '# Unused')
+                print('# ', packages_used[name].get_file(), 'Missing')
 
-        for name in namesUsed:
-            if name not in namesFiles:
-                print('# ', packagesUsed[name].get_file(), 'Missing')
+        for name in names_used:
+            if name not in names_files:
+                print('# ', packages_used[name].get_file(), 'Missing')
 
 
 class Main(object):

@@ -12,10 +12,10 @@ import time
 
 import syslib
 
-RELEASE = '2.7.0'
+RELEASE = '2.7.1'
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -65,14 +65,14 @@ class Stats(object):
             with open(lockfile, errors='replace') as ifile:
                 try:
                     pid = int(ifile.readline().strip())
-                except (IOError, ValueError):
+                except (OSError, ValueError):
                     pass
                 else:
                     if syslib.Task().haspid(pid):
                         return
                     else:
                         os.remove(lockfile)
-        except IOError:
+        except OSError:
             pass
         print('MyQS batch job scheduler not running. Run "myqsd" command.')
 
@@ -87,10 +87,10 @@ class Stats(object):
         for jobid in sorted(jobids):
             try:
                 ifile = open(os.path.join(self._myqsdir, str(jobid) + '.q'), errors='replace')
-            except IOError:
+            except OSError:
                 try:
                     ifile = open(os.path.join(self._myqsdir, str(jobid) + '.r'), errors='replace')
-                except IOError:
+                except OSError:
                     continue
                 state = 'RUN'
             else:
@@ -128,7 +128,7 @@ class Stats(object):
                             output = []
                             for line in ifile:
                                 output = (output + [line.rstrip()])[-5:]
-                    except IOError:
+                    except OSError:
                         pass
                 else:
                     state = 'STOP'

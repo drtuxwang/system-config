@@ -76,7 +76,7 @@ class Pack(object):
                 self._jar.append_arg(file[:-5]+'.class')
             else:
                 self._jar.append_arg(file)
-        self._create_manifest(options)
+        self._create_manifest()
         print('Building "' + self._jar_file + '" Java archive file.')
         self._jar.run(mode='exec')
 
@@ -103,7 +103,7 @@ class Pack(object):
             if not os.path.isfile(target):
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" Java class file.')
 
-    def _create_manifest(self, options):
+    def _create_manifest(self):
         if not os.path.isfile(self._manifest):
             if 'Main.class' in self._jar.get_args():
                 main = 'Main'
@@ -114,7 +114,7 @@ class Pack(object):
             try:
                 with open(self._manifest, 'w', newline='\n') as ofile:
                     print('Main-Class:', main, file=ofile)
-            except IOError:
+            except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + self._manifest + '" Java manifest file.')
 

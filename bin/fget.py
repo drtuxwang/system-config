@@ -15,8 +15,8 @@ import urllib.request
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -103,7 +103,7 @@ class Download(object):
                     return 'skip'
                 if jsonData['fget']['data'] == data:
                     return 'resume'
-        except (IOError, KeyError, ValueError):
+        except (KeyError, OSError, ValueError):
             pass
 
         return 'download'
@@ -122,7 +122,7 @@ class Download(object):
         try:
             with open(file+'.part.json', 'w', newline='\n') as ofile:
                 print(json.dumps(jsonData, indent=4, sort_keys=True), file=ofile)
-        except IOError:
+        except OSError:
             pass
 
     def _get_url(self, url):
@@ -174,7 +174,7 @@ class Download(object):
 
         except urllib.error.URLError as exception:
             reason = exception.reason
-            if type(reason) == socket.gaierror:
+            if isinstance(reason, socket.gaierror):
                 raise SystemExit(sys.argv[0] + ': ' + reason.args[1] + '.')
             elif 'Not Found' in reason:
                 raise SystemExit(sys.argv[0] + ': 404 Not Found.')

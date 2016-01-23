@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -54,7 +54,7 @@ class Sort(object):
                         for line in ifile:
                             line = line.rstrip('\r\n')
                             self._lines.append(line)
-                except IOError:
+                except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
         else:
             for line in sys.stdin:
@@ -62,6 +62,9 @@ class Sort(object):
         self._lines = sorted(self._lines)
 
     def print(self):
+        """
+        Print lines
+        """
         for line in self._lines:
             print(line)
 

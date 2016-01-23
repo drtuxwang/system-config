@@ -11,8 +11,8 @@ import signal
 import sys
 import xml.sax
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -91,7 +91,7 @@ class XmlChecker():
                     xml.sax.parse(open('xmlcheck.xml', errors='replace'), handler)
                 else:
                     xml.sax.parse(open(file, errors='replace'), handler)
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot parse "' + file + '" XML file.')
             except http.client.HTTPException:
                 raise SystemExit(sys.argv[0] + ': HTTP request failed.')
@@ -109,9 +109,9 @@ class XmlChecker():
                                 ofile.write('\n')
                             else:
                                 ofile.write(line.replace('&', '.'))
-                except IOError:
+                except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "xmlcheck.xml" temporary file.')
-        except IOError:
+        except OSError:
             print(sys.argv[0], ': Cannot parse "', file, '" XML file.', sep='')
 
 

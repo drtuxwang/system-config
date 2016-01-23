@@ -12,8 +12,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -31,13 +31,13 @@ class Options(object):
             try:
                 with open(os.path.join(os.environ['HOME'], '.address'), errors='replace') as ifile:
                     self._domain_name = ifile.readline().strip().split('@')[-1]
-            except IOError:
+            except OSError:
                 pass
         if not self._domain_name:
-            domainName = syslib.Command('domainname')
-            domainName.run(mode='batch')
-            if domainName.has_output():
-                self._domain_name = domainName.get_output()[0]
+            domain_name = syslib.Command('domainname')
+            domain_name.run(mode='batch')
+            if domain_name.has_output():
+                self._domain_name = domain_name.get_output()[0]
 
     def get_aliases(self):
         """
@@ -77,14 +77,17 @@ class Address(object):
                                 name, address = line.strip().split()
                                 self._book[name] = address
                                 self._names.append(name)
-            except IOError:
+            except OSError:
                 pass
 
     def match(self, domainname, aliases):
+        """
+        Match address
+        """
         addresses = []
         for alias in aliases:
             try:
-                isMatch = re.compile(alias, re.IGNORECASE)
+                is_match = re.compile(alias, re.IGNORECASE)
             except re.error:
                 raise SystemExit(sys.argv[0] + ': Invalid regular expression "' + alias + '".')
             if '@' in alias:
@@ -92,7 +95,7 @@ class Address(object):
             else:
                 address = alias + '@' + domainname
                 for name in self._names:
-                    if isMatch.search(name):
+                    if is_match.search(name):
                         address = self._book[name]
                         break
                 addresses.append(address)

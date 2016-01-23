@@ -48,6 +48,9 @@ class Open(object):
         self._files = options.get_files()
 
     def run(self):
+        """
+        Open files
+        """
         for file in self._files:
             prefix = file.split(':', 1)[0]
             extension = file.rsplit('.', 1)[-1].lower()

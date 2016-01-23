@@ -12,8 +12,8 @@ import time
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -215,7 +215,7 @@ class Burner(object):
             print('Verifying MD5 check sum of data CD/DVD:')
             dd = syslib.Command('dd')
             dd.set_args(['if=' + self._device, 'bs=' + str(2048*360), 'count=1', 'of=/dev/null'])
-            for i in range(10):
+            for _ in range(10):
                 time.sleep(1)
                 dd.run(mode='batch')
                 if dd.has_output():
@@ -230,7 +230,7 @@ class Burner(object):
                 with open(self._files[0][:-4] + '.md5', errors='replace') as ifile:
                     for line in ifile:
                         print(line.rstrip())
-            except IOError:
+            except OSError:
                 pass
 
 
@@ -248,22 +248,9 @@ class Cdrom(object):
                 try:
                     with open(os.path.join(directory, file), errors='replace') as ifile:
                         model += ' ' + ifile.readline().strip()
-                except IOError:
+                except OSError:
                     continue
             self._devices[device] = model
-
-    def device(self, mount):
-        if mount == 'cdrom':
-            rank = 0
-        else:
-            try:
-                rank = int(mount[5:])-1
-            except ValueError:
-                return ''
-        try:
-            return sorted(self._devices.keys())[rank]
-        except IndexError:
-            return ''
 
     def get_devices(self):
         """

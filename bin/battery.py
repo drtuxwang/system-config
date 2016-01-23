@@ -105,7 +105,7 @@ class BatteryAcpi(object):
                             self._capacity = int(self._isjunk.sub('', line))
                         except ValueError:
                             pass
-        except IOError:
+        except OSError:
             return
 
     def is_exist(self):
@@ -219,7 +219,7 @@ class BatteryPower(BatteryAcpi):
                             self._capacity = int(int(self._isjunk.sub('', line)) / self._voltage)
                         except ValueError:
                             pass
-        except IOError:
+        except OSError:
             return
 
 

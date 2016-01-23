@@ -14,8 +14,8 @@ import time
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -112,8 +112,8 @@ class Print(object):
         if options.get_view_flag():
             evince = syslib.Command('evince')
         else:
-            lp = syslib.Command('lp', flags=['-o', 'number-up=' + str(options.get_pages()),
-                                             '-d', options.get_printer()])
+            command = syslib.Command('lp', flags=[
+                '-o', 'number-up=' + str(options.get_pages()), '-d', options.get_printer()])
 
         for file in options.get_files():
             if not os.path.isfile(file):
@@ -124,7 +124,7 @@ class Print(object):
             elif ext == 'pdf':
                 message = self._pdf(file)
             elif ext in ('ps', 'eps'):
-                message = self._postscript(options, file)
+                message = self._postscript(file)
             else:
                 message = self._text(options, file)
             if options.get_view_flag():
@@ -133,11 +133,11 @@ class Print(object):
                 evince.run()
             else:
                 print('Spooling ', message, ' to printer "', options.get_printer(), '"', sep='')
-                lp.set_args([self._tmpfile])
-                lp.run()
-                if lp.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(lp.get_exitcode()) +
-                                     ' received from "' + lp.get_file() + '".')
+                command.set_args([self._tmpfile])
+                command.run()
+                if command.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
+                                     ' received from "' + command.get_file() + '".')
             os.remove(self._tmpfile)
 
     def _image(self, file):
@@ -148,46 +148,46 @@ class Print(object):
         self._convert.run(filter='^' + file + ' ', mode='batch', error2output=True)
         if not self._convert.has_output():
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" image file.')
-        x, y = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
+        xsize, ysize = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
 
-        if int(x) > int(y):
+        if int(xsize) > int(ysize):
             self._convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40',
-                                   '-rotate', '90'])
+                                    '-rotate', '90'])
         else:
             self._convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40'])
         self._convert.extend_args([file, 'ps:' + self._tmpfile])
         self._convert.run(mode='batch')
         if self._convert.get_exitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(self._convert.get_exitcode()) +
-                                           ' received from "' + self._convert.get_file() + '".')
+                             ' received from "' + self._convert.get_file() + '".')
 
         return 'IMAGE file "' + file + '"'
 
     def _pdf(self, file):
-        gs = syslib.Command('gs')
-        gs.set_flags(['-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pswrite',
-                     '-sPAPERSIZE=a4', '-r300x300'])
-        gs.set_args(['-sOutputFile=' + self._tmpfile, '-c', 'save', 'pop', '-f', file])
-        gs.run(mode='batch')
-        if gs.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(gs.get_exitcode()) +
-                             ' received from "' + gs.get_file() + '".')
+        command = syslib.Command('gs')
+        command.set_flags(['-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pswrite',
+                           '-sPAPERSIZE=a4', '-r300x300'])
+        command.set_args(['-sOutputFile=' + self._tmpfile, '-c', 'save', 'pop', '-f', file])
+        command.run(mode='batch')
+        if command.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
+                             ' received from "' + command.get_file() + '".')
         self._postscript_fix(self._tmpfile)
         return 'PDF file "' + file + '"'
 
-    def _postscript(self, options, file):
+    def _postscript(self, file):
         try:
             with open(file, 'rb') as ifile:
                 try:
                     with open(self._tmpfile, 'wb') as ofile:
                         for line in ifile:
                             ofile.write(line.rstrip(b'\r\n\004') + b'\n')
-                except IOError:
+                except OSError:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' + self._tmpfile + '" temporary file.')
                 self._postscript_fix(self._tmpfile)
                 return 'Postscript file "' + file + '"'
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" postscript file.')
 
     def _postscript_fix(self, file):
@@ -198,7 +198,7 @@ class Print(object):
                     if '/a3 setpagesize' in line:
                         scaling = 0.7071
                         break
-        except IOError:
+        except OSError:
             pass
 
         if scaling:
@@ -211,9 +211,9 @@ class Print(object):
                             columns[2] = '/a4'
                             line = ' '.join(columns)
                         elif line.endswith(' scale'):
-                            x, y, junk = line.split()
+                            xsize, ysize, _ = line.split()
                             line = '{0:6.4f} {1:6.4f} scale'.format(
-                                float(x)*scaling, float(y)*scaling)
+                                float(xsize)*scaling, float(ysize)*scaling)
                         print(line, file=ofile)
             os.rename(file + '-new', file)
 
@@ -232,19 +232,19 @@ class Print(object):
                              '--left-title=' + time.strftime('%Y-%m-%d-%H:%M:%S'),
                              '--center-title=' + os.path.basename(file)])
 
-        isnotPrintable = re.compile('[\000-\037\200-\277]')
+        is_not_printable = re.compile('[\000-\037\200-\277]')
         try:
             with open(file, 'rb') as ifile:
                 stdin = []
                 for line in ifile:
-                    line = isnotPrintable.sub(
+                    line = is_not_printable.sub(
                         ' ', line.decode('utf-8', 'replace').rstrip('\r\n\004'))
                     lines = textwrap.wrap(line, chars)
                     if not lines:
                         stdin.append('')
                     else:
                         stdin.extend(lines)
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" text file.')
         self._a2ps.run(mode='batch', stdin=stdin, output_file=self._tmpfile)
         if self._a2ps.get_exitcode():

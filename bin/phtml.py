@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -71,7 +71,7 @@ class Gallery(object):
             raise SystemExit(sys.argv[0] + ': Cannot open "' + directory + '" directory.')
         self._nfiles = len(self._files)
 
-    def _generate(self, number, file, next):
+    def _generate(self, number, file, next_file):
         yield ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
                '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">')
         yield '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'
@@ -88,7 +88,7 @@ class Gallery(object):
         yield '  (' + str(number+1) + '/' + str(self._nfiles) + ')'
         yield '  </td>'
         yield '  <td>'
-        yield '    <a href="' + next.rsplit('.', 1)[0] + '.xhtml">'
+        yield '    <a href="' + next_file.rsplit('.', 1)[0] + '.xhtml">'
         yield '    <img src="' + file + '" height="' + str(self._height) + '"/></a>'
         yield '  </td>'
         yield '  <td>'
@@ -99,27 +99,30 @@ class Gallery(object):
         yield '</body></html>'
 
     def create(self):
+        """
+        Create gallery
+        """
         if self._files:
-            directoryTime = 0
+            directory_time = 0
             for i in range(self._nfiles):
                 file = self._files[i]
 
-                next = self._files[(i+1) % self._nfiles]
+                next_file = self._files[(i+1) % self._nfiles]
 
-                xhtmlFile = os.path.join(self._directory, file.rsplit('.', 1)[0]) + '.xhtml'
+                xhtml_file = os.path.join(self._directory, file.rsplit('.', 1)[0]) + '.xhtml'
                 try:
-                    with open(xhtmlFile, 'w', newline='\n') as ofile:
-                        for line in self._generate(i, file, next):
+                    with open(xhtml_file, 'w', newline='\n') as ofile:
+                        for line in self._generate(i, file, next_file):
                             print(line, file=ofile)
-                except IOError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + xhtmlFile + '" file.')
+                except OSError:
+                    raise SystemExit(sys.argv[0] + ': Cannot create "' + xhtml_file + '" file.')
 
-                fileTime = syslib.FileStat(os.path.join(self._directory, file)).get_time()
-                os.utime(xhtmlFile, (fileTime, fileTime))
-                directoryTime = max(directoryTime, fileTime)
+                file_time = syslib.FileStat(os.path.join(self._directory, file)).get_time()
+                os.utime(xhtml_file, (file_time, file_time))
+                directory_time = max(directory_time, file_time)
 
-            os.utime(self._directory, (directoryTime, directoryTime))
-            return directoryTime
+            os.utime(self._directory, (directory_time, directory_time))
+            return directory_time
 
         return None
 
@@ -144,47 +147,50 @@ class Xhtml(object):
                 directories.extend(self._find(file))
         return directories
 
-    def _generate(self, fileStats):
+    def _generate(self, file_stats):
         yield ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
                '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">')
         yield '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'
         yield ''
         yield '<head>'
-        yield ('<title>Photo Galleries</title>')
+        yield '<title>Photo Galleries</title>'
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>'
         yield '</head>'
         yield '<body bgcolor="#fffff1" text="#000000" link="#0000ff" vlink="#900090">'
         yield ''
-        for fileStat in fileStats:
-            directory = fileStat.get_file()
+        for file_stat in file_stats:
+            directory = file_stat.get_file()
             files = glob.glob(os.path.join(directory, '*.xhtml'))
             nfiles = len(files)
-            xhtmlFile = sorted(files)[0]
-            yield '<a href="' + xhtmlFile + '" target="_blank">'
+            xhtml_file = sorted(files)[0]
+            yield '<a href="' + xhtml_file + '" target="_blank">'
             yield '{0:s} ({1:d})</a>'.format(directory, nfiles)
             yield '<br/>'
             yield ''
         yield '</body></html>'
 
     def create(self):
+        """
+        Create files
+        """
         try:
             os.chdir(self._directory)
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot change to "' + self._directory() + '" directory.')
 
-        fileStats = []
+        file_stats = []
         for directory in self._find():
             gallery = Gallery(directory, self._height)
             if gallery.create():
-                fileStats.append(syslib.FileStat(directory))
-        fileStats = sorted(fileStats, key=lambda s: s.get_time(), reverse=True)
+                file_stats.append(syslib.FileStat(directory))
+        file_stats = sorted(file_stats, key=lambda s: s.get_time(), reverse=True)
 
         try:
             with open('index.xhtml', 'w', newline='\n') as ofile:
-                for line in self._generate(fileStats):
+                for line in self._generate(file_stats):
                     print(line, file=ofile)
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot create "index.xhtml" file.')
 
 

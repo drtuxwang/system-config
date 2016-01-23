@@ -59,7 +59,16 @@ class CommandThread(threading.Thread):
         self._command = command
         self._stdout = ''
 
+    def get_output(self):
+        """
+        Return thread output.
+        """
+        return self._stdout
+
     def run(self):
+        """
+        Start thread
+        """
         self._child = self._command.run(mode='child')
         while True:
             try:
@@ -71,15 +80,12 @@ class CommandThread(threading.Thread):
             self._stdout += byte.decode('utf-8', 'replace')
 
     def kill(self):
+        """
+        Terminate thread
+        """
         if self._child:
             self._child.kill()
             self._child = None
-
-    def get_output(self):
-        """
-        Return thread output.
-        """
-        return self._stdout
 
 
 class DiskReport(object):
@@ -93,7 +99,21 @@ class DiskReport(object):
         if not self._mounts:
             self._detect()
 
+    def _detect(self):
+        mount = syslib.Command('mount')
+        mount.run(mode='batch')
+        for line in mount.get_output():
+            try:
+                directory, info = line.split(' ', 3)[2:]
+            except IndexError:
+                continue
+            if 'none' not in info:
+                self._mounts.append(directory)
+
     def run(self):
+        """
+        Generate report
+        """
         devices = {}
         for file in glob.glob('/dev/disk/by-uuid/*'):
             try:
@@ -106,13 +126,13 @@ class DiskReport(object):
             self._df.set_args([mount])
             thread = CommandThread(self._df)
             thread.start()
-            endTime = time.time() + 1  # One second delay limit
+            end_time = time.time() + 1  # One second delay limit
             while thread.is_alive():
-                if time.time() > endTime:
+                if time.time() > end_time:
                     thread.kill()
                     break
             try:
-                device, blocks, used, avail, ratio, directory = thread._stdout.split()[-6:]
+                device, blocks, used, avail, ratio, directory = thread.get_output().split()[-6:]
             except (IndexError, ValueError):
                 continue
 
@@ -124,17 +144,6 @@ class DiskReport(object):
                     device = ''
                 print('{0:15s} {1:>10s} {2:>10s} {3:>10s} {4:>4s} {5:s}'.
                       format(device, blocks, used, avail, ratio, directory))
-
-    def _detect(self):
-        mount = syslib.Command('mount')
-        mount.run(mode='batch')
-        for line in mount.get_output():
-            try:
-                device, junk, directory, info = line.split(' ', 3)
-            except IndexError:
-                continue
-            if 'none' not in info:
-                self._mounts.append(directory)
 
 
 class Main(object):

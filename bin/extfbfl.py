@@ -13,8 +13,8 @@ import time
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -65,10 +65,13 @@ class Extract(object):
                                     '"')[0].split('&')[0])
                                 name = block.split('>')[1].split('<')[0]
                                 self._profiles[uid] = Profile(name, url)
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" HTML file.')
 
     def write(self):
+        """
+        Write file
+        """
         file = time.strftime('facebook-%Y%m%d.csv', time.localtime())
         print('Writing "' + file + '" with', len(self._profiles.keys()), 'friends...')
         try:
@@ -83,7 +86,7 @@ class Extract(object):
                         print(',"' + profile.get_name() + '",' + profile.get_url(), file=ofile)
                     else:
                         print(',' + profile.get_name() + ',' + profile.get_url(), file=ofile)
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" CSV file.')
 
 

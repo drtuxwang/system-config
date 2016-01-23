@@ -82,6 +82,9 @@ class Play(object):
         return sorted(files)
 
     def run(self):
+        """
+        Run player
+        """
         self._play.run()
         if self._play.get_exitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(self._play.get_exitcode()) +

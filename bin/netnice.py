@@ -12,8 +12,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -58,23 +58,23 @@ class Options(object):
         parser.add_argument('command', nargs=1, help='Command to run.')
         parser.add_argument('args', nargs='*', metavar='arg', help='Command argument.')
 
-        myArgs = []
+        my_args = []
         while len(args):
-            myArgs.append(args[0])
+            my_args.append(args[0])
             if not args[0].startswith('-'):
                 break
             elif args[0] == '-n' and len(args) >= 2:
                 args = args[1:]
-                myArgs.append(args[0])
+                my_args.append(args[0])
             args = args[1:]
 
-        self._args = parser.parse_args(myArgs)
+        self._args = parser.parse_args(my_args)
 
         if self._args.drate[0] < 0:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
                              'download rate limit.')
 
-        self._command_args = args[len(myArgs):]
+        self._command_args = args[len(my_args):]
 
 
 class Shaper(syslib.Command):
@@ -97,6 +97,11 @@ class Shaper(syslib.Command):
         self.set_rate(self._drate)
 
     def set_rate(self, drate):
+        """
+        Set rate
+
+        drate = Download rate (KB)
+        """
         self._drate = drate
         self.set_args(['-d', str(self._drate), '-s'])
 
@@ -106,7 +111,7 @@ class Shaper(syslib.Command):
                 with open(file) as ifile:
                     data = json.load(ifile)
                     self._drate = data['netnice']['download']
-            except (IOError, KeyError, ValueError):
+            except (KeyError, OSError, ValueError):
                 pass
             else:
                 return True
@@ -122,7 +127,7 @@ class Shaper(syslib.Command):
         try:
             with open(file, 'w', newline='\n') as ofile:
                 print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
-        except IOError:
+        except OSError:
             pass
 
 

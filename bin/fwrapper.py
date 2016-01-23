@@ -9,8 +9,8 @@ import os
 import signal
 import sys
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -54,10 +54,13 @@ class Wrap(object):
                       os.path.dirname(source) + '@"` export PATH', file=ofile)
                 print('exec "' + source + '" "$@"', file=ofile)
             os.chmod(target, int('755', 8))
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" wrapper file.')
 
     def run(self):
+        """
+        Wrap files
+        """
         for file in self._files:
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')

@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -93,10 +93,10 @@ class Graph(object):
         self._xcol = options.get_xcol()
         self._xrange = options.get_xrange()
 
-        self._labels(options)
-        self._graph(options)
+        self._config_labels()
+        self._graph()
 
-    def _labels(self, options):
+    def _config_labels(self):
         if not os.path.isfile(self._file):
             raise SystemExit(sys.argv[0] + ': Cannot find "' + self._file + '" data file.')
         try:
@@ -108,13 +108,13 @@ class Graph(object):
                     self._labels = []
                     for i in range(1, len(line.split()) + 1):
                         self._labels.append(str(i))
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + self._file + '" data file.')
         if len(self._labels) < 2:
             raise SystemExit(
                 sys.argv[0] + ': Cannot find enough columns in "' + self._file + '" data file.')
 
-    def _graph(self, options):
+    def _graph(self):
         if self._xcol > len(self._labels):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find column number "' + str(self._xcol) + '" in data file.')
@@ -141,7 +141,7 @@ class Graph(object):
             with open(file, 'w', newline='\n') as ofile:
                 for line in lines:
                     print(line, file=ofile)
-        except IOError:
+        except OSError:
             return 1
         return 0
 

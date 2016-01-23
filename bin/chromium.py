@@ -122,7 +122,7 @@ class Options(object):
                 data['profile']['per_host_zoom_levels'] = {}
                 with open(file + '-new', 'w', newline='\n') as ofile:
                     print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
-            except (IOError, KeyError, ValueError):
+            except (KeyError, OSError, ValueError):
                 try:
                     os.remove(file + '-new')
                 except OSError:
@@ -150,7 +150,7 @@ class Options(object):
                                 for line in ifile:
                                     if not ispattern.search(line):
                                         print(line, end='', file=ofile)
-                    except IOError:
+                    except OSError:
                         try:
                             os.remove(file + '-new')
                         except OSError:
@@ -169,7 +169,7 @@ class Options(object):
                             shutil.rmtree(file)
                         with open(file, 'wb'):
                             pass
-                    except (IOError, OSError):
+                    except OSError:
                         pass
 
     def _copy(self):
@@ -196,7 +196,7 @@ class Options(object):
             if not os.path.isdir(newhome):
                 try:
                     shutil.copytree(configdir, os.path.join(newhome, '.config', self._directory))
-                except (IOError, shutil.Error):  # Ignore 'lock' file error
+                except (OSError, shutil.Error):  # Ignore 'lock' file error
                     pass
             try:
                 os.symlink(os.path.join(os.environ['HOME'], 'Desktop'),
@@ -298,7 +298,7 @@ class FlashPlayer(object):
                             return
                         except IndexError:
                             break
-        except IOError:
+        except OSError:
             pass
         self._version = '0.0.0.0'
 

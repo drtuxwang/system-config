@@ -132,8 +132,9 @@ class PackageManger(object):
 
     def _show_packages_info(self):
         for name, package in sorted(self._packages.items()):
-            print('{0:35s} {1:15s} {2:5d}KB {3:s}'.format(name.split(':')[0],
-                  package.get_version(), package.get_size(), package.get_description()))
+            print('{0:35s} {1:15s} {2:5d}KB {3:s}'.format(
+                name.split(':')[0], package.get_version(), package.get_size(),
+                package.get_description()))
 
 
 class Main(object):

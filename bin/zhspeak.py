@@ -209,7 +209,7 @@ class ChineseDictionary(object):
                         for match in self._issound.finditer(sounds):
                             self._mappings[text].append(match.group())
                         self._max_block = max(self._max_block, len(text))
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" dialect file.')
 
     def map_speech(self, text):

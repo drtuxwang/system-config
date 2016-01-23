@@ -2,9 +2,9 @@
 """
 Python system interaction Library
 
-2006-2015 By Dr Colin Kong
+2006-2016 By Dr Colin Kong
 
-Version 5.3.1 (2016-01-18)
+Version 5.3.2 (2016-01-20)
 """
 
 import copy
@@ -18,8 +18,8 @@ import subprocess
 import sys
 import time
 
-if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=wrong-import-order,wrong-import-position
 
@@ -286,7 +286,7 @@ class Command(object):
             for line in stdin:
                 try:
                     child.stdin.write(line.encode('utf-8') + b'\n')
-                except IOError:
+                except OSError:
                     break
             child.stdin.close()
             isfilter = re.compile(filter)
@@ -295,20 +295,20 @@ class Command(object):
                 while True:
                     try:
                         line = child.stdout.readline().decode('utf-8', 'replace')
-                    except (IOError, KeyboardInterrupt):
+                    except (KeyboardInterrupt, OSError):
                         break
                     if not line:
                         break
                     if not filter or not isfilter.search(line):
                         try:
                             sys.stdout.write(line.replace(replace[0], replace[1]))
-                        except IOError:
+                        except OSError:
                             raise SyslibError(sys.argv[0] + ': Error in writing stdout of "' +
                                               self._file + '" program.')
                 while True:
                     try:
                         line = child.stderr.readline().decode('utf-8', 'replace')
-                    except (IOError, KeyboardInterrupt):
+                    except (KeyboardInterrupt, OSError):
                         break
                     if not line:
                         break
@@ -320,13 +320,13 @@ class Command(object):
                     if append:
                         try:
                             ofile = open(output_file, 'ab')
-                        except IOError:
+                        except OSError:
                             raise SyslibError(sys.argv[0] + ': Cannot append to "' +
                                               output_file + '" output file.')
                     else:
                         try:
                             ofile = open(output_file, 'wb')
-                        except IOError:
+                        except OSError:
                             raise SyslibError(sys.argv[0] + ': Cannot create "' +
                                               output_file + '" output file.')
                     while True:
@@ -342,7 +342,7 @@ class Command(object):
                     while True:
                         try:
                             line = child.stdout.readline().decode('utf-8', 'replace')
-                        except (IOError, KeyboardInterrupt):
+                        except (KeyboardInterrupt, OSError):
                             break
                         if not line:
                             break
@@ -352,7 +352,7 @@ class Command(object):
                     while True:
                         try:
                             line = child.stderr.readline().decode('utf-8', 'replace')
-                        except (IOError, KeyboardInterrupt):
+                        except (KeyboardInterrupt, OSError):
                             break
                         if not line:
                             break
@@ -517,7 +517,7 @@ class Command(object):
         if os.name == 'nt':
             try:
                 ifile = open(self._file, 'rb')
-            except IOError:
+            except OSError:
                 pass
             else:
                 line = ifile.readline().decode('utf-8', 'replace').rstrip('\r\n')
@@ -773,7 +773,7 @@ class Daemon(object):
                         break
                     ofile.write(byte)
                     ofile.flush()  # Unbuffered
-        except IOError:
+        except OSError:
             pass
 
     def _run_wait(self, child):
@@ -842,7 +842,7 @@ class FileStat(object):
         """
         return self._ino
 
-    def get_numberlinks(self):
+    def get_number_links(self):
         """
         Return number of links to the inode
         """
@@ -941,7 +941,7 @@ class SystemInfo(object):
                         with open(os.path.join(registry_key, 'CurrentBuildNumber'),
                                   errors='replace') as ifile:
                             _cache['kernel'] += '.' + ifile.readline()
-                    except IOError:
+                    except OSError:
                         raise SyslibError(sys.argv[0] + ': Error reading "' +
                                           registry_key + '" registry key.')
 
@@ -1047,7 +1047,7 @@ class SystemInfo(object):
             if len(string) >= 4:
                 if is_match.search(string):
                     return string
-        except IOError:
+        except OSError:
             pass
         return ''
 

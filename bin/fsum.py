@@ -12,8 +12,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -54,8 +54,8 @@ class Options(object):
         """
         Return update file.
         """
-        if self._args.updateFile:
-            return self._args.updateFile[0]
+        if self._args.update_file:
+            return self._args.update_file[0]
         else:
             return None
 
@@ -69,7 +69,7 @@ class Options(object):
                             help='Check checksums against files.')
         parser.add_argument('-f', dest='createFlag', action='store_true',
                             help='Create ".fsum" file for each file.')
-        parser.add_argument('-update', nargs=1, dest='updateFile', metavar='index.fsum',
+        parser.add_argument('-update', nargs=1, dest='update_file', metavar='index.fsum',
                             help='Update checksums if file size and date changed.')
 
         parser.add_argument('files', nargs='*', metavar='file|file.fsum',
@@ -88,14 +88,14 @@ class Checksum(object):
             self._check(options.get_files())
         else:
             self._cache = {}
-            updateFile = options.get_update_file()
+            update_file = options.get_update_file()
 
-            if updateFile:
-                if not os.path.isfile(updateFile):
+            if update_file:
+                if not os.path.isfile(update_file):
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot find "' + updateFile + '" checksum file.')
+                        sys.argv[0] + ': Cannot find "' + update_file + '" checksum file.')
                 try:
-                    with open(updateFile, errors='replace') as ifile:
+                    with open(update_file, errors='replace') as ifile:
                         for line in ifile:
                             try:
                                 line = line.rstrip('\r\n')
@@ -104,9 +104,9 @@ class Checksum(object):
                                     self._cache[(file, size, mtime)] = md5sum
                             except IndexError:
                                 pass
-                except IOError:
+                except OSError:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + updateFile + '" checksum file.')
+                        sys.argv[0] + ': Cannot read "' + update_file + '" checksum file.')
             self._calc(options, options.get_files())
 
     def _calc(self, options, files):
@@ -120,23 +120,24 @@ class Checksum(object):
                         except PermissionError:
                             pass
             elif os.path.isfile(file) and not file.endswith('..fsum'):
-                fileStat = syslib.FileStat(file)
+                file_stat = syslib.FileStat(file)
                 try:
-                    md5sum = self._cache[(file, fileStat.get_size(), fileStat.get_time())]
+                    md5sum = self._cache[(file, file_stat.get_size(), file_stat.get_time())]
                 except KeyError:
                     md5sum = self._md5sum(file)
                 if not md5sum:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
-                print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(md5sum, fileStat.get_size(),
-                                                           fileStat.get_time(), file))
+                print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(md5sum, file_stat.get_size(),
+                                                           file_stat.get_time(), file))
                 if options.get_create_flag():
                     try:
                         with open(file + '.fsum', 'w', newline='\n') as ofile:
-                            print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(md5sum, fileStat.get_size(),
-                                  fileStat.get_time(), os.path.basename(file)), file=ofile)
-                        fileStat = syslib.FileStat(file)
-                        os.utime(file + '.fsum', (fileStat.get_time(), fileStat.get_time()))
-                    except (IOError, OSError):
+                            print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(
+                                md5sum, file_stat.get_size(), file_stat.get_time(),
+                                os.path.basename(file)), file=ofile)
+                        file_stat = syslib.FileStat(file)
+                        os.utime(file + '.fsum', (file_stat.get_time(), file_stat.get_time()))
+                    except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '.fsum" file.')
 
     def _check(self, files):
@@ -159,24 +160,24 @@ class Checksum(object):
                             file = os.path.join(directory, file)
                             found.append(file)
                             nfiles += 1
-                            fileStat = syslib.FileStat(file)
+                            file_stat = syslib.FileStat(file)
                             try:
                                 if not os.path.isfile(file):
                                     print(file, '# FAILED open or read')
                                     nmiss += 1
-                                elif size != fileStat.get_size():
+                                elif size != file_stat.get_size():
                                     print(file, '# FAILED checksize')
                                     nfail += 1
                                 elif self._md5sum(file) != md5sum:
                                     print(file, '# FAILED checksum')
                                     nfail += 1
-                                elif mtime != fileStat.get_time():
+                                elif mtime != file_stat.get_time():
                                     print(file, '# FAILED checkdate')
                                     nfail += 1
                             except TypeError:
                                 raise SystemExit(
                                     sys.argv[0] + ': Corrupt "' + fsumfile + '" checksum file.')
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + fsumfile + '" checksum file.')
 
         if os.path.join(directory, 'index.fsum') in files:
@@ -226,7 +227,7 @@ class Checksum(object):
                     if not chunk:
                         break
                     md5.update(chunk)
-        except (IOError, TypeError):
+        except (OSError, TypeError):
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
         return md5.hexdigest()
 

@@ -76,7 +76,7 @@ class Main(object):
             self._windows_argv()
         try:
             options = Options(sys.argv)
-            Upper(options)
+            ToUpper(options)
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:

@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -37,19 +37,19 @@ class Options(object):
 
         self._sh(self._command)
 
-        if self._args.logFile:
+        if self._args.log_file:
             try:
-                with open(self._args.logFile, 'wb'):
+                with open(self._args.log_file, 'wb'):
                     pass
             except OSError:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + self._logFile + '" logfile file.')
+                    sys.argv[0] + ': Cannot create "' + self._args.log_file + '" logfile file.')
 
     def get_log_file(self):
         """
         Return log file.
         """
-        return self._args.logFile
+        return self._args.log_file
 
     def get_command(self):
         """
@@ -60,29 +60,29 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Run a command immune to terminal hangups.')
 
-        parser.add_argument('-q', action='store_const', const='', dest='logFile',
+        parser.add_argument('-q', action='store_const', const='', dest='log_file',
                             default='run.out', help="Do not create 'run.out' output file.")
 
         parser.add_argument('command', nargs=1, help='Command to run.')
         parser.add_argument('args', nargs='*', metavar='arg', help='Command argument.')
 
-        myArgs = []
+        my_args = []
         for arg in args:
-            myArgs.append(arg)
+            my_args.append(arg)
             if not arg.startswith('-'):
                 break
-        self._args = parser.parse_args(myArgs)
+        self._args = parser.parse_args(my_args)
 
-        self._command_args = args[len(myArgs):]
+        self._command_args = args[len(my_args):]
 
     def _sh(self, command):
         try:
             with open(command.get_file(), errors='replace') as ifile:
                 line = ifile.readline().rstrip('\r\n')
                 if line == '#!/bin/sh':
-                    sh = syslib.Command(file='/bin/sh')
-                    command.set_wrapper(sh)
-        except IOError:
+                    shell = syslib.Command(file='/bin/sh')
+                    command.set_wrapper(shell)
+        except OSError:
             pass
 
 

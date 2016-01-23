@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -87,7 +87,7 @@ class Backlight(object):
         try:
             with open(os.path.join(self._device, 'brightness'), errors='replace') as ifile:
                 brightness = int(ifile.readline())
-        except (IOError, ValueError):
+        except (OSError, ValueError):
             brightness = 0
         return brightness
 
@@ -98,7 +98,7 @@ class Backlight(object):
         try:
             with open(os.path.join(self._device, 'max_brightness'), errors='replace') as ifile:
                 brightness = int(ifile.readline())
-        except (IOError, ValueError):
+        except (OSError, ValueError):
             brightness = 0
         return brightness
 
@@ -109,7 +109,7 @@ class Backlight(object):
         try:
             with open(os.path.join(self._device, 'brightness'), 'w', newline='\n') as ofile:
                 print(brightness, file=ofile)
-        except IOError:
+        except OSError:
             pass
 
     def run(self, change):

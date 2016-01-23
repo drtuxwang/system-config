@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -76,10 +76,10 @@ class Chop(object):
                         with open(file, 'wb') as ofile:
                             print(file + '...')
                             self._copy(ifile, ofile)
-                    except IOError:
+                    except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' +
                                          str(part + 1).zfill(3) + '" file.')
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + options.get_file() + '" file.')
 
     def _copy(self, ifile, ofile):

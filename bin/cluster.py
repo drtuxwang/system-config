@@ -80,17 +80,17 @@ class Options(object):
         parser.add_argument('command', nargs=1, help='Command to run on all systems.')
         parser.add_argument('args', nargs='*', metavar='arg', help='Command argument.')
 
-        myArgs = []
+        my_args = []
         while len(args):
-            myArgs.append(args[0])
+            my_args.append(args[0])
             if not args[0].startswith('-'):
                 break
             elif args[0] == '-subnet' and len(args) >= 2:
                 args = args[1:]
-                myArgs.append(args[0])
+                my_args.append(args[0])
             args = args[1:]
 
-        self._args = parser.parse_args(myArgs)
+        self._args = parser.parse_args(my_args)
 
         self._command_args = args[1:]
 
@@ -113,14 +113,22 @@ class Remote(threading.Thread):
         threading.Thread.__init__(self)
         self._ip = ip
         self._output = ''
+        self._child = None
 
     def get_output(self):
+        """
+        Get output
+        """
         return self._output
 
     def run(self):
+        """
+        Run command
+        """
         ssh = self._options.get_ssh()
-        ssh.set_args([self._ip] + ['echo "=== ' + self._ip + ': "`uname -s -n`" ==="; ' +
-                     ssh.args2cmd(self._options.get_command_line())])
+        ssh.set_args([self._ip, 'echo "=== ' + self._ip + ': "`uname -s -n`" ==="; ' + ssh.args2cmd(
+            self._options.get_command_line())])
+
         self._child = ssh.run(mode='child', error2output=True)
         self._child.stdin.close()
         while True:
@@ -130,6 +138,9 @@ class Remote(threading.Thread):
             self._output += byte.decode('utf-8', 'replace')
 
     def kill(self):
+        """
+        Kill thread
+        """
         if self._child:
             self._child.kill()
             self._child = None
@@ -157,31 +168,31 @@ class Cluster(object):
         alive = True
 
         while alive:
-            bytes = 0
+            nbytes = 0
             alive = False
             for thread in self._threads:
-                bytes += len(thread.get_output())
+                nbytes += len(thread.get_output())
                 if thread.is_alive():
                     alive = True
-            sys.stdout.write('\r  -> Received ' + str(bytes) + ' bytes...')
+            sys.stdout.write('\r  -> Received ' + str(nbytes) + ' bytes...')
             sys.stdout.flush()
-            if bytes == obytes:
+            if nbytes == obytes:
                 same += 1
                 if same > self._wait_max:
                     break
             else:
                 same = 0
-                obytes = bytes
+                obytes = nbytes
             time.sleep(self._wait_time)
         print()
 
     def _bcast(self):
         print('Bcast to subnet "' + self._options.get_subnet() + '.0"...')
         for host in range(1, 255):
-            ip = self._options.get_subnet() + '.' + str(host)
-            sys.stdout.write('\r  -> ' + str(ip) + '...')
+            ip_address = self._options.get_subnet() + '.' + str(host)
+            sys.stdout.write('\r  -> ' + str(ip_address) + '...')
             sys.stdout.flush()
-            thread = Remote(self._options, ip)
+            thread = Remote(self._options, ip_address)
             thread.start()
             self._threads.append(thread)
 

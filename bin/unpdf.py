@@ -61,7 +61,7 @@ class Unpack(object):
     """
 
     def __init__(self, options):
-        gs = options.get_gs()
+        command = options.get_gs()
 
         for file in options.get_files():
             if not os.path.isfile(file):
@@ -73,12 +73,12 @@ class Unpack(object):
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + directory + '" directory.')
             print('Unpacking "' + directory + os.sep + '*.jpg" file...')
-            gs.set_args(['-sOutputFile=' + directory + os.sep + '%08d.jpg', '-c',
-                         'save', 'pop', '-f', file])
-            gs.run(filter='Ghostscript|^Copyright|WARRANTY:|^Processing')
-            if gs.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(gs.get_exitcode()) +
-                                 ' received from "' + gs.get_file() + '".')
+            command.set_args(['-sOutputFile=' + directory + os.sep + '%08d.jpg', '-c',
+                              'save', 'pop', '-f', file])
+            command.run(filter='Ghostscript|^Copyright|WARRANTY:|^Processing')
+            if command.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
+                                 ' received from "' + command.get_file() + '".')
 
 
 class Main(object):

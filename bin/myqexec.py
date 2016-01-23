@@ -11,7 +11,7 @@ import time
 
 import syslib
 
-RELEASE = '2.7.0'
+RELEASE = '2.7.1'
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
@@ -83,7 +83,7 @@ class Job(object):
                 os.setpgid(mypid, mypid)  # New PGID
                 pgid = os.getpgid(mypid)
                 print('PGID=' + str(pgid) + '\nSTART=' + str(time.time()), file=ofile)
-        except IOError:
+        except OSError:
             return
 
         try:
@@ -93,7 +93,7 @@ class Job(object):
                     line = line.strip()
                     if '=' in line:
                         info[line.split('=')[0]] = line.split('=', 1)[1]
-        except IOError:
+        except OSError:
             return
 
         print('\nMyQS v' + options.get_release() + ', My Queuing System batch job exec.\n')
@@ -119,7 +119,7 @@ class Job(object):
                 if line == '#!/bin/sh':
                     shell = syslib.Command(file='/bin/sh')
                     command.set_wrapper(shell)
-        except IOError:
+        except OSError:
             pass
 
     def _start(self):
@@ -130,7 +130,7 @@ class Job(object):
                     line = line.strip()
                     if '=' in line:
                         info[line.split('=')[0]] = line.split('=', 1)[1]
-        except IOError:
+        except OSError:
             return
         if os.path.isdir(info['DIRECTORY']):
             os.chdir(info['DIRECTORY'])

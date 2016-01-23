@@ -13,8 +13,8 @@ import time
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -98,7 +98,7 @@ class Copy(object):
 
     def _automount(self, directory, wait):
         if directory.startswith('/media/'):
-            for i in range(0, wait * 10):
+            for _ in range(0, wait * 10):
                 if os.path.isdir(directory):
                     break
                 time.sleep(0.1)
@@ -134,12 +134,12 @@ class Copy(object):
             print('Copying "' + source + '" file...')
             try:
                 shutil.copy2(source, target)
-            except IOError as exception:
+            except OSError as exception:
                 if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
                     try:
                         with open(source, 'rb'):
                             raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
-                    except IOError:
+                    except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
                     except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot read "' + source + '" file.')

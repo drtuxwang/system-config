@@ -87,25 +87,25 @@ class Normalize(object):
 
     def _adjust(self, file, volume):
         change = -16 - float(volume)
-        fileNew = file + '-new'
+        file_new = file + '-new'
 
         self._ffmpeg.set_args(
-            ['-i', file, '-af', 'volume=' + str(change) + 'dB', '-y', '-f', 'wav', fileNew])
+            ['-i', file, '-af', 'volume=' + str(change) + 'dB', '-y', '-f', 'wav', file_new])
         self._ffmpeg.run(mode='batch')
         if self._ffmpeg.get_exitcode():
             syslib.Dump().list('debugX', self._ffmpeg)
             raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ffmpeg.get_exitcode()) +
                              ' received from "' + self._ffmpeg.get_file() + '".')
         try:
-            os.rename(fileNew, file)
+            os.rename(file_new, file)
         except OSError:
-            os.remove(fileNew)
+            os.remove(file_new)
             raise SystemExit(sys.argv[0] + ': Cannot update "' + file + '" file.')
 
     def _view(self, file):
         self._ffmpeg.set_args(['-i', file, "-af", "volumedetect", "-f", "null", "/dev/null"])
         self._ffmpeg.run(filter=' (mean|max)_volume: .* dB$', mode='batch', error2output=True)
-        if (len(self._ffmpeg.get_output()) != 2):
+        if len(self._ffmpeg.get_output()) != 2:
             raise SystemExit(sys.argv[0] + ': Cannot read corrupt "' + file + '" wave file.')
         elif self._ffmpeg.get_exitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ffmpeg.get_exitcode()) +

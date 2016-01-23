@@ -13,8 +13,8 @@ import time
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -75,22 +75,9 @@ class Cdrom(object):
                 try:
                     with open(os.path.join(directory, file), errors='replace') as ifile:
                         model += ' ' + ifile.readline().strip()
-                except IOError:
+                except OSError:
                     continue
             self._devices[device] = model
-
-    def device(self, mount):
-        if mount == 'cdrom':
-            rank = 0
-        else:
-            try:
-                rank = int(mount[5:])-1
-            except ValueError:
-                return ''
-        try:
-            return sorted(self._devices.keys())[rank]
-        except IndexError:
-            return ''
 
     def get_devices(self):
         """
@@ -129,10 +116,10 @@ class Md5cd(object):
         nice = syslib.Command('nice', args=['-20'])
         tmpfile = os.sep + os.path.join(
             'tmp', 'fprint-' + syslib.info.get_username() + '.' + str(os.getpid()))
-        dd = syslib.Command(
+        command = syslib.Command(
             'dd', args=['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + tmpfile])
-        dd.run(mode='batch')
-        if dd.get_error('Permission denied$'):
+        command.run(mode='batch')
+        if command.get_error('Permission denied$'):
             raise SystemExit(sys.argv[0] +
                              ': Cannot read from CD/DVD device. Please check permissions.')
         elif not os.path.isfile(tmpfile):
@@ -148,9 +135,9 @@ class Md5cd(object):
                              ' received from "' + isoinfo.get_file() + '".')
         blocks = int(isoinfo.get_output()[0].split()[-1])
 
-        dd.set_args(['if=' + device, 'bs=2048', 'count=' + str(blocks)])
-        dd.set_wrapper(nice)
-        child = dd.run(mode='child')
+        command.set_args(['if=' + device, 'bs=2048', 'count=' + str(blocks)])
+        command.set_wrapper(nice)
+        child = command.run(mode='child')
         child.stdin.close()
         size = 0
         md5 = hashlib.md5()

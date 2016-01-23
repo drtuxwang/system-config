@@ -24,7 +24,7 @@ class Options(object):
     def __init__(self, args):
         xterm = syslib.Command('xterm')
         xterm.set_flags(['-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', '#000000',
-                        '-bg', '#ffffdd', '-cr', '#ff0000', '-geometry', '100x24', '-ut', '+sb'])
+                         '-bg', '#ffffdd', '-cr', '#ff0000', '-geometry', '100x24', '-ut', '+sb'])
         self._command = syslib.Command('sudo')
 
         if len(args) > 1:

@@ -64,7 +64,7 @@ class Options(object):
                         print('vo=x11', file=ofile)
                         print('vf=eq2', file=ofile)
                         print('zoom=1', file=ofile)
-                except IOError:
+                except OSError:
                     return
 
     def _set_libraries(self, command):
@@ -74,8 +74,8 @@ class Options(object):
                 os.environ['LD_LIBRARY_PATH'] = libdir + os.pathsep + os.environ['LD_LIBRARY_PATH']
             else:
                 os.environ['LD_LIBRARY_PATH'] = libdir
-            if self._mplayer.flags[-1] in ('pulse', 'alsa'):
-                self._mplayer.flags[-1] = 'esd'
+            if self._mplayer.get_flags()[-1] in ('pulse', 'alsa'):
+                self._mplayer.get_flags()[-1] = 'esd'
 
 
 class Main(object):

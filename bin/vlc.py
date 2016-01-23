@@ -53,7 +53,7 @@ class Options(object):
                                       file=ofile)
                             else:
                                 print(line, file=ofile)
-            except IOError:
+            except OSError:
                 try:
                     os.remove(file + '-new')
                 except OSError:

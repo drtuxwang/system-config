@@ -35,19 +35,19 @@ class Options(object):
 
         self._parse_args(args[1:])
 
-        id = syslib.Command('id')
-        id.set_args(['-u'])
-        id.run(mode='batch')
-        if id.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(id.get_exitcode()) +
-                             ' received from "' + id.get_file() + '".')
-        uid = id.get_output()[0]
-        id.set_args(['-g'])
-        id.run(mode='batch')
-        if id.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(id.get_exitcode()) +
-                             ' received from "' + id.get_file() + '".')
-        gid = id.get_output()[0]
+        command = syslib.Command('id')
+        command.set_args(['-u'])
+        command.run(mode='batch')
+        if command.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
+                             ' received from "' + command.get_file() + '".')
+        uid = command.get_output()[0]
+        command.set_args(['-g'])
+        command.run(mode='batch')
+        if command.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
+                             ' received from "' + command.get_file() + '".')
+        gid = command.get_output()[0]
 
         self._sshfs = syslib.Command('sshfs')
         self._sshfs.set_args(['-o', 'uid=' + uid + ',gid=' + gid + ',nonempty,reconnect'] +

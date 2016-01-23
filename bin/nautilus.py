@@ -89,23 +89,23 @@ class Options(object):
                         print('x-scheme-handler/mms=vlc.desktop', file=ofile)
                         print('x-scheme-handler/mms=vlc.desktop', file=ofile)
                         print('x-scheme-handler/rtsp=vlc.desktop', file=ofile)
-                except IOError:
+                except OSError:
                     return
             self._userapp('application/vnd.oasis.opendocument.text', 'soffice')
             self._userapp('image/jpeg', 'gqview')
             self._userapp('text/html', 'chrome')
 
-    def _userapp(self, mimeType, appName):
-        file = os.path.join(self._configdir, appName + '-userapp.desktop')
+    def _userapp(self, mime_type, app_name):
+        file = os.path.join(self._configdir, app_name + '-userapp.desktop')
         if not os.path.isfile(file):
             try:
                 with open(file, 'w', newline='\n') as ofile:
                     print('[Desktop Entry]', file=ofile)
-                    print('Name=' + appName, file=ofile)
-                    print('Exec=' + appName, ' %f', file=ofile)
+                    print('Name=' + app_name, file=ofile)
+                    print('Exec=' + app_name, ' %f', file=ofile)
                     print('Type=Application', file=ofile)
                     print('NoDisplay=true', file=ofile)
-            except IOError:
+            except OSError:
                 return
 
         file = os.path.join(self._configdir, 'mimeinfo.cache')
@@ -114,11 +114,11 @@ class Options(object):
                 with open(file, 'w', newline='\n') as ofile:
                     print('[MIME Cache]', file=ofile)
             with open(file, errors='replace') as ifile:
-                if mimeType + '=' + appName + '-userapp.desktop' in ifile:
+                if mime_type + '=' + app_name + '-userapp.desktop' in ifile:
                     return
             with open(file, 'a', newline='\n') as ofile:
-                print(mimeType + '=' + appName + '-userapp.desktop', file=ofile)
-        except IOError:
+                print(mime_type + '=' + app_name + '-userapp.desktop', file=ofile)
+        except OSError:
             return
 
 

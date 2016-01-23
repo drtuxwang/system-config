@@ -3,9 +3,7 @@
 Test module for 'pyld.py' module
 """
 
-import glob
 import os
-import signal
 import sys
 import unittest
 import unittest.mock
@@ -16,6 +14,9 @@ import pyld
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+
+# pylint: disable=no-member,no-self-use
+# pylint: disable=invalid-name,too-many-public-methods
 
 
 class Test_Options(unittest.TestCase):
@@ -122,7 +123,7 @@ class Test_Options(unittest.TestCase):
         args = ['arg0', 'moduleX', '-pyldpath', '-pyldv']
 
         with self.assertRaises(SystemExit) as context:
-            options = pyld.Options(args)
+            pyld.Options(args)
         self.assertIsInstance(context.exception.args, tuple)
         self.assertEqual(2, context.exception.args[0])
 
@@ -292,8 +293,8 @@ class Test_Options(unittest.TestCase):
         """
         args = ['arg0', '-h']
 
-        with self.assertRaises(SystemExit) as context:
-            options = pyld.Options(args)
+        with self.assertRaises(SystemExit):
+            pyld.Options(args)
 
         value = pyld.sys.stdout.getvalue()
         self.assertIsInstance(value, str)
@@ -306,8 +307,8 @@ class Test_Options(unittest.TestCase):
         """
         args = ['arg0', '--h']
 
-        with self.assertRaises(SystemExit) as context:
-            options = pyld.Options(args)
+        with self.assertRaises(SystemExit):
+            pyld.Options(args)
 
         value = pyld.sys.stdout.getvalue()
         self.assertIsInstance(value, str)
@@ -320,8 +321,8 @@ class Test_Options(unittest.TestCase):
         """
         args = ['arg0', '--help']
 
-        with self.assertRaises(SystemExit) as context:
-            options = pyld.Options(args)
+        with self.assertRaises(SystemExit):
+            pyld.Options(args)
 
         value = pyld.sys.stdout.getvalue()
         self.assertIsInstance(value, str)
@@ -335,7 +336,8 @@ class Test_Options(unittest.TestCase):
         args = ['arg0']
 
         with self.assertRaises(SystemExit) as context:
-            options = pyld.Options(args)
+            pyld.Options(args)
+
         self.assertIsInstance(context.exception.args, tuple)
         self.assertEqual(2, context.exception.args[0])
 
@@ -381,7 +383,7 @@ class Test_PythonLoader(unittest.TestCase):
 
         pythonLoader = pyld.PythonLoader(self._options)
 
-        with self.assertRaises(FileNotFoundError) as context:
+        with self.assertRaises(FileNotFoundError):
             pythonLoader.run()
 
         self.assertTrue(pythonLoader.dump.called)
@@ -392,7 +394,7 @@ class Test_PythonLoader(unittest.TestCase):
         """
         pythonLoader = pyld.PythonLoader(self._options)
 
-        with self.assertRaises(FileNotFoundError) as context:
+        with self.assertRaises(FileNotFoundError):
             pythonLoader.run()
 
     def test_run_import_main(self):
@@ -406,6 +408,7 @@ class Test_PythonLoader(unittest.TestCase):
 
         with self.assertRaises(AttributeError) as context:
             pythonLoader.run()
+
         self.assertIsInstance(context.exception.args, tuple)
         self.assertIn("has no attribute 'Main'", context.exception.args[0])
 
@@ -417,7 +420,7 @@ class Test_PythonLoader(unittest.TestCase):
 
         pythonLoader = pyld.PythonLoader(self._options)
 
-        with self.assertRaises(FileNotFoundError) as context:
+        with self.assertRaises(FileNotFoundError):
             pythonLoader.run()
         self.assertIn('directory1', sys.path)
         self.assertIn('directory2', sys.path)
@@ -430,7 +433,7 @@ class Test_PythonLoader(unittest.TestCase):
 
         pythonLoader = pyld.PythonLoader(self._options)
 
-        with self.assertRaises(FileNotFoundError) as context:
+        with self.assertRaises(FileNotFoundError):
             pythonLoader.run()
 
         value = pyld.sys.stdout.getvalue()

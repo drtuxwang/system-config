@@ -76,23 +76,28 @@ class StopWatch(object):
         self._options = options
         self._bell = syslib.Command('bell')
         self._limit = options.get_time() * 60
-        self._reset()
+        self._alarm = None
 
     def run(self):
+        """
+        Start timer
+        """
         while True:
+            sys.stdout.write('\033]11;#ffffdd\007')
+            start = int(time.time())
+            elapsed = 0
+            self._alarm = 0
+
             try:
-                sys.stdout.write('\033]11;#ffffdd\007')
                 while True:
-                    if self._elapsed >= self._limit + self._alarm:
+                    if elapsed >= self._limit + self._alarm:
                         self._alert()
                     time.sleep(1)
-                    self._elapsed = int(time.time()) - self._start
-                    sys.stdout.write(' \r ' + time.strftime('%H:%M ') +
-                                     str(self._limit-self._elapsed))
+                    elapsed = int(time.time()) - start
+                    sys.stdout.write(' \r ' + time.strftime('%H:%M ') + str(self._limit - elapsed))
                     sys.stdout.flush()
             except KeyboardInterrupt:
                 print()
-            self._reset()
 
     def _alert(self):
         if self._alarm < 601:
@@ -103,11 +108,6 @@ class StopWatch(object):
             # Avoids defunct process
             self._options.get_pop().run(mode='batch')
         self._alarm += 60  # One minute reminder
-
-    def _reset(self):
-        self._alarm = 0
-        self._elapsed = 0
-        self._start = int(time.time())
 
 
 class Main(object):

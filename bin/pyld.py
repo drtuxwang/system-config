@@ -41,11 +41,11 @@ class Options(object):
         print('            "module":' + str(self._args.module) + ',')
         print('            "verbosity":', self._args.verbosity)
         print('        },')
-        print('        "_dumpFlag":', str(self._dump_flag) + ',')
-        print('        "_libraryPath":', str(self._library_path) + ',')
-        print('        "_moduleArgs":', str(self._module_args) + ',')
-        print('        "_moduleDir": "', self._module_dir, '",')
-        print('        "_verboseFlag":', self._verbose_flag)
+        print('        "_dump_flag":', str(self._dump_flag) + ',')
+        print('        "_library_path":', str(self._library_path) + ',')
+        print('        "_module_args":', str(self._module_args) + ',')
+        print('        "_module_dir": "', self._module_dir, '",')
+        print('        "_verbose_flag":', self._verbose_flag)
         print('    },')
 
     def __init__(self, args):

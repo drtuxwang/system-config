@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -29,12 +29,12 @@ class Options(object):
         """
         Return list of distribution files.
         """
-        return self._args.distributionFiles
+        return self._args.distribution_files
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Download Debian packages list files.')
 
-        parser.add_argument('distributionFiles', nargs='+', metavar='distribution.dist',
+        parser.add_argument('distribution_files', nargs='+', metavar='distribution.dist',
                             help='File containing Debian package URLs.')
 
         self._args = parser.parse_args(args)
@@ -48,29 +48,29 @@ class Distribution(object):
     def __init__(self, options):
         self._wget = syslib.Command('wget', flags=['--timestamping'])
         os.umask(int('022', 8))
-        for distributionFile in options.get_distribution_files():
-            if distributionFile.endswith('.dist'):
+        for distribution_file in options.get_distribution_files():
+            if distribution_file.endswith('.dist'):
                 try:
-                    print('Checking "' + distributionFile + '" distribution file...')
+                    print('Checking "' + distribution_file + '" distribution file...')
                     lines = []
-                    with open(distributionFile, errors='replace') as ifile:
+                    with open(distribution_file, errors='replace') as ifile:
                         for url in ifile:
                             url = url.rstrip()
                             if url and not url.startswith('#'):
                                 lines.extend(self._get_package_list(url))
-                except IOError:
+                except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' +
-                                     distributionFile + '" distribution file.')
+                                     distribution_file + '" distribution file.')
                 try:
-                    file = distributionFile[:-4] + 'packages'
+                    file = distribution_file[:-4] + 'packages'
                     with open(file + '-new', 'w', newline='\n') as ofile:
                         for line in lines:
                             print(line, file=ofile)
-                except IOError:
+                except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '-new" file.')
                 try:
                     os.rename(file + '-new', file)
-                except IOError:
+                except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
 
     def _get_package_list(self, url):
@@ -90,7 +90,7 @@ class Distribution(object):
         elif self._wget.get_exitcode():
             self._remove()
             raise SystemExit(sys.argv[0] + ': Error code ' + str(self._wget.get_exitcode()) +
-                             ' received from "' + wget.get_file() + '".')
+                             ' received from "' + self._wget.get_file() + '".')
         self._unpack(archive)
         site = url[:url.find('/dists/') + 1]
         lines = []
@@ -102,7 +102,7 @@ class Distribution(object):
                             'Filename: ', 'Filename: ' + site, 1))
                     else:
                         lines.append(line.rstrip('\r\n'))
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "Packages" packages file.')
         self._remove()
         return lines

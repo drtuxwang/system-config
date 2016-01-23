@@ -13,8 +13,8 @@ import time
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -104,22 +104,9 @@ class Cdrom(object):
                 try:
                     with open(os.path.join(directory, file), errors='replace') as ifile:
                         model += ' ' + ifile.readline().strip()
-                except IOError:
+                except OSError:
                     continue
             self._devices[device] = model
-
-    def device(self, mount):
-        if mount == 'cdrom':
-            rank = 0
-        else:
-            try:
-                rank = int(mount[5:])-1
-            except ValueError:
-                return ''
-        try:
-            return sorted(self._devices.keys())[rank]
-        except IndexError:
-            return ''
 
     def get_devices(self):
         """
@@ -181,7 +168,7 @@ class Readcd(object):
         cdrdao = syslib.Command('cdrdao', flags=['read-cd', '--device', device, '--read-raw'])
         nice = syslib.Command('nice', args=['-20'])
         if speed:
-            cdrdao.extend(['--speed', speed])
+            cdrdao.extend_args(['--speed', speed])
         if file.endswith('.bin'):
             cdrdao.set_args(['--datafile', file, file[:-4] + '.toc'])
         else:
@@ -201,7 +188,7 @@ class Readcd(object):
                     if not chunk:
                         break
                     md5.update(chunk)
-        except (IOError, TypeError):
+        except (OSError, TypeError):
             return ''
         return md5.hexdigest()
 
@@ -215,17 +202,17 @@ class Readcd(object):
     def _tao(self, device, file):
         isoinfo = syslib.Command('isoinfo')
         nice = syslib.Command('nice', args=['-20'])
-        dd = syslib.Command(
+        command = syslib.Command(
             'dd', args=['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + file])
-        dd.run(mode='batch')
-        if dd.get_error()[0].endswith('Permission denied'):
+        command.run(mode='batch')
+        if command.get_error()[0].endswith('Permission denied'):
             raise SystemExit(sys.argv[0] + ': Cannot read from CD/DVD device. '
                                            'Please check permissions.')
         elif not os.path.isfile(file):
             raise SystemExit(sys.argv[0] + ': Cannot find CD/DVD media. Please check drive.')
-        elif dd.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(dd.get_exitcode()) +
-                             ' received from "' + dd.get_file() + '".')
+        elif command.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
+                             ' received from "' + command.get_file() + '".')
 
         isoinfo.set_args(['-d', '-i', file])
         isoinfo.run(filter='^Volume size is: ', mode='batch')
@@ -242,9 +229,9 @@ class Readcd(object):
                              ' received from "' + isoinfo.get_file() + '".')
 
         print('Creating ISO image file "' + file + '"...')
-        dd.set_args(['if=' + device, 'bs=2048', 'count=' + str(blocks), 'of=' + file])
-        dd.set_wrapper(nice)
-        dd.run(filter='Input/output error| records (in|out)$')
+        command.set_args(['if=' + device, 'bs=2048', 'count=' + str(blocks), 'of=' + file])
+        command.set_wrapper(nice)
+        command.run(filter='Input/output error| records (in|out)$')
         if not os.path.isfile(file):
             raise SystemExit(sys.argv[0] + ': Cannot find CD/DVD media. Please check drive.')
         pad = int(blocks * 2048 - syslib.FileStat(file).get_size())

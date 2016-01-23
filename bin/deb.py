@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -240,7 +240,7 @@ class PackageManger(object):
                         package.set_description(line.replace('Description: ', '', 1))
                         self._packages[name] = package
                         package = Package('', -1, [], '')
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "/var/lib/dpkg/status" file.')
 
         for name, value in self._packages.items():

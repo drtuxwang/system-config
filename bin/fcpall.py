@@ -12,8 +12,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -66,20 +66,18 @@ class Copy(object):
         print('Copying to "' + target + '" file...')
         try:
             shutil.copy2(source, target)
-        except IOError as exception:
-            if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
-                try:
-                    with open(source, 'rb'):
-                        raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
-                except IOError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
-                except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' + source + '" file.')
         except shutil.Error as exception:
             if 'are the same file' in exception.args[0]:
                 raise SystemExit(sys.argv[0] + ': Cannot copy to same "' + target + '" file.')
             else:
                 raise SystemExit(sys.argv[0] + ': Cannot copy to "' + target + '" file.')
+        except OSError as exception:
+            if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
+                try:
+                    with open(source, 'rb'):
+                        raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
+                except OSError:
+                    raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
 
 
 class Main(object):

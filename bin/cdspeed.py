@@ -14,8 +14,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -98,23 +98,32 @@ class Configuration(object):
             try:
                 with open(file) as ifile:
                     self._data = json.load(ifile)
-            except (IOError, KeyError):
+            except (KeyError, OSError):
                 pass
 
     def get_speed(self, device):
+        """
+        Get speed
+        """
         try:
             return self._data['cdspeed'][device]
         except KeyError:
             return 0
 
     def set_speed(self, device, speed):
+        """
+        Set speed
+        """
         self._data['cdspeed'][device] = speed
 
     def write(self, file):
+        """
+        Write file
+        """
         try:
             with open(file, 'w', newline='\n') as ofile:
                 print(json.dumps(self._data, indent=4, sort_keys=True), file=ofile)
-        except IOError:
+        except OSError:
             pass
 
 

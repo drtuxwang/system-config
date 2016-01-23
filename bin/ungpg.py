@@ -14,8 +14,13 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+# pylint: disable=no-self-use,too-few-public-methods
+
 
 class Options(object):
+    """
+    Options class
+    """
 
     def __init__(self, args):
         self._parse_args(args[1:])
@@ -74,6 +79,9 @@ class Options(object):
 
 
 class Ungpg(object):
+    """
+    Ungpg class
+    """
 
     def __init__(self, options):
         gpg = options.get_gpg()
@@ -89,6 +97,9 @@ class Ungpg(object):
 
 
 class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()

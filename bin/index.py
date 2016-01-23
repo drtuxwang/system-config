@@ -21,7 +21,7 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
+    def __init__(self):
         self._archive = os.path.basename(os.getcwd())
 
     def get_archive(self):
@@ -39,16 +39,12 @@ class Index(object):
     def __init__(self, options):
         self._options = options
 
-    def run(self):
-        self._core_find()
-        self._checksum()
-
     def _checksum(self):
         print('Generating "index.fsum"...')
         try:
             with open('index.fsum', 'a', newline='\n') as ofile:
                 self._read_fsums(ofile, '')
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot create "index.fsum" file.')
 
         fsum = syslib.Command('fsum')
@@ -61,15 +57,15 @@ class Index(object):
         fsum.run(mode='batch')
 
         self._write_fsums(fsum.get_output())
-        timeNew = 0
+        time_new = 0
         try:
             with open('index.fsum', 'w', newline='\n') as ofile:
                 for line in fsum.get_output():
-                    timeNew = max(timeNew, int(line.split(' ', 1)[0].rsplit('/', 1)[-1]))
+                    time_new = max(time_new, int(line.split(' ', 1)[0].rsplit('/', 1)[-1]))
                     print(line, file=ofile)
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot create "index.fsum" file.')
-        os.utime('index.fsum', (timeNew, timeNew))
+        os.utime('index.fsum', (time_new, time_new))
 
     def _core_find(self, directory=''):
         for file in sorted(glob.glob(os.path.join(directory, '.*')) +
@@ -93,7 +89,7 @@ class Index(object):
                     for line in ifile:
                         checksum, file = line.rstrip('\r\n').split('  ', 1)
                         print(checksum + '  ' + os.path.join(directory, file), file=ofile)
-            except (IOError, ValueError):
+            except (OSError, ValueError):
                 pass
             for file in glob.glob(os.path.join(directory, '*')):
                 if os.path.isdir(file) and not os.path.islink(file):
@@ -118,17 +114,24 @@ class Index(object):
         for depth in sorted(directories.keys(), reverse=True):
             for directory in directories[depth]:
                 file = os.path.join(directory, '..fsum')
-                timeNew = 0
+                time_new = 0
                 try:
                     with open(file, 'w', newline='\n') as ofile:
                         for line in fsums[directory]:
-                            timeNew = max(timeNew, int(line.split(' ', 1)[0].rsplit('/', 1)[-1]))
+                            time_new = max(time_new, int(line.split(' ', 1)[0].rsplit('/', 1)[-1]))
                             print(line, file=ofile)
-                except IOError:
+                except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
-                os.utime(file, (timeNew, timeNew))
+                os.utime(file, (time_new, time_new))
                 if directory:
-                    os.utime(directory, (timeNew, timeNew))
+                    os.utime(directory, (time_new, time_new))
+
+    def run(self):
+        """
+        Create index
+        """
+        self._core_find()
+        self._checksum()
 
 
 class Main(object):
@@ -138,10 +141,8 @@ class Main(object):
 
     def __init__(self):
         self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
+            options = Options()
             Index(options).run()
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
@@ -152,16 +153,6 @@ class Main(object):
     def _signals(self):
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':

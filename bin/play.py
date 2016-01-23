@@ -66,16 +66,6 @@ class Play(object):
     def __init__(self, options):
         self._options = options
 
-    def run(self):
-        files = self._options.get_files()
-
-        if self._options.get_view_flag():
-            self._view(files)
-        else:
-            if self._options.get_shuffle_flag():
-                random.shuffle(files)
-            self._play(files)
-
     def _play(self, files):
         vlc = syslib.Command('vlc', args=files)
         vlc.run(mode='background',
@@ -91,6 +81,19 @@ class Play(object):
         for file in files:
             if os.path.isfile(file):
                 Media(file).print()
+
+    def run(self):
+        """
+        Run player
+        """
+        files = self._options.get_files()
+
+        if self._options.get_view_flag():
+            self._view(files)
+        else:
+            if self._options.get_shuffle_flag():
+                random.shuffle(files)
+            self._play(files)
 
 
 class Media(object):
@@ -121,41 +124,59 @@ class Media(object):
             raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
 
     def get_stream(self):
+        """
+        Generates (stream-number, information) tuples.
+        """
         for key, value in sorted(self._stream.items()):
             yield (key, value)
 
-    def get_type(self):
-        return self._type
-
     def has_audio(self):
+        """
+        Return True if audio found
+        """
         for value in self._stream.values():
             if value.startswith('Audio: '):
                 return True
         return False
 
     def has_audio_codec(self, codec):
+        """
+        Return True if audio codec found
+        """
         for value in self._stream.values():
             if value.startswith('Audio: ' + codec):
                 return True
         return False
 
     def has_video(self):
+        """
+        Return True if video found
+        """
         for value in self._stream.values():
             if value.startswith('Video: '):
                 return True
         return False
 
     def has_video_codec(self, codec):
+        """
+        Return True if video codec found
+        """
         for value in self._stream.values():
             if value.startswith('Video: ' + codec):
                 return True
         return False
 
-    def isvalid(self):
+    def is_valid(self):
+        """
+        Return True if valid
+        """
         return self._type != 'Unknown'
 
     def print(self):
-        if self.isvalid():
+        """
+        Show information
+        """
+        if self.is_valid():
             print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
                   str(syslib.FileStat(self._file).get_size()) + ' bytes')
             for stream, information in self.get_stream():

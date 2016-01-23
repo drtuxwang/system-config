@@ -13,8 +13,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -152,7 +152,7 @@ class Pack(object):
                         else:
                             with open(image + '.md5', 'w', newline='\n') as ofile:
                                 print(md5sum + '  ' + image, file=ofile)
-                    except IOError:
+                    except OSError:
                         return
 
     def _bootimg(self, options):
@@ -212,7 +212,7 @@ class Pack(object):
                     if not chunk:
                         break
                     md5.update(chunk)
-        except (IOError, TypeError):
+        except (OSError, TypeError):
             return ''
         return md5.hexdigest()
 
@@ -220,15 +220,15 @@ class Pack(object):
         if os.name == 'nt':
             self._genisoimage.extend_flags(['-file-mode', '444'])
         else:
-            df = syslib.Command('df', args=[options.get_directory()], check=False)
+            command = syslib.Command('df', args=[options.get_directory()], check=False)
             mount = syslib.Command('mount', check=False)
-            if df.is_found() and mount.is_found():
-                df.run(mode='batch')
-                if df.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(df.get_exitcode()) +
-                                     ' received from "' + df.get_file() + '".')
-                if len(df.get_output()) > 1:
-                    mount.run(filter='^' + df.get_output()[1].split()[0] +
+            if command.is_found() and mount.is_found():
+                command.run(mode='batch')
+                if command.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
+                                     ' received from "' + command.get_file() + '".')
+                if len(command.get_output()) > 1:
+                    mount.run(filter='^' + command.get_output()[1].split()[0] +
                               ' .* (fuseblk|vfat|ntfs) ', mode='batch')
                     if mount.has_output():
                         print('Using mode 444 for all plain files (' +

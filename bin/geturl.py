@@ -12,8 +12,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -94,48 +94,51 @@ class Geturl(object):
         self._options = options
 
     def run(self):
+        """
+        Start processing
+        """
         os.umask(int('022', 8))
         aria2c = self._options.get_aria2c()
 
         for url in self._options.get_urls():
-            filesLocal = []
+            files_local = []
             if url.endswith('.url') and os.path.isfile(url):
                 directory = url[:-4]
-                filesRemote = []
+                files_remote = []
                 aria2c.set_args(['--max-concurrent-downloads=' + str(self._options.get_threads()),
-                                '--dir=' + directory, '-Z'])
+                                 '--dir=' + directory, '-Z'])
                 try:
                     with open(url, errors='replace') as ifile:
                         for line in ifile:
                             line = line.strip()
                             if line and not line.startswith('#'):
                                 if line.startswith('file://'):
-                                    if line not in filesLocal:
-                                        filesLocal.append(line.replace('file://', '', 1))
-                                elif line not in filesRemote:
-                                    filesRemote.append(line)
-                except IOError:
+                                    if line not in files_local:
+                                        files_local.append(line.replace('file://', '', 1))
+                                elif line not in files_remote:
+                                    files_remote.append(line)
+                except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + url + '" URL file.')
             elif os.path.isdir(url):
                 raise SystemExit(sys.argv[0] + ': Cannot process "' + url + '" directory.')
             else:
                 aria2c.set_args(['--split=' + str(self._options.get_threads())])
-                filesRemote = [url]
-            if filesLocal:
+                files_remote = [url]
+            if files_local:
                 if not os.path.isdir(directory):
                     try:
                         os.mkdir(directory)
                     except OSError:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' + directory + '" directory.')
-                for file in filesLocal:
+                for file in files_local:
                     print('file://' + file)
                     try:
                         shutil.copy2(file, os.path.join(directory, os.path.basename(file)))
-                    except IOError:
+                    except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
-            if filesRemote:
-                for file in filesRemote:
+            if files_remote:
+                for file in files_remote:
                     aria2c.append_arg(file.replace('https://', 'http://'))
                 aria2c.run()
                 if aria2c.get_exitcode():

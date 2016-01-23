@@ -12,8 +12,8 @@ import time
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -60,21 +60,21 @@ class Zerofile(object):
         else:
             file = options.get_location()
             print('Zeroing "' + file + '" device...')
-        startTime = time.time()
+        start_time = time.time()
         chunk = 16384 * b'\0'
         size = 0
         try:
             with open(file, 'wb') as ofile:
                 while True:
-                    for i in range(64):
+                    for _ in range(64):
                         ofile.write(chunk)
                     size += 1
                     sys.stdout.write('\r' + str(size) + ' MB')
                     sys.stdout.flush()
-        except (IOError, KeyboardInterrupt):
+        except (KeyboardInterrupt, OSError):
             pass
-        elapsedTime = time.time() - startTime
-        print(', {0:4.2f} seconds, {1:.0f} MB/s'.format(elapsedTime, size / elapsedTime))
+        elapsed_time = time.time() - start_time
+        print(', {0:4.2f} seconds, {1:.0f} MB/s'.format(elapsed_time, size / elapsed_time))
 
 
 class Main(object):

@@ -46,18 +46,17 @@ class Status(object):
 
     def __init__(self, options):
         for file in options.get_files():
-            fileStat = syslib.FileStat(file)
-            name = file.replace('\\', '\\\\').replace("'", "\\'")
-            print('"' + file + '".mode  =', oct(fileStat.get_mode()))
-            print('"' + file + '".ino   =', fileStat.get_inode_number())
-            print('"' + file + '".dev   =', fileStat.get_inode_device())
-            print('"' + file + '".nlink =', fileStat.get_number_links())
-            print('"' + file + '".uid   =', fileStat.get_userid())
-            print('"' + file + '".gid   =', fileStat.get_groupid())
-            print('"' + file + '".size  =', fileStat.get_size())
-            print('"' + file + '".atime =', fileStat.get_time_access())
-            print('"' + file + '".mtime =', fileStat.get_time())
-            print('"' + file + '".ctime =', fileStat.get_time_create())
+            file_stat = syslib.FileStat(file)
+            print('"' + file + '".mode  =', oct(file_stat.get_mode()))
+            print('"' + file + '".ino   =', file_stat.get_inode_number())
+            print('"' + file + '".dev   =', file_stat.get_inode_device())
+            print('"' + file + '".nlink =', file_stat.get_number_links())
+            print('"' + file + '".uid   =', file_stat.get_userid())
+            print('"' + file + '".gid   =', file_stat.get_groupid())
+            print('"' + file + '".size  =', file_stat.get_size())
+            print('"' + file + '".atime =', file_stat.get_time_access())
+            print('"' + file + '".mtime =', file_stat.get_time())
+            print('"' + file + '".ctime =', file_stat.get_time_create())
 
 
 class Main(object):

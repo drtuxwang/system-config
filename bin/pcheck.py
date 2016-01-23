@@ -49,6 +49,9 @@ class Check(object):
         self._directories = options.get_directories()
 
     def run(self):
+        """
+        Start checking
+        """
         errors = []
         jpeginfo = syslib.Command('jpeginfo', flags=['--info', '--check'])
         for directory in self._directories:

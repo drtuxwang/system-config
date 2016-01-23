@@ -35,13 +35,13 @@ class Options(object):
         """
         Return view flag.
         """
-        return self._args.viewFlag
+        return self._args.view_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Unpack a portable CD/DVD archive in ISO9660 format.')
 
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='Show contents of archive.')
 
         parser.add_argument('images', nargs='+', metavar='image.iso', help='ISO image file.')
@@ -56,9 +56,9 @@ class Unpack(object):
 
     def __init__(self, options):
         os.umask(int('022', 8))
-        viewFlag = options.get_view_flag()
+        view_flag = options.get_view_flag()
 
-        if viewFlag:
+        if view_flag:
             archiver = syslib.Command('7z', flags=['l'])
             isoinfo = syslib.Command('isoinfo', flags=['-d', '-i'])
         else:
@@ -72,7 +72,7 @@ class Unpack(object):
             if archiver.get_exitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
                                  ' received from "' + archiver.get_file() + '".')
-            if viewFlag:
+            if view_flag:
                 isoinfo.set_args([image])
                 isoinfo.run()
                 if isoinfo.get_exitcode():

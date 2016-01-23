@@ -82,7 +82,7 @@ class Calendar(object):
                     line += ' | ' + str(day[0]).ljust(8)
             line += ' |'
             print(line)
-            for i in range(5):
+            for _ in range(5):
                 print(' |' + 7*'          |')
             print(' |' + 7*'__________|')
 

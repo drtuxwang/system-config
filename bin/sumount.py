@@ -35,9 +35,6 @@ class Options(object):
         """
         return self._args.directories
 
-        print('\nsumount - Securely unmount a file system using ssh protocol\n')
-        print('Usage: sumount /localpath1 [/locapath2 [...]]')
-
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Unmount file system securely mounted with SSH protocol.')
@@ -58,6 +55,9 @@ class Unmount(object):
         self._fusermount = syslib.Command('fusermount')
 
     def run(self):
+        """
+        Run command
+        """
         for directory in self._directories:
             self._mount.run(filter=' ' + directory + ' type fuse.sshfs ', mode='batch')
             if not self._mount.has_output():

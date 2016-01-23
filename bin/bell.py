@@ -22,7 +22,11 @@ class Options(object):
     """
 
     def __init__(self, args):
-        sound = args[0][:-3] + '.ogg'  # Replace '.py' with '.ogg'
+        if args[0].endswith('.py'):
+            sound = args[0][:-3] + '.ogg'
+        else:
+            sound = args[0] + '.ogg'
+
         if not os.path.isfile(sound):
             raise SystemExit(sys.argv[0] + ': Cannot find "' + sound + '" file.')
         self._bell = syslib.Command('ogg123', check=False)

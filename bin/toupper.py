@@ -47,6 +47,9 @@ class ToUpper(object):
 
 
 class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()

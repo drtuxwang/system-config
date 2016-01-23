@@ -12,8 +12,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -103,18 +103,18 @@ class PythonChecker(object):
                 file += '.py'
             self._py2to3 = syslib.Command(file=file)
         self._py2to3.set_flags(['--nofix=dict', '--nofix=future', '--nofix=imports',
-                               '--nofix=raise', '--nofix=unicode', '--nofix=xrange'])
+                                '--nofix=raise', '--nofix=unicode', '--nofix=xrange'])
         self._py2to3.set_wrapper(syslib.Command(file=sys.executable))
 
     def _check(self, file):
         error = False
         try:
             with open(file, errors='replace') as ifile:
-                n = 0
+                nlines = 0
                 for line in ifile:
                     line = line.rstrip('\r\n')
-                    n += 1
-                    if n == 1:
+                    nlines += 1
+                    if nlines == 1:
                         if not line.startswith('#!/'):
                             return 0
                         elif 'python' not in line:  # Not Python program
@@ -126,20 +126,20 @@ class PythonChecker(object):
                             print(file, ': ? line 1 should be "#!/usr/bin/env python".', sep='')
                             error = True
                     if len(line) > 100:
-                        print(file + ': line', n, 'contains more than 100 characters. '
+                        print(file + ': line', nlines, 'contains more than 100 characters. '
                               'Please use continuation line.')
                         error = True
                     if 'except:' in line and '"except:' not in line:
-                        print(file, ': ? line ', n,
+                        print(file, ': ? line ', nlines,
                               ' contains exception with no name "except:".', sep='')
                         error = True
                     if line.endswith(' '):
-                        print(file, ': ? line ', n, ' contains space at end of line.', sep='')
+                        print(file, ': ? line ', nlines, ' contains space at end of line.', sep='')
                         error = True
                     if '\t' in line:
-                        print(file, ': ? line ', n, ' contains tab instead of spaces.', sep='')
+                        print(file, ': ? line ', nlines, ' contains tab instead of spaces.', sep='')
                         error = True
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" Python module file.')
         if self._python3(file):
             error = True
@@ -172,6 +172,9 @@ class PythonChecker(object):
         return error
 
     def run(self, file):
+        """
+        Start check
+        """
         if not os.path.isdir(file):
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" Python module file.')
@@ -194,6 +197,14 @@ class PythonCompiler(object):
         if 'PYTHONDONTWRITEBYTECODE' in os.environ:
             del os.environ['PYTHONDONTWRITEBYTECODE']
 
+    def _build_target(self, module):
+        try:
+            py_compile.compile(module.get_source())
+        except py_compile.PyCompileError:
+            return 1
+        module.update_target()
+        return 0
+
     def run(self):
         """
         Compiles Python with verbose error messages
@@ -201,12 +212,12 @@ class PythonCompiler(object):
         if self._options.get_dump_flag():
             syslib.Dump().list('pyc', self)
 
-        self._umask = os.umask(int('022', 8))
+        os.umask(int('022', 8))
         errors = 0
 
-        verboseFlag = self._options.get_verbose_flag()
+        verbose_flag = self._options.get_verbose_flag()
         for module in self._options.get_modules():
-            if verboseFlag:
+            if verbose_flag:
                 print('\nChecking', module.get_source())
             if self._options.get_noskip_flag() or not module.check_target():
                 source = module.get_source()
@@ -220,14 +231,6 @@ class PythonCompiler(object):
         print()
         if errors > 0:
             raise SystemExit('Total errors encountered: ' + str(errors) + '.')
-
-    def _build_target(self, module):
-        try:
-            py_compile.compile(module.get_source())
-        except py_compile.PyCompileError as exception:
-            return 1
-        module.update_target()
-        return 0
 
 
 class PythonModule(object):
@@ -257,8 +260,8 @@ class PythonModule(object):
         """
         Set target file modification time to source file.
         """
-        timeNew = syslib.FileStat(self._source).get_time()
-        os.utime(self._target, (timeNew, timeNew))
+        time_new = syslib.FileStat(self._source).get_time()
+        os.utime(self._target, (time_new, time_new))
 
     def get_source(self):
         """

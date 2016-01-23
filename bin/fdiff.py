@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -95,15 +95,15 @@ class Diff(object):
         elif (fileStat1.get_time() != fileStat2.get_time()):
             try:
                 ifile1 = open(file1, 'rb')
-            except IOError:
+            except OSError:
                 print('diff ', file1 + '  ' + file2)
                 return
             try:
                 ifile2 = open(file2, 'rb')
-            except IOError:
+            except OSError:
                 print('diff ', file1 + '  ' + file2)
                 return
-            for i in range(0, fileStat1.get_size(), 131072):
+            for _ in range(0, fileStat1.get_size(), 131072):
                 chunk1 = ifile1.read(131072)
                 chunk2 = ifile2.read(131072)
                 if chunk1 != chunk2:

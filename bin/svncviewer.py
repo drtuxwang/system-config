@@ -26,27 +26,27 @@ class Options(object):
         self._parse_args(args[1:])
 
         try:
-            remoteHost, remotePort = self._args.server[0].split(':')
+            remote_host, remote_port = self._args.server[0].split(':')
         except ValueError:
             raise SystemExit(
                 sys.argv[0] + ': You must specific a single ":" in VNC server location.')
 
         try:
-            if int(remotePort) < 101:
-                remotePort = str(int(remotePort) + 5900)
+            if int(remote_port) < 101:
+                remote_port = str(int(remote_port) + 5900)
         except ValueError:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer '
                              'for port number.')
 
         self._vncviewer = syslib.Command('vncviewer')
-        if remoteHost:
-            localPort = self._getport(remoteHost, remotePort)
-            print('Starting "vncviewer" connection via "localhost:' + localPort + '" to "' +
-                  remoteHost + ':' + remotePort + '"...')
+        if remote_host:
+            local_port = self._getport(remote_host, remote_port)
+            print('Starting "vncviewer" connection via "localhost:' + local_port + '" to "' +
+                  remote_host + ':' + remote_port + '"...')
         else:
-            localPort = remotePort
-            print('Starting "vncviewer" connection to "localhost:' + localPort + '"...')
-        self._vncviewer.set_args([':' + localPort])
+            local_port = remote_port
+            print('Starting "vncviewer" connection to "localhost:' + local_port + '"...')
+        self._vncviewer.set_args([':' + local_port])
 
     def get_vncviewer(self):
         """
@@ -54,17 +54,18 @@ class Options(object):
         """
         return self._vncviewer
 
-    def _getport(self, remoteHost, remotePort):
+    def _getport(self, remote_host, remote_port):
         lsof = syslib.Command('lsof', args=['-i', 'tcp:5901-5999'])
         lsof.run(mode='batch')
-        for localPort in range(5901, 6000):
-            if not lsof.is_match_output(':' + str(localPort) + '[ -]'):
-                ssh = syslib.Command('ssh', args=['-f', '-L', str(localPort) + ':localhost:' +
-                                     remotePort, remoteHost, 'sleep', '64'])
-                print('Starting "ssh" port forwarding from "localhost:' + str(localPort) +
-                      '" to "' + remoteHost + ':' + remotePort + '"...')
+        for local_port in range(5901, 6000):
+            if not lsof.is_match_output(':' + str(local_port) + '[ -]'):
+                ssh = syslib.Command('ssh')
+                ssh.set_args(['-f', '-L', str(local_port) + ':localhost:' + remote_port,
+                              remote_host, 'sleep', '64'])
+                print('Starting "ssh" port forwarding from "localhost:' + str(local_port) +
+                      '" to "' + remote_host + ':' + remote_port + '"...')
                 ssh.run()
-                return str(localPort)
+                return str(local_port)
         raise SystemExit(sys.argv[0] + ': Cannot find unused local port in range 5901-5999.')
 
     def _parse_args(self, args):

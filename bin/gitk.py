@@ -30,10 +30,10 @@ class Options(object):
             os.environ['PATH'] = os.path.join(os.environ['PATH'],
                                               os.path.dirname(self._gitk.get_file()))
         else:
-            gitHome = os.path.dirname(os.path.dirname(self._gitk.get_file()))
-            if gitHome not in ('/usr', '/usr/local', '/opt/software'):
-                self._env['GIT_EXEC_PATH'] = os.path.join(gitHome, 'libexec', 'git-core')
-                self._env['GIT_TEMPLATE_DIR'] = os.path.join(gitHome, 'share',
+            git_home = os.path.dirname(os.path.dirname(self._gitk.get_file()))
+            if git_home not in ('/usr', '/usr/local', '/opt/software'):
+                self._env['GIT_EXEC_PATH'] = os.path.join(git_home, 'libexec', 'git-core')
+                self._env['GIT_TEMPLATE_DIR'] = os.path.join(git_home, 'share',
                                                              'git-core', 'templates')
 
         self._config()
@@ -61,7 +61,7 @@ class Options(object):
                         print('[user]', file=ofile)
                         print('        name =', user, file=ofile)
                         print('        email =', user + '@' + host, file=ofile)
-                except IOError:
+                except OSError:
                     pass
 
 

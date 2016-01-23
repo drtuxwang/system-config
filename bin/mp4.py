@@ -214,10 +214,10 @@ class Encoder(object):
                             self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
                         if self._options.get_run_time():
                             self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
-                    fileNew = file.rsplit('.', 1)[0] + '.mp4'
-                    self._ffmpeg.extend_args(['-f', 'mp4', '-y', fileNew])
+                    file_new = file.rsplit('.', 1)[0] + '.mp4'
+                    self._ffmpeg.extend_args(['-f', 'mp4', '-y', file_new])
                     self._run()
-                    Media(fileNew).print()
+                    Media(file_new).print()
 
     def _config(self, file):
         media = Media(file)

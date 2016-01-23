@@ -3,8 +3,6 @@
 Shuts down WINE and all Windows applications
 """
 
-import glob
-import os
 import signal
 import sys
 
@@ -21,7 +19,7 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
+    def __init__(self):
         self._wineserver = syslib.Command('wineserver', args=['-k'])
 
     def get_wineserver(self):
@@ -38,10 +36,8 @@ class Main(object):
 
     def __init__(self):
         self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
+            options = Options()
             options.get_wineserver().run()
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
@@ -52,16 +48,6 @@ class Main(object):
     def _signals(self):
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':

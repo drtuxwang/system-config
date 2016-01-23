@@ -47,9 +47,9 @@ class Options(object):
                                 if islog.search(line):
                                     line = line.rstrip().replace('1', '0')
                                 print(line, file=ofile)
-                    except IOError:
+                    except OSError:
                         return
-            except IOError:
+            except OSError:
                 return
             try:
                 os.rename(configfile + '-new', configfile)

@@ -80,18 +80,19 @@ class Remeg(object):
             for file in sorted(glob.glob(os.path.join(directory, '*'))):
                 if (file.split('.')[-1].lower() in (
                         'bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff')):
-                    ix, iy = self._imagesize(options, file)
-                    imegs = ix * iy / 1000000
-                    print('{0:s}: {1:d} x {2:d} ({3:4.2f})'.format(file, ix, iy, imegs), end='')
+                    ix_size, iy_size = self._imagesize(file)
+                    imegs = ix_size * iy_size / 1000000
+                    print('{0:s}: {1:d} x {2:d} ({3:4.2f})'.format(
+                        file, ix_size, iy_size, imegs), end='')
                     resize = math.sqrt(megs / imegs)
-                    ox = int(ix*resize + 0.5)
-                    oy = int(iy*resize + 0.5)
-                    if ox < ix and oy < iy:
-                        print(' => {0:d} x {1:d} ({2:4.2f})'.format(ox, oy, ox * oy / 1000000),
-                              end='')
-                        self._convert.set_args(['-verbose', '-size', str(ox) + 'x' + str(oy),
-                                                '-resize', str(ox) + 'x' + str(oy) + '!',
-                                                file, file])
+                    ox_size = int(ix_size*resize + 0.5)
+                    oy_size = int(iy_size*resize + 0.5)
+                    if ox_size < ix_size and oy_size < iy_size:
+                        print(' => {0:d} x {1:d} ({2:4.2f})'.format(
+                            ox_size, oy_size, ox_size * oy_size / 1000000), end='')
+                        self._convert.set_args(
+                            ['-verbose', '-size', str(ox_size) + 'x' + str(oy_size),
+                             '-resize', str(ox_size) + 'x' + str(oy_size) + '!', file, file])
                         self._convert.run(mode='batch')
                         if self._convert.get_exitcode():
                             raise SystemExit(
@@ -99,7 +100,7 @@ class Remeg(object):
                                 ' received from "' + self._convert.get_file() + '".')
                     print()
 
-    def _imagesize(self, options, file):
+    def _imagesize(self, file):
         self._convert.set_args(['-verbose', file, '/dev/null'])
         self._convert.run(filter='^' + file + '=>', mode='batch', error2output=True)
         if not self._convert.has_output():
@@ -107,8 +108,8 @@ class Remeg(object):
         elif self._convert.get_exitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(self._convert.get_exitcode()) +
                              ' received from "' + self._convert.get_file() + '".')
-        x, y = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
-        return (int(x), int(y))
+        x_size, y_size = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
+        return (int(x_size), int(y_size))
 
 
 class Main(object):

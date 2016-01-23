@@ -12,10 +12,10 @@ import time
 
 import syslib
 
-RELEASE = '2.7.0'
+RELEASE = '2.7.1'
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -80,9 +80,9 @@ class Lock(object):
             with open(self._file, errors='replace') as ifile:
                 try:
                     self._pid = int(ifile.readline().strip())
-                except (IOError, ValueError):
+                except (OSError, ValueError):
                     pass
-        except IOError:
+        except OSError:
             pass
 
     def check(self):
@@ -98,7 +98,7 @@ class Lock(object):
         try:
             with open(self._file, 'w', newline='\n') as ofile:
                 print(os.getpid(), file=ofile)
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot create "' +
                              self._file + '" MyQS scheduler lock file.')
         time.sleep(1)
@@ -106,12 +106,12 @@ class Lock(object):
             with open(self._file, errors='replace') as ifile:
                 try:
                     int(ifile.readline().strip())
-                except (IOError, ValueError):
+                except (OSError, ValueError):
                     raise SystemExit(0)
                 else:
                     if not syslib.Task().haspid(os.getpid()):
                         raise SystemExit(sys.argv[0] + ": Cannot obtain MyQS scheduler lock file.")
-        except IOError:
+        except OSError:
             return
 
     def remove(self):
@@ -151,7 +151,7 @@ class Daemon(object):
                         line = line.strip()
                         if '=' in line:
                             info[line.split('=')[0]] = line.split('=', 1)[1]
-            except IOError:
+            except OSError:
                 continue
             if 'PGID' in info:
                 try:
@@ -174,7 +174,7 @@ class Daemon(object):
                         line = line.strip()
                         if '=' in line:
                             info[line.split('=')[0]] = line.split('=', 1)[1]
-            except IOError:
+            except OSError:
                 continue
             if 'PGID' in info:
                 if not syslib.Task().haspgid(int(info['PGID'])):
@@ -204,7 +204,7 @@ class Daemon(object):
                             line = line.strip()
                             if '=' in line:
                                 info[line.split('=')[0]] = line.split('=', 1)[1]
-                except IOError:
+                except OSError:
                     continue
                 if 'QUEUE' in info:
                     if info['QUEUE'] == queue:

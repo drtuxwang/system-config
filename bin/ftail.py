@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -73,7 +73,7 @@ class Tail(object):
         try:
             with open(file, errors='replace') as ifile:
                 self._pipe(options, ifile)
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
 
     def _pipe(self, options, pipe):
@@ -85,17 +85,17 @@ class Tail(object):
             for line in buffer:
                 try:
                     print(line)
-                except IOError:
+                except OSError:
                     raise SystemExit(0)
         else:
-            for i in range(-options.get_lines() - 1):
+            for _ in range(-options.get_lines() - 1):
                 line = pipe.readline()
                 if not line:
                     break
             for line in pipe:
                 try:
                     print(line.rstrip('\r\n'))
-                except IOError:
+                except OSError:
                     raise SystemExit(0)
 
 

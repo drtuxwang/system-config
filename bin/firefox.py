@@ -122,7 +122,7 @@ class Options(object):
                                 for line in ifile:
                                     if not ispattern.search(line):
                                         print(line, end='', file=ofile)
-                    except IOError:
+                    except OSError:
                         try:
                             os.remove(file + '-new')
                         except OSError:
@@ -141,7 +141,7 @@ class Options(object):
                                 for line in ifile:
                                     print(line.replace('"fullscreen"', '"maximized"'),
                                           end='', file=ofile)
-                    except IOError:
+                    except OSError:
                         try:
                             os.remove(file + '-new')
                         except OSError:
@@ -186,7 +186,7 @@ class Options(object):
             if not os.path.isdir(newhome):
                 try:
                     shutil.copytree(firefoxdir, os.path.join(newhome, '.mozilla', 'firefox'))
-                except (IOError, shutil.Error):  # Ignore 'lock' file error
+                except (OSError, shutil.Error):  # Ignore 'lock' file error
                     pass
             for directory in ('Desktop', '.cups'):
                 try:
@@ -300,7 +300,7 @@ class Options(object):
                                             '"ui.submenuDelay", 0'):
                                 if 'user_pref(' + setting + ');\n' not in lines:
                                     print('user_pref(' + setting + ');', file=ofile)
-                    except IOError:
+                    except OSError:
                         pass
 
 

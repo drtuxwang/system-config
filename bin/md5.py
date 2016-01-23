@@ -12,8 +12,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -108,7 +108,7 @@ class Md5sum(object):
                                 elif test != md5sum:
                                     print(file, '# FAILED checksum')
                                     nfail += 1
-                except IOError:
+                except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + md5file + '" md5sum file.')
         if nmiss > 0:
             print('md5: Cannot find', nmiss, 'of', nfiles, 'listed files.')
@@ -124,7 +124,7 @@ class Md5sum(object):
                     if not chunk:
                         break
                     md5.update(chunk)
-        except (IOError, TypeError):
+        except (OSError, TypeError):
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
         return md5.hexdigest()
 

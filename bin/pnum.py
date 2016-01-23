@@ -41,7 +41,7 @@ class Options(object):
         """
         Return per directory number reset flag
         """
-        return self._args.resetFlag
+        return self._args.reset_flag
 
     def get_start(self):
         """
@@ -57,7 +57,7 @@ class Options(object):
                             default='file', help='Sort using file creation time.')
         parser.add_argument('-mtime', action='store_const', const='mtime', dest='order',
                             default='file', help='Sort using file modification time.')
-        parser.add_argument('-noreset', dest='resetFlag', action='store_false',
+        parser.add_argument('-noreset', dest='reset_flag', action='store_false',
                             help='Use same number sequence for all directories.')
         parser.add_argument('-start', nargs=1, type=int, default=[1],
                             help='Select number to start from.')
@@ -80,29 +80,29 @@ class Renumber(object):
 
     def __init__(self, options):
         startdir = os.getcwd()
-        resetFlag = options.get_reset_flag()
+        reset_flag = options.get_reset_flag()
         number = options.get_start()
 
         for directory in options.get_directories():
-            if resetFlag:
+            if reset_flag:
                 number = options.get_start()
             if os.path.isdir(directory):
                 os.chdir(directory)
-                fileStats = []
+                file_stats = []
                 for file in glob.glob('*.*'):
                     if (file.split('.')[-1].lower() in (
                             'bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff')):
-                        fileStats.append(syslib.FileStat(file))
+                        file_stats.append(syslib.FileStat(file))
                 newfiles = []
                 mypid = os.getpid()
-                for fileStat in self._sorted(options, fileStats):
+                for file_stat in self._sorted(options, file_stats):
                     newfile = 'pic{0:05d}.{1:s}'.format(
-                        number, fileStat.get_file().split('.')[-1].lower().replace('jpeg', 'jpg'))
+                        number, file_stat.get_file().split('.')[-1].lower().replace('jpeg', 'jpg'))
                     newfiles.append(newfile)
                     try:
-                        os.rename(fileStat.get_file(), str(mypid) + '-' + newfile)
+                        os.rename(file_stat.get_file(), str(mypid) + '-' + newfile)
                     except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot rename "' + fileStat.get_file() +
+                        raise SystemExit(sys.argv[0] + ': Cannot rename "' + file_stat.get_file() +
                                          '" image file.')
                     number += 1
                 for file in newfiles:
@@ -113,15 +113,15 @@ class Renumber(object):
                             sys.argv[0] + ': Cannot rename to "' + file + '" image file.')
                 os.chdir(startdir)
 
-    def _sorted(self, options, fileStats):
+    def _sorted(self, options, file_stats):
         order = options.get_order()
         if order == 'mtime':
-            fileStats = sorted(fileStats, key=lambda s: s.get_time())
+            file_stats = sorted(file_stats, key=lambda s: s.get_time())
         elif order == 'ctime':
-            fileStats = sorted(fileStats, key=lambda s: s.get_time_create())
+            file_stats = sorted(file_stats, key=lambda s: s.get_time_create())
         else:
-            fileStats = sorted(fileStats, key=lambda s: s.get_file())
-        return fileStats
+            file_stats = sorted(file_stats, key=lambda s: s.get_file())
+        return file_stats
 
 
 class Main(object):

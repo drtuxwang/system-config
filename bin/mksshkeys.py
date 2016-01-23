@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -70,7 +70,7 @@ class SecureShell(object):
             with open(configfile, errors='replace') as ifile:
                 for line in ifile:
                     config.append(line.strip())
-        except IOError:
+        except OSError:
             pass
 
         for login in options.get_logins():
@@ -84,7 +84,7 @@ class SecureShell(object):
                         with open(configfile + '-new', 'w', newline='\n') as ofile:
                             for line in config:
                                 print(line, file=ofile)
-                    except IOError:
+                    except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' +
                                          configfile + '-new' + '" temporary file.')
                     try:
@@ -138,7 +138,7 @@ class SecureShell(object):
         try:
             with open(os.path.join(self._sshdir, 'id_rsa.pub'), errors='replace') as ifile:
                 pubkey = ifile.readline().strip()
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' +
                              os.path.join(self._sshdir, 'id_rsa.pub') + '" public key file.')
 
@@ -151,7 +151,7 @@ class SecureShell(object):
                         pubkeys = []
                         for line in ifile:
                             pubkeys.append(line.strip())
-                except IOError:
+                except OSError:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot read "' + file + '" authorised key file.')
             if pubkey not in pubkeys:
@@ -160,7 +160,7 @@ class SecureShell(object):
                         for line in pubkeys:
                             print(line, file=ofile)
                         print(pubkey, file=ofile)
-                except IOError:
+                except OSError:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' + file + '-new' + '" temporary file.')
                 try:

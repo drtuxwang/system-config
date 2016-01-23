@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -132,7 +132,7 @@ class Pack(object):
             try:
                 with open(sfx, 'rb') as ifile:
                     self._copy(ifile, ofile)
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + sfx + '" SFX file.')
             with open(archive, 'rb') as ifile:
                 self._copy(ifile, ofile)

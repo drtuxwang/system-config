@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -51,7 +51,6 @@ class Count(object):
                 if not os.path.isfile(file):
                     raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
                 nlines = 0
-                maxline = 0
                 maxcols = 0
                 try:
                     with open(file, errors='replace') as ifile:
@@ -61,7 +60,7 @@ class Count(object):
                             if ncols > maxcols:
                                 maxcols = ncols
                                 lline = nlines
-                except IOError:
+                except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
                 except UnicodeDecodeError:  # Non text file
                     continue

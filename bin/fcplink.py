@@ -10,8 +10,8 @@ import shutil
 import signal
 import sys
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -54,24 +54,23 @@ class Copylink(object):
                 target = os.path.join(os.path.dirname(file), link)
                 if os.path.isfile(target):
                     print('Copy file:', file, '->', target)
-                    self._copy(file, link, target)
+                    self._copy(file, target)
                 elif not os.path.isdir(target):
                     print('Null link:', file, '->', link)
             elif not os.path.exists(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
 
-    def _copy(self, file, link, target):
+    def _copy(self, file, target):
         try:
             os.remove(file)
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot remove "' + file + '" link.')
+
         try:
             shutil.copy2(target, file)
-        except IOError as exception:
+        except OSError as exception:
             if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
                 raise SystemExit(sys.argv[0] + ': Cannot copy "' + target + '" file.')
-        except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
 
 
 class Main(object):

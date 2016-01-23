@@ -12,8 +12,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -106,7 +106,7 @@ class Move(object):
         if os.path.isdir(source):
             try:
                 shutil.copytree(source, target, symlinks=True)
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot copy "' + source + '" source file.')
             try:
                 shutil.rmtree(source)
@@ -115,11 +115,9 @@ class Move(object):
         else:
             try:
                 shutil.copy2(source, target)
-            except IOError as exception:
+            except OSError as exception:
                 if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
                     raise SystemExit(sys.argv[0] + ': Cannot copy "' + source + '" source file.')
-            except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot read "' + source + '" file.')
             try:
                 os.remove(source)
             except OSError:

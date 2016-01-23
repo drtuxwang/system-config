@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -88,22 +88,9 @@ class Cdrom(object):
                 try:
                     with open(os.path.join(directory, file), errors='replace') as ifile:
                         model += ' ' + ifile.readline().strip()
-                except IOError:
+                except OSError:
                     continue
             self._devices[device] = model
-
-    def device(self, mount):
-        if mount == 'cdrom':
-            rank = 0
-        else:
-            try:
-                rank = int(mount[5:])-1
-            except ValueError:
-                return ''
-        try:
-            return sorted(self._devices.keys())[rank]
-        except IndexError:
-            return ''
 
     def get_devices(self):
         """
@@ -127,7 +114,7 @@ class RipDvd(object):
             self._scan()
         else:
             self._cdspeed(self._device, options.get_speed())
-            self._rip(options)
+            self._rip()
 
     def _cdspeed(self, device, speed):
         cdspeed = syslib.Command('cdspeed', flags=[device], check=False)
@@ -140,7 +127,7 @@ class RipDvd(object):
             hdparm = syslib.Command(file='/sbin/hdparm', args=['-E', str(speed), device])
             hdparm.run(mode='batch')
 
-    def _rip(self, options):
+    def _rip(self):
         file = 'title-' + str(self._title).zfill(2) + '.mpg'
         self._vlc.set_args(
             ['dvdsimple:/' + self._device + ':#' + str(self._title), '--sout',

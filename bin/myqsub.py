@@ -12,10 +12,10 @@ import time
 
 import syslib
 
-RELEASE = '2.7.0'
+RELEASE = '2.7.1'
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -98,9 +98,9 @@ class Submit(object):
                 with open(lastjob, errors='replace') as ifile:
                     try:
                         jobid = int(ifile.readline().strip()) + 1
-                    except (IOError, ValueError):
+                    except (OSError, ValueError):
                         jobid = 1
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + lastjob + '" MyQS lastjob file.')
             if jobid > 32767:
                 jobid = 1
@@ -109,7 +109,7 @@ class Submit(object):
         try:
             with open(lastjob, 'w', newline='\n') as ofile:
                 print(jobid, file=ofile)
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot update "' + lastjob + '" MyQS lastjob file.')
         return jobid
 
@@ -121,19 +121,19 @@ class Submit(object):
                     with open(lockfile, errors='replace') as ifile:
                         try:
                             pid = int(ifile.readline().strip())
-                        except (IOError, ValueError):
+                        except (OSError, ValueError):
                             pass
                         else:
                             if not syslib.Task().haspid(pid):
                                 os.remove(lockfile)
-                except IOError:
+                except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' +
                                      lockfile + '" MyQS lock file.')
             if not os.path.isfile(lockfile):
                 try:
                     with open(lockfile, 'w', newline='\n') as ofile:
                         print(os.getpid(), file=ofile)
-                except IOError:
+                except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' +
                                      lockfile + '" MyQS lock file.')
                 return lockfile
@@ -145,14 +145,14 @@ class Submit(object):
             with open(lockfile, errors='replace') as ifile:
                 try:
                     pid = int(ifile.readline().strip())
-                except (IOError, ValueError):
+                except (OSError, ValueError):
                     pass
                 else:
                     if syslib.Task().haspid(pid):
                         return
                     else:
                         os.remove(lockfile)
-        except IOError:
+        except OSError:
             pass
         print('MyQS batch job scheduler not running. Run "myqsd" command.')
 
@@ -173,7 +173,7 @@ class Submit(object):
                     print('PATH=' + os.environ['PATH'], file=ofile)
                     print('QUEUE=' + queue, file=ofile)
                     print('NCPUS=' + str(ncpus), file=ofile)
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + tmpfile + '" temporary file.')
             os.rename(tmpfile, os.path.join(self._myqsdir, str(jobid) + '.q'))
             print('Batch job with jobid', jobid, 'has been submitted into MyQS.')

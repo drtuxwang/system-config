@@ -47,9 +47,9 @@ class Ffix(object):
     """
 
     def __init__(self, options):
-        isbadChar = re.compile(r'^-|[ !\'$&`"()*<>?\[\]\\\\|]')
+        is_bad_char = re.compile(r'^-|[ !\'$&`"()*<>?\[\]\\\\|]')
         for file in options.get_files():
-            newfile = isbadChar.sub('_', file)
+            newfile = is_bad_char.sub('_', file)
             if newfile != file:
                 if not os.path.isfile(newfile):
                     if not os.path.isdir(newfile):

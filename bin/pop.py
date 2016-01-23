@@ -71,6 +71,9 @@ class Message(object):
         self._delay = 60 * options.get_time_delay()
 
     def run(self):
+        """
+        Show message
+        """
         time.sleep(self._delay)
 
         if self._bell.is_found():
@@ -78,7 +81,7 @@ class Message(object):
 
         self._pop.run()
         if self._pop.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(pop.get_exitcode()) +
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._pop.get_exitcode()) +
                              ' received from "' + self._pop.get_file() + '".')
 
 

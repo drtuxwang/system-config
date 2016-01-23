@@ -11,8 +11,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -67,22 +67,22 @@ class Dump(object):
             try:
                 with open(file, 'rb') as ifile:
                     print('\nFile:', file)
-                    fileStat = syslib.FileStat(file)
-                    if options.get_all_flag() or fileStat.get_size() < 128:
-                        for position in range(1, fileStat.get_size() + 1, 16):
-                            print('{0:07d}{1:s}'.format(position,
-                                  self._format(options, ifile.read(16))))
+                    file_stat = syslib.FileStat(file)
+                    if options.get_all_flag() or file_stat.get_size() < 128:
+                        for position in range(1, file_stat.get_size() + 1, 16):
+                            print('{0:07d}{1:s}'.format(
+                                position, self._format(options, ifile.read(16))))
                     else:
                         for position in range(1, 65, 16):
-                            print('{0:07d}{1:s}'.format(position,
-                                  self._format(options, ifile.read(16))))
+                            print('{0:07d}{1:s}'.format(
+                                position, self._format(options, ifile.read(16))))
                         print('...')
-                        ifile.seek(fileStat.get_size() - 64)
+                        ifile.seek(file_stat.get_size() - 64)
                         for position in range(
-                                fileStat.get_size() - 63, fileStat.get_size() + 1, 16):
-                            print('{0:07d}{1:s}'.format(position,
-                                  self._format(options, ifile.read(16))))
-            except IOError:
+                                file_stat.get_size() - 63, file_stat.get_size() + 1, 16):
+                            print('{0:07d}{1:s}'.format(
+                                position, self._format(options, ifile.read(16))))
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
 
     def _format(self, options, data):

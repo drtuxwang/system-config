@@ -29,16 +29,16 @@ class Proxy(object):
         if 'http_proxy' in os.environ:
             if os.environ['http_proxy'].startswith('http://'):
                 myproxy = os.environ['http_proxy'][7:]
-            del(os.environ['http_proxy'])
+            del os.environ['http_proxy']
         if re.match('^192.168.14[89][.][0-9]+$', myip):
             try:
                 with urllib.request.urlopen('http://intranet/proxy.pac') as ifile:
-                    isMatch = re.compile('^return "PROXY ')
+                    is_match = re.compile('^return "PROXY ')
                     for line in ifile:
-                        if isMatch.match(str(line)):
+                        if is_match.match(str(line)):
                             myproxy = line.split('"')[1][6:]
                             break
-            except IOError:
+            except OSError:
                 pass
         print(myproxy)
 

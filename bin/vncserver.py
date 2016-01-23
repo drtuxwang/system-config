@@ -65,7 +65,7 @@ class Options(object):
                         print('else', file=ofile)
                         print('    startxfce4 &', file=ofile)
                         print('fi', file=ofile)
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot create ".vnc/xstartup" file.')
             os.chmod(xstartup, int('755', 8) & ~self._umask)
         directory = os.path.dirname(self._vncserver.get_file())

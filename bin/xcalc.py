@@ -3,8 +3,6 @@
 Wrapper for GNOME/KDE/XFCE calculator
 """
 
-import glob
-import os
 import signal
 import sys
 
@@ -49,8 +47,6 @@ class Main(object):
 
     def __init__(self):
         self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
             options = Options()
             options.get_xcalc().run(mode='exec')
@@ -63,16 +59,6 @@ class Main(object):
     def _signals(self):
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':

@@ -73,6 +73,9 @@ class Finder(object):
                 print(file)
 
     def run(self):
+        """
+        Run search
+        """
         self._find(self._options.get_directories())
 
 

@@ -12,7 +12,8 @@ import unittest.mock
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
+# pylint: disable=no-member,no-self-use,too-few-public-methods
+# pylint: disable=attribute-defined-outside-init,invalid-name
 
 
 class Patcher(object):
@@ -35,11 +36,11 @@ class Patcher(object):
         sys.stderr = io.StringIO()
 
     def __del__(self):
-        if type(sys.stdout) == 'io.StringIO':
+        if isinstance(sys.stdout, io.StringIO):
             print(sys.stdout.getvalue(), end='', file=sys.stdout)
             sys.stdout = self._stdout
 
-        if type(sys.stderr) == 'io.StringIO':
+        if isinstance(sys.stderr, io.StringIO):
             print(sys.stderr.getvalue(), end='', file=sys.stderr)
             sys.stderr = self._stderr
 

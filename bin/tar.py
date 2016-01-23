@@ -13,8 +13,8 @@ import tarfile
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -74,7 +74,7 @@ class Pack(object):
         if options.get_archive().endswith('.tar'):
             try:
                 self._archive = tarfile.open(options.get_archive(), 'w:')
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' +
                                  options.get_archive() + '" archive file.')
             self._addfile(options.get_files())
@@ -103,10 +103,8 @@ class Pack(object):
             print(file)
             try:
                 self._archive.add(file, recursive=False)
-            except IOError:
-                raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" file.')
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot add "' + file + '" file to archive.')
+                raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" file.')
             if os.path.isdir(file) and not os.path.islink(file):
                 try:
                     self._addfile([os.path.join(file, x) for x in os.listdir(file)])

@@ -12,8 +12,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -94,22 +94,9 @@ class Cdrom(object):
                 try:
                     with open(os.path.join(directory, file), errors='replace') as ifile:
                         model += ' ' + ifile.readline().strip()
-                except IOError:
+                except OSError:
                     continue
             self._devices[device] = model
-
-    def device(self, mount):
-        if mount == 'cdrom':
-            rank = 0
-        else:
-            try:
-                rank = int(mount[5:])-1
-            except ValueError:
-                return ''
-        try:
-            return sorted(self._devices.keys())[rank]
-        except IndexError:
-            return ''
 
     def get_devices(self):
         """
@@ -132,11 +119,10 @@ class RipCd(object):
         if self._device == 'scan':
             self._scan()
         else:
-            self._toc(options)
-            if mode == 'rip':
-                self._rip(options)
+            self._read_toc()
+            self._rip()
 
-    def _rip(self, options):
+    def _rip(self):
         self._icedax.set_flags(['-vtrackid', '-paranoia', '-S=' + str(self._speed),
                                 '-K', 'dsp', '-H'])
         tee = syslib.Command('tee')
@@ -144,7 +130,7 @@ class RipCd(object):
             with open('00.log', 'w', newline='\n') as ofile:
                 for line in self._toc:
                     print(line, file=ofile)
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot create "00.log" TOC file.')
         try:
             ntracks = int(self._toc[-1].split('.(')[-2].split()[-1])
@@ -154,7 +140,7 @@ class RipCd(object):
             self._tracks = [str(i) for i in range(1, int(ntracks) + 1)]
 
         for track in self._tracks:
-            istrack = re.compile(r'^.* ' + track + '[.]\( *')
+            istrack = re.compile('^.* ' + track + r'[.]\( *')
             length = 'Unknown'
             for line in self._toc:
                 if istrack.search(line):
@@ -171,13 +157,13 @@ class RipCd(object):
                             ' (' + length + ' seconds)')
                     print(line)
                     print(line, file=ofile)
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + logfile + '" file.')
             warnfile = track.zfill(2) + '.warning'
             try:
                 with open(warnfile, 'wb'):
                     pass
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + warnfile + '" file.')
             wavfile = track.zfill(2) + '.wav'
             self._icedax.set_args(['verbose-level=disable', 'track=' + track, 'dev=' +
@@ -223,7 +209,7 @@ class RipCd(object):
         for key, value in sorted(devices.items()):
             print('  {0:10s}  {1:s}'.format(key, value))
 
-    def _toc(self, options):
+    def _read_toc(self):
         self._icedax.set_args(['-info-only', '--no-infofile', 'verbose-level=toc',
                                'dev=' + self._device, 'speed=' + str(self._speed)])
         self._icedax.run(mode='batch')

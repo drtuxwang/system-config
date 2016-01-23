@@ -82,34 +82,34 @@ class List(object):
         self._list(options, options.get_files())
 
     def _list(self, options, files):
-        fileStats = []
+        file_stats = []
         for file in files:
             if os.path.islink(file):
-                fileStats.append(syslib.FileStat(file, size=0))
+                file_stats.append(syslib.FileStat(file, size=0))
             elif os.path.isdir(file):
-                fileStats.append(syslib.FileStat(file + os.sep))
+                file_stats.append(syslib.FileStat(file + os.sep))
             elif os.path.isfile(file):
-                fileStats.append(syslib.FileStat(file))
-        for fileStat in self._sorted(options, fileStats):
-            print('{0:10d} [{1:s}] {2:s}'.format(fileStat.get_size(), fileStat.get_time_local(),
-                                                 fileStat.get_file()))
-            if options.get_recursive_flag() and fileStat.get_file().endswith(os.sep):
-                self._list(options, sorted(glob.glob(fileStat.get_file() + '.*') +
-                           glob.glob(fileStat.get_file() + '*')))
+                file_stats.append(syslib.FileStat(file))
+        for file_stat in self._sorted(options, file_stats):
+            print('{0:10d} [{1:s}] {2:s}'.format(file_stat.get_size(), file_stat.get_time_local(),
+                                                 file_stat.get_file()))
+            if options.get_recursive_flag() and file_stat.get_file().endswith(os.sep):
+                self._list(options, sorted(glob.glob(
+                    file_stat.get_file() + '.*') + glob.glob(file_stat.get_file() + '*')))
         return
 
-    def _sorted(self, options, fileStats):
+    def _sorted(self, options, file_stats):
         order = options.get_order()
         if order == 'ctime':
-            fileStats = sorted(fileStats, key=lambda s: s.get_time_create())
+            file_stats = sorted(file_stats, key=lambda s: s.get_time_create())
         elif order == 'mtime':
-            fileStats = sorted(fileStats, key=lambda s: s.get_time())
+            file_stats = sorted(file_stats, key=lambda s: s.get_time())
         elif order == 'size':
-            fileStats = sorted(fileStats, key=lambda s: s.get_size())
+            file_stats = sorted(file_stats, key=lambda s: s.get_size())
         if options.get_reverse_flag():
-            return reversed(fileStats)
+            return reversed(file_stats)
         else:
-            return fileStats
+            return file_stats
 
 
 class Main(object):

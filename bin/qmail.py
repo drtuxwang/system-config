@@ -14,8 +14,8 @@ import syslib
 
 RELEASE = '2.6.0'
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -85,14 +85,14 @@ class Options(object):
             try:
                 with open(file, errors='replace') as ifile:
                     my_address = ifile.readline().strip()
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" configuration file.')
         else:
             my_address = syslib.info.get_username()
             try:
                 with open(file, 'w', newline='\n') as ofile:
                     print(my_address.encode(), file=ofile)
-            except IOError:
+            except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" configuration file.')
         return my_address
 
@@ -138,7 +138,7 @@ class Mailer(object):
             with open(options.get_tmpfile(), 'w', newline='\n') as ofile:
                 for line in self._email:
                     print(line, file=ofile)
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot create "' +
                              options.get_tmpfile() + '" temporary file.')
         options.get_editor().run()
@@ -147,7 +147,7 @@ class Mailer(object):
                 self._email = []
                 for line in ifile:
                     self._email.append(line.rstrip('\r\n'))
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' +
                              options.get_tmpfile() + '" temporary file.')
 

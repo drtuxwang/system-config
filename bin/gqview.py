@@ -54,7 +54,7 @@ class Options(object):
                     if os.path.isfile(file):
                         os.remove(file)
                     os.mkdir(file)
-                except (IOError, OSError):
+                except OSError:
                     pass
             for file in (os.path.join(os.environ['HOME'], '.local', 'share', 'geeqie'),
                          os.path.join(os.environ['HOME'], '.cache', 'geeqie', 'thumbnails')):
@@ -64,7 +64,7 @@ class Options(object):
                             shutil.rmtree(file)
                         with open(file, 'wb'):
                             pass
-                    except (IOError, OSError):
+                    except OSError:
                         pass
 
     def _config_gqview(self):
@@ -83,7 +83,7 @@ class Options(object):
                             shutil.rmtree(file)
                         with open(file, 'wb'):
                             pass
-                    except (IOError, OSError):
+                    except OSError:
                         pass
             file = os.path.join(configdir, 'history')
             if not os.path.isdir(file):
@@ -91,7 +91,7 @@ class Options(object):
                     if os.path.isfile(file):
                         os.remove(file)
                     os.mkdir(file)
-                except (IOError, OSError):
+                except OSError:
                     pass
 
 

@@ -52,6 +52,9 @@ class Clam(object):
         self._clamscan = options.get_lamscan()
 
     def run(self):
+        """
+        Run scanner
+        """
         self._clamscan.run()
         print('---------- VIRUS DATABASE ----------')
         if os.name == 'nt':
@@ -62,9 +65,9 @@ class Clam(object):
         else:
             directory = '/var/lib/clamav'
         for file in sorted(glob.glob(os.path.join(directory, '*c[lv]d'))):
-            fileStat = syslib.FileStat(file)
+            file_stat = syslib.FileStat(file)
             print('{0:10d} [{1:s}] {2:s}'.format(
-                fileStat.get_size(), fileStat.get_time_local(), file))
+                file_stat.get_size(), file_stat.get_time_local(), file))
         return self._clamscan.get_exitcode()
 
 

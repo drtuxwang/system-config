@@ -57,7 +57,7 @@ class Options(object):
                         if '(thumbnail-size none)\n' not in ifile.readlines():
                             with open(file, 'a', newline='\n') as ofile:
                                 print('(thumbnail-size none)', file=ofile)
-                except IOError:
+                except OSError:
                     continue
 
 

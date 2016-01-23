@@ -10,8 +10,10 @@ import re
 import signal
 import sys
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+import syslib
+
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -68,11 +70,6 @@ class Replace(object):
         self._replacement = options.get_replacement()
         self._files = options.get_files()
 
-    def run(self):
-        for file in self._files:
-            if os.path.isfile(file):
-                self._replace(file)
-
     def _remove(self, *files):
         for file in files:
             try:
@@ -89,28 +86,37 @@ class Replace(object):
                 try:
                     with open(newfile, 'w', newline='\n') as ofile:
                         for line in ifile:
-                            lineNew = self._is_match.sub(self._replacement, line)
-                            print(lineNew, end='', file=ofile)
-                            if lineNew != line:
+                            line_new = self._is_match.sub(self._replacement, line)
+                            print(line_new, end='', file=ofile)
+                            if line_new != line:
                                 nchange += 1
-                except IOError:
+                except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + newfile + '" file.')
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
 
         if nchange:
             if nchange > 1:
-                print(newfile + ':', nchange, 'lines changed.')
+                print(file + ':', nchange, 'lines changed.')
             else:
-                print(newfile + ':', nchange, 'line changed.')
+                print(file + ':', nchange, 'line changed.')
 
             try:
+                os.chmod(newfile, syslib.FileStat(file).get_mode())
                 os.rename(newfile, file)
             except OSError:
                 self._remove(newfile)
                 raise SystemExit(sys.argv[0] + ': Cannot update "' + file + '" file.')
         else:
             self._remove(newfile)
+
+    def run(self):
+        """
+        Run changes
+        """
+        for file in self._files:
+            if os.path.isfile(file):
+                self._replace(file)
 
 
 class Main(object):

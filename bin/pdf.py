@@ -14,8 +14,8 @@ import time
 
 import syslib
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable=no-self-use,too-few-public-methods
 
@@ -98,27 +98,27 @@ class Encode(object):
     """
 
     def __init__(self, options):
-        tmpfile = (os.sep + os.path.join('tmp', 'pdf-' + syslib.info.get_username() + '.' +
-                                                str(os.getpid())) + '-')
+        tmpfile = (os.sep + os.path.join(
+            'tmp', 'pdf-' + syslib.info.get_username() + '.' + str(os.getpid())) + '-')
         self._tempfiles = []
         if options.get_pages() != 1:
-            self._psnup = syslib.Command('psnup', args=['-p' + options.get_paper(), '-m5',
-                                         '-' + str(options.get_pages())])
-        gs = syslib.Command('gs')
-        gs.set_flags(['-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pdfwrite',
-                     '-sPAPERSIZE=' + options.get_paper().lower()])
-        gs.set_args(['-sOutputFile=' + options.get_archive(), '-c', '.setpdfwrite'])
+            self._psnup = syslib.Command(
+                'psnup', args=['-p' + options.get_paper(), '-m5', '-' + str(options.get_pages())])
+        command = syslib.Command('gs')
+        command.set_flags(['-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pdfwrite',
+                           '-sPAPERSIZE=' + options.get_paper().lower()])
+        command.set_args(['-sOutputFile=' + options.get_archive(), '-c', '.setpdfwrite'])
 
         for file in options.get_files():
             print('Packing', file)
             if not options.get_archive():
-                gs.set_args([
+                command.set_args([
                     '-sOutputFile=' + file.rsplit('.', 1)[0] + '.pdf', '-c', '.setpdfwrite'])
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
             ext = file.split('.')[-1].lower()
             if ext == 'pdf':
-                gs.extend_args(['-f', file])
+                command.extend_args(['-f', file])
             else:
                 self._tmpfile = tmpfile + str(len(self._tempfiles) + 1)
                 if ext in ('bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff'):
@@ -129,11 +129,11 @@ class Encode(object):
                 else:
                     self._text(options, file)
                 self._tempfiles.append(self._tmpfile)
-                gs.extend_args(['-f', self._tmpfile])
+                command.extend_args(['-f', self._tmpfile])
             if not options.get_archive():
-                gs.run()
+                command.run()
         if options.get_archive():
-            gs.run()
+            command.run()
 
     def __del__(self):
         for file in self._tempfiles:
@@ -145,15 +145,14 @@ class Encode(object):
     def _image(self, file):
         if not hasattr(self, '_convert'):
             self._convert = syslib.Command('convert')
-        # Imagemagick low quality method A4 = 595x842, rotate/resize to 545x790 and add 20x20 border
-        tmpfile = self._tmpfile + '.png'
 
+        # Imagemagick low quality method A4 = 595x842, rotate/resize to 545x790 and add 20x20 border
         self._convert.set_args(['-verbose', file, '/dev/null'])
         self._convert.run(filter='^' + file + ' ', mode='batch', error2output=True)
         if not self._convert.has_output():
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" image file.')
-        x, y = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
-        if int(x) > int(y):
+        xsize, ysize = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
+        if int(xsize) > int(ysize):
             self._convert.set_args(['-page', 'a4', '-rotate', '90', file, 'ps:' + self._tmpfile])
         else:
             self._convert.set_args(['-page', 'a4', file, 'ps:' + self._tmpfile])
@@ -171,7 +170,7 @@ class Encode(object):
                         with open(self._tmpfile, 'wb') as ofile:
                             for line in ifile:
                                 ofile.write(line.rstrip(b'\r\n\004') + b'\n')
-                    except IOError:
+                    except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' + self._tmpfile +
                                          '" temporary file.')
                     self._postscript_fix(self._tmpfile)
@@ -188,7 +187,7 @@ class Encode(object):
                     self._postscript_fix(self._tmpfile)
                     return ('Postscript file "' + file + '" with ' + str(options.get_pages()) +
                             ' pages per page')
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" postscript file.')
 
     def _postscript_fix(self, file):
@@ -199,7 +198,7 @@ class Encode(object):
                     if '/a3 setpagesize' in line:
                         scaling = 0.7071
                         break
-        except IOError:
+        except OSError:
             pass
         if scaling:
             with open(file, errors='replace') as ifile:
@@ -211,9 +210,9 @@ class Encode(object):
                             columns[2] = '/a4'
                             line = ' '.join(columns)
                         elif line.endswith(' scale'):
-                            x, y, junk = line.split()
-                            line = '{0:6.4f} {1:6.4f} scale'.format(float(x)*scaling,
-                                                                    float(y)*scaling)
+                            xsize, ysize, _ = line.split()
+                            line = '{0:6.4f} {1:6.4f} scale'.format(
+                                float(xsize)*scaling, float(ysize)*scaling)
                         print(line, file=ofile)
             os.rename(file + '-new', file)
 
@@ -232,19 +231,19 @@ class Encode(object):
             '--portrait', '--chars-per-line=' + str(chars), '--left-title=' +
             time.strftime('%Y-%m-%d-%H:%M:%S'), '--center-title=' + os.path.basename(file)])
 
-        isnotPrintable = re.compile('[\000-\037\200-\277]')
+        is_not_printable = re.compile('[\000-\037\200-\277]')
         try:
             with open(file, 'rb') as ifile:
                 stdin = []
                 for line in ifile:
-                    line = isnotPrintable.sub(
+                    line = is_not_printable.sub(
                         ' ', line.decode('utf-8', 'replace').rstrip('\r\n\004'))
                     lines = textwrap.wrap(line, chars)
                     if not lines:
                         stdin.append('')
                     else:
                         stdin.extend(lines)
-        except IOError:
+        except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" text file.')
         if options.get_pages() == 1:
             self._a2ps.run(mode='batch', stdin=stdin, output_file=self._tmpfile)

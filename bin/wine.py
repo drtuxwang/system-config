@@ -56,12 +56,12 @@ class Options(object):
                 except OSError:
                     pass
 
-    def _signal_ignore(self, signal, frame):
+    def _signal_ignore(self, sig, frame):
         pass
 
     def _signal_trap(self):
-        signal.signal(signal.SIGINT, self._signalIgnore)
-        signal.signal(signal.SIGTERM, self._signalIgnore)
+        signal.signal(signal.SIGINT, self._signal_ignore)
+        signal.signal(signal.SIGTERM, self._signal_ignore)
 
 
 class Wine(object):
@@ -80,6 +80,9 @@ class Wine(object):
             self._resolution += 1
 
     def run(self):
+        """
+        Run command
+        """
         self._wine.run()
         self._xrandr.run(filter='^  ', mode='batch')
         resolution = 0
