@@ -199,13 +199,14 @@ class PythonTest(object):
             errors += module_test.get_errors()
             exit_errors += module_test.get_exit_error()
 
-        print('\nUnit Test runs      =', tests)
-        print('Unit Test failures  =', failures)
-        print('Testing code errors =', errors)
-        print('Exit code errors    =', exit_errors)
-        print('Total elapsed time  = {0:5.3f}s'.format(time.time() - start_time))
-        if failures + errors + exit_errors:
-            raise SystemExit(1)
+        if tests:
+            print('\nUnit Test runs      =', tests)
+            print('Unit Test failures  =', failures)
+            print('Testing code errors =', errors)
+            print('Exit code errors    =', exit_errors)
+            print('Total elapsed time  = {0:5.3f}s'.format(time.time() - start_time))
+            if failures + errors + exit_errors:
+                raise SystemExit(1)
 
 
 class Main(object):
