@@ -4,7 +4,7 @@
 #
 
 BIN_DIR=`dirname "$0"`
-PY_MAIN=_`basename "$0" | sed -e "s/-/_/g"`
+PY_MAIN="-pyldname=`basename \"$0\"` _`basename \"$0\" | sed -e \"s/-/_/g\"`"
 
 if [ -x "$BIN_DIR/python3" ]; then
     exec "$BIN_DIR/python3" "$BIN_DIR/pyld.py" $PY_MAIN "$@"

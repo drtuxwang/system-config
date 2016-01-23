@@ -29,6 +29,12 @@ class Mock_Options(unittest.mock.MagicMock):
         """
         self.get_module = unittest.mock.MagicMock(return_value=module)
 
+    def mock_get_module_name(self, name):
+        """
+        Mock get module name
+        """
+        self.get_module_name = unittest.mock.MagicMock(return_value=name)
+
     def mock_get_module_args(self, args):
         """
         Mock get module args

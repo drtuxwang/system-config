@@ -132,7 +132,7 @@ class Test_Options(unittest.TestCase):
         self.assertIn(os.path.basename(sys.argv[0]) +
                       ': error: argument -pyldpath: expected 1 argument', value)
 
-    def test_get_module_value(self):
+    def test_get_module(self):
         """
         Test module name is passed correctly.
         """
@@ -141,7 +141,40 @@ class Test_Options(unittest.TestCase):
 
         value = options.get_module()
         self.assertIsInstance(value, str)
-        self.assertEqual('moduleX', value)
+        self.assertEqual(value, 'moduleX')
+
+    def test_get_module_name_default(self):
+        """
+        Test getting module name default.
+        """
+        args = ['arg0', 'moduleX']
+        options = pyld.Options(args)
+
+        value = options.get_module_name()
+        self.assertIsInstance(value, str)
+        self.assertEqual(value, 'moduleX')
+
+    def test_get_module_name_pyldname1(self):
+        """
+        Test '-pyldname moduleY' sets module name.
+        """
+        args = ['arg0', '-pyldname', 'moduleY', 'moduleX']
+        options = pyld.Options(args)
+
+        value = options.get_module_name()
+        self.assertIsInstance(value, str)
+        self.assertEqual(value, 'moduleY')
+
+    def test_get_module_name_pyldname2(self):
+        """
+        Test '-pyldname=moduleY' sets module name.
+        """
+        args = ['arg0', '-pyldname=moduleY', 'moduleX']
+        options = pyld.Options(args)
+
+        value = options.get_module_name()
+        self.assertIsInstance(value, str)
+        self.assertEqual(value, 'moduleY')
 
     def test_get_module_args_default(self):
         """
@@ -363,6 +396,7 @@ class Test_PythonLoader(unittest.TestCase):
         self._options.mock_get_dump_flag(False)
         self._options.mock_get_library_path([])
         self._options.mock_get_module('arg0')
+        self._options.mock_get_module_name('arg0')
         self._options.mock_get_module_args(['args1', 'args2'])
         self._options.mock_get_module_dir('directory')
         self._options.mock_get_verbose_flag(False)
@@ -459,17 +493,6 @@ class Test_PythonLoader(unittest.TestCase):
         value = pythonLoader.get_sys_argv()
         self.assertIsInstance(value, list)
         self.assertListEqual(value, [os.path.join('directory', 'arg0'), 'args1', 'args2'])
-
-    def test_get_sys_argv_underscore(self):
-        """
-        Test getting Python system arguments with underscore (faked by pyld).
-        """
-        self._options.mock_get_module('_arg0_x_y')
-        pythonLoader = pyld.PythonLoader(self._options)
-
-        value = pythonLoader.get_sys_argv()
-        self.assertIsInstance(value, list)
-        self.assertListEqual(value, [os.path.join('directory', 'arg0-x-y'), 'args1', 'args2'])
 
 
 if __name__ == '__main__':

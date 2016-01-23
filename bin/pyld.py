@@ -43,6 +43,7 @@ class Options(object):
         print('        },')
         print('        "_dump_flag":', str(self._dump_flag) + ',')
         print('        "_library_path":', str(self._library_path) + ',')
+        print('        "_module_name":', str(self._module_name) + ',')
         print('        "_module_args":', str(self._module_args) + ',')
         print('        "_module_dir": "', self._module_dir, '",')
         print('        "_verbose_flag":', self._verbose_flag)
@@ -52,9 +53,8 @@ class Options(object):
         """
         args = Python loader commandline arguments
         """
-        self._parse_args(args[1:])
-
         self._module_dir = os.path.dirname(args[0])
+        self._parse_args(args[1:])
 
     def get_dump_flag(self):
         """
@@ -73,6 +73,12 @@ class Options(object):
         Return module name containing 'Main(args)' class
         """
         return self._args.module[0]
+
+    def get_module_name(self):
+        """
+        Return module name.
+        """
+        return self._module_name
 
     def get_module_args(self):
         """
@@ -100,6 +106,8 @@ class Options(object):
                             dest='verbosity', default=0, help='Select verbosity level 1, 2 or 3.')
         parser.add_argument('-pyldverbose', action='store_const', const=1, dest='verbosity',
                             default=0, help='Select verbosity level 1.')
+        parser.add_argument('-pyldname', nargs=1, dest='name', default=None,
+                            help='Select module name.')
         parser.add_argument('-pyldpath', nargs=1, dest='libpath',
                             help='Add directories to the python load path.')
 
@@ -109,13 +117,14 @@ class Options(object):
         py_args = []
         mod_args = []
         while len(args):
-            if args[0] in ('-pyldv', '-pyldvv', '-pyldvvv', '-pyldverbose', '-pyldpath'):
+            if args[0] in (
+                    '-pyldv', '-pyldvv', '-pyldvvv', '-pyldverbose', '-pyldname', '-pyldpath'):
                 py_args.append(args[0])
-                if args[0] == '-pyldpath' and len(args) >= 2:
+                if args[0] in ('-pyldname', '-pyldpath') and len(args) >= 2:
                     args = args[1:]
                     py_args.append(args[0])
-            elif args[0].startswith('-pyldpath='):
-                py_args.append(args[0])
+            elif args[0].startswith('-pyldname=') or args[0].startswith('-pyldpath='):
+                py_args.extend(args[0].split('=', 1))
             else:
                 mod_args.append(args[0])
             args = args[1:]
@@ -125,6 +134,10 @@ class Options(object):
 
         self._verbose_flag = self._args.verbosity >= 1
         self._dump_flag = self._args.verbosity >= 2
+        if self._args.name:
+            self._module_name = self._args.name[0]
+        else:
+            self._module_name = self._args.module[0]
         self._module_args = mod_args[1:]
         if self._args.libpath:
             self._library_path = self._args.libpath[0].split(os.path.pathsep)
@@ -165,9 +178,7 @@ class PythonLoader(object):
         """
         self._options = options
 
-        name = options.get_module()
-        if name.startswith('_'):
-            name = name[1:].replace('_', '-')
+        name = options.get_module_name()
         self._sys_argv = [os.path.join(options.get_module_dir(), name)] + options.get_module_args()
 
     def run(self):
