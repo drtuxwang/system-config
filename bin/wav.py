@@ -130,6 +130,9 @@ class Encoder(object):
         self._ffmpeg = syslib.Command('ffmpeg', flags=options.get_flags())
 
     def run(self):
+        """
+        Run encoder
+        """
         if self._options.get_file_new():
             print()
             self._config(self._options.get_files()[0])
@@ -140,7 +143,7 @@ class Encoder(object):
                 for file in self._options.get_files():
                     media = Media(file)
                     args.extend(['-i', file])
-                    for stream, information in media.get_stream_audio():
+                    for stream, _ in media.get_stream_audio():
                         maps += '[' + str(number) + ':' + str(stream) + '] '
                     number += 1
                 self._ffmpeg.set_args(
@@ -154,10 +157,10 @@ class Encoder(object):
                 if not file.endswith('.wav'):
                     print()
                     self._config(file)
-                    fileNew = file.rsplit('.', 1)[0] + '.wav'
-                    self._ffmpeg.extend_args(['-f', 'wav', '-y', fileNew])
+                    file_new = file.rsplit('.', 1)[0] + '.wav'
+                    self._ffmpeg.extend_args(['-f', 'wav', '-y', file_new])
                     self._run()
-                    Media(fileNew).print()
+                    Media(file_new).print()
 
     def _config(self, file):
         media = Media(file)
@@ -187,7 +190,6 @@ class Encoder(object):
                                '^(In|Out)put | : |^Press|^Truncating|bitstream (filter|malformed)|'
                                r'Buffer queue|buffer underflow|message repeated|^\[|p11-kit:|'
                                '^Codec AVOption threads')
-        init = False
 
         while True:
             byte = child.stdout.read(1)
@@ -236,54 +238,78 @@ class Media(object):
         except IndexError:
             raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
 
-    def print(self):
-        if self.isvalid():
-            print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
-                  str(syslib.FileStat(self._file).get_size()) + ' bytes')
-            for stream, information in self.get_stream():
-                print(self._file + '[' + str(stream) + '] =', information)
-
-    def isvalid(self):
-        return self._type != 'Unknown'
-
-    def get_duration(self):
-        return self._duration
-
     def get_stream(self):
+        """
+        Return stream
+        """
         for key, value in sorted(self._stream.items()):
             yield (key, value)
 
     def get_stream_audio(self):
+        """
+        Return audio stream
+        """
         for key, value in sorted(self._stream.values()):
             if value.startswith('Audio: '):
                 yield (key, value)
 
     def get_type(self):
+        """
+        Return media type
+        """
         return self._type
 
     def has_audio(self):
+        """
+        Return True if audio found
+        """
         for value in self._stream.values():
             if value.startswith('Audio: '):
                 return True
         return False
 
     def has_audio_codec(self, codec):
+        """
+        Return True if audio codec found
+        """
         for value in self._stream.values():
             if value.startswith('Audio: ' + codec):
                 return True
         return False
 
     def has_video(self):
+        """
+        Return True if video found
+        """
         for value in self._stream.values():
             if value.startswith('Video: '):
                 return True
         return False
 
     def has_video_codec(self, codec):
+        """
+        Return True if video codec found
+        """
         for value in self._stream.values():
             if value.startswith('Video: ' + codec):
                 return True
         return False
+
+    def is_valid(self):
+        """
+        Return True if valid media
+        """
+        return self._type != 'Unknown'
+
+    def print(self):
+        """
+        Print information
+        """
+        if self.is_valid():
+            print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
+                  str(syslib.FileStat(self._file).get_size()) + ' bytes')
+            for stream, information in self.get_stream():
+                print(self._file + '[' + str(stream) + '] =', information)
 
 
 class Main(object):

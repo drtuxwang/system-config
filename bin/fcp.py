@@ -106,14 +106,14 @@ class Copy(object):
     def _copy(self, source, target):
         if self._options.get_copy_link_flag() and os.path.islink(source):
             print('Copying "' + source + '" link...')
-            sourceLink = os.readlink(source)
+            source_link = os.readlink(source)
             if os.path.islink(target) or os.path.isfile(target):
                 try:
                     os.remove(target)
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot remove "' + target + '" link.')
             try:
-                os.symlink(sourceLink, target)
+                os.symlink(source_link, target)
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" link.')
         elif os.path.isdir(source):
@@ -141,8 +141,6 @@ class Copy(object):
                             raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
                     except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
-                    except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot read "' + source + '" file.')
             except shutil.Error as exception:
                 if 'are the same file' in exception.args[0]:
                     raise SystemExit(sys.argv[0] + ': Cannot copy to same "' + target + '" file.')

@@ -243,9 +243,9 @@ class Encoder(object):
             convert.run(mode='batch')
             try:
                 # Must be multiple of 2 in x and y resolutions
-                x, y = convert.get_output()[0].split()[2].split('x')
+                xsize, ysize = convert.get_output()[0].split()[2].split('x')
                 self._ffmpeg.extend_args([
-                    '-vf', 'scale=' + str(int(int(x)/2)*2) + ':' + str(int(int(y)/2)*2)])
+                    '-vf', 'scale=' + str(int(int(xsize)/2)*2) + ':' + str(int(int(ysize)/2)*2)])
             except (IndexError, ValueError):
                 pass
         if self._options.get_start_time():
@@ -276,7 +276,7 @@ class Encoder(object):
             'Stream|concat:|Program|service|lastkeyframe)|^(In|Out)put | : |^Press|^Truncating|'
             r'bitstream (filter|malformed)|Buffer queue|buffer underflow|message repeated|^\[|'
             'p11-kit:')
-        init = False
+
         while True:
             byte = child.stdout.read(1)
             line += byte.decode('utf-8', 'replace')
@@ -297,6 +297,9 @@ class Encoder(object):
             sys.exit(exitcode)
 
     def run(self):
+        """
+        Run encoder
+        """
         if self._options.get_file_new():
             print()
             if self._all_images(self._options.get_files()):
@@ -339,10 +342,10 @@ class Encoder(object):
                             self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
                         if self._options.get_run_time():
                             self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
-                    fileNew = file.rsplit('.', 1)[0] + '.mp4'
-                    self._ffmpeg.extend_args(['-f', 'mp4', '-y', fileNew])
+                    file_new = file.rsplit('.', 1)[0] + '.mp4'
+                    self._ffmpeg.extend_args(['-f', 'mp4', '-y', file_new])
                     self._run()
-                    Media(fileNew).print()
+                    Media(file_new).print()
 
 
 class Media(object):
@@ -371,50 +374,74 @@ class Media(object):
         except IndexError:
             raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
 
-    def get_duration(self):
-        return self._duration
-
     def get_stream(self):
+        """
+        Return stream
+        """
         for key, value in sorted(self._stream.items()):
             yield (key, value)
 
     def get_stream_audio(self):
+        """
+        Return audio stream
+        """
         for key, value in sorted(self._stream.items()):
             if value.startswith('Audio: '):
                 yield (key, value)
 
     def get_type(self):
+        """
+        Return media type
+        """
         return self._type
 
     def has_audio(self):
+        """
+        Return True if audio found
+        """
         for value in self._stream.values():
             if value.startswith('Audio: '):
                 return True
         return False
 
     def has_audio_codec(self, codec):
+        """
+        Return True if audio codec found
+        """
         for value in self._stream.values():
             if value.startswith('Audio: ' + codec):
                 return True
         return False
 
     def has_video(self):
+        """
+        Return True if video found
+        """
         for value in self._stream.values():
             if value.startswith('Video: '):
                 return True
         return False
 
     def has_video_codec(self, codec):
+        """
+        Return True if video codec found
+        """
         for value in self._stream.values():
             if value.startswith('Video: ' + codec):
                 return True
         return False
 
-    def isvalid(self):
+    def is_valid(self):
+        """
+        Return True if valid media
+        """
         return self._type != 'Unknown'
 
     def print(self):
-        if self.isvalid():
+        """
+        Print information
+        """
+        if self.is_valid():
             print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
                   str(syslib.FileStat(self._file).get_size()) + ' bytes')
             for stream, information in self.get_stream():

@@ -4,7 +4,7 @@ Python system interaction Library
 
 2006-2016 By Dr Colin Kong
 
-Version 5.3.2 (2016-01-20)
+Version 5.3.3 (2016-01-23)
 """
 
 import copy
@@ -1129,7 +1129,7 @@ class SyslibError(Exception):
         """
         message = Error message
         """
-        super(SyslibError, self).__init__()
+        super().__init__()
         self.args = (message,)
 
     def get_args(self):

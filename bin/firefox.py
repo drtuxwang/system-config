@@ -200,14 +200,14 @@ class Options(object):
         if 'HOME' in os.environ:
             firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
             if os.path.isdir(firefoxdir):
-                keepList = ('adblockplus', 'extensions', 'extension-data', 'extensions.json',
-                            'extensions.sqlite', 'localstore.rdf', 'mimeTypes.rdf',
-                            'permissions.sqlite', 'prefs.js', 'user.js', 'xulstore.json')
+                keep_list = ('adblockplus', 'extensions', 'extension-data', 'extensions.json',
+                             'extensions.sqlite', 'localstore.rdf', 'mimeTypes.rdf',
+                             'permissions.sqlite', 'prefs.js', 'user.js', 'xulstore.json')
                 for directory in glob.glob(os.path.join(firefoxdir, '*')):
                     if os.path.isfile(os.path.join(directory, 'prefs.js')):
                         for file in (glob.glob(os.path.join(directory, '.*')) +
                                      glob.glob(os.path.join(directory, '*'))):
-                            if os.path.basename(file) not in keepList:
+                            if os.path.basename(file) not in keep_list:
                                 print('Removing "{0:s}"...'.format(file))
                                 try:
                                     if os.path.isdir(file):

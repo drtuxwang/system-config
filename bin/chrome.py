@@ -66,7 +66,7 @@ class Options(object):
         self._filter = ('^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
                         ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
                         'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|')
-        self._config(args)
+        self._config()
         self._set_libraries(self._chrome)
 
     def get_filter(self):
@@ -81,7 +81,7 @@ class Options(object):
         """
         return self._chrome
 
-    def _config(self, args):
+    def _config(self):
         if 'HOME' in os.environ:
             adobe = os.path.join(os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
             macromedia = os.path.join(os.environ['HOME'], '.macromedia',
@@ -200,12 +200,12 @@ class Options(object):
         if 'HOME' in os.environ:
             configdir = os.path.join(os.environ['HOME'], '.config', self._directory)
             if os.path.isdir(configdir):
-                keepList = ('Extensions', 'File System', 'Local Extension Settings',
-                            'Local Storage', 'Preferences', 'Secure Preferences')
+                keep_list = ('Extensions', 'File System', 'Local Extension Settings',
+                             'Local Storage', 'Preferences', 'Secure Preferences')
                 for directory in glob.glob(os.path.join(configdir, '*')):
                     if os.path.isfile(os.path.join(directory, 'Preferences')):
                         for file in glob.glob(os.path.join(directory, '*')):
-                            if os.path.basename(file) not in keepList:
+                            if os.path.basename(file) not in keep_list:
                                 print('Removing "{0:s}"...'.format(file))
                                 try:
                                     if os.path.isdir(file):

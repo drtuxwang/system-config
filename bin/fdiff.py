@@ -87,12 +87,12 @@ class Diff(object):
                     print('only ', file)
 
     def _difffile(self, file1, file2):
-        fileStat1 = syslib.FileStat(file1)
-        fileStat2 = syslib.FileStat(file2)
+        file_stat1 = syslib.FileStat(file1)
+        file_stat2 = syslib.FileStat(file2)
 
-        if (fileStat1.get_size() != fileStat2.get_size()):
+        if file_stat1.get_size() != file_stat2.get_size():
             print('diff ', file1 + '  ' + file2)
-        elif (fileStat1.get_time() != fileStat2.get_time()):
+        elif file_stat1.get_time() != file_stat2.get_time():
             try:
                 ifile1 = open(file1, 'rb')
             except OSError:
@@ -103,7 +103,7 @@ class Diff(object):
             except OSError:
                 print('diff ', file1 + '  ' + file2)
                 return
-            for _ in range(0, fileStat1.get_size(), 131072):
+            for _ in range(0, file_stat1.get_size(), 131072):
                 chunk1 = ifile1.read(131072)
                 chunk2 = ifile2.read(131072)
                 if chunk1 != chunk2:

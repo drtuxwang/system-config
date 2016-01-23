@@ -54,6 +54,7 @@ class XmlDataHandler(xml.sax.ContentHandler):
     """
 
     def __init__(self, view):
+        super().__init__()
         self._elements = []
         self._nelement = 0
         self._view_flag = view
@@ -95,7 +96,7 @@ class XmlChecker():
                 raise SystemExit(sys.argv[0] + ': Cannot parse "' + file + '" XML file.')
             except http.client.HTTPException:
                 raise SystemExit(sys.argv[0] + ': HTTP request failed.')
-            except xml.sax._exceptions.SAXParseException:
+            except Exception:
                 raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" XML file.')
             os.remove('xmlcheck.xml')
 

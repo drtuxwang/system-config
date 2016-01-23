@@ -66,6 +66,9 @@ class Download(object):
         self._wget = options.get_wget()
 
     def run(self):
+        """
+        Start download
+        """
         if self._output:
             self._wget.run()
             if self._wget.get_exitcode():

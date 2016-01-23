@@ -172,6 +172,9 @@ class Encoder(object):
         self._tempfiles = []
 
     def run(self):
+        """
+        Run encoder
+        """
         if self._options.get_file_new():
             print()
             if self._all_images(self._options.get_files()):
@@ -290,9 +293,9 @@ class Encoder(object):
             convert.run(mode='batch')
             try:
                 # Must be multiple of 2 in x and y resolutions
-                x, y = convert.get_output()[0].split()[2].split('x')
+                xsize, ysize = convert.get_output()[0].split()[2].split('x')
                 self._ffmpeg.extend_args([
-                    '-vf', 'scale=' + str(int(int(x)/2)*2) + ':' + str(int(int(y)/2)*2)])
+                    '-vf', 'scale=' + str(int(int(xsize)/2)*2) + ':' + str(int(int(ysize)/2)*2)])
             except (IndexError, ValueError):
                 pass
         if self._options.get_start_time():
@@ -322,7 +325,6 @@ class Encoder(object):
                                'compatible_brands:|Stream|concat:|Program|service|lastkeyframe)|'
                                '^(In|Out)put | : |^Press|^Truncating|bitstream (filter|malformed)|'
                                r'Buffer queue|buffer underflow|message repeated|^\[|p11-kit:')
-        init = False
 
         while True:
             byte = child.stdout.read(1)
@@ -371,54 +373,78 @@ class Media(object):
         except IndexError:
             raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
 
-    def print(self):
-        if self.isvalid():
-            print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
-                  str(syslib.FileStat(self._file).get_size()) + ' bytes')
-            for stream, information in self.get_stream():
-                print(self._file + '[' + str(stream) + '] =', information)
-
-    def isvalid(self):
-        return self._type != 'Unknown'
-
-    def get_duration(self):
-        return self._duration
-
     def get_stream(self):
+        """
+        Return stream
+        """
         for key, value in sorted(self._stream.items()):
             yield (key, value)
 
     def get_stream_audio(self):
+        """
+        Return audio stream
+        """
         for key, value in sorted(self._stream.items()):
             if value.startswith('Audio: '):
                 yield (key, value)
 
     def get_type(self):
+        """
+        Return media type
+        """
         return self._type
 
     def has_audio(self):
+        """
+        Return True if audio found
+        """
         for value in self._stream.values():
             if value.startswith('Audio: '):
                 return True
         return False
 
     def has_audio_codec(self, codec):
+        """
+        Return True if audio codec found
+        """
         for value in self._stream.values():
             if value.startswith('Audio: ' + codec):
                 return True
         return False
 
     def has_video(self):
+        """
+        Return True if video found
+        """
         for value in self._stream.values():
             if value.startswith('Video: '):
                 return True
         return False
 
     def has_video_codec(self, codec):
+        """
+        Return True if video codec found
+        """
         for value in self._stream.values():
             if value.startswith('Video: ' + codec):
                 return True
         return False
+
+    def is_valid(self):
+        """
+        Return True if valid media
+        """
+        return self._type != 'Unknown'
+
+    def print(self):
+        """
+        Print information
+        """
+        if self.is_valid():
+            print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
+                  str(syslib.FileStat(self._file).get_size()) + ' bytes')
+            for stream, information in self.get_stream():
+                print(self._file + '[' + str(stream) + '] =', information)
 
 
 class Main(object):
