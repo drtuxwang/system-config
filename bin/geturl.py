@@ -30,8 +30,6 @@ class Options(object):
         self._aria2c.set_flags(['--file-allocation=none', '--remote-time=true'])
         self._set_libraries(self._aria2c)
 
-        self._set_proxy()
-
     def get_threads(self):
         """
         Return number of threads.
@@ -74,15 +72,6 @@ class Options(object):
                         libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
                 else:
                     os.environ['LD_LIBRARY_PATH'] = libdir
-
-    def _set_proxy(self):
-        setproxy = syslib.Command('setproxy', check=False)
-        if setproxy:
-            setproxy.run(mode='batch')
-            if setproxy.has_output():
-                proxy = setproxy.get_output()[0].strip()
-                if proxy:
-                    self._aria2c.extend_flags(['--all-proxy=http://' + proxy])
 
 
 class Geturl(object):

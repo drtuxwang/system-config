@@ -1,4 +1,4 @@
-1996-2015 By Dr Colin Kong
+1996-2016 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -26,9 +26,6 @@ bin/_7z.py
 bin/7za
 bin/_7za.py
 
-bin/acroread           acroread wrapper (allowing non systems port)
-bin/acroread.py
-
 bin/aftp               Automatic connection to FTP server anonymously
 bin/aftp.py
 
@@ -46,17 +43,8 @@ bin/audacity           audacity wrapper (allowing non systems port)
 bin/audacity.bat
 bin/audacity.py
 
-bin/avconv             avconv wrapper (allowing non systems port)
-bin/avconv.py
-
 bin/avi                Encode AVI video using avconv (libxvid/libmp3lame)
 bin/avi.py
-
-bin/avplay             avplay wrapper (allowing non systems port)
-bin/avplay.py
-
-bin/avprobe            avprobe wrapper (allowing non systems port)
-bin/avprobe.py
 
 bin/battery            Linux battery status utility
 bin/battery.py
@@ -110,10 +98,6 @@ bin/cluster.py
 
 bin/cmd                wine wrapper (allowing non systems port)
 
-bin/cpuz               Windows "cpuz_x32.exe" wrapper (allowing non systems port)
-bin/cpuz.bat
-bin/cpuz.py
-
 bin/deb                Debian package management tools
 bin/deb-chkdir         (support offline repository searching and update checks)
 bin/_deb_chkdir.py
@@ -134,9 +118,6 @@ bin/df.py              (KB default and fix format problems)
 
 bin/dhcptable          Shows local DHCP hosts
 bin/dhcptable.py
-
-bin/dsmj               dsmj wrapper (allowing non systems port)
-bin/dsmj.py            (IBM backup/restore tool)
 
 bin/eclipse            eclipse wrapper (allowing non systems port)
 bin/eclipse.py
@@ -338,7 +319,7 @@ bin/fzero.py
 
 bin/g++                g++ wrapper (allowing non systems port)
 bin/g++.bat
-bin/g++.py
+bin/_gxx.py
 
 bin/gcc                gcc wrapper (allowing non systems port)
 bin/gcc.bat
@@ -403,20 +384,12 @@ bin/inkscape           inkscape wrapper (allowing non systems port)
 bin/inkscape.bat
 bin/inkscape.py
 
-bin/irecorder          irecorder wrapper (allowing non systems port)
-bin/irecorder.bat      (Windows CD/DVD burner tool)
-bin/irecorder.py
-
 bin/isitup             Checks whether a host is up
 bin/isitup.bat
 bin/isitup.py
 
 bin/iso                Make a portable CD/DVD archive in ISO9660 format
 bin/iso.py
-
-bin/iview              iview wrapper (allowing non systems port)
-bin/iview.bat          (Windows IrfanView iamge viewer)
-bin/iview.py
 
 bin/jar                jar wrapper (allowing non systems port)
 bin/jar.py             (Java jar archiver)
@@ -430,16 +403,9 @@ bin/javac.py           (Java compiler)
 bin/json               JSON file indenting (display on screen)
 bin/_json.py
 
-bin/juniper            Connect to Juniper Network Connect VPN
-bin/juniper.py
-
-bin/jython             jython wrapper (allowing non systems port)
 bin/jython.py
 
 bin/keymap.tcl         TCL/TK widget for setting keymaps
-
-bin/malias             Look up mail aliases in ".mailrc" file
-bin/malias.py
 
 bin/md5                Calculate MD5 checksums of files
 bin/md5.bat
@@ -491,9 +457,6 @@ bin/mp4.py
 
 bin/mpg                Encode MPEG video using avconv (mpeg2/ac3)
 bin/mpg.py
-
-bin/mplayer            mplayer wrapper (allowing non systems port)
-bin/mplayer.py
 
 bin/myqdel             MyQS personal batch system for each user
 bin/myqdel.py
@@ -646,9 +609,6 @@ bin/rpm.py
 bin/run                Run a command immune to terminal hangups
 bin/run.py
 
-bin/runxpcs            Run XPCS phone system
-bin/runxpcs.py
-
 bin/say                Speak words using Espeak TTS engine
 bin/say.py             (uses espeak)
 
@@ -656,9 +616,6 @@ bin/scp.bat            Windows scp wrapper (uses PuTTY)
 
 bin/sdd                Securely backup/restore partitions using SSH protocol
 bin/sdd.py
-
-bin/setproxy           Determine proxy server address
-bin/setproxy.py
 
 bin/sftp.bat           Windows sftp wrapper (uses PuTTY)
 
@@ -671,9 +628,6 @@ bin/skype.py
 
 bin/smount             Securely mount a file system using SSH protocol
 bin/smount.py          (uses fuse.sshfs)
-
-bin/smplayer           smplayer wrapper (allowing non systems port)
-bin/smplayer.py
 
 bin/soffice            soffice wrapper (allowing non systems port)
 bin/soffice.bat        (LibreOffice)
@@ -708,16 +662,9 @@ bin/tbz.py
 
 bin/test_pyld.py       Unit testing suite for "pyld.py"
 
-bin/testdisk           testdisk wrapper (allowing non systems port)
-bin/testdisk.py
-
 bin/tgz                Make a compressed archive in TAR.GZ format
 bin/tgz.bat
 bin/tgz.py
-
-bin/thunderbird        thunderbird wrapper (allowing non systems port)
-bin/thunderbird.bat
-bin/thunderbird.py
 
 bin/tinyproxy          tinyproxy wrapper (allowing non systems port)
 bin/tinyproxy.py
@@ -831,15 +778,11 @@ bin/vi.py
 bin/vim                vim wrapper (allowing non systems port)
 bin/vim.py
 
-bin/vinagre            vinagre wrapper (allowing non systems port)
-bin/vinagre.py
-
 bin/vlc                vlc wrapper (allowing non systems port)
 bin/vlc.bat
 bin/vlc.py
 
 bin/vmware             VMware Player launcher
-bin/vmware.py          (uses vmplayer)
 
 bin/vncpasswd          vncpasswd wrapper (allowing non systems port)
 bin/vncpasswd.py

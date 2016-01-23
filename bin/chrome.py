@@ -57,13 +57,6 @@ class Options(object):
             self._chrome.extend_flags(['--disable-background-mode', '--disable-geolocation',
                                        '--disk-cache-size=0'])
 
-        # Get flash player
-        if '--ppapi-flash-path=' not in ''.join(self._chrome.get_args()):
-            flashPlayer = FlashPlayer(self._chrome)
-            if flashPlayer.get_version():
-                self._chrome.extend_flags(['--ppapi-flash-path=' + flashPlayer.get_plugin(),
-                                           '--ppapi-flash-version=' + flashPlayer.get_version()])
-
         # Suid sandbox workaround
         if 'HOME' in os.environ:
             if syslib.FileStat(os.path.join(os.path.dirname(
@@ -250,55 +243,6 @@ class Options(object):
                             libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
                     else:
                         os.environ['LD_LIBRARY_PATH'] = libdir
-
-
-class FlashPlayer(object):
-    """
-    Flash player class
-    """
-
-    def __init__(self, chrome):
-        self._plugin = None
-        self._version = None
-
-        file = os.path.join(os.path.dirname(
-            chrome.get_file()), 'PepperFlash', 'libpepflashplayer.so')
-        if os.path.isfile(file):
-            self._detect(file)
-
-        setflash = syslib.Command('setflash', check=False)
-        if setflash.is_found():
-            setflash.run(mode='batch')
-            if setflash.has_output():
-                self._detect(setflash.get_output()[0])
-
-    def get_plugin(self):
-        """
-        Return plugin location.
-        """
-        return self._plugin
-
-    def get_version(self):
-        """
-        Return version of files.
-        """
-        return self._version
-
-    def _detect(self, file):
-        self._plugin = file
-        try:
-            with open(os.path.join(os.path.dirname(file), 'manifest.json'),
-                      errors='replace') as ifile:
-                for line in ifile:
-                    if 'version' in line:
-                        try:
-                            self._version = line.split('"')[3]
-                            return
-                        except IndexError:
-                            break
-        except OSError:
-            pass
-        self._version = '0.0.0.0'
 
 
 class Main(object):

@@ -43,8 +43,6 @@ class Options(object):
             self._wget.append_arg(args[1])
             args = args[1:]
 
-        self._set_proxy()
-
     def get_output(self):
         """
         Return output file.
@@ -56,17 +54,6 @@ class Options(object):
         Return wget Command class object.
         """
         return self._wget
-
-    def _set_proxy(self):
-        setproxy = syslib.Command('setproxy', check=False)
-        if setproxy.is_found():
-            setproxy.run(mode='batch')
-            if not setproxy.get_exitcode() and setproxy.has_output():
-                proxy = setproxy.get_output()[0].strip()
-                if proxy:
-                    os.environ['ftp_proxy'] = 'http://' + proxy
-                    os.environ['http_proxy'] = 'http://' + proxy
-                    os.environ['https_proxy'] = 'http://' + proxy
 
 
 class Download(object):
