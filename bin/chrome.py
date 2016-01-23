@@ -81,87 +81,94 @@ class Options(object):
         """
         return self._chrome
 
-    def _config(self):
-        if 'HOME' in os.environ:
-            adobe = os.path.join(os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
-            macromedia = os.path.join(os.environ['HOME'], '.macromedia',
-                                      'Flash_Player', 'macromedia.com')
-            if not os.path.isfile(adobe) or not os.path.isfile(macromedia):
+    def _clean_adobe(self, configdir):
+        adobe = os.path.join(os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
+        macromedia = os.path.join(
+            os.environ['HOME'], '.macromedia', 'Flash_Player', 'macromedia.com')
+        if not os.path.isfile(adobe) or not os.path.isfile(macromedia):
+            try:
+                shutil.rmtree(os.path.join(os.environ['HOME'], '.adobe'))
+                os.makedirs(os.path.dirname(adobe))
+                with open(adobe, 'w', newline='\n'):
+                    pass
+                shutil.rmtree(os.path.join(os.environ['HOME'], '.macromedia'))
+                os.makedirs(os.path.dirname(macromedia))
+                with open(macromedia, 'w', newline='\n'):
+                    pass
+            except OSError:
+                pass
+        try:
+            shutil.rmtree(os.path.join(os.path.dirname(macromedia), '#SharedObjects'))
+        except OSError:
+            pass
+
+        for file in (os.path.join(os.environ['HOME'], '.cache', self._directory),
+                     os.path.join(configdir, 'Pepper Data')):
+            if not os.path.isfile(file):
                 try:
-                    shutil.rmtree(os.path.join(os.environ['HOME'], '.adobe'))
-                    os.makedirs(os.path.dirname(adobe))
-                    with open(adobe, 'w', newline='\n') as ofile:
-                        pass
-                    shutil.rmtree(os.path.join(os.environ['HOME'], '.macromedia'))
-                    os.makedirs(os.path.dirname(macromedia))
-                    with open(macromedia, 'w', newline='\n') as ofile:
+                    if os.path.isdir(file):
+                        shutil.rmtree(file)
+                    with open(file, 'wb'):
                         pass
                 except OSError:
                     pass
+
+    def _clean_preferences(self, configdir):
+        file = os.path.join(configdir, 'Preferences')
+        try:
+            with open(file) as ifile:
+                data = json.load(ifile)
+            data['profile']['exit_type'] = 'Normal'
+            data['profile']['per_host_zoom_levels'] = {}
+            with open(file + '-new', 'w', newline='\n') as ofile:
+                print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
+        except (KeyError, OSError, ValueError):
             try:
-                shutil.rmtree(os.path.join(os.path.dirname(macromedia), '#SharedObjects'))
+                os.remove(file + '-new')
+            except OSError:
+                pass
+        else:
+            try:
+                os.rename(file + '-new', file)
             except OSError:
                 pass
 
-            configdir = os.path.join(os.environ['HOME'], '.config', self._directory, 'Default')
-
-            file = os.path.join(configdir, 'Preferences')
+    def _clean_junk_files(self, configdir):
+        for fileglob in ('Archive*', 'Cookies*', 'Current*', 'History*',
+                         'Last*', 'Visited*', 'Last*'):
+            for file in glob.glob(os.path.join(configdir, fileglob)):
+                try:
+                    os.remove(file)
+                except OSError:
+                    pass
+        ispattern = re.compile('^(lastDownload|lastSuccess|lastCheck|'
+                               r'expires|softExpiration)=\d*')
+        for file in glob.glob(os.path.join(configdir, 'File System', '*', 'p', '00', '*')):
             try:
-                with open(file) as ifile:
-                    data = json.load(ifile)
-                data['profile']['exit_type'] = 'Normal'
-                data['profile']['per_host_zoom_levels'] = {}
-                with open(file + '-new', 'w', newline='\n') as ofile:
-                    print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
-            except (KeyError, OSError, ValueError):
+                with open(file, errors='replace') as ifile:
+                    with open(file + '-new', 'w', newline='\n') as ofile:
+                        for line in ifile:
+                            if not ispattern.search(line):
+                                print(line, end='', file=ofile)
+            except OSError:
                 try:
                     os.remove(file + '-new')
                 except OSError:
-                    pass
+                    continue
             else:
                 try:
                     os.rename(file + '-new', file)
                 except OSError:
-                    pass
+                    continue
 
+    def _config(self):
+        if 'HOME' in os.environ:
+            configdir = os.path.join(os.environ['HOME'], '.config', self._directory, 'Default')
+
+            self._clean_adobe(configdir)
             if os.path.isdir(configdir):
-                for fileglob in ('Archive*', 'Cookies*', 'Current*', 'History*',
-                                 'Last*', 'Visited*', 'Last*'):
-                    for file in glob.glob(os.path.join(configdir, fileglob)):
-                        try:
-                            os.remove(file)
-                        except OSError:
-                            pass
-                ispattern = re.compile('^(lastDownload|lastSuccess|lastCheck|'
-                                       r'expires|softExpiration)=\d*')
-                for file in glob.glob(os.path.join(configdir, 'File System', '*', 'p', '00', '*')):
-                    try:
-                        with open(file, errors='replace') as ifile:
-                            with open(file + '-new', 'w', newline='\n') as ofile:
-                                for line in ifile:
-                                    if not ispattern.search(line):
-                                        print(line, end='', file=ofile)
-                    except OSError:
-                        try:
-                            os.remove(file + '-new')
-                        except OSError:
-                            continue
-                    else:
-                        try:
-                            os.rename(file + '-new', file)
-                        except OSError:
-                            continue
-
-            for file in (os.path.join(os.environ['HOME'], '.cache', self._directory),
-                         os.path.join(configdir, 'Pepper Data')):
-                if not os.path.isfile(file):
-                    try:
-                        if os.path.isdir(file):
-                            shutil.rmtree(file)
-                        with open(file, 'wb'):
-                            pass
-                    except OSError:
-                        pass
+                self._clean_preferences(configdir)
+                self._clean_junk_files(configdir)
 
     def _copy(self):
         if 'HOME' in os.environ:
@@ -196,33 +203,32 @@ class Options(object):
                 pass
             os.environ['HOME'] = newhome
 
+    def _remove(self, file):
+        try:
+            if os.path.isdir(file):
+                shutil.rmtree(file)
+            else:
+                os.remove(file)
+        except OSError:
+            pass
+
     def _reset(self):
-        if 'HOME' in os.environ:
-            configdir = os.path.join(os.environ['HOME'], '.config', self._directory)
-            if os.path.isdir(configdir):
-                keep_list = ('Extensions', 'File System', 'Local Extension Settings',
-                             'Local Storage', 'Preferences', 'Secure Preferences')
-                for directory in glob.glob(os.path.join(configdir, '*')):
-                    if os.path.isfile(os.path.join(directory, 'Preferences')):
-                        for file in glob.glob(os.path.join(directory, '*')):
-                            if os.path.basename(file) not in keep_list:
-                                print('Removing "{0:s}"...'.format(file))
-                                try:
-                                    if os.path.isdir(file):
-                                        shutil.rmtree(file)
-                                    else:
-                                        os.remove(file)
-                                except OSError:
-                                    continue
-                    elif os.path.basename(directory) not in ('First Run', 'Local State'):
-                        print('Removing "{0:s}"...'.format(directory))
-                        try:
-                            if os.path.isdir(directory):
-                                shutil.rmtree(directory)
-                            else:
-                                os.remove(directory)
-                        except OSError:
-                            continue
+        if 'HOME' not in os.environ:
+            return
+
+        configdir = os.path.join(os.environ['HOME'], '.config', self._directory)
+        if os.path.isdir(configdir):
+            keep_list = ('Extensions', 'File System', 'Local Extension Settings',
+                         'Local Storage', 'Preferences', 'Secure Preferences')
+            for directory in glob.glob(os.path.join(configdir, '*')):
+                if os.path.isfile(os.path.join(directory, 'Preferences')):
+                    for file in glob.glob(os.path.join(directory, '*')):
+                        if os.path.basename(file) not in keep_list:
+                            print('Removing "{0:s}"...'.format(file))
+                            self._remove(file)
+                elif os.path.basename(directory) not in ('First Run', 'Local State'):
+                    print('Removing "{0:s}"...'.format(directory))
+                    self._remove(directory)
 
     def _restart(self):
         if 'HOME' in os.environ:
