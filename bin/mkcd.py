@@ -151,10 +151,10 @@ class Burner(object):
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(cdrdao.get_exitcode()) +
                                  ' received from "' + cdrdao.get_file() + '".')
         cdrdao.set_flags(['write', '--device', self._device, '--speed', str(self._speed)])
-        if os.path.isfile(self._files[0][:-4]+'.toc'):
-            cdrdao.set_args([self._files[0][:-4]+'.toc'])
+        if os.path.isfile(self._image[:-4]+'.toc'):
+            cdrdao.set_args([self._image[:-4]+'.toc'])
         else:
-            cdrdao.set_args([self._files[0][:-4]+'.cue'])
+            cdrdao.set_args([self._image[:-4]+'.cue'])
         cdrdao.run()
         if cdrdao.get_exitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(cdrdao.get_exitcode()) +
@@ -162,7 +162,7 @@ class Burner(object):
         self._eject()
 
     def _track_at_once_audio(self):
-        files = glob.glob(os.path.join(self._image[0], '*.wav'))
+        files = glob.glob(os.path.join(self._image, '*.wav'))
 
         wodim = syslib.Command('wodim')
         print('If your media is a rewrite-able CD/DVD its contents will be deleted.')
@@ -181,7 +181,7 @@ class Burner(object):
         icedax = syslib.Command('icedax', check=False)
         if icedax.is_found():
             icedax.set_args(['-info-only', '--no-infofile', 'verbose-level=toc',
-                             'dev=' + self._device, 'speed=' + self._speed])
+                             'dev=' + self._device, 'speed=' + str(self._speed)])
             icedax.run(mode='batch')
             toc = icedax.get_error(r'[.]\(.*:.*\)|^CD')
             if not toc:
@@ -228,7 +228,7 @@ class Burner(object):
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(md5cd.get_exitcode()) +
                                  ' received from "' + md5cd.get_file() + '".')
             try:
-                with open(self._files[0][:-4] + '.md5', errors='replace') as ifile:
+                with open(file[:-4] + '.md5', errors='replace') as ifile:
                     for line in ifile:
                         print(line.rstrip())
             except OSError:

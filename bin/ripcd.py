@@ -122,22 +122,8 @@ class RipCd(object):
             self._read_toc()
             self._rip()
 
-    def _rip(self):
-        self._icedax.set_flags(['-vtrackid', '-paranoia', '-S=' + str(self._speed),
-                                '-K', 'dsp', '-H'])
+    def _rip_tracks(self, ntracks):
         tee = syslib.Command('tee')
-        try:
-            with open('00.log', 'w', newline='\n') as ofile:
-                for line in self._toc:
-                    print(line, file=ofile)
-        except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "00.log" TOC file.')
-        try:
-            ntracks = int(self._toc[-1].split('.(')[-2].split()[-1])
-        except (IndexError, ValueError):
-            raise SystemExit(sys.argv[0] + ": Unable to detect the number of audio tracks.")
-        if not self._tracks:
-            self._tracks = [str(i) for i in range(1, int(ntracks) + 1)]
 
         for track in self._tracks:
             istrack = re.compile('^.* ' + track + r'[.]\( *')
@@ -177,6 +163,24 @@ class RipCd(object):
                 self._pregap(wavfile)
             if not self._hasprob(logfile):
                 os.remove(warnfile)
+
+    def _rip(self):
+        self._icedax.set_flags(['-vtrackid', '-paranoia', '-S=' + str(self._speed),
+                                '-K', 'dsp', '-H'])
+        try:
+            with open('00.log', 'w', newline='\n') as ofile:
+                for line in self._toc:
+                    print(line, file=ofile)
+        except OSError:
+            raise SystemExit(sys.argv[0] + ': Cannot create "00.log" TOC file.')
+        try:
+            ntracks = int(self._toc[-1].split('.(')[-2].split()[-1])
+        except (IndexError, ValueError):
+            raise SystemExit(sys.argv[0] + ": Unable to detect the number of audio tracks.")
+        if not self._tracks:
+            self._tracks = [str(i) for i in range(1, int(ntracks) + 1)]
+
+        self._rip_tracks(ntracks)
 
     def _hasprob(self, logfile):
         with open(logfile, errors='replace') as ifile:

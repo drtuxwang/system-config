@@ -445,8 +445,6 @@ bin/mksshkeys.py
 
 bin/mktest.bat         Windows command prompt batch file set %TESTDIR%
 
-bin/mock_pyld.py       Unit testing mocking for pyld.py
-
 bin/mousepad           mousepad wrapper (allowing non systems port)
 bin/mousepad.py        (XFCE editor)
 
@@ -552,11 +550,9 @@ bin/procexp            Windows procexp wrapper (allowing non systems port)
 bin/procexp.bat
 bin/procexp.py
 
-bin/pyc                Check and compile Python 3.x modules to ".pyc" byte code
-bin/pyc.bat
-bin/pyc.py
-
 bin/pyld.py            Load Python main program as module (must have Main class)
+bin/mock_pyld.py       Unit testing mocking for pyld.py
+bin/test_pyld.py       Unit testing suite for "pyld.py"
 
 bin/pyprof             Profile Python 3.x program
 bin/pyprof.bat
@@ -657,8 +653,6 @@ bin/tar.py
 bin/tbz                Make a compressed archive in TAR.BZ2 format
 bin/tbz.bat
 bin/tbz.py
-
-bin/test_pyld.py       Unit testing suite for "pyld.py"
 
 bin/tgz                Make a compressed archive in TAR.GZ format
 bin/tgz.bat

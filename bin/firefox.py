@@ -79,85 +79,99 @@ class Options(object):
         """
         return self._firefox
 
-    def _config(self):
-        if 'HOME' in os.environ:
-            adobe = os.path.join(os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
-            macromedia = os.path.join(os.environ['HOME'], '.macromedia',
-                                      'Flash_Player', 'macromedia.com')
-            if not os.path.isfile(adobe) or not os.path.isfile(macromedia):
-                try:
-                    shutil.rmtree(os.path.join(os.environ['HOME'], '.adobe'))
-                    os.makedirs(os.path.dirname(adobe))
-                    with open(adobe, 'w', newline='\n') as ofile:
-                        pass
-                    shutil.rmtree(os.path.join(os.environ['HOME'], '.macromedia'))
-                    os.makedirs(os.path.dirname(macromedia))
-                    with open(macromedia, 'w', newline='\n') as ofile:
-                        pass
-                except OSError:
-                    pass
+    def _clean_adobe(self):
+        adobe = os.path.join(os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
+        macromedia = os.path.join(os.environ['HOME'], '.macromedia',
+                                  'Flash_Player', 'macromedia.com')
+        if not os.path.isfile(adobe) or not os.path.isfile(macromedia):
             try:
-                shutil.rmtree(os.path.join(os.path.dirname(macromedia), '#SharedObjects'))
+                shutil.rmtree(os.path.join(os.environ['HOME'], '.adobe'))
+                os.makedirs(os.path.dirname(adobe))
+                with open(adobe, 'w', newline='\n'):
+                    pass
+                shutil.rmtree(os.path.join(os.environ['HOME'], '.macromedia'))
+                os.makedirs(os.path.dirname(macromedia))
+                with open(macromedia, 'w', newline='\n'):
+                    pass
             except OSError:
                 pass
+        try:
+            shutil.rmtree(os.path.join(os.path.dirname(macromedia), '#SharedObjects'))
+        except OSError:
+            pass
+
+    def _remove_lock(self, firefoxdir):
+        # Remove old session data and lock file (allows multiple instances)
+        for file in (glob.glob(os.path.join(firefoxdir, '*', 'sessionstore.js')) +
+                     glob.glob(os.path.join(firefoxdir, '*', '.parentlock')) +
+                     glob.glob(os.path.join(firefoxdir, '*', 'lock')) +
+                     glob.glob(os.path.join(firefoxdir, '*', '*.log'))):
+            try:
+                os.remove(file)
+            except OSError:
+                continue
+
+    def _remove_junk_files(self, firefoxdir):
+        ispattern = re.compile(
+            r'^(lastDownload|lastSuccess|lastCheck|expires|softExpiration)=\d*')
+        for file in glob.glob(os.path.join(firefoxdir, '*', 'adblockplus', 'patterns.ini')):
+            try:
+                with open(file, errors='replace') as ifile:
+                    with open(file + '-new', 'w', newline='\n') as ofile:
+                        for line in ifile:
+                            if not ispattern.search(line):
+                                print(line, end='', file=ofile)
+            except OSError:
+                try:
+                    os.remove(file + '-new')
+                except OSError:
+                    continue
+            else:
+                try:
+                    os.rename(file + '-new', file)
+                except OSError:
+                    continue
+
+    def _fix_xulstore(self, firefoxdir):
+        for directory in glob.glob(os.path.join(firefoxdir, '*')):
+            file = os.path.join(directory, 'xulstore.json')
+            try:
+                with open(file) as ifile:
+                    with open(file + '-new', 'w', newline='\n') as ofile:
+                        for line in ifile:
+                            print(line.replace('"fullscreen"', '"maximized"'),
+                                  end='', file=ofile)
+            except OSError:
+                try:
+                    os.remove(file + '-new')
+                except OSError:
+                    pass
+            else:
+                try:
+                    os.rename(file + '-new', file)
+                except OSError:
+                    pass
+
+    def _fix_permissions(self):
+        if os.path.isfile(self._firefox.get_file() + '-bin'):
+            setmod = syslib.Command('setmod', check=False)
+            if setmod.is_found():
+                # Fix permissions if owner and updated
+                setmod.set_args(['wa', os.path.dirname(self._firefox.get_file())])
+                setmod.run(mode='daemon')
+
+    def _config(self):
+        if 'HOME' in os.environ:
+            self._clean_adobe()
 
             firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
             if os.path.isdir(firefoxdir):
                 os.chmod(firefoxdir, int('700', 8))
-                # Remove old session data and lock file (allows multiple instances)
-                for file in (glob.glob(os.path.join(firefoxdir, '*', 'sessionstore.js')) +
-                             glob.glob(os.path.join(firefoxdir, '*', '.parentlock')) +
-                             glob.glob(os.path.join(firefoxdir, '*', 'lock')) +
-                             glob.glob(os.path.join(firefoxdir, '*', '*.log'))):
-                    try:
-                        os.remove(file)
-                    except OSError:
-                        continue
-                ispattern = re.compile(
-                    r'^(lastDownload|lastSuccess|lastCheck|expires|softExpiration)=\d*')
-                for file in glob.glob(os.path.join(firefoxdir, '*', 'adblockplus', 'patterns.ini')):
-                    try:
-                        with open(file, errors='replace') as ifile:
-                            with open(file + '-new', 'w', newline='\n') as ofile:
-                                for line in ifile:
-                                    if not ispattern.search(line):
-                                        print(line, end='', file=ofile)
-                    except OSError:
-                        try:
-                            os.remove(file + '-new')
-                        except OSError:
-                            continue
-                    else:
-                        try:
-                            os.rename(file + '-new', file)
-                        except OSError:
-                            continue
+                self._remove_lock(firefoxdir)
+                self._remove_junk_files(firefoxdir)
+                self._fix_xulstore(firefoxdir)
 
-                for directory in glob.glob(os.path.join(firefoxdir, '*')):
-                    file = os.path.join(directory, 'xulstore.json')
-                    try:
-                        with open(file) as ifile:
-                            with open(file + '-new', 'w', newline='\n') as ofile:
-                                for line in ifile:
-                                    print(line.replace('"fullscreen"', '"maximized"'),
-                                          end='', file=ofile)
-                    except OSError:
-                        try:
-                            os.remove(file + '-new')
-                        except OSError:
-                            pass
-                    else:
-                        try:
-                            os.rename(file + '-new', file)
-                        except OSError:
-                            pass
-
-            if os.path.isfile(self._firefox.get_file() + '-bin'):
-                setmod = syslib.Command('setmod', check=False)
-                if setmod.is_found():
-                    # Fix permissions if owner and updated
-                    setmod.set_args(['wa', os.path.dirname(self._firefox.get_file())])
-                    setmod.run(mode='daemon')
+            self._fix_permissions()
 
     def _copy(self):
         if 'HOME' in os.environ:
@@ -196,32 +210,34 @@ class Options(object):
                     pass
             os.environ['HOME'] = newhome
 
+    def _remove(self, file):
+        try:
+            if os.path.isdir(file):
+                shutil.rmtree(file)
+            else:
+                os.remove(file)
+        except OSError:
+            pass
+
     def _reset(self):
-        if 'HOME' in os.environ:
-            firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
-            if os.path.isdir(firefoxdir):
-                keep_list = ('adblockplus', 'extensions', 'extension-data', 'extensions.json',
-                             'extensions.sqlite', 'localstore.rdf', 'mimeTypes.rdf',
-                             'permissions.sqlite', 'prefs.js', 'user.js', 'xulstore.json')
-                for directory in glob.glob(os.path.join(firefoxdir, '*')):
-                    if os.path.isfile(os.path.join(directory, 'prefs.js')):
-                        for file in (glob.glob(os.path.join(directory, '.*')) +
-                                     glob.glob(os.path.join(directory, '*'))):
-                            if os.path.basename(file) not in keep_list:
-                                print('Removing "{0:s}"...'.format(file))
-                                try:
-                                    if os.path.isdir(file):
-                                        shutil.rmtree(file)
-                                    else:
-                                        os.remove(file)
-                                except OSError:
-                                    continue
-                        for file in glob.glob(os.path.join(directory, 'adblockplus',
-                                                           'patterns-backup*ini')):
-                            try:
-                                os.remove(file)
-                            except OSError:
-                                pass
+        if 'HOME' not in os.environ:
+            return
+
+        firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
+        if os.path.isdir(firefoxdir):
+            keep_list = ('adblockplus', 'extensions', 'extension-data', 'extensions.json',
+                         'extensions.sqlite', 'localstore.rdf', 'mimeTypes.rdf',
+                         'permissions.sqlite', 'prefs.js', 'user.js', 'xulstore.json')
+            for directory in glob.glob(os.path.join(firefoxdir, '*')):
+                if os.path.isfile(os.path.join(directory, 'prefs.js')):
+                    for file in (glob.glob(os.path.join(directory, '.*')) +
+                                 glob.glob(os.path.join(directory, '*'))):
+                        if os.path.basename(file) not in keep_list:
+                            print('Removing "{0:s}"...'.format(file))
+                            self._remove(file)
+                    for file in glob.glob(os.path.join(
+                            directory, 'adblockplus', 'patterns-backup*ini')):
+                        self._remove(file)
 
     def _prefs(self, updates):
         if 'HOME' in os.environ:
