@@ -60,26 +60,29 @@ class Options(object):
             self._gpg.set_args(['--list-secret-keys'])
 
         else:
-            extension = '.gpg'
-            if self._args.asciiFlag:
-                self._gpg.append_arg('--armor')
-                extension = '.asc'
-            if self._args.recipient:
-                self._gpg.extend_args(['--batch', '--recipient', self._args.recipient[0]])
-            if self._args.signFlag:
-                self._gpg.append_arg('--sign')
+            self._config_encoder()
 
-            if self._args.file:
-                file = self._args.file
-                if os.path.isfile(file):
-                    if file.endswith('.gpg') or file.endswith('.pgp'):
-                        self._gpg.set_args([file])
-                    else:
-                        if self._args.recipent:
-                            self._gpg.extend_args(['--recipient', self._args.recipent])
-                        self._gpg.extend_args(['--output=' + file + extension, '--encrypt', file])
+    def _config_encoder(self):
+        extension = '.gpg'
+        if self._args.asciiFlag:
+            self._gpg.append_arg('--armor')
+            extension = '.asc'
+        if self._args.recipient:
+            self._gpg.extend_args(['--batch', '--recipient', self._args.recipient[0]])
+        if self._args.signFlag:
+            self._gpg.append_arg('--sign')
+
+        if self._args.file:
+            file = self._args.file
+            if os.path.isfile(file):
+                if file.endswith('.gpg') or file.endswith('.pgp'):
+                    self._gpg.set_args([file])
                 else:
-                    self._gpg.set_args(file)
+                    if self._args.recipent:
+                        self._gpg.extend_args(['--recipient', self._args.recipent])
+                    self._gpg.extend_args(['--output=' + file + extension, '--encrypt', file])
+            else:
+                self._gpg.set_args(file)
 
     def _config(self):
         if 'HOME' in os.environ:

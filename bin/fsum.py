@@ -148,35 +148,32 @@ class Checksum(object):
 
         for fsumfile in files:
             found.append(fsumfile)
-            if not os.path.isfile(fsumfile):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + fsumfile + '" checksum file.')
             directory = os.path.dirname(fsumfile)
             try:
                 with open(fsumfile, errors='replace') as ifile:
                     for line in ifile:
                         line = line.rstrip('\r\n')
                         md5sum, size, mtime, file = self._getfsum(line)
-                        if file:
-                            file = os.path.join(directory, file)
-                            found.append(file)
-                            nfiles += 1
-                            file_stat = syslib.FileStat(file)
-                            try:
-                                if not os.path.isfile(file):
-                                    print(file, '# FAILED open or read')
-                                    nmiss += 1
-                                elif size != file_stat.get_size():
-                                    print(file, '# FAILED checksize')
-                                    nfail += 1
-                                elif self._md5sum(file) != md5sum:
-                                    print(file, '# FAILED checksum')
-                                    nfail += 1
-                                elif mtime != file_stat.get_time():
-                                    print(file, '# FAILED checkdate')
-                                    nfail += 1
-                            except TypeError:
-                                raise SystemExit(
-                                    sys.argv[0] + ': Corrupt "' + fsumfile + '" checksum file.')
+                        file = os.path.join(directory, file)
+                        found.append(file)
+                        nfiles += 1
+                        file_stat = syslib.FileStat(file)
+                        try:
+                            if not os.path.isfile(file):
+                                print(file, '# FAILED open or read')
+                                nmiss += 1
+                            elif size != file_stat.get_size():
+                                print(file, '# FAILED checksize')
+                                nfail += 1
+                            elif self._md5sum(file) != md5sum:
+                                print(file, '# FAILED checksum')
+                                nfail += 1
+                            elif mtime != file_stat.get_time():
+                                print(file, '# FAILED checkdate')
+                                nfail += 1
+                        except TypeError:
+                            raise SystemExit(
+                                sys.argv[0] + ': Corrupt "' + fsumfile + '" checksum file.')
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + fsumfile + '" checksum file.')
 

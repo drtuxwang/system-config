@@ -114,48 +114,58 @@ class Setmod(object):
             'jpeg|js|json|key|lic|lib|list|log|mov|mp[34g]|mpeg|obj|od[fgst]|ogg|opt|pdf|'
             'png|ppt|pptx|rar|reg|rpm|swf|tar|txt|url|wsdl|xhtml|xls|xlsx|xml|xs[dl]|'
             'xvid|zip)$', re.IGNORECASE)
-        self._setmod(options, options.get_files())
 
-    def _setmod(self, options, files):
-        fmod = options.get_fmod()
-        xmod = options.get_xmod()
-        recursive_flag = options.get_recursive_flag()
+        self._recursive_flag = options.get_recursive_flag()
+        self._fmod = options.get_fmod()
+        self._xmod = options.get_xmod()
+        self._files = options.get_files()
 
+    def _setmod_directory(self, directory):
+        try:
+            os.chmod(directory, self._xmod)
+        except OSError:
+            print('Permission denied:', directory + os.sep)
+        if self._recursive_flag:
+            try:
+                self._setmod([os.path.join(directory, x) for x in os.listdir(directory)])
+            except PermissionError:
+                pass
+
+    def _setmod_file(self, file):
+        try:
+            try:
+                with open(file, 'rb') as ifile:
+                    magic = ifile.read(4)
+            except OSError:
+                os.chmod(file, self._fmod)
+                with open(file, 'rb') as ifile:
+                    magic = ifile.read(4)
+            if magic.startswith(b'#!') or magic in self._exe_magics:
+                os.chmod(file, self._xmod)
+            elif self._is_not_exe_ext.search(file):
+                os.chmod(file, self._fmod)
+            elif os.access(file, os.X_OK):
+                os.chmod(file, self._xmod)
+            else:
+                os.chmod(file, self._fmod)
+        except OSError:
+            print('Permission denied:', file)
+
+    def _setmod(self, files):
         for file in sorted(files):
             if not os.path.islink(file):
                 if os.path.isdir(file):
-                    try:
-                        os.chmod(file, xmod)
-                    except OSError:
-                        print('Permission denied:', file + os.sep)
-                    if recursive_flag:
-                        try:
-                            self._setmod(options, [os.path.join(file, x) for x in os.listdir(file)])
-                        except PermissionError:
-                            pass
+                    self._setmod_directory(file)
                 elif os.path.isfile(file):
-                    try:
-                        try:
-                            with open(file, 'rb') as ifile:
-                                magic = ifile.read(4)
-                        except OSError:
-                            os.chmod(file, fmod)
-                            with open(file, 'rb') as ifile:
-                                magic = ifile.read(4)
-                        if magic.startswith(b'#!') or magic in self._exe_magics:
-                            os.chmod(file, xmod)
-                        elif self._is_exe_ext.search(file):
-                            os.chmod(file, xmod)
-                        elif self._is_not_exe_ext.search(file):
-                            os.chmod(file, fmod)
-                        elif os.access(file, os.X_OK):
-                            os.chmod(file, xmod)
-                        else:
-                            os.chmod(file, fmod)
-                    except OSError:
-                        print('Permission denied:', file)
+                    self._setmod_file(file)
                 else:
                     raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+
+    def run(self):
+        """
+        Start changes
+        """
+        self._setmod(self._files)
 
 
 class Main(object):
@@ -169,7 +179,8 @@ class Main(object):
             self._windows_argv()
         try:
             options = Options(sys.argv)
-            Setmod(options)
+            Setmod(options).run()
+
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:

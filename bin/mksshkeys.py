@@ -107,6 +107,33 @@ class SecureShell(object):
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ssh.get_exitcode()) +
                                  ' received from "' + self._ssh.get_file() + '".')
 
+    def _add_authorized_key(self, pubkey):
+        file = os.path.join(self._sshdir, 'authorized_keys')
+        pubkeys = []
+        if os.path.isfile(file):
+            try:
+                with open(file, errors='replace') as ifile:
+                    pubkeys = []
+                    for line in ifile:
+                        pubkeys.append(line.strip())
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "' + file + '" authorised key file.')
+        if pubkey not in pubkeys:
+            try:
+                with open(file + '-new', 'w', newline='\n') as ofile:
+                    for line in pubkeys:
+                        print(line, file=ofile)
+                    print(pubkey, file=ofile)
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' + file + '-new' + '" temporary file.')
+            try:
+                os.rename(file + '-new', file)
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot update "' + file + '" authorised key file.')
+
     def _config(self):
         os.umask(int('077', 8))
         if os.path.isdir(self._sshdir):
@@ -135,6 +162,7 @@ class SecureShell(object):
             if ssh_add.is_found():
                 # When SSH_AUTH_SOCK agent is used
                 ssh_add.run(mode='batch')
+
         try:
             with open(os.path.join(self._sshdir, 'id_rsa.pub'), errors='replace') as ifile:
                 pubkey = ifile.readline().strip()
@@ -143,31 +171,7 @@ class SecureShell(object):
                              os.path.join(self._sshdir, 'id_rsa.pub') + '" public key file.')
 
         if pubkey:
-            file = os.path.join(self._sshdir, 'authorized_keys')
-            pubkeys = []
-            if os.path.isfile(file):
-                try:
-                    with open(file, errors='replace') as ifile:
-                        pubkeys = []
-                        for line in ifile:
-                            pubkeys.append(line.strip())
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + file + '" authorised key file.')
-            if pubkey not in pubkeys:
-                try:
-                    with open(file + '-new', 'w', newline='\n') as ofile:
-                        for line in pubkeys:
-                            print(line, file=ofile)
-                        print(pubkey, file=ofile)
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + file + '-new' + '" temporary file.')
-                try:
-                    os.rename(file + '-new', file)
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot update "' + file + '" authorised key file.')
+            self._add_authorized_key(pubkey)
 
         return pubkey
 

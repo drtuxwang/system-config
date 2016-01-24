@@ -55,16 +55,16 @@ class Diff(object):
     def __init__(self, options):
         self._diffdir(options.get_directory_1(), options.get_directory_2())
 
-    def _diffdir(self, directory1, directory2):
+    def _get_files(self, directory):
         try:
-            files1 = sorted([os.path.join(directory1, x) for x in os.listdir(directory1)])
+            files = sorted([os.path.join(directory, x) for x in os.listdir(directory)])
         except (FileNotFoundError, NotADirectoryError, PermissionError):
-            raise SystemExit(sys.argv[0] + ': Cannot open "' + directory1 + '" directory.')
+            raise SystemExit(sys.argv[0] + ': Cannot open "' + directory + '" directory.')
+        return files
 
-        try:
-            files2 = sorted([os.path.join(directory2, x) for x in os.listdir(directory2)])
-        except (FileNotFoundError, NotADirectoryError, PermissionError):
-            raise SystemExit(sys.argv[0] + ': Cannot open "' + directory2 + '" directory.')
+    def _diffdir(self, directory1, directory2):
+        files1 = self._get_files(directory1)
+        files2 = self._get_files(directory2)
 
         for file in files1:
             if os.path.isdir(file):

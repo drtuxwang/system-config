@@ -103,49 +103,58 @@ class Copy(object):
                     break
                 time.sleep(0.1)
 
+    def _copy_link(self, source, target):
+        print('Copying "' + source + '" link...')
+        source_link = os.readlink(source)
+        if os.path.islink(target) or os.path.isfile(target):
+            try:
+                os.remove(target)
+            except OSError:
+                raise SystemExit(sys.argv[0] + ': Cannot remove "' + target + '" link.')
+        try:
+            os.symlink(source_link, target)
+        except OSError:
+            raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" link.')
+
+    def _copy_directory(self, source, target):
+        print('Copying "' + source + '" directory...')
+        try:
+            files = sorted([os.path.join(source, x) for x in os.listdir(source)])
+        except PermissionError:
+            raise SystemExit(sys.argv[0] + ': Cannot open "' + source + '" directory.')
+        if not os.path.isdir(target):
+            try:
+                os.makedirs(target)
+                os.chmod(target, syslib.FileStat(source).get_mode())
+            except OSError:
+                raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" directory.')
+        for file in files:
+            self._copy(file, os.path.join(target, os.path.basename(file)))
+
+    def _copy_file(self, source, target):
+        print('Copying "' + source + '" file...')
+        try:
+            shutil.copy2(source, target)
+        except shutil.Error as exception:
+            if 'are the same file' in exception.args[0]:
+                raise SystemExit(sys.argv[0] + ': Cannot copy to same "' + target + '" file.')
+            else:
+                raise SystemExit(sys.argv[0] + ': Cannot copy to "' + target + '" file.')
+        except OSError as exception:
+            if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
+                try:
+                    with open(source, 'rb'):
+                        raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
+                except OSError:
+                    raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
+
     def _copy(self, source, target):
         if self._options.get_copy_link_flag() and os.path.islink(source):
-            print('Copying "' + source + '" link...')
-            source_link = os.readlink(source)
-            if os.path.islink(target) or os.path.isfile(target):
-                try:
-                    os.remove(target)
-                except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot remove "' + target + '" link.')
-            try:
-                os.symlink(source_link, target)
-            except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" link.')
+            self._copy_link(source, target)
         elif os.path.isdir(source):
-            print('Copying "' + source + '" directory...')
-            try:
-                files = sorted([os.path.join(source, x) for x in os.listdir(source)])
-            except PermissionError:
-                raise SystemExit(sys.argv[0] + ': Cannot open "' + source + '" directory.')
-            if not os.path.isdir(target):
-                try:
-                    os.makedirs(target)
-                    os.chmod(target, syslib.FileStat(source).get_mode())
-                except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" directory.')
-            for file in files:
-                self._copy(file, os.path.join(target, os.path.basename(file)))
+            self._copy_directory(source, target)
         elif os.path.isfile(source):
-            print('Copying "' + source + '" file...')
-            try:
-                shutil.copy2(source, target)
-            except shutil.Error as exception:
-                if 'are the same file' in exception.args[0]:
-                    raise SystemExit(sys.argv[0] + ': Cannot copy to same "' + target + '" file.')
-                else:
-                    raise SystemExit(sys.argv[0] + ': Cannot copy to "' + target + '" file.')
-            except OSError as exception:
-                if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
-                    try:
-                        with open(source, 'rb'):
-                            raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
-                    except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
+            self._copy_file(source, target)
 
 
 class Main(object):

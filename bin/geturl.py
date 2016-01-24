@@ -82,6 +82,30 @@ class Geturl(object):
     def __init__(self, options):
         self._options = options
 
+    def _get_local(self, directory, files_local):
+        if files_local:
+            if not os.path.isdir(directory):
+                try:
+                    os.mkdir(directory)
+                except OSError:
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot create "' + directory + '" directory.')
+            for file in files_local:
+                print('file://' + file)
+                try:
+                    shutil.copy2(file, os.path.join(directory, os.path.basename(file)))
+                except OSError:
+                    raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+
+    def _get_remote(self, aria2c, files_remote):
+        if files_remote:
+            for file in files_remote:
+                aria2c.append_arg(file.replace('https://', 'http://'))
+            aria2c.run()
+            if aria2c.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(aria2c.get_exitcode()) +
+                                 ' received from "' + aria2c.get_file() + '".')
+
     def run(self):
         """
         Start processing
@@ -91,6 +115,7 @@ class Geturl(object):
 
         for url in self._options.get_urls():
             files_local = []
+            files_remote = [url]
             if url.endswith('.url') and os.path.isfile(url):
                 directory = url[:-4]
                 files_remote = []
@@ -112,27 +137,9 @@ class Geturl(object):
                 raise SystemExit(sys.argv[0] + ': Cannot process "' + url + '" directory.')
             else:
                 aria2c.set_args(['--split=' + str(self._options.get_threads())])
-                files_remote = [url]
-            if files_local:
-                if not os.path.isdir(directory):
-                    try:
-                        os.mkdir(directory)
-                    except OSError:
-                        raise SystemExit(
-                            sys.argv[0] + ': Cannot create "' + directory + '" directory.')
-                for file in files_local:
-                    print('file://' + file)
-                    try:
-                        shutil.copy2(file, os.path.join(directory, os.path.basename(file)))
-                    except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
-            if files_remote:
-                for file in files_remote:
-                    aria2c.append_arg(file.replace('https://', 'http://'))
-                aria2c.run()
-                if aria2c.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(aria2c.get_exitcode()) +
-                                     ' received from "' + aria2c.get_file() + '".')
+
+            self._get_local(directory, files_local)
+            self._get_remote(aria2c, files_remote)
 
 
 class Main(object):

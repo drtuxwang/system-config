@@ -207,8 +207,20 @@ class PackageManger(object):
         else:
             options.get_dpkg().run(mode='exec')
 
+    def _calc_dependencies(self, names_all):
+        for name, value in self._packages.items():
+            if ':' in name:
+                depends = []
+                for depend in value.get_depends():
+                    if depend.split(':')[0] in names_all:
+                        depends.append(depend)
+                    else:
+                        depends.append(depend + ':' + name.split(':')[-1])
+                self._packages[name].set_depends(depends)
+
     def _read_dpkg_status(self):
         names_all = []
+
         self._packages = {}
         name = ''
         package = Package('', -1, [], '')
@@ -233,7 +245,6 @@ class PackageManger(object):
                             raise SystemExit(sys.argv[0] + ': Package "' + name +
                                              '" in "/var/lib/dpkg/info" has non integer size.')
                     elif line.startswith('Depends: '):
-                        depends = []
                         for i in line.replace('Depends: ', '', 1).split(', '):
                             package.append_depends(i.split()[0])
                     elif line.startswith('Description: '):
@@ -243,15 +254,7 @@ class PackageManger(object):
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "/var/lib/dpkg/status" file.')
 
-        for name, value in self._packages.items():
-            if ':' in name:
-                depends = []
-                for depend in value.get_depends():
-                    if depend.split(':')[0] in names_all:
-                        depends.append(depend)
-                    else:
-                        depends.append(depend + ':' + name.split(':')[-1])
-                self._packages[name].set_depends(depends)
+        self._calc_dependencies(names_all)
 
     def _show_packages_info(self):
         for name, package in sorted(self._packages.items()):

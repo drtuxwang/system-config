@@ -120,6 +120,77 @@ class Mirror(object):
                         raise SystemExit(
                             sys.argv[0] + ': Cannot remove "' + target_file + '" file.')
 
+    def _mirror_link(self, source_file, target_file):
+        source_link = os.readlink(source_file)
+        if (os.path.isfile(target_file) or os.path.isdir(target_file) or
+                os.path.islink(target_file)):
+            if os.path.islink(target_file):
+                target_link = os.readlink(target_file)
+                if target_link == source_link:
+                    return
+            print('[', self._size, ',', int(time.time()) - self._start, '] Updating "',
+                  target_file, '" link...', sep='')
+            try:
+                if os.path.isdir(target_file) and not os.path.islink(target_file):
+                    shutil.rmtree(target_file)
+                else:
+                    os.remove(target_file)
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot remove "' + target_file + '" link.')
+        else:
+            print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
+                  target_file, '" link...', sep='')
+        try:
+            os.symlink(source_link, target_file)
+        except OSError:
+            raise SystemExit(sys.argv[0] + ': Cannot create "' + target_file + '" link.')
+
+    def _mirror_file(self, source_file, target_file):
+        if os.path.islink(target_file):
+            try:
+                os.remove(target_file)
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot remove "' + target_file + '" link.')
+        elif os.path.isfile(target_file):
+            source_file_stat = syslib.FileStat(source_file)
+            target_file_stat = syslib.FileStat(target_file)
+            if source_file_stat.get_size() == target_file_stat.get_size():
+                # Allow FAT16/FAT32/NTFS 1h daylight saving and 1 sec rounding error
+                if (abs(source_file_stat.get_time() - target_file_stat.get_time()) in
+                        (0, 1, 3599, 3600, 3601)):
+                    return
+            self._size += int((source_file_stat.get_size() + 1023) / 1024)
+            print('[', self._size, ',', int(time.time()) - self._start, '] Updating "',
+                  target_file, '" file...', sep='')
+        else:
+            source_file_stat = syslib.FileStat(source_file)
+            self._size += int((source_file_stat.get_size() + 1023) / 1024)
+            print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
+                  target_file, '" file...', sep='')
+        try:
+            shutil.copy2(source_file, target_file)
+        except OSError as exception:
+            if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
+                try:
+                    with open(source_file):
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot create "' + target_file + '" file.')
+                except OSError:
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot create "' + target_file + '" file.')
+
+    def _mirror_directory_time(self, source_dir, target_dir):
+        source_time = syslib.FileStat(source_dir).get_time()
+        target_time = syslib.FileStat(target_dir).get_time()
+        if source_time != target_time:
+            try:
+                os.utime(target_dir, (source_time, source_time))
+            except OSError:
+                raise SystemExit(sys.argv[0] + ': Cannot update "' +
+                                 target_dir + '" directory modification time.')
+
     def _mirror(self, source_dir, target_dir):
         try:
             source_files = [os.path.join(source_dir, x) for x in os.listdir(source_dir)]
@@ -144,75 +215,13 @@ class Mirror(object):
         for source_file in sorted(source_files):
             target_file = os.path.join(target_dir, os.path.basename(source_file))
             if os.path.islink(source_file):
-                source_link = os.readlink(source_file)
-                if (os.path.isfile(target_file) or os.path.isdir(target_file) or
-                        os.path.islink(target_file)):
-                    if os.path.islink(target_file):
-                        target_link = os.readlink(target_file)
-                        if target_link == source_link:
-                            continue
-                    print('[', self._size, ',', int(time.time()) - self._start, '] Updating "',
-                          target_file, '" link...', sep='')
-                    try:
-                        if os.path.isdir(target_file) and not os.path.islink(target_file):
-                            shutil.rmtree(target_file)
-                        else:
-                            os.remove(target_file)
-                    except OSError:
-                        raise SystemExit(
-                            sys.argv[0] + ': Cannot remove "' + target_file + '" link.')
-                else:
-                    print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
-                          target_file, '" link...', sep='')
-                try:
-                    os.symlink(source_link, target_file)
-                except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + target_file + '" link.')
+                self._mirror_link(source_file, target_file)
             elif os.path.isdir(source_file):
                 self._mirror(source_file, target_file)
             else:
-                if os.path.islink(target_file):
-                    try:
-                        os.remove(target_file)
-                    except OSError:
-                        raise SystemExit(
-                            sys.argv[0] + ': Cannot remove "' + target_file + '" link.')
-                elif os.path.isfile(target_file):
-                    source_file_stat = syslib.FileStat(source_file)
-                    target_file_stat = syslib.FileStat(target_file)
-                    if source_file_stat.get_size() == target_file_stat.get_size():
-                        # Allow FAT16/FAT32/NTFS 1h daylight saving and 1 sec rounding error
-                        if (abs(source_file_stat.get_time() - target_file_stat.get_time()) in
-                                (0, 1, 3599, 3600, 3601)):
-                            continue
-                    self._size += int((source_file_stat.get_size() + 1023) / 1024)
-                    print('[', self._size, ',', int(time.time()) - self._start, '] Updating "',
-                          target_file, '" file...', sep='')
-                else:
-                    source_file_stat = syslib.FileStat(source_file)
-                    self._size += int((source_file_stat.get_size() + 1023) / 1024)
-                    print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
-                          target_file, '" file...', sep='')
-                try:
-                    shutil.copy2(source_file, target_file)
-                except OSError as exception:
-                    if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
-                        try:
-                            with open(source_file):
-                                raise SystemExit(
-                                    sys.argv[0] + ': Cannot create "' + target_file + '" file.')
-                        except OSError:
-                            raise SystemExit(
-                                sys.argv[0] + ': Cannot create "' + target_file + '" file.')
+                self._mirror_file(source_file, target_file)
 
-        source_time = syslib.FileStat(source_dir).get_time()
-        target_time = syslib.FileStat(target_dir).get_time()
-        if source_time != target_time:
-            try:
-                os.utime(target_dir, (source_time, source_time))
-            except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot update "' +
-                                 target_dir + '" directory modification time.')
+        self._mirror_directory_time(source_dir, target_dir)
 
         if self._options.get_remove_flag():
             self._remove_old_files(source_dir, source_files, target_files)
