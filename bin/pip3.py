@@ -16,7 +16,7 @@ if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
 # pylint: disable=no-self-use,too-few-public-methods
 
 
-class Options(syslib.Dump):
+class Options(object):
     """
     Options class
     """

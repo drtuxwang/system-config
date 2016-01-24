@@ -93,7 +93,6 @@ class Normalize(object):
             ['-i', file, '-af', 'volume=' + str(change) + 'dB', '-y', '-f', 'wav', file_new])
         self._ffmpeg.run(mode='batch')
         if self._ffmpeg.get_exitcode():
-            syslib.Dump().list('debugX', self._ffmpeg)
             raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ffmpeg.get_exitcode()) +
                              ' received from "' + self._ffmpeg.get_file() + '".')
         try:

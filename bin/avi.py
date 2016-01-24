@@ -172,14 +172,12 @@ class Encoder(object):
         self._ffmpeg = syslib.Command('ffmpeg', flags=options.get_flags())
         self._tempfiles = []
 
-    def _config(self, file):
-        media = Media(file)
-        self._ffmpeg.set_args(['-i', file])
-
+    def _config_video(self, media):
         if media.has_video():
-            if (not media.has_video_codec('mpeg4') or self._options.getCideoCrop() or
-                    self._options.vfps or self._options.get_video_size() or self._options.vq or
-                    self._options.noskip or len(self._options.get_files()) > 1):
+            changing = (self._options.get_video_crop() or self._options.vfps or
+                        self._options.get_video_size() or self._options.vq)
+            if (not media.has_video_codec('mpeg4') or self._options.noskip or changing or
+                    len(self._options.get_files()) > 1):
                 self._ffmpeg.extend_args(['-c:v', self._options.get_video_codec(), '-flags',
                                           '+mv4+aic', '-mbd', 'rd', '-g', '300', '-trellis', '2'])
                 if self._options.get_video_quality():
@@ -195,6 +193,7 @@ class Encoder(object):
             else:
                 self._ffmpeg.extend_args(['-c:v', 'copy'])
 
+    def _config_audio(self, media):
         if media.has_audio:
             if (not media.has_audio_codec('mp3') or self._options.get_audio_quality() or
                     self._options.get_audio_volume() or self._options.get_noskip_flag() or
@@ -209,6 +208,13 @@ class Encoder(object):
                         '-af', 'volume=' + self._options.get_audio_volume() + 'dB'])
             else:
                 self._ffmpeg.extend_args(['-c:a', 'copy'])
+
+    def _config(self, file):
+        media = Media(file)
+        self._ffmpeg.set_args(['-i', file])
+
+        self._config_video(media)
+        self._config_audio(media)
 
         if self._options.get_start_time():
             self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
@@ -296,56 +302,63 @@ class Encoder(object):
         if exitcode:
             sys.exit(exitcode)
 
+    def _single(self):
+        self._single()
+        print()
+        if self._all_images(self._options.get_files()):
+            self._config_images(self._options.get_files())
+            self._ffmpeg.extend_args(['-f', 'mp4', '-y', self._options.get_file_new()])
+            self._run()
+        else:
+            if len(self._options.get_files()) == 1:
+                self._config(self._options.get_files()[0])
+            else:
+                extension = '-tmpfile' + str(os.getpid()) + '.ts'
+                for file in self._options.get_files():
+                    media = self._config(file)
+                    if media.has_video():
+                        self._ffmpeg.extend_args(['-bsf:v', 'h264_mp4toannexb'])
+                    self._ffmpeg.extend_args(['-f', 'mpegts', '-y', file + extension])
+                    self._tempfiles.append(file + extension)
+                    self._run()
+                self._ffmpeg.set_args([
+                    '-i', 'concat:' + '|'.join(self._tempfiles), '-c', 'copy'])
+                if media.has_audio():
+                    self._ffmpeg.extend_args(['-bsf:a', 'aac_adtstoasc'])
+            if self._options.get_start_time():
+                self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
+            if self._options.get_run_time():
+                self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
+            self._ffmpeg.extend_args([
+                '-metadata', 'title=', '-f', 'mp4', '-y', self._options.get_file_new()])
+            self._run()
+        Media(self._options.get_file_new()).print()
+
+    def _multi(self):
+        for file in self._options.get_files():
+            if not file.endswith('.avi'):
+                print()
+                if self._all_images([file]):
+                    self._config_images([file])
+                else:
+                    self._config(file)
+                    if self._options.get_start_time():
+                        self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
+                    if self._options.get_run_time():
+                        self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
+                file_new = file.rsplit('.', 1)[0] + '.mp4'
+                self._ffmpeg.extend_args(['-f', 'mp4', '-y', file_new])
+                self._run()
+                Media(file_new).print()
+
     def run(self):
         """
         Run encoder
         """
         if self._options.get_file_new():
-            print()
-            if self._all_images(self._options.get_files()):
-                self._config_images(self._options.get_files())
-                self._ffmpeg.extend_args(['-f', 'mp4', '-y', self._options.get_file_new()])
-                self._run()
-            else:
-                if len(self._options.get_files()) == 1:
-                    self._config(self._options.get_files()[0])
-                else:
-                    extension = '-tmpfile' + str(os.getpid()) + '.ts'
-                    for file in self._options.get_files():
-                        media = self._config(file)
-                        if media.has_video():
-                            self._ffmpeg.extend_args(['-bsf:v', 'h264_mp4toannexb'])
-                        self._ffmpeg.extend_args(['-f', 'mpegts', '-y', file + extension])
-                        self._tempfiles.append(file + extension)
-                        self._run()
-                    self._ffmpeg.set_args([
-                        '-i', 'concat:' + '|'.join(self._tempfiles), '-c', 'copy'])
-                    if media.has_audio():
-                        self._ffmpeg.extend_args(['-bsf:a', 'aac_adtstoasc'])
-                if self._options.get_start_time():
-                    self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
-                if self._options.get_run_time():
-                    self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
-                self._ffmpeg.extend_args([
-                    '-metadata', 'title=', '-f', 'mp4', '-y', self._options.get_file_new()])
-                self._run()
-            Media(self._options.get_file_new()).print()
+            self._single()
         else:
-            for file in self._options.get_files():
-                if not file.endswith('.avi'):
-                    print()
-                    if self._all_images([file]):
-                        self._config_images([file])
-                    else:
-                        self._config(file)
-                        if self._options.get_start_time():
-                            self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
-                        if self._options.get_run_time():
-                            self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
-                    file_new = file.rsplit('.', 1)[0] + '.mp4'
-                    self._ffmpeg.extend_args(['-f', 'mp4', '-y', file_new])
-                    self._run()
-                    Media(file_new).print()
+            self._multi()
 
 
 class Media(object):

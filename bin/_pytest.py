@@ -10,6 +10,7 @@ import signal
 import sys
 import time
 
+import ck_debug
 import syslib
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -23,7 +24,7 @@ class Options(object):
     This class handles Python loader commandline options.
 
     self._dump_flag    = Dump objects flag
-    self._files       = List of Python test module files
+    self._files        = List of Python test module files
     self._verbose_flag = Verbose flag
     """
 
@@ -180,7 +181,7 @@ class PythonTest(object):
         Run all test suites
         """
         if self._options.get_dump_flag():
-            syslib.Dump().list('pytest', self)
+            ck_debug.Dump().list('pytest', self)
 
         start_time = time.time()
         tests = 0

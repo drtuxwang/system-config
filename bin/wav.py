@@ -129,42 +129,7 @@ class Encoder(object):
         self._options = options
         self._ffmpeg = syslib.Command('ffmpeg', flags=options.get_flags())
 
-    def run(self):
-        """
-        Run encoder
-        """
-        if self._options.get_file_new():
-            print()
-            self._config(self._options.get_files()[0])
-            if len(self._options.get_files()) > 1:
-                args = []
-                maps = ''
-                number = 0
-                for file in self._options.get_files():
-                    media = Media(file)
-                    args.extend(['-i', file])
-                    for stream, _ in media.get_stream_audio():
-                        maps += '[' + str(number) + ':' + str(stream) + '] '
-                    number += 1
-                self._ffmpeg.set_args(
-                    args + ['-filter_complex', maps + 'concat=n=' + str(number) + ':v=0:a=1 [out]',
-                            '-map', '[out]'] + self._ffmpeg.get_args()[2:])
-            self._ffmpeg.extend_args(['-f', 'wav', '-y', self._options.get_file_new()])
-            self._run()
-            Media(self._options.get_file_new()).print()
-        else:
-            for file in self._options.get_files():
-                if not file.endswith('.wav'):
-                    print()
-                    self._config(file)
-                    file_new = file.rsplit('.', 1)[0] + '.wav'
-                    self._ffmpeg.extend_args(['-f', 'wav', '-y', file_new])
-                    self._run()
-                    Media(file_new).print()
-
-    def _config(self, file):
-        media = Media(file)
-        self._ffmpeg.set_args(['-i', file])
+    def _config_audio(self, media):
         if media.has_audio:
             if (not media.has_audio_codec('wav') or self._options.get_audio_volume() or
                     self._options.get_noskip_flag() or len(self._options.get_files()) > 1):
@@ -174,6 +139,13 @@ class Encoder(object):
                         ['-af', 'volume=' + self._options.get_audio_volume() + 'dB'])
             else:
                 self._ffmpeg.extend_args(['-c:a', 'copy'])
+
+    def _config(self, file):
+        media = Media(file)
+        self._ffmpeg.set_args(['-i', file])
+
+        self._config_audio(media)
+
         if self._options.get_start_time():
             self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
         if self._options.get_run_time():
@@ -210,6 +182,45 @@ class Encoder(object):
         exitcode = child.wait()
         if exitcode:
             sys.exit(exitcode)
+
+    def _single(self):
+        print()
+        self._config(self._options.get_files()[0])
+        if len(self._options.get_files()) > 1:
+            args = []
+            maps = ''
+            number = 0
+            for file in self._options.get_files():
+                media = Media(file)
+                args.extend(['-i', file])
+                for stream, _ in media.get_stream_audio():
+                    maps += '[' + str(number) + ':' + str(stream) + '] '
+                number += 1
+            self._ffmpeg.set_args(
+                args + ['-filter_complex', maps + 'concat=n=' + str(number) + ':v=0:a=1 [out]',
+                        '-map', '[out]'] + self._ffmpeg.get_args()[2:])
+        self._ffmpeg.extend_args(['-f', 'wav', '-y', self._options.get_file_new()])
+        self._run()
+        Media(self._options.get_file_new()).print()
+
+    def _multi(self):
+        for file in self._options.get_files():
+            if not file.endswith('.wav'):
+                print()
+                self._config(file)
+                file_new = file.rsplit('.', 1)[0] + '.wav'
+                self._ffmpeg.extend_args(['-f', 'wav', '-y', file_new])
+                self._run()
+                Media(file_new).print()
+
+    def run(self):
+        """
+        Run encoder
+        """
+        if self._options.get_file_new():
+            self._single()
+        else:
+            self._multi()
 
 
 class Media(object):

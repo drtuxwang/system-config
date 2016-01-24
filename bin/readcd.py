@@ -139,7 +139,7 @@ class Readcd(object):
                 self._dao(device, speed, file)
             else:
                 self._tao(device, file)
-            if options.getMd5sumFlag():
+            if options.get_md5_flag():
                 print('Creating MD5 check sum of ISO file.')
                 md5sum = self._md5sum(options.get_file())
                 if not md5sum:
