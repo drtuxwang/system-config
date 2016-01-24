@@ -76,12 +76,11 @@ class Which(object):
             if os.path.isdir(directory):
                 for extension in self._options.get_extensions():
                     file = os.path.join(directory, program) + extension
-                    if file not in found:
-                        if os.path.isfile(file):
-                            found.append(file)
-                            print(file)
-                            if not self._options.get_all_flag():
-                                return
+                    if file not in found and os.path.isfile(file):
+                        found.append(file)
+                        print(file)
+                        if not self._options.get_all_flag():
+                            return
 
         if not found:
             print(program, 'not in:')
@@ -91,6 +90,9 @@ class Which(object):
 
 
 class Main(object):
+    """
+    Main class
+    """
 
     def __init__(self):
         self._signals()

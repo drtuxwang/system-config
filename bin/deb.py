@@ -208,7 +208,7 @@ class PackageManger(object):
             options.get_dpkg().run(mode='exec')
 
     def _read_dpkg_status(self):
-        namesAll = []
+        names_all = []
         self._packages = {}
         name = ''
         package = Package('', -1, [], '')
@@ -221,7 +221,7 @@ class PackageManger(object):
                     elif line.startswith('Architecture: '):
                         arch = line.replace('Architecture: ', '', 1)
                         if arch == 'all':
-                            namesAll.append(name)
+                            names_all.append(name)
                         elif arch != self._options.get_arch():
                             name += ':' + arch
                     elif line.startswith('Version: '):
@@ -247,7 +247,7 @@ class PackageManger(object):
             if ':' in name:
                 depends = []
                 for depend in value.get_depends():
-                    if depend.split(':')[0] in namesAll:
+                    if depend.split(':')[0] in names_all:
                         depends.append(depend)
                     else:
                         depends.append(depend + ':' + name.split(':')[-1])
@@ -260,23 +260,13 @@ class PackageManger(object):
                     continue
             elif ':' in name:
                 continue
-            print('{0:35s} {1:15s} {2:5d}KB {3:s}'.format(name.split(':')[0],
-                  package.get_version(), package.get_size(), package.get_description()))
+            print('{0:35s} {1:15s} {2:5d}KB {3:s}'.format(
+                name.split(':')[0], package.get_version(), package.get_size(),
+                package.get_description()))
 
-    def _show_dependent_packages(self, names, checked=[], ident=''):
-        keys = sorted(self.getPackages().keys())
-        for name in names:
-            if name in self.getPackages():
-                print(ident + name)
-                for key in keys:
-                    if name in self._packages[key].get_depends():
-                        if key not in checked:
-                            checked.append(key)
-                            checked.extend(
-                                self._show_dependent_packages([key], checked, ident + '  '))
-        return checked
-
-    def _show_dependent_packages(self, names, checked=[], ident=''):
+    def _show_dependent_packages(self, names, checked=None, ident=''):
+        if not checked:
+            checked = []
         keys = sorted(self._packages.keys())
         for name in names:
             if name in self._packages:

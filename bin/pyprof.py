@@ -53,17 +53,17 @@ class Options(object):
         parser.add_argument('file', nargs=1, metavar='file[.py]|file.pstats',
                             help='Python module or pstats file.')
 
-        myArgs = []
+        my_args = []
         while len(args):
-            myArgs.append(args[0])
+            my_args.append(args[0])
             if not args[0].startswith('-'):
                 break
             elif args[0] == '-n' and len(args) >= 2:
                 args = args[1:]
-                myArgs.append(args[0])
+                my_args.append(args[0])
             args = args[1:]
 
-        self._args = parser.parse_args(myArgs)
+        self._args = parser.parse_args(my_args)
 
         self._module_args = args[1:]
 
@@ -76,7 +76,43 @@ class Profiler(object):
     def __init__(self, options):
         self._options = options
 
+    def _profile(self, module_file, module_args):
+        stats_file = os.path.basename(module_file.rsplit('.', 1)[0] + '.pstats')
+        if os.path.isfile(stats_file):
+            try:
+                os.remove(stats_file)
+            except OSError:
+                raise SystemExit(sys.argv[0] + ': Cannot remove old "' + stats_file + '" file.')
+
+        python3 = syslib.Command(file=sys.executable)
+        python3.set_args(['-m', 'cProfile', '-o', stats_file])
+
+        if os.path.isfile(module_file):
+            command = syslib.Command(file=module_file)
+        else:
+            try:
+                command = syslib.Command(module_file)
+            except syslib.SyslibError:
+                raise SystemExit(sys.argv[0] + ': Cannot find "' + module_file + '" module file')
+        command.set_args(module_args)
+        command.set_wrapper(python3)
+        command.run()
+
+        print('pyprof:', command.args2cmd([command.get_file()] + module_args))
+        return stats_file
+
+    def _show(self, stats_file, lines):
+        try:
+            stats = pstats.Stats(stats_file)
+        except OSError:
+            raise SystemExit(sys.argv[0] + ': Cannot read "' + stats_file + '" file.')
+
+        stats.strip_dirs().sort_stats('tottime', 'cumtime').print_stats(lines)
+
     def run(self):
+        """
+        Start profiling
+        """
         file = self._options.get_file()
 
         if not file.endswith('.pstats'):
@@ -86,38 +122,14 @@ class Profiler(object):
 
         self._show(file, self._options.get_lines())
 
-    def _profile(self, moduleFile, moduleArgs):
-        statsFile = os.path.basename(moduleFile.rsplit('.', 1)[0] + '.pstats')
-        if os.path.isfile(statsFile):
-            try:
-                os.remove(statsFile)
-            except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot remove old "' + statsFile + '" file.')
+        file = self._options.get_file()
 
-        python3 = syslib.Command(file=sys.executable)
-        python3.set_args(['-m', 'cProfile', '-o', statsFile])
+        if not file.endswith('.pstats'):
+            if not file.endswith('.py'):
+                file = file + '.py'
+            file = self._profile(file, self._options.get_module_args())
 
-        if os.path.isfile(moduleFile):
-            command = syslib.Command(file=moduleFile)
-        else:
-            try:
-                command = syslib.Command(moduleFile)
-            except syslib.SyslibError:
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + moduleFile + '" module file')
-        command.set_args(moduleArgs)
-        command.set_wrapper(python3)
-        command.run()
-
-        print('pyprof:', command.args2cmd([command.get_file()] + moduleArgs))
-        return statsFile
-
-    def _show(self, statsFile, lines):
-        try:
-            stats = pstats.Stats(statsFile)
-        except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + statsFile + '" file.')
-
-        stats.strip_dirs().sort_stats('tottime', 'cumtime').print_stats(lines)
+        self._show(file, self._options.get_lines())
 
 
 class Main(object):

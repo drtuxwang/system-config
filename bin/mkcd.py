@@ -98,7 +98,7 @@ class Options(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + self._args.image[0] + '" CD/DVD device.')
 
-    def _signal_ignore(self, signal, frame):
+    def _signal_ignore(self, _signal, _frame):
         pass
 
     def _signal_trap(self):
@@ -213,12 +213,13 @@ class Burner(object):
 
         if options.get_md5_flag():
             print('Verifying MD5 check sum of data CD/DVD:')
-            dd = syslib.Command('dd')
-            dd.set_args(['if=' + self._device, 'bs=' + str(2048*360), 'count=1', 'of=/dev/null'])
+            command = syslib.Command('dd')
+            command.set_args(
+                ['if=' + self._device, 'bs=' + str(2048*360), 'count=1', 'of=/dev/null'])
             for _ in range(10):
                 time.sleep(1)
-                dd.run(mode='batch')
-                if dd.has_output():
+                command.run(mode='batch')
+                if command.has_output():
                     time.sleep(1)
                     break
             md5cd = syslib.Command('md5cd', args=[self._device])

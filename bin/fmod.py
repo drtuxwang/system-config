@@ -65,7 +65,7 @@ class Options(object):
         """
         Return recursive flag.
         """
-        return self._args.recursiveFlag
+        return self._args.recursive_flag
 
     def get_xmod(self):
         """
@@ -76,7 +76,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Set file access mode.')
 
-        parser.add_argument('-R', dest='recursiveFlag', action='store_true',
+        parser.add_argument('-R', dest='recursive_flag', action='store_true',
                             help='Set mod of directories recursively.')
         parser.add_argument('-r', dest='mode', action='store_const', const='r',
                             help='Set read-only permission for user.')
@@ -119,7 +119,7 @@ class Setmod(object):
     def _setmod(self, options, files):
         fmod = options.get_fmod()
         xmod = options.get_xmod()
-        recursiveFlag = options.get_recursive_flag()
+        recursive_flag = options.get_recursive_flag()
 
         for file in sorted(files):
             if not os.path.islink(file):
@@ -128,7 +128,7 @@ class Setmod(object):
                         os.chmod(file, xmod)
                     except OSError:
                         print('Permission denied:', file + os.sep)
-                    if recursiveFlag:
+                    if recursive_flag:
                         try:
                             self._setmod(options, [os.path.join(file, x) for x in os.listdir(file)])
                         except PermissionError:

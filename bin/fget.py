@@ -49,15 +49,15 @@ class Download(object):
     """
 
     def __init__(self, options):
-        self._chunkSize = 131072
+        self._chunk_size = 131072
         self._urls = options.get_urls()
 
     def _check_file(self, file, size, mtime):
         """
         Check existing file and return True if already downloaded.
         """
-        fileStat = syslib.FileStat(file)
-        if fileStat.get_size() == size and fileStat.get_time() >= mtime:
+        file_stat = syslib.FileStat(file)
+        if file_stat.get_size() == size and file_stat.get_time() >= mtime:
             return True
         return False
 
@@ -95,13 +95,13 @@ class Download(object):
         """
         try:
             with open(file + '.part.json') as ifile:
-                jsonData = json.load(ifile)
-                host = jsonData['fget']['lock']['host']
-                pid = jsonData['fget']['lock']['pid']
+                json_data = json.load(ifile)
+                host = json_data['fget']['lock']['host']
+                pid = json_data['fget']['lock']['pid']
 
                 if host == syslib.info.get_hostname() and syslib.Task().haspid(pid):
                     return 'skip'
-                if jsonData['fget']['data'] == data:
+                if json_data['fget']['data'] == data:
                     return 'resume'
         except (KeyError, OSError, ValueError):
             pass
@@ -109,7 +109,7 @@ class Download(object):
         return 'download'
 
     def _write_resume(self, file, data):
-        jsonData = {
+        json_data = {
             'fget': {
                 'lock': {
                     'host': syslib.info.get_hostname(),
@@ -121,7 +121,7 @@ class Download(object):
 
         try:
             with open(file+'.part.json', 'w', newline='\n') as ofile:
-                print(json.dumps(jsonData, indent=4, sort_keys=True), file=ofile)
+                print(json.dumps(json_data, indent=4, sort_keys=True), file=ofile)
         except OSError:
             pass
 
@@ -155,7 +155,7 @@ class Download(object):
             try:
                 with open(tmpfile, mode) as ofile:
                     while True:
-                        chunk = conn.read(self._chunkSize)
+                        chunk = conn.read(self._chunk_size)
                         if not chunk:
                             break
                         tmpsize += len(chunk)
@@ -186,6 +186,9 @@ class Download(object):
             raise SystemExit(sys.argv[0] + ': ' + exception.args[0])
 
     def run(self):
+        """
+        Start download
+        """
         for url in self._urls:
             self._get_url(url)
 

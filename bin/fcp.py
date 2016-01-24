@@ -134,6 +134,11 @@ class Copy(object):
             print('Copying "' + source + '" file...')
             try:
                 shutil.copy2(source, target)
+            except shutil.Error as exception:
+                if 'are the same file' in exception.args[0]:
+                    raise SystemExit(sys.argv[0] + ': Cannot copy to same "' + target + '" file.')
+                else:
+                    raise SystemExit(sys.argv[0] + ': Cannot copy to "' + target + '" file.')
             except OSError as exception:
                 if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
                     try:
@@ -141,11 +146,6 @@ class Copy(object):
                             raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
                     except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
-            except shutil.Error as exception:
-                if 'are the same file' in exception.args[0]:
-                    raise SystemExit(sys.argv[0] + ': Cannot copy to same "' + target + '" file.')
-                else:
-                    raise SystemExit(sys.argv[0] + ': Cannot copy to "' + target + '" file.')
 
 
 class Main(object):
