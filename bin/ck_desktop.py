@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """
-Desktop environment module
+Python X-windows desktop module
+
+Copyright GPL v2: 2016 By Dr Colin Kong
+
+Version 1.0.0 (2016-01-17)
 """
 
 import os

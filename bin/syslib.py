@@ -4,7 +4,7 @@ Python system interaction Library
 
 2006-2016 By Dr Colin Kong
 
-Version 5.3.3 (2016-01-23)
+Version 5.4.0 (2016-01-24)
 """
 
 import copy
@@ -26,41 +26,10 @@ if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
 if os.name == 'nt':
     import platform
 
-try:
-    import jsonpickle
-except ImportError:
-    pass
-
 # pylint: disable=no-member,no-self-use,too-few-public-methods
 # pylint: disable=redefined-builtin,unused-variable,invalid-name,redefined-outer-name
 # pylint: disable=too-many-arguments,too-many-branches,too-many-instance-attributes
 # pylint: disable=too-many-lines,too-many-locals,too-many-public-methods,too-many-statements
-
-
-class Dump(object):
-    """
-    This class dumps object attributes recursively.
-    """
-
-    def show(self, name, obj):
-        """
-        Dump object attributes recursively as compact JSON.
-
-        name = Name of object (ie "myobject.subobject")
-        obj  = Object to dump
-        """
-        jsonpickle.set_encoder_options('json', indent=None, sort_keys=True)
-        print('"' + name, '": ', jsonpickle.encode(obj, unpicklable=False))
-
-    def list(self, name, obj):
-        """
-        List object attributes recursively as expanded JSON.
-
-        name = Name of object (ie "myobject.subobject")
-        obj  = Object to dump
-        """
-        jsonpickle.set_encoder_options('json', indent=4, sort_keys=True)
-        print('"' + name, '": ', jsonpickle.encode(obj, unpicklable=False))
 
 
 class Background(object):
