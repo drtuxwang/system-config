@@ -2,9 +2,9 @@
 """
 Python X-windows desktop module
 
-Copyright GPL v2: 2016 By Dr Colin Kong
+Copyright GPL v2: 2013-2016 By Dr Colin Kong
 
-Version 1.0.0 (2016-01-17)
+Version 1.0.1 (2016-01-24)
 """
 
 import os

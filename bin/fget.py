@@ -125,53 +125,55 @@ class Download(object):
         except OSError:
             pass
 
+    def _fetch(self, url):
+        conn = urllib.request.urlopen(url)
+        file, size, mtime = self._get_file_stat(url, conn)
+        if self._check_file(file, size, mtime):
+            print('  => {0:s} [{1:d}/{2:d}]'.format(file, size, size))
+            return
+        tmpfile = file + '.part'
+
+        data = {'size': size, 'time': int(mtime)}
+        check = self._check_resume(file, data)
+
+        if check == 'skip':
+            return
+        elif 'Accept-Ranges' in conn.info() and check == 'resume':
+            tmpsize = syslib.FileStat(file + '.part').get_size()
+            req = urllib.request.Request(url, headers={'Range': 'bytes='+str(tmpsize)+'-'})
+            conn = urllib.request.urlopen(req)
+            mode = 'ab'
+        else:
+            tmpsize = 0
+            mode = 'wb'
+
+        self._write_resume(file, data)
+
+        try:
+            with open(tmpfile, mode) as ofile:
+                while True:
+                    chunk = conn.read(self._chunk_size)
+                    if not chunk:
+                        break
+                    tmpsize += len(chunk)
+                    ofile.write(chunk)
+                    print('\r  => {0:s} [{1:d}/{2:d}]'.format(file, tmpsize, size), end='')
+        except PermissionError:
+            raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
+        print()
+
+        os.utime(tmpfile, (mtime, mtime))
+        try:
+            os.rename(tmpfile, file)
+            os.remove(tmpfile + '.json')
+        except OSError:
+            pass
+
     def _get_url(self, url):
         print(url)
 
         try:
-            conn = urllib.request.urlopen(url)
-            file, size, mtime = self._get_file_stat(url, conn)
-            if self._check_file(file, size, mtime):
-                print('  => {0:s} [{1:d}/{2:d}]'.format(file, size, size))
-                return
-            tmpfile = file + '.part'
-
-            data = {'size': size, 'time': int(mtime)}
-            check = self._check_resume(file, data)
-
-            if check == 'skip':
-                return
-            elif 'Accept-Ranges' in conn.info() and check == 'resume':
-                tmpsize = syslib.FileStat(file + '.part').get_size()
-                req = urllib.request.Request(url, headers={'Range': 'bytes='+str(tmpsize)+'-'})
-                conn = urllib.request.urlopen(req)
-                mode = 'ab'
-            else:
-                tmpsize = 0
-                mode = 'wb'
-
-            self._write_resume(file, data)
-
-            try:
-                with open(tmpfile, mode) as ofile:
-                    while True:
-                        chunk = conn.read(self._chunk_size)
-                        if not chunk:
-                            break
-                        tmpsize += len(chunk)
-                        ofile.write(chunk)
-                        print('\r  => {0:s} [{1:d}/{2:d}]'.format(file, tmpsize, size), end='')
-            except PermissionError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
-            print()
-
-            os.utime(tmpfile, (mtime, mtime))
-            try:
-                os.rename(tmpfile, file)
-                os.remove(tmpfile + '.json')
-            except OSError:
-                pass
-
+            self._fetch(url)
         except urllib.error.URLError as exception:
             reason = exception.reason
             if isinstance(reason, socket.gaierror):

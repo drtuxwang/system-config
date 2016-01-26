@@ -87,6 +87,7 @@ bin/chrome.py
 bin/chroot             chroot wrapper (allowing non systems port)
 bin/chroot.py          (creates /shared mount automatically)
 
+bin/ck_battery.py      Python battery module
 bin/ck_debug.py        Python debugging module
 bin/ck_desktop.py      Python X-windows desktop module
 

@@ -2,9 +2,9 @@
 """
 Python debugging module
 
-Copyright GPL v2: 2016 By Dr Colin Kong
+Copyright GPL v2: 2015-2016 By Dr Colin Kong
 
-Version 1.0.0 (2016-01-24)
+Version 1.0.1 (2016-01-26)
 """
 
 import sys
