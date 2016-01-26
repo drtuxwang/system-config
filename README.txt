@@ -475,9 +475,6 @@ bin/nautilus.py
 bin/netnice            Run a command with limited network bandwidth (uses trickle)
 bin/netnice.py
 
-bin/nhs                nhs wrapper (allowing non systems port)
-bin/nhs.py
-
 bin/normalize          normalize wrapper (allowing non systems port)
 bin/normalize.py
 
@@ -489,9 +486,6 @@ bin/ocr.py             (uses tesseract)
 
 bin/ogg                Encode OGG audio using avconv (libvorbis)
 bin/ogg.py
-
-bin/onall              onall wrapper (allowing non systems port)
-bin/onall.py
 
 bin/open               Open files using default application
 bin/open.py            (hardwired application list)
