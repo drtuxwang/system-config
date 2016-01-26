@@ -475,6 +475,9 @@ bin/nautilus.py
 bin/netnice            Run a command with limited network bandwidth (uses trickle)
 bin/netnice.py
 
+bin/nhs                nhs wrapper (allowing non systems port)
+bin/nhs.py
+
 bin/normalize          normalize wrapper (allowing non systems port)
 bin/normalize.py
 
