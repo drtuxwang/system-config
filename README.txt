@@ -9,12 +9,13 @@ etc/setbin.bat   Windows Command prompt initialization
 etc/setbin.ps1   Windows Power shell initialization
 
 config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
-config/config                   Copy to "$HOME/.ssh/config"
 config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
 config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
+config/config                   Copy to "$HOME/.ssh/config"
 config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
 config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
 config/mimeapps.list            Copy to "$HOME/.local/share/applications" for Mime definitions
+config/offline                  Wrapper script to run any command in off line mode (read comments)
 config/profile                  Copy to "$HOME/.profile" for ksh/bash shells (translated ".login")
 config/rc.local                 Copy to "/etc/rc.local" for auto running commands
 config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
