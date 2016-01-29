@@ -52,6 +52,11 @@ class Options(object):
             except OSError:
                 pass
 
+        offline = syslib.Command("offline", check=False)
+        if offline.is_found():
+            self._soffice.set_wrapper(offline)
+            self._filter += "|: GConf-WARNING|: Connection refused|GConf warning: |GConf Error: "
+
     def _setenv(self):
         if 'GTK_MODULES' in os.environ:
             del os.environ['GTK_MODULES']  # Fix Linux 'gnomebreakpad' problems
