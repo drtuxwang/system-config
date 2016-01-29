@@ -85,7 +85,7 @@ class Pack(object):
             if archive.endswith('.tar.7z'):
                 tar.set_args(['cfv', '-'] + options.get_files())
                 p7zip = syslib.Command('7za')
-                p7zip.set_args(['a', '-mx=9', '-y', '-si', archive()])
+                p7zip.set_args(['a', '-mx=9', '-y', '-si', archive])
                 tar.run(pipes=[p7zip])
             elif archive.endswith('.txz') or archive.endswith('.tar.xz'):
                 tar.set_args(['cfvJ', archive] + options.get_files())
