@@ -18,8 +18,8 @@ import time
 import ck_battery
 import syslib
 
-RELEASE = '4.6.i2'
-VERSION = 20160120
+RELEASE = '4.6.3'
+VERSION = 20160129
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
