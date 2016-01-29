@@ -2,7 +2,7 @@
 """
 Python system interaction Library
 
-Version 5.4.0 (2016-01-24)
+Version 5.4.1 (2016-01-29)
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -689,7 +689,7 @@ class Command(object):
             mynames = (sys.argv[0][:-3], sys.argv[0])
         else:
             mynames = (sys.argv[0], sys.argv[0] + '.py')
-        for directory in pathextra + paths:
+        for directory in list(pathextra) + paths:
             if os.path.isdir(directory):
                 for extension in extensions:
                     file = os.path.join(directory, program) + extension
