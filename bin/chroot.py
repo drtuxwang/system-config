@@ -26,7 +26,7 @@ class Options(object):
             chroot = syslib.Command('chroot', args=args[1:])
             chroot.run(mode='exec')
         elif syslib.info.get_username() != 'root':
-            sudo = syslib.Command('sudo', args=['python3', args[0], os.path.abspath(args[1])])
+            sudo = syslib.Command('sudo', args=['python3', __file__ , os.path.abspath(args[1])])
             sudo.run(mode='exec')
         if not os.path.isfile(os.path.join(args[1], 'bin', 'bash')):
             raise SystemExit(sys.argv[0] + ': Cannot find "/bin/bash" in chroot directory.')
