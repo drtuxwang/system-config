@@ -19,53 +19,15 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        # firefox10 etc
-        self._firefox = syslib.Command(os.path.basename(args[0]).replace('.py', ''))
-        updates = os.access(self._firefox.get_file(), os.W_OK)
-
-        while len(args) > 1:
-            if not args[1].startswith('-'):
-                break
-            elif args[1] in ('-copy', '-no-remote'):
-                if args[1] == '-copy':
-                    updates = False
-                    self._copy()
-                self._firefox.set_flags(['-no-remote'])
-                if 'about:' not in args:
-                    self._firefox.append_flag('about:')
-            elif args[1] == '-reset':
-                self._reset()
-                raise SystemExit(0)
-            else:
-                raise SystemExit(sys.argv[0] + ': Invalid "' + args[1] + '" option.')
-            args.remove(args[1])
-
-        # Avoids 'exo-helper-1 firefox http://' problem of clicking text in XFCE
-        if len(args) > 1:
-            ppid = os.getppid()
-            if ppid != 1 and 'exo-helper' in syslib.Task().get_process(ppid)['COMMAND']:
-                raise SystemExit
-
-        self._firefox.set_args(args[1:])
-        self._filter = (
-            '^$|Failed to load module|: G[dt]k-WARNING |: G[dt]k-CRITICAL |:'
-            ' GLib-GObject-|: GnomeUI-WARNING|^OpenGL Warning: | Pango-WARNING |'
-            '^WARNING: Application calling GLX |: libgnomevfs-WARNING |: wrong ELF class|'
-            '(child|parent) won, so we|processing deferred in-call|is not defined|'
-            '^failed to create drawable|None of the authentication protocols|'
-            'NOTE: child process received|: Not a directory|[/ ]thumbnails |'
-            ': Connection reset by peer|')
-        self._config()
-        self._prefs(updates)
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_filter(self):
         """
@@ -79,7 +41,8 @@ class Options(object):
         """
         return self._firefox
 
-    def _clean_adobe(self):
+    @staticmethod
+    def _clean_adobe():
         adobe = os.path.join(os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
         macromedia = os.path.join(os.environ['HOME'], '.macromedia',
                                   'Flash_Player', 'macromedia.com')
@@ -100,7 +63,8 @@ class Options(object):
         except OSError:
             pass
 
-    def _remove_lock(self, firefoxdir):
+    @staticmethod
+    def _remove_lock(firefoxdir):
         # Remove old session data and lock file (allows multiple instances)
         for file in (glob.glob(os.path.join(firefoxdir, '*', 'sessionstore.js')) +
                      glob.glob(os.path.join(firefoxdir, '*', '.parentlock')) +
@@ -111,7 +75,8 @@ class Options(object):
             except OSError:
                 continue
 
-    def _remove_junk_files(self, firefoxdir):
+    @staticmethod
+    def _remove_junk_files(firefoxdir):
         ispattern = re.compile(
             r'^(lastDownload|lastSuccess|lastCheck|expires|softExpiration)=\d*')
         for file in glob.glob(os.path.join(firefoxdir, '*', 'adblockplus', 'patterns.ini')):
@@ -132,7 +97,8 @@ class Options(object):
                 except OSError:
                     continue
 
-    def _fix_xulstore(self, firefoxdir):
+    @staticmethod
+    def _fix_xulstore(firefoxdir):
         for directory in glob.glob(os.path.join(firefoxdir, '*')):
             file = os.path.join(directory, 'xulstore.json')
             try:
@@ -173,7 +139,8 @@ class Options(object):
 
             self._fix_permissions()
 
-    def _copy(self):
+    @staticmethod
+    def _copy():
         if 'HOME' in os.environ:
             task = syslib.Task()
             for directory in glob.glob(
@@ -210,7 +177,8 @@ class Options(object):
                     pass
             os.environ['HOME'] = newhome
 
-    def _remove(self, file):
+    @staticmethod
+    def _remove(file):
         try:
             if os.path.isdir(file):
                 shutil.rmtree(file)
@@ -239,7 +207,8 @@ class Options(object):
                             directory, 'adblockplus', 'patterns-backup*ini')):
                         self._remove(file)
 
-    def _prefs(self, updates):
+    @staticmethod
+    def _prefs(updates):
         if 'HOME' in os.environ:
             firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
             if os.path.isdir(firefoxdir):
@@ -319,6 +288,48 @@ class Options(object):
                     except OSError:
                         pass
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._firefox = syslib.Command(os.path.basename(args[0]).replace('.py', ''))
+        updates = os.access(self._firefox.get_file(), os.W_OK)
+
+        while len(args) > 1:
+            if not args[1].startswith('-'):
+                break
+            elif args[1] in ('-copy', '-no-remote'):
+                if args[1] == '-copy':
+                    updates = False
+                    self._copy()
+                self._firefox.set_flags(['-no-remote'])
+                if 'about:' not in args:
+                    self._firefox.append_flag('about:')
+            elif args[1] == '-reset':
+                self._reset()
+                raise SystemExit(0)
+            else:
+                raise SystemExit(sys.argv[0] + ': Invalid "' + args[1] + '" option.')
+            args.remove(args[1])
+
+        # Avoids 'exo-helper-1 firefox http://' problem of clicking text in XFCE
+        if len(args) > 1:
+            ppid = os.getppid()
+            if ppid != 1 and 'exo-helper' in syslib.Task().get_process(ppid)['COMMAND']:
+                raise SystemExit
+
+        self._firefox.set_args(args[1:])
+        self._filter = (
+            '^$|Failed to load module|: G[dt]k-WARNING |: G[dt]k-CRITICAL |:'
+            ' GLib-GObject-|: GnomeUI-WARNING|^OpenGL Warning: | Pango-WARNING |'
+            '^WARNING: Application calling GLX |: libgnomevfs-WARNING |: wrong ELF class|'
+            '(child|parent) won, so we|processing deferred in-call|is not defined|'
+            '^failed to create drawable|None of the authentication protocols|'
+            'NOTE: child process received|: Not a directory|[/ ]thumbnails |'
+            ': Connection reset by peer|')
+        self._config()
+        self._prefs(updates)
+
 
 class Main(object):
     """
@@ -326,31 +337,42 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_firefox().run(filter=options.get_filter(), mode='background')
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
+        except SystemExit as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        try:
+            options.get_firefox().run(filter=options.get_filter(), mode='background')
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

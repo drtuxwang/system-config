@@ -17,20 +17,15 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._ssh = syslib.Command('ssh')
-        self._ssh.set_flags(['-o', 'StrictHostKeyChecking=no', '-o',
-                             'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes'])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_command_line(self):
         """
@@ -50,7 +45,8 @@ class Options(object):
         """
         return self._subnet
 
-    def _getmyip(self):
+    @staticmethod
+    def _getmyip():
         myip = ''
         if syslib.info.get_system() == 'linux':
             os.environ['LANG'] = 'en_GB'
@@ -70,8 +66,6 @@ class Options(object):
         return myip
 
     def _parse_args(self, args):
-        issubnet = re.compile(r'^\d{1,3}[.]\d{1,3}[.]\d{1,3}[.]0$')
-
         parser = argparse.ArgumentParser(description='Run command on a subnet in parallel.\n')
 
         parser.add_argument('-subnet', nargs=1, metavar='netmask',
@@ -92,8 +86,15 @@ class Options(object):
 
         self._args = parser.parse_args(my_args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
         self._command_args = args[1:]
 
+        issubnet = re.compile(r'^\d{1,3}[.]\d{1,3}[.]\d{1,3}[.]0$')
         if self._args.subnet and issubnet.match(self._args.subnet[0]):
             self._subnet = self._args.subnet[0]
         else:
@@ -101,6 +102,10 @@ class Options(object):
             if not myip:
                 raise SystemExit(sys.argv[0] + ": Cannot determine subnet configuration.")
             self._subnet = myip.rsplit('.', 1)[0]
+
+        self._ssh = syslib.Command('ssh')
+        self._ssh.set_flags(['-o', 'StrictHostKeyChecking=no', '-o',
+                             'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes'])
 
 
 class Remote(threading.Thread):
@@ -146,20 +151,36 @@ class Remote(threading.Thread):
             self._child = None
 
 
-class Cluster(object):
+class Main(object):
     """
-    Cluster class
+    Main class
     """
 
-    def __init__(self, options):
-        self._wait_max = 64
-        self._wait_time = 0.1
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except SystemExit as exception:
+            sys.exit(exception)
 
-        self._options = options
-        self._threads = []
-        self._bcast()
-        self._allreduce()
-        self._output()
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _allreduce(self):
         print('\rAllreduce from subnet "' + self._options.get_subnet() + '.0"...')
@@ -208,38 +229,21 @@ class Cluster(object):
         for thread in self._threads:
             thread.kill()
 
+    def run(self):
+        """
+        Start program
+        """
+        self._options = Options()
+        self._wait_max = 64
+        self._wait_time = 0.1
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            Cluster(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+            self._threads = []
+            self._bcast()
+            self._allreduce()
+            self._output()
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

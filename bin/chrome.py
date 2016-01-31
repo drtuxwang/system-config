@@ -20,54 +20,15 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._chrome = syslib.Command('chrome')
-        self._directory = 'google-chrome'
-
-        if len(args) > 1:
-            if args[1] == '-version':
-                self._chrome.set_args(['-version'])
-                self._chrome.run(mode='exec')
-            elif args[1] == '-copy':
-                self._copy()
-            elif args[1] == '-reset':
-                self._reset()
-                raise SystemExit(0)
-
-            if args[1] == '-restart':
-                self._restart()
-                args = args[1:]
-            self._chrome.set_args(args[1:])
-
-        # Avoids 'exo-helper-1 chrome http://' problem of clicking text in XFCE
-        if len(args) > 1:
-            ppid = os.getppid()
-            if ppid != 1 and 'exo-helper' in syslib.Task().get_process(ppid)['COMMAND']:
-                raise SystemExit
-
-        if '--disable-background-mode' not in self._chrome.get_args():
-            self._chrome.extend_flags(['--disable-background-mode', '--disable-geolocation',
-                                       '--disk-cache-size=0'])
-
-        # Suid sandbox workaround
-        if 'HOME' in os.environ:
-            if syslib.FileStat(os.path.join(os.path.dirname(
-                    self._chrome.get_file()), 'chrome-sandbox')).get_mode() != 104755:
-                self._chrome.extend_flags(['--test-type', '--disable-setuid-sandbox'])
-
-        self._filter = ('^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
-                        ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
-                        'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|')
-        self._config()
-        self._set_libraries(self._chrome)
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_filter(self):
         """
@@ -113,7 +74,8 @@ class Options(object):
                 except OSError:
                     pass
 
-    def _clean_preferences(self, configdir):
+    @staticmethod
+    def _clean_preferences(configdir):
         file = os.path.join(configdir, 'Preferences')
         try:
             with open(file) as ifile:
@@ -133,7 +95,8 @@ class Options(object):
             except OSError:
                 pass
 
-    def _clean_junk_files(self, configdir):
+    @staticmethod
+    def _clean_junk_files(configdir):
         for fileglob in ('Archive*', 'Cookies*', 'Current*', 'History*',
                          'Last*', 'Visited*', 'Last*'):
             for file in glob.glob(os.path.join(configdir, fileglob)):
@@ -203,7 +166,8 @@ class Options(object):
                 pass
             os.environ['HOME'] = newhome
 
-    def _remove(self, file):
+    @staticmethod
+    def _remove(file):
         try:
             if os.path.isdir(file):
                 shutil.rmtree(file)
@@ -230,7 +194,8 @@ class Options(object):
                     print('Removing "{0:s}"...'.format(directory))
                     self._remove(directory)
 
-    def _restart(self):
+    @staticmethod
+    def _restart():
         if 'HOME' in os.environ:
             configdir = os.path.join(os.environ['HOME'], '.config', 'google-chrome')
             try:
@@ -239,7 +204,8 @@ class Options(object):
             except (IndexError, OSError):
                 pass
 
-    def _set_libraries(self, command):
+    @staticmethod
+    def _set_libraries(command):
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir):
             if syslib.info.get_system() == 'linux':
@@ -250,6 +216,50 @@ class Options(object):
                     else:
                         os.environ['LD_LIBRARY_PATH'] = libdir
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._chrome = syslib.Command('chrome')
+        self._directory = 'google-chrome'
+
+        if len(args) > 1:
+            if args[1] == '-version':
+                self._chrome.set_args(['-version'])
+                self._chrome.run(mode='exec')
+            elif args[1] == '-copy':
+                self._copy()
+            elif args[1] == '-reset':
+                self._reset()
+                raise SystemExit(0)
+
+            if args[1] == '-restart':
+                self._restart()
+                args = args[1:]
+            self._chrome.set_args(args[1:])
+
+        # Avoids 'exo-helper-1 chrome http://' problem of clicking text in XFCE
+        if len(args) > 1:
+            ppid = os.getppid()
+            if ppid != 1 and 'exo-helper' in syslib.Task().get_process(ppid)['COMMAND']:
+                raise SystemExit
+
+        if '--disable-background-mode' not in self._chrome.get_args():
+            self._chrome.extend_flags(['--disable-background-mode', '--disable-geolocation',
+                                       '--disk-cache-size=0'])
+
+        # Suid sandbox workaround
+        if 'HOME' in os.environ:
+            if syslib.FileStat(os.path.join(os.path.dirname(
+                    self._chrome.get_file()), 'chrome-sandbox')).get_mode() != 104755:
+                self._chrome.extend_flags(['--test-type', '--disable-setuid-sandbox'])
+
+        self._filter = ('^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
+                        ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
+                        'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|')
+        self._config()
+        self._set_libraries(self._chrome)
+
 
 class Main(object):
     """
@@ -257,31 +267,42 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_chrome().run(filter=options.get_filter(), mode='background')
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
+        except SystemExit as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        try:
+            options.get_chrome().run(filter=options.get_filter(), mode='background')
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

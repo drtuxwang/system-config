@@ -15,27 +15,15 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        if self._args.guiFlag:
-            xterm = syslib.Command('xterm')
-            xterm.set_args([
-                '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', '#000000',
-                '-bg', '#ffffdd', '-cr', '#880000', '-geometry', '15x3', '-ut', '+sb',
-                '-e', sys.argv[0]] + args[2:])
-            xterm.run(mode='daemon')
-            raise SystemExit(0)
-
-        self._setpop()
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_pop(self):
         """
@@ -62,42 +50,55 @@ class Options(object):
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
                              'break time.')
 
-    def _setpop(self):
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        if self._args.guiFlag:
+            xterm = syslib.Command('xterm')
+            xterm.set_args([
+                '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', '#000000',
+                '-bg', '#ffffdd', '-cr', '#880000', '-geometry', '15x3', '-ut', '+sb',
+                '-e', sys.argv[0]] + args[2:])
+            xterm.run(mode='daemon')
+            raise SystemExit(0)
+
         self._pop = syslib.Command('notify-send')
         self._pop.set_flags(['-t', '10000'])  # 10 seconds display time
 
 
-class StopWatch(object):
+class Main(object):
     """
-    Stop watch class
+    Main class
     """
 
-    def __init__(self, options):
-        self._options = options
-        self._bell = syslib.Command('bell')
-        self._limit = options.get_time() * 60
-        self._alarm = None
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except SystemExit as exception:
+            sys.exit(exception)
 
-    def run(self):
+    @staticmethod
+    def config():
         """
-        Start timer
+        Configure program
         """
-        while True:
-            sys.stdout.write('\033]11;#ffffdd\007')
-            start = int(time.time())
-            elapsed = 0
-            self._alarm = 0
-
-            try:
-                while True:
-                    if elapsed >= self._limit + self._alarm:
-                        self._alert()
-                    time.sleep(1)
-                    elapsed = int(time.time()) - start
-                    sys.stdout.write(' \r ' + time.strftime('%H:%M ') + str(self._limit - elapsed))
-                    sys.stdout.flush()
-            except KeyboardInterrupt:
-                print()
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _alert(self):
         if self._alarm < 601:
@@ -109,38 +110,35 @@ class StopWatch(object):
             self._options.get_pop().run(mode='batch')
         self._alarm += 60  # One minute reminder
 
+    def run(self):
+        """
+        Start program
+        """
+        self._options = Options()
+        self._bell = syslib.Command('bell')
+        self._limit = self._options.get_time() * 60
+        self._alarm = None
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            StopWatch(options).run()
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
+            while True:
+                sys.stdout.write('\033]11;#ffffdd\007')
+                start = int(time.time())
+                elapsed = 0
+                self._alarm = 0
 
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+                try:
+                    while True:
+                        if elapsed >= self._limit + self._alarm:
+                            self._alert()
+                        time.sleep(1)
+                        elapsed = int(time.time()) - start
+                        sys.stdout.write(
+                            ' \r ' + time.strftime('%H:%M ') + str(self._limit - elapsed))
+                        sys.stdout.flush()
+                except KeyboardInterrupt:
+                    print()
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

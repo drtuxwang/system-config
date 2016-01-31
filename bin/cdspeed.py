@@ -17,26 +17,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._device = syslib.info.get_hostname() + ':' + self._args.device[0]
-
-        self._cdspeed()
-        if self._speed == 0:
-            raise SystemExit(0)
-
-        self._hdparm = syslib.Command(file='/sbin/hdparm',
-                                      args=['-E', str(self._speed), self._device])
-        print('Setting CD/DVD drive speed to ', self._speed, 'X', sep='')
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_hdparm(self):
         """
@@ -44,7 +33,15 @@ class Options(object):
         """
         return self._hdparm
 
-    def _cdspeed(self):
+    def _config_speed(self):
+        if self._args.speed:
+            speed = self._args.speed
+            if speed < 0:
+                raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
+                                 'CD/DVD device speed.')
+        else:
+            speed = 0
+
         if 'HOME' in os.environ:
             configdir = os.path.join(os.environ['HOME'], '.config')
             if not os.path.isdir(configdir):
@@ -55,20 +52,22 @@ class Options(object):
             configfile = os.path.join(configdir, 'cdspeed.json')
             if os.path.isfile(configfile):
                 config = Configuration(configfile)
-                speed = config.get_speed(self._device)
-                if speed:
-                    if self._speed == 0:
-                        self._speed = speed
-                    elif self._speed == speed:
-                        return
+                old_speed = config.get_speed(self._device)
+                if old_speed:
+                    if speed == 0:
+                        speed = old_speed
+                    elif speed == old_speed:
+                        return speed
             else:
                 config = Configuration()
-            config.set_speed(self._device, self._speed)
+            config.set_speed(self._device, speed)
             config.write(configfile + '-new')
             try:
                 os.rename(configfile + '-new', configfile)
             except OSError:
                 os.remove(configfile + '-new')
+
+            return speed
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Set CD/DVD drive speed.')
@@ -78,13 +77,21 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
-        if self._args.speed:
-            self._speed = self._args.speed
-            if self._speed < 0:
-                raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                                 'CD/DVD device speed.')
-        else:
-            self._speed = 0
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        self._device = syslib.info.get_hostname() + ':' + self._args.device[0]
+
+        self._speed = self._config_speed()
+        if self._speed == 0:
+            raise SystemExit(0)
+
+        self._hdparm = syslib.Command(file='/sbin/hdparm',
+                                      args=['-E', str(self._speed), self._device])
+        print('Setting CD/DVD drive speed to ', self._speed, 'X', sep='')
 
 
 class Configuration(object):
@@ -133,31 +140,42 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_hdparm().run(mode='batch')
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
+        except SystemExit as exception:
             sys.exit(exception)
-        sys.exit(options.get_hdparm().get_exitcode())
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        try:
+            options.get_hdparm().run(mode='batch')
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':
