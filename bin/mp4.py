@@ -15,19 +15,15 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._audio_codec = 'aac'
-        self._video_codec = 'libx264'
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_audio_codec(self):
         """
@@ -151,6 +147,12 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
         if self._args.files[0].endswith('.mp4'):
             self._file_new = self._args.files[0]
             self._files = self._args.files[1:]
@@ -160,6 +162,9 @@ class Options(object):
             self._file_new = ''
             self._files = self._args.files
 
+        self._audio_codec = 'aac'
+        self._video_codec = 'libx264'
+
 
 class Encoder(object):
     """
@@ -167,9 +172,7 @@ class Encoder(object):
     """
 
     def __init__(self, options):
-        self._options = options
-        self._ffmpeg = syslib.Command('ffmpeg', flags=options.get_flags())
-        self._tempfiles = []
+        self.config(options)
 
     def _config_video(self, media):
         if media.has_video():
@@ -265,7 +268,8 @@ class Encoder(object):
             except OSError:
                 pass
 
-    def _all_images(self, files):
+    @staticmethod
+    def _all_images(files):
         for file in files:
             extension = file.split('.')[-1]
             if extension not in ('bmp', 'gif', 'jpg', 'jpeg', 'png', 'tif', 'tiff'):
@@ -348,6 +352,14 @@ class Encoder(object):
                 self._ffmpeg.extend_args(['-f', 'mp4', '-y', file_new])
                 self._run()
                 Media(file_new).print()
+
+    def config(self, options):
+        """
+        Configure encoder
+        """
+        self._options = options
+        self._ffmpeg = syslib.Command('ffmpeg', flags=options.get_flags())
+        self._tempfiles = []
 
     def run(self):
         """
@@ -465,31 +477,42 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            Encoder(options).run()
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
+        except SystemExit as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        try:
+            Encoder(options).run()
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

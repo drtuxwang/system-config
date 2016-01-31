@@ -13,36 +13,6 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
-
-class Options(object):
-    """
-    Options class
-    """
-
-    def __init__(self, args):
-        xterm = syslib.Command('xterm')
-        xterm.set_flags(['-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', '#000000',
-                         '-bg', '#ffffdd', '-cr', '#ff0000', '-geometry', '100x24', '-ut', '+sb'])
-        self._command = syslib.Command('sudo')
-
-        if len(args) > 1:
-            xterm.extend_flags(['-T', 'sudo ' + xterm.args2cmd(args[1:])])
-            self._command.set_args(args[1:])
-        else:
-            xterm.extend_flags(['-T', 'sudo su'])
-            self._command.set_args(['su'])
-
-        xterm.append_flag('-e')
-        self._command.set_wrapper(xterm)
-
-    def get_command(self):
-        """
-        Return Command class object.
-        """
-        return self._command
-
 
 class Main(object):
     """
@@ -50,31 +20,54 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_command().run(mode='daemon')
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
+        except SystemExit as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        xterm = syslib.Command('xterm')
+        xterm.set_flags(['-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', '#000000',
+                         '-bg', '#ffffdd', '-cr', '#ff0000', '-geometry', '100x24', '-ut', '+sb'])
+        sudo = syslib.Command('sudo')
+
+        if len(sys.argv) > 1:
+            xterm.extend_flags(['-T', 'sudo ' + xterm.args2cmd(sys.argv[1:])])
+            sudo.set_args(sys.argv[1:])
+        else:
+            xterm.extend_flags(['-T', 'sudo su'])
+            sudo.set_args(['su'])
+        xterm.append_flag('-e')
+        sudo.set_wrapper(xterm)
+
+        try:
+            sudo.run(mode='daemon')
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

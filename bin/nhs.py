@@ -13,26 +13,40 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
 
-
-class Options(object):
+class Main(object):
     """
-    Options class
+    Main class
     """
 
-    def __init__(self, args):
-        self._nhs = syslib.Command('nhs')
-        self._nhs.set_args(args[1:])
-        self._config()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except SystemExit as exception:
+            sys.exit(exception)
 
-    def get_command(self):
+    @staticmethod
+    def config():
         """
-        Return Command class object.
+        Configure program
         """
-        return self._nhs
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _config(self):
+    @staticmethod
+    def _config():
         if 'HOME' in os.environ:
             home = os.environ['HOME']
             if os.path.basename(home) != '.nhs':
@@ -44,38 +58,18 @@ class Options(object):
                         return
                 os.environ['HOME'] = home
 
+    def run(self):
+        """
+        Start program
+        """
+        nhs = syslib.Command('nhs')
+        nhs.set_args(sys.argv[1:])
+        self._config()
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_command().run(mode='exec')
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+            nhs.run(mode='exec')
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

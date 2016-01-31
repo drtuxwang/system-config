@@ -15,16 +15,15 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_directories(self):
         """
@@ -56,39 +55,11 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
-
-class Play(object):
-    """
-    Play class
-    """
-
-    def __init__(self, options):
-        self._play = syslib.Command('play')
-
-        if options.get_view_flag():
-            self._play.set_flags(['-v'])
-        for directory in options.get_directories():
-            if not os.path.isdir(directory):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + directory + '" media directory.')
-            files = self._getfiles(directory, '*.avi', '*.flv', '*.mp4')
-            if options.get_shuffle_flag():
-                random.shuffle(files)
-            self._play.extend_args(files)
-
-    def run(self):
+    def parse(self, args):
         """
-        Run player
+        Parse arguments
         """
-        self._play.run()
-        if self._play.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._play.get_exitcode()) +
-                             ' received from "' + self._play.get_file() + '".')
-
-    def _getfiles(self, directory, *patterns):
-        files = []
-        for pattern in patterns:
-            files.extend(glob.glob(os.path.join(directory, pattern)))
-        return sorted(files)
+        self._parse_args(args[1:])
 
 
 class Main(object):
@@ -97,31 +68,62 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            Play(options).run()
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
+        except SystemExit as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def _getfiles(directory, *patterns):
+        files = []
+        for pattern in patterns:
+            files.extend(glob.glob(os.path.join(directory, pattern)))
+        return sorted(files)
+
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
+
+        play = syslib.Command('play')
+        if options.get_view_flag():
+            play.set_flags(['-v'])
+        for directory in options.get_directories():
+            if not os.path.isdir(directory):
+                raise SystemExit(sys.argv[0] + ': Cannot find "' + directory + '" media directory.')
+            files = self._getfiles(directory, '*.avi', '*.flv', '*.mp4')
+            if options.get_shuffle_flag():
+                random.shuffle(files)
+            play.extend_args(files)
+
+        try:
+            play.run()
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
+        if play.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(play.get_exitcode()) +
+                             ' received from "' + play.get_file() + '".')
 
 
 if __name__ == '__main__':

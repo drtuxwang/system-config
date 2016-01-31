@@ -14,20 +14,15 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._bzip2 = syslib.Command('bzip2')
-        self._bzip2.set_flags(['-9'])
-        self._bzip2.set_args(self._args.files)
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_bzip2(self):
         """
@@ -43,6 +38,16 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        self._bzip2 = syslib.Command('bzip2')
+        self._bzip2.set_flags(['-9'])
+        self._bzip2.set_args(self._args.files)
+
 
 class Main(object):
     """
@@ -50,31 +55,42 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_bzip2().run()
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
+        except SystemExit as exception:
             sys.exit(exception)
-        sys.exit(options.get_bzip2().get_exitcode())
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        try:
+            options.get_bzip2().run()
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

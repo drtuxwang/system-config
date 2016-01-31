@@ -15,31 +15,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        command = self._args.command[0]
-        if os.path.isfile(command):
-            self._command = syslib.Command(file=os.path.abspath(command), args=self._command_args)
-        else:
-            file = os.path.join(os.path.dirname(args[0]), command)
-            if os.path.isfile(file):
-                self._command = syslib.Command(file=file, args=self._command_args)
-            else:
-                self._command = syslib.Command(command, args=self._command_args)
-
-        shaper = Shaper(self._args.drate[0])
-        if not shaper.get_file():
-            raise SystemExit(sys.argv[0] + ': Cannot find "trickle" command.')
-        self._command.set_wrapper(shaper)
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_command(self):
         """
@@ -74,7 +58,28 @@ class Options(object):
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
                              'download rate limit.')
 
-        self._command_args = args[len(my_args):]
+        if os.path.isfile(self._args.command[0]):
+            command = syslib.Command(file=self._args.command[0])
+        else:
+            file = os.path.join(os.path.dirname(args[0]), self._args.command[0])
+            if os.path.isfile(file):
+                command = syslib.Command(file=file)
+            else:
+                command = syslib.Command(self._args.command[0])
+        command.set_args(args[len(my_args):])
+
+        return command
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._command = self._parse_args(args[1:])
+
+        shaper = Shaper(self._args.drate[0])
+        if not shaper.get_file():
+            raise SystemExit(sys.argv[0] + ': Cannot find "trickle" command.')
+        self._command.set_wrapper(shaper)
 
 
 class Shaper(syslib.Command):
@@ -88,8 +93,8 @@ class Shaper(syslib.Command):
         self._drate = 512
         if 'HOME' in os.environ:
             file = os.path.join(os.environ['HOME'], '.config', 'netnice.json')
-            if not self._load(file):
-                self._save(file)
+            if not self.read(file):
+                self.write(file)
 
         if drate:
             self._drate = drate
@@ -105,7 +110,10 @@ class Shaper(syslib.Command):
         self._drate = drate
         self.set_args(['-d', str(self._drate), '-s'])
 
-    def _load(self, file):
+    def read(self, file):
+        """
+        Read configuration file
+        """
         if os.path.isfile(file):
             try:
                 with open(file) as ifile:
@@ -118,7 +126,10 @@ class Shaper(syslib.Command):
 
         return False
 
-    def _save(self, file):
+    def write(self, file):
+        """
+        Write configuration file
+        """
         data = {
             'netnice': {
                 'download': self._drate
@@ -137,31 +148,44 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_command().run()
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
+        except SystemExit as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        command = options.get_command()
+        try:
+            command.run()
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
+        raise SystemExit(command.get_exitcode())
 
 
 if __name__ == '__main__':

@@ -16,16 +16,15 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_files(self):
         """
@@ -57,43 +56,11 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
-
-class Play(object):
-    """
-    Play class
-    """
-
-    def __init__(self, options):
-        self._options = options
-
-    def _play(self, files):
-        vlc = syslib.Command('vlc', args=files)
-        vlc.run(mode='background',
-                filter="^$|Use 'cvlc'|may be inaccurate|"
-                       ': Failed to resize display|: call to |: Locale not supported |'
-                       'fallback "C" locale|^xdg-screensaver:|: cannot estimate delay:|'
-                       'Failed to open VDPAU backend ')
-        if vlc.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(vlc.get_exitcode()) +
-                             ' received from "' + vlc.get_file() + '".')
-
-    def _view(self, files):
-        for file in files:
-            if os.path.isfile(file):
-                Media(file).print()
-
-    def run(self):
+    def parse(self, args):
         """
-        Run player
+        Parse arguments
         """
-        files = self._options.get_files()
-
-        if self._options.get_view_flag():
-            self._view(files)
-        else:
-            if self._options.get_shuffle_flag():
-                random.shuffle(files)
-            self._play(files)
+        self._parse_args(args[1:])
 
 
 class Media(object):
@@ -189,31 +156,66 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            Play(options).run()
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
+        except SystemExit as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
+    @staticmethod
+    def _view(files):
+        for file in files:
+            if os.path.isfile(file):
+                Media(file).print()
+
+    @staticmethod
+    def _play(files):
+        vlc = syslib.Command('vlc', args=files)
+        vlc.run(mode='background',
+                filter="^$|Use 'cvlc'|may be inaccurate|"
+                       ': Failed to resize display|: call to |: Locale not supported |'
+                       'fallback "C" locale|^xdg-screensaver:|: cannot estimate delay:|'
+                       'Failed to open VDPAU backend ')
+        if vlc.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(vlc.get_exitcode()) +
+                             ' received from "' + vlc.get_file() + '".')
+
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
+        files = options.get_files()
+
+        try:
+            if options.get_view_flag():
+                self._view(files)
             else:
-                argv.append(arg)
-        sys.argv = argv
+                if options.get_shuffle_flag():
+                    random.shuffle(files)
+                self._play(files)
+
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

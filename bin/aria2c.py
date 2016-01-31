@@ -14,30 +14,40 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
 
-
-class Options(object):
+class Main(object):
     """
-    Options class
+    Main class
     """
 
-    def __init__(self, args):
-        self._aria2c = syslib.Command('aria2c')
-        self._aria2c.set_args(args[1:])
-        self._set_libraries(self._aria2c)
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except SystemExit as exception:
+            sys.exit(exception)
 
-        shaper = netnice.Shaper()
-        if shaper.is_found():
-            self._aria2c.set_wrapper(shaper)
-
-    def get_aria2c(self):
+    @staticmethod
+    def config():
         """
-        Return aria2c Command class object.
+        Configure program
         """
-        return self._aria2c
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _set_libraries(self, command):
+    @staticmethod
+    def _set_libraries(command):
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir):
             if syslib.info.get_system() == 'linux':
@@ -47,38 +57,22 @@ class Options(object):
                 else:
                     os.environ['LD_LIBRARY_PATH'] = libdir
 
+    def run(self):
+        """
+        Start program
+        """
+        aria2c = syslib.Command('aria2c')
+        aria2c.set_args(sys.argv[1:])
+        self._set_libraries(aria2c)
 
-class Main(object):
-    """
-    Main class
-    """
+        shaper = netnice.Shaper()
+        if shaper.is_found():
+            aria2c.set_wrapper(shaper)
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_aria2c().run(mode='exec')
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+            aria2c.run(mode='exec')
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':
