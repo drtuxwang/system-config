@@ -12,8 +12,7 @@ import unittest.mock
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-member,no-self-use,too-few-public-methods
-# pylint: disable=attribute-defined-outside-init,invalid-name
+# pylint: disable = attribute-defined-outside-init, invalid-name, too-few-public-methods
 
 
 class Patcher(object):
@@ -153,13 +152,14 @@ class Patch_os(object):
             os.sep = '\\'
             os.pathsep = ';'
             os.path.pathsep = ';'
-        self._testCase.addCleanup(self._unsetSystem)
+        self._testCase.addCleanup(self._unset_system)
 
         patcher = unittest.mock.patch.object(os.path, 'join', side_effect=self.mocked_os_path_join)
         patcher.start()
         self._testCase.addCleanup(patcher.stop)
 
-    def mocked_os_path_join(self, *args):
+    @staticmethod
+    def mocked_os_path_join(*args):
         """
         Mocked 'os.path.join()' pretending to be another operating system.
         """

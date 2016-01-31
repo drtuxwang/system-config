@@ -14,15 +14,14 @@ import jsonpickle
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Dump(object):
     """
     This class dumps object attributes recursively.
     """
 
-    def _print(self, name, obj, indent=4):
+    @staticmethod
+    def _print(name, obj, indent=4):
         jsonpickle.set_encoder_options('json', indent=indent, sort_keys=True)
         print('"' + name, '": ', jsonpickle.encode(obj, unpicklable=False))
 

@@ -15,8 +15,7 @@ import pyld
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-member,no-self-use
-# pylint: disable=invalid-name,too-many-public-methods
+# pylint: disable = invalid-name, no-member, too-many-public-methods
 
 
 class Test_Options(unittest.TestCase):
@@ -31,7 +30,8 @@ class Test_Options(unittest.TestCase):
         self.maxDiff = None
         self._patcher = patchlib.Patcher(self)
 
-    def test_dump(self):
+    @staticmethod
+    def test_dump():
         """
         Test object dumping does not fail.
         """

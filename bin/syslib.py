@@ -4,7 +4,7 @@ Python system interaction Library
 
 2006-2016 By Dr Colin Kong
 
-Version 5.4.0 (2016-01-24)
+Version 5.4.1 (2016-01-30)
 """
 
 import copy
@@ -21,15 +21,15 @@ import time
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=wrong-import-order,wrong-import-position
+# pylint: disable = wrong-import-order, wrong-import-position
 
 if os.name == 'nt':
     import platform
 
-# pylint: disable=no-member,no-self-use,too-few-public-methods
-# pylint: disable=redefined-builtin,unused-variable,invalid-name,redefined-outer-name
-# pylint: disable=too-many-arguments,too-many-branches,too-many-instance-attributes
-# pylint: disable=too-many-lines,too-many-locals,too-many-public-methods,too-many-statements
+# pylint: disable = no-member, no-self-use, too-few-public-methods
+# pylint: disable = redefined-builtin, unused-variable, invalid-name, redefined-outer-name
+# pylint: disable = too-many-arguments, too-many-branches, too-many-instance-attributes
+# pylint: disable = too-many-lines, too-many-locals, too-many-public-methods, too-many-statements
 
 
 class Background(object):

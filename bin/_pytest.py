@@ -16,7 +16,7 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
+# pylint: disable = too-few-public-methods
 
 
 class Options(object):
@@ -163,23 +163,43 @@ class ModuleTest(object):
         return min(self._python3.get_exitcode(), 1)
 
 
-class PythonTest(object):
+class Main(object):
     """
-    This class performs Python unit testing
-
-    self._options = Options class object
+    Main class
     """
 
-    def __init__(self, options):
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
         """
-        options = Options class object
+        Configure program
         """
-        self._options = options
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def run(self):
         """
-        Run all test suites
+        Start program
         """
+        self._options = Options(sys.argv)
+
         if self._options.get_dump_flag():
             ck_debug.Dump().list('pytest', self)
 
@@ -188,13 +208,17 @@ class PythonTest(object):
         failures = 0
         errors = 0
         exit_errors = 0
+
         for file in self._options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" Python module file.')
             print('\nRunning "' + os.path.abspath(file) + '"...')
 
             module_test = ModuleTest(self._options, file)
-            module_test.run()
+            try:
+                module_test.run()
+            except syslib.SyslibError as exception:
+                raise SystemExit(exception)
             tests += module_test.get_tests()
             failures += module_test.get_failures()
             errors += module_test.get_errors()
@@ -208,39 +232,6 @@ class PythonTest(object):
             print('Total elapsed time  = {0:5.3f}s'.format(time.time() - start_time))
             if failures + errors + exit_errors:
                 raise SystemExit(1)
-
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            PythonTest(options).run()
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except SystemExit as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':

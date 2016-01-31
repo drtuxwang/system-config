@@ -17,16 +17,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_list_files(self):
         """
@@ -42,6 +41,12 @@ class Options(object):
                             help='Debian installed packages list file.')
 
         self._args = parser.parse_args(args)
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
 
 class Package(object):
@@ -97,26 +102,22 @@ class Package(object):
         self._version = version
 
 
-class CheckUpdates(object):
+class Main(object):
     """
-    Check updates class
+    Main class
     """
 
-    def __init__(self, options):
-        ispattern = re.compile('[.]debs-?.*$')
-        for list_file in options.get_list_files():
-            if syslib.FileStat(list_file).get_size() > 0:
-                if os.path.isfile(list_file):
-                    if ispattern.search(list_file):
-                        distribution = ispattern.sub('', list_file)
-                        print('\nChecking "' + list_file + '" list file...')
-                        self._packages = self._read_distribution_packages(
-                            distribution + '.packages')
-                        self._read_distribution_pin_packages(distribution + '.pinlist')
-                        self._read_distribution_blacklist(distribution + '.blacklist')
-                        self._check_distribution_updates(distribution, list_file)
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except SystemExit as exception:
+            sys.exit(exception)
 
-    def _read_distribution_packages(self, packages_file):
+    @staticmethod
+    def _read_distribution_packages(packages_file):
         packages = {}
         name = ''
         package = Package()
@@ -224,44 +225,48 @@ class CheckUpdates(object):
                     names.extend(self._depends(versions, self._packages[name].get_depends()))
         return names
 
-    def _local(self, distribution, url):
+    @staticmethod
+    def _local(distribution, url):
         file = os.path.join(distribution, os.path.basename(url))
         if os.path.isfile(file):
             return 'file://' + os.path.abspath(file)
         return url
 
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            CheckUpdates(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
+
+        ispattern = re.compile('[.]debs-?.*$')
+        for list_file in options.get_list_files():
+            if syslib.FileStat(list_file).get_size() > 0:
+                if os.path.isfile(list_file):
+                    if ispattern.search(list_file):
+                        distribution = ispattern.sub('', list_file)
+                        print('\nChecking "' + list_file + '" list file...')
+                        self._packages = self._read_distribution_packages(
+                            distribution + '.packages')
+                        self._read_distribution_pin_packages(distribution + '.pinlist')
+                        self._read_distribution_blacklist(distribution + '.blacklist')
+                        self._check_distribution_updates(distribution, list_file)
 
 
 if __name__ == '__main__':

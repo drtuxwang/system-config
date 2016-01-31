@@ -18,21 +18,22 @@ import time
 import ck_battery
 import syslib
 
-RELEASE = '4.6.3'
-VERSION = 20160129
+RELEASE = '4.6.4'
+VERSION = 20160130
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=import-error,wrong-import-position
+# pylint: disable = import-error, wrong-import-position
 
 if os.name == 'nt':
     import winreg
 
-# pylint: disable=no-self-use,too-few-public-methods
-# pylint: disable=too-many-lines,too-many-nested-blocks,undefined-variable,too-many-nested-blocks
-# pylint: disable=too-many-return-statements,too-many-arguments,too-many-statements,too-many-locals
-# pylint: disable=too-many-branches,too-many-instance-attributes, super-init-not-called
+# pylint: disable = no-self-use, too-few-public-methods
+# pylint: disable = too-many-lines, too-many-nested-blocks, undefined-variable
+# pylint: disable = too-many-nested-blocks, too-many-return-statements, too-many-arguments
+# pylint: disable = too-many-statements, too-many-locals, too-many-branches
+# pylint: disable = too-many-instance-attributes, super-init-not-called
 
 
 class Options(object):
@@ -623,7 +624,7 @@ class LinuxSystem(PosixSystem):
                                           comment='SPK')
 
     def _detect_battery(self, writer):
-        batteries = ck_battery.BatteryFactory().detect()
+        batteries = ck_battery.Battery.factory()
 
         for battery in batteries:
             if battery.is_exist():
@@ -1488,19 +1489,34 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
         try:
-            options = Options()
-            Detect(options).run()
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
         sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        try:
+            Detect(options).run()
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

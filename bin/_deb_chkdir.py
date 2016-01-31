@@ -14,16 +14,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_distributions(self):
         """
@@ -39,6 +38,12 @@ class Options(object):
                             help='Distribution directory.')
 
         self._args = parser.parse_args(args)
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
 
 class Package(object):
@@ -70,20 +75,22 @@ class Package(object):
         return self._version
 
 
-class CheckDistributions(object):
+class Main(object):
     """
-    Check distribution class
+    Main class
     """
 
-    def __init__(self, options):
-        for distribution in options.get_distributions():
-            packages_files = self._check_files(distribution)
-            if packages_files and os.path.isfile(distribution + '.debs'):
-                packages_white_list = self._read_distribution_whitelist(distribution + '.whitelist')
-                packages_used = self._check_used(distribution)
-                self._compare(packages_files, packages_white_list, packages_used)
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except SystemExit as exception:
+            sys.exit(exception)
 
-    def _check_files(self, distribution):
+    @staticmethod
+    def _check_files(distribution):
         try:
             files = sorted(glob.glob(os.path.join(distribution, '*.deb')))
         except OSError:
@@ -105,7 +112,8 @@ class CheckDistributions(object):
                 packages[name] = Package(file, file_stat.get_time(), version)
         return packages
 
-    def _check_used(self, distribution):
+    @staticmethod
+    def _check_used(distribution):
         packages = {}
         try:
             file = distribution + '.debs'
@@ -138,7 +146,8 @@ class CheckDistributions(object):
             pass
         return packages
 
-    def _read_distribution_whitelist(self, file):
+    @staticmethod
+    def _read_distribution_whitelist(file):
         packages = {}
         try:
             with open(file, errors='replace') as ifile:
@@ -153,7 +162,8 @@ class CheckDistributions(object):
             pass
         return packages
 
-    def _compare(self, packages_files, packages_white_list, packages_used):
+    @staticmethod
+    def _compare(packages_files, packages_white_list, packages_used):
         names_files = sorted(packages_files.keys())
         names_white_list = sorted(packages_white_list.keys())
         names_used = packages_used.keys()
@@ -172,38 +182,35 @@ class CheckDistributions(object):
             if name not in names_files:
                 print('# ', packages_used[name].get_file(), 'Missing')
 
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            CheckDistributions(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
+
+        for distribution in options.get_distributions():
+            packages_files = self._check_files(distribution)
+            if packages_files and os.path.isfile(distribution + '.debs'):
+                packages_white_list = self._read_distribution_whitelist(distribution + '.whitelist')
+                packages_used = self._check_used(distribution)
+                self._compare(packages_files, packages_white_list, packages_used)
 
 
 if __name__ == '__main__':

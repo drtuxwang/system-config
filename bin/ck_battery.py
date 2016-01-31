@@ -15,12 +15,10 @@ import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
 
-
-class BatteryAcpi(object):
+class Battery(object):
     """
-    Uses '/proc/acpi/battery/BAT*'
+    Battery base class
     """
 
     def __init__(self, directory):
@@ -31,6 +29,92 @@ class BatteryAcpi(object):
         self._isjunk = None
         self._config(directory)
         self.check()
+
+    def _config(self, _):
+        self._is_exist = False
+
+    def is_exist(self):
+        """
+        Return exist flag.
+        """
+        return self._is_exist
+
+    def get_capacity(self):
+        """
+        Return current capcity
+        """
+        return self._info['capacity']
+
+    def get_capacity_max(self):
+        """
+        Return max capcity
+        """
+        return self._info['capacity_max']
+
+    def get_charge(self):
+        """
+        Return charge change mode
+        """
+        return self._info['charge']
+
+    def get_name(self):
+        """
+        Return model name
+        """
+        return self._info['model_name']
+
+    def get_oem(self):
+        """
+        Return OEM name
+        """
+        return self._info['oem_name']
+
+    def get_rate(self):
+        """
+        Return chargee change rate
+        """
+        return self._info['rate']
+
+    def get_type(self):
+        """
+        Return battery type
+        """
+        return self._info['type']
+
+    def get_voltage(self):
+        """
+        Return voltage
+        """
+        return self._info['voltage']
+
+    def check(self):
+        """
+        Check status
+        """
+
+    @classmethod
+    def factory(cls):
+        """
+        Return list of batteries
+        """
+        devices = []
+
+        if os.path.isdir('/sys/class/power_supply'):
+            for directory in glob.glob('/sys/class/power_supply/BAT*'):  # New kernels
+                devices.append(BatteryPower(directory))
+        else:
+            for directory in glob.glob('/proc/acpi/battery/BAT*'):
+                devices.append(BatteryAcpi(directory))
+
+        return devices
+
+
+class BatteryAcpi(Battery):
+    """
+    Battery ACPI class
+
+    Uses old '/proc/acpi/battery/BAT*' interface
+    """
 
     def _config(self, directory):
         self._state = os.path.join(directory, 'state')
@@ -91,64 +175,12 @@ class BatteryAcpi(object):
         except OSError:
             return
 
-    def is_exist(self):
-        """
-        Return exist flag.
-        """
-        return self._is_exist
 
-    def get_capacity(self):
-        """
-        Return current capcity
-        """
-        return self._info['capacity']
-
-    def get_capacity_max(self):
-        """
-        Return max capcity
-        """
-        return self._info['capacity_max']
-
-    def get_charge(self):
-        """
-        Return charge change mode
-        """
-        return self._info['charge']
-
-    def get_name(self):
-        """
-        Return model name
-        """
-        return self._info['model_name']
-
-    def get_oem(self):
-        """
-        Return OEM name
-        """
-        return self._info['oem_name']
-
-    def get_rate(self):
-        """
-        Return chargee change rate
-        """
-        return self._info['rate']
-
-    def get_type(self):
-        """
-        Return battery type
-        """
-        return self._info['type']
-
-    def get_voltage(self):
-        """
-        Return voltage
-        """
-        return self._info['voltage']
-
-
-class BatteryPower(BatteryAcpi):
+class BatteryPower(Battery):
     """
-    Uses '/sys/class/power_supply/BAT*'
+    Battery Power class
+
+    Uses new '/sys/class/power_supply/BAT*' interface
     """
 
     def _config(self, directory):
@@ -212,27 +244,6 @@ class BatteryPower(BatteryAcpi):
                         pass
         except OSError:
             return
-
-
-class BatteryFactory(object):
-    """
-    Battery factory class
-    """
-
-    def detect(self):
-        """
-        Return list of batteries
-        """
-        devices = []
-
-        if os.path.isdir('/sys/class/power_supply'):
-            for directory in glob.glob('/sys/class/power_supply/BAT*'):  # New kernels
-                devices.append(BatteryPower(directory))
-        else:
-            for directory in glob.glob('/proc/acpi/battery/BAT*'):
-                devices.append(BatteryAcpi(directory))
-
-        return devices
 
 
 if __name__ == '__main__':

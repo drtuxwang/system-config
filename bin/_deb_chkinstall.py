@@ -12,12 +12,9 @@ import signal
 import sre_constants
 import sys
 
-import syslib
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
-
-# pylint: disable=no-self-use,too-few-public-methods
 
 
 class Options(object):
@@ -25,14 +22,9 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        list_file = self._args.list_file[0]
-        ispattern = re.compile('[.]debs-?.*$')
-        if not ispattern.search(list_file):
-            raise SystemExit(sys.argv[0] + ': Invalid "' + list_file + '" installed list filename.')
-        self._distribution = ispattern.sub('', list_file)
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_distribution(self):
         """
@@ -62,6 +54,18 @@ class Options(object):
                             help='Debian package name.')
 
         self._args = parser.parse_args(args)
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args)
+
+        list_file = self._args.list_file[0]
+        ispattern = re.compile('[.]debs-?.*$')
+        if not ispattern.search(list_file):
+            raise SystemExit(sys.argv[0] + ': Invalid "' + list_file + '" installed list filename.')
+        self._distribution = ispattern.sub('', list_file)
 
 
 class Package(object):
@@ -132,19 +136,22 @@ class Package(object):
         self._url = url
 
 
-class CheckInstall(object):
+class Main(object):
     """
-    Check install class
+    Main class
     """
 
-    def __init__(self, options):
-        self._packages = self._read_distribution_packages(options.get_distribution() + '.packages')
-        self._read_distribution_pin_packages(options.get_distribution() + '.pinlist')
-        self._read_distribution_installed(options.get_list_file())
-        self._check_distribution_install(
-            options.get_distribution(), options.get_list_file(), options.get_package_names())
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except SystemExit as exception:
+            sys.exit(exception)
 
-    def _read_distribution_packages(self, packages_file):
+    @staticmethod
+    def _read_distribution_packages(packages_file):
         packages = {}
         name = ''
         package = Package()
@@ -233,44 +240,41 @@ class CheckInstall(object):
         if os.path.getsize(urlfile) == 0:
             os.remove(urlfile)
 
-    def _local(self, distribution, url):
+    @staticmethod
+    def _local(distribution, url):
         file = os.path.join(distribution, os.path.basename(url))
         if os.path.isfile(file):
             return 'file://' + os.path.abspath(file)
         return url
 
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            CheckInstall(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
+
+        self._packages = self._read_distribution_packages(options.get_distribution() + '.packages')
+        self._read_distribution_pin_packages(options.get_distribution() + '.pinlist')
+        self._read_distribution_installed(options.get_list_file())
+        self._check_distribution_install(
+            options.get_distribution(), options.get_list_file(), options.get_package_names())
 
 
 if __name__ == '__main__':

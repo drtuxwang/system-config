@@ -17,12 +17,10 @@ import time
 
 import syslib2 as syslib
 
-RELEASE = '3.0.9'
+RELEASE = '3.0.10'
 
 if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 2.7, < 4.0).')
-
-# pylint: disable=no-self-use,redefined-variable-type,too-few-public-methods
 
 
 class Options(object):
@@ -30,32 +28,9 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
-        self._release = RELEASE
-
-        self._parse_args(args[1:])
-
-        self._speak_dir = os.path.abspath(os.path.join(
-            os.path.dirname(args[0]), os.pardir, 'zhspeak-data'))
-        if not os.path.isdir(self._speak_dir):
-            zhspeak = syslib.Command('zhspeak', args=args[1:], check=False)
-            if not zhspeak.is_found():
-                raise SystemExit(sys.argv[0] + ': Cannot find "zhspeak-data" directory.')
-            zhspeak.run(mode='exec')
-
-        if self._args.guiFlag:
-            zhspeaktcl = syslib.Command('zhspeak.tcl')
-            zhspeaktcl.run(mode='exec')
-
-        if self._args.xclipFlag:
-            self._phrases = self._xclip()
-        else:
-            self._phrases = self._args.phrases
-
-        if self._args.dialect in ('zh', 'zhy'):
-            self._language = Chinese(self)
-        else:
-            self._language = Espeak(self)
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_dialect(self):
         """
@@ -119,7 +94,8 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
-    def _xclip(self):
+    @staticmethod
+    def _xclip():
         isxclip = re.compile(os.sep + 'python.* zhspeak .*-xclip')
         task = syslib.Task()
         for pid in task.get_pids():
@@ -135,8 +111,57 @@ class Options(object):
                              ' received from "' + xclip.get_file() + '".')
         return xclip.get_output()
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._release = RELEASE
 
-class Chinese(object):
+        self._parse_args(args[1:])
+
+        self._speak_dir = os.path.abspath(os.path.join(
+            os.path.dirname(args[0]), os.pardir, 'zhspeak-data'))
+        if not os.path.isdir(self._speak_dir):
+            zhspeak = syslib.Command('zhspeak', args=args[1:], check=False)
+            if not zhspeak.is_found():
+                raise SystemExit(sys.argv[0] + ': Cannot find "zhspeak-data" directory.')
+            zhspeak.run(mode='exec')
+
+        if self._args.guiFlag:
+            zhspeaktcl = syslib.Command('zhspeak.tcl')
+            zhspeaktcl.run(mode='exec')
+
+        if self._args.xclipFlag:
+            self._phrases = self._xclip()
+        else:
+            self._phrases = self._args.phrases
+
+        self._language = Language.factory(self)
+
+
+class Language(object):
+    """
+    Language base class
+    """
+
+    def text2speech(self, _):
+        """
+        Text to speech conversion
+        """
+        pass
+
+    @classmethod
+    def factory(cls, options):
+        """
+        Return Language sub class object
+        """
+        if options.get_dialect() in ('zh', 'zhy'):
+            return Chinese(options)
+        else:
+            return Espeak(options)
+
+
+class Chinese(Language):
     """
     Chinese class
     """
@@ -187,16 +212,19 @@ class ChineseDictionary(object):
         self._issound = re.compile(r'[A-Z]$|[a-z]+\d+')
         self._mappings = {}
         self._max_block = 0
-        self._readmap(os.path.join(options.get_speak_dir(), 'en_list'))
+        self.readmap(os.path.join(options.get_speak_dir(), 'en_list'))
         if options.get_dialect() == 'zhy':
-            self._readmap(os.path.join(options.get_speak_dir(), 'zhy_list'))
-            self._readmap(os.path.join(options.get_speak_dir(), 'zhy_listck'))
+            self.readmap(os.path.join(options.get_speak_dir(), 'zhy_list'))
+            self.readmap(os.path.join(options.get_speak_dir(), 'zhy_listck'))
         else:
-            self._readmap(os.path.join(options.get_speak_dir(), 'zh_list'))
-            self._readmap(os.path.join(options.get_speak_dir(), 'zh_listx'))
-            self._readmap(os.path.join(options.get_speak_dir(), 'zh_listck'))
+            self.readmap(os.path.join(options.get_speak_dir(), 'zh_list'))
+            self.readmap(os.path.join(options.get_speak_dir(), 'zh_listx'))
+            self.readmap(os.path.join(options.get_speak_dir(), 'zh_listck'))
 
-    def _readmap(self, file):
+    def readmap(self, file):
+        """
+        Read map
+        """
         try:
             with open(file, 'rb') as ifile:
                 for line in ifile.readlines():
@@ -232,7 +260,7 @@ class ChineseDictionary(object):
         yield sounds
 
 
-class Espeak(object):
+class Espeak(Language):
     """
     Espeak class
     """
@@ -327,37 +355,47 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            if sys.version_info < (3, 0):
-                self._unicode_argv()
-            options = Options(sys.argv)
-            options.get_language().text2speech(options.get_phrases())
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
         sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+        if sys.version_info < (3, 0):
+            for i in range(len(sys.argv)):
+                sys.argv[i] = sys.argv[i].decode('utf-8', 'replace')
 
-    def _unicode_argv(self):
-        for i in range(len(sys.argv)):
-            sys.argv[i] = sys.argv[i].decode('utf-8', 'replace')
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        try:
+            options.get_language().text2speech(options.get_phrases())
+
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

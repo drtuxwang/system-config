@@ -12,33 +12,6 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
-
-class Options(object):
-    """
-    Options class
-    """
-
-    def __init__(self):
-        self._desktop = ck_desktop.Desktop().detect()
-        if self._desktop == 'gnome':
-            self._xcalc = syslib.Command('gcalctool', check=False)
-            if not self._xcalc.is_found():
-                self._xcalc = syslib.Command('xcalc')
-        elif self._desktop == 'kde':
-            self._xcalc = syslib.Command('kcalc', check=False)
-            if not self._xcalc.is_found():
-                self._xcalc = syslib.Command('xcalc')
-        else:
-            self._xcalc = syslib.Command('xcalc')
-
-    def get_xcalc(self):
-        """
-        Return calculator Command class object.
-        """
-        return self._xcalc
-
 
 class Main(object):
     """
@@ -46,19 +19,43 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
         try:
-            options = Options()
-            options.get_xcalc().run(mode='exec')
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
+        except SystemExit as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        desktop = ck_desktop.Desktop().detect()
+        if desktop == 'gnome':
+            xcalc = syslib.Command('gcalctool', check=False)
+            if not xcalc.is_found():
+                xcalc = syslib.Command('xcalc')
+        elif desktop == 'kde':
+            xcalc = syslib.Command('kcalc', check=False)
+            if not xcalc.is_found():
+                xcalc = syslib.Command('xcalc')
+        else:
+            xcalc = syslib.Command('xcalc')
+
+        try:
+            xcalc.run(mode='exec')
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

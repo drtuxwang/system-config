@@ -14,16 +14,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_distribution_files(self):
         """
@@ -39,39 +38,26 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
-class Distribution(object):
+
+class Main(object):
     """
-    Distribution class
+    Main class
     """
 
-    def __init__(self, options):
-        self._wget = syslib.Command('wget', flags=['--timestamping'])
-        os.umask(int('022', 8))
-        for distribution_file in options.get_distribution_files():
-            if distribution_file.endswith('.dist'):
-                try:
-                    print('Checking "' + distribution_file + '" distribution file...')
-                    lines = []
-                    with open(distribution_file, errors='replace') as ifile:
-                        for url in ifile:
-                            url = url.rstrip()
-                            if url and not url.startswith('#'):
-                                lines.extend(self._get_package_list(url))
-                except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' +
-                                     distribution_file + '" distribution file.')
-                try:
-                    file = distribution_file[:-4] + 'packages'
-                    with open(file + '-new', 'w', newline='\n') as ofile:
-                        for line in lines:
-                            print(line, file=ofile)
-                except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '-new" file.')
-                try:
-                    os.rename(file + '-new', file)
-                except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except SystemExit as exception:
+            sys.exit(exception)
 
     def _get_package_list(self, url):
         archive = os.path.basename(url)
@@ -107,14 +93,16 @@ class Distribution(object):
         self._remove()
         return lines
 
-    def _remove(self):
+    @staticmethod
+    def _remove():
         try:
             os.remove('Packages')
             os.remove('Packages.bz2')
         except OSError:
             pass
 
-    def _unpack(self, file):
+    @staticmethod
+    def _unpack(file):
         if file.endswith('.xz'):
             syslib.Command('xz', args=['-d', file]).run()
         elif file.endswith('.bz2'):
@@ -124,38 +112,59 @@ class Distribution(object):
         else:
             raise SystemExit(sys.argv[0] + ': Cannot unpack "' + file + '" package file.')
 
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Distribution(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    def run(self):
+        """
+        Start program
+        """
+        os.umask(int('022', 8))
+
+        options = Options()
+
+        try:
+            self._wget = syslib.Command('wget', flags=['--timestamping'])
+            for distribution_file in options.get_distribution_files():
+                if distribution_file.endswith('.dist'):
+                    try:
+                        print('Checking "' + distribution_file + '" distribution file...')
+                        lines = []
+                        with open(distribution_file, errors='replace') as ifile:
+                            for url in ifile:
+                                url = url.rstrip()
+                                if url and not url.startswith('#'):
+                                    lines.extend(self._get_package_list(url))
+                    except OSError:
+                        raise SystemExit(sys.argv[0] + ': Cannot read "' +
+                                         distribution_file + '" distribution file.')
+                    try:
+                        file = distribution_file[:-4] + 'packages'
+                        with open(file + '-new', 'w', newline='\n') as ofile:
+                            for line in lines:
+                                print(line, file=ofile)
+                    except OSError:
+                        raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '-new" file.')
+                    try:
+                        os.rename(file + '-new', file)
+                    except OSError:
+                        raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
+        except syslib.SyslibError as exception:
+            raise SystemExit(exception)
 
 
 if __name__ == '__main__':

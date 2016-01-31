@@ -4,7 +4,7 @@ Python X-windows desktop module
 
 Copyright GPL v2: 2013-2016 By Dr Colin Kong
 
-Version 1.0.1 (2016-01-24)
+Version 1.0.2 (2016-01-30)
 """
 
 import os
@@ -13,7 +13,7 @@ import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
+# pylint: disable = too-few-public-methods
 
 
 class Desktop(object):
@@ -24,7 +24,8 @@ class Desktop(object):
     def __init__(self):
         self._type = None
 
-    def _detect_xfce(self, keys):
+    @staticmethod
+    def _detect_xfce(keys):
         if 'XDG_MENU_PREFIX' in keys and os.environ['XDG_MENU_PREFIX'] == 'xfce-':
             return 'xfce'
         elif 'XDG_CURRENT_DESKTOP' in keys and os.environ['XDG_CURRENT_DESKTOP'] == 'XFCE':
@@ -33,14 +34,16 @@ class Desktop(object):
             return 'xfce'
         return None
 
-    def _detect_gnome(self, keys):
+    @staticmethod
+    def _detect_gnome(keys):
         if 'DESKTOP_SESSION' in keys and 'gnome' in os.environ['DESKTOP_SESSION']:
             return 'gnome'
         elif 'GNOME_DESKTOP_SESSION_ID' in keys:
             return 'gnome'
         return None
 
-    def _detect_kde(self, keys):
+    @staticmethod
+    def _detect_kde(keys):
         if 'DESKTOP_SESSION' in keys and 'kde' in os.environ['DESKTOP_SESSION']:
             return 'kde'
         return None

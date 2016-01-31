@@ -9,7 +9,7 @@ import unittest.mock
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=attribute-defined-outside-init,invalid-name
+# pylint: disable = attribute-defined-outside-init, invalid-name
 
 
 class Mock_Options(unittest.mock.MagicMock):
