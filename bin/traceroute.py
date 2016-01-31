@@ -25,7 +25,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
         sys.exit(0)
 
@@ -57,10 +57,7 @@ class Main(object):
             traceroute = syslib.Command('traceroute', pathextra=['/usr/sbin', '/usr/etc'])
         traceroute.set_args(sys.argv[1:])
 
-        try:
-            traceroute.run(mode='exec')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        traceroute.run(mode='exec')
 
 
 if __name__ == '__main__':

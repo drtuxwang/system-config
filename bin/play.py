@@ -161,7 +161,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -206,16 +206,12 @@ class Main(object):
         options = Options()
         files = options.get_files()
 
-        try:
-            if options.get_view_flag():
-                self._view(files)
-            else:
-                if options.get_shuffle_flag():
-                    random.shuffle(files)
-                self._play(files)
-
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        if options.get_view_flag():
+            self._view(files)
+        else:
+            if options.get_shuffle_flag():
+                random.shuffle(files)
+            self._play(files)
 
 
 if __name__ == '__main__':

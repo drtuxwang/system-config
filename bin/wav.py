@@ -345,7 +345,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -372,10 +372,7 @@ class Main(object):
         """
         options = Options()
 
-        try:
-            Encoder(options).run()
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        Encoder(options).run()
 
 
 if __name__ == '__main__':

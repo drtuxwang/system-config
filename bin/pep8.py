@@ -25,7 +25,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -54,10 +54,7 @@ class Main(object):
         pep8.set_flags(["--max-line-length=100"])
         pep8.set_args(sys.argv[1:])
 
-        try:
-            pep8.run(mode='exec')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        pep8.run(mode='exec')
 
 
 if __name__ == '__main__':

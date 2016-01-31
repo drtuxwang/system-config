@@ -48,7 +48,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -73,12 +73,9 @@ class Main(object):
         """
         Start program
         """
-        try:
-            options = Options(sys.argv)
-            espeak = options.get_espeak()
-            espeak.run(filter=options.get_filter())
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        options = Options(sys.argv)
+        espeak = options.get_espeak()
+        espeak.run(filter=options.get_filter())
 
         return espeak.get_exitcode()
 

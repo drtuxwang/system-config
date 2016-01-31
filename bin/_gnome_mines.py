@@ -25,7 +25,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -50,16 +50,14 @@ class Main(object):
         """
         Start program
         """
-        try:
-            command = syslib.Command('gnome-mines', check=False)
+        command = syslib.Command('gnome-mines', check=False)
+        if not command.is_found():
+            command = syslib.Command('gnomine', check=False)
             if not command.is_found():
-                command = syslib.Command('gnomine', check=False)
-                if not command.is_found():
-                    command = syslib.Command('gnome-mines')
-            command.set_args(sys.argv[1:])
-            command.run(mode='exec')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+                command = syslib.Command('gnome-mines')
+        command.set_args(sys.argv[1:])
+
+        command.run(mode='exec')
 
 
 if __name__ == '__main__':

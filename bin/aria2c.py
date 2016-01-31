@@ -26,7 +26,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -69,10 +69,7 @@ class Main(object):
         if shaper.is_found():
             aria2c.set_wrapper(shaper)
 
-        try:
-            aria2c.run(mode='exec')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        aria2c.run(mode='exec')
 
 
 if __name__ == '__main__':

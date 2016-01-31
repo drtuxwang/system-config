@@ -25,7 +25,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -54,12 +54,9 @@ class Main(object):
 
         name = os.path.basename(sys.argv[0]).replace('.py', '')
 
-        try:
-            command = syslib.Command(name)
-            command.set_args(sys.argv[1:])
-            command.run(mode='exec')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        command = syslib.Command(name)
+        command.set_args(sys.argv[1:])
+        command.run(mode='exec')
 
 
 if __name__ == '__main__':

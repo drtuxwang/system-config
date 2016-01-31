@@ -25,7 +25,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -53,10 +53,7 @@ class Main(object):
         vncviewer = syslib.Command('vncviewer')
         vncviewer.set_args(sys.argv[1:])
 
-        try:
-            vncviewer.run(mode='daemon')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        vncviewer.run(mode='daemon')
 
 
 if __name__ == '__main__':

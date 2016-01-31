@@ -162,7 +162,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -237,13 +237,10 @@ class Main(object):
         self._wait_max = 64
         self._wait_time = 0.1
 
-        try:
-            self._threads = []
-            self._bcast()
-            self._allreduce()
-            self._output()
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        self._threads = []
+        self._bcast()
+        self._allreduce()
+        self._output()
 
 
 if __name__ == '__main__':

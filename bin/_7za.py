@@ -108,7 +108,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -176,19 +176,16 @@ class Main(object):
         """
         os.umask(int('022', 8))
 
-        try:
-            options = Options()
-            archiver = options.get_archiver()
-            archive = archiver.get_args()[0]
-            sfx = self._check_sfx(archiver, archive)
+        options = Options()
+        archiver = options.get_archiver()
+        archive = archiver.get_args()[0]
+        sfx = self._check_sfx(archiver, archive)
 
-            archiver.run()
-            if archiver.get_exitcode():
-                print(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
-                      ' received from "' + archiver.get_file() + '".', file=sys.stderr)
-                raise SystemExit(archiver.get_exitcode())
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        archiver.run()
+        if archiver.get_exitcode():
+            print(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
+                  ' received from "' + archiver.get_file() + '".', file=sys.stderr)
+            raise SystemExit(archiver.get_exitcode())
 
         if sfx:
             self._make_sfx(archive, sfx)

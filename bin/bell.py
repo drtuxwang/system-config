@@ -25,7 +25,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -65,11 +65,7 @@ class Main(object):
                                  ' "cvlc" software.')
         bell.set_args([sound])
 
-        try:
-            bell.run(mode='batch')
-
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        bell.run(mode='batch')
 
 
 if __name__ == '__main__':

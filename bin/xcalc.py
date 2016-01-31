@@ -24,7 +24,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -52,10 +52,7 @@ class Main(object):
         else:
             xcalc = syslib.Command('xcalc')
 
-        try:
-            xcalc.run(mode='exec')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        xcalc.run(mode='exec')
 
 
 if __name__ == '__main__':

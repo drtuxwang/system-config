@@ -80,7 +80,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -119,26 +119,23 @@ class Main(object):
         self._limit = self._options.get_time() * 60
         self._alarm = None
 
-        try:
-            while True:
-                sys.stdout.write('\033]11;#ffffdd\007')
-                start = int(time.time())
-                elapsed = 0
-                self._alarm = 0
+        while True:
+            sys.stdout.write('\033]11;#ffffdd\007')
+            start = int(time.time())
+            elapsed = 0
+            self._alarm = 0
 
-                try:
-                    while True:
-                        if elapsed >= self._limit + self._alarm:
-                            self._alert()
-                        time.sleep(1)
-                        elapsed = int(time.time()) - start
-                        sys.stdout.write(
-                            ' \r ' + time.strftime('%H:%M ') + str(self._limit - elapsed))
-                        sys.stdout.flush()
-                except KeyboardInterrupt:
-                    print()
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+            try:
+                while True:
+                    if elapsed >= self._limit + self._alarm:
+                        self._alert()
+                    time.sleep(1)
+                    elapsed = int(time.time()) - start
+                    sys.stdout.write(
+                        ' \r ' + time.strftime('%H:%M ') + str(self._limit - elapsed))
+                    sys.stdout.flush()
+            except KeyboardInterrupt:
+                print()
 
 
 if __name__ == '__main__':

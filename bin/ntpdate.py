@@ -26,7 +26,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -54,17 +54,15 @@ class Main(object):
         ntpdate = syslib.Command('ntpdate', pathextra=['/usr/sbin'])
         ntpdate.set_args(['pool.ntp.org'])
 
-        try:
-            if len(sys.argv) == 1 or sys.argv[1] != '-u':
-                ntpdate.run(mode='exec')
-            while True:
-                ntpdate.run(mode='batch')
-                if not ntpdate.has_error():
-                    print('NTP Time updated =', time.strftime('%Y-%m-%d-%H:%M:%S'))
-                    time.sleep(86340)
-                time.sleep(60)
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        if len(sys.argv) == 1 or sys.argv[1] != '-u':
+            ntpdate.run(mode='exec')
+
+        while True:
+            ntpdate.run(mode='batch')
+            if not ntpdate.has_error():
+                print('NTP Time updated =', time.strftime('%Y-%m-%d-%H:%M:%S'))
+                time.sleep(86340)
+            time.sleep(60)
 
 
 if __name__ == '__main__':

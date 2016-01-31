@@ -73,7 +73,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -117,10 +117,7 @@ class Main(object):
                 random.shuffle(files)
             play.extend_args(files)
 
-        try:
-            play.run()
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        play.run()
         if play.get_exitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(play.get_exitcode()) +
                              ' received from "' + play.get_file() + '".')

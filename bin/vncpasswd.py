@@ -25,7 +25,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -52,12 +52,9 @@ class Main(object):
         """
         os.umask(int('077', 8))
 
-        try:
-            vncpasswd = syslib.Command('vncpasswd')
-            vncpasswd.set_args(sys.argv[1:])
-            vncpasswd.run(mode='exec')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        vncpasswd = syslib.Command('vncpasswd')
+        vncpasswd.set_args(sys.argv[1:])
+        vncpasswd.run(mode='exec')
 
 
 if __name__ == '__main__':

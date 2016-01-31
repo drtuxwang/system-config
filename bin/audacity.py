@@ -25,7 +25,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -72,10 +72,7 @@ class Main(object):
                    '^ALSA lib |alsa.c|^Cannot connect to server socket|^jack server')
         self._config()
 
-        try:
-            audacity.run(filter=pattern, mode='background')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        audacity.run(filter=pattern, mode='background')
 
 
 if __name__ == '__main__':

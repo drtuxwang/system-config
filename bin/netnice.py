@@ -153,7 +153,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -181,10 +181,7 @@ class Main(object):
         options = Options()
 
         command = options.get_command()
-        try:
-            command.run()
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        command.run()
         raise SystemExit(command.get_exitcode())
 
 

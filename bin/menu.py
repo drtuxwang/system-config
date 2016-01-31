@@ -62,7 +62,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -89,10 +89,7 @@ class Main(object):
         """
         options = Options()
 
-        try:
-            options.get_menu().run(filter='Failed to load module:', mode='background')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        options.get_menu().run(filter='Failed to load module:', mode='background')
 
 if __name__ == '__main__':
     if '--pydoc' in sys.argv:

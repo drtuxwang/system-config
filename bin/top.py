@@ -25,7 +25,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
         sys.exit(0)
 
@@ -61,10 +61,7 @@ class Main(object):
             top = syslib.Command('top')
         top.set_args(sys.argv[1:])
 
-        try:
-            top.run(mode='exec')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        top.run(mode='exec')
 
 
 if __name__ == '__main__':

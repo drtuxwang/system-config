@@ -56,7 +56,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     def _get_package_list(self, url):
@@ -137,34 +137,31 @@ class Main(object):
 
         options = Options()
 
-        try:
-            self._wget = syslib.Command('wget', flags=['--timestamping'])
-            for distribution_file in options.get_distribution_files():
-                if distribution_file.endswith('.dist'):
-                    try:
-                        print('Checking "' + distribution_file + '" distribution file...')
-                        lines = []
-                        with open(distribution_file, errors='replace') as ifile:
-                            for url in ifile:
-                                url = url.rstrip()
-                                if url and not url.startswith('#'):
-                                    lines.extend(self._get_package_list(url))
-                    except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot read "' +
-                                         distribution_file + '" distribution file.')
-                    try:
-                        file = distribution_file[:-4] + 'packages'
-                        with open(file + '-new', 'w', newline='\n') as ofile:
-                            for line in lines:
-                                print(line, file=ofile)
-                    except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '-new" file.')
-                    try:
-                        os.rename(file + '-new', file)
-                    except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        self._wget = syslib.Command('wget', flags=['--timestamping'])
+        for distribution_file in options.get_distribution_files():
+            if distribution_file.endswith('.dist'):
+                try:
+                    print('Checking "' + distribution_file + '" distribution file...')
+                    lines = []
+                    with open(distribution_file, errors='replace') as ifile:
+                        for url in ifile:
+                            url = url.rstrip()
+                            if url and not url.startswith('#'):
+                                lines.extend(self._get_package_list(url))
+                except OSError:
+                    raise SystemExit(sys.argv[0] + ': Cannot read "' +
+                                     distribution_file + '" distribution file.')
+                try:
+                    file = distribution_file[:-4] + 'packages'
+                    with open(file + '-new', 'w', newline='\n') as ofile:
+                        for line in lines:
+                            print(line, file=ofile)
+                except OSError:
+                    raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '-new" file.')
+                try:
+                    os.rename(file + '-new', file)
+                except OSError:
+                    raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
 
 
 if __name__ == '__main__':

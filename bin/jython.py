@@ -25,7 +25,7 @@ class Main(object):
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except SystemExit as exception:
+        except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
 
     @staticmethod
@@ -53,10 +53,7 @@ class Main(object):
         jython = syslib.Command(os.path.join('bin', 'jython'))
         jython.set_args(sys.argv[1:])
 
-        try:
-            jython.run(mode='exec')
-        except syslib.SyslibError as exception:
-            raise SystemExit(exception)
+        jython.run(mode='exec')
 
 
 if __name__ == '__main__':
