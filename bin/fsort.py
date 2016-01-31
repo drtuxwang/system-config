@@ -9,12 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
-
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
-
-# pylint: disable=no-self-use,too-few-public-methods
 
 
 class Options(object):
@@ -22,8 +18,9 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_files(self):
         """
@@ -39,34 +36,11 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
-
-class Sort(object):
-    """
-    Sort class
-    """
-
-    def __init__(self, options):
-        self._lines = []
-        if len(options.get_files()):
-            for file in options.get_files():
-                try:
-                    with open(file, errors='replace') as ifile:
-                        for line in ifile:
-                            line = line.rstrip('\r\n')
-                            self._lines.append(line)
-                except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
-        else:
-            for line in sys.stdin:
-                self._lines.append(line.rstrip('\r\n'))
-        self._lines = sorted(self._lines)
-
-    def print(self):
+    def parse(self, args):
         """
-        Print lines
+        Parse arguments
         """
-        for line in self._lines:
-            print(line)
+        self._parse_args(args[1:])
 
 
 class Main(object):
@@ -75,31 +49,54 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            Sort(options).print()
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
+        except SystemExit as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        lines = []
+        if len(options.get_files()):
+            for file in options.get_files():
+                try:
+                    with open(file, errors='replace') as ifile:
+                        for line in ifile:
+                            line = line.rstrip('\r\n')
+                            lines.append(line)
+                except OSError:
+                    raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+        else:
+            for line in sys.stdin:
+                lines.append(line.rstrip('\r\n'))
+
+        for line in sorted(lines):
+            print(line)
 
 
 if __name__ == '__main__':

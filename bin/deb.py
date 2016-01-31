@@ -14,16 +14,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_arch(self):
         """
@@ -81,6 +80,12 @@ class Options(object):
                             help='Debian package file, package name or arch.')
 
         self._args = parser.parse_args(args)
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
         self._dpkg = syslib.Command('dpkg')
         self._dpkg.set_args(['--print-architecture'])
@@ -189,26 +194,40 @@ class Package(object):
         self._version = version
 
 
-class PackageManger(object):
+class Main(object):
     """
-    Package manager class
+    Main class
     """
 
-    def __init__(self, options):
-        self._options = options
-        self._read_dpkg_status()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-        mode = options.get_mode()
-        if mode == 'list':
-            self._show_packages_info()
-        elif mode == 'depends':
-            for packagename in options.get_package_names():
-                self._show_dependent_packages([packagename], checked=[])
-        else:
-            options.get_dpkg().run(mode='exec')
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _calc_dependencies(self, names_all):
-        for name, value in self._packages.items():
+    @staticmethod
+    def _calc_dependencies(packages, names_all):
+        for name, value in packages.items():
             if ':' in name:
                 depends = []
                 for depend in value.get_depends():
@@ -216,12 +235,12 @@ class PackageManger(object):
                         depends.append(depend)
                     else:
                         depends.append(depend + ':' + name.split(':')[-1])
-                self._packages[name].set_depends(depends)
+                packages[name].set_depends(depends)
 
     def _read_dpkg_status(self):
         names_all = []
 
-        self._packages = {}
+        packages = {}
         name = ''
         package = Package('', -1, [], '')
         try:
@@ -249,12 +268,14 @@ class PackageManger(object):
                             package.append_depends(i.split()[0])
                     elif line.startswith('Description: '):
                         package.set_description(line.replace('Description: ', '', 1))
-                        self._packages[name] = package
+                        packages[name] = package
                         package = Package('', -1, [], '')
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "/var/lib/dpkg/status" file.')
 
-        self._calc_dependencies(names_all)
+        self._calc_dependencies(packages, names_all)
+
+        return packages
 
     def _show_packages_info(self):
         for name, package in sorted(self._packages.items()):
@@ -280,38 +301,21 @@ class PackageManger(object):
                             checked.append(key)
                             self._show_dependent_packages([key], checked, ident + '  ')
 
+    def run(self):
+        """
+        Start program
+        """
+        self._options = Options()
+        self._packages = self._read_dpkg_status()
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            PackageManger(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        mode = self._options.get_mode()
+        if mode == 'list':
+            self._show_packages_info()
+        elif mode == 'depends':
+            for packagename in self._options.get_package_names():
+                self._show_dependent_packages([packagename], checked=[])
+        else:
+            self._options.get_dpkg().run(mode='exec')
 
 
 if __name__ == '__main__':

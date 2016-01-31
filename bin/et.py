@@ -14,38 +14,37 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
 
-
-class Options(object):
+class Main(object):
     """
-    Options class
+    Main class
     """
 
-    def __init__(self, args):
-        self._et = syslib.Command('et.x86', check=False)
-        if not os.path.isfile(self._et.get_file()):
-            self._et = syslib.Command('et')
-            self._et.set_args(args[1:])
-            self._et.run(mode='exec')
-        xrun = syslib.Command('xrun', check=False)
-        if xrun.is_found():
-            self._et.set_wrapper(xrun)
-        self._config()
-        self._punkbuster()
-        self._et.set_args(args[1:])
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-    def get_et(self):
+    @staticmethod
+    def config():
         """
-        Return et Command class object.
+        Configure program
         """
-        return self._et
-
-    def get_logfile(self):
-        """
-        Return logfile location.
-        """
-        return self._logfile
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _punkbuster(self):
         if 'HOME' in os.environ:
@@ -90,28 +89,27 @@ class Options(object):
                     os.getcwd(), 'et-sdl-sound-r29', 'et-sdl-sound.so')
             if not os.path.isdir(os.path.join(os.environ['HOME'], '.etwolf')):
                 os.mkdir(os.path.join(os.environ['HOME'], '.etwolf'))
-            self._logfile = os.path.join(os.environ['HOME'], '.etwolf', 'etwolf.log')
 
+    def run(self):
+        """
+        Start program
+        """
+        self._et = syslib.Command('et.x86', check=False)
+        if not os.path.isfile(self._et.get_file()):
+            self._et = syslib.Command('et')
+            self._et.set_args(sys.argv[1:])
+            self._et.run(mode='exec')
 
-class Main(object):
-    """
-    Main class
-    """
+        xrun = syslib.Command('xrun', check=False)
+        if xrun.is_found():
+            self._et.set_wrapper(xrun)
 
-    def __init__(self):
-        self._signals()
-        try:
-            options = Options(sys.argv)
-            options.get_et().run(logfile=options.get_logfile(), mode='daemon')
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
+        self._config()
+        self._punkbuster()
+        self._et.set_args(sys.argv[1:])
 
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        logfile = os.path.join(os.environ['HOME'], '.etwolf', 'etwolf.log')
+        self._et.run(logfile=logfile, mode='daemon')
 
 
 if __name__ == '__main__':

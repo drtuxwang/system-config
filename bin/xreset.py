@@ -17,15 +17,34 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
+
+    def get_settings(self):
+        """
+        Return settings
+        """
+        return self._config.get()
+
+    def _parse_args(self, args):
+        parser = argparse.ArgumentParser(description='Reset to default screen resolution.')
+
+        parser.add_argument('settings', nargs='*', metavar='device=mode',
+                            help='Display device (ie "DP1=1920x1080").')
+
+        self._args = parser.parse_args(args)
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
         self._parse_args(args[1:])
 
         if 'HOME' not in os.environ:
@@ -48,20 +67,6 @@ class Options(object):
                     raise SystemExit(sys.argv[0] + ': Invalid "' + setting + '" settings.')
                 self._config.set(device, mode)
             self._config.write(configfile)
-
-    def get_settings(self):
-        """
-        Return settings
-        """
-        return self._config.get()
-
-    def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Reset to default screen resolution.')
-
-        parser.add_argument('settings', nargs='*', metavar='device=mode',
-                            help='Display device (ie "DP1=1920x1080").')
-
-        self._args = parser.parse_args(args)
 
 
 class Configuration(object):
@@ -101,63 +106,58 @@ class Configuration(object):
             pass
 
 
-class Xreset(object):
-    """
-    Xreset class
-    """
-
-    def __init__(self, options):
-        self._xrandr = syslib.Command('xrandr')
-        self._dpi = '96'
-        self._settings = options.get_settings()
-
-    def run(self):
-        """
-        Run commands
-        """
-        self._xrandr.set_args(['-s', '0'])
-        self._xrandr.run(mode='batch')
-        self._xrandr.set_args(['--dpi', self._dpi])
-        self._xrandr.run(mode='batch')
-
-        for device, mode in self._settings:
-            self._xrandr.set_args(['--output', device, '--auto'])
-            self._xrandr.run(mode='batch')
-            self._xrandr.set_args(['--output', device, '--mode', mode])
-            self._xrandr.run(mode='batch')
-
-
 class Main(object):
     """
     Main class
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            Xreset(options).run()
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        xrandr = syslib.Command('xrandr')
+        dpi = '96'
+        settings = options.get_settings()
+
+        xrandr.set_args(['-s', '0'])
+        xrandr.run(mode='batch')
+        xrandr.set_args(['--dpi', dpi])
+        xrandr.run(mode='batch')
+
+        for device, mode in settings:
+            xrandr.set_args(['--output', device, '--auto'])
+            xrandr.run(mode='batch')
+            xrandr.set_args(['--output', device, '--mode', mode])
+            xrandr.run(mode='batch')
 
 
 if __name__ == '__main__':

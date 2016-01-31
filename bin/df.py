@@ -15,38 +15,6 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
-
-class Options(object):
-    """
-    Options class
-    """
-
-    def __init__(self, args):
-        self._df = syslib.Command('df', args=args[1:], pathextra=['/bin'])
-
-        while len(args) > 1:
-            if not args[1].startswith('-'):
-                break
-            elif args[1] != '-k':
-                self._df.run(mode='exec')
-            args = args[1:]
-
-        self._mounts = args[1:]
-
-    def get_df(self):
-        """
-        Return df Command class object.
-        """
-        return self._df
-
-    def get_mounts(self):
-        """
-        Return list of disk mounts.
-        """
-        return self._mounts
-
 
 class CommandThread(threading.Thread):
     """
@@ -88,32 +56,54 @@ class CommandThread(threading.Thread):
             self._child = None
 
 
-class DiskReport(object):
+class Main(object):
     """
-    Disk report class
+    Main class
     """
 
-    def __init__(self, options):
-        self._df = options.get_df()
-        self._mounts = options.get_mounts()
-        if not self._mounts:
-            self._detect()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-    def _detect(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    @staticmethod
+    def _detect():
         mount = syslib.Command('mount')
         mount.run(mode='batch')
+
+        mounts = []
         for line in mount.get_output():
             try:
                 directory, info = line.split(' ', 3)[2:]
             except IndexError:
                 continue
             if 'none' not in info:
-                self._mounts.append(directory)
+                mounts.append(directory)
 
-    def run(self):
-        """
-        Generate report
-        """
+        return mounts
+
+    def _show(self):
         devices = {}
         for file in glob.glob('/dev/disk/by-uuid/*'):
             try:
@@ -123,8 +113,8 @@ class DiskReport(object):
 
         print('Filesystem       1K-blocks       Used  Available Use% Mounted on')
         for mount in self._mounts:
-            self._df.set_args([mount])
-            thread = CommandThread(self._df)
+            self._command.set_args([mount])
+            thread = CommandThread(self._command)
             thread.start()
             end_time = time.time() + 1  # One second delay limit
             while thread.is_alive():
@@ -145,38 +135,25 @@ class DiskReport(object):
                 print('{0:15s} {1:>10s} {2:>10s} {3:>10s} {4:>4s} {5:s}'.
                       format(device, blocks, used, avail, ratio, directory))
 
+    def run(self):
+        """
+        Generate report
+        """
+        self._command = syslib.Command('df', args=sys.argv[1:], pathextra=['/bin'])
 
-class Main(object):
-    """
-    Main class
-    """
+        args = sys.argv
+        while len(args) > 1:
+            if not args[1].startswith('-'):
+                break
+            elif args[1] != '-k':
+                self._command.run(mode='exec')
+            args = args[1:]
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            DiskReport(options).run()
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
+        self._mounts = sys.argv[1:]
+        if not self._mounts:
+            self._mounts = self._detect()
 
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        self._show()
 
 
 if __name__ == '__main__':

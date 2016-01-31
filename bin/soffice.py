@@ -13,37 +13,37 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
 
-
-class Options(object):
+class Main(object):
     """
-    Options class
+    Main class
     """
 
-    def __init__(self, args):
-        self._soffice = syslib.Command(os.path.join('program', 'soffice'))
-        self._soffice.set_args(args[1:])
-        if args[1:] == ['--version']:
-            self._soffice.run(mode='exec')
-        self._filter = ('^$|: GLib-CRITICAL |: GLib-GObject-WARNING |: Gtk-WARNING |'
-                        ': wrong ELF class:|: Could not find a Java Runtime|'
-                        ': failed to read path from javaldx|^Failed to load module:|'
-                        'unary operator expected|: unable to get gail version number|gtk printer')
-        self._config()
-        self._setenv()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-    def get_filter(self):
+    @staticmethod
+    def config():
         """
-        Return filter pattern.
+        Configure program
         """
-        return self._filter
-
-    def get_soffice(self):
-        """
-        Return soffice Command class object.
-        """
-        return self._soffice
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _config(self):
         for file in glob.glob('.~lock.*#'):  # Remove stupid lock files
@@ -55,44 +55,29 @@ class Options(object):
         offline = syslib.Command("offline", check=False)
         if offline.is_found():
             self._soffice.set_wrapper(offline)
-            self._filter += "|: GConf-WARNING|: Connection refused|GConf warning: |GConf Error: "
+            self._pattern += "|: GConf-WARNING|: Connection refused|GConf warning: |GConf Error: "
 
-    def _setenv(self):
+    @staticmethod
+    def _setenv():
         if 'GTK_MODULES' in os.environ:
             del os.environ['GTK_MODULES']  # Fix Linux 'gnomebreakpad' problems
 
+    def run(self):
+        """
+        Start program
+        """
+        self._soffice = syslib.Command(os.path.join('program', 'soffice'))
+        self._soffice.set_args(sys.argv[1:])
+        if sys.argv[1:] == ['--version']:
+            self._soffice.run(mode='exec')
+        self._pattern = ('^$|: GLib-CRITICAL |: GLib-GObject-WARNING |: Gtk-WARNING |'
+                         ': wrong ELF class:|: Could not find a Java Runtime|'
+                         ': failed to read path from javaldx|^Failed to load module:|'
+                         'unary operator expected|: unable to get gail version number|gtk printer')
+        self._config()
+        self._setenv()
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            options.get_soffice().run(filter=options.get_filter(), mode='background')
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        self._soffice.run(filter=self._pattern, mode='background')
 
 
 if __name__ == '__main__':

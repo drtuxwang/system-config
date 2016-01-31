@@ -13,37 +13,40 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
 
-
-class Options(object):
+class Main(object):
     """
-    Options class
+    Main class
     """
 
-    def __init__(self, args):
-        self._skype = syslib.Command('skype')
-        self._skype.set_args(args[1:])
-        self._filter = '^Fontconfig '
-        self._set_libraries(self._skype)
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-        # Prevent creation of 'fontconfig' directory
-        if 'HOME' in os.environ:
-            os.chdir(os.path.dirname(os.environ['HOME']))
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def get_filter(self):
-        """
-        Return filter pattern.
-        """
-        return self._filter
-
-    def get_skype(self):
-        """
-        Return skype Command class object.
-        """
-        return self._skype
-
-    def _set_libraries(self, command):
+    @staticmethod
+    def _set_libraries(command):
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir):
             if syslib.info.get_system() == 'linux':
@@ -53,38 +56,20 @@ class Options(object):
                 else:
                     os.environ['LD_LIBRARY_PATH'] = libdir
 
+    def run(self):
+        """
+        Start program
+        """
+        skype = syslib.Command('skype')
+        skype.set_args(sys.argv[1:])
+        pattern = '^Fontconfig '
+        self._set_libraries(skype)
 
-class Main(object):
-    """
-    Main class
-    """
+        # Prevent creation of 'fontconfig' directory
+        if 'HOME' in os.environ:
+            os.chdir(os.path.dirname(os.environ['HOME']))
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            options.get_skype().run(filter=options.get_filter(), mode='background')
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        skype.run(filter=pattern, mode='background')
 
 
 if __name__ == '__main__':

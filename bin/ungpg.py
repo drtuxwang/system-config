@@ -14,21 +14,15 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._gpg = syslib.Command('gpg')
-
-        self._config()
-        self._set_libraries(self._gpg)
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_files(self):
         """
@@ -42,7 +36,8 @@ class Options(object):
         """
         return self._gpg
 
-    def _config(self):
+    @staticmethod
+    def _config():
         if 'HOME' in os.environ:
             os.umask(int('077', 8))
             gpgdir = os.path.join(os.environ['HOME'], '.gnupg')
@@ -58,16 +53,8 @@ class Options(object):
         if 'DISPLAY' in os.environ:
             os.environ['DISPLAY'] = ''
 
-    def _parse_args(self, args):
-        parser = argparse.ArgumentParser(
-            description='Unpack an encrypted archive in gpg (pgp compatible) format.')
-
-        parser.add_argument('files', nargs='+', metavar='file.gpg|file.pgp',
-                            help='GPG/PGP encrypted file.')
-
-        self._args = parser.parse_args(args)
-
-    def _set_libraries(self, command):
+    @staticmethod
+    def _set_libraries(command):
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir):
             if syslib.info.get_system() == 'linux':
@@ -77,13 +64,65 @@ class Options(object):
                 else:
                     os.environ['LD_LIBRARY_PATH'] = libdir
 
+    def _parse_args(self, args):
+        parser = argparse.ArgumentParser(
+            description='Unpack an encrypted archive in gpg (pgp compatible) format.')
 
-class Ungpg(object):
+        parser.add_argument('files', nargs='+', metavar='file.gpg|file.pgp',
+                            help='GPG/PGP encrypted file.')
+
+        self._args = parser.parse_args(args)
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        self._gpg = syslib.Command('gpg')
+
+        self._config()
+        self._set_libraries(self._gpg)
+
+
+class Main(object):
     """
-    Ungpg class
+    Main class
     """
 
-    def __init__(self, options):
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
         gpg = options.get_gpg()
 
         for file in options.get_files():
@@ -94,39 +133,6 @@ class Ungpg(object):
             if gpg.get_exitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(gpg.get_exitcode()) +
                                  ' received from "' + gpg.get_file() + '".')
-
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Ungpg(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':
