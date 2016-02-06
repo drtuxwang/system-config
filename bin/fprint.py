@@ -112,8 +112,9 @@ class Print(object):
         if options.get_view_flag():
             evince = syslib.Command('evince')
         else:
-            command = syslib.Command('lp', flags=[
-                '-o', 'number-up=' + str(options.get_pages()), '-d', options.get_printer()])
+            command = syslib.Command(
+                'lp', flags=['-U', 'fprint','-o', 'number-up=' + str(options.get_pages()),
+                '-d', options.get_printer()])
 
         for file in options.get_files():
             if not os.path.isfile(file):

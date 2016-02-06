@@ -14,24 +14,15 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._espeak = syslib.Command('espeak')
-        self._espeak.set_flags(['-a128', '-k30', '-ven+f2', '-s60', '-x'])
-        if self._args.voice:
-            self._espeak.append_flag('-v' + self._args.voice[0])
-        self._espeak.set_args([' '.join(self._args.words)])
-
-        self._filter = '^ALSA lib|: Connection refused|^Cannot connect|^jack server'
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_espeak(self):
         """
@@ -56,6 +47,20 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        self._espeak = syslib.Command('espeak')
+        self._espeak.set_flags(['-a128', '-k30', '-ven+f2', '-s60', '-x'])
+        if self._args.voice:
+            self._espeak.append_flag('-v' + self._args.voice[0])
+        self._espeak.set_args([' '.join(self._args.words)])
+
+        self._filter = '^ALSA lib|: Connection refused|^Cannot connect|^jack server'
+
 
 class Main(object):
     """
@@ -63,31 +68,39 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_espeak().run(filter=options.get_filter())
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
-        sys.exit(options.get_espeak().get_exitcode())
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        options.get_espeak().run(filter=options.get_filter())
 
 
 if __name__ == '__main__':

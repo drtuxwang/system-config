@@ -14,20 +14,15 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._gs = syslib.Command('gs')
-        self._gs.set_flags(
-            ['-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=jpeg', '-r' + str(self._args.dpi[0])])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_files(self):
         """
@@ -54,13 +49,55 @@ class Options(object):
         if self._args.dpi[0] < 50:
             raise SystemExit(sys.argv[0] + ': DPI resolution must be at least 50.')
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
-class Unpack(object):
+        self._gs = syslib.Command('gs')
+        self._gs.set_flags(
+            ['-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=jpeg', '-r' + str(self._args.dpi[0])])
+
+
+class Main(object):
     """
-    Unpack class
+    Main class
     """
 
-    def __init__(self, options):
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
         command = options.get_gs()
 
         for file in options.get_files():
@@ -79,39 +116,6 @@ class Unpack(object):
             if command.get_exitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
                                  ' received from "' + command.get_file() + '".')
-
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Unpack(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':
