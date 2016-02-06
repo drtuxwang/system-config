@@ -9,10 +9,8 @@ frame .mainmenu -bg "#cccccc"
     pack .mainmenu.console -side top
     button .mainmenu.desktop -width 10 -bg "#ffcc00" -text Desktop -command {exec xdesktop Desktop &}
     pack .mainmenu.desktop -side top
-    button .mainmenu.chrome -width 10 -bg "#ffff00" -text "Chrome" -command {exec chrome &}
-    pack .mainmenu.chrome -side top
-    button .mainmenu.firefox -width 10 -bg "#ffff00" -text "Firefox" -command {exec firefox &}
-    pack .mainmenu.firefox -side top
+    button .mainmenu.browser -width 10 -bg "#ffff00" -text "Browser" -command {exec firefox &}
+    pack .mainmenu.browser -side top
 
 # Menus
     button .mainmenu.menu_document -width 10 -bg "#00ff00" -text "Document" -command {exec menu_document.tcl &}
