@@ -30,6 +30,22 @@ class Battery(object):
         self._config(directory)
         self.check()
 
+    @classmethod
+    def factory(cls):
+        """
+        Return list of Battery sub class objects
+        """
+        devices = []
+
+        if os.path.isdir('/sys/class/power_supply'):
+            for directory in glob.glob('/sys/class/power_supply/BAT*'):  # New kernels
+                devices.append(BatteryPower(directory))
+        else:
+            for directory in glob.glob('/proc/acpi/battery/BAT*'):
+                devices.append(BatteryAcpi(directory))
+
+        return devices
+
     def _config(self, _):
         self._is_exist = False
 
@@ -91,22 +107,6 @@ class Battery(object):
         """
         Check status
         """
-
-    @classmethod
-    def factory(cls):
-        """
-        Return list of batteries
-        """
-        devices = []
-
-        if os.path.isdir('/sys/class/power_supply'):
-            for directory in glob.glob('/sys/class/power_supply/BAT*'):  # New kernels
-                devices.append(BatteryPower(directory))
-        else:
-            for directory in glob.glob('/proc/acpi/battery/BAT*'):
-                devices.append(BatteryAcpi(directory))
-
-        return devices
 
 
 class BatteryAcpi(Battery):

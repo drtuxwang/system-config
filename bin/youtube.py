@@ -14,31 +14,15 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._youtubedl = syslib.Command('youtube-dl', check=False)
-        if not self._youtubedl.is_found():
-            youtube = syslib.Command('youtube', args=args[1:], check=False)
-            if youtube.is_found():
-                youtube.run(mode='exec')
-            self._youtubedl = syslib.Command('youtube-dl')
-
-        if self._args.viewFlag:
-            self._youtubedl.set_args(['--list-formats'])
-        elif self._args.format:
-            self._youtubedl.set_args(['--title', '--format', str(self._args.format[0])])
-        self._youtubedl.extend_args(self._args.urls)
-
-        self._setpython(self._youtubedl)
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_youtubedl(self):
         """
@@ -46,7 +30,8 @@ class Options(object):
         """
         return self._youtubedl
 
-    def _setpython(self, command):  # Must use system Python
+    @staticmethod
+    def _setpython(command):  # Must use system Python
         if os.path.isfile('/usr/bin/python3'):
             command.set_wrapper(syslib.Command(file='/usr/bin/python3'))
         elif os.path.isfile('/usr/bin/python'):
@@ -64,6 +49,27 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        self._youtubedl = syslib.Command('youtube-dl', check=False)
+        if not self._youtubedl.is_found():
+            youtube = syslib.Command('youtube', args=args[1:], check=False)
+            if youtube.is_found():
+                youtube.run(mode='exec')
+            self._youtubedl = syslib.Command('youtube-dl')
+
+        if self._args.viewFlag:
+            self._youtubedl.set_args(['--list-formats'])
+        elif self._args.format:
+            self._youtubedl.set_args(['--title', '--format', str(self._args.format[0])])
+        self._youtubedl.extend_args(self._args.urls)
+
+        self._setpython(self._youtubedl)
+
 
 class Main(object):
     """
@@ -71,31 +77,39 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_youtubedl().run()
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        options.get_youtubedl().run()
 
 
 if __name__ == '__main__':

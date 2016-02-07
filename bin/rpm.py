@@ -13,21 +13,15 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._rpm = syslib.Command('rpm')
-        if len(args) == 1 or args[1] != '-l':
-            self._rpm.set_args(sys.argv[1:])
-            self._rpm.run(mode='exec')
-
-        self._mode = 'show_packages_info'
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_mode(self):
         """
@@ -40,6 +34,17 @@ class Options(object):
         Return rpm Command class object.
         """
         return self._rpm
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._rpm = syslib.Command('rpm')
+        if len(args) == 1 or args[1] != '-l':
+            self._rpm.set_args(sys.argv[1:])
+            self._rpm.run(mode='exec')
+
+        self._mode = 'show_packages_info'
 
 
 class Package(object):
@@ -95,23 +100,44 @@ class Package(object):
         self._version = version
 
 
-class PackageManger(object):
+class Main(object):
     """
-    Package manager class
+    Main class
     """
 
-    def __init__(self, options):
-        self._options = options
-        self._read_rpm_status()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-        self._show_packages_info()
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _read_rpm_status(self):
-        rpm = self._options.get_rpm()
+    @staticmethod
+    def _read_rpm_status(options):
+        rpm = options.get_rpm()
         rpm.set_args(['-a', '-q', '-i'])
         rpm.run(mode='batch')
         name = ''
-        self._packages = {}
+        packages = {}
         package = Package('', -1, '')
 
         for line in rpm.get_output():
@@ -126,48 +152,25 @@ class PackageManger(object):
                     raise SystemExit(sys.argv[0] + ': Package "' + name + '" has non integer size.')
             elif line.startswith('Summary '):
                 package.set_description(line.split(': ')[1])
-                self._packages[name] = package
+                packages[name] = package
                 package = Package('', '0', '')
-        return
+        return packages
 
-    def _show_packages_info(self):
-        for name, package in sorted(self._packages.items()):
+    @staticmethod
+    def _show_packages_info(packages):
+        for name, package in sorted(packages.items()):
             print('{0:35s} {1:15s} {2:5d}KB {3:s}'.format(
                 name.split(':')[0], package.get_version(), package.get_size(),
                 package.get_description()))
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            PackageManger(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        packages = self._read_rpm_status(options)
+        self._show_packages_info(packages)
 
 
 if __name__ == '__main__':

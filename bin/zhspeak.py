@@ -17,7 +17,7 @@ import time
 
 import syslib2 as syslib
 
-RELEASE = '3.0.11'
+RELEASE = '3.0.12'
 
 if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 2.7, < 4.0).')
@@ -143,12 +143,6 @@ class Language(object):
     Language base class
     """
 
-    def text2speech(self, _):
-        """
-        Text to speech conversion
-        """
-        pass
-
     @classmethod
     def factory(cls, options):
         """
@@ -158,6 +152,12 @@ class Language(object):
             return Chinese(options)
         else:
             return Espeak(options)
+
+    def text2speech(self, _):
+        """
+        Text to speech conversion
+        """
+        pass
 
 
 class Chinese(Language):

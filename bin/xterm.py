@@ -16,15 +16,38 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
+
+    def get_columns(self):
+        """
+        Return number of columns.
+        """
+        return self._columns
+
+    def get_hosts(self):
+        """
+        Return list of hosts.
+        """
+        return self._hosts
+
+    def get_terminal(self):
+        """
+        Return terminal Command class object.
+        """
+        return self._terminal
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
         self._columns = '100'
         invis_flag = False
 
@@ -51,24 +74,6 @@ class Options(object):
         else:
             self._hosts = args[1:]
 
-    def get_columns(self):
-        """
-        Return number of columns.
-        """
-        return self._columns
-
-    def get_hosts(self):
-        """
-        Return list of hosts.
-        """
-        return self._hosts
-
-    def get_terminal(self):
-        """
-        Return terminal Command class object.
-        """
-        return self._terminal
-
 
 class Xterm(object):
     """
@@ -93,13 +98,22 @@ class Xterm(object):
             self._command.append_flag('-rightbar')
         self._filter = '^$'
 
-    def _get_label_flags(self, host):
+    @staticmethod
+    def get_label_flags(host):
+        """
+        Return list of flags for setting terminal label
+        """
         return ['-T', host.split('@')[-1] + ':']
 
-    def _get_run_flag(self):
+    @staticmethod
+    def get_run_flag():
+        """
+        Return flag to prefix command
+        """
         return '-e'
 
-    def _ssh(self):
+    @staticmethod
+    def _ssh():
         if 'HOME' in os.environ:
             sshdir = os.path.join(os.environ['HOME'], '.ssh')
             if not os.path.isdir(sshdir):
@@ -129,10 +143,10 @@ class Xterm(object):
         ssh = None
         for host in self._options.get_hosts():
             if host == self._myhost:
-                self._command.set_args(self._get_label_flags(host))
+                self._command.set_args(self.get_label_flags(host))
                 self._command.run(mode='background', filter=self._filter)
             else:
-                self._command.set_args(self._get_label_flags(host) + [self._get_run_flag()])
+                self._command.set_args(self.get_label_flags(host) + [self.get_run_flag()])
                 if not ssh:
                     ssh = syslib.Command('ssh')
                     ssh.set_flags(
@@ -152,10 +166,10 @@ class XtermInvisible(Xterm):
         ssh = None
         for host in self._options.get_hosts():
             if host == self._myhost:
-                self._command.set_args(self._get_label_flags(host))
+                self._command.set_args(self.get_label_flags(host))
                 self._command.run(mode='background', filter=self._filter)
             else:
-                self._command.set_args(self._get_label_flags(host))
+                self._command.set_args(self.get_label_flags(host))
                 if not ssh:
                     ssh = syslib.Command('ssh')
                     ssh.set_flags(
@@ -180,10 +194,16 @@ class GnomeTerminal(Xterm):
         self._command.set_flags(['--geometry=' + self._options.get_columns() + 'x24'])
         self._filter = '^$|: Gtk-WARNING'
 
-    def _get_label_flags(self, host):
+    def get_label_flags(self, host):
+        """
+        Return list of flags for setting terminal label
+        """
         return ['--title=' + host.split('@')[-1] + ':']
 
-    def _get_run_flag(self):
+    def get_run_flag(self):
+        """
+        Return flag to prefix command
+        """
         return '-x'
 
 
@@ -196,7 +216,10 @@ class Konsole(GnomeTerminal):
         self._command = syslib.Command('konsole')
         self._command.set_flags(['--geometry=' + self._options.get_columns() + 'x24'])
 
-    def _get_run_flag(self):
+    def get_run_flag(self):
+        """
+        Return flag to prefix command
+        """
         return '-e'
 
 
@@ -209,7 +232,7 @@ class XfceTerminal(GnomeTerminal):
         self._command = syslib.Command('xfce4-terminal')
         self._command.set_flags(['--geometry=' + self._options.get_columns() + 'x24'])
 
-    def _get_label_flags(self, host):
+    def get_label_flags(self, host):
         return ['--title=']  # Must use empty to allow bash/tcsh title changing
 
 
@@ -219,31 +242,39 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_terminal().run()
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        options.get_terminal().run()
 
 
 if __name__ == '__main__':

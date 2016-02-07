@@ -14,18 +14,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._backlight = self._get_backlight()
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_change(self):
         """
@@ -39,12 +36,6 @@ class Options(object):
         """
         return self._backlight
 
-    def _get_backlight(self):
-        for backlight in (BacklightIntel(), BacklightIntelSetpci(), BacklightXrandr()):
-            if backlight.detect():
-                return backlight
-        raise SystemExit(sys.argv[0] + ": Cannot detect backlight device.")
-
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Desktop screen backlight utility.')
 
@@ -57,10 +48,18 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        self._backlight = Backlight.factory()
+
 
 class Backlight(object):
     """
-    Backlight class
+    Backlight base class
     """
 
     def __init__(self):
@@ -72,7 +71,18 @@ class Backlight(object):
         self._command = None
         self._screens = None
 
-    def _get_device(self):
+    @classmethod
+    def factory(cls):
+        """
+        Return Backlight sub class object
+        """
+        for backlight in (BacklightIntel(), BacklightIntelSetpci(), BacklightXrandr()):
+            if backlight.detect():
+                return backlight
+        raise SystemExit(sys.argv[0] + ": Cannot detect backlight device.")
+
+    @staticmethod
+    def _get_device():
         return '/sys/class/backlight/acpi_video0'
 
     def get_brightness(self):
@@ -286,31 +296,39 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_backlight().run(options.get_change())
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        options.get_backlight().run(options.get_change())
 
 
 if __name__ == '__main__':
