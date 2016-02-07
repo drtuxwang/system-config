@@ -61,18 +61,20 @@ class Main(object):
             command = syslib.Command('vim')
         else:
             command = syslib.Command('vi')
-
         command.set_args(sys.argv[1:])
-        if len(sys.argv) > 1 and sys.argv[-1] != 'NONE':
-            try:
-                sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':' +
-                                 os.path.abspath(sys.argv[1] + '\007'))
-            except OSError:
-                pass
-            else:
-                sys.stdout.flush()
-                self._edit(command)
-                sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':\007')
+
+        for file in sys.argv[1:]:
+            if not file.startswith('-'):
+                try:
+                    sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':' +
+                                     os.path.abspath(file) + '\007')
+                except OSError:
+                    pass
+                else:
+                    sys.stdout.flush()
+                    self._edit(command)
+                    sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':\007')
+                break
         else:
             self._edit(command)
 
