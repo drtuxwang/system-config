@@ -25,11 +25,11 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
     def get_ping(self):
         """
@@ -57,7 +57,7 @@ class Options(object):
         else:
             self._ping = syslib.Command('ping')
 
-        self._filter = 'min/avg/max'
+        self._pattern = 'min/avg/max'
 
         host = self._args.host[0]
         if syslib.info.get_system() == 'macos':
@@ -68,7 +68,7 @@ class Options(object):
             self._ping.set_args(['-s', host, '64', '3'])
         elif os.name == 'nt':
             self._ping.set_args(['-w', '4', '-n', '3', host])
-            self._filter = 'Minimum|TTL'
+            self._pattern = 'Minimum|TTL'
         else:
             self._ping.set_args(['-w', '4', '-c', '3', host])
 
@@ -113,7 +113,7 @@ class Main(object):
 
         ping = options.get_ping()
         while True:
-            ping.run(filter=options.get_filter(), mode='batch')
+            ping.run(filter=options.get_pattern(), mode='batch')
             if ping.has_output():
                 break
             time.sleep(5)

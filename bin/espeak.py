@@ -22,7 +22,7 @@ class Options(object):
     def __init__(self, args):
         self._espeak = syslib.Command('espeak')
         self._espeak.set_args(args[1:])
-        self._filter = ': Connection refused'
+        self._pattern = ': Connection refused'
 
     def get_espeak(self):
         """
@@ -30,11 +30,11 @@ class Options(object):
         """
         return self._espeak
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
 
 class Main(object):
@@ -75,7 +75,7 @@ class Main(object):
         """
         options = Options(sys.argv)
         espeak = options.get_espeak()
-        espeak.run(filter=options.get_filter())
+        espeak.run(filter=options.get_pattern())
 
         return espeak.get_exitcode()
 

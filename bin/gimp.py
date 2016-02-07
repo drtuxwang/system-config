@@ -24,11 +24,11 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
     def get_gimp(self):
         """
@@ -59,11 +59,11 @@ class Options(object):
         """
         self._gimp = syslib.Command('gimp')
         self._gimp.set_args(args[1:])
-        self._filter = ('^$| GLib-WARNING | GLib-GObject-WARNING | Gtk-WARNING |: Gimp-|'
-                        ' g_bookmark_file_get_size:|recently-used.xbel|^ sRGB |^lcms: |'
-                        'pixmap_path: |in <module>| import |wrong ELF class:|'
-                        ': LibGimpBase-WARNING |^Traceback |: undefined symbol:| XMP metadata:|'
-                        ': No XMP packet found')
+        self._pattern = ('^$| GLib-WARNING | GLib-GObject-WARNING | Gtk-WARNING |: Gimp-|'
+                         ' g_bookmark_file_get_size:|recently-used.xbel|^ sRGB |^lcms: |'
+                         'pixmap_path: |in <module>| import |wrong ELF class:|'
+                         ': LibGimpBase-WARNING |^Traceback |: undefined symbol:| XMP metadata:|'
+                         ': No XMP packet found')
         self._config()
 
 
@@ -105,7 +105,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_gimp().run(filter=options.get_filter(), mode='background')
+        options.get_gimp().run(filter=options.get_pattern(), mode='background')
 
 
 if __name__ == '__main__':

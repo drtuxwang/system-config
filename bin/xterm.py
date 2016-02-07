@@ -82,7 +82,7 @@ class Xterm(object):
 
     def __init__(self, options):
         self._options = options
-        self._filter = '^$'
+        self._pattern = '^$'
         self._myhost = syslib.info.get_hostname()
         self._config()
 
@@ -96,7 +96,7 @@ class Xterm(object):
              '-cr', '#ff00ff', '-ls', '-ut', '-geometry', self._options.get_columns() + 'x24'])
         if self._command.is_match_output(' -rightbar '):
             self._command.append_flag('-rightbar')
-        self._filter = '^$'
+        self._pattern = '^$'
 
     @staticmethod
     def get_label_flags(host):
@@ -144,7 +144,7 @@ class Xterm(object):
         for host in self._options.get_hosts():
             if host == self._myhost:
                 self._command.set_args(self.get_label_flags(host))
-                self._command.run(mode='background', filter=self._filter)
+                self._command.run(mode='background', filter=self._pattern)
             else:
                 self._command.set_args(self.get_label_flags(host) + [self.get_run_flag()])
                 if not ssh:
@@ -154,7 +154,7 @@ class Xterm(object):
                     self._ssh()
                 ssh.set_wrapper(self._command)
                 ssh.set_args([host])
-                ssh.run(mode='background', filter=self._filter)
+                ssh.run(mode='background', filter=self._pattern)
 
 
 class XtermInvisible(Xterm):
@@ -167,7 +167,7 @@ class XtermInvisible(Xterm):
         for host in self._options.get_hosts():
             if host == self._myhost:
                 self._command.set_args(self.get_label_flags(host))
-                self._command.run(mode='background', filter=self._filter)
+                self._command.run(mode='background', filter=self._pattern)
             else:
                 self._command.set_args(self.get_label_flags(host))
                 if not ssh:
@@ -181,7 +181,7 @@ class XtermInvisible(Xterm):
                         ssh.append_arg('"' + arg + '"')
                     else:
                         ssh.append_arg(arg)
-                ssh.run(mode='background', filter=self._filter)
+                ssh.run(mode='background', filter=self._pattern)
 
 
 class GnomeTerminal(Xterm):
@@ -192,7 +192,7 @@ class GnomeTerminal(Xterm):
     def _config(self):
         self._command = syslib.Command('gnome-terminal')
         self._command.set_flags(['--geometry=' + self._options.get_columns() + 'x24'])
-        self._filter = '^$|: Gtk-WARNING'
+        self._pattern = '^$|: Gtk-WARNING'
 
     def get_label_flags(self, host):
         """

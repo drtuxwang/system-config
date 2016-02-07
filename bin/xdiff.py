@@ -24,11 +24,11 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
     def get_meld(self):
         """
@@ -61,8 +61,8 @@ class Options(object):
         else:
             raise SystemExit(sys.argv[0] + ': Cannot compare two directories.')
 
-        self._filter = ('^$|: GtkWarning: |: Gtk-CRITICAL |^  buttons =|^  gtk.main|'
-                        'recently-used.xbel')
+        self._pattern = ('^$|: GtkWarning: |: Gtk-CRITICAL |^  buttons =|^  gtk.main|'
+                         'recently-used.xbel')
 
 
 class Main(object):
@@ -104,7 +104,7 @@ class Main(object):
         options = Options()
 
         meld = options.get_meld()
-        meld.run(filter=options.get_filter())
+        meld.run(filter=options.get_pattern())
         return meld.get_exitcode()
 
 if __name__ == '__main__':

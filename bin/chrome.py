@@ -30,11 +30,11 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
     def get_chrome(self):
         """
@@ -254,9 +254,9 @@ class Options(object):
                     self._chrome.get_file()), 'chrome-sandbox')).get_mode() != 104755:
                 self._chrome.extend_flags(['--test-type', '--disable-setuid-sandbox'])
 
-        self._filter = ('^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
-                        ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
-                        'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|')
+        self._pattern = ('^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
+                         ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
+                         'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|')
         self._config()
         self._set_libraries(self._chrome)
 
@@ -299,7 +299,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_chrome().run(filter=options.get_filter(), mode='background')
+        options.get_chrome().run(filter=options.get_pattern(), mode='background')
 
 
 if __name__ == '__main__':

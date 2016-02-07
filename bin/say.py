@@ -30,11 +30,11 @@ class Options(object):
         """
         return self._espeak
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Speak words using Espeak TTS engine.')
@@ -59,7 +59,7 @@ class Options(object):
             self._espeak.append_flag('-v' + self._args.voice[0])
         self._espeak.set_args([' '.join(self._args.words)])
 
-        self._filter = '^ALSA lib|: Connection refused|^Cannot connect|^jack server'
+        self._pattern = '^ALSA lib|: Connection refused|^Cannot connect|^jack server'
 
 
 class Main(object):
@@ -100,7 +100,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_espeak().run(filter=options.get_filter())
+        options.get_espeak().run(filter=options.get_pattern())
 
 
 if __name__ == '__main__':

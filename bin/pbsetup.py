@@ -23,11 +23,11 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
     def get_pbsetup(self):
         """
@@ -43,7 +43,7 @@ class Options(object):
         if not self._pbsetup.is_found():
             self._pbsetup = syslib.Command('pbsetup')
         self._pbsetup.set_args(args[1:])
-        self._filter = ': wrong ELF class:|: Gtk-WARNING '
+        self._pattern = ': wrong ELF class:|: Gtk-WARNING '
 
 
 class Main(object):
@@ -84,7 +84,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_pbsetup().run(filter=options.get_filter())
+        options.get_pbsetup().run(filter=options.get_pattern())
 
 
 if __name__ == '__main__':

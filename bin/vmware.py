@@ -23,11 +23,11 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
     def get_vmplayer(self):
         """
@@ -77,7 +77,7 @@ class Options(object):
         """
         self._vmplayer = syslib.Command('vmplayer')
         self._vmplayer.set_args(args[1:])
-        self._filter = ': Gtk-WARNING |: g_bookmark_file_get_size|^Fontconfig'
+        self._pattern = ': Gtk-WARNING |: g_bookmark_file_get_size|^Fontconfig'
         self._config()
 
 
@@ -119,7 +119,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_vmplayer().run(filter=options.get_filter(), mode='background')
+        options.get_vmplayer().run(filter=options.get_pattern(), mode='background')
 
 
 if __name__ == '__main__':

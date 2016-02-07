@@ -23,11 +23,11 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
     def get_vlc(self):
         """
@@ -67,7 +67,7 @@ class Options(object):
         """
         self._vlc = syslib.Command('vlc')
         self._vlc.set_args(args[1:])
-        self._filter = ': Paint device returned engine'
+        self._pattern = ': Paint device returned engine'
         self._config()
 
 
@@ -109,7 +109,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_vlc().run(filter=options.get_filter(), mode='background')
+        options.get_vlc().run(filter=options.get_pattern(), mode='background')
 
 
 if __name__ == '__main__':

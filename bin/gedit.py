@@ -23,11 +23,11 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
     def get_gedit(self):
         """
@@ -41,9 +41,9 @@ class Options(object):
         """
         self._gedit = syslib.Command('gedit')
         self._gedit.set_args(args[1:])
-        self._filter = ('^$|$HOME/.gnome|FAMOpen| DEBUG: |GEDIT_IS_PLUGIN|IPP request failed|'
-                        'egg_recent_model_|g_bookmark_file_get_size:|recently-used.xbel|'
-                        'Could not load theme')
+        self._pattern = ('^$|$HOME/.gnome|FAMOpen| DEBUG: |GEDIT_IS_PLUGIN|IPP request failed|'
+                         'egg_recent_model_|g_bookmark_file_get_size:|recently-used.xbel|'
+                         'Could not load theme')
 
 
 class Main(object):
@@ -84,7 +84,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_gedit().run(filter=options.get_filter(), mode='background')
+        options.get_gedit().run(filter=options.get_pattern(), mode='background')
 
 
 if __name__ == '__main__':

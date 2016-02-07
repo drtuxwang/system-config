@@ -23,11 +23,11 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
     def get_mousepad(self):
         """
@@ -41,7 +41,7 @@ class Options(object):
         """
         self._mousepad = syslib.Command('mousepad')
         self._mousepad.set_args(args[1:])
-        self._filter = '^$|recently-used.xbel'
+        self._pattern = '^$|recently-used.xbel'
 
 
 class Main(object):
@@ -82,7 +82,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_mousepad().run(filter=options.get_filter(), mode='background')
+        options.get_mousepad().run(filter=options.get_pattern(), mode='background')
 
 
 if __name__ == '__main__':

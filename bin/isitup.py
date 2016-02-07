@@ -25,11 +25,11 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
     def get_host(self):
         """
@@ -73,7 +73,7 @@ class Options(object):
             self._ping = syslib.Command('ping')
 
         host = self._args.host[0]
-        self._filter = 'min/avg/max'
+        self._pattern = 'min/avg/max'
         if syslib.info.get_system() == 'linux':
             self._ping.set_args(['-h'])
             self._ping.run(filter='[-]w ', mode='batch')
@@ -85,7 +85,7 @@ class Options(object):
             self._ping.set_args(['-s', host, '64', '3'])
         elif os.name == 'nt':
             self._ping.set_args(['-w', '4', '-n', '3', host])
-            self._filter = 'Minimum|TTL'
+            self._pattern = 'Minimum|TTL'
         else:
             self._ping.set_args(['-w', '4', '-c', '3', host])
 
@@ -123,7 +123,7 @@ class Main(object):
 
     @staticmethod
     def _ping(options):
-        options.get_ping().run(filter=options.get_filter(), mode='batch')
+        options.get_ping().run(filter=options.get_pattern(), mode='batch')
         if options.get_ping().has_output():
             return options.get_host() + ' is alive'
         else:

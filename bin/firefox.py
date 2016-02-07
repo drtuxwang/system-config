@@ -29,11 +29,11 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter patern.
         """
-        return self._filter
+        return self._pattern
 
     def get_firefox(self):
         """
@@ -319,7 +319,7 @@ class Options(object):
                 raise SystemExit
 
         self._firefox.set_args(args[1:])
-        self._filter = (
+        self._pattern = (
             '^$|Failed to load module|: G[dt]k-WARNING |: G[dt]k-CRITICAL |:'
             ' GLib-GObject-|: GnomeUI-WARNING|^OpenGL Warning: | Pango-WARNING |'
             '^WARNING: Application calling GLX |: libgnomevfs-WARNING |: wrong ELF class|'
@@ -369,7 +369,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_firefox().run(filter=options.get_filter(), mode='background')
+        options.get_firefox().run(filter=options.get_pattern(), mode='background')
 
 
 if __name__ == '__main__':

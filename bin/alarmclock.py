@@ -29,11 +29,11 @@ class Options(object):
         """
         return self._alarmclock
 
-    def get_filter(self):
+    def get_pattern(self):
         """
         Return filter pattern.
         """
-        return self._filter
+        return self._pattern
 
     def parse(self, args):
         """
@@ -41,7 +41,7 @@ class Options(object):
         """
         self._alarmclock = syslib.Command('alarmclock')
         self._alarmclock.set_args(args[1:])
-        self._filter = ' Gtk-WARNING '
+        self._pattern = ' Gtk-WARNING '
 
 
 class Main(object):
@@ -82,7 +82,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_alarmclock().run(filter=options.get_filter(), mode='background')
+        options.get_alarmclock().run(filter=options.get_pattern(), mode='background')
 
 
 if __name__ == '__main__':
