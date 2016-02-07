@@ -2,10 +2,10 @@
 """
 Python system interaction Library
 
-Version 5.4.1 (2016-01-29)
-"""
+2006-2016 By Dr Colin Kong
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+Version 5.4.1 (2016-01-30)
+"""
 
 import copy
 import distutils.version
@@ -18,17 +18,18 @@ import subprocess
 import sys
 import time
 
-if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 2.7, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=wrong-import-order,wrong-import-position
+# pylint: disable = wrong-import-order, wrong-import-position
+
 if os.name == 'nt':
     import platform
 
-# pylint: disable=no-member,no-self-use,too-few-public-methods
-# pylint: disable=redefined-builtin,unused-variable,invalid-name, redefined-outer-name
-# pylint: disable=too-many-arguments,too-many-branches,too-many-instance-attributes
-# pylint: disable=too-many-lines,too-many-locals,too-many-public-methods,too-many-statements
+# pylint: disable = no-member, no-self-use, too-few-public-methods
+# pylint: disable = redefined-builtin, unused-variable, invalid-name, redefined-outer-name
+# pylint: disable = too-many-arguments, too-many-branches, too-many-instance-attributes
+# pylint: disable = too-many-lines, too-many-locals, too-many-public-methods, too-many-statements
 
 
 class Background(object):
@@ -187,12 +188,8 @@ class Command(object):
 
         elif mode == 'exec':
             if os.name == 'nt':  # Avoids Windows execvpn exit status bug
-                if sys.version_info < (3, 0):
-                    stdout_write = sys.stdout.write
-                    stderr_write = sys.stderr.write
-                else:
-                    stdout_write = sys.stdout.buffer.write
-                    stderr_write = sys.stderr.buffer.write
+                stdout_write = sys.stdout.buffer.write
+                stderr_write = sys.stderr.buffer.write
                 try:
                     if env == {}:
                         child = subprocess.Popen(cmdline, shell=False, stdout=subprocess.PIPE,
@@ -258,7 +255,7 @@ class Command(object):
             for line in stdin:
                 try:
                     child.stdin.write(line.encode('utf-8') + b'\n')
-                except IOError:
+                except OSError:
                     break
             child.stdin.close()
             isfilter = re.compile(filter)
@@ -267,20 +264,20 @@ class Command(object):
                 while True:
                     try:
                         line = child.stdout.readline().decode('utf-8', 'replace')
-                    except (IOError, KeyboardInterrupt):
+                    except (KeyboardInterrupt, OSError):
                         break
                     if not line:
                         break
                     if not filter or not isfilter.search(line):
                         try:
                             sys.stdout.write(line.replace(replace[0], replace[1]))
-                        except IOError:
+                        except OSError:
                             raise SyslibError(sys.argv[0] + ': Error in writing stdout of "' +
                                               self._file + '" program.')
                 while True:
                     try:
                         line = child.stderr.readline().decode('utf-8', 'replace')
-                    except (IOError, KeyboardInterrupt):
+                    except (KeyboardInterrupt, OSError):
                         break
                     if not line:
                         break
@@ -292,13 +289,13 @@ class Command(object):
                     if append:
                         try:
                             ofile = open(output_file, 'ab')
-                        except IOError:
+                        except OSError:
                             raise SyslibError(sys.argv[0] + ': Cannot append to "' +
                                               output_file + '" output file.')
                     else:
                         try:
                             ofile = open(output_file, 'wb')
-                        except IOError:
+                        except OSError:
                             raise SyslibError(sys.argv[0] + ': Cannot create "' +
                                               output_file + '" output file.')
                     while True:
@@ -314,7 +311,7 @@ class Command(object):
                     while True:
                         try:
                             line = child.stdout.readline().decode('utf-8', 'replace')
-                        except (IOError, KeyboardInterrupt):
+                        except (KeyboardInterrupt, OSError):
                             break
                         if not line:
                             break
@@ -324,7 +321,7 @@ class Command(object):
                     while True:
                         try:
                             line = child.stderr.readline().decode('utf-8', 'replace')
-                        except (IOError, KeyboardInterrupt):
+                        except (KeyboardInterrupt, OSError):
                             break
                         if not line:
                             break
@@ -489,7 +486,7 @@ class Command(object):
         if os.name == 'nt':
             try:
                 ifile = open(self._file, 'rb')
-            except IOError:
+            except OSError:
                 pass
             else:
                 line = ifile.readline().decode('utf-8', 'replace').rstrip('\r\n')
@@ -745,7 +742,7 @@ class Daemon(object):
                         break
                     ofile.write(byte)
                     ofile.flush()  # Unbuffered
-        except IOError:
+        except OSError:
             pass
 
     def _run_wait(self, child):
@@ -913,7 +910,7 @@ class SystemInfo(object):
                         with open(os.path.join(registry_key, 'CurrentBuildNumber'),
                                   errors='replace') as ifile:
                             _cache['kernel'] += '.' + ifile.readline()
-                    except IOError:
+                    except OSError:
                         raise SyslibError(sys.argv[0] + ': Error reading "' +
                                           registry_key + '" registry key.')
 
@@ -954,10 +951,7 @@ class SystemInfo(object):
         """
         Return hostname in IDNA format.
         """
-        if sys.version_info < (3, 0):
-            return host.decode('utf-8', 'replace').encode('idna')
-        else:
-            return str(host.encode('idna'))[2:-1]
+        return str(host.encode('idna'))[2:-1]
 
     def newest(self, files):
         """
@@ -971,7 +965,7 @@ class SystemInfo(object):
             if os.path.isfile(file) or os.path.isdir(file):
                 if nfile:
                     file_stat = FileStat(file)
-                    if file_stat.get_time() > nfile_stat.getTime():
+                    if file_stat.get_time() > nfile_stat.get_time():
                         nfile = file
                         nfile_stat = file_stat
                 else:
@@ -991,7 +985,7 @@ class SystemInfo(object):
             if os.path.isfile(file) or os.path.isdir(file):
                 if nfile:
                     file_stat = FileStat(file)
-                    if file_stat.get_time() < nfile_stat.getTime():
+                    if file_stat.get_time() < nfile_stat.get_time():
                         nfile = file
                         nfile_stat = file_stat
                 else:
@@ -1022,7 +1016,7 @@ class SystemInfo(object):
             if len(string) >= 4:
                 if is_match.search(string):
                     return string
-        except IOError:
+        except OSError:
             pass
         return ''
 
@@ -1104,7 +1098,7 @@ class SyslibError(Exception):
         """
         message = Error message
         """
-        super(SyslibError, self).__init__()
+        super().__init__()
         self.args = (message,)
 
     def get_args(self):
@@ -1355,8 +1349,6 @@ class Main(object):
     def __init__(self):
         self._signals()
         try:
-            if sys.version_info < (3, 0):
-                self._unicode_argv()
             if '_SYSTEM_BG' in os.environ:
                 Background()
             elif '_SYSTEM_DM' in os.environ:
@@ -1370,10 +1362,6 @@ class Main(object):
     def _signals(self):
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _unicode_argv(self):
-        for i in range(len(sys.argv)):
-            sys.argv[i] = sys.argv[i].decode('utf-8', 'replace')
 
 
 # Caching dictionary for this module

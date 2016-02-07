@@ -12,21 +12,19 @@ import unittest.mock
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable = attribute-defined-outside-init, invalid-name, too-few-public-methods
-
 
 class Patcher(object):
     """
     This class patches Python objects and class object generators.
 
-    self._testCase = TestCase class object
+    self._test_case = TestCase class object
     """
 
-    def __init__(self, testCase):
+    def __init__(self, test_case):
         """
-        testCase = TestCase class object
+        test_case = TestCase class object
         """
-        self._testCase = testCase
+        self._test_case = test_case
 
         self._stdout = sys.stdout
         sys.stdout = io.StringIO()
@@ -52,7 +50,7 @@ class Patcher(object):
         """
         patcher = unittest.mock.patch.dict(handle, dictionary)
         patcher.start()
-        self._testCase.addCleanup(patcher.stop)
+        self._test_case.addCleanup(patcher.stop)
 
     def set_file(self, file, data):
         """
@@ -61,7 +59,7 @@ class Patcher(object):
         file = File name
         data = Binary data
         """
-        Patch_File(self._testCase).create(file, data)
+        PatchFile(self._test_case).create(file, data)
 
     def set_method(self, handle, method, mock=None):
         """
@@ -76,7 +74,7 @@ class Patcher(object):
         else:
             patcher = unittest.mock.patch.object(handle, method, return_value=mock)
         patcher.start()
-        self._testCase.addCleanup(patcher.stop)
+        self._test_case.addCleanup(patcher.stop)
 
     def set_system(self, system):
         """
@@ -84,21 +82,22 @@ class Patcher(object):
 
         system = Operating System (ie 'linux', 'windows')
         """
-        Patch_os(self._testCase).set_system(system)
+        PatchOs(self._test_case).set_system(system)
 
 
-class Patch_File(object):
+class PatchFile(object):
     """
     This class patches file system with a temp file.
 
-    self._testCase = TestCase class object
+    self._test_case = TestCase class object
     """
 
-    def __init__(self, testCase):
+    def __init__(self, test_case):
         """
-        testCase = TestCase class object
+        test_case = TestCase class object
         """
-        self._testCase = testCase
+        self._test_case = test_case
+        self._tmpfiles = []
 
     def create(self, file, data):
         """
@@ -107,31 +106,40 @@ class Patch_File(object):
         file = File name
         data = Binary data
         """
-        self._file = file
-        self._testCase.addCleanup(self._delete)
+        self._tmpfiles.append(file)
+        self._test_case.addCleanup(self._delete)
 
         with open(file, 'wb') as ofile:
             ofile.write(data)
 
-    def _delete(self):
+    @staticmethod
+    def remove(file):
+        """
+        Remove file
+        """
         try:
-            os.remove(self._file)
+            os.remove(file)
         except OSError:
             pass
 
+    def _delete(self):
+        for file in self._tmpfiles:
+            self.remove(file)
 
-class Patch_os(object):
+
+class PatchOs(object):
     """
     This class patches Python built-in 'os' module objects.
 
-    self._testCase = TestCase class object
+    self._test_case = TestCase class object
     """
 
-    def __init__(self, testCase):
+    def __init__(self, test_case):
         """
-        testCase = TestCase class object
+        test_case = TestCase class object
         """
-        self._testCase = testCase
+        self._test_case = test_case
+        self._info = {}
 
     def set_system(self, system):
         """
@@ -140,9 +148,9 @@ class Patch_os(object):
         system = Operating System (ie 'linux', 'windows')
         """
 
-        self._os_sep = os.sep
-        self._os_pathsep = os.pathsep
-        self._os_path_pathsep = os.path.pathsep
+        self._info['os.sep'] = os.sep
+        self._info['os.pathsep'] = os.pathsep
+        self._info['os.path.pathsep'] = os.path.pathsep
 
         if system == 'linux':
             os.sep = '/'
@@ -152,11 +160,11 @@ class Patch_os(object):
             os.sep = '\\'
             os.pathsep = ';'
             os.path.pathsep = ';'
-        self._testCase.addCleanup(self._unset_system)
+        self._test_case.addCleanup(self._unset_system)
 
         patcher = unittest.mock.patch.object(os.path, 'join', side_effect=self.mocked_os_path_join)
         patcher.start()
-        self._testCase.addCleanup(patcher.stop)
+        self._test_case.addCleanup(patcher.stop)
 
     @staticmethod
     def mocked_os_path_join(*args):
@@ -166,14 +174,14 @@ class Patch_os(object):
         return os.sep.join(args)
 
     def _unset_system(self):
-        if os.sep != self._os_sep:
-            os.sep = self._os_sep
+        if os.sep != self._info['os.sep']:
+            os.sep = self._info['os.sep']
 
-        if os.pathsep != self._os_pathsep:
-            os.pathsep = self._os_pathsep
+        if os.pathsep != self._info['os.pathsep']:
+            os.pathsep = self._info['os.pathsep']
 
-        if os.path.pathsep != self._os_path_pathsep:
-            os.path.pathsep = self._os_path_pathsep
+        if os.path.pathsep != self._info['os.path.pathsep']:
+            os.path.pathsep = self._info['os.path.pathsep']
 
 
 if __name__ == '__main__':

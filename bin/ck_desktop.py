@@ -13,8 +13,6 @@ import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable = too-few-public-methods
-
 
 class Desktop(object):
     """
@@ -25,40 +23,53 @@ class Desktop(object):
         self._type = None
 
     @staticmethod
-    def _detect_xfce(keys):
+    def has_xfce():
+        """
+        Return true if running XFCE
+        """
+        keys = os.environ.keys()
         if 'XDG_MENU_PREFIX' in keys and os.environ['XDG_MENU_PREFIX'] == 'xfce-':
-            return 'xfce'
+            return True
         elif 'XDG_CURRENT_DESKTOP' in keys and os.environ['XDG_CURRENT_DESKTOP'] == 'XFCE':
-            return 'xfce'
+            return True
         elif 'XDG_DATA_DIRS' in keys and '/xfce' in os.environ['XDG_DATA_DIRS']:
-            return 'xfce'
-        return None
+            return True
+        return False
 
     @staticmethod
-    def _detect_gnome(keys):
+    def has_gnome():
+        """
+        Return true if running Gnome
+        """
+        keys = os.environ.keys()
         if 'DESKTOP_SESSION' in keys and 'gnome' in os.environ['DESKTOP_SESSION']:
-            return 'gnome'
+            return True
         elif 'GNOME_DESKTOP_SESSION_ID' in keys:
-            return 'gnome'
-        return None
+            return True
+        return False
 
     @staticmethod
-    def _detect_kde(keys):
+    def has_kde():
+        """
+        Return true if running KDE
+        """
+        keys = os.environ.keys()
         if 'DESKTOP_SESSION' in keys and 'kde' in os.environ['DESKTOP_SESSION']:
-            return 'kde'
-        return None
+            return True
+        return False
 
     def detect(self):
         """
-        Detect desktop type
+        Return desktop name (xfce, gnome, kde)
         """
         if not self._type:
-            keys = os.environ.keys()
-            self._type = 'Unknown'
-            for method in (self._detect_xfce, self._detect_gnome, self._detect_kde):
-                self._type = method(keys)
-                if self._type:
-                    break
+            if self.has_xfce():
+                self._type = 'xfce'
+            elif self.has_gnome():
+                self._type = 'gnome'
+            elif self.has_kde():
+                self._type = 'kde'
+
         return self._type
 
 

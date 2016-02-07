@@ -18,7 +18,7 @@ if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
 # pylint: disable = invalid-name, no-member, too-many-public-methods
 
 
-class Test_Options(unittest.TestCase):
+class TestOptions(unittest.TestCase):
     """
     This class tests Options class.
     """
@@ -380,7 +380,7 @@ class Test_Options(unittest.TestCase):
                       ': error: the following arguments are required: module, arg', value)
 
 
-class Test_PythonLoader(unittest.TestCase):
+class TestPythonLoader(unittest.TestCase):
     """
     This class tests PythonLoader class.
     """
@@ -392,7 +392,7 @@ class Test_PythonLoader(unittest.TestCase):
         self.maxDiff = None
         self._patcher = patchlib.Patcher(self)
 
-        self._options = mock_pyld.Mock_Options()
+        self._options = mock_pyld.MockOptions()
         self._options.mock_get_dump_flag(False)
         self._options.mock_get_library_path([])
         self._options.mock_get_module('arg0')
@@ -405,8 +405,8 @@ class Test_PythonLoader(unittest.TestCase):
         """
         Test object dumping does not fail.
         """
-        pythonLoader = pyld.PythonLoader(self._options)
-        pythonLoader.dump()
+        python_loader = pyld.PythonLoader(self._options)
+        python_loader.dump()
 
     def test_run_dump_flag(self):
         """
@@ -415,21 +415,21 @@ class Test_PythonLoader(unittest.TestCase):
         self._patcher.set_method(pyld.PythonLoader, 'dump')
         self._options.mock_get_dump_flag(True)
 
-        pythonLoader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._options)
 
         with self.assertRaises(FileNotFoundError):
-            pythonLoader.run()
+            python_loader.run()
 
-        self.assertTrue(pythonLoader.dump.called)
+        self.assertTrue(python_loader.dump.called)
 
     def test_run_import_error(self):
         """
         Test run failure when module does not exist
         """
-        pythonLoader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._options)
 
         with self.assertRaises(FileNotFoundError):
-            pythonLoader.run()
+            python_loader.run()
 
     def test_run_import_main(self):
         """
@@ -438,10 +438,10 @@ class Test_PythonLoader(unittest.TestCase):
         self._options.mock_get_module('test_pyld')
         self._options.mock_get_module_dir(os.curdir)
 
-        pythonLoader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._options)
 
         with self.assertRaises(AttributeError) as context:
-            pythonLoader.run()
+            python_loader.run()
 
         self.assertIsInstance(context.exception.args, tuple)
         self.assertIn("has no attribute 'Main'", context.exception.args[0])
@@ -452,10 +452,10 @@ class Test_PythonLoader(unittest.TestCase):
         """
         self._options.mock_get_library_path(['directory1', 'directory2'])
 
-        pythonLoader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._options)
 
         with self.assertRaises(FileNotFoundError):
-            pythonLoader.run()
+            python_loader.run()
         self.assertIn('directory1', sys.path)
         self.assertIn('directory2', sys.path)
 
@@ -465,10 +465,10 @@ class Test_PythonLoader(unittest.TestCase):
         """
         self._options.mock_get_verbose_flag(True)
 
-        pythonLoader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._options)
 
         with self.assertRaises(FileNotFoundError):
-            pythonLoader.run()
+            python_loader.run()
 
         value = pyld.sys.stdout.getvalue()
         self.assertIsInstance(value, str)
@@ -478,9 +478,9 @@ class Test_PythonLoader(unittest.TestCase):
         """
         Test options is set correctly.
         """
-        pythonLoader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._options)
 
-        value = pythonLoader.get_options()
+        value = python_loader.get_options()
         self.assertIsInstance(value, unittest.mock.MagicMock)
         self.assertEqual(value, self._options)
 
@@ -488,9 +488,9 @@ class Test_PythonLoader(unittest.TestCase):
         """
         Test getting Python system arguments (faked by pyld).
         """
-        pythonLoader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._options)
 
-        value = pythonLoader.get_sys_argv()
+        value = python_loader.get_sys_argv()
         self.assertIsInstance(value, list)
         self.assertListEqual(value, [os.path.join('directory', 'arg0'), 'args1', 'args2'])
 

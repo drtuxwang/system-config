@@ -9,19 +9,27 @@ import unittest.mock
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable = attribute-defined-outside-init, invalid-name
 
-
-class Mock_Options(unittest.mock.MagicMock):
+class MockOptions(unittest.mock.MagicMock):
     """
     This class mocks Options class.
     """
 
-    def mock_get_dump_flag(self, dumpFlag):
+    def __init__(self, **args):
+        super().__init__(*args)
+        self.get_dump_flag = unittest.mock.MagicMock()
+        self.get_module = unittest.mock.MagicMock()
+        self.get_module_name = unittest.mock.MagicMock()
+        self.get_module_args = unittest.mock.MagicMock()
+        self.get_module_dir = unittest.mock.MagicMock()
+        self.get_library_path = unittest.mock.MagicMock()
+        self.get_verbose_flag = unittest.mock.MagicMock()
+
+    def mock_get_dump_flag(self, dump_flag):
         """
         Mock get dump flag
         """
-        self.get_dump_flag = unittest.mock.MagicMock(return_value=dumpFlag)
+        self.get_dump_flag = unittest.mock.MagicMock(return_value=dump_flag)
 
     def mock_get_module(self, module):
         """
@@ -47,17 +55,17 @@ class Mock_Options(unittest.mock.MagicMock):
         """
         self.get_module_dir = unittest.mock.MagicMock(return_value=directory)
 
-    def mock_get_library_path(self, libraryPath):
+    def mock_get_library_path(self, library_path):
         """
         Mock get library path
         """
-        self.get_library_path = unittest.mock.MagicMock(return_value=libraryPath)
+        self.get_library_path = unittest.mock.MagicMock(return_value=library_path)
 
-    def mock_get_verbose_flag(self, verboseFlag):
+    def mock_get_verbose_flag(self, verbose_flag):
         """
         Mock get verbose flag
         """
-        self.get_verbose_flag = unittest.mock.MagicMock(return_value=verboseFlag)
+        self.get_verbose_flag = unittest.mock.MagicMock(return_value=verbose_flag)
 
 
 if __name__ == '__main__':
