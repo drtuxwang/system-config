@@ -13,30 +13,15 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._gitk = syslib.Command(os.path.join('bin', 'gitk'))
-        self._gitk.set_args(args[1:])
-
-        self._env = {}
-        if os.name == 'nt':
-            os.environ['PATH'] = os.path.join(os.environ['PATH'],
-                                              os.path.dirname(self._gitk.get_file()))
-        else:
-            git_home = os.path.dirname(os.path.dirname(self._gitk.get_file()))
-            if git_home not in ('/usr', '/usr/local', '/opt/software'):
-                self._env['GIT_EXEC_PATH'] = os.path.join(git_home, 'libexec', 'git-core')
-                self._env['GIT_TEMPLATE_DIR'] = os.path.join(git_home, 'share',
-                                                             'git-core', 'templates')
-
-        self._config()
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_env(self):
         """
@@ -50,7 +35,8 @@ class Options(object):
         """
         return self._gitk
 
-    def _config(self):
+    @staticmethod
+    def _config():
         if 'HOME' in os.environ:
             file = os.path.join(os.environ['HOME'], '.gitconfig')
             if not os.path.isfile(file):
@@ -64,6 +50,25 @@ class Options(object):
                 except OSError:
                     pass
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._gitk = syslib.Command(os.path.join('bin', 'gitk'))
+        self._gitk.set_args(args[1:])
+
+        self._env = {}
+        if os.name == 'nt':
+            os.environ['PATH'] = os.path.join(os.environ['PATH'],
+                                              os.path.dirname(self._gitk.get_file()))
+        else:
+            git_home = os.path.dirname(os.path.dirname(self._gitk.get_file()))
+            if git_home not in ('/usr', '/usr/local', '/opt/software'):
+                self._env['GIT_EXEC_PATH'] = os.path.join(git_home, 'libexec', 'git-core')
+                self._env['GIT_TEMPLATE_DIR'] = os.path.join(git_home, 'share',
+                                                             'git-core', 'templates')
+        self._config()
+
 
 class Main(object):
     """
@@ -71,31 +76,39 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_gitk().run(mode='exec', env=options.get_env())
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        options.get_gitk().run(mode='exec', env=options.get_env())
 
 
 if __name__ == '__main__':

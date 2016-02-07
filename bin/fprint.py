@@ -17,18 +17,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        os.umask(int('077', 8))
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_chars(self):
         """
@@ -60,7 +57,8 @@ class Options(object):
         """
         return self._args.viewFlag
 
-    def _get_default_printer(self):
+    @staticmethod
+    def _get_default_printer():
         lpstat = syslib.Command('lpstat', args=['-d'], check=False)
         if lpstat.is_found():
             lpstat.run(filter='^system default destination: ', mode='batch')
@@ -86,6 +84,14 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        os.umask(int('077', 8))
+
         if self._args.chars[0] < 0:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
                              'characters per line.')
@@ -101,66 +107,56 @@ class Options(object):
                 raise SystemExit(sys.argv[0] + ': Cannot detect default printer.')
 
 
-class Print(object):
+class Main(object):
     """
-    Print class
+    Main class
     """
 
-    def __init__(self, options):
-        self._tmpfile = os.sep + os.path.join(
-            'tmp', 'fprint-' + syslib.info.get_username() + '.' + str(os.getpid()))
-        if options.get_view_flag():
-            evince = syslib.Command('evince')
-        else:
-            command = syslib.Command(
-                'lp', flags=['-U', 'fprint','-o', 'number-up=' + str(options.get_pages()),
-                '-d', options.get_printer()])
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
-            ext = file.split('.')[-1].lower()
-            if ext in ('bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff'):
-                message = self._image(file)
-            elif ext == 'pdf':
-                message = self._pdf(file)
-            elif ext in ('ps', 'eps'):
-                message = self._postscript(file)
-            else:
-                message = self._text(options, file)
-            if options.get_view_flag():
-                print('Spooling', message, 'to printer previewer')
-                evince.set_args([self._tmpfile])
-                evince.run()
-            else:
-                print('Spooling ', message, ' to printer "', options.get_printer(), '"', sep='')
-                command.set_args([self._tmpfile])
-                command.run()
-                if command.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
-                                     ' received from "' + command.get_file() + '".')
-            os.remove(self._tmpfile)
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _image(self, file):
-        if not hasattr(self, '_convert'):
-            self._convert = syslib.Command('convert')
+        convert = syslib.Command('convert')
 
-        self._convert.set_args(['-verbose', file, '/dev/null'])
-        self._convert.run(filter='^' + file + ' ', mode='batch', error2output=True)
-        if not self._convert.has_output():
+        convert.set_args(['-verbose', file, '/dev/null'])
+        convert.run(filter='^' + file + ' ', mode='batch', error2output=True)
+        if not convert.has_output():
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" image file.')
-        xsize, ysize = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
+        xsize, ysize = convert.get_output()[0].split('+')[0].split()[-1].split('x')
 
         if int(xsize) > int(ysize):
-            self._convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40',
-                                    '-rotate', '90'])
+            convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40',
+                              '-rotate', '90'])
         else:
-            self._convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40'])
-        self._convert.extend_args([file, 'ps:' + self._tmpfile])
-        self._convert.run(mode='batch')
-        if self._convert.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._convert.get_exitcode()) +
-                             ' received from "' + self._convert.get_file() + '".')
+            convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40'])
+        convert.extend_args([file, 'ps:' + self._tmpfile])
+        convert.run(mode='batch')
+        if convert.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(convert.get_exitcode()) +
+                             ' received from "' + convert.get_file() + '".')
 
         return 'IMAGE file "' + file + '"'
 
@@ -221,17 +217,16 @@ class Print(object):
     def _text(self, options, file):
         if 'LANG' in os.environ:
             del os.environ['LANG']  # Avoids locale problems
-        if not hasattr(self, '_a2ps'):
-            self._a2ps = syslib.Command('a2ps')
-            # Space in header and footer increase top/bottom margins
-            self._a2ps.set_flags(
-                ['--media=A4', '--columns=1', '--header= ', '--left-footer=', '--footer= ',
-                 '--right-footer=', '--output=-', '--highlight-level=none', '--quiet'])
+        a2ps = syslib.Command('a2ps')
+        # Space in header and footer increase top/bottom margins
+        a2ps.set_flags(
+            ['--media=A4', '--columns=1', '--header= ', '--left-footer=', '--footer= ',
+             '--right-footer=', '--output=-', '--highlight-level=none', '--quiet'])
         chars = options.get_chars()
 
-        self._a2ps.set_args(['--portrait', '--chars-per-line=' + str(chars),
-                             '--left-title=' + time.strftime('%Y-%m-%d-%H:%M:%S'),
-                             '--center-title=' + os.path.basename(file)])
+        a2ps.set_args(['--portrait', '--chars-per-line=' + str(chars),
+                       '--left-title=' + time.strftime('%Y-%m-%d-%H:%M:%S'),
+                       '--center-title=' + os.path.basename(file)])
 
         is_not_printable = re.compile('[\000-\037\200-\277]')
         try:
@@ -247,44 +242,51 @@ class Print(object):
                         stdin.extend(lines)
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" text file.')
-        self._a2ps.run(mode='batch', stdin=stdin, output_file=self._tmpfile)
-        if self._a2ps.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._a2ps.get_exitcode()) +
-                             ' received from "' + self._a2ps.get_file() + '".')
+        a2ps.run(mode='batch', stdin=stdin, output_file=self._tmpfile)
+        if a2ps.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(a2ps.get_exitcode()) +
+                             ' received from "' + a2ps.get_file() + '".')
         return 'text file "' + file + '" with ' + str(chars) + ' columns'
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
+        self._tmpfile = os.sep + os.path.join(
+            'tmp', 'fprint-' + syslib.info.get_username() + '.' + str(os.getpid()))
+        if options.get_view_flag():
+            evince = syslib.Command('evince')
+        else:
+            command = syslib.Command('lp', flags=[
+                '-U', 'someone', '-o', 'number-up=' + str(options.get_pages()), '-d',
+                options.get_printer()])
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Print(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
+        for file in options.get_files():
+            if not os.path.isfile(file):
+                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+            ext = file.split('.')[-1].lower()
+            if ext in ('bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff'):
+                message = self._image(file)
+            elif ext == 'pdf':
+                message = self._pdf(file)
+            elif ext in ('ps', 'eps'):
+                message = self._postscript(file)
             else:
-                argv.append(arg)
-        sys.argv = argv
+                message = self._text(options, file)
+            if options.get_view_flag():
+                print('Spooling', message, 'to printer previewer')
+                evince.set_args([self._tmpfile])
+                evince.run()
+            else:
+                print('Spooling ', message, ' to printer "', options.get_printer(), '"', sep='')
+                command.set_args([self._tmpfile])
+                command.run()
+                if command.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
+                                     ' received from "' + command.get_file() + '".')
+            os.remove(self._tmpfile)
 
 
 if __name__ == '__main__':

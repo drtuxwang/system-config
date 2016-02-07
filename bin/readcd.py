@@ -16,16 +16,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_disk_at_once_flag(self):
         """
@@ -75,6 +74,12 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
         if self._args.speed[0] < 1:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
                              'CD/DVD device speed.')
@@ -97,6 +102,18 @@ class Cdrom(object):
 
     def __init__(self):
         self._devices = {}
+        self.detect()
+
+    def get_devices(self):
+        """
+        Return list of devices
+        """
+        return self._devices
+
+    def detect(self):
+        """
+        Detect devices
+        """
         for directory in glob.glob('/sys/block/sr*/device'):
             device = '/dev/' + os.path.basename(os.path.dirname(directory))
             model = ''
@@ -108,53 +125,40 @@ class Cdrom(object):
                     continue
             self._devices[device] = model
 
-    def get_devices(self):
-        """
-        Return list of devices
-        """
-        return self._devices
 
-
-class Readcd(object):
+class Main(object):
     """
-    Read CD class
+    Main class
     """
 
-    def __init__(self, options):
-        device = options.get_device()
-        if device == 'scan':
-            self._scan()
-        else:
-            speed = options.get_speed()
-            file = options.get_image()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-            self._cdspeed(device, speed)
-            if os.path.isfile(file):
-                try:
-                    os.remove(file)
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot over write "' + file + '" CD/DVD image file.')
-            if options.get_disk_at_once_flag():
-                self._dao(device, speed, file)
-            else:
-                self._tao(device, file)
-            if options.get_md5_flag():
-                print('Creating MD5 check sum of ISO file.')
-                md5sum = self._md5sum(options.get_file())
-                if not md5sum:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
                 else:
-                    print(md5sum, options.get_file(), sep='  ')
-            time.sleep(1)
-            eject = syslib.Command('eject', check=False)
-            if eject.is_found():
-                eject.run(mode='batch')
-                if eject.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(eject.get_exitcode()) +
-                                     ' received from "' + eject.get_file() + '".')
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _cdspeed(self, device, speed):
+    @staticmethod
+    def _cdspeed(device, speed):
         cdspeed = syslib.Command('cdspeed', flags=[device], check=False)
         if cdspeed.is_found():
             if speed:
@@ -164,7 +168,8 @@ class Readcd(object):
             hdparm = syslib.Command(file='/sbin/hdparm', args=['-E', str(speed), device])
             hdparm.run(mode='batch')
 
-    def _dao(self, device, speed, file):
+    @staticmethod
+    def _dao(device, speed, file):
         cdrdao = syslib.Command('cdrdao', flags=['read-cd', '--device', device, '--read-raw'])
         nice = syslib.Command('nice', args=['-20'])
         if speed:
@@ -179,7 +184,8 @@ class Readcd(object):
             raise SystemExit(sys.argv[0] + ': Error code ' + str(cdrdao.get_exitcode()) +
                              ' received from "' + cdrdao.get_file() + '".')
 
-    def _md5sum(self, file):
+    @staticmethod
+    def _md5sum(file):
         try:
             with open(file, 'rb') as ifile:
                 md5 = hashlib.md5()
@@ -192,7 +198,8 @@ class Readcd(object):
             return ''
         return md5.hexdigest()
 
-    def _scan(self):
+    @staticmethod
+    def _scan():
         cdrom = Cdrom()
         print('Scanning for CD/DVD devices...')
         devices = cdrom.get_devices()
@@ -241,7 +248,8 @@ class Readcd(object):
                 ofile.write(b'\0' * pad)
         self._isosize(file, syslib.FileStat(file).get_size())
 
-    def _isosize(self, image, size):
+    @staticmethod
+    def _isosize(image, size):
         if size > 734003200:
             print('\n*** {0:s}: {1:4.2f} MB ({2:5.3f} salesman"s GB) ***\n'.format(
                 image, size/1048576, size/1000000000))
@@ -270,38 +278,44 @@ class Readcd(object):
                                  '650MB/74min CD media.\n')
                 sys.stderr.write('        ==> Please use 700MB/80min CD media instead.\n')
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
+        device = options.get_device()
+        if device == 'scan':
+            self._scan()
+        else:
+            speed = options.get_speed()
+            file = options.get_image()
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Readcd(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
+            self._cdspeed(device, speed)
+            if os.path.isfile(file):
+                try:
+                    os.remove(file)
+                except OSError:
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot over write "' + file + '" CD/DVD image file.')
+            if options.get_disk_at_once_flag():
+                self._dao(device, speed, file)
             else:
-                argv.append(arg)
-        sys.argv = argv
+                self._tao(device, file)
+            if options.get_md5_flag():
+                print('Creating MD5 check sum of ISO file.')
+                md5sum = self._md5sum(file)
+                if not md5sum:
+                    raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+                else:
+                    print(md5sum, file, sep='  ')
+            time.sleep(1)
+            eject = syslib.Command('eject', check=False)
+            if eject.is_found():
+                eject.run(mode='batch')
+                if eject.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(eject.get_exitcode()) +
+                                     ' received from "' + eject.get_file() + '".')
 
 
 if __name__ == '__main__':

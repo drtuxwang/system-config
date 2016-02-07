@@ -11,12 +11,10 @@ import sys
 
 import syslib
 
-RELEASE = '2.7.1'
+RELEASE = '2.7.2'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
-
-# pylint: disable=no-self-use,too-few-public-methods
 
 
 class Options(object):
@@ -24,10 +22,10 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
+    def __init__(self):
         self._release = RELEASE
-
-        self._parse_args(args[1:])
+        self._args = None
+        self.parse(sys.argv)
 
     def get_force_flag(self):
         """
@@ -53,6 +51,12 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
         self._jobids = []
         for jobid in self._args.jobIds:
             if not jobid.isdigit():
@@ -60,23 +64,36 @@ class Options(object):
             self._jobids.append(jobid)
 
 
-class Delete(object):
+class Main(object):
     """
-    Delete class
+    Main class
     """
 
-    def __init__(self, options):
-        self._force_flag = options.get_force_flag()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-        if 'HOME' not in os.environ:
-            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
-        self._myqsdir = os.path.join(os.environ['HOME'], '.config',
-                                     'myqs', syslib.info.get_hostname())
-        for jobid in options.get_jobids():
-            if not glob.glob(os.path.join(self._myqsdir, jobid + '.[qr]')):
-                print('MyQS cannot delete batch job with jobid', jobid, 'as it does no exist.')
-            else:
-                self._remove(jobid)
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _remove(self, jobid):
         file = os.path.join(self._myqsdir, jobid + '.q')
@@ -114,38 +131,23 @@ class Delete(object):
             except OSError:
                 pass
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
+        self._force_flag = options.get_force_flag()
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Delete(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
+        if 'HOME' not in os.environ:
+            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
+        self._myqsdir = os.path.join(os.environ['HOME'], '.config',
+                                     'myqs', syslib.info.get_hostname())
+        for jobid in options.get_jobids():
+            if not glob.glob(os.path.join(self._myqsdir, jobid + '.[qr]')):
+                print('MyQS cannot delete batch job with jobid', jobid, 'as it does no exist.')
             else:
-                argv.append(arg)
-        sys.argv = argv
+                self._remove(jobid)
 
 
 if __name__ == '__main__':

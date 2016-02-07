@@ -12,12 +12,10 @@ import sys
 
 import syslib
 
-RELEASE = '2.6.0'
+RELEASE = '2.6.1'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
-
-# pylint: disable=no-self-use,too-few-public-methods
 
 
 class Options(object):
@@ -25,23 +23,10 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
+    def __init__(self):
         self._release = RELEASE
-
-        self._parse_args(args[1:])
-
-        os.umask(int('077', 8))
-
-        self._sendmail = syslib.Command('sendmail', flags=['-t'], pathextra=['/usr/lib'])
-        self._editor = syslib.Command('hedit', check=False)
-        if 'HOME' not in os.environ:
-            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
-        self._tmpfile = os.sep + os.path.join(
-            'tmp', 'qmail-' + syslib.info.get_username() + '.' + str(os.getpid()))
-        if not self._editor.is_found():
-            self._editor = syslib.Command('vi',)
-        self._editor.set_args([self._tmpfile])
-        self._my_address = self._address()
+        self._args = None
+        self.parse(sys.argv)
 
     def get_addresses(self):
         """
@@ -79,7 +64,8 @@ class Options(object):
         """
         return self._tmpfile
 
-    def _address(self):
+    @staticmethod
+    def _address():
         file = os.path.join(os.environ['HOME'], '.address')
         if os.path.isfile(file):
             try:
@@ -104,34 +90,64 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
-class Mailer(object):
+        os.umask(int('077', 8))
+
+        self._sendmail = syslib.Command('sendmail', flags=['-t'], pathextra=['/usr/lib'])
+        self._editor = syslib.Command('hedit', check=False)
+        if 'HOME' not in os.environ:
+            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
+        self._tmpfile = os.sep + os.path.join(
+            'tmp', 'qmail-' + syslib.info.get_username() + '.' + str(os.getpid()))
+        if not self._editor.is_found():
+            self._editor = syslib.Command('vi',)
+        self._editor.set_args([self._tmpfile])
+        self._my_address = self._address()
+
+
+class Main(object):
     """
-    Mailer class
+    Main class
     """
 
-    def __init__(self, options):
-        self._malias = syslib.Command('malias', check=False)
-        self._create(options)
-        while True:
-            self._edit(options)
-            self._update()
-            self._header()
-            answer = input('Do you want to send E-mail (y/n)? ')
-            if answer.lower() == 'y':
-                self._send(options)
-                break
-            else:
-                answer = input('Do you want to delete E-mail (y/n)? ')
-                if answer.lower() == 'y':
-                    break
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _create(self, options):
         subject = input('Subject: ')
         addresses = self._mail_alias(options.get_addresses())
-        self._email = ['Subject: ' + subject, 'To: ' + ', '.join(addresses),
-                       'From: ' + options.get_my_address(), 'Reply-to: ' + options.get_my_address(),
-                       'X-Mailer: Qwikmail v' + options.get_release(), '']
+        email = ['Subject: ' + subject, 'To: ' + ', '.join(addresses),
+                 'From: ' + options.get_my_address(), 'Reply-to: ' + options.get_my_address(),
+                 'X-Mailer: Qwikmail v' + options.get_release(), '']
+        return email
 
     def _edit(self, options):
         try:
@@ -141,15 +157,18 @@ class Mailer(object):
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot create "' +
                              options.get_tmpfile() + '" temporary file.')
+
         options.get_editor().run()
+
         try:
             with open(options.get_tmpfile(), errors='replace') as ifile:
-                self._email = []
+                email = []
                 for line in ifile:
-                    self._email.append(line.rstrip('\r\n'))
+                    email.append(line.rstrip('\r\n'))
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' +
                              options.get_tmpfile() + '" temporary file.')
+        return email
 
     def _header(self):
         for line in self._email:
@@ -188,38 +207,26 @@ class Mailer(object):
                 self._email[i] = (self._email[i].split()[0] + ' ' +
                                   ', '.join(self._mail_alias([isemail.sub('', self._email[i])])))
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Mailer(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
+        self._malias = syslib.Command('malias', check=False)
+        self._email = self._create(options)
+        while True:
+            self._email = self._edit(options)
+            self._update()
+            self._header()
+            answer = input('Do you want to send E-mail (y/n)? ')
+            if answer.lower() == 'y':
+                self._send(options)
+                break
             else:
-                argv.append(arg)
-        sys.argv = argv
+                answer = input('Do you want to delete E-mail (y/n)? ')
+                if answer.lower() == 'y':
+                    break
 
 
 if __name__ == '__main__':

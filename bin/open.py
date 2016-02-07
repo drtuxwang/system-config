@@ -14,16 +14,15 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_files(self):
         """
@@ -38,20 +37,59 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
-class Open(object):
+
+class Main(object):
     """
-    Open class
+    Main class
     """
 
-    def __init__(self, options):
-        self._files = options.get_files()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    @staticmethod
+    def _spawn(program, file):
+        print(file + ': opening with "' + program + '"...')
+        program = syslib.Command(program, args=[file])
+        program.run(mode='daemon')
 
     def run(self):
         """
-        Open files
+        Start program
         """
-        for file in self._files:
+        options = Options()
+
+        files = options.get_files()
+
+        for file in files:
             prefix = file.split(':', 1)[0]
             extension = file.rsplit('.', 1)[-1].lower()
 
@@ -76,44 +114,6 @@ class Open(object):
                 self._spawn('xedit', file)
             else:
                 print(file + ': unknown file extension.')
-
-    def _spawn(self, program, file):
-        print(file + ': opening with "' + program + '"...')
-        program = syslib.Command(program, args=[file])
-        program.run(mode='daemon')
-
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Open(options).run()
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':

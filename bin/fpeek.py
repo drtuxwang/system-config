@@ -14,16 +14,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_all_flag(self):
         """
@@ -56,13 +55,69 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
-class Dump(object):
+
+class Main(object):
     """
-    Dump class
+    Main class
     """
 
-    def __init__(self, options):
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    @staticmethod
+    def _format(options, data):
+        if options.get_ascii_flag():
+            line = ' '
+            for byte in data:
+                if byte > 31 and byte < 127:
+                    line += '   ' + chr(byte)
+                elif byte == 10:
+                    line += r'  \n'
+                elif byte == 13:
+                    line += r'  \r'
+                else:
+                    line += ' ' + str(byte).zfill(3)
+        else:
+            line = ' '
+            for byte in data:
+                line += ' ' + str(byte).rjust(3)
+        return line
+
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
+
         for file in options.get_files():
             try:
                 with open(file, 'rb') as ifile:
@@ -84,57 +139,6 @@ class Dump(object):
                                 position, self._format(options, ifile.read(16))))
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
-
-    def _format(self, options, data):
-        if options.get_ascii_flag():
-            line = ' '
-            for byte in data:
-                if byte > 31 and byte < 127:
-                    line += '   ' + chr(byte)
-                elif byte == 10:
-                    line += r'  \n'
-                elif byte == 13:
-                    line += r'  \r'
-                else:
-                    line += ' ' + str(byte).zfill(3)
-        else:
-            line = ' '
-            for byte in data:
-                line += ' ' + str(byte).rjust(3)
-        return line
-
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Dump(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':

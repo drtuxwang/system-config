@@ -15,18 +15,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._icedax = syslib.Command('icedax')
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_device(self):
         """
@@ -67,6 +64,14 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        self._icedax = syslib.Command('icedax')
+
         if self._args.speed[0] < 1:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
                              'CD/DVD device speed.')
@@ -87,6 +92,18 @@ class Cdrom(object):
 
     def __init__(self):
         self._devices = {}
+        self.detect()
+
+    def get_devices(self):
+        """
+        Return list of devices
+        """
+        return self._devices
+
+    def detect(self):
+        """
+        Detect devices
+        """
         for directory in glob.glob('/sys/block/sr*/device'):
             device = '/dev/' + os.path.basename(os.path.dirname(directory))
             model = ''
@@ -98,29 +115,39 @@ class Cdrom(object):
                     continue
             self._devices[device] = model
 
-    def get_devices(self):
-        """
-        Return list of devices
-        """
-        return self._devices
 
-
-class RipCd(object):
+class Main(object):
     """
-    Rip CD class
+    Main class
     """
 
-    def __init__(self, options):
-        self._icedax = options.get_icedax()
-        self._device = options.get_device()
-        self._speed = options.get_speed()
-        self._tracks = options.get_tracks()
+    def __init__(self):
+        try:
+            self.config()
+            self._toc = None
+            self._tracks = None
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-        if self._device == 'scan':
-            self._scan()
-        else:
-            self._read_toc()
-            self._rip()
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _rip_tracks(self, ntracks):
         tee = syslib.Command('tee')
@@ -182,7 +209,8 @@ class RipCd(object):
 
         self._rip_tracks(ntracks)
 
-    def _hasprob(self, logfile):
+    @staticmethod
+    def _hasprob(logfile):
         with open(logfile, errors='replace') as ifile:
             for line in ifile:
                 line = line.rstrip('\r\n')
@@ -192,7 +220,8 @@ class RipCd(object):
                         return True
         return False
 
-    def _pregap(self, wavfile):
+    @staticmethod
+    def _pregap(wavfile):
         size = syslib.FileStat(wavfile).get_size()
         with open(wavfile, 'rb+') as ifile:
             ifile.seek(size - 2097152)
@@ -206,7 +235,8 @@ class RipCd(object):
                         ifile.truncate(newsize)
                     break
 
-    def _scan(self):
+    @staticmethod
+    def _scan():
         cdrom = Cdrom()
         print('Scanning for CD/DVD devices...')
         devices = cdrom.get_devices()
@@ -226,38 +256,22 @@ class RipCd(object):
         for line in self._icedax.get_error(r'[.]\(.*:.*\)|^CD'):
             print(line)
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
+        self._icedax = options.get_icedax()
+        self._device = options.get_device()
+        self._speed = options.get_speed()
+        self._tracks = options.get_tracks()
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            RipCd(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        if self._device == 'scan':
+            self._scan()
+        else:
+            self._read_toc()
+            self._rip()
 
 
 if __name__ == '__main__':

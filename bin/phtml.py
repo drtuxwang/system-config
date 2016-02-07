@@ -14,16 +14,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_directory(self):
         """
@@ -54,6 +53,12 @@ class Options(object):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + self._args.directory[0] + '" directory.')
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
 
 class Gallery(object):
     """
@@ -71,7 +76,14 @@ class Gallery(object):
             raise SystemExit(sys.argv[0] + ': Cannot open "' + directory + '" directory.')
         self._nfiles = len(self._files)
 
-    def _generate(self, number, file, next_file):
+    def generate(self, number, file, next_file):
+        """
+        Generate XHTML docuement
+
+        number    = Number of images
+        file      = Image file
+        next_file = Next image file
+        """
         yield ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
                '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">')
         yield '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'
@@ -112,7 +124,7 @@ class Gallery(object):
                 xhtml_file = os.path.join(self._directory, file.rsplit('.', 1)[0]) + '.xhtml'
                 try:
                     with open(xhtml_file, 'w', newline='\n') as ofile:
-                        for line in self._generate(i, file, next_file):
+                        for line in self.generate(i, file, next_file):
                             print(line, file=ofile)
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + xhtml_file + '" file.')
@@ -147,7 +159,13 @@ class Xhtml(object):
                 directories.extend(self._find(file))
         return directories
 
-    def _generate(self, file_stats):
+    @staticmethod
+    def generate(file_stats):
+        """
+        Generate XHTML index file
+
+        file_stats = List of FileStat class objects
+        """
         yield ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
                '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">')
         yield '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'
@@ -188,7 +206,7 @@ class Xhtml(object):
 
         try:
             with open('index.xhtml', 'w', newline='\n') as ofile:
-                for line in self._generate(file_stats):
+                for line in self.generate(file_stats):
                     print(line, file=ofile)
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot create "index.xhtml" file.')
@@ -200,31 +218,39 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            Xhtml(options).create()
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        Xhtml(options).create()
 
 
 if __name__ == '__main__':

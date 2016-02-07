@@ -15,16 +15,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_files(self):
         """
@@ -49,19 +48,43 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
-class Md5sum(object):
+
+class Main(object):
     """
-    Md5sum class
+    Main class
     """
 
-    def __init__(self, options):
-        self._md5files = {}
-        self._calc(options, options.get_files())
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-        for _, files in sorted(self._md5files.items()):
-            if files:
-                print(syslib.Command().args2cmd(sorted(files)))
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _calc(self, options, files):
         for file in files:
@@ -81,7 +104,8 @@ class Md5sum(object):
                 else:
                     self._md5files[md5sum] = [file]
 
-    def _md5sum(self, file):
+    @staticmethod
+    def _md5sum(file):
         try:
             with open(file, 'rb') as ifile:
                 md5 = hashlib.md5()
@@ -94,38 +118,18 @@ class Md5sum(object):
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
         return md5.hexdigest()
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
+        self._md5files = {}
+        self._calc(options, options.get_files())
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Md5sum(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
+        for _, files in sorted(self._md5files.items()):
             if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+                print(syslib.Command().args2cmd(sorted(files)))
 
 
 if __name__ == '__main__':

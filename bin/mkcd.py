@@ -15,21 +15,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-
-        self._parse_args(args[1:])
-
-        if self._args.image != 'scan':
-            self._device_detect()
-        self._signal_trap()
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_device(self):
         """
@@ -61,16 +55,23 @@ class Options(object):
         """
         return self._args.speed[0]
 
-    def _device_detect(self):
-        if self._args.device:
-            self._device = self._args.device[0]
-        else:
+    @staticmethod
+    def _detect_device(device):
+        if not device:
             cdrom = Cdrom()
             if not cdrom.get_devices().keys():
                 raise SystemExit(sys.argv[0] + ': Cannot find any CD/DVD device.')
-            self._device = sorted(cdrom.get_devices().keys())[0]
-        if not os.path.exists(self._device) and not os.path.isdir(self.get_image()):
-            raise SystemExit(sys.argv[0] + ': Cannot find "' + self._device + '" CD/DVD device.')
+            device = sorted(cdrom.get_devices().keys())[0]
+        if not os.path.exists(device):
+            raise SystemExit(sys.argv[0] + ': Cannot find "' + device + '" CD/DVD device.')
+        return device
+
+    def _signal_ignore(self, _signal, _frame):
+        pass
+
+    def _signal_trap(self):
+        signal.signal(signal.SIGINT, self._signal_ignore)
+        signal.signal(signal.SIGTERM, self._signal_ignore)
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
@@ -90,6 +91,16 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        if self._args.image != 'scan':
+            self._device = self._detect_device(self._args.device)
+        self._signal_trap()
+
         if self._args.speed[0] < 1:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
                              'CD/DVD device speed.')
@@ -98,34 +109,71 @@ class Options(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + self._args.image[0] + '" CD/DVD device.')
 
-    def _signal_ignore(self, _signal, _frame):
-        pass
 
-    def _signal_trap(self):
-        signal.signal(signal.SIGINT, self._signal_ignore)
-        signal.signal(signal.SIGTERM, self._signal_ignore)
-
-
-class Burner(object):
+class Cdrom(object):
     """
-    CD/DVD burner class
+    CDROM class
     """
 
-    def __init__(self, options):
-        self._device = options.get_device()
-        self._speed = options.get_speed()
-        self._image = options.get_image()
+    def __init__(self):
+        self._devices = {}
+        self.detect()
 
-        if self._image == 'scan':
-            self._scan()
-        elif os.path.isdir(self._image):
-            self._track_at_once_audio()
-        elif self._image.endswith('.bin'):
-            self._disk_at_once_data(options)
-        else:
-            self._track_at_once_data(options)
+    def get_devices(self):
+        """
+        Return list of devices
+        """
+        return self._devices
 
-    def _eject(self):
+    def detect(self):
+        """
+        Detect devices
+        """
+        for directory in glob.glob('/sys/block/sr*/device'):
+            device = '/dev/' + os.path.basename(os.path.dirname(directory))
+            model = ''
+            for file in ('vendor', 'model'):
+                try:
+                    with open(os.path.join(directory, file), errors='replace') as ifile:
+                        model += ' ' + ifile.readline().strip()
+                except OSError:
+                    continue
+            self._devices[device] = model
+
+
+class Main(object):
+    """
+    Main class
+    """
+
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    @staticmethod
+    def _eject():
         eject = syslib.Command('eject', check=False)
         if eject.is_found():
             time.sleep(1)
@@ -134,7 +182,8 @@ class Burner(object):
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(eject.get_exitcode()) +
                                  ' received from "' + eject.get_file() + '".')
 
-    def _scan(self):
+    @staticmethod
+    def _scan():
         cdrom = Cdrom()
         print('Scanning for CD/DVD devices...')
         devices = cdrom.get_devices()
@@ -234,63 +283,24 @@ class Burner(object):
             except OSError:
                 pass
 
-
-class Cdrom(object):
-    """
-    CDROM class
-    """
-
-    def __init__(self):
-        self._devices = {}
-        for directory in glob.glob('/sys/block/sr*/device'):
-            device = '/dev/' + os.path.basename(os.path.dirname(directory))
-            model = ''
-            for file in ('vendor', 'model'):
-                try:
-                    with open(os.path.join(directory, file), errors='replace') as ifile:
-                        model += ' ' + ifile.readline().strip()
-                except OSError:
-                    continue
-            self._devices[device] = model
-
-    def get_devices(self):
+    def run(self):
         """
-        Return list of devices.
+        Start program
         """
-        return self._devices
+        options = Options()
 
+        self._device = options.get_device()
+        self._speed = options.get_speed()
+        self._image = options.get_image()
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Burner(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        if self._image == 'scan':
+            self._scan()
+        elif os.path.isdir(self._image):
+            self._track_at_once_audio()
+        elif self._image.endswith('.bin'):
+            self._disk_at_once_data(options)
+        else:
+            self._track_at_once_data(options)
 
 
 if __name__ == '__main__':

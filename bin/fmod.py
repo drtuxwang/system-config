@@ -10,12 +10,8 @@ import re
 import signal
 import sys
 
-import syslib
-
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
-
-# pylint: disable=no-self-use,too-few-public-methods
 
 
 class Options(object):
@@ -23,31 +19,9 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        mode = self._args.mode
-        if mode == 'r':
-            self._xmod = int('500', 8)
-            self._fmod = int('400', 8)
-        elif mode == 'rg':
-            self._xmod = int('550', 8)
-            self._fmod = int('440', 8)
-        elif mode == 'ra':
-            self._xmod = int('555', 8)
-            self._fmod = int('444', 8)
-        elif mode == 'w':
-            self._xmod = int('700', 8)
-            self._fmod = int('600', 8)
-        elif mode == 'wg':
-            self._xmod = int('750', 8)
-            self._fmod = int('640', 8)
-        elif mode == 'wa':
-            self._xmod = int('755', 8)
-            self._fmod = int('644', 8)
-        else:
-            self._xmod = int('755', 8)
-            self._fmod = int('644', 8)
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_files(self):
         """
@@ -95,30 +69,66 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
-class Setmod(object):
+        mode = self._args.mode
+        if mode == 'r':
+            self._xmod = int('500', 8)
+            self._fmod = int('400', 8)
+        elif mode == 'rg':
+            self._xmod = int('550', 8)
+            self._fmod = int('440', 8)
+        elif mode == 'ra':
+            self._xmod = int('555', 8)
+            self._fmod = int('444', 8)
+        elif mode == 'w':
+            self._xmod = int('700', 8)
+            self._fmod = int('600', 8)
+        elif mode == 'wg':
+            self._xmod = int('750', 8)
+            self._fmod = int('640', 8)
+        elif mode == 'wa':
+            self._xmod = int('755', 8)
+            self._fmod = int('644', 8)
+        else:
+            self._xmod = int('755', 8)
+            self._fmod = int('644', 8)
+
+
+class Main(object):
     """
-    Set mod class
+    Main class
     """
 
-    def __init__(self, options):
-        #   127 ELF,      202 254 186 190      207 250 237 254      206 250 237 254
-        #  linux/sunos   macos-x86/x86_64       macos-x86_64           macos-x86
-        self._exe_magics = (
-            b'\177ELF', b'\312\376\272\276', b'\317\372\355\376', b'\316\372\355\376')
-        self._is_exe_ext = re.compile(
-            '[.](bat|cmd|com|dll|exe|ms[ip]|psd|s[olh]|s[ol][.].*|tcl)$', re.IGNORECASE)
-        self._is_not_exe_ext = re.compile(
-            '[.](7z|[acfo]|ace|asr|avi|bak|blacklist|bmp|bz2|cpp|crt|css|dat|deb|diz|doc|'
-            'docx|f77|f90|gif|gz|h|hlp|htm|html|ico|ini|installed|ism|iso|jar|java|jpg|'
-            'jpeg|js|json|key|lic|lib|list|log|mov|mp[34g]|mpeg|obj|od[fgst]|ogg|opt|pdf|'
-            'png|ppt|pptx|rar|reg|rpm|swf|tar|txt|url|wsdl|xhtml|xls|xlsx|xml|xs[dl]|'
-            'xvid|zip)$', re.IGNORECASE)
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except SystemExit as exception:
+            sys.exit(exception)
 
-        self._recursive_flag = options.get_recursive_flag()
-        self._fmod = options.get_fmod()
-        self._xmod = options.get_xmod()
-        self._files = options.get_files()
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _setmod_directory(self, directory):
         try:
@@ -163,43 +173,29 @@ class Setmod(object):
 
     def run(self):
         """
-        Start changes
+        Start program
         """
+        options = Options()
+
+        #   127 ELF,      202 254 186 190      207 250 237 254      206 250 237 254
+        #  linux/sunos   macos-x86/x86_64       macos-x86_64           macos-x86
+        self._exe_magics = (
+            b'\177ELF', b'\312\376\272\276', b'\317\372\355\376', b'\316\372\355\376')
+        self._is_exe_ext = re.compile(
+            '[.](bat|cmd|com|dll|exe|ms[ip]|psd|s[olh]|s[ol][.].*|tcl)$', re.IGNORECASE)
+        self._is_not_exe_ext = re.compile(
+            '[.](7z|[acfo]|ace|asr|avi|bak|blacklist|bmp|bz2|cpp|crt|css|dat|deb|diz|doc|'
+            'docx|f77|f90|gif|gz|h|hlp|htm|html|ico|ini|installed|ism|iso|jar|java|jpg|'
+            'jpeg|js|json|key|lic|lib|list|log|mov|mp[34g]|mpeg|obj|od[fgst]|ogg|opt|pdf|'
+            'png|ppt|pptx|rar|reg|rpm|swf|tar|txt|url|wsdl|xhtml|xls|xlsx|xml|xs[dl]|'
+            'xvid|zip)$', re.IGNORECASE)
+
+        self._recursive_flag = options.get_recursive_flag()
+        self._fmod = options.get_fmod()
+        self._xmod = options.get_xmod()
+        self._files = options.get_files()
+
         self._setmod(self._files)
-
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Setmod(options).run()
-
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':

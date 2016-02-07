@@ -14,16 +14,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_file(self):
         """
@@ -46,6 +45,12 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
         try:
             size = self._args.size[0]
             if size.endswith('MB'):
@@ -58,14 +63,52 @@ class Options(object):
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for chunksize.')
 
 
-class Chop(object):
+class Main(object):
     """
-    Chop class
+    Main class
     """
 
-    def __init__(self, options):
-        self._options = options
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    def _copy(self, ifile, ofile):
+        chunks, lchunk = divmod(self._max_size, self._cache_size)
+        for i in [self._cache_size]*chunks + [lchunk]:
+            chunk = ifile.read(i)
+            if not chunk:
+                break
+            ofile.write(chunk)
+
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
         self._cache_size = 131072
+        self._max_size = options.get_max_size()
 
         try:
             with open(options.get_file(), 'rb') as ifile:
@@ -81,47 +124,6 @@ class Chop(object):
                                          str(part + 1).zfill(3) + '" file.')
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + options.get_file() + '" file.')
-
-    def _copy(self, ifile, ofile):
-        chunks, lchunk = divmod(self._options.get_max_size(), self._cache_size)
-        for i in [self._cache_size]*chunks + [lchunk]:
-            chunk = ifile.read(i)
-            if not chunk:
-                break
-            ofile.write(chunk)
-
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Chop(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':

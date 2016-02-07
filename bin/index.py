@@ -13,31 +13,37 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
 
-
-class Options(object):
+class Main(object):
     """
-    Options class
+    Main class
     """
 
     def __init__(self):
-        self._archive = os.path.basename(os.getcwd())
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-    def get_archive(self):
+    @staticmethod
+    def config():
         """
-        Return archive directory.
+        Configure program
         """
-        return self._archive
-
-
-class Index(object):
-    """
-    Index class
-    """
-
-    def __init__(self, options):
-        self._options = options
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _checksum(self):
         print('Generating "index.fsum"...')
@@ -95,7 +101,8 @@ class Index(object):
                 if os.path.isdir(file) and not os.path.islink(file):
                     self._read_fsums(ofile, file)
 
-    def _write_fsums(self, lines):
+    @staticmethod
+    def _write_fsums(lines):
         fsums = {}
         for line in lines:
             checksum, file = line.split('  ', 1)
@@ -128,31 +135,10 @@ class Index(object):
 
     def run(self):
         """
-        Create index
+        Start program
         """
         self._core_find()
         self._checksum()
-
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        try:
-            options = Options()
-            Index(options).run()
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
 
 if __name__ == '__main__':

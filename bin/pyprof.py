@@ -15,16 +15,16 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self._module_args = None
+        self.parse(sys.argv)
 
     def get_file(self):
         """
@@ -67,16 +67,46 @@ class Options(object):
 
         self._module_args = args[1:]
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
-class Profiler(object):
+
+class Main(object):
     """
-    Profiler class
+    Main class
     """
 
-    def __init__(self, options):
-        self._options = options
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-    def _profile(self, module_file, module_args):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    @staticmethod
+    def _profile(module_file, module_args):
         stats_file = os.path.basename(module_file.rsplit('.', 1)[0] + '.pstats')
         if os.path.isfile(stats_file):
             try:
@@ -101,7 +131,8 @@ class Profiler(object):
         print('pyprof:', command.args2cmd([command.get_file()] + module_args))
         return stats_file
 
-    def _show(self, stats_file, lines):
+    @staticmethod
+    def _show(stats_file, lines):
         try:
             stats = pstats.Stats(stats_file)
         except OSError:
@@ -111,8 +142,9 @@ class Profiler(object):
 
     def run(self):
         """
-        Start profiling
+        Start program
         """
+        self._options = Options()
         file = self._options.get_file()
 
         if not file.endswith('.pstats'):
@@ -130,39 +162,6 @@ class Profiler(object):
             file = self._profile(file, self._options.get_module_args())
 
         self._show(file, self._options.get_lines())
-
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Profiler(options).run()
-        except KeyboardInterrupt:
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':

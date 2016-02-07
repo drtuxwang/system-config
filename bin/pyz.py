@@ -14,15 +14,35 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
+
+    def get_archiver(self):
+        """
+        Return archiver Command class object.
+        """
+        return self._archiver
+
+    def _parse_args(self, args):
+        parser = argparse.ArgumentParser(
+            description='Make a Python3 ZIP Application in PYZ format.')
+
+        parser.add_argument('archive', nargs=1, metavar='file.pyz', help='Archive file.')
+        parser.add_argument('files', nargs='*', metavar='file', help='File to archive.')
+
+        self._args = parser.parse_args(args)
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
         self._parse_args(args[1:])
 
         if os.name == 'nt':
@@ -51,37 +71,37 @@ class Options(object):
         """
         return self._args.archive
 
-    def get_archiver(self):
-        """
-        Return archiver Command class object.
-        """
-        return self._archiver
 
-    def _parse_args(self, args):
-        parser = argparse.ArgumentParser(
-            description='Make a Python3 ZIP Application in PYZ format.')
-
-        parser.add_argument('archive', nargs=1, metavar='file.pyz', help='Archive file.')
-        parser.add_argument('files', nargs='*', metavar='file', help='File to archive.')
-
-        self._args = parser.parse_args(args)
-
-
-class Pack(object):
+class Main(object):
     """
-    Pack class
+    Main class
     """
 
-    def __init__(self, options):
-        archiver = options.get_archiver()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-        archiver.run()
-        if archiver.get_exitcode():
-            print(
-                sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) + ' received from "' +
-                archiver.get_file() + '".', file=sys.stderr)
-            raise SystemExit(archiver.get_exitcode())
-        self._make_pyz(options.get_archive())
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _make_pyz(self, archive):
         try:
@@ -98,45 +118,28 @@ class Pack(object):
             pass
         os.chmod(archive, int('755', 8))
 
-    def _copy(self, ifile, ofile):
+    @staticmethod
+    def _copy(ifile, ofile):
         while True:
             chunk = ifile.read(131072)
             if not chunk:
                 break
             ofile.write(chunk)
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
+        archiver = options.get_archiver()
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Pack(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        archiver.run()
+        if archiver.get_exitcode():
+            print(
+                sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) + ' received from "' +
+                archiver.get_file() + '".', file=sys.stderr)
+            raise SystemExit(archiver.get_exitcode())
+        self._make_pyz(options.get_archive())
 
 
 if __name__ == '__main__':

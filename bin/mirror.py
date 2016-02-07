@@ -16,16 +16,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_mirrors(self):
         """
@@ -51,6 +50,12 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
         directories = self._args.directories
         if len(directories) % 2:
             raise SystemExit(sys.argv[0] + ': Source and target directory pair has missing '
@@ -63,28 +68,47 @@ class Options(object):
             self._mirrors.append([directories[i], directories[i+1]])
 
 
-class Mirror(object):
+class Main(object):
     """
-    Mirroring class
+    Main class
     """
 
-    def __init__(self, options):
-        self._size = 0
-        self._start = int(time.time())
-        self._options = options
-        for mirror in options.get_mirrors():
-            self._automount(mirror[1], 8)
-            self._mirror(mirror[0], mirror[1])
-        print('[', self._size, ',', int(time.time()) - self._start, ']', sep='')
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-    def _automount(self, directory, wait):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    @staticmethod
+    def _automount(directory, wait):
         if directory.startswith('/media/'):
             for _ in range(wait * 10):
                 if os.path.isdir(directory):
                     break
                 time.sleep(0.1)
 
-    def _report_old_files(self, source_dir, source_files, target_files):
+    @staticmethod
+    def _report_old_files(source_dir, source_files, target_files):
         for target_file in target_files:
             if os.path.join(source_dir, os.path.basename(target_file)) not in source_files:
                 if os.path.islink(target_file):
@@ -181,7 +205,8 @@ class Mirror(object):
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' + target_file + '" file.')
 
-    def _mirror_directory_time(self, source_dir, target_dir):
+    @staticmethod
+    def _mirror_directory_time(source_dir, target_dir):
         source_time = syslib.FileStat(source_dir).get_time()
         target_time = syslib.FileStat(target_dir).get_time()
         if source_time != target_time:
@@ -228,38 +253,18 @@ class Mirror(object):
         else:
             self._report_old_files(source_dir, source_files, target_files)
 
+    def run(self):
+        """
+        Start program
+        """
+        self._options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Mirror(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        self._size = 0
+        self._start = int(time.time())
+        for mirror in self._options.get_mirrors():
+            self._automount(mirror[1], 8)
+            self._mirror(mirror[0], mirror[1])
+        print('[', self._size, ',', int(time.time()) - self._start, ']', sep='')
 
 
 if __name__ == '__main__':

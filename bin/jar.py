@@ -13,27 +13,15 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._jar = syslib.Command(os.path.join('bin', 'jar'))
-
-        if len(args) == 1:
-            self._jar.run(mode='exec')
-        elif args[1][-4:] != '.jar':
-            self._jar.set_args(args[1:])
-            self._jar.run(mode='exec')
-
-        self._jar_file = args[1]
-        self._manifest = args[1][:-4]+'.manifest'
-        self._files = args[2:]
-        self._jar.set_flags(['cfvm', args[1], self._manifest])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_files(self):
         """
@@ -59,28 +47,57 @@ class Options(object):
         """
         return self._manifest
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._jar = syslib.Command(os.path.join('bin', 'jar'))
 
-class Pack(object):
+        if len(args) == 1:
+            self._jar.run(mode='exec')
+        elif args[1][-4:] != '.jar':
+            self._jar.set_args(args[1:])
+            self._jar.run(mode='exec')
+
+        self._jar_file = args[1]
+        self._manifest = args[1][:-4]+'.manifest'
+        self._files = args[2:]
+        self._jar.set_flags(['cfvm', args[1], self._manifest])
+
+
+class Main(object):
     """
-    Pack class
+    Main class
     """
 
-    def __init__(self, options):
-        self._jar = options.get_jar()
-        self._jar_file = options.get_jar_file()
-        self._manifest = options.get_manifest()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-        for file in options.get_files():
-            if file.endswith('.java'):
-                self._compile(file)
-                self._jar.append_arg(file[:-5]+'.class')
-            else:
-                self._jar.append_arg(file)
-        self._create_manifest()
-        print('Building "' + self._jar_file + '" Java archive file.')
-        self._jar.run(mode='exec')
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _compile(self, source):
+    @staticmethod
+    def _compile(source):
         target = source[:-5]+'.class'
         if not os.path.isfile(source):
             raise SystemExit(sys.argv[0] + ': Cannot find "' + source + '" Java source file.')
@@ -118,38 +135,25 @@ class Pack(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + self._manifest + '" Java manifest file.')
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
+        self._jar = options.get_jar()
+        self._jar_file = options.get_jar_file()
+        self._manifest = options.get_manifest()
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Pack(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
+        for file in options.get_files():
+            if file.endswith('.java'):
+                self._compile(file)
+                self._jar.append_arg(file[:-5]+'.class')
             else:
-                argv.append(arg)
-        sys.argv = argv
+                self._jar.append_arg(file)
+        self._create_manifest()
+        print('Building "' + self._jar_file + '" Java archive file.')
+        self._jar.run(mode='exec')
 
 
 if __name__ == '__main__':

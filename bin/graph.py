@@ -14,18 +14,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._gnuplot = syslib.Command('gnuplot')
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_file(self):
         """
@@ -71,6 +68,14 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        self._gnuplot = syslib.Command('gnuplot')
+
         if self._args.xcol[0] < 1:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
                              'X-axis column number.')
@@ -81,38 +86,56 @@ class Options(object):
             self._xrange = ''
 
 
-class Graph(object):
+class Main(object):
     """
-    Graph class
+    Main class
     """
 
-    def __init__(self, options):
-        self._gnuplot = options.get_gnuplot()
-        self._file = options.get_file()
-        self._mode = options.get_mode()
-        self._xcol = options.get_xcol()
-        self._xrange = options.get_xrange()
-
-        self._config_labels()
-        self._graph()
-
-    def _config_labels(self):
-        if not os.path.isfile(self._file):
-            raise SystemExit(sys.argv[0] + ': Cannot find "' + self._file + '" data file.')
+    def __init__(self):
         try:
-            with open(self._file, errors='replace') as ifile:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    @staticmethod
+    def _config_labels(file):
+        if not os.path.isfile(file):
+            raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" data file.')
+        try:
+            with open(file, errors='replace') as ifile:
                 line = ifile.readline().strip()
                 if line[0] == '#':
-                    self._labels = line[1:].split()
+                    labels = line[1:].split()
                 else:
-                    self._labels = []
+                    labels = []
                     for i in range(1, len(line.split()) + 1):
-                        self._labels.append(str(i))
+                        labels.append(str(i))
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + self._file + '" data file.')
-        if len(self._labels) < 2:
+            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" data file.')
+        if len(labels) < 2:
             raise SystemExit(
-                sys.argv[0] + ': Cannot find enough columns in "' + self._file + '" data file.')
+                sys.argv[0] + ': Cannot find enough columns in "' + file + '" data file.')
+        return labels
 
     def _graph(self):
         if self._xcol > len(self._labels):
@@ -136,7 +159,8 @@ class Graph(object):
                         sys.argv[0] + ': Error code ' + str(self._gnuplot.get_exitcode()) +
                         ' received from "' + self._gnuplot.get_file() + '".')
 
-    def _writefile(self, file, lines):
+    @staticmethod
+    def _writefile(file, lines):
         try:
             with open(file, 'w', newline='\n') as ofile:
                 for line in lines:
@@ -145,38 +169,20 @@ class Graph(object):
             return 1
         return 0
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
+        self._gnuplot = options.get_gnuplot()
+        self._file = options.get_file()
+        self._mode = options.get_mode()
+        self._xcol = options.get_xcol()
+        self._xrange = options.get_xrange()
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Graph(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        self._labels = self._config_labels(self._file)
+        self._graph()
 
 
 if __name__ == '__main__':

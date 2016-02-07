@@ -15,16 +15,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_overwrite_flag(self):
         """
@@ -57,18 +56,43 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
-class Move(object):
+
+class Main(object):
     """
-    Move class
+    Main class
     """
 
-    def __init__(self, options):
-        self._options = options
-        if len(options.get_sources()) > 1 or os.path.isdir(options.get_target()):
-            self._move()
-        else:
-            self._rename(options.get_sources()[0], options.get_target())
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _move(self):
         if not os.path.isdir(self._options.get_target()):
@@ -102,7 +126,8 @@ class Move(object):
                 else:
                     raise SystemExit(sys.argv[0] + ': Cannot move "' + source + '" source file.')
 
-    def _cprm(self, source, target):
+    @staticmethod
+    def _cprm(source, target):
         if os.path.isdir(source):
             try:
                 shutil.copytree(source, target, symlinks=True)
@@ -150,38 +175,18 @@ class Move(object):
             else:
                 raise SystemExit(sys.argv[0] + ': Cannot rename "' + source + '" source file.')
 
+    def run(self):
+        """
+        Start program
+        """
+        self._options = Options()
+        sources = self._options.get_sources()
+        target = self._options.get_target()
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Move(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        if len(sources) > 1 or os.path.isdir(target):
+            self._move()
+        else:
+            self._rename(sources[0], target)
 
 
 if __name__ == '__main__':

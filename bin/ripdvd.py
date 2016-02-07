@@ -14,18 +14,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._vlc = syslib.Command('vlc')
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_device(self):
         """
@@ -64,6 +61,14 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        self._vlc = syslib.Command('vlc')
+
         if self._args.speed[0] < 1:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
                              'DVD device speed.')
@@ -81,6 +86,18 @@ class Cdrom(object):
 
     def __init__(self):
         self._devices = {}
+        self.detect()
+
+    def get_devices(self):
+        """
+        Return list of devices
+        """
+        return self._devices
+
+    def detect(self):
+        """
+        Detect devices
+        """
         for directory in glob.glob('/sys/block/sr*/device'):
             device = '/dev/' + os.path.basename(os.path.dirname(directory))
             model = ''
@@ -92,31 +109,40 @@ class Cdrom(object):
                     continue
             self._devices[device] = model
 
-    def get_devices(self):
-        """
-        Return list of devices
-        """
-        return self._devices
 
-
-class RipDvd(object):
+class Main(object):
     """
-    Rip DVD class
+    Main class
     """
 
-    def __init__(self, options):
-        self._vlc = options.get_vlc()
-        self._device = options.get_device()
-        self._speed = options.get_speed()
-        self._title = options.get_title()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-        if self._device == 'scan':
-            self._scan()
-        else:
-            self._cdspeed(self._device, options.get_speed())
-            self._rip()
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _cdspeed(self, device, speed):
+    @staticmethod
+    def _cdspeed(device, speed):
         cdspeed = syslib.Command('cdspeed', flags=[device], check=False)
         if cdspeed.is_found():
             if speed:
@@ -134,45 +160,30 @@ class RipDvd(object):
              '#standard{access=file,mux=ts,dst=' + file + '}', 'vlc://quit'])
         self._vlc.run()
 
-    def _scan(self):
+    @staticmethod
+    def _scan():
         cdrom = Cdrom()
         print('Scanning for CD/DVD devices...')
         devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
             print('  {0:10s}  {1:s}'.format(key, value))
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
+        self._vlc = options.get_vlc()
+        self._device = options.get_device()
+        self._speed = options.get_speed()
+        self._title = options.get_title()
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            RipDvd(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        if self._device == 'scan':
+            self._scan()
+        else:
+            self._cdspeed(self._device, options.get_speed())
+            self._rip()
 
 
 if __name__ == '__main__':

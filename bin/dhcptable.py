@@ -14,8 +14,6 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
@@ -23,6 +21,7 @@ class Options(object):
     """
 
     def __init__(self):
+        self._args = None
         self._arping = syslib.Command('arping', pathextra=['/sbin'])
         self._detect()
 
@@ -122,17 +121,27 @@ class ScanHost(threading.Thread):
             self._child = None
 
 
-class ScanLan(object):
+class Main(object):
     """
-    Scan LAN class
+    Main class
     """
 
-    def __init__(self, options):
-        self._time_limit = 1
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-        self._options = options
-        self._avahi_rdns = syslib.Command('avahi-resolve-address', check=False)
-        self._threads = []
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     def _detect(self):
         for host in range(1, 255):
@@ -168,32 +177,19 @@ class ScanLan(object):
 
     def run(self):
         """
-        Start scan
+        Start program
         """
+        options = Options()
+
+        self._time_limit = 1
+
+        self._options = options
+        self._avahi_rdns = syslib.Command('avahi-resolve-address', check=False)
+        self._threads = []
+
         self._detect()
         time.sleep(self._time_limit)
         self._output()
-
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        try:
-            options = Options()
-            ScanLan(options).run()
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
 
 if __name__ == '__main__':

@@ -14,16 +14,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
@@ -46,16 +45,46 @@ class Options(object):
         """
         return self._args.directories[1]
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
-class Diff(object):
+
+class Main(object):
     """
-    Difference class
+    Main class
     """
 
-    def __init__(self, options):
-        self._diffdir(options.get_directory_1(), options.get_directory_2())
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-    def _get_files(self, directory):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    @staticmethod
+    def _get_files(directory):
         try:
             files = sorted([os.path.join(directory, x) for x in os.listdir(directory)])
         except (FileNotFoundError, NotADirectoryError, PermissionError):
@@ -86,7 +115,8 @@ class Diff(object):
                 if not os.path.isfile(os.path.join(directory1, os.path.basename(file))):
                     print('only ', file)
 
-    def _difffile(self, file1, file2):
+    @staticmethod
+    def _difffile(file1, file2):
         file_stat1 = syslib.FileStat(file1)
         file_stat2 = syslib.FileStat(file2)
 
@@ -112,38 +142,13 @@ class Diff(object):
             ifile1.close()
             ifile2.close()
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Diff(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        self._diffdir(options.get_directory_1(), options.get_directory_2())
 
 
 if __name__ == '__main__':

@@ -15,18 +15,15 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._convert = syslib.Command('convert')
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_convert(self):
         """
@@ -58,6 +55,14 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        self._convert = syslib.Command('convert')
+
         if self._args.megs[0] < 1:
             raise SystemExit(sys.argv[0] + ': You must specific a positive number for megabytes.')
 
@@ -67,12 +72,53 @@ class Options(object):
                     sys.argv[0] + ': Image directory "' + directory + '" does not exist.')
 
 
-class Remeg(object):
+class Main(object):
     """
-    Change metai-pixels class
+    Main class
     """
 
-    def __init__(self, options):
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    def _imagesize(self, file):
+        self._convert.set_args(['-verbose', file, '/dev/null'])
+        self._convert.run(filter='^' + file + '=>', mode='batch', error2output=True)
+        if not self._convert.has_output():
+            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" picture file.')
+        elif self._convert.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._convert.get_exitcode()) +
+                             ' received from "' + self._convert.get_file() + '".')
+        x_size, y_size = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
+        return (int(x_size), int(y_size))
+
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
         self._convert = options.get_convert()
         megs = options.get_megs()
 
@@ -99,50 +145,6 @@ class Remeg(object):
                                 sys.argv[0] + ': Error code ' + str(self._convert.get_exitcode()) +
                                 ' received from "' + self._convert.get_file() + '".')
                     print()
-
-    def _imagesize(self, file):
-        self._convert.set_args(['-verbose', file, '/dev/null'])
-        self._convert.run(filter='^' + file + '=>', mode='batch', error2output=True)
-        if not self._convert.has_output():
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" picture file.')
-        elif self._convert.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._convert.get_exitcode()) +
-                             ' received from "' + self._convert.get_file() + '".')
-        x_size, y_size = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
-        return (int(x_size), int(y_size))
-
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Remeg(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
 
 
 if __name__ == '__main__':

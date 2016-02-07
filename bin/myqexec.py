@@ -11,12 +11,10 @@ import time
 
 import syslib
 
-RELEASE = '2.7.1'
+RELEASE = '2.7.2'
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
-
-# pylint: disable=no-self-use,too-few-public-methods
 
 
 class Options(object):
@@ -24,15 +22,10 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
+    def __init__(self):
         self._release = RELEASE
-        if len(args) != 3 or args[1] not in ('-jobid', '-spawn'):
-            raise SystemExit(sys.argv[0] +
-                             ': Cannot be started manually. Please run "myqsd" command.')
-        self._mode = args[1][1:]
-        self._myqsdir = os.path.join(os.environ['HOME'], '.config',
-                                     'myqs', syslib.info.get_hostname())
-        self._jobid = args[2]
+        self._args = None
+        self.parse(sys.argv)
 
     def get_jobid(self):
         """
@@ -58,22 +51,49 @@ class Options(object):
         """
         return self._release
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        if len(args) != 3 or args[1] not in ('-jobid', '-spawn'):
+            raise SystemExit(sys.argv[0] +
+                             ': Cannot be started manually. Please run "myqsd" command.')
+        self._mode = args[1][1:]
+        self._myqsdir = os.path.join(os.environ['HOME'], '.config',
+                                     'myqs', syslib.info.get_hostname())
+        self._jobid = args[2]
 
-class Job(object):
+
+class Main(object):
     """
-    Job class
+    Main class
     """
 
-    def __init__(self, options):
-        self._myqsdir = options.get_myqsdir()
-        self._jobid = options.get_jobid()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-        if 'HOME' not in os.environ:
-            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
-        if options.get_mode() == 'spawn':
-            self._spawn(options)
-        else:
-            self._start()
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _spawn(self, options):
         try:
@@ -112,7 +132,8 @@ class Job(object):
         self._sh(command)
         command.run(mode='exec')
 
-    def _sh(self, command):
+    @staticmethod
+    def _sh(command):
         try:
             with open(command.get_file(), errors='replace') as ifile:
                 line = ifile.readline().rstrip()
@@ -150,38 +171,21 @@ class Job(object):
         except OSError:
             pass
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
+        self._myqsdir = options.get_myqsdir()
+        self._jobid = options.get_jobid()
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Job(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        if 'HOME' not in os.environ:
+            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
+        if options.get_mode() == 'spawn':
+            self._spawn(options)
+        else:
+            self._start()
 
 
 if __name__ == '__main__':

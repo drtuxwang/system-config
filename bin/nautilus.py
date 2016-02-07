@@ -13,24 +13,15 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._nautilus = syslib.Command('nautilus')
-        if len(args) == 1:
-            if 'DESKTOP_STARTUP_ID' not in os.environ:
-                self._nautilus.set_args([os.getcwd()])
-        else:
-            self._nautilus.set_args(args[1:])
-        self._filter = ('^$|^Initializing nautilus|: Gtk-WARNING |: Gtk-CRITICAL | '
-                        'GLib.*CRITICAL |^Shutting down')
-        self._config()
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_filter(self):
         """
@@ -46,13 +37,13 @@ class Options(object):
 
     def _config(self):
         if 'HOME' in os.environ:
-            self._configdir = os.path.join(os.environ['HOME'], '.local', 'share', 'applications')
-            if not os.path.isdir(self._configdir):
+            configdir = os.path.join(os.environ['HOME'], '.local', 'share', 'applications')
+            if not os.path.isdir(configdir):
                 try:
-                    os.makedirs(self._configdir)
+                    os.makedirs(configdir)
                 except OSError:
                     return
-            file = os.path.join(self._configdir, 'mimeapps.list')
+            file = os.path.join(configdir, 'mimeapps.list')
             if not os.path.isfile(file):
                 try:
                     with open(file, 'w', newline='\n') as ofile:
@@ -91,12 +82,13 @@ class Options(object):
                         print('x-scheme-handler/rtsp=vlc.desktop', file=ofile)
                 except OSError:
                     return
-            self._userapp('application/vnd.oasis.opendocument.text', 'soffice')
-            self._userapp('image/jpeg', 'gqview')
-            self._userapp('text/html', 'chrome')
+            self._userapp(configdir, 'application/vnd.oasis.opendocument.text', 'soffice')
+            self._userapp(configdir, 'image/jpeg', 'gqview')
+            self._userapp(configdir, 'text/html', 'chrome')
 
-    def _userapp(self, mime_type, app_name):
-        file = os.path.join(self._configdir, app_name + '-userapp.desktop')
+    @staticmethod
+    def _userapp(configdir, mime_type, app_name):
+        file = os.path.join(configdir, app_name + '-userapp.desktop')
         if not os.path.isfile(file):
             try:
                 with open(file, 'w', newline='\n') as ofile:
@@ -108,7 +100,7 @@ class Options(object):
             except OSError:
                 return
 
-        file = os.path.join(self._configdir, 'mimeinfo.cache')
+        file = os.path.join(configdir, 'mimeinfo.cache')
         try:
             if not os.path.isfile(file):
                 with open(file, 'w', newline='\n') as ofile:
@@ -121,6 +113,20 @@ class Options(object):
         except OSError:
             return
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._nautilus = syslib.Command('nautilus')
+        if len(args) == 1:
+            if 'DESKTOP_STARTUP_ID' not in os.environ:
+                self._nautilus.set_args([os.getcwd()])
+        else:
+            self._nautilus.set_args(args[1:])
+        self._filter = ('^$|^Initializing nautilus|: Gtk-WARNING |: Gtk-CRITICAL | '
+                        'GLib.*CRITICAL |^Shutting down')
+        self._config()
+
 
 class Main(object):
     """
@@ -128,31 +134,39 @@ class Main(object):
     """
 
     def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
         try:
-            options = Options(sys.argv)
-            options.get_nautilus().run(filter=options.get_filter(), mode='background')
+            self.config()
+            sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except (syslib.SyslibError, SystemExit) as exception:
             sys.exit(exception)
-        sys.exit(0)
 
-    def _signals(self):
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+
+        options.get_nautilus().run(filter=options.get_filter(), mode='background')
 
 
 if __name__ == '__main__':

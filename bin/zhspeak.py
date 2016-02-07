@@ -17,7 +17,7 @@ import time
 
 import syslib2 as syslib
 
-RELEASE = '3.0.10'
+RELEASE = '3.0.11'
 
 if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 2.7, < 4.0).')
@@ -29,6 +29,7 @@ class Options(object):
     """
 
     def __init__(self):
+        self._release = RELEASE
         self._args = None
         self.parse(sys.argv)
 
@@ -115,8 +116,6 @@ class Options(object):
         """
         Parse arguments
         """
-        self._release = RELEASE
-
         self._parse_args(args[1:])
 
         self._speak_dir = os.path.abspath(os.path.join(

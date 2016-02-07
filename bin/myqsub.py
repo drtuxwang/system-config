@@ -12,12 +12,10 @@ import time
 
 import syslib
 
-RELEASE = '2.7.1'
+RELEASE = '2.7.2'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
-
-# pylint: disable=no-self-use,too-few-public-methods
 
 
 class Options(object):
@@ -25,10 +23,10 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
+    def __init__(self):
         self._release = RELEASE
-
-        self._parse_args(args[1:])
+        self._args = None
+        self.parse(sys.argv)
 
     def get_files(self):
         """
@@ -61,6 +59,12 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
         if self._args.ncpus[0] < 1:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
                              'the number of cpus.')
@@ -69,27 +73,36 @@ class Options(object):
                              self._args.queue[0] + '".')
 
 
-class Submit(object):
+class Main(object):
     """
-    Submit class
+    Main class
     """
 
-    def __init__(self, options):
-        if 'HOME' not in os.environ:
-            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
-        self._myqsdir = os.path.join(os.environ['HOME'], '.config',
-                                     'myqs', syslib.info.get_hostname())
-        if not os.path.isdir(self._myqsdir):
-            try:
-                os.makedirs(self._myqsdir)
-                os.chmod(self._myqsdir, int('700', 8))
-            except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' +
-                                 self._myqsdir + '" MyQS directory.')
-        lockfile = self._lock()
-        self._submit(options)
-        os.remove(lockfile)
-        self._myqsd()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _lastjob(self):
         lastjob = os.path.join(self._myqsdir, 'myqs.last')
@@ -179,38 +192,27 @@ class Submit(object):
             print('Batch job with jobid', jobid, 'has been submitted into MyQS.')
             time.sleep(0.5)
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Submit(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        if 'HOME' not in os.environ:
+            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
+        self._myqsdir = os.path.join(os.environ['HOME'], '.config',
+                                     'myqs', syslib.info.get_hostname())
+        if not os.path.isdir(self._myqsdir):
+            try:
+                os.makedirs(self._myqsdir)
+                os.chmod(self._myqsdir, int('700', 8))
+            except OSError:
+                raise SystemExit(sys.argv[0] + ': Cannot create "' +
+                                 self._myqsdir + '" MyQS directory.')
+        lockfile = self._lock()
+        self._submit(options)
+        os.remove(lockfile)
+        self._myqsd()
 
 
 if __name__ == '__main__':

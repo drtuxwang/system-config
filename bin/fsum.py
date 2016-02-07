@@ -15,16 +15,15 @@ import syslib
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable=no-self-use,too-few-public-methods
-
 
 class Options(object):
     """
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_check_flag(self):
         """
@@ -77,37 +76,43 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
-class Checksum(object):
+
+class Main(object):
     """
-    Check sum class
+    Main class
     """
 
-    def __init__(self, options):
-        if options.get_check_flag():
-            self._check(options.get_files())
-        else:
-            self._cache = {}
-            update_file = options.get_update_file()
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except (syslib.SyslibError, SystemExit) as exception:
+            sys.exit(exception)
 
-            if update_file:
-                if not os.path.isfile(update_file):
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot find "' + update_file + '" checksum file.')
-                try:
-                    with open(update_file, errors='replace') as ifile:
-                        for line in ifile:
-                            try:
-                                line = line.rstrip('\r\n')
-                                md5sum, size, mtime, file = self._getfsum(line)
-                                if file:
-                                    self._cache[(file, size, mtime)] = md5sum
-                            except IndexError:
-                                pass
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + update_file + '" checksum file.')
-            self._calc(options, options.get_files())
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
 
     def _calc(self, options, files):
         for file in files:
@@ -204,7 +209,8 @@ class Checksum(object):
                         extra.append(file)
         return extra
 
-    def _getfsum(self, line):
+    @staticmethod
+    def _getfsum(line):
         i = line.find('  ')
         try:
             md5sum, size, mtime = line[:i].split('/')
@@ -215,7 +221,8 @@ class Checksum(object):
         except ValueError:
             return ('', -1, -1, '')
 
-    def _md5sum(self, file):
+    @staticmethod
+    def _md5sum(file):
         try:
             with open(file, 'rb') as ifile:
                 md5 = hashlib.md5()
@@ -228,38 +235,36 @@ class Checksum(object):
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
         return md5.hexdigest()
 
+    def run(self):
+        """
+        Start program
+        """
+        options = Options()
 
-class Main(object):
-    """
-    Main class
-    """
+        if options.get_check_flag():
+            self._check(options.get_files())
+        else:
+            self._cache = {}
+            update_file = options.get_update_file()
 
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            Checksum(options)
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+            if update_file:
+                if not os.path.isfile(update_file):
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot find "' + update_file + '" checksum file.')
+                try:
+                    with open(update_file, errors='replace') as ifile:
+                        for line in ifile:
+                            try:
+                                line = line.rstrip('\r\n')
+                                md5sum, size, mtime, file = self._getfsum(line)
+                                if file:
+                                    self._cache[(file, size, mtime)] = md5sum
+                            except IndexError:
+                                pass
+                except OSError:
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot read "' + update_file + '" checksum file.')
+            self._calc(options, options.get_files())
 
 
 if __name__ == '__main__':
