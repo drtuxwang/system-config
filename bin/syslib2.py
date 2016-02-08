@@ -4,7 +4,7 @@ Python system interaction Library
 
 2006-2016 By Dr Colin Kong
 
-Version 5.4.1 (2016-01-30)
+Version 5.4.2 (2016-02-08)
 """
 
 import copy
@@ -1087,7 +1087,7 @@ class SystemInfo(object):
         return _cache['username']
 
 
-class SyslibError(Exception):
+class SyslibError(SystemExit):
     """
     This class handles module exception errors.
 

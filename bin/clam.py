@@ -20,12 +20,9 @@ class Options(object):
     Options class
     """
 
-    def __init__(self, args):
-        self._parse_args(args[1:])
-
-        self._clamscan = syslib.Command('clamscan')
-        self._clamscan.set_flags(['-r'])
-        self._clamscan.set_args(self._args.files)
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
 
     def get_lamscan(self):
         """
@@ -40,23 +37,60 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
-
-class Clam(object):
-    """
-    Clam class
-    """
-
-    def __init__(self, options):
-        self._clamscan = options.get_lamscan()
-
-    def run(self):
+    def parse(self, args):
         """
-        Run scanner
+        Parse arguments
         """
-        self._clamscan.run()
+        self._parse_args(args[1:])
+
+        self._clamscan = syslib.Command('clamscan')
+        self._clamscan.set_flags(['-r'])
+        self._clamscan.set_args(self._args.files)
+
+
+class Main(object):
+    """
+    Main class
+    """
+
+    def __init__(self):
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except SystemExit as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    @staticmethod
+    def run():
+        """
+        Start program
+        """
+        options = Options()
+        clamscan = options.get_lamscan()
+
+        clamscan.run()
         print('---------- VIRUS DATABASE ----------')
         if os.name == 'nt':
-            os.chdir(os.path.join(os.path.dirname(self._clamscan.get_file())))
+            os.chdir(os.path.join(os.path.dirname(clamscan.get_file())))
             directory = 'database'
         elif os.path.isdir('/var/clamav'):
             directory = '/var/clamav'
@@ -66,40 +100,8 @@ class Clam(object):
             file_stat = syslib.FileStat(file)
             print('{0:10d} [{1:s}] {2:s}'.format(
                 file_stat.get_size(), file_stat.get_time_local(), file))
-        return self._clamscan.get_exitcode()
 
-
-class Main(object):
-    """
-    Main class
-    """
-
-    def __init__(self):
-        self._signals()
-        if os.name == 'nt':
-            self._windows_argv()
-        try:
-            options = Options(sys.argv)
-            sys.exit(Clam(options).run())
-        except (EOFError, KeyboardInterrupt):
-            sys.exit(114)
-        except (syslib.SyslibError, SystemExit) as exception:
-            sys.exit(exception)
-        sys.exit(0)
-
-    def _signals(self):
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-    def _windows_argv(self):
-        argv = []
-        for arg in sys.argv:
-            files = glob.glob(arg)  # Fixes Windows globbing bug
-            if files:
-                argv.extend(files)
-            else:
-                argv.append(arg)
-        sys.argv = argv
+        return clamscan.get_exitcode()
 
 
 if __name__ == '__main__':
