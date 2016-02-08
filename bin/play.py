@@ -11,7 +11,7 @@ import os
 import signal
 import sys
 
-import file_utility
+import file_mod
 import syslib
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -146,7 +146,7 @@ class Media(object):
         """
         if self.is_valid():
             print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
-                  str(file_utility.FileStat(self._file).get_size()) + ' bytes')
+                  str(file_mod.FileStat(self._file).get_size()) + ' bytes')
             for stream, information in self.get_stream():
                 print(self._file + '[' + str(stream) + '] =', information)
 

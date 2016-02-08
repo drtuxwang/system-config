@@ -6,7 +6,7 @@ Monitor laptop battery
 import signal
 import sys
 
-import power_utility
+import power_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -65,7 +65,7 @@ class Main(object):
         """
         Start program
         """
-        batteries = power_utility.Battery.factory()
+        batteries = power_mod.Battery.factory()
 
         for battery in batteries:
             if battery.is_exist():

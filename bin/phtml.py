@@ -9,7 +9,7 @@ import os
 import signal
 import sys
 
-import file_utility
+import file_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -129,7 +129,7 @@ class Gallery(object):
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + xhtml_file + '" file.')
 
-                file_time = file_utility.FileStat(os.path.join(self._directory, file)).get_time()
+                file_time = file_mod.FileStat(os.path.join(self._directory, file)).get_time()
                 os.utime(xhtml_file, (file_time, file_time))
                 directory_time = max(directory_time, file_time)
 
@@ -201,7 +201,7 @@ class Xhtml(object):
         for directory in self._find():
             gallery = Gallery(directory, self._height)
             if gallery.create():
-                file_stats.append(file_utility.FileStat(directory))
+                file_stats.append(file_mod.FileStat(directory))
         file_stats = sorted(file_stats, key=lambda s: s.get_time(), reverse=True)
 
         try:

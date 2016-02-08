@@ -15,7 +15,7 @@ import sys
 import threading
 import time
 
-import power_utility
+import power_mod
 import syslib
 
 RELEASE = '4.6.5'
@@ -624,7 +624,7 @@ class LinuxSystem(PosixSystem):
                                           comment='SPK')
 
     def _detect_battery(self, writer):
-        batteries = power_utility.Battery.factory()
+        batteries = power_mod.Battery.factory()
 
         for battery in batteries:
             if battery.is_exist():

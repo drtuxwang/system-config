@@ -10,7 +10,7 @@ import signal
 import sys
 import time
 
-import ck_debug
+import debug_mod
 import syslib
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -201,7 +201,7 @@ class Main(object):
         self._options = Options(sys.argv)
 
         if self._options.get_dump_flag():
-            ck_debug.Dump().list('pytest', self)
+            debug_mod.Dump().list('pytest', self)
 
         start_time = time.time()
         tests = 0

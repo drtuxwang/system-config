@@ -10,7 +10,7 @@ import os
 import signal
 import sys
 
-import ck_desktop
+import desktop_mod
 import syslib
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -64,7 +64,7 @@ class Options(object):
         if invis_flag:
             desktop = 'invisible'
         else:
-            desktop = ck_desktop.Desktop().detect()
+            desktop = desktop_mod.Desktop().detect()
         mapping = {'invisible': XtermInvisible, 'gnome': GnomeTerminal, 'kde': Konsole,
                    'xfce': XfceTerminal, 'Unknown': Xterm}
         self._terminal = mapping[desktop](self)

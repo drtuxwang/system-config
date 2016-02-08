@@ -21,10 +21,10 @@ config/rc.local                 Copy to "/etc/rc.local" for auto running command
 config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
 config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
 
-bin/file_utility       Python file handling utility library
-bin/power_utility      Python power handling utility library
-bin/ck_debug.py        Python debugging module
-bin/ck_desktop.py      Python X-windows desktop module
+bin/debug_mod.py        Python debugging tools module
+bin/desktop_mod.py      Python X-windows desktop module
+bin/file_mod            Python file handling utility module
+bin/power_mod           Python power handling module
 
 bin/7z                 Make a compressed archive in 7z format
 bin/7z.bat             (uses p7zip or 7zip)

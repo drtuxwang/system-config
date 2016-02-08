@@ -11,7 +11,7 @@ import signal
 import sys
 import time
 
-import file_utility
+import file_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -126,7 +126,7 @@ class Main(object):
         if not os.path.isdir(target):
             try:
                 os.makedirs(target)
-                os.chmod(target, file_utility.FileStat(source).get_mode())
+                os.chmod(target, file_mod.FileStat(source).get_mode())
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" directory.')
         for file in files:
@@ -180,7 +180,7 @@ class Main(object):
                     if not os.path.isdir(targetdir):
                         try:
                             os.makedirs(targetdir)
-                            os.chmod(targetdir, file_utility.FileStat(source).get_mode())
+                            os.chmod(targetdir, file_mod.FileStat(source).get_mode())
                         except OSError:
                             raise SystemExit(
                                 sys.argv[0] + ': Cannot create "' + targetdir + '" directory.')

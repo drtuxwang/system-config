@@ -10,7 +10,7 @@ import os
 import signal
 import sys
 
-import file_utility
+import file_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -125,7 +125,7 @@ class Main(object):
                         except PermissionError:
                             pass
             elif os.path.isfile(file) and not file.endswith('..fsum'):
-                file_stat = file_utility.FileStat(file)
+                file_stat = file_mod.FileStat(file)
                 try:
                     md5sum = self._cache[(file, file_stat.get_size(), file_stat.get_time())]
                 except KeyError:
@@ -140,7 +140,7 @@ class Main(object):
                             print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(
                                 md5sum, file_stat.get_size(), file_stat.get_time(),
                                 os.path.basename(file)), file=ofile)
-                        file_stat = file_utility.FileStat(file)
+                        file_stat = file_mod.FileStat(file)
                         os.utime(file + '.fsum', (file_stat.get_time(), file_stat.get_time()))
                     except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '.fsum" file.')
@@ -162,7 +162,7 @@ class Main(object):
                         file = os.path.join(directory, file)
                         found.append(file)
                         nfiles += 1
-                        file_stat = file_utility.FileStat(file)
+                        file_stat = file_mod.FileStat(file)
                         try:
                             if not os.path.isfile(file):
                                 print(file, '# FAILED open or read')

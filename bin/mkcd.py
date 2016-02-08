@@ -10,7 +10,7 @@ import signal
 import sys
 import time
 
-import file_utility
+import file_mod
 import syslib
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -252,7 +252,7 @@ class Main(object):
         if answer.lower() != 'y':
             raise SystemExit(1)
         wodim.set_flags(['-v', '-shorttrack', '-eject'])
-        if file_utility.FileStat(file).get_size() < 2097152:  # Pad to avoid dd read problem
+        if file_mod.FileStat(file).get_size() < 2097152:  # Pad to avoid dd read problem
             wodim.append_arg('-pad')
         wodim.set_args([
             'dev=' + self._device, 'speed=' + str(self._speed), 'driveropts=burnfree', file])

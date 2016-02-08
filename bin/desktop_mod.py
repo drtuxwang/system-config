@@ -4,7 +4,7 @@ Python X-windows desktop module
 
 Copyright GPL v2: 2013-2016 By Dr Colin Kong
 
-Version 1.0.2 (2016-01-30)
+Version 2.0.0 (2016-02-08)
 """
 
 import os

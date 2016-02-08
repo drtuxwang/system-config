@@ -8,7 +8,7 @@ import os
 import signal
 import sys
 
-import file_utility
+import file_mod
 import syslib
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -103,7 +103,7 @@ class Main(object):
         if not os.path.isfile(source):
             raise SystemExit(sys.argv[0] + ': Cannot find "' + source + '" Java source file.')
         if os.path.isfile(target):
-            if file_utility.FileStat(source).get_time() > file_utility.FileStat(target).get_time():
+            if file_mod.FileStat(source).get_time() > file_mod.FileStat(target).get_time():
                 try:
                     os.remove(target)
                 except OSError:

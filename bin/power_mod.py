@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Python power handling utility library
+Python power handling module
 
 Copyright GPL v2: 2011-2016 By Dr Colin Kong
 

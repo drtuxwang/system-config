@@ -9,7 +9,7 @@ import os
 import signal
 import sys
 
-import file_utility
+import file_mod
 import syslib
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -145,7 +145,7 @@ class Main(object):
                 if isoinfo.get_exitcode():
                     raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.get_exitcode()) +
                                      ' received from "' + isoinfo.get_file() + '".')
-                self._isosize(image, file_utility.FileStat(image).get_size())
+                self._isosize(image, file_mod.FileStat(image).get_size())
 
 
 if __name__ == '__main__':

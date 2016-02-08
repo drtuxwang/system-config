@@ -9,7 +9,7 @@ import os
 import signal
 import sys
 
-import file_utility
+import file_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -113,11 +113,11 @@ class Main(object):
         file_stats = []
         for file in files:
             if os.path.islink(file):
-                file_stats.append(file_utility.FileStat(file, size=0))
+                file_stats.append(file_mod.FileStat(file, size=0))
             elif os.path.isdir(file):
-                file_stats.append(file_utility.FileStat(file + os.sep))
+                file_stats.append(file_mod.FileStat(file + os.sep))
             elif os.path.isfile(file):
-                file_stats.append(file_utility.FileStat(file))
+                file_stats.append(file_mod.FileStat(file))
         for file_stat in self._sorted(options, file_stats):
             print('{0:10d} [{1:s}] {2:s}'.format(file_stat.get_size(), file_stat.get_time_local(),
                                                  file_stat.get_file()))

@@ -10,7 +10,7 @@ import re
 import signal
 import sys
 
-import file_utility
+import file_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -124,7 +124,7 @@ class Main(object):
                 print(file + ':', nchange, 'line changed.')
 
             try:
-                os.chmod(newfile, file_utility.FileStat(file).get_mode())
+                os.chmod(newfile, file_mod.FileStat(file).get_mode())
                 os.rename(newfile, file)
             except OSError:
                 self._remove(newfile)

@@ -8,7 +8,7 @@ import os
 import signal
 import sys
 
-import ck_desktop
+import desktop_mod
 import syslib
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -51,7 +51,7 @@ class Main(object):
         """
         Start program
         """
-        desktop = ck_desktop.Desktop().detect()
+        desktop = desktop_mod.Desktop().detect()
         if desktop == 'gnome':
             xdesktop = syslib.Command('nautilus')
         elif desktop == 'kde':

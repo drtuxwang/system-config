@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Python debugging module
+Python debugging tools module
 
 Copyright GPL v2: 2015-2016 By Dr Colin Kong
 
-Version 1.0.1 (2016-01-26)
+Version 2.0.0 (2016-02-08)
 """
 
 import sys

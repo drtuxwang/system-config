@@ -9,7 +9,7 @@ import signal
 import sys
 import time
 
-import ck_desktop
+import desktop_mod
 import syslib
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -52,7 +52,7 @@ class Main(object):
         """
         Start program
         """
-        desktop = ck_desktop.Desktop().detect()
+        desktop = desktop_mod.Desktop().detect()
         xlock = syslib.Command('light-locker-command', flags=['--lock'], check=False)
         if xlock.is_found():
             if not syslib.Task().haspname('light-locker'):

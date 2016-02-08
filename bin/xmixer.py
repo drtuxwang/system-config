@@ -8,7 +8,7 @@ import os
 import signal
 import sys
 
-import ck_desktop
+import desktop_mod
 import syslib
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -53,7 +53,7 @@ class Main(object):
         """
         xmixer = syslib.Command('pavucontrol', check=False)
         if not xmixer.is_found():
-            desktop = ck_desktop.Desktop().detect()
+            desktop = desktop_mod.Desktop().detect()
             if desktop == 'gnome':
                 xmixer = syslib.Command('gnome-volume-control', check=False)
             elif desktop == 'kde':
