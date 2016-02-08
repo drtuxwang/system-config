@@ -53,7 +53,7 @@ class Options(object):
         parser.add_argument('packageNames', nargs='+', metavar='package',
                             help='Debian package name.')
 
-        self._args = parser.parse_args(args)
+        self._args = parser.parse_args(args[1:])
 
     def parse(self, args):
         """
