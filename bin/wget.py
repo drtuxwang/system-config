@@ -8,7 +8,7 @@ import os
 import signal
 import sys
 
-import netnice
+import network_mod
 import syslib
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -56,7 +56,7 @@ class Options(object):
                     self._wget.extend_flags(['--output-document', os.path.basename(args[-1])])
                     break
 
-        shaper = netnice.Shaper()
+        shaper = network_mod.Shaper()
         if shaper.is_found():
             self._wget.set_wrapper(shaper)
 

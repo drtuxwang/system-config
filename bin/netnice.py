@@ -5,11 +5,11 @@ Run a command with limited network bandwidth.
 
 import argparse
 import glob
-import json
 import os
 import signal
 import sys
 
+import network_mod
 import syslib
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -76,70 +76,10 @@ class Options(object):
         """
         self._command = self._parse_args(args[1:])
 
-        shaper = Shaper(self._args.drate[0])
+        shaper = network_mod.Shaper(self._args.drate[0])
         if not shaper.get_file():
             raise SystemExit(sys.argv[0] + ': Cannot find "trickle" command.')
         self._command.set_wrapper(shaper)
-
-
-class Shaper(syslib.Command):
-    """
-    Sharper class
-    """
-
-    def __init__(self, drate=None):
-        super().__init__('trickle', check=False)
-
-        self._drate = 512
-        if 'HOME' in os.environ:
-            file = os.path.join(os.environ['HOME'], '.config', 'netnice.json')
-            if not self.read(file):
-                self.write(file)
-
-        if drate:
-            self._drate = drate
-
-        self.set_rate(self._drate)
-
-    def set_rate(self, drate):
-        """
-        Set rate
-
-        drate = Download rate (KB)
-        """
-        self._drate = drate
-        self.set_args(['-d', str(self._drate), '-s'])
-
-    def read(self, file):
-        """
-        Read configuration file
-        """
-        if os.path.isfile(file):
-            try:
-                with open(file) as ifile:
-                    data = json.load(ifile)
-                    self._drate = data['netnice']['download']
-            except (KeyError, OSError, ValueError):
-                pass
-            else:
-                return True
-
-        return False
-
-    def write(self, file):
-        """
-        Write configuration file
-        """
-        data = {
-            'netnice': {
-                'download': self._drate
-            }
-        }
-        try:
-            with open(file, 'w', newline='\n') as ofile:
-                print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
-        except OSError:
-            pass
 
 
 class Main(object):

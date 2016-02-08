@@ -8,7 +8,7 @@ import os
 import signal
 import sys
 
-import netnice
+import network_mod
 import syslib
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -65,7 +65,7 @@ class Main(object):
         aria2c.set_args(sys.argv[1:])
         self._set_libraries(aria2c)
 
-        shaper = netnice.Shaper()
+        shaper = network_mod.Shaper()
         if shaper.is_found():
             aria2c.set_wrapper(shaper)
 
