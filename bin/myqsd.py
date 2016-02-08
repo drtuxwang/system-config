@@ -11,8 +11,9 @@ import sys
 import time
 
 import syslib
+import task_mod
 
-RELEASE = '2.7.2'
+RELEASE = '2.7.3'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -93,7 +94,7 @@ class Lock(object):
         """
         Return True if lock exists
         """
-        return syslib.Task().haspid(self._pid)
+        return task_mod.Task().haspid(self._pid)
 
     def create(self):
         """
@@ -113,7 +114,7 @@ class Lock(object):
                 except (OSError, ValueError):
                     raise SystemExit(0)
                 else:
-                    if not syslib.Task().haspid(os.getpid()):
+                    if not task_mod.Task().haspid(os.getpid()):
                         raise SystemExit(sys.argv[0] + ": Cannot obtain MyQS scheduler lock file.")
         except OSError:
             return
@@ -122,7 +123,7 @@ class Lock(object):
         """
         Remove lock file
         """
-        syslib.Task().killpids([self._pid])
+        task_mod.Task().killpids([self._pid])
         try:
             os.remove(self._file)
         except OSError:
@@ -177,7 +178,7 @@ class Main(object):
                     pgid = int(info['PGID'])
                 except ValueError:
                     pass
-                if not syslib.Task().haspgid(pgid):
+                if not task_mod.Task().haspgid(pgid):
                     jobid = os.path.basename(file)[:-2]
                     print('Batch job with jobid "' + jobid +
                           '" being requeued after system restart...')
@@ -196,7 +197,7 @@ class Main(object):
             except OSError:
                 continue
             if 'PGID' in info:
-                if not syslib.Task().haspgid(int(info['PGID'])):
+                if not task_mod.Task().haspgid(int(info['PGID'])):
                     time.sleep(0.5)
                     try:
                         os.remove(file)

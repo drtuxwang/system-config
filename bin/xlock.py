@@ -11,6 +11,7 @@ import time
 
 import desktop_mod
 import syslib
+import task_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -55,12 +56,12 @@ class Main(object):
         desktop = desktop_mod.Desktop().detect()
         xlock = syslib.Command('light-locker-command', flags=['--lock'], check=False)
         if xlock.is_found():
-            if not syslib.Task().haspname('light-locker'):
+            if not task_mod.Task().haspname('light-locker'):
                 syslib.Command('light-locker').run(mode='daemon')
                 time.sleep(1)
         elif desktop == 'gnome':
             xlock = syslib.Command('gnome-screensaver-command', flags=['--lock'])
-            if not syslib.Task().haspname('gnome-screensaver'):
+            if not task_mod.Task().haspname('gnome-screensaver'):
                 syslib.Command('gnome-screensaver').run()
         elif desktop == 'kde':
             xlock = syslib.Command(

@@ -15,6 +15,7 @@ import signal
 import sys
 
 import syslib
+import task_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
@@ -142,7 +143,7 @@ class Options(object):
     @staticmethod
     def _copy():
         if 'HOME' in os.environ:
-            task = syslib.Task()
+            task = task_mod.Task()
             for directory in glob.glob(
                     os.path.join('/tmp', 'firefox-' + syslib.info.get_username() + '.*')):
                 try:
@@ -315,7 +316,7 @@ class Options(object):
         # Avoids 'exo-helper-1 firefox http://' problem of clicking text in XFCE
         if len(args) > 1:
             ppid = os.getppid()
-            if ppid != 1 and 'exo-helper' in syslib.Task().get_process(ppid)['COMMAND']:
+            if ppid != 1 and 'exo-helper' in task_mod.Task().get_process(ppid)['COMMAND']:
                 raise SystemExit
 
         self._firefox.set_args(args[1:])

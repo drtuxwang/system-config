@@ -9,7 +9,7 @@ import os
 import signal
 import sys
 
-import syslib
+import task_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -86,7 +86,7 @@ class Main(object):
 
     @staticmethod
     def _filter(options):
-        task = syslib.Task()
+        task = task_mod.Task()
         keyword = options.get_keyword()
         if keyword.isdigit():
             if task.haspid(int(keyword)):
@@ -109,7 +109,7 @@ class Main(object):
 
     @staticmethod
     def _ykill(options, pids):
-        task = syslib.Task()
+        task = task_mod.Task()
         mypid = os.getpid()
         apids = task.get_ancestor_pids(mypid)
         for pid in pids:

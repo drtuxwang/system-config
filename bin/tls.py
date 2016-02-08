@@ -9,7 +9,7 @@ import os
 import signal
 import sys
 
-import syslib
+import task_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -47,11 +47,11 @@ class Options(object):
         self._parse_args(args[1:])
 
         if self._args.username:
-            self._task = syslib.Task(self._args.username)
+            self._task = task_mod.Task(self._args.username)
         elif self._args.allFlag:
-            self._task = syslib.Task('<all>')
+            self._task = task_mod.Task('<all>')
         else:
-            self._task = syslib.Task()
+            self._task = task_mod.Task()
 
 
 class Main(object):

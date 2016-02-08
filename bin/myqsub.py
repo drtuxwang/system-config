@@ -11,8 +11,9 @@ import sys
 import time
 
 import syslib
+import task_mod
 
-RELEASE = '2.7.2'
+RELEASE = '2.7.3'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -137,7 +138,7 @@ class Main(object):
                         except (OSError, ValueError):
                             pass
                         else:
-                            if not syslib.Task().haspid(pid):
+                            if not task_mod.Task().haspid(pid):
                                 os.remove(lockfile)
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' +
@@ -161,7 +162,7 @@ class Main(object):
                 except (OSError, ValueError):
                     pass
                 else:
-                    if syslib.Task().haspid(pid):
+                    if task_mod.Task().haspid(pid):
                         return
                     else:
                         os.remove(lockfile)

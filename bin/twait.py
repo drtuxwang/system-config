@@ -11,6 +11,7 @@ import sys
 import time
 
 import syslib
+import task_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -119,11 +120,11 @@ class Main(object):
         pname = options.get_pname()
 
         if pname:
-            while syslib.Task(user).haspname(pname):
+            while task_mod.Task(user).haspname(pname):
                 time.sleep(1)
         else:
             pid = options.get_pid()
-            while pid in syslib.Task(user).get_pids():
+            while pid in task_mod.Task(user).get_pids():
                 time.sleep(1)
         options.get_command().run(mode='exec')
 

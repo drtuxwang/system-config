@@ -11,8 +11,9 @@ import sys
 import time
 
 import syslib
+import task_mod
 
-RELEASE = '2.7.2'
+RELEASE = '2.7.3'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -86,7 +87,7 @@ class Main(object):
                 except (OSError, ValueError):
                     pass
                 else:
-                    if syslib.Task().haspid(pid):
+                    if task_mod.Task().haspid(pid):
                         return
                     else:
                         os.remove(lockfile)
@@ -133,7 +134,7 @@ class Main(object):
             except ValueError:
                 etime = '0'
             else:
-                if syslib.Task().haspgid(pgid):
+                if task_mod.Task().haspgid(pgid):
                     if os.path.isdir(info['DIRECTORY']):
                         logfile = os.path.join(
                             info['DIRECTORY'], os.path.basename(info['COMMAND']) +

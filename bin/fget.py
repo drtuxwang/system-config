@@ -15,6 +15,7 @@ import urllib.request
 
 import file_mod
 import syslib
+import task_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -130,7 +131,7 @@ class Main(object):
                 host = json_data['fget']['lock']['host']
                 pid = json_data['fget']['lock']['pid']
 
-                if host == syslib.info.get_hostname() and syslib.Task().haspid(pid):
+                if host == syslib.info.get_hostname() and task_mod.Task().haspid(pid):
                     return 'skip'
                 if json_data['fget']['data'] == data:
                     return 'resume'

@@ -17,6 +17,7 @@ import sys
 
 import file_mod
 import syslib
+import task_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
@@ -136,7 +137,7 @@ class Options(object):
 
     def _copy(self):
         if 'HOME' in os.environ:
-            task = syslib.Task()
+            task = task_mod.Task()
             for directory in glob.glob(
                     os.path.join('/tmp', 'chrome-' + syslib.info.get_username() + '.*')):
                 try:
@@ -201,7 +202,7 @@ class Options(object):
             configdir = os.path.join(os.environ['HOME'], '.config', 'google-chrome')
             try:
                 pid = os.readlink(os.path.join(configdir, 'SingletonLock')).split('-')[1]
-                syslib.Task().killpids([pid])
+                task_mod.Task().killpids([pid])
             except (IndexError, OSError):
                 pass
 
@@ -242,7 +243,7 @@ class Options(object):
         # Avoids 'exo-helper-1 chrome http://' problem of clicking text in XFCE
         if len(args) > 1:
             ppid = os.getppid()
-            if ppid != 1 and 'exo-helper' in syslib.Task().get_process(ppid)['COMMAND']:
+            if ppid != 1 and 'exo-helper' in task_mod.Task().get_process(ppid)['COMMAND']:
                 raise SystemExit
 
         if '--disable-background-mode' not in self._chrome.get_args():

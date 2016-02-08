@@ -9,7 +9,7 @@ import os
 import signal
 import sys
 
-import syslib
+import task_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -99,7 +99,7 @@ class Main(object):
             except KeyboardInterrupt:
                 sys.exit(114)
 
-        syslib.Task().killpids([self._pid])
+        task_mod.Task().killpids([self._pid])
 
 
 if __name__ == '__main__':
