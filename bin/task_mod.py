@@ -39,13 +39,13 @@ class Task(object):
         raise NotImplementedError
 
     @classmethod
-    def factory(cls):
+    def factory(cls, user=None):
         """
         Return Task sub class object.
         """
         if _System.is_windows():
-            return WindowsTask()
-        return PosixTask()
+            return WindowsTask(user)
+        return PosixTask(user)
 
     def pgid2pids(self, pgid):
         """

@@ -87,7 +87,7 @@ class Main(object):
                 except (OSError, ValueError):
                     pass
                 else:
-                    if task_mod.Task().haspid(pid):
+                    if task_mod.Task.factory().haspid(pid):
                         return
                     else:
                         os.remove(lockfile)
@@ -134,7 +134,7 @@ class Main(object):
             except ValueError:
                 etime = '0'
             else:
-                if task_mod.Task().haspgid(pgid):
+                if task_mod.Task.factory().haspgid(pgid):
                     if os.path.isdir(info['DIRECTORY']):
                         logfile = os.path.join(
                             info['DIRECTORY'], os.path.basename(info['COMMAND']) +

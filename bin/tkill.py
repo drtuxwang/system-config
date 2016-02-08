@@ -86,7 +86,7 @@ class Main(object):
 
     @staticmethod
     def _filter(options):
-        task = task_mod.Task()
+        task = task_mod.Task.factory()
         keyword = options.get_keyword()
         if keyword.isdigit():
             if task.haspid(int(keyword)):
@@ -109,7 +109,7 @@ class Main(object):
 
     @staticmethod
     def _ykill(options, pids):
-        task = task_mod.Task()
+        task = task_mod.Task.factory()
         mypid = os.getpid()
         apids = task.get_ancestor_pids(mypid)
         for pid in pids:

@@ -94,7 +94,7 @@ class Lock(object):
         """
         Return True if lock exists
         """
-        return task_mod.Task().haspid(self._pid)
+        return task_mod.Task.factory().haspid(self._pid)
 
     def create(self):
         """
@@ -114,7 +114,7 @@ class Lock(object):
                 except (OSError, ValueError):
                     raise SystemExit(0)
                 else:
-                    if not task_mod.Task().haspid(os.getpid()):
+                    if not task_mod.Task.factory().haspid(os.getpid()):
                         raise SystemExit(sys.argv[0] + ": Cannot obtain MyQS scheduler lock file.")
         except OSError:
             return
@@ -123,7 +123,7 @@ class Lock(object):
         """
         Remove lock file
         """
-        task_mod.Task().killpids([self._pid])
+        task_mod.Task.factory().killpids([self._pid])
         try:
             os.remove(self._file)
         except OSError:
@@ -178,7 +178,7 @@ class Main(object):
                     pgid = int(info['PGID'])
                 except ValueError:
                     pass
-                if not task_mod.Task().haspgid(pgid):
+                if not task_mod.Task.factory().haspgid(pgid):
                     jobid = os.path.basename(file)[:-2]
                     print('Batch job with jobid "' + jobid +
                           '" being requeued after system restart...')
@@ -197,7 +197,7 @@ class Main(object):
             except OSError:
                 continue
             if 'PGID' in info:
-                if not task_mod.Task().haspgid(int(info['PGID'])):
+                if not task_mod.Task.factory().haspgid(int(info['PGID'])):
                     time.sleep(0.5)
                     try:
                         os.remove(file)

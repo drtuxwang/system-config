@@ -99,7 +99,7 @@ class Main(object):
             except KeyboardInterrupt:
                 sys.exit(114)
 
-        task_mod.Task().killpids([self._pid])
+        task_mod.Task.factory().killpids([self._pid])
 
 
 if __name__ == '__main__':

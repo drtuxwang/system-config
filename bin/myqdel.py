@@ -123,7 +123,7 @@ class Main(object):
                                 pgid = int(info['PGID'])
                             except ValueError:
                                 return
-                            task_mod.Task().killpgid(pgid, signal='TERM')
+                            task_mod.Task.factory().killpgid(pgid, signal='TERM')
                         try:
                             os.remove(file)
                         except OSError:

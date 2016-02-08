@@ -56,12 +56,12 @@ class Main(object):
         desktop = desktop_mod.Desktop().detect()
         xlock = syslib.Command('light-locker-command', flags=['--lock'], check=False)
         if xlock.is_found():
-            if not task_mod.Task().haspname('light-locker'):
+            if not task_mod.Task.factory().haspname('light-locker'):
                 syslib.Command('light-locker').run(mode='daemon')
                 time.sleep(1)
         elif desktop == 'gnome':
             xlock = syslib.Command('gnome-screensaver-command', flags=['--lock'])
-            if not task_mod.Task().haspname('gnome-screensaver'):
+            if not task_mod.Task.factory().haspname('gnome-screensaver'):
                 syslib.Command('gnome-screensaver').run()
         elif desktop == 'kde':
             xlock = syslib.Command(

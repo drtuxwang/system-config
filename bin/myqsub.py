@@ -138,7 +138,7 @@ class Main(object):
                         except (OSError, ValueError):
                             pass
                         else:
-                            if not task_mod.Task().haspid(pid):
+                            if not task_mod.Task.factory().haspid(pid):
                                 os.remove(lockfile)
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' +
@@ -162,7 +162,7 @@ class Main(object):
                 except (OSError, ValueError):
                     pass
                 else:
-                    if task_mod.Task().haspid(pid):
+                    if task_mod.Task.factory().haspid(pid):
                         return
                     else:
                         os.remove(lockfile)
