@@ -643,8 +643,9 @@ bin/sysinfo.bat
 bin/sysinfo.py
 bin/sysinfo.sh         Old Bourne shell version
 
-bin/syslib.py          Python system interaction Library (Python 3)
-bin/syslib2.py         Python system interaction Library (Python 2.7 & 3)
+bin/syslib.py          Python system interaction Library (transitional)
+bin/syslib2.py         Python system interaction Library (legacy Python 2.7 & 3)
+bin/syslib3.py         Python system interaction Library (legacy Python Python 3)
 
 bin/tar                tar wrapper (allowing non systems port)
 bin/tar.bat            (with Python enhancements)

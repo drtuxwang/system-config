@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Python system interaction Library (transitional)
+Python system interaction Library (legacy)
 
 2006-2016 By Dr Colin Kong
 
-Version 6.0.0 (2016-02-08)
+Version 5.4.3 (2016-02-08)
 """
 
 import copy
@@ -16,21 +16,20 @@ import signal
 import socket
 import subprocess
 import sys
-
-import file_mod
+import time
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 # pylint: disable = wrong-import-order, wrong-import-position
+
 if os.name == 'nt':
     import platform
-# pylint: enable = wrong-import-order, wrong-import-position
 
 # pylint: disable = no-member, no-self-use, too-few-public-methods
 # pylint: disable = redefined-builtin, unused-variable, invalid-name, redefined-outer-name
 # pylint: disable = too-many-arguments, too-many-branches, too-many-instance-attributes
-# pylint: disable = too-many-lines,too-many-locals,too-many-public-methods,too-many-statements
+# pylint: disable = too-many-lines, too-many-locals, too-many-public-methods, too-many-statements
 
 
 class Background(object):
@@ -664,7 +663,7 @@ class Command(object):
                     if files:
                         break
 
-            self._file = file_mod.FileStat.newest(files)
+            self._file = info.newest(files)
             if self._file:
                 return
 
@@ -749,6 +748,116 @@ class Daemon(object):
     def _run_wait(self, child):
         while child.stdout.read(self._buffer_size):
             pass
+
+
+class FileStat(object):
+    """
+    This class contains file status information.
+
+    self._file  = Filename
+    self._mode  = Inode protection mode
+    self._ino   = Inode number
+    self._dev   = Device inode resides on
+    self._nlink = Number of links to the inode
+    self._uid   = User ID of the owner
+    self._gid   = Group ID of the owner.
+    self._size  = Size in bytes of a file
+    self._atime = Time of last access
+    self._mtime = Time of last modification
+    self._ctime = Time of creation
+    """
+
+    def __init__(self, file='', size=None):
+        """
+        file = filename
+
+        size = Override file size (useful for zero sizing links)
+        """
+        if file:
+            self._file = file
+            try:
+                (self._mode, self._ino, self._dev, self._nlink, self._uid, self._gid,
+                 self._size, self._atime, self._mtime, self._ctime) = os.stat(file)
+            except (OSError, TypeError):
+                if not os.path.islink:
+                    raise SyslibError(sys.argv[0] + ': Cannot find "' + file + '" file status.')
+                (self._mode, self._ino, self._dev, self._nlink, self._uid, self._gid, self._size,
+                 self._atime, self._mtime, self._ctime) = [0] * 10
+            else:
+                if size is not None:
+                    self._size = size
+
+    def get_file(self):
+        """
+        Return filename
+        """
+        return self._file
+
+    def get_groupid(self):
+        """
+        Return group ID of the owner
+        """
+        return self._gid
+
+    def get_inode_device(self):
+        """
+        Return device inode resides on
+        """
+        return self._dev
+
+    def get_inode_number(self):
+        """
+        Return inode number
+        """
+        return self._ino
+
+    def get_number_links(self):
+        """
+        Return number of links to the inode
+        """
+        return self._nlink
+
+    def get_mode(self):
+        """
+        Return inode protection mode
+        """
+        return self._mode
+
+    def get_size(self):
+        """
+        Return size in bytes of a file
+        """
+        return self._size
+
+    def get_userid(self):
+        """
+        Return user ID of the owner
+        """
+        return self._uid
+
+    def get_time(self):
+        """
+        Return time of last modification
+        """
+        return self._mtime
+
+    def get_time_access(self):
+        """
+        Return time of last access
+        """
+        return self._atime
+
+    def get_time_create(self):
+        """
+        Return time of creation.
+        """
+        return self._ctime
+
+    def get_time_local(self):
+        """
+        Return time of last modification in full ISO local time format (ie '2011-12-31-12:30:28')
+        """
+        return time.strftime('%Y-%m-%d-%H:%M:%S', time.localtime(self._mtime))
 
 
 class SystemInfo(object):
@@ -843,6 +952,46 @@ class SystemInfo(object):
         Return hostname in IDNA format.
         """
         return str(host.encode('idna'))[2:-1]
+
+    def newest(self, files):
+        """
+        Return newest file or directory.
+
+        files = List of files
+        """
+        nfile_stat = None
+        nfile = ''
+        for file in files:
+            if os.path.isfile(file) or os.path.isdir(file):
+                if nfile:
+                    file_stat = FileStat(file)
+                    if file_stat.get_time() > nfile_stat.get_time():
+                        nfile = file
+                        nfile_stat = file_stat
+                else:
+                    nfile = file
+                    nfile_stat = FileStat(nfile)
+        return nfile
+
+    def oldest(self, files):
+        """
+        Return oldest file or directory.
+
+        files = List of files
+        """
+        nfile_stat = None
+        nfile = ''
+        for file in files:
+            if os.path.isfile(file) or os.path.isdir(file):
+                if nfile:
+                    file_stat = FileStat(file)
+                    if file_stat.get_time() < nfile_stat.get_time():
+                        nfile = file
+                        nfile_stat = file_stat
+                else:
+                    nfile = file
+                    nfile_stat = FileStat(nfile)
+        return nfile
 
     def strings(self, file, pattern):
         """

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Python system interaction Library
+Python system interaction Library (legacy)
 
-Version 5.4.1 (2016-01-29)
+Version 5.4.2 (2016-02-08)
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
