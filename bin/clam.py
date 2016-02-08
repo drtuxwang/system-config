@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 
+import file_utility
 import syslib
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -97,7 +98,7 @@ class Main(object):
         else:
             directory = '/var/lib/clamav'
         for file in sorted(glob.glob(os.path.join(directory, '*c[lv]d'))):
-            file_stat = syslib.FileStat(file)
+            file_stat = file_utility.FileStat(file)
             print('{0:10d} [{1:s}] {2:s}'.format(
                 file_stat.get_size(), file_stat.get_time_local(), file))
 

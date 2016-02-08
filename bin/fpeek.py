@@ -9,7 +9,7 @@ import os
 import signal
 import sys
 
-import syslib
+import file_utility
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -122,7 +122,7 @@ class Main(object):
             try:
                 with open(file, 'rb') as ifile:
                     print('\nFile:', file)
-                    file_stat = syslib.FileStat(file)
+                    file_stat = file_utility.FileStat(file)
                     if options.get_all_flag() or file_stat.get_size() < 128:
                         for position in range(1, file_stat.get_size() + 1, 16):
                             print('{0:07d}{1:s}'.format(

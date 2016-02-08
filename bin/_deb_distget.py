@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 
+import file_utility
 import syslib
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -68,7 +69,7 @@ class Main(object):
         self._wget.set_args([url])
         self._wget.run(mode='batch')
         if self._wget.is_match_error(' saved '):
-            print('  [' + syslib.FileStat(archive).get_time_local() + ']', url)
+            print('  [' + file_utility.FileStat(archive).get_time_local() + ']', url)
         elif not self._wget.is_match_error('^Server file no newer'):
             print('  [File Download Error]', url)
             self._remove()

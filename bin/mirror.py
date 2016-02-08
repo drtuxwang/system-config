@@ -11,7 +11,7 @@ import signal
 import sys
 import time
 
-import syslib
+import file_utility
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -178,8 +178,8 @@ class Main(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot remove "' + target_file + '" link.')
         elif os.path.isfile(target_file):
-            source_file_stat = syslib.FileStat(source_file)
-            target_file_stat = syslib.FileStat(target_file)
+            source_file_stat = file_utility.FileStat(source_file)
+            target_file_stat = file_utility.FileStat(target_file)
             if source_file_stat.get_size() == target_file_stat.get_size():
                 # Allow FAT16/FAT32/NTFS 1h daylight saving and 1 sec rounding error
                 if (abs(source_file_stat.get_time() - target_file_stat.get_time()) in
@@ -189,7 +189,7 @@ class Main(object):
             print('[', self._size, ',', int(time.time()) - self._start, '] Updating "',
                   target_file, '" file...', sep='')
         else:
-            source_file_stat = syslib.FileStat(source_file)
+            source_file_stat = file_utility.FileStat(source_file)
             self._size += int((source_file_stat.get_size() + 1023) / 1024)
             print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
                   target_file, '" file...', sep='')
@@ -207,8 +207,8 @@ class Main(object):
 
     @staticmethod
     def _mirror_directory_time(source_dir, target_dir):
-        source_time = syslib.FileStat(source_dir).get_time()
-        target_time = syslib.FileStat(target_dir).get_time()
+        source_time = file_utility.FileStat(source_dir).get_time()
+        target_time = file_utility.FileStat(target_dir).get_time()
         if source_time != target_time:
             try:
                 os.utime(target_dir, (source_time, source_time))
@@ -233,7 +233,7 @@ class Main(object):
                   target_dir, '" directory...', sep='')
             try:
                 os.mkdir(target_dir)
-                os.chmod(target_dir, syslib.FileStat(source_dir).get_mode())
+                os.chmod(target_dir, file_utility.FileStat(source_dir).get_mode())
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + target_dir + '" directory.')
 

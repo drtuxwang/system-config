@@ -9,7 +9,7 @@ import os
 import signal
 import sys
 
-import syslib
+import file_utility
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -98,7 +98,7 @@ class Main(object):
         packages = {}
         for file in files:
             name = os.path.basename(file).split('_')[0]
-            file_stat = syslib.FileStat(file)
+            file_stat = file_utility.FileStat(file)
             version = os.path.basename(file).split('_')[1]
             if name in packages:
                 if file_stat.get_time() > packages[name].get_time():

@@ -9,7 +9,7 @@ import os
 import signal
 import sys
 
-import syslib
+import file_utility
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -117,8 +117,8 @@ class Main(object):
 
     @staticmethod
     def _difffile(file1, file2):
-        file_stat1 = syslib.FileStat(file1)
-        file_stat2 = syslib.FileStat(file2)
+        file_stat1 = file_utility.FileStat(file1)
+        file_stat2 = file_utility.FileStat(file2)
 
         if file_stat1.get_size() != file_stat2.get_size():
             print('diff ', file1 + '  ' + file2)

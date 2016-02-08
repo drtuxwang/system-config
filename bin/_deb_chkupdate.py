@@ -12,7 +12,7 @@ import signal
 import sre_constants
 import sys
 
-import syslib
+import file_utility
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -257,7 +257,7 @@ class Main(object):
 
         ispattern = re.compile('[.]debs-?.*$')
         for list_file in options.get_list_files():
-            if syslib.FileStat(list_file).get_size() > 0:
+            if file_utility.FileStat(list_file).get_size() > 0:
                 if os.path.isfile(list_file):
                     if ispattern.search(list_file):
                         distribution = ispattern.sub('', list_file)

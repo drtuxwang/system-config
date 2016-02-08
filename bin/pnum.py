@@ -9,7 +9,7 @@ import os
 import signal
 import sys
 
-import syslib
+import file_utility
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -139,7 +139,7 @@ class Main(object):
                 for file in glob.glob('*.*'):
                     if (file.split('.')[-1].lower() in (
                             'bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff')):
-                        file_stats.append(syslib.FileStat(file))
+                        file_stats.append(file_utility.FileStat(file))
                 newfiles = []
                 mypid = os.getpid()
                 for file_stat in self._sorted(options, file_stats):

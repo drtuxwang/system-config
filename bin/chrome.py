@@ -15,6 +15,7 @@ import shutil
 import signal
 import sys
 
+import file_utility
 import syslib
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -250,7 +251,7 @@ class Options(object):
 
         # Suid sandbox workaround
         if 'HOME' in os.environ:
-            if syslib.FileStat(os.path.join(os.path.dirname(
+            if file_utility.FileStat(os.path.join(os.path.dirname(
                     self._chrome.get_file()), 'chrome-sandbox')).get_mode() != 104755:
                 self._chrome.extend_flags(['--test-type', '--disable-setuid-sandbox'])
 

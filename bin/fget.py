@@ -13,6 +13,7 @@ import sys
 import time
 import urllib.request
 
+import file_utility
 import syslib
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -84,7 +85,7 @@ class Main(object):
         """
         Check existing file and return True if already downloaded.
         """
-        file_stat = syslib.FileStat(file)
+        file_stat = file_utility.FileStat(file)
         if file_stat.get_size() == size and file_stat.get_time() >= mtime:
             return True
         return False
@@ -170,7 +171,7 @@ class Main(object):
         if check == 'skip':
             return
         elif 'Accept-Ranges' in conn.info() and check == 'resume':
-            tmpsize = syslib.FileStat(file + '.part').get_size()
+            tmpsize = file_utility.FileStat(file + '.part').get_size()
             req = urllib.request.Request(url, headers={'Range': 'bytes='+str(tmpsize)+'-'})
             conn = urllib.request.urlopen(req)
             mode = 'ab'

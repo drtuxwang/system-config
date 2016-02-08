@@ -11,6 +11,7 @@ import signal
 import sys
 import time
 
+import file_utility
 import syslib
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -241,12 +242,12 @@ class Main(object):
         command.run(filter='Input/output error| records (in|out)$')
         if not os.path.isfile(file):
             raise SystemExit(sys.argv[0] + ': Cannot find CD/DVD media. Please check drive.')
-        pad = int(blocks * 2048 - syslib.FileStat(file).get_size())
+        pad = int(blocks * 2048 - file_utility.FileStat(file).get_size())
         if pad > 0 and pad < 16777216:
             print(pad, 'bytes flushing from CD/DVD prefetch bug...')
             with open(file, 'ab') as ofile:
                 ofile.write(b'\0' * pad)
-        self._isosize(file, syslib.FileStat(file).get_size())
+        self._isosize(file, file_utility.FileStat(file).get_size())
 
     @staticmethod
     def _isosize(image, size):

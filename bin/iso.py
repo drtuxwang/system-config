@@ -11,6 +11,7 @@ import os
 import signal
 import sys
 
+import file_utility
 import syslib
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -143,13 +144,13 @@ class Main(object):
                  glob.glob(os.path.join(options.get_directory(), '*.bin')) +
                  glob.glob(os.path.join(options.get_directory(), 'isolinux', '*.bin')))
         if files:
-            bootimg = syslib.info.newest(files)
+            bootimg = file_utility.FileStat.newest(files)
             print('Adding Eltorito boot image "' + bootimg + '"...')
             if 'isolinux' in bootimg:
                 self._genisoimage.extend_flags([
                     '-eltorito-boot', os.path.join('isolinux', os.path.basename(bootimg)),
                     '-no-emul-boot', '-boot-info-table'])
-            elif syslib.FileStat(bootimg).get_size() == 2048:
+            elif file_utility.FileStat(bootimg).get_size() == 2048:
                 self._genisoimage.extend_flags([
                     '-eltorito-boot', os.path.basename(bootimg), '-no-emul-boot',
                     '-boot-load-size', '4', '-hide', 'boot.catalog'])
@@ -255,7 +256,7 @@ class Main(object):
             if isoinfo.get_exitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.get_exitcode()) +
                                  ' received from "' + isoinfo.get_file() + '".')
-            self._isosize(image, syslib.FileStat(image).get_size())
+            self._isosize(image, file_utility.FileStat(image).get_size())
             if options.get_md5_flag():
                 print('Creating MD5 check sum of ISO file.')
                 md5sum = self._md5sum(image)

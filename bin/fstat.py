@@ -9,7 +9,7 @@ import os
 import signal
 import sys
 
-import syslib
+import file_utility
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -83,7 +83,7 @@ class Main(object):
         options = Options()
 
         for file in options.get_files():
-            file_stat = syslib.FileStat(file)
+            file_stat = file_utility.FileStat(file)
             print('"' + file + '".mode  =', oct(file_stat.get_mode()))
             print('"' + file + '".ino   =', file_stat.get_inode_number())
             print('"' + file + '".dev   =', file_stat.get_inode_device())

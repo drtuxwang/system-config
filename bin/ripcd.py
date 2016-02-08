@@ -10,6 +10,7 @@ import re
 import signal
 import sys
 
+import file_utility
 import syslib
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -222,7 +223,7 @@ class Main(object):
 
     @staticmethod
     def _pregap(wavfile):
-        size = syslib.FileStat(wavfile).get_size()
+        size = file_utility.FileStat(wavfile).get_size()
         with open(wavfile, 'rb+') as ifile:
             ifile.seek(size - 2097152)
             data = ifile.read(2097152)
