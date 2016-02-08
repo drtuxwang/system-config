@@ -21,6 +21,10 @@ config/rc.local                 Copy to "/etc/rc.local" for auto running command
 config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
 config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
 
+bin/power_utility      Python power handling utility library
+bin/ck_debug.py        Python debugging module
+bin/ck_desktop.py      Python X-windows desktop module
+
 bin/7z                 Make a compressed archive in 7z format
 bin/7z.bat             (uses p7zip or 7zip)
 bin/_7z.py
@@ -87,10 +91,6 @@ bin/chrome.py
 
 bin/chroot             chroot wrapper (allowing non systems port)
 bin/chroot.py          (creates /shared mount automatically)
-
-bin/ck_battery.py      Python battery module
-bin/ck_debug.py        Python debugging module
-bin/ck_desktop.py      Python X-windows desktop module
 
 bin/clam               Run ClamAV anti-virus scanner
 bin/clam.bat

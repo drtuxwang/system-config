@@ -15,11 +15,11 @@ import sys
 import threading
 import time
 
-import ck_battery
+import power_utility
 import syslib
 
-RELEASE = '4.6.4'
-VERSION = 20160130
+RELEASE = '4.6.5'
+VERSION = 20160208
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -624,7 +624,7 @@ class LinuxSystem(PosixSystem):
                                           comment='SPK')
 
     def _detect_battery(self, writer):
-        batteries = ck_battery.Battery.factory()
+        batteries = power_utility.Battery.factory()
 
         for battery in batteries:
             if battery.is_exist():
