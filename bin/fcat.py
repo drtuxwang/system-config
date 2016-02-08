@@ -13,8 +13,6 @@ import sys
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
-# pylint: disable = no-member
-
 
 class Options(object):
     """
@@ -73,7 +71,9 @@ class Main(object):
             data = pipe.read(4096)
             if len(data) == 0:
                 break
+            # pylint: disable = no-member
             sys.stdout.buffer.write(data)
+            # pylint: enable = no-member
 
     @staticmethod
     def config():

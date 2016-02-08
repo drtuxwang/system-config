@@ -75,7 +75,8 @@ class Main(object):
                     argv.append(arg)
             sys.argv = argv
 
-    def _copy(self, file, target):
+    @staticmethod
+    def _copy(file, target):
         try:
             os.remove(file)
         except OSError:

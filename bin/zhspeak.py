@@ -2,7 +2,7 @@
 """
 Zhong Hua Speak Chinese TTS software.
 
-2009-2015 By Dr Colin Kong
+2009-2016 By Dr Colin Kong
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -17,7 +17,7 @@ import time
 
 import syslib2 as syslib
 
-RELEASE = '3.0.12'
+RELEASE = '3.0.13'
 
 if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 2.7, < 4.0).')
@@ -302,7 +302,7 @@ class Ogg123:
 
     def has_player(self):
         """
-        Return true if player found
+        Return True if player found
         """
         return self._player.is_found()
 

@@ -15,8 +15,6 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
 if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
-# pylint: disable = too-few-public-methods
-
 
 class Options(object):
     """
@@ -145,6 +143,7 @@ class Options(object):
             self._library_path = []
 
 
+# pylint: disable = too-few-public-methods
 class ArgparseVerboseAction(argparse.Action):
     """
     Arg parser verbose action handler class
@@ -153,6 +152,7 @@ class ArgparseVerboseAction(argparse.Action):
     def __call__(self, parser, args, values, option_string=None):
         # option_string must be '-pyldv', '-pyldvv' or '-pldyvvv'
         setattr(args, self.dest, len(option_string[5:]))
+# pylint: enable = too-few-public-methods
 
 
 class PythonLoader(object):

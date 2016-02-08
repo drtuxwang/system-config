@@ -126,7 +126,7 @@ class Main(object):
             self._link_files(directory, '.')
 
 
-    if '--pydoc' in sys.argv:
-        help(__name__)
-    else:
-        Main()
+if '--pydoc' in sys.argv:
+    help(__name__)
+else:
+    Main()

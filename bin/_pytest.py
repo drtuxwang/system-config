@@ -16,8 +16,6 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# pylint: disable = too-few-public-methods
-
 
 class Options(object):
     """
@@ -73,6 +71,7 @@ class Options(object):
                 self._files.append(file)
 
 
+# pylint: disable = too-few-public-methods
 class ArgparseVerboseAction(argparse.Action):
     """
     Arg parser verbose action handler class
@@ -81,6 +80,7 @@ class ArgparseVerboseAction(argparse.Action):
     def __call__(self, parser, args, values, option_string=None):
         # option_string must be '-v', '-vv' or '-vvv'
         setattr(args, self.dest, len(option_string[1:]))
+# pylint: enable = too-few-public-methods
 
 
 class ModuleTest(object):
