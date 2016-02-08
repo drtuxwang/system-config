@@ -41,7 +41,20 @@ class Options(object):
         Parse arguments
         """
         self._wget = syslib.Command('wget')
-        self._wget.set_flags(['--no-check-certificate', '--timestamping'])
+        if '--no-check-certificate' in args:
+            self._wget.append_flag('--no-check-certificate')
+        if '--timestamping' in args:
+            self._wget.append_flag('--timestamping')
+
+        # Replace '-O' with '--output-document'
+        args = ['--output-document' if x == '-O' else x for x in args]
+
+        # Add '--output-document' for Firefox
+        if '--output-document' not in args:
+            for arg in args:
+                if arg.startswith('--user-agent=') and 'Firefox/' in arg:
+                    self._wget.extend_flags(['--output-document', os.path.basename(args[-1])])
+                    break
 
         shaper = netnice.Shaper()
         if shaper.is_found():
