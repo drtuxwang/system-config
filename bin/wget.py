@@ -41,9 +41,9 @@ class Options(object):
         Parse arguments
         """
         self._wget = syslib.Command('wget')
-        if '--no-check-certificate' in args:
+        if '--no-check-certificate' not in args:
             self._wget.append_flag('--no-check-certificate')
-        if '--timestamping' in args:
+        if '--timestamping' not in args:
             self._wget.append_flag('--timestamping')
 
         # Replace '-O' with '--output-document'
