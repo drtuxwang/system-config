@@ -42,8 +42,8 @@ class FileStat(object):
                 if size is not None:
                     self._stat[6] = size
 
-    @classmethod
-    def newest(cls, files):
+    @staticmethod
+    def newest(files):
         """
         Return newest file or directory.
 
@@ -63,8 +63,8 @@ class FileStat(object):
                     nfile_stat = FileStat(nfile)
         return nfile
 
-    @classmethod
-    def oldest(cls, files):
+    @staticmethod
+    def oldest(files):
         """
         Return oldest file or directory.
 

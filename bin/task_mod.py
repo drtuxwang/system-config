@@ -38,8 +38,8 @@ class Task(object):
     def _config(self, user):
         raise NotImplementedError
 
-    @classmethod
-    def factory(cls, user=None):
+    @staticmethod
+    def factory(user=None):
         """
         Return Task sub class object.
         """
@@ -322,8 +322,8 @@ class WindowsTask(Task):
 
 class _System(object):
 
-    @classmethod
-    def is_windows(cls):
+    @staticmethod
+    def is_windows():
         """
         Return True if running on Windows.
         """
@@ -335,8 +335,8 @@ class _System(object):
 
         return False
 
-    @classmethod
-    def get_username(cls):
+    @staticmethod
+    def get_username():
         """
         Return my username.
         """

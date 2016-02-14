@@ -30,8 +30,8 @@ class Battery(object):
         self._config(directory)
         self.check()
 
-    @classmethod
-    def factory(cls):
+    @staticmethod
+    def factory():
         """
         Return list of Battery sub class objects
         """

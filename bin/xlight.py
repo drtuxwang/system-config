@@ -71,8 +71,8 @@ class Backlight(object):
         self._command = None
         self._screens = None
 
-    @classmethod
-    def factory(cls):
+    @staticmethod
+    def factory():
         """
         Return Backlight sub class object
         """

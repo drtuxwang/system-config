@@ -17,7 +17,7 @@ import time
 
 import syslib2 as syslib
 
-RELEASE = '3.0.13'
+RELEASE = '3.0.14'
 
 if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 2.7, < 4.0).')
@@ -143,8 +143,8 @@ class Language(object):
     Language base class
     """
 
-    @classmethod
-    def factory(cls, options):
+    @staticmethod
+    def factory(options):
         """
         Return Language sub class object
         """
