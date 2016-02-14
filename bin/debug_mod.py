@@ -25,23 +25,25 @@ class Dump(object):
         jsonpickle.set_encoder_options('json', indent=indent, sort_keys=True)
         print('"' + name, '": ', jsonpickle.encode(obj, unpicklable=False))
 
-    def show(self, name, obj):
+    @classmethod
+    def show(cls, name, obj):
         """
         Dump object attributes recursively as compact JSON.
 
         name = Name of object (ie "myobject.subobject")
         obj  = Object to dump
         """
-        self._print(name, obj, indent=None)
+        cls._print(name, obj, indent=None)
 
-    def list(self, name, obj):
+    @classmethod
+    def list(cls, name, obj):
         """
         List object attributes recursively as expanded JSON.
 
         name = Name of object (ie "myobject.subobject")
         obj  = Object to dump
         """
-        self._print(name, obj)
+        cls._print(name, obj)
 
 
 if __name__ == '__main__':
