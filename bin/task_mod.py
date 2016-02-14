@@ -346,7 +346,7 @@ class _System(object):
         return 'Unknown'
 
 
-class TaskModError(SystemExit):
+class TaskModError(Exception):
     """
     Task module error.
 

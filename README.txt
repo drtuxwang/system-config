@@ -21,6 +21,7 @@ config/rc.local                 Copy to "/etc/rc.local" for auto running command
 config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
 config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
 
+bin/command_mod.py     Python command line handling module
 bin/debug_mod.py       Python debugging tools module
 bin/desktop_mod.py     Python X-windows desktop module
 bin/file_mod.py        Python file handling utility module

@@ -4,7 +4,7 @@ Python file handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.0 (2016-02-08)
+Version 2.0.1 (2016-02-14)
 """
 
 import os
@@ -50,17 +50,13 @@ class FileStat(object):
         files = List of files
         """
         nfile_stat = None
-        nfile = ''
+        nfile = None
         for file in files:
             if os.path.isfile(file) or os.path.isdir(file):
-                if nfile:
-                    file_stat = FileStat(file)
-                    if file_stat.get_time() > nfile_stat.get_time():
-                        nfile = file
-                        nfile_stat = file_stat
-                else:
+                file_stat = FileStat(file)
+                if file_stat.get_time() > nfile_stat.get_time():
                     nfile = file
-                    nfile_stat = FileStat(nfile)
+                    nfile_stat = file_stat
         return nfile
 
     @staticmethod
@@ -74,14 +70,10 @@ class FileStat(object):
         nfile = ''
         for file in files:
             if os.path.isfile(file) or os.path.isdir(file):
-                if nfile:
-                    file_stat = FileStat(file)
-                    if file_stat.get_time() < nfile_stat.get_time():
-                        nfile = file
-                        nfile_stat = file_stat
-                else:
+                file_stat = FileStat(file)
+                if file_stat.get_time() < nfile_stat.get_time():
                     nfile = file
-                    nfile_stat = FileStat(nfile)
+                    nfile_stat = file_stat
         return nfile
 
     def get_file(self):
@@ -157,7 +149,7 @@ class FileStat(object):
         return self._stat[9]
 
 
-class FileStatNotFoundError(SystemExit):
+class FileStatNotFoundError(Exception):
     """
     File stat not found error class.
 
