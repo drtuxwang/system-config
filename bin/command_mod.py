@@ -4,7 +4,7 @@ Python command line handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 1.9.9alpha (2016-02-14)
+Version 1.9.9alpha2 (2016-02-15)
 """
 
 import distutils
@@ -255,15 +255,11 @@ class CommandLocate(Command):
         if file:
             return file
 
-        print('debugX1')
         try:
-            print('debugX2')
             if not flags['check']:
-                print('debugX3')
                 return None
         except KeyError:
             pass
-        print('debugX4')
         raise CommandNotFoundError(
             sys.argv[0] + ': Cannot find required "' + program + '" software.')
 
@@ -380,7 +376,7 @@ class _System(object):
         if cls.get_platform().startswith('linux'):
             ldd = syslib.Command('ldd', args=['--version'], check=False)
             if not ldd.is_found():
-                raise CommandNotFoundError(
+                raise CommandLddNotFoundError(
                     sys.argv[0] + ': Cannot find required "ldd" software.')
             ldd.run(filter='^ldd ', mode='batch')
             return ldd.get_output()[0].split()[-1]
@@ -393,37 +389,29 @@ class _System(object):
 
         files = List of files
         """
+        nfile = ''
         nfile_time = -1
-        nfile = None
+
         for file in files:
             if os.path.isfile(file) or os.path.isdir(file):
                 file_time = cls._get_file_time(file)
                 if file_time > nfile_time:
                     nfile = file
                     nfile_time = file_time
+
         return nfile
 
 
 class CommandNotFoundError(Exception):
     """
-    Command not foudn error.
-
-    self.args = Arguments
+    Command not found error.
     """
 
-    def __init__(self, message):
-        """
-        message = Error message
-        """
-        super().__init__()
-        self.args = (message,)
 
-    def get_args(self):
-        """
-        Return arguments
-        """
-        return self.args
-
+class CommandLddNotFoundError(Exception):
+    """
+    Command 'ldd' not found error.
+    """
 
 if __name__ == '__main__':
     help(__name__)

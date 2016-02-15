@@ -4,7 +4,7 @@ Python task handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.0 (2016-02-08)
+Version 2.0.1 (2016-02-15)
 """
 
 import os
@@ -346,40 +346,19 @@ class _System(object):
         return 'Unknown'
 
 
-class TaskModError(Exception):
-    """
-    Task module error.
-
-    self.args = Arguments
-    """
-
-    def __init__(self, message):
-        """
-        message = Error message
-        """
-        super().__init__()
-        self.args = (message,)
-
-    def get_args(self):
-        """
-        Return arguments
-        """
-        return self.args
-
-
-class TaskInvalidPidError(TaskModError):
+class TaskInvalidPidError(Exception):
     """
     Task invalid process ID error.
     """
 
 
-class TaskInvalidPgidError(TaskModError):
+class TaskInvalidPgidError(Exception):
     """
     Task invalid process group ID error.
     """
 
 
-class TaskInvalidSignalError(TaskModError):
+class TaskInvalidSignalError(Exception):
     """
     Task invalid signal error.
     """

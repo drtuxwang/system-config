@@ -121,11 +121,11 @@ class Options(object):
 
     def _fix_permissions(self):
         if os.path.isfile(self._firefox.get_file() + '-bin'):
-            setmod = syslib.Command('setmod', check=False)
-            if setmod.is_found():
+            fmod = syslib.Command('fmod', check=False)
+            if fmod.is_found():
                 # Fix permissions if owner and updated
-                setmod.set_args(['wa', os.path.dirname(self._firefox.get_file())])
-                setmod.run(mode='daemon')
+                fmod.set_args(['wa', os.path.dirname(self._firefox.get_file())])
+                fmod.run(mode='daemon')
 
     def _config(self):
         if 'HOME' in os.environ:

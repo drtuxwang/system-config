@@ -4,7 +4,7 @@ Python file handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.1 (2016-02-14)
+Version 2.0.2 (2016-02-15)
 """
 
 import os
@@ -49,14 +49,16 @@ class FileStat(object):
 
         files = List of files
         """
-        nfile_stat = None
-        nfile = None
+        nfile = ''
+        nfile_time = -1
+
         for file in files:
             if os.path.isfile(file) or os.path.isdir(file):
-                file_stat = FileStat(file)
-                if file_stat.get_time() > nfile_stat.get_time():
+                file_time = FileStat(file).get_time()
+                if file_time > nfile_time:
                     nfile = file
-                    nfile_stat = file_stat
+                    nfile_time = file_time
+
         return nfile
 
     @staticmethod
@@ -66,14 +68,16 @@ class FileStat(object):
 
         files = List of files
         """
-        nfile_stat = None
         nfile = ''
+        nfile_time = float('inf')
+
         for file in files:
             if os.path.isfile(file) or os.path.isdir(file):
-                file_stat = FileStat(file)
-                if file_stat.get_time() < nfile_stat.get_time():
+                file_time = FileStat(file).get_time()
+                if file_time < nfile_time:
                     nfile = file
-                    nfile_stat = file_stat
+                    nfile_time = file_time
+
         return nfile
 
     def get_file(self):
@@ -152,22 +156,7 @@ class FileStat(object):
 class FileStatNotFoundError(Exception):
     """
     File stat not found error class.
-
-    self.args = Arguments
     """
-
-    def __init__(self, message):
-        """
-        message = Error message
-        """
-        super().__init__()
-        self.args = (message,)
-
-    def get_args(self):
-        """
-        Return arguments
-        """
-        return self.args
 
 
 if __name__ == '__main__':
