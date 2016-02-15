@@ -4,7 +4,7 @@ Python command line handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 1.9.9alpha2 (2016-02-15)
+Version 2.0.0 (2016-02-15)
 """
 
 import distutils
@@ -26,136 +26,52 @@ class Command(object):
     This class stores a command (uses supplied executable)
     """
 
-    def __init__(self, file, **flags):
-        """
-        file = Full PATH to executable
-        args = Optional command arguments list
-        """
-        self._file = file
-        try:
-            self._args = flags['args']
-        except KeyError:
-            self._args = []
-
-    @staticmethod
-    def args2cmd(args):
-        """
-        Join list of arguments into a command string.
-
-        args = List of arguments
-        """
-        return subprocess.list2cmdline(args)
-
-    @staticmethod
-    def _cmd2chars(cmd):
-        chars = []
-        backslashs = ''
-        for char in cmd:
-            if char == '\\':
-                backslashs += char
-            elif char == '"' and backslashs:
-                nbackslashs = len(backslashs)
-                chars.extend(['\\'] * (nbackslashs//2))
-                backslashs = ''
-                if nbackslashs % 2:
-                    chars.append(1)
-                else:
-                    chars.append('"')
-            else:
-                if backslashs:
-                    chars.extend(list(backslashs))
-                    backslashs = ''
-                chars.append(char)
-        return chars
-
-    @staticmethod
-    def _chars2args(chars):
-        args = []
-        arg = []
-        quoted = False
-        chars.append(' ')
-        for char in chars:
-            if char == '"':
-                quoted = not quoted
-            elif char == 1:
-                arg.append('"')
-            elif char in (' ', '\t'):
-                if quoted:
-                    arg.append(char)
-                elif arg:
-                    args.append(''.join(arg))
-                    arg = []
-            else:
-                arg.append(char)
-        return args
-
-    @classmethod
-    def cmd2args(cls, cmd):
-        """
-        Split a command string into a list of arguments.
-        """
-        chars = cls._cmd2chars(cmd)
-        args = cls._chars2args(chars)
-        return args
-
-    def get_cmdline(self):
-        """
-        Return the command line as a list.
-        """
-        return [self._file] + self._args
-
-    def get_file(self):
-        """
-        Return file location.
-        """
-        return self._file
-
-    def get_args(self):
-        """
-        Return list of arguments.
-        """
-        return self._args
-
-    def set_args(self, args):
-        """
-        Set command line arguments
-
-        args = List of arguments
-        """
-        self._args = args
-
-    def append_arg(self, arg):
-        """
-        Append to command line arguments
-
-        arg = Argument
-        """
-        self._args.append(arg)
-
-    def extend_args(self, args):
-        """
-        Extend command line arguments
-
-        args = List of arguments
-        """
-        self._args.extend(args)
-
-
-class CommandLocate(Command):
-    """
-    This class stores a command (locates executbale)
-    """
-
     def __init__(self, program, **flags):
         """
         program   = Command program name (ie 'evince', 'bin/acroread')
         args      = Optional command arguments list
         pathextra = Optional extra PATH to prefix in search
         platform  = Optional platform (ie 'windows-x86_64' for WINE)
-        check     = Set to False to ignore file not found error
+        errors    = Optional error handling ('stop' or 'ignore')
         """
-        file = self._locate(program, **flags)
-        super().__init__(file, **flags)
+        self._args = [ self._locate(program, **flags) ]
+        try:
+            self._args = self._args.extend(flags['args'])
+        except KeyError:
+            pass
+
+    @classmethod
+    def _locate(cls, program, **flags):
+        try:
+            platform = flags['platform']
+        except KeyError:
+            platform = _System.get_platform()
+        extensions = cls._get_extensions(platform)
+
+        directory = os.path.dirname(os.path.abspath(sys.argv[0]))
+        if os.path.basename(directory) == 'bin':
+            directory = os.path.dirname(directory)
+            file = cls._search_ports(directory, platform, program, extensions)
+            if file:
+                return file
+
+        try:
+            pathextra = flags['pathextra']
+        except KeyError:
+            pathextra = []
+        file = cls._search_path(pathextra, program, extensions)
+        if file:
+            return file
+
+        try:
+            if flags['errors'] == 'stop':
+                raise SystemExit(sys.argv[0] + ': Cannot find required "' + program + '" software.')
+            elif flags['errors'] == 'ignore':
+                return ''
+        except KeyError:
+            pass
+        raise CommandNotFoundError(
+            sys.argv[0] + ': Cannot find required "' + program + '" software.')
 
     @staticmethod
     def _get_extensions(platform):
@@ -232,42 +148,131 @@ class CommandLocate(Command):
 
         return None
 
+    @staticmethod
+    def args2cmd(args):
+        """
+        Join list of arguments into a command string.
+
+        args = List of arguments
+        """
+        return subprocess.list2cmdline(args)
+
+    @staticmethod
+    def _cmd2chars(cmd):
+        chars = []
+        backslashs = ''
+        for char in cmd:
+            if char == '\\':
+                backslashs += char
+            elif char == '"' and backslashs:
+                nbackslashs = len(backslashs)
+                chars.extend(['\\'] * (nbackslashs//2))
+                backslashs = ''
+                if nbackslashs % 2:
+                    chars.append(1)
+                else:
+                    chars.append('"')
+            else:
+                if backslashs:
+                    chars.extend(list(backslashs))
+                    backslashs = ''
+                chars.append(char)
+        return chars
+
+    @staticmethod
+    def _chars2args(chars):
+        args = []
+        arg = []
+        quoted = False
+        chars.append(' ')
+        for char in chars:
+            if char == '"':
+                quoted = not quoted
+            elif char == 1:
+                arg.append('"')
+            elif char in (' ', '\t'):
+                if quoted:
+                    arg.append(char)
+                elif arg:
+                    args.append(''.join(arg))
+                    arg = []
+            else:
+                arg.append(char)
+        return args
+
     @classmethod
-    def _locate(cls, program, **flags):
-        try:
-            platform = flags['platform']
-        except KeyError:
-            platform = _System.get_platform()
-        extensions = cls._get_extensions(platform)
+    def cmd2args(cls, cmd):
+        """
+        Split a command string into a list of arguments.
+        """
+        chars = cls._cmd2chars(cmd)
+        args = cls._chars2args(chars)
+        return args
 
-        directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-        if os.path.basename(directory) == 'bin':
-            directory = os.path.dirname(directory)
-            file = cls._search_ports(directory, platform, program, extensions)
-            if file:
-                return file
+    def get_cmdline(self):
+        """
+        Return the command line as a list.
+        """
+        return self._args
 
-        try:
-            pathextra = flags['pathextra']
-        except KeyError:
-            pathextra = []
-        file = cls._search_path(pathextra, program, extensions)
-        if file:
-            return file
+    def get_file(self):
+        """
+        Return file location.
+        """
+        return self._args[0]
 
-        try:
-            if not flags['check']:
-                return None
-        except KeyError:
-            pass
-        raise CommandNotFoundError(
-            sys.argv[0] + ': Cannot find required "' + program + '" software.')
+    def get_args(self):
+        """
+        Return list of arguments.
+        """
+        return self._args[1:]
+
+    def append_arg(self, arg):
+        """
+        Append to command line arguments
+
+        arg = Argument
+        """
+        self._args.append(arg)
+
+    def extend_args(self, args):
+        """
+        Extend command line arguments
+
+        args = List of arguments
+        """
+        self._args.extend(args)
+
+    def set_args(self, args):
+        """
+        Set command line arguments
+
+        args = List of arguments
+        """
+        self._args[1:] = args
 
     def is_found(self):
         """
         Return True if file is defined.
         """
-        return self._file != ''
+        return self._args[0] != ''
+
+
+class CommandFile(Command):
+    """
+    This class stores a command (uses supplied executable)
+    """
+
+    def __init__(self, file, **flags):
+        """
+        file = Full PATH to executable
+        args = Optional command arguments list
+        """
+        super().__init__(file, **flags)
+
+    @staticmethod
+    def _locate(file, **flags):
+        return file
 
 
 class _System(object):
