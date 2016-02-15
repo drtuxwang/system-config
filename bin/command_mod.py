@@ -4,7 +4,7 @@ Python command line handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.0 (2016-02-15)
+Version 2.0.1 (2016-02-15)
 """
 
 import distutils
@@ -17,8 +17,8 @@ import sys
 
 import syslib
 
-if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
 
 class Command(object):
@@ -34,7 +34,7 @@ class Command(object):
         platform  = Optional platform (ie 'windows-x86_64' for WINE)
         errors    = Optional error handling ('stop' or 'ignore')
         """
-        self._args = [ self._locate(program, **flags) ]
+        self._args = [self._locate(program, **flags)]
         try:
             self._args = self._args.extend(flags['args'])
         except KeyError:

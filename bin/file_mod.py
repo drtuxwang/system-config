@@ -4,15 +4,15 @@ Python file handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.2 (2016-02-15)
+Version 2.0.3 (2016-02-15)
 """
 
 import os
 import sys
 import time
 
-if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
 
 class FileStat(object):
