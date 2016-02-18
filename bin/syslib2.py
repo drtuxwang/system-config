@@ -2,7 +2,7 @@
 """
 Python system interaction Library (legacy)
 
-Version 5.4.2 (2016-02-08)
+Version 5.4.3 (2016-02-16)
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -1096,22 +1096,7 @@ class SystemInfo(object):
 class SyslibError(Exception):
     """
     This class handles module exception errors.
-
-    self.args = Arguments
     """
-
-    def __init__(self, message):
-        """
-        message = Error message
-        """
-        super(SyslibError, self).__init__()
-        self.args = (message,)
-
-    def get_args(self):
-        """
-        Return arguments
-        """
-        return self.args
 
 
 class Task(object):

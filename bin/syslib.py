@@ -4,7 +4,7 @@ Python system interaction Library (transitional)
 
 2006-2016 By Dr Colin Kong
 
-Version 6.0.0 (2016-02-08)
+Version 6.0.1 (2016-02-18)
 """
 
 import copy
@@ -941,22 +941,7 @@ class SystemInfo(object):
 class SyslibError(SystemExit):
     """
     This class handles module exception errors.
-
-    self.args = Arguments
     """
-
-    def __init__(self, message):
-        """
-        message = Error message
-        """
-        super().__init__()
-        self.args = (message,)
-
-    def get_args(self):
-        """
-        Return arguments
-        """
-        return self.args
 
 
 class Main(object):
