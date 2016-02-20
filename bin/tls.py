@@ -47,11 +47,11 @@ class Options(object):
         self._parse_args(args[1:])
 
         if self._args.username:
-            self._task = task_mod.Task.factory(self._args.username)
+            self._task = task_mod.Tasks.factory(self._args.username)
         elif self._args.allFlag:
-            self._task = task_mod.Task.factory('<all>')
+            self._task = task_mod.Tasks.factory('<all>')
         else:
-            self._task = task_mod.Task.factory()
+            self._task = task_mod.Tasks.factory()
 
 
 class Main(object):

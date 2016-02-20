@@ -4,7 +4,7 @@ Python task handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.2 (2016-02-15)
+Version 2.0.3 (2016-02-20)
 """
 
 import os
@@ -17,7 +17,7 @@ if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
 
-class Task(object):
+class Tasks(object):
     """
     This class handles system processess.
 
@@ -41,11 +41,11 @@ class Task(object):
     @staticmethod
     def factory(user=None):
         """
-        Return Task sub class object.
+        Return Tasks sub class object.
         """
         if _System.is_windows():
-            return WindowsTask(user)
-        return PosixTask(user)
+            return WindowsTasks(user)
+        return PosixTasks(user)
 
     def pgid2pids(self, pgid):
         """
@@ -54,8 +54,8 @@ class Task(object):
         pgid = Process group ID
         """
         if not isinstance(pgid, int):
-            raise TaskInvalidPgidError(
-                sys.argv[0] + ': "' + __name__ + '.Task" invalid pgid type "' + str(pgid) + '".')
+            raise InvalidPgidError(
+                sys.argv[0] + ': "' + __name__ + '.Tasks" invalid pgid type "' + str(pgid) + '".')
         pids = []
         for pid in self.get_pids():
             if self._process[pid]['PGID'] == pgid:
@@ -82,7 +82,7 @@ class Task(object):
         signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
         if signal not in ('CONT', 'KILL', 'STOP', 'TERM'):
-            raise TaskInvalidSignalError(sys.argv[0] + ': Invalid "' + signal + '" signal name.')
+            raise InvalidSignalError(sys.argv[0] + ': Invalid "' + signal + '" signal name.')
 
         if pids:
             self._kill(signal, pids)
@@ -112,8 +112,8 @@ class Task(object):
         pgid = Process group ID
         """
         if not isinstance(pgid, int):
-            raise TaskInvalidPgidError(
-                sys.argv[0] + ': "' + __name__ + '.Task" invalid pgid type "' + str(pgid) + '".')
+            raise InvalidPgidError(
+                sys.argv[0] + ': "' + __name__ + '.Tasks" invalid pgid type "' + str(pgid) + '".')
         return self.pgid2pids(pgid) != []
 
     def haspid(self, pid):
@@ -123,8 +123,8 @@ class Task(object):
         pid = Process ID
         """
         if not isinstance(pid, int):
-            raise TaskInvalidPidError(
-                sys.argv[0] + ': "' + __name__ + '.Task" invalid pid type "' + str(pid) + '".')
+            raise InvalidPidError(
+                sys.argv[0] + ': "' + __name__ + '.Tasks" invalid pid type "' + str(pid) + '".')
         return pid in self._process.keys()
 
     def haspname(self, pname):
@@ -188,7 +188,7 @@ class Task(object):
         return self._process[pid]
 
 
-class PosixTask(Task):
+class PosixTasks(Tasks):
     """
     This class handles POSIX system processess.
 
@@ -252,7 +252,7 @@ class PosixTask(Task):
         self.killpids([-pgid], signal=signal)
 
 
-class WindowsTask(Task):
+class WindowsTasks(Tasks):
     """
     This class handles Windows system processess.
 
@@ -346,19 +346,25 @@ class _System(object):
         return 'Unknown'
 
 
-class TaskInvalidPidError(Exception):
+class TaskError(Exception):
+    """
+    Task module error.
+    """
+
+
+class InvalidPidError(TaskError):
     """
     Task invalid process ID error.
     """
 
 
-class TaskInvalidPgidError(Exception):
+class InvalidPgidError(TaskError):
     """
     Task invalid process group ID error.
     """
 
 
-class TaskInvalidSignalError(Exception):
+class InvalidSignalError(TaskError):
     """
     Task invalid signal error.
     """

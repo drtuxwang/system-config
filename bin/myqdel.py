@@ -12,7 +12,7 @@ import sys
 import syslib
 import task_mod
 
-RELEASE = '2.7.3'
+RELEASE = '2.7.4'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -123,7 +123,7 @@ class Main(object):
                                 pgid = int(info['PGID'])
                             except ValueError:
                                 return
-                            task_mod.Task.factory().killpgid(pgid, signal='TERM')
+                            task_mod.Tasks.factory().killpgid(pgid, signal='TERM')
                         try:
                             os.remove(file)
                         except OSError:

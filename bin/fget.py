@@ -131,7 +131,7 @@ class Main(object):
                 host = json_data['fget']['lock']['host']
                 pid = json_data['fget']['lock']['pid']
 
-                if host == syslib.info.get_hostname() and task_mod.Task.factory().haspid(pid):
+                if host == syslib.info.get_hostname() and task_mod.Tasks.factory().haspid(pid):
                     return 'skip'
                 if json_data['fget']['data'] == data:
                     return 'resume'

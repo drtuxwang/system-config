@@ -143,7 +143,7 @@ class Options(object):
     @staticmethod
     def _copy():
         if 'HOME' in os.environ:
-            task = task_mod.Task.factory()
+            task = task_mod.Tasks.factory()
             for directory in glob.glob(
                     os.path.join('/tmp', 'firefox-' + syslib.info.get_username() + '.*')):
                 try:
@@ -316,7 +316,7 @@ class Options(object):
         # Avoids 'exo-helper-1 firefox http://' problem of clicking text in XFCE
         if len(args) > 1:
             ppid = os.getppid()
-            if ppid != 1 and 'exo-helper' in task_mod.Task.factory().get_process(ppid)['COMMAND']:
+            if ppid != 1 and 'exo-helper' in task_mod.Tasks.factory().get_process(ppid)['COMMAND']:
                 raise SystemExit
 
         self._firefox.set_args(args[1:])
