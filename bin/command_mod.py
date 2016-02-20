@@ -4,7 +4,7 @@ Python command line handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.1 (2016-02-15)
+Version 2.0.2 (2016-02-20)
 """
 
 import distutils
@@ -213,6 +213,13 @@ class Command(object):
         """
         Return the command line as a list.
         """
+        if os.name == 'nt':
+            try:
+                with open(self._args[0]) as ifile:
+                    if ifile.readline().startswith('#!/usr/bin/env python'):
+                        return [sys.executable] + self._args
+            except OSError:
+                pass
         return self._args
 
     def get_file(self):
@@ -407,13 +414,19 @@ class _System(object):
         return nfile
 
 
-class CommandNotFoundError(Exception):
+class CommandError(Exception):
+    """
+    Command module error.
+    """
+
+
+class CommandNotFoundError(CommandError):
     """
     Command not found error.
     """
 
 
-class CommandLddNotFoundError(Exception):
+class CommandLddNotFoundError(CommandError):
     """
     Command 'ldd' not found error.
     """

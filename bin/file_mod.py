@@ -4,7 +4,7 @@ Python file handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.4 (2016-02-20)
+Version 2.0.5 (2016-02-20)
 """
 
 import os
@@ -155,7 +155,7 @@ class FileStat(object):
 
 class FileError(Exception):
     """
-    File stat not found error class.
+    File module error class.
     """
 
 
