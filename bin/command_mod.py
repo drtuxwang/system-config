@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Python command line handling module
+Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.2 (2016-02-20)
+Version 2.0.4 (2016-02-21)
 """
 
 import distutils
@@ -26,7 +26,7 @@ class Command(object):
     This class stores a command (uses supplied executable)
     """
 
-    def __init__(self, program, **flags):
+    def __init__(self, program, **kwargs):
         """
         program   = Command program name (ie 'evince', 'bin/acroread')
         args      = Optional command arguments list
@@ -34,16 +34,35 @@ class Command(object):
         platform  = Optional platform (ie 'windows-x86_64' for WINE)
         errors    = Optional error handling ('stop' or 'ignore')
         """
-        self._args = [self._locate(program, **flags)]
+        info = self._parse_keys(('args', 'errors', 'pathextra', 'platform'), **kwargs)
+        self._args = [self._locate(program, info)]
         try:
-            self._args = self._args.extend(flags['args'])
+            self._args.extend(kwargs['args'])
         except KeyError:
             pass
 
+    @staticmethod
+    def _parse_keys(keys, **kwargs):
+        if set(kwargs.keys()) - set(keys):
+            raise CommandKeywordError(sys.argv[0] + ': Unsupported keyword "' +
+                                      list(set(kwargs.keys()) - set(keys))[0] + '".')
+        info = {}
+        for key in keys:
+            try:
+                info[key] = kwargs[key]
+            except KeyError:
+                if key == 'pathextra':
+                    info[key] = []
+                elif key == 'platform':
+                    info[key] = ''
+                else:
+                    info[key] = None
+        return info
+
     @classmethod
-    def _locate(cls, program, **flags):
+    def _locate(cls, program, info):
         try:
-            platform = flags['platform']
+            platform = info['platform']
         except KeyError:
             platform = _System.get_platform()
         extensions = cls._get_extensions(platform)
@@ -55,18 +74,14 @@ class Command(object):
             if file:
                 return file
 
-        try:
-            pathextra = flags['pathextra']
-        except KeyError:
-            pathextra = []
-        file = cls._search_path(pathextra, program, extensions)
+        file = cls._search_path(info['pathextra'], program, extensions)
         if file:
             return file
 
         try:
-            if flags['errors'] == 'stop':
+            if info['errors'] == 'stop':
                 raise SystemExit(sys.argv[0] + ': Cannot find required "' + program + '" software.')
-            elif flags['errors'] == 'ignore':
+            elif info['errors'] == 'ignore':
                 return ''
         except KeyError:
             pass
@@ -213,13 +228,6 @@ class Command(object):
         """
         Return the command line as a list.
         """
-        if os.name == 'nt':
-            try:
-                with open(self._args[0]) as ifile:
-                    if ifile.readline().startswith('#!/usr/bin/env python'):
-                        return [sys.executable] + self._args
-            except OSError:
-                pass
         return self._args
 
     def get_file(self):
@@ -270,15 +278,15 @@ class CommandFile(Command):
     This class stores a command (uses supplied executable)
     """
 
-    def __init__(self, file, **flags):
+    def __init__(self, file, **kwargs):
         """
         file = Full PATH to executable
         args = Optional command arguments list
         """
-        super().__init__(file, **flags)
+        super().__init__(file, **kwargs)
 
     @staticmethod
-    def _locate(file, **flags):
+    def _locate(file, info):
         return file
 
 
@@ -417,6 +425,12 @@ class _System(object):
 class CommandError(Exception):
     """
     Command module error.
+    """
+
+
+class CommandKeywordError(Exception):
+    """
+    Command keyword error.
     """
 
 

@@ -27,7 +27,8 @@ bin/desktop_mod.py     Python X-windows desktop module
 bin/file_mod.py        Python file handling utility module
 bin/network_mod.py     Python network handling utility module
 bin/power_mod.py       Python power handling module
-bin/task_mod.py        Python task handling utility module
+bin/subtask_mod.py     Python sub task handling module [Draft]
+bin/task_mod.py        Python task handling utility module [Draft]
 
 bin/7z                 Make a compressed archive in 7z format
 bin/7z.bat             (uses p7zip or 7zip)
