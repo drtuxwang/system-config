@@ -4,17 +4,17 @@ Python task handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.3 (2016-02-20)
+Version 2.0.4 (2016-02-21)
 """
 
+import functools
 import os
 import re
+import subprocess
 import sys
 
-import syslib
-
-if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
 
 class Tasks(object):
@@ -29,7 +29,6 @@ class Tasks(object):
         user = Username or '<all>'
         """
         self._process = {}
-        self._cache = {}
 
         if not user:
             user = _System.get_username()
@@ -196,13 +195,15 @@ class PosixTasks(Tasks):
     """
 
     def _config(self, user):
-        command = syslib.Command(
-            'ps', flags=['-o', 'ruser pid ppid pgid pri nice tty vsz time etime args', '-e'])
         if 'COLUMNS' not in os.environ:
-            os.environ['COLUMNS'] = '1024'       # Fix Linux ps width
-        command.run(mode='batch')
+            os.environ['COLUMNS'] = '1024'  # Fix Linux ps width
+        try:
+            lines = _System.run_program(
+                ['ps', '-o', 'ruser pid ppid pgid pri nice tty vsz time etime args', '-e'])
+        except (CommandNotFoundError, ExecutableCallError) as exception:
+            raise SystemExit(exception)
 
-        for line in command.get_output()[1:]:
+        for line in lines[1:]:
             process = {}
             process['USER'] = line.split()[0]
             if user in (process['USER'], '<all>'):
@@ -233,14 +234,13 @@ class PosixTasks(Tasks):
         return sorted(pids)
 
     def _kill(self, signal, pids):
-        if 'kill' not in self._cache:
-            self._cache['kill'] = syslib.Command('kill')
-
-        kill = self._cache['kill']
-        kill.set_flags(['-' + signal])
+        command = ['kill', '-' + signal]
         for pid in pids:
-            kill.append_arg(str(pid))
-        kill.run(mode='batch')
+            command.append(str(pid))
+        try:
+            _System.run_program(command)
+        except (CommandNotFoundError, ExecutableCallError) as exception:
+            raise SystemExit(exception)
 
     def killpgid(self, pgid, signal='KILL'):
         """
@@ -260,15 +260,17 @@ class WindowsTasks(Tasks):
     """
 
     def _config(self, user):
-        command = syslib.Command('tasklist', flags=['/v'])
-        command.run(mode='batch')
+        try:
+            lines = _System.run_program(['tasklist', '/v'])
+        except (CommandNotFoundError, ExecutableCallError) as exception:
+            raise SystemExit(exception)
 
         indice = [0]
         position = 0
-        for column in command.get_output()[2].split():
+        for column in lines[2].split():
             position += len(column) + 1
             indice.append(position)
-        for line in command.get_output()[3:]:
+        for line in lines[3:]:
             process = {}
             process['USER'] = line[indice[6]:indice[7]-1].strip()
             if '\\' in process['USER']:
@@ -302,13 +304,13 @@ class WindowsTasks(Tasks):
         return sorted(pids)
 
     def _kill(self, signal, pids):
-        if 'kill' not in self._cache:
-            self._cache['kill'] = syslib.Command('taskkill', flags=['/f'])
-
-        kill = self._cache['kill']
+        command = ['taskkill', '/f']
         for pid in pids:
-            kill.extend_args(['/pid', str(pid)])
-        kill.run(mode='batch')
+            command.extend(['/pid', str(pid)])
+        try:
+            _System.run_program(command)
+        except (CommandNotFoundError, ExecutableCallError) as exception:
+            raise SystemExit(exception)
 
     def killpgid(self, pgid, signal='KILL'):
         """
@@ -345,6 +347,41 @@ class _System(object):
                 return os.environ[environment]
         return 'Unknown'
 
+    @staticmethod
+    @functools.lru_cache(maxsize=4)
+    def _locate_program(program):
+        for directory in os.environ['PATH'].split(os.pathsep):
+            file = os.path.join(directory, program)
+            if os.path.isfile(file):
+                break
+        else:
+            raise CommandNotFoundError(
+                sys.argv[0] + ': Cannot find required "' + program + '" software.')
+        return file
+
+    @classmethod
+    def run_program(cls, command):
+        """
+        Run program in batch mode and return list of lines.
+        """
+        program = cls._locate_program(command[0])
+        try:
+            child = subprocess.Popen([program] + command[1:], shell=False,
+                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        except OSError:
+            raise ExecutableCallError(
+                sys.argv[0] + ': Error in calling "' + program + '" program.')
+        lines = []
+        while True:
+            try:
+                line = child.stdout.readline().decode('utf-8', 'replace')
+            except (KeyboardInterrupt, OSError):
+                break
+            if not line:
+                break
+            lines.append(line.rstrip('\r\n'))
+        return lines
+
 
 class TaskError(Exception):
     """
@@ -367,6 +404,18 @@ class InvalidPgidError(TaskError):
 class InvalidSignalError(TaskError):
     """
     Task invalid signal error.
+    """
+
+
+class CommandNotFoundError(TaskError):
+    """
+    Command not found error.
+    """
+
+
+class ExecutableCallError(TaskError):
+    """
+    Executable call error.
     """
 
 

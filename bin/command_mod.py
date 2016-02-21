@@ -15,8 +15,6 @@ import re
 import subprocess
 import sys
 
-import syslib
-
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
@@ -386,6 +384,40 @@ class _System(object):
         except (OSError, TypeError):
             return 0
 
+    @staticmethod
+    def _locate_program(program):
+        for directory in os.environ['PATH'].split(os.pathsep):
+            file = os.path.join(directory, program)
+            if os.path.isfile(file):
+                break
+        else:
+            raise CommandNotFoundError(
+                sys.argv[0] + ': Cannot find required "' + program + '" software.')
+        return file
+
+    @classmethod
+    def run_program(cls, command):
+        """
+        Run program in batch mode and return list of lines.
+        """
+        program = cls._locate_program(command[0])
+        try:
+            child = subprocess.Popen([program] + command[1:], shell=False,
+                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        except OSError:
+            raise ExecutableCallError(
+                sys.argv[0] + ': Error in calling "' + program + '" program.')
+        lines = []
+        while True:
+            try:
+                line = child.stdout.readline().decode('utf-8', 'replace')
+            except (KeyboardInterrupt, OSError):
+                break
+            if not line:
+                break
+            lines.append(line.rstrip('\r\n'))
+        return lines
+
     @classmethod
     @functools.lru_cache(maxsize=1)
     def get_glibc(cls):
@@ -394,12 +426,11 @@ class _System(object):
         (based on glibc version used to compile 'ldd' or return '0.0' for non Linux)
         """
         if cls.get_platform().startswith('linux'):
-            ldd = syslib.Command('ldd', args=['--version'], check=False)
-            if not ldd.is_found():
-                raise CommandLddNotFoundError(
-                    sys.argv[0] + ': Cannot find required "ldd" software.')
-            ldd.run(filter='^ldd ', mode='batch')
-            return ldd.get_output()[0].split()[-1]
+            lines = cls.run_program(['ldd', '--version'])
+            try:
+                return lines[0].split()[-1]
+            except IndexError:
+                raise GlibcVersionError(sys.argv[0] + ': Cannot determine "glibc" version.')
         return '0.0'
 
     @classmethod
@@ -428,7 +459,7 @@ class CommandError(Exception):
     """
 
 
-class CommandKeywordError(Exception):
+class CommandKeywordError(CommandError):
     """
     Command keyword error.
     """
@@ -440,10 +471,17 @@ class CommandNotFoundError(CommandError):
     """
 
 
-class CommandLddNotFoundError(CommandError):
+class ExecutableCallError(CommandError):
     """
-    Command 'ldd' not found error.
+    Executable call error.
     """
+
+
+class GlibcVersionError(CommandError):
+    """
+    Command 'ldd' version found error.
+    """
+
 
 if __name__ == '__main__':
     help(__name__)
