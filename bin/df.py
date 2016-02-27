@@ -149,7 +149,7 @@ class Main(object):
                 self._command.run(mode='exec')
             args = args[1:]
 
-        self._mounts = sys.argv[1:]
+        self._mounts = args[1:]
         if not self._mounts:
             self._mounts = self._detect()
 
