@@ -4,17 +4,20 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 1.9.9 (2016-02-21)
+Version 2.0.0 (2016-02-27)
 """
 
 import copy
 import os
 import re
+import signal
 import subprocess
 import sys
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+
+BUFFER_SIZE = 131072
 
 
 class Task(object):
@@ -29,6 +32,8 @@ class Task(object):
         self._file = cmdline[0]
         self._cmdline = cmdline
         if os.name == 'nt':
+            if '|' in cmdline:
+                raise PipeNotSupportedError(sys.argv[0] + ': Windows does not support pipes.')
             try:
                 with open(cmdline[0]) as ifile:
                     if ifile.readline().startswith('#!/usr/bin/env python'):
@@ -226,12 +231,12 @@ class Task(object):
 
     def run(self, **kwargs):
         """
-        Run process interactively
+        Run process interactively.
 
         directory    = <directory>   - Directory to run command in
         env          = <dictonary>   - Dictionary containing environmental variables to change
         error2output = True          - Send stderr to stdout
-        pattern      = <pattern>     - Regular expression for filtering output
+        pattern      = <pattern>     - Regular expression for removing output
         replace      = (str1, str2)  - Replace all occurance of str1 with str2
         stdin        = <lines>       - Stdin input text
         """
@@ -262,7 +267,47 @@ class Background(Task):
     """
     This class handles running sub process in background mode.
     """
-    # debugX
+
+    @staticmethod
+    def _start_background_run(cmdline, info):
+        if '|' in cmdline:
+            pipe = True
+            cmdline = subprocess.list2cmdline(cmdline)
+        else:
+            pipe = False
+
+        if info['pattern']:
+            os.environ['_SUBTASK_MOD_BACKGROUND_FILTER'] = info['pattern']
+            subprocess.Popen([sys.executable, __file__] + cmdline, shell=pipe, env=info['env'])
+            del os.environ['_SUBTASK_MOD_BACKGROUND_FILTER']
+        else:
+            subprocess.Popen(cmdline, shell=pipe, env=info['env'])
+
+    def run(self, **kwargs):
+        """
+        Start background process.
+
+        directory    = <directory>   - Directory to run command in
+        env          = <dictonary>   - Dictionary containing environmental variables to change
+        error2output = True          - Send stderr to stdout
+        pattern      = <pattern>     - Regular expression for removing output
+        """
+        info = self._parse_keys(('directory', 'env', 'error2output', 'pattern'), **kwargs)
+
+        if not sys.stdout.isatty():
+            sys.stdout.flush()
+        if not sys.stderr.isatty():
+            sys.stderr.flush()
+        if info['directory']:
+            pwd = os.getcwd()
+            os.chdir(info['directory'])
+        try:
+            self._start_background_run(self._cmdline, info)
+        except OSError:
+            raise ExecutableCallError(
+                sys.argv[0] + ': Error in calling "' + self._file + '" program.')
+        if info['directory']:
+            os.chdir(pwd)
 
 
 class Batch(Task):
@@ -325,7 +370,7 @@ class Batch(Task):
 
     def run(self, **kwargs):
         """
-        Run process interactively
+        Run process in batch mode.
 
         append       = True          - Append to output_file
         directory    = <directory>   - Directory to run command in
@@ -356,19 +401,71 @@ class Child(Task):
     """
     This class handles running sub process as a child process.
     """
-    # debugX
+
+    def run(self, **kwargs):
+        """
+        Return child process object with stdin, stdout and stderr pipes.
+
+        directory    = <directory>   - Directory to run command in
+        env          = <dictonary>   - Dictionary containing environmental variables to change
+        error2output = True          - Send stderr to stdout
+        """
+        info = self._parse_keys(('directory', 'env', 'error2output'), **kwargs)
+
+        if info['directory']:
+            pwd = os.getcwd()
+            os.chdir(info['directory'])
+        try:
+            return self._start_child(self._cmdline, info)
+        except OSError:
+            raise ExecutableCallError(
+                sys.argv[0] + ': Error in calling "' + self._file + '" program.')
+        if info['directory']:
+            os.chdir(pwd)
 
 
 class Daemon(Task):
     """
     This class handles running sub process as a daemon.
     """
-    # debugX
+
+    @staticmethod
+    def _start_daemon(cmdline, info):
+        if '|' in cmdline:
+            pipe = True
+            cmdline = subprocess.list2cmdline(cmdline)
+        else:
+            pipe = False
+
+        os.environ['_SUBTASK_MOD_DAEMON_FILE'] = info['file']
+        subprocess.Popen([sys.executable, __file__] + cmdline, shell=pipe, env=info['env'])
+        del os.environ['_SUBTASK_MOD_DAEMON_FILE']
+
+    def run(self, **kwargs):
+        """
+        Replace current process with new executable.
+
+        directory    = <directory>   - Directory to run command in
+        env          = <dictonary>   - Dictionary containing environmental variables to change
+        file         = <file>        - Log stdout & stderr to file
+        """
+        info = self._parse_keys(('directory', 'env', 'file'), **kwargs)
+
+        if info['directory']:
+            pwd = os.getcwd()
+            os.chdir(info['directory'])
+        try:
+            self._start_daemon(self._cmdline, info)
+        except OSError:
+            raise ExecutableCallError(
+                sys.argv[0] + ': Error in calling "' + self._file + '" program.')
+        if info['directory']:
+            os.chdir(pwd)
 
 
 class Exec(Task):
     """
-    This class handles replacing current process with new executable.
+    This class handles replaces current process with new executable.
     """
 
     @staticmethod
@@ -397,17 +494,17 @@ class Exec(Task):
 
     @classmethod
     def _exec_run(cls, cmdline, info):
+        if '|' in cmdline:
+            raise PipeNotSupportedError(sys.argv[0] + ': Exec does not support pipe.')
+
         if os.name == 'nt':  # Avoids Windows execvpn exit status bug
             cls._windows_exec_run(cmdline, info)
         else:
-            # os.execvpe(cmdline[0], cmdline, env=info['env'])
-            print('debugX4', cmdline[0])
-            print('debugX4', cmdline)
-            os.execvpe(cmdline[0], cmdline, env=os.environ)
+            os.execvpe(cmdline[0], cmdline, env=info['env'])
 
     def run(self, **kwargs):
         """
-        Run process interactively
+        Replace current process with new executable.
 
         directory    = <directory>   - Directory to run command in
         env          = <dictonary>   - Dictionary containing environmental variables to change
@@ -453,5 +550,83 @@ class OutputWriteError(SubTaskError):
     """
 
 
+class PipeNotSupportedError(SubTaskError):
+    """
+    Pipe '|' not supported error.
+    """
+
+
+class Main(object):
+    """
+    Main class
+    """
+
+    def __init__(self):
+        self.config()
+        try:
+            self.config()
+            sys.exit(self.run())
+        except (EOFError, KeyboardInterrupt):
+            sys.exit(114)
+        except SystemExit as exception:
+            sys.exit(exception)
+
+    @staticmethod
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+    @staticmethod
+    def _signal_ignore(sig, frame):
+        pass
+
+    @classmethod
+    def _filter_background(cls, pattern):
+        signal.signal(signal.SIGINT, cls._signal_ignore)
+        Task(sys.argv[1:]).run(pattern=pattern)
+
+    @staticmethod
+    def _start_daemon(file):
+        if os.name == 'posix':
+            mypid = os.getpid()
+            os.setpgid(mypid, mypid)  # New PGID
+
+        child = Child(sys.argv[1:]).run(error2output=True)
+        child.stdin.close()
+        if file:
+            try:
+                with open(file, 'ab') as ofile:
+                    while True:
+                        byte = child.stdout.read(1)
+                        if not byte:
+                            break
+                        ofile.write(byte)
+                        ofile.flush()  # Unbuffered
+            except OSError:
+                pass
+        else:
+            while child.stdout.read(BUFFER_SIZE):
+                pass
+
+    def run(self):
+        """
+        Start program
+        """
+        if '_SUBTASK_MOD_BACKGROUND_FILTER' in os.environ:
+            pattern = os.environ['_SUBTASK_MOD_BACKGROUND_FILTER']
+            del os.environ['_SUBTASK_MOD_BACKGROUND_FILTER']
+            self._filter_background(pattern)
+        elif '_SUBTASK_MOD_DAEMON_FILE' in os.environ:
+            file = os.environ['_SUBTASK_MOD_DAEMON_FILE']
+            del os.environ['_SUBTASK_MOD_DAEMON_FILE']
+            self._start_daemon(file)
+
+
 if __name__ == '__main__':
-    help(__name__)
+    if '--pydoc' in sys.argv:
+        help(__name__)
+    else:
+        Main()
