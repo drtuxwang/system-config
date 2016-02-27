@@ -83,7 +83,7 @@ class Options(object):
             with open(file) as ifile:
                 data = json.load(ifile)
             data['profile']['exit_type'] = 'Normal'
-            data['profile']['per_host_zoom_levels'] = {}
+            data['partition']['per_host_zoom_levels'] = {}
             with open(file + '-new', 'w', newline='\n') as ofile:
                 print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
         except (KeyError, OSError, ValueError):
