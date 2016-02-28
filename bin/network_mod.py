@@ -53,7 +53,7 @@ class Shaper(command_mod.Command):
             try:
                 with open(file) as ifile:
                     data = json.load(ifile)
-                    self._drate = data['netnice']['download']
+                    self._drate = data['trickle']['download']
             except (KeyError, OSError, ValueError):
                 pass
             else:
@@ -66,7 +66,7 @@ class Shaper(command_mod.Command):
         Write configuration file
         """
         data = {
-            'netnice': {
+            'trickle': {
                 'download': self._drate
             }
         }
