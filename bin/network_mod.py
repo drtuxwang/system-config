@@ -4,30 +4,30 @@ Python network handling utility module
 
 Copyright GPL v2: 2015-2016 By Dr Colin Kong
 
-Version 2.0.1 (2016-02-15)
+Version 2.0.2 (2016-02-28)
 """
 
 import json
 import os
 import sys
 
-import syslib
+import command_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
 
-class Shaper(syslib.Command):
+class Shaper(command_mod.Command):
     """
-    Shape network traffic class
+    Shaper network traffic command class
     """
 
-    def __init__(self, drate=None):
-        super().__init__('trickle', check=False)
+    def __init__(self, drate=None, errors='ignore'):
+        super().__init__('trickle', errors=errors)
 
         self._drate = 512
         if 'HOME' in os.environ:
-            file = os.path.join(os.environ['HOME'], '.config', 'netnice.json')
+            file = os.path.join(os.environ['HOME'], '.config', 'trickle.json')
             if not self.read(file):
                 self.write(file)
 

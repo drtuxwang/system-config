@@ -8,8 +8,9 @@ import os
 import signal
 import sys
 
+import command_mod
 import network_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -50,7 +51,7 @@ class Main(object):
     def _set_libraries(command):
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir):
-            if syslib.info.get_system() == 'linux':
+            if os.name != 'nt' and os.uname()[0] == 'linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
                     os.environ['LD_LIBRARY_PATH'] = (
                         libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
@@ -61,15 +62,15 @@ class Main(object):
         """
         Start program
         """
-        aria2c = syslib.Command('aria2c')
+        aria2c = command_mod.Command('aria2c', errors='stop')
         aria2c.set_args(sys.argv[1:])
         self._set_libraries(aria2c)
 
         shaper = network_mod.Shaper()
         if shaper.is_found():
-            aria2c.set_wrapper(shaper)
-
-        aria2c.run(mode='exec')
+            subtask_mod.Exec(shaper.get_cmdline() + aria2c.get_cmdline()).run()
+        else:
+            subtask_mod.Exec(aria2c.get_cmdline()).run()
 
 
 if __name__ == '__main__':

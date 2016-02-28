@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
@@ -54,9 +55,9 @@ class Main(object):
 
         name = os.path.basename(sys.argv[0]).replace('.py', '')
 
-        command = syslib.Command(name)
+        command = command_mod.Command(name, errors='stop')
         command.set_args(sys.argv[1:])
-        command.run(mode='exec')
+        subtask_mod.Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

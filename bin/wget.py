@@ -8,8 +8,9 @@ import os
 import signal
 import sys
 
+import command_mod
 import network_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -40,11 +41,11 @@ class Options(object):
         """
         Parse arguments
         """
-        self._wget = syslib.Command('wget')
+        self._wget = command_mod.Command('wget', errors='stop')
         if '--no-check-certificate' not in args:
-            self._wget.append_flag('--no-check-certificate')
+            self._wget.append_arg('--no-check-certificate')
         if '--timestamping' not in args:
-            self._wget.append_flag('--timestamping')
+            self._wget.append_arg('--timestamping')
 
         # Replace '-O' with '--output-document'
         args = ['--output-document' if x == '-O' else x for x in args]
@@ -53,12 +54,8 @@ class Options(object):
         if '--output-document' not in args:
             for arg in args:
                 if arg.startswith('--user-agent=') and 'Firefox/' in arg:
-                    self._wget.extend_flags(['--output-document', os.path.basename(args[-1])])
+                    self._wget.extend_args(['--output-document', os.path.basename(args[-1])])
                     break
-
-        shaper = network_mod.Shaper()
-        if shaper.is_found():
-            self._wget.set_wrapper(shaper)
 
         self._output = ''
         while len(args) > 1:
@@ -114,17 +111,24 @@ class Main(object):
         output = options.get_output()
         wget = options.get_wget()
 
+        shaper = network_mod.Shaper()
+        if shaper.is_found():
+            cmdline = shaper.get_cmdline() + wget.get_cmdline()
+        else:
+            cmdline = wget.get_cmdline()
+
         if output:
-            wget.run()
-            if wget.get_exitcode():
-                raise SystemExit(wget.get_exitcode())
+            task = subtask_mod.Task(cmdline)
+            task.run()
+            if task.get_exitcode():
+                raise SystemExit(task.get_exitcode())
             try:
                 os.rename(output + '.part', output)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + output + '" output file.')
         else:
-            wget.run(mode='exec')
+            subtask_mod.Exec(cmdline).run()
 
 
 if __name__ == '__main__':

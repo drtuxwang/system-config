@@ -9,8 +9,9 @@ import os
 import signal
 import sys
 
+import command_mod
 import network_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -30,6 +31,12 @@ class Options(object):
         Return command Command class object.
         """
         return self._command
+
+    def get_shaper(self):
+        """
+        Return shaper Command class object.
+        """
+        return self._shaper
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
@@ -59,27 +66,17 @@ class Options(object):
                              'download rate limit.')
 
         if os.path.isfile(self._args.command[0]):
-            command = syslib.Command(file=self._args.command[0])
+            return command_mod.CommandFile(self._args.command[0], args=args[len(my_args):])
         else:
-            file = os.path.join(os.path.dirname(args[0]), self._args.command[0])
-            if os.path.isfile(file):
-                command = syslib.Command(file=file)
-            else:
-                command = syslib.Command(self._args.command[0])
-        command.set_args(args[len(my_args):])
-
-        return command
+            return command_mod.Command(
+                self._args.command[0], args=args[len(my_args):], errors='stop')
 
     def parse(self, args):
         """
         Parse arguments
         """
         self._command = self._parse_args(args[1:])
-
-        shaper = network_mod.Shaper(self._args.drate[0])
-        if not shaper.get_file():
-            raise SystemExit(sys.argv[0] + ': Cannot find "trickle" command.')
-        self._command.set_wrapper(shaper)
+        self._shaper = network_mod.Shaper(self._args.drate[0], errors='stop')
 
 
 class Main(object):
@@ -120,9 +117,10 @@ class Main(object):
         """
         options = Options()
 
-        command = options.get_command()
-        command.run()
-        raise SystemExit(command.get_exitcode())
+        cmdline = options.get_shaper().get_cmdline() + options.get_command().get_cmdline()
+        task = subtask_mod.Task(cmdline)
+        task.run()
+        raise SystemExit(task.get_exitcode())
 
 
 if __name__ == '__main__':
