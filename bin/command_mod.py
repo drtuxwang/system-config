@@ -4,10 +4,10 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.4 (2016-02-21)
+Version 2.0.5 (2016-02-28)
 """
 
-import distutils
+import distutils.version
 import functools
 import glob
 import os
@@ -59,9 +59,8 @@ class Command(object):
 
     @classmethod
     def _locate(cls, program, info):
-        try:
-            platform = info['platform']
-        except KeyError:
+        platform = info['platform']
+        if not platform:
             platform = _System.get_platform()
         extensions = cls._get_extensions(platform)
 
@@ -76,13 +75,10 @@ class Command(object):
         if file:
             return file
 
-        try:
-            if info['errors'] == 'stop':
-                raise SystemExit(sys.argv[0] + ': Cannot find required "' + program + '" software.')
-            elif info['errors'] == 'ignore':
-                return ''
-        except KeyError:
-            pass
+        if info['errors'] == 'stop':
+            raise SystemExit(sys.argv[0] + ': Cannot find required "' + program + '" software.')
+        elif info['errors'] == 'ignore':
+            return ''
         raise CommandNotFoundError(
             sys.argv[0] + ': Cannot find required "' + program + '" software.')
 
@@ -112,13 +108,14 @@ class Command(object):
 
     @classmethod
     def _search_ports(cls, directory, platform, program, extensions):
+        files = []
         for port_glob in _System.get_port_globs(platform):
             for extension in extensions:
                 files = glob.glob(os.path.join(directory, '*', port_glob, program + extension))
                 if platform.startswith('linux'):
                     files = cls._check_glibc(files)
                 if files:
-                    return files
+                    return _System.newest(files)
 
         # Search directories with 4 or more characters as fall back for local port
         if not files:

@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -29,6 +30,12 @@ class Options(object):
         Return archiver Command class object.
         """
         return self._archiver
+
+    def get_archive(self):
+        """
+        Return archive file.
+        """
+        return self._archive
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Make a compressed archive in 7z format.')
@@ -60,34 +67,35 @@ class Options(object):
         Parse arguments
         """
         if os.name == 'nt':
-            self._archiver = syslib.Command('7z.dll', check=False)
+            self._archiver = command_mod.Command('7z.dll', errors='ignore')
         else:
-            self._archiver = syslib.Command('7z.so', check=False)
+            self._archiver = command_mod.Command('7z.so', errors='ignore')
         if self._archiver.is_found():
-            self._archiver = syslib.Command('7z')
+            self._archiver = command_mod.Command('7z')
         else:
-            self._archiver = syslib.Command('7za')
+            self._archiver = command_mod.Command('7za')
 
         if len(args) > 1 and args[1] in ('a', '-bd', 'l', 't', 'x'):
             self._archiver.set_args(args[1:])
-            self._archiver.run(mode='exec')
+            subtask_mod.Exec(self._archiver.get_cmdline()).run()
 
         self._parse_args(args[1:])
 
         if self._args.split:
-            self._archiver.extend_flags(['-v' + str(self._args.split[0]) + 'b'])
+            self._archiver.extend_args(['-v' + str(self._args.split[0]) + 'b'])
 
         if self._args.threads[0] == '1':
-            self._archiver.set_flags(
+            self._archiver.set_args(
                 ['a', '-m0=lzma', '-mmt=' + str(self._args.threads[0]), '-mx=9', '-ms=on', '-y'])
         else:
-            self._archiver.set_flags(
+            self._archiver.set_args(
                 ['a', '-m0=lzma2', '-mmt=' + str(self._args.threads[0]), '-mx=9', '-ms=on', '-y'])
 
         if os.path.isdir(self._args.archive[0]):
-            self._archiver.set_args([os.path.abspath(self._args.archive[0]) + '.7z'])
+            self._archive = os.path.abspath(self._args.archive[0]) + '.7z'
         else:
-            self._archiver.set_args(self._args.archive)
+            self._archive = self._args.archive[0]
+        self._archiver.extend_args([self._archive])
 
         if self._args.files:
             self._archiver.extend_args(self._args.files)
@@ -113,18 +121,19 @@ class Main(object):
 
     @staticmethod
     def _check_sfx(archiver, archive):
-        sfx = ''
         file = os.path.basename(archive)
-        if '.bin' in file or '.exe' in file:
+        if file.endswith('.bin'):
             sfx = os.path.join(os.path.dirname(archiver.get_file()), '7zCon.sfx')
-            if '.exe' in file and syslib.info.get_system() != 'windows':
-                sfx = os.path.join(os.path.dirname(archiver.get_file()), '7zCon.exe')
-            if not os.path.isfile(sfx):
-                archiver = syslib.Command(archiver.get_program(), args=archiver.get_args(),
-                                          check=False)
-                if not archiver.is_found():
-                    raise SystemExit(sys.argv[0] + ': Cannot find "' + sfx + '" SFX file.')
-                archiver.run(mode='exec')
+        elif file.endswith('.exe'):
+            sfx = os.path.join(os.path.dirname(archiver.get_file()), '7zCon.exe')
+        else:
+            return ''
+
+        if not os.path.isfile(sfx):
+            archiver = command_mod.Command(archiver.get_file(), args=sys.argv[1:], errors='ignore')
+            if not archiver.is_found():
+                raise SystemExit(sys.argv[0] + ': Cannot find "' + sfx + '" SFX file.')
+            subtask_mod.Exec(archiver.get_cmdline()).run()
         return sfx
 
     def _make_sfx(self, archive, sfx):
@@ -178,14 +187,15 @@ class Main(object):
 
         options = Options()
         archiver = options.get_archiver()
-        archive = archiver.get_args()[0]
+        archive = options.get_archive()
         sfx = self._check_sfx(archiver, archive)
 
-        archiver.run()
-        if archiver.get_exitcode():
-            print(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
-                  ' received from "' + archiver.get_file() + '".', file=sys.stderr)
-            raise SystemExit(archiver.get_exitcode())
+        task = subtask_mod.Task(archiver.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            print(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                  ' received from "' + task.get_file() + '".', file=sys.stderr)
+            raise SystemExit(task.get_exitcode())
 
         if sfx:
             self._make_sfx(archive, sfx)

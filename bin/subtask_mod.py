@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.0 (2016-02-27)
+Version 2.0.1 (2016-02-27)
 """
 
 import copy
@@ -41,6 +41,18 @@ class Task(object):
             except OSError:
                 pass
         self._status = {'output': [], 'error': [], 'exitcode': 0}
+
+    def get_cmdline(self):
+        """
+        Return the command line as a list.
+        """
+        return self._cmdline
+
+    def get_file(self):
+        """
+        Return file location
+        """
+        return self._file
 
     def has_output(self):
         """
