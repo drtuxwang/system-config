@@ -15,12 +15,14 @@ import signal
 import sys
 import time
 
-import syslib2 as syslib
+import command_mod
+import subtask_mod
+import task_mod
 
-RELEASE = '3.0.14'
+RELEASE = '3.1.0'
 
-if sys.version_info < (2, 7) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 2.7, < 4.0).')
+if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
+    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
 
 
 class Options(object):
@@ -97,20 +99,22 @@ class Options(object):
 
     @staticmethod
     def _xclip():
-        isxclip = re.compile(os.sep + 'python.* zhspeak .*-xclip')
-        task = syslib.Task()
-        for pid in task.get_pids():
+        isxclip = re.compile(os.sep + 'python.*[/ ]zhspeak.py .*-xclip')
+        tasks = task_mod.Tasks.factory()
+        for pid in tasks.get_pids():
             if pid != os.getpid():
-                if isxclip.search(task.get_process(pid)['COMMAND']):
+                if isxclip.search(tasks.get_process(pid)['COMMAND']):
+                    print('debugX pid', pid)
                     # Kill old zhspeak clipboard
-                    task.killpids([pid] + task.get_descendant_pids(pid))
-        xclip = syslib.Command('xclip')
+                    tasks.killpids([pid] + tasks.get_descendant_pids(pid))
+        xclip = command_mod.Command('xclip', errors='stop')
         xclip.set_args(['-out', '-selection', '-c', 'test'])
-        xclip.run(mode='batch')
-        if xclip.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(xclip.get_exitcode()) +
-                             ' received from "' + xclip.get_file() + '".')
-        return xclip.get_output()
+        task = subtask_mod.Batch(xclip.get_cmdline())
+        task.run(mode='batch')
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
+        return task.get_output()
 
     def parse(self, args):
         """
@@ -121,14 +125,14 @@ class Options(object):
         self._speak_dir = os.path.abspath(os.path.join(
             os.path.dirname(args[0]), os.pardir, 'zhspeak-data'))
         if not os.path.isdir(self._speak_dir):
-            zhspeak = syslib.Command('zhspeak', args=args[1:], check=False)
+            zhspeak = command_mod.Command('zhspeak', args=args[1:], errors='ignore')
             if not zhspeak.is_found():
                 raise SystemExit(sys.argv[0] + ': Cannot find "zhspeak-data" directory.')
-            zhspeak.run(mode='exec')
+            subtask_mod.Exec(zhspeak.get_cmdline()).run()
 
         if self._args.guiFlag:
-            zhspeaktcl = syslib.Command('zhspeak.tcl')
-            zhspeaktcl.run(mode='exec')
+            zhspeaktcl = command_mod.Command('zhspeak.tcl', errors='stop')
+            subtask_mod.Exec(zhspeaktcl.get_cmdline()).run()
 
         if self._args.xclipFlag:
             self._phrases = self._xclip()
@@ -266,26 +270,36 @@ class Espeak(Language):
 
     def __init__(self, options):
         self._options = options
-        self._espeak = syslib.Command('espeak')
-        self._espeak.set_flags(['-a256', '-k30', '-v' + options.get_dialect() + '+f2', '-s120'])
+        self._espeak = command_mod.Command('espeak', errors='stop')
+        self._espeak.set_args(['-a256', '-k30', '-v' + options.get_dialect() + '+f2', '-s120'])
+
+    @staticmethod
+    def _show_sounds(cmdline, text):
+        task = subtask_mod.Task(cmdline + ['-x', '-q', ' '.join(text)])
+        task.run(pattern=': Connection refused')
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
+
+    @staticmethod
+    def _speak_sounds(cmdline, text):
+        # Break at '.' and ','
+        for phrase in re.sub(r'[^\s\w-]', '.', '.'.join(text)).split('.'):
+            if phrase:
+                task = subtask_mod.Batch(cmdline + [phrase])
+                task.run()
+                if task.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                     ' received from "' + task.get_file() + '".')
 
     def text2speech(self, text):
         """
         Text to speech conversion
         """
-        if not self._options.get_sound_flag():
-            self._espeak.set_args([' '.join(text)])
-            self._espeak.extend_flags(['-x', '-q'])
-            self._espeak.run(filter=': Connection refused')
-        else:
-            # Break at '.' and ','
-            for phrase in re.sub(r'[^\s\w-]', '.', '.'.join(text)).split('.'):
-                if phrase:
-                    self._espeak.set_args([phrase])
-                    self._espeak.run(mode='batch')
-        if self._espeak.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._espeak.get_exitcode()) +
-                             ' received from "' + self._espeak.get_file() + '".')
+        cmdline = self._espeak.get_cmdline()
+        self._show_sounds(cmdline, text)
+        if self._options.get_sound_flag():
+            self._speak_sounds(cmdline, text)
 
 
 class Ogg123:
@@ -298,7 +312,7 @@ class Ogg123:
         self._config()
 
     def _config(self):
-        self._player = syslib.Command('ogg123', check=False)
+        self._player = command_mod.Command('ogg123', errors='ignore')
 
     def has_player(self):
         """
@@ -316,36 +330,39 @@ class Ogg123:
         """
         Run player
         """
-        self._player.set_args(files)
-        self._player.run(directory=self._oggdir, mode='batch')
-        return self._player.get_exitcode()
+        cmdline = self._player.get_cmdline() + files
+        task = subtask_mod.Batch(cmdline)
+        task.run(directory=self._oggdir)
+        return task.get_exitcode()
 
 
-class Avplay(Ogg123):
-    """
-    Uses 'avplay' from 'libav-tools'.
-    """
-
-    def _config(self):
-        self._player = syslib.Command('ffplay', check=False)
-        self._player.set_flags(['-nodisp', '-autoexit', '-i'])
-
-    def run(self, files):
-        """
-        Run player
-        """
-        self._player.set_args(['concat:' + '|'.join(files)])
-        self._player.run(directory=self._oggdir, mode='batch', filter='p11-kit:')
-
-
-class Ffplay(Avplay):
+class Ffplay(Ogg123):
     """
     Uses 'ffplay' from 'ffmpeg'.
     """
 
     def _config(self):
-        self._player = syslib.Command('ffplay', check=False)
-        self._player.set_flags(['-nodisp', '-autoexit', '-i'])
+        self._player = command_mod.Command('ffplay', errors='ignore')
+        self._player.set_args(['-nodisp', '-autoexit', '-i'])
+
+    def run(self, files):
+        """
+        Run player
+        """
+        cmdline = self._player.get_cmdline() + ['concat:' + '|'.join(files)]
+        task = subtask_mod.Batch(cmdline)
+        task.run(directory=self._oggdir)
+        return task.get_exitcode()
+
+
+class Avplay(Ffplay):
+    """
+    Uses 'avplay' from 'libav-tools'.
+    """
+
+    def _config(self):
+        self._player = command_mod.Command('ffplay', errors='ignore')
+        self._player.set_args(['-nodisp', '-autoexit', '-i'])
 
 
 class Main(object):
@@ -392,8 +409,7 @@ class Main(object):
 
         try:
             options.get_language().text2speech(options.get_phrases())
-
-        except syslib.SyslibError as exception:
+        except subtask_mod.ExecutableCallError as exception:
             raise SystemExit(exception)
 
 
