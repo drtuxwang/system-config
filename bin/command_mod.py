@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.5 (2016-02-28)
+Version 2.0.6 (2016-03-01)
 """
 
 import distutils.version
@@ -42,8 +42,8 @@ class Command(object):
     @staticmethod
     def _parse_keys(keys, **kwargs):
         if set(kwargs.keys()) - set(keys):
-            raise CommandKeywordError(sys.argv[0] + ': Unsupported keyword "' +
-                                      list(set(kwargs.keys()) - set(keys))[0] + '".')
+            raise CommandKeywordError(
+                'Unsupported keyword "' + list(set(kwargs.keys()) - set(keys))[0] + '".')
         info = {}
         for key in keys:
             try:
@@ -79,8 +79,7 @@ class Command(object):
             raise SystemExit(sys.argv[0] + ': Cannot find required "' + program + '" software.')
         elif info['errors'] == 'ignore':
             return ''
-        raise CommandNotFoundError(
-            sys.argv[0] + ': Cannot find required "' + program + '" software.')
+        raise CommandNotFoundError('Cannot find required "' + program + '" software.')
 
     @staticmethod
     def _get_extensions(platform):
@@ -388,8 +387,7 @@ class _System(object):
             if os.path.isfile(file):
                 break
         else:
-            raise CommandNotFoundError(
-                sys.argv[0] + ': Cannot find required "' + program + '" software.')
+            raise CommandNotFoundError('Cannot find required "' + program + '" software.')
         return file
 
     @classmethod
@@ -402,8 +400,7 @@ class _System(object):
             child = subprocess.Popen([program] + command[1:], shell=False,
                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         except OSError:
-            raise ExecutableCallError(
-                sys.argv[0] + ': Error in calling "' + program + '" program.')
+            raise ExecutableCallError('Error in calling "' + program + '" program.')
         lines = []
         while True:
             try:
@@ -427,7 +424,7 @@ class _System(object):
             try:
                 return lines[0].split()[-1]
             except IndexError:
-                raise GlibcVersionError(sys.argv[0] + ': Cannot determine "glibc" version.')
+                raise GlibcVersionError('Cannot determine "glibc" version.')
         return '0.0'
 
     @classmethod

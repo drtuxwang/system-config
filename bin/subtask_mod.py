@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.2 (2016-03-01)
+Version 2.0.3 (2016-03-01)
 """
 
 import copy
@@ -33,7 +33,7 @@ class Task(object):
         self._cmdline = cmdline
         if os.name == 'nt':
             if '|' in cmdline:
-                raise PipeNotSupportedError(sys.argv[0] + ': Windows does not support pipes.')
+                raise PipeNotSupportedError('Windows does not support pipes.')
             try:
                 with open(cmdline[0]) as ifile:
                     if ifile.readline().startswith('#!/usr/bin/env python'):
@@ -130,8 +130,8 @@ class Task(object):
     @staticmethod
     def _parse_keys(keys, **kwargs):
         if set(kwargs.keys()) - set(keys):
-            raise TaskKeywordError(sys.argv[0] + ': Unsupported keyword "' +
-                                   list(set(kwargs.keys()) - set(keys))[0] + '".')
+            raise TaskKeywordError(
+                'Unsupported keyword "' + list(set(kwargs.keys()) - set(keys))[0] + '".')
         info = {}
         for key in keys:
             try:
@@ -231,14 +231,12 @@ class Task(object):
         try:
             self._recv_stdout(child, ismatch, info['replace'])
         except OSError:
-            raise OutputWriteError(
-                sys.argv[0] + ': Error writing stderr of "' + self._file + '" program.')
+            raise OutputWriteError('Error writing stderr of "' + self._file + '" program.')
         if not info['error2output']:
             try:
                 self._recv_stderr(child, ismatch, info['replace'])
             except OSError:
-                raise OutputWriteError(
-                    sys.argv[0] + ': Error  writing output of "' + self._file + '" program.')
+                raise OutputWriteError('Error  writing output of "' + self._file + '" program.')
         return child.wait()
 
     def run(self, **kwargs):
@@ -268,8 +266,7 @@ class Task(object):
             else:
                 self._status['exitcode'] = self._interactive_run(self._cmdline, info)
         except OSError:
-            raise ExecutableCallError(
-                sys.argv[0] + ': Error in calling "' + self._file + '" program.')
+            raise ExecutableCallError('Error in calling "' + self._file + '" program.')
         if info['directory']:
             os.chdir(pwd)
 
@@ -315,8 +312,7 @@ class Background(Task):
         try:
             self._start_background_run(self._cmdline, info)
         except OSError:
-            raise ExecutableCallError(
-                sys.argv[0] + ': Error in calling "' + self._file + '" program.')
+            raise ExecutableCallError('Error in calling "' + self._file + '" program.')
         if info['directory']:
             os.chdir(pwd)
 
@@ -343,10 +339,9 @@ class Batch(Task):
             pass
         except OSError:
             if append:
-                raise OutputWriteError(
-                    sys.argv[0] + ': Cannot append to "' + file + '" output file.')
+                raise OutputWriteError('Cannot append to "' + file + '" output file.')
             else:
-                raise OutputWriteError(sys.argv[0] + ': Cannot create "' + file + '" output file.')
+                raise OutputWriteError('Cannot create "' + file + '" output file.')
 
     def _batch_run(self, cmdline, info):
         child = self._start_child(cmdline, info)
@@ -402,8 +397,7 @@ class Batch(Task):
         try:
             self._status['exitcode'] = self._batch_run(self._cmdline, info)
         except OSError:
-            raise ExecutableCallError(
-                sys.argv[0] + ': Error in calling "' + self._file + '" program.')
+            raise ExecutableCallError('Error in calling "' + self._file + '" program.')
         if info['directory']:
             os.chdir(pwd)
 
@@ -429,8 +423,7 @@ class Child(Task):
         try:
             return self._start_child(self._cmdline, info)
         except OSError:
-            raise ExecutableCallError(
-                sys.argv[0] + ': Error in calling "' + self._file + '" program.')
+            raise ExecutableCallError('Error in calling "' + self._file + '" program.')
         if info['directory']:
             os.chdir(pwd)
 
@@ -468,8 +461,7 @@ class Daemon(Task):
         try:
             self._start_daemon(self._cmdline, info)
         except OSError:
-            raise ExecutableCallError(
-                sys.argv[0] + ': Error in calling "' + self._file + '" program.')
+            raise ExecutableCallError('Error in calling "' + self._file + '" program.')
         if info['directory']:
             os.chdir(pwd)
 
@@ -506,7 +498,7 @@ class Exec(Task):
     @classmethod
     def _exec_run(cls, cmdline, info):
         if '|' in cmdline:
-            raise PipeNotSupportedError(sys.argv[0] + ': Exec does not support pipe.')
+            raise PipeNotSupportedError('Exec does not support pipe.')
 
         if os.name == 'nt':  # Avoids Windows execvpn exit status bug
             cls._windows_exec_run(cmdline, info)
@@ -527,8 +519,7 @@ class Exec(Task):
         try:
             self._exec_run(self._cmdline, info)
         except OSError:
-            raise ExecutableCallError(
-                sys.argv[0] + ': Error in calling "' + self._file + '" program.')
+            raise ExecutableCallError('Error in calling "' + self._file + '" program.')
 
 
 class SubTaskError(Exception):

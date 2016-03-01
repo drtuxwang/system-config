@@ -4,7 +4,7 @@ Python task handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.4 (2016-02-21)
+Version 2.0.5 (2016-03-01)
 """
 
 import functools
@@ -54,7 +54,7 @@ class Tasks(object):
         """
         if not isinstance(pgid, int):
             raise InvalidPgidError(
-                sys.argv[0] + ': "' + __name__ + '.Tasks" invalid pgid type "' + str(pgid) + '".')
+                '"' + __name__ + '.Tasks" invalid pgid type "' + str(pgid) + '".')
         pids = []
         for pid in self.get_pids():
             if self._process[pid]['PGID'] == pgid:
@@ -81,7 +81,7 @@ class Tasks(object):
         signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
         if signal not in ('CONT', 'KILL', 'STOP', 'TERM'):
-            raise InvalidSignalError(sys.argv[0] + ': Invalid "' + signal + '" signal name.')
+            raise InvalidSignalError('Invalid "' + signal + '" signal name.')
 
         if pids:
             self._kill(signal, pids)
@@ -112,7 +112,7 @@ class Tasks(object):
         """
         if not isinstance(pgid, int):
             raise InvalidPgidError(
-                sys.argv[0] + ': "' + __name__ + '.Tasks" invalid pgid type "' + str(pgid) + '".')
+                '"' + __name__ + '.Tasks" invalid pgid type "' + str(pgid) + '".')
         return self.pgid2pids(pgid) != []
 
     def haspid(self, pid):
@@ -122,8 +122,7 @@ class Tasks(object):
         pid = Process ID
         """
         if not isinstance(pid, int):
-            raise InvalidPidError(
-                sys.argv[0] + ': "' + __name__ + '.Tasks" invalid pid type "' + str(pid) + '".')
+            raise InvalidPidError('"' + __name__ + '.Tasks" invalid pid type "' + str(pid) + '".')
         return pid in self._process.keys()
 
     def haspname(self, pname):
@@ -355,8 +354,7 @@ class _System(object):
             if os.path.isfile(file):
                 break
         else:
-            raise CommandNotFoundError(
-                sys.argv[0] + ': Cannot find required "' + program + '" software.')
+            raise CommandNotFoundError('Cannot find required "' + program + '" software.')
         return file
 
     @classmethod
@@ -369,8 +367,7 @@ class _System(object):
             child = subprocess.Popen([program] + command[1:], shell=False,
                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         except OSError:
-            raise ExecutableCallError(
-                sys.argv[0] + ': Error in calling "' + program + '" program.')
+            raise ExecutableCallError('Error in calling "' + program + '" program.')
         lines = []
         while True:
             try:

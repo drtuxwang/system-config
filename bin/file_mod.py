@@ -4,7 +4,7 @@ Python file handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.5 (2016-02-20)
+Version 2.0.6 (2016-03-01)
 """
 
 import os
@@ -35,8 +35,7 @@ class FileStat(object):
                 self._stat = list(os.stat(file))
             except (OSError, TypeError):
                 if not os.path.islink:
-                    raise FileStatNotFoundError(
-                        sys.argv[0] + ': Cannot find "' + file + '" file status.')
+                    raise FileStatNotFoundError('Cannot find "' + file + '" file status.')
                 self._stat = [0] * 10
             else:
                 if size is not None:
