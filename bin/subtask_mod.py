@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.1 (2016-02-27)
+Version 2.0.2 (2016-03-01)
 """
 
 import copy
@@ -139,8 +139,6 @@ class Task(object):
             except KeyError:
                 if key == 'pattern':
                     info[key] = ''
-                elif key == 'replace':
-                    info[key] = ('', '')
                 else:
                     info[key] = None
         try:
@@ -228,6 +226,8 @@ class Task(object):
             ismatch = re.compile(info['pattern'])
         else:
             ismatch = None
+        if not info['replace']:
+            info['replace'] = ('', '')
         try:
             self._recv_stdout(child, ismatch, info['replace'])
         except OSError:
@@ -263,11 +263,10 @@ class Task(object):
             pwd = os.getcwd()
             os.chdir(info['directory'])
         try:
-            if (not info['error2output'] and not info['pattern'] and
-                    not info['replace'] and not info['stdin']):
-                self._status['exitcode'] = self._interactive_run(self._cmdline, info)
-            else:
+            if info['error2output'] or info['pattern'] or info['replace'] or info['stdin']:
                 self._status['exitcode'] = self._interactive_child_run(self._cmdline, info)
+            else:
+                self._status['exitcode'] = self._interactive_run(self._cmdline, info)
         except OSError:
             raise ExecutableCallError(
                 sys.argv[0] + ': Error in calling "' + self._file + '" program.')
