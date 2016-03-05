@@ -7,6 +7,7 @@ import argparse
 import glob
 import os
 import re
+import shutil
 import signal
 import sys
 
@@ -125,7 +126,7 @@ class Main(object):
 
             try:
                 os.chmod(newfile, file_mod.FileStat(file).get_mode())
-                os.rename(newfile, file)
+                shutil.move(newfile, file)
             except OSError:
                 self._remove(newfile)
                 raise SystemExit(sys.argv[0] + ': Cannot update "' + file + '" file.')

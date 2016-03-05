@@ -6,6 +6,7 @@ Renumber picture files into a numerical series.
 import argparse
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -147,14 +148,14 @@ class Main(object):
                         number, file_stat.get_file().split('.')[-1].lower().replace('jpeg', 'jpg'))
                     newfiles.append(newfile)
                     try:
-                        os.rename(file_stat.get_file(), str(mypid) + '-' + newfile)
+                        shutil.move(file_stat.get_file(), str(mypid) + '-' + newfile)
                     except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot rename "' + file_stat.get_file() +
                                          '" image file.')
                     number += 1
                 for file in newfiles:
                     try:
-                        os.rename(str(mypid) + '-' + file, file)
+                        shutil.move(str(mypid) + '-' + file, file)
                     except OSError:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot rename to "' + file + '" image file.')

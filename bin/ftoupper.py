@@ -6,6 +6,7 @@ Convert filename to uppercase.
 import argparse
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -96,7 +97,7 @@ class Main(object):
                     raise SystemExit(
                         sys.argv[0] + ': Cannot rename over existing "' + newfile + '" file.')
                 try:
-                    os.rename(file, newfile)
+                    shutil.move(file, newfile)
                 except OSError:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot rename "' + file + '" file to "' + newfile + '".')

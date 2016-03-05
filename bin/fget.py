@@ -7,6 +7,7 @@ import argparse
 import glob
 import json
 import os
+import shutil
 import signal
 import socket
 import sys
@@ -197,7 +198,7 @@ class Main(object):
 
         os.utime(tmpfile, (mtime, mtime))
         try:
-            os.rename(tmpfile, file)
+            shutil.move(tmpfile, file)
             os.remove(tmpfile + '.json')
         except OSError:
             pass

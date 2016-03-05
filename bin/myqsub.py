@@ -6,6 +6,7 @@ MyQS, My Queuing System batch job submission.
 import argparse
 import glob
 import os
+import shutil
 import signal
 import sys
 import time
@@ -13,7 +14,7 @@ import time
 import syslib
 import task_mod
 
-RELEASE = '2.7.4'
+RELEASE = '2.7.5'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -189,7 +190,7 @@ class Main(object):
                     print('NCPUS=' + str(ncpus), file=ofile)
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + tmpfile + '" temporary file.')
-            os.rename(tmpfile, os.path.join(self._myqsdir, str(jobid) + '.q'))
+            shutil.move(tmpfile, os.path.join(self._myqsdir, str(jobid) + '.q'))
             print('Batch job with jobid', jobid, 'has been submitted into MyQS.')
             time.sleep(0.5)
 

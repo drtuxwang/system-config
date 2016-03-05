@@ -10,8 +10,6 @@ import shutil
 import signal
 import sys
 
-import syslib
-
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
@@ -116,35 +114,7 @@ class Main(object):
                     raise SystemExit(
                         sys.argv[0] + ': Cannot safely overwrite "' + target + '" target file.')
             try:
-                os.rename(source, target)
-            except OSError as exception:
-                if 'Invalid cross-device link' in exception.args:
-                    self._cprm(source, target)
-                elif os.path.isdir(source):
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot move "' + source + '" source directory.')
-                else:
-                    raise SystemExit(sys.argv[0] + ': Cannot move "' + source + '" source file.')
-
-    @staticmethod
-    def _cprm(source, target):
-        if os.path.isdir(source):
-            try:
-                shutil.copytree(source, target, symlinks=True)
-            except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot copy "' + source + '" source file.')
-            try:
-                shutil.rmtree(source)
-            except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot move "' + source + '" source directory.')
-        else:
-            try:
-                shutil.copy2(source, target)
-            except OSError as exception:
-                if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
-                    raise SystemExit(sys.argv[0] + ': Cannot copy "' + source + '" source file.')
-            try:
-                os.remove(source)
+                shutil.move(source, target)
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot move "' + source + '" source file.')
 
@@ -165,10 +135,7 @@ class Main(object):
                     sys.argv[0] + ': Cannot safely overwrite "' + target + '" target file.')
 
         try:
-            # Workaround Windows rename bug
-            if syslib.info.get_system() == 'windows' and os.path.isfile(target):
-                os.remove(target)
-            os.rename(source, target)
+            shutil.move(source, target)
         except OSError:
             if os.path.isdir(source):
                 raise SystemExit(sys.argv[0] + ': Cannot rename "' + source + '" source directory.')

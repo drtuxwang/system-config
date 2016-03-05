@@ -5,6 +5,7 @@ Wrapper for 'vlc' command
 
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -57,7 +58,7 @@ class Options(object):
                     pass
             else:
                 try:
-                    os.rename(file + '-new', file)
+                    shutil.move(file + '-new', file)
                 except OSError:
                     pass
 

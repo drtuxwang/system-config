@@ -7,6 +7,7 @@ import argparse
 import glob
 import re
 import os
+import shutil
 import signal
 import sys
 
@@ -92,7 +93,7 @@ class Main(object):
                     if not os.path.isdir(newfile):
                         if not os.path.islink(newfile):
                             try:
-                                os.rename(file, newfile)
+                                shutil.move(file, newfile)
                             except OSError:
                                 pass
 

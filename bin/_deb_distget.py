@@ -6,6 +6,7 @@ Download Debian packages list files.
 import argparse
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -160,7 +161,7 @@ class Main(object):
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '-new" file.')
                 try:
-                    os.rename(file + '-new', file)
+                    shutil.move(file + '-new', file)
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
 

@@ -6,6 +6,7 @@ Converts file to '\r' newline format.
 import argparse
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -100,7 +101,7 @@ class Main(object):
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
             try:
-                os.rename(tmpfile, file)
+                shutil.move(tmpfile, file)
             except OSError:
                 os.remove(tmpfile)
                 raise SystemExit(sys.argv[0] + ': Cannot update "' + file + '" file.')

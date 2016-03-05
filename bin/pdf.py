@@ -7,6 +7,7 @@ import argparse
 import glob
 import os
 import re
+import shutil
 import signal
 import sys
 import textwrap
@@ -209,7 +210,7 @@ class Main(object):
                             line = '{0:6.4f} {1:6.4f} scale'.format(
                                 float(xsize)*scaling, float(ysize)*scaling)
                         print(line, file=ofile)
-            os.rename(file + '-new', file)
+            shutil.move(file + '-new', file)
 
     def _text(self, options, file):
         if 'LANG' in os.environ:

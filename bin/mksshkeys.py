@@ -6,6 +6,7 @@ Create SSH keys and setup access to remote systems.
 import argparse
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -110,7 +111,7 @@ class Main(object):
                         raise SystemExit(sys.argv[0] + ': Cannot create "' +
                                          configfile + '-new' + '" temporary file.')
                     try:
-                        os.rename(configfile + '-new', configfile)
+                        shutil.move(configfile + '-new', configfile)
                     except OSError:
                         raise SystemExit(sys.argv[0] + ': Cannot update "' +
                                          configfile + '" configuration file.')
@@ -151,7 +152,7 @@ class Main(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + file + '-new' + '" temporary file.')
             try:
-                os.rename(file + '-new', file)
+                shutil.move(file + '-new', file)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot update "' + file + '" authorised key file.')

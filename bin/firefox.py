@@ -94,7 +94,7 @@ class Options(object):
                     continue
             else:
                 try:
-                    os.rename(file + '-new', file)
+                    shutil.move(file + '-new', file)
                 except OSError:
                     continue
 
@@ -115,7 +115,7 @@ class Options(object):
                     pass
             else:
                 try:
-                    os.rename(file + '-new', file)
+                    shutil.move(file + '-new', file)
                 except OSError:
                     pass
 

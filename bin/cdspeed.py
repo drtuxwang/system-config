@@ -9,6 +9,7 @@ import argparse
 import glob
 import json
 import os
+import shutil
 import signal
 import sys
 
@@ -63,7 +64,7 @@ class Options(object):
             config.set_speed(self._device, speed)
             config.write(configfile + '-new')
             try:
-                os.rename(configfile + '-new', configfile)
+                shutil.move(configfile + '-new', configfile)
             except OSError:
                 os.remove(configfile + '-new')
 

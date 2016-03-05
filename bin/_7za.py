@@ -6,6 +6,7 @@ Make a compressed archive in 7Z format.
 import argparse
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -148,8 +149,8 @@ class Main(object):
                 self._copy(ifile, ofile)
 
         try:
-            os.rename(archive + '-sfx', archive)
-            os.chmod(archive, int('755', 8))
+            os.chmod(archive + '-sfx', int('755', 8))
+            shutil.move(archive + '-sfx', archive)
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot rename "' + archive +
                              '-sfx" file to "' + archive + '".')

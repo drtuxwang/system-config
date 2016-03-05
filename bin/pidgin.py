@@ -6,6 +6,7 @@ Wrapper for 'pidgin' command
 import glob
 import os
 import re
+import shutil
 import signal
 import sys
 
@@ -66,7 +67,7 @@ class Main(object):
             except OSError:
                 return
             try:
-                os.rename(configfile + '-new', configfile)
+                shutil.move(configfile + '-new', configfile)
             except OSError:
                 pass
 

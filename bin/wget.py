@@ -5,6 +5,7 @@ Wrapper for 'wget' command
 
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -123,10 +124,9 @@ class Main(object):
             if task.get_exitcode():
                 raise SystemExit(task.get_exitcode())
             try:
-                os.rename(output + '.part', output)
+                shutil.move(output + '.part', output)
             except OSError:
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + output + '" output file.')
+                raise SystemExit(sys.argv[0] + ': Cannot create "' + output + '" output file.')
         else:
             subtask_mod.Exec(cmdline).run()
 

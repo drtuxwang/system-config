@@ -6,6 +6,7 @@ MyQS, My Queuing System batch job scheduler daemon
 import argparse
 import glob
 import os
+import shutil
 import signal
 import sys
 import time
@@ -182,7 +183,7 @@ class Main(object):
                     jobid = os.path.basename(file)[:-2]
                     print('Batch job with jobid "' + jobid +
                           '" being requeued after system restart...')
-                    os.rename(file, file[:-2] + '.q')
+                    shutil.move(file, file[:-2] + '.q')
 
     def _schedule_job(self):
         running = 0
@@ -238,7 +239,7 @@ class Main(object):
                                     logfile = os.path.join(os.environ['HOME'], os.path.basename(
                                         info['COMMAND']) + '.o' + jobid)
                                 try:
-                                    os.rename(file, file[:-2] + '.r')
+                                    shutil.move(file, file[:-2] + '.r')
                                 except OSError:
                                     continue
                                 myqexec = syslib.Command('myqexec', args=['-jobid', jobid])

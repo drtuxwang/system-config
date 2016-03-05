@@ -6,6 +6,7 @@ Normalize volume of wave files (-16.0dB rms mean volume).
 import argparse
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -106,7 +107,7 @@ class Main(object):
             raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ffmpeg.get_exitcode()) +
                              ' received from "' + self._ffmpeg.get_file() + '".')
         try:
-            os.rename(file_new, file)
+            shutil.move(file_new, file)
         except OSError:
             os.remove(file_new)
             raise SystemExit(sys.argv[0] + ': Cannot update "' + file + '" file.')
