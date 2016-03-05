@@ -4,7 +4,7 @@ Python X-windows desktop module
 
 Copyright GPL v2: 2013-2016 By Dr Colin Kong
 
-Version 2.0.0 (2016-02-08)
+Version 2.0.1 (2016-03-05)
 """
 
 import os
@@ -20,7 +20,7 @@ class Desktop(object):
     """
 
     def __init__(self):
-        self._type = None
+        self._type = 'Unknown'
 
     @staticmethod
     def has_xfce():
