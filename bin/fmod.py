@@ -150,7 +150,9 @@ class Main(object):
                 os.chmod(file, self._fmod)
                 with open(file, 'rb') as ifile:
                     magic = ifile.read(4)
-            if magic.startswith(b'#!') or magic in self._exe_magics:
+
+            if (magic.startswith(b'#!') or magic in self._exe_magics or
+                    self._is_exe_ext.search(file)):
                 os.chmod(file, self._xmod)
             elif self._is_not_exe_ext.search(file):
                 os.chmod(file, self._fmod)
