@@ -53,9 +53,9 @@ class Options(object):
             description='Renumber picture files into a numerical series.')
 
         parser.add_argument('-ctime', action='store_const', const='ctime', dest='order',
-                            default='file', help='Sort using file creation time.')
+                            default='file', help='Sort using meta data change time.')
         parser.add_argument('-mtime', action='store_const', const='mtime', dest='order',
-                            default='file', help='Sort using file modification time.')
+                            default='file', help='Sort using modification time.')
         parser.add_argument('-noreset', dest='reset_flag', action='store_false',
                             help='Use same number sequence for all directories.')
         parser.add_argument('-start', nargs=1, type=int, default=[1],
@@ -115,7 +115,7 @@ class Main(object):
         if order == 'mtime':
             file_stats = sorted(file_stats, key=lambda s: s.get_time())
         elif order == 'ctime':
-            file_stats = sorted(file_stats, key=lambda s: s.get_time_create())
+            file_stats = sorted(file_stats, key=lambda s: s.get_time_change())
         else:
             file_stats = sorted(file_stats, key=lambda s: s.get_file())
         return file_stats

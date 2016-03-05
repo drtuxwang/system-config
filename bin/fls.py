@@ -58,7 +58,7 @@ class Options(object):
         parser.add_argument('-t', action='store_const', const='mtime', dest='order',
                             default='name', help='Sort by modification time of file.')
         parser.add_argument('-c', action='store_const', const='ctime', dest='order',
-                            default='name', help='Sort by creation time of file.')
+                            default='name', help='Sort by meta data change time of file.')
         parser.add_argument('-r', dest='reverseFlag', action='store_true',
                             help='Reverse order.')
 
@@ -130,7 +130,7 @@ class Main(object):
     def _sorted(options, file_stats):
         order = options.get_order()
         if order == 'ctime':
-            file_stats = sorted(file_stats, key=lambda s: s.get_time_create())
+            file_stats = sorted(file_stats, key=lambda s: s.get_time_change())
         elif order == 'mtime':
             file_stats = sorted(file_stats, key=lambda s: s.get_time())
         elif order == 'size':

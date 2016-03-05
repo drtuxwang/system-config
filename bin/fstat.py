@@ -93,7 +93,7 @@ class Main(object):
             print('"' + file + '".size  =', file_stat.get_size())
             print('"' + file + '".atime =', file_stat.get_time_access())
             print('"' + file + '".mtime =', file_stat.get_time())
-            print('"' + file + '".ctime =', file_stat.get_time_create())
+            print('"' + file + '".ctime =', file_stat.get_time_change())
 
 
 if __name__ == '__main__':

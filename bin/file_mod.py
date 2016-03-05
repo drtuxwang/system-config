@@ -4,7 +4,7 @@ Python file handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.6 (2016-03-01)
+Version 2.0.7 (2016-03-02)
 """
 
 import os
@@ -145,9 +145,9 @@ class FileStat(object):
         """
         return time.strftime('%Y-%m-%d-%H:%M:%S', time.localtime(self.get_time()))
 
-    def get_time_create(self):
+    def get_time_change(self):
         """
-        Return time of creation.
+        Return time of last meta data change.
         """
         return self._stat[9]
 
