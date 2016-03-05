@@ -16,8 +16,8 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
 
-FG_COLOUR = '#00ff00'
-BG_COLOUR = '#000000'
+FG_COLOUR = '#000000'
+BG_COLOUR = '#ffffdd'
 
 
 class Options(object):
