@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.3 (2016-03-01)
+Version 2.0.4 (2016-03-04)
 """
 
 import copy
@@ -628,7 +628,4 @@ class Main(object):
 
 
 if __name__ == '__main__':
-    if '--pydoc' in sys.argv:
-        help(__name__)
-    else:
-        Main()
+    help(__name__)
