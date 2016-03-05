@@ -15,6 +15,9 @@ import syslib
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+FG_COLOUR = '#000000'
+BG_COLOUR = '#ffffdd'
+
 
 class Options(object):
     """
@@ -59,8 +62,8 @@ class Options(object):
         if self._args.guiFlag:
             xterm = syslib.Command('xterm')
             xterm.set_args([
-                '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', '#000000',
-                '-bg', '#ffffdd', '-cr', '#880000', '-geometry', '15x3', '-ut', '+sb',
+                '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', FG_COLOUR,
+                '-bg', BG_COLOUR, '-cr', '#880000', '-geometry', '15x3', '-ut', '+sb',
                 '-e', sys.argv[0]] + args[2:])
             xterm.run(mode='daemon')
             raise SystemExit(0)

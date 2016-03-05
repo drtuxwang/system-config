@@ -16,6 +16,9 @@ import syslib
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
 
+FG_COLOUR = '#00f800'
+BG_COLOUR = '#000000'
+
 
 class Options(object):
     """
@@ -92,8 +95,8 @@ class Xterm(object):
         self._command.run(mode='batch')
         self._command.set_flags(
             ['-s', '-j', '-sb', '-sl', '4096', '-cc', '33:48,35-38:48,40-58:48,63-255:48', '-fn',
-             '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', '#000000', '-bg', '#ffffdd',
-             '-cr', '#ff00ff', '-ls', '-ut', '-geometry', self._options.get_columns() + 'x24'])
+             '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', BG_COLOUR, '-bg', BG_COLOUR,
+             '-cr', '#ff0000', '-ls', '-ut', '-geometry', self._options.get_columns() + 'x24'])
         if self._command.is_match_output(' -rightbar '):
             self._command.append_flag('-rightbar')
         self._pattern = '^$'

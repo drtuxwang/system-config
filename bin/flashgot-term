@@ -3,5 +3,8 @@
 # Flashgot terminal wrapper
 #
 
+FG_COLOUR="#000000"
+BG_COLOUR="#ffffdd"
+
 sed -i "s/^echo -n.*/sleep 2/" "$3"
-exec xterm -fn -misc-fixed-bold-r-normal--18-*-iso8859-1 -fg "#000000" -bg "#ffffdd" -cr "#ff00ff" -ut -geometry 100x10 -T "$1" -e "$3"
+exec xterm -fn -misc-fixed-bold-r-normal--18-*-iso8859-1 -fg "$FG_COLOUR" -bg "$BG_COLOUR" -cr "#ff00ff" -ut -geometry 100x10 -T "$1" -e "$3"
