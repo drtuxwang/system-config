@@ -10,7 +10,7 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -127,9 +127,9 @@ class Main(object):
         self._md5files = {}
         self._calc(options, options.get_files())
 
-        for _, files in sorted(self._md5files.items()):
-            if files:
-                print(syslib.Command().args2cmd(sorted(files)))
+        for files in sorted(self._md5files.values()):
+            if len(files) > 1:
+                print(command_mod.Command.args2cmd(sorted(files)))
 
 
 if __name__ == '__main__':
