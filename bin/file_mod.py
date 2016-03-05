@@ -4,7 +4,7 @@ Python file handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.7 (2016-03-02)
+Version 2.0.8 (2016-03-05)
 """
 
 import os
@@ -48,15 +48,16 @@ class FileStat(object):
 
         files = List of files
         """
+
+        files = [x for x in files if not os.path.islink(x)]
+
         nfile = ''
         nfile_time = -1
-
         for file in files:
-            if os.path.isfile(file) or os.path.isdir(file):
-                file_time = FileStat(file).get_time()
-                if file_time > nfile_time:
-                    nfile = file
-                    nfile_time = file_time
+            file_time = FileStat(file).get_time()
+            if file_time > nfile_time:
+                nfile = file
+                nfile_time = file_time
 
         return nfile
 
@@ -67,15 +68,15 @@ class FileStat(object):
 
         files = List of files
         """
+        files = [x for x in files if not os.path.islink(x)]
+
         nfile = ''
         nfile_time = float('inf')
-
         for file in files:
-            if os.path.isfile(file) or os.path.isdir(file):
-                file_time = FileStat(file).get_time()
-                if file_time < nfile_time:
-                    nfile = file
-                    nfile_time = file_time
+            file_time = FileStat(file).get_time()
+            if file_time < nfile_time:
+                nfile = file
+                nfile_time = file_time
 
         return nfile
 
