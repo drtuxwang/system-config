@@ -51,7 +51,7 @@ class Main(object):
         """
         Start program
         """
-        desktop = desktop_mod.Desktop().detect()
+        desktop = desktop_mod.Desktop.detect()
         if desktop == 'gnome':
             xsnap = syslib.Command('gnome-screenshot', flags=['--interactive'])
         elif desktop == 'kde':

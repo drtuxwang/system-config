@@ -40,7 +40,7 @@ class Main(object):
         """
         Start program
         """
-        desktop = desktop_mod.Desktop().detect()
+        desktop = desktop_mod.Desktop.detect()
         if desktop == 'gnome':
             xcalc = syslib.Command('gcalctool', check=False)
             if not xcalc.is_found():

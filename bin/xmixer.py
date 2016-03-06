@@ -53,7 +53,7 @@ class Main(object):
         """
         xmixer = syslib.Command('pavucontrol', check=False)
         if not xmixer.is_found():
-            desktop = desktop_mod.Desktop().detect()
+            desktop = desktop_mod.Desktop.detect()
             if desktop == 'gnome':
                 xmixer = syslib.Command('gnome-volume-control', check=False)
             elif desktop == 'kde':

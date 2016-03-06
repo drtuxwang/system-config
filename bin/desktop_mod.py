@@ -4,9 +4,10 @@ Python X-windows desktop module
 
 Copyright GPL v2: 2013-2016 By Dr Colin Kong
 
-Version 2.0.1 (2016-03-05)
+Version 2.0.2 (2016-03-06)
 """
 
+import functools
 import os
 import sys
 
@@ -18,9 +19,6 @@ class Desktop(object):
     """
     Desktop class
     """
-
-    def __init__(self):
-        self._type = 'Unknown'
 
     @staticmethod
     def has_xfce():
@@ -58,19 +56,22 @@ class Desktop(object):
             return True
         return False
 
-    def detect(self):
+    @classmethod
+    @functools.lru_cache(maxsize=1)
+    def detect(cls):
         """
-        Return desktop name (xfce, gnome, kde)
+        Return desktop name (xfce, gnome, kde or Unknown)
         """
-        if not self._type:
-            if self.has_xfce():
-                self._type = 'xfce'
-            elif self.has_gnome():
-                self._type = 'gnome'
-            elif self.has_kde():
-                self._type = 'kde'
+        if cls.has_xfce():
+            name = 'xfce'
+        elif cls.has_gnome():
+            name = 'gnome'
+        elif cls.has_kde():
+            name = 'kde'
+        else:
+            name = 'Unknown'
 
-        return self._type
+        return name
 
 
 if __name__ == '__main__':

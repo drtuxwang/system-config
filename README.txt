@@ -579,6 +579,7 @@ bin/python3.2
 bin/python3.3
 bin/python3.4
 bin/python3.4.bat
+bin/python3.5
 bin/python3.bat
 
 bin/pyuntar.py         Unpack an archive in TAR format.

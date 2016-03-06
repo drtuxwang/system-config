@@ -51,7 +51,7 @@ class Main(object):
         """
         Start program
         """
-        desktop = desktop_mod.Desktop().detect()
+        desktop = desktop_mod.Desktop.detect()
         if desktop == 'gnome':
             xdesktop = syslib.Command('nautilus')
         elif desktop == 'kde':

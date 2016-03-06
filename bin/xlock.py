@@ -53,7 +53,7 @@ class Main(object):
         """
         Start program
         """
-        desktop = desktop_mod.Desktop().detect()
+        desktop = desktop_mod.Desktop.detect()
         xlock = syslib.Command('light-locker-command', flags=['--lock'], check=False)
         if xlock.is_found():
             if not task_mod.Tasks.factory().haspname('light-locker'):

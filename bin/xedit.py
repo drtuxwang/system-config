@@ -51,7 +51,7 @@ class Main(object):
         """
         Start program
         """
-        desktop = desktop_mod.Desktop().detect()
+        desktop = desktop_mod.Desktop.detect()
         if desktop == 'gnome':
             xedit = syslib.Command('gedit')
         elif desktop == 'kde':

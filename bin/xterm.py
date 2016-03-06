@@ -67,7 +67,7 @@ class Options(object):
         if invis_flag:
             desktop = 'invisible'
         else:
-            desktop = desktop_mod.Desktop().detect()
+            desktop = desktop_mod.Desktop.detect()
         mapping = {'invisible': XtermInvisible, 'gnome': GnomeTerminal, 'kde': Konsole,
                    'xfce': XfceTerminal, 'Unknown': Xterm}
         self._terminal = mapping[desktop](self)
@@ -95,7 +95,7 @@ class Xterm(object):
         self._command.run(mode='batch')
         self._command.set_flags(
             ['-s', '-j', '-sb', '-sl', '4096', '-cc', '33:48,35-38:48,40-58:48,63-255:48', '-fn',
-             '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', BG_COLOUR, '-bg', BG_COLOUR,
+             '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', FG_COLOUR, '-bg', BG_COLOUR,
              '-cr', '#ff0000', '-ls', '-ut', '-geometry', self._options.get_columns() + 'x24'])
         if self._command.is_match_output(' -rightbar '):
             self._command.append_flag('-rightbar')
