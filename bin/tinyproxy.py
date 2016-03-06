@@ -3,12 +3,14 @@
 Wrapper for 'tinyproxy' command
 """
 
+import getpass
 import glob
 import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -65,10 +67,10 @@ class Options(object):
         """
         Parse arguments
         """
-        self._tinyproxy = syslib.Command('tinyproxy')
+        self._tinyproxy = command_mod.Command('tinyproxy', errors='stop')
         if len(args) > 1:
             self._tinyproxy.set_args(args[1:])
-        elif syslib.info.get_username() != 'root':
+        elif getpass.getuser() != 'root':
             if not os.path.isfile('tinyproxy.conf'):
                 self._create_config()
             self._tinyproxy.set_args(['-d', '-c', 'tinyproxy.conf'])
@@ -112,7 +114,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_tinyproxy().run(mode='exec')
+        subtask_mod.Exec(options.get_tinyproxy().get_cmdline()).run()
 
 
 if __name__ == '__main__':

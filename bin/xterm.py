@@ -8,6 +8,7 @@ Use '-i' for invisible terminal
 import glob
 import os
 import signal
+import socket
 import sys
 
 import desktop_mod
@@ -73,7 +74,7 @@ class Options(object):
         self._terminal = mapping[desktop](self)
 
         if len(args) == 1:
-            self._hosts = [syslib.info.get_hostname()]
+            self._hosts = [socket.gethostname().split('.')[0].lower()]
         else:
             self._hosts = args[1:]
 
@@ -86,7 +87,7 @@ class Xterm(object):
     def __init__(self, options):
         self._options = options
         self._pattern = '^$'
-        self._myhost = syslib.info.get_hostname()
+        self._myhost = socket.gethostname().split('.')[0].lower()
         self._config()
 
     def _config(self):

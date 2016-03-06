@@ -7,6 +7,7 @@ Use '-reset' to clean junk from profile
 Use '-restart' to restart chrome
 """
 
+import getpass
 import glob
 import json
 import os
@@ -139,7 +140,7 @@ class Options(object):
         if 'HOME' in os.environ:
             task = task_mod.Tasks.factory()
             for directory in glob.glob(
-                    os.path.join('/tmp', 'chrome-' + syslib.info.get_username() + '.*')):
+                    os.path.join('/tmp', 'chrome-' + getpass.getuser() + '.*')):
                 try:
                     if not task.pgid2pids(int(directory.split('.')[-1])):
                         print('Removing copy of Chrome profile in "' + directory + '"...')
@@ -153,8 +154,7 @@ class Options(object):
             configdir = os.path.join(os.environ['HOME'], '.config', self._directory)
             mypid = os.getpid()
             os.setpgid(mypid, mypid)  # New PGID
-            newhome = os.path.join(
-                '/tmp', 'chrome-' + syslib.info.get_username() + '.' + str(mypid))
+            newhome = os.path.join('/tmp', 'chrome-' + getpass.getuser() + '.' + str(mypid))
             print('Creating copy of Chrome profile in "' + newhome + '"...')
             if not os.path.isdir(newhome):
                 try:

@@ -11,9 +11,11 @@ import json
 import os
 import shutil
 import signal
+import socket
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -84,14 +86,14 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._device = syslib.info.get_hostname() + ':' + self._args.device[0]
+        self._device = socket.gethostname().split('.')[0].lower() + ':' + self._args.device[0]
 
         self._speed = self._config_speed()
         if self._speed == 0:
             raise SystemExit(0)
 
-        self._hdparm = syslib.Command(file='/sbin/hdparm',
-                                      args=['-E', str(self._speed), self._device])
+        self._hdparm = command_mod.CommandFile(
+            '/sbin/hdparm', args=['-E', str(self._speed), self._device])
         print('Setting CD/DVD drive speed to ', self._speed, 'X', sep='')
 
 
@@ -173,7 +175,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_hdparm().run(mode='batch')
+        subtask_mod.Batch(options.get_hdparm().get_cmdline()).run()
 
 
 if __name__ == '__main__':

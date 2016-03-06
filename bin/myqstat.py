@@ -7,13 +7,13 @@ import argparse
 import glob
 import os
 import signal
+import socket
 import sys
 import time
 
-import syslib
 import task_mod
 
-RELEASE = '2.7.4'
+RELEASE = '2.7.5'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -165,13 +165,12 @@ class Main(object):
         """
         options = Options()
 
-        hostname = syslib.info.get_hostname()
+        host = socket.gethostname().split('.')[0].lower()
         print('\nMyQS', options.get_release(),
-              ', My Queuing System batch job statistics on HOST "' + hostname + '".\n')
+              ', My Queuing System batch job statistics on HOST "' + host + '".\n')
         if 'HOME' not in os.environ:
             raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
-        self._myqsdir = os.path.join(os.environ['HOME'], '.config',
-                                     'myqs', syslib.info.get_hostname())
+        self._myqsdir = os.path.join(os.environ['HOME'], '.config', 'myqs', host)
         self._showjobs()
         self._myqsd()
 

@@ -6,9 +6,11 @@ Wrapper for 'vi' command
 import glob
 import os
 import signal
+import socket
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -47,33 +49,34 @@ class Main(object):
 
     @staticmethod
     def _edit(command):
-        command.run()
-        if command.get_exitcode():
-            print(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) + ' received from "' +
-                  command.get_file() + '".', file=sys.stderr)
-            raise SystemExit(command.get_exitcode())
+        task = subtask_mod.Task(command.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            print(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) + ' received from "' +
+                  task.get_file() + '".', file=sys.stderr)
+            raise SystemExit(task.get_exitcode())
 
     def run(self):
         """
         Start program
         """
         if os.path.isfile('/usr/bin/vim'):
-            command = syslib.Command('vim')
+            command = command_mod.Command('vim', errors='stop')
         else:
-            command = syslib.Command('vi')
+            command = command_mod.Command('vi', errors='stop')
         command.set_args(sys.argv[1:])
 
         for file in sys.argv[1:]:
             if not file.startswith('-'):
+                host = socket.gethostname().split('.')[0].lower()
                 try:
-                    sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':' +
-                                     os.path.abspath(file) + '\007')
+                    sys.stdout.write('\033]0;' + host + ':' + os.path.abspath(file) + '\007')
                 except OSError:
                     pass
                 else:
                     sys.stdout.flush()
                     self._edit(command)
-                    sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':\007')
+                    sys.stdout.write('\033]0;' + host + ':\007')
                 break
         else:
             self._edit(command)

@@ -7,9 +7,11 @@ import argparse
 import glob
 import os
 import signal
+import socket
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -49,17 +51,21 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    @staticmethod
+    def _get_editor():
+        if os.path.isfile('/usr/bin/vim'):
+            return command_mod.CommandFile('/usr/bin/vim', args=['-N', '-n', '-u', 'NONE'])
+        else:
+            return command_mod.Command('vi', errors='stop')
+
     def parse(self, args):
         """
         Parse arguments
         """
         self._parse_args(args[1:])
 
-        if os.path.isfile('/usr/bin/vim'):
-            self._editor = syslib.Command(file='/usr/bin/vim', flags=['-N', '-n', '-u', 'NONE'])
-        else:
-            self._editor = syslib.Command('vi')
-        self._speller = syslib.Command('fspell')
+        self._editor = self._get_editor()
+        self._speller = command_mod.Command('fspell', errors='stop')
 
 
 class Main(object):
@@ -94,12 +100,11 @@ class Main(object):
             sys.argv = argv
 
     def _edit(self, file):
-        self._options.get_editor().set_args([file])
-        sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':' +
-                         os.path.abspath(file) + '\007')
+        host = socket.gethostname().split('.')[0].lower()
+        sys.stdout.write('\033]0;' + host + ':' + os.path.abspath(file) + '\007')
         sys.stdout.flush()
-        self._options.get_editor().run()
-        sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':' + os.getcwd() + '\007')
+        subtask_mod.Task(self._options.get_editor().get_cmdline() + [file]).run()
+        sys.stdout.write('\033]0;' + host + ':' + os.getcwd() + '\007')
 
     def run(self):
         """
@@ -121,8 +126,7 @@ class Main(object):
             elif answer.startswith('q'):
                 break
             elif answer.startswith('s'):
-                speller.set_args(files[:1])
-                speller.run()
+                subtask_mod.Task(speller.get_cmdline() + files[:1]).run()
                 try:
                     os.remove(files[0]+'.bak')
                 except OSError:

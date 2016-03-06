@@ -3,12 +3,15 @@
 Wrapper for 'chroot' command
 """
 
+import getpass
 import glob
 import os
 import signal
+import socket
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -34,11 +37,12 @@ class Options(object):
         Parse arguments
         """
         if len(args) != 2 or not os.path.isdir(args[1]):
-            chroot = syslib.Command('chroot', args=args[1:])
-            chroot.run(mode='exec')
-        elif syslib.info.get_username() != 'root':
-            sudo = syslib.Command('sudo', args=['python3', __file__, os.path.abspath(args[1])])
-            sudo.run(mode='exec')
+            chroot = command_mod.Command('chroot', args=args[1:], errors='stop')
+            subtask_mod.Exec(chroot.get_cmdline()).run()
+        elif getpass.getuser() != 'root':
+            sudo = command_mod.Command(
+                'sudo', args=['python3', __file__, os.path.abspath(args[1])], errors='stop')
+            subtask_mod.Exec(sudo.get_cmdline()).run()
         if not os.path.isfile(os.path.join(args[1], 'bin', 'bash')):
             raise SystemExit(sys.argv[0] + ': Cannot find "/bin/bash" in chroot directory.')
         self._directory = os.path.abspath(args[1])
@@ -50,10 +54,10 @@ class Chroot(object):
     """
 
     def __init__(self, directory):
-        self._chroot = syslib.Command('/usr/sbin/chroot')
+        self._chroot = command_mod.Command('/usr/sbin/chroot', errors='stop')
         self._chroot.set_args([directory, '/bin/bash', '-l'])
         self._directory = directory
-        self._mount = syslib.Command('mount')
+        self._mount = command_mod.Command('mount', errors='stop')
 
         self._mountpoints = []
         self.mount_dir('-o', 'bind', '/dev', os.path.join(self._directory, 'dev'))
@@ -79,7 +83,7 @@ class Chroot(object):
         Mount directory
         """
         self._mount.set_args(list(args))
-        self._mount.run()
+        subtask_mod.Task(self._mount.get_cmdline()).run()
         self._mountpoints.append(args[-1])
 
     def run(self):
@@ -87,14 +91,15 @@ class Chroot(object):
         Start session
         """
         print('Chroot "' + self._directory + '" starting...')
+        host = socket.gethostname().split('.')[0].lower()
         if self._getterm() in ['xterm', 'xvt100']:
-            sys.stdout.write(
-                '\033]0;' + syslib.info.get_hostname() + ':' + self._directory + '\007')
+            sys.stdout.write('\033]0;' + host + ':' + self._directory + '\007')
             sys.stdout.flush()
-        self._chroot.run()
+        subtask_mod.Task(self._chroot.get_cmdline()).run()
         if self._getterm() in ['xterm', 'xvt100']:
-            sys.stdout.write('\033]0;' + syslib.info.get_hostname() + ':\007')
-        syslib.Command('umount', args=['-l'] + self._mountpoints).run()
+            sys.stdout.write('\033]0;' + host + ':\007')
+        umount = command_mod.Command('umount', args=['-l'] + self._mountpoints, errors='stop')
+        subtask_mod.Task(umount.get_cmdline()).run()
         print('Chroot "' + self._directory + '" finished!')
 
 

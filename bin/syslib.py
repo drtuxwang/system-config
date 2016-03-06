@@ -4,11 +4,12 @@ Python system interaction Library (transitional)
 
 2006-2016 By Dr Colin Kong
 
-Version 6.0.1 (2016-02-18)
+Version 6.0.2 (2016-03-06)
 """
 
 import copy
 import distutils.version
+import getpass
 import glob
 import os
 import re
@@ -930,12 +931,7 @@ class SystemInfo(object):
         """
         Return my username.
         """
-        if 'username' not in _cache:
-            _cache['username'] = 'Unknown'
-            for environment in ('LOGNAME', 'USER', 'USERNAME'):
-                if environment in os.environ:
-                    _cache['username'] = os.environ[environment]
-        return _cache['username']
+        return getpass.getuser()
 
 
 class SyslibError(SystemExit):

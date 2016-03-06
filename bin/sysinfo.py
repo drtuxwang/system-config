@@ -18,8 +18,8 @@ import time
 import power_mod
 import syslib
 
-RELEASE = '4.6.5'
-VERSION = 20160208
+RELEASE = '4.6.6'
+VERSION = 20160306
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -129,7 +129,7 @@ class Detect(object):
 
     def _network_information(self):
         info = self._system.get_net_info()
-        self._writer.output(name='Hostname', value=syslib.info.get_hostname())
+        self._writer.output(name='Hostname', value=socket.gethostname().split('.')[0].lower())
         self._writer.output(name='Net FQDN', value=info['Net FQDN'])
 
         for address in info['Net IPvx Address']:
@@ -459,7 +459,7 @@ class PosixSystem(OperatingSystem):
             with open('/etc/resolv.conf', errors='replace') as ifile:
                 for line in ifile:
                     if ispattern.match(line):
-                        fqdn = syslib.info.get_hostname() + '.' + line.split()[1]
+                        fqdn = socket.gethostname().split('.')[0].lower() + '.' + line.split()[1]
                         if fqdn.endswith('.'):
                             return fqdn
                         return fqdn + '.'
@@ -1344,7 +1344,7 @@ class WindowsSystem(OperatingSystem):
         if not self._ipconfig.has_output():
             self._ipconfig.run(mode='batch')
         for line in self._ipconfig.get_output('Connection-specific DNS Suffix'):
-            fqdn = syslib.info.get_hostname() + '.' + line.split()[-1]
+            fqdn = socket.gethostname().split('.')[0].lower() + '.' + line.split()[-1]
             if fqdn.count('.') > 1:
                 if fqdn.endswith('.'):
                     return fqdn

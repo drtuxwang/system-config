@@ -7,12 +7,12 @@ import argparse
 import glob
 import os
 import signal
+import socket
 import sys
 
-import syslib
 import task_mod
 
-RELEASE = '2.7.4'
+RELEASE = '2.7.5'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -142,8 +142,8 @@ class Main(object):
 
         if 'HOME' not in os.environ:
             raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
-        self._myqsdir = os.path.join(os.environ['HOME'], '.config',
-                                     'myqs', syslib.info.get_hostname())
+        self._myqsdir = os.path.join(
+            os.environ['HOME'], '.config', 'myqs', socket.gethostname().split('.')[0].lower())
         for jobid in options.get_jobids():
             if not glob.glob(os.path.join(self._myqsdir, jobid + '.[qr]')):
                 print('MyQS cannot delete batch job with jobid', jobid, 'as it does no exist.')

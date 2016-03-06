@@ -4,6 +4,7 @@ Sends text/images/postscript/PDF files to printer.
 """
 
 import argparse
+import getpass
 import glob
 import os
 import re
@@ -256,7 +257,7 @@ class Main(object):
         options = Options()
 
         self._tmpfile = os.sep + os.path.join(
-            'tmp', 'fprint-' + syslib.info.get_username() + '.' + str(os.getpid()))
+            'tmp', 'fprint-' + getpass.getuser() + '.' + str(os.getpid()))
         if options.get_view_flag():
             evince = syslib.Command('evince')
         else:

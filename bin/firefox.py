@@ -7,6 +7,7 @@ Use '-no-remote' to avoid using current instance
 Use '-reset' to clean junk from profile
 """
 
+import getpass
 import glob
 import os
 import re
@@ -145,7 +146,7 @@ class Options(object):
         if 'HOME' in os.environ:
             task = task_mod.Tasks.factory()
             for directory in glob.glob(
-                    os.path.join('/tmp', 'firefox-' + syslib.info.get_username() + '.*')):
+                    os.path.join('/tmp', 'firefox-' + getpass.getuser() + '.*')):
                 try:
                     if not task.pgid2pids(int(directory.split('.')[-1])):
                         print('Removing copy of Firefox profile in "' + directory + '"...')
@@ -160,8 +161,7 @@ class Options(object):
             firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
             mypid = os.getpid()
             os.setpgid(mypid, mypid)  # New PGID
-            newhome = os.path.join(
-                '/tmp', 'firefox-' + syslib.info.get_username() + '.' + str(mypid))
+            newhome = os.path.join('/tmp', 'firefox-' + getpass.getuser() + '.' + str(mypid))
             os.environ['TMPDIR'] = newhome
             print('Creating copy of Firefox profile in "' + newhome + '"...')
 

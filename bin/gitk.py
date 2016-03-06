@@ -3,12 +3,15 @@
 Wrapper for GITK revision control system
 """
 
+import getpass
 import glob
 import os
 import signal
+import socket
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -42,8 +45,8 @@ class Options(object):
             if not os.path.isfile(file):
                 try:
                     with open(file, 'w', newline='\n') as ofile:
-                        user = syslib.info.get_username()
-                        host = syslib.info.get_hostname()
+                        user = getpass.getuser()
+                        host = socket.gethostname().split('.')[0].lower()
                         print('[user]', file=ofile)
                         print('        name =', user, file=ofile)
                         print('        email =', user + '@' + host, file=ofile)
@@ -54,7 +57,7 @@ class Options(object):
         """
         Parse arguments
         """
-        self._gitk = syslib.Command(os.path.join('bin', 'gitk'))
+        self._gitk = command_mod.Command(os.path.join('bin', 'gitk'), errors='stop')
         self._gitk.set_args(args[1:])
 
         self._env = {}
@@ -108,7 +111,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_gitk().run(mode='exec', env=options.get_env())
+        subtask_mod.Exec(options.get_gitk().get_cmdline()).run(env=options.get_env())
 
 
 if __name__ == '__main__':

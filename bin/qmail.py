@@ -4,6 +4,7 @@ Quick commandline E-mailer.
 """
 
 import argparse
+import getpass
 import glob
 import os
 import re
@@ -74,7 +75,7 @@ class Options(object):
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" configuration file.')
         else:
-            my_address = syslib.info.get_username()
+            my_address = getpass.getuser()
             try:
                 with open(file, 'w', newline='\n') as ofile:
                     print(my_address.encode(), file=ofile)
@@ -103,7 +104,7 @@ class Options(object):
         if 'HOME' not in os.environ:
             raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
         self._tmpfile = os.sep + os.path.join(
-            'tmp', 'qmail-' + syslib.info.get_username() + '.' + str(os.getpid()))
+            'tmp', 'qmail-' + getpass.getuser() + '.' + str(os.getpid()))
         if not self._editor.is_found():
             self._editor = syslib.Command('vi',)
         self._editor.set_args([self._tmpfile])

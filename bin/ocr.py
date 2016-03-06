@@ -4,6 +4,7 @@ Convert image file to text using OCR.
 """
 
 import argparse
+import getpass
 import glob
 import os
 import signal
@@ -106,8 +107,8 @@ class Main(object):
         self._tesseract = options.get_tesseract()
         convert = options.get_convert()
 
-        tmpfile = os.sep + os.path.join('tmp', 'ocr-' + syslib.info.get_username() +
-                                        str(os.getpid()) + '.tif')
+        tmpfile = os.sep + os.path.join(
+            'tmp', 'ocr-' + getpass.getuser() + str(os.getpid()) + '.tif')
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" image file.')

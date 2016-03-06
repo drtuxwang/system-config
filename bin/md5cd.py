@@ -4,6 +4,7 @@ Calculate MD5 checksums for CD/DVD data disk.
 """
 
 import argparse
+import getpass
 import glob
 import hashlib
 import os
@@ -145,7 +146,7 @@ class Main(object):
         isoinfo = syslib.Command('isoinfo')
         nice = syslib.Command('nice', args=['-20'])
         tmpfile = os.sep + os.path.join(
-            'tmp', 'fprint-' + syslib.info.get_username() + '.' + str(os.getpid()))
+            'tmp', 'fprint-' + getpass.getuser() + '.' + str(os.getpid()))
         command = syslib.Command(
             'dd', args=['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + tmpfile])
         command.run(mode='batch')

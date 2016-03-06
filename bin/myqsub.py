@@ -8,13 +8,13 @@ import glob
 import os
 import shutil
 import signal
+import socket
 import sys
 import time
 
-import syslib
 import task_mod
 
-RELEASE = '2.7.5'
+RELEASE = '2.7.6'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -202,15 +202,15 @@ class Main(object):
 
         if 'HOME' not in os.environ:
             raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
-        self._myqsdir = os.path.join(os.environ['HOME'], '.config',
-                                     'myqs', syslib.info.get_hostname())
+        self._myqsdir = os.path.join(
+            os.environ['HOME'], '.config', 'myqs', socket.gethostname().split('.')[0].lower())
         if not os.path.isdir(self._myqsdir):
             try:
                 os.makedirs(self._myqsdir)
                 os.chmod(self._myqsdir, int('700', 8))
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' +
-                                 self._myqsdir + '" MyQS directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' + self._myqsdir + '" MyQS directory.')
         lockfile = self._lock()
         self._submit(options)
         os.remove(lockfile)

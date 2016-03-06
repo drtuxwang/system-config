@@ -4,6 +4,7 @@ Create PDF from text/images/postscript/PDF files.
 """
 
 import argparse
+import getpass
 import glob
 import os
 import re
@@ -264,7 +265,7 @@ class Main(object):
         self._cache = {}
 
         tmpfile = (os.sep + os.path.join(
-            'tmp', 'pdf-' + syslib.info.get_username() + '.' + str(os.getpid())) + '-')
+            'tmp', 'pdf-' + getpass.getuser() + '.' + str(os.getpid())) + '-')
         if options.get_pages() != 1:
             self._psnup = syslib.Command(
                 'psnup', args=['-p' + options.get_paper(), '-m5', '-' + str(options.get_pages())])

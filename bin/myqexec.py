@@ -6,12 +6,14 @@ MyQS, My Queuing System batch job execution.
 import glob
 import os
 import signal
+import socket
 import sys
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 
-RELEASE = '2.7.2'
+RELEASE = '2.7.3'
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
@@ -59,8 +61,8 @@ class Options(object):
             raise SystemExit(sys.argv[0] +
                              ': Cannot be started manually. Please run "myqsd" command.')
         self._mode = args[1][1:]
-        self._myqsdir = os.path.join(os.environ['HOME'], '.config',
-                                     'myqs', syslib.info.get_hostname())
+        self._myqsdir = os.path.join(
+            os.environ['HOME'], '.config', 'myqs', socket.gethostname().split('.')[0].lower())
         self._jobid = args[2]
 
 
@@ -95,6 +97,13 @@ class Main(object):
                     argv.append(arg)
             sys.argv = argv
 
+    @staticmethod
+    def _get_command(file):
+        if os.path.isfile(file):
+            return command_mod.CommandFile(os.path.abspath(file))
+        else:
+            return command_mod.Command(file, errors='stop')
+
     def _spawn(self, options):
         try:
             with open(os.path.join(self._myqsdir, self._jobid + '.r'), 'a',
@@ -125,12 +134,9 @@ class Main(object):
         print('-'*80)
         sys.stdout.flush()
         os.environ['PATH'] = info['PATH']
-        if os.path.isfile(info['COMMAND']):
-            command = syslib.Command(file=os.path.abspath(info['COMMAND']))
-        else:
-            command = syslib.Command(info['COMMAND'])
+        command = self._get_command(info['COMMAND'])
         self._sh(command)
-        command.run(mode='exec')
+        subtask_mod.Exec(command.get_cmdline()).run()
 
     @staticmethod
     def _sh(command):
@@ -138,8 +144,7 @@ class Main(object):
             with open(command.get_file(), errors='replace') as ifile:
                 line = ifile.readline().rstrip()
                 if line == '#!/bin/sh':
-                    shell = syslib.Command(file='/bin/sh')
-                    command.set_wrapper(shell)
+                    command.set_args(['/bin/sh'] + command.get_cmdline())
         except OSError:
             pass
 
@@ -157,12 +162,12 @@ class Main(object):
             os.chdir(info['DIRECTORY'])
         else:
             os.chdir(os.environ['HOME'])
-        renice = syslib.Command('renice', check=False)
+        renice = command_mod.Command('renice', errors='ignore')
         if renice.is_found():
             renice.set_args(['100', str(os.getpid())])
-            renice.run(mode='batch')
-        myqexec = syslib.Command(file=__file__, args=['-spawn', self._jobid])
-        myqexec.run()
+            subtask_mod.Batch(renice.get_cmdline()).run()
+        myqexec = command_mod.CommandFile(__file__, args=['-spawn', self._jobid])
+        subtask_mod.Task(myqexec.get_cmdline()).run()
         print('-'*80)
         print('MyQS FINISH =', time.strftime('%Y-%m-%d-%H:%M:%S'))
         time.sleep(1)

@@ -8,13 +8,15 @@ import glob
 import os
 import shutil
 import signal
+import socket
 import sys
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 import task_mod
 
-RELEASE = '2.7.4'
+RELEASE = '2.7.5'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -66,8 +68,8 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._myqsdir = os.path.join(os.environ['HOME'], '.config', 'myqs',
-                                     syslib.info.get_hostname())
+        self._myqsdir = os.path.join(
+            os.environ['HOME'], '.config', 'myqs', socket.gethostname().split('.')[0].lower())
 
         if self._args.slots[0] < 1:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
@@ -242,8 +244,9 @@ class Main(object):
                                     shutil.move(file, file[:-2] + '.r')
                                 except OSError:
                                     continue
-                                myqexec = syslib.Command('myqexec', args=['-jobid', jobid])
-                                myqexec.run(logfile=logfile, mode='daemon')
+                                myqexec = command_mod.Command(
+                                    'myqexec', args=['-jobid', jobid], errors='stop')
+                                subtask_mod.Daemon(myqexec.get_cmdline()).run(logfile=logfile)
                                 return
 
     def _scheduler_daemon(self):
@@ -266,8 +269,8 @@ class Main(object):
         else:
             self._restart()
         print('Starting MyQS batch job scheduler...')
-        myqsd = syslib.Command(file=__file__, args=['-daemon', str(self._slots)])
-        myqsd.run(mode='daemon')
+        myqsd = command_mod.CommandFile(__file__, args=['-daemon', str(self._slots)])
+        subtask_mod.Daemon(myqsd.get_cmdline()).run()
 
     def run(self):
         """

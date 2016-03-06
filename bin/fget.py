@@ -15,7 +15,6 @@ import time
 import urllib.request
 
 import file_mod
-import syslib
 import task_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -132,7 +131,8 @@ class Main(object):
                 host = json_data['fget']['lock']['host']
                 pid = json_data['fget']['lock']['pid']
 
-                if host == syslib.info.get_hostname() and task_mod.Tasks.factory().haspid(pid):
+                if (host == socket.gethostname().split('.')[0].lower() and
+                        task_mod.Tasks.factory().haspid(pid)):
                     return 'skip'
                 if json_data['fget']['data'] == data:
                     return 'resume'
@@ -146,7 +146,7 @@ class Main(object):
         json_data = {
             'fget': {
                 'lock': {
-                    'host': syslib.info.get_hostname(),
+                    'host': socket.gethostname().split('.')[0].lower(),
                     'pid': os.getpid()
                 },
                 'data': data

@@ -4,6 +4,7 @@ Desktop screen backlight utility.
 """
 
 import argparse
+import getpass
 import glob
 import os
 import signal
@@ -135,7 +136,7 @@ class Backlight(object):
         """
         file = os.path.join(self._device, 'brightness')
         if os.path.isfile(file):
-            if syslib.info.get_username() != 'root':
+            if getpass.getuser() != 'root':
                 try:
                     os.chmod(file, int('666', 8))
                 except OSError:
@@ -181,7 +182,7 @@ class BacklightIntelSetpci(Backlight):
         """
         Return brightness
         """
-        if syslib.info.get_username() != 'root':
+        if getpass.getuser() != 'root':
             self._command.set_wrapper(syslib.Command('sudo'))
         self._command.set_args(['F4.B'])
         self._command.run(mode='batch')
