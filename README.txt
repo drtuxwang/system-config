@@ -499,8 +499,6 @@ bin/ogg.py
 bin/open               Open files using default application
 bin/open.py            (hardwired application list)
 
-bin/patchlib.py        Unit testing patching library
-
 bin/pause              Pause until user presses <ENTER/RETURN> key
 bin/pause.bat
 bin/pause.py
@@ -555,7 +553,8 @@ bin/procexp.bat
 bin/procexp.py
 
 bin/pyld.py            Load Python main program as module (must have Main class)
-bin/mock_pyld.py       Unit testing mocking for pyld.py
+bin/mock_pyld.py       Unit testing mocking for "pyld.py"
+bin/patch_pyld.py      Unit testing patching for "pyld.py"
 bin/test_pyld.py       Unit testing suite for "pyld.py"
 
 bin/pyprof             Profile Python 3.x program

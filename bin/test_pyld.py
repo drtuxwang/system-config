@@ -9,7 +9,7 @@ import unittest
 import unittest.mock
 
 import mock_pyld
-import patchlib
+import patch_pyld
 import pyld
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -28,7 +28,7 @@ class TestOptions(unittest.TestCase):
         Setup test harness.
         """
         self.maxDiff = None
-        self._patcher = patchlib.Patcher(self)
+        self._patcher = patch_pyld.Patcher(self)
 
     @staticmethod
     def test_dump():
@@ -390,7 +390,7 @@ class TestPythonLoader(unittest.TestCase):
         Setup test harness.
         """
         self.maxDiff = None
-        self._patcher = patchlib.Patcher(self)
+        self._patcher = patch_pyld.Patcher(self)
 
         self._options = mock_pyld.MockOptions()
         self._options.mock_get_dump_flag(False)
