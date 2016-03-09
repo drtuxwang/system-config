@@ -832,6 +832,10 @@ bin/xmlcheck           Check XML file for errors
 bin/xmlcheck.bat
 bin/xmlcheck.py
 
+bin/xmlformat          XML file re-formatter
+bin/xmlformat.bat
+bin/xmlformat.py
+
 bin/xreset             Reset to default screen resolution
 bin/xreset.py
 
