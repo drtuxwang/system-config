@@ -8,8 +8,6 @@ import sys
 import unittest
 import unittest.mock
 
-import mock_pyld
-import patch_pyld
 import pyld
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -28,7 +26,6 @@ class TestOptions(unittest.TestCase):
         Setup test harness.
         """
         self.maxDiff = None
-        self._patcher = patch_pyld.Patcher(self)
 
     @staticmethod
     def test_dump():
@@ -390,32 +387,39 @@ class TestPythonLoader(unittest.TestCase):
         Setup test harness.
         """
         self.maxDiff = None
-        self._patcher = patch_pyld.Patcher(self)
 
-        self._options = mock_pyld.MockOptions()
-        self._options.mock_get_dump_flag(False)
-        self._options.mock_get_library_path([])
-        self._options.mock_get_module('arg0')
-        self._options.mock_get_module_name('arg0')
-        self._options.mock_get_module_args(['args1', 'args2'])
-        self._options.mock_get_module_dir('directory')
-        self._options.mock_get_verbose_flag(False)
+        self._mock_options = unittest.mock.MagicMock('mock_options')
+        self._mock_options.get_dump_flag = unittest.mock.MagicMock(return_value=False)
+        self._mock_options.get_library_path = unittest.mock.MagicMock(return_value=[])
+        self._mock_options.get_module = unittest.mock.MagicMock(return_value='arg0')
+        self._mock_options.get_module_name = unittest.mock.MagicMock(return_value='arg0')
+        self._mock_options.get_module_args = unittest.mock.MagicMock(
+            return_value=['args1', 'args2'])
+        self._mock_options.get_module_dir = unittest.mock.MagicMock(return_value='directory')
+        self._mock_options.get_verbose_flag = unittest.mock.MagicMock(return_value=False)
+        self._mock_options.dump = unittest.mock.MagicMock()
 
     def test_dump(self):
         """
         Test object dumping does not fail.
         """
-        python_loader = pyld.PythonLoader(self._options)
+        patch_dump = unittest.mock.patch.object(pyld.PythonLoader, 'dump', return_value=None)
+        patch_dump.start()
+
+        python_loader = pyld.PythonLoader(self._mock_options)
         python_loader.dump()
+
+        self.assertTrue(python_loader.dump.called)
 
     def test_run_dump_flag(self):
         """
         Test run with dump flag set.
         """
-        self._patcher.set_method(pyld.PythonLoader, 'dump')
-        self._options.mock_get_dump_flag(True)
+        patch_dump = unittest.mock.patch.object(pyld.PythonLoader, 'dump', return_value=None)
+        patch_dump.start()
+        self._mock_options.get_dump_flag = unittest.mock.MagicMock(return_value=True)
 
-        python_loader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._mock_options)
 
         with self.assertRaises(FileNotFoundError):
             python_loader.run()
@@ -426,7 +430,7 @@ class TestPythonLoader(unittest.TestCase):
         """
         Test run failure when module does not exist
         """
-        python_loader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._mock_options)
 
         with self.assertRaises(FileNotFoundError):
             python_loader.run()
@@ -435,10 +439,10 @@ class TestPythonLoader(unittest.TestCase):
         """
         Test run loads module and calls 'Main()'. We use this module as the test module.
         """
-        self._options.mock_get_module('test_pyld')
-        self._options.mock_get_module_dir(os.curdir)
+        self._mock_options.get_module = unittest.mock.MagicMock(return_value='test_pyld')
+        self._mock_options.get_module_dir = unittest.mock.MagicMock(return_value=os.curdir)
 
-        python_loader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._mock_options)
 
         with self.assertRaises(AttributeError) as context:
             python_loader.run()
@@ -450,9 +454,10 @@ class TestPythonLoader(unittest.TestCase):
         """
         Test run with '-libpath' sets Python system path.
         """
-        self._options.mock_get_library_path(['directory1', 'directory2'])
+        self._mock_options.get_library_path = unittest.mock.MagicMock(
+            return_value=['directory1', 'directory2'])
 
-        python_loader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._mock_options)
 
         with self.assertRaises(FileNotFoundError):
             python_loader.run()
@@ -463,9 +468,9 @@ class TestPythonLoader(unittest.TestCase):
         """
         Test run with '-pyldverbose' flag on.
         """
-        self._options.mock_get_verbose_flag(True)
+        self._mock_options.get_verbose_flag = unittest.mock.MagicMock(return_value=True)
 
-        python_loader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._mock_options)
 
         with self.assertRaises(FileNotFoundError):
             python_loader.run()
@@ -478,17 +483,17 @@ class TestPythonLoader(unittest.TestCase):
         """
         Test options is set correctly.
         """
-        python_loader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._mock_options)
 
         value = python_loader.get_options()
         self.assertIsInstance(value, unittest.mock.MagicMock)
-        self.assertEqual(value, self._options)
+        self.assertEqual(value, self._mock_options)
 
     def test_get_sys_argv(self):
         """
         Test getting Python system arguments (faked by pyld).
         """
-        python_loader = pyld.PythonLoader(self._options)
+        python_loader = pyld.PythonLoader(self._mock_options)
 
         value = python_loader.get_sys_argv()
         self.assertIsInstance(value, list)

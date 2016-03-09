@@ -553,8 +553,6 @@ bin/procexp.bat
 bin/procexp.py
 
 bin/pyld.py            Load Python main program as module (must have Main class)
-bin/mock_pyld.py       Unit testing mocking for "pyld.py"
-bin/patch_pyld.py      Unit testing patching for "pyld.py"
 bin/test_pyld.py       Unit testing suite for "pyld.py"
 
 bin/pyprof             Profile Python 3.x program
