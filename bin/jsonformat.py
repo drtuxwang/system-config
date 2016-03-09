@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Convert filename to lowercase.
+Re-format JSON file.
 """
 
 import argparse
@@ -9,6 +9,9 @@ import os
 import shutil
 import signal
 import sys
+
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -30,7 +33,7 @@ class Options(object):
         return self._args.files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Convert filename to lowercase.')
+        parser = argparse.ArgumentParser(description='re-format JSON file.')
 
         parser.add_argument('files', nargs='+', metavar='file', help='File to change.')
 
@@ -84,22 +87,36 @@ class Main(object):
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
-            if os.sep not in file:
-                newfile = file.lower()
-            elif file.endswith(os.sep):
-                newfile = os.path.join(os.path.dirname(file), os.path.basename(file[:-1]).lower())
-            else:
-                newfile = os.path.join(os.path.dirname(file), os.path.basename(file).lower())
-            if newfile != file:
-                print('Converting filename "' + file + '" to lowercase...')
-                if os.path.isfile(newfile):
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot rename over existing "' + newfile + '" file.')
-                try:
-                    shutil.move(file, newfile)
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot rename "' + file + '" file to "' + newfile + '".')
+            print('Re-formatting "' + file + '" JSON file...')
+
+            lines = []
+            try:
+                with open(file, errors='replace') as ifile:
+                    for line in ifile:
+                        lines.append(line.strip())
+            except OSError:
+                raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+
+            command = command_mod.Command('json_reformat', args=['-s'], errors='stop')
+            task = subtask_mod.Batch(command.get_cmdline())
+            task.run(stdin=lines)
+            if task.has_error():
+                for line in task.get_error():
+                    print(line, file=sys.stderr)
+                raise SystemExit(task.get_exitcode())
+
+            tmpfile = file + '-tmp' + str(os.getpid())
+            try:
+                with open(tmpfile, 'w', newline='\n') as ofile:
+                    for line in task.get_output():
+                        print(line, file=ofile)
+            except OSError:
+                raise SystemExit(sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
+            try:
+                shutil.move(tmpfile, file)
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot rename "' + tmpfile + '" file to "' + file + '".')
 
 
 if __name__ == '__main__':

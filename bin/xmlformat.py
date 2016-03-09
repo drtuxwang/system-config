@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Convert filename to lowercase.
+Re-format XML file.
 """
 
 import argparse
@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+import xml.dom.minidom
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -30,7 +31,7 @@ class Options(object):
         return self._args.files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Convert filename to lowercase.')
+        parser = argparse.ArgumentParser(description='Re-format XML file.')
 
         parser.add_argument('files', nargs='+', metavar='file', help='File to change.')
 
@@ -84,22 +85,29 @@ class Main(object):
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
-            if os.sep not in file:
-                newfile = file.lower()
-            elif file.endswith(os.sep):
-                newfile = os.path.join(os.path.dirname(file), os.path.basename(file[:-1]).lower())
-            else:
-                newfile = os.path.join(os.path.dirname(file), os.path.basename(file).lower())
-            if newfile != file:
-                print('Converting filename "' + file + '" to lowercase...')
-                if os.path.isfile(newfile):
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot rename over existing "' + newfile + '" file.')
-                try:
-                    shutil.move(file, newfile)
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot rename "' + file + '" file to "' + newfile + '".')
+            print('Re-formatting "' + file + '" XML file...')
+
+            xml_text = ''
+            try:
+                with open(file, errors='replace') as ifile:
+                    for line in ifile:
+                        xml_text += line.strip()
+            except OSError:
+                raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+            xml_doc = xml.dom.minidom.parseString(xml_text)
+            xml_text = xml_doc.toprettyxml(indent='    ', newl='\n')
+
+            tmpfile = file + '-tmp' + str(os.getpid())
+            try:
+                with open(tmpfile, 'w', newline='\n') as ofile:
+                    print(xml_text, end='', file=ofile)
+            except OSError:
+                raise SystemExit(sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
+            try:
+                shutil.move(tmpfile, file)
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot rename "' + tmpfile + '" file to "' + file + '".')
 
 
 if __name__ == '__main__':

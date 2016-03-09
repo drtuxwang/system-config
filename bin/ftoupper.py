@@ -83,8 +83,7 @@ class Main(object):
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                if not os.path.isdir(file):
-                    raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
             if os.sep not in file:
                 newfile = file.upper()
             elif file.endswith(os.sep):

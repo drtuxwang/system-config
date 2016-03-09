@@ -47,7 +47,7 @@ bin/aplay              Play MP3/OGG/WAV audio files in directory
 bin/aplay.py           (uses vlc)
 
 bin/aria2c             aria2c wrapper (allowing non systems port)
-bin/aria2c.py          (bandwidth 512KB limit default using "trickle", "$HOME/.config/netnice.json)
+bin/aria2c.py          (bandwidth 512KB limit default using "trickle", "$HOME/.config/tickle.json)
 
 bin/audacity           audacity wrapper (allowing non systems port)
 bin/audacity.bat
@@ -408,8 +408,8 @@ bin/java.py            (Java run time)
 bin/javac              javac wrapper (allowing non systems port)
 bin/javac.py           (Java compiler)
 
-bin/json               JSON file indenting (display on screen)
-bin/_json.py
+bin/jsonformat         JSON file re-formatter
+bin/jsonformat.py
 
 bin/jython.py
 
@@ -796,7 +796,7 @@ bin/wav                Encode WAV audio using avconv (pcm_s16le).
 bin/wav.py
 
 bin/wget               wget wrapper (allowing non systems port)
-bin/wget.py            (bandwidth 512KB limit default using "trickle", "$HOME/.config/netnice.json)
+bin/wget.py            (bandwidth 512KB limit default using "trickle", "$HOME/.config/trickle.json)
 
 bin/wine               wine wrapper (allowing non systems port)
 bin/wine.py
