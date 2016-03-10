@@ -28,7 +28,7 @@ frame .mainmenu -bg "#cccccc"
     pack .mainmenu.assaultcube -side top
     button .mainmenu.et -width 10 -bg "#ffff00" -text "ET" -command {exec et &}
     pack .mainmenu.et -side top
-    button .mainmenu.et_goc -width 10 -bg "#ffff00" -text "ET:GOC" -command {exec et +connect 213.108.30.108:27960 &}
+    button .mainmenu.et_goc -width 10 -bg "#ffff00" -text "ET:GOC" -command {exec et +connect 5.39.188.178:27960 &}
     pack .mainmenu.et_goc -side top
     button .mainmenu.tuxracer -width 10 -bg "#ffff00" -text "Tux Racer" -command {exec xrun etracer &}
     pack .mainmenu.tuxracer -side top
