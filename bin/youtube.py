@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -30,13 +31,6 @@ class Options(object):
         """
         return self._youtubedl
 
-    @staticmethod
-    def _setpython(command):  # Must use system Python
-        if os.path.isfile('/usr/bin/python3'):
-            command.set_wrapper(syslib.Command(file='/usr/bin/python3'))
-        elif os.path.isfile('/usr/bin/python'):
-            command.set_wrapper(syslib.Command(file='/usr/bin/python'))
-
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Youtube video downloader.')
 
@@ -55,20 +49,18 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._youtubedl = syslib.Command('youtube-dl', check=False)
+        self._youtubedl = command_mod.Command('youtube-dl', errors='ignore')
         if not self._youtubedl.is_found():
-            youtube = syslib.Command('youtube', args=args[1:], check=False)
+            youtube = command_mod.Command('youtube', args=args[1:], errors='ignore')
             if youtube.is_found():
-                youtube.run(mode='exec')
-            self._youtubedl = syslib.Command('youtube-dl')
+                subtask.Exec(youtube.get_cmdline()).run()
+            self._youtubedl = command_mod.Command('youtube-dl', errors='stop')
 
         if self._args.viewFlag:
             self._youtubedl.set_args(['--list-formats'])
         elif self._args.format:
             self._youtubedl.set_args(['--title', '--format', str(self._args.format[0])])
         self._youtubedl.extend_args(self._args.urls)
-
-        self._setpython(self._youtubedl)
 
 
 class Main(object):
@@ -109,7 +101,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_youtubedl().run()
+        subtask_mod.Exec(options.get_youtubedl().get_cmdline()).run()
 
 
 if __name__ == '__main__':
