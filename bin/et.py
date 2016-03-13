@@ -108,7 +108,7 @@ class Main(object):
         logfile = os.path.join(os.environ['HOME'], '.etwolf', 'etwolf.log')
         xrun = command_mod.Command('xrun', errors='ignore')
         if xrun.is_found():
-            subtask_mod.Daemon(xrun.get_cmdline + self._et.get_cmdline()).run(file=logfile)
+            subtask_mod.Daemon(xrun.get_cmdline() + self._et.get_cmdline()).run(file=logfile)
         else:
             subtask_mod.Daemon(self._et.get_cmdline()).run(file=logfile)
 
