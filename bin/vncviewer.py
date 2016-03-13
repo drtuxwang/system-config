@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -50,10 +51,8 @@ class Main(object):
         """
         Start program
         """
-        vncviewer = syslib.Command('vncviewer')
-        vncviewer.set_args(sys.argv[1:])
-
-        vncviewer.run(mode='daemon')
+        vncviewer = command_mod.Command('vncviewer', args=sys.argv[1:], errors='stop')
+        subtask_mod.Daemon(vncviewer.get_cmdline()).run()
 
 
 if __name__ == '__main__':

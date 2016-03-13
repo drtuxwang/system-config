@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -56,28 +57,28 @@ class Options(object):
         self._parse_args(args[1:])
 
         if os.name == 'nt':
-            self._archiver = syslib.Command('pkzip32.exe', check=False)
+            self._archiver = command_mod.Command('pkzip32.exe', errors='ignore')
             if not self._archiver.is_found():
-                self._archiver = syslib.Command('unzip')
+                self._archiver = command_mod.Command('unzip', errors='stop')
         else:
-            self._archiver = syslib.Command('unzip')
+            self._archiver = command_mod.Command('unzip', errors='stop')
 
         if args[1] in ('view', 'test'):
             self._archiver.set_args(args[1:])
-            self._archiver.run(mode='exec')
+            subtask_mod.Exec(self._archiver.get_cmdline()).run()
 
         if os.path.basename(self._archiver.get_file()) == 'pkzip32.exe':
             if self._args.viewFlag:
-                self._archiver.set_flags(['-view'])
+                self._archiver.set_args(['-view'])
             elif self._args.testFlag:
-                self._archiver.set_flags(['-test'])
+                self._archiver.set_args(['-test'])
             else:
-                self._archiver.set_flags(['-extract', '-directories'])
+                self._archiver.set_args(['-extract', '-directories'])
         else:
             if self._args.viewFlag:
-                self._archiver.set_flags(['-v'])
+                self._archiver.set_args(['-v'])
             elif self._args.testFlag:
-                self._archiver.set_flags(['-t'])
+                self._archiver.set_args(['-t'])
 
 
 class Main(object):
@@ -119,14 +120,14 @@ class Main(object):
         options = Options()
 
         os.umask(int('022', 8))
-        archiver = options.get_archiver()
+        cmdline = options.get_archiver().get_cmdline()
         for archive in options.get_archives():
-            archiver.set_args([archive])
-            archiver.run()
-            if archiver.get_exitcode():
-                print(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
-                      ' received from "' + archiver.get_file() + '".', file=sys.stderr)
-                raise SystemExit(archiver.get_exitcode())
+            task = subtask_mod.Task(cmdline + [archive])
+            task.run()
+            if task.get_exitcode():
+                print(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                      ' received from "' + task.get_file() + '".', file=sys.stderr)
+                raise SystemExit(task.get_exitcode())
 
 
 if __name__ == '__main__':

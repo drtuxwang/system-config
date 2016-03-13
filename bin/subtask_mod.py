@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.4 (2016-03-04)
+Version 2.0.5 (2016-03-13)
 """
 
 import copy
@@ -137,7 +137,7 @@ class Task(object):
             try:
                 info[key] = kwargs[key]
             except KeyError:
-                if key == 'pattern':
+                if key in ('file', 'pattern'):
                     info[key] = ''
                 else:
                     info[key] = None
@@ -628,4 +628,7 @@ class Main(object):
 
 
 if __name__ == '__main__':
-    help(__name__)
+    if len(sys.argv) == 1 or '--pydoc' in sys.argv:
+        help(__name__)
+    else:
+        Main()

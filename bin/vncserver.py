@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -70,9 +71,9 @@ class Options(object):
         """
         Parse arguments
         """
-        self._vncserver = syslib.Command('vncserver', pathextra=['/usr/bin'])
-        self._vncserver.set_flags(['-geometry', '1280x960', '-depth', '24', '-alwaysshared'])
-        self._vncserver.set_args(args[1:])
+        self._vncserver = command_mod.Command('vncserver', pathextra=['/usr/bin'], errors='stop')
+        self._vncserver.set_args(
+            ['-geometry', '1280x960', '-depth', '24', '-alwaysshared'] + args[1:])
         self._umask = os.umask(int('077', 8))
         os.umask(self._umask)
         self._config()
@@ -116,7 +117,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_vncserver().run(mode='exec')
+        subtask_mod.Exec(options.get_vncserver().get_cmdline()).run()
 
 
 if __name__ == '__main__':

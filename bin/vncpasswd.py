@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -52,9 +53,8 @@ class Main(object):
         """
         os.umask(int('077', 8))
 
-        vncpasswd = syslib.Command('vncpasswd')
-        vncpasswd.set_args(sys.argv[1:])
-        vncpasswd.run(mode='exec')
+        vncpasswd = command_mod.Command('vncpasswd', args=sys.argv[1:], errors='stop')
+        subtask_mod.Exec(vncpasswd.get_cmdline()).run()
 
 
 if __name__ == '__main__':

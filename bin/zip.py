@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -44,25 +45,23 @@ class Options(object):
         Parse arguments
         """
         if os.name == 'nt':
-            self._archiver = syslib.Command('pkzip32.exe', check=False)
+            self._archiver = command_mod.Command('pkzip32.exe', errors='ignore')
             if self._archiver.is_found():
-                self._archiver.set_flags(['-add', '-maximum', '-recurse', '-path'])
-                self._archiver.set_args(args[1:])
+                self._archiver.set_args(['-add', '-maximum', '-recurse', '-path'])
             else:
-                self._archiver = syslib.Command('zip', flags=['-r', '-9'])
+                self._archiver = command_mod.Command('zip', args=['-r', '-9'], errors='stop')
         else:
-            self._archiver = syslib.Command('zip', flags=['-r', '-9'])
+            self._archiver = command_mod.Command('zip', args=['-r', '-9'], errors='stop')
 
         if len(args) > 1 and args[1] in ('-add', '-r'):
-            self._archiver.set_args(args[1:])
-            self._archiver.run(mode='exec')
+            subtask_mod.Exec(self._archiver.get_cmdline() + args[1:]).run()
 
         self._parse_args(args[1:])
 
         if os.path.isdir(self._args.archive[0]):
-            self._archiver.set_args([os.path.abspath(self._args.archive[0] + '.7z')])
+            self._archiver.append_arg(os.path.abspath(self._args.archive[0] + '.7z'))
         else:
-            self._archiver.set_args(self._args.archive)
+            self._archiver.append_arg(self._args.archive[0])
 
         if self._args.files:
             self._archiver.extend_args(self._args.files)
@@ -108,7 +107,8 @@ class Main(object):
         """
         options = Options()
 
-        options.get_archiver().run(mode='exec')
+        print('debugX', options.get_archiver().get_cmdline())
+        subtask_mod.Exec(options.get_archiver().get_cmdline()).run()
 
 
 if __name__ == '__main__':
