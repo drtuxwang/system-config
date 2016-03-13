@@ -8,8 +8,9 @@ import os
 import signal
 import sys
 
+import command_mod
 import desktop_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -53,16 +54,16 @@ class Main(object):
         """
         desktop = desktop_mod.Desktop.detect()
         if desktop == 'gnome':
-            xsnap = syslib.Command('gnome-screenshot', flags=['--interactive'])
+            xsnap = command_mod.Command('gnome-screenshot', flags=['--interactive'], errors='stop')
         elif desktop == 'kde':
-            xsnap = syslib.Command('ksnapshot')
+            xsnap = command_mod.Command('ksnapshot', errors='stop')
         elif desktop == 'xfce':
-            xsnap = syslib.Command('xfce4-screenshooter')
+            xsnap = command_mod.Command('xfce4-screenshooter', errors='stop')
         else:
-            xsnap = syslib.Command('true')
+            xsnap = command_mod.Command('true', errors='stop')
         xsnap.set_args(sys.argv[1:])
 
-        xsnap.run(mode='exec')
+        subtask_mod.Exec(xsnap.get_cmdline()).run()
 
 
 if __name__ == '__main__':

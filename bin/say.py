@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -53,11 +54,11 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._espeak = syslib.Command('espeak')
-        self._espeak.set_flags(['-a128', '-k30', '-ven+f2', '-s60', '-x'])
+        self._espeak = command_mod.Command('espeak', errors='stop')
+        self._espeak.set_args(['-a128', '-k30', '-ven+f2', '-s60', '-x'])
         if self._args.voice:
-            self._espeak.append_flag('-v' + self._args.voice[0])
-        self._espeak.set_args([' '.join(self._args.words)])
+            self._espeak.append_arg('-v' + self._args.voice[0])
+        self._espeak.extend_args([' '.join(self._args.words)])
 
         self._pattern = '^ALSA lib|: Connection refused|^Cannot connect|^jack server'
 
@@ -100,7 +101,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_espeak().run(filter=options.get_pattern())
+        subtask_mod.Task(options.get_espeak().get_cmdline()).run(pattern=options.get_pattern())
 
 
 if __name__ == '__main__':

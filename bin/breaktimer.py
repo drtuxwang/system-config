@@ -10,7 +10,8 @@ import signal
 import sys
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -60,16 +61,16 @@ class Options(object):
         self._parse_args(args[1:])
 
         if self._args.guiFlag:
-            xterm = syslib.Command('xterm')
+            xterm = command_mod.Command('xterm', errors='stop')
             xterm.set_args([
                 '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', FG_COLOUR,
                 '-bg', BG_COLOUR, '-cr', '#880000', '-geometry', '15x3', '-ut', '+sb',
                 '-e', sys.argv[0]] + args[2:])
-            xterm.run(mode='daemon')
+            subtask_mod.Daemon(xterm.get_cmdline()).run()
             raise SystemExit(0)
 
-        self._pop = syslib.Command('notify-send')
-        self._pop.set_flags(['-t', '10000'])  # 10 seconds display time
+        self._pop = command_mod.Command('notify-send', errors='stop')
+        self._pop.set_args(['-t', '10000'])  # 10 seconds display time
 
 
 class Main(object):
@@ -107,10 +108,9 @@ class Main(object):
         if self._alarm < 601:
             sys.stdout.write('\033]11;#ff8888\007')
             sys.stdout.flush()
-            self._bell.run(mode='batch')  # Avoids defunct process
+            subtask_mod.Batch(self._bell.get_cmdline()).run()
             self._options.get_pop().set_args([time.strftime('%H:%M') + ': break time reminder'])
-            # Avoids defunct process
-            self._options.get_pop().run(mode='batch')
+            subtask_mod.Batch(self._options.get_pop().get_cmdline()).run()
         self._alarm += 60  # One minute reminder
 
     def run(self):
@@ -118,7 +118,7 @@ class Main(object):
         Start program
         """
         self._options = Options()
-        self._bell = syslib.Command('bell')
+        self._bell = command_mod.Command('bell', errors='stop')
         self._limit = self._options.get_time() * 60
         self._alarm = None
 

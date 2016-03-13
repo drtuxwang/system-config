@@ -12,7 +12,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -144,20 +145,16 @@ class Main(object):
         """
         options = Options()
 
-        xrandr = syslib.Command('xrandr')
+        xrandr = command_mod.Command('xrandr', errors='stop')
         dpi = '96'
         settings = options.get_settings()
 
-        xrandr.set_args(['-s', '0'])
-        xrandr.run(mode='batch')
-        xrandr.set_args(['--dpi', dpi])
-        xrandr.run(mode='batch')
+        subtask_mod.Batch(xrandr.get_cmdline() + ['-s', '0']).run()
+        subtask_mod.Batch(xrandr.get_cmdline() + ['--dpi', dpi]).run()
 
         for device, mode in settings:
-            xrandr.set_args(['--output', device, '--auto'])
-            xrandr.run(mode='batch')
-            xrandr.set_args(['--output', device, '--mode', mode])
-            xrandr.run(mode='batch')
+            subtask_mod.Batch(xrandr.get_cmdline() + ['--output', device, '--auto']).run()
+            subtask_mod.Batch(xrandr.get_cmdline() + ['--output', device, '--mode', mode]).run()
 
 
 if __name__ == '__main__':

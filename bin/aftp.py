@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -58,7 +59,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._ftp = syslib.Command('ftp')
+        self._ftp = command_mod.Command('ftp', errors='stop')
         self._ftp.set_args(['-i', self._args.host[0]])
 
         self._netrc(self._args.host[0])
@@ -102,7 +103,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_ftp().run(mode='exec')
+        subtask_mod.Exec(options.get_ftp().get_cmdline()).run()
 
 
 if __name__ == '__main__':

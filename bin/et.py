@@ -9,7 +9,8 @@ import shutil
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -94,22 +95,22 @@ class Main(object):
         """
         Start program
         """
-        self._et = syslib.Command('et.x86', check=False)
+        self._et = command_mod.Command('et.x86', errors='ignore')
         if not os.path.isfile(self._et.get_file()):
-            self._et = syslib.Command('et')
+            self._et = command_mod.Command('et', errors='stop')
             self._et.set_args(sys.argv[1:])
-            self._et.run(mode='exec')
-
-        xrun = syslib.Command('xrun', check=False)
-        if xrun.is_found():
-            self._et.set_wrapper(xrun)
+            subtask_mod.Exec(self._et.get_cmdline()).run()
 
         self._config()
         self._punkbuster()
         self._et.set_args(sys.argv[1:])
 
         logfile = os.path.join(os.environ['HOME'], '.etwolf', 'etwolf.log')
-        self._et.run(logfile=logfile, mode='daemon')
+        xrun = command_mod.Command('xrun', errors='ignore')
+        if xrun.is_found():
+            subtask_mod.Daemon(xrun.get_cmdline + self._et.get_cmdline()).run(file=logfile)
+        else:
+            subtask_mod.Daemon(self._et.get_cmdline()).run(file=logfile)
 
 
 if __name__ == '__main__':

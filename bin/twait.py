@@ -10,7 +10,8 @@ import signal
 import sys
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 import task_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -75,7 +76,7 @@ class Options(object):
         except ValueError:
             self._pname = self._args.task[0]
 
-        self._command = syslib.Command(self._args.command[0], args=args[2:])
+        self._command = command_mod.Command(self._args.command[0], args=args[2:], errors='stop')
 
 
 class Main(object):
@@ -126,7 +127,7 @@ class Main(object):
             pid = options.get_pid()
             while pid in task_mod.Tasks(user).get_pids():
                 time.sleep(1)
-        options.get_command().run(mode='exec')
+        subtask_mod.Exec(options.get_command().get_cmdline()).run()
 
 
 if __name__ == '__main__':

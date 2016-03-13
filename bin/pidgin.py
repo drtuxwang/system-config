@@ -10,7 +10,8 @@ import shutil
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -75,11 +76,11 @@ class Main(object):
         """
         Start program
         """
-        pidgin = syslib.Command('pidgin')
+        pidgin = command_mod.Command('pidgin', errors='stop')
         pidgin.set_args(sys.argv[1:])
         self._config()
 
-        pidgin.run(mode='background')
+        subtask_mod.Background(pidgin.get_cmdline()).run()
 
 
 if __name__ == '__main__':

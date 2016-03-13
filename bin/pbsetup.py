@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -39,9 +40,9 @@ class Options(object):
         """
         Parse arguments
         """
-        self._pbsetup = syslib.Command('pbsetup.run', check=False)
+        self._pbsetup = command_mod.Command('pbsetup.run', errors='ignore')
         if not self._pbsetup.is_found():
-            self._pbsetup = syslib.Command('pbsetup')
+            self._pbsetup = command_mod.Command('pbsetup', errors='stop')
         self._pbsetup.set_args(args[1:])
         self._pattern = ': wrong ELF class:|: Gtk-WARNING '
 
@@ -84,7 +85,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_pbsetup().run(filter=options.get_pattern())
+        subtask_mod.Task(options.get_pbsetup().get_cmdline()).run(pattern=options.get_pattern())
 
 
 if __name__ == '__main__':
