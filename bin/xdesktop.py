@@ -8,8 +8,9 @@ import os
 import signal
 import sys
 
+import command_mod
 import desktop_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -53,16 +54,16 @@ class Main(object):
         """
         desktop = desktop_mod.Desktop.detect()
         if desktop == 'gnome':
-            xdesktop = syslib.Command('nautilus')
+            xdesktop = command_mod.Command('nautilus', errors='stop')
         elif desktop == 'kde':
-            xdesktop = syslib.Command('dolphin')
+            xdesktop = command_mod.Command('dolphin', errors='stop')
         elif desktop == 'xfce':
-            xdesktop = syslib.Command('thunar')
+            xdesktop = command_mod.Command('thunar', errors='stop')
         else:
-            xdesktop = syslib.Command('xterm')
+            xdesktop = command_mod.Command('xterm', errors='stop')
         xdesktop.set_args(sys.argv[1:])
 
-        xdesktop.run(mode='exec')
+        subtask_mod.Exec(xdesktop.get_cmdline()).run()
 
 
 if __name__ == '__main__':

@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
@@ -62,11 +63,10 @@ class Main(object):
         """
         Start program
         """
-        nhs = syslib.Command('nhs')
-        nhs.set_args(sys.argv[1:])
+        nhs = command_mod.Command('nhs', args=sys.argv[1:], errors='stop')
         self._config()
 
-        nhs.run(mode='exec')
+        subtask_mod.Exec(nhs.get_cmdline()).run()
 
 
 if __name__ == '__main__':

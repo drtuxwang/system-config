@@ -11,7 +11,8 @@ import signal
 import shutil
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -54,13 +55,13 @@ class Options(object):
         """
         Parse arguments
         """
-        self._wine = syslib.Command('wine')
+        self._wine = command_mod.Command('wine', errors='stop')
 
         if len(args) > 1:
             if args[1].endswith('.bat'):
-                self._wine.set_flags(['cmd', '/c'])
+                self._wine.set_args(['cmd', '/c'])
             elif args[1].endswith('.msi'):
-                self._wine.set_flags(['cmd', '/c', 'start'])
+                self._wine.set_args(['cmd', '/c', 'start'])
             elif args[1] == '-reset':
                 self._reset()
                 raise SystemExit(0)
@@ -109,24 +110,27 @@ class Main(object):
         options = Options()
 
         wine = options.get_wine()
-        xrandr = syslib.Command('xrandr')
-        xrandr.run(filter='^  ', mode='batch')
+        xrandr = command_mod.Command('xrandr', errors='stop')
+        task = subtask_mod.Batch(xrandr.get_cmdline())
+        task.run(pattern='^  ')
         resolution = 0
-        for line in xrandr.get_output():
+        for line in task.get_output():
             if '*' in line:
                 break
             resolution += 1
 
-        wine.run()
-        xrandr.run(filter='^  ', mode='batch')
+        subtask_mod.Task(wine.get_cmdline()).run()
+
+        task = subtask_mod.Batch(xrandr.get_cmdline())
+        task.run(pattern='^  ')
         resolution = 0
-        for line in xrandr.get_output():
+        for line in task.get_output():
             if '*' in line:
                 break
             resolution += 1
         if resolution != resolution:
             xrandr.set_args(['-s', str(resolution)])
-            xrandr.run(mode='batch')
+            subtask_mod.Batch(xrandr.get_cmdline()).run()
 
 
 if __name__ == '__main__':

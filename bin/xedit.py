@@ -8,8 +8,9 @@ import os
 import signal
 import sys
 
+import command_mod
 import desktop_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -53,16 +54,16 @@ class Main(object):
         """
         desktop = desktop_mod.Desktop.detect()
         if desktop == 'gnome':
-            xedit = syslib.Command('gedit')
+            xedit = command_mod.Command('gedit', errors='stop')
         elif desktop == 'kde':
-            xedit = syslib.Command('kate')
+            xedit = command_mod.Command('kate', errors='stop')
         elif desktop == 'xfce':
-            xedit = syslib.Command('mousepad')
+            xedit = command_mod.Command('mousepad', errors='stop')
         else:
-            xedit = syslib.Command('vi')
+            xedit = command_mod.Command('vi', errors='stop')
         xedit.set_args(sys.argv[1:])
 
-        xedit.run(mode='exec')
+        subtask_mod.Exec(xedit.get_cmdline()).run()
 
 
 if __name__ == '__main__':

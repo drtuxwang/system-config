@@ -16,8 +16,9 @@ import shutil
 import signal
 import sys
 
+import command_mod
 import file_mod
-import syslib
+import subtask_mod
 import task_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -209,26 +210,25 @@ class Options(object):
     @staticmethod
     def _set_libraries(command):
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
-        if os.path.isdir(libdir):
-            if syslib.info.get_system() == 'linux':
-                if not os.path.isfile('/usr/lib/libnss3.so.1d'):  # use workaround
-                    if 'LD_LIBRARY_PATH' in os.environ:
-                        os.environ['LD_LIBRARY_PATH'] = (
-                            libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
-                    else:
-                        os.environ['LD_LIBRARY_PATH'] = libdir
+        if os.path.isdir(libdir) and os.name == 'posix':
+            if os.uname()[0] == 'linux':
+                if 'LD_LIBRARY_PATH' in os.environ:
+                    os.environ['LD_LIBRARY_PATH'] = (
+                        libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
+                else:
+                    os.environ['LD_LIBRARY_PATH'] = libdir
 
     def parse(self, args):
         """
         Parse arguments
         """
-        self._chrome = syslib.Command('chrome')
+        self._chrome = command_mod.Command('chrome', errors='stop')
         self._directory = 'google-chrome'
 
         if len(args) > 1:
             if args[1] == '-version':
                 self._chrome.set_args(['-version'])
-                self._chrome.run(mode='exec')
+                subtask_mod.Exec(self._chrome.get_cmdline()).run()
             elif args[1] == '-copy':
                 self._copy()
             elif args[1] == '-reset':
@@ -247,14 +247,14 @@ class Options(object):
                 raise SystemExit
 
         if '--disable-background-mode' not in self._chrome.get_args():
-            self._chrome.extend_flags(['--disable-background-mode', '--disable-geolocation',
-                                       '--disk-cache-size=0'])
+            self._chrome.extend_args(['--disable-background-mode', '--disable-geolocation',
+                                      '--disk-cache-size=0'])
 
         # Suid sandbox workaround
         if 'HOME' in os.environ:
             if file_mod.FileStat(os.path.join(os.path.dirname(
                     self._chrome.get_file()), 'chrome-sandbox')).get_mode() != 104755:
-                self._chrome.extend_flags(['--test-type', '--disable-setuid-sandbox'])
+                self._chrome.extend_args(['--test-type', '--disable-setuid-sandbox'])
 
         self._pattern = ('^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
                          ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
@@ -301,7 +301,8 @@ class Main(object):
         """
         options = Options()
 
-        options.get_chrome().run(filter=options.get_pattern(), mode='background')
+        subtask_mod.Background(options.get_chrome().get_cmdline()).run(
+            pattern=options.get_pattern())
 
 
 if __name__ == '__main__':

@@ -10,7 +10,8 @@ import signal
 import sys
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -46,7 +47,8 @@ class Options(object):
         self._parse_args(args[1:])
 
         command = self._args.command[0]
-        self._command = syslib.Command(command, pathextra=[command], args=args[2:])
+        self._command = command_mod.Command(command, pathextra=[command], errors='stop')
+        self._command.set_args(args[2:])
 
 
 class Main(object):
@@ -88,42 +90,42 @@ class Main(object):
         options = Options()
         command = options.get_command()
 
-        xrandr = syslib.Command('xrandr')
-        xrandr.run(filter='^  ', mode='batch')
+        xrandr = command_mod.Command('xrandr', errors='stop')
+        task = subtask_mod.Batch(xrandr.get_cmdline())
+        task.run(pattern='^  ')
         resolution = 0
-        for line in xrandr.get_output():
+        for line in task.get_output():
             if '*' in line:
                 break
             resolution += 1
         dpi = '96'
-
-        xrdb = syslib.Command('xrdb', args=['-query'], check=False)
+        xrdb = command_mod.Command('xrdb', args=['-query'], errors='ignore')
         if xrdb.is_found():
-            xrdb.run(mode='batch', filter='^Xft.dpi:\t')
-            if xrdb.has_output():
-                dpi = xrdb.get_output()[0].split()[1]
+            task = subtask_mod.Batch(xrdb.get_cmdline())
+            task.run(pattern='^Xft.dpi:\t')
+            if task.has_output():
+                dpi = task.get_output()[0].split()[1]
 
-        command.run()
-        xrandr.run(filter='^  ', mode='batch')
+        subtask_mod.Task(command.get_cmdline()).run()
+
+        task = subtask_mod.Batch(xrandr.get_cmdline())
+        task.run(pattern='^  ')
         resolution = 0
-
-        for line in xrandr.get_output():
+        for line in task.get_output():
             if '*' in line:
                 break
             resolution += 1
-
         if resolution != resolution:
             time.sleep(1)
             if resolution != 0:
                 xrandr.set_args(['-s', '0'])
-                xrandr.run(mode='batch')
+                subtask_mod.Batch(xrandr.get_cmdline()).run()
                 time.sleep(1)
             xrandr.set_args(['-s', str(resolution)])
-            xrandr.run(mode='batch')
-
+            subtask_mod.Task(xrandr.get_cmdline()).run()
         time.sleep(1)
         xrandr.set_args(['--dpi', dpi])
-        xrandr.run(mode='batch')
+        subtask_mod.Task(xrandr.get_cmdline()).run()
 
 
 if __name__ == '__main__':

@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -117,7 +118,7 @@ class Options(object):
         """
         Parse arguments
         """
-        self._nautilus = syslib.Command('nautilus')
+        self._nautilus = command_mod.Command('nautilus', errors='stop')
         if len(args) == 1:
             if 'DESKTOP_STARTUP_ID' not in os.environ:
                 self._nautilus.set_args([os.getcwd()])
@@ -166,7 +167,8 @@ class Main(object):
         """
         options = Options()
 
-        options.get_nautilus().run(filter=options.get_pattern(), mode='background')
+        subtask_mod.Background(options.get_nautilus().get_cmdline()).run(
+            pattern=options.get_pattern())
 
 
 if __name__ == '__main__':

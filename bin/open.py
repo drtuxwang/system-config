@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -78,8 +79,8 @@ class Main(object):
     @staticmethod
     def _spawn(program, file):
         print(file + ': opening with "' + program + '"...')
-        program = syslib.Command(program, args=[file])
-        program.run(mode='daemon')
+        program = command_mod.Command(program, args=[file], errors='stop')
+        subtask_mod.Daemon(program.get_cmdline()).run()
 
     def run(self):
         """

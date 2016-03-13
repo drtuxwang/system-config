@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -64,8 +65,8 @@ class Options(object):
     @staticmethod
     def _set_libraries(command):
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
-        if os.path.isdir(libdir):
-            if syslib.info.get_system() == 'linux':
+        if os.path.isdir(libdir) and os.name == 'posix':
+            if os.uname()[0] == 'linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
                     os.environ['LD_LIBRARY_PATH'] = (
                         libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
@@ -110,38 +111,39 @@ class Options(object):
         """
         self._config()
 
-        self._gpg = syslib.Command('gpg')
+        self._gpg = command_mod.Command('gpg', errors='stop')
         self._set_libraries(self._gpg)
 
         if len(args) > 1 and args[1].startswith('--'):
             self._gpg.set_args(args[1:])
-            self._gpg.run(mode='exec')
+            subtask_mod.Exec(self._gpg.get_cmdline()).run()
 
         self._parse_args(args[1:])
 
-        self._gpg.set_flags(['--openpgp', '-z', '0'])
+        self._gpg.set_args(['--openpgp', '-z', '0'])
 
         if self._args.add:
-            self._gpg.set_args(['--import', self._args.add[0]])
+            self._gpg.extend_args(['--import', self._args.add[0]])
 
         elif self._args.makeFlag:
-            self._gpg.set_args(['--gen-key'])
+            self._gpg.extend_args(['--gen-key'])
 
         elif self._args.passwd:
-            self._gpg.set_args(['--edit-key', self._args.passwd[0], 'passwd'])
+            self._gpg.extend_args(['--edit-key', self._args.passwd[0], 'passwd'])
 
         elif self._args.pub:
-            self._gpg.set_args(['--openpgp', '--export', '--armor', self._args.pub[0]])
+            self._gpg.extend_args(['--openpgp', '--export', '--armor', self._args.pub[0]])
 
         elif self._args.trust:
-            self._gpg.set_args(['--sign-key', self._args.trust[0]])
+            self._gpg.extend_args(['--sign-key', self._args.trust[0]])
 
         elif self._args.viewFlag:
-            self._gpg.set_args(['--list-keys'])
-            self._gpg.run()
-            if self._gpg.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(self._gpg.get_exitcode()) +
-                                 ' received from "' + self._gpg.get_file() + '".')
+            self._gpg.extend_args(['--list-keys'])
+            task = subtask_mod.Task(self._gpg.get_cmdline())
+            task.run()
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
             self._gpg.set_args(['--list-secret-keys'])
 
         else:
@@ -186,7 +188,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_gpg().run(mode='exec')
+        subtask_mod.Exec(options.get_gpg().get_cmdline()).run()
 
 
 if __name__ == '__main__':

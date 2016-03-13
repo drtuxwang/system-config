@@ -6,8 +6,9 @@ Wrapper for GNOME/KDE/XFCE calculator
 import signal
 import sys
 
+import command_mod
 import desktop_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -42,17 +43,17 @@ class Main(object):
         """
         desktop = desktop_mod.Desktop.detect()
         if desktop == 'gnome':
-            xcalc = syslib.Command('gcalctool', check=False)
+            xcalc = command_mod.Command('gcalctool', errors='ignore')
             if not xcalc.is_found():
-                xcalc = syslib.Command('xcalc')
+                xcalc = command_mod.Command('xcalc', errors='stop')
         elif desktop == 'kde':
-            xcalc = syslib.Command('kcalc', check=False)
+            xcalc = command_mod.Command('kcalc', errors='ignore')
             if not xcalc.is_found():
-                xcalc = syslib.Command('xcalc')
+                xcalc = command_mod.Command('xcalc', errors='stop')
         else:
-            xcalc = syslib.Command('xcalc')
+            xcalc = command_mod.Command('xcalc', errors='stop')
 
-        xcalc.run(mode='exec')
+        subtask_mod.Exec(xcalc.get_cmdline()).run()
 
 
 if __name__ == '__main__':

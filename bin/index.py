@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -53,20 +54,21 @@ class Main(object):
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot create "index.fsum" file.')
 
-        fsum = syslib.Command('fsum')
+        fsum = command_mod.Command('fsum', errors='stop')
         files = glob.glob('*')
         if 'index.fsum' in files:
             files.remove('index.fsum')
             fsum.set_args(['-R', '-update=index.fsum'] + files)
         else:
             fsum.set_args(['-R'] + files)
-        fsum.run(mode='batch')
+        task = subtask_mod.Batch(fsum.get_cmdline())
+        task.run()
 
-        self._write_fsums(fsum.get_output())
+        self._write_fsums(task.get_output())
         time_new = 0
         try:
             with open('index.fsum', 'w', newline='\n') as ofile:
-                for line in fsum.get_output():
+                for line in task.get_output():
                     time_new = max(time_new, int(line.split(' ', 1)[0].rsplit('/', 1)[-1]))
                     print(line, file=ofile)
         except OSError:

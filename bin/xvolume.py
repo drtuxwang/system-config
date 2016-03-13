@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
@@ -32,10 +33,11 @@ class Options(object):
 
     def _getvol(self):
         self._pacmd.set_args(['dump'])
-        self._pacmd.run(filter='^set-sink-volume', mode='batch')
+        task = subtask_mod.Batch(self._pacmd.get_cmdline())
+        task.run(pattern='^set-sink-volume')
         try:
             # From 0 - 15
-            return int(int(self._pacmd.get_output()[0].split()[2], 16) / 0x1000)
+            return int(int(task.get_output()[0].split()[2], 16) / 0x1000)
         except (IndexError, ValueError):
             raise SystemExit(sys.argv[0] + ': Cannot detect current Pulseaudio volume.')
 
@@ -57,7 +59,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._pacmd = syslib.Command('pacmd')
+        self._pacmd = command_mod.Command('pacmd', errors='stop')
 
         change = self._args.change
         if change == '+':
@@ -109,7 +111,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_pacmd().run(mode='exec')
+        subtask_mod.Exec(options.get_pacmd().get_cmdline()).run()
 
 
 if __name__ == '__main__':

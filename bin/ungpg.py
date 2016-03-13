@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -56,8 +57,8 @@ class Options(object):
     @staticmethod
     def _set_libraries(command):
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
-        if os.path.isdir(libdir):
-            if syslib.info.get_system() == 'linux':
+        if os.path.isdir(libdir) and os.name == 'posix':
+            if os.uname()[0] == 'linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
                     os.environ['LD_LIBRARY_PATH'] = (
                         libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
@@ -79,7 +80,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._gpg = syslib.Command('gpg')
+        self._gpg = command_mod.Command('gpg', errors='stop')
 
         self._config()
         self._set_libraries(self._gpg)
@@ -129,10 +130,11 @@ class Main(object):
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
             gpg.set_args([file])
-            gpg.run()
-            if gpg.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(gpg.get_exitcode()) +
-                                 ' received from "' + gpg.get_file() + '".')
+            task = subtask_mod.Task(gpg.get_cmdline())
+            task.run()
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
 
 
 if __name__ == '__main__':

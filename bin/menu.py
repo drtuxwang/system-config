@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -48,7 +49,7 @@ class Options(object):
         """
         self._config()
         self._setenv(args)
-        self._menu = syslib.Command('menu_main.tcl')
+        self._menu = command_mod.Command('menu_main.tcl', errors='stop')
 
 
 class Main(object):
@@ -89,7 +90,9 @@ class Main(object):
         """
         options = Options()
 
-        options.get_menu().run(filter='Failed to load module:', mode='background')
+        subtask_mod.Background(options.get_menu().get_cmdline()).run(
+            pattern='Failed to load module:')
+
 
 if __name__ == '__main__':
     if '--pydoc' in sys.argv:

@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -53,22 +54,21 @@ class Main(object):
         """
         Start program
         """
-        xterm = syslib.Command('xterm')
-        xterm.set_flags([
+        xterm = command_mod.Command('xterm', errors='stop')
+        xterm.set_args([
             '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', FG_COLOUR,
             '-bg', BG_COLOUR, '-cr', '#ff0000', '-geometry', '100x24', '-ut', '+sb'])
-        sudo = syslib.Command('sudo')
+        sudo = command_mod.Command('sudo', errors='stop')
 
         if len(sys.argv) > 1:
-            xterm.extend_flags(['-T', 'sudo ' + xterm.args2cmd(sys.argv[1:])])
+            xterm.extend_args(['-T', 'sudo ' + xterm.args2cmd(sys.argv[1:])])
             sudo.set_args(sys.argv[1:])
         else:
-            xterm.extend_flags(['-T', 'sudo su'])
+            xterm.extend_args(['-T', 'sudo su'])
             sudo.set_args(['su'])
-        xterm.append_flag('-e')
-        sudo.set_wrapper(xterm)
+        xterm.append_arg('-e')
 
-        sudo.run(mode='daemon')
+        subtask_mod.Exec(xterm.get_cmdline() + sudo.get_cmdline()).run()
 
 
 if __name__ == '__main__':

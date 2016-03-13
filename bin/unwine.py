@@ -6,7 +6,8 @@ Shuts down WINE and all Windows applications
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -39,9 +40,9 @@ class Main(object):
         """
         Start program
         """
-        wineserver = syslib.Command('wineserver', args=['-k'])
+        wineserver = command_mod.Command('wineserver', args=['-k'], errors='stop')
 
-        wineserver.run()
+        subtask_mod.Task(wineserver.get_cmdline()).run()
 
 
 if __name__ == '__main__':

@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -92,39 +93,44 @@ class Main(object):
     def _poweroff(self, machines):
         for machine in machines:
             self._vboxmanage.set_args(['controlvm', machine, 'poweroff'])
-            self._vboxmanage.run()
-            if self._vboxmanage.get_exitcode():
+            task = subtask_mod.Task(self._vboxmanage.get_cmdline())
+            task.run()
+            if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(self._vboxmanage.get_exitcode()) +
-                    ' received from "' + self._vboxmanage.get_file() + '".')
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".')
 
     def _shutdown(self, machines):
         for machine in machines:
             self._vboxmanage.set_args(['controlvm', machine, 'acpipowerbutton'])
-            self._vboxmanage.run()
-            if self._vboxmanage.get_exitcode():
+            task = subtask_mod.Task(self._vboxmanage.get_cmdline())
+            task.run()
+            if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(self._vboxmanage.get_exitcode()) +
-                    ' received from "' + self._vboxmanage.get_file() + '".')
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".')
 
     def _start(self, machines):
         for machine in machines:
             self._vboxmanage.set_args(['startvm', machine, '--type', 'headless'])
-            self._vboxmanage.run()
-            if self._vboxmanage.get_exitcode():
+            task = subtask_mod.Task(self._vboxmanage.get_cmdline())
+            task.run()
+            if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(self._vboxmanage.get_exitcode()) +
-                    ' received from "' + self._vboxmanage.get_file() + '".')
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".')
 
     def _view(self):
         self._vboxmanage.set_args(['list', 'vms'])
-        self._vboxmanage.run(filter='^".*"', mode='batch')
-        if self._vboxmanage.has_output():
-            lines = sorted(self._vboxmanage.get_output())
+        task = subtask_mod.Task(self._vboxmanage.get_cmdline())
+        task.run(pattern='^".*"')
+        if task.has_output():
+            lines = sorted(task.get_output())
             self._vboxmanage.set_args(['list', 'runningvms'])
-            self._vboxmanage.run(filter='^".*"', mode='batch')
+            task = subtask_mod.Task(self._vboxmanage.get_cmdline())
+            task.run(filter='^".*"')
             for line in lines:
-                if line in self._vboxmanage.get_output():
+                if line in task.get_output():
                     print('[Run]', line)
                 else:
                     print('[Off]', line)
@@ -135,7 +141,7 @@ class Main(object):
         """
         options = Options()
 
-        self._vboxmanage = syslib.Command('VBoxManage')
+        self._vboxmanage = command_mod.Command('VBoxManage', errors='stop')
         mode = options.get_mode()
         machines = options.get_machines()
 

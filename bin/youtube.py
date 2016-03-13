@@ -53,7 +53,7 @@ class Options(object):
         if not self._youtubedl.is_found():
             youtube = command_mod.Command('youtube', args=args[1:], errors='ignore')
             if youtube.is_found():
-                subtask.Exec(youtube.get_cmdline()).run()
+                subtask_mod.Exec(youtube.get_cmdline()).run()
             self._youtubedl = command_mod.Command('youtube-dl', errors='stop')
 
         if self._args.viewFlag:

@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -48,8 +49,8 @@ class Main(object):
     @staticmethod
     def _set_libraries(command):
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
-        if os.path.isdir(libdir):
-            if syslib.info.get_system() == 'linux':
+        if os.path.isdir(libdir) and os.name == 'posix':
+            if os.uname()[0] == 'linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
                     os.environ['LD_LIBRARY_PATH'] = (
                         libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
@@ -60,12 +61,12 @@ class Main(object):
         """
         Start program
         """
-        unetbootin = syslib.Command('unetbootin')
+        unetbootin = command_mod.Command('unetbootin', errors='stop')
         unetbootin.set_args(sys.argv[1:])
         pattern = '^$|recently-used.xbel|^Fontconfig '
         self._set_libraries(unetbootin)
 
-        unetbootin.run(filter=pattern, mode='background')
+        subtask_mod.Background(unetbootin.get_cmdline()).run(pattern=pattern)
 
 
 if __name__ == '__main__':

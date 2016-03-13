@@ -8,8 +8,9 @@ import os
 import signal
 import sys
 
+import command_mod
 import desktop_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -51,20 +52,20 @@ class Main(object):
         """
         Start program
         """
-        xmixer = syslib.Command('pavucontrol', check=False)
+        xmixer = command_mod.Command('pavucontrol', errors='ignore')
         if not xmixer.is_found():
             desktop = desktop_mod.Desktop.detect()
             if desktop == 'gnome':
-                xmixer = syslib.Command('gnome-volume-control', check=False)
+                xmixer = command_mod.Command('gnome-volume-control', errors='ignore')
             elif desktop == 'kde':
-                xmixer = syslib.Command('kmix', check=False)
+                xmixer = command_mod.Command('kmix', errors='ignore')
             elif desktop == 'xfce':
-                xmixer = syslib.Command('xfce4-mixer', check=False)
+                xmixer = command_mod.Command('xfce4-mixer', errors='ignore')
             if not xmixer.is_found():
-                xmixer = syslib.Command('alsamixer')
+                xmixer = command_mod.Command('alsamixer', errors='stop')
         xmixer.set_args(sys.argv[1:])
 
-        xmixer.run(mode='exec')
+        subtask_mod.Exec(xmixer.get_cmdline()).run()
 
 
 if __name__ == '__main__':

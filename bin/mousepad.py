@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -39,7 +40,7 @@ class Options(object):
         """
         Parse arguments
         """
-        self._mousepad = syslib.Command('mousepad')
+        self._mousepad = command_mod.Command('mousepad', errors='stop')
         self._mousepad.set_args(args[1:])
         self._pattern = '^$|recently-used.xbel'
 
@@ -82,7 +83,8 @@ class Main(object):
         """
         options = Options()
 
-        options.get_mousepad().run(filter=options.get_pattern(), mode='background')
+        subtask_mod.Background(options.get_mousepad().get_cmdline()).run(
+            pattern=options.get_pattern)
 
 
 if __name__ == '__main__':

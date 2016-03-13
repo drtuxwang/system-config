@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -50,7 +51,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._meld = syslib.Command('meld')
+        self._meld = command_mod.Command('meld', errors='stop')
         files = self._args.files
         if os.path.isdir(files[0]) and os.path.isfile(files[1]):
             self._meld.set_args([os.path.join(files[0], os.path.basename(files[1])), files[1]])
@@ -103,9 +104,9 @@ class Main(object):
         """
         options = Options()
 
-        meld = options.get_meld()
-        meld.run(filter=options.get_pattern())
-        return meld.get_exitcode()
+        task = subtask_mod.Task(options.get_meld().get_cmdline())
+        task.run(pattern=options.get_pattern())
+        return task.get_exitcode()
 
 if __name__ == '__main__':
     if '--pydoc' in sys.argv:

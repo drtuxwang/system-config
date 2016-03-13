@@ -10,7 +10,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -183,11 +184,13 @@ class BacklightIntelSetpci(Backlight):
         Return brightness
         """
         if getpass.getuser() != 'root':
-            self._command.set_wrapper(syslib.Command('sudo'))
-        self._command.set_args(['F4.B'])
-        self._command.run(mode='batch')
+            sudo = command_mod.Command('sudo', errors='stop')
+            task = subtask_mod.Batch(sudo.get_cmdline() + self._command.get_cmdline() + ['F4.B'])
+        else:
+            task = subtask_mod.Batch(self._command.get_cmdline() + ['F4.B'])
+        task.run()
         try:
-            return int(int(self._command.get_output()[0], 16) / 16)  # From 0 - 15
+            return int(int(task.get_output()[0], 16) / 16)  # From 0 - 15
         except (IndexError, ValueError):
             raise SystemExit(sys.argv[0] + ': Cannot detect current brightness setting.')
 
@@ -214,18 +217,19 @@ class BacklightIntelSetpci(Backlight):
         Set brightness
         """
         self._command.set_args(['F4.B={0:x}'.format(brightness*16 + 15)])
-        self._command.run(mode='exec')
+        subtask_mod.Exec(self._command.get_cmdline()).run()
 
     def detect(self):
         """
         Detect status
         """
-        lspci = syslib.Command('lspci', check=False)
+        lspci = command_mod.Command('lspci', errors='ignore')
         if lspci.is_found():
-            lspci.run(filter='VGA.*Intel.*Atom', mode='batch')
-            if lspci.has_output():
-                self._command = syslib.Command(
-                    'setpci', flags=['-s', lspci.get_output()[0].split()[0]])
+            task = subtask_mod.Batch(lspci.get_cmdline())
+            task.run(pattern='VGA.*Intel.*Atom')
+            if task.has_output():
+                self._command = command_mod.Command(
+                    'setpci', args=['-s', task.get_output()[0].split()[0]], errors='stop')
                 return True
         return False
 
@@ -243,9 +247,10 @@ class BacklightXrandr(Backlight):
         Return brightness
         """
         self._command.set_args(['--verbose'])
-        self._command.run(mode='batch')
+        task = subtask_mod.Batch(self._command.get_cmdline())
+        task.run()
         try:
-            brightness = float(self._command.get_output(r'^\s+Brightness: ')[0].split()[1])
+            brightness = float(task.get_output(r'^\s+Brightness: ')[0].split()[1])
         except (IndexError, ValueError):
             brightness = 0.
         return brightness
@@ -274,17 +279,18 @@ class BacklightXrandr(Backlight):
         """
         for screen in self._screens:
             self._command.set_args(['--output', screen, '--brightness', str(brightness)])
-            self._command.run()
+            subtask_mod.Task(self._command.get_cmdline()).run()
 
     def detect(self):
         """
         Detect status
         """
-        self._command = syslib.Command('xrandr', check=False)
+        self._command = command_mod.Command('xrandr', errors='ignore')
         if self._command.is_found():
-            self._command.run(mode='batch')
+            task = subtask_mod.Batch(self._command.get_cmdline())
+            task.run()
             self._screens = []
-            for line in self._command.get_output('^[^ ]* connected '):
+            for line in task.get_output('^[^ ]* connected '):
                 self._screens.append(line.split()[0])
             if self._screens:
                 return True

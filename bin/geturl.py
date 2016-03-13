@@ -10,7 +10,8 @@ import shutil
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -46,8 +47,8 @@ class Options(object):
     @staticmethod
     def _set_libraries(command):
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
-        if os.path.isdir(libdir):
-            if syslib.info.get_system() == 'linux':
+        if os.path.isdir(libdir) and os.name == 'posix':
+            if os.uname()[0] == 'linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
                     os.environ['LD_LIBRARY_PATH'] = (
                         libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
@@ -71,8 +72,8 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._aria2c = syslib.Command('aria2c')
-        self._aria2c.set_flags(['--file-allocation=none', '--remote-time=true'])
+        self._aria2c = command_mod.Command('aria2c', errors='stop')
+        self._aria2c.set_args(['--file-allocation=none', '--remote-time=true'])
         self._set_libraries(self._aria2c)
 
         if self._args.threads[0] < 1:
@@ -130,12 +131,14 @@ class Main(object):
     @staticmethod
     def _get_remote(aria2c, files_remote):
         if files_remote:
+            cmdline = []
             for file in files_remote:
-                aria2c.append_arg(file.replace('https://', 'http://'))
-            aria2c.run()
-            if aria2c.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(aria2c.get_exitcode()) +
-                                 ' received from "' + aria2c.get_file() + '".')
+                cmdline.append(file.replace('https://', 'http://'))
+            task = subtask_mod.Task(aria2c.get_cmdline() + cmdline).run()
+            task.run()
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
 
     def run(self):
         """

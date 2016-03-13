@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -50,11 +51,10 @@ class Main(object):
         """
         Start program
         """
-        pep8 = syslib.Command('pep8')
-        pep8.set_flags(["--max-line-length=100"])
-        pep8.set_args(sys.argv[1:])
+        pep8 = command_mod.Command('pep8', errors='stop')
+        pep8.set_args(["--max-line-length=100"] + sys.argv[1:])
 
-        pep8.run(mode='exec')
+        subtask_mod.Exec(pep8.get_cmdline()).run()
 
 
 if __name__ == '__main__':

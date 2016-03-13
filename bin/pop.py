@@ -10,7 +10,9 @@ import signal
 import sys
 import time
 
-import syslib
+
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -54,9 +56,8 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._pop = syslib.Command('notify-send')
-        self._pop.set_flags(['--expire-time=0'])
-        self._pop.set_args(self._args.words)
+        self._pop = command_mod.Command('notify-send', errors='stop')
+        self._pop.set_args(['--expire-time=0'] + self._args.words)
 
         if self._args.timeDelay[0] < 0:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for delay time.')
@@ -99,19 +100,20 @@ class Main(object):
         Start program
         """
         options = Options()
-        bell = syslib.Command('bell', check=False)
+        bell = command_mod.Command('bell', errors='ignore')
         pop = options.get_pop()
         delay = 60 * options.get_time_delay()
 
         time.sleep(delay)
 
         if bell.is_found():
-            bell.run(mode='background')
+            subtask_mod.Background(bell.get_cmdline()).run()
 
-        pop.run()
-        if pop.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(pop.get_exitcode()) +
-                             ' received from "' + pop.get_file() + '".')
+        task = subtask_mod.Task(pop.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
 
 
 if __name__ == '__main__':
