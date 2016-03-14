@@ -652,6 +652,9 @@ bin/tar                tar wrapper (allowing non systems port)
 bin/tar.bat            (with Python enhancements)
 bin/tar.py
 
+bin/terraform          terraform wrapper (allowing non systems port)
+bin/terraform.py
+
 bin/tbz                Make a compressed archive in TAR.BZ2 format
 bin/tbz.bat
 bin/tbz.py
