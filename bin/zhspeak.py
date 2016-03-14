@@ -19,7 +19,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '3.1.0'
+RELEASE = '3.1.1'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
@@ -110,7 +110,7 @@ class Options(object):
         xclip = command_mod.Command('xclip', errors='stop')
         xclip.set_args(['-out', '-selection', '-c', 'test'])
         task = subtask_mod.Batch(xclip.get_cmdline())
-        task.run(mode='batch')
+        task.run()
         if task.get_exitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                              ' received from "' + task.get_file() + '".')
