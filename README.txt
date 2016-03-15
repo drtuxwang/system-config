@@ -863,6 +863,7 @@ config/offline                  Wrapper script to run any command in off line mo
 config/profile                  Copy to "$HOME/.profile" for ksh/bash shells (translated ".login")
 config/rc.local                 Copy to "/etc/rc.local" for auto running commands
 config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
+config/requirements.txt         Python requirements "python3 -m pip install -r requirements.txt"
 config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
 
 etc/setbin       Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
