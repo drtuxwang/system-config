@@ -1,0 +1,94 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Nested stack example. Uses \"sg_stack.json\" & \"pxy_stack.json\".",
+    "Mappings": {
+        "RegionMap": {
+            "eu-west-1": {
+                "ImageId": "ami-4374b732",
+                "Subnets": [
+                    "subnet-85b8a5f0",
+                    "subnet-d886877f",
+                    "subnet-5dc85320"
+                ]
+            }
+            "us-west-2": {
+                "ImageId": "ami-c1fe12a0",
+                "Subnets": [
+                    "subnet-fd3979a4",
+                    "subnet-58c58e6f",
+                    "subnet-6ed73209"
+                ]
+            }
+        }
+    },
+    "Resources": {
+        "SgStack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "https://s3-",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            ".amazonaws.com/",
+                            "mybucket-f265e99a/pxy-example/sg_stack.json"
+                        ]
+                    ]
+                }
+            }
+        },
+        "PxyStack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "https://s3-",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            ".amazonaws.com/",
+                            "mybucket-f265e99a/pxy-example/pxy_stack.json"
+                        ]
+                    ]
+                },
+                "Parameters": {
+                    "RunMode": "dev",
+                    "ImageId": {
+                        "Fn::FindInMap": [
+                            "RegionMap",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            "ImageId"
+                        ]
+                    },
+                    "Subnets": {
+                        "Fn::Join": [
+                            ",",
+                            {
+                                "Fn::FindInMap": [
+                                    "RegionMap",
+                                    {
+                                        "Ref": "AWS::Region"
+                                    },
+                                    "Subnets"
+                                ]
+                            }
+                        ]
+                    },
+                    "SecurityGroup": {
+                        "Fn::GetAtt": [
+                            "SgStack",
+                            "Outputs.SecurityGroup"
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

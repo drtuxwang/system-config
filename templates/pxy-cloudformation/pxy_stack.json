@@ -1,0 +1,241 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Start Pxy server EC2 instances with ELB loadbalancer & autoscaling.",
+    "Parameters": {
+        "RunMode": {
+            "Type": "String",
+            "Description": "Run mode (either dev or prod).",
+            "Default": "dev",
+            "AllowedValues": [
+                "dev",
+                "prod"
+            ],
+            "ConstraintDescription": "Must be dev or prod."
+        },
+        "ImageId": {
+            "Type": "String",
+            "Description": "Amazon machine image."
+        },
+        "Subnets": {
+            "Type": "CommaDelimitedList",
+            "Description": "Comma delimited list of subnets."
+        },
+        "SecurityGroup": {
+            "Type": "String",
+            "Description": "Security Group."
+        }
+    },
+    "Mappings": {
+        "PxyMap": {
+            "dev": {
+                "PxyInstanceType": "t2.micro",
+                "MinSize": "1",
+                "MaxSize": "3",
+                "DesiredCapacity": "2"
+            },
+            "prod": {
+                "PxyInstanceType": "t2.medium",
+                "MinSize": "2",
+                "MaxSize": "6",
+                "DesiredCapacity": "4"
+            }
+        }
+    },
+    "Resources": {
+        "PxyGroup": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "Cooldown": "300",
+                "VPCZoneIdentifier": {
+                    "Ref": "Subnets"
+                },
+                "MinSize": {
+                    "Fn::FindInMap": [
+                        "PxyMap",
+                        {
+                            "Ref": "RunMode"
+                        },
+                        "MinSize"
+                    ]
+                },
+                "MaxSize": {
+                    "Fn::FindInMap": [
+                        "PxyMap",
+                        {
+                            "Ref": "RunMode"
+                        },
+                        "MaxSize"
+                    ]
+                },
+                "DesiredCapacity": {
+                    "Fn::FindInMap": [
+                        "PxyMap",
+                        {
+                            "Ref": "RunMode"
+                        },
+                        "DesiredCapacity"
+                    ]
+                },
+                "LaunchConfigurationName": {
+                    "Ref": "PxyLaunch"
+                },
+                "LoadBalancerNames": [
+                    {
+                        "Ref": "PxyLoadBalancer"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "class",
+                        "Value": "pxy",
+                        "PropagateAtLaunch": "true"
+                    }
+                ]
+            },
+            "UpdatePolicy": {
+                "AutoScalingRollingUpdate": {
+                    "MinInstancesInService": "1",
+                    "MaxBatchSize": "1",
+                    "WaitOnResourceSignals": "true",
+                    "PauseTime": "PT15M"
+                }
+            }
+        },
+        "PxyLaunch": {
+            "Type": "AWS::AutoScaling::LaunchConfiguration",
+            "Properties": {
+                "ImageId": {
+                    "Ref": "ImageId"
+                },
+                "InstanceType": {
+                    "Fn::FindInMap": [
+                        "PxyMap",
+                        {
+                            "Ref": "RunMode"
+                        },
+                        "PxyInstanceType"
+                    ]
+                },
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/sda1",
+                        "Ebs": {
+                            "VolumeType": "gp2",
+                            "VolumeSize": "20",
+                            "DeleteOnTermination": true
+                        }
+                    }
+                ],
+                "SecurityGroups": [
+                    {
+                        "Ref": "SecurityGroup"
+                    }
+                ]
+            }
+        },
+        "PxyLoadBalancer": {
+            "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+            "Properties": {
+                "Listeners": [
+                    {
+                        "Protocol": "HTTP",
+                        "LoadBalancerPort": "80",
+                        "InstanceProtocol": "HTTP",
+                        "InstancePort": "80"
+                    }
+                ],
+                "HealthCheck": {
+                    "Target": "HTTP:80/netscaler_test_object",
+                    "HealthyThreshold": "3",
+                    "UnhealthyThreshold": "5",
+                    "Interval": "30",
+                    "Timeout": "5"
+                },
+                "Scheme": "internal",
+                "Subnets": {
+                    "Ref": "Subnets"
+                },
+                "CrossZone": "true",
+                "SecurityGroups": [
+                    {
+                        "Ref": "SecurityGroup"
+                    }
+                ]
+            }
+        },
+        "PxyScaleOut": {
+            "Type": "AWS::AutoScaling::ScalingPolicy",
+            "Properties": {
+                "AdjustmentType": "ChangeInCapacity",
+                "AutoScalingGroupName": {
+                    "Ref": "PxyGroup"
+                },
+                "Cooldown": "900",
+                "ScalingAdjustment": "1"
+            }
+        },
+        "PxyScaleIn": {
+            "Type": "AWS::AutoScaling::ScalingPolicy",
+            "Properties": {
+                "AdjustmentType": "ChangeInCapacity",
+                "AutoScalingGroupName": {
+                    "Ref": "PxyGroup"
+                },
+                "Cooldown": "900",
+                "ScalingAdjustment": "-1"
+            }
+        },
+        "PxyCpuHigh": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+                "AlarmDescription": "Scale-up if CPU > 70% for 10 minutes",
+                "MetricName": "CPUUtilization",
+                "Namespace": "AWS/EC2",
+                "Statistic": "Average",
+                "Period": "300",
+                "EvaluationPeriods": "2",
+                "Threshold": "70",
+                "AlarmActions": [
+                    {
+                        "Ref": "PxyScaleOut"
+                    }
+                ],
+                "Dimensions": [
+                    {
+                        "Name": "AutoScalingGroupName",
+                        "Value": {
+                            "Ref": "PxyGroup"
+                        }
+                    }
+                ],
+                "ComparisonOperator": "GreaterThanThreshold"
+            }
+        },
+        "PxyCpuLow": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+                "AlarmDescription": "Scale-down if CPU < 20% for 10 minutes",
+                "MetricName": "CPUUtilization",
+                "Namespace": "AWS/EC2",
+                "Statistic": "Average",
+                "Period": "300",
+                "EvaluationPeriods": "2",
+                "Threshold": "20",
+                "AlarmActions": [
+                    {
+                        "Ref": "PxyScaleIn"
+                    }
+                ],
+                "Dimensions": [
+                    {
+                        "Name": "AutoScalingGroupName",
+                        "Value": {
+                            "Ref": "PxyGroup"
+                        }
+                    }
+                ],
+                "ComparisonOperator": "LessThanThreshold"
+            }
+        }
+    }
+}

@@ -1,0 +1,70 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Define Security Group",
+    "Resources": {
+        "sganyfromrfc1918": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Any port from private addresses",
+                "VpcId": "vpc-60328505"
+            }
+        },
+        "ingress1": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "sganyfromrfc1918"
+                },
+                "IpProtocol": "-1",
+                "CidrIp": "10.0.0.0/8"
+            }
+        },
+        "ingress2": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "sganyfromrfc1918"
+                },
+                "IpProtocol": "-1",
+                "CidrIp": "192.168.0.0/16"
+            }
+        },
+        "ingress3": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "sganyfromrfc1918"
+                },
+                "IpProtocol": "-1",
+                "CidrIp": "172.16.0.0/12"
+            }
+        },
+        "ingress4": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "sganyfromrfc1918"
+                },
+                "IpProtocol": "-1",
+                "CidrIp": "29.0.0.0/8"
+            }
+        },
+        "egress1": {
+            "Type": "AWS::EC2::SecurityGroupEgress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "sganyfromrfc1918"
+                },
+                "IpProtocol": "-1",
+                "CidrIp": "0.0.0.0/0"
+            }
+        }
+    },
+    "Outputs": {
+        "SecurityGroup": {
+            "Value": {
+                "Ref": "sganyfromrfc1918"
+            }
+        }
+    }
+}

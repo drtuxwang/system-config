@@ -4,24 +4,6 @@ These are production scripts and configuration files that I use and share. Origi
 were started Bourne shell scripts started during my University days and continuously enhanced over
 the years. Now most of the scripts are written in Python 3.
 
-etc/setbin       Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
-etc/setbin.bat   Windows Command prompt initialization
-etc/setbin.ps1   Windows Power shell initialization
-
-config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
-config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
-config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
-config/config                   Copy to "$HOME/.ssh/config"
-config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
-config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
-config/mimeapps.list            Copy to "$HOME/.local/share/applications" for Mime definitions
-config/offline                  Wrapper script to run any command in off line mode (read comments)
-config/profile                  Copy to "$HOME/.profile" for ksh/bash shells (translated ".login")
-config/rc.local                 Copy to "/etc/rc.local" for auto running commands
-config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
-config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
-
-bin/Makefile           Makefile for testing
 bin/command_mod.py     Python command line handling module
 bin/debug_mod.py       Python debugging tools module
 bin/desktop_mod.py     Python X-windows desktop module
@@ -869,3 +851,33 @@ bin/zhspeak.tcl
 
 bin/zip                zip wrapper (allowing non systems port)
 bin/zip.py
+
+config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
+config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
+config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
+config/config                   Copy to "$HOME/.ssh/config"
+config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
+config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
+config/mimeapps.list            Copy to "$HOME/.local/share/applications" for Mime definitions
+config/offline                  Wrapper script to run any command in off line mode (read comments)
+config/profile                  Copy to "$HOME/.profile" for ksh/bash shells (translated ".login")
+config/rc.local                 Copy to "/etc/rc.local" for auto running commands
+config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
+config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
+
+etc/setbin       Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
+etc/setbin.bat   Windows Command prompt initialization
+etc/setbin.ps1   Windows Power shell initialization
+
+templates/pxy-cloudformation/Makefile         CloudFormation example
+templates/pxy-cloudformation/main_stack.json
+templates/pxy-cloudformation/pxy_stack.json
+templates/pxy-cloudformation/sg_stack.json
+templates/pxy-cloudformation/submit.sh
+
+templates/pxy-terraform/aws_config.tf         Terraform example
+templates/pxy-terraform/aws_resources.tf
+templates/pxy-terraform/pxy_resources.tf
+templates/pxy-terraform/pxy_variables.tf
+
+bin/Makefile           Makefile for testing
