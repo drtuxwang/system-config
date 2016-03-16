@@ -387,6 +387,8 @@ class TestPythonLoader(unittest.TestCase):
         Setup test harness.
         """
         self.maxDiff = None
+        self._start_directory = os.getcwd()
+        os.chdir(os.path.dirname(__file__))
 
         self._mock_options = unittest.mock.MagicMock('mock_options')
         self._mock_options.get_dump_flag = unittest.mock.MagicMock(return_value=False)
@@ -398,6 +400,9 @@ class TestPythonLoader(unittest.TestCase):
         self._mock_options.get_module_dir = unittest.mock.MagicMock(return_value='directory')
         self._mock_options.get_verbose_flag = unittest.mock.MagicMock(return_value=False)
         self._mock_options.dump = unittest.mock.MagicMock()
+
+    def tearDown(self):
+        os.chdir(self._start_directory)
 
     def test_dump(self):
         """
