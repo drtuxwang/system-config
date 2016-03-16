@@ -4,6 +4,8 @@ These are production scripts and configuration files that I use and share. Origi
 were started Bourne shell scripts started during my University days and continuously enhanced over
 the years. Now most of the scripts are written in Python 3.
 
+Makefile               Makefile for testing
+
 bin/command_mod.py     Python command line handling module
 bin/debug_mod.py       Python debugging tools module
 bin/desktop_mod.py     Python X-windows desktop module
@@ -879,4 +881,3 @@ templates/pxy-terraform/aws_resources.tf
 templates/pxy-terraform/pxy_resources.tf
 templates/pxy-terraform/pxy_variables.tf
 
-bin/Makefile           Makefile for testing
