@@ -1,11 +1,16 @@
 default: test
 
-test: py_compile pep8 pylint unittest clean
+test: py_compile requirements pep8 pylint unittest clean
 	@echo "\n*** Tests successfull ***"
 
 py_compile:
 	@echo "\n*** Running Python 3 compilation check ***"
 	python3 -m py_compile bin/*.py
+	rm -rf */__pycache__
+
+requirements:
+	@echo "\n*** Running Python 3 requirements check ***"
+	python3 -m pip install -r requirements.txt
 
 pep8:
 	@echo "\n*** Running Python 3 PEP8 check ***"
@@ -18,8 +23,3 @@ pylint:
 unittest:
 	@echo "\n*** Running Python 3 UNITTEST check ***"
 	python3 ./bin/test_pyld.py
-
-clean:
-	@echo "\n*** Cleaning ***"
-	rm -rf __pycache__
-
