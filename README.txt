@@ -90,19 +90,19 @@ bin/cluster.py
 bin/cmd                wine wrapper (allowing non systems port)
 
 bin/deb                Debian package management tools
-bin/deb-chkdir         (support offline repository searching and update checks)
-bin/_deb_chkdir.py
-bin/deb-chkinstall
-bin/_deb_chkinstall.py
-bin/deb-chkupdate
-bin/_deb_chkupdate.py
-bin/deb-distfind
-bin/_deb_distfind.py
-bin/deb-distget
-bin/_deb_distget.py
+bin/deb.py             (support offline repository searching and update checks
+bin/debchkdir
+bin/debchkdir.py
+bin/debchkinstall
+bin/debchkinstall.py
+bin/debchkupdate
+bin/debchkupdate.py
+bin/debdistfind
+bin/debdistfind.py
+bin/debdistget
+bin/debdistget.py
 bin/deb-distinfo
-bin/_deb_distinfo.py
-bin/deb.py
+bin/debdistinfo.py
 
 bin/df                 df wrapper (allowing non systems port)
 bin/df.py              (KB default and fix format problems)
@@ -310,7 +310,7 @@ bin/fzero.py
 
 bin/g++                g++ wrapper (allowing non systems port)
 bin/g++.bat
-bin/_gxx.py
+bin/gxx.py
 
 bin/gcc                gcc wrapper (allowing non systems port)
 bin/gcc.bat
@@ -347,8 +347,8 @@ bin/gitk.py
 bin/git-time           Modify file time to original GIT author time
 bin/_git_time.py
 
-bin/gnome-mines        gnome-mines wrapper (allowing non systems port)
-bin/_gnome_mines.py    (can pick using old gnomines name)
+bin/gnomine            gnome-mines/gnomine wrapper (allowing non systems port)
+bin/gnomine.py         (can pick using old gnomines name)
 
 bin/gpg                gpg wrapper (allowing non systems port)
 bin/gpg.py             (contains enhanced functions "gpg -h")

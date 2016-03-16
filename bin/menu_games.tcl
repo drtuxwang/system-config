@@ -12,7 +12,7 @@ frame .mainmenu -bg "#cccccc"
     pack .mainmenu.frozenbubble -side top
     button .mainmenu.hearts -width 10 -bg "#ffcc00" -text "Hearts" -command {exec gnome-hearts &}
     pack .mainmenu.hearts -side top
-    button .mainmenu.mines -width 10 -bg "#ffcc00" -text "Mines" -command {exec gnome-mines &}
+    button .mainmenu.mines -width 10 -bg "#ffcc00" -text "Mines" -command {exec gnomine &}
     pack .mainmenu.mines -side top
     button .mainmenu.reversi -width 10 -bg "#ffcc00" -text "Iagno" -command {exec iagno &}
     pack .mainmenu.reversi -side top

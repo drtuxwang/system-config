@@ -4,7 +4,7 @@
 #
 
 BIN_DIR=`dirname "$0"`
-PY_MAIN="-pyldname=g++ _gxx"
+PY_MAIN="-pyldname=g++ gxx"
 
 if [ -x "$BIN_DIR/python3" ]; then
     exec "$BIN_DIR/python3" "$BIN_DIR/pyld.py" $PY_MAIN "$@"
