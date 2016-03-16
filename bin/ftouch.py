@@ -26,7 +26,7 @@ class Options(object):
 
     def get_directories(self):
         """
-        Return list of files.
+        Return list of directories.
         """
         return self._args.directories
 
