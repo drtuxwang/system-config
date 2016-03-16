@@ -25,6 +25,12 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
+    def get_long_flag(self):
+        """
+        Return long flag.
+        """
+        return self._args.long_flag
+
     def get_month(self):
         """
         Return month of files.
@@ -39,6 +45,9 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Displays month or year calendar.')
+
+        parser.add_argument('-l', dest='long_flag', action='store_true',
+                            help='Select long output.')
 
         parser.add_argument('year', nargs='?', type=int, help='Select year.')
         parser.add_argument('month', nargs='?', type=int, help='Select month.')
@@ -102,16 +111,51 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def _long(year, month):
+        if not month:
+            month = int(time.strftime('%m'))
+        print('\n                  [ ', calendar.month_name[month] + ' ', year, ' ]\n')
+        for line in calendar.TextCalendar(6).formatmonth(year, month).split(os.linesep)[1:]:
+            print('  __________________________________________________  ', line)
+        print()
+        print('  ____________________________________________________________________________ ')
+        print(' |          |          |          |          |          |          |          |')
+        print(' |          |          |          |          |          |          |          |')
+        print(' | Sunday   | Monday   | Tuesday  | Wednesday| Thursday | Friday   | Saturday |')
+        print(' |          |          |          |          |          |          |          |')
+        print(' |__________|__________|__________|__________|__________|__________|__________|')
+        for week in calendar.Calendar(6).monthdays2calendar(year, month):
+            print(' |          |          |          |          |          |          |          |')
+            line = ''
+            for day in week:
+                if day[0] == 0:
+                    line += ' |         '
+                else:
+                    line += ' | ' + str(day[0]).ljust(8)
+            line += ' |'
+            print(line)
+            for _ in range(5):
+                print(' |' + 7*'          |')
+            print(' |' + 7*'__________|')
+
+    @staticmethod
+    def _short(year, month):
+        if month == 0:
+            print(calendar.TextCalendar(6).formatyear(year))
+        else:
+            print(calendar.TextCalendar(6).formatmonth(year, month))
+
+    @classmethod
+    def run(cls):
         """
         Start program
         """
         options = Options()
 
-        if options.get_month() == 0:
-            print(calendar.TextCalendar(6).formatyear(options.get_year()))
+        if options.get_long_flag():
+            cls._long(options.get_year(), options.get_month())
         else:
-            print(calendar.TextCalendar(6).formatmonth(options.get_year(), options.get_month()))
+            cls._short(options.get_year(), options.get_month())
 
 
 if __name__ == '__main__':
