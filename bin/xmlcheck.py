@@ -34,12 +34,12 @@ class Options(object):
         """
         Return view flag.
         """
-        return self._args.viewFlag
+        return self._args.view_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Check XML file for errors.')
 
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='View XML data.')
 
         parser.add_argument('files', nargs='+', metavar='file', help='XML/XHTML files.')

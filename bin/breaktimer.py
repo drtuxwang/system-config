@@ -44,7 +44,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Break reminder timer.')
 
-        parser.add_argument('-g', dest='guiFlag', action='store_true', help='Start GUI.')
+        parser.add_argument('-g', dest='gui_flag', action='store_true', help='Start GUI.')
 
         parser.add_argument('time', nargs=1, type=int, help='Time between breaks in minutes.')
 
@@ -60,7 +60,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        if self._args.guiFlag:
+        if self._args.gui_flag:
             xterm = command_mod.Command('xterm', errors='stop')
             xterm.set_args([
                 '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', FG_COLOUR,

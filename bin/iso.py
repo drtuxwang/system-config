@@ -55,7 +55,7 @@ class Options(object):
         """
         Return md5sum flag.
         """
-        return self._args.md5Flag
+        return self._args.md5_flag
 
     def get_volume(self):
         """
@@ -67,9 +67,9 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Make a portable CD/DVD archive in ISO9660 format.')
 
-        parser.add_argument('-f', dest='followFlag', action='store_true',
+        parser.add_argument('-f', dest='follow_flag', action='store_true',
                             help='Follow symbolic links.')
-        parser.add_argument('-md5', dest='md5Flag', action='store_true',
+        parser.add_argument('-md5', dest='md5_flag', action='store_true',
                             help='Create MD5 check sum of ISO image file.')
 
         parser.add_argument('volume', nargs=1, help='ISO file volume name.')
@@ -94,7 +94,7 @@ class Options(object):
         self._genisoimage.set_flags([
             '-iso-level', '3', '-joliet-long', '-rational-rock', '-appid', 'GENISOIMAGE-' +
             self._genisoimage.get_output()[0].split()[1]])
-        if self._args.followFlag:
+        if self._args.follow_flag:
             self._genisoimage.append_flag('-follow-links')
 
         self._isoinfo = syslib.Command('isoinfo')

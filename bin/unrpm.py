@@ -45,7 +45,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Unpack a compressed archive in RPM format.')
 
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='Show contents of archive.')
 
         parser.add_argument('archives', nargs='+', metavar='file.rpm',
@@ -61,7 +61,7 @@ class Options(object):
 
         self._rpm2cpio = syslib.Command('rpm2cpio')
         self._cpio = syslib.Command('cpio')
-        if self._args.viewFlag:
+        if self._args.view_flag:
             self._cpio.set_args(['-idmt', '--no-absolute-filenames'])
         else:
             self._cpio.set_args(['-idmv', '--no-absolute-filenames'])

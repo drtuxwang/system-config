@@ -28,7 +28,7 @@ class Options(object):
         """
         Return force flag.
         """
-        return self._args.forceFlag
+        return self._args.force_flag
 
     def get_keyword(self):
         """
@@ -39,7 +39,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Kill tasks by process ID or name.')
 
-        parser.add_argument('-f', dest='forceFlag', action='store_true',
+        parser.add_argument('-f', dest='force_flag', action='store_true',
                             help='Force termination of tasks.')
 
         parser.add_argument('task', nargs=1, metavar='pid|keyword', help='Process ID or keyword.')

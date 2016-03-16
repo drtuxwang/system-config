@@ -40,9 +40,9 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Unpack a compressed archive in ZIP format.')
 
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='Show contents of archive.')
-        parser.add_argument('-test', dest='testFlag', action='store_true',
+        parser.add_argument('-test', dest='test_flag', action='store_true',
                             help='Test archive data only.')
 
         parser.add_argument('archives', nargs='+', metavar='file.zip',
@@ -68,16 +68,16 @@ class Options(object):
             subtask_mod.Exec(self._archiver.get_cmdline()).run()
 
         if os.path.basename(self._archiver.get_file()) == 'pkzip32.exe':
-            if self._args.viewFlag:
+            if self._args.view_flag:
                 self._archiver.set_args(['-view'])
-            elif self._args.testFlag:
+            elif self._args.test_flag:
                 self._archiver.set_args(['-test'])
             else:
                 self._archiver.set_args(['-extract', '-directories'])
         else:
-            if self._args.viewFlag:
+            if self._args.view_flag:
                 self._archiver.set_args(['-v'])
-            elif self._args.testFlag:
+            elif self._args.test_flag:
                 self._archiver.set_args(['-t'])
 
 

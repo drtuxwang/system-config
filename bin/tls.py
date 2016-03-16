@@ -33,7 +33,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Show all tasks belonging to an user.')
 
-        parser.add_argument('-a', dest='allFlag', action='store_true',
+        parser.add_argument('-a', dest='all_flag', action='store_true',
                             help='Show task list for all users.')
 
         parser.add_argument('username', nargs='?', help='user name.')
@@ -48,7 +48,7 @@ class Options(object):
 
         if self._args.username:
             self._task = task_mod.Tasks.factory(self._args.username)
-        elif self._args.allFlag:
+        elif self._args.all_flag:
             self._task = task_mod.Tasks.factory('<all>')
         else:
             self._task = task_mod.Tasks.factory()

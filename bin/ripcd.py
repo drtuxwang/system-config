@@ -57,7 +57,7 @@ class Options(object):
                             help='Select CD spin speed.')
         parser.add_argument('-tracks', nargs=1, metavar='n[,n...]',
                             help='Select CD tracks to rip.')
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='View CD table of contents only.')
 
         parser.add_argument('device', nargs=1, metavar='device|scan',

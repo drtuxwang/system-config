@@ -26,7 +26,7 @@ class Options(object):
         """
         Return all flag.
         """
-        return self._args.allFlag
+        return self._args.all_flag
 
     def get_extensions(self):
         """
@@ -43,7 +43,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Locate a program file.')
 
-        parser.add_argument('-a', dest='allFlag', action='store_true',
+        parser.add_argument('-a', dest='all_flag', action='store_true',
                             help='Show the location of all occurances.')
 
         parser.add_argument('programs', nargs='+', metavar='program', help='Command to search.')

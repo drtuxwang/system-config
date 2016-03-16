@@ -31,7 +31,7 @@ class Options(object):
         """
         Return dao flag
         """
-        return self._args.daoFlag
+        return self._args.dao_flag
 
     def get_device(self):
         """
@@ -43,7 +43,7 @@ class Options(object):
         """
         Return md5 flag.
         """
-        return self._args.md5Flag
+        return self._args.md5_flag
 
     def get_image(self):
         """
@@ -61,9 +61,9 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Copy CD/DVD data as a portable ISO/BIN image file.')
 
-        parser.add_argument('-dao', dest='daoFlag', action='store_true',
+        parser.add_argument('-dao', dest='dao_flag', action='store_true',
                             help='Read data/audio/video CD in disk-at-once mode.')
-        parser.add_argument('-md5', dest='md5Flag', action='store_true',
+        parser.add_argument('-md5', dest='md5_flag', action='store_true',
                             help='Create MD5 check sum of CD/DVD.')
         parser.add_argument('-speed', nargs=1, type=int, default=[8],
                             help='Select CD/DVD spin speed.')
@@ -90,7 +90,7 @@ class Options(object):
 
         if self._args.image:
             self._image = self._args.image[0]
-        elif self._args.daoFlag:
+        elif self._args.dao_flag:
             self._image = 'file.bin'
         else:
             self._image = 'file.iso'

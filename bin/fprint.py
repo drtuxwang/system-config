@@ -57,7 +57,7 @@ class Options(object):
         """
         Return view flag.
         """
-        return self._args.viewFlag
+        return self._args.view_flag
 
     @staticmethod
     def _get_default_printer():
@@ -78,7 +78,7 @@ class Options(object):
         parser.add_argument('-paper', nargs=1, default=['A4'],
                             help='Select paper type. Default is A4.')
         parser.add_argument('-printer', nargs=1, help='Select printer name.')
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='Select view instead of priiting.')
 
         parser.add_argument('files', nargs='+', metavar='file',

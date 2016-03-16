@@ -36,13 +36,13 @@ class Options(object):
         """
         Return remove flag.
         """
-        return self._args.removeFlag
+        return self._args.remove_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Copy all files/directory inside a directory into mirror directory.')
 
-        parser.add_argument('-rm', dest='removeFlag', action='store_true',
+        parser.add_argument('-rm', dest='remove_flag', action='store_true',
                             help='Delete obsolete files in target directory.')
 
         parser.add_argument('directories', nargs='+', metavar='source_dir target_dir',

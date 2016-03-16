@@ -27,12 +27,12 @@ class Options(object):
 
     def _config_encoder(self):
         extension = '.gpg'
-        if self._args.asciiFlag:
+        if self._args.ascii_flag:
             self._gpg.append_arg('--armor')
             extension = '.asc'
         if self._args.recipient:
             self._gpg.extend_args(['--batch', '--recipient', self._args.recipient[0]])
-        if self._args.signFlag:
+        if self._args.sign_flag:
             self._gpg.append_arg('--sign')
 
         if self._args.file:
@@ -83,21 +83,21 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Make an encrypted archive in gpg (pgp compatible) format.')
 
-        parser.add_argument('-a', dest='asciiFlag', action='store_true',
+        parser.add_argument('-a', dest='ascii_flag', action='store_true',
                             help='Select ASCII text encrypted output.')
         parser.add_argument('-r', nargs=1, dest='recipient', help='Recipient for encryption.')
         parser.add_argument('-add', nargs=1, metavar='file.pub', help='Add public key.')
-        parser.add_argument('-mkkey', action='store_true', dest='makeFlag',
+        parser.add_argument('-mkkey', action='store_true', dest='make_flag',
                             help='Generate a new pair of public/private keys.')
         parser.add_argument('-passwd', nargs=1, metavar='keyid',
                             help='Generate a new pair of public/private keys.')
         parser.add_argument('-pub', nargs=1, metavar='keyid',
                             help='Extract public key.')
-        parser.add_argument('-sign', action='store_true', dest='signFlag',
+        parser.add_argument('-sign', action='store_true', dest='sign_flag',
                             help='Sign file to prove your identity.')
         parser.add_argument('-trust', nargs=1, metavar='keyid',
                             help='Trust identity of public key owner.')
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='Show all public/private keys in keyring.')
 
         parser.add_argument('file', nargs='?', help='File to encrypt/decrypt.')
@@ -125,7 +125,7 @@ class Options(object):
         if self._args.add:
             self._gpg.extend_args(['--import', self._args.add[0]])
 
-        elif self._args.makeFlag:
+        elif self._args.make_flag:
             self._gpg.extend_args(['--gen-key'])
 
         elif self._args.passwd:
@@ -137,7 +137,7 @@ class Options(object):
         elif self._args.trust:
             self._gpg.extend_args(['--sign-key', self._args.trust[0]])
 
-        elif self._args.viewFlag:
+        elif self._args.view_flag:
             self._gpg.extend_args(['--list-keys'])
             task = subtask_mod.Task(self._gpg.get_cmdline())
             task.run()

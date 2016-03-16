@@ -35,13 +35,13 @@ class Options(object):
         """
         Return recursive flag.
         """
-        return self._args.recursiveFlag
+        return self._args.recursive_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Modify file time to original GIT author time.')
 
-        parser.add_argument('-r', dest='recursiveFlag', action='store_true',
+        parser.add_argument('-r', dest='recursive_flag', action='store_true',
                             help='Recursive into sub-directories.')
 
         parser.add_argument('files', nargs='+', metavar='file',

@@ -40,18 +40,18 @@ class Options(object):
         """
         Return recursive flag.
         """
-        return self._args.recursiveFlag
+        return self._args.recursive_flag
 
     def get_reverse_flag(self):
         """
         Return reverse flag.
         """
-        return self._args.reverseFlag
+        return self._args.reverse_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Show full list of files.')
 
-        parser.add_argument('-R', dest='recursiveFlag', action='store_true',
+        parser.add_argument('-R', dest='recursive_flag', action='store_true',
                             help='Show directories recursively.')
         parser.add_argument('-s', action='store_const', const='size', dest='order',
                             default='name', help='Sort by size of file.')
@@ -59,7 +59,7 @@ class Options(object):
                             default='name', help='Sort by modification time of file.')
         parser.add_argument('-c', action='store_const', const='ctime', dest='order',
                             default='name', help='Sort by meta data change time of file.')
-        parser.add_argument('-r', dest='reverseFlag', action='store_true',
+        parser.add_argument('-r', dest='reverse_flag', action='store_true',
                             help='Reverse order.')
 
         parser.add_argument('files', nargs='*', metavar='file', help='File or directory.')

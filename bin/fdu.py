@@ -34,12 +34,12 @@ class Options(object):
         """
         Return summary flag.
         """
-        return self._args.summaryFlag
+        return self._args.summary_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Show file disk usage.')
 
-        parser.add_argument('-s', dest='summaryFlag', action='store_true',
+        parser.add_argument('-s', dest='summary_flag', action='store_true',
                             help='Show summary only.')
 
         parser.add_argument('files', nargs='*', default=[os.curdir], metavar='file',

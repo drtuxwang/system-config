@@ -36,7 +36,7 @@ class Options(object):
         """
         Return daemon flag.
         """
-        return self._args.daemonFlag
+        return self._args.daemon_flag
 
     def get_myqsdir(self):
         """
@@ -55,7 +55,7 @@ class Options(object):
             description='MyQS v' + self._release + ', My Queuing System batch scheduler daemon.')
 
         parser.add_argument(
-            '-daemon', dest='daemonFlag', action='store_true', help='Start batch job daemon.')
+            '-daemon', dest='daemon_flag', action='store_true', help='Start batch job daemon.')
 
         parser.add_argument(
             'slots', nargs=1, type=int, help='The maximum number of CPU execution slots to create.')

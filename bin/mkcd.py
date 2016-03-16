@@ -36,7 +36,7 @@ class Options(object):
         """
         Return erase flag.
         """
-        return self._args.eraseFlag
+        return self._args.erase_flag
 
     def get_image(self):
         """
@@ -48,7 +48,7 @@ class Options(object):
         """
         Return md5 flag.
         """
-        return self._args.md5Flag
+        return self._args.md5_flag
 
     def get_speed(self):
         """
@@ -80,9 +80,9 @@ class Options(object):
 
         parser.add_argument('-dev', nargs=1, dest='device',
                             help='Select device (ie /dev/sr0).')
-        parser.add_argument('-erase', dest='eraseFlag', action='store_true',
+        parser.add_argument('-erase', dest='erase_flag', action='store_true',
                             help='Erase TOC on CD-RW media before writing in DAO mode.')
-        parser.add_argument('-md5', dest='md5Flag', action='store_true',
+        parser.add_argument('-md5', dest='md5_flag', action='store_true',
                             help='Verify MD5 check sum of data CD/DVD disk.')
         parser.add_argument('-speed', nargs=1, type=int, default=[8],
                             help='Select CD/DVD spin speed.')

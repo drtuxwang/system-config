@@ -28,12 +28,12 @@ class Options(object):
         """
         Return force flag.
         """
-        return self._args.forceFlag
+        return self._args.force_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Logout from X-windows desktop.')
 
-        parser.add_argument('-force', dest='forceFlag', action='store_true',
+        parser.add_argument('-force', dest='force_flag', action='store_true',
                             help='Force login without confirmation.')
 
         self._args = parser.parse_args(args)

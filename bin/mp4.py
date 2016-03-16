@@ -66,7 +66,7 @@ class Options(object):
         """
         Return noskip flag.
         """
-        return self._args.noskipFlag
+        return self._args.noskip_flag
 
     def get_run_time(self):
         """
@@ -119,7 +119,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Encode MP4 video using ffmpeg (libx264/aac).')
 
-        parser.add_argument('-noskip', dest='noskipFlag', action='store_true',
+        parser.add_argument('-noskip', dest='noskip_flag', action='store_true',
                             help='Disable skipping of encoding when codecs same.')
         parser.add_argument('-vq', nargs=1, dest='videoQuality', default=[None],
                             help='x264 quality (0=loseless, 51=worse). Default is 23.')

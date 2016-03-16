@@ -32,7 +32,7 @@ class Options(object):
         """
         Return force flag.
         """
-        return self._args.forceFlag
+        return self._args.force_flag
 
     def get_jobids(self):
         """
@@ -44,7 +44,7 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='MyQS v' + self._release + ', My Queuing System batch job deletion.')
 
-        parser.add_argument('-k', action='store_true', dest='forceFlag',
+        parser.add_argument('-k', action='store_true', dest='force_flag',
                             help='Force termination of running jobs.')
 
         parser.add_argument('jobIds', nargs='+', metavar='jobid',

@@ -66,7 +66,7 @@ class Options(object):
         """
         Return noskip flag.
         """
-        return self._args.noskipFlag[0]
+        return self._args.noskip_flag[0]
 
     def get_run_time(self):
         """
@@ -89,7 +89,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Encode WAV audio using ffmpeg (pcm_s16le).')
 
-        parser.add_argument('-noskip', dest='noskipFlag', action='store_true',
+        parser.add_argument('-noskip', dest='noskip_flag', action='store_true',
                             help='Disable skipping of encoding when codecs same.')
         parser.add_argument('-avol', nargs=1, dest='audioVolume', default=[None],
                             help='Select audio volume adjustment in dB (ie "-5", "5").')

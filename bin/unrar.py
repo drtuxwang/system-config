@@ -39,9 +39,9 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Unpack a compressed archive in RAR format.')
 
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='Show contents of archive.')
-        parser.add_argument('-test', dest='testFlag', action='store_true',
+        parser.add_argument('-test', dest='test_flag', action='store_true',
                             help='Test archive data only.')
 
         parser.add_argument('archives', nargs='+', metavar='file.rar',
@@ -60,9 +60,9 @@ class Options(object):
             self._archiver.set_args(args[1:])
             self._archiver.run(mode='exec')
 
-        if self._args.viewFlag:
+        if self._args.view_flag:
             self._archiver.set_flags(['l', '-std'])
-        elif self._args.testFlag:
+        elif self._args.test_flag:
             self._archiver.set_flags(['t', '-std'])
         else:
             self._archiver.set_flags(['x', '-std'])

@@ -33,12 +33,12 @@ class Options(object):
         """
         Return view flag.
         """
-        return self._args.viewFlag
+        return self._args.view_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Unpack an archive in TAR format.')
 
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='Show contents of archive.')
 
         parser.add_argument('archives', nargs='+', metavar='file.tar', help='Archive file.')

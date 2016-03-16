@@ -47,12 +47,12 @@ class Options(object):
         """
         Return repeat flag.
         """
-        return self._args.repeatFlag
+        return self._args.repeat_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Checks whether a host is up.')
 
-        parser.add_argument('-f', dest='repeatFlag', action='store_true',
+        parser.add_argument('-f', dest='repeat_flag', action='store_true',
                             help='Monitor host every five seconds.')
 
         parser.add_argument('host', nargs=1, help='Host to monitor.')

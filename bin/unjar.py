@@ -40,7 +40,7 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Unpack a compressed JAVA archive in JAR format.')
 
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='Show contents of archive.')
 
         parser.add_argument('archives', nargs='+', metavar='file.jar',
@@ -55,7 +55,7 @@ class Options(object):
         self._parse_args(args[1:])
 
         self._archiver = syslib.Command('jar')
-        if self._args.viewFlag:
+        if self._args.view_flag:
             self._archiver.set_flags(['tfv'])
         else:
             self._archiver.set_flags(['xfv'])

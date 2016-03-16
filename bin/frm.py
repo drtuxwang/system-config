@@ -33,12 +33,12 @@ class Options(object):
         """
         Return recursive flag.
         """
-        return self._args.recursiveFlag
+        return self._args.recursive_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Remove files or directories.')
 
-        parser.add_argument('-R', dest='recursiveFlag', action='store_true',
+        parser.add_argument('-R', dest='recursive_flag', action='store_true',
                             help='Remove directories recursively.')
 
         parser.add_argument('files', nargs='+', metavar='file', help='File or directory.')

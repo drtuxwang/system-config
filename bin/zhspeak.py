@@ -57,7 +57,7 @@ class Options(object):
         """
         Return sound flag.
         """
-        return self._args.soundFlag
+        return self._args.sound_flag
 
     def get_speak_dir(self):
         """
@@ -69,11 +69,11 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Zhong Hua Speak v' + self._release + ', Chinese TTS software.')
 
-        parser.add_argument('-xclip', action='store_true', dest='xclipFlag',
+        parser.add_argument('-xclip', action='store_true', dest='xclip_flag',
                             help='Select text from clipboard (enables single session).')
-        parser.add_argument('-pinyin', action='store_false', dest='soundFlag',
+        parser.add_argument('-pinyin', action='store_false', dest='sound_flag',
                             help='Print pinyin tones only.')
-        parser.add_argument('-g', action='store_true', dest='guiFlag', help='Start GUI.')
+        parser.add_argument('-g', action='store_true', dest='gui_flag', help='Start GUI.')
         parser.add_argument('-de', action='store_const', const='de', dest='dialect', default='zh',
                             help='Select Deutsch (German) language.')
         parser.add_argument('-en', action='store_const', const='en', dest='dialect', default='zh',
@@ -130,11 +130,11 @@ class Options(object):
                 raise SystemExit(sys.argv[0] + ': Cannot find "zhspeak-data" directory.')
             subtask_mod.Exec(zhspeak.get_cmdline()).run()
 
-        if self._args.guiFlag:
+        if self._args.gui_flag:
             zhspeaktcl = command_mod.Command('zhspeak.tcl', errors='stop')
             subtask_mod.Exec(zhspeaktcl.get_cmdline()).run()
 
-        if self._args.xclipFlag:
+        if self._args.xclip_flag:
             self._phrases = self._xclip()
         else:
             self._phrases = self._args.phrases

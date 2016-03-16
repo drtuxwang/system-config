@@ -36,7 +36,7 @@ class Options(object):
 
         parser.add_argument('-f', nargs=1, type=int, dest='format', metavar='code',
                             help='Select video format code.')
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='Show video format codes.')
 
         parser.add_argument('urls', nargs='+', metavar='url', help='Youtube video URL.')
@@ -56,7 +56,7 @@ class Options(object):
                 subtask_mod.Exec(youtube.get_cmdline()).run()
             self._youtubedl = command_mod.Command('youtube-dl', errors='stop')
 
-        if self._args.viewFlag:
+        if self._args.view_flag:
             self._youtubedl.set_args(['--list-formats'])
         elif self._args.format:
             self._youtubedl.set_args(['--title', '--format', str(self._args.format[0])])

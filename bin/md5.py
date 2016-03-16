@@ -27,7 +27,7 @@ class Options(object):
         """
         Return check flag.
         """
-        return self._args.checkFlag
+        return self._args.check_flag
 
     def get_files(self):
         """
@@ -39,14 +39,14 @@ class Options(object):
         """
         Return recursive flag.
         """
-        return self._args.recursiveFlag
+        return self._args.recursive_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Calculate MD5 checksums of files.')
 
-        parser.add_argument('-R', dest='recursiveFlag', action='store_true',
+        parser.add_argument('-R', dest='recursive_flag', action='store_true',
                             help='Recursive into sub-directories.')
-        parser.add_argument('-c', dest='checkFlag', action='store_true',
+        parser.add_argument('-c', dest='check_flag', action='store_true',
                             help='Check checksums against files.')
 
         parser.add_argument('files', nargs='+', metavar='file|file.md5',

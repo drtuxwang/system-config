@@ -35,12 +35,12 @@ class Options(object):
         """
         Return recursive flag.
         """
-        return self._args.recursiveFlag
+        return self._args.recursive_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Show files with same MD5 checksums.')
 
-        parser.add_argument('-R', dest='recursiveFlag', action='store_true',
+        parser.add_argument('-R', dest='recursive_flag', action='store_true',
                             help='Recursive into sub-directories.')
 
         parser.add_argument('files', nargs='+', metavar='file|file.md5',

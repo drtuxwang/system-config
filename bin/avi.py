@@ -66,7 +66,7 @@ class Options(object):
         """
         Return noskip flag.
         """
-        return self._args.noskipFlag
+        return self._args.noskip_flag
 
     def get_run_time(self):
         """
@@ -120,7 +120,7 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Encode AVI video using ffmpeg (libxvid/libmp3lame).')
 
-        parser.add_argument('-noskip', dest='noskipFlag', action='store_true',
+        parser.add_argument('-noskip', dest='noskip_flag', action='store_true',
                             help='Disable skipping of encoding when codecs same.')
         parser.add_argument('-vq', nargs=1, dest='videoQuality', default=[None],
                             help='Video quality (1=best, 31=worse). Default is 4.')

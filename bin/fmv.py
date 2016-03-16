@@ -27,7 +27,7 @@ class Options(object):
         """
         Return overwrite flag.
         """
-        return self._args.overwriteFlag
+        return self._args.overwrite_flag
 
     def get_sources(self):
         """
@@ -44,7 +44,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Move or rename files.')
 
-        parser.add_argument('-f', dest='overwriteFlag', action='store_true',
+        parser.add_argument('-f', dest='overwrite_flag', action='store_true',
                             help='Overwrite files.')
 
         parser.add_argument('sources', nargs='+', metavar='source',

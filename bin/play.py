@@ -37,20 +37,20 @@ class Options(object):
         """
         Return shuffle flag.
         """
-        return self._args.shuffleFlag
+        return self._args.shuffle_flag
 
     def get_view_flag(self):
         """
         Return view flag.
         """
-        return self._args.viewFlag
+        return self._args.view_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Play multimedia file/URL.')
 
-        parser.add_argument('-s', dest='shuffleFlag', action='store_true',
+        parser.add_argument('-s', dest='shuffle_flag', action='store_true',
                             help='Shuffle order of the media files.')
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='View information.')
         parser.add_argument('files', nargs='+', metavar='file',
                             help='Multimedia fiel or URL.')

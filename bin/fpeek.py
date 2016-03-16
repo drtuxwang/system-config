@@ -28,13 +28,13 @@ class Options(object):
         """
         Return all flag.
         """
-        return self._args.allFlag
+        return self._args.all_flag
 
     def get_ascii_flag(self):
         """
         Return ascii flag.
         """
-        return self._args.asciiFlag
+        return self._args.ascii_flag
 
     def get_files(self):
         """
@@ -46,9 +46,9 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Dump the first and last few bytes of a binary file.')
 
-        parser.add_argument('-a', dest='allFlag', action='store_true',
+        parser.add_argument('-a', dest='all_flag', action='store_true',
                             help='Show contents of the whole file.')
-        parser.add_argument('-c', dest='asciiFlag', action='store_true',
+        parser.add_argument('-c', dest='ascii_flag', action='store_true',
                             help='Show contents as ASCII characters.')
 
         parser.add_argument('files', nargs=1, metavar='file', help='File to view.')

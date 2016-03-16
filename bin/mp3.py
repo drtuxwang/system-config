@@ -66,7 +66,7 @@ class Options(object):
         """
         Return noskip flag.
         """
-        return self._args.noskipFlag
+        return self._args.noskip_flag
 
     def get_run_time(self):
         """
@@ -90,7 +90,7 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Encode MP3 audio using ffmpeg (libmp3lame).')
 
-        parser.add_argument('-noskip', dest='noskipFlag', action='store_true',
+        parser.add_argument('-noskip', dest='noskip_flag', action='store_true',
                             help='Disable skipping of encoding when codecs same.')
         parser.add_argument('-aq', nargs=1, dest='audioQuality', default=[None],
                             help='Select audio bitrate in kbps (128kbps default).')

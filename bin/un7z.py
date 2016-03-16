@@ -44,9 +44,9 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Unpack a compressed archive in 7Z format.')
 
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='Show contents of archive.')
-        parser.add_argument('-test', dest='testFlag', action='store_true',
+        parser.add_argument('-test', dest='test_flag', action='store_true',
                             help='Test archive data only.')
 
         parser.add_argument('archives', nargs='+', metavar='file.7z',
@@ -64,9 +64,9 @@ class Options(object):
         if self._archiver.is_found():
             self._archiver = syslib.Command('7z')
 
-        if self._args.viewFlag:
+        if self._args.view_flag:
             self._archiver.set_flags(['l'])
-        elif self._args.testFlag:
+        elif self._args.test_flag:
             self._archiver.set_flags(['t'])
         else:
             self._archiver.set_flags(['x', '-y'])

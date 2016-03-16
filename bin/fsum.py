@@ -29,13 +29,13 @@ class Options(object):
         """
         Return check flag.
         """
-        return self._args.checkFlag
+        return self._args.check_flag
 
     def get_create_flag(self):
         """
         Return create flag.
         """
-        return self._args.createFlag
+        return self._args.create_flag
 
     def get_files(self):
         """
@@ -47,7 +47,7 @@ class Options(object):
         """
         Return recursive flag.
         """
-        return self._args.recursiveFlag
+        return self._args.recursive_flag
 
     def get_update_file(self):
         """
@@ -62,11 +62,11 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Calculate checksum using MD5, file size and file modification time.')
 
-        parser.add_argument('-R', dest='recursiveFlag', action='store_true',
+        parser.add_argument('-R', dest='recursive_flag', action='store_true',
                             help='Recursive into sub-directories.')
-        parser.add_argument('-c', dest='checkFlag', action='store_true',
+        parser.add_argument('-c', dest='check_flag', action='store_true',
                             help='Check checksums against files.')
-        parser.add_argument('-f', dest='createFlag', action='store_true',
+        parser.add_argument('-f', dest='create_flag', action='store_true',
                             help='Create ".fsum" file for each file.')
         parser.add_argument('-update', nargs=1, dest='update_file', metavar='index.fsum',
                             help='Update checksums if file size and date changed.')

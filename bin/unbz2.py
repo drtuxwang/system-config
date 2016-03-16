@@ -33,7 +33,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Uncompress a file in BZIP2 format.')
 
-        parser.add_argument('-test', dest='testFlag', action='store_true',
+        parser.add_argument('-test', dest='test_flag', action='store_true',
                             help='Test archive data only.')
 
         parser.add_argument('archives', nargs='+', metavar='file.bz2', help='Archive file.')
@@ -48,7 +48,7 @@ class Options(object):
 
         self._bzip2 = syslib.Command('bzip2')
 
-        if self._args.testFlag:
+        if self._args.test_flag:
             self._bzip2.set_flags(['-t'])
         else:
             self._bzip2.set_flags(['-d'])

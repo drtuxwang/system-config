@@ -30,7 +30,7 @@ class Options(object):
         """
         Return copy link flag.
         """
-        return self._args.copyLinkFlag
+        return self._args.copyLink_flag
 
     def get_sources(self):
         """
@@ -47,7 +47,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Copy files and directories.')
 
-        parser.add_argument('-f', dest='copyLinkFlag', action='store_true',
+        parser.add_argument('-f', dest='copyLink_flag', action='store_true',
                             help='Follow links and copy file/directory.')
 
         parser.add_argument('sources', nargs='+', metavar='source',

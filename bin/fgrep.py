@@ -33,19 +33,19 @@ class Options(object):
         """
         Return ignore case flag.
         """
-        return self._args.ignoreCaseFlag
+        return self._args.ignoreCase_flag
 
     def get_invert_flag(self):
         """
         Return invert regular expression flag.
         """
-        return self._args.invertFlag
+        return self._args.invert_flag
 
     def get_number_flag(self):
         """
         Return line number flag.
         """
-        return self._args.numberFlag
+        return self._args.number_flag
 
     def get_pattern(self):
         """
@@ -56,11 +56,11 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Print lines matching a pattern.')
 
-        parser.add_argument('-i', dest='ignoreCaseFlag', action='store_true',
+        parser.add_argument('-i', dest='ignoreCase_flag', action='store_true',
                             help='Ignore case distinctions.')
-        parser.add_argument('-n', dest='numberFlag', action='store_true',
+        parser.add_argument('-n', dest='number_flag', action='store_true',
                             help='Prefix each line of output with line number.')
-        parser.add_argument('-v', dest='invertFlag', action='store_true',
+        parser.add_argument('-v', dest='invert_flag', action='store_true',
                             help='Invert the sense of matching.')
 
         parser.add_argument('pattern', nargs=1, help='Regular expression.')

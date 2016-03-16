@@ -41,13 +41,13 @@ class Options(object):
         """
         Return view flag.
         """
-        return self._args.viewFlag
+        return self._args.view_flag
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Normalize volume of wave files (-16.0dB rms mean volume).')
 
-        parser.add_argument('-v', dest='viewFlag', action='store_true',
+        parser.add_argument('-v', dest='view_flag', action='store_true',
                             help='View volume only.')
 
         parser.add_argument('files', nargs='+', metavar='file.wav', help='Audio file.')
