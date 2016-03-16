@@ -65,7 +65,7 @@ class Options(object):
             elif args[1] == '-reset':
                 self._reset()
                 raise SystemExit(0)
-        self._wine.set_args(args[1:])
+        self._wine.extend_args(args[1:])
 
         self._signal_trap()
         os.environ['WINEDEBUG'] = '-all'
