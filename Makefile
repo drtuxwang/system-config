@@ -1,6 +1,6 @@
 default: test
 
-test: py_compile requirements pep8 pylint unittest clean
+test: py_compile requirements pep8 pylint unittest
 	@echo "\n*** Tests successfull ***"
 
 py_compile:
