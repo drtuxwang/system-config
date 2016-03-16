@@ -344,6 +344,8 @@ bin/git-bash.bat       git bash shell for Windows
 bin/gitk               gitk wrapper (allowing non systems port)
 bin/gitk.bat
 bin/gitk.py
+bin/git-time           Modify file time to original GIT author time
+bin/_git_time.py
 
 bin/gnome-mines        gnome-mines wrapper (allowing non systems port)
 bin/_gnome_mines.py    (can pick using old gnomines name)
