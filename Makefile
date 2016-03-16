@@ -5,19 +5,19 @@ test: py_compile pep8 pylint unittest clean
 
 py_compile:
 	@echo "\n*** Running Python 3 compilation check ***"
-	python3 -m py_compile *.py
+	python3 -m py_compile bin/*.py
 
 pep8:
 	@echo "\n*** Running Python 3 PEP8 check ***"
-	python3 -m pep8 --max-line-length=100 *.py
+	python3 -m pep8 --max-line-length=100 bin/*.py
 
 pylint:
 	@echo "\n*** Running Python 3 LINT check ***"
-	python3 -m pylint --max-line-length=100 -j 2 --reports=n *.py
+	python3 -m pylint --max-line-length=100 -j 2 --reports=n bin/*.py
 
 unittest:
 	@echo "\n*** Running Python 3 UNITTEST check ***"
-	python3 ./test_pyld.py
+	python3 ./bin/test_pyld.py
 
 clean:
 	@echo "\n*** Cleaning ***"

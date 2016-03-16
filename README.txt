@@ -544,10 +544,6 @@ bin/pyprof             Profile Python 3.x program
 bin/pyprof.bat
 bin/pyprof.py
 
-bin/pytest             Run Python unittests in module files
-bin/pytest.bat
-bin/_pytest.py
-
 bin/python             Python startup (allowing non systems port)
 bin/python.bat
 bin/python2
