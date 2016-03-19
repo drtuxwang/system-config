@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.6 (2016-03-01)
+Version 2.0.7 (2016-03-19)
 """
 
 import distutils.version
@@ -129,6 +129,8 @@ class Command(object):
 
     @staticmethod
     def _search_path(pathextra, program, extensions):
+        program = os.path.basename(program)
+
         # Shake PATH to make it unique
         paths = []
         for path in list(pathextra) + os.environ['PATH'].split(os.pathsep):
@@ -137,8 +139,7 @@ class Command(object):
                     paths.append(path)
 
         # Prevent recursion
-        program = os.path.basename(program)
-        if os.path.basename(sys.argv[0]) in (program, program + '.py'):
+        if not pathextra and os.path.basename(sys.argv[0]) in (program, program + '.py'):
             mydir = os.path.dirname(sys.argv[0])
             if mydir in paths:
                 paths = paths[paths.index(mydir) + 1:]
@@ -147,6 +148,7 @@ class Command(object):
             mynames = (sys.argv[0][:-3], sys.argv[0])
         else:
             mynames = (sys.argv[0], sys.argv[0] + '.py')
+
         for directory in paths:
             if os.path.isdir(directory):
                 for extension in extensions:
