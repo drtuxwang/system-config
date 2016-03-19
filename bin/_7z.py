@@ -126,7 +126,7 @@ class Main(object):
         if file.endswith('.bin'):
             sfx = os.path.join(os.path.dirname(archiver.get_file()), '7zCon.sfx')
         elif file.endswith('.exe'):
-            sfx = os.path.join(os.path.dirname(archiver.get_file()), '7zCon.exe')
+            sfx = os.path.join(os.path.dirname(archiver.get_file()), '7zExe.sfx')
         else:
             return ''
 

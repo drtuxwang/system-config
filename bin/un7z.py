@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -60,16 +61,16 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._archiver = syslib.Command('7za', check=False)
+        self._archiver = command_mod.Command('7za', errors='ignoe')
         if self._archiver.is_found():
-            self._archiver = syslib.Command('7z')
+            self._archiver = command_mod.Command('7z', errors='stop')
 
         if self._args.view_flag:
-            self._archiver.set_flags(['l'])
+            self._archiver.set_args(['l'])
         elif self._args.test_flag:
-            self._archiver.set_flags(['t'])
+            self._archiver.set_args(['t'])
         else:
-            self._archiver.set_flags(['x', '-y'])
+            self._archiver.set_args(['x', '-y'])
 
         self._setenv()
 
@@ -117,18 +118,18 @@ class Main(object):
 
         if os.name == 'nt':
             for archive in options.get_archives():
-                archiver.set_args([archive])
-                archiver.run()
-                if archiver.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
-                                     ' received from "' + archiver.get_file() + '".')
+                task = subtask_mod.Task(archiver.get_cmdline() + [archive])
+                task.run()
+                if task.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                     ' received from "' + task.get_file() + '".')
         else:
             for archive in options.get_archives():
-                archiver.set_args([archive])
-                archiver.run(replace=('\\', '/'))
-                if archiver.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
-                                     ' received from "' + archiver.get_file() + '".')
+                task = subtask_mod.Task(archiver.get_cmdline() + [archive])
+                task.run(replace=('\\', '/'))
+                if task.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                     ' received from "' + task.get_file() + '".')
 
 
 if __name__ == '__main__':
