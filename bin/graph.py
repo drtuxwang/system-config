@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -74,7 +75,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._gnuplot = syslib.Command('gnuplot')
+        self._gnuplot = command_mod.Command('gnuplot', errors='stop')
 
         if self._args.xcol[0] < 1:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
@@ -153,11 +154,12 @@ class Main(object):
                          ':' + str(column + 1) + ' t "' + ylabel + '" w ' + self._mode)
                 self._writefile(self._file + '_' + self._labels[column] + '.plt', stdin)
                 print('Plotting "' + output + '"...')
-                self._gnuplot.run(stdin=stdin)
-                if self._gnuplot.get_exitcode():
+                task = subtask_mod.Task(self._gnuplot.get_cmdline())
+                task.run(stdin=stdin)
+                if task.get_exitcode():
                     raise SystemExit(
-                        sys.argv[0] + ': Error code ' + str(self._gnuplot.get_exitcode()) +
-                        ' received from "' + self._gnuplot.get_file() + '".')
+                        sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                        ' received from "' + task.get_file() + '".')
 
     @staticmethod
     def _writefile(file, lines):

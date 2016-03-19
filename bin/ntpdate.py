@@ -9,7 +9,8 @@ import signal
 import sys
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -51,15 +52,16 @@ class Main(object):
         """
         Start program
         """
-        ntpdate = syslib.Command('ntpdate', pathextra=['/usr/sbin'])
+        ntpdate = command_mod.Command('ntpdate', pathextra=['/usr/sbin'], errors='stop')
         ntpdate.set_args(['pool.ntp.org'])
 
         if len(sys.argv) == 1 or sys.argv[1] != '-u':
-            ntpdate.run(mode='exec')
+            subtask_mod.Exec(ntpdate.get_cmdline()).run()
 
+        task = subtask_mod.Batch(ntpdate.get_cmdline())
         while True:
-            ntpdate.run(mode='batch')
-            if not ntpdate.has_error():
+            task.run()
+            if not task.has_error():
                 print('NTP Time updated =', time.strftime('%Y-%m-%d-%H:%M:%S'))
                 time.sleep(86340)
             time.sleep(60)

@@ -4,14 +4,16 @@ Download Debian packages list files.
 """
 
 import argparse
+import functools
 import glob
 import os
 import shutil
 import signal
 import sys
 
+import command_mod
 import file_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -67,18 +69,18 @@ class Main(object):
                 'Packages.xz', 'Packages.bz2', 'Packages.gz'):
             raise SystemExit(sys.argv[0] + ': Invalid "' + url + '" URL.')
         self._remove()
-        self._wget.set_args([url])
-        self._wget.run(mode='batch')
-        if self._wget.is_match_error(' saved '):
+        task = subtask_mod.Batch(self._wget.get_cmdline() + [url])
+        task.run()
+        if task.is_match_error(' saved '):
             print('  [' + file_mod.FileStat(archive).get_time_local() + ']', url)
-        elif not self._wget.is_match_error('^Server file no newer'):
+        elif not task.is_match_error('^Server file no newer'):
             print('  [File Download Error]', url)
             self._remove()
             raise SystemExit(1)
-        elif self._wget.get_exitcode():
+        elif task.get_exitcode():
             self._remove()
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._wget.get_exitcode()) +
-                             ' received from "' + self._wget.get_file() + '".')
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
         self._unpack(archive)
         site = url[:url.find('/dists/') + 1]
         lines = []
@@ -104,13 +106,20 @@ class Main(object):
             pass
 
     @staticmethod
-    def _unpack(file):
+    @functools.lru_cache(maxsize=4)
+    def _get_cmdline(name):
+        command = command_mod.Command(name, args=['-d'], errors='stop')
+
+        return command.get_cmdline()
+
+    @classmethod
+    def _unpack(cls, file):
         if file.endswith('.xz'):
-            syslib.Command('xz', args=['-d', file]).run()
+            subtask_mod.Task(cls._get_cmdline('xz') + [file]).run()
         elif file.endswith('.bz2'):
-            syslib.Command('bzip2', args=['-d', file]).run()
+            subtask_mod.Task(cls._get_cmdline('bzip2') + [file]).run()
         elif file.endswith('.gz'):
-            syslib.Command('gzip', args=['-d', file]).run()
+            subtask_mod.Task(cls._get_cmdline('gzip') + [file]).run()
         else:
             raise SystemExit(sys.argv[0] + ': Cannot unpack "' + file + '" package file.')
 
@@ -139,7 +148,7 @@ class Main(object):
 
         options = Options()
 
-        self._wget = syslib.Command('wget', flags=['--timestamping'])
+        self._wget = command_mod.Command('wget', args=['--timestamping'], errors='stop')
         for distribution_file in options.get_distribution_files():
             if distribution_file.endswith('.dist'):
                 try:

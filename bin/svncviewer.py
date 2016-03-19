@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -32,16 +33,17 @@ class Options(object):
 
     @staticmethod
     def _getport(remote_host, remote_port):
-        lsof = syslib.Command('lsof', args=['-i', 'tcp:5901-5999'])
-        lsof.run(mode='batch')
+        lsof = command_mod.Command('lsof', args=['-i', 'tcp:5901-5999'], errors='stop')
+        task = subtask_mod.Batch(lsof.get_cmdline())
+        task.run()
         for local_port in range(5901, 6000):
-            if not lsof.is_match_output(':' + str(local_port) + '[ -]'):
-                ssh = syslib.Command('ssh')
+            if not task.is_match_output(':' + str(local_port) + '[ -]'):
+                ssh = command_mod.Command('ssh', errors='stop')
                 ssh.set_args(['-f', '-L', str(local_port) + ':localhost:' + remote_port,
                               remote_host, 'sleep', '64'])
                 print('Starting "ssh" port forwarding from "localhost:' + str(local_port) +
                       '" to "' + remote_host + ':' + remote_port + '"...')
-                ssh.run()
+                subtask_mod.Task(ssh.get_cmdline()).run()
                 return str(local_port)
         raise SystemExit(sys.argv[0] + ': Cannot find unused local port in range 5901-5999.')
 
@@ -73,7 +75,7 @@ class Options(object):
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer '
                              'for port number.')
 
-        self._vncviewer = syslib.Command('vncviewer')
+        self._vncviewer = command_mod.Command('vncviewer', errors='stop')
         if remote_host:
             local_port = self._getport(remote_host, remote_port)
             print('Starting "vncviewer" connection via "localhost:' + local_port + '" to "' +
@@ -122,7 +124,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_vncviewer().run(mode='daemon')
+        subtask_mod.Daemon(options.get_vncviewer().get_cmdline()).run()
 
 
 if __name__ == '__main__':

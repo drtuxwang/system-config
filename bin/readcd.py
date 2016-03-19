@@ -11,8 +11,9 @@ import signal
 import sys
 import time
 
+import command_mod
 import file_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -160,29 +161,34 @@ class Main(object):
 
     @staticmethod
     def _cdspeed(device, speed):
-        cdspeed = syslib.Command('cdspeed', flags=[device], check=False)
+        cdspeed = command_mod.Command('cdspeed', errors='ignore')
         if cdspeed.is_found():
             if speed:
-                cdspeed.set_args([str(speed)])
-            cdspeed.run()
-        elif speed:
-            hdparm = syslib.Command(file='/sbin/hdparm', args=['-E', str(speed), device])
-            hdparm.run(mode='batch')
+                cdspeed.set_args([device, str(speed)])
+            # If CD/DVD spin speed change fails its okay
+            subtask_mod.Task(cdspeed.get_cmdline()).run()
+        elif speed and os.path.isfile('/sbin/hdparm'):
+            hdparm = command_mod.Command('/sbin/hdparm', errors='ignore')
+            hdparm.set_args(['-E', str(speed), device])
+            subtask_mod.Batch(hdparm.get_cmdline()).run()
 
     @staticmethod
     def _dao(device, speed, file):
-        cdrdao = syslib.Command('cdrdao', flags=['read-cd', '--device', device, '--read-raw'])
-        nice = syslib.Command('nice', args=['-20'])
+        cdrdao = command_mod.Command('cdrdao', errors='stop')
+
+        cdrdao.set_args(['read-cd', '--device', device, '--read-raw'])
         if speed:
             cdrdao.extend_args(['--speed', speed])
         if file.endswith('.bin'):
-            cdrdao.set_args(['--datafile', file, file[:-4] + '.toc'])
+            cdrdao.extend_args(['--datafile', file, file[:-4] + '.toc'])
         else:
-            cdrdao.set_args(['--datafile', file, file + '.toc'])
-        cdrdao.set_wrapper(nice)
-        cdrdao.run()
-        if cdrdao.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(cdrdao.get_exitcode()) +
+            cdrdao.extend_args(['--datafile', file, file + '.toc'])
+
+        nice = command_mod.Command('nice', args=['-20'], errors='stop')
+        task = subtask_mod.Task(nice.get_cmdline() + cdrdao.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                              ' received from "' + cdrdao.get_file() + '".')
 
     @staticmethod
@@ -208,38 +214,45 @@ class Main(object):
             print('  {0:10s}  {1:s}'.format(key, value))
 
     def _tao(self, device, file):
-        isoinfo = syslib.Command('isoinfo')
-        nice = syslib.Command('nice', args=['-20'])
-        command = syslib.Command(
-            'dd', args=['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + file])
-        command.run(mode='batch')
-        if command.get_error()[0].endswith('Permission denied'):
+        isoinfo = command_mod.Command('isoinfo', errors='stop')
+
+        command = command_mod.Command('dd', errors='stop')
+        command.set_args(['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + file])
+        task = subtask_mod.Batch(command.get_cmdline())
+        task.run()
+        if task.get_error()[0].endswith('Permission denied'):
             raise SystemExit(sys.argv[0] + ': Cannot read from CD/DVD device. '
                                            'Please check permissions.')
         elif not os.path.isfile(file):
             raise SystemExit(sys.argv[0] + ': Cannot find CD/DVD media. Please check drive.')
-        elif command.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
-                             ' received from "' + command.get_file() + '".')
+        elif task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
 
         isoinfo.set_args(['-d', '-i', file])
-        isoinfo.run(filter='^Volume size is: ', mode='batch')
-        if not isoinfo.has_output():
+        task = subtask_mod.Batch(isoinfo.get_cmdline())
+        task.run(pattern='^Volume size is: ')
+        if not task.has_output():
             raise SystemExit(sys.argv[0] + ': Cannot find TOC on CD/DVD media. '
                                            'Disk not recognised.')
-        elif isoinfo.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.get_exitcode()) +
-                             ' received from "' + isoinfo.get_file() + '".')
-        blocks = int(isoinfo.get_output()[0].split()[-1])
-        isoinfo.run(filter=' id: $')
-        if isoinfo.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.get_exitcode()) +
-                             ' received from "' + isoinfo.get_file() + '".')
+        elif task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
+        blocks = int(task.get_output()[0].split()[-1])
+
+        task2 = subtask_mod.Task(isoinfo.get_cmdline())
+        task2.run(pattern=' id: $')
+        if task2.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task2.get_exitcode()) +
+                             ' received from "' + task2.get_file() + '".')
 
         print('Creating ISO image file "' + file + '"...')
         command.set_args(['if=' + device, 'bs=2048', 'count=' + str(blocks), 'of=' + file])
-        command.set_wrapper(nice)
-        command.run(filter='Input/output error| records (in|out)$')
+
+        nice = command_mod.Command('nice', args=['-20'], errors='stop')
+        task2 = subtask_mod.Task(nice.get_cmdline() + command.get_cmdline())
+        task2.run(pattern='Input/output error| records (in|out)$')
+
         if not os.path.isfile(file):
             raise SystemExit(sys.argv[0] + ': Cannot find CD/DVD media. Please check drive.')
         pad = int(blocks * 2048 - file_mod.FileStat(file).get_size())
@@ -311,12 +324,13 @@ class Main(object):
                 else:
                     print(md5sum, file, sep='  ')
             time.sleep(1)
-            eject = syslib.Command('eject', check=False)
+            eject = command_mod.Command('eject', errors='ignore')
             if eject.is_found():
-                eject.run(mode='batch')
-                if eject.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(eject.get_exitcode()) +
-                                     ' received from "' + eject.get_file() + '".')
+                task = subtask_mod.Batch(eject.get_cmdline())
+                task.run()
+                if task.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                     ' received from "' + task.get_file() + '".')
 
 
 if __name__ == '__main__':

@@ -12,7 +12,8 @@ import signal
 import sys
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -131,44 +132,48 @@ class Main(object):
 
     @staticmethod
     def _cdspeed(device, speed):
-        cdspeed = syslib.Command('cdspeed', flags=[device], check=False)
+        cdspeed = command_mod.Command('cdspeed', errors='ignore')
         if cdspeed.is_found():
             if speed:
-                cdspeed.set_args([str(speed)])
+                cdspeed.set_args([device, str(speed)])
             # If CD/DVD spin speed change fails its okay
-            cdspeed.run()
-        elif speed:
-            hdparm = syslib.Command(file='/sbin/hdparm', args=['-E', str(speed), device])
-            hdparm.run(mode='batch')
+            subtask_mod.Task(cdspeed.get_cmdline()).run()
+        elif speed and os.path.isfile('/sbin/hdparm'):
+            hdparm = command_mod.Command('/sbin/hdparm', errors='ignore')
+            hdparm.set_args(['-E', str(speed), device])
+            subtask_mod.Batch(hdparm.get_cmdline()).run()
 
     @staticmethod
     def _md5tao(device):
-        isoinfo = syslib.Command('isoinfo')
-        nice = syslib.Command('nice', args=['-20'])
+        isoinfo = command_mod.Command('isoinfo', errors='stop')
+
         tmpfile = os.sep + os.path.join(
             'tmp', 'fprint-' + getpass.getuser() + '.' + str(os.getpid()))
-        command = syslib.Command(
-            'dd', args=['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + tmpfile])
-        command.run(mode='batch')
-        if command.get_error('Permission denied$'):
-            raise SystemExit(sys.argv[0] +
-                             ': Cannot read from CD/DVD device. Please check permissions.')
+        command = command_mod.Command('dd', errors='stop')
+        command.set_args(['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + tmpfile])
+        task = subtask_mod.Batch(command.get_cmdline())
+        task.run()
+        if task.get_error('Permission denied$'):
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read from CD/DVD device. Please check permissions.')
         elif not os.path.isfile(tmpfile):
             raise SystemExit(sys.argv[0] + ': Cannot find CD/DVD media. Please check drive.')
 
         isoinfo.set_args(['-d', '-i', tmpfile])
-        isoinfo.run(filter='^Volume size is: ', mode='batch')
-        if not isoinfo.has_output():
-            raise SystemExit(sys.argv[0] +
-                             ': Cannot find TOC on CD/DVD media. Disk not recognised.')
-        elif isoinfo.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.get_exitcode()) +
-                             ' received from "' + isoinfo.get_file() + '".')
-        blocks = int(isoinfo.get_output()[0].split()[-1])
+        task2 = subtask_mod.Task(isoinfo.get_cmdline())
+        task2.run(pattern='^Volume size is: ')
+        if not task2.has_output():
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find TOC on CD/DVD media. Disk not recognised.')
+        elif task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task2.get_exitcode()) +
+                             ' received from "' + task2.get_file() + '".')
+        blocks = int(task2.get_output()[0].split()[-1])
 
         command.set_args(['if=' + device, 'bs=2048', 'count=' + str(blocks)])
-        command.set_wrapper(nice)
-        child = command.run(mode='child')
+
+        nice = command_mod.Command('nice', args=['-20'], errors='stop')
+        child = subtask_mod.Child(nice.get_cmdline() + command.get_cmdline()).run()
         child.stdin.close()
         size = 0
         md5 = hashlib.md5()
@@ -185,12 +190,13 @@ class Main(object):
         print(md5.hexdigest(), device, sep='  ')
         time.sleep(1)
 
-        eject = syslib.Command('eject', check=False)
+        eject = command_mod.Command('eject', errors='ignore')
         if eject.is_found():
-            eject.run(mode='batch')
-            if eject.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(eject.get_exitcode()) +
-                                 ' received from "' + eject.get_file() + '".')
+            task = subtask_mod.Batch(eject.get_cmdline())
+            task.run()
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
 
     @staticmethod
     def _scan():

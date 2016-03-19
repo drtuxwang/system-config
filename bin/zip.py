@@ -107,7 +107,6 @@ class Main(object):
         """
         options = Options()
 
-        print('debugX', options.get_archiver().get_cmdline())
         subtask_mod.Exec(options.get_archiver().get_cmdline()).run()
 
 

@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -24,9 +25,8 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-        self._aspell = syslib.Command('aspell')
-        self._aspell.set_flags(['-c'])
-        self._aspell.set_args(self._args.files)
+        self._aspell = command_mod.Command('aspell', errors='stop')
+        self._aspell.set_args(['-c'] + self._args.files)
 
     def get_aspell(self):
         """
@@ -86,7 +86,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_aspell().run(mode='exec')
+        subtask_mod.Exec(options.get_aspell().get_cmdline()).run()
 
 
 if __name__ == '__main__':

@@ -10,7 +10,8 @@ import sys
 import threading
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -37,7 +38,7 @@ class CommandThread(threading.Thread):
         """
         Start thread
         """
-        self._child = self._command.run(mode='child')
+        self._child = subtask_mod.Child(self._command.get_cmdline()).run()
         while True:
             try:
                 byte = self._child.stdout.read(1)
@@ -89,11 +90,12 @@ class Main(object):
 
     @staticmethod
     def _detect():
-        mount = syslib.Command('mount')
-        mount.run(mode='batch')
+        mount = command_mod.Command('mount', errors='stop')
+        task = subtask_mod.Batch(mount.get_cmdline())
+        task.run()
 
         mounts = []
-        for line in mount.get_output():
+        for line in task.get_output():
             try:
                 directory, info = line.split(' ', 3)[2:]
             except IndexError:
@@ -123,30 +125,30 @@ class Main(object):
                     break
             try:
                 device, blocks, used, avail, ratio, directory = thread.get_output().split()[-6:]
+                if int(blocks) != 0:
+                    if device in devices:  # Map UUID to device
+                        device = devices[device]
+                    if len(device) > 15:
+                        print(device)
+                        device = ''
+                    print('{0:15s} {1:>10s} {2:>10s} {3:>10s} {4:>4s} {5:s}'.format(
+                        device, blocks, used, avail, ratio, directory))
             except (IndexError, ValueError):
                 continue
-
-            if blocks != '0':
-                if device in devices:  # Map UUID to device
-                    device = devices[device]
-                if len(device) > 15:
-                    print(device)
-                    device = ''
-                print('{0:15s} {1:>10s} {2:>10s} {3:>10s} {4:>4s} {5:s}'.
-                      format(device, blocks, used, avail, ratio, directory))
 
     def run(self):
         """
         Generate report
         """
-        self._command = syslib.Command('df', args=sys.argv[1:], pathextra=['/bin'])
+        self._command = command_mod.Command(
+            'df', args=sys.argv[1:], pathextra=['/bin'], errors='stop')
 
         args = sys.argv
         while len(args) > 1:
             if not args[1].startswith('-'):
                 break
             elif args[1] != '-k':
-                self._command.run(mode='exec')
+                subtask_mod.Exec(self._command.get_cmdline()).run()
             args = args[1:]
 
         self._mounts = args[1:]

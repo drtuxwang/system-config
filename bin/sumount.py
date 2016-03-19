@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -89,18 +90,19 @@ class Main(object):
         options = Options()
 
         directories = options.get_directories()
-        mount = syslib.Command('mount')
-        fusermount = syslib.Command('fusermount')
+        mount = command_mod.Command('mount', errors='stop')
+        fusermount = command_mod.Command('fusermount', errors='stop')
 
         for directory in directories:
-            mount.run(filter=' ' + directory + ' type fuse.sshfs ', mode='batch')
-            if not mount.has_output():
+            task = subtask_mod.Batch(mount.get_cmdline())
+            task.run(pattern=' ' + directory + ' type fuse.sshfs ')
+            if not task.has_output():
                 raise SystemExit(sys.argv[0] + ': "' + directory + '" is not a mount point.')
-            elif mount.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(mount.get_exitcode()) +
-                                 ' received from "' + mount.get_file() + '".')
+            elif task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
             fusermount.set_args(['-u', directory])
-            fusermount.run()
+            subtask_mod.Task(fusermount.get_cmdline()).run()
 
 
 if __name__ == '__main__':

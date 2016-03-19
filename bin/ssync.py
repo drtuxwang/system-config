@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -47,12 +48,11 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        ssh = syslib.Command('ssh')
+        ssh = command_mod.Command('ssh', errors='stop')
 
-        self._rsync = syslib.Command('rsync')
-        self._rsync.set_flags(
-            ['-l', '-p', '-r', '-t', '-v', '-z', '-e', ssh.get_file(), '--delete'])
-        self._rsync.set_args([self._args.source[0], self._args.target[0]])
+        self._rsync = command_mod.Command('rsync', errors='stop')
+        self._rsync.set_args(['-l', '-p', '-r', '-t', '-v', '-z', '-e', ssh.get_file(), '--delete',
+                              self._args.source[0], self._args.target[0]])
 
 
 class Main(object):
@@ -93,7 +93,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_rsync().run(filter='^$')
+        subtask_mod.Task(options.get_rsync().get_cmdline()).run(pattern='^$')
 
 
 if __name__ == '__main__':

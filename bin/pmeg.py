@@ -10,7 +10,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -61,7 +62,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._convert = syslib.Command('convert')
+        self._convert = command_mod.Command('convert', errors='stop')
 
         if self._args.megs[0] < 1:
             raise SystemExit(sys.argv[0] + ': You must specific a positive number for megabytes.')
@@ -105,13 +106,14 @@ class Main(object):
 
     def _imagesize(self, file):
         self._convert.set_args(['-verbose', file, '/dev/null'])
-        self._convert.run(filter='^' + file + '=>', mode='batch', error2output=True)
-        if not self._convert.has_output():
+        task = subtask_mod.Batch(self._convert.get_cmdline())
+        task.run(pattern='^' + file + '=>', error2output=True)
+        if not task.has_output():
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" picture file.')
-        elif self._convert.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._convert.get_exitcode()) +
-                             ' received from "' + self._convert.get_file() + '".')
-        x_size, y_size = self._convert.get_output()[0].split('+')[0].split()[-1].split('x')
+        elif task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
+        x_size, y_size = task.get_output()[0].split('+')[0].split()[-1].split('x')
         return (int(x_size), int(y_size))
 
     def run(self):
@@ -139,11 +141,12 @@ class Main(object):
                         self._convert.set_args(
                             ['-verbose', '-size', str(ox_size) + 'x' + str(oy_size),
                              '-resize', str(ox_size) + 'x' + str(oy_size) + '!', file, file])
-                        self._convert.run(mode='batch')
-                        if self._convert.get_exitcode():
+                        task = subtask_mod.Batch(self._convert.get_cmdline())
+                        task.run()
+                        if task.get_exitcode():
                             raise SystemExit(
-                                sys.argv[0] + ': Error code ' + str(self._convert.get_exitcode()) +
-                                ' received from "' + self._convert.get_file() + '".')
+                                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                ' received from "' + task.get_file() + '".')
                     print()
 
 

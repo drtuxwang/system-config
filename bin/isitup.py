@@ -10,7 +10,8 @@ import signal
 import sys
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -59,35 +60,40 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+    @staticmethod
+    def _get_ping():
+        if os.path.isfile('/usr/sbin/ping'):
+            return command_mod.CommandFile('/usr/sbin/ping')
+        elif os.path.isfile('/usr/etc/ping'):
+            return command_mod.CommandFile('/usr/etc/ping')
+        else:
+            return command_mod.Command('ping')
+
     def parse(self, args):
         """
         Parse arguments
         """
         self._parse_args(args[1:])
 
-        if os.path.isfile('/usr/sbin/ping'):
-            self._ping = syslib.Command(file='/usr/sbin/ping')
-        elif os.path.isfile('/usr/etc/ping'):
-            self._ping = syslib.Command(file='/usr/etc/ping')
-        else:
-            self._ping = syslib.Command('ping')
-
         host = self._args.host[0]
+        self._ping = self._get_ping()
+        self._ping.set_args(['-w', '4', '-c', '3', host])
         self._pattern = 'min/avg/max'
-        if syslib.info.get_system() == 'linux':
-            self._ping.set_args(['-h'])
-            self._ping.run(filter='[-]w ', mode='batch')
-            if self._ping.has_output():
-                self._ping.set_args(['-w', '4', '-c', '3', host])
-            else:
-                self._ping.set_args(['-c', '3', host])
-        elif syslib.info.get_system() == 'sunos':
-            self._ping.set_args(['-s', host, '64', '3'])
-        elif os.name == 'nt':
+
+        if os.name == 'nt':
             self._ping.set_args(['-w', '4', '-n', '3', host])
             self._pattern = 'Minimum|TTL'
         else:
-            self._ping.set_args(['-w', '4', '-c', '3', host])
+            osname = os.uname()[0]
+            if osname == 'Linux':
+                task = subtask_mod.Batch(self._ping.get_cmdline() + ['-h'])
+                task.run(pattern='[-]w ')
+                if task.has_output():
+                    self._ping.set_args(['-w', '4', '-c', '3', host])
+                else:
+                    self._ping.set_args(['-c', '3', host])
+            elif osname == 'SunOS':
+                self._ping.set_args(['-s', host, '64', '3'])
 
 
 class Main(object):
@@ -123,8 +129,9 @@ class Main(object):
 
     @staticmethod
     def _ping(options):
-        options.get_ping().run(filter=options.get_pattern(), mode='batch')
-        if options.get_ping().has_output():
+        task = subtask_mod.Batch(options.get_ping().get_cmdline())
+        task.run(pattern=options.get_pattern())
+        if task.has_output():
             return options.get_host() + ' is alive'
         else:
             return options.get_host() + ' is dead'

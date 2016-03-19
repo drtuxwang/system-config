@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -57,15 +58,15 @@ class Main(object):
 
         if not os.path.isfile(sound):
             raise SystemExit(sys.argv[0] + ': Cannot find "' + sound + '" file.')
-        bell = syslib.Command('ogg123', check=False)
+        bell = command_mod.Command('ogg123', errors='ignore')
         if not bell.is_found():
-            bell = syslib.Command('cvlc', flags=['--play-and-exit'], check=False)
+            bell = command_mod.Command('cvlc', flags=['--play-and-exit'], errors='ignore')
             if not bell.is_found():
                 raise SystemExit(sys.argv[0] + ': Cannot find required "ogg123" or'
                                  ' "cvlc" software.')
         bell.set_args([sound])
 
-        bell.run(mode='batch')
+        subtask_mod.Background(bell.get_cmdline()).run()
 
 
 if __name__ == '__main__':

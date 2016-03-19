@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -50,10 +51,10 @@ class Main(object):
         """
         Start program
         """
-        javac = syslib.Command(os.path.join('bin', 'javac'))
+        javac = command_mod.Command(os.path.join('bin', 'javac'), errors='stop')
         javac.set_args(sys.argv[1:])
 
-        javac.run(mode='exec')
+        subtask_mod.Exec(javac.get_cmdline()).run()
 
 
 if __name__ == '__main__':

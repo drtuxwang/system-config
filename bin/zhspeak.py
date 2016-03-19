@@ -104,7 +104,6 @@ class Options(object):
         for pid in tasks.get_pids():
             if pid != os.getpid():
                 if isxclip.search(tasks.get_process(pid)['COMMAND']):
-                    print('debugX pid', pid)
                     # Kill old zhspeak clipboard
                     tasks.killpids([pid] + tasks.get_descendant_pids(pid))
         xclip = command_mod.Command('xclip', errors='stop')

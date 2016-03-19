@@ -10,7 +10,8 @@ import shutil
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -31,7 +32,7 @@ class Options(object):
         """
         return self._args.files
 
-    def get_normalize(self):
+    def get_ffmpeg(self):
         """
         Return ffmpeg Command class object.
         """
@@ -60,9 +61,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._ffmpeg = syslib.Command('ffmpeg', check=False)
-        if not self._ffmpeg.is_found():
-            self._ffmpeg = syslib.Command('ffmpeg')
+        self._ffmpeg = command_mod.Command('ffmpeg', errors='stop')
 
 
 class Main(object):
@@ -102,10 +101,11 @@ class Main(object):
 
         self._ffmpeg.set_args(
             ['-i', file, '-af', 'volume=' + str(change) + 'dB', '-y', '-f', 'wav', file_new])
-        self._ffmpeg.run(mode='batch')
-        if self._ffmpeg.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ffmpeg.get_exitcode()) +
-                             ' received from "' + self._ffmpeg.get_file() + '".')
+        task = subtask_mod.Batch(self._ffmpeg.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
         try:
             shutil.move(file_new, file)
         except OSError:
@@ -114,14 +114,15 @@ class Main(object):
 
     def _view(self, file):
         self._ffmpeg.set_args(['-i', file, "-af", "volumedetect", "-f", "null", "/dev/null"])
-        self._ffmpeg.run(filter=' (mean|max)_volume: .* dB$', mode='batch', error2output=True)
-        if len(self._ffmpeg.get_output()) != 2:
+        task = subtask_mod.Batch(self._ffmpeg.get_cmdline())
+        task.run(pattern=' (mean|max)_volume: .* dB$', error2output=True)
+        if len(task.get_output()) != 2:
             raise SystemExit(sys.argv[0] + ': Cannot read corrupt "' + file + '" wave file.')
-        elif self._ffmpeg.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ffmpeg.get_exitcode()) +
-                             ' received from "' + self._ffmpeg.get_file() + '".')
-        volume = self._ffmpeg.get_output()[0].split()[-2]
-        pvolume = self._ffmpeg.get_output()[1].split()[-2]
+        elif task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
+        volume = task.get_output()[0].split()[-2]
+        pvolume = task.get_output()[1].split()[-2]
         return (volume, pvolume)
 
     def run(self):
@@ -130,7 +131,7 @@ class Main(object):
         """
         options = Options()
 
-        self._ffmpeg = options.get_normalize()
+        self._ffmpeg = options.get_ffmpeg()
 
         for file in options.get_files():
             if not os.path.isfile(file):

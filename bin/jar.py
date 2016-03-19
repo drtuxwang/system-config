@@ -8,8 +8,9 @@ import os
 import signal
 import sys
 
+import command_mod
 import file_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -52,18 +53,18 @@ class Options(object):
         """
         Parse arguments
         """
-        self._jar = syslib.Command(os.path.join('bin', 'jar'))
+        self._jar = command_mod.Command(os.path.join('bin', 'jar'), errors='stop')
 
         if len(args) == 1:
-            self._jar.run(mode='exec')
+            subtask_mod.Exec(self._jar.get_cmdline()).run()
         elif args[1][-4:] != '.jar':
             self._jar.set_args(args[1:])
-            self._jar.run(mode='exec')
+            subtask_mod.Exec(self._jar.get_cmdline()).run()
 
         self._jar_file = args[1]
         self._manifest = args[1][:-4]+'.manifest'
         self._files = args[2:]
-        self._jar.set_flags(['cfvm', args[1], self._manifest])
+        self._jar.set_args(['cfvm', args[1], self._manifest])
 
 
 class Main(object):
@@ -110,13 +111,14 @@ class Main(object):
                     raise SystemExit(
                         sys.argv[0] + ': Cannot remove "' + target + '" Java class file.')
         if not os.path.isfile(target):
-            javac = syslib.Command('javac', args=[source])
+            javac = command_mod.Command('javac', args=[source], errors='stop')
             print('Building "' + target + '" Java class file.')
-            javac.run(mode='batch', error2output=True)
-            if javac.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(javac.get_exitcode()) +
-                                 ' received from "' + javac.get_file() + '".')
-            for line in javac.get_output():
+            task = subtask_mod.Batch(javac.get_cmdline())
+            task.run(error2output=True)
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
+            for line in task.get_output():
                 print('  ' + line)
             if not os.path.isfile(target):
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" Java class file.')
@@ -154,7 +156,7 @@ class Main(object):
                 self._jar.append_arg(file)
         self._create_manifest()
         print('Building "' + self._jar_file + '" Java archive file.')
-        self._jar.run(mode='exec')
+        subtask_mod.Exec(self._jar.get_cmdline()).run()
 
 
 if __name__ == '__main__':

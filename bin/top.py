@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -47,21 +48,23 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def _get_top():
+        if os.name == 'posix' and os.uname()[0] == 'SunOS':
+            if os.path.isfile('/bin/prstat'):
+                return command_mod.CommandFile('/bin/prstat', args=['10'])
+            return command_mod.Command('prstat', args=['10'], errors='stop')
+
+        return command_mod.Command('top', errors='stop')
+
+    @classmethod
+    def run(cls):
         """
         Start program
         """
-        if syslib.info.get_system() == 'sunos':
-            if os.path.isfile('/bin/prstat'):
-                top = syslib.Command(file='/bin/prstat')
-            else:
-                top = syslib.Command('prstat')
-            top.set_args(['10'])
-        else:
-            top = syslib.Command('top')
-        top.set_args(sys.argv[1:])
+        top = cls._get_top()
+        top.extend_args(sys.argv[1:])
 
-        top.run(mode='exec')
+        subtask_mod.Exec(top.get_cmdline()).run()
 
 
 if __name__ == '__main__':

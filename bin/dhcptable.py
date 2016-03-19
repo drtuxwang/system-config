@@ -9,7 +9,8 @@ import sys
 import threading
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -22,32 +23,36 @@ class Options(object):
 
     def __init__(self):
         self._args = None
-        self._arping = syslib.Command('arping', pathextra=['/sbin'])
+        self._arping = command_mod.Command('arping', pathextra=['/sbin'], errors='stop')
         self._detect()
 
     def _detect(self):
-        self._myip = '127.0.0.1'
+        myip = '127.0.0.1'
         self._mymac = '00:00:00:00:00:00'
-        self._subnet = '127.0.0'
-        if syslib.info.get_system() == 'linux':
-            os.environ['LANG'] = 'en_GB'
-            ifconfig = syslib.Command(file='/sbin/ifconfig')
-            ifconfig.run(mode='batch')
-            for line in ifconfig.get_output(' HWaddr | inet addr[a-z]*:'):
-                if ' HWaddr ' in line:
-                    self._arping.set_flags(['-I', line.split()[0]])
-                    self._mymac = line.split()[-1]
-                else:
-                    myip = line.split(':')[1].split()[0]
+        if os.name == 'posix':
+            osname = os.uname()[0]
+            if osname == 'Linux':
+                os.environ['LANG'] = 'en_GB'
+                ifconfig = command_mod.CommandFile('/sbin/ifconfig')
+                task = subtask_mod.Batch(ifconfig.get_cmdline())
+                task.run()
+                for line in task.get_output(' HWaddr | inet addr[a-z]*:'):
+                    if ' HWaddr ' in line:
+                        self._arping.set_args(['-I', line.split()[0]])
+                        self._mymac = line.split()[-1]
+                    else:
+                        myip = line.split(':')[1].split()[0]
+                        if myip not in ('', '127.0.0.1'):
+                            break
+            elif osname == 'SunOS':
+                ifconfig = command_mod.CommandFile('/sbin/ifconfig', args=['-a'])
+                task = subtask_mod.Batch(ifconfig.get_cmdline())
+                task.run(pattern='\tinet [^ ]+ netmask')
+                for line in task.get_output():
+                    myip = line.split()[1]
                     if myip not in ('', '127.0.0.1'):
                         break
-        elif syslib.info.get_system() == 'sunos':
-            ifconfig = syslib.Command(file='/sbin/ifconfig', args=['-a'])
-            ifconfig.run(filter='\tinet [^ ]+ netmask', mode='batch')
-            for line in ifconfig.get_output():
-                myip = line.split()[1]
-                if myip not in ('', '127.0.0.1'):
-                    break
+
         self._myip = myip
         self._subnet = self._myip.rsplit('.', 1)[0]
 
@@ -105,7 +110,8 @@ class ScanHost(threading.Thread):
         Start thread
         """
         self._options.get_arping().set_args(['-c', '1', self._ip])
-        self._child = self._options.get_arping().run(mode='child', error2output=True)
+        self._child = subtask_mod.Child(
+            self._options.get_arping().get_cmdline()).run(error2output=True)
         while True:
             byte = self._child.stdout.read(1)
             if not byte:
@@ -170,9 +176,10 @@ class Main(object):
     def _reverse_dns(self, ip_address):
         if self._avahi_rdns.is_found():
             self._avahi_rdns.set_args([ip_address])
-            self._avahi_rdns.run(mode='batch')
-            if self._avahi_rdns.has_output():
-                return self._avahi_rdns.get_output()[0].split()[-1]
+            task = subtask_mod.Batch(self._avahi_rdns.get_cmdline())
+            task.run()
+            if task.has_output():
+                return task.get_output()[0].split()[-1]
         return 'Unknown'
 
     def run(self):
@@ -184,7 +191,7 @@ class Main(object):
         self._time_limit = 1
 
         self._options = options
-        self._avahi_rdns = syslib.Command('avahi-resolve-address', check=False)
+        self._avahi_rdns = command_mod.Command('avahi-resolve-address', errors='ignore')
         self._threads = []
 
         self._detect()

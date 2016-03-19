@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -67,7 +68,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._vlc = syslib.Command('vlc')
+        self._vlc = command_mod.Command('vlc', errors='stop')
 
         if self._args.speed[0] < 1:
             raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
@@ -143,22 +144,23 @@ class Main(object):
 
     @staticmethod
     def _cdspeed(device, speed):
-        cdspeed = syslib.Command('cdspeed', flags=[device], check=False)
+        cdspeed = command_mod.Command('cdspeed', errors='ignore')
         if cdspeed.is_found():
             if speed:
-                cdspeed.set_args([str(speed)])
+                cdspeed.set_args([device, str(speed)])
             # If CD/DVD spin speed change fails its okay
-            cdspeed.run()
-        elif speed:
-            hdparm = syslib.Command(file='/sbin/hdparm', args=['-E', str(speed), device])
-            hdparm.run(mode='batch')
+            subtask_mod.Task(cdspeed.get_cmdline()).run()
+        elif speed and os.path.isfile('/sbin/hdparm'):
+            hdparm = command_mod.Command('/sbin/hdparm', errors='ignore')
+            hdparm.set_args(['-E', str(speed), device])
+            subtask_mod.Batch(hdparm.get_cmdline()).run()
 
     def _rip(self):
         file = 'title-' + str(self._title).zfill(2) + '.mpg'
         self._vlc.set_args(
             ['dvdsimple:/' + self._device + ':#' + str(self._title), '--sout',
              '#standard{access=file,mux=ts,dst=' + file + '}', 'vlc://quit'])
-        self._vlc.run()
+        subtask_mod.Task(self._vlc.get_cmdline()).run()
 
     @staticmethod
     def _scan():

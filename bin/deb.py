@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -87,12 +88,13 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._dpkg = syslib.Command('dpkg')
+        self._dpkg = command_mod.Command('dpkg', errors='stop')
         self._dpkg.set_args(['--print-architecture'])
-        self._dpkg.run(mode='batch')
-        if len(self._dpkg.get_output()) != 1:
+        task = subtask_mod.Batch(self._dpkg.get_cmdline())
+        task.run()
+        if len(task.get_output()) != 1:
             raise SystemExit(sys.argv[0] + ": Cannot detect default architecture of packages.")
-        self._arch = self._dpkg.get_output()[0]
+        self._arch = task.get_output()[0]
 
         if self._args.mode == 'list':
             if self._args.args:
@@ -104,7 +106,7 @@ class Options(object):
         elif self._args.option:
             self._dpkg.set_args([self._args.option] + self._args.args)
         elif len(self._args.args) and self._args.args[0].endswith('.deb'):
-            self._dpkg = syslib.Command('dpkg-deb')
+            self._dpkg = command_mod.Command('dpkg-deb', errors='stop')
             self._dpkg.set_args(['-b', os.curdir, self._args.args[0]])
         elif self._args.args:
             raise SystemExit(sys.argv[0] + ': Invalid Debian package name "' +
@@ -315,7 +317,7 @@ class Main(object):
             for packagename in self._options.get_package_names():
                 self._show_dependent_packages([packagename], checked=[])
         else:
-            self._options.get_dpkg().run(mode='exec')
+            subtask_mod.Exec(self._options.get_dpkg().get_cmdline()).run()
 
 
 if __name__ == '__main__':

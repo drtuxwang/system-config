@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -54,11 +55,11 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._archiver = syslib.Command('jar')
+        self._archiver = command_mod.Command('jar', errors='stop')
         if self._args.view_flag:
-            self._archiver.set_flags(['tfv'])
+            self._archiver.set_args(['tfv'])
         else:
-            self._archiver.set_flags(['xfv'])
+            self._archiver.set_args(['xfv'])
 
 
 class Main(object):
@@ -100,14 +101,14 @@ class Main(object):
         options = Options()
 
         os.umask(int('022', 8))
-        archiver = options.get_archiver()
+        cmdline = options.get_archiver().get_cmdline()
 
         for archive in options.get_archives():
-            archiver.set_args([archive])
-            archiver.run()
-            if archiver.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
-                                 ' received from "' + archiver.get_file() + '".')
+            task = subtask_mod.Task(cmdline + [archive])
+            task.run()
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
 
 
 if __name__ == '__main__':

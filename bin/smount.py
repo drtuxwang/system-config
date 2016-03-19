@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -46,32 +47,35 @@ class Options(object):
         Parse arguments
         """
         if len(args) == 1:
-            mount = syslib.Command('mount')
-            mount.run(filter='type fuse.sshfs ', mode='batch')
-            if mount.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(mount.get_exitcode()) +
-                                 ' received from "' + mount.get_file() + '".')
-            for line in mount.get_output():
+            mount = command_mod.Command('mount', errors='stop')
+            task = subtask_mod.Batch(mount.get_cmdline())
+            task.run(pattern='type fuse.sshfs ')
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
+            for line in task.get_output():
                 print(line)
             raise SystemExit(0)
 
         self._parse_args(args[1:])
 
-        command = syslib.Command('id')
+        command = command_mod.Command('id', errors='stop')
         command.set_args(['-u'])
-        command.run(mode='batch')
-        if command.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
-                             ' received from "' + command.get_file() + '".')
-        uid = command.get_output()[0]
+        task = subtask_mod.Batch(command.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
+        uid = task.get_output()[0]
         command.set_args(['-g'])
-        command.run(mode='batch')
-        if command.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
-                             ' received from "' + command.get_file() + '".')
-        gid = command.get_output()[0]
+        task = subtask_mod.Batch(command.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
+        gid = task.get_output()[0]
 
-        self._sshfs = syslib.Command('sshfs')
+        self._sshfs = command_mod.Command('sshfs', errors='stop')
         self._sshfs.set_args(['-o', 'uid=' + uid + ',gid=' + gid + ',nonempty,reconnect'] +
                              self._args.remote + self._args.local)
 
@@ -114,7 +118,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_sshfs().run(mode='exec')
+        subtask_mod.Exec(options.get_sshfs().get_cmdline()).run()
 
 
 if __name__ == '__main__':
