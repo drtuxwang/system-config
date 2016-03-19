@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -66,13 +67,13 @@ class Main(object):
         """
         Start program
         """
-        audacity = syslib.Command('audacity')
+        audacity = command_mod.Command('audacity', errors='stop')
         audacity.set_args(sys.argv[1:])
         pattern = ('^$|^HCK OnTimer|: Gtk-WARNING | LIBDBUSMENU-GLIB-WARNING |'
-                   '^ALSA lib |alsa.c|^Cannot connect to server socket|^jack server')
+                   '^ALSA lib |alsa.c|^Cannot connect to server socket|^jack server|Debug: ')
         self._config()
 
-        audacity.run(filter=pattern, mode='background')
+        subtask_mod.Background(audacity.get_cmdline()).run(pattern=pattern)
 
 
 if __name__ == '__main__':

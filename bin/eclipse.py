@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -50,16 +51,16 @@ class Main(object):
         """
         Start program
         """
-        eclipse = syslib.Command('eclipse')
+        eclipse = command_mod.Command('eclipse', errors='stop')
         if len(sys.argv) == 1:
-            java = syslib.Command(os.path.join('bin', 'java'))
-            eclipse.set_args([
-                '-vm', java.get_file(), '-vmargs', '-Xms2048m', '-Xmx2048m', '-XX:PermSize=8192m',
-                '-XX:MaxPermSize=8192m', '-XX:-UseCompressedOops'])
+            java = command_mod.Command(os.path.join('bin', 'java'), errors='stop')
+            args = ['-vm', java.get_file(), '-vmargs', '-Xms2048m',
+                    '-Xmx2048m', '-XX:PermSize=8192m', '-XX:MaxPermSize=8192m',
+                    '-XX:-UseCompressedOops']
         else:
-            eclipse.set_args(sys.argv[1:])
+            args = sys.argv[1:]
 
-        eclipse.run(mode='background')
+        subtask_mod.Background(eclipse.get_cmdline() + args).run()
 
 
 if __name__ == '__main__':

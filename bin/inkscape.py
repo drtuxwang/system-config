@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -66,12 +67,12 @@ class Main(object):
         """
         Start program
         """
-        inkscape = syslib.Command('inkscape')
+        inkscape = command_mod.Command('inkscape', errors='stop')
         inkscape.set_args(sys.argv[1:])
         pattern = '^$|: Gtk-CRITICAL|: GLib-GObject-|: Gtk-WARNING|: WARNING'
         self._config()
 
-        inkscape.run(filter=pattern, mode='background')
+        subtask_mod.Background(inkscape.get_cmdline()).run(pattern=pattern)
 
 
 if __name__ == '__main__':

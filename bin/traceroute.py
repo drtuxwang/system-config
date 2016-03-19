@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -47,17 +48,31 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def _is_windows():
+        """
+        Return True if running on Windows.
+        """
+        if os.name == 'posix':
+            if os.uname()[0].startswith('cygwin'):
+                return True
+        elif os.name == 'nt':
+            return True
+
+        return False
+
+    @classmethod
+    def run(cls):
         """
         Start program
         """
-        if syslib.info.get_system() == 'windows':
-            traceroute = syslib.Command('tracert.exe')
+        if cls._is_windows():
+            traceroute = command_mod.Command('tracert.exe', errors='stop')
         else:
-            traceroute = syslib.Command('traceroute', pathextra=['/usr/sbin', '/usr/etc'])
+            traceroute = command_mod.Command(
+                'traceroute', pathextra=['/usr/sbin', '/usr/etc'], errors='stop')
         traceroute.set_args(sys.argv[1:])
 
-        traceroute.run(mode='exec')
+        subtask_mod.Exec(traceroute.get_cmdline()).run()
 
 
 if __name__ == '__main__':

@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -39,7 +40,7 @@ class Options(object):
         """
         Parse arguments
         """
-        self._gedit = syslib.Command('gedit')
+        self._gedit = command_mod.Command('gedit', errors='stop')
         self._gedit.set_args(args[1:])
         self._pattern = ('^$|$HOME/.gnome|FAMOpen| DEBUG: |GEDIT_IS_PLUGIN|IPP request failed|'
                          'egg_recent_model_|g_bookmark_file_get_size:|recently-used.xbel|'
@@ -84,7 +85,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_gedit().run(filter=options.get_pattern(), mode='background')
+        subtask_mod.Background(options.get_gedit().get_cmdline()).run(pattern=options.get_pattern())
 
 
 if __name__ == '__main__':

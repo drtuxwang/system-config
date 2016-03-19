@@ -15,7 +15,8 @@ import shutil
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 import task_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -122,11 +123,11 @@ class Options(object):
 
     def _fix_permissions(self):
         if os.path.isfile(self._firefox.get_file() + '-bin'):
-            fmod = syslib.Command('fmod', check=False)
+            fmod = command_mod.Command('fmod', errors='ignore')
             if fmod.is_found():
                 # Fix permissions if owner and updated
                 fmod.set_args(['wa', os.path.dirname(self._firefox.get_file())])
-                fmod.run(mode='daemon')
+                subtask_mod.Daemon(fmod.get_cmdline()).run()
 
     def _config(self):
         if 'HOME' in os.environ:
@@ -293,7 +294,8 @@ class Options(object):
         """
         Parse arguments
         """
-        self._firefox = syslib.Command(os.path.basename(args[0]).replace('.py', ''))
+        self._firefox = command_mod.Command(
+            os.path.basename(args[0]).replace('.py', ''), errors='stop')
         updates = os.access(self._firefox.get_file(), os.W_OK)
 
         while len(args) > 1:
@@ -303,9 +305,9 @@ class Options(object):
                 if args[1] == '-copy':
                     updates = False
                     self._copy()
-                self._firefox.set_flags(['-no-remote'])
+                self._firefox.set_args(['-no-remote'])
                 if 'about:' not in args:
-                    self._firefox.append_flag('about:')
+                    self._firefox.append_arg('about:')
             elif args[1] == '-reset':
                 self._reset()
                 raise SystemExit(0)
@@ -319,7 +321,7 @@ class Options(object):
             if ppid != 1 and 'exo-helper' in task_mod.Tasks.factory().get_process(ppid)['COMMAND']:
                 raise SystemExit
 
-        self._firefox.set_args(args[1:])
+        self._firefox.extend_args(args[1:])
         self._pattern = (
             '^$|Failed to load module|: G[dt]k-WARNING |: G[dt]k-CRITICAL |:'
             ' GLib-GObject-|: GnomeUI-WARNING|^OpenGL Warning: | Pango-WARNING |'
@@ -370,7 +372,8 @@ class Main(object):
         """
         options = Options()
 
-        options.get_firefox().run(filter=options.get_pattern(), mode='background')
+        subtask_mod.Background(
+            options.get_firefox().get_cmdline()).run(pattern=options.get_pattern())
 
 
 if __name__ == '__main__':

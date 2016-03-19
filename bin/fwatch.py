@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -44,9 +45,9 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._inotifywait = syslib.Command('inotifywait')
-        self._inotifywait.set_flags(['-e', 'create,modify,move,delete', '-mr'])
-        self._inotifywait.set_args(self._args.directories)
+        self._inotifywait = command_mod.Command('inotifywait', errors='stop')
+        self._inotifywait.set_args(
+            ['-e', 'create,modify,move,delete', '-mr'] + self._args.directories)
 
 
 class Main(object):
@@ -87,7 +88,8 @@ class Main(object):
         """
         options = Options()
 
-        options.get_inotifywait().run(mode='exec')
+        subtask_mod.Exec(options.get_inotifywait().get_cmdline()).run()
+
 
 if __name__ == '__main__':
     if '--pydoc' in sys.argv:

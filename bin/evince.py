@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -60,18 +61,18 @@ class Main(object):
         if 'LC_PAPER' not in os.environ:  # Default to A4
             os.environ['LC_PAPER'] = 'en_GB.UTF-8'
         if 'PRINTER' not in os.environ:
-            lpstat = syslib.Command('lpstat', args=['-d'], check=False)
+            lpstat = command_mod.Command('lpstat', args=['-d'], errors='ignore')
             if lpstat.is_found():
-                lpstat.run(filter='^system default destination: ', mode='batch')
-                if lpstat.has_output():
-                    os.environ['PRINTER'] = lpstat.get_output()[0].split()[-1]
+                task = subtask_mod.Background(lpstat.get_cmdline())
+                task.run(pattern='^system default destination: ')
+                if task.has_output():
+                    os.environ['PRINTER'] = task.get_output()[0].split()[-1]
 
     def run(self):
         """
         Start program
         """
-        evince = syslib.Command('evince')
-        evince.set_args(sys.argv[1:])
+        evince = command_mod.Command('evince', args=sys.argv[1:], errors='stop')
         pattern = ('^$|: Gtk-WARNING | Gtk-CRITICAL | GLib-CRITICAL | Poppler-WARNING |'
                    ': Failed to create dbus proxy|: invalid matrix |: Page transition|'
                    'ToUnicode CMap|: Illegal character|^undefined|'
@@ -81,8 +82,9 @@ class Main(object):
         self._config()
         self._setenv()
 
-        evince.run(filter=pattern)
-        return evince.get_exitcode()
+        task = subtask_mod.Task(evince.get_cmdline())
+        task.run(pattern=pattern)
+        return task.get_exitcode()
 
 
 if __name__ == '__main__':

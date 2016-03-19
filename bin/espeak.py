@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -20,7 +21,7 @@ class Options(object):
     """
 
     def __init__(self, args):
-        self._espeak = syslib.Command('espeak')
+        self._espeak = command_mod.Command('espeak', errors='stop')
         self._espeak.set_args(args[1:])
         self._pattern = ': Connection refused'
 
@@ -74,10 +75,11 @@ class Main(object):
         Start program
         """
         options = Options(sys.argv)
-        espeak = options.get_espeak()
-        espeak.run(filter=options.get_pattern())
 
-        return espeak.get_exitcode()
+        task = subtask_mod.Task(options.get_espeak().get_cmdline())
+        task.run(pattern=options.get_pattern())
+
+        return task.get_exitcode()
 
 
 if __name__ == '__main__':

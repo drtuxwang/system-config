@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
@@ -50,14 +51,14 @@ class Main(object):
         """
         Start program
         """
-        command = syslib.Command('gnome-mines', check=False)
+        command = command_mod.Command('gnome-mines', errors='ignore')
         if not command.is_found():
-            command = syslib.Command('gnomine', check=False)
+            command = command_mod.Command('gnomine', errors='ignore')
             if not command.is_found():
-                command = syslib.Command('gnome-mines')
+                command = command_mod.Command('gnome-mines', errors='stop')
         command.set_args(sys.argv[1:])
 
-        command.run(mode='exec')
+        subtask_mod.Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

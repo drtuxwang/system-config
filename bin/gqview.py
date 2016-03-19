@@ -9,7 +9,8 @@ import signal
 import shutil
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -90,11 +91,11 @@ class Options(object):
         """
         Parse arguments
         """
-        self._gqview = syslib.Command('geeqie', check=False)
+        self._gqview = command_mod.Command('geeqie', errors='ignore')
         if self._gqview.is_found():
             self._config_geeqie()
         else:
-            self._gqview = syslib.Command('gqview')
+            self._gqview = command_mod.Command('gqview', errors='stop')
             self._config_gqview()
         if len(args) == 1:
             self._gqview.set_args([os.curdir])
@@ -140,7 +141,7 @@ class Main(object):
         """
         options = Options()
         # Geeqie hangs with filter/background
-        options.get_gqview().run(mode='daemon')
+        subtask_mod.Daemon(options.get_gqview().get_cmdline()).run()
 
 
 if __name__ == '__main__':

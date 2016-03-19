@@ -9,8 +9,9 @@ import os
 import signal
 import sys
 
+import command_mod
 import file_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -25,7 +26,7 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_lamscan(self):
+    def get_clamscan(self):
         """
         Return clamscan Command class object.
         """
@@ -44,9 +45,8 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._clamscan = syslib.Command('clamscan')
-        self._clamscan.set_flags(['-r'])
-        self._clamscan.set_args(self._args.files)
+        self._clamscan = command_mod.Command('clamscan', errors='stop')
+        self._clamscan.set_args(['-r'] + self._args.files)
 
 
 class Main(object):
@@ -86,12 +86,13 @@ class Main(object):
         Start program
         """
         options = Options()
-        clamscan = options.get_lamscan()
+        clamscan = options.get_clamscan()
 
-        clamscan.run()
+        task = subtask_mod.Task(clamscan.get_cmdline())
+        task.run()
         print('---------- VIRUS DATABASE ----------')
         if os.name == 'nt':
-            os.chdir(os.path.join(os.path.dirname(clamscan.get_file())))
+            os.chdir(os.path.join(os.path.dirname(task.get_file())))
             directory = 'database'
         elif os.path.isdir('/var/clamav'):
             directory = '/var/clamav'
@@ -102,7 +103,7 @@ class Main(object):
             print('{0:10d} [{1:s}] {2:s}'.format(
                 file_stat.get_size(), file_stat.get_time_local(), file))
 
-        return clamscan.get_exitcode()
+        return task.get_exitcode()
 
 
 if __name__ == '__main__':
