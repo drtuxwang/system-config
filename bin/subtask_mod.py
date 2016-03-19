@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.5 (2016-03-13)
+Version 2.0.6 (2016-03-19)
 """
 
 import copy
@@ -241,7 +241,7 @@ class Task(object):
 
     def run(self, **kwargs):
         """
-        Run process interactively.
+        Run process interactively and return exits status.
 
         directory    = <directory>   - Directory to run command in
         env          = <dictonary>   - Dictionary containing environmental variables to change
@@ -269,6 +269,7 @@ class Task(object):
             raise ExecutableCallError('Error in calling "' + self._file + '" program.')
         if info['directory']:
             os.chdir(pwd)
+        return self._status['exitcode']
 
 
 class Background(Task):
@@ -376,7 +377,7 @@ class Batch(Task):
 
     def run(self, **kwargs):
         """
-        Run process in batch mode.
+        Run process in batch mode and return exit status.
 
         append       = True          - Append to output_file
         directory    = <directory>   - Directory to run command in
@@ -400,6 +401,8 @@ class Batch(Task):
             raise ExecutableCallError('Error in calling "' + self._file + '" program.')
         if info['directory']:
             os.chdir(pwd)
+
+        return self._status['exitcode']
 
 
 class Child(Task):
@@ -628,7 +631,7 @@ class Main(object):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 1 or '--pydoc' in sys.argv:
+    if '--pydoc' in sys.argv:
         help(__name__)
     else:
         Main()
