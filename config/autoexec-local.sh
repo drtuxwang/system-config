@@ -7,5 +7,8 @@ if [ "`lsmod | grep vboxguest`" ]; then
     (xrandr --dpi 96; sleep 1; xrandr -s 1280x960) &
 fi
 
-# Start Firefox
+# Slow down mouse
+#xset m 2,16
+
 #firefox
+#chrome
