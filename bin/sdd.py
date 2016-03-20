@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -62,8 +63,8 @@ class Options(object):
             host, file = source.split(':')[:2]
             device = target
             print('Restoring "' + device + '" from', host + ':' + file + '...')
-            self._command1 = syslib.Command('ssh', args=[host, 'cat ' + file])
-            self._command2 = syslib.Command('dd', args=['of=' + device])
+            self._command1 = command_mod.Command('ssh', args=[host, 'cat ' + file], errors='stop')
+            self._command2 = command_mod.Command('dd', args=['of=' + device], errors='stop')
         else:
             if ':' not in target:
                 raise SystemExit(
@@ -73,8 +74,9 @@ class Options(object):
             device = source
             host, file = target.split(':')[:2]
             print('Backing up "' + device + '" to', host + ':' + file + '...')
-            self._command1 = syslib.Command('dd', args=['if=' + device])
-            self._command2 = syslib.Command('ssh', args=[host, 'cat - > ' + file])
+            self._command1 = command_mod.Command('dd', args=['if=' + device], errors='stop')
+            self._command2 = command_mod.Command(
+                'ssh', args=[host, 'cat - > ' + file], errors='stop')
 
 
 class Main(object):
@@ -115,9 +117,10 @@ class Main(object):
         """
         options = Options()
 
-        options.get_command_1().run(pipes=[options.get_command_2()])
-
-        return options.get_command_1().get_exitcode()
+        task = subtask_mod.Task(options.get_command_1().get_cmdline() + ['|'] +
+                                options.get_command_2().get_cmdline())
+        task.run()
+        return task.get_exitcode()
 
 
 if __name__ == '__main__':

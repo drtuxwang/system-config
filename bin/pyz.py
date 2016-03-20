@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -46,21 +47,21 @@ class Options(object):
         self._parse_args(args[1:])
 
         if os.name == 'nt':
-            self._archiver = syslib.Command('pkzip32.exe', check=False)
+            self._archiver = command_mod.Command('pkzip32.exe', errors='ignore')
             if self._archiver.is_found():
-                self._archiver.set_flags(
+                self._archiver.set_args(
                     ['-add', '-maximum', '-recurse', '-path', self._args.archive[0] + '-zip'])
             else:
-                self._archiver = syslib.Command(
-                    'zip', flags=['-r', '-9', self._args.archive[0] + '-zip'])
+                self._archiver = command_mod.Command('zip', args=[
+                    '-r', '-9', self._args.archive[0] + '-zip'], errors='stop')
         else:
-            self._archiver = syslib.Command(
-                'zip', flags=['-r', '-9', self._args.archive[0] + '-zip'])
+            self._archiver = command_mod.Command('zip', args=[
+                '-r', '-9', self._args.archive[0] + '-zip'], errors='stop')
 
         if self._args.files:
-            self._archiver.set_args(self._args.files)
+            self._archiver.extend_args(self._args.files)
         else:
-            self._archiver.set_args(os.listdir())
+            self._archiver.extend_args(os.listdir())
 
         if '__main__.py' not in self._archiver.get_args():
             raise SystemExit(sys.argv[0] + ': Cannot find "__main__.py" main program file.')
@@ -133,12 +134,13 @@ class Main(object):
         options = Options()
         archiver = options.get_archiver()
 
-        archiver.run()
-        if archiver.get_exitcode():
+        task = subtask_mod.Task(archiver.get_cmdline())
+        task.run()
+        if task.get_exitcode():
             print(
-                sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) + ' received from "' +
-                archiver.get_file() + '".', file=sys.stderr)
-            raise SystemExit(archiver.get_exitcode())
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) + ' received from "' +
+                task.get_file() + '".', file=sys.stderr)
+            raise SystemExit(task.get_exitcode())
         self._make_pyz(options.get_archive())
 
 

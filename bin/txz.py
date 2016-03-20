@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -58,8 +59,8 @@ class Options(object):
         else:
             self._files = os.listdir()
 
-        self._tar = syslib.Command('tar')
-        self._tar.set_flags(['cfvJ', self._archive] + self._files)
+        self._tar = command_mod.Command('tar', errors='stop')
+        self._tar.set_args(['cfvJ', self._archive] + self._files)
 
         os.environ['XZ_OPT'] = '-9 -e'
 
@@ -102,7 +103,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_tar().run(mode='exec')
+        subtask_mod.Exec(options.get_tar().get_cmdline()).run()
 
 
 if __name__ == '__main__':

@@ -14,7 +14,8 @@ import sys
 import textwrap
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -61,11 +62,12 @@ class Options(object):
 
     @staticmethod
     def _get_default_printer():
-        lpstat = syslib.Command('lpstat', args=['-d'], check=False)
+        lpstat = command_mod.Command('lpstat', args=['-d'], errors='ignore')
         if lpstat.is_found():
-            lpstat.run(filter='^system default destination: ', mode='batch')
-            if lpstat.has_output():
-                return lpstat.get_output()[0].split()[-1]
+            task = subtask_mod.Batch(lpstat.get_cmdline())
+            task.run(pattern='^system default destination: ')
+            if task.has_output():
+                return task.get_output()[0].split()[-1]
         return None
 
     def _parse_args(self, args):
@@ -141,36 +143,39 @@ class Main(object):
             sys.argv = argv
 
     def _image(self, file):
-        convert = syslib.Command('convert')
+        convert = command_mod.Command('convert', errors='stop')
 
         convert.set_args(['-verbose', file, '/dev/null'])
-        convert.run(filter='^' + file + ' ', mode='batch', error2output=True)
-        if not convert.has_output():
+        task = subtask_mod.Batch(convert.get_cmdline())
+        task.run(filter='^' + file + ' ', error2output=True)
+        if not task.has_output():
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" image file.')
-        xsize, ysize = convert.get_output()[0].split('+')[0].split()[-1].split('x')
+        xsize, ysize = task.get_output()[0].split('+')[0].split()[-1].split('x')
 
         if int(xsize) > int(ysize):
-            convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40',
-                              '-rotate', '90'])
+            convert.set_args([
+                '-page', 'a4', '-bordercolor', 'white', '-border', '40x40', '-rotate', '90'])
         else:
             convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40'])
         convert.extend_args([file, 'ps:' + self._tmpfile])
-        convert.run(mode='batch')
-        if convert.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(convert.get_exitcode()) +
-                             ' received from "' + convert.get_file() + '".')
+        task = subtask_mod.Batch(convert.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
 
         return 'IMAGE file "' + file + '"'
 
     def _pdf(self, file):
-        command = syslib.Command('gs')
-        command.set_flags(['-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pswrite',
-                           '-sPAPERSIZE=a4', '-r300x300'])
-        command.set_args(['-sOutputFile=' + self._tmpfile, '-c', 'save', 'pop', '-f', file])
-        command.run(mode='batch')
-        if command.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
-                             ' received from "' + command.get_file() + '".')
+        command = command_mod.Command('gs', errors='stop')
+        command.set_args([
+            '-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pswrite', '-sPAPERSIZE=a4',
+            '-r300x300', '-sOutputFile=' + self._tmpfile, '-c', 'save', 'pop', '-f', file])
+        task = subtask_mod.Batch(command.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
         self._postscript_fix(self._tmpfile)
         return 'PDF file "' + file + '"'
 
@@ -219,16 +224,15 @@ class Main(object):
     def _text(self, options, file):
         if 'LANG' in os.environ:
             del os.environ['LANG']  # Avoids locale problems
-        a2ps = syslib.Command('a2ps')
+        a2ps = command_mod.Command('a2ps', errors='stop')
         # Space in header and footer increase top/bottom margins
-        a2ps.set_flags(
-            ['--media=A4', '--columns=1', '--header= ', '--left-footer=', '--footer= ',
-             '--right-footer=', '--output=-', '--highlight-level=none', '--quiet'])
+        a2ps.set_args(['--media=A4', '--columns=1', '--header= ', '--left-footer=', '--footer= ',
+                       '--right-footer=', '--output=-', '--highlight-level=none', '--quiet'])
         chars = options.get_chars()
 
-        a2ps.set_args(['--portrait', '--chars-per-line=' + str(chars),
-                       '--left-title=' + time.strftime('%Y-%m-%d-%H:%M:%S'),
-                       '--center-title=' + os.path.basename(file)])
+        a2ps.extend_args(['--portrait', '--chars-per-line=' + str(chars),
+                          '--left-title=' + time.strftime('%Y-%m-%d-%H:%M:%S'),
+                          '--center-title=' + os.path.basename(file)])
 
         is_not_printable = re.compile('[\000-\037\200-\277]')
         try:
@@ -244,10 +248,11 @@ class Main(object):
                         stdin.extend(lines)
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" text file.')
-        a2ps.run(mode='batch', stdin=stdin, output_file=self._tmpfile)
-        if a2ps.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(a2ps.get_exitcode()) +
-                             ' received from "' + a2ps.get_file() + '".')
+        task = subtask_mod.Batch(a2ps.get_cmdline())
+        task.run(stdin=stdin, file=self._tmpfile)
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
         return 'text file "' + file + '" with ' + str(chars) + ' columns'
 
     def run(self):
@@ -259,11 +264,11 @@ class Main(object):
         self._tmpfile = os.sep + os.path.join(
             'tmp', 'fprint-' + getpass.getuser() + '.' + str(os.getpid()))
         if options.get_view_flag():
-            evince = syslib.Command('evince')
+            evince = command_mod.Command('evince', errors='stop')
         else:
-            command = syslib.Command('lp', flags=[
-                '-U', 'someone', '-o', 'number-up=' + str(options.get_pages()), '-d',
-                options.get_printer()])
+            command = command_mod.Command('lp', errors='stop')
+            command.set_args(['-U', 'someone', '-o', 'number-up=' + str(options.get_pages()),
+                              '-d', options.get_printer()])
 
         for file in options.get_files():
             if not os.path.isfile(file):
@@ -279,15 +284,14 @@ class Main(object):
                 message = self._text(options, file)
             if options.get_view_flag():
                 print('Spooling', message, 'to printer previewer')
-                evince.set_args([self._tmpfile])
-                evince.run()
+                subtask_mod.Task(evince.get_cmdline() + [self._tmpfile]).run()
             else:
                 print('Spooling ', message, ' to printer "', options.get_printer(), '"', sep='')
-                command.set_args([self._tmpfile])
-                command.run()
-                if command.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
-                                     ' received from "' + command.get_file() + '".')
+                task = subtask_mod.Task(command.get_cmdline() + [self._tmpfile])
+                task.run()
+                if task.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                     ' received from "' + task.get_file() + '".')
             os.remove(self._tmpfile)
 
 

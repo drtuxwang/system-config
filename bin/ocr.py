@@ -10,7 +10,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -56,8 +57,8 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._convert = syslib.Command('convert')
-        self._tesseract = syslib.Command('tesseract')
+        self._convert = command_mod.Command('convert', errors='stop')
+        self._tesseract = command_mod.Command('tesseract', errors='stop')
 
 
 class Main(object):
@@ -92,11 +93,11 @@ class Main(object):
             sys.argv = argv
 
     def _ocr(self, file, name):
-        self._tesseract.set_args([file, name])
-        self._tesseract.run(filter='^Tesseract')
-        if self._tesseract.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._tesseract.get_exitcode()) +
-                             ' received from "' + self._tesseract.get_file() + '".')
+        task = subtask_mod.Task(self._tesseract.get_cmdline() + [file, name])
+        task.run(pattern='^Tesseract')
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
 
     def run(self):
         """
@@ -116,11 +117,11 @@ class Main(object):
             name = file.rsplit('.', 1)[0]
             if ext in ('bmp', 'jpg', 'jpeg', 'png', 'pcx'):
                 print('Converting "' + file + '" to "' + name + '.txt' + '"...')
-                convert.set_args([file, tmpfile])
-                convert.run()
-                if convert.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(convert.get_exitcode()) +
-                                     ' received from "' + convert.get_file() + '".')
+                task = subtask_mod.Task(convert.get_cmdline() + [file, tmpfile])
+                task.run()
+                if task.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                     ' received from "' + task.get_file() + '".')
                 self._ocr(tmpfile, name)
                 try:
                     os.remove(tmpfile)

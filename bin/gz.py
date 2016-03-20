@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -44,9 +45,8 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._gzip = syslib.Command('gzip')
-        self._gzip.set_flags(['-9'])
-        self._gzip.set_args(self._args.files)
+        self._gzip = command_mod.Command('gzip', errors='stop')
+        self._gzip.set_args(['-9'] + self._args.files)
 
 
 class Main(object):
@@ -87,7 +87,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_gzip().run(mode='exec')
+        subtask_mod.Exec(options.get_gzip().get_cmdline()).run()
 
 
 if __name__ == '__main__':

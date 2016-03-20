@@ -12,7 +12,8 @@ import sys
 import threading
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
@@ -48,21 +49,25 @@ class Options(object):
     @staticmethod
     def _getmyip():
         myip = ''
-        if syslib.info.get_system() == 'linux':
-            os.environ['LANG'] = 'en_GB'
-            ifconfig = syslib.Command(file='/sbin/ifconfig', args=['-a'])
-            ifconfig.run(filter=' inet addr[a-z]*:', mode='batch')
-            for line in ifconfig.get_output():
-                myip = line.split(':')[1].split()[0]
-                if myip not in ('', '127.0.0.1'):
-                    break
-        elif syslib.info.get_system() == 'sunos':
-            ifconfig = syslib.Command(file='/sbin/ifconfig', args=['-a'])
-            ifconfig.run(filter='\tinet [^ ]+ netmask', mode='batch')
-            for line in ifconfig.get_output():
-                myip = line.split()[1]
-                if myip not in ('', '127.0.0.1'):
-                    break
+        if os.name == 'posix':
+            osname = os.uname()[0]
+            if osname == 'Linux':
+                os.environ['LANG'] = 'en_GB'
+                ifconfig = command_mod.CommandFile('/sbin/ifconfig', args=['-a'])
+                task = subtask_mod.Batch(ifconfig.get_cmdline())
+                task.run(pattern=' inet addr[a-z]*:')
+                for line in task.get_output():
+                    myip = line.split(':')[1].split()[0]
+                    if myip not in ('', '127.0.0.1'):
+                        break
+            elif osname == 'SunOS':
+                ifconfig = command_mod.CommandFile('/sbin/ifconfig', args=['-a'])
+                task = subtask_mod.Batch(ifconfig.get_cmdline())
+                task.run(pattern='\tinet [^ ]+ netmask')
+                for line in task.get_output():
+                    myip = line.split()[1]
+                    if myip not in ('', '127.0.0.1'):
+                        break
         return myip
 
     def _parse_args(self, args):
@@ -103,9 +108,9 @@ class Options(object):
                 raise SystemExit(sys.argv[0] + ": Cannot determine subnet configuration.")
             self._subnet = myip.rsplit('.', 1)[0]
 
-        self._ssh = syslib.Command('ssh')
-        self._ssh.set_flags(['-o', 'StrictHostKeyChecking=no', '-o',
-                             'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes'])
+        self._ssh = command_mod.Command('ssh', errors='stop')
+        self._ssh.set_args(['-o', 'StrictHostKeyChecking=no', '-o',
+                            'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes'])
 
 
 class Remote(threading.Thread):
@@ -134,7 +139,7 @@ class Remote(threading.Thread):
         ssh.set_args([self._ip, 'echo "=== ' + self._ip + ': "`uname -s -n`" ==="; ' + ssh.args2cmd(
             self._options.get_command_line())])
 
-        self._child = ssh.run(mode='child', error2output=True)
+        self._child = subtask_mod.Child(ssh.get_cmdline()).run(error2output=True)
         self._child.stdin.close()
         while True:
             byte = self._child.stdout.read(1)

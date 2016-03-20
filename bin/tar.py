@@ -11,7 +11,8 @@ import signal
 import sys
 import tarfile
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -129,23 +130,23 @@ class Main(object):
             self._addfile(options.get_files())
             self._archive.close()
         else:
-            tar = syslib.Command('tar')
+            tar = command_mod.Command('tar', errors='stop')
             archive = options.get_archive()
             if archive.endswith('.tar.7z'):
                 tar.set_args(['cfv', '-'] + options.get_files())
-                p7zip = syslib.Command('7za')
+                p7zip = command_mod.Command('7za', errors='stop')
                 p7zip.set_args(['a', '-mx=9', '-y', '-si', archive])
-                tar.run(pipes=[p7zip])
+                subtask_mod.Task(tar.get_cmdline() + '|' + p7zip.get_cmdline()).run()
             elif archive.endswith('.txz') or archive.endswith('.tar.xz'):
                 tar.set_args(['cfvJ', archive] + options.get_files())
                 os.environ['XZ_OPT'] = '-9 -e'
-                tar.run(mode='exec')
+                subtask_mod.Exec(tar.get_cmdline()).run()
             else:
                 tar.set_args(['cfva', archive] + options.get_files())
                 os.environ['GZIP'] = '-9'
                 os.environ['BZIP2'] = '-9'
                 os.environ['XZ_OPT'] = '-9 -e'
-                tar.run(mode='exec')
+                subtask_mod.Exec(tar.get_cmdline()).run()
 
 
 if __name__ == '__main__':
