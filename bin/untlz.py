@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -98,14 +99,14 @@ class Main(object):
         options = Options()
 
         os.umask(int('022', 8))
-        tar = syslib.Command('tar')
+        tar = command_mod.Command('tar', errors='stop')
         for archive in options.get_archives():
             print(archive + ':')
             if options.get_view_flag():
                 tar.set_args(['tfv', archive])
             else:
                 tar.set_args(['xfv', archive])
-            tar.run()
+            subtask_mod.Task(tar.get_cmdline()).run()
 
 
 if __name__ == '__main__':

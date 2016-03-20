@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -55,8 +56,8 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._gs = syslib.Command('gs')
-        self._gs.set_flags(
+        self._gs = command_mod.Command('gs', errors='stop')
+        self._gs.set_args(
             ['-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=jpeg', '-r' + str(self._args.dpi[0])])
 
 
@@ -110,12 +111,12 @@ class Main(object):
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot create "' + directory + '" directory.')
             print('Unpacking "' + directory + os.sep + '*.jpg" file...')
-            command.set_args(['-sOutputFile=' + directory + os.sep + '%08d.jpg', '-c',
-                              'save', 'pop', '-f', file])
-            command.run(filter='Ghostscript|^Copyright|WARRANTY:|^Processing')
-            if command.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
-                                 ' received from "' + command.get_file() + '".')
+            task = subtask_mod.Task(command.get_cmdline() + [
+                '-sOutputFile=' + directory + os.sep + '%08d.jpg', '-c', 'save', 'pop', '-f', file])
+            task.run(pattern='Ghostscript|^Copyright|WARRANTY:|^Processing')
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
 
 
 if __name__ == '__main__':

@@ -10,7 +10,8 @@ import re
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -97,23 +98,23 @@ class Main(object):
 
     def _unpack(self, archive):
         if archive.endswith('.tar.7z'):
-            p7zip = syslib.Command('7za')
+            p7zip = command_mod.Command('7za', errors='stop')
             p7zip.set_args(['x', '-y', '-so', archive])
             self._tar.set_args(['xfv', '-'])
-            p7zip.run(pipes=[self._tar])
+            subtask_mod.Task(p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
         else:
             self._tar.set_args(['xfv', archive])
-            self._tar.run()
+            subtask_mod.Task(self._tar.get_cmdline()).run()
 
     def _view(self, archive):
         if archive.endswith('.tar.7z'):
-            p7zip = syslib.Command('7za')
+            p7zip = command_mod.Command('7za', errors='stop')
             p7zip.set_args(['x', '-y', '-so', archive])
             self._tar.set_args(['tfv', '-'])
-            p7zip.run(pipes=[self._tar])
+            subtask_mod.Task(p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
         else:
             self._tar.set_args(['tfv', archive])
-            self._tar.run()
+            subtask_mod.Task(self._tar.get_cmdline()).run()
 
     def run(self):
         """
@@ -123,9 +124,10 @@ class Main(object):
 
         os.umask(int('022', 8))
         if os.name == 'nt':
-            self._tar = syslib.Command('tar.exe')
+            self._tar = command_mod.Command('tar.exe', errors='stop')
         else:
-            self._tar = syslib.Command('tar')
+            self._tar = command_mod.Command('tar', errors='stop')
+
         for archive in options.get_archives():
             print(archive + ':')
             if options.get_view_flag():

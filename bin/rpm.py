@@ -8,7 +8,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
@@ -39,10 +40,10 @@ class Options(object):
         """
         Parse arguments
         """
-        self._rpm = syslib.Command('rpm')
+        self._rpm = command_mod.Command('rpm', errors='stop')
         if len(args) == 1 or args[1] != '-l':
             self._rpm.set_args(sys.argv[1:])
-            self._rpm.run(mode='exec')
+            subtask_mod.Exec(self._rpm.get_cmdline()).run()
 
         self._mode = 'show_packages_info'
 
@@ -135,12 +136,13 @@ class Main(object):
     def _read_rpm_status(options):
         rpm = options.get_rpm()
         rpm.set_args(['-a', '-q', '-i'])
-        rpm.run(mode='batch')
+        task = subtask_mod.Batch(rpm.get_cmdline())
+        task.run()
         name = ''
         packages = {}
         package = Package('', -1, '')
 
-        for line in rpm.get_output():
+        for line in task.get_output():
             if line.startswith('Name '):
                 name = line.split()[2]
             elif line.startswith('Version '):

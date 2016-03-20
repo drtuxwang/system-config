@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -59,8 +60,8 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._rpm2cpio = syslib.Command('rpm2cpio')
-        self._cpio = syslib.Command('cpio')
+        self._rpm2cpio = command_mod.Command('rpm2cpio', errors='stop')
+        self._cpio = command_mod.Command('cpio', errors='stop')
         if self._args.view_flag:
             self._cpio.set_args(['-idmt', '--no-absolute-filenames'])
         else:
@@ -113,11 +114,11 @@ class Main(object):
             if not os.path.isfile(archive):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + archive + '" archive file.')
             print(archive + ':')
-            rpm2cpio.set_args([archive])
-            rpm2cpio.run(pipes=[cpio])
-            if rpm2cpio.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(rpm2cpio.get_exitcode()) +
-                                 ' received from "' + rpm2cpio.get_file() + '".')
+            task = subtask_mod.Task(rpm2cpio.get_cmdline() + [archive, '|'] + cpio.get_cmdline())
+            task.run()
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
 
 
 if __name__ == '__main__':

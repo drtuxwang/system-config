@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -55,17 +56,17 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._archiver = syslib.Command('unrar')
+        self._archiver = command_mod.Command('unrar', errors='stop')
         if args[1] in ('l', 't', 'x'):
             self._archiver.set_args(args[1:])
-            self._archiver.run(mode='exec')
+            subtask_mod.Exec(self._archiver.get_cmdline()).run()
 
         if self._args.view_flag:
-            self._archiver.set_flags(['l', '-std'])
+            self._archiver.set_args(['l', '-std'])
         elif self._args.test_flag:
-            self._archiver.set_flags(['t', '-std'])
+            self._archiver.set_args(['t', '-std'])
         else:
-            self._archiver.set_flags(['x', '-std'])
+            self._archiver.set_args(['x', '-std'])
 
 
 class Main(object):
@@ -110,12 +111,12 @@ class Main(object):
         archiver = options.get_archiver()
 
         for archive in options.get_archives():
-            archiver.set_args([archive])
-            archiver.run()
-            if archiver.get_exitcode():
-                print(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
-                      ' received from "' + archiver.get_file() + '".', file=sys.stderr)
-                raise SystemExit(archiver.get_exitcode())
+            task = subtask_mod.Task(archiver.get_cmdline() + [archive])
+            task.run()
+            if task.get_exitcode():
+                print(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                      ' received from "' + task.get_file() + '".', file=sys.stderr)
+                raise SystemExit(task.get_exitcode())
 
 
 if __name__ == '__main__':

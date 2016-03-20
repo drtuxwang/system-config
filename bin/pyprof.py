@@ -10,7 +10,8 @@ import pstats
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -106,7 +107,17 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
-    def _profile(module_file, module_args):
+    def _get_command(module_file, module_args):
+        if os.path.isfile(module_file):
+            return command_mod.CommandFile(module_file, args=module_args)
+
+        try:
+            return command_mod.Command(module_file, args=module_args)
+        except command_mod.CommandNotFoundError:
+            raise SystemExit(sys.argv[0] + ': Cannot find "' + module_file + '" module file')
+
+    @classmethod
+    def _profile(cls, module_file, module_args):
         stats_file = os.path.basename(module_file.rsplit('.', 1)[0] + '.pstats')
         if os.path.isfile(stats_file):
             try:
@@ -114,19 +125,13 @@ class Main(object):
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot remove old "' + stats_file + '" file.')
 
-        python3 = syslib.Command(file=sys.executable)
+        python3 = command_mod.CommandFile(sys.executable)
         python3.set_args(['-m', 'cProfile', '-o', stats_file])
 
-        if os.path.isfile(module_file):
-            command = syslib.Command(file=module_file)
-        else:
-            try:
-                command = syslib.Command(module_file)
-            except syslib.SyslibError:
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + module_file + '" module file')
-        command.set_args(module_args)
-        command.set_wrapper(python3)
-        command.run()
+        command = cls._get_command(module_file, module_args)
+
+        task = subtask_mod.Task(python3.get_cmdline() + command.get_cmdline())
+        task.run()
 
         print('pyprof:', command.args2cmd([command.get_file()] + module_args))
         return stats_file

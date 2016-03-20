@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -46,13 +47,13 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._bzip2 = syslib.Command('bzip2')
+        self._bzip2 = command_mod.Command('bzip2', errors='stop')
 
         if self._args.test_flag:
-            self._bzip2.set_flags(['-t'])
+            self._bzip2.set_args(['-t'])
         else:
-            self._bzip2.set_flags(['-d'])
-        self._bzip2.set_args(self._args.archives)
+            self._bzip2.set_args(['-d'])
+        self._bzip2.extend_args(self._args.archives)
 
 
 class Main(object):
@@ -93,7 +94,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_bzip2().run(mode='exec')
+        subtask_mod.Exec(options.get_bzip2().get_cmdline()).run()
 
 
 if __name__ == '__main__':

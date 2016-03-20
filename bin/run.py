@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -36,17 +37,6 @@ class Options(object):
         """
         return self._args.log_file
 
-    @staticmethod
-    def _sh(command):
-        try:
-            with open(command.get_file(), errors='replace') as ifile:
-                line = ifile.readline().rstrip('\r\n')
-                if line == '#!/bin/sh':
-                    shell = syslib.Command(file='/bin/sh')
-                    command.set_wrapper(shell)
-        except OSError:
-            pass
-
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Run a command immune to terminal hangups.')
 
@@ -66,23 +56,25 @@ class Options(object):
 
         return args[len(my_args):]
 
+    @staticmethod
+    def _get_command(directory, command):
+        if os.path.isfile(command):
+            return command_mod.CommandFile(os.path.abspath(command))
+
+        file = os.path.join(directory, command)
+        if os.path.isfile(file):
+            return command_mod.CommandFile(file)
+        else:
+            return command_mod.Command(command)
+
     def parse(self, args):
         """
         Parse arguments
         """
         command_args = self._parse_args(args[1:])
 
-        command = self._args.command[0]
-        if os.path.isfile(command):
-            self._command = syslib.Command(file=os.path.abspath(command), args=command_args)
-        else:
-            file = os.path.join(os.path.dirname(args[0]), command)
-            if os.path.isfile(file):
-                self._command = syslib.Command(file=file, args=command_args)
-            else:
-                self._command = syslib.Command(command, args=command_args)
-
-        self._sh(self._command)
+        self._command = self._get_command(os.path.dirname(args[0]), self._args.command[0])
+        self._command.set_args(command_args)
 
         if self._args.log_file:
             try:
@@ -131,7 +123,7 @@ class Main(object):
         """
         options = Options()
 
-        options.get_command().run(logfile=options.get_log_file(), mode='daemon')
+        subtask_mod.Daemon(options.get_command().get_cmdline()).run(file=options.get_log_file())
 
 
 if __name__ == '__main__':

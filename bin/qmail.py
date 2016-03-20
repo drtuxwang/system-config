@@ -11,9 +11,10 @@ import re
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
-RELEASE = '2.6.1'
+RELEASE = '2.6.2'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -99,15 +100,19 @@ class Options(object):
 
         os.umask(int('077', 8))
 
-        self._sendmail = syslib.Command('sendmail', flags=['-t'], pathextra=['/usr/lib'])
-        self._editor = syslib.Command('hedit', check=False)
+        self._sendmail = command_mod.Command('sendmail', pathextra=['/usr/lib'], errors='stop')
+        self._sendmail.set_args(['-t'])
+
         if 'HOME' not in os.environ:
             raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
         self._tmpfile = os.sep + os.path.join(
             'tmp', 'qmail-' + getpass.getuser() + '.' + str(os.getpid()))
+
+        self._editor = command_mod.Command('fedit', errors='ignore')
         if not self._editor.is_found():
-            self._editor = syslib.Command('vi',)
+            self._editor = command_mod.Command('vi', errors='stop')
         self._editor.set_args([self._tmpfile])
+
         self._my_address = self._address()
 
 
@@ -159,7 +164,7 @@ class Main(object):
             raise SystemExit(sys.argv[0] + ': Cannot create "' +
                              options.get_tmpfile() + '" temporary file.')
 
-        options.get_editor().run()
+        subtask_mod.Task(options.get_editor().get_cmdline()).run()
 
         try:
             with open(options.get_tmpfile(), errors='replace') as ifile:
@@ -179,25 +184,26 @@ class Main(object):
 
     def _mail_alias(self, addresses):
         if self._malias.is_found():
-            self._malias.set_args(addresses)
-            self._malias.run(mode='batch')
-            addresses = self._malias.get_output()
+            task = subtask_mod.Batch(self._malias.get_cmdline() + addresses)
+            task.run(mode='batch')
+            addresses = task.get_output()
         return addresses
 
     def _send(self, options):
         print('Sending E-mail...')
         sendmail = options.get_sendmail()
-        sendmail.run(mode='batch', stdin=self._email)
-        if not sendmail.has_output():
+        task = subtask_mod.Batch(sendmail.get_cmdline())
+        task.run(stdin=self._email)
+        if not task.has_output():
             try:
                 os.remove(options.get_tmpfile())
             except OSError:
                 pass
-        for line in sendmail.get_output() + sendmail.get_error():
+        for line in task.get_output() + task.get_error():
             print(line)
-        if sendmail.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(sendmail.get_exitcode()) +
-                             ' received from "' + sendmail.get_file() + '".')
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
 
     def _update(self):
         isemail = re.compile('(To|Cc|Bcc): ', re.IGNORECASE)
@@ -214,7 +220,7 @@ class Main(object):
         """
         options = Options()
 
-        self._malias = syslib.Command('malias', check=False)
+        self._malias = command_mod.Command('malias', errors='ignore')
         self._email = self._create(options)
         while True:
             self._email = self._edit(options)

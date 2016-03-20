@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -85,7 +86,7 @@ class Main(object):
         directories = options.get_directories()
 
         errors = []
-        jpeginfo = syslib.Command('jpeginfo', flags=['--info', '--check'])
+        jpeginfo = command_mod.Command('jpeginfo', args=['--info', '--check'], errors='stop')
         for directory in directories:
             if os.path.isdir(directory):
                 files = []
@@ -93,9 +94,9 @@ class Main(object):
                     if file.split('.')[-1].lower() in ('jpg', 'jpeg'):
                         files.append(file)
                 if files:
-                    jpeginfo.set_args(files)
-                    jpeginfo.run(mode='batch')
-                    for line in jpeginfo.get_output():
+                    task = subtask_mod.Batch(jpeginfo.get_cmdline() + files)
+                    task.run()
+                    for line in task.get_output():
                         if '[ERROR]' in line:
                             errors.append(line)
                         else:

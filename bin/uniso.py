@@ -9,8 +9,9 @@ import os
 import signal
 import sys
 
+import command_mod
 import file_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
@@ -126,25 +127,25 @@ class Main(object):
         view_flag = options.get_view_flag()
 
         if view_flag:
-            archiver = syslib.Command('7z', flags=['l'])
-            isoinfo = syslib.Command('isoinfo', flags=['-d', '-i'])
+            archiver = command_mod.Command('7z', args=['l'], errors='stop')
+            isoinfo = command_mod.Command('isoinfo', args=['-d', '-i'], errors='stop')
         else:
-            archiver = syslib.Command('7z', flags=['x', '-y'])
+            archiver = command_mod.Command('7z', args=['x', '-y'], errors='stop')
 
         for image in options.get_images():
             if not os.path.isfile(image):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + image + '" ISO9660 file.')
-            archiver.set_args([image])
-            archiver.run()
-            if archiver.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(archiver.get_exitcode()) +
-                                 ' received from "' + archiver.get_file() + '".')
+            task = subtask_mod.Task(archiver.get_cmdline() + [image])
+            task.run()
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
             if view_flag:
-                isoinfo.set_args([image])
-                isoinfo.run()
-                if isoinfo.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.get_exitcode()) +
-                                     ' received from "' + isoinfo.get_file() + '".')
+                task = subtask_mod.Task(isoinfo.get_cmdline() + [image])
+                task.run()
+                if task.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                     ' received from "' + task.get_file() + '".')
                 self._isosize(image, file_mod.FileStat(image).get_size())
 
 

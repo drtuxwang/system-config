@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -82,8 +83,7 @@ class Main(object):
         if os.path.isdir(directory):
             try:
                 files = [os.path.join(directory, x) for x in os.listdir(directory)]
-                self._touch.set_args(files)
-                self._touch.run(mode='batch')
+                subtask_mod.Batch(self._touch.get_cmdline() + files).run()
                 for file in files:
                     if os.path.isdir(file) and not os.path.islink(file):
                         self._toucher(file)
@@ -96,7 +96,7 @@ class Main(object):
         """
         options = Options()
 
-        self._touch = syslib.Command('touch', flags=['-a'])
+        self._touch = command_mod.Command('touch', args=['-a'], errors='stop')
         for directory in options.get_directories():
             self._toucher(directory)
 

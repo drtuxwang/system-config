@@ -14,7 +14,8 @@ import sys
 import textwrap
 import time
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -140,23 +141,25 @@ class Main(object):
 
     def _image(self, file):
         if 'convert' not in self._cache:
-            self._cache['convert'] = syslib.Command('convert')
+            self._cache['convert'] = command_mod.Command('convert', errors='stop')
         convert = self._cache['convert']
 
         # Imagemagick low quality method A4 = 595x842, rotate/resize to 545x790 and add 20x20 border
-        convert.set_args(['-verbose', file, '/dev/null'])
-        convert.run(filter='^' + file + ' ', mode='batch', error2output=True)
-        if not convert.has_output():
+        task = subtask_mod.Batch(convert.get_cmdline() + ['-verbose', file, '/dev/null'])
+        task.run(pattern='^' + file + ' ', error2output=True)
+        if not task.has_output():
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" image file.')
-        xsize, ysize = convert.get_output()[0].split('+')[0].split()[-1].split('x')
+        xsize, ysize = task.get_output()[0].split('+')[0].split()[-1].split('x')
         if int(xsize) > int(ysize):
-            convert.set_args(['-page', 'a4', '-rotate', '90', file, 'ps:' + self._tmpfile])
+            task = subtask_mod.Batch(convert.get_cmdline() + [
+                '-page', 'a4', '-rotate', '90', file, 'ps:' + self._tmpfile])
         else:
-            convert.set_args(['-page', 'a4', file, 'ps:' + self._tmpfile])
-        convert.run(mode='batch')
-        if convert.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(convert.get_exitcode()) +
-                             ' received from "' + convert.get_file() + '".')
+            task = subtask_mod.Batch(convert.get_cmdline() + [
+                '-page', 'a4', file, 'ps:' + self._tmpfile])
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
         return 'IMAGE file "' + file + '"'
 
     def _postscript(self, options, file):
@@ -176,11 +179,12 @@ class Main(object):
                     stdin = []
                     for line in ifile:
                         stdin.append(line.rstrip('\r\n' + chr(4)) + '\n')
-                    self._psnup.run(mode='batch', stdin=stdin, output_file=self._tmpfile)
-                    if self._psnup.get_exitcode():
+                    task = subtask_mod.Batch(self._psnup.get_cmdline())
+                    task.run(stdin=stdin, file=self._tmpfile)
+                    if task.get_exitcode():
                         raise SystemExit(
-                            sys.argv[0] + ': Error code ' + str(self._psnup.get_exitcode()) +
-                            ' received from "' + self._psnup.get_file() + '".')
+                            sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                            ' received from "' + task.get_file() + '".')
                     self._postscript_fix(self._tmpfile)
                     return ('Postscript file "' + file + '" with ' + str(options.get_pages()) +
                             ' pages per page')
@@ -217,7 +221,7 @@ class Main(object):
         if 'LANG' in os.environ:
             del os.environ['LANG']  # Avoids locale problems
         if 'a2ps' not in self._cache:
-            self._cache['a2ps'] = syslib.Command('a2ps')
+            self._cache['a2ps'] = command_mod.Command('a2ps', errors='stop')
             self._cache['a2ps'].set_flags([
                 '--media=A4', '--columns=1', '--header=', '--left-footer=', '--footer=',
                 '--right-footer=', '--output=-', '--highlight-level=none', '--quiet'])
@@ -267,23 +271,23 @@ class Main(object):
         tmpfile = (os.sep + os.path.join(
             'tmp', 'pdf-' + getpass.getuser() + '.' + str(os.getpid())) + '-')
         if options.get_pages() != 1:
-            self._psnup = syslib.Command(
-                'psnup', args=['-p' + options.get_paper(), '-m5', '-' + str(options.get_pages())])
-        command = syslib.Command('gs')
-        command.set_flags(['-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pdfwrite',
-                           '-sPAPERSIZE=' + options.get_paper().lower()])
-        command.set_args(['-sOutputFile=' + options.get_archive(), '-c', '.setpdfwrite'])
+            self._psnup = command_mod.Command('psnup', errors='stop')
+            self._psnup.set_args(
+                ['-p' + options.get_paper(), '-m5', '-' + str(options.get_pages())])
+        command = command_mod.Command('gs', errors='stop')
+        command.set_args(['-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pdfwrite',
+                          '-sPAPERSIZE=' + options.get_paper().lower()])
 
+        args = ['-sOutputFile=' + options.get_archive(), '-c', '.setpdfwrite']
         for file in options.get_files():
             print('Packing', file)
             if not options.get_archive():
-                command.set_args([
-                    '-sOutputFile=' + file.rsplit('.', 1)[0] + '.pdf', '-c', '.setpdfwrite'])
+                args = ['-sOutputFile=' + file.rsplit('.', 1)[0] + '.pdf', '-c', '.setpdfwrite']
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
             ext = file.split('.')[-1].lower()
             if ext == 'pdf':
-                command.extend_args(['-f', file])
+                args.extend(['-f', file])
             else:
                 self._tmpfile = tmpfile + str(len(self._tempfiles) + 1)
                 if ext in ('bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff'):
@@ -294,11 +298,11 @@ class Main(object):
                 else:
                     self._text(options, file)
                 self._tempfiles.append(self._tmpfile)
-                command.extend_args(['-f', self._tmpfile])
+                args.extend(['-f', self._tmpfile])
             if not options.get_archive():
-                command.run()
+                subtask_mod.Task(command.get_cmdline() + args).run()
         if options.get_archive():
-            command.run()
+            subtask_mod.Task(command.get_cmdline() + args).run()
 
 
 if __name__ == '__main__':

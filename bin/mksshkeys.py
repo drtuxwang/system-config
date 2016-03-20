@@ -10,7 +10,8 @@ import shutil
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -52,7 +53,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._ssh = syslib.Command('ssh')
+        self._ssh = command_mod.Command('ssh', errors='stop')
 
 
 class Main(object):
@@ -125,10 +126,11 @@ class Main(object):
                 '    echo "$PUBKEY" >> $HOME/.ssh/authorized_keys',
                 'fi')
             self._ssh.set_args([login, '/bin/sh'])
-            self._ssh.run(stdin=stdin)
-            if self._ssh.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(self._ssh.get_exitcode()) +
-                                 ' received from "' + self._ssh.get_file() + '".')
+            task = subtask_mod.Task(self._ssh.get_cmdline())
+            task.run(stdin=stdin)
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
 
     def _add_authorized_key(self, pubkey):
         file = os.path.join(self._sshdir, 'authorized_keys')
@@ -175,16 +177,17 @@ class Main(object):
         private_key = os.path.join(self._sshdir, 'id_rsa')
         if not os.path.isfile(private_key):
             print('\nGenerating 4096bit RSA private/public key pair...')
-            ssh_keygen = syslib.Command('ssh-keygen')
+            ssh_keygen = command_mod.Command('ssh-keygen', errors='stop')
             ssh_keygen.set_args(['-t', 'rsa', '-b', '4096', '-f', private_key, '-N', ''])
-            ssh_keygen.run()
-            if ssh_keygen.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(ssh_keygen.get_exitcode()) +
-                                 ' received from "' + ssh_keygen.get_file() + '".')
-            ssh_add = syslib.Command('ssh-add', check=False)
+            task = subtask_mod.Task(ssh_keygen.get_cmdline())
+            task.run()
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
+            ssh_add = command_mod.Command('ssh-add', errors='ignore')
             if ssh_add.is_found():
                 # When SSH_AUTH_SOCK agent is used
-                ssh_add.run(mode='batch')
+                subtask_mod.Batch(ssh_add.get_cmdline()).run()
 
         try:
             with open(os.path.join(self._sshdir, 'id_rsa.pub'), errors='replace') as ifile:

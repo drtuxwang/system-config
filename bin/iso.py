@@ -11,8 +11,9 @@ import os
 import signal
 import sys
 
+import command_mod
 import file_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -84,26 +85,25 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._genisoimage = syslib.Command('genisoimage')
-        self._genisoimage.set_flags(['-version'])
-        self._genisoimage.run(mode='batch')
-        if self._genisoimage.get_exitcode():
-            raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(self._genisoimage.get_exitcode()) +
-                ' received from "' + self._genisoimage.get_file() + '".')
-        self._genisoimage.set_flags([
+        self._genisoimage = command_mod.Command('genisoimage', errors='stop')
+        task = subtask_mod.Batch(self._genisoimage.get_cmdline() + ['-version'])
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
+        self._genisoimage.set_args([
             '-iso-level', '3', '-joliet-long', '-rational-rock', '-appid', 'GENISOIMAGE-' +
-            self._genisoimage.get_output()[0].split()[1]])
+            task.get_output()[0].split()[1]])
         if self._args.follow_flag:
-            self._genisoimage.append_flag('-follow-links')
+            self._genisoimage.append_arg('-follow-links')
 
-        self._isoinfo = syslib.Command('isoinfo')
+        self._isoinfo = command_mod.Command('isoinfo', errors='stop')
 
         if not os.path.isdir(self._args.directory[0]):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + self._args.directory + '" directory.')
         if self._args.image:
-            self._image = self._args.image[0]
+            self._image = self._args.image
         else:
             self._image = self._args.volume[0] + '.iso'
 
@@ -147,15 +147,15 @@ class Main(object):
             bootimg = file_mod.FileStat.newest(files)
             print('Adding Eltorito boot image "' + bootimg + '"...')
             if 'isolinux' in bootimg:
-                self._genisoimage.extend_flags([
+                self._genisoimage.extend_args([
                     '-eltorito-boot', os.path.join('isolinux', os.path.basename(bootimg)),
                     '-no-emul-boot', '-boot-info-table'])
             elif file_mod.FileStat(bootimg).get_size() == 2048:
-                self._genisoimage.extend_flags([
+                self._genisoimage.extend_args([
                     '-eltorito-boot', os.path.basename(bootimg), '-no-emul-boot',
                     '-boot-load-size', '4', '-hide', 'boot.catalog'])
             else:
-                self._genisoimage.extend_flags([
+                self._genisoimage.extend_args([
                     '-eltorito-boot', os.path.basename(bootimg), '-hide', 'boot.catalog'])
 
     @staticmethod
@@ -204,22 +204,24 @@ class Main(object):
 
     def _windisk(self, options):
         if os.name == 'nt':
-            self._genisoimage.extend_flags(['-file-mode', '444'])
+            self._genisoimage.extend_args(['-file-mode', '444'])
         else:
-            command = syslib.Command('df', args=[options.get_directory()], check=False)
-            mount = syslib.Command('mount', check=False)
+            command = command_mod.Command('df', args=[options.get_directory()], errors='ignore')
+            mount = command_mod.Command('mount', errors='ignore')
             if command.is_found() and mount.is_found():
-                command.run(mode='batch')
-                if command.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(command.get_exitcode()) +
-                                     ' received from "' + command.get_file() + '".')
-                if len(command.get_output()) > 1:
-                    mount.run(filter='^' + command.get_output()[1].split()[0] +
-                              ' .* (fuseblk|vfat|ntfs) ', mode='batch')
-                    if mount.has_output():
+                task = subtask_mod.Batch(command.get_cmdline())
+                task.run()
+                if task.get_exitcode():
+                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                     ' received from "' + task.get_file() + '".')
+                if len(task.get_output()) > 1:
+                    task2 = subtask_mod.Batch(mount.get_cmdline())
+                    task2.run(
+                        pattern='^' + task.get_output()[1].split()[0] + ' .* (fuseblk|vfat|ntfs) ')
+                    if task2.has_output():
                         print('Using mode 444 for all plain files (' +
-                              mount.get_output()[0].split()[4] + ' disk detected)...')
-                        self._genisoimage.extend_flags(['-file-mode', '444'])
+                              task2.get_output()[0].split()[4] + ' disk detected)...')
+                        self._genisoimage.extend_args(['-file-mode', '444'])
 
     def run(self):
         """
@@ -241,21 +243,24 @@ class Main(object):
         self._genisoimage = options.get_genisoimage()
         self._windisk(options)
         self._bootimg(options)
-        self._genisoimage.set_args(['-volid', re.sub(r'[^\w,.+-]', '_', options.get_volume())[:32],
-                                    '-o', image, options.get_directory()])
-        self._genisoimage.run()
-        if self._genisoimage.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(self._genisoimage.get_exitcode()) +
-                             ' received from "' + self._genisoimage.get_file() + '".')
+        self._genisoimage.extend_args([
+            '-volid', re.sub(r'[^\w,.+-]', '_', options.get_volume())[:32],
+            '-o', image, options.get_directory()])
+        task = subtask_mod.Task(self._genisoimage.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
 
         if os.path.isfile(image):
             print()
             isoinfo = options.get_isoinfo()
             isoinfo.set_args(['-d', '-i', image])
-            isoinfo.run(filter=' id: $')
-            if isoinfo.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(isoinfo.get_exitcode()) +
-                                 ' received from "' + isoinfo.get_file() + '".')
+            task = subtask_mod.Task(isoinfo.get_cmdline())
+            task.run(pattern=' id: $')
+            if task.get_exitcode():
+                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                                 ' received from "' + task.get_file() + '".')
             self._isosize(image, file_mod.FileStat(image).get_size())
             if options.get_md5_flag():
                 print('Creating MD5 check sum of ISO file.')
