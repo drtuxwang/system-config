@@ -4,12 +4,13 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.7 (2016-03-19)
+Version 2.0.8 (2016-03-20)
 """
 
 import distutils.version
 import functools
 import glob
+import platform
 import os
 import re
 import subprocess
@@ -59,15 +60,15 @@ class Command(object):
 
     @classmethod
     def _locate(cls, program, info):
-        platform = info['platform']
-        if not platform:
-            platform = _System.get_platform()
-        extensions = cls._get_extensions(platform)
+        _platform = info['platform']
+        if not _platform:
+            _platform = _System.get_platform()
+        extensions = cls._get_extensions(_platform)
 
         directory = os.path.dirname(os.path.abspath(sys.argv[0]))
         if os.path.basename(directory) == 'bin':
             directory = os.path.dirname(directory)
-            file = cls._search_ports(directory, platform, program, extensions)
+            file = cls._search_ports(directory, _platform, program, extensions)
             if file:
                 return file
 
@@ -82,9 +83,9 @@ class Command(object):
         raise CommandNotFoundError('Cannot find required "' + program + '" software.')
 
     @staticmethod
-    def _get_extensions(platform):
+    def _get_extensions(_platform):
         extensions = ['']
-        if platform.startswith('windows-'):
+        if _platform.startswith('windows-'):
             try:
                 extensions.extend(os.environ['PATHEXT'].lower().split(os.pathsep))
             except KeyError:
@@ -106,12 +107,12 @@ class Command(object):
         return nfiles
 
     @classmethod
-    def _search_ports(cls, directory, platform, program, extensions):
+    def _search_ports(cls, directory, _platform, program, extensions):
         files = []
-        for port_glob in _System.get_port_globs(platform):
+        for port_glob in _System.get_port_globs(_platform):
             for extension in extensions:
                 files = glob.glob(os.path.join(directory, '*', port_glob, program + extension))
-                if platform.startswith('linux'):
+                if _platform.startswith('linux'):
                     files = cls._check_glibc(files)
                 if files:
                     return _System.newest(files)
@@ -286,10 +287,14 @@ class CommandFile(Command):
         return file
 
 
-class _System(object):
+class Platform(object):
+    """
+    This class provides some platform information
+    """
 
     @staticmethod
-    def _get_linux_platform(machine):
+    def _get_arch_linux():
+        machine = os.uname()[-1]
         arch = 'unknown'
         if machine == 'x86_64':
             arch = 'x86_64'
@@ -299,20 +304,21 @@ class _System(object):
             arch = 'sparc64'
         elif machine == 'ppc64':
             arch = 'power64'
-        return 'linux-' + arch
+        return arch
 
     @staticmethod
-    def _get_macos_platform(machine):
+    def _get_arch_macos():
         # "/usr/sbin/sysct -a" => "hw.cpu64bit_capable: 1"
+        machine = os.uname()[-1]
         arch = 'unknown'
         if machine == 'x86_64':
             arch = 'x86_64'
         elif machine == 'i386':
             arch = 'x86'
-        return 'macos-' + arch
+        return arch
 
     @staticmethod
-    def _get_windows_platform():
+    def _get_arch_windows():
         arch = 'unknown'
         if 'PROCESSOR_ARCHITECTURE' in os.environ:
             if os.environ['PROCESSOR_ARCHITECTURE'] == 'AMD64':
@@ -322,65 +328,20 @@ class _System(object):
                 arch = 'x86_64'
             elif os.environ['PROCESSOR_ARCHITECTURE'] == 'x86':
                 arch = 'x86'
-        return 'windows-' + arch
+        return arch
 
     @staticmethod
-    def _get_windows_cygwin_platform(kernel, machine):
+    def _get_arch_windows_cygwin():
+        osname, *_, machine = os.uname()[-1]
         arch = 'unknown'
         if machine == 'x86_64':
             arch = 'x86_64'
         elif machine.endswith('86'):
-            if 'WOW64' in kernel:
+            if 'WOW64' in osname:
                 arch = 'x86_64'
             else:
                 arch = 'x86'
-        return 'Windows_' + arch
-
-    @classmethod
-    @functools.lru_cache(maxsize=1)
-    def get_platform(cls):
-        """
-        Return platform (ie linux-x86, linux-x86_64, macos-x86_64, windows-x86_64).
-        """
-        platform = ('unknown', 'unknown')
-        if os.name == 'nt':
-            platform = cls._get_windows_platform()
-        else:
-            kernel, *_, machine = os.uname()
-            if kernel == 'Linux':
-                platform = cls._get_linux_platform(machine)
-            elif kernel == 'Darwin':
-                platform = cls._get_macos_platform(machine)
-            elif kernel.startswith('cygwin'):
-                platform = cls._get_windows_cygwin_platform(kernel, machine)
-        return platform
-
-    @staticmethod
-    @functools.lru_cache(maxsize=None)
-    def get_port_globs(platform):
-        """
-        Return tuple of portname globs (ie 'linux64_*-x86*', 'windows64_*-x86*')
-        """
-        mapping = {'linux-x86_64': ('linux64_*-x86*', 'linux_*-x86*'),
-                   'linux-x86': ('linux_*-x86*'),
-                   'linux-sparc64': ('linux64_*-sparc64*', 'linux_*-sparc*'),
-                   'linux-power64': ('linux64_*-power64*', 'linux_*-power*'),
-                   'macos-x86_64': ('macos64_*-x86*', 'macos_*-x86*'),
-                   'macos-x86': ('macos_*-x86*'),
-                   'windows-x86_64': ('windows64_*-x86*', 'windows_*-x86*'),
-                   'windows-x86': ('windows_*-x86*')}
-
-        try:
-            return mapping[platform]
-        except KeyError:
-            return ()
-
-    @staticmethod
-    def _get_file_time(file):
-        try:
-            return os.stat(file)[8]
-        except (OSError, TypeError):
-            return 0
+        return arch
 
     @staticmethod
     def _locate_program(program):
@@ -393,7 +354,7 @@ class _System(object):
         return file
 
     @classmethod
-    def run_program(cls, command):
+    def _run_program(cls, command):
         """
         Run program in batch mode and return list of lines.
         """
@@ -422,12 +383,97 @@ class _System(object):
         (based on glibc version used to compile 'ldd' or return '0.0' for non Linux)
         """
         if cls.get_platform().startswith('linux'):
-            lines = cls.run_program(['ldd', '--version'])
+            lines = cls._run_program(['ldd', '--version'])
             try:
                 return lines[0].split()[-1]
             except IndexError:
                 raise GlibcVersionError('Cannot determine "glibc" version.')
         return '0.0'
+
+    @staticmethod
+    def _get_kernel_windows_cygwin():
+        registry_key = (
+            '/proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows NT/CurrentVersion')
+        try:
+            with open(os.path.join(registry_key, 'CurrentVersion'), errors='replace') as ifile:
+                kernel = ifile.readline()
+            with open(os.path.join(registry_key, 'CurrentBuildNumber'), errors='replace') as ifile:
+                kernel += '.' + ifile.readline()
+        except OSError:
+            kernel = 'unknown'
+        return kernel
+
+    @classmethod
+    @functools.lru_cache(maxsize=1)
+    def get_kernel(cls):
+        """
+        Return kernel version (ie '4.5', '5.2')
+        """
+        system = cls.get_system()
+        kernel = 'unknown'
+        if system in ('linux', 'macos'):
+            kernel = os.uname()[2]
+        elif system == 'windows':
+            if os.name == 'posix':
+                kernel = cls._get_arch_windows_cygwin()
+            else:
+                kernel = platform.version()
+        return kernel
+
+    @staticmethod
+    @functools.lru_cache(maxsize=1)
+    def get_system():
+        """
+        Return system name (ie 'linux', 'windows')
+        """
+        system = 'unknown'
+        if os.name == 'nt':
+            system = 'windows'
+        else:
+            osname = os.uname()[0]
+            if osname == 'Linux':
+                system = 'linux'
+            elif osname == 'Darwin':
+                system = 'macos'
+            elif osname.startswith('cygwin'):
+                system = 'windows'
+        return system
+
+    @classmethod
+    @functools.lru_cache(maxsize=1)
+    def get_arch(cls):
+        """
+        Return arch name (ie 'x86', 'x86_64')
+        """
+        system = cls.get_system()
+        arch = 'unknown'
+        if system == 'linux':
+            arch = cls._get_arch_linux()
+        elif system == 'macos':
+            arch = cls._get_arch_macos()
+        elif system == 'windows':
+            if os.name == 'posix':
+                arch = cls._get_arch_windows_cygwin()
+            else:
+                arch = cls._get_arch_windows()
+        return arch
+
+    @classmethod
+    def get_platform(cls):
+        """
+        Return platform (ie linux-x86, linux-x86_64, macos-x86_64, windows-x86_64).
+        """
+        return cls.get_system() + '-' + cls.get_arch()
+
+
+class _System(Platform):
+
+    @staticmethod
+    def _get_file_time(file):
+        try:
+            return os.stat(file)[8]
+        except (OSError, TypeError):
+            return 0
 
     @classmethod
     def newest(cls, files):
@@ -447,6 +493,26 @@ class _System(object):
                     nfile_time = file_time
 
         return nfile
+
+    @staticmethod
+    @functools.lru_cache(maxsize=None)
+    def get_port_globs(_platform):
+        """
+        Return tuple of portname globs (ie 'linux64_*-x86*', 'windows64_*-x86*')
+        """
+        mapping = {'linux-x86_64': ('linux64_*-x86*', 'linux_*-x86*'),
+                   'linux-x86': ('linux_*-x86*'),
+                   'linux-sparc64': ('linux64_*-sparc64*', 'linux_*-sparc*'),
+                   'linux-power64': ('linux64_*-power64*', 'linux_*-power*'),
+                   'macos-x86_64': ('macos64_*-x86*', 'macos_*-x86*'),
+                   'macos-x86': ('macos_*-x86*'),
+                   'windows-x86_64': ('windows64_*-x86*', 'windows_*-x86*'),
+                   'windows-x86': ('windows_*-x86*')}
+
+        try:
+            return mapping[_platform]
+        except KeyError:
+            return ()
 
 
 class CommandError(Exception):

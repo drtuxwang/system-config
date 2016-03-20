@@ -626,8 +626,6 @@ bin/sysinfo.bat
 bin/sysinfo.py
 bin/sysinfo.sh         Old Bourne shell version
 
-bin/syslib.py          Python system interaction Library (transitional)
-
 bin/tar                tar wrapper (allowing non systems port)
 bin/tar.bat            (with Python enhancements)
 bin/tar.py

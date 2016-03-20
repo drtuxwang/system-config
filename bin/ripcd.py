@@ -181,14 +181,14 @@ class Main(object):
             wavfile = track.zfill(2) + '.wav'
             tee.set_args(['-a', logfile])
             task = subtask_mod.Task(self._icedax.get_cmdline() + [
-               'verbose-level=disable', 'track=' + track, 'dev=' + self._device, wavfile,
-               '2>&1', '|'] + tee.get_cmdline())
+                'verbose-level=disable', 'track=' + track, 'dev=' + self._device, wavfile,
+                '2>&1', '|'] + tee.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                                  ' received from "' + task.get_file() + '".')
             if os.path.isfile(wavfile):
-                self._pregap(wavfile, length)
+                self._pregap(wavfile)
             if not self._hasprob(logfile):
                 os.remove(warnfile)
 
@@ -222,7 +222,7 @@ class Main(object):
         return False
 
     @staticmethod
-    def _pregap(wavfile, length):
+    def _pregap(wavfile):
         # 1s = 176400 bytes
         size = file_mod.FileStat(wavfile).get_size()
         with open(wavfile, 'rb+') as ifile:

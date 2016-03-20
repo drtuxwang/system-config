@@ -15,19 +15,21 @@ import sys
 import threading
 import time
 
+import command_mod
+import file_mod
 import power_mod
-import syslib
+import subtask_mod
 
-RELEASE = '4.6.6'
-VERSION = 20160306
+# pylint: disable = import-error
+if os.name == 'nt':
+    import winreg
+# pylint: enable = import-error
+
+RELEASE = '4.6.7'
+VERSION = 20160320
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
-
-# pylint: disable = import-error, wrong-import-position
-
-if os.name == 'nt':
-    import winreg
 
 # pylint: disable = no-self-use, too-few-public-methods
 # pylint: disable = too-many-lines, too-many-nested-blocks, undefined-variable
@@ -45,7 +47,7 @@ class Options(object):
         self._release_date = str(VERSION)[:4] + '-' + str(VERSION)[4:6] + '-' + str(VERSION)[6:]
         self._release_version = RELEASE
 
-        self._system = self._get_system()
+        self._system = OperatingSystem.factory()
 
     def get_release_date(self):
         """
@@ -61,18 +63,9 @@ class Options(object):
 
     def get_system(self):
         """
-        Return operating syslib.
+        Return operating system.
         """
         return self._system
-
-    def _get_system(self):
-        name = syslib.info.get_system()
-        if name == 'linux':
-            return LinuxSystem()
-        elif name == 'windows':
-            return WindowsSystem()
-        else:
-            return OperatingSystem()
 
 
 class CommandThread(threading.Thread):
@@ -90,7 +83,7 @@ class CommandThread(threading.Thread):
         """
         Run thread
         """
-        self._child = self._command.run(mode='child')
+        self._child = subtask_mod.Child(self._command.get_cmdline()).run()
         while True:
             try:
                 byte = self._child.stdout.read(1)
@@ -180,17 +173,19 @@ class Detect(object):
                             comment='average over last 1min, 5min & 15min')
 
     def _xwindows(self):
-        xwininfo = syslib.Command('xwininfo', pathextra=['/usr/bin/X11', '/usr/openwin/bin'],
-                                  args=['-root'], check=False)
+        xwininfo = command_mod.Command('xwininfo', pathextra=['/usr/bin/X11', '/usr/openwin/bin'],
+                                       args=['-root'], errors='ignore')
         if xwininfo.is_found():
-            xwininfo.run(mode='batch')
-            if xwininfo.has_output():
-                xset = syslib.Command('xset', pathextra=['/usr/bin/X11', '/usr/openwin/bin'],
-                                      args=['-q'], check=False)
+            task = subtask_mod.Batch(xwininfo.get_cmdline())
+            task.run()
+            if task.has_output():
+                xset = command_mod.Command('xset', pathextra=['/usr/bin/X11', '/usr/openwin/bin'],
+                                           args=['-q'], errors='ignore')
                 if xset.is_found():
-                    xset.run(mode='batch')
+                    task2 = subtask_mod.Batch(xset.get_cmdline())
+                    task2.run()
                     try:
-                        for line in xset.get_output():
+                        for line in task2.get_output():
                             if 'Standby:' in line and 'Suspend:' in line and 'Off:' in line:
                                 _, standby, _, suspend, _, off = (line + ' ').replace(
                                     ' 0 ', ' Off ').split()
@@ -198,19 +193,19 @@ class Detect(object):
                                     name='X-Display Power', value=standby + ' ' + suspend + ' ' +
                                     off, comment='DPMS Standby Suspend Off')
                                 break
-                        for line in xset.get_output():
+                        for line in task2.get_output():
                             if 'auto repeat delay:' in line and 'repeat rate:' in line:
                                 self._writer.output(
                                     name='X-Keyboard Repeat', value=line.split()[3],
                                     comment=line.split()[6] + ' characters per second')
                                 break
-                        for line in xset.get_output():
+                        for line in task2.get_output():
                             if 'acceleration:' in line and 'threshold:' in line:
                                 self._writer.output(
                                     name='X-Mouse Speed', value=line.split()[1],
                                     comment='acceleration factor')
                                 break
-                        for line in xset.get_output():
+                        for line in task2.get_output():
                             if 'timeout:' in line and 'cycle:' in line:
                                 timeout = int(line.split()[1])
                                 if timeout:
@@ -221,10 +216,10 @@ class Detect(object):
                     except (IndexError, ValueError):
                         pass
 
-                xrandr = syslib.Command('xrandr', check=False)
+                xrandr = command_mod.Command('xrandr', errors='ignore')
                 if xrandr.is_found():
-                    xrandr.run(mode='batch')
-                    for line in xrandr.get_output():
+                    task2 = subtask_mod.Batch(xrandr.get_cmdline())
+                    for line in task2.get_output():
                         try:
                             if ' connected ' in line:
                                 screen, _, resolution, *_, width, _, height = line.replace(
@@ -245,16 +240,16 @@ class Detect(object):
                     width = '???'
                     height = '???'
                     try:
-                        for line in xwininfo.get_output():
+                        for line in task.get_output():
                             if 'Width:' in line:
                                 width = line.split()[1]
                             elif 'Height:' in line:
                                 height = line.split()[1]
                             elif 'Depth:' in line:
-                                self._writer.output(name='X-Windows Server',
-                                                    value=os.environ['DISPLAY'],
-                                                    comment=width + 'x' + height + ', ' +
-                                                    line.split()[1] + 'bit colour')
+                                self._writer.output(
+                                    name='X-Windows Server', value=os.environ['DISPLAY'],
+                                    comment=width + 'x' + height + ', ' + line.split()[1] +
+                                    'bit colour')
                     except IndexError:
                         pass
 
@@ -287,13 +282,14 @@ class OperatingSystem(object):
         """
         Detect loader
         """
-        ldd = syslib.Command('ldd', args=['/bin/sh'], check=False)
+        ldd = command_mod.Command('ldd', args=['/bin/sh'], errors='ignore')
         if ldd.is_found():
-            ldd.run(filter='libc.*=>', mode='batch')
-            if ldd.has_output():
+            task = subtask_mod.Batch(ldd.get_cmdline())
+            task.run(pattern='libc.*=>')
+            if task.has_output():
                 try:
-                    glibc = ldd.get_output()[0].split()[2]
-                    version = syslib.info.strings(glibc, 'GNU C Library').split(
+                    glibc = task.get_output()[0].split()[2]
+                    version = file_mod.FileUtil.strings(glibc, 'GNU C Library').split(
                         'version')[1].replace(',', ' ').split()[0]
                 except IndexError:
                     pass
@@ -318,7 +314,7 @@ class OperatingSystem(object):
 
     def has_devices(self):
         """
-        Retrun False
+        Return False
         """
         return False
 
@@ -355,7 +351,7 @@ class OperatingSystem(object):
         Return operating system information dictionary.
         """
         info = {}
-        info['OS Type'] = syslib.info.get_system()
+        info['OS Type'] = command_mod.Platform.get_system()
         info['OS Name'] = 'Unknown'
         info['OS Kernel'] = 'Unknown'
         info['OS Kernel X'] = ''
@@ -368,7 +364,7 @@ class OperatingSystem(object):
         Return CPU information dictionary.
         """
         info = {}
-        info['CPU Type'] = syslib.info.get_machine()
+        info['CPU Type'] = command_mod.Platform.get_arch()
         info['CPU Addressability'] = 'Unknown'
         info['CPU Addressability X'] = ''
         info['CPU Model'] = 'Unknown'
@@ -380,9 +376,9 @@ class OperatingSystem(object):
         info['CPU Clock'] = 'Unknown'
         info['CPU Clocks'] = 'Unknown'
         info['CPU Cache'] = {}
-        if syslib.info.get_machine() == 'x86':
+        if command_mod.Platform.get_arch() == 'x86':
             info['CPU Type'] = 'x86'
-        elif syslib.info.get_machine() == 'x86_64':
+        elif command_mod.Platform.get_arch() == 'x86_64':
             info['CPU Type'] = 'x86'
         return info
 
@@ -391,7 +387,7 @@ class OperatingSystem(object):
         Return system information dictionary.
         """
         info = {}
-        info['System Platform'] = syslib.info.get_platform()
+        info['System Platform'] = command_mod.Platform.get_platform()
         info['System Platform X'] = ''
         info['System Memory'] = 'Unknown'
         info['System Swap Space'] = 'Unknown'
@@ -411,6 +407,21 @@ class OperatingSystem(object):
         else:
             return 'Unknown'
 
+    @staticmethod
+    def factory():
+        """
+        Return OperatignSystem sub class
+        """
+
+        if os.name == 'nt':
+            return WindowsSystem()
+
+        osname = os.uname()[0]
+        if osname == 'Linux':
+            return LinuxSystem()
+
+        return OperatingSystem()
+
 
 class PosixSystem(OperatingSystem):
     """
@@ -421,11 +432,12 @@ class PosixSystem(OperatingSystem):
         """
         Detect devices
         """
-        mount = syslib.Command('mount', check=False)
+        mount = command_mod.Command('mount', errors='ignore')
         if mount.is_found():
-            mount.run(filter=':', mode='batch')
-            command = syslib.Command('df', flags=['-k'], check=False)
-            for line in sorted(mount.get_output()):
+            task = subtask_mod.Batch(mount.get_cmdline())
+            task.run(pattern=':')
+            command = command_mod.Command('df', args=['-k'], errors='ignore')
+            for line in sorted(task.get_output()):
                 try:
                     device, _, directory = line.split()[:3]
                 except IndexError:
@@ -487,8 +499,8 @@ class PosixSystem(OperatingSystem):
         Return operating system information dictionary.
         """
         info = super().get_os_info()
-        info['OS Kernel'] = syslib.info.get_kernel()
-        info['OS Kernel X'] = syslib.info.get_system()
+        info['OS Kernel'] = command_mod.Platform.get_kernel()
+        info['OS Kernel X'] = os.uname()[0]
         return info
 
     def get_cpu_info(self):
@@ -503,13 +515,14 @@ class PosixSystem(OperatingSystem):
         Return system information dictionary.
         """
         info = super().get_sys_info()
-        uptime = syslib.Command('uptime', check=False)
+        uptime = command_mod.Command('uptime', errors='ignore')
         if uptime.is_found():
-            uptime.run(mode='batch')
+            task = subtask_mod.Batch(uptime.get_cmdline())
+            task.run()
             try:
-                info['System Uptime'] = ','.join(uptime.get_output()[0].split(
+                info['System Uptime'] = ','.join(task.get_output()[0].split(
                     ',')[:2]).split('up ')[1].strip()
-                info['System Load'] = uptime.get_output()[0].split(': ')[-1]
+                info['System Load'] = task.get_output()[0].split(': ')[-1]
             except (IndexError, OSError):
                 pass
         return info
@@ -523,22 +536,24 @@ class LinuxSystem(PosixSystem):
     def __init__(self):
         device = None
         self._devices = {}
-        lspci = syslib.Command('lspci', pathextra=['/sbin'], args=['-k'], check=False)
-        modinfo = syslib.Command('modinfo', pathextra=['/sbin'], check=False)
+        lspci = command_mod.Command('lspci', pathextra=['/sbin'], args=['-k'], errors='ignore')
+        modinfo = command_mod.Command('modinfo', pathextra=['/sbin'], errors='ignore')
         if lspci.is_found():
-            lspci.run(mode='batch')
-            if not lspci.has_output():
+            task = subtask_mod.Batch(lspci.get_cmdline())
+            task.run()
+            if not task.has_output():
                 lspci.set_args([])
-                lspci.run(mode='batch')
-            for line in lspci.get_output():
+                task = subtask_mod.Batch(lspci.get_cmdline())
+                task.run()
+            for line in task.get_output():
                 if 'Kernel driver in use:' in line:
                     driver = line.split()[-1]
                     if modinfo.is_found():
-                        modinfo.set_args([driver])
-                        modinfo.run(filter='^(version|vermagic):', mode='batch')
-                        if modinfo.has_output():
-                            self._devices[device] = (driver + ' driver ' +
-                                                     modinfo.get_output()[0].split()[1])
+                        task2 = subtask_mod.Batch(modinfo.get_cmdline() + [driver])
+                        task2.run(pattern='^(version|vermagic):')
+                        if task2.has_output():
+                            self._devices[device] = (
+                                driver + ' driver ' + task2.get_output()[0].split()[1])
                             continue
                 elif not line.startswith('\t'):
                     device = line.replace('(', '').replace(')', '')
@@ -555,11 +570,11 @@ class LinuxSystem(PosixSystem):
                             except OSError:
                                 pass
                         elif 'VirtualBox' in line and modinfo.is_found():
-                            modinfo.set_args(['vboxvideo'])
-                            modinfo.run(filter='^(version|vermagic):', mode='batch')
-                            if modinfo.has_output():
-                                self._devices[device] = ('vboxvideo driver ' +
-                                                         modinfo.get_output()[0].split()[1])
+                            task2 = subtask_mod.Batch(modinfo.get_cmdline() + ['vboxvideo'])
+                            task2.run(pattern='^(version|vermagic):')
+                            if task2.has_output():
+                                self._devices[device] = (
+                                    'vboxvideo driver ' + task2.get_output()[0].split()[1])
                                 continue
                     else:
                         self._devices[device] = ''
@@ -726,11 +741,12 @@ class LinuxSystem(PosixSystem):
                 pass
 
         crypts = []
-        lsblk = syslib.Command('lsblk', args=['-l'], check=False)
+        lsblk = command_mod.Command('lsblk', args=['-l'], errors='ignore')
         if lsblk.is_found():
-            lsblk.run(mode='batch')
+            task = subtask_mod.Batch(lsblk.get_cmdline())
+            task.run()
             device = None
-            for line in lsblk.get_output():
+            for line in task.get_output():
                 if ' crypt ' in line:
                     crypts.append(device)
                     if '[SWAP]' in line:
@@ -740,52 +756,54 @@ class LinuxSystem(PosixSystem):
                 else:
                     device = '/dev/' + line.split()[0]
 
-        mount = syslib.Command('mount', check=False)
+        mount = command_mod.Command('mount', errors='ignore')
         if mount.is_found():
-            mount.run(filter='^/dev/', mode='batch')
-        partitions = []
-        try:
-            with open('/proc/partitions', errors='replace') as ifile:
-                for line in ifile:
-                    partitions.append(line.rstrip('\r\n'))
-        except OSError:
-            pass
-
-        for directory in sorted(glob.glob('/proc/ide/hd*')):
+            task = subtask_mod.Batch(mount.get_cmdline())
+            task.run(pattern='^/dev/')
+            partitions = []
             try:
-                with open(os.path.join(directory, 'driver'), errors='replace') as ifile:
+                with open('/proc/partitions', errors='replace') as ifile:
                     for line in ifile:
-                        if line.startswith('ide-disk '):
-                            with open(os.path.join(directory, 'model'), errors='replace') as ifile2:
-                                model = ifile2.readline().rstrip('\r\n')
-                            hdx = os.path.basename(directory)
-                            for partition in partitions:
-                                if partition.endswith(hdx) or hdx + ' ' in partition:
-                                    try:
-                                        size = partition.split()[2]
-                                    except IndexError:
-                                        size = '???'
-                                    writer.output(name='Disk device', device='/dev/' + hdx,
-                                                  value=size + ' KB', comment=model)
-                                elif hdx in partition:
-                                    size, hdxn = partition.split()[2:4]
-                                    device = '/dev/' + hdxn
-                                    comment = ''
-                                    if device in swaps:
-                                        comment = 'swap'
-                                    else:
-                                        for line2 in mount.get_output():
-                                            if line2.startswith(device + ' '):
-                                                try:
-                                                    mount_point, _, mount_type = line2.split()[2:]
-                                                    comment = mount_type + ' on ' + mount_point
-                                                except (IndexError, ValueError):
-                                                    comment = '??? on ???'
-                                                break
-                                    writer.output(name='Disk device', device=device,
-                                                  value=size + ' KB', comment=comment)
+                        partitions.append(line.rstrip('\r\n'))
             except OSError:
                 pass
+            for directory in sorted(glob.glob('/proc/ide/hd*')):
+                try:
+                    with open(os.path.join(directory, 'driver'), errors='replace') as ifile:
+                        for line in ifile:
+                            if line.startswith('ide-disk '):
+                                file = os.path.join(directory, 'model')
+                                with open(file, errors='replace') as ifile2:
+                                    model = ifile2.readline().rstrip('\r\n')
+                                hdx = os.path.basename(directory)
+                                for partition in partitions:
+                                    if partition.endswith(hdx) or hdx + ' ' in partition:
+                                        try:
+                                            size = partition.split()[2]
+                                        except IndexError:
+                                            size = '???'
+                                        writer.output(name='Disk device', device='/dev/' + hdx,
+                                                      value=size + ' KB', comment=model)
+                                    elif hdx in partition:
+                                        size, hdxn = partition.split()[2:4]
+                                        device = '/dev/' + hdxn
+                                        comment = ''
+                                        if device in swaps:
+                                            comment = 'swap'
+                                        else:
+                                            for line2 in task.get_output():
+                                                if line2.startswith(device + ' '):
+                                                    try:
+                                                        mount_point, _, mount_type = (
+                                                            line2.split()[2:])
+                                                        comment = mount_type + ' on ' + mount_point
+                                                    except (IndexError, ValueError):
+                                                        comment = '??? on ???'
+                                                    break
+                                        writer.output(name='Disk device', device=device,
+                                                      value=size + ' KB', comment=comment)
+                except OSError:
+                    pass
 
         if os.path.isdir('/sys/bus/scsi/devices'):
             for file in sorted(glob.glob('/sys/block/sd*/device')):  # New kernels
@@ -819,7 +837,7 @@ class LinuxSystem(PosixSystem):
                         if device in swaps:
                             comment = 'swap'
                         else:
-                            for line2 in mount.get_output():
+                            for line2 in task.get_output():
                                 try:
                                     if (line2.startswith(device + ' ') or
                                             line2.startswith(uuids[device] + ' ')):
@@ -862,7 +880,7 @@ class LinuxSystem(PosixSystem):
                                         if device in swaps:
                                             comment = 'swap'
                                         else:
-                                            for line2 in mount.get_output():
+                                            for line2 in task.get_output():
                                                 if line2.startswith(device + ' '):
                                                     try:
                                                         mount_point, _, mount_type = line2.split(
@@ -983,10 +1001,11 @@ class LinuxSystem(PosixSystem):
         env = {}
         if 'LANG' not in os.environ:
             env['LANG'] = 'en_US'
-        ifconfig = syslib.Command(file='/sbin/ifconfig', args=['-a'])
-        ifconfig.run(env=env, filter='inet[6]? addr', mode='batch')
+        ifconfig = command_mod.CommandFile('/sbin/ifconfig', args=['-a'])
+        task = subtask_mod.Batch(ifconfig.get_cmdline())
+        task.run(env=env, pattern='inet[6]? addr')
         isjunk = re.compile('.*inet[6]? addr[a-z]*:')
-        for line in ifconfig.get_output():
+        for line in task.get_output():
             info['Net IPvx Address'].append(isjunk.sub(' ', line).split()[0])
         return info
 
@@ -1072,10 +1091,12 @@ class LinuxSystem(PosixSystem):
             except (IndexError, OSError):
                 pass
             return info
-        dpkg = syslib.Command('dpkg', check=False, args=['--list'])
+
+        dpkg = command_mod.Command('dpkg', args=['--list'], errors='ignore')
         if dpkg.is_found():
-            dpkg.run(mode='batch')
-            for line in dpkg.get_output():
+            task = subtask_mod.Batch(dpkg.get_cmdline())
+            task.run()
+            for line in task.get_output():
                 try:
                     package = line.split()[1]
                     if package == 'knoppix-g':
@@ -1090,7 +1111,7 @@ class LinuxSystem(PosixSystem):
                         return info
                 except IndexError:
                     pass
-            for line in dpkg.get_output():
+            for line in task.get_output():
                 try:
                     package = line.split()[1]
                     if package == 'base-files':
@@ -1109,7 +1130,7 @@ class LinuxSystem(PosixSystem):
         isspace = re.compile(r'\s+')
 
         if info['CPU Addressability'] == 'Unknown':
-            if syslib.info.get_machine().endswith('64'):
+            if command_mod.Platform.get_arch().endswith('64'):
                 info['CPU Addressability'] = '64bit'
             else:
                 info['CPU Addressability'] = '32bit'
@@ -1122,7 +1143,7 @@ class LinuxSystem(PosixSystem):
         except OSError:
             pass
         try:
-            if syslib.info.get_machine() == 'Power':
+            if command_mod.Platform.get_arch() == 'Power':
                 for line in lines:
                     if line.startswith('cpu'):
                         info['CPU Model'] = 'PowerPC_' + isspace.sub(
@@ -1133,7 +1154,7 @@ class LinuxSystem(PosixSystem):
                     if line.startswith('model name'):
                         info['CPU Model'] = isspace.sub(' ', line.split(': ')[1].strip())
                         break
-            if syslib.info.get_machine() == 'x86_64':
+            if command_mod.Platform.get_arch() == 'x86_64':
                 for line in lines:
                     if line.startswith('address size'):
                         info['CPU Addressability X'] = line.split(
@@ -1333,17 +1354,18 @@ class WindowsSystem(OperatingSystem):
         pathextra = []
         if 'WINDIR' in os.environ:
             pathextra.append(os.path.join(os.environ['WINDIR'], 'system32'))
-        self._ipconfig = syslib.Command('ipconfig', pathextra=pathextra, args=['-all'])
+        self._ipconfig = command_mod.Command(
+            'ipconfig', pathextra=pathextra, args=['-all'], errors='stop')
         # Except for WIndows XP Home
-        self._systeminfo = syslib.Command('systeminfo', pathextra=pathextra, check=False)
+        self._systeminfo = command_mod.Command('systeminfo', pathextra=pathextra, errors='ignore')
 
     def get_fqdn(self):
         """
         Return fully qualified domain name (ie 'hostname.domain.com.').
         """
-        if not self._ipconfig.has_output():
-            self._ipconfig.run(mode='batch')
-        for line in self._ipconfig.get_output('Connection-specific DNS Suffix'):
+        task = subtask_mod.Batch(self._ipconfig.get_cmdline())
+        task.run()
+        for line in task.get_output('Connection-specific DNS Suffix'):
             fqdn = socket.gethostname().split('.')[0].lower() + '.' + line.split()[-1]
             if fqdn.count('.') > 1:
                 if fqdn.endswith('.'):
@@ -1357,13 +1379,13 @@ class WindowsSystem(OperatingSystem):
         """
         info = {}
         info['Net FQDN'] = self.get_fqdn()
-        if not self._ipconfig.has_output():
-            self._ipconfig.run(mode='batch')
+        task = subtask_mod.Batch(self._ipconfig.get_cmdline())
+        task.run()
         info['Net IPvx Address'] = []
-        for line in self._ipconfig.get_output('IP.* Address'):
+        for line in task.get_output('IP.* Address'):
             (info['Net IPvx Address']).append(line.replace('(Preferred)', '').split()[-1])
         info['Net IPvx DNS'] = []
-        for line in self._ipconfig.get_output():
+        for line in task.get_output():
             if 'DNS Servers' in line:
                 (info['Net IPvx DNS']).append(line.split()[-1])
             elif info['Net IPvx DNS']:
@@ -1402,15 +1424,17 @@ class WindowsSystem(OperatingSystem):
         info['CPU Threads'] = info['CPU Cores']
         subkeys, values = self._reg_read(
             winreg.HKEY_LOCAL_MACHINE, r'HARDWARE\DESCRIPTION\System\BIOS')
+
         if self._systeminfo.is_found():
-            self._systeminfo.run(mode='batch')
-        if self._has_value(values, 'RHEV') or self._systeminfo.is_match_output('RHEV'):
-            info['CPU Cores X'] = 'RHEV VM'
-        elif self._has_value(values, 'VMware') or self._systeminfo.is_match_output('VMware'):
-            info['CPU Cores X'] = 'VMware VM'
-        elif (self._has_value(values, 'VirtualBox') or
-              self._systeminfo.is_match_output('VirtualBox')):
-            info['CPU Cores X'] = 'VirtualBox VM'
+            task = subtask_mod.Batch(self._systeminfo.get_cmdline())
+            task.run()
+            if self._has_value(values, 'RHEV') or task.is_match_output('RHEV'):
+                info['CPU Cores X'] = 'RHEV VM'
+            elif self._has_value(values, 'VMware') or task.is_match_output('VMware'):
+                info['CPU Cores X'] = 'VMware VM'
+            elif self._has_value(values, 'VirtualBox') or task.is_match_output('VirtualBox'):
+                info['CPU Cores X'] = 'VirtualBox VM'
+
         subkeys, values = self._reg_read(
             winreg.HKEY_LOCAL_MACHINE, r'HARDWARE\DESCRIPTION\System\CentralProcessor\0')
         info['CPU Model'] = re.sub(' +', ' ', self._isitset(values, 'ProcessorNameString').strip())
@@ -1422,19 +1446,22 @@ class WindowsSystem(OperatingSystem):
         Return system information dictionary.
         """
         info = super().get_sys_info()
+
         if self._systeminfo.is_found():
-            self._systeminfo.run(mode='batch')
-        memory = self._systeminfo.get_output(':.*MB$')
-        if len(memory) > 0:
-            info['System Memory'] = memory[0].split()[-2].replace(',', '')
-        if len(memory) > 2:
-            info['System Swap Space'] = memory[4].split()[-2].replace(',', '')
-        try:
-            uptime = self._systeminfo.get_output('^System Up Time:')[0].split()
-            info['System Uptime'] = (uptime[3] + ' days ' + uptime[5].zfill(2) +
-                                     ':' + uptime[7].zfill(2))
-        except IndexError:
-            pass
+            task = subtask_mod.Batch(self._systeminfo.get_cmdline())
+            task.run()
+            memory = task.get_output(':.*MB$')
+            if len(memory) > 0:
+                info['System Memory'] = memory[0].split()[-2].replace(',', '')
+            if len(memory) > 2:
+                info['System Swap Space'] = memory[4].split()[-2].replace(',', '')
+            try:
+                uptime = task.get_output('^System Up Time:')[0].split()
+                info['System Uptime'] = (
+                    uptime[3] + ' days ' + uptime[5].zfill(2) + ':' + uptime[7].zfill(2))
+            except IndexError:
+                pass
+
         info['System Load'] = 'Unknown'
         return info
 
@@ -1515,7 +1542,7 @@ class Main(object):
 
         try:
             Detect(options).run()
-        except syslib.SyslibError as exception:
+        except subtask_mod.ExecutableCallError as exception:
             raise SystemExit(exception)
 
 

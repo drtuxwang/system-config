@@ -4,10 +4,11 @@ Python file handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.8 (2016-03-05)
+Version 2.0.9 (2016-03-20)
 """
 
 import os
+import re
 import sys
 import time
 
@@ -40,45 +41,6 @@ class FileStat(object):
             else:
                 if size is not None:
                     self._stat[6] = size
-
-    @staticmethod
-    def newest(files):
-        """
-        Return newest file or directory.
-
-        files = List of files
-        """
-
-        files = [x for x in files if not os.path.islink(x)]
-
-        nfile = ''
-        nfile_time = -1
-        for file in files:
-            file_time = FileStat(file).get_time()
-            if file_time > nfile_time:
-                nfile = file
-                nfile_time = file_time
-
-        return nfile
-
-    @staticmethod
-    def oldest(files):
-        """
-        Return oldest file or directory.
-
-        files = List of files
-        """
-        files = [x for x in files if not os.path.islink(x)]
-
-        nfile = ''
-        nfile_time = float('inf')
-        for file in files:
-            file_time = FileStat(file).get_time()
-            if file_time < nfile_time:
-                nfile = file
-                nfile_time = file_time
-
-        return nfile
 
     def get_file(self):
         """
@@ -151,6 +113,79 @@ class FileStat(object):
         Return time of last meta data change.
         """
         return self._stat[9]
+
+
+class FileUtil(object):
+    """
+    This class contains file utilites.
+    """
+
+    @staticmethod
+    def newest(files):
+        """
+        Return newest file or directory.
+
+        files = List of files
+        """
+
+        files = [x for x in files if not os.path.islink(x)]
+
+        nfile = ''
+        nfile_time = -1
+        for file in files:
+            file_time = FileStat(file).get_time()
+            if file_time > nfile_time:
+                nfile = file
+                nfile_time = file_time
+
+        return nfile
+
+    @staticmethod
+    def oldest(files):
+        """
+        Return oldest file or directory.
+
+        files = List of files
+        """
+        files = [x for x in files if not os.path.islink(x)]
+
+        nfile = ''
+        nfile_time = float('inf')
+        for file in files:
+            file_time = FileStat(file).get_time()
+            if file_time < nfile_time:
+                nfile = file
+                nfile_time = file_time
+
+        return nfile
+
+    @staticmethod
+    def strings(file, pattern):
+        """
+        Return first match of pattern in binary file
+        """
+        is_match = re.compile(pattern)
+        try:
+            with open(file, 'rb') as ifile:
+                string = ''
+                while True:
+                    data = ifile.read(4096)
+                    if len(data) == 0:
+                        break
+                    for byte in data:
+                        if byte > 31 and byte < 127:
+                            string += chr(byte)
+                        else:
+                            if len(string) >= 4:
+                                if is_match.search(string):
+                                    return string
+                            string = ''
+            if len(string) >= 4:
+                if is_match.search(string):
+                    return string
+        except OSError:
+            pass
+        return ''
 
 
 class FileError(Exception):
