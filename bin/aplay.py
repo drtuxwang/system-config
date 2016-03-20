@@ -10,7 +10,8 @@ import os
 import signal
 import sys
 
-import syslib
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -106,9 +107,9 @@ class Main(object):
         """
         options = Options()
 
-        play = syslib.Command('play')
+        play = command_mod.Command('play', errors='stop')
         if options.get_view_flag():
-            play.set_flags(['-v'])
+            play.set_args(['-v'])
         for directory in options.get_directories():
             if not os.path.isdir(directory):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + directory + '" media directory.')
@@ -117,10 +118,11 @@ class Main(object):
                 random.shuffle(files)
             play.extend_args(files)
 
-        play.run()
-        if play.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(play.get_exitcode()) +
-                             ' received from "' + play.get_file() + '".')
+        task = subtask_mod.Task(play.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
 
 
 if __name__ == '__main__':

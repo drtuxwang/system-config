@@ -10,8 +10,9 @@ import re
 import signal
 import sys
 
+import command_mod
 import file_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -178,9 +179,9 @@ class Encoder(object):
 
     def _config_video(self, media):
         if media.has_video():
-            changing = (self._options.get_video_crop() or self._options.vfps or
-                        self._options.get_video_size() or self._options.vq)
-            if (not media.has_video_codec('mpeg4') or self._options.noskip or changing or
+            changing = (self._options.get_video_crop() or self._options.get_video_rate() or
+                        self._options.get_video_quality() or self._options.get_video_size())
+            if (not media.has_video_codec('mpeg4') or self._options.get_noskip_flag() or changing or
                     len(self._options.get_files()) > 1):
                 self._ffmpeg.extend_args(['-c:v', self._options.get_video_codec(), '-flags',
                                           '+mv4+aic', '-mbd', 'rd', '-g', '300', '-trellis', '2'])
@@ -229,7 +230,7 @@ class Encoder(object):
         return media
 
     def _config_images(self, files):
-        convert = syslib.Command('convert')
+        convert = command_mod.Command('convert', errors='stop')
         extension = '-tmpfile' + str(os.getpid()) + '.png'
         frame = 0
         for file in files:
@@ -237,7 +238,8 @@ class Encoder(object):
             tmpfile = 'frame{0:08d}'.format(frame) + extension
             self._tempfiles.append(tmpfile)
             convert.set_args([file, tmpfile])
-            convert.run()
+            task = subtask_mod.Task(convert.get_cmdline())
+            task.run()
         if self._options.get_video_rate():
             self._ffmpeg.set_args(['-r', self._options.get_video_rate()])
         else:
@@ -250,10 +252,11 @@ class Encoder(object):
             self._ffmpeg.extend_args(['-vf', 'scale=' + self._options.get_video_size()])
         else:
             convert.set_args(['-verbose', tmpfile, '/dev/null'])
-            convert.run(mode='batch')
+            task2 = subtask_mod.Batch(convert.get_cmdline())
+            task.run()
             try:
                 # Must be multiple of 2 in x and y resolutions
-                xsize, ysize = convert.get_output()[0].split()[2].split('x')
+                xsize, ysize = task2.get_output()[0].split()[2].split('x')
                 self._ffmpeg.extend_args([
                     '-vf', 'scale=' + str(int(int(xsize)/2)*2) + ':' + str(int(int(ysize)/2)*2)])
             except (IndexError, ValueError):
@@ -280,7 +283,7 @@ class Encoder(object):
         return True
 
     def _run(self):
-        child = self._ffmpeg.run(mode='child', error2output=True)
+        child = subtask_mod.Child(self._ffmpeg.get_cmdline()).run(error2output=True)
         line = ''
         ispattern = re.compile(
             '^$| version |^ *(built |configuration:|lib|Metadata:|Duration:|compatible_brands:|'
@@ -308,7 +311,6 @@ class Encoder(object):
             sys.exit(exitcode)
 
     def _single(self):
-        self._single()
         print()
         if self._all_images(self._options.get_files()):
             self._config_images(self._options.get_files())
@@ -361,7 +363,7 @@ class Encoder(object):
         Configure encoder
         """
         self._options = options
-        self._ffmpeg = syslib.Command('ffmpeg', flags=options.get_flags())
+        self._ffmpeg = command_mod.Command('ffmpeg', args=options.get_flags(), errors='stop')
         self._tempfiles = []
 
     def run(self):
@@ -384,12 +386,13 @@ class Media(object):
         self._length = '0'
         self._stream = {}
         self._type = 'Unknown'
-        ffprobe = syslib.Command('ffprobe', args=[file])
-        ffprobe.run(mode='batch', error2output=True)
+        ffprobe = command_mod.Command('ffprobe', args=[file], errors='stop')
+        task = subtask_mod.Batch(ffprobe.get_cmdline())
+        task.run(error2output=True)
         number = 0
         isjunk = re.compile('^ *Stream #[^ ]*: ')
         try:
-            for line in ffprobe.get_output():
+            for line in task.get_output():
                 if line.strip().startswith('Duration:'):
                     self._length = line.replace(',', '').split()[1]
                 elif line.strip().startswith('Stream #0'):

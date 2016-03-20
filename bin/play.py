@@ -11,8 +11,9 @@ import os
 import signal
 import sys
 
+import command_mod
 import file_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
@@ -74,13 +75,14 @@ class Media(object):
         self._length = '0'
         self._stream = {}
         self._type = 'Unknown'
-        ffprobe = syslib.Command('ffprobe', args=[file])
-        ffprobe.run(mode='batch', error2output=True)
+        ffprobe = command_mod.Command('ffprobe', args=[file], errors='stop')
+        task = subtask_mod.Batch(ffprobe.get_cmdline())
+        task.run(error2output=True)
         number = 0
 
         isjunk = re.compile('^ *Stream #[^ ]*: ')
         try:
-            for line in ffprobe.get_output():
+            for line in task.get_output():
                 if line.strip().startswith('Duration:'):
                     self._length = line.replace(',', '').split()[1]
                 elif line.strip().startswith('Stream #0'):
@@ -190,15 +192,16 @@ class Main(object):
 
     @staticmethod
     def _play(files):
-        vlc = syslib.Command('vlc', args=files)
-        vlc.run(mode='background',
-                filter="^$|Use 'cvlc'|may be inaccurate|"
-                       ': Failed to resize display|: call to |: Locale not supported |'
-                       'fallback "C" locale|^xdg-screensaver:|: cannot estimate delay:|'
-                       'Failed to open VDPAU backend ')
-        if vlc.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(vlc.get_exitcode()) +
-                             ' received from "' + vlc.get_file() + '".')
+        vlc = command_mod.Command('vlc', args=files, errors='stop')
+        task = subtask_mod.Batch(vlc.get_cmdline())
+        task.run(
+            pattern="^$|Use 'cvlc'|may be inaccurate|"
+            ': Failed to resize display|: call to |: Locale not supported |'
+            'fallback "C" locale|^xdg-screensaver:|: cannot estimate delay:|'
+            'Failed to open VDPAU backend ')
+        if task.get_exitcode():
+            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                             ' received from "' + task.get_file() + '".')
 
     def run(self):
         """

@@ -10,8 +10,9 @@ import re
 import signal
 import sys
 
+import command_mod
 import file_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -167,13 +168,13 @@ class Encoder(object):
         return media
 
     def _run(self):
-        child = self._ffmpeg.run(mode='child', error2output=True)
+        child = subtask_mod.Child(self._ffmpeg.get_cmdline()).run(error2output=True)
         line = ''
         ispattern = re.compile('^$| version |^ *(built |configuration:|lib|Metadata:|Duration:|'
                                'compatible_brands:|Stream|concat:|Program|service|lastkeyframe)|'
                                '^(In|Out)put | : |^Press|^Truncating|bitstream (filter|malformed)|'
                                r'Buffer queue|buffer underflow|message repeated|^\[|p11-kit:|'
-                               '^Codec AVOption threads')
+                               '^Codec AVOption threads|COMPATIBLE_BRANDS:|concat ->')
 
         while True:
             byte = child.stdout.read(1)
@@ -230,7 +231,7 @@ class Encoder(object):
         Configure encoder
         """
         self._options = options
-        self._ffmpeg = syslib.Command('ffmpeg', flags=options.get_flags())
+        self._ffmpeg = command_mod.Command('ffmpeg', args=options.get_flags(), errors='stop')
 
     def run(self):
         """
@@ -252,12 +253,13 @@ class Media(object):
         self._length = '0'
         self._stream = {}
         self._type = 'Unknown'
-        ffprobe = syslib.Command('ffprobe', args=[file])
-        ffprobe.run(mode='batch', error2output=True)
+        ffprobe = command_mod.Command('ffprobe', args=[file], errors='stop')
+        task = subtask_mod.Batch(ffprobe.get_cmdline())
+        task.run(error2output=True)
         number = 0
         isjunk = re.compile('^ *Stream #[^ ]*: ')
         try:
-            for line in ffprobe.get_output():
+            for line in task.get_output():
                 if line.strip().startswith('Duration:'):
                     self._length = line.replace(',', '').split()[1]
                 elif line.strip().startswith('Stream #0'):
