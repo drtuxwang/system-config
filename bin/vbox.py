@@ -128,7 +128,7 @@ class Main(object):
             lines = sorted(task.get_output())
             self._vboxmanage.set_args(['list', 'runningvms'])
             task = subtask_mod.Task(self._vboxmanage.get_cmdline())
-            task.run(filter='^".*"')
+            task.run(pattern='^".*"')
             for line in lines:
                 if line in task.get_output():
                     print('[Run]', line)

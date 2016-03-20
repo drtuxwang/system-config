@@ -147,7 +147,7 @@ class Main(object):
 
         convert.set_args(['-verbose', file, '/dev/null'])
         task = subtask_mod.Batch(convert.get_cmdline())
-        task.run(filter='^' + file + ' ', error2output=True)
+        task.run(pattern='^' + file + ' ', error2output=True)
         if not task.has_output():
             raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" image file.')
         xsize, ysize = task.get_output()[0].split('+')[0].split()[-1].split('x')

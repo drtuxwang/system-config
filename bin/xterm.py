@@ -11,8 +11,9 @@ import signal
 import socket
 import sys
 
+import command_mod
 import desktop_mod
-import syslib
+import subtask_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.0, < 4.0).')
@@ -59,10 +60,10 @@ class Options(object):
             if not args[1].startswith('-'):
                 break
             elif args[1] == '-i':
-                self._invis_flag = True
+                invis_flag = True
             else:
-                xterm = syslib.Command('xterm', args=args[1:])
-                xterm.run(mode='exec')
+                xterm = command_mod.Command('xterm', args=args[1:], errors='stop')
+                subtask_mod.Exec(xterm.get_cmdline()).run()
             args = args[1:]
 
         if invis_flag:
@@ -91,15 +92,15 @@ class Xterm(object):
         self._config()
 
     def _config(self):
-        self._command = syslib.Command('xterm')
-        self._command.set_args(['-h'])
-        self._command.run(mode='batch')
-        self._command.set_flags(
+        self._command = command_mod.Command('xterm', errors='stop')
+        task = subtask_mod.Batch(self._command.get_cmdline() + ['-h'])
+        task.run()
+        self._command.set_args(
             ['-s', '-j', '-sb', '-sl', '4096', '-cc', '33:48,35-38:48,40-58:48,63-255:48', '-fn',
              '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', FG_COLOUR, '-bg', BG_COLOUR,
              '-cr', '#ff0000', '-ls', '-ut', '-geometry', self._options.get_columns() + 'x24'])
-        if self._command.is_match_output(' -rightbar '):
-            self._command.append_flag('-rightbar')
+        if task.is_match_output(' -rightbar '):
+            self._command.append_arg('-rightbar')
         self._pattern = '^$'
 
     @staticmethod
@@ -146,19 +147,16 @@ class Xterm(object):
         """
         ssh = None
         for host in self._options.get_hosts():
-            if host == self._myhost:
-                self._command.set_args(self.get_label_flags(host))
-                self._command.run(mode='background', filter=self._pattern)
-            else:
-                self._command.set_args(self.get_label_flags(host) + [self.get_run_flag()])
+            cmdline = self._command.get_cmdline() + self.get_label_flags(host)
+            if host != self._myhost:
+                cmdline.append(self.get_run_flag())
                 if not ssh:
-                    ssh = syslib.Command('ssh')
-                    ssh.set_flags(
+                    ssh = command_mod.Command('ssh', errors='stop')
+                    ssh.set_args(
                         ['-X', '-o', 'ServerAliveInterval=300', '-o', 'ServerAliveCountMax=3'])
                     self._ssh()
-                ssh.set_wrapper(self._command)
-                ssh.set_args([host])
-                ssh.run(mode='background', filter=self._pattern)
+                cmdline.extend(ssh.get_cmdline() + [host])
+            subtask_mod.Background(cmdline).run(pattern=self._pattern)
 
 
 class XtermInvisible(Xterm):
@@ -170,22 +168,23 @@ class XtermInvisible(Xterm):
         ssh = None
         for host in self._options.get_hosts():
             if host == self._myhost:
-                self._command.set_args(self.get_label_flags(host))
-                self._command.run(mode='background', filter=self._pattern)
+                task = subtask_mod.Background(
+                    self._command.get_cmdline() + self.get_label_flags(host))
+                task.run(pattern=self._pattern)
             else:
-                self._command.set_args(self.get_label_flags(host))
                 if not ssh:
-                    ssh = syslib.Command('ssh')
-                    ssh.set_flags(
+                    ssh = command_mod.Command('ssh', errors='stop')
+                    ssh.set_args(
                         ['-X', '-o', 'ServerAliveInterval=300', '-o', 'ServerAliveCountMax=3'])
                     self._ssh()
                 ssh.set_args([host, 'xterm'])
-                for arg in self._command.get_flags() + self._command.get_args():
+                for arg in (self._command.get_cmdline() + self.get_label_flags(host) +
+                            self._command.get_args()):
                     if '#' in arg:
                         ssh.append_arg('"' + arg + '"')
                     else:
                         ssh.append_arg(arg)
-                ssh.run(mode='background', filter=self._pattern)
+                subtask_mod.Background(ssh.get_cmdline()).run(pattern=self._pattern)
 
 
 class GnomeTerminal(Xterm):
@@ -194,8 +193,8 @@ class GnomeTerminal(Xterm):
     """
 
     def _config(self):
-        self._command = syslib.Command('gnome-terminal')
-        self._command.set_flags(['--geometry=' + self._options.get_columns() + 'x24'])
+        self._command = command_mod.Command('gnome-terminal', errors='stop')
+        self._command.set_args(['--geometry=' + self._options.get_columns() + 'x24'])
         self._pattern = '^$|: Gtk-WARNING'
 
     def get_label_flags(self, host):
@@ -217,8 +216,8 @@ class Konsole(GnomeTerminal):
     """
 
     def _config(self):
-        self._command = syslib.Command('konsole')
-        self._command.set_flags(['--geometry=' + self._options.get_columns() + 'x24'])
+        self._command = command_mod.Command('konsole', errors='stop')
+        self._command.set_args(['--geometry=' + self._options.get_columns() + 'x24'])
 
     def get_run_flag(self):
         """
@@ -233,8 +232,8 @@ class XfceTerminal(GnomeTerminal):
     """
 
     def _config(self):
-        self._command = syslib.Command('xfce4-terminal')
-        self._command.set_flags(['--geometry=' + self._options.get_columns() + 'x24'])
+        self._command = command_mod.Command('xfce4-terminal', errors='stop')
+        self._command.set_args(['--geometry=' + self._options.get_columns() + 'x24'])
 
     def get_label_flags(self, host):
         return ['--title=']  # Must use empty to allow bash/tcsh title changing
