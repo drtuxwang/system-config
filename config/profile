@@ -163,32 +163,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     export WINEDITOR=vi
     ENV=
 
-    case `uname` in
-    Darwin)
-        if [ -d "$HOME/.Spotlight-V100" ]; then
-            rm -rf $HOME/.Spotlight-V100; touch $HOME/.Spotlight-V100
-        fi
-        ;;
-
-    HP-UX)
-        alias df="bdf"
-        ;;
-
-    Linux)
-        if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]; then
-            alias ls="ls -C --time-style=long-iso --color=auto"
-        else
-            alias ls="ls -C --color=auto"
-        fi
-        # Defend against stubborn Linux distributions
-        if [ -f /etc/ksh.kshrc ]; then
-            alias test='return 2> /dev/null'
-        fi
-        unset CDPATH
-        unset command_not_found_handle
-        ;;
-    esac
-
     if [ -x /usr/bin/vim ]; then
         alias vi="vim -N -n -i NONE"
     fi
@@ -249,6 +223,33 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         echo "Applying   Local settings ($HOME/.profile-local)"
         . $HOME/.profile-local
     fi
+
+    case `uname` in
+    Darwin)
+        if [ -d "$HOME/.Spotlight-V100" ]; then
+            rm -rf $HOME/.Spotlight-V100; touch $HOME/.Spotlight-V100
+        fi
+        ;;
+
+    HP-UX)
+        alias df="bdf"
+        ;;
+
+    Linux)
+        if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]; then
+            alias ls="ls -C --time-style=long-iso --color=always"
+        else
+            alias ls="ls -C --color=always"
+        fi
+        # Defend against stubborn Linux distributions
+        if [ -f /etc/ksh.kshrc ]; then
+            alias test='return 2> /dev/null'
+        fi
+        unset CDPATH
+        unset command_not_found_handle
+        ;;
+    esac
+
     echo
 
 elif [ ! "$*" ]; then
@@ -292,9 +293,10 @@ elif [ ! "$*" ]; then
 
         alias ftp="ftp -i"
         alias h="history 256"
-        alias ls="ls -C --time-style=long-iso --color=auto"
+        alias ls="ls -C --time-style=long-iso --color=always"
         alias bye=exit
         unalias cp cd.. d l ll la lsd mv p rm s star which 2> /dev/null
+
         echo
         ;;
     esac

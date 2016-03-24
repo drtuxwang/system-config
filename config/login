@@ -133,26 +133,6 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     setenv TMP /tmp; setenv TMPDIR $TMP; rm -rf $HOME/tmp >& /dev/null
     setenv WINEDITOR vi
 
-    switch (`uname`)
-    case Darwin:
-        if ( -d "$HOME/.Spotlight-V100" ) then
-            rm -rf $HOME/.Spotlight-V100; touch $HOME/.Spotlight-V100
-        endif
-        breaksw
-
-    case HP-UX:
-        alias df "bdf"
-        breaksw
-
-    case Linux:
-        if ( "`\ls --help |& \grep '^ *--time-style'`" != "" ) then
-            alias ls "ls -C --time-style=long-iso --color=auto"
-        else
-            alias ls "ls -C --color=auto"
-        endif
-        breaksw
-    endsw
-
     if ( -x /usr/bin/vim ) then
         alias vi "vim -N -n -i NONE"
     endif
@@ -208,5 +188,27 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         echo "Applying   Local settings ($HOME/.login-local)"
         source $HOME/.login-local
     endif
+
+    switch (`uname`)
+    case Darwin:
+        if ( -d "$HOME/.Spotlight-V100" ) then
+            rm -rf $HOME/.Spotlight-V100; touch $HOME/.Spotlight-V100
+        endif
+        breaksw
+
+    case HP-UX:
+        alias df "bdf"
+        breaksw
+
+    case Linux:
+        if ( "`\ls --help |& \grep '^ *--time-style'`" != "" ) then
+            alias ls "ls -C --time-style=long-iso --color=auto"
+        else
+            alias ls "ls -C --color=auto"
+        endif
+        breaksw
+    endsw
+
     echo ""
+
 endif
