@@ -245,7 +245,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         if [ -f /etc/ksh.kshrc ]; then
             alias test='return 2> /dev/null'
         fi
-        unset CDPATH
+        unset CDPATH LS_COLORS
         unset command_not_found_handle
         ;;
     esac

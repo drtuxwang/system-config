@@ -202,10 +202,11 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
 
     case Linux:
         if ( "`\ls --help |& \grep '^ *--time-style'`" != "" ) then
-            alias ls "ls -C --time-style=long-iso --color=auto"
+            alias ls "ls -C --time-style=long-iso --color=always"
         else
-            alias ls "ls -C --color=auto"
+            alias ls "ls -C --color=always"
         endif
+        setenv LS_COLORS ""
         breaksw
     endsw
 
