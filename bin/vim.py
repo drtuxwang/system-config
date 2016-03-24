@@ -63,7 +63,8 @@ class Main(object):
             if not os.path.isfile(file):
                 try:
                     with open(file, 'w', newline='\n') as ofile:
-                        print('syntax off', file=ofile)
+                        print('syntax on', file=ofile)
+                        print('set background=dark', file=ofile)
                 except OSError:
                     pass
 
