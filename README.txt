@@ -860,6 +860,7 @@ config/profile                  Copy to "$HOME/.profile" for ksh/bash shells (tr
 config/rc.local                 Copy to "/etc/rc.local" for auto running commands
 config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
 config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
+config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults
 
 etc/setbin       Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
 etc/setbin.bat   Windows Command prompt initialization

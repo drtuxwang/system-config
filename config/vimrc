@@ -1,0 +1,14 @@
+" Syntax on or off:
+syntax on
+" Background dark or light:
+set background=dark
+
+" Determine file type from extension and contents:
+filetype indent plugin on
+" Indent using 4 spaces instead of using tab
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+
+" Remove whitespace at end fo lines:
+autocmd BufWritePre *.* :%s/\s\+$//e

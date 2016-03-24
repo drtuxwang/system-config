@@ -56,18 +56,6 @@ class Main(object):
                   task.get_file() + '".', file=sys.stderr)
             raise SystemExit(task.get_exitcode())
 
-    @staticmethod
-    def _create_vimrc():
-        if 'HOME' in os.environ:
-            file = os.path.join(os.environ['HOME'], '.vimrc')
-            if not os.path.isfile(file):
-                try:
-                    with open(file, 'w', newline='\n') as ofile:
-                        print('syntax on', file=ofile)
-                        print('set background=dark', file=ofile)
-                except OSError:
-                    pass
-
     def run(self):
         """
         Start program
@@ -77,8 +65,6 @@ class Main(object):
         else:
             command = command_mod.Command('vi', errors='stop')
         command.set_args(sys.argv[1:])
-
-        self._create_vimrc()
 
         for file in sys.argv[1:]:
             if not file.startswith('-'):
