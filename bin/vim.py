@@ -6,7 +6,6 @@ Wrapper for 'vi' command
 import glob
 import os
 import signal
-import socket
 import sys
 
 import command_mod
@@ -47,7 +46,8 @@ class Main(object):
                     argv.append(arg)
             sys.argv = argv
 
-    def run(self):
+    @staticmethod
+    def run():
         """
         Start program
         """
