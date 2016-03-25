@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.6 (2016-03-19)
+Version 2.0.7 (2016-03-25)
 """
 
 import copy
@@ -628,6 +628,8 @@ class Main(object):
             file = os.environ['_SUBTASK_MOD_DAEMON_FILE']
             del os.environ['_SUBTASK_MOD_DAEMON_FILE']
             self._start_daemon(file)
+        else:
+            help(__name__)
 
 
 if __name__ == '__main__':
