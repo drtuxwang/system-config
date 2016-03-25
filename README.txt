@@ -162,9 +162,6 @@ bin/fdu                Show file disk usage
 bin/fdu.bat            (like du but same values independent of file system including Windows)
 bin/fdu.py
 
-bin/fedit              Edit multiple files
-bin/fedit.py           (uses vim)
-
 bin/ffind              Find file or directory
 bin/ffind.bat          (uses regular expression)
 bin/ffind.py
