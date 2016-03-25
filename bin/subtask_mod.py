@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.7 (2016-03-25)
+Version 2.0.8 (2016-03-25)
 """
 
 import copy
@@ -35,7 +35,7 @@ class Task(object):
             if '|' in cmdline:
                 raise PipeNotSupportedError('Windows does not support pipes.')
             try:
-                with open(cmdline[0]) as ifile:
+                with open(cmdline[0], errors='replace') as ifile:
                     if ifile.readline().startswith('#!/usr/bin/env python'):
                         self._cmdline = [sys.executable] + cmdline
             except OSError:
