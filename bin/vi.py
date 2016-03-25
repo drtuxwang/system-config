@@ -47,39 +47,23 @@ class Main(object):
                     argv.append(arg)
             sys.argv = argv
 
-    @staticmethod
-    def _edit(command):
-        task = subtask_mod.Task(command.get_cmdline())
-        task.run()
-        if task.get_exitcode():
-            print(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) + ' received from "' +
-                  task.get_file() + '".', file=sys.stderr)
-            raise SystemExit(task.get_exitcode())
-
     def run(self):
         """
         Start program
         """
         if os.path.isfile('/usr/bin/vim'):
             command = command_mod.Command('vim', errors='stop')
+            if '-n' not in sys.argv[1:]:
+                command.set_args(['vim', '-N', '-n', '-i', 'NONE'])
         else:
             command = command_mod.Command('vi', errors='stop')
-        command.set_args(sys.argv[1:])
 
-        for file in sys.argv[1:]:
-            if not file.startswith('-'):
-                host = socket.gethostname().split('.')[0].lower()
-                try:
-                    sys.stdout.write('\033]0;' + host + ':' + os.path.abspath(file) + '\007')
-                except OSError:
-                    pass
-                else:
-                    sys.stdout.flush()
-                    self._edit(command)
-                    sys.stdout.write('\033]0;' + host + ':\007')
-                break
-        else:
-            self._edit(command)
+        task = subtask_mod.Task(command.get_cmdline() + sys.argv[1:])
+        task.run()
+        if task.get_exitcode():
+            print(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) + ' received from "' +
+                  task.get_file() + '".', file=sys.stderr)
+            raise SystemExit(task.get_exitcode())
 
 
 if __name__ == '__main__':
