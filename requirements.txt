@@ -1,1 +1,3 @@
 jsonpickle >= 0.8
+pep8 >= 1.7
+pylint >= 1.5
