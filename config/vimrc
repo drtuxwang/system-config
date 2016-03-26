@@ -8,5 +8,5 @@ set shiftwidth=4
 set softtabstop=4
 set expandtab
 
-" Remove whitespace at end fo lines:
+" Remove whitespace at end of lines:
 autocmd BufWritePre *.* :%s/\s\+$//e
