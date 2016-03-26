@@ -743,11 +743,12 @@ bin/unzip.py
 bin/vbox               VirtualBox virtual machine manager
 bin/vbox.py            (uses VBoxManage)
 
-bin/vi                 vi  wrapper (allowing non systems port)
+bin/vi                 vi wrapper (allowing non systems port)
 bin/vi.bat
 bin/vi.py
 
 bin/vim                vim wrapper (allowing non systems port)
+bin/vim.bat
 bin/vim.py
 
 bin/vlc                vlc wrapper (allowing non systems port)
