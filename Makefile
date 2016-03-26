@@ -18,7 +18,7 @@ pep8:
 
 pylint:
 	@echo "\n*** Running Python 3 LINT check ***"
-	python3 -m pylint --disable=locally-enabled --max-line-length=100 -j 2 --reports=n bin/*.py
+	python3 -m pylint --disable=locally-enabled --max-line-length=100 --output-format=parseable --reports=n -j 2 bin/*.py
 
 unittest:
 	@echo "\n*** Running Python 3 UNITTEST check ***"
