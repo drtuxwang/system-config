@@ -19,7 +19,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '3.1.1'
+RELEASE = '3.1.2'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
@@ -99,8 +99,11 @@ class Options(object):
 
     @staticmethod
     def _xclip():
-        isxclip = re.compile(os.sep + 'python.*[/ ]zhspeak.py .*-xclip')
+        isxclip = re.compile(os.sep + 'python.*[/ ]zhspeak(.py)? .*-xclip')
         tasks = task_mod.Tasks.factory()
+        for pid in tasks.get_pids():
+            if 'zhspeak' in tasks.get_process(pid)['COMMAND']:
+                print(pid, tasks.get_process(pid)['COMMAND'])
         for pid in tasks.get_pids():
             if pid != os.getpid():
                 if isxclip.search(tasks.get_process(pid)['COMMAND']):
