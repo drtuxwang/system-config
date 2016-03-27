@@ -245,7 +245,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         alias df="bdf"
         ;;
 
-    Linux)
+    Linux|*NT*)
         if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]; then
             alias ls="ls -C --time-style=long-iso --color=always"
         else

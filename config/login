@@ -201,6 +201,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         breaksw
 
     case Linux:
+    case *NT*:
         if ( "`\ls --help |& \grep '^ *--time-style'`" != "" ) then
             alias ls "ls -C --time-style=long-iso --color=always"
         else
