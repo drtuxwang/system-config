@@ -27,7 +27,7 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.7.0'
+RELEASE = '4.7.1'
 VERSION = 20160327
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -893,7 +893,7 @@ class LinuxSystem(PosixSystem):
                 elif device in info['mounts']:
                     mount_point, mount_type = info['mounts'][device]
                     comment = mount_type + ' on ' + mount_point
-                elif info['uuids'][device] in info['mounts']:
+                elif device in info['uuids'] and info['uuids'][device] in info['mounts']:
                     mount_point, mount_type = info['mounts'][info['uuids'][device]]
                     comment = mount_type + ' on ' + mount_point
                 else:
