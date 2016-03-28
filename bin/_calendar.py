@@ -60,8 +60,9 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._year = datetime.datetime.now().year
-        self._month = datetime.datetime.now().month
+        now = datetime.datetime.now()
+        self._year = now.year
+        self._month = now.month
         if self._args.year:
             self._year = self._args.year
             if self._year < 2 or self._year > 9999:
@@ -79,7 +80,7 @@ class Options(object):
             elif self._month > 12:
                 self._year = self._month
                 self._month = 0
-            elif self._month < datetime.datetime.now().month:
+            elif self._month < now.month:
                 self._year += 1  # Next year
 
 
@@ -116,8 +117,6 @@ class Main(object):
 
     @staticmethod
     def _long(year, month):
-        if not month:
-            month = datetime.datetime.now().month
         print('\n                  [ ', calendar.month_name[month] + ' ', year, ' ]\n')
         for line in calendar.TextCalendar(6).formatmonth(year, month).split(os.linesep)[1:]:
             print('  __________________________________________________  ', line)
