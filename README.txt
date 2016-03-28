@@ -409,14 +409,13 @@ bin/menu.py            (this can be used independent of GNOME/KDE/XFCE menu syst
 bin/menu_document.tcl
 bin/menu_games.tcl
 bin/menu_graphics.tcl
-bin/menu_linux.tcl
 bin/menu_main.tcl
 bin/menu_multimedia.tcl
 bin/menu_network.tcl
 bin/menu_radiotuner.tcl
+bin/menu_rdesktop.tcl
 bin/menu_system.tcl
 bin/menu_utility.tcl
-bin/menu_windows.tcl
 
 bin/mirror             Copy all files/directory inside a directory into mirror directory
 bin/mirror.bat

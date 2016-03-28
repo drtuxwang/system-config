@@ -14,16 +14,15 @@ frame .mainmenu -bg "#cccccc"
 # Others
     button .mainmenu.radiotuner -width 10 -bg "#ffff00" -text "Radiotuner" -command {exec menu_radiotuner.tcl &}
     pack .mainmenu.radiotuner -side top
+    button .mainmenu.rdesktop -width 10 -bg "#ffff00" -text "Rdesktop" -command {exec menu_rdesktop.tcl &}
+    pack .mainmenu.rdesktop -side top
     button .mainmenu.skype -width 10 -bg "#ffff00" -text "Skype" -command {exec skype &}
     pack .mainmenu.skype -side top
+    button .mainmenu.vncviewer -width 10 -bg "#ffff00" -text "VNC Viewer" -command {exec vncviewer &}
+    pack .mainmenu.vncviewer -side top
     button .mainmenu.zoom -width 10 -bg "#ffff00" -text "Zoom" -command {exec zoom &}
     pack .mainmenu.zoom -side top
 
-# Menus
-    button .mainmenu.menu_linux -width 10 -bg "#00ff00" -text "Linux" -command {exec menu_linux.tcl &}
-    pack .mainmenu.menu_linux -side top
-    button .mainmenu.menu_windows -width 10 -bg "#00ff00" -text "Windows" -command {exec menu_windows.tcl &}
-    pack .mainmenu.menu_windows -side top
 
     button .mainmenu.close -width 10 -bg "#ff0000" -text Close -command exit
     pack .mainmenu.close -side top
