@@ -4,11 +4,11 @@ Displays month or year calendar.
 """
 
 import argparse
+import datetime
 import glob
 import os
 import signal
 import sys
-import time
 
 import calendar
 
@@ -60,8 +60,8 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._year = int(time.strftime('%Y'))
-        self._month = int(time.strftime('%m'))
+        self._year = datetime.datetime.now().year
+        self._month = datetime.datetime.now().month
         if self._args.year:
             self._year = self._args.year
             if self._year < 2 or self._year > 9999:
@@ -76,9 +76,11 @@ class Options(object):
             if self._month < 0 or self._month > 9999:
                 raise SystemExit(sys.argv[0] + ': Invalid "' + str(self._month) +
                                  '" month or year. Use 1-12 for month or 13-9999 for year.')
-            if self._month > 12:
+            elif self._month > 12:
                 self._year = self._month
                 self._month = 0
+            elif self._month < datetime.datetime.now().month:
+                self._year += 1  # Next year
 
 
 class Main(object):
@@ -115,7 +117,7 @@ class Main(object):
     @staticmethod
     def _long(year, month):
         if not month:
-            month = int(time.strftime('%m'))
+            month = datetime.datetime.now().month
         print('\n                  [ ', calendar.month_name[month] + ' ', year, ' ]\n')
         for line in calendar.TextCalendar(6).formatmonth(year, month).split(os.linesep)[1:]:
             print('  __________________________________________________  ', line)
