@@ -1,2 +1,2 @@
 @echo off
-%~dp0..\pcunix_8.0.1\windows_5.1-x86\.pcunix.bat
+%~dp0..\pcunix_8.0.2\windows_5.1-x86\etc\pcunix.bat
