@@ -13,7 +13,7 @@ import time
 
 import task_mod
 
-RELEASE = '2.7.5'
+RELEASE = '2.7.6'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -129,7 +129,7 @@ class Main(object):
         output = []
         if 'START' in info:
             try:
-                etime = str(int((time.time()-float(info['START']))/60.))
+                etime = str(int((time.time() - float(info['START'])) / 60.))
                 pgid = int(info['PGID'])
             except ValueError:
                 etime = '0'
