@@ -22,4 +22,4 @@ pylint:
 
 unittest:
 	@echo "\n*** Running Python 3 UNITTEST check ***"
-	python3 -m unittest discover --verbose --buffer bin
+	python3 -m unittest discover --buffer bin
