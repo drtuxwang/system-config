@@ -1,10 +1,10 @@
 #!/bin/sh
 #
-# Wrapper for generic Python 3.x program
+# Wrapper for generic Python 3.x program (change "-" to "_" and prefix underscore)
 #
 
 BIN_DIR=`dirname "$0"`
-PY_MAIN=`basename "$0"`
+PY_MAIN="-pyldname=`basename \"$0\"` _`basename \"$0\" | sed -e \"s/-/_/g\"`"
 
 if [ -x "$BIN_DIR/python3" ]; then
     exec "$BIN_DIR/python3" "$BIN_DIR/pyld.py" $PY_MAIN "$@"

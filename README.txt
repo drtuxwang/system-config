@@ -55,9 +55,9 @@ bin/breaktimer.py      (10 min default)
 bin/bz2                Compress a file in BZIP2 format
 bin/bz2.py
 
-bin/cal                Displays month or year calendar
-bin/cal.bat
-bin/cal.py
+bin/calendar           Displays month or year calendar
+bin/calendar.bat
+bin/calendar.py
 
 bin/cdinst.bat         Windows command prompt batch file to "cd %INSTDIR%"
 

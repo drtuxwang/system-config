@@ -49,8 +49,8 @@ class Options(object):
         parser.add_argument('-l', dest='long_flag', action='store_true',
                             help='Select long output.')
 
-        parser.add_argument('year', nargs='?', type=int, help='Select year.')
-        parser.add_argument('month', nargs='?', type=int, help='Select month.')
+        parser.add_argument('month', nargs='?', type=int, help='Select month (1-12 or 0 for year.')
+        parser.add_argument('year', nargs='?', type=int, help='Select year (2-9999).')
 
         self._args = parser.parse_args(args)
 
@@ -60,23 +60,25 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
+        self._year = int(time.strftime('%Y'))
+        self._month = int(time.strftime('%m'))
         if self._args.year:
             self._year = self._args.year
             if self._year < 2 or self._year > 9999:
                 raise SystemExit(sys.argv[0] + ': Invalid "' + str(self._year) +
                                  '" year. Use 2-9999.')
-        else:
-            self._year = int(time.strftime('%Y'))
-
-        if self._args.month:
             self._month = self._args.month
-            if self._month < 1 or self._month > 12:
+            if self._month < 0 or self._month > 12:
                 raise SystemExit(sys.argv[0] + ': Invalid "' + str(self._month) +
-                                 '" month. Use 1-12.')
-        elif self._args.year:
-            self._month = 0
-        else:
-            self._month = int(time.strftime('%m'))
+                                 '" month. Use 1-12 or 0 for year.')
+        elif self._args.month:
+            self._month = self._args.month
+            if self._month < 0 or self._month > 9999:
+                raise SystemExit(sys.argv[0] + ': Invalid "' + str(self._month) +
+                                 '" month or year. Use 1-12 for month or 13-9999 for year.')
+            if self._month > 12:
+                self._year = self._month
+                self._month = 0
 
 
 class Main(object):
