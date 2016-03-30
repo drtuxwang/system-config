@@ -3,7 +3,7 @@ syntax on
 " Background dark or light:
 set background=dark
 
-" Indent using 4 spaces instead of using tab
+" Indent using 4 spaces instead of using tab (<ctrl>+<v>+<tab> for Tab)
 set shiftwidth=4
 set softtabstop=4
 set expandtab
