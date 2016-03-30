@@ -21,37 +21,26 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     if [ "$TERM" = "dumb" ]; then
         MYTTY="/dev/???"
     else
-        case $TERM in
-        ansi)
-            export TERM=vt100
-            ;;
-
-        iris*|xterm-*|rxvt*)
-            export TERM=xterm
-            ;;
-
-        xterm)
-            if [ "$BASH" -a -x /bin/echo ]; then
-                precmd() {
-                    prexec_interactive=1; \echo -e "\033]0;$MYHNAME:$PWD\007\c"
-                }
-                preexec() {
-                    if [ "$prexec_interactive" ]; then
-                        prexec_interactive=; \echo -e "\033]0;$MYHNAME: $BASH_COMMAND\007\c"
-                    fi
-                }
-                case $BASH_VERSION in
-                [12].*|3.0*)
-                    PROMPT_COMMAND="precmd"
-                    ;;
-
-                *)
-                    PROMPT_COMMAND="precmd"
-                    trap preexec DEBUG
-                    ;;
-                esac
-            fi;;
-        esac
+        TERM=vt100
+        if [ "$BASH" -a -x /bin/echo ]; then
+            precmd() {
+                prexec_interactive=1; \echo -e "\033]0;$MYHNAME:$PWD\007\c"
+            }
+            preexec() {
+                if [ "$prexec_interactive" ]; then
+                    prexec_interactive=; \echo -e "\033]0;$MYHNAME: $BASH_COMMAND\007\c"
+                fi
+            }
+            case $BASH_VERSION in
+            [12].*|3.0*)
+                PROMPT_COMMAND="precmd"
+                ;;
+            *)
+                PROMPT_COMMAND="precmd"
+                trap preexec DEBUG
+                ;;
+            esac
+        fi
         MYTTY=`\tty 2> /dev/null`
         (mesg y) > /dev/null 2>&1
         if [ "$TMOUT" != 0 ]; then
@@ -77,35 +66,20 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
 
 # Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if [ ! "$BASE_PATH" ]; then
-        if [ ! "$MANPATH" ]; then
-            export MANPATH=/usr/share/man:/usr/share/catman:/usr/local/man:/usr/man
-        fi
         if [ ! "$LM_LICENSE_FILE" ]; then
             export LM_LICENSE_FILE=:
         fi
+        if [ ! "$LD_LIBRARY_PATH" ]; then
+            export LD_LIBRARY_PATH=:
+        fi
+
+        echo "Storing    Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
         export BASE_PATH=$PATH
         export BASE_MANPATH=$MANPATH
         export BASE_LM_LICENSE_FILE=$LM_LICENSE_FILE
-
-        case `uname` in
-        AIX)
-            echo "Storing    Default settings (PATH, MANPATH, LM_LICENSE_FILE, LIBPATH)"
-            if [ ! "$LIBPATH" ]; then
-                export LIBPATH=:
-            fi
-            export BASE_DSOPATH=$LIBPATH
-            ;;
-
-
-        *)
-            echo "Storing    Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
-            if [ ! "$LD_LIBRARY_PATH" ]; then
-                export LD_LIBRARY_PATH=:
-            fi
-            export BASE_DSOPATH=$LD_LIBRARY_PATH
-            ;;
-        esac
+        export BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
     else
+        echo "Applying   Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
         case `uname` in
         *NT*)
             export PATH=`/bin/cygpath --unix --path "$BASE_PATH"`
@@ -118,41 +92,8 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
             export LM_LICENSE_FILE=$BASE_LM_LICENSE_FILE
             ;;
         esac
-
-        case `uname` in
-        AIX)
-            echo "Applying   Default settings (PATH, MANPATH, LM_LICENSE_FILE, LIBPATH)"
-            export LIBPATH=$BASE_LIBPATH
-            ;;
-
-        *)
-            echo "Applying   Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
-            export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
-            ;;
-        esac
+        export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
     fi
-
-# Applying PATH fixes for specific platforms
-    case `uname` in
-    AIX)
-        echo "Applying   PATH fixes for AIX"
-        export PATH=/usr/vac/bin:/usr/vacpp/bin:$PATH
-        ;;
-
-    HP-UX)
-        echo "Applying   PATH fixes for HP-UX"
-        export PATH=$PATH:/opt/fortran/bin:/opt/fortran90/bin
-        ;;
-
-    SunOS)
-        echo "Applying   PATH fixes for SunOS"
-        export OPENWINHOME=/usr/openwin; export MANPATH=/opt/SUNWspro/man:/usr/man:$MANPATH
-        # Fixes rsh path
-        PATH=/opt/SUNWspro/bin:/bin:/sbin:/usr/sbin:/usr/ucb:/usr/openwin/bin:/usr/ccs/bin:$PATH
-        if [ -d /opt/FSUNf90/bin ]; then
-            export PATH=/opt/FSUNf90/bin:$PATH
-        fi;;
-    esac
 
 # General stuff
     rm()
@@ -174,7 +115,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     ENV=
 
     if [ -x /usr/bin/vim ]; then
-        alias vi="vim -N -n -i NONE"
+        alias vi="vim -N -n -i NONE -T xterm"
     fi
     if [ -x /usr/sbin/ping ]; then
         alias ping="/usr/sbin/ping"
@@ -219,11 +160,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
 
 # Applying Dynamic Limit Removal (DLR)
     echo "Applying   Dynamic Limit Removal (DLR)"
-    if [ "`uname`" != AIX -a -f /usr/bin/ulimit  ]; then
-        ULIMIT=/usr/bin/ulimit
-    else
-        ULIMIT=ulimit
-    fi
+    ULIMIT=ulimit
     for LIMIT in `$ULIMIT -a | \cut -c1`; do
         $ULIMIT -$LIMIT `$ULIMIT -${LIMIT} -H 2> /dev/null` 2> /dev/null
     done
@@ -239,10 +176,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         if [ -d "$HOME/.Spotlight-V100" ]; then
             rm -rf $HOME/.Spotlight-V100; touch $HOME/.Spotlight-V100
         fi
-        ;;
-
-    HP-UX)
-        alias df="bdf"
         ;;
 
     Linux|*NT*)

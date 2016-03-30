@@ -21,24 +21,11 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     if ( "$TERM" == "dumb" ) then
         setenv MYTTY "/dev/???"
     else
-        switch ($TERM)
-        case ansi:
-            setenv TERM vt100
-            breaksw
-
-        case iris*:
-        case xterm-*:
-        case rxvt*:
-            setenv TERM xterm
-            breaksw
-
-        case xterm:
-            if ( $?tcsh && -x /bin/echo ) then
-                /bin/echo -e "\033]0;$MYUNAME@$MYHNAME\007\c"
-                alias precmd '/bin/echo -e "\033]0;${MYHNAME}:$cwd\007\c"'
-            endif
-            breaksw
-        endsw
+        setenv TERM vt100
+        if ( $?tcsh && -x /bin/echo ) then
+            /bin/echo -e "\033]0;$MYUNAME@$MYHNAME\007\c"
+            alias precmd '/bin/echo -e "\033]0;${MYHNAME}:$cwd\007\c"'
+        endif
 
         setenv MYTTY `\tty`
         (mesg y) >& /dev/null
@@ -55,74 +42,25 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
 
 # Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if ( ! $?BASE_PATH ) then
-        if ( ! $?MANPATH ) then
-            setenv MANPATH /usr/share/man:/usr/share/catman:/usr/local/man:/usr/man
-        endif
         if ( ! $?LM_LICENSE_FILE ) then
             setenv LM_LICENSE_FILE :
         endif
+        if ( ! $?LD_LIBRARY_PATH ) then
+            setenv LD_LIBRARY_PATH :
+        endif
+
+        echo "Storing    Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
         setenv BASE_PATH $PATH
         setenv BASE_MANPATH $MANPATH
         setenv BASE_LM_LICENSE_FILE $LM_LICENSE_FILE
-
-        switch (`uname`)
-        case AIX:
-            echo "Storing    Default settings (PATH, MANPATH, LM_LICENSE_FILE, LIBPATH)"
-            if ( ! $?LIBPATH ) then
-                setenv LIBPATH :
-            endif
-            setenv BASE_DSOPATH $LIBPATH
-            breaksw
-
-        default:
-            echo "Storing    Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
-            if ( ! $?LD_LIBRARY_PATH ) then
-                setenv LD_LIBRARY_PATH :
-            endif
-            setenv BASE_DSOPATH $LD_LIBRARY_PATH
-            breaksw
-        endsw
+        setenv BASE_LD_LIBRARY_PATH $LD_LIBRARY_PATH
     else
+        echo "Applying   Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
         setenv PATH $BASE_PATH
         setenv MANPATH $BASE_MANPATH
         setenv LM_LICENSE_FILE $BASE_LM_LICENSE_FILE
-
-        switch (`uname`)
-        case AIX:
-            echo "Applying   Default settings (PATH, MANPATH, LM_LICENSE_FILE, LIBPATH)"
-            setenv LIBPATH $BASE_DSOPATH
-            breaksw
-
-        default:
-            echo "Applying   Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
-            setenv LD_LIBRARY_PATH $BASE_DSOPATH
-            breaksw
-        endsw
+        setenv LD_LIBRARY_PATH $BASE_LD_LIBRARY_PATH
     endif
-
-# Applying PATH fixes for specific platforms
-    switch (`uname`)
-    case AIX:
-        echo "Applying   PATH fixes for AIX"
-        setenv PATH /usr/vac/bin:/usr/vacpp/bin:${PATH}
-        breaksw
-
-    case HP-UX:
-        echo "Applying   PATH fixes for HP-UX"
-        setenv PATH ${PATH}:/opt/fortran/bin:/opt/fortran90/bin
-        breaksw
-
-    case SunOS:
-        echo "Applying   PATH fixes for SunOS"
-        setenv OPENWINHOME /usr/openwin
-        setenv MANPATH /opt/SUNWspro/man:/usr/man:${MANPATH}
-        # Fixes rsh path
-        setenv PATH /opt/SUNWspro/bin:/bin:/sbin:/usr/sbin:/usr/ucb:/usr/openwin/bin:/usr/ccs/bin:${PATH}
-        if ( -d /opt/FSUNf90/bin ) then
-            setenv PATH /opt/FSUNf90/bin:${PATH}
-        endif
-        breaksw
-    endsw
 
 # General stuff
     umask 027
@@ -134,7 +72,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     setenv WINEDITOR vi
 
     if ( -x /usr/bin/vim ) then
-        alias vi "vim -N -n -i NONE"
+        alias vi "vim -N -n -i NONE -T xterm"
     endif
     if ( -x /usr/sbin/ping ) then
         alias ping "/usr/sbin/ping"
