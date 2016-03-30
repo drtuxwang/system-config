@@ -567,9 +567,6 @@ bin/qmail.py
 bin/readcd             Copy CD/DVD data as a portable ISO/BIN image file
 bin/readcd.py
 
-bin/renwin             Rename window title
-bin/renwin.py
-
 bin/ripcd              Rip CD audio tracks as WAVE sound files
 bin/ripcd.py
 
