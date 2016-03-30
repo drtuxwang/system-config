@@ -7,7 +7,6 @@ import getpass
 import glob
 import os
 import signal
-import socket
 import sys
 
 import command_mod
@@ -71,13 +70,6 @@ class Chroot(object):
             self.mount_dir('-o', 'bind', '/var/run/dbus',
                            os.path.join(self._directory, 'var/run/dbus'))
 
-    @staticmethod
-    def _getterm():
-        term = 'Unkown'
-        if 'TERM' in os.environ:
-            term = os.environ['TERM']
-        return term
-
     def mount_dir(self, *args):
         """
         Mount directory
@@ -91,13 +83,7 @@ class Chroot(object):
         Start session
         """
         print('Chroot "' + self._directory + '" starting...')
-        host = socket.gethostname().split('.')[0].lower()
-        if self._getterm() in ['xterm', 'xvt100']:
-            sys.stdout.write('\033]0;' + host + ':' + self._directory + '\007')
-            sys.stdout.flush()
         subtask_mod.Task(self._chroot.get_cmdline()).run()
-        if self._getterm() in ['xterm', 'xvt100']:
-            sys.stdout.write('\033]0;' + host + ':\007')
         umount = command_mod.Command('umount', args=['-l'] + self._mountpoints, errors='stop')
         subtask_mod.Task(umount.get_cmdline()).run()
         print('Chroot "' + self._directory + '" finished!')
