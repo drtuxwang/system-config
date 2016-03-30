@@ -73,7 +73,6 @@ class Options(object):
         self._parse_args(args[1:])
 
         self._aria2c = command_mod.Command('aria2c', errors='stop')
-        self._aria2c.set_args(['--file-allocation=none', '--remote-time=true'])
         self._set_libraries(self._aria2c)
 
         if self._args.threads[0] < 1:
@@ -135,6 +134,7 @@ class Main(object):
             for file in files_remote:
                 cmdline.append(file.replace('https://', 'http://'))
             task = subtask_mod.Task(aria2c.get_cmdline() + cmdline)
+            print('debugX', task.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
@@ -155,7 +155,8 @@ class Main(object):
             if url.endswith('.url') and os.path.isfile(url):
                 directory = url[:-4]
                 files_remote = []
-                aria2c.set_args(['--max-concurrent-downloads=' + str(self._options.get_threads()),
+                aria2c.set_args(['--file-allocation=none', '--remote-time=true',
+                                 '--max-concurrent-downloads=' + str(self._options.get_threads()),
                                  '--dir=' + directory, '-Z'])
                 try:
                     with open(url, errors='replace') as ifile:
@@ -172,7 +173,8 @@ class Main(object):
             elif os.path.isdir(url):
                 raise SystemExit(sys.argv[0] + ': Cannot process "' + url + '" directory.')
             else:
-                aria2c.set_args(['--split=' + str(self._options.get_threads())])
+                aria2c.extend_args(['--file-allocation=none', '--remote-time=true',
+                                    '--split=' + str(self._options.get_threads())])
 
             self._get_local(directory, files_local)
             self._get_remote(aria2c, files_remote)

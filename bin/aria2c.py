@@ -63,14 +63,13 @@ class Main(object):
         Start program
         """
         aria2c = command_mod.Command('aria2c', errors='stop')
-        aria2c.set_args(sys.argv[1:])
         self._set_libraries(aria2c)
 
         shaper = network_mod.Shaper()
         if shaper.is_found():
-            subtask_mod.Exec(shaper.get_cmdline() + aria2c.get_cmdline()).run()
+            subtask_mod.Exec(shaper.get_cmdline() + aria2c.get_cmdline() + sys.argv[1:]).run()
         else:
-            subtask_mod.Exec(aria2c.get_cmdline()).run()
+            subtask_mod.Exec(aria2c.get_cmdline() + sys.argv[1:]).run()
 
 
 if __name__ == '__main__':
