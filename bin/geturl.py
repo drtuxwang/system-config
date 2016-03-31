@@ -134,7 +134,6 @@ class Main(object):
             for file in files_remote:
                 cmdline.append(file.replace('https://', 'http://'))
             task = subtask_mod.Task(aria2c.get_cmdline() + cmdline)
-            print('debugX', task.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
