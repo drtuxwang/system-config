@@ -71,7 +71,7 @@ class Main(object):
                 'qdbus', args=['org.freedesktop.ScreenSaver', '/ScreenSaver', 'Lock'],
                 errors='stop')
         elif desktop == 'xfce':
-            xlock = command_mod.Command('xscreensaver-command', args=['-lock'], errors='stop')
+            xlock = command_mod.Command('xflock4', errors='stop')
         else:
             xlock = command_mod.Command('xlock', args=[
                 '-allowroot', '+nolock', '-mode', 'blank', '-fg', 'red', '-bg', 'black',
