@@ -10,5 +10,9 @@ fi
 # Slow down mouse
 #xset m 2,16
 
+# Select Keyboard map (ie "gb", "de", "us")
+setxkbmap us
+
+#xreset
 #firefox
 #chrome
