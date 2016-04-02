@@ -855,6 +855,7 @@ config/rc.local                 Copy to "/etc/rc.local" for auto running command
 config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
 config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
 config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults
+config/xscreensaver             Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
 
 etc/setbin       Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
 etc/setbin.bat   Windows Command prompt initialization
