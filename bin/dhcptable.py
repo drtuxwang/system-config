@@ -109,9 +109,8 @@ class ScanHost(threading.Thread):
         """
         Start thread
         """
-        self._options.get_arping().set_args(['-c', '1', self._ip])
-        self._child = subtask_mod.Child(
-            self._options.get_arping().get_cmdline()).run(error2output=True)
+        cmdline = self._options.get_arping().get_cmdline() + ['-c', '3', self._ip]
+        self._child = subtask_mod.Child(cmdline).run(error2output=True)
         while True:
             byte = self._child.stdout.read(1)
             if not byte:
