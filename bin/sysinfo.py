@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.7.1'
-VERSION = 20160327
+RELEASE = '4.7.2'
+VERSION = 20160403
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -1211,7 +1211,7 @@ class LinuxSystem(PosixSystem):
         for scan_method in (self._scan_etc_release, self._scan_etc_lsb_release,
                             self._scan_etc_version, self._scan_dpkg_version):
             info.update(scan_method())
-            if 'OS Name' in info:
+            if info['OS Name'] != 'Unknown':
                 break
 
         return info
