@@ -21,7 +21,6 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     if ( "$TERM" == "dumb" ) then
         setenv MYTTY "/dev/???"
     else
-        setenv TERM vt100
         if ( $?tcsh && -x /bin/echo ) then
             /bin/echo -e "\033]0;$MYUNAME@$MYHNAME\007\c"
             alias precmd '/bin/echo -e "\033]0;${MYHNAME}:$cwd\007\c"'

@@ -21,7 +21,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     if [ "$TERM" = "dumb" ]; then
         MYTTY="/dev/???"
     else
-        TERM=vt100
         if [ "$BASH" -a -x /bin/echo ]; then
             precmd() {
                 prexec_interactive=1; \echo -e "\033]0;$MYHNAME:$PWD\007\c"
