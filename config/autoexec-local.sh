@@ -1,18 +1,12 @@
 #!/bin/sh
 
-# Fix VirtualBox resolution to 1280x960
-if [ "`lsmod | grep vboxguest`" ]; then
-    xrandr --newmode "1280x960" 102.10 1280 1360 1496 1712 960 961 964 994 # gtf 1280 960 60
-    xrandr --addmode VGA-0 1280x960
-    (xrandr --dpi 96; sleep 1; xrandr -s 1280x960) &
-fi
+# xrandr --newmode "1280x960" 102.10 1280 1360 1496 1712 960 961 964 994 # gtf 1280 960 60
+# xrandr --addmode VGA-0 1280x960
+# (sleep 1; xrandr --dpi 96; sleep 1; xrandr -s 1024x768) &
 
-# Slow down mouse
-#xset m 2,16
+# setxkbmap us  # "gb", "de", "us"
+# xset m 2,16  # Slow mouse
 
-# Select Keyboard map (ie "gb", "de", "us")
-setxkbmap us
-
-#xreset
-#firefox
-#chrome
+# xreset
+# firefox
+# chrome
