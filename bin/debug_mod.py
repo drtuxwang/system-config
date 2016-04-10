@@ -22,22 +22,38 @@ class Dump(object):
     """
 
     @staticmethod
-    def _output(message, file):
+    def append(bytes, file):
+        """
+        Append data to file.
+
+        data = Bytes
+        file = Output file to append
+        """
+        with open(file, 'ab') as ofile:
+            ofile.write(bytes)
+
+    @classmethod
+    def output(cls, message, file=None):
+        """
+        Show debug message with timestamp.
+
+        message = Message message
+        file    = Optional output file to append
+        """
         if file:
-            with open(file, 'a', newline='\n') as ofile:
-                print(message, file=ofile)
+            cls.append(message.encode() + b'\n', file)
         else:
             print(message)
 
     @classmethod
     def show(cls, message, file=None):
         """
-        Show debug message.
+        Show debug message with timestamp.
 
         message = Debug message
         file    = Optional output file to append
         """
-        cls._output(time.strftime('Debug: %Y-%m-%d-%H:%M:%S: ') + message, file=file)
+        cls.output(time.strftime('Debug: %Y-%m-%d-%H:%M:%S: ') + message, file=file)
 
     @classmethod
     def list(cls, name, obj, indent=4, file=None):
