@@ -22,7 +22,7 @@ class Dump(object):
     """
 
     @staticmethod
-    def append(bytes, file):
+    def append(data, file):
         """
         Append data to file.
 
@@ -30,7 +30,7 @@ class Dump(object):
         file = Output file to append
         """
         with open(file, 'ab') as ofile:
-            ofile.write(bytes)
+            ofile.write(data)
 
     @classmethod
     def output(cls, message, file=None):
