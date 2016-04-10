@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.7.2'
-VERSION = 20160403
+RELEASE = '4.7.3'
+VERSION = 20160410
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -1117,7 +1117,7 @@ class LinuxSystem(PosixSystem):
                 pass
             else:
                 if lines and lines[-1].startswith('DISTRIB_DESCRIPTION='):
-                    info['OS Name'] = lines[-1].split('=')[1].replace("'", '')
+                    info['OS Name'] = lines[-1].split('=')[1].replace('"', '')
                 else:
                     identity = None
                     for line in lines:
