@@ -12,7 +12,7 @@ frame .middle -bg "#cccccc"
     entry .middle.xsize -width 4 -relief sunken -textvariable xsize
     pack .middle.xsize -side left
     pack .middle -side top -fill x
-    button .middle.reset -width 1 -bg "#ffff00" -text "X" -command { set xsize {1280}; set ysize {960} }
+    button .middle.reset -width 1 -bg "#ffff00" -text "X" -command { set xsize {1024}; set ysize {768} }
     pack .middle.reset -side left
     entry .middle.ysize -width 4 -relief sunken -textvariable ysize
     pack .middle.ysize -side left
@@ -24,5 +24,5 @@ frame .bottom -bg "#cccccc"
 pack .bottom -side top -fill x
 
 set hostname {hostname.local}
-set xsize {1280}
-set ysize {960}
+set xsize {1024}
+set ysize {768}
