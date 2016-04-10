@@ -4,10 +4,11 @@ Python debugging tools module
 
 Copyright GPL v2: 2015-2016 By Dr Colin Kong
 
-Version 2.0.0 (2016-02-08)
+Version 2.1.0 (2016-04-10)
 """
 
 import sys
+import time
 
 import jsonpickle
 
@@ -17,34 +18,36 @@ if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
 
 class Dump(object):
     """
-    This class dumps object attributes recursively.
+    Dump debugging information to stdout or file.
     """
 
     @staticmethod
-    def _print(name, obj, indent=4):
-        jsonpickle.set_encoder_options('json', indent=indent, sort_keys=True)
-        print('"' + name, '": ', jsonpickle.encode(obj, unpicklable=False))
+    def _output(message, file):
+        if file:
+            with open(file, 'a', newline='\n') as ofile:
+                print(message, file=ofile)
+        else:
+            print(message)
 
     @classmethod
-    def show(cls, name, obj):
+    def show(cls, message, file=None):
         """
-        Dump object attributes recursively as compact JSON.
+        Show debug message.
 
-        name = Name of object (ie "myobject.subobject")
-        obj  = Object to dump
+        message = Debug message
+        file    = Optional output file to append
         """
-        cls._print(name, obj, indent=None)
+        cls._output(time.strftime('Debug: %Y-%m-%d-%H:%M:%S: ') + message, file=file)
 
     @classmethod
-    def list(cls, name, obj):
+    def list(cls, name, obj, indent=4, file=None):
         """
         List object attributes recursively as expanded JSON.
 
-        name = Name of object (ie "myobject.subobject")
-        obj  = Object to dump
+        name   = Name of object (ie "myobject.subobject")
+        obj    = Object to dump
+        indent = Number of chacracters to indent (default is 4)
+        file   = Optional output file to append
         """
-        cls._print(name, obj)
-
-
-if __name__ == '__main__':
-    help(__name__)
+        jsonpickle.set_encoder_options('json', indent=indent, sort_keys=True)
+        cls.show(name + ' = ' + jsonpickle.encode(obj, unpicklable=False), file=file)
