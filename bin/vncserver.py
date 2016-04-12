@@ -73,7 +73,7 @@ class Options(object):
         """
         self._vncserver = command_mod.Command('vncserver', pathextra=['/usr/bin'], errors='stop')
         self._vncserver.set_args(
-            ['-geometry', '1280x960', '-depth', '24', '-alwaysshared'] + args[1:])
+            ['-geometry', '1024x768', '-depth', '24', '-alwaysshared'] + args[1:])
         self._umask = os.umask(int('077', 8))
         os.umask(self._umask)
         self._config()
