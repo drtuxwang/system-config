@@ -4,17 +4,17 @@
 
 
 frame .top -bg "#cccccc"
-    entry .top.hostname -width 13 -relief sunken -textvariable hostname
+    entry .top.hostname -width 13 -relief sunken -textvar hostname
     pack .top.hostname -side left
 pack .top -fill x
 
 frame .middle -bg "#cccccc"
-    entry .middle.xsize -width 4 -relief sunken -textvariable xsize
+    entry .middle.xsize -width 4 -relief sunken -textvar xsize
     pack .middle.xsize -side left
     pack .middle -side top -fill x
     button .middle.reset -width 1 -bg "#ffff00" -text "X" -command { set xsize {1024}; set ysize {768} }
     pack .middle.reset -side left
-    entry .middle.ysize -width 4 -relief sunken -textvariable ysize
+    entry .middle.ysize -width 4 -relief sunken -textvar ysize
     pack .middle.ysize -side left
 pack .middle -fill x
 
