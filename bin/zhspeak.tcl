@@ -5,7 +5,7 @@
 
 frame .input -bg "#cccccc"
 
-    entry .input.text -width 100 -relief sunken -textvariable text
+    entry .input.text -width 100 -relief sunken -textvar text
     pack .input.text -side left
 
 pack .input -side top -fill x
