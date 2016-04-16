@@ -84,7 +84,7 @@ class Main(object):
         options = Options()
 
         subtask_mod.Background(options.get_mousepad().get_cmdline()).run(
-            pattern=options.get_pattern)
+            pattern=options.get_pattern())
 
 
 if __name__ == '__main__':
