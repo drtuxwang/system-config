@@ -51,7 +51,7 @@ frame .submenu -bg "#cccccc"
     pack .submenu.system -side top
 
     button .submenu.utility -width 10 -bg "#00ff00" -text "Utility" -command {
-        exec utility.tcl &
+        exec menu_utility.tcl &
     }
     pack .submenu.utility -side top
 pack .submenu -side top -fill x
