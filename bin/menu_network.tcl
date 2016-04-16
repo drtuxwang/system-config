@@ -2,29 +2,46 @@
 
 . config -bg "#cccccc"
 
+frame .browser -bg "#cccccc"
+    button .browser.chrome -width 10 -bg "#ffcc00" -text "Chrome" -command {
+        exec chrome &
+    }
+    pack .browser.chrome -side top
 
-frame .mainmenu -bg "#cccccc"
+    button .browser.firefox -width 10 -bg "#ffcc00" -text "Firefox" -command {
+        exec firefox &
+    }
+    pack .browser.firefox -side top
+pack .browser -side top -fill x
 
-# Browsers
-    button .mainmenu.chrome -width 10 -bg "#ffcc00" -text "Chrome" -command {exec chrome &}
-    pack .mainmenu.chrome -side top
-    button .mainmenu.firefox -width 10 -bg "#ffcc00" -text "Firefox" -command {exec firefox &}
-    pack .mainmenu.firefox -side top
+frame .other -bg "#cccccc"
+    button .other.radiotuner -width 10 -bg "#ffff00" -text "Radiotuner" -command {
+        exec menu_radiotuner.tcl &
+    }
+    pack .other.radiotuner -side top
 
-# Others
-    button .mainmenu.radiotuner -width 10 -bg "#ffff00" -text "Radiotuner" -command {exec menu_radiotuner.tcl &}
-    pack .mainmenu.radiotuner -side top
-    button .mainmenu.rdesktop -width 10 -bg "#ffff00" -text "Rdesktop" -command {exec menu_rdesktop.tcl &}
-    pack .mainmenu.rdesktop -side top
-    button .mainmenu.skype -width 10 -bg "#ffff00" -text "Skype" -command {exec skype &}
-    pack .mainmenu.skype -side top
-    button .mainmenu.vncviewer -width 10 -bg "#ffff00" -text "VNC Viewer" -command {exec vncviewer &}
-    pack .mainmenu.vncviewer -side top
-    button .mainmenu.zoom -width 10 -bg "#ffff00" -text "Zoom" -command {exec zoom &}
-    pack .mainmenu.zoom -side top
+    button .other.skype -width 10 -bg "#ffff00" -text "Skype" -command {
+        exec skype &
+    }
+    pack .other.skype -side top
 
+    button .other.vncviewer -width 10 -bg "#ffff00" -text "VNC Viewer" -command {
+        exec vncviewer &
+    }
+    pack .other.vncviewer -side top
 
-    button .mainmenu.close -width 10 -bg "#ff0000" -text Close -command exit
-    pack .mainmenu.close -side top
+    button .other.xfreerdp -width 10 -bg "#ffff00" -text "X FreeRDP" -command {
+        exec xfreerdp.tcl &
+    }
+    pack .other.xfreerdp -side top
 
-pack .mainmenu -side top -fill x
+    button .other.zoom -width 10 -bg "#ffff00" -text "Zoom" -command {
+        exec zoom &
+    }
+    pack .other.zoom -side top
+pack .other -side top -fill x
+
+frame .menu -bg "#cccccc"
+    button .menu.close -width 10 -bg "#ff0000" -text Close -command exit
+    pack .menu.close -side top
+pack .menu -side top -fill x

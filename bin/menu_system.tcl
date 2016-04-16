@@ -6,29 +6,46 @@
 
 . config -bg "#cccccc"
 
+frame .tools -bg "#cccccc"
+    button .tools.kill -width 10 -bg "#ffff00" -text "Kill Window" -command {
+        exec xkill &
+    }
+    pack .tools.kill -side top
 
-frame .mainmenu -bg "#cccccc"
+    button .tools.settimezone -width 10 -bg "#ffcc00" -text "Set Time Zone" -command {
+        exec xsudo sh -c "dpkg-reconfigure tzdata; ntpdate pool.ntp.org" &
+    }
+    pack .tools.settimezone -side top
 
-# Tools
-    button .mainmenu.settimezone -width 10 -bg "#ffcc00" -text "Set Time Zone" -command {exec xsudo sh -c "dpkg-reconfigure tzdata; ntpdate pool.ntp.org" &}
-    pack .mainmenu.settimezone -side top
-    button .mainmenu.keymap -width 10 -bg "#ffcc00" -text "Set Key Map" -command {exec keymap.tcl &}
-    pack .mainmenu.keymap -side top
-    button .mainmenu.xlock -width 10 -bg "#ffcc00" -text "Lock Screen" -command {exec xlock &}
-    pack .mainmenu.xlock -side top
+    button .tools.keymap -width 10 -bg "#ffcc00" -text "Set Key Map" -command {
+        exec keymap.tcl &
+    }
+    pack .tools.keymap -side top
+pack .tools -side top -fill x
 
-# Kill
-    button .mainmenu.kill -width 10 -bg "#ffff00" -text "Kill Window" -command {exec xkill &}
-    pack .mainmenu.kill -side top
-    button .mainmenu.logout -width 10 -bg "#ffff00" -text "Logout" -command {exec xlogout -force &}
-    pack .mainmenu.logout -side top
-    button .mainmenu.reboot -width 10 -bg "#ffff00" -text "Restart" -command {exec sudo /sbin/reboot &}
-    pack .mainmenu.reboot -side top
-    button .mainmenu.shutdown -width 10 -bg "#ffff00" -text "Shut Down" -command {exec sudo /sbin/poweroff &}
-    pack .mainmenu.shutdown -side top
+frame .session -bg "#cccccc"
+    button .session.logout -width 10 -bg "#ffff00" -text "Logout" -command {
+        exec xlogout -force &
+    }
+    pack .session.logout -side top
 
-    button .mainmenu.close -width 10 -bg "#ff0000" -text Close -command exit
-    pack .mainmenu.close -side top
+    button .session.reboot -width 10 -bg "#ffff00" -text "Restart" -command {
+        exec sudo /sbin/reboot &
+    }
+    pack .session.reboot -side top
 
-pack .mainmenu -side top -fill x
+    button .session.shutdown -width 10 -bg "#ffff00" -text "Shut Down" -command {
+        exec sudo /sbin/poweroff &
+    }
+    pack .session.shutdown -side top
+pack .session -side top -fill x
 
+frame .menu -bg "#cccccc"
+    button .menu.lock -width 10 -bg "#ff0000" -text "Lock Screen" -command {
+        exec lock &
+    }
+    pack .menu.lock -side top
+
+    button .menu.close -width 10 -bg "#ff0000" -text Close -command exit
+    pack .menu.close -side top
+pack .menu -side top -fill x

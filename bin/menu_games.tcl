@@ -2,40 +2,76 @@
 
 . config -bg "#cccccc"
 
+frame .small -bg "#cccccc"
+    button .small.chess -width 10 -bg "#ffcc00" -text "Dream Chess" -command {
+        exec dreamchess &
+    }
+    pack .small.chess -side top
 
-frame .mainmenu -bg "#cccccc"
+    button .small.frozenbubble -width 10 -bg "#ffcc00" -text "Frozen Bubble" -command {
+        exec frozen-bubble &
+    }
+    pack .small.frozenbubble -side top
 
-# Standard games
-    button .mainmenu.chess -width 10 -bg "#ffcc00" -text "Dream Chess" -command {exec dreamchess &}
-    pack .mainmenu.chess -side top
-    button .mainmenu.frozenbubble -width 10 -bg "#ffcc00" -text "Frozen Bubble" -command {exec frozen-bubble &}
-    pack .mainmenu.frozenbubble -side top
-    button .mainmenu.hearts -width 10 -bg "#ffcc00" -text "Hearts" -command {exec gnome-hearts &}
-    pack .mainmenu.hearts -side top
-    button .mainmenu.mines -width 10 -bg "#ffcc00" -text "Mines" -command {exec gnomine &}
-    pack .mainmenu.mines -side top
-    button .mainmenu.reversi -width 10 -bg "#ffcc00" -text "Iagno" -command {exec iagno &}
-    pack .mainmenu.reversi -side top
-    button .mainmenu.sudoku -width 10 -bg "#ffcc00" -text "Sudoku" -command {exec gnome-sudoku &}
-    pack .mainmenu.sudoku -side top
-    button .mainmenu.swellfoop -width 10 -bg "#ffcc00" -text "Swell Foop" -command {exec swell-foop &}
-    pack .mainmenu.swellfoop -side top
+    button .small.hearts -width 10 -bg "#ffcc00" -text "Hearts" -command {
+        exec gnome-hearts &
+    }
+    pack .small.hearts -side top
 
-# 3D games
-    button .mainmenu.0ad -width 10 -bg "#ffff00" -text "0AD" -command {exec 0ad &}
-    pack .mainmenu.0ad -side top
-    button .mainmenu.assaultcube -width 10 -bg "#ffff00" -text "AssaultCube" -command {exec xrun assaultcube &}
-    pack .mainmenu.assaultcube -side top
-    button .mainmenu.et -width 10 -bg "#ffff00" -text "ET" -command {exec et &}
-    pack .mainmenu.et -side top
-    button .mainmenu.et_goc -width 10 -bg "#ffff00" -text "ET:GOC" -command {exec et +connect 5.39.188.178:27960 &}
-    pack .mainmenu.et_goc -side top
-    button .mainmenu.tuxracer -width 10 -bg "#ffff00" -text "Tux Racer" -command {exec xrun etracer &}
-    pack .mainmenu.tuxracer -side top
-    button .mainmenu.wesnoth -width 10 -bg "#ffff00" -text "Wesnoth" -command {exec wesnoth &}
-    pack .mainmenu.wesnoth -side top
+    button .small.mines -width 10 -bg "#ffcc00" -text "Mines" -command {
+       exec gnomine &
+    }
+    pack .small.mines -side top
 
-    button .mainmenu.close -width 10 -bg "#ff0000" -text Close -command exit
-    pack .mainmenu.close -side top
+    button .small.reversi -width 10 -bg "#ffcc00" -text "Iagno" -command {
+        exec iagno &
+    }
+    pack .small.reversi -side top
 
-pack .mainmenu -side top -fill x
+    button .small.sudoku -width 10 -bg "#ffcc00" -text "Sudoku" -command {
+        exec gnome-sudoku &
+    }
+    pack .small.sudoku -side top
+
+    button .small.swellfoop -width 10 -bg "#ffcc00" -text "Swell Foop" -command {
+        exec swell-foop &
+    }
+    pack .small.swellfoop -side top
+pack .small -side top -fill x
+
+frame .large -bg "#cccccc"
+    button .large.0ad -width 10 -bg "#ffff00" -text "0AD" -command {
+        exec 0ad &
+    }
+    pack .large.0ad -side top
+
+    button .large.assaultcube -width 10 -bg "#ffff00" -text "AssaultCube" -command {
+        exec xrun assaultcube &
+    }
+    pack .large.assaultcube -side top
+
+    button .large.et -width 10 -bg "#ffff00" -text "ET" -command {
+        exec et &
+    }
+    pack .large.et -side top
+
+    button .large.et_goc -width 10 -bg "#ffff00" -text "ET:GOC" -command {
+        exec et +connect 5.39.188.178:27960 &
+    }
+    pack .large.et_goc -side top
+
+    button .large.tuxracer -width 10 -bg "#ffff00" -text "Tux Racer" -command {
+        exec xrun etracer &
+    }
+    pack .large.tuxracer -side top
+
+    button .large.wesnoth -width 10 -bg "#ffff00" -text "Wesnoth" -command {
+        exec wesnoth &
+    }
+    pack .large.wesnoth -side top
+pack .large -side top -fill x
+
+frame .menu -bg "#cccccc"
+    button .menu.close -width 10 -bg "#ff0000" -text Close -command exit
+    pack .menu.close -side top
+pack .menu -side top -fill x
