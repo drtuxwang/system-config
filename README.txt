@@ -347,6 +347,9 @@ bin/_git_time.py
 bin/gnomine            gnome-mines/gnomine wrapper (allowing non systems port)
 bin/gnomine.py         (can pick using old gnomines name)
 
+bin/google             Google search engine submission
+bin/google.py
+
 bin/gpg                gpg wrapper (allowing non systems port)
 bin/gpg.py             (contains enhanced functions "gpg -h")
 
