@@ -83,8 +83,14 @@ class Main(object):
         url = 'http://ajax.googleapis.com/ajax/services/search/web?v=1.0&' + search_for
         user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0'
 
-        response = requests.get(url, params={'q': search_for}, headers={'User-Agent': user_agent},
-                                allow_redirects=True, verify=True)
+        try:
+            response = requests.get(
+                url, params={'q': search_for}, headers={'User-Agent': user_agent},
+                allow_redirects=True, verify=True)
+        except Exception as exception:
+            raise SystemExit(str(exception))
+        if response.status_code != 200:
+            raise SystemExit('Requests response code: ' + str(response.status_code))
 
         print(response.url)
         for page in json.loads(response.text)['responseData']['results']:
