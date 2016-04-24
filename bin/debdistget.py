@@ -15,7 +15,6 @@ import urllib.request
 
 import command_mod
 import file_mod
-import requests
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -148,8 +147,8 @@ class Main(object):
         for url in urls:
             try:
                 conn = urllib.request.urlopen(url)
-            except Exception as exception:
-                raise SystemExit('Error: Cannot fetch URL: ' +  url)
+            except Exception:
+                raise SystemExit('Error: Cannot fetch URL: ' + url)
 
             info = conn.info()
             url_time = time.mktime(time.strptime(
