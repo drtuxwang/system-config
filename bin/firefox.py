@@ -13,6 +13,7 @@ import os
 import re
 import shutil
 import signal
+import sqlite3
 import sys
 
 import command_mod
@@ -130,17 +131,16 @@ class Options(object):
                 subtask_mod.Daemon(fmod.get_cmdline()).run()
 
     def _config(self):
-        if 'HOME' in os.environ:
-            self._clean_adobe()
+        self._clean_adobe()
 
-            firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
-            if os.path.isdir(firefoxdir):
-                os.chmod(firefoxdir, int('700', 8))
-                self._remove_lock(firefoxdir)
-                self._remove_junk_files(firefoxdir)
-                self._fix_xulstore(firefoxdir)
+        firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
+        if os.path.isdir(firefoxdir):
+            os.chmod(firefoxdir, int('700', 8))
+            self._remove_lock(firefoxdir)
+            self._remove_junk_files(firefoxdir)
+            self._fix_xulstore(firefoxdir)
 
-            self._fix_permissions()
+        self._fix_permissions()
 
     @staticmethod
     def _copy():
@@ -211,85 +211,97 @@ class Options(object):
 
     @staticmethod
     def _prefs(updates):
-        if 'HOME' in os.environ:
-            firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
-            if os.path.isdir(firefoxdir):
-                for file in glob.glob(os.path.join(firefoxdir, '*', 'prefs.js')):
+        firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
+        if os.path.isdir(firefoxdir):
+            for file in glob.glob(os.path.join(firefoxdir, '*', 'prefs.js')):
+                try:
+                    with open(file, errors='replace') as ifile:
+                        lines = ifile.readlines()
+                    # Workaround 'user.js' dropped support
+                    with open(file, 'a', newline='\n') as ofile:
+                        if (not updates and
+                                'user_pref("app.update.enabled", false);\n' not in lines):
+                            print('user_pref("app.update.enabled", false);', file=ofile)
+                        for setting in ('"accessibility.typeaheadfind.enablesound", false',
+                                        '"browser.blink_allowed", false',
+                                        '"browser.bookmarks.max_backups", 1',
+                                        '"browser.safebrowsing.enabled", false',
+                                        '"browser.safebrowsing.malware.enabled", false',
+                                        '"browser.cache.memory.capacity", 16384',
+                                        '"browser.display.show_image_placeholders", false',
+                                        '"browser.download.animateNotifications", false',
+                                        '"browser.link.open_external", 3',
+                                        '"browser.link.open_newwindow", 3',
+                                        '"browser.link.open_newwindow.restriction", 0',
+                                        '"browser.newtabpage.enabled", false',
+                                        '"browser.pocket.enabled", false',
+                                        '"browser.tabs.animate", false',
+                                        '"browser.tabs.insertRelatedAfterCurrent", false',
+                                        '"browser.urlbar.autoFill", false',
+                                        '"browser.sessionhistory.max_total_viewers", 0',
+                                        '"browser.sessionhistory.max_viewers", 0',
+                                        '"browser.sessionhistory.sessionhistory.max_entries", 5',
+                                        '"browser.sessionstore.resume_from_crash", false',
+                                        '"browser.sessionstore.max_resumed_crashes", 0',
+                                        '"browser.sessionstore.max_tabs_undo", 0',
+                                        '"browser.shell.checkDefaultBrowser", false',
+                                        '"browser.zoom.siteSpecific", false',
+                                        '"content.interrupt.parsing", true',
+                                        '"content.notify.backoffcount", 5',
+                                        '"content.notify.interval", 500000',
+                                        '"content.notify.ontimer", true',
+                                        '"dom.event.contextmenu.enabled", false',
+                                        '"dom.max_script_run_time", 20',
+                                        '"dom.push.enable", false',
+                                        '"extensions.blocklist.enabled", false',
+                                        '"full-screen-api.approval-required", false',
+                                        '"geo.enabled", false',
+                                        '"image.animation_mode", "none"',
+                                        '"keyword.enabled", true',
+                                        '"layout.frames.force_resizability", true',
+                                        '"layout.spellcheckDefault", 2',
+                                        '"loop.throttled", false',
+                                        '"media.autoplay.enabled", false',
+                                        '"media.fragmented-mp4.exposed", true',
+                                        '"media.fragmented-mp4.ffmpeg.enabled", true',
+                                        '"media.fragmented-mp4.gmp.enabled", false',
+                                        '"media.gstreamer.enabled", false',
+                                        '"media.mediasource.enabled", true',
+                                        '"media.mediasource.mp4.enabled", true',
+                                        '"media.mediasource.webm.enabled", true',
+                                        '"network.http.pipelining.maxrequests", 8',
+                                        '"network.http.pipelining", true',
+                                        '"network.http.proxy.pipelining", true',
+                                        '"network.http.spdy.enabled", true',
+                                        '"network.prefetch-next", false',
+                                        '"nglayout.initialpaint.delay", 0',
+                                        '"print.print_edge_bottom", 20',
+                                        '"print.print_edge_left", 20',
+                                        '"print.print_edge_right", 20',
+                                        '"print.print_edge_top", 20',
+                                        '"plugins.click_to_play", true',
+                                        '"reader.parse-on-load.enabled", false',
+                                        '"security.dialog_enable_delay", 0',
+                                        '"toolkit.telemetry.enabled", false',
+                                        '"toolkit.storage.synchronous", 0',
+                                        '"ui.submenuDelay", 0'):
+                            if 'user_pref(' + setting + ');\n' not in lines:
+                                print('user_pref(' + setting + ');', file=ofile)
+                except OSError:
+                    pass
+
+    @staticmethod
+    def _ublock():
+        firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
+        for file in glob.glob(os.path.join(firefoxdir, '*', 'extension-data', 'ublock0.sqlite')):
+            if os.path.isfile(file):
+                with sqlite3.connect(file) as conn:
                     try:
-                        with open(file, errors='replace') as ifile:
-                            lines = ifile.readlines()
-                        # Workaround 'user.js' dropped support
-                        with open(file, 'a', newline='\n') as ofile:
-                            if (not updates and
-                                    'user_pref("app.update.enabled", false);\n' not in lines):
-                                print('user_pref("app.update.enabled", false);', file=ofile)
-                            for setting in ('"accessibility.typeaheadfind.enablesound", false',
-                                            '"browser.blink_allowed", false',
-                                            '"browser.bookmarks.max_backups", 1',
-                                            '"browser.safebrowsing.enabled", false',
-                                            '"browser.safebrowsing.malware.enabled", false',
-                                            '"browser.cache.memory.capacity", 16384',
-                                            '"browser.display.show_image_placeholders", false',
-                                            '"browser.download.animateNotifications", false',
-                                            '"browser.link.open_external", 3',
-                                            '"browser.link.open_newwindow", 3',
-                                            '"browser.link.open_newwindow.restriction", 0',
-                                            '"browser.newtabpage.enabled", false',
-                                            '"browser.pocket.enabled", false',
-                                            '"browser.tabs.animate", false',
-                                            '"browser.tabs.insertRelatedAfterCurrent", false',
-                                            '"browser.urlbar.autoFill", false',
-                                            '"browser.sessionhistory.max_total_viewers", 0',
-                                            '"browser.sessionhistory.max_viewers", 0',
-                                            '"browser.sessionhistory.sessionhistory.max_entries"'
-                                            ', 5',
-                                            '"browser.sessionstore.resume_from_crash", false',
-                                            '"browser.sessionstore.max_resumed_crashes", 0',
-                                            '"browser.sessionstore.max_tabs_undo", 0',
-                                            '"browser.shell.checkDefaultBrowser", false',
-                                            '"browser.zoom.siteSpecific", false',
-                                            '"content.interrupt.parsing", true',
-                                            '"content.notify.backoffcount", 5',
-                                            '"content.notify.interval", 500000',
-                                            '"content.notify.ontimer", true',
-                                            '"dom.event.contextmenu.enabled", false',
-                                            '"dom.max_script_run_time", 20',
-                                            '"dom.push.enable", false',
-                                            '"extensions.blocklist.enabled", false',
-                                            '"full-screen-api.approval-required", false',
-                                            '"geo.enabled", false',
-                                            '"image.animation_mode", "none"',
-                                            '"keyword.enabled", true',
-                                            '"layout.frames.force_resizability", true',
-                                            '"layout.spellcheckDefault", 2',
-                                            '"loop.throttled", false',
-                                            '"media.autoplay.enabled", false',
-                                            '"media.fragmented-mp4.exposed", true',
-                                            '"media.fragmented-mp4.ffmpeg.enabled", true',
-                                            '"media.fragmented-mp4.gmp.enabled", false',
-                                            '"media.gstreamer.enabled", false',
-                                            '"media.mediasource.enabled", true',
-                                            '"media.mediasource.mp4.enabled", true',
-                                            '"media.mediasource.webm.enabled", true',
-                                            '"network.http.pipelining.maxrequests", 8',
-                                            '"network.http.pipelining", true',
-                                            '"network.http.proxy.pipelining", true',
-                                            '"network.http.spdy.enabled", true',
-                                            '"network.prefetch-next", false',
-                                            '"nglayout.initialpaint.delay", 0',
-                                            '"print.print_edge_bottom", 20',
-                                            '"print.print_edge_left", 20',
-                                            '"print.print_edge_right", 20',
-                                            '"print.print_edge_top", 20',
-                                            '"plugins.click_to_play", true',
-                                            '"reader.parse-on-load.enabled", false',
-                                            '"security.dialog_enable_delay", 0',
-                                            '"toolkit.telemetry.enabled", false',
-                                            '"toolkit.storage.synchronous", 0',
-                                            '"ui.submenuDelay", 0'):
-                                if 'user_pref(' + setting + ');\n' not in lines:
-                                    print('user_pref(' + setting + ');', file=ofile)
-                    except OSError:
+                        cursor = conn.cursor()
+                        cursor.execute(
+                             "UPDATE settings SET value = '{}' WHERE name = 'cached_asset_entries'")
+                        cursor.execute("DELETE FROM settings WHERE name = 'selfie'")
+                    except sqlite3.DatabaseError:
                         pass
 
     def parse(self, args):
@@ -332,8 +344,11 @@ class Options(object):
             '^failed to create drawable|None of the authentication protocols|'
             'NOTE: child process received|: Not a directory|[/ ]thumbnails |'
             ': Connection reset by peer|')
-        self._config()
-        self._prefs(updates)
+
+        if 'HOME' in os.environ:
+            self._config()
+            self._prefs(updates)
+            self._ublock()
 
 
 class Main(object):
