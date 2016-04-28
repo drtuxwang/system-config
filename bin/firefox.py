@@ -299,7 +299,7 @@ class Options(object):
                     try:
                         cursor = conn.cursor()
                         cursor.execute(
-                             "UPDATE settings SET value = '{}' WHERE name = 'cached_asset_entries'")
+                            "UPDATE settings SET value = '{}' WHERE name = 'cached_asset_entries'")
                         cursor.execute("DELETE FROM settings WHERE name = 'selfie'")
                     except sqlite3.DatabaseError:
                         pass
