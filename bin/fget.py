@@ -164,8 +164,6 @@ class Main(object):
             conn = urllib.request.urlopen(url)
         except Exception as exception:
             raise SystemExit(str(exception))
-        if response.status_code != 200:
-            raise SystemExit('Requests response code: ' + str(response.status_code))
 
         file, size, mtime = self._get_file_stat(url, conn)
         if self._check_file(file, size, mtime):
