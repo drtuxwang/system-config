@@ -133,12 +133,13 @@ class Options(object):
     def _config(self):
         self._clean_adobe()
 
-        firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
-        if os.path.isdir(firefoxdir):
-            os.chmod(firefoxdir, int('700', 8))
-            self._remove_lock(firefoxdir)
-            self._remove_junk_files(firefoxdir)
-            self._fix_xulstore(firefoxdir)
+        for directory in ('.mozilla/firefox', 'Library/Application Support/Firefox/Profiles'):
+            firefoxdir = os.path.join(os.environ['HOME'], directory)
+            if os.path.isdir(firefoxdir):
+                os.chmod(firefoxdir, int('700', 8))
+                self._remove_lock(firefoxdir)
+                self._remove_junk_files(firefoxdir)
+                self._fix_xulstore(firefoxdir)
 
         self._fix_permissions()
 
