@@ -498,18 +498,9 @@ bin/pcunix.bat         Start PCUNIX on Windows
 bin/pdf                Create PDF file from text/images/postscript/PDF files
 bin/pdf.py
 
-bin/pep8               pep8 wrapper
-bin/pep8.bat
-bin/pep8.py
-
 bin/pidgin             pidgin wrapper (allowing non systems port)
 bin/pidgin.bat
 bin/pidgin.py
-
-bin/pip                Wrapper to select "umask 022"
-bin/pip.py
-bin/pip3
-bin/pip3.py
 
 bin/play               Play multimedia file/URL
 bin/play.py            (uses vlc and avprobe)
