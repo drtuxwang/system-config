@@ -4,14 +4,14 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.8 (2016-03-20)
+Version 2.0.9 (2016-03-30)
 """
 
 import distutils.version
 import functools
 import glob
-import platform
 import os
+import platform
 import re
 import subprocess
 import sys
