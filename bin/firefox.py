@@ -122,8 +122,14 @@ class Options(object):
                 except OSError:
                     pass
 
-    def _fix_permissions(self):
-        if os.path.isfile(self._firefox.get_file() + '-bin'):
+    def _fix_installation(self):
+        file = self._firefox.get_file()
+        if os.path.isfile(file + '-bin'):
+            try:
+                shutil.rmtree(os.path.join(os.path.dirname(file), 'browser', 'features'))
+            except OSError:
+                pass
+
             fmod = command_mod.Command('fmod', errors='ignore')
             if fmod.is_found():
                 # Fix permissions if owner and updated
@@ -141,7 +147,7 @@ class Options(object):
                 self._remove_junk_files(firefoxdir)
                 self._fix_xulstore(firefoxdir)
 
-        self._fix_permissions()
+        self._fix_installation()
 
     @staticmethod
     def _copy():
