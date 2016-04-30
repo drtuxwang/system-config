@@ -83,12 +83,15 @@ class Main(object):
                 print('#', file=ofile)
                 print('# fwrapper.py generated script', file=ofile)
                 print('#\n', file=ofile)
+                print('MYDIR=$(dirname "$0")', file=ofile)
                 if file == os.path.abspath(file):
                     directory = os.path.dirname(file)
-                    print('MYDIR=$(dirname "$0")', file=ofile)
                     print('PATH=$(echo "$PATH" | sed -e "s@$MYDIR@' + directory + '@")', file=ofile)
                     print('export PATH\n', file=ofile)
-                print('exec "' + file + '" "$@"', file=ofile)
+                    print('exec "' + file + '" "$@"', file=ofile)
+                else:
+                    print('exec "$MYDIR/' + file + '" "$@"', file=ofile)
+
             os.chmod(link, int('755', 8))
             file_time = file_mod.FileStat(file).get_time()
             os.utime(link, (file_time, file_time))
