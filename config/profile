@@ -175,6 +175,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         if [ -d "$HOME/.Spotlight-V100" ]; then
             rm -rf $HOME/.Spotlight-V100; touch $HOME/.Spotlight-V100
         fi
+        alias ls="ls -C -G"
         ;;
 
     Linux|*NT*)
