@@ -9,6 +9,8 @@ import os
 import signal
 import sys
 
+import file_mod
+
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
@@ -74,17 +76,24 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
-    def _create(source, target):
+    def _create(file, link):
         try:
-            with open(target, 'w', newline='\n') as ofile:
-                print('#!/bin/sh', file=ofile)
-                print('# fwrapper generated script', file=ofile)
-                print('PATH=`echo "$PATH" | sed -e "s@\\`dirname \\"$0\\"\\`@' +
-                      os.path.dirname(source) + '@"` export PATH', file=ofile)
-                print('exec "' + source + '" "$@"', file=ofile)
-            os.chmod(target, int('755', 8))
+            with open(link, 'w', newline='\n') as ofile:
+                print('#!/bin/bash', file=ofile)
+                print('#', file=ofile)
+                print('# fwrapper.py generated script', file=ofile)
+                print('#\n', file=ofile)
+                if file == os.path.abspath(file):
+                    directory = os.path.dirname(file)
+                    print('MYDIR=$(dirname "$0")', file=ofile)
+                    print('PATH=$(echo "$PATH" | sed -e "s@$MYDIR@' + directory + '@")', file=ofile)
+                    print('export PATH\n', file=ofile)
+                print('exec "' + file + '" "$@"', file=ofile)
+            os.chmod(link, int('755', 8))
+            file_time = file_mod.FileStat(file).get_time()
+            os.utime(link, (file_time, file_time))
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" wrapper file.')
+            raise SystemExit(sys.argv[0] + ': Cannot create "' + link + '" wrapper file.')
 
     def run(self):
         """
@@ -96,14 +105,13 @@ class Main(object):
         for file in self._files:
             if not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
-            source = os.path.abspath(file)
 
-            target = os.path.basename(file)
-            if os.path.exists(target):
-                print('Skipping "', target, '" wrapper for "', source, '"...', sep='')
+            link = os.path.basename(file)
+            if os.path.exists(file):
+                print('Updating "', link, '" wrapper for "', file, '"...', sep='')
             else:
-                print('Creating "', target, '" wrapper for "', source, '"...', sep='')
-                self._create(source, target)
+                print('Creating "', link, '" wrapper for "', file, '"...', sep='')
+            self._create(file, link)
 
 
 if __name__ == '__main__':
