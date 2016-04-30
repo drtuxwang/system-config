@@ -61,7 +61,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._archiver = command_mod.Command('7za', errors='ignoe')
+        self._archiver = command_mod.Command('7za', errors='ignore')
         if self._archiver.is_found():
             self._archiver = command_mod.Command('7z', errors='stop')
 
