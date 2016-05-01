@@ -46,7 +46,15 @@ class Options(object):
         """
         return self._chrome
 
-    def _clean_adobe(self, configdir):
+    @staticmethod
+    def _get_profiles_dir():
+        if command_mod.Platform.get_system() == 'macos':
+            return os.path.join('Library', 'Application Support', 'Google', 'Chrome')
+        else:
+            return os.path.join('.config', 'google-chrome')
+
+    @staticmethod
+    def _clean_adobe(configdir):
         adobe = os.path.join(os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
         macromedia = os.path.join(
             os.environ['HOME'], '.macromedia', 'Flash_Player', 'macromedia.com')
@@ -67,7 +75,7 @@ class Options(object):
         except OSError:
             pass
 
-        for file in (os.path.join(os.environ['HOME'], '.cache', self._directory),
+        for file in (os.path.join(os.environ['HOME'], '.cache', 'google-chrome'),
                      os.path.join(configdir, 'Pepper Data')):
             if not os.path.isfile(file):
                 try:
@@ -130,7 +138,7 @@ class Options(object):
 
     def _config(self):
         if 'HOME' in os.environ:
-            configdir = os.path.join(os.environ['HOME'], '.config', self._directory, 'Default')
+            configdir = os.path.join(os.environ['HOME'], self._get_profiles_dir(), 'Default')
 
             self._clean_adobe(configdir)
             if os.path.isdir(configdir):
@@ -152,14 +160,14 @@ class Options(object):
                 except ValueError:
                     pass
             os.umask(int('077', 8))
-            configdir = os.path.join(os.environ['HOME'], '.config', self._directory)
+            configdir = os.path.join(os.environ['HOME'], self._get_profiles_dir())
             mypid = os.getpid()
             os.setpgid(mypid, mypid)  # New PGID
             newhome = os.path.join('/tmp', 'chrome-' + getpass.getuser() + '.' + str(mypid))
             print('Creating copy of Chrome profile in "' + newhome + '"...')
             if not os.path.isdir(newhome):
                 try:
-                    shutil.copytree(configdir, os.path.join(newhome, '.config', self._directory))
+                    shutil.copytree(configdir, os.path.join(newhome, self._get_profiles_dir()))
                 except (OSError, shutil.Error):  # Ignore 'lock' file error
                     pass
             try:
@@ -183,7 +191,7 @@ class Options(object):
         if 'HOME' not in os.environ:
             return
 
-        configdir = os.path.join(os.environ['HOME'], '.config', self._directory)
+        configdir = os.path.join(os.environ['HOME'], self._get_profiles_dir())
         if os.path.isdir(configdir):
             keep_list = ('Extensions', 'File System', 'Local Extension Settings',
                          'Local Storage', 'Preferences', 'Secure Preferences')
@@ -197,10 +205,10 @@ class Options(object):
                     print('Removing "{0:s}"...'.format(directory))
                     self._remove(directory)
 
-    @staticmethod
-    def _restart():
+    @classmethod
+    def _restart(cls):
         if 'HOME' in os.environ:
-            configdir = os.path.join(os.environ['HOME'], '.config', 'google-chrome')
+            configdir = os.path.join(os.environ['HOME'], cls._get_profiles_dir())
             try:
                 pid = os.readlink(os.path.join(configdir, 'SingletonLock')).split('-')[1]
                 task_mod.Tasks.factory().killpids([pid])
@@ -223,7 +231,6 @@ class Options(object):
         Parse arguments
         """
         self._chrome = command_mod.Command('chrome', errors='stop')
-        self._directory = 'google-chrome'
 
         if len(args) > 1:
             if args[1] == '-version':

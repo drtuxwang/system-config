@@ -46,6 +46,13 @@ class Options(object):
         return self._firefox
 
     @staticmethod
+    def _get_profiles_dir():
+        if command_mod.Platform.get_system() == 'macos':
+            return os.path.join('Library', 'Application Support', 'Firefox', 'Profiles')
+        else:
+            return os.path.join('.mozilla', 'firefox')
+
+    @staticmethod
     def _clean_adobe():
         adobe = os.path.join(os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
         macromedia = os.path.join(os.environ['HOME'], '.macromedia',
@@ -139,18 +146,17 @@ class Options(object):
     def _config(self):
         self._clean_adobe()
 
-        for directory in ('.mozilla/firefox', 'Library/Application Support/Firefox/Profiles'):
-            firefoxdir = os.path.join(os.environ['HOME'], directory)
-            if os.path.isdir(firefoxdir):
-                os.chmod(firefoxdir, int('700', 8))
-                self._remove_lock(firefoxdir)
-                self._remove_junk_files(firefoxdir)
-                self._fix_xulstore(firefoxdir)
+        firefoxdir = os.path.join(os.environ['HOME'], self._get_profiles_dir())
+        if os.path.isdir(firefoxdir):
+            os.chmod(firefoxdir, int('700', 8))
+            self._remove_lock(firefoxdir)
+            self._remove_junk_files(firefoxdir)
+            self._fix_xulstore(firefoxdir)
 
         self._fix_installation()
 
-    @staticmethod
-    def _copy():
+    @classmethod
+    def _copy(cls):
         if 'HOME' in os.environ:
             task = task_mod.Tasks.factory()
             for directory in glob.glob(
@@ -166,7 +172,7 @@ class Options(object):
                     pass
 
             os.umask(int('077', 8))
-            firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
+            firefoxdir = os.path.join(os.environ['HOME'], cls._get_profiles_dir())
             mypid = os.getpid()
             os.setpgid(mypid, mypid)  # New PGID
             newhome = os.path.join('/tmp', 'firefox-' + getpass.getuser() + '.' + str(mypid))
@@ -200,7 +206,7 @@ class Options(object):
         if 'HOME' not in os.environ:
             return
 
-        firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
+        firefoxdir = os.path.join(os.environ['HOME'], self._get_profiles_dir())
         if os.path.isdir(firefoxdir):
             keep_list = ('adblockplus', 'extensions', 'extension-data', 'extensions.json',
                          'extensions.sqlite', 'localstore.rdf', 'mimeTypes.rdf',
@@ -216,9 +222,9 @@ class Options(object):
                             directory, 'adblockplus', 'patterns-backup*ini')):
                         self._remove(file)
 
-    @staticmethod
-    def _prefs(updates):
-        firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
+    @classmethod
+    def _prefs(cls, updates):
+        firefoxdir = os.path.join(os.environ['HOME'], cls._get_profiles_dir())
         if os.path.isdir(firefoxdir):
             for file in glob.glob(os.path.join(firefoxdir, '*', 'prefs.js')):
                 try:
@@ -297,9 +303,9 @@ class Options(object):
                 except OSError:
                     pass
 
-    @staticmethod
-    def _ublock():
-        firefoxdir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox')
+    @classmethod
+    def _ublock(cls):
+        firefoxdir = os.path.join(os.environ['HOME'], cls._get_profiles_dir())
         for file in glob.glob(os.path.join(firefoxdir, '*', 'extension-data', 'ublock0.sqlite')):
             if os.path.isfile(file):
                 with sqlite3.connect(file) as conn:
