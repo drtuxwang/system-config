@@ -218,6 +218,9 @@ bin/fmv                Move or rename files
 bin/fmv.bat
 bin/fmv.py
 
+bin/fopen              Open files using default application
+bin/fopen.py           (hardwired application list)
+
 bin/fpeek              Dump the first and last few bytes of a binary file
 bin/fpeek.bat
 bin/fpeek.py
@@ -482,9 +485,6 @@ bin/ocr.py             (uses tesseract)
 
 bin/ogg                Encode OGG audio using avconv (libvorbis)
 bin/ogg.py
-
-bin/open               Open files using default application
-bin/open.py            (hardwired application list)
 
 bin/pause              Pause until user presses <ENTER/RETURN> key
 bin/pause.bat
