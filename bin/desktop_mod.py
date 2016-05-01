@@ -56,13 +56,24 @@ class Desktop(object):
             return True
         return False
 
+    @staticmethod
+    def has_macos():
+        """
+        Return true if running MacOS desktop
+        """
+        if os.name == 'posix' and os.uname()[0] == 'Darwin':
+            return True
+        return False
+
     @classmethod
     @functools.lru_cache(maxsize=1)
     def detect(cls):
         """
         Return desktop name (xfce, gnome, kde or Unknown)
         """
-        if cls.has_xfce():
+        if cls.has_macos():
+            name = 'macos'
+        elif cls.has_xfce():
             name = 'xfce'
         elif cls.has_gnome():
             name = 'gnome'

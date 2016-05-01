@@ -71,7 +71,7 @@ class Options(object):
         else:
             desktop = desktop_mod.Desktop.detect()
         mapping = {'invisible': XtermInvisible, 'gnome': GnomeTerminal, 'kde': Konsole,
-                   'xfce': XfceTerminal, 'Unknown': Xterm}
+                   'macos': Iterm, 'xfce': XfceTerminal, 'Unknown': Xterm}
         self._terminal = mapping[desktop](self)
 
         if len(args) == 1:
@@ -80,9 +80,9 @@ class Options(object):
             self._hosts = args[1:]
 
 
-class Xterm(object):
+class Terminal(object):
     """
-    Xterm class
+    Terminal class
     """
 
     def __init__(self, options):
@@ -90,6 +90,69 @@ class Xterm(object):
         self._pattern = '^$'
         self._myhost = socket.gethostname().split('.')[0].lower()
         self._config()
+
+    def _config(self):
+        self._command = None
+
+    @staticmethod
+    def get_label_flags(host):
+        """
+        Return list of flags for setting terminal label
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    def get_run_flag():
+        """
+        Return flag to prefix command
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    def run():
+        """
+        Start terminal
+        """
+        raise NotImplementedError
+
+
+class Iterm(Terminal):
+    """
+    Iterm class
+    """
+
+    def _config(self):
+        self._command = command_mod.Command('iterm', errors='stop')
+
+    @staticmethod
+    def get_label_flags(host):
+        """
+        Return list of flags for setting terminal label
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    def get_run_flag():
+        """
+        Return flag to prefix command
+        """
+        raise NotImplementedError
+
+    def run(self):
+        """
+        Start terminal
+        """
+        for host in self._options.get_hosts():
+            cmdline = self._command.get_cmdline()
+            if host != self._myhost:
+                print('debugxxx')
+            subtask_mod.Background(cmdline).run(pattern=self._pattern)
+
+
+class Xterm(Terminal):
+    """
+    Xterm class
+    """
 
     def _config(self):
         self._command = command_mod.Command('xterm', errors='stop')
