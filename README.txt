@@ -387,6 +387,9 @@ bin/isitup.py
 bin/iso                Make a portable CD/DVD archive in ISO9660 format
 bin/iso.py
 
+bin/iterm              iTerm2 (allowing non systems port)
+bin/iterm.py
+
 bin/jar                jar wrapper (allowing non systems port)
 bin/jar.py             (Java jar archiver)
 
