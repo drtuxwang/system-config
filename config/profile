@@ -14,7 +14,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     echo
     echo "Processing Startup script ($HOME/.profile)"
 
-# Check terminal and login shell
+    # Check terminal and login shell
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
     PS1="$MYUNAME@${MYHNAME}_$ "
@@ -63,7 +63,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         echo "Running    Login shell /bin/sh (Bourne Shell) on $MYTTY ($TERM)"
     fi
 
-# Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
+    # Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if [ ! "$BASE_PATH" ]; then
         if [ ! "$LM_LICENSE_FILE" ]; then
             export LM_LICENSE_FILE=:
@@ -94,7 +94,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
     fi
 
-# General stuff
+    # General stuff
     rm()
     {
         if [ "`echo \" $@ \" | grep \" $HOME/* \"`" ]; then
@@ -108,7 +108,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     chmod go= $HOME/Desktop .??*/* 2> /dev/null
     export LC_COLLATE=C
     export HISTFILE=
-    export PATH="$HOME/software/bin:/opt/software/bin:$PATH"
     export TMP=/tmp; export TMPDIR=$TMP; rm -rf $HOME/tmp 2> /dev/null
     export WINEDITOR=vi
     ENV=
@@ -157,25 +156,15 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     alias bye=exit
     unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 
-# Applying Dynamic Limit Removal (DLR)
-    echo "Applying   Dynamic Limit Removal (DLR)"
-    ULIMIT=ulimit
-    for LIMIT in `$ULIMIT -a | \cut -c1`; do
-        $ULIMIT -$LIMIT `$ULIMIT -${LIMIT} -H 2> /dev/null` 2> /dev/null
-    done
-
-# Applying local settings
-    if [ -f $HOME/.profile-local ]; then
-        echo "Applying   Local settings ($HOME/.profile-local)"
-        . $HOME/.profile-local
-    fi
-
+    # Platform specific
     case `uname` in
     Darwin)
-        if [ -d "$HOME/.Spotlight-V100" ]; then
-            rm -rf $HOME/.Spotlight-V100; touch $HOME/.Spotlight-V100
+        if [ -d /usr/local/opt/coreutils/libexec/gnubin ]; then
+            export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+            alias ls="ls -C --time-style=long-iso --color=always"
+        else
+            alias ls="ls -C -G"
         fi
-        alias ls="ls -C -G"
         ;;
 
     Linux|*NT*)
@@ -192,6 +181,19 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         unset command_not_found_handle
         ;;
     esac
+    export PATH="$HOME/software/bin:/opt/software/bin:$PATH"
 
+    # Applying Dynamic Limit Removal (DLR)
+    echo "Applying   Dynamic Limit Removal (DLR)"
+    ULIMIT=ulimit
+    for LIMIT in `$ULIMIT -a | \cut -c1`; do
+        $ULIMIT -$LIMIT `$ULIMIT -${LIMIT} -H 2> /dev/null` 2> /dev/null
+    done
+
+    # Applying local settings
+    if [ -f $HOME/.profile-local ]; then
+        echo "Applying   Local settings ($HOME/.profile-local)"
+        . $HOME/.profile-local
+    fi
     echo
 fi

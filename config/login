@@ -14,18 +14,13 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     echo ""
     echo "Processing Startup script ($HOME/.login)"
 
-# Check terminal and login shell
+    # Check terminal and login shell
     setenv MYHNAME `uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
     set prompt="$MYUNAME@${MYHNAME}_% "
     if ( "$TERM" == "dumb" ) then
         setenv MYTTY "/dev/???"
     else
-        if ( $?tcsh && -x /bin/echo ) then
-            /bin/echo -e "\033]0;$MYUNAME@$MYHNAME\007\c"
-            alias precmd '/bin/echo -e "\033]0;${MYHNAME}:$cwd\007\c"'
-        endif
-
         setenv MYTTY `\tty`
         (mesg y) >& /dev/null
         set autologout=0
@@ -39,7 +34,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         echo "Running    Login shell /bin/csh (C Shell) on $MYTTY ($TERM)"
     endif
 
-# Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
+    # Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if ( ! $?BASE_PATH ) then
         if ( ! $?LM_LICENSE_FILE ) then
             setenv LM_LICENSE_FILE :
@@ -61,12 +56,11 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         setenv LD_LIBRARY_PATH $BASE_LD_LIBRARY_PATH
     endif
 
-# General stuff
+    # General stuff
     umask 027
     mkdir $HOME/Desktop >& /dev/null
     chmod go= $HOME/Desktop .??*/* >& /dev/null
     setenv LC_COLLATE C
-    setenv PATH $HOME/software/bin:/usr/local/bin`echo ":$PATH": | sed -e "s@:$HOME/software/bin:@:@g" -e "s@:/usr/local/bin:@:@g" -e 's/:$//'`
     setenv TMP /tmp; setenv TMPDIR $TMP; rm -rf $HOME/tmp >& /dev/null
     setenv WINEDITOR vi
 
@@ -112,26 +106,15 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     alias bye exit
     unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
 
-# Applying Dynamic Limit Removal (DLR)
-    echo "Applying   Dynamic Limit Removal (DLR)"
-    foreach LIMIT ( `limit | \egrep -v "unlimited|-" | \awk '{print $1}'` )
-        if ( "`limit $LIMIT unlimited`" == "" ) then
-            limit $LIMIT unlimited
-        endif
-    end
-
-# Applying local settings
-    if ( -f $HOME/.login-local ) then
-        echo "Applying   Local settings ($HOME/.login-local)"
-        source $HOME/.login-local
-    endif
-
+    # Platform specific
     switch (`uname`)
     case Darwin:
-        if ( -d "$HOME/.Spotlight-V100" ) then
-            rm -rf $HOME/.Spotlight-V100; touch $HOME/.Spotlight-V100
+        if ( -d /usr/local/opt/coreutils/libexec/gnubin ) then
+            setenv PATH "/usr/local/opt/coreutils/libexec/gnubin:${PATH}"
+            alias ls "ls -C --time-style=long-iso --color=always"
+        else
+            alias ls "ls -C -G"
         endif
-        alias ls "ls -C -G"
         breaksw
 
     case HP-UX:
@@ -148,7 +131,21 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         setenv LS_COLORS ""
         breaksw
     endsw
+    setenv PATH $HOME/software/bin:/usr/local/bin`echo ":$PATH": | sed -e "s@:$HOME/software/bin:@:@g" -e "s@:/usr/local/bin:@:@g" -e 's/:$//'`
 
+    # Applying Dynamic Limit Removal (DLR)
+    echo "Applying   Dynamic Limit Removal (DLR)"
+    foreach LIMIT ( `limit | \egrep -v "unlimited|-" | \awk '{print $1}'` )
+        if ( "`limit $LIMIT unlimited`" == "" ) then
+            limit $LIMIT unlimited
+        endif
+    end
+
+    # Applying local settings
+    if ( -f $HOME/.login-local ) then
+        echo "Applying   Local settings ($HOME/.login-local)"
+        source $HOME/.login-local
+    endif
     echo ""
 
 endif
