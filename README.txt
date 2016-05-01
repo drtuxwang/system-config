@@ -445,6 +445,9 @@ bin/mp3.py
 bin/mp4                Encode MP4 video using avconv (libx264/aac)
 bin/mp4.py
 
+bin/meld               Meld wrapper (allowing non systems port)
+bin/mled.py
+
 bin/mpg                Encode MPEG video using avconv (mpeg2/ac3)
 bin/mpg.py
 
