@@ -376,10 +376,6 @@ bin/index              Produce "index.fsum" file and "..fsum" cache files
 bin/index.bat
 bin/index.py
 
-bin/inkscape           inkscape wrapper (allowing non systems port)
-bin/inkscape.bat
-bin/inkscape.py
-
 bin/isitup             Checks whether a host is up
 bin/isitup.bat
 bin/isitup.py
