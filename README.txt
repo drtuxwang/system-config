@@ -448,7 +448,8 @@ bin/mp4                Encode MP4 video using avconv (libx264/aac)
 bin/mp4.py
 
 bin/meld               Meld wrapper (allowing non systems port)
-bin/mled.py
+bin/meld.bat
+bin/meld.py
 
 bin/mpg                Encode MPEG video using avconv (mpeg2/ac3)
 bin/mpg.py
@@ -784,7 +785,8 @@ bin/xdesktop           Start GNOME/KDE/XFCE file manager
 bin/xdesktop.py
 
 bin/xdiff              Graphical file comparison and merge tool
-bin/xdiff.py           (uses meld)
+bin/xdiff.bat          (uses meld)
+bin/xdiff.py
 
 bin/xedit              Start GNOME/KDE/XFCE graphical editor
 bin/xedit.py
