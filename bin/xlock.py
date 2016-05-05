@@ -72,6 +72,10 @@ class Main(object):
                 errors='stop')
         elif desktop == 'xfce':
             xlock = command_mod.Command('xflock4', errors='stop')
+        elif desktop == 'macos':
+            xlock = command_mod.CommandFile(
+                '/System/Library/CoreServices/Menu Extras/User.menu/Contents/Resources/CGSession',
+                args=['-suspend'])
         else:
             xlock = command_mod.Command('xlock', args=[
                 '-allowroot', '+nolock', '-mode', 'blank', '-fg', 'red', '-bg', 'black',
