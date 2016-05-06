@@ -61,6 +61,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     mkdir $HOME/Desktop >& /dev/null
     chmod go= $HOME/Desktop .??*/* >& /dev/null
     setenv LC_COLLATE C
+    setenv _POSIX2_VERSION 199209
     setenv TMP /tmp; setenv TMPDIR $TMP; rm -rf $HOME/tmp >& /dev/null
     setenv WINEDITOR vi
 
