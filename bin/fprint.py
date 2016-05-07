@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sends text/images/postscript/PDF files to printer.
+Sends text/images/postscript/PDF files to printer/preview.
 """
 
 import argparse
@@ -143,22 +143,37 @@ class Main(object):
             sys.argv = argv
 
     def _image(self, file):
+        print('debugX', file)
         convert = command_mod.Command('convert', errors='stop')
+        jpeg2ps = command_mod.Command('jpeg2psX', errors='ignore')
 
-        convert.set_args(['-verbose', file, '/dev/null'])
-        task = subtask_mod.Batch(convert.get_cmdline())
-        task.run(pattern='^' + file + ' ', error2output=True)
-        if not task.has_output():
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" image file.')
-        xsize, ysize = task.get_output()[0].split('+')[0].split()[-1].split('x')
+        if jpeg2ps.is_found():
+            # Old but still mst reliable
+            convert.set_args([file, self._tmpfile + '.jpg'])
+            task = subtask_mod.Batch(convert.get_cmdline())
+            task.run()
 
-        if int(xsize) > int(ysize):
-            convert.set_args([
-                '-page', 'a4', '-bordercolor', 'white', '-border', '40x40', '-rotate', '90'])
+            jpeg2ps.set_args(['-a', '-p', 'a4', '-o', self._tmpfile + 'jpg', file])
+            task = subtask_mod.Batch(jpeg2ps.get_cmdline())
+            task.run()
+
         else:
-            convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40'])
-        convert.extend_args([file, 'ps:' + self._tmpfile])
-        task = subtask_mod.Batch(convert.get_cmdline())
+            # Image magic is a bit buggy
+            convert.set_args(['-verbose', file, '/dev/null'])
+            task = subtask_mod.Batch(convert.get_cmdline())
+            task.run(pattern='^' + file + ' ', error2output=True)
+            if not task.has_output():
+                raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" image file.')
+            xsize, ysize = task.get_output()[0].split('+')[0].split()[-1].split('x')
+
+            if int(xsize) > int(ysize):
+                convert.set_args([
+                    '-page', 'a4', '-bordercolor', 'white', '-border', '40x40', '-rotate', '90'])
+            else:
+                convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40'])
+            convert.extend_args([file, 'ps:' + self._tmpfile])
+            task = subtask_mod.Batch(convert.get_cmdline())
+
         task.run()
         if task.get_exitcode():
             raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
