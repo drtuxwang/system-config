@@ -143,7 +143,6 @@ class Main(object):
             sys.argv = argv
 
     def _image(self, file):
-        print('debugX', file)
         convert = command_mod.Command('convert', errors='stop')
         jpeg2ps = command_mod.Command('jpeg2psX', errors='ignore')
 
