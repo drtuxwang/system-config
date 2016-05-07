@@ -395,6 +395,9 @@ bin/java.py            (Java run time)
 bin/javac              javac wrapper (allowing non systems port)
 bin/javac.py           (Java compiler)
 
+bin/jpeg2ps            jpeg2ps wrapper (allowing non systems port)
+bin/jpeg2ps.py
+
 bin/jsonformat         JSON file re-formatter
 bin/jsonformat.py
 
