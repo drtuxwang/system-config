@@ -132,11 +132,6 @@ class Options(object):
     def _fix_installation(self):
         file = self._firefox.get_file()
         if os.path.isfile(file + '-bin'):
-            try:
-                shutil.rmtree(os.path.join(os.path.dirname(file), 'browser', 'features'))
-            except OSError:
-                pass
-
             fmod = command_mod.Command('fmod', errors='ignore')
             if fmod.is_found():
                 # Fix permissions if owner and updated
