@@ -144,17 +144,16 @@ class Main(object):
 
     def _image(self, file):
         convert = command_mod.Command('convert', errors='stop')
-        jpeg2ps = command_mod.Command('jpeg2psX', errors='ignore')
+        jpeg2ps = command_mod.Command('jpeg2ps', errors='ignore')
 
         if jpeg2ps.is_found():
-            # Old but still mst reliable
+            # Old but still most reliable
             convert.set_args([file, self._tmpfile + '.jpg'])
             task = subtask_mod.Batch(convert.get_cmdline())
             task.run()
 
-            jpeg2ps.set_args(['-a', '-p', 'a4', '-o', self._tmpfile + 'jpg', file])
+            jpeg2ps.set_args(['-a', '-p', 'a4', '-o', self._tmpfile, self._tmpfile + '.jpg'])
             task = subtask_mod.Batch(jpeg2ps.get_cmdline())
-            task.run()
 
         else:
             # Image magic is a bit buggy
