@@ -189,8 +189,16 @@ class Main(object):
 
     def _pdf(self, file):
         command = command_mod.Command('gs', errors='stop')
+
+        task = subtask_mod.Batch(command.get_cmdline() + ['--help'])
+        task.run(error2output=True)
+        if task.is_match_output('ps2write'):
+            device = 'ps2write'
+        else:
+            device = 'pswrite'
+
         command.set_args([
-            '-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=pswrite', '-sPAPERSIZE=a4',
+            '-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=' + device, '-sPAPERSIZE=a4',
             '-r300x300', '-sOutputFile=' + self._tmpfile, '-c', 'save', 'pop', '-f', file])
         task = subtask_mod.Batch(command.get_cmdline())
         task.run()
@@ -289,9 +297,11 @@ class Main(object):
         else:
             command = command_mod.Command('lp', errors='stop')
             command.set_args(['-U', 'someone', '-d', options.get_printer(),
-                '-o', 'number-up=' + str(options.get_pages())])
+                              '-o', 'number-up=' + str(options.get_pages())])
+            sides = 'single side'
             if options.get_double_side_flag():
                 command.extend_args(['-o', 'sides=two-sided-long-edge'])
+                sides = 'double sides'
 
         for file in options.get_files():
             if not os.path.isfile(file):
@@ -309,10 +319,8 @@ class Main(object):
                 print('Spooling', message, 'to printer previewer')
                 subtask_mod.Task(evince.get_cmdline() + [self._tmpfile]).run()
             else:
-                if options.get_double_side_flag():
-                    print('Spooling ', message, ' to printer "', options.get_printer(), '" (double sides)', sep='')
-                else:
-                    print('Spooling ', message, ' to printer "', options.get_printer(), '" (single side)', sep='')
+                print('Spooling ', message, ' to printer "', options.get_printer(),
+                      '" (', sides, ')', sep='')
                 task = subtask_mod.Task(command.get_cmdline() + [self._tmpfile])
                 task.run()
                 if task.get_exitcode():
