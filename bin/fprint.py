@@ -42,6 +42,12 @@ class Options(object):
         """
         return self._args.files
 
+    def get_double_side_flag(self):
+        """
+        Return double side flag.
+        """
+        return self._args.double_side_flag
+
     def get_pages(self):
         """
         Return pages per page.
@@ -73,6 +79,8 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Sends text/images/postscript/PDF to printer.')
 
+        parser.add_argument('-2side', dest='double_side_flag', action='store_true',
+                            help='Select double sided output.')
         parser.add_argument('-chars', nargs=1, type=int, default=[100],
                             help='Select characters per line.')
         parser.add_argument('-pages', nargs=1, type=int, choices=[1, 2, 4, 6, 8], default=[1],
@@ -280,8 +288,10 @@ class Main(object):
             evince = command_mod.Command('evince', errors='stop')
         else:
             command = command_mod.Command('lp', errors='stop')
-            command.set_args(['-U', 'someone', '-o', 'number-up=' + str(options.get_pages()),
-                              '-d', options.get_printer()])
+            command.set_args(['-U', 'someone', '-d', options.get_printer(),
+                '-o', 'number-up=' + str(options.get_pages())])
+            if options.get_double_side_flag():
+                command.extend_args(['-o', 'sides=two-sided-long-edge'])
 
         for file in options.get_files():
             if not os.path.isfile(file):
@@ -299,7 +309,10 @@ class Main(object):
                 print('Spooling', message, 'to printer previewer')
                 subtask_mod.Task(evince.get_cmdline() + [self._tmpfile]).run()
             else:
-                print('Spooling ', message, ' to printer "', options.get_printer(), '"', sep='')
+                if options.get_double_side_flag():
+                    print('Spooling ', message, ' to printer "', options.get_printer(), '" (double sides)', sep='')
+                else:
+                    print('Spooling ', message, ' to printer "', options.get_printer(), '" (single side)', sep='')
                 task = subtask_mod.Task(command.get_cmdline() + [self._tmpfile])
                 task.run()
                 if task.get_exitcode():
