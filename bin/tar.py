@@ -136,7 +136,7 @@ class Main(object):
                 tar.set_args(['cfv', '-'] + options.get_files())
                 p7zip = command_mod.Command('7za', errors='stop')
                 p7zip.set_args(['a', '-mx=9', '-y', '-si', archive])
-                subtask_mod.Task(tar.get_cmdline() + '|' + p7zip.get_cmdline()).run()
+                subtask_mod.Task(tar.get_cmdline() + ['|'] + p7zip.get_cmdline()).run()
             elif archive.endswith('.txz') or archive.endswith('.tar.xz'):
                 tar.set_args(['cfvJ', archive] + options.get_files())
                 os.environ['XZ_OPT'] = '-9 -e'
