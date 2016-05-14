@@ -131,10 +131,7 @@ class Main(object):
             return ''
 
         if not os.path.isfile(sfx):
-            archiver = command_mod.Command(archiver.get_file(), args=sys.argv[1:], errors='ignore')
-            if not archiver.is_found():
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + sfx + '" SFX file.')
-            subtask_mod.Exec(archiver.get_cmdline()).run()
+            raise SystemExit(sys.argv[0] + ': Cannot find "' + sfx + '" SFX file.')
         return sfx
 
     def _make_sfx(self, archive, sfx):
