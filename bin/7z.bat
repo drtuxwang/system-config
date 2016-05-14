@@ -1,2 +1,2 @@
 @echo off
-%~dp0..\7zip_15.14\windows_5.1-x86\7z.bat %*
+%~dp0..\7zip_9.20+15.14\windows_5.1-x86\7z.bat %*
