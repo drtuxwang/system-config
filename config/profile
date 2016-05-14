@@ -104,8 +104,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         fi
     }
     umask 027
-    mkdir $HOME/Desktop 2> /dev/null
-    chmod go= $HOME/Desktop .??*/* 2> /dev/null
     export LC_COLLATE=C
     export HISTFILE=
     export _POSIX2_VERSION=199209
@@ -129,19 +127,20 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         fi
     fi
 
-    # mksrc, cdsrc, mkinst, cdinst, mktest, cdtest
-    if [ ! "$SRCDIR" ]; then
-        export SRCDIR=$PWD
+    # cd[a-z], mk[a-z], scd
+    mkdir $HOME/Desktop 2> /dev/null
+    chmod go= $HOME/Desktop .??*/* 2> /dev/null
+    if [ ! "$cdz" ]; then
+        cd "$HOME/Desktop"
+        for DIR in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
+            export cd$DIR="$HOME/Desktop"
+        done
     fi
-    alias mksrc='export SRCDIR="$PWD"; echo New SRCDIR: $SRCDIR'; alias cdsrc='echo Using SRCDIR: $SRCDIR; cd "$SRCDIR"'
-    if [ ! "$INSTDIR" ]; then
-        export INSTDIR=$PWD
-    fi
-    alias mkinst='export INSTDIR="$PWD"; echo New INSTDIR: $INSTDIR'; alias cdinst='echo Using INSTDIR: $INSTDIR; cd "$INSTDIR"'
-    if [ ! "$TESTDIR" ]; then
-        export TESTDIR=$PWD
-    fi
-    alias mktest='export TESTDIR="$PWD"; echo New TESTDIR: $TESTDIR'; alias cdtest='echo Using TESTDIR: $TESTDIR; cd "$TESTDIR"'
+    for DIR in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
+        alias mk$DIR='export cd'$DIR'="$PWD"; echo "cd'$DIR'=$cd'$DIR'"'
+        alias cd$DIR='echo "cd \"$cd'$DIR'\""; cd "$cd'$DIR'"'
+    done
+    alias scd='env | grep "^cd[a-z]=" | grep -v "=$HOME/Desktop$" | sort'
 
     alias df="df -k"
     alias du="du -k"

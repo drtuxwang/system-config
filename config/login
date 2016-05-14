@@ -58,8 +58,6 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
 
     # General stuff
     umask 027
-    mkdir $HOME/Desktop >& /dev/null
-    chmod go= $HOME/Desktop .??*/* >& /dev/null
     setenv LC_COLLATE C
     setenv _POSIX2_VERSION 199209
     setenv TMP /tmp; setenv TMPDIR $TMP; rm -rf $HOME/tmp >& /dev/null
@@ -81,21 +79,20 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         endif
     endif
 
-    # mksrc, cdsrc, mkinst, cdinst, mktest, cdtest
-    if ( ! $?SRCDIR ) then
-        setenv SRCDIR "`pwd`"
+    # cd[a-z], mk[a-z], scd
+    mkdir $HOME/Desktop >& /dev/null
+    chmod go= $HOME/Desktop .??*/* >& /dev/null
+    if ( ! $?cdz ) then
+        cd "$HOME/Desktop"
+        foreach DIR (a b c d e f g h i j k l m n o p q r s t u v w x y z)
+            setenv cd$DIR "$HOME/Desktop"
+        end
     endif
-    alias mksrc 'setenv SRCDIR "`pwd`"; echo New SRCDIR: $SRCDIR'; alias cdsrc 'echo Using SRCDIR: $SRCDIR; cd "$SRCDIR"'
-
-    if ( ! $?INSTDIR ) then
-        setenv INSTDIR "`pwd`"
-    endif
-    alias mkinst 'setenv INSTDIR "`pwd`"; echo New INSTDIR: $INSTDIR'; alias cdinst 'echo Using INSTDIR: $INSTDIR; cd "$INSTDIR"'
-
-    if ( ! $?TESTDIR ) then
-        setenv TESTDIR "`pwd`"
-    endif
-    alias mktest 'setenv TESTDIR "`pwd`"; echo New TESTDIR: $TESTDIR'; alias cdtest 'echo Using TESTDIR: $TESTDIR; cd "$TESTDIR"'
+    foreach DIR (a b c d e f g h i j k l m n o p q r s t u v w x y z)
+        alias mk$DIR 'setenv cd'$DIR' "$PWD"; echo "cd'$DIR'=$cd'$DIR'"'
+        alias cd$DIR 'echo "cd \"$cd'$DIR'\""; cd "$cd'$DIR'"'
+    end
+    alias scd 'env | grep "^cd[a-z]=" | grep -v "=$HOME/Desktop$" | sort'
 
     set history=256
     alias df "df -k"
