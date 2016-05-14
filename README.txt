@@ -59,13 +59,8 @@ bin/calendar           Displays month or year calendar
 bin/calendar.bat
 bin/calendar.py
 
-bin/cdinst.bat         Windows command prompt batch file to "cd %INSTDIR%"
-
 bin/cdspeed            Set CD/DVD drive speed
 bin/cdspeed.py         ("$HOME/.config/cdspeed.xml)
-
-bin/cdsrc.bat          Windows command prompt batch file to "cd %SRCDIR%"
-bin/cdtest.bat         Windows command prompt batch file to "cd %TESTDIR%"
 
 bin/chkpath            Check PATH and return correct settings
 bin/chkpath.bat
@@ -432,14 +427,8 @@ bin/mirror.py
 bin/mkcd               Make data/audio/video CD/DVD using CD/DVD writer
 bin/mkcd.py            (uses wodim, icedax, cdrdao)
 
-bin/mkinst.bat         Windows command prompt batch file set %INSTDIR%
-
-bin/mksrc.bat          Windows command prompt batch file set %SRCDIR%
-
 bin/mksshkeys          Create SSH keys and setup access to remote systems
 bin/mksshkeys.py
-
-bin/mktest.bat         Windows command prompt batch file set %TESTDIR%
 
 bin/mousepad           mousepad wrapper (allowing non systems port)
 bin/mousepad.py        (XFCE editor)
@@ -846,6 +835,61 @@ bin/zhspeak.tcl
 bin/zip                zip wrapper (allowing non systems port)
 bin/zip.py
 
+bin/cda.bat            Windows command prompt batch file
+bin/cdb.bat            for changing directory to %cda%..%cdz%
+bin/cdc.bat
+bin/cdd.bat
+bin/cde.bat
+bin/cdf.bat
+bin/cdg.bat
+bin/cdh.bat
+bin/cdi.bat
+bin/cdj.bat
+bin/cdk.bat
+bin/cdl.bat
+bin/cdm.bat
+bin/cdn.bat
+bin/cdo.bat
+bin/cdp.bat
+bin/cdq.bat
+bin/cdr.bat
+bin/cds.bat
+bin/cdt.bat
+bin/cdu.bat
+bin/cdv.bat
+bin/cdw.bat
+bin/cdx.bat
+bin/cdy.bat
+bin/cdz.bat
+bin/mka.bat            Windows command prompt batch file
+bin/mkb.bat            for setting %cda%..%cdz% to current working driectory
+bin/mkc.bat
+bin/mkd.bat
+bin/mke.bat
+bin/mkf.bat
+bin/mkg.bat
+bin/mkh.bat
+bin/mki.bat
+bin/mkj.bat
+bin/mkk.bat
+bin/mkl.bat
+bin/mkm.bat
+bin/mkn.bat
+bin/mko.bat
+bin/mkp.bat
+bin/mkq.bat
+bin/mkr.bat
+bin/mks.bat
+bin/mkt.bat
+bin/mku.bat
+bin/mkv.bat
+bin/mkw.bat
+bin/mkx.bat
+bin/mky.bat
+bin/mkz.bat
+bin/scd.bat
+bin/mka.bat            Show settings of %cda%..%cdz% environmental variables
+
 config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
 config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
 config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
@@ -862,7 +906,6 @@ config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for Li
 config/terminalrc               Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
 config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults
 config/com.googlecode.iterm2.plist Copy to
-                                "$HOME//Library/Preferences/com.googlecode.iterm2.plist" for iTerm2
 config/xscreensaver             Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
 
 etc/setbin       Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
