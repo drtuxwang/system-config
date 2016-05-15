@@ -16,8 +16,8 @@ fi
 # Function to locate command
 #
 locate_python() {
-    case $* in
-    */ibus.py*|*/ibus/*|*/meld|*/meld\ *)
+    case $1 in
+    */ibus.py|*/ibus/*|*/meld|*/meld\ *)
         return # Must use system Python
     esac
 

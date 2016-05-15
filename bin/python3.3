@@ -16,8 +16,8 @@ fi
 # Function to locate command
 #
 locate_python() {
-    case $* in
-    */ibus.py*|*/ibus/*|*/meld|*/meld\ *)
+    case $1 in
+    */ibus.py|*/ibus/*|*/meld|*/meld\ *)
         return # Must use system Python
     esac
 
@@ -32,7 +32,7 @@ locate_python() {
 
     LOCATE=`ls -1t $LOCAL/*/bin/$PYEXE 2> /dev/null | head -1`
     if [ "$LOCATE" ]; then
-        # Generic Python port (ie "ln -s /usr/bin $LOCAL/*/bin" for system Python)
+        # Create "$LOCAL/*/bin/python3" wrapper script to pick system Python
         echo "$LOCATE"
         return
     fi
