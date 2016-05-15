@@ -2,7 +2,7 @@
 #
 # Wrapper for "python"
 #
-VERSION=20150605
+VERSION=20160515
 
 #
 # Test for GNU Textutil POSIX 200112 bug
@@ -17,7 +17,7 @@ fi
 #
 locate_python() {
     case $1 in
-    */ibus.py|*/ibus/*|*/meld|*/meld\ *)
+    */ibus/*|*/meld)
         return # Must use system Python
     esac
 
