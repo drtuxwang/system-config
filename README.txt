@@ -905,7 +905,7 @@ config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable d
 config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
 config/terminalrc               Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
 config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults
-config/com.googlecode.iterm2.plist Copy to
+config/com.googlecode.iterm2.plist Copy to "$HOME/Library/Preference" for iTerm2 on Mac
 config/xscreensaver             Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
 
 etc/setbin       Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
