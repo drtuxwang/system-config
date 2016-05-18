@@ -427,6 +427,10 @@ bin/mirror.py
 bin/mkcd               Make data/audio/video CD/DVD using CD/DVD writer
 bin/mkcd.py            (uses wodim, icedax, cdrdao)
 
+bin/mkpasswd           Create Create secure random password.
+bin/mkpasswd.bat
+bin/mkpasswd.py
+
 bin/mksshkeys          Create SSH keys and setup access to remote systems
 bin/mksshkeys.py
 
