@@ -60,6 +60,11 @@ frame .large -bg "#cccccc"
     }
     pack .large.et_goc -side top
 
+    button .large.et_bba -width 10 -bg "#ffff00" -text "ET:BBA" -command {
+        exec et +connect 173.230.141.36:27960 &
+    }
+    pack .large.et_bba -side top
+
     button .large.tuxracer -width 10 -bg "#ffff00" -text "Tux Racer" -command {
         exec xrun etracer &
     }
