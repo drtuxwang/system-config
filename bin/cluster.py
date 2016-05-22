@@ -159,13 +159,13 @@ class WorkQueue(object):
             self._workers.append(worker)
 
     def _show_start(self, host, message):
-        print('[{0:d},{1:d}] {2:s}: {3:s}'.format(
-            int((self._nitems - self._queue.qsize()) / self._nitems * 100),
+        print('[{0:d}/{1:d},{2:d}] {3:s}: {4:s}'.format(
+            self._nitems - self._queue.qsize(), self._nitems,
             int(time.time() - self._time0), host, message))
 
     def _show_finish(self, host, message):
-        print('[{0:d},{1:d}] {2:s}: {3:s}'.format(
-            int((self._nitems - self._queue.qsize() + 1) / self._nitems * 100),
+        print('[{0:d}/{1:d},{2:d}] {3:s}: {4:s}'.format(
+            self._nitems - self._queue.qsize() + 1, self._nitems,
             int(time.time() - self._time0), host, message))
 
     def _do_work(self, command, timeout):
@@ -199,7 +199,6 @@ class WorkQueue(object):
         """
         for worker in self._workers:
             self._queue.put(None)
-            self._nitems += 1
         for worker in self._workers:
             worker.join()
 
