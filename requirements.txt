@@ -3,3 +3,4 @@ paramiko >= 1.15
 pep8 >= 1.7
 pylint >= 1.5
 requests >= 2.4
+youtube-dl
