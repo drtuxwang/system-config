@@ -5,7 +5,6 @@ were started Bourne shell scripts started during my University days and continuo
 the years. Now most of the scripts are written in Python 3.
 
 Makefile               Makefile for testing
-requirements.txt       Python requirements "python3 -m pip install -r requirements.txt"
 
 bin/command_mod.py     Python command line handling module
 bin/debug_mod.py       Python debugging tools module
@@ -912,9 +911,10 @@ config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults
 config/com.googlecode.iterm2.plist Copy to "$HOME/Library/Preference" for iTerm2 on Mac
 config/xscreensaver             Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
 
-etc/setbin       Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
-etc/setbin.bat   Windows Command prompt initialization
-etc/setbin.ps1   Windows Power shell initialization
+etc/setbin                Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
+etc/setbin.bat            Windows Command prompt initialization
+etc/setbin.ps1            Windows Power shell initialization
+etc/python3-requirements  Python requirements "python3 -m pip install -r requirements.txt"
 
 templates/pxy-cloudformation/Makefile         CloudFormation example
 templates/pxy-cloudformation/main_stack.json

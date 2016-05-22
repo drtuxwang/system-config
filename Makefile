@@ -10,7 +10,7 @@ py_compile:
 
 requirements:
 	@echo "\n*** Running Python 3 requirements check ***"
-	python3 -m pip install -r requirements.txt
+	python3 -m pip install -r etc/python3-requirements
 
 pep8:
 	@echo "\n*** Running Python 3 PEP8 check ***"
