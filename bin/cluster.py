@@ -63,10 +63,10 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Run command on a list of nodes in parallel.\n')
 
-        parser.add_argument('-threads', nargs=1, type=int, dest='threads', default=[8],
+        parser.add_argument('-threads', nargs=1, type=int, dest='threads', default=[16],
                             metavar='N', help='Select number of threads. Default is 8.')
-        parser.add_argument('-timeout', nargs=1, type=int, dest='timeout', default=[10],
-                            metavar='seconds', help='Select timeout in seconds. Default is 10.')
+        parser.add_argument('-timeout', nargs=1, type=int, dest='timeout', default=[60],
+                            metavar='seconds', help='Select timeout in seconds. Default is 60.')
 
         parser.add_argument('command', nargs=1, help='Command to run on all systems.')
         parser.add_argument('args', nargs='*', metavar='arg', help='Command arguments.')
