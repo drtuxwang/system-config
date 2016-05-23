@@ -173,12 +173,7 @@ class WorkQueue(object):
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot change toc "cluster" directory.')
 
-    def _show_start(self, host, message):
-        print('[{0:d}/{1:d},{2:d}] {3:s}: {4:s}'.format(
-            self._nitems - self._queue.qsize(), self._nitems,
-            int(time.time() - self._time0), host, message))
-
-    def _show_finish(self, host, message):
+    def _show_result(self, host, message):
         print('[{0:d}/{1:d},{2:d}] {3:s}: {4:s}'.format(
             self._nitems - self._queue.qsize() + 1, self._nitems,
             int(time.time() - self._time0), host, message))
@@ -194,12 +189,11 @@ class WorkQueue(object):
 
             try:
                 ssh.connect(host)
-                self._show_start(host, 'connected')
                 ssh.execute(subprocess.list2cmdline(command), timeout)
             except SecureShellError as exception:
-                self._show_finish(host, str(exception))
+                self._show_result(host, str(exception))
             else:
-                self._show_finish(host, 'completed')
+                self._show_result(host, 'ok')
             self._queue.task_done()
 
     def add_items(self, hosts):
