@@ -113,10 +113,10 @@ class SecureShell(object):
         """
         Connect to host
         """
-        self._host = host
+        username, self._host = host.split('@', 1)
 
         try:
-            self._client.connect(self._host, look_for_keys=False, timeout=4)
+            self._client.connect(self._host, username=username, look_for_keys=False, timeout=4)
         except Exception as exception:
             raise SecureShellError(exception)
 
@@ -129,6 +129,7 @@ class SecureShell(object):
         """
 
         _, stdout, _ = self._client.exec_command(command, get_pty=True, timeout=timeout)
+
         try:
             with open(self._host + '.log', 'w', newline='\n') as ofile:
                 for line in stdout:
@@ -158,6 +159,20 @@ class WorkQueue(object):
             worker.start()
             self._workers.append(worker)
 
+        self._config()
+
+    @staticmethod
+    def _config():
+        if not os.path.isdir('cluster'):
+            try:
+                os.mkdir('cluster')
+            except OSError:
+                raise SystemExit(sys.argv[0] + ': Cannot create "cluster" directory.')
+        try:
+            os.chdir('cluster')
+        except OSError:
+            raise SystemExit(sys.argv[0] + ': Cannot change toc "cluster" directory.')
+
     def _show_start(self, host, message):
         print('[{0:d}/{1:d},{2:d}] {3:s}: {4:s}'.format(
             self._nitems - self._queue.qsize(), self._nitems,
@@ -173,6 +188,8 @@ class WorkQueue(object):
             host = self._queue.get()
             if host is None:
                 break
+            elif '@' not in host:
+                host = 'root@' + host
             ssh = SecureShell()
 
             try:
