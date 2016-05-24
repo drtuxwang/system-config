@@ -106,9 +106,6 @@ class SecureShell(object):
         self._client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         self._host = None
 
-    def __del__(self):
-        self._client.close()
-
     def connect(self, host):
         """
         Connect to host
@@ -116,7 +113,8 @@ class SecureShell(object):
         username, self._host = host.split('@', 1)
 
         try:
-            self._client.connect(self._host, username=username, look_for_keys=False, timeout=4)
+            with open(os.devnull, 'w') as sys.stderr:
+                self._client.connect(self._host, username=username, look_for_keys=False, timeout=4)
         except Exception as exception:
             raise SecureShellError(exception)
 
