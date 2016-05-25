@@ -116,6 +116,7 @@ class SecureShell(object):
             with open(os.devnull, 'w') as sys.stderr:
                 self._client.connect(self._host, username=username, look_for_keys=False, timeout=4)
         except Exception as exception:
+            self.close()
             raise SecureShellError(exception)
 
     def execute(self, command, timeout):
@@ -125,15 +126,20 @@ class SecureShell(object):
         command = Command to run
         timeout = Output timeout inseconds
         """
-
-        _, stdout, _ = self._client.exec_command(command, get_pty=True, timeout=timeout)
-
         try:
+            _, stdout, _ = self._client.exec_command(command, get_pty=True, timeout=timeout)
             with open(self._host + '.log', 'w', newline='\n') as ofile:
                 for line in stdout:
                     print(line.rstrip('\r\n'), file=ofile)
         except Exception as exception:
+            self.close()
             raise SecureShellError(exception)
+
+    def close(self):
+        """
+        Disconnect from host
+        """
+        self._client.close()
 
 
 class WorkQueue(object):
@@ -152,8 +158,7 @@ class WorkQueue(object):
 
         self._workers = []
         for _ in range(threads):
-            worker = threading.Thread(target=self._do_work, args=(command, timeout))
-            worker.setDaemon(True)
+            worker = threading.Thread(target=self._do_work, args=(command, timeout), daemon=True)
             worker.start()
             self._workers.append(worker)
 
@@ -161,15 +166,16 @@ class WorkQueue(object):
 
     @staticmethod
     def _config():
-        if not os.path.isdir('cluster'):
+        directory = 'cluster.results'
+        if not os.path.isdir(directory):
             try:
-                os.mkdir('cluster')
+                os.mkdir(directory)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "cluster" directory.')
+                raise SystemExit(sys.argv[0] + ': Cannot create "' + directory + '" directory.')
         try:
-            os.chdir('cluster')
+            os.chdir(directory)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot change toc "cluster" directory.')
+            raise SystemExit(sys.argv[0] + ': Cannot change to "' + directory + '" directory.')
 
     def _show_result(self, host, message):
         print('[{0:d}/{1:d},{2:d}] {3:s}: {4:s}'.format(
@@ -188,6 +194,7 @@ class WorkQueue(object):
             try:
                 ssh.connect(host)
                 ssh.execute(subprocess.list2cmdline(command), timeout)
+                ssh.close()
             except SecureShellError as exception:
                 self._show_result(host, str(exception))
             else:
