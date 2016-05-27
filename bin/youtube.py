@@ -49,7 +49,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._youtubedl = command_mod.Command('youtube-dl', errors='ignore')
+        self._youtubedl = command_mod.Command(os.path.join('bin', 'youtube-dl'), errors='ignore')
         if not self._youtubedl.is_found():
             youtube = command_mod.Command('youtube', args=args[1:], errors='ignore')
             if youtube.is_found():
