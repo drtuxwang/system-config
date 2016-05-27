@@ -150,7 +150,8 @@ class WorkQueue(object):
     def __init__(self, threads, command, timeout):
         """
         threads = Number of threads
-        data    = Work data
+        command = Command list
+        timeout = Execution no data time out
         """
         self._time0 = time.time()
         self._nitems = 0
