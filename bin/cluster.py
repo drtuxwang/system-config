@@ -5,6 +5,8 @@ Run command on a list of nodes in parallel.
 
 import argparse
 import glob
+import logging
+import logging.handlers
 import os
 import queue
 import signal
@@ -128,7 +130,8 @@ class SecureShell(object):
         """
         try:
             _, stdout, _ = self._client.exec_command(command, get_pty=True, timeout=timeout)
-            with open(self._host + '.log', 'w', newline='\n') as ofile:
+            with open(self._host + '.txt', 'a', newline='\n') as ofile:
+                print(time.strftime('%Y-%m-%d-%H:%M:%S: connected'), file=ofile)
                 for line in stdout:
                     print(line.rstrip('\r\n'), file=ofile)
         except Exception as exception:
@@ -163,26 +166,6 @@ class WorkQueue(object):
             worker.start()
             self._workers.append(worker)
 
-        self._config()
-
-    @staticmethod
-    def _config():
-        directory = 'cluster.results'
-        if not os.path.isdir(directory):
-            try:
-                os.mkdir(directory)
-            except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + directory + '" directory.')
-        try:
-            os.chdir(directory)
-        except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot change to "' + directory + '" directory.')
-
-    def _show_result(self, host, message):
-        print('[{0:d}/{1:d},{2:d}] {3:s}: {4:s}'.format(
-            self._nitems - self._queue.qsize() + 1, self._nitems,
-            int(time.time() - self._time0), host, message))
-
     def _do_work(self, command, timeout):
         while True:
             host = self._queue.get()
@@ -197,9 +180,13 @@ class WorkQueue(object):
                 ssh.execute(subprocess.list2cmdline(command), timeout)
                 ssh.close()
             except SecureShellError as exception:
-                self._show_result(host, str(exception))
+                message = str(exception)
+                logging.warning(host + ': ' + message)
             else:
-                self._show_result(host, 'ok')
+                message = 'ok'
+            print('[{0:d}/{1:d},{2:d}] {3:s}: {4:s}'.format(
+                self._nitems - self._queue.qsize() + 1, self._nitems,
+                int(time.time() - self._time0), host, message))
             self._queue.task_done()
 
     def add_items(self, hosts):
@@ -257,14 +244,47 @@ class Main(object):
                     argv.append(arg)
             sys.argv = argv
 
+    @staticmethod
+    def _config_logging():
+        formatter = logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s', datefmt='%Y-%m-%d-%H:%M:%S')
+        handler = logging.handlers.RotatingFileHandler(
+            'cluster.log', maxBytes=5242880, backupCount=3)
+        handler.setFormatter(formatter)
+
+        logger = logging.getLogger()
+        logger.addHandler(handler)
+        logger.setLevel(logging.INFO)
+
+    @staticmethod
+    def _config_directory():
+        directory = 'cluster.results'
+        if not os.path.isdir(directory):
+            try:
+                os.mkdir(directory)
+            except OSError:
+                message = 'Cannot create "' + directory + '" directory.'
+                logging.error(message)
+                raise SystemExit(sys.argv[0] + ': ' + message)
+        try:
+            os.chdir(directory)
+        except OSError:
+            message = 'Cannot change to "' + directory + '" directory.'
+            logging.error(message)
+            raise SystemExit(sys.argv[0] + ': ' + message)
+
     def run(self):
         """
         Start program
         """
         self._options = Options()
-
         nodes = self._options.get_nodes()
         threads = min(len(nodes), self._options.get_threads())
+
+        self._config_logging()
+        self._config_directory()
+        logging.info('INIT %d threads: run on %d nodes', threads, len(nodes))
+
         work_queue = WorkQueue(threads, self._options.get_cmdline(), self._options.get_timeout())
         work_queue.add_items(nodes)
         work_queue.join()
