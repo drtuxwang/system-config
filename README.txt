@@ -916,14 +916,28 @@ etc/setbin.bat            Windows Command prompt initialization
 etc/setbin.ps1            Windows Power shell initialization
 etc/python3-requirements  Python requirements "python3 -m pip install -r requirements.txt"
 
-templates/pxy-cloudformation/Makefile         CloudFormation example
-templates/pxy-cloudformation/main_stack.json
-templates/pxy-cloudformation/pxy_stack.json
-templates/pxy-cloudformation/sg_stack.json
-templates/pxy-cloudformation/submit.sh
-
 templates/pxy-terraform/aws_config.tf         Terraform example
 templates/pxy-terraform/aws_resources.tf
 templates/pxy-terraform/pxy_resources.tf
 templates/pxy-terraform/pxy_variables.tf
+
+templates/cloudformation/1pxy/1pxy.json                CloudFormation: 1pxy example
+templates/cloudformation/1pxy/Makefile
+templates/cloudformation/1pxy/submit.sh
+
+templates/cloudformation/multi-stacks/Makefile         CloudFormation: multi-stacks example
+templates/cloudformation/multi-stacks/main_stack.json
+templates/cloudformation/multi-stacks/pxy_stack.json
+templates/cloudformation/multi-stacks/sg_stack.json
+templates/cloudformation/multi-stacks/submit.sh
+
+templates/terraform-aws/1pxy/aws_config.tf             Terraform AWS: 1pxy example
+templates/terraform-aws/1pxy/aws_resources.tf
+templates/terraform-aws/1pxy/pxy_resources.tf
+templates/terraform-aws/1pxy/pxy_variables.tf
+
+templates/terraform-aws/pxy-as/aws_config.tf           Terraform AWS: pxy-as example
+templates/terraform-aws/pxy-as/aws_resources.tf
+templates/terraform-aws/pxy-as/pxy_resources.tf
+templates/terraform-aws/pxy-as/pxy_variables.tf
 

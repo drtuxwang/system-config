@@ -5,4 +5,4 @@ test: pep8
 
 pep8:
 	@echo "\n*** Running JSON PEP8 check ***"
-	pep8 --max-line-length=255 *.json
+	python3 -m pep8 --max-line-length=255 *.json

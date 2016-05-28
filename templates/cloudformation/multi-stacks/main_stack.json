@@ -4,7 +4,7 @@
     "Mappings": {
         "RegionMap": {
             "eu-west-1": {
-                "ImageId": "ami-4374b732",
+                "ImageId": "ami-44044933",
                 "Subnets": [
                     "subnet-85b8a5f0",
                     "subnet-d886877f",

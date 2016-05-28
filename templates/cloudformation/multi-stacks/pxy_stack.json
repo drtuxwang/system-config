@@ -89,6 +89,11 @@
                         "Key": "class",
                         "Value": "pxy",
                         "PropagateAtLaunch": "true"
+                    },
+                    {
+                        "Key": "cluster",
+                        "Value": "aws-dev1",
+                        "PropagateAtLaunch": "true"
                     }
                 ]
             },

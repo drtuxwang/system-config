@@ -1,0 +1,37 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Single EC2 instance",
+    "Resources": {
+        "PxyInstance": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "ImageId": "ami-42044933",
+                "InstanceType": "t2.micro",
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/sda1",
+                        "Ebs": {
+                            "VolumeType": "gp2",
+                            "VolumeSize": "20",
+                            "DeleteOnTermination": true
+                        }
+                    }
+                ],
+                "SubnetId": "subnet-ef47cc99",
+                "SecurityGroupIds": [
+                    "sg-778cb912"
+                ],
+                "Tags": [
+                    {
+                        "Key": "class",
+                        "Value": "pxy"
+                    },
+                    {
+                        "Key": "cluster",
+                        "Value": "aws-dev1"
+                    }
+                ]
+            }
+        }
+    }
+}
