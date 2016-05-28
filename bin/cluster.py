@@ -63,7 +63,7 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Run command on a list of nodes in parallel.\n')
+            description='Run command on a list of nodes in parallel (supply ndoe list as stdin).\n')
 
         parser.add_argument('-threads', nargs=1, type=int, dest='threads', default=[16],
                             metavar='N', help='Select number of threads. Default is 16.')
