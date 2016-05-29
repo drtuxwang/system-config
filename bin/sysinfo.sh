@@ -2,10 +2,10 @@
 #
 # System configuration detection tool
 #
-# 1996-2015 By Dr Colin Kong
+# 1996-2016 By Dr Colin Kong
 #
-VERSION=20150714
-RELEASE="2.6.40-1"
+VERSION=20160529
+RELEASE="2.6.40-2"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]; then
@@ -332,7 +332,7 @@ detect()
     done
 
     # Detect hardware information
-    MYTYPE=Unknown 
+    MYTYPE=Unknown
     MYCPUS=Unknown # Init to unknown
     MYBIT=Unknown
     MYCLOCK=Unknown
@@ -376,7 +376,7 @@ detect()
                 MYOSX="Kanotix `awk '{print $2}' /etc/kanotix-version`"
             elif [ -f /etc/knoppix-version ]; then
                 MYOSX="Knoppix `awk '{print $1}' /etc/knoppix-version`"
-            elif [ -f /etc/DISTRO_SPECS ]; then                                                                         
+            elif [ -f /etc/DISTRO_SPECS ]; then
                 MYOSX="`grep ^DISTRO_NAME /etc/DISTRO_SPECS | cut -f2 -d= | sed -e \"s/'//g\"` `grep ^DISTRO_VERSION /etc/DISTRO_SPECS | cut -f2 -d=`"
             elif [ "`dpkg --list 2> /dev/null | grep \"ii  knoppix\"`" ]; then
                 MYOSX="Knoppix "`dpkg --list | grep "ii  knoppix-g" | awk '{print $3}' | sed -e "s/-.*//"`
@@ -524,7 +524,7 @@ EOF
         ;;
 
     Darwin)
-        HARDWARES=`/usr/sbin/sysctl -a`
+        HARDWARES=`/usr/sbin/sysctl -a | sed -e "s/ = /: /"`
         case `uname -m` in
         i386|amd64|x86_64)
             MYTYPE=`echo "$HARDWARES" | grep "machdep.cpu.brand_string:" | cut -f2- -d":"`
@@ -561,14 +561,14 @@ EOF
         if [ $SOCKETS = 1 ]; then
             MYCPUSX=`echo "$MYCPUSX" | sed -e "s/ sockets / socket /" -e "s/ each//"`
         fi
-        MYCLOCK=`echo "$HARDWARES" | grep "hw.cpufrequency =" | awk '{printf("%d MHz",$3/1000000+0.5)}'`
-        MYBUS=`echo "$HARDWARES" | grep "hw.busfrequency = " | awk '{printf("%d MHz",$3/1000000+0.5)}'`
+        MYCLOCK=`echo "$HARDWARES" | grep "hw.cpufrequency:" | awk '{printf("%d MHz",$2/1000000+0.5)}'`
+        MYBUS=`echo "$HARDWARES" | grep "hw.busfrequency:" | awk '{printf("%d MHz",$2/1000000+0.5)}'`
         if [ "$MYBUS" ]; then
             MYCLOCK="$MYCLOCK ($MYBUS System Bus)"
         fi
-        MYCACHE=`echo "$HARDWARES" | grep "hw.l2cachesize =" | awk '{printf("%d KB (L2)",$3/1024)}'`
-        MYRAM=`echo "$HARDWARES" | grep "hw.physmem =" | awk '{printf("%d MB",$3/1048576)}'`
-        MYSWAP=`echo "$HARDWARES" | grep "vm.swapusage: " | sed -e "s/M//g" | awk '{printf("%d MB",$4)}'`
+        MYCACHE=`echo "$HARDWARES" | grep "hw.l2cachesize: " | awk '{printf("%d KB (L2)",$2/1024)}'`
+        MYRAM=`echo "$HARDWARES" | grep "hw.memsize:" | awk '{printf("%d MB",$2/1048576)}'`
+        MYSWAP=`echo "$HARDWARES" | grep "vm.swapusage: " | sed -e "s/M//g" | awk '{printf("%d MB",$3)}'`
         ;;
 
     HP-UX)
