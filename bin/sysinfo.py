@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.7.3'
-VERSION = 20160410
+RELEASE = '4.8.0'
+VERSION = 20160529
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -434,7 +434,9 @@ class OperatingSystem(object):
             return WindowsSystem()
 
         osname = os.uname()[0]
-        if osname == 'Linux':
+        if osname == 'Darwin':
+            return MacSystem()
+        elif osname == 'Linux':
             return LinuxSystem()
 
         return OperatingSystem()
@@ -1484,6 +1486,114 @@ class LinuxSystem(PosixSystem):
                     pass
 
         return name
+
+
+class MacSystem(PosixSystem):
+    """
+    Mac system class
+    """
+
+    def __init__(self):
+        sysctl = command_mod.CommandFile('/usr/sbin/sysctl', args=['-a'])
+        task = subtask_mod.Batch(sysctl.get_cmdline())
+        task.run()
+
+        # ' = ' is used in older versions of MacOS
+        self._kernel_settings = [x.replace(' = ', ': ', 1) for x in task.get_output()]
+
+    def get_net_info(self):
+        """
+        Return network information dictionary.
+        """
+        info = super().get_net_info()
+        ifconfig = command_mod.CommandFile('/sbin/ifconfig', args=['-a'])
+        task = subtask_mod.Batch(ifconfig.get_cmdline())
+        task.run(pattern='inet[6]? ')
+        isjunk = re.compile('.*inet[6]? ')
+        for line in task.get_output():
+            info['Net IPvx Address'].append(isjunk.sub(' ', line).split()[0])
+        return info
+
+    def get_os_info(self):
+        """
+        Return operating system information dictionary.
+        """
+        info = super().get_os_info()
+        system_profiler = command_mod.CommandFile(
+            '/usr/sbin/system_profiler', args=['SPSoftwareDataType'])
+        task = subtask_mod.Batch(system_profiler.get_cmdline())
+        task.run(pattern='System Version: ')
+        if task.has_output():
+            info['OS Name'] = task.get_output()[0].split(': ', 1)[1].split(' (')[0]
+        return info
+
+    def _get_cpu_socket_info(self):
+        for line in self._kernel_settings:
+            if line.startswith('machdep.cpu.thread_count: '):
+                threads = int(line.split(': ', 1)[1])
+                break
+        for line in self._kernel_settings:
+            if line.startswith('machdep.cpu.core_count: '):
+                cores = int(line.split(': ', 1)[1])
+                break
+        for line in self._kernel_settings:
+            if line.startswith('machdep.cpu.cores_per_package: '):
+                cores_per_package = min(int(line.split(': ', 1)[1]), cores)
+                break
+        else:
+            cores_per_package = cores
+        info = {}
+        info['CPU Sockets'] = str(int(cores/cores_per_package))
+        info['CPU Cores'] = str(cores)
+        info['CPU Threads'] = str(threads)
+        return info
+
+    def get_cpu_info(self):
+        """
+        Return CPU information dictionary.
+        """
+        info = super().get_cpu_info()
+
+        for line in self._kernel_settings:
+            if line == 'hw.cpu64bit_capable: 1':
+                info['CPU Addressability'] = '64bit'
+                break
+        else:
+            info['CPU Addressability'] = '32bit'
+        for line in self._kernel_settings:
+            if line.startswith('machdep.cpu.brand_string: '):
+                info['CPU Model'] = line.split(': ', 1)[1]
+                break
+
+        info.update(self._get_cpu_socket_info())
+
+        for line in self._kernel_settings:
+            if line.startswith('hw.cpufrequency: '):
+                info['CPU Clock'] = str(int(float(line.split(': ', 1)[1])/1000000 + 0.5))
+                break
+
+        for line in self._kernel_settings:
+            if line.startswith('hw.l') and 'cachesize: ' in line:
+                info['CPU Cache'][line[4:].split('cachesize:')[0]] = '{0:d}'.format(
+                    int(int(line.split(': ', 1)[1]) / 1024))
+
+        return info
+
+    def get_sys_info(self):
+        """
+        Return system information dictionary.
+        """
+        info = super().get_sys_info()
+        for line in self._kernel_settings:
+            if line.startswith('hw.memsize: '):
+                info['System Memory'] = str(int(int(line.split(': ', 1)[1])/1048576 + 0.5))
+                break
+        for line in self._kernel_settings:
+            if line.startswith('vm.swapusage: '):
+                info['System Swap Space'] = line.split()[2].split('.')[0]
+                break
+
+        return info
 
 
 class WindowsSystem(OperatingSystem):
