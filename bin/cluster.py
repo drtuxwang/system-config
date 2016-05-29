@@ -283,6 +283,7 @@ class Main(object):
 
         self._config_logging()
         self._config_directory()
+        logging.info(50 * '-')
         logging.info('INIT %d threads: run on %d nodes', threads, len(nodes))
 
         work_queue = WorkQueue(threads, self._options.get_cmdline(), self._options.get_timeout())
