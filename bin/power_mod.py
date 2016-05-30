@@ -4,12 +4,14 @@ Python power handling module
 
 Copyright GPL v2: 2011-2016 By Dr Colin Kong
 
-Version 2.0.0 (2016-02-08)
+Version 2.1.0 (2016-05-30)
 """
 
+import functools
 import glob
 import os
 import re
+import subprocess
 import sys
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
@@ -22,7 +24,6 @@ class Battery(object):
     """
 
     def __init__(self, directory):
-        self._device = os.path.basename(directory)
         self._info = {'oem_name': 'Unknown', 'model_name': 'Unknown', 'type': 'Unknown',
                       'capacity_max': -1, 'voltage': -1}
         self._state = None
@@ -40,9 +41,12 @@ class Battery(object):
         if os.path.isdir('/sys/class/power_supply'):
             for directory in glob.glob('/sys/class/power_supply/BAT*'):  # New kernels
                 devices.append(BatteryPower(directory))
-        else:
+        elif os.path.isdir('/proc/acpi/battery'):
             for directory in glob.glob('/proc/acpi/battery/BAT*'):
                 devices.append(BatteryAcpi(directory))
+        elif _System.is_mac():
+            if os.path.isfile('/usr/sbin/ioreg'):
+                devices = BatteryMac.factory()
 
         return devices
 
@@ -245,6 +249,136 @@ class BatteryPower(Battery):
         except OSError:
             return
 
+
+class BatteryMac(Battery):
+    """
+    Battery Mac class
+
+    Uses '/usr/sbin/ioreg' utility
+    """
+
+    @staticmethod
+    def factory():
+        devices = []
+
+        data = {}
+        for line in _System.run_program(['/usr/sbin/ioreg', '-l']):
+            if "Battery  <" in line:
+                data['id'] = line.split('id ')[1].split(',')[0]
+                data['type'] = line.split('class ')[1].split(',')[0]
+            elif data:
+                if '"' in line:
+                    key, value = line.split('"', 1)[1].replace('"', '').split(' = ')
+                    data[key] = value
+                elif '}' in line and 'id' in data:
+                    devices.append(BatteryMac(data))
+                    data = {}
+
+        return devices
+
+    def _config(self, data):
+        try:
+            self._info['id'] = data['id']
+            self._info['capacity_max'] = data['DesignCapacity']
+            self._info['model_name'] = data['BatterySerialNumber']
+            self._info['oem_name'] = data['Manufacturer']
+            self._info['type'] = data['type']
+        except ValueError:
+            pass
+
+    def check(self):
+        data = {}
+        for line in _System.run_program(['/usr/sbin/ioreg', '-l']):
+            if "Battery  <" in line and self._info['id'] in line:
+                data['id'] = line.split('id ')[1].split(',')[0]
+                data['type'] = line.split('class ')[1].split(',')[0]
+            elif data:
+                if '"' in line:
+                    key, value = line.split('"', 1)[1].replace('"', '').split(' = ')
+                    data[key] = value
+                elif '}' in line and 'id' in data:
+                    break
+
+        try:
+            self._is_exist = data['BatteryInstalled'] == 'Yes'
+            self._info['capacity'] = data['CurrentCapacity']
+            self._info['voltage'] = int(data['Voltage'])
+            if data['FullyCharged'] == 'No':
+                hours = int(data['TimeRemaining']) / 60
+                if hours == 0:
+                    self._info['charge'] = '='
+                elif data['IsCharging'] == 'Yes':
+                    self._info['charge'] = '+'
+                    self._info['rate'] = int((
+                        int(data['MaxCapacity']) - int(self._info['capacity']) / hours))
+                else:
+                    self._info['charge'] = '-'
+                    self._info['rate'] = int(int(self._info['capacity']) / hours)
+        except ValueError:
+            pass
+
+
+class _System(object):
+
+    @staticmethod
+    def is_mac():
+        """
+        Return True if running on MacOS.
+        """
+        if os.name == 'posix' and os.uname()[0].startswith('Darwin'):
+            return True
+        return False
+
+    @staticmethod
+    @functools.lru_cache(maxsize=4)
+    def _locate_program(program):
+        for directory in os.environ['PATH'].split(os.pathsep):
+            file = os.path.join(directory, program)
+            if os.path.isfile(file):
+                break
+        else:
+            raise CommandNotFoundError('Cannot find required "' + program + '" software.')
+        return file
+
+    @classmethod
+    def run_program(cls, command):
+        """
+        Run program in batch mode and return list of lines.
+        """
+        program = cls._locate_program(command[0])
+        try:
+            child = subprocess.Popen([program] + command[1:], shell=False,
+                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        except OSError:
+            raise ExecutableCallError('Error in calling "' + program + '" program.')
+        lines = []
+        while True:
+            try:
+                line = child.stdout.readline().decode('utf-8', 'replace')
+            except (KeyboardInterrupt, OSError):
+                break
+            if not line:
+                break
+            lines.append(line.rstrip('\r\n'))
+        return lines
+
+
+class PowerError(Exception):
+    """
+    Power module error.
+    """
+
+
+class CommandNotFoundError(PowerError):
+    """
+    Command not found error.
+    """
+
+
+class ExecutableCallError(PowerError):
+    """
+    Executable call error.
+    """
 
 if __name__ == '__main__':
     help(__name__)

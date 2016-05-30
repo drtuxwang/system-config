@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.8.0'
-VERSION = 20160529
+RELEASE = '4.8.1'
+VERSION = 20160530
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -448,10 +448,41 @@ class PosixSystem(OperatingSystem):
     """
 
     @staticmethod
-    def detect_devices():
-        """
-        Detect devices
-        """
+    def _detect_battery():
+        batteries = power_mod.Battery.factory()
+
+        for battery in batteries:
+            if battery.is_exist():
+                model = (
+                    battery.get_oem() + ' ' + battery.get_name() + ' ' + battery.get_type() + ' ' +
+                    str(battery.get_capacity_max()) + 'mAh/' + str(battery.get_voltage()) + 'mV')
+                if battery.get_charge() == '-':
+                    state = '-'
+                    if battery.get_rate() > 0:
+                        state += str(battery.get_rate()) + 'mA'
+                        if battery.get_voltage() > 0:
+                            mywatts = '{0:4.2f}'.format(
+                                float(battery.get_rate()*battery.get_voltage()) / 1000000)
+                            state += ', ' + str(mywatts) + 'W'
+                        hours = '{0:3.1f}'.format(
+                            float(battery.get_capacity()) / battery.get_rate())
+                        state += ', ' + str(hours) + 'h'
+                elif battery.get_charge() == '+':
+                    state = '+'
+                    if battery.get_rate() > 0:
+                        state += str(battery.get_rate()) + 'mA'
+                        if battery.get_voltage() > 0:
+                            mywatts = '{0:4.2f}'.format(
+                                float(battery.get_rate() * battery.get_voltage()) / 1000000)
+                            state += ', ' + str(mywatts) + 'W'
+                else:
+                    state = 'Unused'
+                Writer.output(name='Battery device', device='/dev/???',
+                              value=str(battery.get_capacity()) + 'mAh',
+                              comment=model + ' [' + state + ']')
+
+    @staticmethod
+    def _detect_mounts():
         mount = command_mod.Command('mount', errors='ignore')
         if mount.is_found():
             task = subtask_mod.Batch(mount.get_cmdline())
@@ -478,6 +509,13 @@ class PosixSystem(OperatingSystem):
                         pass
                 Writer.output(name='Disk nfs', device='/dev/???', value=size,
                               comment=device + ' on ' + directory)
+
+    @classmethod
+    def detect_devices(cls):
+        """
+        Detect devices
+        """
+        cls._detect_battery()
 
     @staticmethod
     def has_devices():
@@ -667,40 +705,6 @@ class LinuxSystem(PosixSystem):
                         cls._detect_audio_device(device, name)
                     else:
                         cls._detect_audio_proc(card, model)
-
-    @staticmethod
-    def _detect_battery():
-        batteries = power_mod.Battery.factory()
-
-        for battery in batteries:
-            if battery.is_exist():
-                model = (
-                    battery.get_oem() + ' ' + battery.get_name() + ' ' + battery.get_type() + ' ' +
-                    str(battery.get_capacity_max()) + 'mAh/' + str(battery.get_voltage()) + 'mV')
-                if battery.get_charge() == '-':
-                    state = '-'
-                    if battery.get_rate() > 0:
-                        state += str(battery.get_rate()) + 'mA'
-                        if battery.get_voltage() > 0:
-                            mywatts = '{0:4.2f}'.format(
-                                float(battery.get_rate()*battery.get_voltage()) / 1000000)
-                            state += ', ' + str(mywatts) + 'W'
-                        hours = '{0:3.1f}'.format(
-                            float(battery.get_capacity()) / battery.get_rate())
-                        state += ', ' + str(hours) + 'h'
-                elif battery.get_charge() == '+':
-                    state = '+'
-                    if battery.get_rate() > 0:
-                        state += str(battery.get_rate()) + 'mA'
-                        if battery.get_voltage() > 0:
-                            mywatts = '{0:4.2f}'.format(
-                                float(battery.get_rate() * battery.get_voltage()) / 1000000)
-                            state += ', ' + str(mywatts) + 'W'
-                else:
-                    state = 'Unused'
-                Writer.output(name='Battery device', device='/dev/???',
-                              value=str(battery.get_capacity()) + 'mAh',
-                              comment=model + ' [' + state + ']')
 
     @staticmethod
     def _detect_cd_proc_ide():
@@ -1045,10 +1049,7 @@ class LinuxSystem(PosixSystem):
         self._detect_battery()
         self._detect_cd()
         self._detect_disk()
-
-        # Disk mounts detection
-        super().detect_devices()
-
+        self._detect_mounts()
         self._detect_ethernet()
         self._detect_firewire()
         self._detect_graphics()
@@ -1500,6 +1501,37 @@ class MacSystem(PosixSystem):
 
         # ' = ' is used in older versions of MacOS
         self._kernel_settings = [x.replace(' = ', ': ', 1) for x in task.get_output()]
+
+    @staticmethod
+    def _detect_disk():
+        mount = command_mod.Command('mount', errors='ignore')
+        if mount.is_found():
+            task = subtask_mod.Batch(mount.get_cmdline())
+            task.run(pattern='/dev/')
+            for line in sorted(task.get_output()):
+                try:
+                    device, _, directory, type_ = line.replace(
+                        '(', '').replace(',', '').split()[:4]
+                except IndexError:
+                    continue
+                command = command_mod.Command('df', args=['-k', directory], errors='ignore')
+                task = subtask_mod.Batch(command.get_cmdline())
+                task.run(pattern='^' + device + ' .* ')
+                for line in task.get_output():
+                    size = line.split()[1]
+                    break
+                else:
+                    size = '???'
+                Writer.output(name='Disk device', device=device,
+                              value=size + ' KB', comment=type_ + ' on ' + directory)
+
+    @classmethod
+    def detect_devices(cls):
+        """
+        Detect devices
+        """
+        cls._detect_battery()
+        cls._detect_disk()
 
     def get_net_info(self):
         """
