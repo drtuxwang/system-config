@@ -4,7 +4,7 @@ Python power handling module
 
 Copyright GPL v2: 2011-2016 By Dr Colin Kong
 
-Version 2.1.0 (2016-05-30)
+Version 2.1.1 (2016-05-31)
 """
 
 import functools
@@ -310,7 +310,7 @@ class BatteryMac(Battery):
                 elif data['IsCharging'] == 'Yes':
                     self._info['charge'] = '+'
                     self._info['rate'] = int((
-                        int(data['MaxCapacity']) - int(self._info['capacity']) / hours))
+                        int(data['MaxCapacity']) - int(self._info['capacity'])) / hours)
                 else:
                     self._info['charge'] = '-'
                     self._info['rate'] = int(int(self._info['capacity']) / hours)
