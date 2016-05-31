@@ -4,7 +4,7 @@ Python power handling module
 
 Copyright GPL v2: 2011-2016 By Dr Colin Kong
 
-Version 2.1.1 (2016-05-31)
+Version 2.1.2 (2016-05-31)
 """
 
 import functools
@@ -303,17 +303,16 @@ class BatteryMac(Battery):
             self._is_exist = data['BatteryInstalled'] == 'Yes'
             self._info['capacity'] = data['CurrentCapacity']
             self._info['voltage'] = int(data['Voltage'])
-            if data['FullyCharged'] == 'No':
-                hours = int(data['TimeRemaining']) / 60
-                if hours == 0:
-                    self._info['charge'] = '='
-                elif data['IsCharging'] == 'Yes':
-                    self._info['charge'] = '+'
-                    self._info['rate'] = int((
-                        int(data['MaxCapacity']) - int(self._info['capacity'])) / hours)
-                else:
-                    self._info['charge'] = '-'
-                    self._info['rate'] = int(int(self._info['capacity']) / hours)
+            hours = int(data['TimeRemaining']) / 60
+            if hours == 0:
+                self._info['charge'] = '='
+            elif data['IsCharging'] == 'Yes':
+                self._info['charge'] = '+'
+                self._info['rate'] = int(
+                    (int(data['MaxCapacity']) - int(self._info['capacity'])) / hours)
+            else:
+                self._info['charge'] = '-'
+                self._info['rate'] = int(int(self._info['capacity']) / hours)
         except ValueError:
             pass
 
