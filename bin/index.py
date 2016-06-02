@@ -5,6 +5,7 @@ Generate 'index.xhtml' & 'index.fsum' files plus '..fsum' cache files
 
 import glob
 import os
+import re
 import signal
 import sys
 
@@ -75,14 +76,14 @@ class Main(object):
             raise SystemExit(sys.argv[0] + ': Cannot create "index.fsum" file.')
         os.utime('index.fsum', (time_new, time_new))
 
-    def _core_find(self, directory=''):
+    def _checkfile(self, isbadfile, directory=''):
         for file in sorted(glob.glob(os.path.join(directory, '.*')) +
                            glob.glob(os.path.join(directory, '*'))):
             if not os.path.islink(file):
                 if os.path.isdir(file):
-                    self._core_find(file)
-                elif os.path.basename(file) == 'core' or os.path.basename(file).startswith('core.'):
-                    raise SystemExit(sys.argv[0] + ': Found "' + file + '" crash dump file.')
+                    self._checkfile(isbadfile, file)
+                elif isbadfile.search(os.path.basename(file)):
+                    raise SystemExit(sys.argv[0] + ': Found "' + file + '" file.')
 
     def _read_fsums(self, ofile, directory):
         fsum = os.path.join(directory, '..fsum')
@@ -139,7 +140,9 @@ class Main(object):
         """
         Start program
         """
-        self._core_find()
+        isbadfile = re.compile(r'^core([.]\d+)?$')
+
+        self._checkfile(isbadfile)
         self._checksum()
 
 
