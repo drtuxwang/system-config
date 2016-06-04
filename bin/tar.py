@@ -133,9 +133,9 @@ class Main(object):
             tar = command_mod.Command('tar', errors='stop')
             archive = options.get_archive()
             if archive.endswith('.tar.7z'):
-                tar.set_args(['cfv', '-'] + options.get_files())
+                tar.set_args(['cf', '-'] + options.get_files())
                 p7zip = command_mod.Command('7za', errors='stop')
-                p7zip.set_args(['a', '-mx=9', '-y', '-si', archive])
+                p7zip.set_args(['a', '-m0=lzma2', '-mmt=2', '-mx=9', '-ms=on', '-y', '-si', archive])
                 subtask_mod.Task(tar.get_cmdline() + ['|'] + p7zip.get_cmdline()).run()
             elif archive.endswith('.txz') or archive.endswith('.tar.xz'):
                 tar.set_args(['cfvJ', archive] + options.get_files())
