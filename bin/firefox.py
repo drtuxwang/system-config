@@ -356,7 +356,7 @@ class Options(object):
         if 'HOME' in os.environ:
             self._config()
             self._prefs(updates)
-            self._ublock()
+            # self._ublock()
 
 
 class Main(object):
