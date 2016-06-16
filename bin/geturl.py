@@ -169,14 +169,13 @@ class Main(object):
                                     files_remote.append(line)
                 except OSError:
                     raise SystemExit(sys.argv[0] + ': Cannot read "' + url + '" URL file.')
+                self._get_local(directory, files_local)
+                self._get_remote(aria2c, files_remote)
             elif os.path.isdir(url):
                 raise SystemExit(sys.argv[0] + ': Cannot process "' + url + '" directory.')
             else:
                 aria2c.extend_args(['--file-allocation=none', '--remote-time=true',
                                     '--split=' + str(self._options.get_threads())])
-
-            self._get_local(directory, files_local)
-            self._get_remote(aria2c, files_remote)
 
 
 if __name__ == '__main__':
