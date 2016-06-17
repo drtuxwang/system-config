@@ -10,5 +10,5 @@ fi
 # xset m 2,16  # Slow mouse
 
 # xreset
-# firefox
-# chrome
+# (sleep 1; firefox)
+# (sleep 1; chrome)
