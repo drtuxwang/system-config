@@ -127,11 +127,15 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         fi
     fi
 
-    # cd[a-z], mk[a-z], scd
+    # Change to $HOME/Desktop
     mkdir $HOME/Desktop 2> /dev/null
     chmod go= $HOME/Desktop .??*/* 2> /dev/null
-    if [ ! "$cdz" ]; then
+    if [ "$PWD" = "$HOME" ]; then
         cd "$HOME/Desktop"
+    fi
+
+    # cd[a-z], mk[a-z], scd
+    if [ ! "$cdz" ]; then
         for DIR in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
             export cd$DIR="$HOME/Desktop"
         done

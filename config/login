@@ -79,11 +79,15 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         endif
     endif
 
-    # cd[a-z], mk[a-z], scd
+    # Change to $HOME/Desktop
     mkdir $HOME/Desktop >& /dev/null
     chmod go= $HOME/Desktop .??*/* >& /dev/null
-    if ( ! $?cdz ) then
+    if ( "$PWD" == "$HOME" ) then
         cd "$HOME/Desktop"
+    endif
+
+    # cd[a-z], mk[a-z], scd
+    if ( ! $?cdz ) then
         foreach DIR (a b c d e f g h i j k l m n o p q r s t u v w x y z)
             setenv cd$DIR "$HOME/Desktop"
         end
