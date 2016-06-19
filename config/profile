@@ -137,7 +137,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     # cd[a-z], mk[a-z], scd
     if [ ! "$cdz" ]; then
         for DIR in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
-            export cd$DIR="$HOME/Desktop"
+            export cd$DIR="$PWD"
         done
     fi
     for DIR in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
