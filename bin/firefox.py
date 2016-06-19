@@ -235,6 +235,7 @@ class Options(object):
                                         '"browser.bookmarks.max_backups", 1',
                                         '"browser.safebrowsing.enabled", false',
                                         '"browser.safebrowsing.malware.enabled", false',
+                                        '"browser.cache.disk.enable", false',
                                         '"browser.cache.memory.capacity", 16384',
                                         '"browser.display.show_image_placeholders", false',
                                         '"browser.download.animateNotifications", false',
