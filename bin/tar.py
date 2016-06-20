@@ -140,13 +140,13 @@ class Main(object):
                 subtask_mod.Task(tar.get_cmdline() + ['|'] + p7zip.get_cmdline()).run()
             elif archive.endswith('.txz') or archive.endswith('.tar.xz'):
                 tar.set_args(['cfvJ', archive] + options.get_files())
-                os.environ['XZ_OPT'] = '-9 -e'
+                os.environ['XZ_OPT'] = '-9 -e --lzma2=dict=128MiB'
                 subtask_mod.Exec(tar.get_cmdline()).run()
             else:
                 tar.set_args(['cfva', archive] + options.get_files())
                 os.environ['GZIP'] = '-9'
                 os.environ['BZIP2'] = '-9'
-                os.environ['XZ_OPT'] = '-9 -e'
+                os.environ['XZ_OPT'] = '-9 -e --lzma2=dict=128MiB'
                 subtask_mod.Exec(tar.get_cmdline()).run()
 
 
