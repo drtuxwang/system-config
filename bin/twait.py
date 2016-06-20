@@ -121,11 +121,11 @@ class Main(object):
         pname = options.get_pname()
 
         if pname:
-            while task_mod.Tasks(user).haspname(pname):
+            while task_mod.Tasks.factory(user).haspname(pname):
                 time.sleep(1)
         else:
             pid = options.get_pid()
-            while pid in task_mod.Tasks(user).get_pids():
+            while pid in task_mod.Tasks.factory(user).get_pids():
                 time.sleep(1)
         subtask_mod.Exec(options.get_command().get_cmdline()).run()
 
