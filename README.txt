@@ -623,6 +623,10 @@ bin/tgz                Make a compressed archive in TAR.GZ format
 bin/tgz.bat
 bin/tgz.py
 
+bin/thunderbird        thunderbird wrapper (allowing non systems port)
+bin/thunderbird.bat
+bin/thunderbird.py
+
 bin/tinyproxy          tinyproxy wrapper (allowing non systems port)
 bin/tinyproxy.py
 
