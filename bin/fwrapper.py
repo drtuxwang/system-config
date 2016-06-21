@@ -110,7 +110,7 @@ class Main(object):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
 
             link = os.path.basename(file)
-            if os.path.exists(file):
+            if os.path.exists(link):
                 print('Updating "', link, '" wrapper for "', file, '"...', sep='')
             else:
                 print('Creating "', link, '" wrapper for "', file, '"...', sep='')
