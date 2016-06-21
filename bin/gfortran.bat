@@ -1,2 +1,2 @@
 @echo off
-%~dp0..\gcc_4.8.1\windows_5.1-x86\gfortran.bat %*
+%~dp0..\sbin\%~n0.bat %*

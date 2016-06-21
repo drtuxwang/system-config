@@ -1,2 +1,2 @@
 @echo off
-%~dp0..\process-explorer_16.05\windows_5.1-x86\procexp.bat %*
+%~dp0..\sbin\%~n0.bat %*

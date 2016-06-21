@@ -1,2 +1,2 @@
 @echo off
-%~dp0\vi.bat %*
+%~dp0..\sbin\%~n0.bat %*
