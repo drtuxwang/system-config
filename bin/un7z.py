@@ -61,9 +61,7 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._archiver = command_mod.Command('7za', errors='ignore')
-        if self._archiver.is_found():
-            self._archiver = command_mod.Command('7z', errors='stop')
+        self._archiver = command_mod.Command('7z', errors='ignore')
 
         if self._args.view_flag:
             self._archiver.set_args(['l'])

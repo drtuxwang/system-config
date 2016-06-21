@@ -67,14 +67,7 @@ class Options(object):
         """
         Parse arguments
         """
-        if os.name == 'nt':
-            self._archiver = command_mod.Command('7z.dll', errors='ignore')
-        else:
-            self._archiver = command_mod.Command('7z.so', errors='ignore')
-        if self._archiver.is_found():
-            self._archiver = command_mod.Command('7z')
-        else:
-            self._archiver = command_mod.Command('7za')
+        self._archiver = command_mod.Command('7z')
 
         if len(args) > 1 and args[1] in ('a', '-bd', 'l', 't', 'x'):
             self._archiver.set_args(args[1:])

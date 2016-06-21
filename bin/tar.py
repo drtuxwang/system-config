@@ -121,6 +121,7 @@ class Main(object):
         """
         options = Options()
 
+        os.umask(int('022', 8))
         if options.get_archive().endswith('.tar'):
             try:
                 self._archive = tarfile.open(options.get_archive(), 'w:')
@@ -134,7 +135,7 @@ class Main(object):
             archive = options.get_archive()
             if archive.endswith('.tar.7z'):
                 tar.set_args(['cf', '-'] + options.get_files())
-                p7zip = command_mod.Command('7za', errors='stop')
+                p7zip = command_mod.Command('7z', errors='stop')
                 p7zip.set_args([
                     'a', '-m0=lzma2', '-mmt=2', '-mx=9', '-ms=on', '-y', '-si', archive])
                 subtask_mod.Task(tar.get_cmdline() + ['|'] + p7zip.get_cmdline()).run()

@@ -98,7 +98,7 @@ class Main(object):
 
     def _unpack(self, archive):
         if archive.endswith('.tar.7z'):
-            p7zip = command_mod.Command('7za', errors='stop')
+            p7zip = command_mod.Command('7z', errors='stop')
             p7zip.set_args(['x', '-y', '-so', archive])
             self._tar.set_args(['xfv', '-'])
             subtask_mod.Task(p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
@@ -108,7 +108,7 @@ class Main(object):
 
     def _view(self, archive):
         if archive.endswith('.tar.7z'):
-            p7zip = command_mod.Command('7za', errors='stop')
+            p7zip = command_mod.Command('7z', errors='stop')
             p7zip.set_args(['x', '-y', '-so', archive])
             self._tar.set_args(['tfv', '-'])
             subtask_mod.Task(p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
