@@ -184,7 +184,7 @@ class Main(object):
         self._exe_magics = (
             b'\177ELF', b'\312\376\272\276', b'\317\372\355\376', b'\316\372\355\376')
         self._is_exe_ext = re.compile(
-            '[.](bat|cmd|com|dll|exe|ms[ip]|psd|s[olh]|s[ol][.].*|tcl)$', re.IGNORECASE)
+            '[.](bat|cmd|com|dll|exe|ms[ip]|psd|sfx|s[olh]|s[ol][.].*|tcl)$', re.IGNORECASE)
         self._is_not_exe_ext = re.compile(
             '[.](7z|[acfo]|ace|asr|avi|bak|blacklist|bmp|bz2|cpp|crt|css|dat|deb|diz|doc|'
             'docx|f77|f90|gif|gz|h|hlp|htm|html|ico|ini|installed|ism|iso|jar|java|jpg|'
