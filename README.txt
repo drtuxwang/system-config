@@ -825,6 +825,9 @@ bin/xterm.py
 bin/xvolume            Desktop audio volume utility
 bin/xvolume.py         (uses pacmd)
 
+bin/xz                 Compress a file in XZ format
+bin/xz.py
+
 bin/youtube            Youtube video downloader
 bin/youtube.py         (uses youtube-dl)
 
