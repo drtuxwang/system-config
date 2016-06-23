@@ -8,8 +8,6 @@ xlight -reset &
 
 if [ "`diff /boot/grub/grub.cfg /boot/grub/grub.cfg-ok`" ]; then
     cp -p /boot/grub/grub.cfg-ok /boot/grub/grub.cfg
-    (cd /boot; ln -sf `ls -1t vmlinuz-* | head -1` vmlinuz)
-    (cd /boot; ln -sf `ls -1t initrd.img-* | head -1` initrd.img)
 fi
 
 if [ -f /etc/rc.mount ]; then
