@@ -66,7 +66,7 @@ class Options(object):
     def _set_libraries(command):
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir) and os.name == 'posix':
-            if os.uname()[0] == 'linux':
+            if os.uname()[0] == 'Linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
                     os.environ['LD_LIBRARY_PATH'] = (
                         libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
