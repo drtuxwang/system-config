@@ -69,7 +69,7 @@ class ScanHost(threading.Thread):
         self._cmdline = arping.get_cmdline() + ['-I', network[0]]
         self._network = network
         self._ip = ip
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, daemon=True)
         self._child = None
         self._output = ''
 

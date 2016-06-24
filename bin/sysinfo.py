@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.8.1'
-VERSION = 20160530
+RELEASE = '4.8.2'
+VERSION = 20160624
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -72,7 +72,7 @@ class CommandThread(threading.Thread):
     """
 
     def __init__(self, command):
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, daemon=True)
         self._child = None
         self._command = command
         self._stdout = ''

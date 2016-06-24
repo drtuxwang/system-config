@@ -23,7 +23,7 @@ class CommandThread(threading.Thread):
     """
 
     def __init__(self, command):
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, daemon=True)
         self._child = None
         self._command = command
         self._stdout = ''
