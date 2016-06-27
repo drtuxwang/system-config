@@ -19,7 +19,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '3.1.2'
+RELEASE = '3.1.3'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
@@ -398,9 +398,6 @@ class Main(object):
                 else:
                     argv.append(arg)
             sys.argv = argv
-        if sys.version_info < (3, 0):
-            for i in range(len(sys.argv)):
-                sys.argv[i] = sys.argv[i].decode('utf-8', 'replace')
 
     @staticmethod
     def run():
