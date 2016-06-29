@@ -51,7 +51,7 @@ bin/bell.py
 bin/breaktimer         Break reminder timer
 bin/breaktimer.py      (10 min default)
 
-bin/bz2                Compress a file in BZIP2 format
+bin/bz2                Compress a file in BZIP2 format (allowing non systems port)
 bin/bz2.py
 
 bin/calendar           Displays month or year calendar
@@ -357,7 +357,7 @@ bin/gqview.py          (uses geeqie)
 bin/graph              Generate multiple graph files with X/Y plots
 bin/graph.py           (uses gnuplot)
 
-bin/gz                 Compress a file in GZIP format
+bin/gz                 Compress a file in GZIP format (allowing non systems port)
 bin/gz.py
 
 bin/halt               Fast shutdown using "/proc/sysrq-trigger"
@@ -611,7 +611,7 @@ bin/tar.py
 bin/terraform          terraform wrapper (allowing non systems port)
 bin/terraform.py
 
-bin/tbz                Make a compressed archive in TAR.BZ2 format
+bin/tbz                Make a compressed archive in TAR.BZ2
 bin/tbz.bat
 bin/tbz.py
 
@@ -670,7 +670,7 @@ bin/un7z.py
 bin/unace              Unpack a compressed archive in ACE format
 bin/unace.py
 
-bin/unbz2              Uncompress a file in BZIP2 format
+bin/unbz2              Uncompress a file in BZIP2 format (allowing non systems port)
 bin/unbz2.py
 
 bin/undeb              Unpack a compressed archive in DEB format
@@ -683,7 +683,7 @@ bin/unetbootin.py
 bin/ungpg              Unpack an encrypted archive in gpg (pgp compatible) format
 bin/ungpg.py
 
-bin/ungz               Unpack an encrypted archive in gpg (pgp compatible) format
+bin/ungz               Uncompress a file in GZIP format (allowing non systems port)
 bin/ungz.py
 
 bin/uniso              Unpack a portable CD/DVD archive in ISO9660 format
@@ -724,6 +724,9 @@ bin/untxz.py
 
 bin/unwine             Shuts down WINE and all Windows applications
 bin/unwine.py
+
+bin/ungz               Uncompress a file in XZ format (allowing non systems port)
+bin/unxz.py
 
 bin/unzip              unzip wrapper (allowing non systems port)
 bin/unzip.py
@@ -821,7 +824,7 @@ bin/xterm.py
 bin/xvolume            Desktop audio volume utility
 bin/xvolume.py         (uses pacmd)
 
-bin/xz                 Compress a file in XZ format
+bin/xz                 Compress a file in XZ format (allowing non systems port)
 bin/xz.py
 
 bin/youtube            Youtube video downloader
