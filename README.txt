@@ -56,7 +56,7 @@ bin/bz2.py
 
 bin/calendar           Displays month or year calendar
 bin/calendar.bat
-bin/calendar.py
+bin/_calendar.py
 
 bin/cdspeed            Set CD/DVD drive speed
 bin/cdspeed.py         ("$HOME/.config/cdspeed.xml)
@@ -95,7 +95,7 @@ bin/debdistfind
 bin/debdistfind.py
 bin/debdistget
 bin/debdistget.py
-bin/deb-distinfo
+bin/debdistinfo
 bin/debdistinfo.py
 
 bin/df                 df wrapper (allowing non systems port)
@@ -338,8 +338,8 @@ bin/git-bash.bat       git bash shell for Windows
 bin/gitk               gitk wrapper (allowing non systems port)
 bin/gitk.bat
 bin/gitk.py
-bin/git-time           Modify file time to original GIT author time
-bin/_git_time.py
+bin/gittime           Modify file time to original GIT author time
+bin/gittime.py
 
 bin/gnomine            gnome-mines/gnomine wrapper (allowing non systems port)
 bin/gnomine.py         (can pick using old gnomines name)
@@ -415,7 +415,6 @@ bin/menu_main.tcl
 bin/menu_multimedia.tcl
 bin/menu_network.tcl
 bin/menu_radiotuner.tcl
-bin/menu_rdesktop.tcl
 bin/menu_system.tcl
 bin/menu_utility.tcl
 
@@ -445,9 +444,6 @@ bin/mp4.py
 bin/meld               Meld wrapper (allowing non systems port)
 bin/meld.bat
 bin/meld.py
-
-bin/mpg                Encode MPEG video using avconv (mpeg2/ac3)
-bin/mpg.py
 
 bin/myqdel             MyQS personal batch system for each user
 bin/myqdel.py
@@ -919,11 +915,6 @@ etc/setbin                Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh 
 etc/setbin.bat            Windows Command prompt initialization
 etc/setbin.ps1            Windows Power shell initialization
 etc/python3-requirements  Python requirements "python3 -m pip install -r requirements.txt"
-
-templates/pxy-terraform/aws_config.tf         Terraform example
-templates/pxy-terraform/aws_resources.tf
-templates/pxy-terraform/pxy_resources.tf
-templates/pxy-terraform/pxy_variables.tf
 
 templates/cloudformation/1pxy/1pxy.json                CloudFormation: 1pxy example
 templates/cloudformation/1pxy/Makefile
