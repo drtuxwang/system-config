@@ -641,7 +641,7 @@ bin/tocapital          Print arguments wth first letter in upper case
 bin/tocapital.bat
 bin/tocapital.py
 
-bin/tolower            Print arguments wth first letter in upper case
+bin/tolower            Print arguments in lower case
 bin/tolower.bat
 bin/tolower.py
 
