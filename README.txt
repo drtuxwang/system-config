@@ -338,7 +338,7 @@ bin/git-bash.bat       git bash shell for Windows
 bin/gitk               gitk wrapper (allowing non systems port)
 bin/gitk.bat
 bin/gitk.py
-bin/gittime           Modify file time to original GIT author time
+bin/gittime            Modify file time to original GIT author time
 bin/gittime.py
 
 bin/gnomine            gnome-mines/gnomine wrapper (allowing non systems port)
