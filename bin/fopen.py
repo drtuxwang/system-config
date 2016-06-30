@@ -109,7 +109,7 @@ class Main(object):
             elif extension in ('jpg', 'jpeg', 'png'):
                 self._spawn('gimp', file)
             elif extension in ('doc', 'docx', 'odf', 'odg', 'ods', 'odt', 'ppt',
-                               'pptx', 'xls', 'xlsx'):
+                               'pptx', 'wpd', 'xls', 'xlsx'):
                 self._spawn('soffice', file)
             elif extension in ('txt', 'json'):
                 self._spawn('xedit', file)
