@@ -494,7 +494,7 @@ bin/pidgin.bat
 bin/pidgin.py
 
 bin/play               Play multimedia file/URL
-bin/play.py            (uses vlc and avprobe)
+bin/play.py            (uses vlc and ffprobe)
 
 bin/phtml              Generate XHTML files to view pictures
 bin/phtml.bat
