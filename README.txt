@@ -59,7 +59,7 @@ bin/calendar.bat
 bin/_calendar.py
 
 bin/cdspeed            Set CD/DVD drive speed
-bin/cdspeed.py         ("$HOME/.config/cdspeed.xml)
+bin/cdspeed.py         ("$HOME/.config/cdspeed.json")
 
 bin/chkpath            Check PATH and return correct settings
 bin/chkpath.bat
