@@ -104,6 +104,12 @@ bin/df.py              (KB default and fix format problems)
 bin/dhcptable          Shows local DHCP hosts
 bin/dhcptable.py
 
+bin/django-admin       Python "django-admin" script wrappers (allowing non systems port)
+bin/django-admin-2.7
+bin/django-admin-3.4
+bin/django-admin-3.5
+bin/django-admin-3.6
+
 bin/eclipse            eclipse wrapper (allowing non systems port)
 bin/eclipse.py
 
