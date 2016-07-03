@@ -567,10 +567,10 @@ bin/pyld.py            Load Python main program as module (must have Main class)
 bin/test_pyld.py       Unit testing suite for "pyld.py"
 
 bin/pylint             Python "pylint" script wrappers (allowing non systems port)
-bin/pylint2.7
-bin/pylint3.4
-bin/pylint3.5
-bin/pylint3.6
+bin/pylint-2.7
+bin/pylint-3.4
+bin/pylint-3.5
+bin/pylint-3.6
 
 bin/pyprof             Profile Python 3.x program
 bin/pyprof.bat
