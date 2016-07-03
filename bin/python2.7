@@ -2,7 +2,7 @@
 #
 # Wrapper for "python"
 #
-VERSION=20160515
+VERSION=20160703
 
 #
 # Test for GNU Textutil POSIX 200112 bug
@@ -135,7 +135,7 @@ python[23])
     fi
 esac
 
-PYTHON=`locate_python $LOCAL "$@"`
+PYTHON=`locate_python "$@"`
 if [ ! "$PYTHON" ]; then
     PYTHON=`which \`basename "$0" | sed -e "s/[.]py$//"\``
     if [ ! "$PYTHON" ]; then
