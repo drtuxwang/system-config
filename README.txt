@@ -41,6 +41,8 @@ bin/audacity.py
 bin/avi                Encode AVI video using avconv (libxvid/libmp3lame)
 bin/avi.py
 
+bin/aws                Python "aws" script wrappers (allowing non systems port)
+
 bin/battery            Linux battery status utility
 bin/battery.py
 
