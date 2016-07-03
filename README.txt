@@ -566,9 +566,7 @@ bin/pyld.py            Load Python main program as module (must have Main class)
 bin/test_pyld.py       Unit testing suite for "pyld.py"
 
 bin/pylint             Python "pylint" script wrappers (allowing non systems port)
-bin/pylint2
 bin/pylint2.7
-bin/pylint3
 bin/pylint3.4
 bin/pylint3.5
 bin/pylint3.6
