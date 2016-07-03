@@ -42,6 +42,7 @@ bin/avi                Encode AVI video using avconv (libxvid/libmp3lame)
 bin/avi.py
 
 bin/aws                Python "aws" script wrappers (allowing non systems port)
+bin/aws.bat
 
 bin/battery            Linux battery status utility
 bin/battery.py
@@ -107,8 +108,11 @@ bin/dhcptable          Shows local DHCP hosts
 bin/dhcptable.py
 
 bin/django-admin       Python "django-admin" script wrappers (allowing non systems port)
+bin/django-admin.bat
 bin/django-admin-2.7
+bin/django-admin-2.7.bat
 bin/django-admin-3.4
+bin/django-admin-3.4.bat
 bin/django-admin-3.5
 bin/django-admin-3.6
 
@@ -498,19 +502,25 @@ bin/pdf                Create PDF file from text/images/postscript/PDF files
 bin/pdf.py
 
 bin/2ot3               Python "2to3" script wrappers (allowing non systems port)
+bin/2to3.bat
 bin/2to3-2.7
+bin/2to3-2.7.bat
 bin/2to3-3.0
 bin/2to3-3.1
 bin/2to3-3.2
 bin/2to3-3.3
 bin/2to3-3.4
+bin/2to3-3.4.bat
 bin/2to3-3.5
 bin/2to3-3.6
 
 bin/pep8               Python "pep8" script wrappers (allowing non systems port)
+bin/pep8.bat
 bin/pep8-2.7
+bin/pep8-2.7.bat
 bin/pep8-3.3
 bin/pep8-3.4
+bin/pep8-3.4.bat
 bin/pep8-3.5
 bin/pep8-3.6
 
@@ -519,11 +529,16 @@ bin/pidgin.bat
 bin/pidgin.py
 
 bin/pip                Python "pip" script wrappers (allowing non systems port)
+bin/pip.bat
 bin/pip2
+bin/pip2.bat
 bin/pip2.7
+bin/pip2.7.bat
 bin/pip3
+bin/pip3.bat
 bin/pip3.3
 bin/pip3.4
+bin/pip3.4.bat
 bin/pip3.5
 bin/pip3.6
 
@@ -553,13 +568,17 @@ bin/procexp.bat
 bin/procexp.py
 
 bin/pydoc              Python "pydoc" script wrappers (allowing non systems port)
+bin/pydoc.bat
 bin/pydoc2.7
+bin/pydoc2.7.bat
 bin/pydoc3
+bin/pydoc3.bat
 bin/pydoc3.0
 bin/pydoc3.1
 bin/pydoc3.2
 bin/pydoc3.3
 bin/pydoc3.4
+bin/pydoc3.4.bat
 bin/pydoc3.5
 bin/pydoc3.6
 
@@ -567,8 +586,11 @@ bin/pyld.py            Load Python main program as module (must have Main class)
 bin/test_pyld.py       Unit testing suite for "pyld.py"
 
 bin/pylint             Python "pylint" script wrappers (allowing non systems port)
+bin/pylint.bat
 bin/pylint-2.7
+bin/pylint-2.7.bat
 bin/pylint-3.4
+bin/pylint-3.4.bat
 bin/pylint-3.5
 bin/pylint-3.6
 
@@ -596,8 +618,11 @@ bin/python3.6
 bin/pyuntar.py         Unpack an archive in TAR format.
 
 bin/pyvenv             Python "pyvenv" script wrappers (allowing non systems port)
+bin/pyvenv.bat
 bin/pyvenv-2.7
+bin/pyvenv-2.7.bat
 bin/pyvenv-3.4
+bin/pyvenv-3.4.bat
 bin/pyvenv-3.5
 bin/pyvenv-3.6
 
