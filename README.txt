@@ -553,6 +553,7 @@ bin/procexp.bat
 bin/procexp.py
 
 bin/pydoc              Python "pydoc" script wrappers (allowing non systems port)
+bin/pydoc2.7
 bin/pydoc3
 bin/pydoc3.0
 bin/pydoc3.1
