@@ -489,9 +489,27 @@ bin/pcunix.bat         Start PCUNIX on Windows
 bin/pdf                Create PDF file from text/images/postscript/PDF files
 bin/pdf.py
 
+bin/pep8               Python "pep8" script wrappers (allowing non systems port)
+bin/pep8-2
+bin/pep8-2.7
+bin/pep8-3
+bin/pep8-3.3
+bin/pep8-3.4
+bin/pep8-3.5
+bin/pep8-3.6
+
 bin/pidgin             pidgin wrapper (allowing non systems port)
 bin/pidgin.bat
 bin/pidgin.py
+
+bin/pip                Python "pip" script wrappers (allowing non systems port)
+bin/pip2
+bin/pip2.7
+bin/pip3
+bin/pip3.3
+bin/pip3.4
+bin/pip3.5
+bin/pip3.6
 
 bin/play               Play multimedia file/URL
 bin/play.py            (uses vlc and ffprobe)
@@ -541,16 +559,6 @@ bin/python3.4.bat
 bin/python3.5
 bin/python3.bat
 bin/python3.6
-
-bin/python             Python script wrappers (allowing non systems port)
-bin/pip
-bin/pip2
-bin/pip2.7
-bin/pip3
-bin/pip3.3
-bin/pip3.4
-bin/pip3.5
-bin/pip3.6
 
 bin/pyuntar.py         Unpack an archive in TAR format.
 

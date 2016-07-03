@@ -119,11 +119,11 @@ PYNAME=`basename "$0"`
 case "$PYNAME" in
 *[23].[0-9])
     PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(...$\)/python\2/'`  # ie python3.4
-    PYNAME=`echo "$PYNAME" | sed -e "s/...\$//"`
+    PYNAME=`echo "$PYNAME" | sed -e "s/-*...\$//"`
     ;;
 *[23])
     PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(.$\)/python\2/'`    # ie python3
-    PYNAME=`echo "$PYNAME" | sed -e "s/.\$//"`
+    PYNAME=`echo "$PYNAME" | sed -e "s/-*.\$//"`
     ;;
 esac
 
