@@ -546,6 +546,16 @@ bin/procexp            Windows procexp wrapper (allowing non systems port)
 bin/procexp.bat
 bin/procexp.py
 
+bin/pydoc              Python "pydoc" script wrappers (allowing non systems port)
+bin/pydoc3
+bin/pydoc3.0
+bin/pydoc3.1
+bin/pydoc3.2
+bin/pydoc3.3
+bin/pydoc3.4
+bin/pydoc3.5
+bin/pydoc3.6
+
 bin/pyld.py            Load Python main program as module (must have Main class)
 bin/test_pyld.py       Unit testing suite for "pyld.py"
 
