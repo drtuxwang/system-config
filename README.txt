@@ -508,9 +508,7 @@ bin/2to3-3.5
 bin/2to3-3.6
 
 bin/pep8               Python "pep8" script wrappers (allowing non systems port)
-bin/pep8-2
 bin/pep8-2.7
-bin/pep8-3
 bin/pep8-3.3
 bin/pep8-3.4
 bin/pep8-3.5
