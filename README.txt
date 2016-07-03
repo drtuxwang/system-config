@@ -547,7 +547,10 @@ bin/pip
 bin/pip2
 bin/pip2.7
 bin/pip3
+bin/pip3.3
 bin/pip3.4
+bin/pip3.5
+bin/pip3.6
 
 bin/pyuntar.py         Unpack an archive in TAR format.
 

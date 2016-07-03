@@ -114,16 +114,16 @@ which() {
 }
 
 
-PYTHON=
-case `basename $0` in
-*2|*2.[0-9])
-    PYEXE=`echo $0 | sed -e "s/.*2/python2/"`
+PYEXE="python3"
+PYNAME=`basename "$0"`
+case "$PYNAME" in
+*[23].[0-9])
+    PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(...$\)/python\2/'`  # ie python3.4
+    PYNAME=`echo "$PYNAME" | sed -e "s/...\$//"`
     ;;
-*3|*3.[0-9])
-    PYEXE=`echo $0 | sed -e "s/.*3/python3/"`
-    ;;
-*)
-    PYEXE="python3"
+*[23])
+    PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(.$\)/python\2/'`    # ie python3
+    PYNAME=`echo "$PYNAME" | sed -e "s/.\$//"`
     ;;
 esac
 
@@ -163,11 +163,11 @@ if [ ! "`echo \":$PATH:\" | grep \":\`dirname $0\`:\"`" ]; then
 fi
 
 # Determine Python script location
-DIR=`dirname $PYTHON`
-SCRIPT="$DIR/`basename \"$0\"`"
+DIR=`dirname "$PYTHON"`
+SCRIPT="$DIR/$PYNAME"
 if [ ! -f "$SCRIPT" ]; then
-    if [ -f "$DIR/Script/`basename \"$0\"`.exe" ]; then
-        SCRIPT="$DIR/`basename \"$0\".exe`"
+    if [ -f "$DIR/Script/$PYNAME.exe" ]; then
+        SCRIPT="$DIR/$PYNAME.exe"
     else
         echo "***ERROR*** Cannot find required \"`basename \"$0\"`\" Python script." 1>&2
         exit 1
