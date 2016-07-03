@@ -590,6 +590,12 @@ bin/python3.6
 
 bin/pyuntar.py         Unpack an archive in TAR format.
 
+bin/pyvenv             Python "pyvenv" script wrappers (allowing non systems port)
+bin/pyvenv-2.7
+bin/pyvenv-3.4
+bin/pyvenv-3.5
+bin/pyvenv-3.6
+
 bin/pyz                Make a Python3 ZIP Application in PYZ format
 bin/pyz.py
 
