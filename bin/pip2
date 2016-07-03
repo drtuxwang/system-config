@@ -117,6 +117,8 @@ which() {
 PYEXE="python3"
 PYNAME=`basename "$0"`
 case "$PYNAME" in
+2to3)
+    ;;
 *[23].[0-9])
     PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(...$\)/python\2/'`  # ie python3.4
     PYNAME=`echo "$PYNAME" | sed -e "s/-*...\$//"`
@@ -172,6 +174,10 @@ if [ ! -f "$SCRIPT" ]; then
         echo "***ERROR*** Cannot find required \"`basename \"$0\"`\" Python script." 1>&2
         exit 1
     fi
+fi
+
+if [ ! "`head -1 $SCRIPT 2> /dev/null | grep bin/python`" ]; then
+    exec $SCRIPT "$@"
 fi
 
 exec $PYTHON -B $SCRIPT "$@"

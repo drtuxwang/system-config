@@ -489,6 +489,16 @@ bin/pcunix.bat         Start PCUNIX on Windows
 bin/pdf                Create PDF file from text/images/postscript/PDF files
 bin/pdf.py
 
+bin/2ot3               Python "2to3" script wrappers (allowing non systems port)
+bin/2to3-2.7
+bin/2to3-3.0
+bin/2to3-3.1
+bin/2to3-3.2
+bin/2to3-3.3
+bin/2to3-3.4
+bin/2to3-3.5
+bin/2to3-3.6
+
 bin/pep8               Python "pep8" script wrappers (allowing non systems port)
 bin/pep8-2
 bin/pep8-2.7
