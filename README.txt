@@ -542,6 +542,13 @@ bin/python3.5
 bin/python3.bat
 bin/python3.6
 
+bin/python             Python script wrappers (allowing non systems port)
+bin/pip
+bin/pip2
+bin/pip2.7
+bin/pip3
+bin/pip3.4
+
 bin/pyuntar.py         Unpack an archive in TAR format.
 
 bin/pyz                Make a Python3 ZIP Application in PYZ format
