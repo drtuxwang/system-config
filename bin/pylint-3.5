@@ -2,7 +2,7 @@
 #
 # Wrapper for Python "bin" script
 #
-VERSION=20160703
+VERSION=20160704
 
 #
 # Test for GNU Textutil POSIX 200112 bug
@@ -117,7 +117,14 @@ which() {
 PYEXE="python3"
 PYNAME=`basename "$0"`
 case "$PYNAME" in
-2to3)
+2to3|pydoc3)
+    ;;
+pydoc)
+    PYEXE="python2"
+    ;;
+pydoc3.[0-9])
+    PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(...$\)/python\2/'`
+    PYNAME=`echo "$PYNAME" | sed -e "s/-*..\$//"`
     ;;
 *[23].[0-9])
     PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(...$\)/python\2/'`  # ie python3.4
@@ -169,7 +176,9 @@ DIR=`dirname "$PYTHON"`
 SCRIPT="$DIR/$PYNAME"
 if [ ! -f "$SCRIPT" ]; then
     if [ -f "$DIR/Script/$PYNAME.exe" ]; then
-        SCRIPT="$DIR/$PYNAME.exe"
+        exec "$DIR/Script/$PYNAME.exe" "$@"
+    elif [ -f "$DIR/Tools/Script/$PYNAME.py" ]; then
+        SCRIPT="$DIR/Tools/Script/$PYNAME.py"
     else
         echo "***ERROR*** Cannot find required \"`basename \"$0\"`\" Python script." 1>&2
         exit 1
