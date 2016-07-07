@@ -209,6 +209,13 @@ bin/fixwav.py          (uses normalize-audio)
 
 bin/flashgot-term      Firefox Flashgot terminal startup script
 
+bin/flask              Python "flask" script wrappers (allowing non systems port)
+bin/flask-2.7
+bin/flask-3.3
+bin/flask-3.4
+bin/flask-3.5
+bin/flask-3.6
+
 bin/flink              Recursively link all files
 bin/flink.py
 
