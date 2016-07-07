@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export FLASK_APP=flask_demo
+export FLASK_APP="flask_demo"
 
 # PLEASE DO NOT use debug and public option together
 # export FLASK_DEBUG=1
