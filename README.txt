@@ -1009,23 +1009,23 @@ etc/setbin.bat            Windows Command prompt initialization
 etc/setbin.ps1            Windows Power shell initialization
 etc/python3-requirements  Python requirements "python3 -m pip install -r requirements.txt"
 
-templates/cloudformation/1pxy/1pxy.json                CloudFormation: 1pxy example
-templates/cloudformation/1pxy/Makefile
-templates/cloudformation/1pxy/submit.sh
+examples/cloudformation/1pxy/1pxy.json                CloudFormation: 1pxy example
+examples/cloudformation/1pxy/Makefile
+examples/cloudformation/1pxy/submit.sh
 
-templates/cloudformation/multi-stacks/Makefile         CloudFormation: multi-stacks example
-templates/cloudformation/multi-stacks/main_stack.json
-templates/cloudformation/multi-stacks/pxy_stack.json
-templates/cloudformation/multi-stacks/sg_stack.json
-templates/cloudformation/multi-stacks/submit.sh
+examples/cloudformation/multi-stacks/Makefile         CloudFormation: multi-stacks example
+examples/cloudformation/multi-stacks/main_stack.json
+examples/cloudformation/multi-stacks/pxy_stack.json
+examples/cloudformation/multi-stacks/sg_stack.json
+examples/cloudformation/multi-stacks/submit.sh
 
-templates/terraform-aws/1pxy/aws_config.tf             Terraform AWS: 1pxy example
-templates/terraform-aws/1pxy/aws_resources.tf
-templates/terraform-aws/1pxy/pxy_resources.tf
-templates/terraform-aws/1pxy/pxy_variables.tf
+examples/terraform-aws/1pxy/aws_config.tf             Terraform AWS: 1pxy example
+examples/terraform-aws/1pxy/aws_resources.tf
+examples/terraform-aws/1pxy/pxy_resources.tf
+examples/terraform-aws/1pxy/pxy_variables.tf
 
-templates/terraform-aws/pxy-as/aws_config.tf           Terraform AWS: pxy-as example
-templates/terraform-aws/pxy-as/aws_resources.tf
-templates/terraform-aws/pxy-as/pxy_resources.tf
-templates/terraform-aws/pxy-as/pxy_variables.tf
+examples/terraform-aws/pxy-as/aws_config.tf           Terraform AWS: pxy-as example
+examples/terraform-aws/pxy-as/aws_resources.tf
+examples/terraform-aws/pxy-as/pxy_resources.tf
+examples/terraform-aws/pxy-as/pxy_variables.tf
 
