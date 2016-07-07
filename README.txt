@@ -1019,9 +1019,10 @@ examples/cloudformation/multi-stacks/pxy_stack.json
 examples/cloudformation/multi-stacks/sg_stack.json
 examples/cloudformation/multi-stacks/submit.sh
 
-examples/python-frameworks/flask-demo/RUN             Simple Flask demo
-examples/python-frameworks/flask-demo/flask_demo.py
-examples/python-frameworks/flask-demo/templates/hello.html
+examples/python-flask/simple-demo/Makefile            Simple Flask demo
+examples/python-flask/simple-demo/RUN
+examples/python-flask/simple-demo/flask_demo.py
+examples/python-flask/simple-demo/templates/hello.html
 
 examples/terraform-aws/1pxy/aws_config.tf             Terraform AWS: 1pxy example
 examples/terraform-aws/1pxy/aws_resources.tf
