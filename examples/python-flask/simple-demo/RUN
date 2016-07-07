@@ -1,8 +1,9 @@
 #!/bin/bash
 
 export FLASK_APP="flask_demo"
+export FLAGS=
 
-# PLEASE DO NOT use debug and public option together
+# FOR SECURITY PLEASE DO NOT enableu and public access together
 # export FLASK_DEBUG=1
 # export FLAGS="--host=0.0.0.0"
 
