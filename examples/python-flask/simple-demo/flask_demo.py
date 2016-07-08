@@ -3,6 +3,8 @@
 Simple Flask test
 """
 
+import sys
+
 import flask
 
 # pylint: disable = invalid-name
@@ -33,3 +35,10 @@ def hello(name=None):
     Uses jinja2 tempalte generate greeting
     """
     return flask.render_template('hello.html', name=name)
+
+
+if __name__ == '__main__':
+    if '--pydoc' in sys.argv:
+        help(__name__)
+    else:
+        app.run()

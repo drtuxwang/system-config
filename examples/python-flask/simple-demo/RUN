@@ -3,7 +3,7 @@
 export FLASK_APP="flask_demo"
 export FLAGS=
 
-# FOR SECURITY PLEASE DO NOT enableu and public access together
+# FOR SECURITY PLEASE DO NOT enable debug and public access together
 # export FLASK_DEBUG=1
 # export FLAGS="--host=0.0.0.0"
 
