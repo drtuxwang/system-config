@@ -4,10 +4,11 @@ Python task handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.5 (2016-03-01)
+Version 2.0.6 (2016-07-09)
 """
 
 import functools
+import getpass
 import os
 import re
 import subprocess
@@ -341,10 +342,7 @@ class _System(object):
         """
         Return my username.
         """
-        for environment in ('LOGNAME', 'USER', 'USERNAME'):
-            if environment in os.environ:
-                return os.environ[environment]
-        return 'Unknown'
+        return getpass.getuser()
 
     @staticmethod
     @functools.lru_cache(maxsize=4)
