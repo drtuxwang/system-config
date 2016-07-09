@@ -184,7 +184,11 @@ class BacklightIntelSetpci(Backlight):
         Return brightness
         """
         if getpass.getuser() != 'root':
+            hostname = socket.gethostname().split('.')[0].lower()
+            username = getpass.getuser()
+            prompt = '[sudo] password for {0:s}@{1:s}: '.format(hostname, username)
             sudo = command_mod.Command('sudo', errors='stop')
+            sudo.set_args(['-p', prompt])
             task = subtask_mod.Batch(sudo.get_cmdline() + self._command.get_cmdline() + ['F4.B'])
         else:
             task = subtask_mod.Batch(self._command.get_cmdline() + ['F4.B'])

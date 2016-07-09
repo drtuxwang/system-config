@@ -3,9 +3,11 @@
 Run sudo command in new terminal session
 """
 
+import getpass
 import glob
 import os
 import signal
+import socket
 import sys
 
 import command_mod
@@ -60,13 +62,16 @@ class Main(object):
             '-bg', BG_COLOUR, '-cr', '#ff0000', '-geometry', '100x24', '-ut', '+sb'])
         sudo = command_mod.Command('sudo', errors='stop')
 
+        hostname = socket.gethostname().split('.')[0].lower()
+        username = getpass.getuser()
+        prompt = '[sudo] password for {0:s}@{1:s}: '.format(hostname, username)
+
         if len(sys.argv) > 1:
-            xterm.extend_args(['-T', 'sudo ' + xterm.args2cmd(sys.argv[1:])])
-            sudo.set_args(sys.argv[1:])
+            xterm.extend_args(['-T', 'sudo ' + xterm.args2cmd(sys.argv[1:]), '-e'])
+            sudo.set_args(['-p', prompt] + sys.argv[1:])
         else:
-            xterm.extend_args(['-T', 'sudo su'])
-            sudo.set_args(['su'])
-        xterm.append_arg('-e')
+            xterm.extend_args(['-T', 'sudo su', '-e'])
+            sudo.set_args(['-p', prompt, 'su'])
 
         subtask_mod.Exec(xterm.get_cmdline() + sudo.get_cmdline()).run()
 

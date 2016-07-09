@@ -7,6 +7,7 @@ import getpass
 import glob
 import os
 import signal
+import socket
 import sys
 
 import command_mod
@@ -39,8 +40,11 @@ class Options(object):
             chroot = command_mod.Command('chroot', args=args[1:], errors='stop')
             subtask_mod.Exec(chroot.get_cmdline()).run()
         elif getpass.getuser() != 'root':
-            sudo = command_mod.Command(
-                'sudo', args=['python3', __file__, os.path.abspath(args[1])], errors='stop')
+            hostname = socket.gethostname().split('.')[0].lower()
+            username = getpass.getuser()
+            prompt = '[sudo] password for {0:s}@{1:s}: '.format(hostname, username)
+            sudo = command_mod.Command('sudo', errors='stop')
+            sudo.set_args(['-p', prompt, 'python3', __file__, os.path.abspath(args[1])])
             subtask_mod.Exec(sudo.get_cmdline()).run()
         if not os.path.isfile(os.path.join(args[1], 'bin', 'bash')):
             raise SystemExit(sys.argv[0] + ': Cannot find "/bin/bash" in chroot directory.')
