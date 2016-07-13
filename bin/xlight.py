@@ -8,6 +8,7 @@ import getpass
 import glob
 import os
 import signal
+import socket
 import sys
 
 import command_mod
