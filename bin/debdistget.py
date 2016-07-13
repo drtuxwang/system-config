@@ -106,9 +106,9 @@ class Main(object):
         task = subtask_mod.Batch(wget.get_cmdline() + [url])
         task.run()
         if task.is_match_error(' saved '):
-            print('  [' + file_mod.FileStat(archive).get_time_local() + ']', url)
+            print('  [' + file_mod.FileStat(archive).get_date_local() + ']', url)
         elif not task.is_match_error('^Server file no newer'):
-            print('  [File Download Error]', url)
+            print('  [File  Error]', url)
             cls._remove()
             raise SystemExit(1)
         elif task.get_exitcode():

@@ -4,7 +4,7 @@ Python file handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.9 (2016-03-20)
+Version 2.1.0 (2016-07-13)
 """
 
 import os
@@ -101,6 +101,12 @@ class FileStat(object):
         Return time of last modification
         """
         return self._stat[8]
+
+    def get_date_local(self):
+        """
+        Return date of last modification in ISO local date format (ie '2011-12-31')
+        """
+        return time.strftime('%Y-%m-%d', time.localtime(self.get_time()))
 
     def get_time_local(self):
         """
