@@ -5,3 +5,13 @@ set background=dark
 
 " Remove whitespace at end of lines:
 autocmd BufWritePre *.* :%s/\s\+$//e
+
+" Python: Tab is 4 spaces & displayed as underscore
+autocmd Filetype python call SetPython()
+function SetPython()
+    set tabstop=4
+    set list
+    set listchars=tab:__
+    set colorcolumn=73,80
+    highlight ColorColumn ctermbg=0 guibg=lightgrey
+endfunction
