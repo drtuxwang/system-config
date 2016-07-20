@@ -291,11 +291,16 @@ class Konsole(GnomeTerminal):
 
 class XfceTerminal(GnomeTerminal):
     """
-    Xfce terminal class
+    Xfce terminal class (fallback to gnome-terminal)
     """
 
     def _config(self):
-        self._command = command_mod.Command('xfce4-terminal', errors='stop')
+        self._command = command_mod.Command('xfce4-terminal', errors='ignore')
+        if not self._command.is_found():
+            self._command = command_mod.Command('gnome-terminal', errors='ignore')
+            if not self._command.is_found():
+                self._command = command_mod.Command('xfce4-terminal', errors='stop')
+
         self._command.set_args(['--geometry=' + self._options.get_columns() + 'x24'])
 
     def get_label_flags(self, host):
