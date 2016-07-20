@@ -54,7 +54,7 @@ class Main(object):
         if os.path.isfile('/usr/bin/vim'):
             command = command_mod.Command('vim', errors='stop')
             if '-n' not in sys.argv[1:]:
-                command.set_args(['vim', '-N', '-n', '-i', 'NONE', '-T', 'xterm'])
+                command.set_args(['-N', '-n', '-i', 'NONE', '-T', 'xterm'])
         else:
             command = command_mod.Command('vi', errors='stop')
 
