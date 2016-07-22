@@ -11,7 +11,7 @@ autocmd Filetype python call SetPython()
 function SetPython()
     set tabstop=4
     set list
-    set listchars=tab:__
+    set listchars=tab:>_
     set colorcolumn=73,80
     highlight ColorColumn ctermbg=0 guibg=lightgrey
 endfunction
