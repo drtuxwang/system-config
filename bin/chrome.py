@@ -230,7 +230,11 @@ class Options(object):
         """
         Parse arguments
         """
-        self._chrome = command_mod.Command('chrome', errors='stop')
+        self._chrome = command_mod.Command('chrome', errors='ignore')
+        if not self._chrome.is_found():
+            self._chrome = command_mod.Command('google-chrome', errors='ignore')
+            if not self._chrome.is_found():
+                self._chrome = command_mod.Command('chrome', errors='stop')
 
         if len(args) > 1:
             if args[1] == '-version':
