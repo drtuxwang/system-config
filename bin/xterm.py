@@ -294,6 +294,10 @@ class XfceTerminal(GnomeTerminal):
     Xfce terminal class (fallback to gnome-terminal)
     """
 
+    def __init__(self, options):
+        super().__init__(options)
+        self._pattern += '|: Failed to connect to socket'
+
     def _config(self):
         self._command = command_mod.Command('xfce4-terminal', errors='ignore')
         if not self._command.is_found():
