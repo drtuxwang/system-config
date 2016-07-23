@@ -4,7 +4,7 @@ Python power handling module
 
 Copyright GPL v2: 2011-2016 By Dr Colin Kong
 
-Version 2.1.2 (2016-05-31)
+Version 2.1.3 (2016-07-23)
 """
 
 import functools
@@ -24,8 +24,13 @@ class Battery(object):
     """
 
     def __init__(self, directory):
-        self._info = {'oem_name': 'Unknown', 'model_name': 'Unknown', 'type': 'Unknown',
-                      'capacity_max': -1, 'voltage': -1}
+        self._info = {
+            'oem_name': 'Unknown',
+            'model_name': 'Unknown',
+            'type': 'Unknown',
+            'capacity_max': -1,
+            'voltage': -1
+        }
         self._state = None
         self._isjunk = None
         self._config(directory)
@@ -38,8 +43,8 @@ class Battery(object):
         """
         devices = []
 
-        if os.path.isdir('/sys/class/power_supply'):
-            for directory in glob.glob('/sys/class/power_supply/BAT*'):  # New kernels
+        if os.path.isdir('/sys/class/power_supply'):  # New kernels
+            for directory in glob.glob('/sys/class/power_supply/BAT*'):
                 devices.append(BatteryPower(directory))
         elif os.path.isdir('/proc/acpi/battery'):
             for directory in glob.glob('/proc/acpi/battery/BAT*'):
@@ -123,7 +128,10 @@ class BatteryAcpi(Battery):
     def _config(self, directory):
         self._state = os.path.join(directory, 'state')
         self._isjunk = re.compile('^.*: *| .*$')
-        with open(os.path.join(directory, 'info'), errors='replace') as ifile:
+        with open(os.path.join(
+            directory,
+            'info'
+        ), errors='replace') as ifile:
             for line in ifile:
                 line = line.rstrip()
                 if line.startswith('OEM info:'):
@@ -134,12 +142,14 @@ class BatteryAcpi(Battery):
                     self._info['type'] = self._isjunk.sub('', line)
                 elif line.startswith('design capacity:'):
                     try:
-                        self._info['capacity_max'] = int(self._isjunk.sub('', line))
+                        self._info['capacity_max'] = int(
+                            self._isjunk.sub('', line))
                     except ValueError:
                         pass
                 elif line.startswith('design voltage:'):
                     try:
-                        self._info['voltage'] = int(self._isjunk.sub('', line))
+                        self._info['voltage'] = int(
+                            self._isjunk.sub('', line))
                     except ValueError:
                         pass
         self.check()
@@ -168,12 +178,14 @@ class BatteryAcpi(Battery):
                             self._info['charge'] = '+'
                     elif line.startswith('present rate:'):
                         try:
-                            self._info['rate'] = abs(int(self._isjunk.sub('', line)))
+                            self._info['rate'] = abs(
+                                int(self._isjunk.sub('', line)))
                         except ValueError:
                             pass
                     elif line.startswith('remaining capacity:'):
                         try:
-                            self._info['capacity'] = int(self._isjunk.sub('', line))
+                            self._info['capacity'] = int(
+                                self._isjunk.sub('', line))
                         except ValueError:
                             pass
         except OSError:
@@ -202,12 +214,16 @@ class BatteryPower(Battery):
                     elif '_TECHNOLOGY=' in line:
                         self._info['type'] = self._isjunk.sub('', line)
                     elif '_CHARGE_FULL_DESIGN=' in line:
-                        self._info['capacity_max'] = int(int(self._isjunk.sub('', line)) / 1000)
+                        self._info['capacity_max'] = int(
+                            int(self._isjunk.sub('', line)) / 1000)
                     elif '_ENERGY_FULL_DESIGN=' in line:
                         self._info['capacity_max'] = int(
-                            int(self._isjunk.sub('', line)) / self._info['voltage'])
+                            int(self._isjunk.sub('', line)) /
+                            self._info['voltage']
+                        )
                     elif '_VOLTAGE_MIN_DESIGN=' in line:
-                        self._info['voltage'] = int(int(self._isjunk.sub('', line)) / 1000)
+                        self._info['voltage'] = int(
+                            int(self._isjunk.sub('', line)) / 1000)
                 except ValueError:
                     pass
 
@@ -235,15 +251,23 @@ class BatteryPower(Battery):
                             elif state == 'Charging':
                                 self._info['charge'] = '+'
                         elif '_CURRENT_NOW=' in line:
-                            self._info['rate'] = abs(int(int(self._isjunk.sub('', line)) / 1000))
-                        elif '_POWER_NOW=' in line:
                             self._info['rate'] = abs(
-                                int(int(self._isjunk.sub('', line)) / self._info['voltage']))
+                                int(int(self._isjunk.sub('', line)) / 1000))
+                        elif '_POWER_NOW=' in line:
+                            self._info['rate'] = abs(int(
+                                int(self._isjunk.sub('', line)) /
+                                self._info['voltage']
+                            ))
                         elif '_CHARGE_NOW=' in line:
-                            self._info['capacity'] = int(int(self._isjunk.sub('', line)) / 1000)
+                            self._info['capacity'] = int(
+                                int(self._isjunk.sub('', line)) /
+                                1000
+                            )
                         elif '_ENERGY_NOW=' in line:
                             self._info['capacity'] = int(
-                                int(self._isjunk.sub('', line)) / self._info['voltage'])
+                                int(self._isjunk.sub('', line)) /
+                                self._info['voltage']
+                            )
                     except ValueError:
                         pass
         except OSError:
@@ -268,7 +292,8 @@ class BatteryMac(Battery):
                 data['type'] = line.split('class ')[1].split(',')[0]
             elif data:
                 if '"' in line:
-                    key, value = line.split('"', 1)[1].replace('"', '').split(' = ')
+                    key, value = line.split(
+                        '"', 1)[1].replace('"', '').split(' = ')
                     data[key] = value
                 elif '}' in line and 'id' in data:
                     devices.append(BatteryMac(data))
@@ -294,7 +319,8 @@ class BatteryMac(Battery):
                 data['type'] = line.split('class ')[1].split(',')[0]
             elif data:
                 if '"' in line:
-                    key, value = line.split('"', 1)[1].replace('"', '').split(' = ')
+                    key, value = line.split(
+                        '"', 1)[1].replace('"', '').split(' = ')
                     data[key] = value
                 elif '}' in line and 'id' in data:
                     break
@@ -309,7 +335,9 @@ class BatteryMac(Battery):
             elif data['IsCharging'] == 'Yes':
                 self._info['charge'] = '+'
                 self._info['rate'] = int(
-                    (int(data['MaxCapacity']) - int(self._info['capacity'])) / hours)
+                    int(data['MaxCapacity'] - int(self._info['capacity'])) /
+                    hours
+                )
             else:
                 self._info['charge'] = '-'
                 self._info['rate'] = int(int(self._info['capacity']) / hours)
@@ -336,7 +364,9 @@ class _System(object):
             if os.path.isfile(file):
                 break
         else:
-            raise CommandNotFoundError('Cannot find required "' + program + '" software.')
+            raise CommandNotFoundError(
+                'Cannot find required "' + program + '" software.'
+            )
         return file
 
     @classmethod
@@ -346,10 +376,16 @@ class _System(object):
         """
         program = cls._locate_program(command[0])
         try:
-            child = subprocess.Popen([program] + command[1:], shell=False,
-                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            child = subprocess.Popen(
+                [program] + command[1:],
+                shell=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT
+            )
         except OSError:
-            raise ExecutableCallError('Error in calling "' + program + '" program.')
+            raise ExecutableCallError(
+                'Error in calling "' + program + '" program.'
+            )
         lines = []
         while True:
             try:

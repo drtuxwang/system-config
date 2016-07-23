@@ -4,7 +4,7 @@ Python task handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.6 (2016-07-09)
+Version 2.0.7 (2016-07-23)
 """
 
 import functools
@@ -22,7 +22,7 @@ class Tasks(object):
     """
     This class handles system processess.
 
-    self._process  = Dictionary containing process information
+    self._process = Dictionary containing process information
     """
 
     def __init__(self, user=None):
@@ -55,7 +55,9 @@ class Tasks(object):
         """
         if not isinstance(pgid, int):
             raise InvalidPgidError(
-                '"' + __name__ + '.Tasks" invalid pgid type "' + str(pgid) + '".')
+                '"' + __name__ + '.Tasks" invalid pgid type "' +
+                str(pgid) + '".'
+            )
         pids = []
         for pid in self.get_pids():
             if self._process[pid]['PGID'] == pgid:
@@ -78,7 +80,7 @@ class Tasks(object):
         """
         Kill processes by process ID list.
 
-        pids   = List of process IDs
+        pids = List of process IDs
         signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
         if signal not in ('CONT', 'KILL', 'STOP', 'TERM'):
@@ -92,7 +94,7 @@ class Tasks(object):
         Kill processes by process group ID.
 
         pgids = List of process group ID
-        signal   = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
+        signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
         raise NotImplementedError
 
@@ -100,7 +102,7 @@ class Tasks(object):
         """
         Kill all processes with program name.
 
-        pname  = Program name
+        pname = Program name
         signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
         self.killpids(self.pname2pids(pname), signal=signal)
@@ -113,7 +115,9 @@ class Tasks(object):
         """
         if not isinstance(pgid, int):
             raise InvalidPgidError(
-                '"' + __name__ + '.Tasks" invalid pgid type "' + str(pgid) + '".')
+                '"' + __name__ + '.Tasks" invalid pgid type "' +
+                str(pgid) + '".'
+            )
         return self.pgid2pids(pgid) != []
 
     def haspid(self, pid):
@@ -123,7 +127,10 @@ class Tasks(object):
         pid = Process ID
         """
         if not isinstance(pid, int):
-            raise InvalidPidError('"' + __name__ + '.Tasks" invalid pid type "' + str(pid) + '".')
+            raise InvalidPidError(
+                '"' + __name__ + '.Tasks" invalid pid type "' +
+                str(pid) + '".'
+            )
         return pid in self._process.keys()
 
     def haspname(self, pname):
@@ -191,15 +198,19 @@ class PosixTasks(Tasks):
     """
     This class handles POSIX system processess.
 
-    self._process  = Dictionary containing process information
+    self._process = Dictionary containing process information
     """
 
     def _config(self, user):
         if 'COLUMNS' not in os.environ:
             os.environ['COLUMNS'] = '1024'  # Fix Linux ps width
         try:
-            lines = _System.run_program(
-                ['ps', '-o', 'ruser pid ppid pgid pri nice tty vsz time etime args', '-e'])
+            lines = _System.run_program([
+                'ps',
+                '-o',
+                'ruser pid ppid pgid pri nice tty vsz time etime args',
+                '-e',
+            ])
         except (CommandNotFoundError, ExecutableCallError) as exception:
             raise SystemExit(exception)
 
@@ -247,7 +258,7 @@ class PosixTasks(Tasks):
         Kill processes by process group ID.
 
         pgids = List of process group ID
-        signal   = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
+        signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
         self.killpids([-pgid], signal=signal)
 
@@ -281,9 +292,10 @@ class WindowsTasks(Tasks):
                 process['PGID'] = pid
                 process['PRI'] = '?'
                 process['NICE'] = '?'
-                process['TTY'] = line[indice[2]:indice[3]-1].strip().replace('Tcp#', '')
-                process['MEMORY'] = int(line[indice[4]:indice[5]-1].strip().replace(
-                    ',', '').replace('.', '').replace(' K', ''))
+                process['TTY'] = line[indice[2]:indice[3]-1].strip(
+                    ).replace('Tcp#', '')
+                process['MEMORY'] = int(line[indice[4]:indice[5]-1].strip(
+                    ).replace(',', '').replace('.', '').replace(' K', ''))
                 process['CPUTIME'] = line[indice[7]:indice[8]-1].strip()
                 process['ETIME'] = '?'
                 process['COMMAND'] = line[indice[0]:indice[1]-1].strip()
@@ -317,7 +329,7 @@ class WindowsTasks(Tasks):
         Kill processes by process group ID.
 
         pgids = List of process group ID
-        signal   = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
+        signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
         self.killpids([pgid], signal=signal)
 
@@ -352,7 +364,9 @@ class _System(object):
             if os.path.isfile(file):
                 break
         else:
-            raise CommandNotFoundError('Cannot find required "' + program + '" software.')
+            raise CommandNotFoundError(
+                'Cannot find required "' + program + '" software.'
+            )
         return file
 
     @classmethod
@@ -362,10 +376,15 @@ class _System(object):
         """
         program = cls._locate_program(command[0])
         try:
-            child = subprocess.Popen([program] + command[1:], shell=False,
-                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            child = subprocess.Popen(
+                [program] + command[1:],
+                shell=False,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+            )
         except OSError:
-            raise ExecutableCallError('Error in calling "' + program + '" program.')
+            raise ExecutableCallError(
+                'Error in calling "' + program + '" program.'
+            )
         lines = []
         while True:
             try:

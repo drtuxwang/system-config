@@ -4,7 +4,7 @@ Python file handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.1.0 (2016-07-13)
+Version 2.1.1 (2016-07-23)
 """
 
 import os
@@ -36,7 +36,8 @@ class FileStat(object):
                 self._stat = list(os.stat(file))
             except (OSError, TypeError):
                 if not os.path.islink:
-                    raise FileStatNotFoundError('Cannot find "' + file + '" file status.')
+                    raise FileStatNotFoundError(
+                        'Cannot find "' + file + '" file status.')
                 self._stat = [0] * 10
             else:
                 if size is not None:
@@ -104,15 +105,18 @@ class FileStat(object):
 
     def get_date_local(self):
         """
-        Return date of last modification in ISO local date format (ie '2011-12-31')
+        Return date of last modification in ISO local date format
+        (ie '2011-12-31')
         """
         return time.strftime('%Y-%m-%d', time.localtime(self.get_time()))
 
     def get_time_local(self):
         """
-        Return time of last modification in full ISO local time format (ie '2011-12-31-12:30:28')
+        Return time of last modification in full ISO local time format
+        (ie '2011-12-31-12:30:28')
         """
-        return time.strftime('%Y-%m-%d-%H:%M:%S', time.localtime(self.get_time()))
+        return time.strftime(
+            '%Y-%m-%d-%H:%M:%S', time.localtime(self.get_time()))
 
     def get_time_change(self):
         """

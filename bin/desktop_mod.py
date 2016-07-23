@@ -4,7 +4,7 @@ Python X-windows desktop module
 
 Copyright GPL v2: 2013-2016 By Dr Colin Kong
 
-Version 2.0.2 (2016-03-06)
+Version 2.0.3 (2016-07-23)
 """
 
 import functools
@@ -26,11 +26,14 @@ class Desktop(object):
         Return true if running XFCE
         """
         keys = os.environ.keys()
-        if 'XDG_MENU_PREFIX' in keys and os.environ['XDG_MENU_PREFIX'] == 'xfce-':
+        if ('XDG_MENU_PREFIX' in keys and
+                os.environ['XDG_MENU_PREFIX'] == 'xfce-'):
             return True
-        elif 'XDG_CURRENT_DESKTOP' in keys and os.environ['XDG_CURRENT_DESKTOP'] == 'XFCE':
+        elif ('XDG_CURRENT_DESKTOP' in keys and
+              os.environ['XDG_CURRENT_DESKTOP'] == 'XFCE'):
             return True
-        elif 'XDG_DATA_DIRS' in keys and '/xfce' in os.environ['XDG_DATA_DIRS']:
+        elif ('XDG_DATA_DIRS' in keys and
+              '/xfce' in os.environ['XDG_DATA_DIRS']):
             return True
         return False
 
@@ -40,7 +43,8 @@ class Desktop(object):
         Return true if running Gnome
         """
         keys = os.environ.keys()
-        if 'DESKTOP_SESSION' in keys and 'gnome' in os.environ['DESKTOP_SESSION']:
+        if ('DESKTOP_SESSION' in keys and
+                'gnome' in os.environ['DESKTOP_SESSION']):
             return True
         elif 'GNOME_DESKTOP_SESSION_ID' in keys:
             return True
@@ -52,7 +56,8 @@ class Desktop(object):
         Return true if running KDE
         """
         keys = os.environ.keys()
-        if 'DESKTOP_SESSION' in keys and 'kde' in os.environ['DESKTOP_SESSION']:
+        if ('DESKTOP_SESSION' in keys and
+                'kde' in os.environ['DESKTOP_SESSION']):
             return True
         return False
 

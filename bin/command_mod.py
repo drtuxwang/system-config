@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.9 (2016-03-30)
+Version 2.0.10 (2016-07-23)
 """
 
 import distutils.version
@@ -27,13 +27,16 @@ class Command(object):
 
     def __init__(self, program, **kwargs):
         """
-        program   = Command program name (ie 'evince', 'bin/acroread')
-        args      = Optional command arguments list
+        program = Command program name (ie 'evince', 'bin/acroread')
+        args = Optional command arguments list
         pathextra = Optional extra PATH to prefix in search
-        platform  = Optional platform (ie 'windows-x86_64' for WINE)
-        errors    = Optional error handling ('stop' or 'ignore')
+        platform = Optional platform (ie 'windows-x86_64' for WINE)
+        errors = Optional error handling ('stop' or 'ignore')
         """
-        info = self._parse_keys(('args', 'errors', 'pathextra', 'platform'), **kwargs)
+        info = self._parse_keys(
+            ('args', 'errors', 'pathextra', 'platform'),
+            **kwargs
+        )
         self._args = [self._locate(program, info)]
         try:
             self._args.extend(kwargs['args'])
@@ -44,7 +47,9 @@ class Command(object):
     def _parse_keys(keys, **kwargs):
         if set(kwargs.keys()) - set(keys):
             raise CommandKeywordError(
-                'Unsupported keyword "' + list(set(kwargs.keys()) - set(keys))[0] + '".')
+                'Unsupported keyword "' +
+                list(set(kwargs.keys()) - set(keys))[0] + '".'
+            )
         info = {}
         for key in keys:
             try:
@@ -77,17 +82,22 @@ class Command(object):
             return file
 
         if info['errors'] == 'stop':
-            raise SystemExit(sys.argv[0] + ': Cannot find required "' + program + '" software.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find required "' +
+                program + '" software.'
+            )
         elif info['errors'] == 'ignore':
             return ''
-        raise CommandNotFoundError('Cannot find required "' + program + '" software.')
+        raise CommandNotFoundError(
+            'Cannot find required "' + program + '" software.')
 
     @staticmethod
     def _get_extensions(_platform):
         extensions = ['']
         if _platform.startswith('windows-'):
             try:
-                extensions.extend(os.environ['PATHEXT'].lower().split(os.pathsep))
+                extensions.extend(
+                    os.environ['PATHEXT'].lower().split(os.pathsep))
             except KeyError:
                 pass
         return extensions
@@ -111,16 +121,22 @@ class Command(object):
         files = []
         for port_glob in _System.get_port_globs(_platform):
             for extension in extensions:
-                files = glob.glob(os.path.join(directory, '*', port_glob, program + extension))
+                files = glob.glob(os.path.join(
+                    directory,
+                    '*',
+                    port_glob,
+                    program + extension
+                ))
                 if _platform.startswith('linux'):
                     files = cls._check_glibc(files)
                 if files:
                     return _System.newest(files)
 
-        # Search directories with 4 or more characters as fall back for local port
+        # Search directories with 4 or more char as fall back for local port
         if not files:
             for extension in extensions:
-                files = glob.glob(os.path.join(directory, '????*', program + extension))
+                files = glob.glob(
+                    os.path.join(directory, '????*', program + extension))
                 if files:
                     break
         if files:
@@ -140,7 +156,8 @@ class Command(object):
                     paths.append(path)
 
         # Prevent recursion
-        if not pathextra and os.path.basename(sys.argv[0]) in (program, program + '.py'):
+        if (not pathextra and
+                os.path.basename(sys.argv[0]) in (program, program + '.py')):
             mydir = os.path.dirname(sys.argv[0])
             if mydir in paths:
                 paths = paths[paths.index(mydir) + 1:]
@@ -350,7 +367,8 @@ class Platform(object):
             if os.path.isfile(file):
                 break
         else:
-            raise CommandNotFoundError('Cannot find required "' + program + '" software.')
+            raise CommandNotFoundError(
+                'Cannot find required "' + program + '" software.')
         return file
 
     @classmethod
@@ -360,10 +378,15 @@ class Platform(object):
         """
         program = cls._locate_program(command[0])
         try:
-            child = subprocess.Popen([program] + command[1:], shell=False,
-                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            child = subprocess.Popen(
+                [program] + command[1:],
+                shell=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT
+            )
         except OSError:
-            raise ExecutableCallError('Error in calling "' + program + '" program.')
+            raise ExecutableCallError(
+                'Error in calling "' + program + '" program.')
         lines = []
         while True:
             try:
@@ -380,7 +403,8 @@ class Platform(object):
     def get_glibc(cls):
         """
         Return glibc version string
-        (based on glibc version used to compile 'ldd' or return '0.0' for non Linux)
+        (based on glibc version used to compile 'ldd' or
+        return '0.0' for non Linux)
         """
         if cls.get_platform().startswith('linux'):
             lines = cls._run_program(['ldd', '--version'])
@@ -393,11 +417,19 @@ class Platform(object):
     @staticmethod
     def _get_kernel_windows_cygwin():
         registry_key = (
-            '/proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows NT/CurrentVersion')
+            '/proc/registry/HKEY_LOCAL_MACHINE/'
+            'SOFTWARE/Microsoft/Windows NT/CurrentVersion'
+        )
         try:
-            with open(os.path.join(registry_key, 'CurrentVersion'), errors='replace') as ifile:
+            with open(
+                os.path.join(registry_key, 'CurrentVersion'),
+                errors='replace'
+            ) as ifile:
                 kernel = ifile.readline()
-            with open(os.path.join(registry_key, 'CurrentBuildNumber'), errors='replace') as ifile:
+            with open(
+                os.path.join(registry_key, 'CurrentBuildNumber'),
+                errors='replace'
+            ) as ifile:
                 kernel += '.' + ifile.readline()
         except OSError:
             kernel = 'unknown'
@@ -461,7 +493,8 @@ class Platform(object):
     @classmethod
     def get_platform(cls):
         """
-        Return platform (ie linux-x86, linux-x86_64, macos-x86_64, windows-x86_64).
+        Return platform
+       (ie linux-x86, linux-x86_64, macos-x86_64, windows-x86_64).
         """
         return cls.get_system() + '-' + cls.get_arch()
 
@@ -498,16 +531,19 @@ class _System(Platform):
     @functools.lru_cache(maxsize=None)
     def get_port_globs(_platform):
         """
-        Return tuple of portname globs (ie 'linux64_*-x86*', 'windows64_*-x86*')
+        Return tuple of portname globs
+        (ie 'linux64_*-x86*', 'windows64_*-x86*')
         """
-        mapping = {'linux-x86_64': ('linux64_*-x86*', 'linux_*-x86*'),
-                   'linux-x86': ('linux_*-x86*'),
-                   'linux-sparc64': ('linux64_*-sparc64*', 'linux_*-sparc*'),
-                   'linux-power64': ('linux64_*-power64*', 'linux_*-power*'),
-                   'macos-x86_64': ('macos64_*-x86*', 'macos_*-x86*'),
-                   'macos-x86': ('macos_*-x86*'),
-                   'windows-x86_64': ('windows64_*-x86*', 'windows_*-x86*'),
-                   'windows-x86': ('windows_*-x86*')}
+        mapping = {
+            'linux-x86_64': ('linux64_*-x86*', 'linux_*-x86*'),
+            'linux-x86': ('linux_*-x86*'),
+            'linux-sparc64': ('linux64_*-sparc64*', 'linux_*-sparc*'),
+            'linux-power64': ('linux64_*-power64*', 'linux_*-power*'),
+            'macos-x86_64': ('macos64_*-x86*', 'macos_*-x86*'),
+            'macos-x86': ('macos_*-x86*'),
+            'windows-x86_64': ('windows64_*-x86*', 'windows_*-x86*'),
+            'windows-x86': ('windows_*-x86*')
+        }
 
         try:
             return mapping[_platform]

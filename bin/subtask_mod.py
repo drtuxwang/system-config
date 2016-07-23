@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.8 (2016-03-25)
+Version 2.0.9 (2016-07-23)
 """
 
 import copy
@@ -74,7 +74,8 @@ class Task(object):
 
     def get_output(self, pattern=''):
         """
-        Return list of lines in stdout that match pattern. If no pattern return all.
+        Return list of lines in stdout that match pattern.
+        If no pattern return all.
 
         pattern = Regular expression
         """
@@ -107,7 +108,8 @@ class Task(object):
 
     def get_error(self, pattern=''):
         """
-        Return list of lines in stderr that match pattern. If no pattern return all.
+        Return list of lines in stderr that match pattern.
+        If no pattern return all.
 
         pattern = Regular expression
         """
@@ -131,7 +133,9 @@ class Task(object):
     def _parse_keys(keys, **kwargs):
         if set(kwargs.keys()) - set(keys):
             raise TaskKeywordError(
-                'Unsupported keyword "' + list(set(kwargs.keys()) - set(keys))[0] + '".')
+                'Unsupported keyword "' +
+                list(set(kwargs.keys()) - set(keys))[0] + '".'
+            )
         info = {}
         for key in keys:
             try:
@@ -214,8 +218,14 @@ class Task(object):
             stderr = subprocess.STDOUT
         else:
             stderr = subprocess.PIPE
-        return subprocess.Popen(cmdline, env=info['env'], shell=pipe, stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE, stderr=stderr)
+        return subprocess.Popen(
+            cmdline,
+            env=info['env'],
+            shell=pipe,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=stderr
+        )
 
     def _interactive_child_run(self, cmdline, info):
         child = self._start_child(cmdline, info)
@@ -231,27 +241,31 @@ class Task(object):
         try:
             self._recv_stdout(child, ismatch, info['replace'])
         except OSError:
-            raise OutputWriteError('Error writing stderr of "' + self._file + '" program.')
+            raise OutputWriteError(
+                'Error writing stderr of "' + self._file + '" program.'
+            )
         if not info['error2output']:
             try:
                 self._recv_stderr(child, ismatch, info['replace'])
             except OSError:
-                raise OutputWriteError('Error  writing output of "' + self._file + '" program.')
+                raise OutputWriteError(
+                    'Error  writing output of "' + self._file + '" program.')
         return child.wait()
 
     def run(self, **kwargs):
         """
         Run process interactively and return exits status.
 
-        directory    = <directory>   - Directory to run command in
-        env          = <dictonary>   - Dictionary containing environmental variables to change
-        error2output = True          - Send stderr to stdout
-        pattern      = <pattern>     - Regular expression for removing output
-        replace      = (str1, str2)  - Replace all occurance of str1 with str2
-        stdin        = <lines>       - Stdin input text
+        directory = Directory to run command in
+        env = Dictionary containing environmental variables to change
+        error2output = Flag to send stderr to stdout
+        pattern = Regular expression for removing output
+        replace = Replace all occurance (str1, str2)
+        stdin = List of str for stdin input
         """
-        info = self._parse_keys(
-            ('directory', 'env', 'error2output', 'pattern', 'replace', 'stdin'), **kwargs)
+        info = self._parse_keys((
+            'directory', 'env', 'error2output', 'pattern',
+            'replace', 'stdin'), **kwargs)
 
         if not sys.stdout.isatty():
             sys.stdout.flush()
@@ -261,12 +275,16 @@ class Task(object):
             pwd = os.getcwd()
             os.chdir(info['directory'])
         try:
-            if info['error2output'] or info['pattern'] or info['replace'] or info['stdin']:
-                self._status['exitcode'] = self._interactive_child_run(self._cmdline, info)
+            if (info['error2output'] or info['pattern'] or
+                    info['replace'] or info['stdin']):
+                self._status['exitcode'] = self._interactive_child_run(
+                    self._cmdline, info)
             else:
-                self._status['exitcode'] = self._interactive_run(self._cmdline, info)
+                self._status['exitcode'] = self._interactive_run(
+                    self._cmdline, info)
         except OSError:
-            raise ExecutableCallError('Error in calling "' + self._file + '" program.')
+            raise ExecutableCallError(
+                'Error in calling "' + self._file + '" program.')
         if info['directory']:
             os.chdir(pwd)
         return self._status['exitcode']
@@ -287,7 +305,11 @@ class Background(Task):
 
         if info['pattern']:
             os.environ['_SUBTASK_MOD_BACKGROUND_FILTER'] = info['pattern']
-            subprocess.Popen([sys.executable, __file__] + cmdline, shell=pipe, env=info['env'])
+            subprocess.Popen(
+                [sys.executable, __file__] + cmdline,
+                shell=pipe,
+                env=info['env']
+            )
             del os.environ['_SUBTASK_MOD_BACKGROUND_FILTER']
         else:
             subprocess.Popen(cmdline, shell=pipe, env=info['env'])
@@ -296,12 +318,15 @@ class Background(Task):
         """
         Start background process.
 
-        directory    = <directory>   - Directory to run command in
-        env          = <dictonary>   - Dictionary containing environmental variables to change
-        error2output = True          - Send stderr to stdout
-        pattern      = <pattern>     - Regular expression for removing output
+        directory = Directory to run command in
+        env = Dictionary containing environmental variables to change
+        error2output = Flag to send stderr to stdout
+        pattern = Regular expression for removing output
         """
-        info = self._parse_keys(('directory', 'env', 'error2output', 'pattern'), **kwargs)
+        info = self._parse_keys(
+            ('directory', 'env', 'error2output', 'pattern'),
+            **kwargs
+        )
 
         if not sys.stdout.isatty():
             sys.stdout.flush()
@@ -313,7 +338,8 @@ class Background(Task):
         try:
             self._start_background_run(self._cmdline, info)
         except OSError:
-            raise ExecutableCallError('Error in calling "' + self._file + '" program.')
+            raise ExecutableCallError(
+                'Error in calling "' + self._file + '" program.')
         if info['directory']:
             os.chdir(pwd)
 
@@ -340,9 +366,13 @@ class Batch(Task):
             pass
         except OSError:
             if append:
-                raise OutputWriteError('Cannot append to "' + file + '" output file.')
+                raise OutputWriteError(
+                    'Cannot append to "' + file + '" output file.'
+                )
             else:
-                raise OutputWriteError('Cannot create "' + file + '" output file.')
+                raise OutputWriteError(
+                    'Cannot create "' + file + '" output file.'
+                )
 
     def _batch_run(self, cmdline, info):
         child = self._start_child(cmdline, info)
@@ -356,17 +386,20 @@ class Batch(Task):
         else:
             while True:
                 try:
-                    line = child.stdout.readline().decode('utf-8', 'replace')
+                    line = child.stdout.readline().decode(
+                        'utf-8', 'replace')
                 except (KeyboardInterrupt, OSError):
                     break
                 if not line:
                     break
                 if ismatch.search(line):
-                    self._status['output'].append(line.rstrip('\r\n'))
+                    self._status['output'].append(
+                        line.rstrip('\r\n'))
         if not info['error2output']:
             while True:
                 try:
-                    line = child.stderr.readline().decode('utf-8', 'replace')
+                    line = child.stderr.readline().decode(
+                        'utf-8', 'replace')
                 except (KeyboardInterrupt, OSError):
                     break
                 if not line:
@@ -379,26 +412,31 @@ class Batch(Task):
         """
         Run process in batch mode and return exit status.
 
-        append       = True          - Append to output_file
-        directory    = <directory>   - Directory to run command in
-        env          = <dictonary>   - Dictionary containing environmental variables to change
-        error2output = True          - Send stderr to stdout
-        file         = <file>        - Redirect stdout to file
-        pattern      = <pattern>     - Regular expression for selecting output
-        stdin        = <lines>       - Stdin input text
+        append = Flag to append to output_file
+        directory = Directory to run command in
+        env = Dictionary containing environmental variables to change
+        error2output = Flag to send stderr to stdout
+        file = Redirect stdout to file
+        pattern = Regular expression for selecting output
+        stdin = List of str for stdin input
         """
         self._status['output'] = []
         self._status['error'] = []
-        info = self._parse_keys(
-            ('append', 'directory', 'env', 'error2output', 'file', 'pattern', 'stdin'), **kwargs)
+        info = self._parse_keys((
+            'append', 'directory', 'env', 'error2output',
+            'file', 'pattern', 'stdin'
+        ), **kwargs)
 
         if info['directory']:
             pwd = os.getcwd()
             os.chdir(info['directory'])
         try:
-            self._status['exitcode'] = self._batch_run(self._cmdline, info)
+            self._status['exitcode'] = self._batch_run(
+                self._cmdline, info)
         except OSError:
-            raise ExecutableCallError('Error in calling "' + self._file + '" program.')
+            raise ExecutableCallError(
+                'Error in calling "' + self._file + '" program.'
+            )
         if info['directory']:
             os.chdir(pwd)
 
@@ -414,9 +452,9 @@ class Child(Task):
         """
         Return child process object with stdin, stdout and stderr pipes.
 
-        directory    = <directory>   - Directory to run command in
-        env          = <dictonary>   - Dictionary containing environmental variables to change
-        error2output = True          - Send stderr to stdout
+        directory = Directory to run command in
+        env = Dictionary containing environmental variables to change
+        error2output = Flag to send stderr to stdout
         """
         info = self._parse_keys(('directory', 'env', 'error2output'), **kwargs)
 
@@ -426,7 +464,9 @@ class Child(Task):
         try:
             return self._start_child(self._cmdline, info)
         except OSError:
-            raise ExecutableCallError('Error in calling "' + self._file + '" program.')
+            raise ExecutableCallError(
+                'Error in calling "' + self._file + '" program.'
+            )
         if info['directory']:
             os.chdir(pwd)
 
@@ -445,16 +485,19 @@ class Daemon(Task):
             pipe = False
 
         os.environ['_SUBTASK_MOD_DAEMON_FILE'] = info['file']
-        subprocess.Popen([sys.executable, __file__] + cmdline, shell=pipe, env=info['env'])
+        subprocess.Popen(
+            [sys.executable, __file__] +
+            cmdline, shell=pipe, env=info['env']
+        )
         del os.environ['_SUBTASK_MOD_DAEMON_FILE']
 
     def run(self, **kwargs):
         """
         Replace current process with new executable.
 
-        directory    = <directory>   - Directory to run command in
-        env          = <dictonary>   - Dictionary containing environmental variables to change
-        file         = <file>        - Log stdout & stderr to file
+        directory = Directory to run command in
+        env = Dictionary containing environmental variables to change
+        file =  Log stdout & stderr to file
         """
         info = self._parse_keys(('directory', 'env', 'file'), **kwargs)
 
@@ -464,7 +507,9 @@ class Daemon(Task):
         try:
             self._start_daemon(self._cmdline, info)
         except OSError:
-            raise ExecutableCallError('Error in calling "' + self._file + '" program.')
+            raise ExecutableCallError(
+                'Error in calling "' + self._file + '" program.'
+            )
         if info['directory']:
             os.chdir(pwd)
 
@@ -481,8 +526,13 @@ class Exec(Task):
         stderr_write = sys.stderr.buffer.write
         # pylint: enable = no-member
         try:
-            child = subprocess.Popen(cmdline, shell=False, stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE, env=info['env'])
+            child = subprocess.Popen(
+                cmdline,
+                shell=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                env=info['env']
+            )
             byte = True
             while byte:
                 byte = child.stdout.read(1)
@@ -512,8 +562,8 @@ class Exec(Task):
         """
         Replace current process with new executable.
 
-        directory    = <directory>   - Directory to run command in
-        env          = <dictonary>   - Dictionary containing environmental variables to change
+        directory = Directory to run command in
+        env = Dictionary containing environmental variables to change
         """
         info = self._parse_keys(('directory', 'env'), **kwargs)
 
@@ -522,7 +572,8 @@ class Exec(Task):
         try:
             self._exec_run(self._cmdline, info)
         except OSError:
-            raise ExecutableCallError('Error in calling "' + self._file + '" program.')
+            raise ExecutableCallError(
+                'Error in calling "' + self._file + '" program.')
 
 
 class SubTaskError(Exception):
