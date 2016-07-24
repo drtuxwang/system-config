@@ -14,7 +14,7 @@ import sys
 import command_mod
 import subtask_mod
 
-RELEASE = '2.6.2'
+RELEASE = '2.6.3'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -74,21 +74,34 @@ class Options(object):
                 with open(file, errors='replace') as ifile:
                     my_address = ifile.readline().strip()
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" configuration file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "' + file +
+                    '" configuration file.'
+                )
         else:
             my_address = getpass.getuser()
             try:
                 with open(file, 'w', newline='\n') as ofile:
                     print(my_address.encode(), file=ofile)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" configuration file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' + file +
+                    '" configuration file.'
+                )
         return my_address
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Qwikmail v' + self._release + ', Quick commandline E-mailer.')
+            description='Qwikmail v' + self._release +
+            ', Quick commandline E-mailer.'
+        )
 
-        parser.add_argument('addresses', nargs='+', metavar='address', help='E-mail addresses.')
+        parser.add_argument(
+            'addresses',
+            nargs='+',
+            metavar='address',
+            help='E-mail addresses.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -100,11 +113,16 @@ class Options(object):
 
         os.umask(int('077', 8))
 
-        self._sendmail = command_mod.Command('sendmail', pathextra=['/usr/lib'], errors='stop')
+        self._sendmail = command_mod.Command(
+            'sendmail',
+            pathextra=['/usr/lib'],
+            errors='stop'
+        )
         self._sendmail.set_args(['-t'])
 
         if 'HOME' not in os.environ:
-            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot determine home directory.')
         self._tmpfile = os.sep + os.path.join(
             'tmp', 'qmail-' + getpass.getuser() + '.' + str(os.getpid()))
 
@@ -150,9 +168,14 @@ class Main(object):
     def _create(self, options):
         subject = input('Subject: ')
         addresses = self._mail_alias(options.get_addresses())
-        email = ['Subject: ' + subject, 'To: ' + ', '.join(addresses),
-                 'From: ' + options.get_my_address(), 'Reply-to: ' + options.get_my_address(),
-                 'X-Mailer: Qwikmail v' + options.get_release(), '']
+        email = [
+            'Subject: ' + subject,
+            'To: ' + ', '.join(addresses),
+            'From: ' + options.get_my_address(),
+            'Reply-to: ' + options.get_my_address(),
+            'X-Mailer: Qwikmail v' + options.get_release(),
+            ''
+        ]
         return email
 
     def _edit(self, options):
@@ -202,8 +225,10 @@ class Main(object):
         for line in task.get_output() + task.get_error():
             print(line)
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
 
     def _update(self):
         isemail = re.compile('(To|Cc|Bcc): ', re.IGNORECASE)
@@ -211,8 +236,8 @@ class Main(object):
             if not self._email[i]:
                 return
             elif isemail.match(self._email[i]):
-                self._email[i] = (self._email[i].split()[0] + ' ' +
-                                  ', '.join(self._mail_alias([isemail.sub('', self._email[i])])))
+                self._email[i] = self._email[i].split()[0] + ' ' + ', '.join(
+                    self._mail_alias([isemail.sub('', self._email[i])]))
 
     def run(self):
         """

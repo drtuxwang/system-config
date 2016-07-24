@@ -14,7 +14,7 @@ import time
 
 import task_mod
 
-RELEASE = '2.7.6'
+RELEASE = '2.7.7'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -50,14 +50,31 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='MyQS v' + self._release + ', My Queuing System batch job submission.')
+            description='MyQS v' + self._release +
+            ', My Queuing System batch job submission.'
+        )
 
-        parser.add_argument('-n', nargs=1, type=int, dest='ncpus', default=[1],
-                            help='Select CPU core slots to reserve for job. Default is 1.')
-        parser.add_argument('-q', nargs=1, dest='queue', default=['normal'],
-                            help='Select "normal" or "express" queue. Default is "normal".')
-
-        parser.add_argument('files', nargs='+', metavar='batch.sh', help='Batch job file.')
+        parser.add_argument(
+            '-n',
+            nargs=1,
+            type=int,
+            dest='ncpus',
+            default=[1],
+            help='Select CPU core slots to reserve for job. Default is 1.'
+        )
+        parser.add_argument(
+            '-q',
+            nargs=1,
+            dest='queue',
+            default=['normal'],
+            help='Select "normal" or "express" queue. Default is "normal".'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='batch.sh',
+            help='Batch job file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -68,11 +85,15 @@ class Options(object):
         self._parse_args(args[1:])
 
         if self._args.ncpus[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'the number of cpus.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer for '
+                'the number of cpus.'
+            )
         elif self._args.queue[0] not in ('normal', 'express'):
-            raise SystemExit(sys.argv[0] + ': Cannot submit to non-existent queue "' +
-                             self._args.queue[0] + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot submit to non-existent queue "' +
+                self._args.queue[0] + '".'
+            )
 
 
 class Main(object):
@@ -116,7 +137,10 @@ class Main(object):
                     except (OSError, ValueError):
                         jobid = 1
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot read "' + lastjob + '" MyQS lastjob file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "' + lastjob +
+                    '" MyQS lastjob file.'
+                )
             if jobid > 32767:
                 jobid = 1
         else:
@@ -125,7 +149,10 @@ class Main(object):
             with open(lastjob, 'w', newline='\n') as ofile:
                 print(jobid, file=ofile)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot update "' + lastjob + '" MyQS lastjob file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot update "' + lastjob +
+                '" MyQS lastjob file.'
+            )
         return jobid
 
     def _lock(self):
@@ -189,9 +216,16 @@ class Main(object):
                     print('QUEUE=' + queue, file=ofile)
                     print('NCPUS=' + str(ncpus), file=ofile)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + tmpfile + '" temporary file.')
-            shutil.move(tmpfile, os.path.join(self._myqsdir, str(jobid) + '.q'))
-            print('Batch job with jobid', jobid, 'has been submitted into MyQS.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' + tmpfile +
+                    '" temporary file.'
+                )
+            shutil.move(
+                tmpfile,
+                os.path.join(self._myqsdir, str(jobid) + '.q')
+            )
+            print(
+                'Batch job with jobid', jobid, 'has been submitted into MyQS.')
             time.sleep(0.5)
 
     def run(self):
@@ -201,16 +235,23 @@ class Main(object):
         options = Options()
 
         if 'HOME' not in os.environ:
-            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot determine home directory.')
         self._myqsdir = os.path.join(
-            os.environ['HOME'], '.config', 'myqs', socket.gethostname().split('.')[0].lower())
+            os.environ['HOME'],
+            '.config',
+            'myqs',
+            socket.gethostname().split('.')[0].lower()
+        )
         if not os.path.isdir(self._myqsdir):
             try:
                 os.makedirs(self._myqsdir)
                 os.chmod(self._myqsdir, int('700', 8))
             except OSError:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + self._myqsdir + '" MyQS directory.')
+                    sys.argv[0] + ': Cannot create "' + self._myqsdir +
+                    '" MyQS directory.'
+                )
         lockfile = self._lock()
         self._submit(options)
         os.remove(lockfile)

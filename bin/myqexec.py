@@ -13,7 +13,7 @@ import time
 import command_mod
 import subtask_mod
 
-RELEASE = '2.7.3'
+RELEASE = '2.7.4'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
@@ -58,11 +58,17 @@ class Options(object):
         Parse arguments
         """
         if len(args) != 3 or args[1] not in ('-jobid', '-spawn'):
-            raise SystemExit(sys.argv[0] +
-                             ': Cannot be started manually. Please run "myqsd" command.')
+            raise SystemExit(
+                sys.argv[0] +
+                ': Cannot be started manually. Please run "myqsd" command.'
+            )
         self._mode = args[1][1:]
         self._myqsdir = os.path.join(
-            os.environ['HOME'], '.config', 'myqs', socket.gethostname().split('.')[0].lower())
+            os.environ['HOME'],
+            '.config',
+            'myqs',
+            socket.gethostname().split('.')[0].lower()
+        )
         self._jobid = args[2]
 
 
@@ -111,12 +117,18 @@ class Main(object):
                 mypid = os.getpid()
                 os.setpgid(mypid, mypid)  # New PGID
                 pgid = os.getpgid(mypid)
-                print('PGID=' + str(pgid) + '\nSTART=' + str(time.time()), file=ofile)
+                print(
+                    'PGID=' + str(pgid) + '\nSTART=' + str(time.time()),
+                    file=ofile
+                )
         except OSError:
             return
 
         try:
-            with open(os.path.join(self._myqsdir, self._jobid + '.r'), errors='replace') as ifile:
+            with open(
+                os.path.join(self._myqsdir, self._jobid + '.r'),
+                errors='replace'
+            ) as ifile:
                 info = {}
                 for line in ifile:
                     line = line.strip()
@@ -125,7 +137,10 @@ class Main(object):
         except OSError:
             return
 
-        print('\nMyQS v' + options.get_release() + ', My Queuing System batch job exec.\n')
+        print(
+            '\nMyQS v' + options.get_release() +
+            ', My Queuing System batch job exec.\n'
+        )
         print('MyQS JOBID  =', self._jobid)
         print('MyQS QUEUE  =', info['QUEUE'])
         print('MyQS NCPUS  =', info['NCPUS'])
@@ -150,7 +165,10 @@ class Main(object):
 
     def _start(self):
         try:
-            with open(os.path.join(self._myqsdir, self._jobid + '.r'), errors='replace') as ifile:
+            with open(
+                os.path.join(self._myqsdir, self._jobid + '.r'),
+                errors='replace'
+            ) as ifile:
                 info = {}
                 for line in ifile:
                     line = line.strip()
@@ -166,7 +184,10 @@ class Main(object):
         if renice.is_found():
             renice.set_args(['100', str(os.getpid())])
             subtask_mod.Batch(renice.get_cmdline()).run()
-        myqexec = command_mod.CommandFile(__file__, args=['-spawn', self._jobid])
+        myqexec = command_mod.CommandFile(
+            __file__,
+            args=['-spawn', self._jobid]
+        )
         subtask_mod.Task(myqexec.get_cmdline()).run()
         print('-'*80)
         print('MyQS FINISH =', time.strftime('%Y-%m-%d-%H:%M:%S'))
@@ -186,7 +207,8 @@ class Main(object):
         self._jobid = options.get_jobid()
 
         if 'HOME' not in os.environ:
-            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot determine home directory.')
         if options.get_mode() == 'spawn':
             self._spawn(options)
         else:

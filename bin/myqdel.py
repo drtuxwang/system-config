@@ -12,7 +12,7 @@ import sys
 
 import task_mod
 
-RELEASE = '2.7.5'
+RELEASE = '2.7.6'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -42,13 +42,22 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='MyQS v' + self._release + ', My Queuing System batch job deletion.')
+            description='MyQS v' + self._release +
+            ', My Queuing System batch job deletion.'
+        )
 
-        parser.add_argument('-k', action='store_true', dest='force_flag',
-                            help='Force termination of running jobs.')
-
-        parser.add_argument('jobIds', nargs='+', metavar='jobid',
-                            help='Batch job ID.')
+        parser.add_argument(
+            '-k',
+            action='store_true',
+            dest='force_flag',
+            help='Force termination of running jobs.'
+        )
+        parser.add_argument(
+            'jobIds',
+            nargs='+',
+            metavar='jobid',
+            help='Batch job ID.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -61,7 +70,8 @@ class Options(object):
         self._jobids = []
         for jobid in self._args.jobIds:
             if not jobid.isdigit():
-                raise SystemExit(sys.argv[0] + ': Invalid "' + jobid + '" job ID.')
+                raise SystemExit(
+                    sys.argv[0] + ': Invalid "' + jobid + '" job ID.')
             self._jobids.append(jobid)
 
 
@@ -104,31 +114,45 @@ class Main(object):
             except OSError:
                 pass
             else:
-                print('Batch job with jobid', jobid, 'has been deleted from MyQS.')
+                print(
+                    'Batch job with jobid',
+                    jobid,
+                    'has been deleted from MyQS.'
+                )
                 return
         file = os.path.join(self._myqsdir, jobid + '.r')
         if os.path.isfile(file):
             try:
                 with open(file, errors='replace') as ifile:
                     if not self._force_flag():
-                        print('MyQS cannot delete batch job with jobid', jobid, 'as it is running.')
+                        print(
+                            'MyQS cannot delete batch job with jobid',
+                            jobid,
+                            'as it is running.'
+                        )
                     else:
                         info = {}
                         for line in ifile:
                             line = line.strip()
                             if '=' in line:
-                                info[line.split('=')[0]] = line.split('=', 1)[1]
+                                info[line.split('=')[0]] = (
+                                    line.split('=', 1)[1])
                         if 'PGID' in info:
                             try:
                                 pgid = int(info['PGID'])
                             except ValueError:
                                 return
-                            task_mod.Tasks.factory().killpgid(pgid, signal='TERM')
+                            task_mod.Tasks.factory(
+                                ).killpgid(pgid, signal='TERM')
                         try:
                             os.remove(file)
                         except OSError:
                             pass
-                        print('Batch job with jobid', jobid, 'has been deleted from MyQS.')
+                        print(
+                            'Batch job with jobid',
+                            jobid,
+                            'has been deleted from MyQS.'
+                        )
             except OSError:
                 pass
 
@@ -141,12 +165,21 @@ class Main(object):
         self._force_flag = options.get_force_flag()
 
         if 'HOME' not in os.environ:
-            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot determine home directory.')
         self._myqsdir = os.path.join(
-            os.environ['HOME'], '.config', 'myqs', socket.gethostname().split('.')[0].lower())
+            os.environ['HOME'],
+            '.config',
+            'myqs',
+            socket.gethostname().split('.')[0].lower()
+        )
         for jobid in options.get_jobids():
             if not glob.glob(os.path.join(self._myqsdir, jobid + '.[qr]')):
-                print('MyQS cannot delete batch job with jobid', jobid, 'as it does no exist.')
+                print(
+                    'MyQS cannot delete batch job with jobid',
+                    jobid,
+                    'as it does no exist.'
+                )
             else:
                 self._remove(jobid)
 

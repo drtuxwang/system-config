@@ -16,7 +16,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '2.7.5'
+RELEASE = '2.7.6'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -52,13 +52,22 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='MyQS v' + self._release + ', My Queuing System batch scheduler daemon.')
+            description='MyQS v' + self._release +
+            ', My Queuing System batch scheduler daemon.'
+        )
 
         parser.add_argument(
-            '-daemon', dest='daemon_flag', action='store_true', help='Start batch job daemon.')
-
+            '-daemon',
+            dest='daemon_flag',
+            action='store_true',
+            help='Start batch job daemon.'
+        )
         parser.add_argument(
-            'slots', nargs=1, type=int, help='The maximum number of CPU execution slots to create.')
+            'slots',
+            nargs=1,
+            type=int,
+            help='The maximum number of CPU execution slots to create.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -69,11 +78,17 @@ class Options(object):
         self._parse_args(args[1:])
 
         self._myqsdir = os.path.join(
-            os.environ['HOME'], '.config', 'myqs', socket.gethostname().split('.')[0].lower())
+            os.environ['HOME'],
+            '.config',
+            'myqs',
+            socket.gethostname().split('.')[0].lower()
+        )
 
         if self._args.slots[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'the number of slots.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer for '
+                'the number of slots.'
+            )
 
 
 class Lock(object):
@@ -118,7 +133,10 @@ class Lock(object):
                     raise SystemExit(0)
                 else:
                     if not task_mod.Tasks.factory().haspid(os.getpid()):
-                        raise SystemExit(sys.argv[0] + ": Cannot obtain MyQS scheduler lock file.")
+                        raise SystemExit(
+                            sys.argv[0] +
+                            ": Cannot obtain MyQS scheduler lock file."
+                        )
         except OSError:
             return
 
@@ -130,7 +148,10 @@ class Lock(object):
         try:
             os.remove(self._file)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot remove "' + self._file + '" lock file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot remove "' + self._file +
+                '" lock file.'
+            )
 
 
 class Main(object):
@@ -226,7 +247,8 @@ class Main(object):
                         for line in ifile:
                             line = line.strip()
                             if '=' in line:
-                                info[line.split('=')[0]] = line.split('=', 1)[1]
+                                info[line.split('=')[0]] = (
+                                    line.split('=', 1)[1])
                 except OSError:
                     continue
                 if 'QUEUE' in info:
@@ -235,18 +257,28 @@ class Main(object):
                             if free_slots >= int(info['NCPUS']):
                                 jobid = os.path.basename(file)[:-2]
                                 if os.path.isdir(info['DIRECTORY']):
-                                    logfile = os.path.join(info['DIRECTORY'], os.path.basename(
-                                        info['COMMAND']) + '.o' + jobid)
+                                    logfile = os.path.join(
+                                        info['DIRECTORY'],
+                                        os.path.basename(info['COMMAND']) +
+                                        '.o' + jobid
+                                    )
                                 else:
-                                    logfile = os.path.join(os.environ['HOME'], os.path.basename(
-                                        info['COMMAND']) + '.o' + jobid)
+                                    logfile = os.path.join(
+                                        os.environ['HOME'],
+                                        os.path.basename(info['COMMAND']) +
+                                        '.o' + jobid
+                                    )
                                 try:
                                     shutil.move(file, file[:-2] + '.r')
                                 except OSError:
                                     continue
                                 myqexec = command_mod.Command(
-                                    'myqexec', args=['-jobid', jobid], errors='stop')
-                                subtask_mod.Daemon(myqexec.get_cmdline()).run(logfile=logfile)
+                                    'myqexec',
+                                    args=['-jobid', jobid],
+                                    errors='stop'
+                                )
+                                subtask_mod.Daemon(
+                                    myqexec.get_cmdline()).run(logfile=logfile)
                                 return
 
     def _scheduler_daemon(self):
@@ -260,8 +292,10 @@ class Main(object):
             try:
                 os.makedirs(self._myqsdir)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot created "' +
-                                 self._myqsdir + '" directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot created "' +
+                    self._myqsdir + '" directory.'
+                )
         lock = Lock(os.path.join(self._myqsdir, 'myqsd.pid'))
         if lock.check():
             print('Stopping MyQS batch job scheduler...')
@@ -269,7 +303,10 @@ class Main(object):
         else:
             self._restart()
         print('Starting MyQS batch job scheduler...')
-        myqsd = command_mod.CommandFile(__file__, args=['-daemon', str(self._slots)])
+        myqsd = command_mod.CommandFile(
+            __file__,
+            args=['-daemon', str(self._slots)]
+        )
         subtask_mod.Daemon(myqsd.get_cmdline()).run()
 
     def run(self):
@@ -282,7 +319,8 @@ class Main(object):
         self._slots = options.get_slots()
 
         if 'HOME' not in os.environ:
-            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot determine home directory.')
         if options.get_daemon_flag():
             self._scheduler_daemon()
         else:

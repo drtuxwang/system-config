@@ -5,8 +5,6 @@ Zhong Hua Speak Chinese TTS software.
 2009-2016 By Dr Colin Kong
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import argparse
 import glob
 import os
@@ -19,7 +17,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '3.1.3'
+RELEASE = '3.1.4'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
@@ -67,33 +65,106 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Zhong Hua Speak v' + self._release + ', Chinese TTS software.')
+            description='Zhong Hua Speak v' + self._release +
+            'Chinese TTS software.'
+        )
 
-        parser.add_argument('-xclip', action='store_true', dest='xclip_flag',
-                            help='Select text from clipboard (enables single session).')
-        parser.add_argument('-pinyin', action='store_false', dest='sound_flag',
-                            help='Print pinyin tones only.')
-        parser.add_argument('-g', action='store_true', dest='gui_flag', help='Start GUI.')
-        parser.add_argument('-de', action='store_const', const='de', dest='dialect', default='zh',
-                            help='Select Deutsch (German) language.')
-        parser.add_argument('-en', action='store_const', const='en', dest='dialect', default='zh',
-                            help='Select English language.')
-        parser.add_argument('-es', action='store_const', const='es', dest='dialect', default='zh',
-                            help='Select Espanol (Spanish) language.')
-        parser.add_argument('-fr', action='store_const', const='fr', dest='dialect', default='zh',
-                            help='Select French language.')
-        parser.add_argument('-it', action='store_const', const='it', dest='dialect', default='zh',
-                            help='Select Italian language.')
-        parser.add_argument('-ru', action='store_const', const='ru', dest='dialect', default='zh',
-                            help='Select Russian language.')
-        parser.add_argument('-sr', action='store_const', const='sr', dest='dialect', default='zh',
-                            help='Select Serbian language.')
-        parser.add_argument('-zh', action='store_const', const='zh', dest='dialect', default='zh',
-                            help='Select Zhonghua (Mandarin) dialect (default).')
-        parser.add_argument('-zhy', action='store_const', const='zhy', dest='dialect', default='zh',
-                            help='Select Zhonghua Yue (Cantonese) dialect.')
-
-        parser.add_argument('phrases', nargs='*', metavar='phrase', help='Phrases.')
+        parser.add_argument(
+            '-xclip',
+            action='store_true',
+            dest='xclip_flag',
+            help='Select text from clipboard (enables single session).'
+        )
+        parser.add_argument(
+            '-pinyin',
+            action='store_false',
+            dest='sound_flag',
+            help='Print pinyin tones only.'
+        )
+        parser.add_argument(
+            '-g',
+            action='store_true',
+            dest='gui_flag',
+            help='Start GUI.'
+        )
+        parser.add_argument(
+            '-de',
+            action='store_const',
+            const='de',
+            dest='dialect',
+            default='zh',
+            help='Select Deutsch (German) language.'
+        )
+        parser.add_argument(
+            '-en',
+            action='store_const',
+            const='en',
+            dest='dialect',
+            default='zh',
+            help='Select English language.'
+        )
+        parser.add_argument(
+            '-es',
+            action='store_const',
+            const='es',
+            dest='dialect',
+            default='zh',
+            help='Select Espanol (Spanish) language.'
+        )
+        parser.add_argument(
+            '-fr',
+            action='store_const',
+            const='fr',
+            dest='dialect',
+            default='zh',
+            help='Select French language.'
+        )
+        parser.add_argument(
+            '-it',
+            action='store_const',
+            const='it',
+            dest='dialect',
+            default='zh',
+            help='Select Italian language.'
+        )
+        parser.add_argument(
+            '-ru',
+            action='store_const',
+            const='ru',
+            dest='dialect',
+            default='zh',
+            help='Select Russian language.'
+        )
+        parser.add_argument(
+            '-sr',
+            action='store_const',
+            const='sr',
+            dest='dialect',
+            default='zh',
+            help='Select Serbian language.'
+        )
+        parser.add_argument(
+            '-zh',
+            action='store_const',
+            const='zh',
+            dest='dialect',
+            default='zh',
+            help='Select Zhonghua (Mandarin) dialect (default).'
+        )
+        parser.add_argument(
+            '-zhy',
+            action='store_const',
+            const='zhy',
+            dest='dialect',
+            default='zh',
+            help='Select Zhonghua Yue (Cantonese) dialect.'
+        )
+        parser.add_argument(
+            'phrases',
+            nargs='*',
+            metavar='phrase',
+            help='Phrases.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -114,8 +185,10 @@ class Options(object):
         task = subtask_mod.Batch(xclip.get_cmdline())
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
         return task.get_output()
 
     def parse(self, args):
@@ -124,12 +197,17 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._speak_dir = os.path.abspath(os.path.join(
-            os.path.dirname(args[0]), os.pardir, 'zhspeak-data'))
+        self._speak_dir = os.path.abspath(
+            os.path.join(os.path.dirname(args[0]), os.pardir, 'zhspeak-data'))
         if not os.path.isdir(self._speak_dir):
-            zhspeak = command_mod.Command('zhspeak', args=args[1:], errors='ignore')
+            zhspeak = command_mod.Command(
+                'zhspeak',
+                args=args[1:],
+                errors='ignore'
+            )
             if not zhspeak.is_found():
-                raise SystemExit(sys.argv[0] + ': Cannot find "zhspeak-data" directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "zhspeak-data" directory.')
             subtask_mod.Exec(zhspeak.get_cmdline()).run()
 
         if self._args.gui_flag:
@@ -173,15 +251,20 @@ class Chinese(Language):
 
     def __init__(self, options):
         self._options = options
-        self._ogg_dir = os.path.join(options.get_speak_dir(), options.get_dialect() + '_ogg')
+        self._ogg_dir = os.path.join(
+            options.get_speak_dir(),
+            options.get_dialect() + '_ogg'
+        )
         self._dictionary = ChineseDictionary(self._options)
         for player in (Ogg123, Avplay, Ffplay):
             self._ogg_player = player(self._ogg_dir)
             if self._ogg_player.has_player():
                 break
         else:
-            raise SystemExit(sys.argv[0] + ': Cannot find "ogg123" (vorbis-tools),'
-                             ' "ffplay" (libav-tools) or "avplay" (ffmpeg).')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "ogg123" (vorbis-tools),'
+                ' "ffplay" (libav-tools) or "avplay" (ffmpeg).'
+            )
 
     def text2speech(self, phrases):
         """
@@ -193,7 +276,8 @@ class Chinese(Language):
                 if self._options.get_sound_flag():
                     files = []
                     for sound in sounds:
-                        if os.path.isfile(os.path.join(self._ogg_dir, sound + '.ogg')):
+                        if os.path.isfile(
+                                os.path.join(self._ogg_dir, sound + '.ogg')):
                             files.append(sound + '.ogg')
                     if files:
                         # Pause after every 100 words if no punctuation marks
@@ -201,8 +285,10 @@ class Chinese(Language):
                             exitcode = self._ogg_player.run(files[i:i + 10])
                             if exitcode:
                                 raise SystemExit(
-                                    sys.argv[0] + ': Error code ' + str(exitcode) +
-                                    ' received from "' + self._ogg_player.get_player() + '".')
+                                    sys.argv[0] + ': Error code ' +
+                                    str(exitcode) + ' received from "' +
+                                    self._ogg_player.get_player() + '".'
+                                )
                             time.sleep(0.25)
 
 
@@ -237,13 +323,15 @@ class ChineseDictionary(object):
                     if line.startswith('//') or line.startswith('$'):
                         continue
                     elif '\t' in line:
-                        text, sounds = self._isjunk.sub('', line).split('\t')[:2]
+                        text, sounds = self._isjunk.sub(
+                            '', line).split('\t')[:2]
                         self._mappings[text] = []
                         for match in self._issound.finditer(sounds):
                             self._mappings[text].append(match.group())
                         self._max_block = max(self._max_block, len(text))
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" dialect file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot open "' + file + '" dialect file.')
 
     def map_speech(self, text):
         """
@@ -259,7 +347,8 @@ class ChineseDictionary(object):
                     break
             else:
                 if sounds:
-                    yield sounds  # Break speech for non text like punctuation marks
+                    # Break speech for non text like punctuation marks
+                    yield sounds
                     sounds = []
                 i += 1
         yield sounds
@@ -273,15 +362,18 @@ class Espeak(Language):
     def __init__(self, options):
         self._options = options
         self._espeak = command_mod.Command('espeak', errors='stop')
-        self._espeak.set_args(['-a256', '-k30', '-v' + options.get_dialect() + '+f2', '-s120'])
+        self._espeak.set_args(
+            ['-a256', '-k30', '-v' + options.get_dialect() + '+f2', '-s120'])
 
     @staticmethod
     def _show_sounds(cmdline, text):
         task = subtask_mod.Task(cmdline + ['-x', '-q', ' '.join(text)])
         task.run(pattern=': Connection refused')
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
 
     @staticmethod
     def _speak_sounds(cmdline, text):
@@ -291,8 +383,11 @@ class Espeak(Language):
                 task = subtask_mod.Batch(cmdline + [phrase])
                 task.run()
                 if task.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                     ' received from "' + task.get_file() + '".')
+                    raise SystemExit(
+                        sys.argv[0] + ': Error code ' +
+                        str(task.get_exitcode()) +
+                        ' received from "' + task.get_file() + '".'
+                    )
 
     def text2speech(self, text):
         """

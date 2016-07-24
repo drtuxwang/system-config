@@ -13,7 +13,7 @@ import time
 
 import task_mod
 
-RELEASE = '2.7.6'
+RELEASE = '2.7.7'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(sys.argv[0] + ': Requires Python version (>= 3.3, < 4.0).')
@@ -36,7 +36,9 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='MyQS v' + self._release + ', My Queuing System batch job submission.')
+            description='MyQS v' + self._release +
+            ', My Queuing System batch job submission.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -96,7 +98,10 @@ class Main(object):
         print('MyQS batch job scheduler not running. Run "myqsd" command.')
 
     def _showjobs(self):
-        print('JOBID  QUEUENAME  JOBNAME                                     CPUS  STATE  TIME')
+        print(
+            'JOBID  QUEUENAME  JOBNAME                                     '
+            'CPUS  STATE  TIME'
+        )
         jobids = []
         for file in glob.glob(os.path.join(self._myqsdir, '*.[qr]')):
             try:
@@ -105,10 +110,16 @@ class Main(object):
                 pass
         for jobid in sorted(jobids):
             try:
-                ifile = open(os.path.join(self._myqsdir, str(jobid) + '.q'), errors='replace')
+                ifile = open(
+                    os.path.join(self._myqsdir, str(jobid) + '.q'),
+                    errors='replace'
+                )
             except OSError:
                 try:
-                    ifile = open(os.path.join(self._myqsdir, str(jobid) + '.r'), errors='replace')
+                    ifile = open(
+                        os.path.join(self._myqsdir, str(jobid) + '.r'),
+                        errors='replace'
+                    )
                 except OSError:
                     continue
                 state = 'RUN'
@@ -137,12 +148,16 @@ class Main(object):
                 if task_mod.Tasks.factory().haspgid(pgid):
                     if os.path.isdir(info['DIRECTORY']):
                         logfile = os.path.join(
-                            info['DIRECTORY'], os.path.basename(info['COMMAND']) +
-                            '.o' + str(jobid))
+                            info['DIRECTORY'],
+                            os.path.basename(info['COMMAND']) +
+                            '.o' + str(jobid)
+                        )
                     else:
                         logfile = os.path.join(
-                            os.environ['HOME'], os.path.basename(info['COMMAND']) +
-                            '.o' + str(jobid))
+                            os.environ['HOME'],
+                            os.path.basename(info['COMMAND']) +
+                            '.o' + str(jobid)
+                        )
                     try:
                         with open(logfile, errors='replace') as ifile:
                             output = []
@@ -155,7 +170,13 @@ class Main(object):
         else:
             etime = '-'
         print('{0:5d}  {1:9s}  {2:42s}  {3:>3s}   {4:5s} {5:>5s}'.format(
-            jobid, info['QUEUE'], info['COMMAND'], info['NCPUS'], state, etime))
+            jobid,
+            info['QUEUE'],
+            info['COMMAND'],
+            info['NCPUS'],
+            state,
+            etime
+        ))
         for line in output:
             print(line)
 
@@ -166,11 +187,16 @@ class Main(object):
         options = Options()
 
         host = socket.gethostname().split('.')[0].lower()
-        print('\nMyQS', options.get_release(),
-              ', My Queuing System batch job statistics on HOST "' + host + '".\n')
+        print(
+            '\nMyQS', options.get_release(),
+            ', My Queuing System batch job statistics on HOST "' +
+            host + '".\n'
+        )
         if 'HOME' not in os.environ:
-            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
-        self._myqsdir = os.path.join(os.environ['HOME'], '.config', 'myqs', host)
+            raise SystemExit(
+                sys.argv[0] + ': Cannot determine home directory.')
+        self._myqsdir = os.path.join(
+            os.environ['HOME'], '.config', 'myqs', host)
         self._showjobs()
         self._myqsd()
 
