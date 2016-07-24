@@ -28,7 +28,8 @@ class Options(object):
         return self._path
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Check PATH and return correct settings.')
+        parser = argparse.ArgumentParser(
+            description='Check PATH and return correct settings.')
 
         self._args = parser.parse_args(args)
 

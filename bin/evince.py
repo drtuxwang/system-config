@@ -49,7 +49,8 @@ class Main(object):
     @staticmethod
     def _config():
         if 'HOME' in os.environ:
-            file = os.path.join(os.environ['HOME'], '.gnome2', 'evince', 'print-settings')
+            file = os.path.join(
+                os.environ['HOME'], '.gnome2', 'evince', 'print-settings')
             if os.path.isfile(file):
                 try:
                     os.remove(file)
@@ -61,7 +62,11 @@ class Main(object):
         if 'LC_PAPER' not in os.environ:  # Default to A4
             os.environ['LC_PAPER'] = 'en_GB.UTF-8'
         if 'PRINTER' not in os.environ:
-            lpstat = command_mod.Command('lpstat', args=['-d'], errors='ignore')
+            lpstat = command_mod.Command(
+                'lpstat',
+                args=['-d'],
+                errors='ignore'
+            )
             if lpstat.is_found():
                 task = subtask_mod.Background(lpstat.get_cmdline())
                 task.run(pattern='^system default destination: ')
@@ -72,13 +77,20 @@ class Main(object):
         """
         Start program
         """
-        evince = command_mod.Command('evince', args=sys.argv[1:], errors='stop')
-        pattern = ('^$|: Gtk-WARNING | Gtk-CRITICAL | GLib-CRITICAL | Poppler-WARNING |'
-                   ': Failed to create dbus proxy|: invalid matrix |: Page transition|'
-                   'ToUnicode CMap|: Illegal character|^undefined|'
-                   ': Page additional action object.*is wrong type|'
-                   ' Unimplemented annotation:|: No current point in closepath|:'
-                   ' Invalid Font Weight|: invalid value')
+        evince = command_mod.Command(
+            'evince',
+            args=sys.argv[1:],
+            errors='stop'
+        )
+        pattern = (
+            '^$|: Gtk-WARNING | Gtk-CRITICAL | GLib-CRITICAL |'
+            ' Poppler-WARNING |: Failed to create dbus proxy|:'
+            ' invalid matrix |: Page transition|ToUnicode CMap|'
+            ': Illegal character|^undefined|'
+            ': Page additional action object.*is wrong type|'
+            ' Unimplemented annotation:|: No current point in closepath|:'
+            ' Invalid Font Weight|: invalid value'
+        )
         self._config()
         self._setenv()
 

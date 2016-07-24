@@ -29,20 +29,29 @@ class Options(object):
         return self._args.directories
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Recursively link all files.')
+        parser = argparse.ArgumentParser(
+            description='Recursively link all files.')
 
-        parser.add_argument('directories', nargs='+', metavar='directory',
-                            help='Directory containing files to link.')
+        parser.add_argument(
+            'directories',
+            nargs='+',
+            metavar='directory',
+            help='Directory containing files to link.'
+        )
 
         self._args = parser.parse_args(args)
 
         for directory in self._args.directories:
             if not os.path.isdir(directory):
                 raise SystemExit(
-                    sys.argv[0] + ': Source directory "' + directory + '" does not exist.')
+                    sys.argv[0] + ': Source directory "' + directory +
+                    '" does not exist.'
+                )
             elif os.path.samefile(directory, os.getcwd()):
-                raise SystemExit(sys.argv[0] + ': Source directory "' + directory +
-                                 '" cannot be current directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Source directory "' + directory +
+                    '" cannot be current directory.'
+                )
 
     def parse(self, args):
         """
@@ -84,7 +93,10 @@ class Main(object):
 
     def _link_files(self, source_dir, target_dir, subdir=''):
         try:
-            source_files = sorted([os.path.join(source_dir, x) for x in os.listdir(source_dir)])
+            source_files = sorted([
+                os.path.join(source_dir, x)
+                for x in os.listdir(source_dir)
+            ])
         except PermissionError:
             return
         if not os.path.isdir(target_dir):
@@ -92,12 +104,22 @@ class Main(object):
             try:
                 os.mkdir(target_dir)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + target_dir + '" directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' + target_dir +
+                    '" directory.'
+                )
 
         for source_file in sorted(source_files):
-            target_file = os.path.join(target_dir, os.path.basename(source_file))
+            target_file = os.path.join(
+                target_dir,
+                os.path.basename(source_file)
+            )
             if os.path.isdir(source_file):
-                self._link_files(source_file, target_file, os.path.join(os.pardir, subdir))
+                self._link_files(
+                    source_file,
+                    target_file,
+                    os.path.join(os.pardir, subdir)
+                )
             else:
                 if os.path.islink(target_file):
                     print('Updating "' + target_file + '" link...')
@@ -105,16 +127,24 @@ class Main(object):
                         os.remove(target_file)
                     except OSError:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot remove "' + target_file + '" link.')
+                            sys.argv[0] + ': Cannot remove "' + target_file +
+                            '" link.'
+                        )
                 else:
                     print('Creating "' + target_file + '" link...')
                 try:
                     if os.path.isabs(source_file):
                         os.symlink(source_file, target_file)
                     else:
-                        os.symlink(os.path.join(subdir, source_file), target_file)
+                        os.symlink(
+                            os.path.join(subdir, source_file),
+                            target_file
+                        )
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + target_file + '" link.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot create "' +
+                        target_file + '" link.'
+                    )
 
     def run(self):
         """

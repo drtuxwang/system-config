@@ -38,13 +38,21 @@ class Options(object):
         return self._args.recursive_flag
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Show files with same MD5 checksums.')
+        parser = argparse.ArgumentParser(
+            description='Show files with same MD5 checksums.')
 
-        parser.add_argument('-R', dest='recursive_flag', action='store_true',
-                            help='Recursive into sub-directories.')
-
-        parser.add_argument('files', nargs='+', metavar='file|file.md5',
-                            help='File to checksum or ".md5" checksum file.')
+        parser.add_argument(
+            '-R',
+            dest='recursive_flag',
+            action='store_true',
+            help='Recursive into sub-directories.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file|file.md5',
+            help='File to checksum or ".md5" checksum file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -91,14 +99,20 @@ class Main(object):
             if os.path.isdir(file):
                 if not os.path.islink(file) and options.get_recursive_flag():
                     try:
-                        self._calc(
-                            options, sorted([os.path.join(file, x) for x in os.listdir(file)]))
+                        self._calc(options, sorted([
+                            os.path.join(file, x)
+                            for x in os.listdir(file)
+                        ]))
                     except PermissionError:
-                        raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot open "' +
+                            file + '" directory.'
+                        )
             elif os.path.isfile(file):
                 md5sum = self._md5sum(file)
                 if not md5sum:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot read "' + file + '" file.')
                 if md5sum in self._md5files:
                     self._md5files[md5sum].append(file)
                 else:
@@ -115,7 +129,8 @@ class Main(object):
                         break
                     md5.update(chunk)
         except (OSError, TypeError):
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" file.')
         return md5.hexdigest()
 
     def run(self):

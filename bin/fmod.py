@@ -50,22 +50,59 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Set file access mode.')
 
-        parser.add_argument('-R', dest='recursive_flag', action='store_true',
-                            help='Set mod of directories recursively.')
-        parser.add_argument('-r', dest='mode', action='store_const', const='r',
-                            help='Set read-only permission for user.')
-        parser.add_argument('-rg', dest='mode', action='store_const', const='rg',
-                            help='Set read-only permission for user and group.')
-        parser.add_argument('-ra', dest='mode', action='store_const', const='ra',
-                            help='Set read-only permission for everyone.')
-        parser.add_argument('-w', dest='mode', action='store_const', const='w',
-                            help='Set read-write permission for user.')
-        parser.add_argument('-wg', dest='mode', action='store_const', const='wg',
-                            help='Set read-write permission for user and read for group.')
-        parser.add_argument('-wa', dest='mode', action='store_const', const='wa',
-                            help='Set read-write permission for user and read for others.')
-
-        parser.add_argument('files', nargs='+', metavar='file', help='File or directory.')
+        parser.add_argument(
+            '-R',
+            dest='recursive_flag',
+            action='store_true',
+            help='Set mod of directories recursively.'
+        )
+        parser.add_argument(
+            '-r',
+            dest='mode',
+            action='store_const', const='r',
+            help='Set read-only permission for user.'
+        )
+        parser.add_argument(
+            '-rg',
+            dest='mode',
+            action='store_const',
+            const='rg',
+            help='Set read-only permission for user and group.'
+        )
+        parser.add_argument(
+            '-ra',
+            dest='mode',
+            action='store_const',
+            const='ra',
+            help='Set read-only permission for everyone.'
+        )
+        parser.add_argument(
+            '-w',
+            dest='mode',
+            action='store_const',
+            const='w',
+            help='Set read-write permission for user.'
+        )
+        parser.add_argument(
+            '-wg',
+            dest='mode',
+            action='store_const',
+            const='wg',
+            help='Set read-write permission for user and read for group.'
+        )
+        parser.add_argument(
+            '-wa',
+            dest='mode',
+            action='store_const',
+            const='wa',
+            help='Set read-write permission for user and read for others.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -137,7 +174,10 @@ class Main(object):
             print('Permission denied:', directory + os.sep)
         if self._recursive_flag:
             try:
-                self._setmod([os.path.join(directory, x) for x in os.listdir(directory)])
+                self._setmod([
+                    os.path.join(directory, x)
+                    for x in os.listdir(directory)
+                ])
             except PermissionError:
                 pass
 
@@ -171,7 +211,8 @@ class Main(object):
                 elif os.path.isfile(file):
                     self._setmod_file(file)
                 else:
-                    raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot find "' + file + '" file.')
 
     def run(self):
         """
@@ -179,18 +220,26 @@ class Main(object):
         """
         options = Options()
 
-        #   127 ELF,      202 254 186 190      207 250 237 254      206 250 237 254
-        #  linux/sunos   macos-x86/x86_64       macos-x86_64           macos-x86
+        #   127 ELF,      202 254 186 190   207 250 237 254   206 250 237 254
+        #  linux/sunos   macos-x86/x86_64    macos-x86_64        macos-x86
         self._exe_magics = (
-            b'\177ELF', b'\312\376\272\276', b'\317\372\355\376', b'\316\372\355\376')
+            b'\177ELF',
+            b'\312\376\272\276',
+            b'\317\372\355\376',
+            b'\316\372\355\376'
+        )
         self._is_exe_ext = re.compile(
-            '[.](bat|cmd|com|dll|exe|ms[ip]|psd|sfx|s[olh]|s[ol][.].*|tcl)$', re.IGNORECASE)
+            '[.](bat|cmd|com|dll|exe|ms[ip]|psd|sfx|s[olh]|s[ol][.].*|tcl)$',
+            re.IGNORECASE
+        )
         self._is_not_exe_ext = re.compile(
-            '[.](7z|[acfo]|ace|asr|avi|bak|blacklist|bmp|bz2|cpp|crt|css|dat|deb|diz|doc|'
-            'docx|f77|f90|gif|gz|h|hlp|htm|html|ico|ini|installed|ism|iso|jar|java|jpg|'
-            'jpeg|js|json|key|lic|lib|list|log|mov|mp[34g]|mpeg|o|obj|od[fgst]|ogg|opt|pdf|'
-            'png|ppt|pptx|rar|reg|rpm|swf|tar|txt|url|wsdl|xhtml|xls|xlsx|xml|xs[dl]|'
-            'xvid|zip)$', re.IGNORECASE)
+            '[.](7z|[acfo]|ace|asr|avi|bak|blacklist|bmp|bz2|cpp|crt|css|dat|'
+            'deb|diz|doc|docx|f77|f90|gif|gz|h|hlp|htm|html|ico|ini|installed|'
+            'ism|iso|jar|java|jpg|jpeg|js|json|key|lic|lib|list|log|mov|'
+            'mp[34g]|mpeg|o|obj|od[fgst]|ogg|opt|pdf|png|ppt|pptx|rar|reg|rpm|'
+            'swf|tar|txt|url|wsdl|xhtml|xls|xlsx|xml|xs[dl]|xvid|zip)$',
+            re.IGNORECASE
+        )
 
         self._recursive_flag = options.get_recursive_flag()
         self._fmod = options.get_fmod()

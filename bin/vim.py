@@ -61,8 +61,10 @@ class Main(object):
         task = subtask_mod.Task(command.get_cmdline() + sys.argv[1:])
         task.run()
         if task.get_exitcode():
-            print(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) + ' received from "' +
-                  task.get_file() + '".', file=sys.stderr)
+            print(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".', file=sys.stderr
+            )
             raise SystemExit(task.get_exitcode())
 
 

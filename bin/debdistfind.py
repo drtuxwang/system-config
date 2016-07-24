@@ -36,13 +36,23 @@ class Options(object):
         return self._args.patterns
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Search for packages that match regular '
-                                                     'expression in Debian package file.')
+        parser = argparse.ArgumentParser(
+            description='Search for packages that match regular '
+            'expression in Debian package file.'
+        )
 
-        parser.add_argument('packages_file', nargs=1, metavar='distribution.package',
-                            help='Debian package file.')
-        parser.add_argument('patterns', nargs='+', metavar='pattern',
-                            help='Regular expression.')
+        parser.add_argument(
+            'packages_file',
+            nargs=1,
+            metavar='distribution.package',
+            help='Debian package file.'
+        )
+        parser.add_argument(
+            'patterns',
+            nargs='+',
+            metavar='pattern',
+            help='Regular expression.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -128,29 +138,42 @@ class Main(object):
                     if line.startswith('Package: '):
                         name = line.replace('Package: ', '')
                     elif line.startswith('Version: '):
-                        package.set_version(line.replace('Version: ', '', 1).split(':')[-1])
+                        package.set_version(
+                            line.replace('Version: ', '', 1).split(':')[-1])
                     elif line.startswith('Installed-Size: '):
                         try:
-                            package.set_size(int(line.replace('Installed-Size: ', '', 1)))
+                            package.set_size(
+                                int(line.replace('Installed-Size: ', '', 1)))
                         except ValueError:
-                            raise SystemExit(sys.argv[0] + ': Package "' + name +
-                                             '" in "/var/lib/dpkg/info" has non integer size.')
+                            raise SystemExit(
+                                sys.argv[0] + ': Package "' + name +
+                                '" in "/var/lib/dpkg/info" '
+                                'has non integer size.'
+                            )
                     elif line.startswith('Description: '):
-                        package.set_description(line.replace('Description: ', '', 1))
+                        package.set_description(
+                            line.replace('Description: ', '', 1))
                         self._packages[name] = package
                         package = Package('', '0', '')
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + packages_file + '" packages file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + packages_file +
+                '" packages file.'
+            )
 
     def _search_distribution_packages(self, patterns):
         for pattern in patterns:
             ispattern = re.compile(pattern, re.IGNORECASE)
             for name, package in sorted(self._packages.items()):
-                if (ispattern.search(name) or
-                        ispattern.search(self._packages[name].get_description())):
+                if ispattern.search(name) or ispattern.search(
+                        self._packages[name].get_description()
+                ):
                     print('{0:25s} {1:15s} {2:5d}KB {3:s}'.format(
-                        name.split(':')[0], package.get_version(), package.get_size(),
-                        package.get_description()))
+                        name.split(':')[0],
+                        package.get_version(),
+                        package.get_size(),
+                        package.get_description()
+                    ))
 
     @staticmethod
     def config():

@@ -39,24 +39,33 @@ class Options(object):
         return self._archive
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Make a compressed archive in 7z format.')
+        parser = argparse.ArgumentParser(
+            description='Make a compressed archive in 7z format.')
 
-        parser.add_argument('-split', nargs=1, type=int, metavar='bytes',
-                            help='Split archive into chucks with selected size.')
-        parser.add_argument('-threads', nargs=1, type=int, default=[2],
-                            help='Threads are faster but decrease quality. Default is 2.')
-        parser.add_argument('archive', nargs=1, metavar='file.7z|file.bin|file.exe|directory',
-                            help='Archive file or directory.')
-        parser.add_argument('files', nargs='*', metavar='file',
-                            help='File or directory.')
+        parser.add_argument(
+            '-split', nargs=1, type=int, metavar='bytes',
+            help='Split archive into chucks with selected size.')
+        parser.add_argument(
+            '-threads', nargs=1, type=int, default=[2],
+            help='Threads are faster but decrease quality. Default is 2.')
+        parser.add_argument(
+            'archive', nargs=1, metavar='file.7z|file.bin|file.exe|directory',
+            help='Archive file or directory.')
+        parser.add_argument(
+            'files', nargs='*', metavar='file', help='File or directory.')
 
         self._args = parser.parse_args(args)
 
         if self._args.split and self._args.split[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for split size.')
+            raise SystemExit(
+                sys.argv[0] +
+                ': You must specific a positive integer for split size.'
+            )
         if self._args.threads[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'number of threads.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer for '
+                'number of threads.'
+            )
 
     @staticmethod
     def _setenv():
@@ -79,11 +88,23 @@ class Options(object):
             self._archiver.extend_args(['-v' + str(self._args.split[0]) + 'b'])
 
         if self._args.threads[0] == '1':
-            self._archiver.set_args(
-                ['a', '-m0=lzma', '-mmt=' + str(self._args.threads[0]), '-mx=9', '-ms=on', '-y'])
+            self._archiver.set_args([
+                'a',
+                '-m0=lzma',
+                '-mmt=' + str(self._args.threads[0]),
+                '-mx=9',
+                '-ms=on',
+                '-y'
+            ])
         else:
-            self._archiver.set_args(
-                ['a', '-m0=lzma2', '-mmt=' + str(self._args.threads[0]), '-mx=9', '-ms=on', '-y'])
+            self._archiver.set_args([
+                'a',
+                '-m0=lzma2',
+                '-mmt=' + str(self._args.threads[0]),
+                '-mx=9',
+                '-ms=on',
+                '-y'
+            ])
 
         if os.path.isdir(self._args.archive[0]):
             self._archive = os.path.abspath(self._args.archive[0]) + '.7z'
@@ -117,16 +138,20 @@ class Main(object):
     def _check_sfx(archiver, archive):
         file = os.path.basename(archive)
         if file.endswith('.bin'):
-            sfx = os.path.join(os.path.dirname(archiver.get_file()), '7zCon.sfx')
+            sfx = os.path.join(
+                os.path.dirname(archiver.get_file()), '7zCon.sfx')
         elif file.endswith('.exe'):
-            sfx = os.path.join(os.path.dirname(archiver.get_file()), '7zExe.sfx')
+            sfx = os.path.join(
+                os.path.dirname(archiver.get_file()), '7zExe.sfx')
         else:
             return ''
 
         if not os.path.isfile(sfx):
-            archiver = command_mod.Command(archiver.get_file(), args=sys.argv[1:], errors='ignore')
+            archiver = command_mod.Command(
+                archiver.get_file(), args=sys.argv[1:], errors='ignore')
             if not archiver.is_found():
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + sfx + '" SFX file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + sfx + '" SFX file.')
             subtask_mod.Exec(archiver.get_cmdline()).run()
         return sfx
 
@@ -137,7 +162,8 @@ class Main(object):
                 with open(sfx, 'rb') as ifile:
                     self._copy(ifile, ofile)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot read "' + sfx + '" SFX file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "' + sfx + '" SFX file.')
             with open(archive, 'rb') as ifile:
                 self._copy(ifile, ofile)
 

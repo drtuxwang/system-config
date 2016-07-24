@@ -30,10 +30,15 @@ class Options(object):
         return self._args.files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Replace symbolic link to files with copies.')
+        parser = argparse.ArgumentParser(
+            description='Replace symbolic link to files with copies.')
 
-        parser.add_argument('files', nargs='+', metavar='file',
-                            help='Symbolic link to file.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='Symbolic link to file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -80,13 +85,15 @@ class Main(object):
         try:
             os.remove(file)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot remove "' + file + '" link.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot remove "' + file + '" link.')
 
         try:
             shutil.copy2(target, file)
         except OSError as exception:
-            if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
-                raise SystemExit(sys.argv[0] + ': Cannot copy "' + target + '" file.')
+            if exception.args != (95, 'Operation not supported'):
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot copy "' + target + '" file.')
 
     def run(self):
         """
@@ -99,7 +106,8 @@ class Main(object):
                 try:
                     link = os.readlink(file)
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" link.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot read "' + file + '" link.')
                 target = os.path.join(os.path.dirname(file), link)
                 if os.path.isfile(target):
                     print('Copy file:', file, '->', target)
@@ -107,7 +115,8 @@ class Main(object):
                 elif not os.path.isdir(target):
                     print('Null link:', file, '->', link)
             elif not os.path.exists(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" file.')
 
 
 if __name__ == '__main__':

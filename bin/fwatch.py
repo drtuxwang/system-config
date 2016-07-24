@@ -32,10 +32,15 @@ class Options(object):
         return self._inotifywait
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Watch file system events.')
+        parser = argparse.ArgumentParser(
+            description='Watch file system events.')
 
-        parser.add_argument('directories', nargs='+', metavar='directory',
-                            help='Directory to monitor.')
+        parser.add_argument(
+            'directories',
+            nargs='+',
+            metavar='directory',
+            help='Directory to monitor.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -46,8 +51,11 @@ class Options(object):
         self._parse_args(args[1:])
 
         self._inotifywait = command_mod.Command('inotifywait', errors='stop')
-        self._inotifywait.set_args(
-            ['-e', 'create,modify,move,delete', '-mr'] + self._args.directories)
+        self._inotifywait.set_args([
+            '-e',
+            'create,modify,move,delete',
+            '-mr'
+        ] + self._args.directories)
 
 
 class Main(object):

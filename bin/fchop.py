@@ -37,11 +37,20 @@ class Options(object):
         return self._max_size
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Chop up a file into chunks.')
+        parser = argparse.ArgumentParser(
+            description='Chop up a file into chunks.')
 
-        parser.add_argument('file', nargs=1, help='File to break up.')
-        parser.add_argument('size', nargs=1, metavar='bytes|nMB',
-                            help='Maximum chunk size to break up.')
+        parser.add_argument(
+            'file',
+            nargs=1,
+            help='File to break up.'
+        )
+        parser.add_argument(
+            'size',
+            nargs=1,
+            metavar='bytes|nMB',
+            help='Maximum chunk size to break up.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -58,9 +67,13 @@ class Options(object):
             else:
                 self._max_size = int(size)
         except ValueError:
-            raise SystemExit(sys.argv[0] + ': You must specific an integer for chunksize.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific an integer for chunksize.')
         if self._max_size < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for chunksize.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer '
+                'for chunksize.'
+            )
 
 
 class Main(object):
@@ -112,10 +125,12 @@ class Main(object):
 
         try:
             with open(options.get_file(), 'rb') as ifile:
-                for part in range(int(file_mod.FileStat(
-                        options.get_file()).get_size()/options.get_max_size() + 1)):
+                for part in range(int(
+                        file_mod.FileStat(options.get_file()).get_size(
+                            )/options.get_max_size() + 1)):
                     try:
-                        file = options.get_file() + '.' + str(part + 1).zfill(3)
+                        file = options.get_file(
+                            ) + '.' + str(part + 1).zfill(3)
                         with open(file, 'wb') as ofile:
                             print(file + '...')
                             self._copy(ifile, ofile)
@@ -123,7 +138,10 @@ class Main(object):
                         raise SystemExit(sys.argv[0] + ': Cannot create "' +
                                          str(part + 1).zfill(3) + '" file.')
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + options.get_file() + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + options.get_file() +
+                '" file.'
+            )
 
 
 if __name__ == '__main__':

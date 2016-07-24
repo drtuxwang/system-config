@@ -34,11 +34,17 @@ class Options(object):
         return self._args.list_files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Check whether installed debian packages in '
-                                                     '".debs" list have updated versions.')
+        parser = argparse.ArgumentParser(
+            description='Check whether installed debian packages in '
+            '".debs" list have updated versions.'
+        )
 
-        parser.add_argument('list_files', nargs='+', metavar='distribution.debs',
-                            help='Debian installed packages list file.')
+        parser.add_argument(
+            'list_files',
+            nargs='+',
+            metavar='distribution.debs',
+            help='Debian installed packages list file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -128,7 +134,8 @@ class Main(object):
                     if line.startswith('Package: '):
                         name = line.replace('Package: ', '')
                     elif line.startswith('Version: '):
-                        package.set_version(line.replace('Version: ', '').split(':')[-1])
+                        package.set_version(
+                            line.replace('Version: ', '').split(':')[-1])
                     elif line.startswith('Depends: '):
                         depends = []
                         for i in line.replace('Depends: ', '').split(', '):
@@ -139,7 +146,10 @@ class Main(object):
                         packages[name] = package
                         package = Package()
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot open "' + packages_file + '" packages file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot open "' + packages_file +
+                '" packages file.'
+            )
         return packages
 
     def _read_distribution_pin_packages(self, pin_file):
@@ -151,12 +161,16 @@ class Main(object):
                     if len(columns) != 0:
                         pattern = columns[0]
                         if pattern[:1] != '#':
-                            file = os.path.join(os.path.dirname(pin_file), columns[1]) + '.packages'
+                            file = os.path.join(
+                                os.path.dirname(pin_file),
+                                columns[1]
+                            ) + '.packages '
                             if file not in packages_cache:
-                                packages_cache[file] = self._read_distribution_packages(file)
+                                packages_cache[file] = (
+                                    self._read_distribution_packages(file))
                             try:
-                                ispattern = re.compile(
-                                    pattern.replace('?', '.').replace('*', '.*')+'$')
+                                ispattern = re.compile(pattern.replace(
+                                    '?', '.').replace('*', '.*')+'$')
                             except sre_constants.error:
                                 continue
                             for key, value in packages_cache[file].items():
@@ -175,7 +189,8 @@ class Main(object):
                         if name[:1] != '#':
                             if name in self._packages:
                                 if (columns[1] == '*' or
-                                        columns[1] == self._packages[name].get_version()):
+                                        columns[1] ==
+                                        self._packages[name].get_version()):
                                     del self._packages[name]
         except OSError:
             return
@@ -189,29 +204,44 @@ class Main(object):
                         try:
                             name, version = line.split()[:2]
                         except ValueError:
-                            raise SystemExit(sys.argv[0] + ': Format error in "' +
-                                             os.path.join(distribution, 'packages.ilist') + '".')
+                            raise SystemExit(
+                                sys.argv[0] + ': Format error in "' +
+                                os.path.join(
+                                    distribution,
+                                    'packages.ilist'
+                                    ) + '".')
                         versions[name] = version
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + list_file + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + list_file + '" file.')
 
-        urlfile = os.path.basename(distribution) + list_file.split('.debs')[-1]+'.url'
+        urlfile = os.path.basename(
+            distribution) + list_file.split('.debs')[-1]+'.url'
         try:
             with open(urlfile, 'w', newline='\n') as ofile:
                 for name, version in sorted(versions.items()):
                     if name in self._packages:
                         if self._packages[name].get_version() != version:
-                            file = self._local(distribution, self._packages[name].get_url())
+                            file = self._local(
+                                distribution,
+                                self._packages[name].get_url()
+                            )
                             print(file, '(Replaces', version + ')')
                             print(file, file=ofile)
-                            for name in sorted(
-                                    self._depends(versions, self._packages[name].get_depends())):
+                            for name in sorted(self._depends(
+                                    versions,
+                                    self._packages[name].get_depends()
+                            )):
                                 if name in self._packages:
-                                    file = self._local(distribution, self._packages[name].get_url())
+                                    file = self._local(
+                                        distribution,
+                                        self._packages[name].get_url()
+                                    )
                                     print('  ' + file, '(New dependency)')
                                     print('  ' + file, file=ofile)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' + urlfile + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + urlfile + '" file.')
         if os.path.getsize(urlfile) == 0:
             os.remove(urlfile)
 
@@ -222,7 +252,10 @@ class Main(object):
                 versions[name] = ''
                 names.append(name)
                 if name in self._packages:
-                    names.extend(self._depends(versions, self._packages[name].get_depends()))
+                    names.extend(self._depends(
+                        versions,
+                        self._packages[name].get_depends()
+                    ))
         return names
 
     @staticmethod
@@ -264,9 +297,12 @@ class Main(object):
                         print('\nChecking "' + list_file + '" list file...')
                         self._packages = self._read_distribution_packages(
                             distribution + '.packages')
-                        self._read_distribution_pin_packages(distribution + '.pinlist')
-                        self._read_distribution_blacklist(distribution + '.blacklist')
-                        self._check_distribution_updates(distribution, list_file)
+                        self._read_distribution_pin_packages(
+                            distribution + '.pinlist')
+                        self._read_distribution_blacklist(
+                            distribution + '.blacklist')
+                        self._check_distribution_updates(
+                            distribution, list_file)
 
 
 if __name__ == '__main__':

@@ -49,20 +49,51 @@ class Options(object):
         return self._args.reverse_flag
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Show full list of files.')
+        parser = argparse.ArgumentParser(
+            description='Show full list of files.')
 
-        parser.add_argument('-R', dest='recursive_flag', action='store_true',
-                            help='Show directories recursively.')
-        parser.add_argument('-s', action='store_const', const='size', dest='order',
-                            default='name', help='Sort by size of file.')
-        parser.add_argument('-t', action='store_const', const='mtime', dest='order',
-                            default='name', help='Sort by modification time of file.')
-        parser.add_argument('-c', action='store_const', const='ctime', dest='order',
-                            default='name', help='Sort by meta data change time of file.')
-        parser.add_argument('-r', dest='reverse_flag', action='store_true',
-                            help='Reverse order.')
-
-        parser.add_argument('files', nargs='*', metavar='file', help='File or directory.')
+        parser.add_argument(
+            '-R',
+            dest='recursive_flag',
+            action='store_true',
+            help='Show directories recursively.'
+        )
+        parser.add_argument(
+            '-s',
+            action='store_const',
+            const='size',
+            dest='order',
+            default='name',
+            help='Sort by size of file.'
+        )
+        parser.add_argument(
+            '-t',
+            action='store_const',
+            const='mtime',
+            dest='order',
+            default='name',
+            help='Sort by modification time of file.'
+        )
+        parser.add_argument(
+            '-c',
+            action='store_const',
+            const='ctime',
+            dest='order',
+            default='name',
+            help='Sort by meta data change time of file.'
+        )
+        parser.add_argument(
+            '-r',
+            dest='reverse_flag',
+            action='store_true',
+            help='Reverse order.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='*',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -119,11 +150,17 @@ class Main(object):
             elif os.path.isfile(file):
                 file_stats.append(file_mod.FileStat(file))
         for file_stat in self._sorted(options, file_stats):
-            print('{0:10d} [{1:s}] {2:s}'.format(file_stat.get_size(), file_stat.get_time_local(),
-                                                 file_stat.get_file()))
-            if options.get_recursive_flag() and file_stat.get_file().endswith(os.sep):
-                self._list(options, sorted(glob.glob(
-                    file_stat.get_file() + '.*') + glob.glob(file_stat.get_file() + '*')))
+            print('{0:10d} [{1:s}] {2:s}'.format(
+                file_stat.get_size(),
+                file_stat.get_time_local(),
+                file_stat.get_file()
+            ))
+            if (options.get_recursive_flag() and
+                    file_stat.get_file().endswith(os.sep)):
+                self._list(options, sorted(
+                    glob.glob(file_stat.get_file() + '.*') +
+                    glob.glob(file_stat.get_file() + '*')
+                ))
         return
 
     @staticmethod

@@ -113,7 +113,8 @@ class Main(object):
             except OSError:
                 pass
 
-        print('Filesystem       1K-blocks       Used  Available Use% Mounted on')
+        print(
+            'Filesystem       1K-blocks       Used  Available Use% Mounted on')
         for mount in self._mounts:
             self._command.set_args([mount])
             thread = CommandThread(self._command)
@@ -124,15 +125,19 @@ class Main(object):
                     thread.kill()
                     break
             try:
-                device, blocks, used, avail, ratio, directory = thread.get_output().split()[-6:]
+                device, blocks, used, avail, ratio, directory = (
+                    thread.get_output().split()[-6:])
                 if int(blocks) != 0:
                     if device in devices:  # Map UUID to device
                         device = devices[device]
                     if len(device) > 15:
                         print(device)
                         device = ''
-                    print('{0:15s} {1:>10s} {2:>10s} {3:>10s} {4:>4s} {5:s}'.format(
-                        device, blocks, used, avail, ratio, directory))
+                    print(
+                        '{0:15s} {1:>10s} {2:>10s} {3:>10s} '
+                        '{4:>4s} {5:s}'.format(
+                            device, blocks, used, avail, ratio, directory)
+                    )
             except (IndexError, ValueError):
                 continue
 

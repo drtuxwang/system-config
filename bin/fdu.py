@@ -39,11 +39,19 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Show file disk usage.')
 
-        parser.add_argument('-s', dest='summary_flag', action='store_true',
-                            help='Show summary only.')
-
-        parser.add_argument('files', nargs='*', default=[os.curdir], metavar='file',
-                            help='File or directory.')
+        parser.add_argument(
+            '-s',
+            dest='summary_flag',
+            action='store_true',
+            help='Show summary only.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='*',
+            default=[os.curdir],
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -90,13 +98,15 @@ class Main(object):
         try:
             files = [os.path.join(directory, x) for x in os.listdir(directory)]
         except PermissionError:
-            raise SystemExit(sys.argv[0] + ': Cannot open "' + directory + '" directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot open "' + directory + '" directory.')
         for file in sorted(files):
             if not os.path.islink(file):
                 if os.path.isdir(file):
                     size += self._usage(options, file)
                 else:
-                    size += int((file_mod.FileStat(file).get_size() + 1023) / 1024)
+                    size += int(
+                        (file_mod.FileStat(file).get_size() + 1023) / 1024)
         if not options.get_summary_flag():
             print('{0:7d} {1:s}'.format(size, directory))
         return size
@@ -116,7 +126,8 @@ class Main(object):
                     if options.get_summary_flag():
                         print('{0:7d} {1:s}'.format(size, file))
                 elif os.path.isfile(file):
-                    size = int((file_mod.FileStat(file).get_size() + 1023) / 1024)
+                    size = int(
+                        (file_mod.FileStat(file).get_size() + 1023) / 1024)
                     print('{0:7d} {1:s}'.format(size, file))
                 else:
                     print('{0:7d} {1:s}'.format(0, file))

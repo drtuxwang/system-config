@@ -31,9 +31,15 @@ class Options(object):
         return self._args.files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Create wrapper to run script/executable.')
+        parser = argparse.ArgumentParser(
+            description='Create wrapper to run script/executable.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='Script/executable to wrap.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='Script/executable to wrap.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -86,7 +92,11 @@ class Main(object):
                 print('MYDIR=$(dirname "$0")', file=ofile)
                 if file == os.path.abspath(file):
                     directory = os.path.dirname(file)
-                    print('PATH=$(echo "$PATH" | sed -e "s@$MYDIR@' + directory + '@")', file=ofile)
+                    print(
+                        'PATH=$(echo "$PATH" | sed -e "s@$MYDIR@' +
+                        directory + '@")',
+                        file=ofile
+                    )
                     print('export PATH\n', file=ofile)
                     print('exec "' + file + '" "$@"', file=ofile)
                 else:
@@ -96,7 +106,8 @@ class Main(object):
             file_time = file_mod.FileStat(file).get_time()
             os.utime(link, (file_time, file_time))
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' + link + '" wrapper file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + link + '" wrapper file.')
 
     def run(self):
         """
@@ -107,13 +118,16 @@ class Main(object):
         self._files = options.get_files()
         for file in self._files:
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" file.')
 
             link = os.path.basename(file)
             if os.path.exists(link):
-                print('Updating "', link, '" wrapper for "', file, '"...', sep='')
+                print('Updating "{0:s}" wrapper for "{1:s}"...'.format(
+                    link, file))
             else:
-                print('Creating "', link, '" wrapper for "', file, '"...', sep='')
+                print('Creating "{0:%}" wrapper for "{1:s}"...'.format(
+                    link, file))
             self._create(file, link)
 
 

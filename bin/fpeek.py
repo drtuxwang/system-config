@@ -46,12 +46,24 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Dump the first and last few bytes of a binary file.')
 
-        parser.add_argument('-a', dest='all_flag', action='store_true',
-                            help='Show contents of the whole file.')
-        parser.add_argument('-c', dest='ascii_flag', action='store_true',
-                            help='Show contents as ASCII characters.')
-
-        parser.add_argument('files', nargs=1, metavar='file', help='File to view.')
+        parser.add_argument(
+            '-a',
+            dest='all_flag',
+            action='store_true',
+            help='Show contents of the whole file.'
+        )
+        parser.add_argument(
+            '-c',
+            dest='ascii_flag',
+            action='store_true',
+            help='Show contents as ASCII characters.'
+        )
+        parser.add_argument(
+            'files',
+            nargs=1,
+            metavar='file',
+            help='File to view.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -126,19 +138,29 @@ class Main(object):
                     if options.get_all_flag() or file_stat.get_size() < 128:
                         for position in range(1, file_stat.get_size() + 1, 16):
                             print('{0:07d}{1:s}'.format(
-                                position, self._format(options, ifile.read(16))))
+                                position,
+                                self._format(options, ifile.read(16))
+                            ))
                     else:
                         for position in range(1, 65, 16):
                             print('{0:07d}{1:s}'.format(
-                                position, self._format(options, ifile.read(16))))
+                                position,
+                                self._format(options, ifile.read(16))
+                            ))
                         print('...')
                         ifile.seek(file_stat.get_size() - 64)
                         for position in range(
-                                file_stat.get_size() - 63, file_stat.get_size() + 1, 16):
+                                file_stat.get_size() - 63,
+                                file_stat.get_size() + 1,
+                                16
+                        ):
                             print('{0:07d}{1:s}'.format(
-                                position, self._format(options, ifile.read(16))))
+                                position,
+                                self._format(options, ifile.read(16))
+                            ))
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "' + file + '" file.')
 
 
 if __name__ == '__main__':

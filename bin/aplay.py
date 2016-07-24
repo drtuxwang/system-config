@@ -45,14 +45,27 @@ class Options(object):
         return self._args.view_flag
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Play MP3/OGG/WAV audio files in directory.')
+        parser = argparse.ArgumentParser(
+            description='Play MP3/OGG/WAV audio files in directory.')
 
-        parser.add_argument('-s', dest='shuffle_flag', action='store_true',
-                            help='Shuffle order of the media files.')
-        parser.add_argument('-v', dest='view_flag', action='store_true',
-                            help='View information.')
-        parser.add_argument('directories', nargs='+', metavar='directory',
-                            help='Audio directory.')
+        parser.add_argument(
+            '-s',
+            dest='shuffle_flag',
+            action='store_true',
+            help='Shuffle order of the media files.'
+        )
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help='View information.'
+        )
+        parser.add_argument(
+            'directories',
+            nargs='+',
+            metavar='directory',
+            help='Audio directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -112,7 +125,10 @@ class Main(object):
             play.set_args(['-v'])
         for directory in options.get_directories():
             if not os.path.isdir(directory):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + directory + '" media directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + directory +
+                    '" media directory.'
+                )
             files = self._getfiles(directory, '*.mp3', '*.ogg', '*.wav')
             if options.get_shuffle_flag():
                 random.shuffle(files)
@@ -121,8 +137,10 @@ class Main(object):
         task = subtask_mod.Task(play.get_cmdline())
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
 
 
 if __name__ == '__main__':

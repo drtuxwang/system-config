@@ -38,9 +38,17 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Find file or directory.')
 
-        parser.add_argument('pattern', nargs=1, help='Regular expression.')
-        parser.add_argument('directories', nargs='+', metavar='directory',
-                            help='Directory to search.')
+        parser.add_argument(
+            'pattern',
+            nargs=1,
+            help='Regular expression.'
+        )
+        parser.add_argument(
+            'directories',
+            nargs='+',
+            metavar='directory',
+            help='Directory to search.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -86,9 +94,15 @@ class Main(object):
         for file in sorted(files):
             if os.path.isdir(file) and not os.path.islink(file):
                 try:
-                    self._find([os.path.join(file, x) for x in os.listdir(file)])
+                    self._find([
+                        os.path.join(file, x)
+                        for x in os.listdir(file)
+                    ])
                 except PermissionError:
-                    raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot open "' + file +
+                        '" directory.'
+                    )
 
             elif self._ispattern.search(file):
                 print(file)

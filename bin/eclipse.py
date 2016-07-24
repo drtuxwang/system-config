@@ -53,10 +53,20 @@ class Main(object):
         """
         eclipse = command_mod.Command('eclipse', errors='stop')
         if len(sys.argv) == 1:
-            java = command_mod.Command(os.path.join('bin', 'java'), errors='stop')
-            args = ['-vm', java.get_file(), '-vmargs', '-Xms2048m',
-                    '-Xmx2048m', '-XX:PermSize=8192m', '-XX:MaxPermSize=8192m',
-                    '-XX:-UseCompressedOops']
+            java = command_mod.Command(
+                os.path.join('bin', 'java'),
+                errors='stop'
+            )
+            args = [
+                '-vm',
+                java.get_file(),
+                '-vmargs',
+                '-Xms2048m',
+                '-Xmx2048m',
+                '-XX:PermSize=8192m',
+                '-XX:MaxPermSize=8192m',
+                '-XX:-UseCompressedOops'
+            ]
         else:
             args = sys.argv[1:]
 

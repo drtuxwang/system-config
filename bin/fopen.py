@@ -32,9 +32,15 @@ class Options(object):
         return self._args.files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Open files using default application.')
+        parser = argparse.ArgumentParser(
+            description='Open files using default application.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='File to open.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File to open.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -108,8 +114,10 @@ class Main(object):
                 self._spawn('firefox', file)
             elif extension in ('jpg', 'jpeg', 'png'):
                 self._spawn('gimp', file)
-            elif extension in ('doc', 'docx', 'odf', 'odg', 'ods', 'odt', 'ppt',
-                               'pptx', 'wpd', 'xls', 'xlsx'):
+            elif extension in (
+                    'doc', 'docx', 'odf', 'odg', 'ods', 'odt', 'ppt',
+                    'pptx', 'wpd', 'xls', 'xlsx'
+            ):
                 self._spawn('soffice', file)
             elif extension in ('txt', 'json'):
                 self._spawn('xedit', file)

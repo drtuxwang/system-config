@@ -46,12 +46,22 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Check installation dependencies of packages against ".debs" list file.')
+            description='Check installation dependencies of packages '
+            'against ".debs" list file.'
+        )
 
-        parser.add_argument('list_file', nargs=1, metavar='distribution.debs',
-                            help='Debian installed packages list file.')
-        parser.add_argument('packageNames', nargs='+', metavar='package',
-                            help='Debian package name.')
+        parser.add_argument(
+            'list_file',
+            nargs=1,
+            metavar='distribution.debs',
+            help='Debian installed packages list file.'
+        )
+        parser.add_argument(
+            'packageNames',
+            nargs='+',
+            metavar='package',
+            help='Debian package name.'
+        )
 
         self._args = parser.parse_args(args[1:])
 
@@ -64,7 +74,10 @@ class Options(object):
         list_file = self._args.list_file[0]
         ispattern = re.compile('[.]debs-?.*$')
         if not ispattern.search(list_file):
-            raise SystemExit(sys.argv[0] + ': Invalid "' + list_file + '" installed list filename.')
+            raise SystemExit(
+                sys.argv[0] + ': Invalid "' + list_file +
+                '" installed list filename.'
+            )
         self._distribution = ispattern.sub('', list_file)
 
 
@@ -171,7 +184,10 @@ class Main(object):
                         packages[name] = package
                         package = Package()
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot open "' + packages_file + '" packages file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot open "' + packages_file +
+                '" packages file.'
+            )
         return packages
 
     def _read_distribution_pin_packages(self, pin_file):
@@ -186,10 +202,11 @@ class Main(object):
                             file = os.path.join(os.path.dirname(
                                 pin_file), columns[1]) + '.packages'
                             if file not in packages_cache:
-                                packages_cache[file] = self._read_distribution_packages(file)
+                                packages_cache[file] = (
+                                    self._read_distribution_packages(file))
                             try:
-                                ispattern = re.compile(
-                                    pattern.replace('?', '.').replace('*', '.*')+'$')
+                                ispattern = re.compile(pattern.replace(
+                                    '?', '.').replace('*', '.*')+'$')
                             except sre_constants.error:
                                 continue
                             for key, value in packages_cache[file].items():
@@ -216,27 +233,36 @@ class Main(object):
             if self._packages[name].get_installed_flag():
                 print(indent + self._packages[name].get_url(), '[Installed]')
             else:
-                file = self._local(distribution, self._packages[name].get_url())
+                file = self._local(
+                    distribution,
+                    self._packages[name].get_url()
+                )
                 print(indent + file)
                 print(indent + file, file=ofile)
             for i in self._packages[name].get_depends():
                 if i in self._packages:
                     if self._packages[i].get_installed_flag():
-                        print(indent + '  ' + self._packages[i].get_url(), '[Installed]')
+                        print(
+                            indent + '  ' + self._packages[i].get_url(),
+                            '[Installed]'
+                        )
                     elif self._packages[i].get_checked_flag():
                         print(indent + '  ' + self._packages[i].get_url())
                     elif not self._packages[name].get_installed_flag():
-                        self._check_package_install(distribution, ofile, indent + '  ', i)
+                        self._check_package_install(
+                            distribution, ofile, indent + '  ', i)
 
     def _check_distribution_install(self, distribution, list_file, names):
-        urlfile = os.path.basename(distribution) + list_file.split('.debs')[-1] + '.url'
+        urlfile = os.path.basename(
+            distribution) + list_file.split('.debs')[-1] + '.url'
         try:
             with open(urlfile, 'w', newline='\n') as ofile:
                 indent = ''
                 for i in names:
                     self._check_package_install(distribution, ofile, indent, i)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' + urlfile + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + urlfile + '" file.')
         if os.path.getsize(urlfile) == 0:
             os.remove(urlfile)
 
@@ -270,11 +296,16 @@ class Main(object):
         """
         options = Options()
 
-        self._packages = self._read_distribution_packages(options.get_distribution() + '.packages')
-        self._read_distribution_pin_packages(options.get_distribution() + '.pinlist')
+        self._packages = self._read_distribution_packages(
+            options.get_distribution() + '.packages')
+        self._read_distribution_pin_packages(
+            options.get_distribution() + '.pinlist')
         self._read_distribution_installed(options.get_list_file())
         self._check_distribution_install(
-            options.get_distribution(), options.get_list_file(), options.get_package_names())
+            options.get_distribution(),
+            options.get_list_file(),
+            options.get_package_names()
+        )
 
 
 if __name__ == '__main__':

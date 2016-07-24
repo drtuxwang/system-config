@@ -32,7 +32,12 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Print the strings of printable characters in files.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='File to search.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File to search.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -79,7 +84,8 @@ class Main(object):
             with open(file, 'rb') as ifile:
                 self._pipe(ifile)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" file.')
 
     @staticmethod
     def _pipe(pipe):

@@ -54,17 +54,38 @@ class Options(object):
         return self._args.pattern[0]
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Print lines matching a pattern.')
+        parser = argparse.ArgumentParser(
+            description='Print lines matching a pattern.')
 
-        parser.add_argument('-i', dest='ignoreCase_flag', action='store_true',
-                            help='Ignore case distinctions.')
-        parser.add_argument('-n', dest='number_flag', action='store_true',
-                            help='Prefix each line of output with line number.')
-        parser.add_argument('-v', dest='invert_flag', action='store_true',
-                            help='Invert the sense of matching.')
-
-        parser.add_argument('pattern', nargs=1, help='Regular expression.')
-        parser.add_argument('files', nargs='+', metavar='file', help='File to search.')
+        parser.add_argument(
+            '-i',
+            dest='ignoreCase_flag',
+            action='store_true',
+            help='Ignore case distinctions.'
+        )
+        parser.add_argument(
+            '-n',
+            dest='number_flag',
+            action='store_true',
+            help='Prefix each line of output with line number.'
+        )
+        parser.add_argument(
+            '-v',
+            dest='invert_flag',
+            action='store_true',
+            help='Invert the sense of matching.'
+        )
+        parser.add_argument(
+            'pattern',
+            nargs=1,
+            help='Regular expression.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File to search.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -111,7 +132,8 @@ class Main(object):
             with open(file, errors='replace') as ifile:
                 self._pipe(options, ifile, prefix)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" file.')
 
     def _pipe(self, options, pipe, prefix=''):
         number = 0
@@ -146,12 +168,15 @@ class Main(object):
 
         try:
             if options.get_ignore_case_flag():
-                self._is_match = re.compile(options.get_pattern(), re.IGNORECASE)
+                self._is_match = re.compile(
+                    options.get_pattern(), re.IGNORECASE)
             else:
                 self._is_match = re.compile(options.get_pattern())
         except re.error:
             raise SystemExit(
-                sys.argv[0] + ': Invalid regular expression "' + options.get_pattern() + '".')
+                sys.argv[0] + ': Invalid regular expression "' +
+                options.get_pattern() + '".'
+            )
         if len(options.get_files()) > 1:
             for file in options.get_files():
                 self._file(options, file, prefix=file + ':')

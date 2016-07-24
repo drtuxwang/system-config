@@ -60,19 +60,41 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Calculate checksum using MD5, file size and file modification time.')
+            description='Calculate checksum using MD5, file size and '
+            'file modification time.'
+        )
 
-        parser.add_argument('-R', dest='recursive_flag', action='store_true',
-                            help='Recursive into sub-directories.')
-        parser.add_argument('-c', dest='check_flag', action='store_true',
-                            help='Check checksums against files.')
-        parser.add_argument('-f', dest='create_flag', action='store_true',
-                            help='Create ".fsum" file for each file.')
-        parser.add_argument('-update', nargs=1, dest='update_file', metavar='index.fsum',
-                            help='Update checksums if file size and date changed.')
-
-        parser.add_argument('files', nargs='*', metavar='file|file.fsum',
-                            help='File to checksum or ".fsum" checksum file.')
+        parser.add_argument(
+            '-R',
+            dest='recursive_flag',
+            action='store_true',
+            help='Recursive into sub-directories.'
+        )
+        parser.add_argument(
+            '-c',
+            dest='check_flag',
+            action='store_true',
+            help='Check checksums against files.'
+        )
+        parser.add_argument(
+            '-f',
+            dest='create_flag',
+            action='store_true',
+            help='Create ".fsum" file for each file.'
+        )
+        parser.add_argument(
+            '-update',
+            nargs=1,
+            dest='update_file',
+            metavar='index.fsum',
+            help='Update checksums if file size and date changed.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='*',
+            metavar='file|file.fsum',
+            help='File to checksum or ".fsum" checksum file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -120,30 +142,47 @@ class Main(object):
                 if not os.path.islink(file):
                     if options.get_recursive_flag():
                         try:
-                            self._calc(options,
-                                       sorted([os.path.join(file, x) for x in os.listdir(file)]))
+                            self._calc(options, sorted([
+                                os.path.join(file, x)
+                                for x in os.listdir(file)
+                            ]))
                         except PermissionError:
                             pass
             elif os.path.isfile(file) and not file.endswith('..fsum'):
                 file_stat = file_mod.FileStat(file)
                 try:
-                    md5sum = self._cache[(file, file_stat.get_size(), file_stat.get_time())]
+                    md5sum = self._cache[
+                        (file, file_stat.get_size(), file_stat.get_time())]
                 except KeyError:
                     md5sum = self._md5sum(file)
                 if not md5sum:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
-                print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(md5sum, file_stat.get_size(),
-                                                           file_stat.get_time(), file))
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot read "' + file + '" file.')
+                print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(
+                    md5sum,
+                    file_stat.get_size(),
+                    file_stat.get_time(),
+                    file
+                ))
                 if options.get_create_flag():
                     try:
                         with open(file + '.fsum', 'w', newline='\n') as ofile:
                             print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(
-                                md5sum, file_stat.get_size(), file_stat.get_time(),
-                                os.path.basename(file)), file=ofile)
+                                md5sum,
+                                file_stat.get_size(),
+                                file_stat.get_time(),
+                                os.path.basename(file)
+                            ), file=ofile)
                         file_stat = file_mod.FileStat(file)
-                        os.utime(file + '.fsum', (file_stat.get_time(), file_stat.get_time()))
+                        os.utime(
+                            file + '.fsum',
+                            (file_stat.get_time(), file_stat.get_time())
+                        )
                     except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '.fsum" file.')
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot create "' + file +
+                            '.fsum" file.'
+                        )
 
     def _check(self, files):
         found = []
@@ -178,9 +217,14 @@ class Main(object):
                                 nfail += 1
                         except TypeError:
                             raise SystemExit(
-                                sys.argv[0] + ': Corrupt "' + fsumfile + '" checksum file.')
+                                sys.argv[0] + ': Corrupt "' + fsumfile +
+                                '" checksum file.'
+                            )
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot read "' + fsumfile + '" checksum file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "' + fsumfile +
+                    '" checksum file.'
+                )
 
         if os.path.join(directory, 'index.fsum') in files:
             for file in self._extra(directory, found):
@@ -188,13 +232,19 @@ class Main(object):
         if nmiss > 0:
             print('fsum: Cannot find', nmiss, 'of', nfiles, 'listed files.')
         if nfail > 0:
-            print('fsum: Mismatch in', nfail, 'of', nfiles - nmiss, 'computed checksums.')
+            print(
+                'fsum: Mismatch in {0:s} of {1:s} computed checksums.'.format(
+                    nfail, nfiles - nmiss)
+            )
 
     def _extra(self, directory, found):
         extra = []
         try:
             if directory:
-                files = [os.path.join(directory, x) for x in os.listdir(directory)]
+                files = [
+                    os.path.join(directory, x)
+                    for x in os.listdir(directory)
+                ]
             else:
                 files = [os.path.join(directory, x) for x in os.listdir()]
         except PermissionError:
@@ -232,7 +282,8 @@ class Main(object):
                         break
                     md5.update(chunk)
         except (OSError, TypeError):
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" file.')
         return md5.hexdigest()
 
     def run(self):
@@ -250,7 +301,9 @@ class Main(object):
             if update_file:
                 if not os.path.isfile(update_file):
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot find "' + update_file + '" checksum file.')
+                        sys.argv[0] + ': Cannot find "' + update_file +
+                        '" checksum file.'
+                    )
                 try:
                     with open(update_file, errors='replace') as ifile:
                         for line in ifile:
@@ -263,7 +316,9 @@ class Main(object):
                                 pass
                 except OSError:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + update_file + '" checksum file.')
+                        sys.argv[0] + ': Cannot read "' + update_file +
+                        '" checksum file.'
+                    )
             self._calc(options, options.get_files())
 
 

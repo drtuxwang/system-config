@@ -46,12 +46,22 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Normalize volume of wave files (-16.0dB rms mean volume).')
+            description='Normalize volume of wave files '
+            '(-16.0dB rms mean volume).'
+        )
 
-        parser.add_argument('-v', dest='view_flag', action='store_true',
-                            help='View volume only.')
-
-        parser.add_argument('files', nargs='+', metavar='file.wav', help='Audio file.')
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help='View volume only.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file.wav',
+            help='Audio file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -99,28 +109,45 @@ class Main(object):
         change = -16 - float(volume)
         file_new = file + '-new'
 
-        self._ffmpeg.set_args(
-            ['-i', file, '-af', 'volume=' + str(change) + 'dB', '-y', '-f', 'wav', file_new])
+        self._ffmpeg.set_args([
+            '-i',
+            file,
+            '-af',
+            'volume=' + str(change) + 'dB',
+            '-y',
+            '-f',
+            'wav',
+            file_new
+        ])
         task = subtask_mod.Batch(self._ffmpeg.get_cmdline())
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
         try:
             shutil.move(file_new, file)
         except OSError:
             os.remove(file_new)
-            raise SystemExit(sys.argv[0] + ': Cannot update "' + file + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot update "' + file + '" file.')
 
     def _view(self, file):
-        self._ffmpeg.set_args(['-i', file, "-af", "volumedetect", "-f", "null", "/dev/null"])
+        self._ffmpeg.set_args(
+            ['-i', file, "-af", "volumedetect", "-f", "null", "/dev/null"])
         task = subtask_mod.Batch(self._ffmpeg.get_cmdline())
         task.run(pattern=' (mean|max)_volume: .* dB$', error2output=True)
         if len(task.get_output()) != 2:
-            raise SystemExit(sys.argv[0] + ': Cannot read corrupt "' + file + '" wave file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read corrupt "' + file +
+                '" wave file.'
+            )
         elif task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
         volume = task.get_output()[0].split()[-2]
         pvolume = task.get_output()[1].split()[-2]
         return (volume, pvolume)
@@ -135,11 +162,16 @@ class Main(object):
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" file.')
             elif file[-4:] != '.wav':
-                raise SystemExit(sys.argv[0] + ': Cannot handle "' + file + '" non-wave file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot handle "' + file +
+                    '" non-wave file.'
+                )
             volume, pvolume = self._view(file)
-            sys.stdout.write(file + ': ' + volume + ' dB (' + pvolume + ' dB peak)')
+            sys.stdout.write(
+                file + ': ' + volume + ' dB (' + pvolume + ' dB peak)')
             if not options.get_view_flag():
                 for npass in range(4):
                     self._adjust(file, volume)

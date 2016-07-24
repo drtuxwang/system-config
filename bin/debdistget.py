@@ -37,10 +37,15 @@ class Options(object):
         return self._args.distribution_files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Download Debian packages list files.')
+        parser = argparse.ArgumentParser(
+            description='Download Debian packages list files.')
 
-        parser.add_argument('distribution_files', nargs='+', metavar='distribution.dist',
-                            help='File containing Debian package URLs.')
+        parser.add_argument(
+            'distribution_files',
+            nargs='+',
+            metavar='distribution.dist',
+            help='File containing Debian package URLs.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -90,13 +95,18 @@ class Main(object):
                 for url in ifile:
                     url = url.rstrip()
                     if url and not url.startswith('#'):
-                        if not url.startswith('http://') or os.path.basename(url) not in (
-                                'Packages.xz', 'Packages.bz2', 'Packages.gz'):
-                            raise SystemExit(sys.argv[0] + ': Invalid "' + url + '" URL.')
+                        if (not url.startswith('http://') or
+                                os.path.basename(url) not in (
+                                    'Packages.xz', 'Packages.bz2',
+                                    'Packages.gz')):
+                            raise SystemExit(
+                                sys.argv[0] + ': Invalid "' + url + '" URL.')
                         urls.append(url)
         except OSError:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + distribution_file + '" distribution file.')
+                sys.argv[0] + ': Cannot read "' + distribution_file +
+                '" distribution file.'
+            )
         return urls
 
     @classmethod
@@ -106,15 +116,18 @@ class Main(object):
         task = subtask_mod.Batch(wget.get_cmdline() + [url])
         task.run()
         if task.is_match_error(' saved '):
-            print('  [' + file_mod.FileStat(archive).get_date_local() + ']', url)
+            print(
+                '  [' + file_mod.FileStat(archive).get_date_local() + ']', url)
         elif not task.is_match_error('^Server file no newer'):
             print('  [File  Error]', url)
             cls._remove()
             raise SystemExit(1)
         elif task.get_exitcode():
             cls._remove()
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
         cls._unpack(archive)
         site = url[:url.find('/dists/') + 1]
         lines = []
@@ -127,7 +140,8 @@ class Main(object):
                     else:
                         lines.append(line.rstrip('\r\n'))
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "Packages" packages file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "Packages" packages file.')
         cls._remove()
         return lines
 
@@ -174,7 +188,8 @@ class Main(object):
         elif file.endswith('.gz'):
             subtask_mod.Task(cls._get_cmdline('gzip') + [file]).run()
         else:
-            raise SystemExit(sys.argv[0] + ': Cannot unpack "' + file + '" package file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot unpack "' + file + '" package file.')
 
     @classmethod
     def _update_packages_list(cls, distribution_file, wget, urls):
@@ -188,11 +203,13 @@ class Main(object):
                 for line in lines:
                     print(line, file=ofile)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '-new" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + file + '-new" file.')
         try:
             shutil.move(file + '-new', file)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + file + '" file.')
 
     @classmethod
     def run(cls):
@@ -203,11 +220,18 @@ class Main(object):
 
         options = Options()
 
-        wget = command_mod.Command('wget', args=['--timestamping'], errors='stop')
+        wget = command_mod.Command(
+            'wget',
+            args=['--timestamping'],
+            errors='stop'
+        )
 
         for distribution_file in options.get_distribution_files():
             if distribution_file.endswith('.dist'):
-                print('Checking "' + distribution_file + '" distribution file...')
+                print(
+                    'Checking "' + distribution_file +
+                    '" distribution file...'
+                )
                 urls = cls._get_urls(distribution_file)
                 if cls._has_changed(distribution_file, urls):
                     cls._update_packages_list(distribution_file, wget, urls)

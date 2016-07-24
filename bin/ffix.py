@@ -31,9 +31,15 @@ class Options(object):
         return self._files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Remove horrible charcters in filename.')
+        parser = argparse.ArgumentParser(
+            description='Remove horrible charcters in filename.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='File or directory.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 

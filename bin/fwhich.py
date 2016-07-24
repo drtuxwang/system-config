@@ -41,12 +41,21 @@ class Options(object):
         return self._args.programs
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Locate a program file.')
+        parser = argparse.ArgumentParser(
+            description='Locate a program file.')
 
-        parser.add_argument('-a', dest='all_flag', action='store_true',
-                            help='Show the location of all occurances.')
-
-        parser.add_argument('programs', nargs='+', metavar='program', help='Command to search.')
+        parser.add_argument(
+            '-a',
+            dest='all_flag',
+            action='store_true',
+            help='Show the location of all occurances.'
+        )
+        parser.add_argument(
+            'programs',
+            nargs='+',
+            metavar='program',
+            help='Command to search.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -57,7 +66,10 @@ class Options(object):
         self._parse_args(args[1:])
 
         if os.name == 'nt':
-            self._extensions = os.environ['PATHEXT'].lower().split(os.pathsep) + ['.py', '']
+            self._extensions = (
+                os.environ['PATHEXT'].lower().split(os.pathsep) +
+                ['.py', '']
+            )
         else:
             self._extensions = ['']
 

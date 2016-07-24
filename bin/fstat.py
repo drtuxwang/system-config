@@ -33,7 +33,12 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Display file status.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='File or directory.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 

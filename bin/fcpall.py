@@ -36,15 +36,28 @@ class Options(object):
         return self._args.targets
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Copy a file to multiple target files.')
+        parser = argparse.ArgumentParser(
+            description='Copy a file to multiple target files.')
 
-        parser.add_argument('source', nargs=1, help='Source file.')
-        parser.add_argument('targets', nargs='+', metavar='target', help='Target file.')
+        parser.add_argument(
+            'source',
+            nargs=1,
+            help='Source file.'
+        )
+        parser.add_argument(
+            'targets',
+            nargs='+',
+            metavar='target',
+            help='Target file.'
+        )
 
         self._args = parser.parse_args(args)
 
         if not os.path.isfile(self._args.source[0]):
-            raise SystemExit(sys.argv[0] + ': Cannot find "' + self._args.source + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "' + self._args.source +
+                '" file.'
+            )
 
     def parse(self, args):
         """
@@ -91,16 +104,26 @@ class Main(object):
             shutil.copy2(source, target)
         except shutil.Error as exception:
             if 'are the same file' in exception.args[0]:
-                raise SystemExit(sys.argv[0] + ': Cannot copy to same "' + target + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot copy to same "' +
+                    target + '" file.'
+                )
             else:
-                raise SystemExit(sys.argv[0] + ': Cannot copy to "' + target + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot copy to "' +
+                    target + '" file.'
+                )
         except OSError as exception:
-            if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
+            if exception.args != (95, 'Operation not supported'):
                 try:
                     with open(source, 'rb'):
-                        raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot create "' +
+                            target + '" file.'
+                        )
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot create "' + target + '" file.')
 
     def run(self):
         """

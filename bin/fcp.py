@@ -45,15 +45,27 @@ class Options(object):
         return self._args.target[0]
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Copy files and directories.')
+        parser = argparse.ArgumentParser(
+            description='Copy files and directories.')
 
-        parser.add_argument('-f', dest='copyLink_flag', action='store_true',
-                            help='Follow links and copy file/directory.')
-
-        parser.add_argument('sources', nargs='+', metavar='source',
-                            help='Source file or directory.')
-        parser.add_argument('target', nargs=1, metavar='target',
-                            help='Target file or directory.')
+        parser.add_argument(
+            '-f',
+            dest='copyLink_flag',
+            action='store_true',
+            help='Follow links and copy file/directory.'
+        )
+        parser.add_argument(
+            'sources',
+            nargs='+',
+            metavar='source',
+            help='Source file or directory.'
+        )
+        parser.add_argument(
+            'target',
+            nargs=1,
+            metavar='target',
+            help='Target file or directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -111,24 +123,31 @@ class Main(object):
             try:
                 os.remove(target)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot remove "' + target + '" link.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot remove "' + target + '" link.')
         try:
             os.symlink(source_link, target)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" link.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + target + '" link.')
 
     def _copy_directory(self, source, target):
         print('Copying "' + source + '" directory...')
         try:
-            files = sorted([os.path.join(source, x) for x in os.listdir(source)])
+            files = sorted(
+                [os.path.join(source, x) for x in os.listdir(source)])
         except PermissionError:
-            raise SystemExit(sys.argv[0] + ': Cannot open "' + source + '" directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot open "' + source + '" directory.')
         if not os.path.isdir(target):
             try:
                 os.makedirs(target)
                 os.chmod(target, file_mod.FileStat(source).get_mode())
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' + target +
+                    '" directory.'
+                )
         for file in files:
             self._copy(file, os.path.join(target, os.path.basename(file)))
 
@@ -139,16 +158,24 @@ class Main(object):
             shutil.copy2(source, target)
         except shutil.Error as exception:
             if 'are the same file' in exception.args[0]:
-                raise SystemExit(sys.argv[0] + ': Cannot copy to same "' + target + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot copy to same "' +
+                    target + '" file.'
+                )
             else:
-                raise SystemExit(sys.argv[0] + ': Cannot copy to "' + target + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot copy to "' + target + '" file.')
         except OSError as exception:
-            if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
+            if exception.args != (95, 'Operation not supported'):
                 try:
                     with open(source, 'rb'):
-                        raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot create "' +
+                            target + '" file.'
+                        )
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + target + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot create "' + target + '" file.')
 
     def _copy(self, source, target):
         if self._options.get_copy_link_flag() and os.path.islink(source):
@@ -169,21 +196,32 @@ class Main(object):
         if len(self._options.get_sources()) > 1:
             if not os.path.isdir(target):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + target + '" target directory.')
+                    sys.argv[0] + ': Cannot find "' + target +
+                    '" target directory.'
+                )
         for source in self._options.get_sources():
             if os.path.isdir(source):
-                if os.path.isabs(source) or source.split(os.sep)[0] in (os.curdir, os.pardir):
+                if (os.path.isabs(source) or
+                        source.split(os.sep)[0] in (os.curdir, os.pardir)):
                     targetdir = target
-                    self._copy(source, os.path.join(target, os.path.basename(source)))
+                    self._copy(
+                        source,
+                        os.path.join(target, os.path.basename(source))
+                    )
                 else:
                     targetdir = os.path.dirname(os.path.join(target, source))
                     if not os.path.isdir(targetdir):
                         try:
                             os.makedirs(targetdir)
-                            os.chmod(targetdir, file_mod.FileStat(source).get_mode())
+                            os.chmod(
+                                targetdir,
+                                file_mod.FileStat(source).get_mode()
+                            )
                         except OSError:
                             raise SystemExit(
-                                sys.argv[0] + ': Cannot create "' + targetdir + '" directory.')
+                                sys.argv[0] + ': Cannot create "' +
+                                targetdir + '" directory.'
+                            )
                     self._copy(source, os.path.join(target, source))
             else:
                 directory = os.path.join(target, os.path.dirname(source))
@@ -192,7 +230,9 @@ class Main(object):
                         os.makedirs(directory)
                     except OSError:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot create "' + directory + '" directory.')
+                            sys.argv[0] + ': Cannot create "' + directory +
+                            '" directory.'
+                        )
                 self._copy(source, os.path.join(target, source))
 
 

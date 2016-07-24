@@ -49,34 +49,44 @@ class Options(object):
     @staticmethod
     def _get_profiles_dir():
         if command_mod.Platform.get_system() == 'macos':
-            return os.path.join('Library', 'Application Support', 'Google', 'Chrome')
+            return os.path.join(
+                'Library', 'Application Support', 'Google', 'Chrome')
         else:
             return os.path.join('.config', 'google-chrome')
 
     @staticmethod
     def _clean_adobe(configdir):
-        adobe = os.path.join(os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
+        adobe = os.path.join(
+            os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
         macromedia = os.path.join(
-            os.environ['HOME'], '.macromedia', 'Flash_Player', 'macromedia.com')
+            os.environ['HOME'],
+            '.macromedia',
+            'Flash_Player',
+            'macromedia.com'
+        )
         if not os.path.isfile(adobe) or not os.path.isfile(macromedia):
             try:
                 shutil.rmtree(os.path.join(os.environ['HOME'], '.adobe'))
                 os.makedirs(os.path.dirname(adobe))
                 with open(adobe, 'w', newline='\n'):
                     pass
-                shutil.rmtree(os.path.join(os.environ['HOME'], '.macromedia'))
+                shutil.rmtree(
+                    os.path.join(os.environ['HOME'], '.macromedia'))
                 os.makedirs(os.path.dirname(macromedia))
                 with open(macromedia, 'w', newline='\n'):
                     pass
             except OSError:
                 pass
         try:
-            shutil.rmtree(os.path.join(os.path.dirname(macromedia), '#SharedObjects'))
+            shutil.rmtree(
+                os.path.join(os.path.dirname(macromedia), '#SharedObjects'))
         except OSError:
             pass
 
-        for file in (os.path.join(os.environ['HOME'], '.cache', 'google-chrome'),
-                     os.path.join(configdir, 'Pepper Data')):
+        for file in (
+                os.path.join(os.environ['HOME'], '.cache', 'google-chrome'),
+                os.path.join(configdir, 'Pepper Data')
+        ):
             if not os.path.isfile(file):
                 try:
                     if os.path.isdir(file):
@@ -118,7 +128,8 @@ class Options(object):
                     pass
         ispattern = re.compile('^(lastDownload|lastSuccess|lastCheck|'
                                r'expires|softExpiration)=\d*')
-        for file in glob.glob(os.path.join(configdir, 'File System', '*', 'p', '00', '*')):
+        for file in glob.glob(
+                os.path.join(configdir, 'File System', '*', 'p', '00', '*')):
             try:
                 with open(file, errors='replace') as ifile:
                     with open(file + '-new', 'w', newline='\n') as ofile:
@@ -138,7 +149,8 @@ class Options(object):
 
     def _config(self):
         if 'HOME' in os.environ:
-            configdir = os.path.join(os.environ['HOME'], self._get_profiles_dir(), 'Default')
+            configdir = os.path.join(
+                os.environ['HOME'], self._get_profiles_dir(), 'Default')
 
             self._clean_adobe(configdir)
             if os.path.isdir(configdir):
@@ -148,11 +160,16 @@ class Options(object):
     def _copy(self):
         if 'HOME' in os.environ:
             task = task_mod.Tasks.factory()
-            for directory in glob.glob(
-                    os.path.join('/tmp', 'chrome-' + getpass.getuser() + '.*')):
+            for directory in glob.glob(os.path.join(
+                    '/tmp',
+                    'chrome-' + getpass.getuser() + '.*'
+            )):
                 try:
                     if not task.pgid2pids(int(directory.split('.')[-1])):
-                        print('Removing copy of Chrome profile in "' + directory + '"...')
+                        print(
+                            'Removing copy of Chrome profile in "' +
+                            directory + '"...'
+                        )
                         try:
                             shutil.rmtree(directory)
                         except OSError:
@@ -160,14 +177,23 @@ class Options(object):
                 except ValueError:
                     pass
             os.umask(int('077', 8))
-            configdir = os.path.join(os.environ['HOME'], self._get_profiles_dir())
+            configdir = os.path.join(
+                os.environ['HOME'],
+                self._get_profiles_dir()
+            )
             mypid = os.getpid()
             os.setpgid(mypid, mypid)  # New PGID
-            newhome = os.path.join('/tmp', 'chrome-' + getpass.getuser() + '.' + str(mypid))
+            newhome = os.path.join(
+                '/tmp',
+                'chrome-' + getpass.getuser() + '.' + str(mypid)
+            )
             print('Creating copy of Chrome profile in "' + newhome + '"...')
             if not os.path.isdir(newhome):
                 try:
-                    shutil.copytree(configdir, os.path.join(newhome, self._get_profiles_dir()))
+                    shutil.copytree(
+                        configdir,
+                        os.path.join(newhome, self._get_profiles_dir())
+                    )
                 except (OSError, shutil.Error):  # Ignore 'lock' file error
                     pass
             try:
@@ -193,24 +219,35 @@ class Options(object):
 
         configdir = os.path.join(os.environ['HOME'], self._get_profiles_dir())
         if os.path.isdir(configdir):
-            keep_list = ('Extensions', 'File System', 'Local Extension Settings',
-                         'Local Storage', 'Preferences', 'Secure Preferences')
+            keep_list = (
+                'Extensions',
+                'File System',
+                'Local Extension Settings',
+                'Local Storage',
+                'Preferences',
+                'Secure Preferences'
+            )
             for directory in glob.glob(os.path.join(configdir, '*')):
                 if os.path.isfile(os.path.join(directory, 'Preferences')):
                     for file in glob.glob(os.path.join(directory, '*')):
                         if os.path.basename(file) not in keep_list:
                             print('Removing "{0:s}"...'.format(file))
                             self._remove(file)
-                elif os.path.basename(directory) not in ('First Run', 'Local State'):
+                elif os.path.basename(directory) not in (
+                        'First Run', 'Local State'):
                     print('Removing "{0:s}"...'.format(directory))
                     self._remove(directory)
 
     @classmethod
     def _restart(cls):
         if 'HOME' in os.environ:
-            configdir = os.path.join(os.environ['HOME'], cls._get_profiles_dir())
+            configdir = os.path.join(
+                os.environ['HOME'],
+                cls._get_profiles_dir()
+            )
             try:
-                pid = os.readlink(os.path.join(configdir, 'SingletonLock')).split('-')[1]
+                pid = os.readlink(
+                    os.path.join(configdir, 'SingletonLock')).split('-')[1]
                 task_mod.Tasks.factory().killpids([pid])
             except (IndexError, OSError):
                 pass
@@ -232,7 +269,10 @@ class Options(object):
         """
         self._chrome = command_mod.Command('chrome', errors='ignore')
         if not self._chrome.is_found():
-            self._chrome = command_mod.Command('google-chrome', errors='ignore')
+            self._chrome = command_mod.Command(
+                'google-chrome',
+                errors='ignore'
+            )
             if not self._chrome.is_found():
                 self._chrome = command_mod.Command('chrome', errors='stop')
 
@@ -254,22 +294,31 @@ class Options(object):
         # Avoids 'exo-helper-1 chrome http://' problem of clicking text in XFCE
         if len(args) > 1:
             ppid = os.getppid()
-            if ppid != 1 and 'exo-helper' in task_mod.Tasks.factory().get_process(ppid)['COMMAND']:
+            if (ppid != 1 and
+                    'exo-helper' in
+                    task_mod.Tasks.factory().get_process(ppid)['COMMAND']):
                 raise SystemExit
 
         if '--disable-background-mode' not in self._chrome.get_args():
-            self._chrome.extend_args(['--disable-background-mode', '--disable-geolocation',
-                                      '--disk-cache-size=0'])
+            self._chrome.extend_args([
+                '--disable-background-mode',
+                '--disable-geolocation',
+                '--disk-cache-size=0'
+            ])
 
         # Suid sandbox workaround
         if 'HOME' in os.environ:
             if file_mod.FileStat(os.path.join(os.path.dirname(
-                    self._chrome.get_file()), 'chrome-sandbox')).get_mode() != 104755:
-                self._chrome.extend_args(['--test-type', '--disable-setuid-sandbox'])
+                    self._chrome.get_file()
+            ), 'chrome-sandbox')).get_mode() != 104755:
+                self._chrome.extend_args(
+                    ['--test-type', '--disable-setuid-sandbox'])
 
-        self._pattern = ('^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
-                         ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
-                         'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|')
+        self._pattern = (
+            '^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
+            ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
+            'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|'
+        )
         self._config()
         self._set_libraries(self._chrome)
 

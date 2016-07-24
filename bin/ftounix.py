@@ -30,9 +30,15 @@ class Options(object):
         return self._args.files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Converts file to "\\n" newline format.')
+        parser = argparse.ArgumentParser(
+            description='Converts file to "\\n" newline format.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='File to change.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File to change.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -83,7 +89,8 @@ class Main(object):
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" file.')
             print('Converting "' + file + '" file to "\\n" newline format...')
             try:
                 with open(file, errors='replace') as ifile:
@@ -93,18 +100,25 @@ class Main(object):
                             for line in ifile:
                                 print(line.rstrip('\r\n'), file=ofile)
                     except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot create "' + tmpfile +
+                            '" file.'
+                        )
                     except UnicodeDecodeError:
                         os.remove(tmpfile)
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot convert "' + file + '" binary file.')
+                            sys.argv[0] + ': Cannot convert "' + file +
+                            '" binary file.'
+                        )
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "' + file + '" file.')
             try:
                 shutil.move(tmpfile, file)
             except OSError:
                 os.remove(tmpfile)
-                raise SystemExit(sys.argv[0] + ': Cannot update "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot update "' + file + '" file.')
 
 
 if __name__ == '__main__':

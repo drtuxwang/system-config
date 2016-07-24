@@ -40,8 +40,10 @@ class Options(object):
         if self._args.speed:
             speed = self._args.speed
             if speed < 0:
-                raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                                 'CD/DVD device speed.')
+                raise SystemExit(
+                    sys.argv[0] + ': You must specific a positive integer for '
+                    'CD/DVD device speed.'
+                )
         else:
             speed = 0
 
@@ -75,8 +77,17 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Set CD/DVD drive speed.')
 
-        parser.add_argument('device', nargs=1, help="CD/DVD device (ie '/dev/sr0').")
-        parser.add_argument('speed', nargs='?', type=int, help='Select CD/DVD spin speed.')
+        parser.add_argument(
+            'device',
+            nargs=1,
+            help="CD/DVD device (ie '/dev/sr0')."
+        )
+        parser.add_argument(
+            'speed',
+            nargs='?',
+            type=int,
+            help='Select CD/DVD spin speed.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -86,7 +97,8 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._device = socket.gethostname().split('.')[0].lower() + ':' + self._args.device[0]
+        self._device = socket.gethostname(
+            ).split('.')[0].lower() + ':' + self._args.device[0]
 
         self._speed = self._config_speed()
         if self._speed == 0:
@@ -132,7 +144,8 @@ class Configuration(object):
         """
         try:
             with open(file, 'w', newline='\n') as ofile:
-                print(json.dumps(self._data, indent=4, sort_keys=True), file=ofile)
+                print(json.dumps(
+                    self._data, indent=4, sort_keys=True), file=ofile)
         except OSError:
             pass
 

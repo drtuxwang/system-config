@@ -36,8 +36,11 @@ class Main(object):
 
     @staticmethod
     def _show(battery):
-        model = (battery.get_oem() + ' ' + battery.get_name() + ' ' + battery.get_type() + ' ' +
-                 str(battery.get_capacity_max()) + 'mAh/' + str(battery.get_voltage()) + 'mV')
+        model = (
+            battery.get_oem() + ' ' + battery.get_name() + ' ' +
+            battery.get_type() + ' ' + str(battery.get_capacity_max()) +
+            'mAh/' + str(battery.get_voltage()) + 'mV'
+        )
         if battery.get_charge() == '-':
             state = '-'
             if battery.get_rate() > 0:
@@ -59,7 +62,11 @@ class Main(object):
                     state += ', ' + str(power) + 'W'
         else:
             state = 'Unused'
-        print(model + ' = ', battery.get_capacity(), 'mAh [' + state + ']', sep='')
+        print(
+            model + ' = ', battery.get_capacity(),
+            'mAh [' + state + ']',
+            sep=''
+        )
 
     def run(self):
         """

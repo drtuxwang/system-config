@@ -65,9 +65,12 @@ class Main(object):
                 except OSError:
                     pass
             if not os.access(os.path.join(pbdir, 'pbcl.so'), os.R_OK):
-                raise SystemExit(sys.argv[0] + ': Cannot access "pbcl.so" in "' +
-                                 pbdir + '" directory.')
-            etkey = os.path.join(os.environ['HOME'], '.etwolf', 'etmain', 'etkey')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot access "pbcl.so" in "' +
+                    pbdir + '" directory.'
+                )
+            etkey = os.path.join(
+                os.environ['HOME'], '.etwolf', 'etmain', 'etkey')
             if not os.path.isfile(etkey):
                 raise SystemExit(sys.argv[0] + ': Cannot find "' + etkey +
                                  '" key file (see http://www.etkey.net).')
@@ -80,15 +83,19 @@ class Main(object):
                      glob.glob('/usr/lib32/libSDL-*so*') +
                      glob.glob('/usr/lib/libSDL-*so*'))
             if not etsdl:
-                raise SystemExit(sys.argv[0] + ": Cannot find SDL sound interface library.")
+                raise SystemExit(
+                    sys.argv[0] + ": Cannot find SDL sound interface library.")
             os.environ['ETSDL_SDL_LIB'] = etsdl[0]
             if 'LD_PRELOAD' in os.environ:
-                os.environ['LD_PRELOAD'] = (os.environ['LD_PRELOAD'] + os.pathsep + os.path.join(
-                    os.getcwd(), 'et-sdl-sound-r29', 'et-sdl-sound.so'))
+                os.environ['LD_PRELOAD'] = (
+                    os.environ['LD_PRELOAD'] + os.pathsep + os.path.join(
+                        os.getcwd(), 'et-sdl-sound-r29', 'et-sdl-sound.so')
+                )
             else:
                 os.environ['LD_PRELOAD'] = os.path.join(
                     os.getcwd(), 'et-sdl-sound-r29', 'et-sdl-sound.so')
-            if not os.path.isdir(os.path.join(os.environ['HOME'], '.etwolf')):
+            if not os.path.isdir(os.path.join(
+                    os.environ['HOME'], '.etwolf')):
                 os.mkdir(os.path.join(os.environ['HOME'], '.etwolf'))
 
     def run(self):
@@ -108,7 +115,8 @@ class Main(object):
         logfile = os.path.join(os.environ['HOME'], '.etwolf', 'etwolf.log')
         xrun = command_mod.Command('xrun', errors='ignore')
         if xrun.is_found():
-            subtask_mod.Daemon(xrun.get_cmdline() + self._et.get_cmdline()).run(file=logfile)
+            subtask_mod.Daemon(
+                xrun.get_cmdline() + self._et.get_cmdline()).run(file=logfile)
         else:
             subtask_mod.Daemon(self._et.get_cmdline()).run(file=logfile)
 

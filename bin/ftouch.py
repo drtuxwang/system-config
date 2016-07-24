@@ -33,10 +33,15 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Modify access times of all files in directory recursively.')
+            description='Modify access times of all files in directory '
+            'recursively.')
 
-        parser.add_argument('directories', nargs='+', metavar='directory',
-                            help='Directory containing files to touch.')
+        parser.add_argument(
+            'directories',
+            nargs='+',
+            metavar='directory',
+            help='Directory containing files to touch.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -82,13 +87,19 @@ class Main(object):
         print(directory)
         if os.path.isdir(directory):
             try:
-                files = [os.path.join(directory, x) for x in os.listdir(directory)]
+                files = [
+                    os.path.join(directory, x)
+                    for x in os.listdir(directory)
+                ]
                 subtask_mod.Batch(self._touch.get_cmdline() + files).run()
                 for file in files:
                     if os.path.isdir(file) and not os.path.islink(file):
                         self._toucher(file)
             except PermissionError:
-                raise SystemExit(sys.argv[0] + ': Cannot open "' + directory + '" directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot open "' + directory +
+                    '" directory.'
+                )
 
     def run(self):
         """

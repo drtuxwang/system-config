@@ -63,15 +63,39 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Run command on a list of nodes in parallel (supply ndoe list as stdin).\n')
+            description='Run command on a list of nodes in parallel '
+            '(supply ndoe list as stdin).\n'
+        )
 
-        parser.add_argument('-threads', nargs=1, type=int, dest='threads', default=[16],
-                            metavar='N', help='Select number of threads. Default is 16.')
-        parser.add_argument('-timeout', nargs=1, type=int, dest='timeout', default=[60],
-                            metavar='seconds', help='Select timeout in seconds. Default is 60.')
-
-        parser.add_argument('command', nargs=1, help='Command to run on all systems.')
-        parser.add_argument('args', nargs='*', metavar='arg', help='Command arguments.')
+        parser.add_argument(
+            '-threads',
+            nargs=1,
+            type=int,
+            dest='threads',
+            default=[16],
+            metavar='N',
+            help='Select number of threads. Default is 16.'
+        )
+        parser.add_argument(
+            '-timeout',
+            nargs=1,
+            type=int,
+            dest='timeout',
+            default=[60],
+            metavar='seconds',
+            help='Select timeout in seconds. Default is 60.'
+        )
+        parser.add_argument(
+            'command',
+            nargs=1,
+            help='Command to run on all systems.'
+        )
+        parser.add_argument(
+            'args',
+            nargs='*',
+            metavar='arg',
+            help='Command arguments.'
+        )
 
         my_args = []
         while len(args):
@@ -116,7 +140,12 @@ class SecureShell(object):
 
         try:
             with open(os.devnull, 'w') as sys.stderr:
-                self._client.connect(self._host, username=username, look_for_keys=False, timeout=4)
+                self._client.connect(
+                    self._host,
+                    username=username,
+                    look_for_keys=False,
+                    timeout=4
+                )
         except Exception as exception:
             self.close()
             raise SecureShellError(exception)
@@ -129,9 +158,14 @@ class SecureShell(object):
         timeout = Output timeout inseconds
         """
         try:
-            _, stdout, _ = self._client.exec_command(command, get_pty=True, timeout=timeout)
+            _, stdout, _ = self._client.exec_command(
+                command,
+                get_pty=True,
+                timeout=timeout
+            )
             with open(self._host + '.txt', 'a', newline='\n') as ofile:
-                print(time.strftime('%Y-%m-%d-%H:%M:%S: connected'), file=ofile)
+                print(
+                    time.strftime('%Y-%m-%d-%H:%M:%S: connected'), file=ofile)
                 for line in stdout:
                     print(line.rstrip('\r\n'), file=ofile)
         except Exception as exception:
@@ -162,7 +196,11 @@ class WorkQueue(object):
 
         self._workers = []
         for _ in range(threads):
-            worker = threading.Thread(target=self._do_work, args=(command, timeout), daemon=True)
+            worker = threading.Thread(
+                target=self._do_work,
+                args=(command, timeout),
+                daemon=True
+            )
             worker.start()
             self._workers.append(worker)
 
@@ -247,7 +285,9 @@ class Main(object):
     @staticmethod
     def _config_logging():
         formatter = logging.Formatter(
-            '%(asctime)s %(levelname)s: %(message)s', datefmt='%Y-%m-%d-%H:%M:%S')
+            '%(asctime)s %(levelname)s: %(message)s',
+            datefmt='%Y-%m-%d-%H:%M:%S'
+        )
         handler = logging.handlers.RotatingFileHandler(
             'cluster.log', maxBytes=5242880, backupCount=3)
         handler.setFormatter(formatter)
@@ -286,7 +326,11 @@ class Main(object):
         logging.info(50 * '-')
         logging.info('INIT %d threads: run on %d nodes', threads, len(nodes))
 
-        work_queue = WorkQueue(threads, self._options.get_cmdline(), self._options.get_timeout())
+        work_queue = WorkQueue(
+            threads,
+            self._options.get_cmdline(),
+            self._options.get_timeout()
+        )
         work_queue.add_items(nodes)
         work_queue.join()
 

@@ -37,11 +37,22 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Show information about packages in Debian packages list file.')
+            description='Show information about packages in Debian '
+            'packages list file.'
+        )
 
-        parser.add_argument('packages_file', nargs=1, metavar='distribution.package',
-                            help='Debian package list file.')
-        parser.add_argument('package_names', nargs='+', metavar='package', help='Package name.')
+        parser.add_argument(
+            'packages_file',
+            nargs=1,
+            metavar='distribution.package',
+            help='Debian package list file.'
+        )
+        parser.add_argument(
+            'package_names',
+            nargs='+',
+            metavar='package',
+            help='Package name.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -83,7 +94,10 @@ class Main(object):
                     else:
                         self._packages[name] = lines
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + packages_file + '" packages file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + packages_file +
+                '" packages file.'
+            )
 
     def _show_distribution_packages(self, package_names):
         for name in package_names:

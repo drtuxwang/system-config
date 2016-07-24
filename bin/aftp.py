@@ -38,8 +38,13 @@ class Options(object):
             umask = os.umask(int('077', 8))
             try:
                 with open(netrc, 'w', newline='\n') as ofile:
-                    print('machine', host,
-                          'login anonymous password someone@somehost.somecompany.com', file=ofile)
+                    print(
+                        'machine',
+                        host,
+                        'login anonymous password '
+                        'someone@somehost.somecompany.com',
+                        file=ofile
+                    )
             except OSError:
                 raise SystemExit(sys.argv[0] + ': Cannot create "' + netrc +
                                  '" configuration file.')

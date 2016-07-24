@@ -57,28 +57,73 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Make a compressed archive in DEB format or query database/files.')
+            description='Make a compressed archive in DEB format or '
+            'query database/files.')
 
-        parser.add_argument('-l', action='store_const', const='list', dest='mode',
-                            default='dpkg', help='Show all installed packages (optional arch).')
-        parser.add_argument('-s', action='store_const', const='-s', dest='option',
-                            help='Show status of selected installed packages.')
-        parser.add_argument('-L', action='store_const', const='-L', dest='option',
-                            help='Show files owned by selected installed packages.')
-        parser.add_argument('-d', action='store_const', const='depends',
-                            dest='mode', default='dpkg',
-                            help='Show dependency tree for selected installed packages.')
-        parser.add_argument('-P', action='store_const', const='-P', dest='option',
-                            help='Remove selected installed packages.')
-        parser.add_argument('-S', action='store_const', const='-S', dest='option',
-                            help='Locate package which contain file.')
-        parser.add_argument('-i', action='store_const', const='-i', dest='option',
-                            help='Install selected Debian package files.')
-        parser.add_argument('-I', action='store_const', const='-I', dest='option',
-                            help='Show information about selected Debian package files.')
-
-        parser.add_argument('args', nargs='*', metavar='package.deb|package|arch',
-                            help='Debian package file, package name or arch.')
+        parser.add_argument(
+            '-l',
+            action='store_const',
+            const='list',
+            dest='mode',
+            default='dpkg',
+            help='Show all installed packages (optional arch).'
+        )
+        parser.add_argument(
+            '-s',
+            action='store_const',
+            const='-s',
+            dest='option',
+            help='Show status of selected installed packages.'
+        )
+        parser.add_argument(
+            '-L',
+            action='store_const',
+            const='-L',
+            dest='option',
+            help='Show files owned by selected installed packages.'
+        )
+        parser.add_argument(
+            '-d',
+            action='store_const',
+            const='depends',
+            dest='mode',
+            default='dpkg',
+            help='Show dependency tree for selected installed packages.'
+        )
+        parser.add_argument(
+            '-P',
+            action='store_const',
+            const='-P',
+            dest='option',
+            help='Remove selected installed packages.'
+        )
+        parser.add_argument(
+            '-S',
+            action='store_const',
+            const='-S',
+            dest='option',
+            help='Locate package which contain file.'
+        )
+        parser.add_argument(
+            '-i',
+            action='store_const',
+            const='-i',
+            dest='option',
+            help='Install selected Debian package files.'
+        )
+        parser.add_argument(
+            '-I',
+            action='store_const',
+            const='-I',
+            dest='option',
+            help='Show information about selected Debian package files.'
+        )
+        parser.add_argument(
+            'args',
+            nargs='*',
+            metavar='package.deb|package|arch',
+            help='Debian package file, package name or arch.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -93,7 +138,10 @@ class Options(object):
         task = subtask_mod.Batch(self._dpkg.get_cmdline())
         task.run()
         if len(task.get_output()) != 1:
-            raise SystemExit(sys.argv[0] + ": Cannot detect default architecture of packages.")
+            raise SystemExit(
+                sys.argv[0] + ": Cannot detect default architecture of "
+                "packages."
+            )
         self._arch = task.get_output()[0]
 
         if self._args.mode == 'list':
@@ -109,14 +157,25 @@ class Options(object):
             self._dpkg = command_mod.Command('dpkg-deb', errors='stop')
             self._dpkg.set_args(['-b', os.curdir, self._args.args[0]])
         elif self._args.args:
-            raise SystemExit(sys.argv[0] + ': Invalid Debian package name "' +
-                             self._args.args[0] + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Invalid Debian package name "' +
+                self._args.args[0] + '".'
+            )
         else:
-            print('usage: deb.py [-h] [-l] [-s] [-L] [-d] [-P] [-S] [-i] [-I]', file=sys.stderr)
-            print('              [package.deb|package|arch [package.deb|package|arch ...]]',
-                  file=sys.stderr)
-            print('deb.py: error: the following arguments are required: package.deb',
-                  file=sys.stderr)
+            print(
+                'usage: deb.py [-h] [-l] [-s] [-L] [-d] [-P] [-S] [-i] [-I]',
+                file=sys.stderr
+            )
+            print(
+                '              [package.deb|package|arch '
+                '[package.deb|package|arch ...]]',
+                file=sys.stderr
+            )
+            print(
+                'deb.py: error: the following arguments are required: '
+                'package.deb',
+                file=sys.stderr
+            )
             raise SystemExit(1)
 
 
@@ -258,22 +317,29 @@ class Main(object):
                         elif arch != self._options.get_arch():
                             name += ':' + arch
                     elif line.startswith('Version: '):
-                        package.set_version(line.replace('Version: ', '', 1).split(':')[-1])
+                        package.set_version(
+                            line.replace('Version: ', '', 1).split(':')[-1])
                     elif line.startswith('Installed-Size: '):
                         try:
-                            package.set_size(int(line.replace('Installed-Size: ', '', 1)))
+                            package.set_size(
+                                int(line.replace('Installed-Size: ', '', 1)))
                         except ValueError:
-                            raise SystemExit(sys.argv[0] + ': Package "' + name +
-                                             '" in "/var/lib/dpkg/info" has non integer size.')
+                            raise SystemExit(
+                                sys.argv[0] + ': Package "' + name +
+                                '" in "/var/lib/dpkg/info" has non '
+                                'integer size.'
+                            )
                     elif line.startswith('Depends: '):
                         for i in line.replace('Depends: ', '', 1).split(', '):
                             package.append_depends(i.split()[0])
                     elif line.startswith('Description: '):
-                        package.set_description(line.replace('Description: ', '', 1))
+                        package.set_description(
+                            line.replace('Description: ', '', 1))
                         packages[name] = package
                         package = Package('', -1, [], '')
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "/var/lib/dpkg/status" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "/var/lib/dpkg/status" file.')
 
         self._calc_dependencies(packages, names_all)
 
@@ -301,7 +367,11 @@ class Main(object):
                     if name in self._packages[key].get_depends():
                         if key not in checked:
                             checked.append(key)
-                            self._show_dependent_packages([key], checked, ident + '  ')
+                            self._show_dependent_packages(
+                                [key],
+                                checked,
+                                ident + '  '
+                            )
 
     def run(self):
         """

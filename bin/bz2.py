@@ -32,10 +32,15 @@ class Options(object):
         return self._bzip2
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Compress a file in BZIP2 format.')
+        parser = argparse.ArgumentParser(
+            description='Compress a file in BZIP2 format.')
 
-        parser.add_argument('files', nargs=1, metavar='file',
-                            help='File to compresss to "file.bz2".')
+        parser.add_argument(
+            'files',
+            nargs=1,
+            metavar='file',
+            help='File to compresss to "file.bz2".'
+        )
 
         self._args = parser.parse_args(args)
 

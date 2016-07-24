@@ -30,19 +30,30 @@ class Options(object):
         return self._args.location[0]
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Zero device or create zero file.')
+        parser = argparse.ArgumentParser(
+            description='Zero device or create zero file.')
 
-        parser.add_argument('location', nargs=1, metavar='device|directory',
-                            help='Device to zero or directory to create "fzero.tmp" file.')
+        parser.add_argument(
+            'location',
+            nargs=1,
+            metavar='device|directory',
+            help='Device to zero or directory to create "fzero.tmp" file.'
+        )
 
         self._args = parser.parse_args(args)
 
         location = self._args.location[0]
         if os.path.exists(location):
             if os.path.isfile(location):
-                raise SystemExit(sys.argv[0] + ': Cannot zero existing "' + location + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot zero existing "' +
+                    location + '" file.'
+                )
         else:
-            raise SystemExit(sys.argv[0] + ': Cannot find "' + location + '" device or directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "' + location +
+                '" device or directory.'
+            )
 
     def parse(self, args):
         """
@@ -109,7 +120,8 @@ class Main(object):
         except (KeyboardInterrupt, OSError):
             pass
         elapsed_time = time.time() - start_time
-        print(', {0:4.2f} seconds, {1:.0f} MB/s'.format(elapsed_time, size / elapsed_time))
+        print(', {0:4.2f} seconds, {1:.0f} MB/s'.format(
+            elapsed_time, size / elapsed_time))
 
 
 if __name__ == '__main__':

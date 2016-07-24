@@ -37,9 +37,15 @@ class Options(object):
         return self._args.urls
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Download http/https/ftp/file URLs.')
+        parser = argparse.ArgumentParser(
+            description='Download http/https/ftp/file URLs.')
 
-        parser.add_argument('urls', nargs='+', metavar='url', help='http/https/ftp/file URL.')
+        parser.add_argument(
+            'urls',
+            nargs='+',
+            metavar='url',
+            help='http/https/ftp/file URL.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -155,7 +161,10 @@ class Main(object):
 
         try:
             with open(file+'.part.json', 'w', newline='\n') as ofile:
-                print(json.dumps(json_data, indent=4, sort_keys=True), file=ofile)
+                print(
+                    json.dumps(json_data, indent=4, sort_keys=True),
+                    file=ofile
+                )
         except OSError:
             pass
 
@@ -178,7 +187,10 @@ class Main(object):
             return
         elif 'Accept-Ranges' in conn.info() and check == 'resume':
             tmpsize = file_mod.FileStat(file + '.part').get_size()
-            req = urllib.request.Request(url, headers={'Range': 'bytes='+str(tmpsize)+'-'})
+            req = urllib.request.Request(
+                url,
+                headers={'Range': 'bytes='+str(tmpsize)+'-'}
+            )
             conn = urllib.request.urlopen(req)
             mode = 'ab'
         else:
@@ -195,9 +207,11 @@ class Main(object):
                         break
                     tmpsize += len(chunk)
                     ofile.write(chunk)
-                    print('\r  => {0:s} [{1:d}/{2:d}]'.format(file, tmpsize, size), end='')
+                    print('\r  => {0:s} [{1:d}/{2:d}]'.format(
+                        file, tmpsize, size), end='')
         except PermissionError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + file + '" file.')
         print()
 
         os.utime(tmpfile, (mtime, mtime))

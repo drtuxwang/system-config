@@ -77,22 +77,53 @@ class Options(object):
         return None
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Sends text/images/postscript/PDF to printer.')
+        parser = argparse.ArgumentParser(
+            description='Sends text/images/postscript/PDF to printer.')
 
-        parser.add_argument('-2side', dest='double_side_flag', action='store_true',
-                            help='Select double sided output.')
-        parser.add_argument('-chars', nargs=1, type=int, default=[100],
-                            help='Select characters per line.')
-        parser.add_argument('-pages', nargs=1, type=int, choices=[1, 2, 4, 6, 8], default=[1],
-                            help='Select pages per page (1, 2, 4, 6, 8).')
-        parser.add_argument('-paper', nargs=1, default=['A4'],
-                            help='Select paper type. Default is A4.')
-        parser.add_argument('-printer', nargs=1, help='Select printer name.')
-        parser.add_argument('-v', dest='view_flag', action='store_true',
-                            help='Select view instead of priiting.')
-
-        parser.add_argument('files', nargs='+', metavar='file',
-                            help='Text/images/postscript/PDF file.')
+        parser.add_argument(
+            '-2side',
+            dest='double_side_flag',
+            action='store_true',
+            help='Select double sided output.'
+        )
+        parser.add_argument(
+            '-chars',
+            nargs=1,
+            type=int,
+            default=[100],
+            help='Select characters per line.'
+        )
+        parser.add_argument(
+            '-pages',
+            nargs=1,
+            type=int,
+            choices=[1, 2, 4, 6, 8],
+            default=[1],
+            help='Select pages per page (1, 2, 4, 6, 8).'
+        )
+        parser.add_argument(
+            '-paper',
+            nargs=1,
+            default=['A4'],
+            help='Select paper type. Default is A4.'
+        )
+        parser.add_argument(
+            '-printer',
+            nargs=1,
+            help='Select printer name.'
+        )
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help='Select view instead of priiting.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='Text/images/postscript/PDF file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -105,18 +136,23 @@ class Options(object):
         os.umask(int('077', 8))
 
         if self._args.chars[0] < 0:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'characters per line.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer for '
+                'characters per line.'
+            )
         if self._args.pages[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'pages per page.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer for '
+                'pages per page.'
+            )
 
         if self._args.printer:
             self._printer = self._args.printer[0]
         else:
             self._printer = self._get_default_printer()
             if not self._printer:
-                raise SystemExit(sys.argv[0] + ': Cannot detect default printer.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot detect default printer.')
 
 
 class Main(object):
@@ -160,7 +196,14 @@ class Main(object):
             task = subtask_mod.Batch(convert.get_cmdline())
             task.run()
 
-            jpeg2ps.set_args(['-a', '-p', 'a4', '-o', self._tmpfile, self._tmpfile + '.jpg'])
+            jpeg2ps.set_args([
+                '-a',
+                '-p',
+                'a4',
+                '-o',
+                self._tmpfile,
+                self._tmpfile + '.jpg'
+            ])
             task = subtask_mod.Batch(jpeg2ps.get_cmdline())
 
         else:
@@ -169,21 +212,30 @@ class Main(object):
             task = subtask_mod.Batch(convert.get_cmdline())
             task.run(pattern='^' + file + ' ', error2output=True)
             if not task.has_output():
-                raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" image file.')
-            xsize, ysize = task.get_output()[0].split('+')[0].split()[-1].split('x')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "' + file + '" image file.')
+            xsize, ysize = task.get_output()[0].split(
+                '+')[0].split()[-1].split('x')
 
+            convert.set_args([
+                '-page',
+                'a4',
+                '-bordercolor',
+                'white',
+                '-border',
+                '40x40'
+            ])
             if int(xsize) > int(ysize):
-                convert.set_args([
-                    '-page', 'a4', '-bordercolor', 'white', '-border', '40x40', '-rotate', '90'])
-            else:
-                convert.set_args(['-page', 'a4', '-bordercolor', 'white', '-border', '40x40'])
+                convert.extend_args(['-rotate', '90'])
             convert.extend_args([file, 'ps:' + self._tmpfile])
             task = subtask_mod.Batch(convert.get_cmdline())
 
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
 
         return 'IMAGE file "' + file + '"'
 
@@ -198,13 +250,27 @@ class Main(object):
             device = 'pswrite'
 
         command.set_args([
-            '-q', '-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=' + device, '-sPAPERSIZE=a4',
-            '-r300x300', '-sOutputFile=' + self._tmpfile, '-c', 'save', 'pop', '-f', file])
+            '-q',
+            '-dNOPAUSE',
+            '-dBATCH',
+            '-dSAFER',
+            '-sDEVICE=' + device,
+            '-sPAPERSIZE=a4',
+            '-r300x300',
+            '-sOutputFile=' + self._tmpfile,
+            '-c',
+            'save',
+            'pop',
+            '-f',
+            file
+        ])
         task = subtask_mod.Batch(command.get_cmdline())
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
         self._postscript_fix(self._tmpfile)
         return 'PDF file "' + file + '"'
 
@@ -217,11 +283,14 @@ class Main(object):
                             ofile.write(line.rstrip(b'\r\n\004') + b'\n')
                 except OSError:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + self._tmpfile + '" temporary file.')
+                        sys.argv[0] + ': Cannot create "' +
+                        self._tmpfile + '" temporary file.'
+                    )
                 self._postscript_fix(self._tmpfile)
                 return 'Postscript file "' + file + '"'
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" postscript file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" postscript file.')
 
     def _postscript_fix(self, file):
         scaling = None
@@ -255,33 +324,48 @@ class Main(object):
             del os.environ['LANG']  # Avoids locale problems
         a2ps = command_mod.Command('a2ps', errors='stop')
         # Space in header and footer increase top/bottom margins
-        a2ps.set_args(['--media=A4', '--columns=1', '--header= ', '--left-footer=', '--footer= ',
-                       '--right-footer=', '--output=-', '--highlight-level=none', '--quiet'])
+        a2ps.set_args([
+            '--media=A4',
+            '--columns=1',
+            '--header= ',
+            '--left-footer=',
+            '--footer= ',
+            '--right-footer=',
+            '--output=-',
+            '--highlight-level=none',
+            '--quiet'
+        ])
         chars = options.get_chars()
 
-        a2ps.extend_args(['--portrait', '--chars-per-line=' + str(chars),
-                          '--left-title=' + time.strftime('%Y-%m-%d-%H:%M:%S'),
-                          '--center-title=' + os.path.basename(file)])
+        a2ps.extend_args([
+            '--portrait',
+            '--chars-per-line=' + str(chars),
+            '--left-title=' + time.strftime('%Y-%m-%d-%H:%M:%S'),
+            '--center-title=' + os.path.basename(file)
+        ])
 
         is_not_printable = re.compile('[\000-\037\200-\277]')
         try:
             with open(file, 'rb') as ifile:
                 stdin = []
                 for line in ifile:
-                    line = is_not_printable.sub(
-                        ' ', line.decode('utf-8', 'replace').rstrip('\r\n\004'))
+                    line = is_not_printable.sub(' ', line.decode(
+                        'utf-8', 'replace').rstrip('\r\n\004'))
                     lines = textwrap.wrap(line, chars)
                     if not lines:
                         stdin.append('')
                     else:
                         stdin.extend(lines)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" text file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" text file.')
         task = subtask_mod.Batch(a2ps.get_cmdline())
         task.run(stdin=stdin, file=self._tmpfile)
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
         return 'text file "' + file + '" with ' + str(chars) + ' columns'
 
     def run(self):
@@ -305,9 +389,13 @@ class Main(object):
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" file.')
             ext = file.split('.')[-1].lower()
-            if ext in ('bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff'):
+            if ext in (
+                    'bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx',
+                    'svg', 'tif', 'tiff'
+            ):
                 message = self._image(file)
             elif ext == 'pdf':
                 message = self._pdf(file)
@@ -319,13 +407,17 @@ class Main(object):
                 print('Spooling', message, 'to printer previewer')
                 subtask_mod.Task(evince.get_cmdline() + [self._tmpfile]).run()
             else:
-                print('Spooling ', message, ' to printer "', options.get_printer(),
-                      '" (', sides, ')', sep='')
-                task = subtask_mod.Task(command.get_cmdline() + [self._tmpfile])
+                print('Spooling {0:s} to printer "{1:s}" ({2:d})'.format(
+                    message, options.get_printer(), sides))
+                task = subtask_mod.Task(
+                    command.get_cmdline() + [self._tmpfile])
                 task.run()
                 if task.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                     ' received from "' + task.get_file() + '".')
+                    raise SystemExit(
+                        sys.argv[0] + ': Error code ' +
+                        str(task.get_exitcode()) + ' received from "' +
+                        task.get_file() + '".'
+                    )
             os.remove(self._tmpfile)
 
 

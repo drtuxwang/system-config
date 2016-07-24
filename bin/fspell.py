@@ -37,7 +37,12 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Check spelling of file.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='File to spell check.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File to spell check.'
+        )
 
         self._args = parser.parse_args(args)
 

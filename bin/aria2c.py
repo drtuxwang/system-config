@@ -67,7 +67,10 @@ class Main(object):
 
         shaper = network_mod.Shaper()
         if shaper.is_found():
-            subtask_mod.Exec(shaper.get_cmdline() + aria2c.get_cmdline() + sys.argv[1:]).run()
+            subtask_mod.Exec(
+                shaper.get_cmdline() + aria2c.get_cmdline() +
+                sys.argv[1:]
+            ).run()
         else:
             subtask_mod.Exec(aria2c.get_cmdline() + sys.argv[1:]).run()
 

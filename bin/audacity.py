@@ -56,7 +56,8 @@ class Main(object):
                 except OSError:
                     pass
                 else:
-                    if not os.path.isfile(os.path.join(audacitydir, 'audacity.cfg')):
+                    if not os.path.isfile(
+                            os.path.join(audacitydir, 'audacity.cfg')):
                         with open(os.path.join(audacitydir, 'audacity.cfg'),
                                   'w', newline='\n') as ofile:
                             print('[AudioIO]', file=ofile)
@@ -69,8 +70,11 @@ class Main(object):
         """
         audacity = command_mod.Command('audacity', errors='stop')
         audacity.set_args(sys.argv[1:])
-        pattern = ('^$|^HCK OnTimer|: Gtk-WARNING | LIBDBUSMENU-GLIB-WARNING |'
-                   '^ALSA lib |alsa.c|^Cannot connect to server socket|^jack server|Debug: ')
+        pattern = (
+            '^$|^HCK OnTimer|: Gtk-WARNING | LIBDBUSMENU-GLIB-WARNING |'
+            '^ALSA lib |alsa.c|^Cannot connect to server socket|'
+            '^jack server|Debug: '
+        )
         self._config()
 
         subtask_mod.Background(audacity.get_cmdline()).run(pattern=pattern)

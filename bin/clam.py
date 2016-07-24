@@ -33,9 +33,15 @@ class Options(object):
         return self._clamscan
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Run ClamAV anti-virus scanner.')
+        parser = argparse.ArgumentParser(
+            description='Run ClamAV anti-virus scanner.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='File or directory.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 

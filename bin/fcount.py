@@ -30,9 +30,15 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Count number of lines and maximum columns used in file.')
+            description='Count number of lines and maximum '
+            'columns used in file.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='File to examine.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File to examine.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -84,7 +90,8 @@ class Main(object):
         for file in options.get_files():
             if os.path.isfile(file):
                 if not os.path.isfile(file):
-                    raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot find "' + file + '" file.')
                 nlines = 0
                 maxcols = 0
                 try:
@@ -96,11 +103,15 @@ class Main(object):
                                 maxcols = ncols
                                 lline = nlines
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot read "' + file + '" file.')
                 except UnicodeDecodeError:  # Non text file
                     continue
-                print('{0:s}: {1:d} lines (max length of {2:d} on line {3:d})'.format(
-                    file, nlines, maxcols, lline))
+                print(
+                    '{0:s}: {1:d} lines (max length of {2:d} '
+                    'on line {3:d})'.format(file, nlines, maxcols, lline)
+                )
+
 
 if __name__ == '__main__':
     if '--pydoc' in sys.argv:

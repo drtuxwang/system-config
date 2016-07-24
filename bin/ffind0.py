@@ -33,8 +33,12 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Find zero sized files.')
 
-        parser.add_argument('directories', nargs='+', metavar='directory',
-                            help='Directory to search.')
+        parser.add_argument(
+            'directories',
+            nargs='+',
+            metavar='directory',
+            help='Directory to search.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -80,7 +84,10 @@ class Main(object):
         for file in sorted(files):
             if os.path.isdir(file):
                 try:
-                    self._findzero([os.path.join(file, x) for x in os.listdir(file)])
+                    self._findzero([
+                        os.path.join(file, x)
+                        for x in os.listdir(file)
+                    ])
                 except PermissionError:
                     pass
             elif file_mod.FileStat(file).get_size() == 0:

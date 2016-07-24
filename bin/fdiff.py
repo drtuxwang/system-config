@@ -26,10 +26,16 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Show summary of differences between two directories recursively.')
+            description='Show summary of differences between two '
+            'directories recursively.'
+        )
 
-        parser.add_argument('directories', nargs=2, metavar='directory',
-                            help='Directory to compare.')
+        parser.add_argument(
+            'directories',
+            nargs=2,
+            metavar='directory',
+            help='Directory to compare.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -86,9 +92,11 @@ class Main(object):
     @staticmethod
     def _get_files(directory):
         try:
-            files = sorted([os.path.join(directory, x) for x in os.listdir(directory)])
+            files = sorted(
+                [os.path.join(directory, x) for x in os.listdir(directory)])
         except (FileNotFoundError, NotADirectoryError, PermissionError):
-            raise SystemExit(sys.argv[0] + ': Cannot open "' + directory + '" directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot open "' + directory + '" directory.')
         return files
 
     def _diffdir(self, directory1, directory2):
@@ -97,22 +105,32 @@ class Main(object):
 
         for file in files1:
             if os.path.isdir(file):
-                if os.path.isdir(os.path.join(directory2, os.path.basename(file))):
-                    self._diffdir(file, os.path.join(directory2, os.path.basename(file)))
+                if os.path.isdir(
+                        os.path.join(directory2, os.path.basename(file))):
+                    self._diffdir(
+                        file,
+                        os.path.join(directory2, os.path.basename(file))
+                    )
                 else:
                     print('only ', file + os.sep)
             elif os.path.isfile(file):
-                if os.path.isfile(os.path.join(directory2, os.path.basename(file))):
-                    self._difffile(file, os.path.join(directory2, os.path.basename(file)))
+                if os.path.isfile(
+                        os.path.join(directory2, os.path.basename(file))):
+                    self._difffile(
+                        file,
+                        os.path.join(directory2, os.path.basename(file))
+                    )
                 else:
                     print('only ', file)
 
         for file in files2:
             if os.path.isdir(file):
-                if not os.path.isdir(os.path.join(directory1, os.path.basename(file))):
+                if not os.path.isdir(
+                        os.path.join(directory1, os.path.basename(file))):
                     print('only ', file + os.sep)
             elif os.path.isfile(file):
-                if not os.path.isfile(os.path.join(directory1, os.path.basename(file))):
+                if not os.path.isfile(
+                        os.path.join(directory1, os.path.basename(file))):
                     print('only ', file)
 
     @staticmethod

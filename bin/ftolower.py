@@ -30,9 +30,15 @@ class Options(object):
         return self._args.files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Convert filename to lowercase.')
+        parser = argparse.ArgumentParser(
+            description='Convert filename to lowercase.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='File to change.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File to change.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -83,23 +89,30 @@ class Main(object):
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" file.')
             if os.sep not in file:
                 newfile = file.lower()
             elif file.endswith(os.sep):
-                newfile = os.path.join(os.path.dirname(file), os.path.basename(file[:-1]).lower())
+                newfile = os.path.join(
+                    os.path.dirname(file), os.path.basename(file[:-1]).lower())
             else:
-                newfile = os.path.join(os.path.dirname(file), os.path.basename(file).lower())
+                newfile = os.path.join(
+                    os.path.dirname(file), os.path.basename(file).lower())
             if newfile != file:
                 print('Converting filename "' + file + '" to lowercase...')
                 if os.path.isfile(newfile):
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot rename over existing "' + newfile + '" file.')
+                        sys.argv[0] + ': Cannot rename over existing "' +
+                        newfile + '" file.'
+                    )
                 try:
                     shutil.move(file, newfile)
                 except OSError:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot rename "' + file + '" file to "' + newfile + '".')
+                        sys.argv[0] + ': Cannot rename "' + file +
+                        '" file to "' + newfile + '".'
+                    )
 
 
 if __name__ == '__main__':

@@ -105,15 +105,18 @@ class Main(object):
                 for line in ifile:
                     for block in line.split('href="'):
                         if '://www.facebook.com/' in block:
-                            if 'hc_location=friends_tab' in block.split("'")[0]:
-                                url = isjunk.sub('', block.split("'")[0]).replace(
-                                    '?hc_location=friend_browser', '')
+                            if ('hc_location=friends_tab' in
+                                    block.split("'")[0]):
+                                url = isjunk.sub('', block.split(
+                                    "'")[0]).replace(
+                                        '?hc_location=friend_browser', '')
                                 uid = int(block.split('user.php?id=')[1].split(
                                     '"')[0].split('&')[0])
                                 name = block.split('>')[1].split('<')[0]
                                 self._profiles[uid] = Profile(name, url)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" HTML file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" HTML file.')
 
     def run(self):
         """
@@ -125,7 +128,10 @@ class Main(object):
         self._read_html(options.get_file())
 
         file = time.strftime('facebook-%Y%m%d.csv', time.localtime())
-        print('Writing "' + file + '" with', len(self._profiles.keys()), 'friends...')
+        print(
+            'Writing "' + file + '" with', len(self._profiles.keys()),
+            'friends...'
+        )
         try:
             with open(file, 'w', newline='\n') as ofile:
                 print('uid,name,profile_url', file=ofile)
@@ -135,11 +141,14 @@ class Main(object):
                     else:
                         print(uid, end='', file=ofile)
                     if ' ' in profile.get_name():
-                        print(',"' + profile.get_name() + '",' + profile.get_url(), file=ofile)
+                        print(',"{0:s}",{1:s}'.format(
+                            profile.get_name(), profile.get_url()), file=ofile)
                     else:
-                        print(',' + profile.get_name() + ',' + profile.get_url(), file=ofile)
+                        print(',{0:s},{1:s}'.format(
+                            profile.get_name(), profile.get_url()), file=ofile)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" CSV file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + file + '" CSV file.')
 
 
 if __name__ == '__main__':

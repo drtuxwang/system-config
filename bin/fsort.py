@@ -29,10 +29,15 @@ class Options(object):
         return self._args.files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Unicode sort lines of a file.')
+        parser = argparse.ArgumentParser(
+            description='Unicode sort lines of a file.')
 
-        parser.add_argument('files', nargs=1, metavar='file',
-                            help='File contents to sort.')
+        parser.add_argument(
+            'files',
+            nargs=1,
+            metavar='file',
+            help='File contents to sort.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -90,7 +95,8 @@ class Main(object):
                             line = line.rstrip('\r\n')
                             lines.append(line)
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot read "' + file + '" file.')
         else:
             for line in sys.stdin:
                 lines.append(line.rstrip('\r\n'))

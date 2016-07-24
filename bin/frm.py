@@ -36,12 +36,21 @@ class Options(object):
         return self._args.recursive_flag
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Remove files or directories.')
+        parser = argparse.ArgumentParser(
+            description='Remove files or directories.')
 
-        parser.add_argument('-R', dest='recursive_flag', action='store_true',
-                            help='Remove directories recursively.')
-
-        parser.add_argument('files', nargs='+', metavar='file', help='File or directory.')
+        parser.add_argument(
+            '-R',
+            dest='recursive_flag',
+            action='store_true',
+            help='Remove directories recursively.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -89,7 +98,8 @@ class Main(object):
         try:
             os.remove(file)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot remove "' + file + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot remove "' + file + '" file.')
 
     def _rmdir(self, directory):
         if self._options.get_recursive_flag():
@@ -97,7 +107,10 @@ class Main(object):
             try:
                 shutil.rmtree(directory)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot remove "' + directory + '" directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot remove "' +
+                    directory + '" directory.'
+                )
         else:
             print(sys.argv[0] + ': Ignoring "' + directory + '" directory.')
 
@@ -113,7 +126,10 @@ class Main(object):
             elif os.path.isdir(file):
                 self._rmdir(file)
             else:
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file or directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file +
+                    '" file or directory.'
+                )
 
 
 if __name__ == '__main__':

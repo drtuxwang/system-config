@@ -35,18 +35,32 @@ class Options(object):
         return self._args.lines[0]
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Output the first n lines of a file.')
+        parser = argparse.ArgumentParser(
+            description='Output the first n lines of a file.')
 
-        parser.add_argument('-n', nargs=1, type=int, dest='lines', default=[10],
-                            metavar='K', help='Output first K lines.')
-
-        parser.add_argument('files', nargs='+', metavar='file', help='File to search.')
+        parser.add_argument(
+            '-n',
+            nargs=1,
+            type=int,
+            dest='lines',
+            default=[10],
+            metavar='K',
+            help='Output first K lines.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File to search.'
+        )
 
         self._args = parser.parse_args(args)
 
         if self._args.lines[0] < 0:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'number of lines.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer for '
+                'number of lines.'
+            )
 
     def parse(self, args):
         """
@@ -91,7 +105,8 @@ class Main(object):
             with open(file, errors='replace') as ifile:
                 self._pipe(options, ifile)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" file.')
 
     @staticmethod
     def _pipe(options, pipe):

@@ -32,10 +32,16 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Check debian directory for old, unused or missing ".deb" packages.')
+            description='Check debian directory for old, unused or missing '
+            '".deb" packages.'
+        )
 
-        parser.add_argument('distributions', nargs='+', metavar='directory',
-                            help='Distribution directory.')
+        parser.add_argument(
+            'distributions',
+            nargs='+',
+            metavar='directory',
+            help='Distribution directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -104,7 +110,11 @@ class Main(object):
                 if file_stat.get_time() > packages[name].get_time():
                     print('rm', packages[name].get_file())
                     print('# ', file)
-                    packages[name] = Package(file, file_stat.get_time(), version)
+                    packages[name] = Package(
+                        file,
+                        file_stat.get_time(),
+                        version
+                    )
                 else:
                     print('rm', file)
                     print('# ', packages[name].get_file())
@@ -122,10 +132,14 @@ class Main(object):
                     try:
                         name, version = line.split()[:2]
                     except ValueError:
-                        raise SystemExit(sys.argv[0] + ': Cannot read corrupt "' + file +
-                                         '" package list file.')
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot read corrupt "' + file +
+                            '" package list file.'
+                        )
                     packages[name] = Package(os.path.join(
-                        distribution, name + '_' + version + '_*.deb'), -1, version)
+                        distribution,
+                        name + '_' + version + '_*.deb'
+                    ), -1, version)
         except OSError:
             pass
 
@@ -136,11 +150,15 @@ class Main(object):
                     try:
                         name, version = line.split()[:2]
                     except ValueError:
-                        raise SystemExit(sys.argv[0] + ': Cannot read corrupt "' + file +
-                                         '" package list file.')
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot read corrupt "' + file +
+                            '" package list file.'
+                        )
                     if name in packages:
-                        if (packages[name].get_file() ==
-                                os.path.join(distribution, name + '_' + version + '_*.deb')):
+                        if packages[name].get_file() == os.path.join(
+                                distribution,
+                                name + '_' + version + '_*.deb'
+                        ):
                             del packages[name]
         except OSError:
             pass
@@ -170,11 +188,13 @@ class Main(object):
 
         for name in names_files:
             if name not in names_used:
-                if (name in names_white_list and packages_white_list[name] in (
-                        '*', packages_files[name])):
+                if (name in names_white_list and
+                        packages_white_list[name] in
+                        ('*', packages_files[name])):
                     continue
                 print('rm', packages_files[name].get_file(), '# Unused')
-            elif packages_files[name].get_version() != packages_used[name].get_version():
+            elif packages_files[name].get_version() != (
+                    packages_used[name].get_version()):
                 print('rm', packages_files[name].get_file(), '# Unused')
                 print('# ', packages_used[name].get_file(), 'Missing')
 
@@ -208,9 +228,14 @@ class Main(object):
         for distribution in options.get_distributions():
             packages_files = self._check_files(distribution)
             if packages_files and os.path.isfile(distribution + '.debs'):
-                packages_white_list = self._read_distribution_whitelist(distribution + '.whitelist')
+                packages_white_list = self._read_distribution_whitelist(
+                    distribution + '.whitelist')
                 packages_used = self._check_used(distribution)
-                self._compare(packages_files, packages_white_list, packages_used)
+                self._compare(
+                    packages_files,
+                    packages_white_list,
+                    packages_used
+                )
 
 
 if __name__ == '__main__':

@@ -46,9 +46,22 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Rename file/directory by replacing some characters.')
 
-        parser.add_argument('pattern', nargs=1, help='Regular expression.')
-        parser.add_argument('replacement', nargs=1, help='Replacement for matches.')
-        parser.add_argument('files', nargs='+', metavar='file', help='File or directory.')
+        parser.add_argument(
+            'pattern',
+            nargs=1,
+            help='Regular expression.'
+        )
+        parser.add_argument(
+            'replacement',
+            nargs=1,
+            help='Replacement for matches.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -107,19 +120,29 @@ class Main(object):
 
         for file in self._files:
             if os.sep in file:
-                newfile = os.path.join(os.path.dirname(file), self._is_match.sub(
-                    self._replacement, os.path.basename(file)))
+                newfile = os.path.join(
+                    os.path.dirname(file),
+                    self._is_match.sub(
+                        self._replacement,
+                        os.path.basename(file)
+                    )
+                )
             else:
                 newfile = self._is_match.sub(self._replacement, file)
             if newfile != file:
                 print('Renaming "' + file + '" to "' + newfile + '"...')
                 if os.path.isfile(newfile):
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot rename over existing "' + newfile + '" file.')
+                        sys.argv[0] + ': Cannot rename over existing "' +
+                        newfile + '" file.'
+                    )
                 try:
                     shutil.move(file, newfile)
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot rename to "' + newfile + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot rename to "' +
+                        newfile + '" file.'
+                    )
 
 
 if __name__ == '__main__':

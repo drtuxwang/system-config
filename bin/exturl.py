@@ -30,9 +30,15 @@ class Options(object):
         return self._args.files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Extracts http references from a HTML file.')
+        parser = argparse.ArgumentParser(
+            description='Extracts http references from a HTML file.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='HTML file.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='HTML file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -81,14 +87,16 @@ class Main(object):
                 for line in ifile:
                     line = line.strip()
                     for token in self._is_iframe.sub('href=', line).split():
-                        if self._is_url.match(token) and not self._is_ignore.search(token):
+                        if (self._is_url.match(token) and not
+                                self._is_ignore.search(token)):
                             url = token[5:].split('>')[0]
                             for quote in ('"', "'"):
                                 if quote in url:
                                     url = url.split(quote)[1]
                             urls.append(url)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read ' + file + ' HTML file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read ' + file + ' HTML file.')
         return urls
 
     def run(self):
@@ -104,7 +112,8 @@ class Main(object):
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" HTML file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" HTML file.')
             urls.extend(self._extract(file))
         for url in sorted(set(urls)):
             print(url)

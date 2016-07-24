@@ -44,15 +44,26 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Break reminder timer.')
 
-        parser.add_argument('-g', dest='gui_flag', action='store_true', help='Start GUI.')
-
-        parser.add_argument('time', nargs=1, type=int, help='Time between breaks in minutes.')
+        parser.add_argument(
+            '-g',
+            dest='gui_flag',
+            action='store_true',
+            help='Start GUI.'
+        )
+        parser.add_argument(
+            'time',
+            nargs=1,
+            type=int,
+            help='Time between breaks in minutes.'
+        )
 
         self._args = parser.parse_args(args)
 
         if self._args.time[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'break time.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer for '
+                'break time.'
+            )
 
     def parse(self, args):
         """
@@ -63,9 +74,10 @@ class Options(object):
         if self._args.gui_flag:
             xterm = command_mod.Command('xterm', errors='stop')
             xterm.set_args([
-                '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', FG_COLOUR,
-                '-bg', BG_COLOUR, '-cr', '#880000', '-geometry', '15x3', '-ut', '+sb',
-                '-e', sys.argv[0]] + args[2:])
+                '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg',
+                FG_COLOUR, '-bg', BG_COLOUR, '-cr', '#880000', '-geometry',
+                '15x3', '-ut', '+sb', '-e', sys.argv[0]
+            ] + args[2:])
             subtask_mod.Daemon(xterm.get_cmdline()).run()
             raise SystemExit(0)
 
@@ -109,7 +121,8 @@ class Main(object):
             sys.stdout.write('\033]11;#ff8888\007')
             sys.stdout.flush()
             subtask_mod.Batch(self._bell.get_cmdline()).run()
-            self._options.get_pop().set_args([time.strftime('%H:%M') + ': break time reminder'])
+            self._options.get_pop().set_args(
+                [time.strftime('%H:%M') + ': break time reminder'])
             subtask_mod.Batch(self._options.get_pop().get_cmdline()).run()
         self._alarm += 60  # One minute reminder
 
@@ -135,7 +148,9 @@ class Main(object):
                     time.sleep(1)
                     elapsed = int(time.time()) - start
                     sys.stdout.write(
-                        ' \r ' + time.strftime('%H:%M ') + str(self._limit - elapsed))
+                        ' \r ' + time.strftime('%H:%M ') +
+                        str(self._limit - elapsed)
+                    )
                     sys.stdout.flush()
             except KeyboardInterrupt:
                 print()

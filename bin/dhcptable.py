@@ -23,7 +23,11 @@ class Options(object):
 
     def __init__(self):
         self._args = None
-        self._arping = command_mod.Command('arping', pathextra=['/sbin'], errors='stop')
+        self._arping = command_mod.Command(
+            'arping',
+            pathextra=['/sbin'],
+            errors='stop'
+        )
         self._detect()
 
     def _detect(self):
@@ -155,7 +159,11 @@ class Main(object):
                     if line.startswith('Unicast reply from ' + ip_address):
                         mac, ping = line.split()[4:6]
                         print('{0:15s} {1:s} {2:>9s}  {3:s}'.format(
-                            ip_address, mac, ping, self._reverse_dns(ip_address)))
+                            ip_address,
+                            mac,
+                            ping,
+                            self._reverse_dns(ip_address)
+                        ))
                         break
 
         for thread in self._threads:
@@ -179,7 +187,10 @@ class Main(object):
         self._time_limit = 1
 
         self._options = options
-        self._avahi_rdns = command_mod.Command('avahi-resolve-address', errors='ignore')
+        self._avahi_rdns = command_mod.Command(
+            'avahi-resolve-address',
+            errors='ignore'
+        )
         self._threads = []
 
         self._detect()

@@ -48,9 +48,22 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Replace contents of multiple files.')
 
-        parser.add_argument('pattern', nargs=1, help='Regular expression.')
-        parser.add_argument('replacement', nargs=1, help='Replacement for matches.')
-        parser.add_argument('files', nargs='+', metavar='file', help='File or directory.')
+        parser.add_argument(
+            'pattern',
+            nargs=1,
+            help='Regular expression.'
+        )
+        parser.add_argument(
+            'replacement',
+            nargs=1,
+            help='Replacement for matches.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -109,14 +122,19 @@ class Main(object):
                 try:
                     with open(newfile, 'w', newline='\n') as ofile:
                         for line in ifile:
-                            line_new = self._is_match.sub(self._replacement, line)
+                            line_new = self._is_match.sub(
+                                self._replacement, line)
                             print(line_new, end='', file=ofile)
                             if line_new != line:
                                 nchange += 1
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + newfile + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot create "' +
+                        newfile + '" file.'
+                    )
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" file.')
 
         if nchange:
             if nchange > 1:
@@ -129,7 +147,8 @@ class Main(object):
                 shutil.move(newfile, file)
             except OSError:
                 self._remove(newfile)
-                raise SystemExit(sys.argv[0] + ': Cannot update "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot update "' + file + '" file.')
         else:
             self._remove(newfile)
 
@@ -143,7 +162,9 @@ class Main(object):
             self._is_match = re.compile(options.get_pattern())
         except re.error:
             raise SystemExit(
-                sys.argv[0] + ': Invalid regular expression "' + options.get_pattern() + '".')
+                sys.argv[0] + ': Invalid regular expression "' +
+                options.get_pattern() + '".'
+            )
 
         self._replacement = options.get_replacement()
         self._files = options.get_files()

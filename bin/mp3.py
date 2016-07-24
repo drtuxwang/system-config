@@ -91,24 +91,59 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Encode MP3 audio using ffmpeg (libmp3lame).')
 
-        parser.add_argument('-noskip', dest='noskip_flag', action='store_true',
-                            help='Disable skipping of encoding when codecs same.')
-        parser.add_argument('-aq', nargs=1, dest='audioQuality', default=[None],
-                            help='Select audio bitrate in kbps (128kbps default).')
-        parser.add_argument('-avol', nargs=1, dest='audioVolume', default=[None],
-                            help='Select audio volume adjustment in dB (ie "-5", "5").')
-        parser.add_argument('-start', nargs=1, dest='startTime', default=[None],
-                            help='Start encoding at time n seconds.')
-        parser.add_argument('-time', nargs=1, dest='runTime', default=[None],
-                            help='Stop encoding after n seconds.')
-        parser.add_argument('-threads', nargs=1, default=['2'],
-                            help='Threads are faster but decrease quality. Default is 2.')
-        parser.add_argument('-flags', nargs=1, default=[],
-                            help='Supply additional flags to ffmpeg.')
-
         parser.add_argument(
-            'files', nargs='+', metavar='file',
-            help='Multimedia file. A target ".mp3" file can be given as the first file.')
+            '-noskip',
+            dest='noskip_flag',
+            action='store_true',
+            help='Disable skipping of encoding when codecs same.'
+        )
+        parser.add_argument(
+            '-aq',
+            nargs=1,
+            dest='audioQuality',
+            default=[None],
+            help='Select audio bitrate in kbps (128kbps default).'
+        )
+        parser.add_argument(
+            '-avol',
+            nargs=1,
+            dest='audioVolume',
+            default=[None],
+            help='Select audio volume adjustment in dB (ie "-5", "5").'
+        )
+        parser.add_argument(
+            '-start',
+            nargs=1,
+            dest='startTime',
+            default=[None],
+            help='Start encoding at time n seconds.'
+        )
+        parser.add_argument(
+            '-time',
+            nargs=1,
+            dest='runTime',
+            default=[None],
+            help='Stop encoding after n seconds.'
+        )
+        parser.add_argument(
+            '-threads',
+            nargs=1,
+            default=['2'],
+            help='Threads are faster but decrease quality. Default is 2.'
+        )
+        parser.add_argument(
+            '-flags',
+            nargs=1,
+            default=[],
+            help='Supply additional flags to ffmpeg.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='Multimedia file. A target ".mp3" file '
+            'can be given as the first file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -122,7 +157,10 @@ class Options(object):
             self._file_new = self._args.files[0]
             self._files = self._args.files[1:]
             if self._file_new in self._args.files[1:]:
-                raise SystemExit(sys.argv[0] + ': The input and output files must be different.')
+                raise SystemExit(
+                    sys.argv[0] + ': The input and output files '
+                    'must be different.'
+                )
         else:
             self._file_new = ''
             self._files = self._args.files
@@ -140,17 +178,26 @@ class Encoder(object):
 
     def _config_audio(self, media):
         if media.has_audio:
-            changing = self._options.get_audio_quality() or self._options.get_audio_volume()
-            if (not media.has_audio_codec('mp3') or self._options.get_noskip_flag() or changing or
+            changing = (
+                self._options.get_audio_quality() or
+                self._options.get_audio_volume()
+            )
+            if (not media.has_audio_codec('mp3') or
+                    self._options.get_noskip_flag() or
+                    changing or
                     len(self._options.get_files()) > 1):
-                self._ffmpeg.extend_args(['-c:a', self._options.get_audio_codec()])
+                self._ffmpeg.extend_args(
+                    ['-c:a', self._options.get_audio_codec()])
                 if self._options.get_audio_quality():
-                    self._ffmpeg.extend_args(['-b:a', self._options.get_audio_quality() + 'K'])
+                    self._ffmpeg.extend_args(
+                        ['-b:a', self._options.get_audio_quality() + 'K'])
                 else:
                     self._ffmpeg.extend_args(['-b:a', '128K'])
                 if self._options.get_audio_volume():
                     self._ffmpeg.extend_args([
-                        '-af', 'volume=' + self._options.get_audio_volume() + 'dB'])
+                        '-af',
+                        'volume=' + self._options.get_audio_volume() + 'dB'
+                    ])
             else:
                 self._ffmpeg.extend_args(['-c:a', 'copy'])
 
@@ -165,17 +212,24 @@ class Encoder(object):
         if self._options.get_run_time():
             self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
         self._ffmpeg.extend_args([
-            '-vn', '-threads', self._options.get_threads()] + self._options.get_flags())
+            '-vn',
+            '-threads',
+            self._options.get_threads()
+        ] + self._options.get_flags())
         return media
 
     def _run(self):
-        child = subtask_mod.Child(self._ffmpeg.get_cmdline()).run(error2output=True)
+        child = subtask_mod.Child(
+            self._ffmpeg.get_cmdline()).run(error2output=True)
         line = ''
         ispattern = re.compile(
-            '^$| version |^ *(built |configuration:|lib|Metadata:|Duration:|compatible_brands:|'
-            'Stream|concat:|Program|service|lastkeyframe)|^(In|Out)put | : |^Press|^Truncating|'
-            r'bitstream (filter|malformed)|Buffer queue|buffer underflow|message repeated|^\[|'
-            'p11-kit:|^Codec AVOption threads|COMPATIBLE_BRANDS:|concat ->')
+            '^$| version |^ *(built |configuration:|lib|Metadata:|Duration:|'
+            'compatible_brands:|Stream|concat:|Program|service|lastkeyframe)|'
+            '^(In|Out)put | : |^Press|^Truncating|bitstream (filter|'
+            'malformed)|Buffer queue|buffer underflow|message repeated|'
+            r'^\[|p11-kit:|^Codec AVOption threads|COMPATIBLE_BRANDS:|'
+            'concat ->'
+        )
 
         while True:
             byte = child.stdout.read(1)
@@ -211,9 +265,13 @@ class Encoder(object):
                     maps += '[' + str(number) + ':' + str(stream) + '] '
                 number += 1
             self._ffmpeg.set_args(args + [
-                '-filter_complex', maps + 'concat=n=' + str(number) + ':v=0:a=1 [out]',
-                '-map', '[out]'] + self._ffmpeg.get_args()[2:])
-        self._ffmpeg.extend_args(['-f', 'mp3', '-y', self._options.get_file_new()])
+                '-filter_complex',
+                maps + 'concat=n=' + str(number) + ':v=0:a=1 [out]',
+                '-map',
+                '[out]'
+            ] + self._ffmpeg.get_args()[2:])
+        self._ffmpeg.extend_args(
+            ['-f', 'mp3', '-y', self._options.get_file_new()])
         self._run()
         Media(self._options.get_file_new()).print()
 
@@ -232,7 +290,11 @@ class Encoder(object):
         Configure encoder
         """
         self._options = options
-        self._ffmpeg = command_mod.Command('ffmpeg', args=options.get_flags(), errors='stop')
+        self._ffmpeg = command_mod.Command(
+            'ffmpeg',
+            args=options.get_flags(),
+            errors='stop'
+        )
 
     def run(self):
         """
@@ -269,7 +331,8 @@ class Media(object):
                 elif line.strip().startswith('Input #'):
                     self._type = line.replace(', from', '').split()[2]
         except IndexError:
-            raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
+            raise SystemExit(
+                sys.argv[0] + ': Invalid "' + file + '" media file.')
 
     def get_stream(self):
         """
@@ -339,8 +402,12 @@ class Media(object):
         Print information
         """
         if self.is_valid():
-            print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
-                  str(file_mod.FileStat(self._file).get_size()) + ' bytes')
+            print('{0:s}    = Type:  {1:s} ({2:s}), {3:s} bytes'.format(
+                self._file,
+                self._type,
+                self._length,
+                str(file_mod.FileStat(self._file).get_size())
+            ))
             for stream, information in self.get_stream():
                 print(self._file + '[' + str(stream) + '] =', information)
 
