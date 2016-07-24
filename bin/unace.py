@@ -38,15 +38,27 @@ class Options(object):
         return self._args.archives
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Unpack a compressed archive in ACE format.')
+        parser = argparse.ArgumentParser(
+            description='Unpack a compressed archive in ACE format.')
 
-        parser.add_argument('-v', dest='view_flag', action='store_true',
-                            help='Show contents of archive.')
-        parser.add_argument('-test', dest='test_flag', action='store_true',
-                            help='Test archive data only.')
-
-        parser.add_argument('archives', nargs='+', metavar='file.ace',
-                            help='Archive file.')
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help='Show contents of archive.'
+        )
+        parser.add_argument(
+            '-test',
+            dest='test_flag',
+            action='store_true',
+            help='Test archive data only.'
+        )
+        parser.add_argument(
+            'archives',
+            nargs='+',
+            metavar='file.ace',
+            help='Archive file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -119,8 +131,11 @@ class Main(object):
             task = subtask_mod.Task(archiver.get_cmdline() + [archive])
             task.run()
             if task.get_exitcode():
-                print(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                      ' received from "' + task.get_file() + '".', file=sys.stderr)
+                print(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".',
+                    file=sys.stderr
+                )
                 raise SystemExit(task.get_exitcode())
 
 

@@ -62,17 +62,37 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Copy CD/DVD data as a portable ISO/BIN image file.')
 
-        parser.add_argument('-dao', dest='dao_flag', action='store_true',
-                            help='Read data/audio/video CD in disk-at-once mode.')
-        parser.add_argument('-md5', dest='md5_flag', action='store_true',
-                            help='Create MD5 check sum of CD/DVD.')
-        parser.add_argument('-speed', nargs=1, type=int, default=[8],
-                            help='Select CD/DVD spin speed.')
-
-        parser.add_argument('device', nargs=1, metavar='device|scan',
-                            help='CD/DVD device (ie "/dev/sr0" or "scan".')
-        parser.add_argument('image', nargs='?', metavar='image.iso|image.bin',
-                            help='ISO image file or BIN image filie for DAO mode.')
+        parser.add_argument(
+            '-dao',
+            dest='dao_flag',
+            action='store_true',
+            help='Read data/audio/video CD in disk-at-once mode.'
+        )
+        parser.add_argument(
+            '-md5',
+            dest='md5_flag',
+            action='store_true',
+            help='Create MD5 check sum of CD/DVD.'
+        )
+        parser.add_argument(
+            '-speed',
+            nargs=1,
+            type=int,
+            default=[8],
+            help='Select CD/DVD spin speed.'
+        )
+        parser.add_argument(
+            'device',
+            nargs=1,
+            metavar='device|scan',
+            help='CD/DVD device (ie "/dev/sr0" or "scan".'
+        )
+        parser.add_argument(
+            'image',
+            nargs='?',
+            metavar='image.iso|image.bin',
+            help='ISO image file or BIN image filie for DAO mode.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -83,11 +103,16 @@ class Options(object):
         self._parse_args(args[1:])
 
         if self._args.speed[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'CD/DVD device speed.')
-        if self._args.device[0] != 'scan' and not os.path.exists(self._args.device[0]):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + self._args.device[0] + '" CD/DVD device.')
+                sys.argv[0] + ': You must specific a positive integer for '
+                'CD/DVD device speed.'
+            )
+        if (self._args.device[0] != 'scan' and not
+                os.path.exists(self._args.device[0])):
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "' + self._args.device[0] +
+                '" CD/DVD device.'
+            )
 
         if self._args.image:
             self._image = self._args.image[0]
@@ -121,7 +146,10 @@ class Cdrom(object):
             model = ''
             for file in ('vendor', 'model'):
                 try:
-                    with open(os.path.join(directory, file), errors='replace') as ifile:
+                    with open(
+                        os.path.join(directory, file),
+                        errors='replace'
+                    ) as ifile:
                         model += ' ' + ifile.readline().strip()
                 except OSError:
                     continue
@@ -188,8 +216,10 @@ class Main(object):
         task = subtask_mod.Task(nice.get_cmdline() + cdrdao.get_cmdline())
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + cdrdao.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + cdrdao.get_file() + '".'
+            )
 
     @staticmethod
     def _md5sum(file):
@@ -217,44 +247,62 @@ class Main(object):
         isoinfo = command_mod.Command('isoinfo', errors='stop')
 
         command = command_mod.Command('dd', errors='stop')
-        command.set_args(['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + file])
+        command.set_args(
+            ['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + file])
         task = subtask_mod.Batch(command.get_cmdline())
         task.run()
         if task.get_error()[0].endswith('Permission denied'):
-            raise SystemExit(sys.argv[0] + ': Cannot read from CD/DVD device. '
-                                           'Please check permissions.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read from CD/DVD device. '
+                'Please check permissions.'
+            )
         elif not os.path.isfile(file):
-            raise SystemExit(sys.argv[0] + ': Cannot find CD/DVD media. Please check drive.')
+            raise SystemExit(
+                sys.argv[0] +
+                ': Cannot find CD/DVD media. Please check drive.'
+            )
         elif task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
 
         isoinfo.set_args(['-d', '-i', file])
         task = subtask_mod.Batch(isoinfo.get_cmdline())
         task.run(pattern='^Volume size is: ')
         if not task.has_output():
-            raise SystemExit(sys.argv[0] + ': Cannot find TOC on CD/DVD media. '
-                                           'Disk not recognised.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find TOC on CD/DVD media. '
+                'Disk not recognised.'
+            )
         elif task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
         blocks = int(task.get_output()[0].split()[-1])
 
         task2 = subtask_mod.Task(isoinfo.get_cmdline())
         task2.run(pattern=' id: $')
         if task2.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task2.get_exitcode()) +
-                             ' received from "' + task2.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task2.get_exitcode()) +
+                ' received from "' + task2.get_file() + '".'
+            )
 
         print('Creating ISO image file "' + file + '"...')
-        command.set_args(['if=' + device, 'bs=2048', 'count=' + str(blocks), 'of=' + file])
+        command.set_args(
+            ['if=' + device, 'bs=2048', 'count=' + str(blocks), 'of=' + file])
 
         nice = command_mod.Command('nice', args=['-20'], errors='stop')
         task2 = subtask_mod.Task(nice.get_cmdline() + command.get_cmdline())
         task2.run(pattern='Input/output error| records (in|out)$')
 
         if not os.path.isfile(file):
-            raise SystemExit(sys.argv[0] + ': Cannot find CD/DVD media. Please check drive.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find CD/DVD media. '
+                'Please check drive.'
+            )
         pad = int(blocks * 2048 - file_mod.FileStat(file).get_size())
         if pad > 0 and pad < 16777216:
             print(pad, 'bytes flushing from CD/DVD prefetch bug...')
@@ -265,32 +313,54 @@ class Main(object):
     @staticmethod
     def _isosize(image, size):
         if size > 734003200:
-            print('\n*** {0:s}: {1:4.2f} MB ({2:5.3f} salesman"s GB) ***\n'.format(
-                image, size/1048576, size/1000000000))
+            print(
+                "\n*** {0:s}: {1:4.2f} MB ({2:5.3f} "
+                "salesman's GB) ***\n".format(
+                    image, size/1048576, size/1000000000)
+                )
             if size > 9400000000:
-                sys.stderr.write('**WARNING** This ISO image file does not fit onto '
-                                 '9.4GB/240min Duel Layer DVD media.\n')
-                sys.stderr.write('        ==> Please split your data into multiple images.\n')
+                sys.stderr.write(
+                    '**WARNING** This ISO image file does not fit onto '
+                    '9.4GB/240min Duel Layer DVD media.\n'
+                )
+                sys.stderr.write(
+                    '        ==> Please split your data into '
+                    'multiple images.\n'
+                )
             elif size > 4700000000:
-                sys.stderr.write('**WARNING** This ISO image file does not fit onto '
-                                 '4.7GB/120min DVD media.\n')
-                sys.stderr.write('        ==> Please use Duel Layer DVD media or split '
-                                 'your data into multiple images.\n')
+                sys.stderr.write(
+                    '**WARNING** This ISO image file does not fit onto '
+                    '4.7GB/120min DVD media.\n'
+                )
+                sys.stderr.write(
+                    '        ==> Please use Duel Layer DVD media or split '
+                    'your data into multiple images.\n'
+                )
             else:
-                sys.stderr.write('**WARNING** This ISO image file does not fit onto '
-                                 '700MB/80min CD media.\n')
-                sys.stderr.write('        ==> Please use DVD media or split your data '
-                                 'into multiple images.\n')
+                sys.stderr.write(
+                    '**WARNING** This ISO image file does not fit onto '
+                    '700MB/80min CD media.\n'
+                )
+                sys.stderr.write(
+                    '        ==> Please use DVD media or split your data '
+                    'into multiple images.\n'
+                )
             print()
         else:
             minutes, remainder = divmod(size, 734003200 / 80)
             seconds = remainder * 4800 / 734003200.
-            print('\n*** {0:s}: {1:4.2f} MB ({2:.0f} min {3:05.2f} sec) ***\n'.format(
-                image, size/1048576, minutes, seconds))
+            print(
+                '\n*** {0:s}: {1:4.2f} MB ({2:.0f} min '
+                '{3:05.2f} sec) ***\n'.format(
+                    image, size/1048576, minutes, seconds)
+            )
             if size > 681574400:
-                sys.stderr.write('**WARNING** This ISO image file does not fit onto '
-                                 '650MB/74min CD media.\n')
-                sys.stderr.write('        ==> Please use 700MB/80min CD media instead.\n')
+                sys.stderr.write(
+                    '**WARNING** This ISO image file does not fit onto '
+                    '650MB/74min CD media.\n'
+                )
+                sys.stderr.write(
+                    '        ==> Please use 700MB/80min CD media instead.\n')
 
     def run(self):
         """
@@ -311,7 +381,9 @@ class Main(object):
                     os.remove(file)
                 except OSError:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot over write "' + file + '" CD/DVD image file.')
+                        sys.argv[0] + ': Cannot over write "' + file +
+                        '" CD/DVD image file.'
+                    )
             if options.get_disk_at_once_flag():
                 self._dao(device, speed, file)
             else:
@@ -320,7 +392,8 @@ class Main(object):
                 print('Creating MD5 check sum of ISO file.')
                 md5sum = self._md5sum(file)
                 if not md5sum:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot read "' + file + '" file.')
                 else:
                     print(md5sum, file, sep='  ')
             time.sleep(1)
@@ -329,8 +402,11 @@ class Main(object):
                 task = subtask_mod.Batch(eject.get_cmdline())
                 task.run()
                 if task.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                     ' received from "' + task.get_file() + '".')
+                    raise SystemExit(
+                        sys.argv[0] + ': Error code ' +
+                        str(task.get_exitcode()) + ' received from "' +
+                        task.get_file() + '".'
+                    )
 
 
 if __name__ == '__main__':

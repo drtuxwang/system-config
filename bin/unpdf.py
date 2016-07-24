@@ -38,17 +38,28 @@ class Options(object):
         return self._gs
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Unpack PDF file into series of JPG files.')
+        parser = argparse.ArgumentParser(
+            description='Unpack PDF file into series of JPG files.')
 
-        parser.add_argument('-dpi', nargs=1, type=int, default=[300],
-                            help='Selects DPI resolution (default is 300).')
-
-        parser.add_argument('files', nargs='+', metavar='file.pdf', help='PDF document file.')
+        parser.add_argument(
+            '-dpi',
+            nargs=1,
+            type=int,
+            default=[300],
+            help='Selects DPI resolution (default is 300).'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file.pdf',
+            help='PDF document file.'
+        )
 
         self._args = parser.parse_args(args)
 
         if self._args.dpi[0] < 50:
-            raise SystemExit(sys.argv[0] + ': DPI resolution must be at least 50.')
+            raise SystemExit(
+                sys.argv[0] + ': DPI resolution must be at least 50.')
 
     def parse(self, args):
         """
@@ -57,8 +68,13 @@ class Options(object):
         self._parse_args(args[1:])
 
         self._gs = command_mod.Command('gs', errors='stop')
-        self._gs.set_args(
-            ['-dNOPAUSE', '-dBATCH', '-dSAFER', '-sDEVICE=jpeg', '-r' + str(self._args.dpi[0])])
+        self._gs.set_args([
+            '-dNOPAUSE',
+            '-dBATCH',
+            '-dSAFER',
+            '-sDEVICE=jpeg',
+            '-r' + str(self._args.dpi[0])
+        ])
 
 
 class Main(object):
@@ -103,20 +119,32 @@ class Main(object):
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" PDF file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" PDF file.')
             directory = file[:-4]
             if not os.path.isdir(directory):
                 try:
                     os.mkdir(directory)
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + directory + '" directory.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot create "' + directory +
+                        '" directory.'
+                    )
             print('Unpacking "' + directory + os.sep + '*.jpg" file...')
             task = subtask_mod.Task(command.get_cmdline() + [
-                '-sOutputFile=' + directory + os.sep + '%08d.jpg', '-c', 'save', 'pop', '-f', file])
+                '-sOutputFile=' + directory + os.sep + '%08d.jpg',
+                '-c',
+                'save',
+                'pop',
+                '-f',
+                file
+            ])
             task.run(pattern='Ghostscript|^Copyright|WARRANTY:|^Processing')
             if task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                 ' received from "' + task.get_file() + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
 
 
 if __name__ == '__main__':

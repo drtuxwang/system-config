@@ -39,17 +39,28 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Unpack a compressed archive in TAR.GZ format.')
 
-        parser.add_argument('-v', dest='view_flag', action='store_true',
-                            help='Show contents of archive.')
-
-        parser.add_argument('archives', nargs='+', metavar='file.tar.gz|file.tgz',
-                            help='Archive file.')
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help='Show contents of archive.'
+        )
+        parser.add_argument(
+            'archives',
+            nargs='+',
+            metavar='file.tar.gz|file.tgz',
+            help='Archive file.'
+        )
 
         self._args = parser.parse_args(args)
 
         for archive in self._args.archives:
-            if not archive.endswith('.tar.gz') and not archive.endswith('.tgz'):
-                raise SystemExit(sys.argv[0] + ': Unsupported "' + archive + '" archive format.')
+            if (not archive.endswith('.tar.gz') and not
+                    archive.endswith('.tgz')):
+                raise SystemExit(
+                    sys.argv[0] + ': Unsupported "' + archive +
+                    '" archive format.'
+                )
 
     def parse(self, args):
         """
@@ -93,20 +104,29 @@ class Main(object):
         for file in self._archive.getnames():
             print(file)
             if os.path.isabs(file):
-                raise SystemExit(sys.argv[0] + ': Unsafe to extract file with absolute path '
-                                               'outside of current directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Unsafe to extract file with absolute '
+                    'path outside of current directory.'
+                )
             elif file.startswith(os.pardir):
-                raise SystemExit(sys.argv[0] + ': Unsafe to extract file with relative path '
-                                               'outside of current directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Unsafe to extract file with relative '
+                    'path outside of current directory.'
+                )
             try:
                 self._archive.extract(self._archive.getmember(file))
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Unable to create "' + file + '" extracted.')
+                raise SystemExit(
+                    sys.argv[0] + ': Unable to create "' + file +
+                    '" extracted.'
+                )
             if not os.path.isfile(file):
                 if not os.path.isdir(file):
                     if not os.path.islink(file):
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot create extracted "' + file + '" file.')
+                            sys.argv[0] + ': Cannot create extracted "' +
+                            file + '" file.'
+                        )
 
     def _view(self):
         self._archive.list()
@@ -123,7 +143,10 @@ class Main(object):
             try:
                 self._archive = tarfile.open(archive, 'r:gz')
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot open "' + archive + '" archive file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot open "' + archive +
+                    '" archive file.'
+                )
             if options.get_view_flag():
                 self._view()
             else:

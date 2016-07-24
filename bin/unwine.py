@@ -40,7 +40,8 @@ class Main(object):
         """
         Start program
         """
-        wineserver = command_mod.Command('wineserver', args=['-k'], errors='stop')
+        wineserver = command_mod.Command(
+            'wineserver', args=['-k'], errors='stop')
 
         subtask_mod.Task(wineserver.get_cmdline()).run()
 

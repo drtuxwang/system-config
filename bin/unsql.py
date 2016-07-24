@@ -30,9 +30,15 @@ class Options(object):
         return self._args.files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Unpack a sqlite database file.')
+        parser = argparse.ArgumentParser(
+            description='Unpack a sqlite database file.')
 
-        parser.add_argument('files', nargs='+', metavar='file.sqlite', help='Sqlite database file.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file.sqlite',
+            help='Sqlite database file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -93,7 +99,10 @@ class Main(object):
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" database file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file +
+                    '" database file.'
+                )
             cls._show(file)
 
 

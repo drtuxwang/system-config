@@ -107,8 +107,10 @@ class Main(object):
             task = subtask_mod.Task(cmdline + [archive])
             task.run()
             if task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                 ' received from "' + task.get_file() + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
 
 
 if __name__ == '__main__':

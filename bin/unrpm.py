@@ -44,13 +44,21 @@ class Options(object):
         return self._rpm2cpio
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Unpack a compressed archive in RPM format.')
+        parser = argparse.ArgumentParser(
+            description='Unpack a compressed archive in RPM format.')
 
-        parser.add_argument('-v', dest='view_flag', action='store_true',
-                            help='Show contents of archive.')
-
-        parser.add_argument('archives', nargs='+', metavar='file.rpm',
-                            help='Archive file.')
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help='Show contents of archive.'
+        )
+        parser.add_argument(
+            'archives',
+            nargs='+',
+            metavar='file.rpm',
+            help='Archive file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -112,13 +120,19 @@ class Main(object):
 
         for archive in options.get_archives():
             if not os.path.isfile(archive):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + archive + '" archive file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + archive +
+                    '" archive file.'
+                )
             print(archive + ':')
-            task = subtask_mod.Task(rpm2cpio.get_cmdline() + [archive, '|'] + cpio.get_cmdline())
+            task = subtask_mod.Task(
+                rpm2cpio.get_cmdline() + [archive, '|'] + cpio.get_cmdline())
             task.run()
             if task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                 ' received from "' + task.get_file() + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
 
 
 if __name__ == '__main__':

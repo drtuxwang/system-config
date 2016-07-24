@@ -67,10 +67,16 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Unpack an encrypted archive in gpg (pgp compatible) format.')
+            description='Unpack an encrypted archive in gpg '
+            '(pgp compatible) format.'
+        )
 
-        parser.add_argument('files', nargs='+', metavar='file.gpg|file.pgp',
-                            help='GPG/PGP encrypted file.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file.gpg|file.pgp',
+            help='GPG/PGP encrypted file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -128,13 +134,16 @@ class Main(object):
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" file.')
             gpg.set_args([file])
             task = subtask_mod.Task(gpg.get_cmdline())
             task.run()
             if task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                 ' received from "' + task.get_file() + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
 
 
 if __name__ == '__main__':

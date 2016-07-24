@@ -32,9 +32,15 @@ class Options(object):
         return self._command
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Uncompress a file in XZ format.')
+        parser = argparse.ArgumentParser(
+            description='Uncompress a file in XZ format.')
 
-        parser.add_argument('archives', nargs='+', metavar='file.xz', help='Archive file.')
+        parser.add_argument(
+            'archives',
+            nargs='+',
+            metavar='file.xz',
+            help='Archive file.'
+        )
 
         self._args = parser.parse_args(args)
 

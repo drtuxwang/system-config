@@ -43,15 +43,27 @@ class Options(object):
             del os.environ['LANG']  # Avoids locale problems
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Unpack a compressed archive in 7Z format.')
+        parser = argparse.ArgumentParser(
+            description='Unpack a compressed archive in 7Z format.')
 
-        parser.add_argument('-v', dest='view_flag', action='store_true',
-                            help='Show contents of archive.')
-        parser.add_argument('-test', dest='test_flag', action='store_true',
-                            help='Test archive data only.')
-
-        parser.add_argument('archives', nargs='+', metavar='file.7z',
-                            help='Archive file.')
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help='Show contents of archive.'
+        )
+        parser.add_argument(
+            '-test',
+            dest='test_flag',
+            action='store_true',
+            help='Test archive data only.'
+        )
+        parser.add_argument(
+            'archives',
+            nargs='+',
+            metavar='file.7z',
+            help='Archive file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -119,15 +131,21 @@ class Main(object):
                 task = subtask_mod.Task(archiver.get_cmdline() + [archive])
                 task.run()
                 if task.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                     ' received from "' + task.get_file() + '".')
+                    raise SystemExit(
+                        sys.argv[0] + ': Error code ' +
+                        str(task.get_exitcode()) + ' received from "' +
+                        task.get_file() + '".'
+                    )
         else:
             for archive in options.get_archives():
                 task = subtask_mod.Task(archiver.get_cmdline() + [archive])
                 task.run(replace=('\\', '/'))
                 if task.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                     ' received from "' + task.get_file() + '".')
+                    raise SystemExit(
+                        sys.argv[0] + ': Error code ' +
+                        str(task.get_exitcode()) + ' received from "' +
+                        task.get_file() + '".'
+                    )
 
 
 if __name__ == '__main__':

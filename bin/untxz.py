@@ -41,17 +41,28 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Unpack a compressed archive in TAR.XZ format.')
 
-        parser.add_argument('-v', dest='view_flag', action='store_true',
-                            help='Show contents of archive.')
-
-        parser.add_argument('archives', nargs='+', metavar='file.tar.xz|file.txz',
-                            help='Archive file.')
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help='Show contents of archive.'
+        )
+        parser.add_argument(
+            'archives',
+            nargs='+',
+            metavar='file.tar.xz|file.txz',
+            help='Archive file.'
+        )
 
         self._args = parser.parse_args(args)
 
         for archive in self._args.archives:
-            if not archive.endswith('.tar.xz') and not archive.endswith('.txz'):
-                raise SystemExit(sys.argv[0] + ': Unsupported "' + archive + '" archive format.')
+            if (not archive.endswith('.tar.xz') and not
+                    archive.endswith('.txz')):
+                raise SystemExit(
+                    sys.argv[0] + ': Unsupported "' + archive +
+                    '" archive format.'
+                )
 
     def parse(self, args):
         """

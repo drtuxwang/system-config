@@ -68,14 +68,30 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Make a portable CD/DVD archive in ISO9660 format.')
 
-        parser.add_argument('-f', dest='follow_flag', action='store_true',
-                            help='Follow symbolic links.')
-        parser.add_argument('-md5', dest='md5_flag', action='store_true',
-                            help='Create MD5 check sum of ISO image file.')
-
+        parser.add_argument(
+            '-f',
+            dest='follow_flag',
+            action='store_true',
+            help='Follow symbolic links.'
+        )
+        parser.add_argument(
+            '-md5',
+            dest='md5_flag',
+            action='store_true',
+            help='Create MD5 check sum of ISO image file.'
+        )
         parser.add_argument('volume', nargs=1, help='ISO file volume name.')
-        parser.add_argument('directory', nargs=1, help='Directory containing files.')
-        parser.add_argument('image', nargs='?', metavar='image.iso', help='Optional image file.')
+        parser.add_argument(
+            'directory',
+            nargs=1,
+            help='Directory containing files.'
+        )
+        parser.add_argument(
+            'image',
+            nargs='?',
+            metavar='image.iso',
+            help='Optional image file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -86,14 +102,22 @@ class Options(object):
         self._parse_args(args[1:])
 
         self._genisoimage = command_mod.Command('genisoimage', errors='stop')
-        task = subtask_mod.Batch(self._genisoimage.get_cmdline() + ['-version'])
+        task = subtask_mod.Batch(
+            self._genisoimage.get_cmdline() + ['-version'])
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
         self._genisoimage.set_args([
-            '-iso-level', '3', '-joliet-long', '-rational-rock', '-appid', 'GENISOIMAGE-' +
-            task.get_output()[0].split()[1]])
+            '-iso-level',
+            '3',
+            '-joliet-long',
+            '-rational-rock',
+            '-appid',
+            'GENISOIMAGE-' + task.get_output()[0].split()[1]
+        ])
         if self._args.follow_flag:
             self._genisoimage.append_arg('-follow-links')
 
@@ -101,7 +125,9 @@ class Options(object):
 
         if not os.path.isdir(self._args.directory[0]):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + self._args.directory + '" directory.')
+                sys.argv[0] + ': Cannot find "' + self._args.directory +
+                '" directory.'
+            )
         if self._args.image:
             self._image = self._args.image
         else:
@@ -140,53 +166,94 @@ class Main(object):
             sys.argv = argv
 
     def _bootimg(self, options):
-        files = (glob.glob(os.path.join(options.get_directory(), '*.img')) +
-                 glob.glob(os.path.join(options.get_directory(), '*.bin')) +
-                 glob.glob(os.path.join(options.get_directory(), 'isolinux', '*.bin')))
+        files = (
+            glob.glob(os.path.join(options.get_directory(), '*.img')) +
+            glob.glob(os.path.join(options.get_directory(), '*.bin')) +
+            glob.glob(os.path.join(
+                options.get_directory(),
+                'isolinux',
+                '*.bin'
+            ))
+        )
         if files:
             bootimg = file_mod.FileUtil.newest(files)
             print('Adding Eltorito boot image "' + bootimg + '"...')
             if 'isolinux' in bootimg:
                 self._genisoimage.extend_args([
-                    '-eltorito-boot', os.path.join('isolinux', os.path.basename(bootimg)),
-                    '-no-emul-boot', '-boot-info-table'])
+                    '-eltorito-boot',
+                    os.path.join('isolinux', os.path.basename(bootimg)),
+                    '-no-emul-boot',
+                    '-boot-info-table'
+                ])
             elif file_mod.FileStat(bootimg).get_size() == 2048:
                 self._genisoimage.extend_args([
-                    '-eltorito-boot', os.path.basename(bootimg), '-no-emul-boot',
-                    '-boot-load-size', '4', '-hide', 'boot.catalog'])
+                    '-eltorito-boot',
+                    os.path.basename(bootimg),
+                    '-no-emul-boot',
+                    '-boot-load-size',
+                    '4',
+                    '-hide',
+                    'boot.catalog'
+                ])
             else:
                 self._genisoimage.extend_args([
-                    '-eltorito-boot', os.path.basename(bootimg), '-hide', 'boot.catalog'])
+                    '-eltorito-boot',
+                    os.path.basename(bootimg),
+                    '-hide',
+                    'boot.catalog'
+                ])
 
     @staticmethod
     def _isosize(image, size):
         if size > 734003200:
-            print('\n*** {0:s}: {1:4.2f} MB ({2:5.3f} salesman"s GB) ***\n'.format(
-                image, size/1048576., size/1000000000.))
+            print(
+                "\n*** {0:s}: {1:4.2f} MB ({2:5.3f} "
+                "salesman's GB) ***\n".format(
+                    image, size/1048576., size/1000000000.)
+            )
             if size > 9400000000:
-                sys.stderr.write('**WARNING** This ISO image file does not fit onto '
-                                 '9.4GB/240min Duel Layer DVD media.\n')
-                sys.stderr.write('        ==> Please split your data into multiple images.\n')
+                sys.stderr.write(
+                    '**WARNING** This ISO image file does not fit onto '
+                    '9.4GB/240min Duel Layer DVD media.\n'
+                )
+                sys.stderr.write(
+                    '        ==> Please split your data into '
+                    'multiple images.\n'
+                )
             elif size > 4700000000:
-                sys.stderr.write('**WARNING** This ISO image file does not fit onto'
-                                 ' 4.7GB/120min DVD media.\n')
-                sys.stderr.write('        ==> Please use Duel Layer DVD media or split your'
-                                 ' data into multiple images.\n')
+                sys.stderr.write(
+                    '**WARNING** This ISO image file does not fit onto'
+                    ' 4.7GB/120min DVD media.\n'
+                )
+                sys.stderr.write(
+                    '        ==> Please use Duel Layer DVD media or split your'
+                    ' data into multiple images.\n'
+                )
             else:
-                sys.stderr.write('**WARNING** This ISO image file does not fit onto'
-                                 ' 700MB/80min CD media.\n')
-                sys.stderr.write('        ==> Please use DVD media or split your data'
-                                 ' into multiple images.\n')
+                sys.stderr.write(
+                    '**WARNING** This ISO image file does not fit onto'
+                    ' 700MB/80min CD media.\n'
+                )
+                sys.stderr.write(
+                    '        ==> Please use DVD media or split your data'
+                    ' into multiple images.\n'
+                )
             print('')
         else:
             minutes, remainder = divmod(size, 734003200 / 80)
             seconds = remainder * 4800 / 734003200.
-            print('\n*** {0:s}: {1:4.2f} MB ({2:.0f} min {3:05.2f} sec) ***\n'.format(
-                image, size/1048576., minutes, seconds))
+            print(
+                '\n*** {0:s}: {1:4.2f} MB ({2:.0f} min '
+                '{3:05.2f} sec) ***\n'.format(
+                    image, size/1048576., minutes, seconds)
+            )
             if size > 681574400:
-                sys.stderr.write('**WARNING** This ISO image file does not fit onto'
-                                 ' 650MB/74min CD media.\n')
-                sys.stderr.write('        ==> Please use 700MB/80min CD media instead.\n')
+                sys.stderr.write(
+                    '**WARNING** This ISO image file does not fit onto'
+                    ' 650MB/74min CD media.\n'
+                )
+                sys.stderr.write(
+                    '        ==> Please use 700MB/80min CD media instead.\n')
 
     @staticmethod
     def _md5sum(file):
@@ -206,21 +273,33 @@ class Main(object):
         if os.name == 'nt':
             self._genisoimage.extend_args(['-file-mode', '444'])
         else:
-            command = command_mod.Command('df', args=[options.get_directory()], errors='ignore')
+            command = command_mod.Command(
+                'df',
+                args=[options.get_directory()],
+                errors='ignore'
+            )
             mount = command_mod.Command('mount', errors='ignore')
             if command.is_found() and mount.is_found():
                 task = subtask_mod.Batch(command.get_cmdline())
                 task.run()
                 if task.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                     ' received from "' + task.get_file() + '".')
+                    raise SystemExit(
+                        sys.argv[0] + ': Error code ' +
+                        str(task.get_exitcode()) + ' received from "' +
+                        task.get_file() + '".'
+                    )
                 if len(task.get_output()) > 1:
                     task2 = subtask_mod.Batch(mount.get_cmdline())
                     task2.run(
-                        pattern='^' + task.get_output()[1].split()[0] + ' .* (fuseblk|vfat|ntfs) ')
+                        pattern='^' + task.get_output()[1].split()[0] +
+                        ' .* (fuseblk|vfat|ntfs) '
+                    )
                     if task2.has_output():
-                        print('Using mode 444 for all plain files (' +
-                              task2.get_output()[0].split()[4] + ' disk detected)...')
+                        print(
+                            'Using mode 444 for all plain files (' +
+                            task2.get_output()[0].split()[4] +
+                            ' disk detected)...'
+                        )
                         self._genisoimage.extend_args(['-file-mode', '444'])
 
     def run(self):
@@ -234,11 +313,23 @@ class Main(object):
         print('Creating portable CD/DVD image file: ' + image + '...')
         print('Adding ISO9660 Level 3 standard file syslib...')
         print('Adding ROCK RIDGE extensions for UNIX file syslib...')
-        print('Adding JOLIET long extensions for Microsoft Windows FAT32 file syslib...')
+        print(
+            'Adding JOLIET long extensions for Microsoft Windows '
+            'FAT32 file syslib...'
+        )
         print('Adding individual files shared by all three file systems...')
-        print('   ==> Directory and file names limit is  31 characters for ISO9660.')
-        print('   ==> Directory and file names limit is 255 characters for ROCK RIDGE.')
-        print('   ==> Directory and file names limit is 103 characters for JOLIET.')
+        print(
+            '   ==> Directory and file names limit is  31 '
+            'characters for ISO9660.'
+        )
+        print(
+            '   ==> Directory and file names limit is 255 '
+            'characters for ROCK RIDGE.'
+        )
+        print(
+            '   ==> Directory and file names limit is 103 '
+            'characters for JOLIET.'
+        )
 
         self._genisoimage = options.get_genisoimage()
         self._windisk(options)
@@ -249,8 +340,10 @@ class Main(object):
         task = subtask_mod.Task(self._genisoimage.get_cmdline())
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
 
         if os.path.isfile(image):
             print()
@@ -259,22 +352,29 @@ class Main(object):
             task = subtask_mod.Task(isoinfo.get_cmdline())
             task.run(pattern=' id: $')
             if task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                 ' received from "' + task.get_file() + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
             self._isosize(image, file_mod.FileStat(image).get_size())
             if options.get_md5_flag():
                 print('Creating MD5 check sum of ISO file.')
                 md5sum = self._md5sum(image)
                 if not md5sum:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' + image + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot read "' + image + '" file.')
                 else:
                     print(md5sum, image, sep='  ')
                     try:
                         if image.endswith('.iso'):
-                            with open(image[:-4] + '.md5', 'w', newline='\n') as ofile:
+                            with open(
+                                image[:-4] + '.md5', 'w', newline='\n'
+                            ) as ofile:
                                 print(md5sum + '  ' + image, file=ofile)
                         else:
-                            with open(image + '.md5', 'w', newline='\n') as ofile:
+                            with open(
+                                image + '.md5', 'w', newline='\n'
+                            ) as ofile:
                                 print(md5sum + '  ' + image, file=ofile)
                     except OSError:
                         return

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.
+Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/
+TAR.7Z/TGZ/TBZ/TLZ/TXZ format.
 """
 
 import argparse
@@ -40,23 +41,33 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Unpack a compressed archive in '
-                        'TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.')
+            description='Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/'
+            'TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.'
+        )
 
-        parser.add_argument('-v', dest='view_flag', action='store_true',
-                            help='Show contents of archive.')
-
-        parser.add_argument('archives', nargs='+',
-                            metavar='file.tar|file.tar.gz|file.tar.bz2|file.tar.lzma|file.tar.xz|'
-                                    'file.tar.7z|file.tgz|file.tbz|file.tlz|file.txz',
-                            help='Archive file.')
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help='Show contents of archive.'
+        )
+        parser.add_argument(
+            'archives',
+            nargs='+',
+            metavar='file.tar|file.tar.gz|file.tar.bz2|file.tar.lzma|'
+            'file.tar.xz|file.tar.7z|file.tgz|file.tbz|file.tlz|file.txz',
+            help='Archive file.'
+        )
 
         self._args = parser.parse_args(args)
 
         isarchive = re.compile('[.](tar|tar[.](gz|bz2|lzma|xz|7z)|t[gblx]z)$')
         for archive in self._args.archives:
             if not isarchive.search(archive):
-                raise SystemExit(sys.argv[0] + ': Unsupported "' + archive + '" archive format.')
+                raise SystemExit(
+                    sys.argv[0] + ': Unsupported "' + archive +
+                    '" archive format.'
+                )
 
     def parse(self, args):
         """
@@ -101,7 +112,8 @@ class Main(object):
             p7zip = command_mod.Command('7z', errors='stop')
             p7zip.set_args(['x', '-y', '-so', archive])
             self._tar.set_args(['xfv', '-'])
-            subtask_mod.Task(p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
+            subtask_mod.Task(
+                p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
         else:
             self._tar.set_args(['xfv', archive])
             subtask_mod.Task(self._tar.get_cmdline()).run()
@@ -111,7 +123,8 @@ class Main(object):
             p7zip = command_mod.Command('7z', errors='stop')
             p7zip.set_args(['x', '-y', '-so', archive])
             self._tar.set_args(['tfv', '-'])
-            subtask_mod.Task(p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
+            subtask_mod.Task(
+                p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
         else:
             self._tar.set_args(['tfv', archive])
             subtask_mod.Task(self._tar.get_cmdline()).run()
