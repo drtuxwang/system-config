@@ -32,14 +32,29 @@ class Options(object):
         return self._youtubedl
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Youtube video downloader.')
+        parser = argparse.ArgumentParser(
+            description='Youtube video downloader.')
 
-        parser.add_argument('-f', nargs=1, type=int, dest='format', metavar='code',
-                            help='Select video format code.')
-        parser.add_argument('-v', dest='view_flag', action='store_true',
-                            help='Show video format codes.')
-
-        parser.add_argument('urls', nargs='+', metavar='url', help='Youtube video URL.')
+        parser.add_argument(
+            '-f',
+            nargs=1,
+            type=int,
+            dest='format',
+            metavar='code',
+            help='Select video format code.'
+        )
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help='Show video format codes.'
+        )
+        parser.add_argument(
+            'urls',
+            nargs='+',
+            metavar='url',
+            help='Youtube video URL.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -49,17 +64,28 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._youtubedl = command_mod.Command(os.path.join('bin', 'youtube-dl'), errors='ignore')
+        self._youtubedl = command_mod.Command(
+            os.path.join('bin', 'youtube-dl'),
+            errors='ignore'
+        )
         if not self._youtubedl.is_found():
-            youtube = command_mod.Command('youtube', args=args[1:], errors='ignore')
+            youtube = command_mod.Command(
+                'youtube',
+                args=args[1:],
+                errors='ignore'
+            )
             if youtube.is_found():
                 subtask_mod.Exec(youtube.get_cmdline()).run()
-            self._youtubedl = command_mod.Command('youtube-dl', errors='stop')
+            self._youtubedl = command_mod.Command(
+                'youtube-dl',
+                errors='stop'
+            )
 
         if self._args.view_flag:
             self._youtubedl.set_args(['--list-formats'])
         elif self._args.format:
-            self._youtubedl.set_args(['--title', '--format', str(self._args.format[0])])
+            self._youtubedl.set_args(
+                ['--title', '--format', str(self._args.format[0])])
         self._youtubedl.extend_args(self._args.urls)
 
 

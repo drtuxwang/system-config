@@ -37,12 +37,21 @@ class Options(object):
         return self._args.view_flag
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Check XML file for errors.')
+        parser = argparse.ArgumentParser(
+            description='Check XML file for errors.')
 
-        parser.add_argument('-v', dest='view_flag', action='store_true',
-                            help='View XML data.')
-
-        parser.add_argument('files', nargs='+', metavar='file', help='XML/XHTML files.')
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help='View XML data.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='XML/XHTML files.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -69,7 +78,8 @@ class XmlDataHandler(xml.sax.ContentHandler):
         self._elements.append(name + '(' + str(self._nelement) + ')')
         if self._view_flag:
             for (key, value) in attrs.items():
-                print('.'.join(self._elements + [key]), "='", value, "'", sep='')
+                print(
+                    '.'.join(self._elements + [key]), "='", value, "'", sep='')
 
     def characters(self, text):
         if self._view_flag:
@@ -123,7 +133,10 @@ class Main(object):
                             else:
                                 ofile.write(line.replace('&', '.'))
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "xmlcheck.xml" temporary file.')
+                    raise SystemExit(
+                        sys.argv[0] +
+                        ': Cannot create "xmlcheck.xml" temporary file.'
+                    )
         except OSError:
             print(sys.argv[0], ': Cannot parse "', file, '" XML file.', sep='')
 
@@ -136,20 +149,27 @@ class Main(object):
         handler = XmlDataHandler(options.get_view_flag())
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" XML file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot open "' + file + '" XML file.')
             try:
                 if file.split('.')[-1] in ('htm', 'html', 'xhtml'):
-                    # Workaround for bug in xml.sax call to urllib requiring 'http_proxy'
+                    # Workaround for bug in xml.sax call to urllib
+                    # requiring 'http_proxy'
                     self._fixhtml(file)
-                    xml.sax.parse(open('xmlcheck.xml', errors='replace'), handler)
+                    xml.sax.parse(
+                        open('xmlcheck.xml', errors='replace'),
+                        handler
+                    )
                 else:
                     xml.sax.parse(open(file, errors='replace'), handler)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot parse "' + file + '" XML file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot parse "' + file + '" XML file.')
             except http.client.HTTPException:
                 raise SystemExit(sys.argv[0] + ': HTTP request failed.')
             except Exception:
-                raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" XML file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Invalid "' + file + '" XML file.')
             os.remove('xmlcheck.xml')
 
 

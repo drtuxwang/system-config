@@ -33,10 +33,16 @@ class Options(object):
         return self._command
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Run GUI software and restore resolution.')
+        parser = argparse.ArgumentParser(
+            description='Run GUI software and restore resolution.')
 
         parser.add_argument('command', nargs=1, help='Command to run.')
-        parser.add_argument('args', nargs='*', metavar='arg', help='Command argument.')
+        parser.add_argument(
+            'args',
+            nargs='*',
+            metavar='arg',
+            help='Command argument.'
+        )
 
         self._args = parser.parse_args(args[:1])
 
@@ -47,7 +53,11 @@ class Options(object):
         self._parse_args(args[1:])
 
         command = self._args.command[0]
-        self._command = command_mod.Command(command, pathextra=[command], errors='stop')
+        self._command = command_mod.Command(
+            command,
+            pathextra=[command],
+            errors='stop'
+        )
         self._command.set_args(args[2:])
 
 

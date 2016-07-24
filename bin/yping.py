@@ -39,7 +39,8 @@ class Options(object):
         return self._ping
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Ping a host until a connection is made.')
+        parser = argparse.ArgumentParser(
+            description='Ping a host until a connection is made.')
 
         parser.add_argument('host', nargs=1, help='Host name or IP address.')
 

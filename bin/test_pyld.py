@@ -106,7 +106,12 @@ class TestOptions(unittest.TestCase):
         """
         Test '-pyldpath libpath1:libpath2' sets library path.
         """
-        args = ['arg0', 'moduleX', '-pyldpath', 'pathX' + os.path.pathsep + 'pathY']
+        args = [
+            'arg0',
+            'moduleX',
+            '-pyldpath',
+            'pathX' + os.path.pathsep + 'pathY'
+        ]
         options = pyld.Options(args)
 
         value = options.get_library_path()
@@ -115,7 +120,8 @@ class TestOptions(unittest.TestCase):
 
     def test_get_library_path_pyldpath_error(self):
         """
-        Test '-pyldpath' without 2nd argument raise exception and exit status 2.
+        Test '-pyldpath' without 2nd argument raise exception and
+        exit status 2.
         """
         args = ['arg0', 'moduleX', '-pyldpath', '-pyldv']
 
@@ -126,8 +132,11 @@ class TestOptions(unittest.TestCase):
 
         value = pyld.sys.stderr.getvalue()
         self.assertIsInstance(value, str)
-        self.assertIn(os.path.basename(sys.argv[0]) +
-                      ': error: argument -pyldpath: expected 1 argument', value)
+        self.assertIn(
+            os.path.basename(sys.argv[0]) +
+            ': error: argument -pyldpath: expected 1 argument',
+            value
+        )
 
     def test_get_module(self):
         """
@@ -199,8 +208,14 @@ class TestOptions(unittest.TestCase):
         """
         Test that '-pyldpath' does not get passed into module arguments.
         """
-        args = ['arg0', 'moduleX', '-pyldpath', 'pathX' + os.path.pathsep + 'pathY',
-                'moduleYarg1', 'moduleYarg2']
+        args = [
+            'arg0',
+            'moduleX',
+            '-pyldpath',
+            'pathX' + os.path.pathsep + 'pathY',
+            'moduleYarg1',
+            'moduleYarg2'
+        ]
         options = pyld.Options(args)
 
         value = options.get_module_args()
@@ -222,7 +237,13 @@ class TestOptions(unittest.TestCase):
         """
         Test that '-pyldverbose' does not get passed into module arguments.
         """
-        args = ['arg0', 'moduleX', '-pyldverbose', 'moduleYarg1', 'moduleYarg2']
+        args = [
+            'arg0',
+            'moduleX',
+            '-pyldverbose',
+            'moduleYarg1',
+            'moduleYarg2'
+        ]
         options = pyld.Options(args)
 
         value = options.get_module_args()
@@ -244,7 +265,13 @@ class TestOptions(unittest.TestCase):
         """
         Test that '-pyldvvv' does not get passed into module arguments.
         """
-        args = ['arg0', 'moduleX', '-pyldvvv', 'moduleYarg1', 'moduleYarg2']
+        args = [
+            'arg0',
+            'moduleX',
+            '-pyldvvv',
+            'moduleYarg1',
+            'moduleYarg2'
+        ]
         options = pyld.Options(args)
 
         value = options.get_module_args()
@@ -255,7 +282,10 @@ class TestOptions(unittest.TestCase):
         """
         Test module directory is correctly detected.
         """
-        args = [os.path.join('myDir', 'myFile'), os.path.join('moduleDir', 'moduleX')]
+        args = [
+            os.path.join('myDir', 'myFile'),
+            os.path.join('moduleDir', 'moduleX')
+        ]
         options = pyld.Options(args)
 
         value = options.get_module_dir()
@@ -361,7 +391,8 @@ class TestOptions(unittest.TestCase):
 
     def test_init_flags_none(self):
         """
-        Test argparse error exit status 2 when no arguments are supplied.
+        Test argparse error exit status 2 when no arguments are
+        supplied.
         """
         args = ['arg0']
 
@@ -373,8 +404,11 @@ class TestOptions(unittest.TestCase):
 
         value = pyld.sys.stderr.getvalue()
         self.assertIsInstance(value, str)
-        self.assertIn(os.path.basename(sys.argv[0]) +
-                      ': error: the following arguments are required: module, arg', value)
+        self.assertIn(
+            os.path.basename(sys.argv[0]) +
+            ': error: the following arguments are required: module, arg',
+            value
+        )
 
 
 class TestPythonLoader(unittest.TestCase):
@@ -391,14 +425,20 @@ class TestPythonLoader(unittest.TestCase):
         os.chdir(os.path.dirname(__file__))
 
         self._mock_options = unittest.mock.MagicMock('mock_options')
-        self._mock_options.get_dump_flag = unittest.mock.MagicMock(return_value=False)
-        self._mock_options.get_library_path = unittest.mock.MagicMock(return_value=[])
-        self._mock_options.get_module = unittest.mock.MagicMock(return_value='arg0')
-        self._mock_options.get_module_name = unittest.mock.MagicMock(return_value='arg0')
+        self._mock_options.get_dump_flag = unittest.mock.MagicMock(
+            return_value=False)
+        self._mock_options.get_library_path = unittest.mock.MagicMock(
+            return_value=[])
+        self._mock_options.get_module = unittest.mock.MagicMock(
+            return_value='arg0')
+        self._mock_options.get_module_name = unittest.mock.MagicMock(
+            return_value='arg0')
         self._mock_options.get_module_args = unittest.mock.MagicMock(
             return_value=['args1', 'args2'])
-        self._mock_options.get_module_dir = unittest.mock.MagicMock(return_value='directory')
-        self._mock_options.get_verbose_flag = unittest.mock.MagicMock(return_value=False)
+        self._mock_options.get_module_dir = unittest.mock.MagicMock(
+            return_value='directory')
+        self._mock_options.get_verbose_flag = unittest.mock.MagicMock(
+            return_value=False)
         self._mock_options.dump = unittest.mock.MagicMock()
 
     def tearDown(self):
@@ -408,7 +448,8 @@ class TestPythonLoader(unittest.TestCase):
         """
         Test object dumping does not fail.
         """
-        patch_dump = unittest.mock.patch.object(pyld.PythonLoader, 'dump', return_value=None)
+        patch_dump = unittest.mock.patch.object(
+            pyld.PythonLoader, 'dump', return_value=None)
         patch_dump.start()
 
         python_loader = pyld.PythonLoader(self._mock_options)
@@ -420,9 +461,11 @@ class TestPythonLoader(unittest.TestCase):
         """
         Test run with dump flag set.
         """
-        patch_dump = unittest.mock.patch.object(pyld.PythonLoader, 'dump', return_value=None)
+        patch_dump = unittest.mock.patch.object(
+            pyld.PythonLoader, 'dump', return_value=None)
         patch_dump.start()
-        self._mock_options.get_dump_flag = unittest.mock.MagicMock(return_value=True)
+        self._mock_options.get_dump_flag = unittest.mock.MagicMock(
+            return_value=True)
 
         python_loader = pyld.PythonLoader(self._mock_options)
 
@@ -442,10 +485,13 @@ class TestPythonLoader(unittest.TestCase):
 
     def test_run_import_main(self):
         """
-        Test run loads module and calls 'Main()'. We use this module as the test module.
+        Test run loads module and calls 'Main()'.
+        We use this module as the test module.
         """
-        self._mock_options.get_module = unittest.mock.MagicMock(return_value='test_pyld')
-        self._mock_options.get_module_dir = unittest.mock.MagicMock(return_value=os.curdir)
+        self._mock_options.get_module = unittest.mock.MagicMock(
+            return_value='test_pyld')
+        self._mock_options.get_module_dir = unittest.mock.MagicMock(
+            return_value=os.curdir)
 
         python_loader = pyld.PythonLoader(self._mock_options)
 
@@ -473,7 +519,8 @@ class TestPythonLoader(unittest.TestCase):
         """
         Test run with '-pyldverbose' flag on.
         """
-        self._mock_options.get_verbose_flag = unittest.mock.MagicMock(return_value=True)
+        self._mock_options.get_verbose_flag = unittest.mock.MagicMock(
+            return_value=True)
 
         python_loader = pyld.PythonLoader(self._mock_options)
 
@@ -502,7 +549,10 @@ class TestPythonLoader(unittest.TestCase):
 
         value = python_loader.get_sys_argv()
         self.assertIsInstance(value, list)
-        self.assertListEqual(value, [os.path.join('directory', 'arg0'), 'args1', 'args2'])
+        self.assertListEqual(
+            value,
+            [os.path.join('directory', 'arg0'), 'args1', 'args2']
+        )
 
 
 if __name__ == '__main__':

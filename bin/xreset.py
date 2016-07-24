@@ -35,10 +35,15 @@ class Options(object):
         return self._config.get()
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Reset to default screen resolution.')
+        parser = argparse.ArgumentParser(
+            description='Reset to default screen resolution.')
 
-        parser.add_argument('settings', nargs='*', metavar='device=mode',
-                            help='Display device (ie "DP1=1920x1080").')
+        parser.add_argument(
+            'settings',
+            nargs='*',
+            metavar='device=mode',
+            help='Display device (ie "DP1=1920x1080").'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -49,7 +54,8 @@ class Options(object):
         self._parse_args(args[1:])
 
         if 'HOME' not in os.environ:
-            raise SystemExit(sys.argv[0] + ': Cannot determine home directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot determine home directory.')
 
         configdir = os.path.join(os.environ['HOME'], '.config')
         if not os.path.isdir(configdir):
@@ -65,7 +71,8 @@ class Options(object):
                 try:
                     device, mode = setting.split('=')
                 except ValueError:
-                    raise SystemExit(sys.argv[0] + ': Invalid "' + setting + '" settings.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Invalid "' + setting + '" settings.')
                 self._config.set(device, mode)
             self._config.write(configfile)
 
@@ -102,7 +109,10 @@ class Configuration(object):
         """
         try:
             with open(file, 'w', newline='\n') as ofile:
-                print(json.dumps(self._data, indent=4, sort_keys=True), file=ofile)
+                print(
+                    json.dumps(self._data, indent=4, sort_keys=True),
+                    file=ofile
+                )
         except OSError:
             pass
 
@@ -153,8 +163,12 @@ class Main(object):
         subtask_mod.Batch(xrandr.get_cmdline() + ['--dpi', dpi]).run()
 
         for device, mode in settings:
-            subtask_mod.Batch(xrandr.get_cmdline() + ['--output', device, '--auto']).run()
-            subtask_mod.Batch(xrandr.get_cmdline() + ['--output', device, '--mode', mode]).run()
+            subtask_mod.Batch(
+                xrandr.get_cmdline() + ['--output', device, '--auto']).run()
+            subtask_mod.Batch(
+                xrandr.get_cmdline() +
+                ['--output', device, '--mode', mode]
+            ).run()
 
 
 if __name__ == '__main__':

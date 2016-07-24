@@ -33,7 +33,12 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Re-format XML file.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='File to change.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File to change.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -84,7 +89,8 @@ class Main(object):
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" file.')
             print('Re-formatting "' + file + '" XML file...')
 
             xml_text = ''
@@ -93,7 +99,8 @@ class Main(object):
                     for line in ifile:
                         xml_text += line.strip()
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "' + file + '" file.')
             xml_doc = xml.dom.minidom.parseString(xml_text)
             xml_text = xml_doc.toprettyxml(indent='    ', newl='\n')
 
@@ -102,12 +109,15 @@ class Main(object):
                 with open(tmpfile, 'w', newline='\n') as ofile:
                     print(xml_text, end='', file=ofile)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
             try:
                 shutil.move(tmpfile, file)
             except OSError:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot rename "' + tmpfile + '" file to "' + file + '".')
+                    sys.argv[0] + ': Cannot rename "' + tmpfile +
+                    '" file to "' + file + '".'
+                )
 
 
 if __name__ == '__main__':

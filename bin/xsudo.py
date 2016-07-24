@@ -58,8 +58,19 @@ class Main(object):
         """
         xterm = command_mod.Command('xterm', errors='stop')
         xterm.set_args([
-            '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg', FG_COLOUR,
-            '-bg', BG_COLOUR, '-cr', '#ff0000', '-geometry', '100x24', '-ut', '+sb'])
+            '-fn',
+            '-misc-fixed-bold-r-normal--18-*-iso8859-1',
+            '-fg',
+            FG_COLOUR,
+            '-bg',
+            BG_COLOUR,
+            '-cr',
+            '#ff0000',
+            '-geometry',
+            '100x24',
+            '-ut',
+            '+sb'
+        ])
         sudo = command_mod.Command('sudo', errors='stop')
 
         hostname = socket.gethostname().split('.')[0].lower()
@@ -67,7 +78,8 @@ class Main(object):
         prompt = '[sudo] password for {0:s}@{1:s}: '.format(hostname, username)
 
         if len(sys.argv) > 1:
-            xterm.extend_args(['-T', 'sudo ' + xterm.args2cmd(sys.argv[1:]), '-e'])
+            xterm.extend_args(
+                ['-T', 'sudo ' + xterm.args2cmd(sys.argv[1:]), '-e'])
             sudo.set_args(['-p', prompt] + sys.argv[1:])
         else:
             xterm.extend_args(['-T', 'sudo su', '-e'])

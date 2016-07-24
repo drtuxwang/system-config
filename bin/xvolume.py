@@ -39,17 +39,34 @@ class Options(object):
             # From 0 - 15
             return int(int(task.get_output()[0].split()[2], 16) / 0x1000)
         except (IndexError, ValueError):
-            raise SystemExit(sys.argv[0] + ': Cannot detect current Pulseaudio volume.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot detect current Pulseaudio volume.')
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Desktop audio volume utility.')
+        parser = argparse.ArgumentParser(
+            description='Desktop audio volume utility.')
 
-        parser.add_argument('-dec', action='store_const', const='-', dest='change',
-                            help='Increase brightness.')
-        parser.add_argument('-inc', action='store_const', const='+', dest='change',
-                            help='Default brightness.')
-        parser.add_argument('-reset', action='store_const', const='=', dest='change',
-                            help='Decrease brightness.')
+        parser.add_argument(
+            '-dec',
+            action='store_const',
+            const='-',
+            dest='change',
+            help='Increase brightness.'
+        )
+        parser.add_argument(
+            '-inc',
+            action='store_const',
+            const='+',
+            dest='change',
+            help='Default brightness.'
+        )
+        parser.add_argument(
+            '-reset',
+            action='store_const',
+            const='=',
+            dest='change',
+            help='Decrease brightness.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -70,7 +87,8 @@ class Options(object):
             volume = 10
         else:
             volume = self._getvol()
-        self._pacmd.set_args(['set-sink-volume', '0', '0x{0:X}'.format(volume * 0x1000)])
+        self._pacmd.set_args(
+            ['set-sink-volume', '0', '0x{0:X}'.format(volume * 0x1000)])
 
 
 class Main(object):

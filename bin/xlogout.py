@@ -31,10 +31,15 @@ class Options(object):
         return self._args.force_flag
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Logout from X-windows desktop.')
+        parser = argparse.ArgumentParser(
+            description='Logout from X-windows desktop.')
 
-        parser.add_argument('-force', dest='force_flag', action='store_true',
-                            help='Force login without confirmation.')
+        parser.add_argument(
+            '-force',
+            dest='force_flag',
+            action='store_true',
+            help='Force login without confirmation.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -85,13 +90,15 @@ class Main(object):
         self._pid = 0
         if 'SESSION_MANAGER' in os.environ:
             try:
-                self._pid = int(os.path.basename(os.environ['SESSION_MANAGER']))
+                self._pid = int(
+                    os.path.basename(os.environ['SESSION_MANAGER']))
             except ValueError:
                 pass
 
         if not options.get_force_flag():
             try:
-                answer = input('Do you really want to logout of X-session? (y/n) [n] ')
+                answer = input(
+                    'Do you really want to logout of X-session? (y/n) [n] ')
                 if answer.lower() != 'y':
                     raise SystemExit(1)
             except EOFError:

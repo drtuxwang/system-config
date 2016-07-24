@@ -38,10 +38,15 @@ class Options(object):
         return self._meld
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Graphical file comparison and merge tool.')
+        parser = argparse.ArgumentParser(
+            description='Graphical file comparison and merge tool.')
 
-        parser.add_argument('files', nargs=2, metavar='file',
-                            help='File to compare.')
+        parser.add_argument(
+            'files',
+            nargs=2,
+            metavar='file',
+            help='File to compare.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -54,16 +59,20 @@ class Options(object):
         self._meld = command_mod.Command('meld', errors='stop')
         files = self._args.files
         if os.path.isdir(files[0]) and os.path.isfile(files[1]):
-            self._meld.set_args([os.path.join(files[0], os.path.basename(files[1])), files[1]])
+            self._meld.set_args(
+                [os.path.join(files[0], os.path.basename(files[1])), files[1]])
         elif os.path.isfile(files[0]) and os.path.isdir(files[1]):
-            self._meld.set_args([files[0], os.path.join(files[1], os.path.basename(files[0]))])
+            self._meld.set_args(
+                [files[0], os.path.join(files[1], os.path.basename(files[0]))])
         elif os.path.isfile(files[0]) and os.path.isfile(files[1]):
             self._meld.set_args(args[1:])
         else:
             raise SystemExit(sys.argv[0] + ': Cannot compare two directories.')
 
-        self._pattern = ('^$|: GtkWarning: |: Gtk-CRITICAL |^  buttons =|^  gtk.main|'
-                         'recently-used.xbel')
+        self._pattern = (
+            '^$|: GtkWarning: |: Gtk-CRITICAL |^  buttons =|^  gtk.main|'
+            'recently-used.xbel'
+        )
 
 
 class Main(object):

@@ -56,7 +56,10 @@ class Main(object):
         if not xmixer.is_found():
             desktop = desktop_mod.Desktop.detect()
             if desktop == 'gnome':
-                xmixer = command_mod.Command('gnome-volume-control', errors='ignore')
+                xmixer = command_mod.Command(
+                    'gnome-volume-control',
+                    errors='ignore'
+                )
             elif desktop == 'kde':
                 xmixer = command_mod.Command('kmix', errors='ignore')
             elif desktop == 'xfce':

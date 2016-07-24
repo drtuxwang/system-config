@@ -40,14 +40,29 @@ class Options(object):
         return self._backlight
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Desktop screen backlight utility.')
+        parser = argparse.ArgumentParser(
+            description='Desktop screen backlight utility.')
 
-        parser.add_argument('-dec', action='store_const', const='-', dest='change',
-                            help='Increase brightness.')
-        parser.add_argument('-inc', action='store_const', const='+', dest='change',
-                            help='Default brightness.')
-        parser.add_argument('-reset', action='store_const', const='=', dest='change',
-                            help='Decrease brightness.')
+        parser.add_argument(
+            '-dec',
+            action='store_const',
+            const='-', dest='change',
+            help='Increase brightness.'
+        )
+        parser.add_argument(
+            '-inc',
+            action='store_const',
+            const='+',
+            dest='change',
+            help='Default brightness.'
+        )
+        parser.add_argument(
+            '-reset',
+            action='store_const',
+            const='=',
+            dest='change',
+            help='Decrease brightness.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -79,7 +94,8 @@ class Backlight(object):
         """
         Return Backlight sub class object
         """
-        for backlight in (BacklightIntel(), BacklightIntelSetpci(), BacklightXrandr()):
+        for backlight in (
+                BacklightIntel(), BacklightIntelSetpci(), BacklightXrandr()):
             if backlight.detect():
                 return backlight
         raise SystemExit(sys.argv[0] + ": Cannot detect backlight device.")
@@ -93,7 +109,10 @@ class Backlight(object):
         Return brightness
         """
         try:
-            with open(os.path.join(self._device, 'brightness'), errors='replace') as ifile:
+            with open(
+                os.path.join(self._device, 'brightness'),
+                errors='replace'
+            ) as ifile:
                 brightness = int(ifile.readline())
         except (OSError, ValueError):
             brightness = 0
@@ -110,7 +129,10 @@ class Backlight(object):
         Return brightness max
         """
         try:
-            with open(os.path.join(self._device, 'max_brightness'), errors='replace') as ifile:
+            with open(
+                os.path.join(self._device, 'max_brightness'),
+                errors='replace'
+            ) as ifile:
                 brightness = int(ifile.readline())
         except (OSError, ValueError):
             brightness = 0
@@ -127,7 +149,11 @@ class Backlight(object):
         set brightness
         """
         try:
-            with open(os.path.join(self._device, 'brightness'), 'w', newline='\n') as ofile:
+            with open(
+                os.path.join(self._device, 'brightness'),
+                'w',
+                newline='\n'
+            ) as ofile:
                 print(brightness, file=ofile)
         except OSError:
             pass
@@ -159,8 +185,8 @@ class Backlight(object):
                 brightness = self._default
             self.set_brightness(brightness)
         else:
-            print('{0:3.1f} / {1:3.1f}'.format(float(self.get_brightness() + 0.01),
-                                               float(self._max + 0.01)))
+            print('{0:3.1f} / {1:3.1f}'.format(
+                float(self.get_brightness() + 0.01), float(self._max + 0.01)))
 
 
 class BacklightIntel(Backlight):
@@ -187,17 +213,20 @@ class BacklightIntelSetpci(Backlight):
         if getpass.getuser() != 'root':
             hostname = socket.gethostname().split('.')[0].lower()
             username = getpass.getuser()
-            prompt = '[sudo] password for {0:s}@{1:s}: '.format(hostname, username)
+            prompt = '[sudo] password for {0:s}@{1:s}: '.format(
+                hostname, username)
             sudo = command_mod.Command('sudo', errors='stop')
             sudo.set_args(['-p', prompt])
-            task = subtask_mod.Batch(sudo.get_cmdline() + self._command.get_cmdline() + ['F4.B'])
+            task = subtask_mod.Batch(
+                sudo.get_cmdline() + self._command.get_cmdline() + ['F4.B'])
         else:
             task = subtask_mod.Batch(self._command.get_cmdline() + ['F4.B'])
         task.run()
         try:
             return int(int(task.get_output()[0], 16) / 16)  # From 0 - 15
         except (IndexError, ValueError):
-            raise SystemExit(sys.argv[0] + ': Cannot detect current brightness setting.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot detect current brightness setting.')
 
     def get_brightness_default(self):
         """
@@ -234,7 +263,10 @@ class BacklightIntelSetpci(Backlight):
             task.run(pattern='VGA.*Intel.*Atom')
             if task.has_output():
                 self._command = command_mod.Command(
-                    'setpci', args=['-s', task.get_output()[0].split()[0]], errors='stop')
+                    'setpci',
+                    args=['-s', task.get_output()[0].split()[0]],
+                    errors='stop'
+                )
                 return True
         return False
 
@@ -255,7 +287,8 @@ class BacklightXrandr(Backlight):
         task = subtask_mod.Batch(self._command.get_cmdline())
         task.run()
         try:
-            brightness = float(task.get_output(r'^\s+Brightness: ')[0].split()[1])
+            brightness = float(
+                task.get_output(r'^\s+Brightness: ')[0].split()[1])
         except (IndexError, ValueError):
             brightness = 0.
         return brightness
@@ -283,7 +316,8 @@ class BacklightXrandr(Backlight):
         Set brightness
         """
         for screen in self._screens:
-            self._command.set_args(['--output', screen, '--brightness', str(brightness)])
+            self._command.set_args(
+                ['--output', screen, '--brightness', str(brightness)])
             subtask_mod.Task(self._command.get_cmdline()).run()
 
     def detect(self):

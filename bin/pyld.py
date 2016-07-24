@@ -21,10 +21,10 @@ class Options(object):
     This class handles Python loader commandline options.
 
     self._args.module = Module name containing 'Main(args)' class
-    self._dump_flag    = Dump objects flag
+    self._dump_flag = Dump objects flag
     self._library_path = Python library path for debug modules
-    self._module_args  = Arguments for 'Main(args)' class
-    self._module_dir   = Directory containing Python modules
+    self._module_args = Arguments for 'Main(args)' class
+    self._module_dir = Directory containing Python modules
     self._verbose_flag = Verbose flag
     """
 
@@ -98,30 +98,70 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Load Python main program as module (must have Main class).')
+            description='Load Python main program as module '
+            '(must have Main class).'
+        )
 
-        parser.add_argument('-pyldv', '-pyldvv', '-pyldvvv', nargs=0, action=ArgparseVerboseAction,
-                            dest='verbosity', default=0, help='Select verbosity level 1, 2 or 3.')
-        parser.add_argument('-pyldverbose', action='store_const', const=1, dest='verbosity',
-                            default=0, help='Select verbosity level 1.')
-        parser.add_argument('-pyldname', nargs=1, dest='name', default=None,
-                            help='Select module name.')
-        parser.add_argument('-pyldpath', nargs=1, dest='libpath',
-                            help='Add directories to the python load path.')
-
-        parser.add_argument('module', nargs=1, help='Module to run.')
-        parser.add_argument('args', nargs='*', metavar='arg', help='Module argument.')
+        parser.add_argument(
+            '-pyldv',
+            '-pyldvv',
+            '-pyldvvv',
+            nargs=0,
+            action=ArgparseVerboseAction,
+            dest='verbosity',
+            default=0,
+            help='Select verbosity level 1, 2 or 3.'
+        )
+        parser.add_argument(
+            '-pyldverbose',
+            action='store_const',
+            const=1,
+            dest='verbosity',
+            default=0,
+            help='Select verbosity level 1.'
+        )
+        parser.add_argument(
+            '-pyldname',
+            nargs=1,
+            dest='name',
+            default=None,
+            help='Select module name.'
+        )
+        parser.add_argument(
+            '-pyldpath',
+            nargs=1,
+            dest='libpath',
+            help='Add directories to the python load path.'
+        )
+        parser.add_argument(
+            'module',
+            nargs=1,
+            help='Module to run.'
+        )
+        parser.add_argument(
+            'args',
+            nargs='*',
+            metavar='arg',
+            help='Module argument.'
+        )
 
         py_args = []
         mod_args = []
         while len(args):
             if args[0] in (
-                    '-pyldv', '-pyldvv', '-pyldvvv', '-pyldverbose', '-pyldname', '-pyldpath'):
+                    '-pyldv',
+                    '-pyldvv',
+                    '-pyldvvv',
+                    '-pyldverbose',
+                    '-pyldname',
+                    '-pyldpath'
+            ):
                 py_args.append(args[0])
                 if args[0] in ('-pyldname', '-pyldpath') and len(args) >= 2:
                     args = args[1:]
                     py_args.append(args[0])
-            elif args[0].startswith('-pyldname=') or args[0].startswith('-pyldpath='):
+            elif args[0].startswith('-pyldname=') or (
+                    args[0].startswith('-pyldpath=')):
                 py_args.extend(args[0].split('=', 1))
             else:
                 mod_args.append(args[0])
@@ -179,7 +219,9 @@ class PythonLoader(object):
         self._options = options
 
         name = options.get_module_name()
-        self._sys_argv = [os.path.join(options.get_module_dir(), name)] + options.get_module_args()
+        self._sys_argv = [
+            os.path.join(options.get_module_dir(), name)
+        ] + options.get_module_args()
 
     def run(self):
         """
@@ -207,7 +249,9 @@ class PythonLoader(object):
 
         os.environ['PYTHONDONTWRITEBYTECODE'] = '1'
         main = importlib.machinery.SourceFileLoader(
-            "module.name", os.path.join(directory, module) + '.py').load_module()
+            "module.name",
+            os.path.join(directory, module) + '.py'
+        ).load_module()
         main.Main()
 
     def get_options(self):

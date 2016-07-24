@@ -32,11 +32,21 @@ class Options(object):
         return self._archiver
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Make a compressed archive in ZIP format.')
+        parser = argparse.ArgumentParser(
+            description='Make a compressed archive in ZIP format.')
 
-        parser.add_argument('archive', nargs=1, metavar='file.zip',
-                            help='Archive file or directory.')
-        parser.add_argument('files', nargs='*', metavar='file', help='File or directory.')
+        parser.add_argument(
+            'archive',
+            nargs=1,
+            metavar='file.zip',
+            help='Archive file or directory.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='*',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -45,13 +55,25 @@ class Options(object):
         Parse arguments
         """
         if os.name == 'nt':
-            self._archiver = command_mod.Command('pkzip32.exe', errors='ignore')
+            self._archiver = command_mod.Command(
+                'pkzip32.exe',
+                errors='ignore'
+            )
             if self._archiver.is_found():
-                self._archiver.set_args(['-add', '-maximum', '-recurse', '-path'])
+                self._archiver.set_args(
+                    ['-add', '-maximum', '-recurse', '-path'])
             else:
-                self._archiver = command_mod.Command('zip', args=['-r', '-9'], errors='stop')
+                self._archiver = command_mod.Command(
+                    'zip',
+                    args=['-r', '-9'],
+                    errors='stop'
+                )
         else:
-            self._archiver = command_mod.Command('zip', args=['-r', '-9'], errors='stop')
+            self._archiver = command_mod.Command(
+                'zip',
+                args=['-r', '-9'],
+                errors='stop'
+            )
 
         if len(args) > 1 and args[1] in ('-add', '-r'):
             subtask_mod.Exec(self._archiver.get_cmdline() + args[1:]).run()
@@ -59,7 +81,8 @@ class Options(object):
         self._parse_args(args[1:])
 
         if os.path.isdir(self._args.archive[0]):
-            self._archiver.append_arg(os.path.abspath(self._args.archive[0] + '.7z'))
+            self._archiver.append_arg(
+                os.path.abspath(self._args.archive[0] + '.7z'))
         else:
             self._archiver.append_arg(self._args.archive[0])
 

@@ -54,7 +54,11 @@ class Main(object):
         """
         desktop = desktop_mod.Desktop.detect()
         if desktop == 'gnome':
-            xsnap = command_mod.Command('gnome-screenshot', flags=['--interactive'], errors='stop')
+            xsnap = command_mod.Command(
+                'gnome-screenshot',
+                flags=['--interactive'],
+                errors='stop'
+            )
         elif desktop == 'kde':
             xsnap = command_mod.Command('ksnapshot', errors='stop')
         elif desktop == 'xfce':
