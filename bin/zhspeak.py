@@ -66,7 +66,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Zhong Hua Speak v' + self._release +
-            'Chinese TTS software.'
+            ' Chinese TTS software.'
         )
 
         parser.add_argument(
