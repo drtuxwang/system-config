@@ -57,19 +57,21 @@ class Options(object):
         """
         Parse arguments
         """
-        self._gitk = command_mod.Command(os.path.join('bin', 'gitk'), errors='stop')
+        self._gitk = command_mod.Command(
+            os.path.join('bin', 'gitk'), errors='stop')
         self._gitk.set_args(args[1:])
 
         self._env = {}
         if os.name == 'nt':
-            os.environ['PATH'] = os.path.join(os.environ['PATH'],
-                                              os.path.dirname(self._gitk.get_file()))
+            os.environ['PATH'] = os.path.join(
+                os.environ['PATH'], os.path.dirname(self._gitk.get_file()))
         else:
             git_home = os.path.dirname(os.path.dirname(self._gitk.get_file()))
             if git_home not in ('/usr', '/usr/local', '/opt/software'):
-                self._env['GIT_EXEC_PATH'] = os.path.join(git_home, 'libexec', 'git-core')
-                self._env['GIT_TEMPLATE_DIR'] = os.path.join(git_home, 'share',
-                                                             'git-core', 'templates')
+                self._env['GIT_EXEC_PATH'] = os.path.join(
+                    git_home, 'libexec', 'git-core')
+                self._env['GIT_TEMPLATE_DIR'] = os.path.join(
+                    git_home, 'share', 'git-core', 'templates')
         self._config()
 
 
@@ -111,7 +113,8 @@ class Main(object):
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_gitk().get_cmdline()).run(env=options.get_env())
+        subtask_mod.Exec(
+            options.get_gitk().get_cmdline()).run(env=options.get_env())
 
 
 if __name__ == '__main__':

@@ -32,10 +32,15 @@ class Options(object):
         return self._gzip
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Compress a file in GZIP format.')
+        parser = argparse.ArgumentParser(
+            description='Compress a file in GZIP format.')
 
         parser.add_argument(
-            'files', nargs=1, metavar='file', help='File to compresss to "file.gz".')
+            'files',
+            nargs=1,
+            metavar='file',
+            help='File to compresss to "file.gz".'
+        )
 
         self._args = parser.parse_args(args)
 

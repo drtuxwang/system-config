@@ -42,10 +42,12 @@ class Options(object):
         if 'HOME' in os.environ:
             if os.path.isdir(os.path.join(os.environ['HOME'], '.thumbnails')):
                 try:
-                    shutil.rmtree(os.path.join(os.environ['HOME'], '.thumbnails'))
+                    shutil.rmtree(
+                        os.path.join(os.environ['HOME'], '.thumbnails'))
                 except OSError:
                     pass
-            for file in glob.glob(os.path.join(os.environ['HOME'], '.gimp*', 'gimprc')):
+            for file in glob.glob(
+                    os.path.join(os.environ['HOME'], '.gimp*', 'gimprc')):
                 try:
                     with open(file, errors='replace') as ifile:
                         if '(thumbnail-size none)\n' not in ifile.readlines():
@@ -60,11 +62,13 @@ class Options(object):
         """
         self._gimp = command_mod.Command('gimp', errors='stop')
         self._gimp.set_args(args[1:])
-        self._pattern = ('^$| GLib-WARNING | GLib-GObject-WARNING | Gtk-WARNING |: Gimp-|'
-                         ' g_bookmark_file_get_size:|recently-used.xbel|^ sRGB |^lcms: |'
-                         'pixmap_path: |in <module>| import |wrong ELF class:|'
-                         ': LibGimpBase-WARNING |^Traceback |: undefined symbol:| XMP metadata:|'
-                         ': No XMP packet found')
+        self._pattern = (
+            '^$| GLib-WARNING | GLib-GObject-WARNING | Gtk-WARNING |: Gimp-|'
+            ' g_bookmark_file_get_size:|recently-used.xbel|^ sRGB |^lcms: |'
+            'pixmap_path: |in <module>| import |wrong ELF class:|'
+            ': LibGimpBase-WARNING |^Traceback |: undefined symbol:|'
+            ' XMP metadata:|: No XMP packet found'
+        )
         self._config()
 
 
@@ -106,7 +110,8 @@ class Main(object):
         """
         options = Options()
 
-        subtask_mod.Background(options.get_gimp().get_cmdline()).run(pattern=options.get_pattern())
+        subtask_mod.Background(options.get_gimp(
+            ).get_cmdline()).run(pattern=options.get_pattern())
 
 
 if __name__ == '__main__':

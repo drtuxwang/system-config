@@ -48,8 +48,12 @@ class Options(object):
                     os.mkdir(file)
                 except OSError:
                     pass
-            for file in (os.path.join(os.environ['HOME'], '.local', 'share', 'geeqie'),
-                         os.path.join(os.environ['HOME'], '.cache', 'geeqie', 'thumbnails')):
+            for file in (
+                    os.path.join(
+                        os.environ['HOME'], '.local', 'share', 'geeqie'),
+                    os.path.join(
+                        os.environ['HOME'], '.cache', 'geeqie', 'thumbnails')
+            ):
                 if not os.path.isfile(file):
                     try:
                         if os.path.isdir(file):
@@ -68,7 +72,9 @@ class Options(object):
                     os.makedirs(configdir)
                 except OSError:
                     return
-            for directory in ('collections', 'history', 'metadata', 'thumbnails'):
+            for directory in (
+                    'collections', 'history', 'metadata', 'thumbnails'
+            ):
                 file = os.path.join(configdir, directory)
                 if not os.path.isfile(file):
                     try:

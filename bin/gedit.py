@@ -42,9 +42,11 @@ class Options(object):
         """
         self._gedit = command_mod.Command('gedit', errors='stop')
         self._gedit.set_args(args[1:])
-        self._pattern = ('^$|$HOME/.gnome|FAMOpen| DEBUG: |GEDIT_IS_PLUGIN|IPP request failed|'
-                         'egg_recent_model_|g_bookmark_file_get_size:|recently-used.xbel|'
-                         'Could not load theme')
+        self._pattern = (
+            '^$|$HOME/.gnome|FAMOpen| DEBUG: |GEDIT_IS_PLUGIN|'
+            'IPP request failed|egg_recent_model_|g_bookmark_file_get_size:|'
+            'recently-used.xbel|Could not load theme'
+        )
 
 
 class Main(object):
@@ -85,7 +87,8 @@ class Main(object):
         """
         options = Options()
 
-        subtask_mod.Background(options.get_gedit().get_cmdline()).run(pattern=options.get_pattern())
+        subtask_mod.Background(options.get_gedit().get_cmdline(
+            )).run(pattern=options.get_pattern())
 
 
 if __name__ == '__main__':

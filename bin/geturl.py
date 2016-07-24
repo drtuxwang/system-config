@@ -56,13 +56,22 @@ class Options(object):
                     os.environ['LD_LIBRARY_PATH'] = libdir
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Multi-threaded download accelerator.')
+        parser = argparse.ArgumentParser(
+            description='Multi-threaded download accelerator.')
 
-        parser.add_argument('-threads', nargs=1, type=int, default=[4],
-                            help='Number of threads. Default is 4.')
-
-        parser.add_argument('urls', nargs='+', metavar='url|file.url',
-                            help='URL or file containing URLs.')
+        parser.add_argument(
+            '-threads',
+            nargs=1,
+            type=int,
+            default=[4],
+            help='Number of threads. Default is 4.'
+        )
+        parser.add_argument(
+            'urls',
+            nargs='+',
+            metavar='url|file.url',
+            help='URL or file containing URLs.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -76,8 +85,10 @@ class Options(object):
         self._set_libraries(self._aria2c)
 
         if self._args.threads[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'number of threads.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer for '
+                'number of threads.'
+            )
 
 
 class Main(object):
@@ -119,13 +130,19 @@ class Main(object):
                     os.mkdir(directory)
                 except OSError:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + directory + '" directory.')
+                        sys.argv[0] + ': Cannot create "' + directory +
+                        '" directory.'
+                    )
             for file in files_local:
                 print('file://' + file)
                 try:
-                    shutil.copy2(file, os.path.join(directory, os.path.basename(file)))
+                    shutil.copy2(
+                        file,
+                        os.path.join(directory, os.path.basename(file))
+                    )
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot find "' + file + '" file.')
 
     @staticmethod
     def _get_remote(aria2c, files_remote):
@@ -136,8 +153,10 @@ class Main(object):
             task = subtask_mod.Task(aria2c.get_cmdline() + cmdline)
             task.run()
             if task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                 ' received from "' + task.get_file() + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
 
     def run(self):
         """
@@ -154,9 +173,14 @@ class Main(object):
             if url.endswith('.url') and os.path.isfile(url):
                 directory = url[:-4]
                 files_remote = []
-                aria2c.set_args(['--file-allocation=none', '--remote-time=true',
-                                 '--max-concurrent-downloads=' + str(self._options.get_threads()),
-                                 '--dir=' + directory, '-Z'])
+                aria2c.set_args([
+                    '--file-allocation=none',
+                    '--remote-time=true',
+                    '--max-concurrent-downloads=' +
+                    str(self._options.get_threads()),
+                    '--dir=' + directory,
+                    '-Z'
+                ])
                 try:
                     with open(url, errors='replace') as ifile:
                         for line in ifile:
@@ -164,18 +188,24 @@ class Main(object):
                             if line and not line.startswith('#'):
                                 if line.startswith('file://'):
                                     if line not in files_local:
-                                        files_local.append(line.replace('file://', '', 1))
+                                        files_local.append(
+                                            line.replace('file://', '', 1))
                                 elif line not in files_remote:
                                     files_remote.append(line)
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' + url + '" URL file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot read "' + url + '" URL file.')
                 self._get_local(directory, files_local)
                 self._get_remote(aria2c, files_remote)
             elif os.path.isdir(url):
-                raise SystemExit(sys.argv[0] + ': Cannot process "' + url + '" directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot process "' + url + '" directory.')
             else:
-                aria2c.extend_args(['--file-allocation=none', '--remote-time=true',
-                                    '--split=' + str(self._options.get_threads())])
+                aria2c.extend_args([
+                    '--file-allocation=none',
+                    '--remote-time=true',
+                    '--split=' + str(self._options.get_threads())
+                ])
 
 
 if __name__ == '__main__':

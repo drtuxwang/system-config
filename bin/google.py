@@ -36,7 +36,12 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Google search.')
 
-        parser.add_argument('keywords', nargs='+', metavar='keyword', help='Keyword to search.')
+        parser.add_argument(
+            'keywords',
+            nargs='+',
+            metavar='keyword',
+            help='Keyword to search.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -80,17 +85,28 @@ class Main(object):
 
     @staticmethod
     def _search(search_for):
-        url = 'http://ajax.googleapis.com/ajax/services/search/web?v=1.0&' + search_for
-        user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0'
+        url = (
+            'http://ajax.googleapis.com/ajax/services/search/web?v=1.0&' +
+            search_for
+        )
+        user_agent = (
+            'Mozilla/5.0 (X11; Linux x86_64; rv:45.0) '
+            'Gecko/20100101 Firefox/45.0'
+        )
 
         try:
             response = requests.get(
-                url, params={'q': search_for}, headers={'User-Agent': user_agent},
-                allow_redirects=True, verify=True)
+                url,
+                params={'q': search_for},
+                headers={'User-Agent': user_agent},
+                allow_redirects=True,
+                verify=True
+            )
         except Exception as exception:
             raise SystemExit(str(exception))
         if response.status_code != 200:
-            raise SystemExit('Requests response code: ' + str(response.status_code))
+            raise SystemExit(
+                'Requests response code: ' + str(response.status_code))
 
         print(response.url)
         for page in json.loads(response.text)['responseData']['results']:

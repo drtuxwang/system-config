@@ -44,13 +44,27 @@ class Options(object):
         return self._year
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Displays month or year calendar.')
+        parser = argparse.ArgumentParser(
+            description='Displays month or year calendar.')
 
-        parser.add_argument('-l', dest='long_flag', action='store_true',
-                            help='Select long output.')
-
-        parser.add_argument('month', nargs='?', type=int, help='Select month (1-12 or 0 for year.')
-        parser.add_argument('year', nargs='?', type=int, help='Select year (2-9999).')
+        parser.add_argument(
+            '-l',
+            dest='long_flag',
+            action='store_true',
+            help='Select long output.'
+        )
+        parser.add_argument(
+            'month',
+            nargs='?',
+            type=int,
+            help='Select month (1-12 or 0 for year.'
+        )
+        parser.add_argument(
+            'year',
+            nargs='?',
+            type=int,
+            help='Select year (2-9999).'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -66,17 +80,23 @@ class Options(object):
         if self._args.year:
             self._year = self._args.year
             if self._year < 2 or self._year > 9999:
-                raise SystemExit(sys.argv[0] + ': Invalid "' + str(self._year) +
-                                 '" year. Use 2-9999.')
+                raise SystemExit(
+                    sys.argv[0] + ': Invalid "' + str(self._year) +
+                    '" year. Use 2-9999.'
+                )
             self._month = self._args.month
             if self._month < 0 or self._month > 12:
-                raise SystemExit(sys.argv[0] + ': Invalid "' + str(self._month) +
-                                 '" month. Use 1-12 or 0 for year.')
+                raise SystemExit(
+                    sys.argv[0] + ': Invalid "' + str(self._month) +
+                    '" month. Use 1-12 or 0 for year.'
+                )
         elif self._args.month:
             self._month = self._args.month
             if self._month < 0 or self._month > 9999:
-                raise SystemExit(sys.argv[0] + ': Invalid "' + str(self._month) +
-                                 '" month or year. Use 1-12 for month or 13-9999 for year.')
+                raise SystemExit(
+                    sys.argv[0] + ': Invalid "' + str(self._month) +
+                    '" month or year. Use 1-12 for month or 13-9999 for year.'
+                )
             elif self._month > 12:
                 self._year = self._month
                 self._month = 0
@@ -117,29 +137,36 @@ class Main(object):
 
     @staticmethod
     def _long(year, month):
-        print('\n                  [ ', calendar.month_name[month] + ' ', year, ' ]\n')
-        for line in calendar.TextCalendar(6).formatmonth(year, month).split(os.linesep)[1:]:
-            print('  __________________________________________________  ', line)
+        print(
+            '\n' + ' '*18 +
+            '[ ', calendar.month_name[month] + ' ', year, ' ]\n'
+        )
+        for line in calendar.TextCalendar(6).formatmonth(
+                year, month).split(os.linesep)[1:]:
+            print('  ' + '_'*51 + '  ', line)
         print()
-        print('  ____________________________________________________________________________ ')
-        print(' |          |          |          |          |          |          |          |')
-        print(' |          |          |          |          |          |          |          |')
-        print(' | Sunday   | Monday   | Tuesday  | Wednesday| Thursday | Friday   | Saturday |')
-        print(' |          |          |          |          |          |          |          |')
-        print(' |__________|__________|__________|__________|__________|__________|__________|')
+        print('  ' + '_'*76 + '  ')
+        print(' ' + ('|'+' '*10)*7 + '| ')
+        print(' ' + ('|'+' '*10)*7 + '| ')
+        print(
+            ' | Sunday   | Monday   | Tuesday  | Wednesday| Thursday'
+            ' | Friday   | Saturday |'
+        )
+        print(' ' + ('|'+' '*10)*7 + '| ')
+        print(' ' + ('|'+'_'*10)*7 + '| ')
         for week in calendar.Calendar(6).monthdays2calendar(year, month):
-            print(' |          |          |          |          |          |          |          |')
+            print(' ' + ('|'+' '*10)*7 + '| ')
             line = ''
             for day in week:
                 if day[0] == 0:
-                    line += ' |         '
+                    line += ' |' + ' '*9
                 else:
                     line += ' | ' + str(day[0]).ljust(8)
             line += ' |'
             print(line)
             for _ in range(5):
-                print(' |' + 7*'          |')
-            print(' |' + 7*'__________|')
+                print(' ' + ('|'+' '*10)*7 + '| ')
+            print(' ' + ('|'+'_'*10)*7 + '| ')
 
     @staticmethod
     def _short(year, month):

@@ -41,11 +41,18 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Modify file time to original GIT author time.')
 
-        parser.add_argument('-r', dest='recursive_flag', action='store_true',
-                            help='Recursive into sub-directories.')
-
-        parser.add_argument('files', nargs='+', metavar='file',
-                            help='File in a GIT repository.')
+        parser.add_argument(
+            '-r',
+            dest='recursive_flag',
+            action='store_true',
+            help='Recursive into sub-directories.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File in a GIT repository.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -99,7 +106,10 @@ class Main(object):
                 except (IndexError, ValueError):
                     pass
             elif recursive and os.path.isdir(file):
-                cls._update(cmdline, glob.glob(os.path.join(file, '*')), recursive)
+                cls._update(
+                    cmdline,
+                    glob.glob(os.path.join(file, '*')),
+                    recursive)
 
     def run(self):
         """
@@ -107,10 +117,18 @@ class Main(object):
         """
         options = Options()
 
-        git = command_mod.Command('git', args=['log', '--pretty=format:%at'], errors='stop')
+        git = command_mod.Command(
+            'git',
+            args=['log', '--pretty=format:%at'],
+            errors='stop'
+        )
         cmdline = git.get_cmdline()
 
-        self._update(cmdline, options.get_files(), options.get_recursive_flag())
+        self._update(
+            cmdline,
+            options.get_files(),
+            options.get_recursive_flag()
+        )
 
 
 if __name__ == '__main__':

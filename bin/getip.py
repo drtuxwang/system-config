@@ -30,9 +30,15 @@ class Options(object):
         return self._args.hosts
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Get the IP number of hosts.')
+        parser = argparse.ArgumentParser(
+            description='Get the IP number of hosts.')
 
-        parser.add_argument('hosts', nargs='+', metavar='host', help='Host name.')
+        parser.add_argument(
+            'hosts',
+            nargs='+',
+            metavar='host',
+            help='Host name.'
+        )
 
         self._args = parser.parse_args(args)
 
