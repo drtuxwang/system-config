@@ -407,7 +407,7 @@ class Main(object):
                 print('Spooling', message, 'to printer previewer')
                 subtask_mod.Task(evince.get_cmdline() + [self._tmpfile]).run()
             else:
-                print('Spooling {0:s} to printer "{1:s}" ({2:d})'.format(
+                print('Spooling {0:s} to printer "{1:s}" ({2:s})'.format(
                     message, options.get_printer(), sides))
                 task = subtask_mod.Task(
                     command.get_cmdline() + [self._tmpfile])
