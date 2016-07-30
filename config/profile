@@ -17,29 +17,9 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     # Check terminal and login shell
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-    PS1="$MYUNAME@${MYHNAME}_$ "
     if [ "$TERM" = "dumb" ]; then
         MYTTY="/dev/???"
     else
-        if [ "$BASH" -a -x /bin/echo ]; then
-            precmd() {
-                prexec_interactive=1; \echo -e "\033]0;$MYHNAME:$PWD\007\c"
-            }
-            preexec() {
-                if [ "$prexec_interactive" ]; then
-                    prexec_interactive=; \echo -e "\033]0;$MYHNAME: $BASH_COMMAND\007\c"
-                fi
-            }
-            case $BASH_VERSION in
-            [12].*|3.0*)
-                PROMPT_COMMAND="precmd"
-                ;;
-            *)
-                PROMPT_COMMAND="precmd"
-                trap preexec DEBUG
-                ;;
-            esac
-        fi
         MYTTY=`\tty 2> /dev/null`
         (mesg y) > /dev/null 2>&1
         if [ "$TMOUT" != 0 ]; then
@@ -52,7 +32,31 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
 
     if [ "$BASH" ]; then
         echo "Running    Login shell /bin/bash (Bash Shell) on $MYTTY ($TERM)"
+        precmd() {
+            if [ "$(__git_ps1 2> /dev/null)" ]; then
+                GIT_REPO=$(git remote -v 2> /dev/null | grep '(fetch)' | sed -e "s@.*/@@;s/ .*//")
+                PS1='\[\033[01;32m\]\u@\h\[\033[01;31m\]$(__git_ps1)'${GIT_REPO}'\[\033[00m\]_$ '
+            else
+                PS1='\[\033[01;32m\]\u@\h\[\033[00m\]_$ '
+            fi
+            prexec_interactive=1; \echo -e "\033]0;$MYHNAME:$PWD\007\c"
+        }
+        preexec() {
+            if [ "$prexec_interactive" ]; then
+                prexec_interactive=; \echo -e "\033]0;$MYHNAME: $BASH_COMMAND\007\c"
+            fi
+        }
+        case $BASH_VERSION in
+        [12].*|3.0*)
+            PROMPT_COMMAND="precmd"
+            ;;
+        *)
+            PROMPT_COMMAND="precmd"
+            trap preexec DEBUG
+            ;;
+        esac
     elif [ "`echo $0 | \grep \"ksh$\"`" ]; then
+        PS1="$MYUNAME@${MYHNAME}_$ "
         set -o emacs
         alias -x __A=$(print '\020' 2> /dev/null) 2> /dev/null # up    = Last line
         alias -x __B=$(print '\016' 2> /dev/null) 2> /dev/null # down  = Next line
