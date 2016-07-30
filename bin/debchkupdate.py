@@ -164,7 +164,7 @@ class Main(object):
                             file = os.path.join(
                                 os.path.dirname(pin_file),
                                 columns[1]
-                            ) + '.packages '
+                            ) + '.packages'
                             if file not in packages_cache:
                                 packages_cache[file] = (
                                     self._read_distribution_packages(file))
