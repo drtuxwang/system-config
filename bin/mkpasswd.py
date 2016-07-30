@@ -37,12 +37,21 @@ class Options(object):
         return self._args.length[0]
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Create secure random password.')
+        parser = argparse.ArgumentParser(
+            description='Create secure random password.')
 
-        parser.add_argument('-s', dest='symbols_flag', action='store_true',
-                            help='Select additional symbols.')
-
-        parser.add_argument('length', nargs=1, type=int, help='Password length.')
+        parser.add_argument(
+            '-s',
+            dest='symbols_flag',
+            action='store_true',
+            help='Select additional symbols.'
+        )
+        parser.add_argument(
+            'length',
+            nargs=1,
+            type=int,
+            help='Password length.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -53,8 +62,10 @@ class Options(object):
         self._parse_args(args[1:])
 
         if self._args.length[0] < 0:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'password length.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer for '
+                'password length.'
+            )
 
 
 class Main(object):
@@ -99,7 +110,8 @@ class Main(object):
         if options.get_symbols_flag():
             chars += '!@#$%^&*()'
 
-        print(''.join(random.choice(chars) for i in range(options.get_length())))
+        print(''.join(random.choice(chars) for i in range(
+            options.get_length())))
 
 
 if __name__ == '__main__':

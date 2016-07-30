@@ -51,7 +51,10 @@ class Main(object):
         """
         Start program
         """
-        javac = command_mod.Command(os.path.join('bin', 'javac'), errors='stop')
+        javac = command_mod.Command(
+            os.path.join('bin', 'javac'),
+            errors='stop'
+        )
         javac.set_args(sys.argv[1:])
 
         subtask_mod.Exec(javac.get_cmdline()).run()

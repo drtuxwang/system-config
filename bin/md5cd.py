@@ -44,11 +44,19 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Calculate MD5 checksums for CD/DVD data disk.')
 
-        parser.add_argument('-speed', nargs=1, type=int, default=[8],
-                            help='Select CD/DVD spin speed.')
-
-        parser.add_argument('device', nargs=1, metavar='device|scan',
-                            help='CD/DVD device (ie "/dev/sr0" or "scan".')
+        parser.add_argument(
+            '-speed',
+            nargs=1,
+            type=int,
+            default=[8],
+            help='Select CD/DVD spin speed.'
+        )
+        parser.add_argument(
+            'device',
+            nargs=1,
+            metavar='device|scan',
+            help='CD/DVD device (ie "/dev/sr0" or "scan".'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -61,11 +69,16 @@ class Options(object):
         os.umask(int('077', 8))
 
         if self._args.speed[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'CD/DVD device speed.')
-        if self._args.device[0] != 'scan' and not os.path.exists(self._args.device[0]):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + self._args.device[0] + '" CD/DVD device.')
+                sys.argv[0] + ': You must specific a positive integer for '
+                'CD/DVD device speed.'
+            )
+        if self._args.device[0] != 'scan' and not (
+                os.path.exists(self._args.device[0])):
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "' + self._args.device[0] +
+                '" CD/DVD device.'
+            )
 
 
 class Cdrom(object):
@@ -92,7 +105,10 @@ class Cdrom(object):
             model = ''
             for file in ('vendor', 'model'):
                 try:
-                    with open(os.path.join(directory, file), errors='replace') as ifile:
+                    with open(
+                        os.path.join(directory, file),
+                        errors='replace'
+                    ) as ifile:
                         model += ' ' + ifile.readline().strip()
                 except OSError:
                     continue
@@ -150,30 +166,45 @@ class Main(object):
         tmpfile = os.sep + os.path.join(
             'tmp', 'fprint-' + getpass.getuser() + '.' + str(os.getpid()))
         command = command_mod.Command('dd', errors='stop')
-        command.set_args(['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + tmpfile])
+        command.set_args([
+            'if=' + device,
+            'bs=' + str(2048*4096),
+            'count=1',
+            'of=' + tmpfile
+        ])
         task = subtask_mod.Batch(command.get_cmdline())
         task.run()
         if task.get_error('Permission denied$'):
             raise SystemExit(
-                sys.argv[0] + ': Cannot read from CD/DVD device. Please check permissions.')
+                sys.argv[0] +
+                ': Cannot read from CD/DVD device. Please check permissions.'
+            )
         elif not os.path.isfile(tmpfile):
-            raise SystemExit(sys.argv[0] + ': Cannot find CD/DVD media. Please check drive.')
+            raise SystemExit(
+                sys.argv[0] +
+                ': Cannot find CD/DVD media. Please check drive.'
+            )
 
         isoinfo.set_args(['-d', '-i', tmpfile])
         task2 = subtask_mod.Task(isoinfo.get_cmdline())
         task2.run(pattern='^Volume size is: ')
         if not task2.has_output():
             raise SystemExit(
-                sys.argv[0] + ': Cannot find TOC on CD/DVD media. Disk not recognised.')
+                sys.argv[0] +
+                ': Cannot find TOC on CD/DVD media. Disk not recognised.'
+            )
         elif task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task2.get_exitcode()) +
-                             ' received from "' + task2.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task2.get_exitcode()) +
+                ' received from "' + task2.get_file() + '".'
+            )
         blocks = int(task2.get_output()[0].split()[-1])
 
         command.set_args(['if=' + device, 'bs=2048', 'count=' + str(blocks)])
 
         nice = command_mod.Command('nice', args=['-20'], errors='stop')
-        child = subtask_mod.Child(nice.get_cmdline() + command.get_cmdline()).run()
+        child = subtask_mod.Child(
+            nice.get_cmdline() + command.get_cmdline()).run()
         child.stdin.close()
         size = 0
         md5 = hashlib.md5()
@@ -195,8 +226,10 @@ class Main(object):
             task = subtask_mod.Batch(eject.get_cmdline())
             task.run()
             if task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                 ' received from "' + task.get_file() + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
 
     @staticmethod
     def _scan():

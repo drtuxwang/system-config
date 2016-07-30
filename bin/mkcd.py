@@ -62,10 +62,12 @@ class Options(object):
         if not device:
             cdrom = Cdrom()
             if not cdrom.get_devices().keys():
-                raise SystemExit(sys.argv[0] + ': Cannot find any CD/DVD device.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find any CD/DVD device.')
             device = sorted(cdrom.get_devices().keys())[0]
         if not os.path.exists(device):
-            raise SystemExit(sys.argv[0] + ': Cannot find "' + device + '" CD/DVD device.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "' + device + '" CD/DVD device.')
         return device
 
     def _signal_ignore(self, _signal, _frame):
@@ -79,17 +81,37 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Make data/audio/video CD/DVD using CD/DVD writer.')
 
-        parser.add_argument('-dev', nargs=1, dest='device',
-                            help='Select device (ie /dev/sr0).')
-        parser.add_argument('-erase', dest='erase_flag', action='store_true',
-                            help='Erase TOC on CD-RW media before writing in DAO mode.')
-        parser.add_argument('-md5', dest='md5_flag', action='store_true',
-                            help='Verify MD5 check sum of data CD/DVD disk.')
-        parser.add_argument('-speed', nargs=1, type=int, default=[8],
-                            help='Select CD/DVD spin speed.')
-
-        parser.add_argument('image', nargs=1, metavar='image.iso|image.bin|directory|scan',
-                            help='ISO/BIn image file, audio or scan')
+        parser.add_argument(
+            '-dev',
+            nargs=1,
+            dest='device',
+            help='Select device (ie /dev/sr0).'
+        )
+        parser.add_argument(
+            '-erase',
+            dest='erase_flag',
+            action='store_true',
+            help='Erase TOC on CD-RW media before writing in DAO mode.'
+        )
+        parser.add_argument(
+            '-md5',
+            dest='md5_flag',
+            action='store_true',
+            help='Verify MD5 check sum of data CD/DVD disk.'
+        )
+        parser.add_argument(
+            '-speed',
+            nargs=1,
+            type=int,
+            default=[8],
+            help='Select CD/DVD spin speed.'
+        )
+        parser.add_argument(
+            'image',
+            nargs=1,
+            metavar='image.iso|image.bin|directory|scan',
+            help='ISO/BIn image file, audio or scan'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -104,12 +126,17 @@ class Options(object):
         self._signal_trap()
 
         if self._args.speed[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'CD/DVD device speed.')
-        if self._args.image[0] != 'scan' and not os.path.isdir(self._args.image[0]):
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer for '
+                'CD/DVD device speed.'
+            )
+        if self._args.image[0] != 'scan' and not (
+                os.path.isdir(self._args.image[0])):
             if not os.path.exists(self._args.image[0]):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + self._args.image[0] + '" CD/DVD device.')
+                    sys.argv[0] + ': Cannot find "' + self._args.image[0] +
+                    '" CD/DVD device.'
+                )
 
 
 class Cdrom(object):
@@ -136,7 +163,10 @@ class Cdrom(object):
             model = ''
             for file in ('vendor', 'model'):
                 try:
-                    with open(os.path.join(directory, file), errors='replace') as ifile:
+                    with open(
+                        os.path.join(directory, file),
+                        errors='replace'
+                    ) as ifile:
                         model += ' ' + ifile.readline().strip()
                 except OSError:
                     continue
@@ -182,8 +212,10 @@ class Main(object):
             task = subtask_mod.Batch(eject.get_cmdline())
             task.run()
             if task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                 ' received from "' + task.get_file() + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
 
     @staticmethod
     def _scan():
@@ -196,14 +228,24 @@ class Main(object):
     def _disk_at_once_data(self, options):
         cdrdao = command_mod.Command('cdrdao', errors='stop')
         if options.get_erase_flag():
-            cdrdao.set_args(['blank', '--blank-mode', 'minimal', '--device', self._device,
-                             '--speed', str(self._speed)])
+            cdrdao.set_args([
+                'blank',
+                '--blank-mode',
+                'minimal',
+                '--device',
+                self._device,
+                '--speed',
+                str(self._speed)
+            ])
             task = subtask_mod.Task(cdrdao.get_cmdline())
             task.run()
             if task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                 ' received from "' + task.get_file() + '".')
-        cdrdao.set_args(['write', '--device', self._device, '--speed', str(self._speed)])
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
+        cdrdao.set_args(
+            ['write', '--device', self._device, '--speed', str(self._speed)])
         if os.path.isfile(self._image[:-4]+'.toc'):
             cdrdao.extend_args([self._image[:-4]+'.toc'])
         else:
@@ -211,40 +253,66 @@ class Main(object):
         task = subtask_mod.Task(cdrdao.get_cmdline())
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
         self._eject()
 
     def _track_at_once_audio(self):
         files = glob.glob(os.path.join(self._image, '*.wav'))
 
         wodim = command_mod.Command('wodim', errors='stop')
-        print('If your media is a rewrite-able CD/DVD its contents will be deleted.')
-        answer = input('Do you really want to burn data to this CD/DVD disk? (y/n) [n] ')
+        print(
+            'If your media is a rewrite-able CD/DVD its contents '
+            'will be deleted.'
+        )
+        answer = input(
+            'Do you really want to burn data to this CD/DVD disk? (y/n) [n] ')
         if answer.lower() != 'y':
             raise SystemExit(1)
         print('Using AUDIO mode for WAVE files (Audio tracks detected)...')
-        wodim.set_args(['-v', '-shorttrack', '-audio', '-pad', '-copy', 'dev=' + self._device,
-                        'speed=' + str(self._speed), 'driveropts=burnfree'] + files)
+        wodim.set_args([
+            '-v',
+            '-shorttrack',
+            '-audio',
+            '-pad',
+            '-copy',
+            'dev=' + self._device,
+            'speed=' + str(self._speed),
+            'driveropts=burnfree'
+        ] + files)
         task = subtask_mod.Task(wodim.get_cmdline())
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
 
         time.sleep(1)
         icedax = command_mod.Command('icedax', errors='ignore')
         if icedax.is_found():
-            icedax.set_args(['-info-only', '--no-infofile', 'verbose-level=toc',
-                             'dev=' + self._device, 'speed=' + str(self._speed)])
+            icedax.set_args([
+                '-info-only',
+                '--no-infofile',
+                'verbose-level=toc',
+                'dev=' + self._device,
+                'speed=' + str(self._speed)
+            ])
             task2 = subtask_mod.Batch(icedax.get_cmdline())
             task2.run()
             toc = task2.get_error(r'[.]\(.*:.*\)|^CD')
             if not toc:
-                raise SystemExit(sys.argv[0] + ': Cannot find Audio CD media. Please check drive.')
+                raise SystemExit(
+                    sys.argv[0] +
+                    ': Cannot find Audio CD media. Please check drive.'
+                )
             elif task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task2.get_exitcode()) +
-                                 ' received from "' + task2.get_file() + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task2.get_exitcode()) +
+                    ' received from "' + task2.get_file() + '".'
+                )
             for line in toc:
                 print(line)
         self._eject()
@@ -253,26 +321,41 @@ class Main(object):
         file = options.get_image()
 
         wodim = command_mod.Command('wodim', errors='stop')
-        print('If your media is a rewrite-able CD/DVD its contents will be deleted.')
-        answer = input('Do you really want to burn data to this CD/DVD disk? (y/n) [n] ')
+        print(
+            'If your media is a rewrite-able CD/DVD its contents will '
+            'be deleted.'
+        )
+        answer = input(
+            'Do you really want to burn data to this CD/DVD disk? (y/n) [n] ')
         if answer.lower() != 'y':
             raise SystemExit(1)
         wodim.set_args(['-v', '-shorttrack', '-eject'])
-        if file_mod.FileStat(file).get_size() < 2097152:  # Pad to avoid dd read problem
+
+        # Pad to avoid dd read problem
+        if file_mod.FileStat(file).get_size() < 2097152:
             wodim.append_arg('-pad')
         wodim.set_args([
-            'dev=' + self._device, 'speed=' + str(self._speed), 'driveropts=burnfree', file])
+            'dev=' + self._device,
+            'speed=' + str(self._speed),
+            'driveropts=burnfree',
+            file])
         task = subtask_mod.Task(wodim.get_cmdline())
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
 
         if options.get_md5_flag():
             print('Verifying MD5 check sum of data CD/DVD:')
             command = command_mod.Command('dd', errors='stop')
-            command.set_args(
-                ['if=' + self._device, 'bs=' + str(2048*360), 'count=1', 'of=/dev/null'])
+            command.set_args([
+                'if=' + self._device,
+                'bs=' + str(2048*360),
+                'count=1',
+                'of=/dev/null'
+            ])
             for _ in range(10):
                 time.sleep(1)
                 task2 = subtask_mod.Batch(command.get_cmdline())
@@ -280,12 +363,18 @@ class Main(object):
                 if task2.has_output():
                     time.sleep(1)
                     break
-            md5cd = command_mod.Command('md5cd', args=[self._device], errors='stop')
+            md5cd = command_mod.Command(
+                'md5cd',
+                args=[self._device],
+                errors='stop'
+            )
             task = subtask_mod.Task(md5cd.get_cmdline())
             task.run()
             if task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                 ' received from "' + task.get_file() + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
             try:
                 with open(file[:-4] + '.md5', errors='replace') as ifile:
                     for line in ifile:

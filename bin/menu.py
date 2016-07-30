@@ -39,9 +39,11 @@ class Options(object):
     def _setenv(args):
         directory = os.path.dirname(os.path.abspath(args[0]))
         if 'BASE_PATH' in os.environ:
-            os.environ['PATH'] = directory + os.pathsep + os.environ['BASE_PATH']
+            os.environ['PATH'] = (
+                directory + os.pathsep + os.environ['BASE_PATH'])
         elif directory not in os.environ['PATH'].split(os.pathsep):
-            os.environ['PATH'] = directory + os.pathsep + os.environ['PATH']
+            os.environ['PATH'] = (
+                directory + os.pathsep + os.environ['PATH'])
 
     def parse(self, args):
         """

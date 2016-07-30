@@ -40,13 +40,22 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Copy all files/directory inside a directory into mirror directory.')
+            description='Copy all files/directory inside a directory '
+            'into mirror directory.'
+        )
 
-        parser.add_argument('-rm', dest='remove_flag', action='store_true',
-                            help='Delete obsolete files in target directory.')
-
-        parser.add_argument('directories', nargs='+', metavar='source_dir target_dir',
-                            help='Source and target directory pairs.')
+        parser.add_argument(
+            '-rm',
+            dest='remove_flag',
+            action='store_true',
+            help='Delete obsolete files in target directory.'
+        )
+        parser.add_argument(
+            'directories',
+            nargs='+',
+            metavar='source_dir target_dir',
+            help='Source and target directory pairs.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -58,13 +67,17 @@ class Options(object):
 
         directories = self._args.directories
         if len(directories) % 2:
-            raise SystemExit(sys.argv[0] + ': Source and target directory pair has missing '
-                                           'target directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Source and target directory pair has missing '
+                'target directory.'
+            )
         self._mirrors = []
         for i in range(0, len(directories), 2):
             if not os.path.isdir(directories[i]):
                 raise SystemExit(
-                    sys.argv[0] + ': Source directory "' + directories[i] + '" does not exist.')
+                    sys.argv[0] + ': Source directory "' + directories[i] +
+                    '" does not exist.'
+                )
             self._mirrors.append([directories[i], directories[i+1]])
 
 
@@ -110,39 +123,64 @@ class Main(object):
     @staticmethod
     def _report_old_files(source_dir, source_files, target_files):
         for target_file in target_files:
-            if os.path.join(source_dir, os.path.basename(target_file)) not in source_files:
+            if os.path.join(
+                    source_dir,
+                    os.path.basename(target_file)
+            ) not in source_files:
                 if os.path.islink(target_file):
-                    print('**WARNING** No source for "' + target_file + '" link.')
+                    print(
+                        '**WARNING** No source for "' +
+                        target_file + '" link.'
+                    )
                 elif os.path.isdir(target_file):
-                    print('**WARNING** No source for "' + target_file + '" directory.')
+                    print(
+                        '**WARNING** No source for "' +
+                        target_file + '" directory.'
+                    )
                 else:
-                    print('**WARNING** No source for "' + target_file + '" file.')
+                    print(
+                        '**WARNING** No source for "' +
+                        target_file + '" file.'
+                    )
 
     def _remove_old_files(self, source_dir, source_files, target_files):
         for target_file in target_files:
-            if os.path.join(source_dir, os.path.basename(target_file)) not in source_files:
+            if os.path.join(
+                    source_dir,
+                    os.path.basename(target_file)
+            ) not in source_files:
                 if os.path.islink(target_file):
                     try:
                         os.remove(target_file)
                     except OSError:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot remove "' + target_file + '" link.')
+                            sys.argv[0] + ': Cannot remove "' +
+                            target_file + '" link.'
+                        )
                 elif os.path.isdir(target_file):
-                    print('[', self._size, ',', int(time.time()) - self._start, '] Removing "',
-                          target_file, '" directory.', sep='')
+                    print(
+                        '[', self._size, ',', int(time.time()) - self._start,
+                        '] Removing "', target_file, '" directory.', sep=''
+                    )
                     try:
                         shutil.rmtree(target_file)
                     except OSError:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot remove "' + target_file + '" directory.')
+                            sys.argv[0] + ': Cannot remove "' +
+                            target_file + '" directory.'
+                        )
                 else:
-                    print('[', self._size, ',', int(time.time()) - self._start, '] Removing "',
-                          target_file, '" file.', sep='')
+                    print(
+                        '[', self._size, ',', int(time.time()) - self._start,
+                        '] Removing "', target_file, '" file.', sep=''
+                    )
                     try:
                         os.remove(target_file)
                     except OSError:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot remove "' + target_file + '" file.')
+                            sys.argv[0] + ': Cannot remove "' +
+                            target_file + '" file.'
+                        )
 
     def _mirror_link(self, source_file, target_file):
         source_link = os.readlink(source_file)
@@ -152,23 +190,31 @@ class Main(object):
                 target_link = os.readlink(target_file)
                 if target_link == source_link:
                     return
-            print('[', self._size, ',', int(time.time()) - self._start, '] Updating "',
-                  target_file, '" link...', sep='')
+            print(
+                '[', self._size, ',', int(time.time()) - self._start,
+                '] Updating "', target_file, '" link...', sep=''
+            )
             try:
-                if os.path.isdir(target_file) and not os.path.islink(target_file):
+                if os.path.isdir(target_file) and not (
+                        os.path.islink(target_file)):
                     shutil.rmtree(target_file)
                 else:
                     os.remove(target_file)
             except OSError:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot remove "' + target_file + '" link.')
+                    sys.argv[0] + ': Cannot remove "' +
+                    target_file + '" link.'
+                )
         else:
-            print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
-                  target_file, '" link...', sep='')
+            print(
+                '[', self._size, ',', int(time.time()) - self._start,
+                '] Creating "', target_file, '" link...', sep=''
+            )
         try:
             os.symlink(source_link, target_file)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' + target_file + '" link.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + target_file + '" link.')
 
     def _mirror_file(self, source_file, target_file):
         if os.path.islink(target_file):
@@ -176,34 +222,47 @@ class Main(object):
                 os.remove(target_file)
             except OSError:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot remove "' + target_file + '" link.')
+                    sys.argv[0] + ': Cannot remove "' +
+                    target_file + '" link.'
+                )
         elif os.path.isfile(target_file):
             source_file_stat = file_mod.FileStat(source_file)
             target_file_stat = file_mod.FileStat(target_file)
             if source_file_stat.get_size() == target_file_stat.get_size():
-                # Allow FAT16/FAT32/NTFS 1h daylight saving and 1 sec rounding error
-                if (abs(source_file_stat.get_time() - target_file_stat.get_time()) in
-                        (0, 1, 3599, 3600, 3601)):
+                # Allow FAT16/FAT32/NTFS 1h daylight saving
+                # and 1 sec rounding error
+                if abs(
+                        source_file_stat.get_time() -
+                        target_file_stat.get_time()
+                ) in (0, 1, 3599, 3600, 3601):
                     return
             self._size += int((source_file_stat.get_size() + 1023) / 1024)
-            print('[', self._size, ',', int(time.time()) - self._start, '] Updating "',
-                  target_file, '" file...', sep='')
+            print(
+                '[', self._size, ',', int(time.time()) - self._start,
+                '] Updating "', target_file, '" file...', sep=''
+            )
         else:
             source_file_stat = file_mod.FileStat(source_file)
             self._size += int((source_file_stat.get_size() + 1023) / 1024)
-            print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
-                  target_file, '" file...', sep='')
+            print(
+                '[', self._size, ',', int(time.time()) - self._start,
+                '] Creating "', target_file, '" file...', sep=''
+            )
         try:
             shutil.copy2(source_file, target_file)
         except OSError as exception:
-            if exception.args != (95, 'Operation not supported'):  # os.listxattr for ACL
+            if exception.args != (95, 'Operation not supported'):
                 try:
                     with open(source_file):
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot create "' + target_file + '" file.')
+                            sys.argv[0] + ': Cannot create "' +
+                            target_file + '" file.'
+                        )
                 except OSError:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + target_file + '" file.')
+                        sys.argv[0] + ': Cannot create "' +
+                        target_file + '" file.'
+                    )
 
     @staticmethod
     def _mirror_directory_time(source_dir, target_dir):
@@ -213,32 +272,54 @@ class Main(object):
             try:
                 os.utime(target_dir, (source_time, source_time))
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot update "' +
-                                 target_dir + '" directory modification time.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot update "' +
+                    target_dir + '" directory modification time.'
+                )
 
     def _mirror(self, source_dir, target_dir):
         try:
-            source_files = [os.path.join(source_dir, x) for x in os.listdir(source_dir)]
+            source_files = [
+                os.path.join(source_dir, x) for x in os.listdir(source_dir)]
         except PermissionError:
-            raise SystemExit(sys.argv[0] + ': Cannot open "' + source_dir + '" source directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot open "' + source_dir +
+                '" source directory.'
+            )
         if os.path.isdir(target_dir):
             try:
-                target_files = [os.path.join(target_dir, x) for x in os.listdir(target_dir)]
+                target_files = [
+                    os.path.join(target_dir, x)
+                    for x in os.listdir(target_dir)
+                ]
             except PermissionError:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot open "' + target_dir + '" target directory.')
+                    sys.argv[0] + ': Cannot open "' + target_dir +
+                    '" target directory.'
+                )
         else:
             target_files = []
-            print('[', self._size, ',', int(time.time()) - self._start, '] Creating "',
-                  target_dir, '" directory...', sep='')
+            print(
+                '[', self._size, ',', int(time.time()) - self._start,
+                '] Creating "', target_dir, '" directory...', sep=''
+            )
             try:
                 os.mkdir(target_dir)
-                os.chmod(target_dir, file_mod.FileStat(source_dir).get_mode())
+                os.chmod(
+                    target_dir,
+                    file_mod.FileStat(source_dir).get_mode()
+                )
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + target_dir + '" directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' + target_dir +
+                    '" directory.'
+                )
 
         for source_file in sorted(source_files):
-            target_file = os.path.join(target_dir, os.path.basename(source_file))
+            target_file = os.path.join(
+                target_dir,
+                os.path.basename(source_file)
+            )
             if os.path.islink(source_file):
                 self._mirror_link(source_file, target_file)
             elif os.path.isdir(source_file):
@@ -264,7 +345,8 @@ class Main(object):
         for mirror in self._options.get_mirrors():
             self._automount(mirror[1], 8)
             self._mirror(mirror[0], mirror[1])
-        print('[', self._size, ',', int(time.time()) - self._start, ']', sep='')
+        print(
+            '[', self._size, ',', int(time.time()) - self._start, ']', sep='')
 
 
 if __name__ == '__main__':

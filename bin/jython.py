@@ -51,7 +51,10 @@ class Main(object):
         """
         Start program
         """
-        jython = command_mod.Command(os.path.join('bin', 'jython'), errors='stop')
+        jython = command_mod.Command(
+            os.path.join('bin', 'jython'),
+            errors='stop'
+        )
         jython.set_args(sys.argv[1:])
 
         subtask_mod.Exec(jython.get_cmdline()).run()

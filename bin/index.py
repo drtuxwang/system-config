@@ -53,7 +53,8 @@ class Main(object):
             with open('index.fsum', 'a', newline='\n') as ofile:
                 self._read_fsums(ofile, '')
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "index.fsum" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "index.fsum" file.')
 
         fsum = command_mod.Command('fsum', errors='stop')
         files = glob.glob('*')
@@ -70,10 +71,14 @@ class Main(object):
         try:
             with open('index.fsum', 'w', newline='\n') as ofile:
                 for line in task.get_output():
-                    time_new = max(time_new, int(line.split(' ', 1)[0].rsplit('/', 1)[-1]))
+                    time_new = max(
+                        time_new,
+                        int(line.split(' ', 1)[0].rsplit('/', 1)[-1])
+                    )
                     print(line, file=ofile)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "index.fsum" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "index.fsum" file.')
         os.utime('index.fsum', (time_new, time_new))
 
     def _checkfile(self, isbadfile, directory=''):
@@ -83,7 +88,8 @@ class Main(object):
                 if os.path.isdir(file):
                     self._checkfile(isbadfile, file)
                 elif isbadfile.search(os.path.basename(file)):
-                    raise SystemExit(sys.argv[0] + ': Found "' + file + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Found "' + file + '" file.')
 
     def _read_fsums(self, ofile, directory):
         fsum = os.path.join(directory, '..fsum')
@@ -97,7 +103,10 @@ class Main(object):
                 with open(fsum, errors='replace') as ifile:
                     for line in ifile:
                         checksum, file = line.rstrip('\r\n').split('  ', 1)
-                        print(checksum + '  ' + os.path.join(directory, file), file=ofile)
+                        print(
+                            checksum + '  ' + os.path.join(directory, file),
+                            file=ofile
+                        )
             except (OSError, ValueError):
                 pass
             for file in glob.glob(os.path.join(directory, '*')):
@@ -112,7 +121,8 @@ class Main(object):
             directory = os.path.dirname(file)
             if directory not in fsums:
                 fsums[directory] = []
-            fsums[os.path.dirname(file)].append(checksum + '  ' + os.path.basename(file))
+            fsums[os.path.dirname(file)].append(
+                checksum + '  ' + os.path.basename(file))
 
         directories = {}
         for directory in sorted(fsums.keys()):
@@ -128,10 +138,14 @@ class Main(object):
                 try:
                     with open(file, 'w', newline='\n') as ofile:
                         for line in fsums[directory]:
-                            time_new = max(time_new, int(line.split(' ', 1)[0].rsplit('/', 1)[-1]))
+                            time_new = max(
+                                time_new,
+                                int(line.split(' ', 1)[0].rsplit('/', 1)[-1])
+                            )
                             print(line, file=ofile)
                 except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' + file + '" file.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot create "' + file + '" file.')
                 os.utime(file, (time_new, time_new))
                 if directory:
                     os.utime(directory, (time_new, time_new))

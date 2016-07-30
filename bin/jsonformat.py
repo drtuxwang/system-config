@@ -33,9 +33,15 @@ class Options(object):
         return self._args.files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='re-format JSON file.')
+        parser = argparse.ArgumentParser(
+            description='re-format JSON file.')
 
-        parser.add_argument('files', nargs='+', metavar='file', help='File to change.')
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File to change.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -86,7 +92,8 @@ class Main(object):
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" file.')
             print('Re-formatting "' + file + '" JSON file...')
 
             lines = []
@@ -95,9 +102,14 @@ class Main(object):
                     for line in ifile:
                         lines.append(line.strip())
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot read "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "' + file + '" file.')
 
-            command = command_mod.Command('json_reformat', args=['-s'], errors='stop')
+            command = command_mod.Command(
+                'json_reformat',
+                args=['-s'],
+                errors='stop'
+            )
             task = subtask_mod.Batch(command.get_cmdline())
             task.run(stdin=lines)
             if task.has_error():
@@ -111,12 +123,15 @@ class Main(object):
                     for line in task.get_output():
                         print(line, file=ofile)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
             try:
                 shutil.move(tmpfile, file)
             except OSError:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot rename "' + tmpfile + '" file to "' + file + '".')
+                    sys.argv[0] + ': Cannot rename "' + tmpfile +
+                    '" file to "' + file + '".'
+                )
 
 
 if __name__ == '__main__':

@@ -38,16 +38,24 @@ class Options(object):
         return self._args.port[0]
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Start a simple Python HTTP server.')
+        parser = argparse.ArgumentParser(
+            description='Start a simple Python HTTP server.')
 
         parser.add_argument('directory', nargs=1, help='Directory to serve.')
-        parser.add_argument('port', nargs=1, type=int, help='Port number to bind to.')
+        parser.add_argument(
+            'port',
+            nargs=1,
+            type=int,
+            help='Port number to bind to.'
+        )
 
         self._args = parser.parse_args(args)
 
         if self._args.port[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'port number.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer for '
+                'port number.'
+            )
 
     def parse(self, args):
         """
@@ -57,12 +65,14 @@ class Options(object):
 
         directory = self._args.directory[0]
         if not os.path.isdir(directory):
-            raise SystemExit(sys.argv[0] + ': Cannot find "' + directory + '" directory.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "' + directory + '" directory.')
 
         try:
             self._port = int(args[2])
         except ValueError:
-            raise SystemExit(sys.argv[0] + ': Invalid port number "' + args[2] + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Invalid port number "' + args[2] + '".')
 
 
 class MyTCPServer(socketserver.TCPServer):
@@ -117,18 +127,29 @@ class Main(object):
             os.chdir(options.get_directory())
         except OSError:
             raise SystemExit(
-                sys.argv[0] + ': Cannot change to "' + options.get_directory() + '" directory.')
+                sys.argv[0] + ': Cannot change to "' +
+                options.get_directory() + '" directory.'
+            )
 
         port = options.get_port()
-        http.server.SimpleHTTPRequestHandler.extensions_map['.log'] = 'text/plain'
+        http.server.SimpleHTTPRequestHandler.extensions_map['.log'] = (
+            'text/plain')
 
         try:
-            httpd = MyTCPServer(('', port), http.server.SimpleHTTPRequestHandler)
+            httpd = MyTCPServer(
+                ('', port),
+                http.server.SimpleHTTPRequestHandler
+            )
         except OSError:
             raise SystemExit(
-                sys.argv[0] + ': Cannot bind to address "localhost:' + str(port) + '".')
+                sys.argv[0] + ': Cannot bind to address "localhost:' +
+                str(port) + '".'
+            )
 
-        print('Serving "' + os.getcwd() + '" at "http://localhost:' + str(port) + '"...')
+        print(
+            'Serving "' + os.getcwd() + '" at "http://localhost:' +
+            str(port) + '"...'
+        )
         httpd.serve_forever()
 
 
