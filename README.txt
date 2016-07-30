@@ -990,6 +990,7 @@ config/Xresources               Copy to "$HOME/.Xresources" to set xterm resourc
 config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
 config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
 config/config                   Copy to "$HOME/.ssh/config"
+config/gitconfig                Copy to "$HOME/.gitconfig" and edit
 config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
 config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
 config/mimeapps.list            Copy to "$HOME/.local/share/applications" for Mime definitions

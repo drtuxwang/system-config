@@ -1,0 +1,9 @@
+[user]
+	name = ???
+	email = ???
+[push]
+	default = simple
+[log]
+	decorate = short
+[alias]
+	meld = difftool --dir-diff
