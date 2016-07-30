@@ -3,18 +3,20 @@ syntax on
 " Background dark or light:
 set background=dark
 
+" Use system clipboard (ie yy, dd, x, p)
+set clipboard=unnamed
+
+" Special character handling
+set tabstop=4
+set list
+set listchars=tab:▸\ ,
+
 " Remove whitespace at end of lines:
 autocmd BufWritePre *.* :%s/\s\+$//e
 
-" Highlight special character (ie Tab)
-set list
-set listchars=tab:\ \ ,trail:\ ,
-highlight SpecialKey ctermbg=0 guibg=lightgrey
-
-" Python: Tab is 4 spaces & displayed as underscore
+" Python settings
 autocmd Filetype python call SetPython()
 function SetPython()
-    set tabstop=4
     set colorcolumn=73,80
     highlight ColorColumn ctermbg=0 guibg=lightgrey
 endfunction
