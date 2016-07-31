@@ -20,6 +20,8 @@ import subtask_mod
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
+IMAGE_EXTS = {'bmp', 'gif', 'jpeg', 'jpg', 'pcx', 'png', 'svg', 'tif', 'tiff'}
+
 
 class Options(object):
     """
@@ -392,10 +394,7 @@ class Main(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
             ext = file.split('.')[-1].lower()
-            if ext in (
-                    'bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx',
-                    'svg', 'tif', 'tiff'
-            ):
+            if ext in IMAGE_EXTS:
                 message = self._image(file)
             elif ext == 'pdf':
                 message = self._pdf(file)

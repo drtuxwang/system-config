@@ -87,8 +87,10 @@ class Main(object):
                 for line in ifile:
                     line = line.strip()
                     for token in self._is_iframe.sub('href=', line).split():
-                        if (self._is_url.match(token) and not
-                                self._is_ignore.search(token)):
+                        if (
+                                self._is_url.match(token) and
+                                not self._is_ignore.search(token)
+                        ):
                             url = token[5:].split('>')[0]
                             for quote in ('"', "'"):
                                 if quote in url:

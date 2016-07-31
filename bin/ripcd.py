@@ -91,8 +91,8 @@ class Options(object):
                 'CD/DVD device speed.'
             )
         if (
-                self._args.device[0] != 'scan' and not
-                os.path.exists(self._args.device[0])
+                self._args.device[0] != 'scan' and
+                not os.path.exists(self._args.device[0])
         ):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' +

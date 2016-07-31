@@ -107,8 +107,10 @@ class Options(object):
                 sys.argv[0] + ': You must specific a positive integer for '
                 'CD/DVD device speed.'
             )
-        if (self._args.device[0] != 'scan' and not
-                os.path.exists(self._args.device[0])):
+        if (
+                self._args.device[0] != 'scan' and
+                not os.path.exists(self._args.device[0])
+        ):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + self._args.device[0] +
                 '" CD/DVD device.'

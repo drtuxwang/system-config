@@ -193,8 +193,10 @@ class Main(object):
                         ('*', packages_files[name])):
                     continue
                 print('rm', packages_files[name].get_file(), '# Unused')
-            elif packages_files[name].get_version() != (
-                    packages_used[name].get_version()):
+            elif (
+                    packages_files[name].get_version() !=
+                    packages_used[name].get_version()
+            ):
                 print('rm', packages_files[name].get_file(), '# Unused')
                 print('# ', packages_used[name].get_file(), 'Missing')
 

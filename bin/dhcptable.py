@@ -49,7 +49,7 @@ class Options(object):
                     else:
                         myip = line.split(':')[1].split()[0]
                         if myip not in ('', '127.0.0.1'):
-                            self._networks.append((mydev, myip, mymac))
+                            self._networks.append([mydev, myip, mymac])
 
     def get_arping(self):
         """

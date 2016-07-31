@@ -15,6 +15,11 @@ import subtask_mod
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+OFFICE_EXTS = {
+    'doc', 'docx', 'odf', 'odg', 'ods', 'odt', 'ppt', 'pptx', 'wpd',
+    'xls', 'xlsx'
+}
+
 
 class Options(object):
     """
@@ -114,10 +119,7 @@ class Main(object):
                 self._spawn('firefox', file)
             elif extension in ('jpg', 'jpeg', 'png'):
                 self._spawn('gimp', file)
-            elif extension in (
-                    'doc', 'docx', 'odf', 'odg', 'ods', 'odt', 'ppt',
-                    'pptx', 'wpd', 'xls', 'xlsx'
-            ):
+            elif extension in OFFICE_EXTS:
                 self._spawn('soffice', file)
             elif extension in ('txt', 'json'):
                 self._spawn('xedit', file)

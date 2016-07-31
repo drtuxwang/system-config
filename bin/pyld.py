@@ -148,20 +148,22 @@ class Options(object):
         py_args = []
         mod_args = []
         while len(args):
-            if args[0] in (
+            if args[0] in {
                     '-pyldv',
                     '-pyldvv',
                     '-pyldvvv',
                     '-pyldverbose',
                     '-pyldname',
                     '-pyldpath'
-            ):
+            }:
                 py_args.append(args[0])
                 if args[0] in ('-pyldname', '-pyldpath') and len(args) >= 2:
                     args = args[1:]
                     py_args.append(args[0])
-            elif args[0].startswith('-pyldname=') or (
-                    args[0].startswith('-pyldpath=')):
+            elif (
+                    args[0].startswith('-pyldname=') or
+                    args[0].startswith('-pyldpath=')
+            ):
                 py_args.extend(args[0].split('=', 1))
             else:
                 mod_args.append(args[0])

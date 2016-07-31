@@ -233,8 +233,10 @@ class Options(object):
                         if os.path.basename(file) not in keep_list:
                             print('Removing "{0:s}"...'.format(file))
                             self._remove(file)
-                elif os.path.basename(directory) not in (
-                        'First Run', 'Local State'):
+                elif (
+                        os.path.basename(directory) not in
+                        {'First Run', 'Local State'}
+                ):
                     print('Removing "{0:s}"...'.format(directory))
                     self._remove(directory)
 

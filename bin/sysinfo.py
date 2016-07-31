@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.8.3'
-VERSION = 20160724
+RELEASE = '4.8.4'
+VERSION = 20160731
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -1072,8 +1072,10 @@ class LinuxSystem(PosixSystem):
                 elif device in info['mounts']:
                     mount_point, mount_type = info['mounts'][device]
                     comment = mount_type + ' on ' + mount_point
-                elif device in info['uuids'] and (
-                        info['uuids'][device] in info['mounts']):
+                elif (
+                        device in info['uuids'] and
+                        info['uuids'][device] in info['mounts']
+                ):
                     mount_point, mount_type = info[
                         'mounts'][info['uuids'][device]]
                     comment = mount_type + ' on ' + mount_point
@@ -2014,11 +2016,15 @@ class WindowsSystem(OperatingSystem):
             task.run()
             if self._has_value(values, 'RHEV') or task.is_match_output('RHEV'):
                 info['CPU Cores X'] = 'RHEV VM'
-            elif self._has_value(values, 'VMware') or (
-                    task.is_match_output('VMware')):
+            elif (
+                    self._has_value(values, 'VMware') or
+                    task.is_match_output('VMware')
+            ):
                 info['CPU Cores X'] = 'VMware VM'
-            elif self._has_value(values, 'VirtualBox') or (
-                    task.is_match_output('VirtualBox')):
+            elif (
+                    self._has_value(values, 'VirtualBox') or
+                    task.is_match_output('VirtualBox')
+            ):
                 info['CPU Cores X'] = 'VirtualBox VM'
 
         subkeys, values = self._reg_read(
