@@ -46,13 +46,24 @@ class Options(object):
         return self._args.lines[0]
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Profile Python 3.x program.')
+        parser = argparse.ArgumentParser(
+            description='Profile Python 3.x program.')
 
-        parser.add_argument('-n', nargs=1, type=int, dest='lines', default=[20],
-                            metavar='K', help='Output first K lines.')
-
-        parser.add_argument('file', nargs=1, metavar='file[.py]|file.pstats',
-                            help='Python module or pstats file.')
+        parser.add_argument(
+            '-n',
+            nargs=1,
+            type=int,
+            dest='lines',
+            default=[20],
+            metavar='K',
+            help='Output first K lines.'
+        )
+        parser.add_argument(
+            'file',
+            nargs=1,
+            metavar='file[.py]|file.pstats',
+            help='Python module or pstats file.'
+        )
 
         my_args = []
         while len(args):
@@ -114,16 +125,23 @@ class Main(object):
         try:
             return command_mod.Command(module_file, args=module_args)
         except command_mod.CommandNotFoundError:
-            raise SystemExit(sys.argv[0] + ': Cannot find "' + module_file + '" module file')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "' + module_file +
+                '" module file'
+            )
 
     @classmethod
     def _profile(cls, module_file, module_args):
-        stats_file = os.path.basename(module_file.rsplit('.', 1)[0] + '.pstats')
+        stats_file = os.path.basename(
+            module_file.rsplit('.', 1)[0] + '.pstats')
         if os.path.isfile(stats_file):
             try:
                 os.remove(stats_file)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot remove old "' + stats_file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot remove old "' +
+                    stats_file + '" file.'
+                )
 
         python3 = command_mod.CommandFile(sys.executable)
         python3.set_args(['-m', 'cProfile', '-o', stats_file])
@@ -141,7 +159,8 @@ class Main(object):
         try:
             stats = pstats.Stats(stats_file)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' + stats_file + '" file.')
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + stats_file + '" file.')
 
         stats.strip_dirs().sort_stats('tottime', 'cumtime').print_stats(lines)
 

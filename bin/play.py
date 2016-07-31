@@ -47,14 +47,27 @@ class Options(object):
         return self._args.view_flag
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Play multimedia file/URL.')
+        parser = argparse.ArgumentParser(
+            description='Play multimedia file/URL.')
 
-        parser.add_argument('-s', dest='shuffle_flag', action='store_true',
-                            help='Shuffle order of the media files.')
-        parser.add_argument('-v', dest='view_flag', action='store_true',
-                            help='View information.')
-        parser.add_argument('files', nargs='+', metavar='file',
-                            help='Multimedia fiel or URL.')
+        parser.add_argument(
+            '-s',
+            dest='shuffle_flag',
+            action='store_true',
+            help='Shuffle order of the media files.'
+        )
+        parser.add_argument(
+            '-v',
+            dest='view_flag',
+            action='store_true',
+            help='View information.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='Multimedia fiel or URL.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -91,7 +104,8 @@ class Media(object):
                 elif line.strip().startswith('Input #'):
                     self._type = line.replace(', from', '').split()[2]
         except IndexError:
-            raise SystemExit(sys.argv[0] + ': Invalid "' + file + '" media file.')
+            raise SystemExit(
+                sys.argv[0] + ': Invalid "' + file + '" media file.')
 
     def get_stream(self):
         """
@@ -147,8 +161,10 @@ class Media(object):
         Show information
         """
         if self.is_valid():
-            print(self._file + '    = Type: ', self._type, '(' + self._length + '),',
-                  str(file_mod.FileStat(self._file).get_size()) + ' bytes')
+            print(
+                self._file + '    = Type: ', self._type, '(' + self._length +
+                '),', str(file_mod.FileStat(self._file).get_size()) + ' bytes'
+            )
             for stream, information in self.get_stream():
                 print(self._file + '[' + str(stream) + '] =', information)
 
@@ -200,8 +216,10 @@ class Main(object):
             'fallback "C" locale|^xdg-screensaver:|: cannot estimate delay:|'
             'Failed to open VDPAU backend ')
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
 
     def run(self):
         """

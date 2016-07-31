@@ -32,10 +32,15 @@ class Options(object):
         return self._args.directories
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Check JPEG picture files.')
+        parser = argparse.ArgumentParser(
+            description='Check JPEG picture files.')
 
-        parser.add_argument('directories', nargs='+', metavar='directory',
-                            help='Directory containing JPEG files to check.')
+        parser.add_argument(
+            'directories',
+            nargs='+',
+            metavar='directory',
+            help='Directory containing JPEG files to check.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -86,7 +91,11 @@ class Main(object):
         directories = options.get_directories()
 
         errors = []
-        jpeginfo = command_mod.Command('jpeginfo', args=['--info', '--check'], errors='stop')
+        jpeginfo = command_mod.Command(
+            'jpeginfo',
+            args=['--info', '--check'],
+            errors='stop'
+        )
         for directory in directories:
             if os.path.isdir(directory):
                 files = []
@@ -104,7 +113,8 @@ class Main(object):
         if errors:
             for line in errors:
                 print(line)
-            raise SystemExit('Total errors encountered: ' + str(len(errors)) + '.')
+            raise SystemExit(
+                'Total errors encountered: ' + str(len(errors)) + '.')
 
 
 if __name__ == '__main__':

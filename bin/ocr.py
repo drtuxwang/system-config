@@ -45,9 +45,15 @@ class Options(object):
         return self._tesseract
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Convert image file to text using OCR.')
+        parser = argparse.ArgumentParser(
+            description='Convert image file to text using OCR.')
 
-        parser.add_argument('files', nargs=1, metavar='file', help='Image file to analyse.')
+        parser.add_argument(
+            'files',
+            nargs=1,
+            metavar='file',
+            help='Image file to analyse.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -96,8 +102,10 @@ class Main(object):
         task = subtask_mod.Task(self._tesseract.get_cmdline() + [file, name])
         task.run(pattern='^Tesseract')
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
 
     def run(self):
         """
@@ -112,26 +120,36 @@ class Main(object):
             'tmp', 'ocr-' + getpass.getuser() + str(os.getpid()) + '.tif')
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + file + '" image file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" image file.')
             ext = file.split('.')[-1].lower()
             name = file.rsplit('.', 1)[0]
             if ext in ('bmp', 'jpg', 'jpeg', 'png', 'pcx'):
-                print('Converting "' + file + '" to "' + name + '.txt' + '"...')
-                task = subtask_mod.Task(convert.get_cmdline() + [file, tmpfile])
+                print(
+                    'Converting "' + file + '" to "' + name + '.txt' + '"...')
+                task = subtask_mod.Task(
+                    convert.get_cmdline() + [file, tmpfile])
                 task.run()
                 if task.get_exitcode():
-                    raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                     ' received from "' + task.get_file() + '".')
+                    raise SystemExit(
+                        sys.argv[0] + ': Error code ' +
+                        str(task.get_exitcode()) + ' received from "' +
+                        task.get_file() + '".'
+                    )
                 self._ocr(tmpfile, name)
                 try:
                     os.remove(tmpfile)
                 except OSError:
                     pass
             elif ext in ('tif', 'tiff'):
-                print('Converting "' + file + '" to "' + name + '.txt' + '"...')
+                print(
+                    'Converting "' + file + '" to "' + name + '.txt' + '"...')
                 self._ocr(file, name)
             else:
-                raise SystemExit(sys.argv[0] + ': Cannot OCR non image file "' + file + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot OCR non image file "' +
+                    file + '".'
+                )
 
 
 if __name__ == '__main__':

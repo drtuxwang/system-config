@@ -12,6 +12,8 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+IMAGE_EXTS = {'bmp', 'gif', 'jpeg', 'jpg', 'pcx', 'png', 'svg', 'tif', 'tiff'}
+
 
 class Options(object):
     """
@@ -29,10 +31,15 @@ class Options(object):
         return self._args.directories
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Create links to JPEG files.')
+        parser = argparse.ArgumentParser(
+            description='Create links to JPEG files.')
 
-        parser.add_argument('directories', nargs='+', metavar='directory',
-                            help='Directory containing JPEG files to link.')
+        parser.add_argument(
+            'directories',
+            nargs='+',
+            metavar='directory',
+            help='Directory containing JPEG files to link.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -45,10 +52,14 @@ class Options(object):
         for directory in self._args.directories:
             if not os.path.isdir(directory):
                 raise SystemExit(
-                    sys.argv[0] + ': Source directory "' + directory + '" does not exist.')
+                    sys.argv[0] + ': Source directory "' + directory +
+                    '" does not exist.'
+                )
             elif os.path.samefile(directory, os.getcwd()):
-                raise SystemExit(sys.argv[0] + ': Source directory "' + directory +
-                                 '" cannot be current directory.')
+                raise SystemExit(
+                    sys.argv[0] + ': Source directory "' + directory +
+                    '" cannot be current directory.'
+                )
 
 
 class Main(object):
@@ -91,14 +102,16 @@ class Main(object):
 
         for directory in options.get_directories():
             for file in sorted(glob.glob(os.path.join(directory, '*'))):
-                if (file.split('.')[-1].lower() in (
-                        'bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff')):
-                    link = os.path.basename(directory + '_' + os.path.basename(file))
+                if file.split('.')[-1].lower() in IMAGE_EXTS:
+                    link = os.path.basename(
+                        directory + '_' + os.path.basename(file))
                     if not os.path.islink(link):
                         try:
                             os.symlink(file, link)
                         except OSError:
-                            raise SystemExit(sys.argv[0] + ': Cannot create "' + link + '" link.')
+                            raise SystemExit(
+                                sys.argv[0] + ': Cannot create "' +
+                                link + '" link.')
 
 
 if __name__ == '__main__':

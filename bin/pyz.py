@@ -35,8 +35,18 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Make a Python3 ZIP Application in PYZ format.')
 
-        parser.add_argument('archive', nargs=1, metavar='file.pyz', help='Archive file.')
-        parser.add_argument('files', nargs='*', metavar='file', help='File to archive.')
+        parser.add_argument(
+            'archive',
+            nargs=1,
+            metavar='file.pyz',
+            help='Archive file.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='*',
+            metavar='file',
+            help='File to archive.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -47,16 +57,30 @@ class Options(object):
         self._parse_args(args[1:])
 
         if os.name == 'nt':
-            self._archiver = command_mod.Command('pkzip32.exe', errors='ignore')
+            self._archiver = command_mod.Command(
+                'pkzip32.exe',
+                errors='ignore'
+            )
             if self._archiver.is_found():
-                self._archiver.set_args(
-                    ['-add', '-maximum', '-recurse', '-path', self._args.archive[0] + '-zip'])
+                self._archiver.set_args([
+                    '-add',
+                    '-maximum',
+                    '-recurse',
+                    '-path',
+                    self._args.archive[0] + '-zip'
+                ])
             else:
-                self._archiver = command_mod.Command('zip', args=[
-                    '-r', '-9', self._args.archive[0] + '-zip'], errors='stop')
+                self._archiver = command_mod.Command(
+                    'zip',
+                    args=['-r', '-9', self._args.archive[0] + '-zip'],
+                    errors='stop'
+                )
         else:
-            self._archiver = command_mod.Command('zip', args=[
-                '-r', '-9', self._args.archive[0] + '-zip'], errors='stop')
+            self._archiver = command_mod.Command(
+                'zip',
+                args=['-r', '-9', self._args.archive[0] + '-zip'],
+                errors='stop'
+            )
 
         if self._args.files:
             self._archiver.extend_args(self._args.files)
@@ -64,7 +88,10 @@ class Options(object):
             self._archiver.extend_args(os.listdir())
 
         if '__main__.py' not in self._archiver.get_args():
-            raise SystemExit(sys.argv[0] + ': Cannot find "__main__.py" main program file.')
+            raise SystemExit(
+                sys.argv[0] +
+                ': Cannot find "__main__.py" main program file.'
+            )
 
     def get_archive(self):
         """
@@ -112,7 +139,9 @@ class Main(object):
                     self._copy(ifile, ofile)
         except OSError:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + archive + '" Python3 ZIP Application.')
+                sys.argv[0] + ': Cannot create "' + archive +
+                '" Python3 ZIP Application.'
+            )
         try:
             os.remove(archive + '-zip')
         except OSError:
@@ -138,8 +167,9 @@ class Main(object):
         task.run()
         if task.get_exitcode():
             print(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) + ' received from "' +
-                task.get_file() + '".', file=sys.stderr)
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".', file=sys.stderr
+            )
             raise SystemExit(task.get_exitcode())
         self._make_pyz(options.get_archive())
 

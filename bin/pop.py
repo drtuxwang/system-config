@@ -40,13 +40,23 @@ class Options(object):
         return self._args.timeDelay[0]
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Send popup message to display.')
+        parser = argparse.ArgumentParser(
+            description='Send popup message to display.')
 
-        parser.add_argument('-time', nargs=1, type=int, dest='timeDelay', default=[0],
-                            help='Delay popup in minutes.')
-
-        parser.add_argument('words', nargs='+', metavar='word',
-                            help='A word.')
+        parser.add_argument(
+            '-time',
+            nargs=1,
+            type=int,
+            dest='timeDelay',
+            default=[0],
+            help='Delay popup in minutes.'
+        )
+        parser.add_argument(
+            'words',
+            nargs='+',
+            metavar='word',
+            help='A word.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -60,7 +70,10 @@ class Options(object):
         self._pop.set_args(['--expire-time=0'] + self._args.words)
 
         if self._args.timeDelay[0] < 0:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for delay time.')
+            raise SystemExit(
+                sys.argv[0] +
+                ': You must specific a positive integer for delay time.'
+            )
 
 
 class Main(object):
@@ -112,8 +125,10 @@ class Main(object):
         task = subtask_mod.Task(pop.get_cmdline())
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
 
 
 if __name__ == '__main__':

@@ -15,6 +15,8 @@ import file_mod
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+IMAGE_EXTS = {'bmp', 'gif', 'jpeg', 'jpg', 'pcx', 'png', 'svg', 'tif', 'tiff'}
+
 
 class Options(object):
     """
@@ -53,17 +55,41 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Renumber picture files into a numerical series.')
 
-        parser.add_argument('-ctime', action='store_const', const='ctime', dest='order',
-                            default='file', help='Sort using meta data change time.')
-        parser.add_argument('-mtime', action='store_const', const='mtime', dest='order',
-                            default='file', help='Sort using modification time.')
-        parser.add_argument('-noreset', dest='reset_flag', action='store_false',
-                            help='Use same number sequence for all directories.')
-        parser.add_argument('-start', nargs=1, type=int, default=[1],
-                            help='Select number to start from.')
-
-        parser.add_argument('directories', nargs='+', metavar='directory',
-                            help='Directory containing picture files.')
+        parser.add_argument(
+            '-ctime',
+            action='store_const',
+            const='ctime',
+            dest='order',
+            default='file',
+            help='Sort using meta data change time.'
+        )
+        parser.add_argument(
+            '-mtime',
+            action='store_const',
+            const='mtime',
+            dest='order',
+            default='file',
+            help='Sort using modification time.'
+        )
+        parser.add_argument(
+            '-noreset',
+            dest='reset_flag',
+            action='store_false',
+            help='Use same number sequence for all directories.'
+        )
+        parser.add_argument(
+            '-start',
+            nargs=1,
+            type=int,
+            default=[1],
+            help='Select number to start from.'
+        )
+        parser.add_argument(
+            'directories',
+            nargs='+',
+            metavar='directory',
+            help='Directory containing picture files.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -76,7 +102,9 @@ class Options(object):
         for directory in self._args.directories:
             if not os.path.isdir(directory):
                 raise SystemExit(
-                    sys.argv[0] + ': Picture directory "' + directory + '" does not exist.')
+                    sys.argv[0] + ': Picture directory "' + directory +
+                    '" does not exist.'
+                )
 
 
 class Main(object):
@@ -138,27 +166,35 @@ class Main(object):
                 os.chdir(directory)
                 file_stats = []
                 for file in glob.glob('*.*'):
-                    if (file.split('.')[-1].lower() in (
-                            'bmp', 'gif', 'jpg', 'jpeg', 'png', 'pcx', 'svg', 'tif', 'tiff')):
+                    if file.split('.')[-1].lower() in IMAGE_EXTS:
                         file_stats.append(file_mod.FileStat(file))
                 newfiles = []
                 mypid = os.getpid()
                 for file_stat in self._sorted(options, file_stats):
                     newfile = 'pic{0:05d}.{1:s}'.format(
-                        number, file_stat.get_file().split('.')[-1].lower().replace('jpeg', 'jpg'))
+                        number,
+                        file_stat.get_file().split('.')[-1].lower(
+                            ).replace('jpeg', 'jpg'))
                     newfiles.append(newfile)
                     try:
-                        shutil.move(file_stat.get_file(), str(mypid) + '-' + newfile)
+                        shutil.move(
+                            file_stat.get_file(),
+                            str(mypid) + '-' + newfile
+                        )
                     except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot rename "' + file_stat.get_file() +
-                                         '" image file.')
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot rename "' +
+                            file_stat.get_file() + '" image file.'
+                        )
                     number += 1
                 for file in newfiles:
                     try:
                         shutil.move(str(mypid) + '-' + file, file)
                     except OSError:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot rename to "' + file + '" image file.')
+                            sys.argv[0] + ': Cannot rename to "' + file +
+                            '" image file.'
+                        )
                 os.chdir(startdir)
 
 

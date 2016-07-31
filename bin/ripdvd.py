@@ -50,15 +50,29 @@ class Options(object):
         return self._args.title[0]
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Rip Video DVD title to file.')
-
-        parser.add_argument('-speed', nargs=1, type=int, default=[8],
-                            help='Select DVD spin speed.')
-        parser.add_argument('-title', nargs=1, type=int, default=[1],
-                            help='Select DVD title to rip (Default is 1).')
+        parser = argparse.ArgumentParser(
+            description='Rip Video DVD title to file.')
 
         parser.add_argument(
-            'device', nargs=1, metavar='device|scan', help='DVD device (ie "/dev/sr0" or "scan".')
+            '-speed',
+            nargs=1,
+            type=int,
+            default=[8],
+            help='Select DVD spin speed.'
+        )
+        parser.add_argument(
+            '-title',
+            nargs=1,
+            type=int,
+            default=[1],
+            help='Select DVD title to rip (Default is 1).'
+        )
+        parser.add_argument(
+            'device',
+            nargs=1,
+            metavar='device|scan',
+            help='DVD device (ie "/dev/sr0" or "scan".'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -71,13 +85,21 @@ class Options(object):
         self._vlc = command_mod.Command('vlc', errors='stop')
 
         if self._args.speed[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'DVD device speed.')
-        if self._args.title[0] < 1:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for DVD title.')
-        if self._args.device[0] != 'scan' and not os.path.exists(self._args.device[0]):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + self._args.device[0] + '" DVD device.')
+                sys.argv[0] +
+                ': You must specific a positive integer for DVD device speed.'
+            )
+        if self._args.title[0] < 1:
+            raise SystemExit(
+                sys.argv[0] +
+                ': You must specific a positive integer for DVD title.'
+            )
+        if self._args.device[0] != 'scan' and not (
+                os.path.exists(self._args.device[0])):
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "' + self._args.device[0] +
+                '" DVD device.'
+            )
 
 
 class Cdrom(object):
@@ -104,7 +126,10 @@ class Cdrom(object):
             model = ''
             for file in ('vendor', 'model'):
                 try:
-                    with open(os.path.join(directory, file), errors='replace') as ifile:
+                    with open(
+                        os.path.join(directory, file),
+                        errors='replace'
+                    ) as ifile:
                         model += ' ' + ifile.readline().strip()
                 except OSError:
                     continue

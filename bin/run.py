@@ -38,13 +38,28 @@ class Options(object):
         return self._args.log_file
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Run a command immune to terminal hangups.')
+        parser = argparse.ArgumentParser(
+            description='Run a command immune to terminal hangups.')
 
-        parser.add_argument('-q', action='store_const', const='', dest='log_file',
-                            default='run.out', help="Do not create 'run.out' output file.")
-
-        parser.add_argument('command', nargs=1, help='Command to run.')
-        parser.add_argument('args', nargs='*', metavar='arg', help='Command argument.')
+        parser.add_argument(
+            '-q',
+            action='store_const',
+            const='',
+            dest='log_file',
+            default='run.out',
+            help="Do not create 'run.out' output file."
+        )
+        parser.add_argument(
+            'command',
+            nargs=1,
+            help='Command to run.'
+        )
+        parser.add_argument(
+            'args',
+            nargs='*',
+            metavar='arg',
+            help='Command argument.'
+        )
 
         my_args = []
         for arg in args:
@@ -73,7 +88,10 @@ class Options(object):
         """
         command_args = self._parse_args(args[1:])
 
-        self._command = self._get_command(os.path.dirname(args[0]), self._args.command[0])
+        self._command = self._get_command(
+            os.path.dirname(args[0]),
+            self._args.command[0]
+        )
         self._command.set_args(command_args)
 
         if self._args.log_file:
@@ -82,7 +100,9 @@ class Options(object):
                     pass
             except OSError:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + self._args.log_file + '" logfile file.')
+                    sys.argv[0] + ': Cannot create "' +
+                    self._args.log_file + '" logfile file.'
+                )
 
 
 class Main(object):
@@ -123,7 +143,8 @@ class Main(object):
         """
         options = Options()
 
-        subtask_mod.Daemon(options.get_command().get_cmdline()).run(file=options.get_log_file())
+        subtask_mod.Daemon(options.get_command().get_cmdline()).run(
+            file=options.get_log_file())
 
 
 if __name__ == '__main__':

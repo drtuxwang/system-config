@@ -85,7 +85,9 @@ class Main(object):
         """
         options = Options()
 
-        subtask_mod.Task(options.get_pbsetup().get_cmdline()).run(pattern=options.get_pattern())
+        subtask_mod.Task(
+            options.get_pbsetup().get_cmdline()).run(
+                pattern=options.get_pattern())
 
 
 if __name__ == '__main__':
