@@ -521,6 +521,34 @@ bin/2to3-3.4.bat
 bin/2to3-3.5
 bin/2to3-3.6
 
+bin/ipdb               Python "ipdb" script wrappers (allowing non systems port)
+bin/ipdb.bat
+bin/ipdb2
+bin/ipdb2.bat
+bin/ipdb2.7
+bin/ipdb2.7.bat
+bin/ipdb3
+bin/ipdb3.bat
+bin/ipdb3.3
+bin/ipdb3.4
+bin/ipdb3.4.bat
+bin/ipdb3.5
+bin/ipdb3.6
+
+bin/ipython            Python "ipython" script wrappers (allowing non systems port)
+bin/ipython.bat
+bin/ipython2
+bin/ipython2.bat
+bin/ipython2.7
+bin/ipython2.7.bat
+bin/ipython3
+bin/ipython3.bat
+bin/ipython3.3
+bin/ipython3.4
+bin/ipython3.4.bat
+bin/ipython3.5
+bin/ipython3.6
+
 bin/pep8               Python "pep8" script wrappers (allowing non systems port)
 bin/pep8.bat
 bin/pep8-2.7

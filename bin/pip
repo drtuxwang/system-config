@@ -2,7 +2,7 @@
 #
 # Wrapper for Python "bin" script
 #
-VERSION=20160704
+VERSION=20160731
 
 #
 # Test for GNU Textutil POSIX 200112 bug
@@ -117,22 +117,22 @@ which() {
 PYEXE="python3"
 PYNAME=`basename "$0"`
 case "$PYNAME" in
-2to3|pydoc3)
+2to3|ipdb[3-9]|pydoc[3-9])
     ;;
-pydoc)
+ipdb[3-9].[0-9]|pydoc[3-9].[0-9])
+    PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(...$\)/python\2/'`  # ie python3.4
+    PYNAME=`echo "$PYNAME" | sed -e "s/-*\..$//"`  # ie pydoc3
+    ;;
+ipdb|pydoc)
     PYEXE="python2"
     ;;
-pydoc3.[0-9])
-    PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(...$\)/python\2/'`
-    PYNAME=`echo "$PYNAME" | sed -e "s/-*..\$//"`
-    ;;
-*[23].[0-9])
+*[2-9].[0-9])
     PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(...$\)/python\2/'`  # ie python3.4
-    PYNAME=`echo "$PYNAME" | sed -e "s/-*...\$//"`
+    PYNAME=`echo "$PYNAME" | sed -e "s/-*...\$//"`  # ie pylint
     ;;
-*[23])
-    PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(.$\)/python\2/'`    # ie python3
-    PYNAME=`echo "$PYNAME" | sed -e "s/-*.\$//"`
+*[2-9])
+    PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(.$\)/python\2/'`  # ie python3
+    PYNAME=`echo "$PYNAME" | sed -e "s/-*.\$//"`  # ie pylint
     ;;
 esac
 
