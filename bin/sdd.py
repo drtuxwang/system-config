@@ -39,12 +39,22 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Securely backup/restore partitions using SSH protocol.')
+            description='Securely backup/restore partitions using '
+            'SSH protocol.'
+        )
 
-        parser.add_argument('source', nargs=1, metavar='[[user1@]host1:]source',
-                            help='Source device/file location.')
-        parser.add_argument('target', nargs=1, metavar='[[user1@]host1:]target',
-                            help='Target device/file location.')
+        parser.add_argument(
+            'source',
+            nargs=1,
+            metavar='[[user1@]host1:]source',
+            help='Source device/file location.'
+        )
+        parser.add_argument(
+            'target',
+            nargs=1,
+            metavar='[[user1@]host1:]target',
+            help='Target device/file location.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -59,24 +69,46 @@ class Options(object):
         if ':' in source:
             if ':' in target:
                 raise SystemExit(
-                    sys.argv[0] + ': Source or target cannot both be remote device/file.')
+                    sys.argv[0] +
+                    ': Source or target cannot both be remote device/file.'
+                )
             host, file = source.split(':')[:2]
             device = target
             print('Restoring "' + device + '" from', host + ':' + file + '...')
-            self._command1 = command_mod.Command('ssh', args=[host, 'cat ' + file], errors='stop')
-            self._command2 = command_mod.Command('dd', args=['of=' + device], errors='stop')
+            self._command1 = command_mod.Command(
+                'ssh',
+                args=[host, 'cat ' + file],
+                errors='stop'
+            )
+            self._command2 = command_mod.Command(
+                'dd',
+                args=['of=' + device],
+                errors='stop'
+            )
         else:
             if ':' not in target:
                 raise SystemExit(
-                    sys.argv[0] + ': Source or target cannot both be local device/file.')
+                    sys.argv[0] +
+                    ': Source or target cannot both be local device/file.'
+                )
             elif not os.path.exists(source):
-                raise SystemExit(sys.argv[0] + ': Cannot find "' + source + '" device or file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + source +
+                    '" device or file.'
+                )
             device = source
             host, file = target.split(':')[:2]
             print('Backing up "' + device + '" to', host + ':' + file + '...')
-            self._command1 = command_mod.Command('dd', args=['if=' + device], errors='stop')
+            self._command1 = command_mod.Command(
+                'dd',
+                args=['if=' + device],
+                errors='stop'
+            )
             self._command2 = command_mod.Command(
-                'ssh', args=[host, 'cat - > ' + file], errors='stop')
+                'ssh',
+                args=[host, 'cat - > ' + file],
+                errors='stop'
+            )
 
 
 class Main(object):

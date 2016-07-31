@@ -35,10 +35,18 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Securely mount a file system using SSH protocol.')
 
-        parser.add_argument('remote', nargs=1, metavar='user@host:/remotepath',
-                            help='Remote directory.')
-        parser.add_argument('local', nargs=1, metavar='user@host:/localpath',
-                            help='Local directory.')
+        parser.add_argument(
+            'remote',
+            nargs=1,
+            metavar='user@host:/remotepath',
+            help='Remote directory.'
+        )
+        parser.add_argument(
+            'local',
+            nargs=1,
+            metavar='user@host:/localpath',
+            help='Local directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -51,8 +59,10 @@ class Options(object):
             task = subtask_mod.Batch(mount.get_cmdline())
             task.run(pattern='type fuse.sshfs ')
             if task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                 ' received from "' + task.get_file() + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
             for line in task.get_output():
                 print(line)
             raise SystemExit(0)
@@ -64,20 +74,26 @@ class Options(object):
         task = subtask_mod.Batch(command.get_cmdline())
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
         uid = task.get_output()[0]
         command.set_args(['-g'])
         task = subtask_mod.Batch(command.get_cmdline())
         task.run()
         if task.get_exitcode():
-            raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                             ' received from "' + task.get_file() + '".')
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
         gid = task.get_output()[0]
 
         self._sshfs = command_mod.Command('sshfs', errors='stop')
-        self._sshfs.set_args(['-o', 'uid=' + uid + ',gid=' + gid + ',nonempty,reconnect'] +
-                             self._args.remote + self._args.local)
+        self._sshfs.set_args([
+            '-o',
+            'uid=' + uid + ',gid=' + gid + ',nonempty,reconnect'
+        ] + self._args.remote + self._args.local)
 
 
 class Main(object):

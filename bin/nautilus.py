@@ -38,7 +38,12 @@ class Options(object):
 
     def _config(self):
         if 'HOME' in os.environ:
-            configdir = os.path.join(os.environ['HOME'], '.local', 'share', 'applications')
+            configdir = os.path.join(
+                os.environ['HOME'],
+                '.local',
+                'share',
+                'applications'
+            )
             if not os.path.isdir(configdir):
                 try:
                     os.makedirs(configdir)
@@ -52,7 +57,8 @@ class Options(object):
                         print('audio/ac3=vlc.desktop;', file=ofile)
                         print('audio/mp4=vlc.desktop;', file=ofile)
                         print('audio/mpeg=vlc.desktop;', file=ofile)
-                        print('audio/vnd.rn-realaudio=vlc.desktop;', file=ofile)
+                        print(
+                            'audio/vnd.rn-realaudio=vlc.desktop;', file=ofile)
                         print('audio/vorbis=vlc.desktop;', file=ofile)
                         print('audio/x-adpcm=vlc.desktop;', file=ofile)
                         print('audio/x-matroska=vlc.desktop;', file=ofile)
@@ -68,22 +74,29 @@ class Options(object):
                         print('video/mp4=vlc.desktop;', file=ofile)
                         print('video/mpeg=vlc.desktop;', file=ofile)
                         print('video/quicktime=vlc.desktop;', file=ofile)
-                        print('video/vnd.rn-realvideo=vlc.desktop;', file=ofile)
+                        print(
+                            'video/vnd.rn-realvideo=vlc.desktop;', file=ofile)
                         print('video/x-matroska=vlc.desktop;', file=ofile)
                         print('video/x-ms-asf=vlc.desktop;', file=ofile)
                         print('video/x-msvideo=vlc.desktop;', file=ofile)
                         print('video/x-ms-wmv=vlc.desktop;', file=ofile)
                         print('video/x-ogm=vlc.desktop;', file=ofile)
                         print('video/x-theora=vlc.desktop;', file=ofile)
-                        print('\n# xdg-open (ie "xdg-mime default vlc.desktop '
-                              'x-scheme-handler/rtsp"', file=ofile)
+                        print(
+                            '\n# xdg-open (ie "xdg-mime default vlc.desktop '
+                            'x-scheme-handler/rtsp"', file=ofile
+                        )
                         print('[Default Applications]', file=ofile)
                         print('x-scheme-handler/mms=vlc.desktop', file=ofile)
                         print('x-scheme-handler/mms=vlc.desktop', file=ofile)
                         print('x-scheme-handler/rtsp=vlc.desktop', file=ofile)
                 except OSError:
                     return
-            self._userapp(configdir, 'application/vnd.oasis.opendocument.text', 'soffice')
+            self._userapp(
+                configdir,
+                'application/vnd.oasis.opendocument.text',
+                'soffice'
+            )
             self._userapp(configdir, 'image/jpeg', 'gqview')
             self._userapp(configdir, 'text/html', 'chrome')
 
@@ -110,7 +123,10 @@ class Options(object):
                 if mime_type + '=' + app_name + '-userapp.desktop' in ifile:
                     return
             with open(file, 'a', newline='\n') as ofile:
-                print(mime_type + '=' + app_name + '-userapp.desktop', file=ofile)
+                print(
+                    mime_type + '=' + app_name + '-userapp.desktop',
+                    file=ofile
+                )
         except OSError:
             return
 
@@ -124,8 +140,10 @@ class Options(object):
                 self._nautilus.set_args([os.getcwd()])
         else:
             self._nautilus.set_args(args[1:])
-        self._pattern = ('^$|^Initializing nautilus|: Gtk-WARNING |: Gtk-CRITICAL | '
-                         'GLib.*CRITICAL |^Shutting down')
+        self._pattern = (
+            '^$|^Initializing nautilus|: Gtk-WARNING |: Gtk-CRITICAL | '
+            'GLib.*CRITICAL |^Shutting down'
+        )
         self._config()
 
 

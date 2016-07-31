@@ -33,10 +33,16 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Unmount file system securely mounted with SSH protocol.')
+            description='Unmount file system securely mounted with '
+            'SSH protocol.'
+        )
 
-        parser.add_argument('directories', nargs='+', metavar='localpath',
-                            help='Local directory.')
+        parser.add_argument(
+            'directories',
+            nargs='+',
+            metavar='localpath',
+            help='Local directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -97,10 +103,15 @@ class Main(object):
             task = subtask_mod.Batch(mount.get_cmdline())
             task.run(pattern=' ' + directory + ' type fuse.sshfs ')
             if not task.has_output():
-                raise SystemExit(sys.argv[0] + ': "' + directory + '" is not a mount point.')
+                raise SystemExit(
+                    sys.argv[0] + ': "' + directory +
+                    '" is not a mount point.'
+                )
             elif task.get_exitcode():
-                raise SystemExit(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                                 ' received from "' + task.get_file() + '".')
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
             fusermount.set_args(['-u', directory])
             subtask_mod.Task(fusermount.get_cmdline()).run()
 

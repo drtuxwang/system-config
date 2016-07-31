@@ -57,27 +57,35 @@ class Main(object):
     @staticmethod
     def _setenv():
         if 'GTK_MODULES' in os.environ:
-            del os.environ['GTK_MODULES']  # Fix Linux 'gnomebreakpad' problems
+            # Fix Linux 'gnomebreakpad' problems
+            del os.environ['GTK_MODULES']
 
     def run(self):
         """
         Start program
         """
-        self._soffice = command_mod.Command(os.path.join('program', 'soffice'), errors='stop')
+        self._soffice = command_mod.Command(
+            os.path.join('program', 'soffice'),
+            errors='stop'
+        )
         self._soffice.set_args(sys.argv[1:])
         if sys.argv[1:] == ['--version']:
             subtask_mod.Exec(self._soffice.get_cmdline()).run()
-        self._pattern = ('^$|: GLib-CRITICAL |: GLib-GObject-WARNING |: Gtk-WARNING |'
-                         ': wrong ELF class:|: Could not find a Java Runtime|'
-                         ': failed to read path from javaldx|^Failed to load module:|'
-                         'unary operator expected|: unable to get gail version number|gtk printer|'
-                         '|: GConf-WARNING|: Connection refused|GConf warning: |GConf Error: ')
+        self._pattern = (
+            '^$|: GLib-CRITICAL |: GLib-GObject-WARNING |: Gtk-WARNING |'
+            ': wrong ELF class:|: Could not find a Java Runtime|'
+            ': failed to read path from javaldx|^Failed to load module:|'
+            'unary operator expected|: unable to get gail version number|'
+            'gtk printer|: GConf-WARNING|: Connection refused|GConf warning: '
+            '|GConf Error: '
+        )
         self._config()
         self._setenv()
 
         offline = command_mod.Command('offline', errors='ignore')
         if offline.is_found():
-            task = subtask_mod.Background(offline.get_cmdline() + self._soffice.get_cmdline())
+            task = subtask_mod.Background(
+                offline.get_cmdline() + self._soffice.get_cmdline())
         else:
             task = subtask_mod.Background(self._soffice.get_cmdline())
         task.run(pattern=self._pattern)

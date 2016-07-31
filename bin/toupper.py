@@ -29,7 +29,8 @@ class Options(object):
         return self._args.words
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Print arguments in upper case.')
+        parser = argparse.ArgumentParser(
+            description='Print arguments in upper case.')
 
         parser.add_argument('words', nargs='+', metavar='word', help='A word.')
 

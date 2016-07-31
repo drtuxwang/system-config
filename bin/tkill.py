@@ -37,12 +37,21 @@ class Options(object):
         return self._args.task[0]
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Kill tasks by process ID or name.')
+        parser = argparse.ArgumentParser(
+            description='Kill tasks by process ID or name.')
 
-        parser.add_argument('-f', dest='force_flag', action='store_true',
-                            help='Force termination of tasks.')
-
-        parser.add_argument('task', nargs=1, metavar='pid|keyword', help='Process ID or keyword.')
+        parser.add_argument(
+            '-f',
+            dest='force_flag',
+            action='store_true',
+            help='Force termination of tasks.'
+        )
+        parser.add_argument(
+            'task',
+            nargs=1,
+            metavar='pid|keyword',
+            help='Process ID or keyword.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -96,14 +105,28 @@ class Main(object):
         else:
             pids = task.pname2pids('.*' + keyword + '.*')
 
-        print('RUSER      PID  PPID  PGID PRI  NI TTY      MEMORY  CPUTIME     ELAPSED COMMAND')
+        print(
+            'RUSER      PID  PPID  PGID PRI  NI TTY      MEMORY  '
+            'CPUTIME     ELAPSED COMMAND'
+        )
         for pid in pids:
             process = task.get_process(pid)
-            print('{0:8s} {1:5d} {2:5d} {3:5d} {4:>3s} {5:>3s} {6:7s} {7:7d} {8:>8s} '
-                  '{9:>11s} {10:s}'.format(
-                      process['USER'].split()[0], pid, process['PPID'],
-                      process['PGID'], process['PRI'], process['NICE'], process['TTY'],
-                      process['MEMORY'], process['CPUTIME'], process['ETIME'], process['COMMAND']))
+            print(
+                '{0:8s} {1:5d} {2:5d} {3:5d} {4:>3s} {5:>3s} {6:7s} {7:7d} '
+                '{8:>8s} {9:>11s} {10:s}'.format(
+                    process['USER'].split()[0],
+                    pid,
+                    process['PPID'],
+                    process['PGID'],
+                    process['PRI'],
+                    process['NICE'],
+                    process['TTY'],
+                    process['MEMORY'],
+                    process['CPUTIME'],
+                    process['ETIME'],
+                    process['COMMAND']
+                )
+            )
         print()
         return pids
 

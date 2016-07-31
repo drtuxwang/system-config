@@ -30,7 +30,8 @@ class Options(object):
         return self._args.words
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Print arguments in random order.')
+        parser = argparse.ArgumentParser(
+            description='Print arguments in random order.')
 
         parser.add_argument('words', nargs='+', metavar='word', help='A word.')
 

@@ -32,12 +32,21 @@ class Options(object):
         return self._tar
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Make a compressed archive in TAR.XZ format.')
+        parser = argparse.ArgumentParser(
+            description='Make a compressed archive in TAR.XZ format.')
 
-        parser.add_argument('archive', nargs=1, metavar='file.tar.xz|file.txz',
-                            help='Archive file.')
-        parser.add_argument('files', nargs='*', metavar='file',
-                            help='File or directory.')
+        parser.add_argument(
+            'archive',
+            nargs=1,
+            metavar='file.tar.xz|file.txz',
+            help='Archive file.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='*',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -51,8 +60,14 @@ class Options(object):
             self._archive = os.path.abspath(self._args.archive[0]) + '.tar.xz'
         else:
             self._archive = self._args.archive[0]
-        if not self._archive.endswith('.tar.xz') and not self._archive.endswith('.txz'):
-            raise SystemExit(sys.argv[0] + ': Unsupported "' + self._archive + '" archive format.')
+        if (
+                not self._archive.endswith('.tar.xz') and
+                not self._archive.endswith('.txz')
+        ):
+            raise SystemExit(
+                sys.argv[0] + ': Unsupported "' + self._archive +
+                '" archive format.'
+            )
 
         if self._args.files:
             self._files = self._args.files

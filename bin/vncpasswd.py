@@ -53,7 +53,11 @@ class Main(object):
         """
         os.umask(int('077', 8))
 
-        vncpasswd = command_mod.Command('vncpasswd', args=sys.argv[1:], errors='stop')
+        vncpasswd = command_mod.Command(
+            'vncpasswd',
+            args=sys.argv[1:],
+            errors='stop'
+        )
         subtask_mod.Exec(vncpasswd.get_cmdline()).run()
 
 

@@ -33,26 +33,46 @@ class Options(object):
 
     @staticmethod
     def _getport(remote_host, remote_port):
-        lsof = command_mod.Command('lsof', args=['-i', 'tcp:5901-5999'], errors='stop')
+        lsof = command_mod.Command(
+            'lsof',
+            args=['-i', 'tcp:5901-5999'],
+            errors='stop'
+        )
         task = subtask_mod.Batch(lsof.get_cmdline())
         task.run()
         for local_port in range(5901, 6000):
             if not task.is_match_output(':' + str(local_port) + '[ -]'):
                 ssh = command_mod.Command('ssh', errors='stop')
-                ssh.set_args(['-f', '-L', str(local_port) + ':localhost:' + remote_port,
-                              remote_host, 'sleep', '64'])
-                print('Starting "ssh" port forwarding from "localhost:' + str(local_port) +
-                      '" to "' + remote_host + ':' + remote_port + '"...')
+                ssh.set_args([
+                    '-f',
+                    '-L',
+                    str(local_port) + ':localhost:' + remote_port,
+                    remote_host,
+                    'sleep',
+                    '64'
+                ])
+                print(
+                    'Starting "ssh" port forwarding from "localhost:' +
+                    str(local_port) + '" to "' + remote_host + ':' +
+                    remote_port + '"...'
+                )
                 subtask_mod.Task(ssh.get_cmdline()).run()
                 return str(local_port)
-        raise SystemExit(sys.argv[0] + ': Cannot find unused local port in range 5901-5999.')
+        raise SystemExit(
+            sys.argv[0] +
+            ': Cannot find unused local port in range 5901-5999.'
+        )
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Securely connect to VNC server using SSH protocol.')
 
-        parser.add_argument('server', nargs=1, metavar='[[user]@host]:port',
-                            help='VNC server location.')
+        parser.add_argument(
+            'server',
+            nargs=1,
+            metavar='[[user]@host]:port',
+            help='VNC server location.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -66,23 +86,33 @@ class Options(object):
             remote_host, remote_port = self._args.server[0].split(':')
         except ValueError:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a single ":" in VNC server location.')
+                sys.argv[0] +
+                ': You must specific a single ":" in VNC server location.'
+            )
 
         try:
             if int(remote_port) < 101:
                 remote_port = str(int(remote_port) + 5900)
         except ValueError:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer '
-                             'for port number.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer '
+                'for port number.'
+            )
 
         self._vncviewer = command_mod.Command('vncviewer', errors='stop')
         if remote_host:
             local_port = self._getport(remote_host, remote_port)
-            print('Starting "vncviewer" connection via "localhost:' + local_port + '" to "' +
-                  remote_host + ':' + remote_port + '"...')
+            print(
+                'Starting "vncviewer" connection via "localhost:' +
+                local_port + '" to "' + remote_host + ':' + remote_port +
+                '"...'
+            )
         else:
             local_port = remote_port
-            print('Starting "vncviewer" connection to "localhost:' + local_port + '"...')
+            print(
+                'Starting "vncviewer" connection to "localhost:' +
+                local_port + '"...'
+            )
         self._vncviewer.set_args([':' + local_port])
 
 

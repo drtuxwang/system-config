@@ -55,7 +55,8 @@ class Options(object):
         if '--output-document' not in args:
             for arg in args:
                 if arg.startswith('--user-agent=') and 'Firefox/' in arg:
-                    self._wget.extend_args(['--output-document', os.path.basename(args[-1])])
+                    self._wget.extend_args(
+                        ['--output-document', os.path.basename(args[-1])])
                     break
 
         self._output = ''
@@ -63,8 +64,12 @@ class Options(object):
             if (len(args) > 2 and args[1] in ('--output-document', '-O') and
                     not args[2].endswith('.part')):
                 self._output = args[2]
-                if os.path.isfile(args[2]) or os.path.isfile(args[2] + '.part'):
-                    self._output = ('-'+str(os.getpid())+'.').join(self._output.rsplit('.', 1))
+                if (
+                        os.path.isfile(args[2]) or
+                        os.path.isfile(args[2] + '.part')
+                ):
+                    self._output = ('-'+str(os.getpid())+'.').join(
+                        self._output.rsplit('.', 1))
                 self._wget.extend_args([args[1], self._output + '.part'])
                 args = args[2:]
                 continue
@@ -126,7 +131,10 @@ class Main(object):
             try:
                 shutil.move(output + '.part', output)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + output + '" output file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' + output +
+                    '" output file.'
+                )
         else:
             subtask_mod.Exec(cmdline).run()
 

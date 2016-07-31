@@ -69,7 +69,10 @@ class Main(object):
             traceroute = command_mod.Command('tracert.exe', errors='stop')
         else:
             traceroute = command_mod.Command(
-                'traceroute', pathextra=['/usr/sbin', '/usr/etc'], errors='stop')
+                'traceroute',
+                pathextra=['/usr/sbin', '/usr/etc'],
+                errors='stop'
+            )
         traceroute.set_args(sys.argv[1:])
 
         subtask_mod.Exec(traceroute.get_cmdline()).run()

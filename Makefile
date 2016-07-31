@@ -14,11 +14,11 @@ requirements:
 
 pep8:
 	@echo "\n*** Running Python 3 PEP8 check ***"
-	python3 -m pep8 --max-line-length=100 bin/*.py
+	python3 -m pep8 --max-line-length=79 bin/*.py
 
 pylint:
 	@echo "\n*** Running Python 3 LINT check ***"
-	python3 -m pylint --disable=locally-disabled,locally-enabled --max-line-length=100 --output-format=parseable --reports=n -j 2 bin/*.py
+	python3 -m pylint --disable=locally-disabled,locally-enabled --max-line-length=79 --output-format=parseable --reports=n -j 2 bin/*.py
 
 unittest:
 	@echo "\n*** Running Python 3 UNITTEST check ***"

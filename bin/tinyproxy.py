@@ -61,7 +61,10 @@ class Options(object):
                 print('# Restrict clients', file=ofile)
                 print('##Allow 127.0.0.1', file=ofile)
         except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "tinyproxy.conf" configuration file.')
+            raise SystemExit(
+                sys.argv[0] +
+                ': Cannot create "tinyproxy.conf" configuration file.'
+            )
 
     def parse(self, args):
         """

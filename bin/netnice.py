@@ -43,11 +43,25 @@ class Options(object):
             description='Run a command with limited network bandwidth.')
 
         parser.add_argument(
-            '-n', nargs=1, type=int, dest='drate', default=[0],
-            help='Download rate limit in KB. Default is 512 set in ".config/netnice.json".')
-
-        parser.add_argument('command', nargs=1, help='Command to run.')
-        parser.add_argument('args', nargs='*', metavar='arg', help='Command argument.')
+            '-n',
+            nargs=1,
+            type=int,
+            dest='drate',
+            default=[0],
+            help='Download rate limit in KB. Default is 512 set in '
+            '".config/netnice.json".'
+        )
+        parser.add_argument(
+            'command',
+            nargs=1,
+            help='Command to run.'
+        )
+        parser.add_argument(
+            'args',
+            nargs='*',
+            metavar='arg',
+            help='Command argument.'
+        )
 
         my_args = []
         while len(args):
@@ -62,11 +76,16 @@ class Options(object):
         self._args = parser.parse_args(my_args)
 
         if self._args.drate[0] < 0:
-            raise SystemExit(sys.argv[0] + ': You must specific a positive integer for '
-                             'download rate limit.')
+            raise SystemExit(
+                sys.argv[0] + ': You must specific a positive integer for '
+                'download rate limit.'
+            )
 
         if os.path.isfile(self._args.command[0]):
-            return command_mod.CommandFile(self._args.command[0], args=args[len(my_args):])
+            return command_mod.CommandFile(
+                self._args.command[0],
+                args=args[len(my_args):]
+            )
         else:
             return command_mod.Command(
                 self._args.command[0], args=args[len(my_args):], errors='stop')
@@ -117,7 +136,8 @@ class Main(object):
         """
         options = Options()
 
-        cmdline = options.get_shaper().get_cmdline() + options.get_command().get_cmdline()
+        cmdline = options.get_shaper().get_cmdline(
+            ) + options.get_command().get_cmdline()
         task = subtask_mod.Task(cmdline)
         task.run()
         raise SystemExit(task.get_exitcode())

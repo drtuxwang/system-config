@@ -52,7 +52,11 @@ class Main(object):
         """
         Start program
         """
-        ntpdate = command_mod.Command('ntpdate', pathextra=['/usr/sbin'], errors='stop')
+        ntpdate = command_mod.Command(
+            'ntpdate',
+            pathextra=['/usr/sbin'],
+            errors='stop'
+        )
         ntpdate.set_args(['pool.ntp.org'])
 
         if len(sys.argv) == 1 or sys.argv[1] != '-u':

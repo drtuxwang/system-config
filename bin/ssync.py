@@ -33,12 +33,22 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Securely synchronize file system using SSH protocol.')
+            description='Securely synchronize file system using '
+            'SSH protocol.'
+        )
 
-        parser.add_argument('source', nargs=1, metavar='[[user1@]host1:]source',
-                            help='Source location.')
-        parser.add_argument('target', nargs=1, metavar='[[user1@]host1:]target',
-                            help='Target location.')
+        parser.add_argument(
+            'source',
+            nargs=1,
+            metavar='[[user1@]host1:]source',
+            help='Source location.'
+        )
+        parser.add_argument(
+            'target',
+            nargs=1,
+            metavar='[[user1@]host1:]target',
+            help='Target location.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -51,8 +61,19 @@ class Options(object):
         ssh = command_mod.Command('ssh', errors='stop')
 
         self._rsync = command_mod.Command('rsync', errors='stop')
-        self._rsync.set_args(['-l', '-p', '-r', '-t', '-v', '-z', '-e', ssh.get_file(), '--delete',
-                              self._args.source[0], self._args.target[0]])
+        self._rsync.set_args([
+            '-l',
+            '-p',
+            '-r',
+            '-t',
+            '-v',
+            '-z',
+            '-e',
+            ssh.get_file(),
+            '--delete',
+            self._args.source[0],
+            self._args.target[0]
+        ])
 
 
 class Main(object):

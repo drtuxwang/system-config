@@ -35,10 +35,18 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Make a compressed archive in TAR.LZMA format.')
 
-        parser.add_argument('archive', nargs=1, metavar='file.tar.lzma|file.tlz',
-                            help='Archive file.')
-        parser.add_argument('files', nargs='*', metavar='file',
-                            help='File or directory.')
+        parser.add_argument(
+            'archive',
+            nargs=1,
+            metavar='file.tar.lzma|file.tlz',
+            help='Archive file.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='*',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -49,11 +57,18 @@ class Options(object):
         self._parse_args(args[1:])
 
         if os.path.isdir(self._args.archive[0]):
-            self._archive = os.path.abspath(self._args.archive[0]) + '.tar.lzma'
+            self._archive = os.path.abspath(
+                self._args.archive[0]) + '.tar.lzma'
         else:
             self._archive = self._args.archive[0]
-        if not self._archive.endswith('.tar.lzma') and not self._archive.endswith('.tlz'):
-            raise SystemExit(sys.argv[0] + ': Unsupported "' + self._archive + '" archive format.')
+        if (
+                not self._archive.endswith('.tar.lzma') and
+                not self._archive.endswith('.tlz')
+        ):
+            raise SystemExit(
+                sys.argv[0] + ': Unsupported "' + self._archive +
+                '" archive format.'
+            )
 
         if self._args.files:
             self._files = self._args.files

@@ -36,12 +36,21 @@ class Options(object):
         return self._files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Make a compressed archive in TAR.BZ2 format.')
+        parser = argparse.ArgumentParser(
+            description='Make a compressed archive in TAR.BZ2 format.')
 
-        parser.add_argument('archive', nargs=1, metavar='file.tar.bz2|file.tbz',
-                            help='Archive file.')
-        parser.add_argument('files', nargs='*', metavar='file',
-                            help='File or directory.')
+        parser.add_argument(
+            'archive',
+            nargs=1,
+            metavar='file.tar.bz2|file.tbz',
+            help='Archive file.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='*',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -55,8 +64,14 @@ class Options(object):
             self._archive = os.path.abspath(self._args.archive[0]) + '.tar.bz2'
         else:
             self._archive = self._args.archive[0]
-        if not self._archive.endswith('.tar.bz2') and not self._archive.endswith('.tbz'):
-            raise SystemExit(sys.argv[0] + ': Unsupported "' + self._archive + '" archive format.')
+        if (
+                not self._archive.endswith('.tar.bz2') and
+                not self._archive.endswith('.tbz')
+        ):
+            raise SystemExit(
+                sys.argv[0] + ': Unsupported "' + self._archive +
+                '" archive format.'
+            )
 
         if self._args.files:
             self._files = self._args.files
@@ -101,12 +116,19 @@ class Main(object):
             try:
                 self._archive.add(file, recursive=False)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot add "' + file + '" file to archive.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot add "' + file +
+                    '" file to archive.'
+                )
             if os.path.isdir(file) and not os.path.islink(file):
                 try:
-                    self._addfile([os.path.join(file, x) for x in os.listdir(file)])
+                    self._addfile(
+                        [os.path.join(file, x) for x in os.listdir(file)])
                 except PermissionError:
-                    raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot open "' + file +
+                        '" directory.'
+                    )
 
     def run(self):
         """
@@ -118,7 +140,9 @@ class Main(object):
             self._archive = tarfile.open(options.get_archive(), 'w:bz2')
         except OSError:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + options.get_archive() + '" archive file.')
+                sys.argv[0] + ': Cannot create "' + options.get_archive() +
+                '" archive file.'
+            )
         self._addfile(options.get_files())
 
 

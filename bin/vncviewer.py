@@ -51,7 +51,11 @@ class Main(object):
         """
         Start program
         """
-        vncviewer = command_mod.Command('vncviewer', args=sys.argv[1:], errors='stop')
+        vncviewer = command_mod.Command(
+            'vncviewer',
+            args=sys.argv[1:],
+            errors='stop'
+        )
         subtask_mod.Daemon(vncviewer.get_cmdline()).run()
 
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Make a compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ|TLZ|TXZ format.
+Make a compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/
+TAR.7Z/TGZ/TBZ|TLZ|TXZ format.
 """
 
 import argparse
@@ -40,14 +41,22 @@ class Options(object):
         return self._files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Make a compressed archive in TAR format.')
+        parser = argparse.ArgumentParser(
+            description='Make a compressed archive in TAR format.')
 
-        parser.add_argument('archive', nargs=1,
-                            metavar='file.tar|file.tar.gz|file.tar.bz2|file.tar.lzma|file.tar.xz|'
-                                    'file.tar.7z|file.tgz|file.tbz|file.tlz|file.txz',
-                            help='Archive file.')
-        parser.add_argument('files', nargs='*', metavar='file',
-                            help='File or directory.')
+        parser.add_argument(
+            'archive',
+            nargs=1,
+            metavar='file.tar|file.tar.gz|file.tar.bz2|file.tar.lzma|'
+            'file.tar.xz|file.tar.7z|file.tgz|file.tbz|file.tlz|file.txz',
+            help='Archive file.'
+        )
+        parser.add_argument(
+            'files',
+            nargs='*',
+            metavar='file',
+            help='File or directory.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -63,7 +72,10 @@ class Options(object):
             self._archive = self._args.archive[0]
         isarchive = re.compile('[.](tar|tar[.](gz|bz2|lzma|xz|7z)|t[gblx]z)$')
         if not isarchive.search(self._archive):
-            raise SystemExit(sys.argv[0] + ': Unsupported "' + self._archive + '" archive format.')
+            raise SystemExit(
+                sys.argv[0] + ': Unsupported "' + self._archive +
+                '" archive format.'
+            )
 
         if self._args.files:
             self._files = self._args.files
@@ -108,12 +120,17 @@ class Main(object):
             try:
                 self._archive.add(file, recursive=False)
             except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" file.')
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot open "' + file + '" file.')
             if os.path.isdir(file) and not os.path.islink(file):
                 try:
-                    self._addfile([os.path.join(file, x) for x in os.listdir(file)])
+                    self._addfile(
+                        [os.path.join(file, x) for x in os.listdir(file)])
                 except PermissionError:
-                    raise SystemExit(sys.argv[0] + ': Cannot open "' + file + '" directory.')
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot open "' + file +
+                        '" directory.'
+                    )
 
     def run(self):
         """
@@ -137,8 +154,17 @@ class Main(object):
                 tar.set_args(['cf', '-'] + options.get_files())
                 p7zip = command_mod.Command('7z', errors='stop')
                 p7zip.set_args([
-                    'a', '-m0=lzma2', '-mmt=2', '-mx=9', '-ms=on', '-y', '-si', archive])
-                subtask_mod.Task(tar.get_cmdline() + ['|'] + p7zip.get_cmdline()).run()
+                    'a',
+                    '-m0=lzma2',
+                    '-mmt=2',
+                    '-mx=9',
+                    '-ms=on',
+                    '-y',
+                    '-si',
+                    archive
+                ])
+                subtask_mod.Task(
+                    tar.get_cmdline() + ['|'] + p7zip.get_cmdline()).run()
             elif archive.endswith('.txz') or archive.endswith('.tar.xz'):
                 tar.set_args(['cfvJ', archive] + options.get_files())
                 os.environ['XZ_OPT'] = '-9 -e --lzma2=dict=128MiB --threads=1'

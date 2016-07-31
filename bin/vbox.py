@@ -38,17 +38,39 @@ class Options(object):
         return self._args.machines
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='VirtualBox virtual machine manager.')
+        parser = argparse.ArgumentParser(
+            description='VirtualBox virtual machine manager.')
 
-        parser.add_argument('-p', action='store_const', const='poweroff', dest='mode',
-                            default='start', help='Power off virtual machine.')
-        parser.add_argument('-s', action='store_const', const='shutdown', dest='mode',
-                            default='start', help='Shutdown virtual machine.')
-        parser.add_argument('-v', action='store_const', const='view', dest='mode',
-                            default='start', help='List virtual machine.')
-
-        parser.add_argument('machines', nargs='+', metavar='machine',
-                            help='Virtual machine.')
+        parser.add_argument(
+            '-p',
+            action='store_const',
+            const='poweroff',
+            dest='mode',
+            default='start',
+            help='Power off virtual machine.'
+        )
+        parser.add_argument(
+            '-s',
+            action='store_const',
+            const='shutdown',
+            dest='mode',
+            default='start',
+            help='Shutdown virtual machine.'
+        )
+        parser.add_argument(
+            '-v',
+            action='store_const',
+            const='view',
+            dest='mode',
+            default='start',
+            help='List virtual machine.'
+        )
+        parser.add_argument(
+            'machines',
+            nargs='+',
+            metavar='machine',
+            help='Virtual machine.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -102,7 +124,8 @@ class Main(object):
 
     def _shutdown(self, machines):
         for machine in machines:
-            self._vboxmanage.set_args(['controlvm', machine, 'acpipowerbutton'])
+            self._vboxmanage.set_args(
+                ['controlvm', machine, 'acpipowerbutton'])
             task = subtask_mod.Task(self._vboxmanage.get_cmdline())
             task.run()
             if task.get_exitcode():
@@ -112,7 +135,8 @@ class Main(object):
 
     def _start(self, machines):
         for machine in machines:
-            self._vboxmanage.set_args(['startvm', machine, '--type', 'headless'])
+            self._vboxmanage.set_args(
+                ['startvm', machine, '--type', 'headless'])
             task = subtask_mod.Task(self._vboxmanage.get_cmdline())
             task.run()
             if task.get_exitcode():

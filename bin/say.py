@@ -38,13 +38,22 @@ class Options(object):
         return self._pattern
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Speak words using Espeak TTS engine.')
+        parser = argparse.ArgumentParser(
+            description='Speak words using Espeak TTS engine.')
 
-        parser.add_argument('-voice', nargs=1, metavar='xx+yy',
-                            help='Select language voice (ie en+f2, fr+m3, de+f2, zhy+f2).')
-
-        parser.add_argument('words', nargs='+', metavar='word',
-                            help='A word.')
+        parser.add_argument(
+            '-voice',
+            nargs=1,
+            metavar='xx+yy',
+            help='Select language voice '
+            '(ie en+f2, fr+m3, de+f2, zhy+f2).'
+        )
+        parser.add_argument(
+            'words',
+            nargs='+',
+            metavar='word',
+            help='A word.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -60,7 +69,8 @@ class Options(object):
             self._espeak.append_arg('-v' + self._args.voice[0])
         self._espeak.extend_args([' '.join(self._args.words)])
 
-        self._pattern = '^ALSA lib|: Connection refused|^Cannot connect|^jack server'
+        self._pattern = (
+            '^ALSA lib|: Connection refused|^Cannot connect|^jack server')
 
 
 class Main(object):
@@ -101,7 +111,8 @@ class Main(object):
         """
         options = Options()
 
-        subtask_mod.Task(options.get_espeak().get_cmdline()).run(pattern=options.get_pattern())
+        subtask_mod.Task(options.get_espeak().get_cmdline()).run(
+            pattern=options.get_pattern())
 
 
 if __name__ == '__main__':
