@@ -6,4 +6,6 @@
 [log]
 	decorate = short
 [alias]
-	meld = difftool --dir-diff
+	xdiff = difftool --dir-diff
+[diff]
+	ignoreSubmodules=all
