@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.8.4'
-VERSION = 20160731
+RELEASE = '4.8.5'
+VERSION = 20160806
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -256,12 +256,13 @@ class Detect(object):
         xrandr = command_mod.Command('xrandr', errors='ignore')
         if xrandr.is_found():
             task = subtask_mod.Batch(xrandr.get_cmdline())
+            task.run(pattern=' connected ')
             for line in task.get_output():
                 try:
                     if ' connected ' in line:
                         screen, _, resolution, *_, width, _, height = (
                             line.replace('mm', '').split())
-                        if width in ('0', '160') and height in ('0', '90'):
+                        if (width, height) == ('0', '0'):
                             Writer.output(
                                 name="X-Windows Screen",
                                 value=screen,
