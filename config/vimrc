@@ -1,22 +1,26 @@
-" Syntax on or off:
-syntax on
-" Background dark or light:
-set background=dark
-
-" Use system clipboard (ie yy, dd, x, p)
-set clipboard=unnamed
-
-" Special character handling
+" Title bar & status line
+set title
+let &titlestring=hostname().':%F %y%r%m %a'
+set ruler
+set so=3  " Show 3 lines above/below cursor
 set tabstop=4
-set list
-set listchars=tab:▸\ ,
+set clipboard=unnamed  " Use system clipboard (ie yy, dd, x, p)
 
-" Remove whitespace at end of lines:
-autocmd BufWritePre *.* :%s/\s\+$//e
+" Syntax highlighting
+syntax on
+set background=dark
+set hlsearch
+set list listchars=tab:▸\ ,trail:·
+
+" Turn off annoying features
+set nobackup
+set noerrorbells
+set noswapfile
+set novisualbell
 
 " Python settings
 autocmd Filetype python call SetPython()
 function SetPython()
-    set colorcolumn=73,80
-    highlight ColorColumn ctermbg=0 guibg=lightgrey
+    highlight OverLength ctermbg=0 guibg=lightgrey
+    match OverLength /\%80v.\+/
 endfunction
