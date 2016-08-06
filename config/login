@@ -29,10 +29,10 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     endif
     if ( $?tcsh ) then
         echo "Running    Login shell /bin/tcsh (TC Shell) on $MYTTY ($TERM)"
-        set prompt="%{\033[1;32m%}$MYUNAME@${MYHNAME}%{\033[00m%}_% "
+        set prompt="%{\033[01;32m%}%n@%m:%{\033[01;34m%}%~%{\033[00m%} % "
     else
         echo "Running    Login shell /bin/csh (C Shell) on $MYTTY ($TERM)"
-        set prompt="$MYUNAME@${MYHNAME}_% "
+        set prompt="$MYUNAME@${MYHNAME} % "
     endif
 
     # Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
