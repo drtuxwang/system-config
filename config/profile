@@ -40,6 +40,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
             prexec_interactive=; \echo -e "\033]0;$MYHNAME:$PWD $ $BASH_COMMAND\007\c"
         }
         complete -f -o default tar
+        complete -f -o default wine
     elif [ "`echo $0 | \grep \"ksh$\"`" ]; then
         echo "Running    Login shell /bin/ksh (Korn Shell) on $MYTTY ($TERM)"
         PS1="$MYUNAME@${MYHNAME}_$ "
