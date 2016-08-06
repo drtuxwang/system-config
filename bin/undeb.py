@@ -185,7 +185,7 @@ class Main(object):
         if options.get_view_flag():
             self._tar.set_args(['tf'])
         else:
-            self._tar.set_args(['xtf'])
+            self._tar.set_args(['xf'])
         for file in options.get_archives():
             if not os.path.isfile(file):
                 raise SystemExit(
