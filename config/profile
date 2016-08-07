@@ -39,6 +39,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         preexec() {
             prexec_interactive=; \echo -e "\033]0;$MYHNAME:$PWD $ $BASH_COMMAND\007\c"
         }
+        PROMPT_COMMAND="precmd"
         complete -f -o default tar
         complete -f -o default wine
     elif [ "`echo $0 | \grep \"ksh$\"`" ]; then
