@@ -2,14 +2,13 @@ default: build
 
 build:
 	@echo "\n*** Building Docker image ***"
-	rm -rf tmpdir
-	mkdir tmpdir
-	cp -rp ../../../bin tmpdir
-	tmpdir/bin/fmod tmpdir/bin/*
-	cp -p ../../../config/profile ../../../config/vimrc tmpdir
+	cp -rp ../../../bin .
+	bin/fmod bin/*
+	cp -p ../../../config/bashrc ../../../config/docker-xstart \
+		../../../config/profile ../../../config/vimrc tmpdir
 	docker build -t debian-7-lxc .
 	docker images
-	rm -rf tmpdir
+	rm -rf bin bashrc docker-xstart profile vimrc
 
 run:
 	@echo "\n*** Running Docker container ***"

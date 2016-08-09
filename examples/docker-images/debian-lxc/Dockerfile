@@ -9,8 +9,8 @@ RUN python3 -m pip install pep8 pylint
 RUN python -m pip install pep8 pylint
 
 # Python scripts
-COPY files/bashrc /root/.bashrc
-COPY tmpdir/bin /opt/software/bin
+COPY bashrc /root/.bashrc
+COPY bin /opt/software/bin
 
 # Create docker user account
 RUN echo "docker:x:1000:100:Docker User:/home/docker:/bin/bash" >> /etc/passwd
@@ -19,8 +19,8 @@ RUN echo "docker ALL=(ALL) NOPASSWD: ALL\nDefaults umask = 0022\nDefaults umask_
 
 # Create "/home/docker"
 RUN mkdir -p /home/docker/Desktop
-COPY tmpdir/profile /home/docker/.profile
-COPY tmpdir/vimrc /home/docker/.vimrc
+COPY profile /home/docker/.profile
+COPY vimrc /home/docker/.vimrc
 RUN chown -R 1000:100 /home/docker
 
 # Set UID script for X-server

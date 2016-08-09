@@ -1017,7 +1017,9 @@ bin/mka.bat            Show settings of %cda%..%cdz% environmental variables
 config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
 config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
 config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
+config/bashrc                   Copy to "/root/.bashrc" for root settings
 config/config                   Copy to "$HOME/.ssh/config"
+config/docker-xstart            Docker X-start script (changes UID of "docker" user)
 config/gitconfig                Copy to "$HOME/.gitconfig" and edit
 config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
 config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
@@ -1050,12 +1052,8 @@ examples/cloudformation/multi-stacks/submit.sh
 
 examples/docker-images/centos-lxc/Dockerfile          CentOS docker image
 examples/docker-images/centos-lxc/Makefile
-examples/docker-images/centos-lxc/files/docker-setuid
-examples/docker-images/centos-lxc/files/bashrc
 examples/docker-images/debian-lxc/Dockerfile          Debian docker image
 examples/docker-images/debian-lxc/Makefile
-examples/docker-images/debian-lxc/files/docker-setuid
-examples/docker-images/debian-lxc/files/bashrc
 
 examples/python-flask/simple-demo/Makefile            Simple Flask demo
 examples/python-flask/simple-demo/RUN
