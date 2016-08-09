@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# Start X for Docker container
+#
+
+if [ "$(id -u)" != 0 ]; then
+    exec sudo $0 "$@"
+fi
+
+if [ "$1" ]; then
+    NEW_UID="$1"
+else
+    NEW_UID=1000
+fi
+
+# Change docker user ID
+sed -i "s/docker:x:1000:/docker:x:$NEW_UID:/" /etc/passwd
+
+# Change ownership of docker user home
+chown -R $NEW_UID:100 /home/docker
+
+# Run using docker user account
+sudo -u docker bash -l

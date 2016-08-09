@@ -1048,6 +1048,15 @@ examples/cloudformation/multi-stacks/pxy_stack.json
 examples/cloudformation/multi-stacks/sg_stack.json
 examples/cloudformation/multi-stacks/submit.sh
 
+examples/docker-images/centos-lxc/Dockerfile          CentOS docker image
+examples/docker-images/centos-lxc/Makefile
+examples/docker-images/centos-lxc/files/docker-setuid
+examples/docker-images/centos-lxc/files/bashrc
+examples/docker-images/debian-lxc/Dockerfile          Debian docker image
+examples/docker-images/debian-lxc/Makefile
+examples/docker-images/debian-lxc/files/docker-setuid
+examples/docker-images/debian-lxc/files/bashrc
+
 examples/python-flask/simple-demo/Makefile            Simple Flask demo
 examples/python-flask/simple-demo/RUN
 examples/python-flask/simple-demo/flask_demo.py
