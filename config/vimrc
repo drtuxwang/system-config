@@ -1,18 +1,24 @@
-" Title bar & status line
+" General settings
 set title
 let &titlestring=hostname().':%F %y%r%m %a'
-set ruler
-set so=3  " Show 3 lines above/below cursor
-set tabstop=4
 set clipboard=unnamed  " Use system clipboard (ie yy, dd, x, p)
+set so=3  " Show 3 lines above/below cursor
 
 " Syntax highlighting
 syntax on
 set background=dark
+set encoding=utf-8
 set hlsearch
 set list listchars=tab:▸\ ,trail:·
+set showmatch
+set tabstop=4
+
+" Status line
+set ruler
+set showcmd
 
 " Turn off annoying features
+set lazyredraw
 set nobackup
 set noerrorbells
 set noswapfile
