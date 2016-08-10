@@ -24,10 +24,10 @@ COPY vimrc /home/docker/.vimrc
 RUN chown -R 1000:100 /home/docker
 
 # Set UID script for X-server
-COPY files/docker-setuid /etc/docker-setuid
+COPY docker-init /etc/docker-init
 
 # Run using docker user account
-USER docker
+USER root
 ENV HOME /home/docker
 WORKDIR /home/docker
-CMD bash -l
+CMD /etc/docker-init

@@ -1019,7 +1019,7 @@ config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to des
 config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
 config/bashrc                   Copy to "/root/.bashrc" for root settings
 config/config                   Copy to "$HOME/.ssh/config"
-config/docker-xstart            Docker X-start script (changes UID of "docker" user)
+config/docker-init              Docker init script (changes UID of "docker" user)
 config/gitconfig                Copy to "$HOME/.gitconfig" and edit
 config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
 config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
