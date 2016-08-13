@@ -15,7 +15,7 @@ run:
 		--name debian-lxc --hostname debian-lxc --rm debian-lxc
 
 xrun:
-	@echo "\n*** Running Docker container ***"
+	@echo "\n*** Running Docker container (with X-windows) ***"
 	docker run --interactive --tty --memory=1024mb \
 		--env UID=`id -u` --env DISPLAY=$(DISPLAY) --volume /tmp/.X11-unix:/tmp/.X11-unix \
 		--name debian-lxc --hostname debian-lxc --rm debian-lxc 
