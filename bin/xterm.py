@@ -29,6 +29,7 @@ class Options(object):
 
     def __init__(self):
         self._args = None
+        self._config()
         self.parse(sys.argv)
 
     def get_columns(self):
@@ -48,6 +49,11 @@ class Options(object):
         Return terminal Command class object.
         """
         return self._terminal
+
+    @staticmethod
+    def _config():
+        if "TMUX" in os.environ:
+            del os.environ['TMUX']
 
     def parse(self, args):
         """
