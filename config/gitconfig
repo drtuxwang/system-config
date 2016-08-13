@@ -6,6 +6,16 @@
 [log]
 	decorate = short
 [alias]
-	xdiff = difftool --dir-diff
+	merge = merge --no-ff
+	xdiff = difftool --tool=meld --dir-diff
+	xmerge = mergetool --tool=meld
+[color]
+	ui = auto
+[core]
+	editor = vim
 [diff]
 	ignoreSubmodules=all
+[log]
+	decorate = full
+[push]
+	default = simple
