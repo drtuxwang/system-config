@@ -1025,6 +1025,7 @@ config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Ge
 config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
 config/mimeapps.list            Copy to "$HOME/.local/share/applications" for Mime definitions
 config/minttyrc                 Copy to "$HOME/.minttyrc" for MSYS2 terminal
+config/tmux.conf                Copy to "$HOME/.tmux.conf" fro TMUX terminal
 config/offline                  Wrapper script to run any command in off line mode (read comments)
 config/profile                  Copy to "$HOME/.profile" for ksh/bash shells (translated ".login")
 config/rc.local                 Copy to "/etc/rc.local" for auto running commands
