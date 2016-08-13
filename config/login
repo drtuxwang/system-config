@@ -23,7 +23,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         setenv MYTTY `\tty`
         (mesg y) >& /dev/null
         set autologout=0
-        stty erase 
+        stty erase "^?"  #  alternative
         stty intr 
         stty susp 
     endif
