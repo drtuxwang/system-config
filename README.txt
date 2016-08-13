@@ -1055,6 +1055,8 @@ examples/docker-images/centos-lxc/Dockerfile          CentOS docker image
 examples/docker-images/centos-lxc/Makefile
 examples/docker-images/debian-lxc/Dockerfile          Debian docker image
 examples/docker-images/debian-lxc/Makefile
+examples/docker-images/ubuntu-lxc/Dockerfile          Ubuntu docker image
+examples/docker-images/ubuntu-lxc/Makefile
 
 examples/python-flask/simple-demo/Makefile            Simple Flask demo
 examples/python-flask/simple-demo/RUN
