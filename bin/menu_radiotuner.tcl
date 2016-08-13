@@ -26,32 +26,32 @@ frame .chinese -bg "#cccccc"
     pack .chinese.rthk -side top
 
     button .chinese.rthk1 -width 10 -bg "#ffff00" -text "RTHK 1" -command {
-        exec vlc --http-reconnect http://rthk.hk/live1.m3u &
+        exec vlc --http-reconnect http://stm.rthk.hk/radio1 &
     }
     pack .chinese.rthk1 -side top
 
     button .chinese.rthk2 -width 10 -bg "#ffff00" -text "RTHK 2" -command {
-        exec vlc --http-reconnect http://rthk.hk/live2.m3u &
+        exec vlc --http-reconnect http://stm.rthk.hk/radio2 &
     }
     pack .chinese.rthk2 -side top
 
     button .chinese.rthk3 -width 10 -bg "#ffff00" -text "RTHK 3" -command {
-        exec vlc --http-reconnect http://rthk.hk/live3.m3u &
+        exec vlc --http-reconnect http://stm.rthk.hk/radio3 &
     }
     pack .chinese.rthk3 -side top
 
     button .chinese.rthk4 -width 10 -bg "#ffff00" -text "RTHK 4" -command {
-        exec vlc --http-reconnect http://rthk.hk/live4.m3u &
+        exec vlc --http-reconnect http://stm.rthk.hk/radio4 &
     }
     pack .chinese.rthk4 -side top
 
     button .chinese.rthk5 -width 10 -bg "#ffff00" -text "RTHK 5" -command {
-        exec vlc --http-reconnect http://rthk.hk/live5.m3u &
+        exec vlc --http-reconnect http://stm.rthk.hk/radio5 &
     }
     pack .chinese.rthk5 -side top
 
     button .chinese.rthkpth -width 10 -bg "#ffff00" -text "RTHK普通話" -command {
-        exec vlc --http-reconnect http://rthk.hk/livepth.m3u &
+        exec vlc --http-reconnect http://stm.rthk.hk/radiopth &
     }
     pack .chinese.rthkpth -side top
 pack .chinese -side top -fill x
