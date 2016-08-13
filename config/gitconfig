@@ -1,10 +1,6 @@
 [user]
 	name = ???
 	email = ???
-[push]
-	default = simple
-[log]
-	decorate = short
 [alias]
 	merge = merge --no-ff
 	xdiff = difftool --tool=meld --dir-diff
