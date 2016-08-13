@@ -126,7 +126,7 @@ class Main(object):
                 print('Updating "{0:s}" wrapper for "{1:s}"...'.format(
                     link, file))
             else:
-                print('Creating "{0:%}" wrapper for "{1:s}"...'.format(
+                print('Creating "{0:s}" wrapper for "{1:s}"...'.format(
                     link, file))
             self._create(file, link)
 
