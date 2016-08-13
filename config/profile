@@ -46,7 +46,11 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
 
     if [ "$BASH" ]; then
         echo "Running    Login shell /bin/bash (Bash Shell) on $MYTTY ($TERM)"
-        PS1='\[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[31m\]$(__git_ps1 2> /dev/null)\[\033[00m\] \$ '
+        if [ "$({ time git status; } 2>&1 | grep "real.*0m0[.][01]")" ]; then
+            PS1='\[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[31m\]$(__git_ps1 2> /dev/null)\[\033[00m\] \$ '
+        else
+            PS1='\[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[00m\] \$ '
+        fi
         precmd() {
             \echo -e "\033]0;$MYHNAME:$PWD\007\c"
         }
