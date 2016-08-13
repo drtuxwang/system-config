@@ -2,21 +2,20 @@ default: build
 
 build:
 	@echo "\n*** Building Docker image ***"
-	cp -rp ../../../bin .
-	bin/fmod bin/*
-	cp -p ../../../config/bashrc ../../../config/docker-init \
-		../../../config/profile ../../../config/vimrc tmpdir
-	docker build -t debian-7-lxc .
+	cp -rp ../../../bin ../../../config/bashrc ../../../config/docker-init \
+		../../../config/profile ../../../config/vimrc .
+	bin/fmod bin/* *
+	docker build -t debian-lxc .
 	docker images
 	rm -rf bin bashrc docker-init profile vimrc
 
 run:
 	@echo "\n*** Running Docker container ***"
 	docker run --interactive --tty --memory=1024mb \
-		--name debian-7-lxc --hostname debian-7-lxc --rm debian-7-lxc
+		--name debian-lxc --hostname debian-lxc --rm debian-lxc
 
 xrun:
 	@echo "\n*** Running Docker container ***"
 	docker run --interactive --tty --memory=1024mb \
-		--env UID=`id -u`--env DISPLAY=$(DISPLAY) --volume /tmp/.X11-unix:/tmp/.X11-unix \
-		--name debian-7-lxc --hostname debian-7-lxc --rm debian-7-lxc 
+		--env UID=`id -u` --env DISPLAY=$(DISPLAY) --volume /tmp/.X11-unix:/tmp/.X11-unix \
+		--name debian-lxc --hostname debian-lxc --rm debian-lxc 
