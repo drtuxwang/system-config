@@ -30,16 +30,22 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         stty susp  2> /dev/null
     fi
 
+    for LIMIT in `\ulimit -a 2> /dev/null | \cut -c1`; do
+        \ulimit -$LIMIT `\ulimit -$LIMIT -H 2> /dev/null` 2> /dev/null
+    done
+
     if [ "$BASH" ]; then
         echo "Running    Login shell /bin/bash (Bash Shell) on $MYTTY ($TERM)"
         PS1='\[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[31m\]$(__git_ps1 2> /dev/null)\[\033[00m\] \$ '
         precmd() {
-            prexec_interactive=1; \echo -e "\033]0;$MYHNAME:$PWD\007\c"
-        }
-        preexec() {
-            prexec_interactive=; \echo -e "\033]0;$MYHNAME:$PWD $ $BASH_COMMAND\007\c"
+            \echo -e "\033]0;$MYHNAME:$PWD\007\c"
         }
         PROMPT_COMMAND="precmd"
+        preexec() {
+            \echo -e "\033]0;$MYHNAME:$PWD $ $BASH_COMMAND\007\c"
+        }
+        trap 'preexec' DEBUG
+
         complete -f -o default tar
         complete -f -o default wine
     elif [ "`echo $0 | \grep \"ksh$\"`" ]; then
