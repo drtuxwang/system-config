@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for generic command
+Wrapper for "meld" command
 """
 
 import glob
@@ -12,12 +12,42 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+
+
+class Options(object):
+    """
+    Options class
+    """
+
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
+
+    def get_pattern(self):
+        """
+        Return filter pattern.
+        """
+        return self._pattern
+
+    def get_meld(self):
+        """
+        Return meld Command class object.
+        """
+        return self._meld
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._meld = command_mod.Command('meld', errors='stop')
+        self._meld.set_args(args[1:])
+        self._pattern = ': GtkWarning: | self.recent_manager =| gtk.main()'
 
 
 class Main(object):
     """
-    This class is the main program.
+    Main class
     """
 
     def __init__(self):
@@ -51,12 +81,11 @@ class Main(object):
         """
         Start program
         """
-        name = os.path.basename(sys.argv[0]).replace('.py', '')
+        options = Options()
 
-        command = command_mod.Command(name, errors='stop')
-        command.set_args(sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
-
+        task = subtask_mod.Task(options.get_meld().get_cmdline())
+        task.run(pattern=options.get_pattern())
+        return task.get_exitcode()
 
 if __name__ == '__main__':
     if '--pydoc' in sys.argv:
