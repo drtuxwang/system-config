@@ -1,6 +1,6 @@
 " General settings
 set title
-let &titlestring=hostname().':%F %y%r%m %a'
+let &titlestring=hostname().':%F  %y%r%m %a'
 set clipboard=unnamed  " Use system clipboard (ie yy, dd, x, p)
 set so=3  " Show 3 lines above/below cursor
 
@@ -24,9 +24,21 @@ set noerrorbells
 set noswapfile
 set novisualbell
 
+" Workaround cursor bugs (ie Tmux)
+map <Esc>[A <Up>
+map <Esc>[B <Down>
+map <Esc>[C <Right>
+map <Esc>[D <Left>
+cmap <Esc>[A <Up>
+cmap <Esc>[B <Down>
+cmap <Esc>[C <Right>
+cmap <Esc>[D <Left>
+
 " Python settings
 autocmd Filetype python call SetPython()
 function SetPython()
     highlight OverLength ctermbg=0 guibg=lightgrey
     match OverLength /\%80v.\+/
+    setlocal foldmethod=indent
+    setlocal foldnestmax=2
 endfunction
