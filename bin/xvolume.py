@@ -13,7 +13,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(sys.argv[0] + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
 
 class Options(object):
