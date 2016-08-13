@@ -1,13 +1,17 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Docker container init script
 #
 
-# Change docker user ID
-if [ "$UID" != 0 ]; then
-    sed -i "s/docker:x:1000:/docker:x:$UID:/" /etc/passwd
-    chown -R $UID:100 /home/docker
+# Change Docker's "owner" user ID
+if [ "$UID" -a "$UID" != 0 ]; then
+    sed -i "s/owner:x:1000:/owner:x:$UID:/" /etc/passwd
+    chown -R $UID:100 /home/owner
 fi
 
 # Run using docker user account
-sudo -u docker bash -l
+if [ $# != 0 ]; then
+    sudo -u owner "$@"
+else
+    sudo -u owner bash -l
+fi
