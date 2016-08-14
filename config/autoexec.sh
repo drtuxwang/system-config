@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ "$1" != "-start" ]; then
+    exec $0 -start > ${0%%.sh}.log 2>&1
+fi
+
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 PATH="$HOME/software/bin:/opt/software/bin:$PATH"; export PATH
 
