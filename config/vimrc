@@ -40,6 +40,4 @@ cmap <Esc>[D <Left>
 autocmd Filetype python call SetPython()
 function SetPython()
     match OverLength /\%80v.\+/
-    setlocal foldmethod=indent
-    setlocal foldnestmax=2
 endfunction
