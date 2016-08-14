@@ -53,6 +53,21 @@ class Main(object):
                 os.remove(file)
             except OSError:
                 pass
+        if 'HOME' in os.environ:
+            for file in glob.glob(os.path.join(
+                    os.environ['HOME'],
+                    '.config',
+                    'libreoffice',
+                    '*',
+                    'user',
+                    'registrymodifications.xcu'
+            )):
+                if os.path.isfile(file):
+                    try:
+                        os.remove(file)
+                        os.mkdir(file)
+                    except OSError:
+                        pass
 
     @staticmethod
     def _setenv():
