@@ -175,18 +175,18 @@ class Main(object):
     @staticmethod
     @functools.lru_cache(maxsize=4)
     def _get_cmdline(name):
-        command = command_mod.Command(name, args=['-d'], errors='stop')
+        command = command_mod.Command(name, errors='stop')
 
         return command.get_cmdline()
 
     @classmethod
     def _unpack(cls, file):
         if file.endswith('.xz'):
-            subtask_mod.Task(cls._get_cmdline('xz') + [file]).run()
+            subtask_mod.Task(cls._get_cmdline('unxz') + [file]).run()
         elif file.endswith('.bz2'):
-            subtask_mod.Task(cls._get_cmdline('bzip2') + [file]).run()
+            subtask_mod.Task(cls._get_cmdline('bzip2') + ['-d', file]).run()
         elif file.endswith('.gz'):
-            subtask_mod.Task(cls._get_cmdline('gzip') + [file]).run()
+            subtask_mod.Task(cls._get_cmdline('gzip') + ['-d', file]).run()
         else:
             raise SystemExit(
                 sys.argv[0] + ': Cannot unpack "' + file + '" package file.')
