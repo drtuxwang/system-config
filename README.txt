@@ -1017,7 +1017,7 @@ bin/mka.bat            Show settings of %cda%..%cdz% environmental variables
 config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
 config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
 config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
-config/bashrc                   Copy to "/root/.bashrc" for root settings
+config/bashrc                   Copy to "/root/.bashrc" for "root" account settings
 config/config                   Copy to "$HOME/.ssh/config"
 config/docker-init              Docker init script (changes UID of "docker" user)
 config/gitconfig                Copy to "$HOME/.gitconfig" and edit
@@ -1027,7 +1027,8 @@ config/mimeapps.list            Copy to "$HOME/.local/share/applications" for Mi
 config/minttyrc                 Copy to "$HOME/.minttyrc" for MSYS2 terminal
 config/tmux.conf                Copy to "$HOME/.tmux.conf" fro TMUX terminal
 config/offline                  Wrapper script to run any command in off line mode (read comments)
-config/profile                  Copy to "$HOME/.profile" for ksh/bash shells (translated ".login")
+config/profile                  Copy to "$HOME/.profile" for ksh/bash shells
+config/profile-local            Copy to "$HOME/.profile-local" for ksh/bash shells
 config/rc.local                 Copy to "/etc/rc.local" for auto running commands
 config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
 config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
