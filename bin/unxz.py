@@ -31,6 +31,17 @@ class Options(object):
         """
         return self._command
 
+    @staticmethod
+    def _set_libraries(command):
+        libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
+        if os.path.isdir(libdir) and os.name == 'posix':
+            if os.uname()[0] == 'Linux':
+                if 'LD_LIBRARY_PATH' in os.environ:
+                    os.environ['LD_LIBRARY_PATH'] = (
+                        libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
+                else:
+                    os.environ['LD_LIBRARY_PATH'] = libdir
+
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Uncompress a file in XZ format.')
@@ -52,6 +63,7 @@ class Options(object):
 
         self._command = command_mod.Command('xz', errors='stop')
         self._command.set_args(['-d'] + self._args.archives)
+        self._set_libraries(self._command)
 
 
 class Main(object):
