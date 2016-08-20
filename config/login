@@ -113,7 +113,6 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     alias h history 256
     alias ls "ls -C"
     alias quota "quota -v"
-    alias bye exit
     unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
 
     # Platform specific
