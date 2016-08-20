@@ -249,7 +249,6 @@ class PythonLoader(object):
             print('sys.argv =', sys.argv)
             print()
 
-        os.environ['PYTHONDONTWRITEBYTECODE'] = '1'
         main = importlib.machinery.SourceFileLoader(
             "module.name",
             os.path.join(directory, module) + '.py'

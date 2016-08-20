@@ -123,7 +123,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     export _POSIX2_VERSION=199209
     export TMP=/tmp; export TMPDIR=$TMP; rm -rf $HOME/tmp 2> /dev/null
     export WINEDITOR=vi
-    unset PYTHONDONTWRITEBYTECODE
     ENV=
 
     if [ -x /usr/bin/vim ]; then

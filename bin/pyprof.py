@@ -144,7 +144,7 @@ class Main(object):
                 )
 
         python3 = command_mod.CommandFile(sys.executable)
-        python3.set_args(['-m', 'cProfile', '-o', stats_file])
+        python3.set_args(['-B', '-m', 'cProfile', '-o', stats_file])
 
         command = cls._get_command(module_file, module_args)
 

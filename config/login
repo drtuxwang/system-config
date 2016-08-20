@@ -70,7 +70,6 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     setenv _POSIX2_VERSION 199209
     setenv TMP /tmp; setenv TMPDIR $TMP; rm -rf $HOME/tmp >& /dev/null
     setenv WINEDITOR vi
-    unsetenv PYTHONDONTWRITEBYTECODE
 
     if ( -x /usr/bin/vim ) then
         alias vi "vim -N -n -i NONE -T xterm"

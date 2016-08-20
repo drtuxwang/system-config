@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.9 (2016-07-23)
+Version 2.1.0 (2016-08-20)
 """
 
 import copy
@@ -37,7 +37,7 @@ class Task(object):
             try:
                 with open(cmdline[0], errors='replace') as ifile:
                     if ifile.readline().startswith('#!/usr/bin/env python'):
-                        self._cmdline = [sys.executable] + cmdline
+                        self._cmdline = [sys.executable, '-B'] + cmdline
             except OSError:
                 pass
         self._status = {'output': [], 'error': [], 'exitcode': 0}
@@ -306,7 +306,7 @@ class Background(Task):
         if info['pattern']:
             os.environ['_SUBTASK_MOD_BACKGROUND_FILTER'] = info['pattern']
             subprocess.Popen(
-                [sys.executable, __file__] + cmdline,
+                [sys.executable, '-B', __file__] + cmdline,
                 shell=pipe,
                 env=info['env']
             )
@@ -486,7 +486,7 @@ class Daemon(Task):
 
         os.environ['_SUBTASK_MOD_DAEMON_FILE'] = info['file']
         subprocess.Popen(
-            [sys.executable, __file__] +
+            [sys.executable, '-B', __file__] +
             cmdline, shell=pipe, env=info['env']
         )
         del os.environ['_SUBTASK_MOD_DAEMON_FILE']

@@ -169,4 +169,8 @@ if [ ! "`echo \":$PATH:\" | grep \":\`dirname $0\`:\"`" ]; then
     PATH=`dirname $0`:$PATH; export PATH
 fi
 
-exec $PYTHON -B "$@"
+if [ "$1" = "-B" ]; then
+    exec $PYTHON "$@"
+else
+    exec $PYTHON -B "$@"
+fi
