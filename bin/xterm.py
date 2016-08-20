@@ -158,7 +158,7 @@ class Iterm(Terminal):
         """
         Start terminal
         """
-        for host in self._options.get_hosts():
+        for _ in self._options.get_hosts():
             cmdline = self._command.get_cmdline()
             subtask_mod.Background(cmdline).run(pattern=self._pattern)
 
