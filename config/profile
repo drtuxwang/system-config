@@ -13,7 +13,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
             if [ ! "$TMUX_SHELL" ]; then
                 export TMUX_SHELL="$$"
                 set -o ignoreeof
-                alias exit='echo Use \"tmux detach\" to detach session or \"logout\" to leave the shell.'
+                alias exit='echo Use \"tmux detach\" or \"logout\" to destory session.'
             fi
         elif [ ! "$SSH_CONNECTION" ]; then
             SESSION=`tmux ls | grep -v attached | head -1 | cut -f1 -d:`
@@ -123,6 +123,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     export _POSIX2_VERSION=199209
     export TMP=/tmp; export TMPDIR=$TMP; rm -rf $HOME/tmp 2> /dev/null
     export WINEDITOR=vi
+    unset PYTHONDONTWRITEBYTECODE
     ENV=
 
     if [ -x /usr/bin/vim ]; then
