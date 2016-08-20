@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.8.6'
-VERSION = 20160813
+RELEASE = '4.8.7'
+VERSION = 20160820
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -1296,8 +1296,8 @@ class LinuxSystem(PosixSystem):
             env['LANG'] = 'en_US'
         ifconfig = command_mod.CommandFile('/sbin/ifconfig', args=['-a'])
         task = subtask_mod.Batch(ifconfig.get_cmdline())
-        task.run(env=env, pattern='inet[6]? addr')
-        isjunk = re.compile('.*inet[6]? addr[a-z]*:')
+        task.run(env=env, pattern='inet[6]?( addr)?')
+        isjunk = re.compile('.*inet[6]? (addr[a-z]*[: ])?')
         for line in task.get_output():
             info['Net IPvx Address'].append(isjunk.sub(' ', line).split()[0])
         return info
@@ -1733,7 +1733,7 @@ class LinuxSystem(PosixSystem):
                 name = 'RHEV'
             elif 'VirtualBox' in data:
                 name = 'VirtualBox'
-            elif 'vmWare' in data.lower():
+            elif 'vmware' in data.lower():
                 name = 'VMware'
             elif ' Xen ' in data:
                 name = 'Xen'
@@ -1751,7 +1751,7 @@ class LinuxSystem(PosixSystem):
                             name = 'RHEV'
                         elif 'VBOX ' in data:
                             name = 'VirtualBox'
-                        elif 'vmWare' in data.lower():
+                        elif 'vmware' in data.lower():
                             name = 'VMware'
                 except OSError:
                     pass
