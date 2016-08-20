@@ -160,8 +160,6 @@ class Iterm(Terminal):
         """
         for host in self._options.get_hosts():
             cmdline = self._command.get_cmdline()
-            if host != self._myhost:
-                print('debugxxx')
             subtask_mod.Background(cmdline).run(pattern=self._pattern)
 
 
