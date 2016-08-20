@@ -1,17 +1,36 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Docker container init script
 #
 
-# Change Docker's "owner" user ID
-if [ "$UID" -a "$UID" != 0 ]; then
-    sed -i "s/owner:x:1000:/owner:x:$UID:/" /etc/passwd
-    chown -R $UID:100 /home/owner
+echo -e "Running \"$0\"..."
+
+if [ ! "$ID" ]; then
+    exec /bin/bash -l
 fi
 
-# Run using docker user account
-if [ $# != 0 ]; then
-    sudo -u owner "$@"
+# Processi "id" output
+ID=$(echo "$ID" | sed -e "s/[=()]/ /g")
+ARRAY=(${ID//:/ })
+USER_ID=${ARRAY[1]}
+USER_NAME=${ARRAY[2]}
+GROUP_ID=${ARRAY[4]}
+GROUP_NAME=${ARRAY[5]}
+
+# Create user account
+echo "$GROUP_NAME:x:$GROUP_ID:" >> /etc/group
+echo "$USER_NAME:x:$USER_ID:$GROUP_ID:Docker User:/home/$USER_NAME:/bin/bash" >> /etc/passwd
+echo -e "$USER_NAME ALL=(ALL) NOPASSWD: ALL\nDefaults umask = 0022\nDefaults umask_override" \
+    >> /etc/sudoers.d/docker
+
+# Create "/home/docker" directory
+if [ ! -d "/home/docker" ]; then
+    mkdir /home/$USER_NAME
 else
-    sudo -u owner bash -l
+    mv /home/docker /home/$USER_NAME
 fi
+chown -R $USER_ID:$GROUP_ID /home/$USER_NAME
+
+# Start "bash" shell
+cd /home/$USER_NAME
+HOME=/home/$USER_NAME sudo -u $USER_NAME bash -l
