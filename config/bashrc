@@ -1,12 +1,15 @@
-PS1='\[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[00m\] \$ '
+PS1='\[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[00m\] # '
 export PATH="/opt/software/bin:$PATH"
 alias df="df -k"
 alias du="du -k"
 alias ftp="ftp -i"
-alias ls="ls -CF --color=never"
-alias quota="quota -v"
-if [ -x /usr/bin/vim ]; then
-    alias vi="vim -N -n -u NONE"
+if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]; then
+    alias ls="ls -C --time-style=long-iso --color=always"
+else
+    alias ls="ls -C --color=always"
 fi
-unalias cp egrep fgrep grep mv p rm which 2> /dev/null
+if [ -x /usr/bin/vim ]; then
+    alias vi="vim -N -n -i NONE -T xterm"
+fi
+unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 unset command_not_found_handle
