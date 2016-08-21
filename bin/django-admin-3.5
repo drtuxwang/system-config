@@ -2,7 +2,7 @@
 #
 # Wrapper for Python "bin" script
 #
-VERSION=20160731
+VERSION=20160821
 
 #
 # Test for GNU Textutil POSIX 200112 bug
@@ -189,4 +189,8 @@ if [ ! "`head -1 $SCRIPT 2> /dev/null | grep bin/python`" ]; then
     exec $SCRIPT "$@"
 fi
 
-exec $PYTHON -B $SCRIPT "$@"
+if [ "$1" = "-B" ]; then
+    exec $PYTHON $SCRIPT "$@"
+else
+    exec $PYTHON -B $SCRIPT "$@"
+fi
