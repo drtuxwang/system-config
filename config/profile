@@ -121,10 +121,22 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     export LC_COLLATE=C
     export HISTFILE=
     export _POSIX2_VERSION=199209
+    export PYTHONDONTWRITEBYTECODE=1
     export TMP=/tmp; export TMPDIR=$TMP; rm -rf $HOME/tmp 2> /dev/null
     export WINEDITOR=vi
     ENV=
 
+    alias df="df -k"
+    alias du="du -k"
+    alias ftp="ftp -i -v"
+    if [ "$BASH" ]; then
+        alias h="history 256"
+    else
+        alias h='fc -l 1 2> /dev/null | tail -256'
+    fi
+    alias ls="ls -C"
+    alias quota="quota -v"
+    alias resize='resize; eval `\resize`'
     if [ -x /usr/bin/vim ]; then
         alias vi="vim -N -n -i NONE -T xterm"
     fi
@@ -140,6 +152,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
             alias scp="scp -F $HOME/.ssh/config"
         fi
     fi
+    unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop 2> /dev/null
@@ -159,19 +172,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         alias cd$DIR='echo "cd \"$cd'$DIR'\""; cd "$cd'$DIR'"'
     done
     alias scd='env | grep "^cd[a-z]=" | grep -v "=$HOME/Desktop$" | sort'
-
-    alias df="df -k"
-    alias du="du -k"
-    alias ftp="ftp -i -v"
-    if [ "$BASH" ]; then
-        alias h="history 256"
-    else
-        alias h='fc -l 1 2> /dev/null | tail -256'
-    fi
-    alias ls="ls -C"
-    alias quota="quota -v"
-    alias resize='resize; eval `\resize`'
-    unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 
     # Platform specific
     case `uname` in

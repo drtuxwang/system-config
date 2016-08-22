@@ -68,9 +68,17 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     umask 027
     setenv LC_COLLATE C
     setenv _POSIX2_VERSION 199209
+    setenv PYTHONDONTWRITEBYTECODE 1
     setenv TMP /tmp; setenv TMPDIR $TMP; rm -rf $HOME/tmp >& /dev/null
     setenv WINEDITOR vi
 
+    set history=256
+    alias df "df -k"
+    alias du "du -k"
+    alias ftp "ftp -i -v"
+    alias h history 256
+    alias ls "ls -C"
+    alias quota "quota -v"
     if ( -x /usr/bin/vim ) then
         alias vi "vim -N -n -i NONE -T xterm"
     endif
@@ -86,6 +94,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
             alias scp "scp -F $HOME/.ssh/config"
         endif
     endif
+    unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
 
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop >& /dev/null
@@ -105,15 +114,6 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         alias cd$DIR 'echo "cd \"$cd'$DIR'\""; cd "$cd'$DIR'"'
     end
     alias scd 'env | grep "^cd[a-z]=" | grep -v "=$HOME/Desktop$" | sort'
-
-    set history=256
-    alias df "df -k"
-    alias du "du -k"
-    alias ftp "ftp -i -v"
-    alias h history 256
-    alias ls "ls -C"
-    alias quota "quota -v"
-    unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
 
     # Platform specific
     switch (`uname`)
