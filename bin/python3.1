@@ -2,7 +2,7 @@
 #
 # Wrapper for "python"
 #
-VERSION=20160820
+VERSION=20160822
 
 #
 # Test for GNU Textutil POSIX 200112 bug
@@ -169,8 +169,4 @@ if [ ! "`echo \":$PATH:\" | grep \":\`dirname $0\`:\"`" ]; then
     PATH=`dirname $0`:$PATH; export PATH
 fi
 
-if [ "$1" = "-B" ]; then
-    exec $PYTHON "$@"
-else
-    exec $PYTHON -B "$@"
-fi
+exec $PYTHON "$@"

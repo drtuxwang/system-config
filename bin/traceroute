@@ -7,7 +7,7 @@ BIN_DIR=`dirname "$0"`
 PY_MAIN=`basename "$0"`
 
 if [ -x "$BIN_DIR/python3" ]; then
-    exec "$BIN_DIR/python3" "$BIN_DIR/pyld.py" $PY_MAIN "$@"
+    exec "$BIN_DIR/python3" -B "$BIN_DIR/pyld.py" $PY_MAIN "$@"
 else
     exec "$BIN_DIR/pyld.py" $PY_MAIN "$@"
 fi
