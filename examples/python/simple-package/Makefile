@@ -25,7 +25,8 @@ unittest:
 	python3 -m unittest discover --buffer .
 
 build: test clean
-	@echo "\n*** Building Python EGG package ***"
+	@echo "\n*** Building Python packages ***"
 	python3 setup.py bdist_egg
-	rm -rf */__pycache__
-	@echo "\n*** Building successfull ***"
+	python3 setup.py bdist_wheel
+	ls -l dist/*
+	@echo "\n*** Building packages successfull ***"
