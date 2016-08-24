@@ -1,0 +1,11 @@
+#!/bin/bash
+
+export PYTHONPATH=$PWD/dist
+cd $HOME
+
+cat << EOF | python3 -i
+from pkg_resources import require
+require('simple')
+import hello.message
+hello.message.show()
+EOF

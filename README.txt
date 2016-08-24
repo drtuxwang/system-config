@@ -1059,6 +1059,12 @@ examples/docker/debian-lxc/Makefile
 examples/docker/ubuntu-lxc/Dockerfile                 Ubuntu docker image
 examples/docker/ubuntu-lxc/Makefile
 
+examples/python/simple-egg/Makefile                   Simple Egg demo
+examples/python/simple-egg/setup.py
+examples/python/simple-egg/RUN
+examples/python/simple-egg/hello/message.py
+examples/python/simple-egg/hello/__init__.py
+
 examples/python/simple-flask/Makefile                 Simple Flask demo
 examples/python/simple-flask/RUN
 examples/python/simple-flask/simple_flask.py
