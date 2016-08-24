@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export FLASK_APP="flask_demo"
+export FLASK_APP="simple_flask"
 export FLAGS=
 
 # FOR SECURITY PLEASE DO NOT enable debug and public access together
