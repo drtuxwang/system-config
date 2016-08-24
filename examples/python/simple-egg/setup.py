@@ -13,7 +13,7 @@ setup(
     author_email='hob4bit@googlemail.com',
     url='https://github.com/drtuxwang/system-config',
     packages=['hello'],
-    long_description="Simple Python Egg exmaple that prints hello world!",
+    long_description="Simple Python Egg example that prints hello world!",
     py_modules=[],
     keywords='simple hello world',
     license='GPL',

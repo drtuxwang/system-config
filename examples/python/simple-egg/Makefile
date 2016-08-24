@@ -1,7 +1,7 @@
 default: build
 
 clean:
-	 rm -rf build dist simple.egg-info
+	rm -rf build dist simple.egg-info
 
 test: py_compile pep8 pylint unittest
 	@echo "\n*** Tests successfull ***"
