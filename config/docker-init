@@ -31,6 +31,5 @@ else
 fi
 chown -R $USER_ID:$GROUP_ID /home/$USER_NAME
 
-# Start "bash" shell
-cd /home/$USER_NAME
-HOME=/home/$USER_NAME sudo -u $USER_NAME bash -l
+# Switch to user
+su - $USER_NAME
