@@ -7,6 +7,7 @@ Zhong Hua Speak Chinese TTS software.
 
 import argparse
 import glob
+import json
 import os
 import re
 import signal
@@ -17,7 +18,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '3.1.4'
+RELEASE = '4.0.0'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -301,16 +302,54 @@ class ChineseDictionary(object):
         self._options = options
         self._isjunk = re.compile('[()| ]')
         self._issound = re.compile(r'[A-Z]$|[a-z]+\d+')
-        self._mappings = {}
-        self._max_block = 0
-        self.readmap(os.path.join(options.get_speak_dir(), 'en_list'))
+
         if options.get_dialect() == 'zhy':
-            self.readmap(os.path.join(options.get_speak_dir(), 'zhy_list'))
-            self.readmap(os.path.join(options.get_speak_dir(), 'zhy_listck'))
+            file = os.path.join(options.get_speak_dir(), 'zhy.json')
         else:
-            self.readmap(os.path.join(options.get_speak_dir(), 'zh_list'))
-            self.readmap(os.path.join(options.get_speak_dir(), 'zh_listx'))
-            self.readmap(os.path.join(options.get_speak_dir(), 'zh_listck'))
+            file = os.path.join(options.get_speak_dir(), 'zh.json')
+        if not os.path.isfile(file):
+            self.create_cache()
+
+        try:
+            with open(file) as ifile:
+                self._mappings = json.load(ifile)
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot open "' + file + '" dialect file.')
+        self._max_block = max([len(key) for key in self._mappings])
+
+    def create_cache(self):
+        """
+        Create JSON cache files
+        """
+        directory = self._options.get_speak_dir()
+
+        file = os.path.join(directory, 'zh.json')
+        print('Creating "{0:s}"...'.format(file))
+        self._mappings = {}
+        self.readmap(os.path.join(directory, 'en_list'))
+        self.readmap(os.path.join(directory, 'zh_list'))
+        self.readmap(os.path.join(directory, 'zh_listx'))
+        self.readmap(os.path.join(directory, 'zh_listck'))
+        try:
+            with open(file, 'w', newline='\n') as ofile:
+                print(json.dumps(self._mappings), file=ofile)
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + file + '" file.')
+
+        file = os.path.join(directory, 'zhy.json')
+        print('Creating "{0:s}"...'.format(file))
+        self._mappings = {}
+        self.readmap(os.path.join(directory, 'en_list'))
+        self.readmap(os.path.join(directory, 'zhy_list'))
+        self.readmap(os.path.join(directory, 'zhy_listck'))
+        try:
+            with open(file, 'w', newline='\n') as ofile:
+                print(json.dumps(self._mappings), file=ofile)
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + file + '" file.')
 
     def readmap(self, file):
         """
@@ -328,7 +367,6 @@ class ChineseDictionary(object):
                         self._mappings[text] = []
                         for match in self._issound.finditer(sounds):
                             self._mappings[text].append(match.group())
-                        self._max_block = max(self._max_block, len(text))
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot open "' + file + '" dialect file.')
