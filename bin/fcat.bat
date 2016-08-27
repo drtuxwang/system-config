@@ -1,2 +1,2 @@
 @echo off
-"%~dp0python3.bat" "%~dp0\pyld.py" fcat %*
+"%~dp0python3.bat" -B "%~dp0\pyld.py" fcat %*

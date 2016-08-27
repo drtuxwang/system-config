@@ -1,2 +1,2 @@
 @echo off
-%~dp0..\sbin\python3.4.bat Scripts\pylint.exe %*
+%~dp0..\sbin\python3.4.bat -B Scripts\pylint.exe %*

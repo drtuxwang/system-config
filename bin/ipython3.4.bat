@@ -1,2 +1,2 @@
 @echo off
-%~dp0..\sbin\python3.4.bat Scripts\ipython.exe %*
+%~dp0..\sbin\python3.4.bat -B Scripts\ipython.exe %*

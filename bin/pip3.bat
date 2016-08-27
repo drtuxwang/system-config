@@ -1,2 +1,2 @@
 @echo off
-%~dp0..\sbin\python3.bat Scripts\pip.exe %*
+%~dp0..\sbin\python3.bat -B Scripts\pip.exe %*

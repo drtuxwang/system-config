@@ -1,2 +1,2 @@
 @echo off
-%~dp0..\sbin\python2.7.bat Tools\Scripts\2to3.py %*
+%~dp0..\sbin\python2.7.bat -B -B Tools\Scripts\2to3.py %*

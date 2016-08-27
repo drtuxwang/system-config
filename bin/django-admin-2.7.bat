@@ -1,2 +1,2 @@
 @echo off
-%~dp0..\sbin\python2.7.bat Scripts\django-admin.exe %*
+%~dp0..\sbin\python2.7.bat -B -B Scripts\django-admin.exe %*
