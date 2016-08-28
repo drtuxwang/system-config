@@ -55,7 +55,7 @@ bin/breaktimer         Break reminder timer
 bin/breaktimer.py      (10 min default)
 
 bin/bz2                Compress a file in BZIP2 format (allowing non systems port)
-bin/bz2.py
+bin/_bz2.py
 
 bin/calendar           Displays month or year calendar
 bin/calendar.bat
