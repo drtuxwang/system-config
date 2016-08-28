@@ -13,4 +13,4 @@ run:
 	@echo "\n*** Running Docker container (with X-windows)***"
 	docker run --interactive --tty --memory=1024mb \
 		--env ID="`id`" --env DISPLAY=$(DISPLAY) --volume /tmp/.X11-unix:/tmp/.X11-unix \
-		--name ubuntu-lxc --hostname ubuntu-lxc --rm ubuntu-lxc
+		--name ubuntu-lxc --hostname ubuntu-lxc --rm ubuntu-lxc || exit 0
