@@ -38,7 +38,6 @@ for FILE in .recently-used.xbel .local/share/recently-used.xbel; do
     rm -f $FILE 2> /dev/null
     mkdir -p $FILE 2> /dev/null
 done
-myqsd 1
 
 eval `/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg` 2> /dev/null
 menu
