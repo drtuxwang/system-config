@@ -20,15 +20,18 @@ COPY bashrc /root/.bashrc
 COPY vimrc /root/.vimrc
 
 # Create "/home/docker" directory
-RUN mkdir -p /home/docker/Desktop
 COPY profile /home/docker/.profile
+COPY terminalrc /home/docker/.config/xfce4/terminal/terminalrc
 COPY vimrc /home/docker/.vimrc
+RUN mkdir -p /home/docker/Desktop && \
+    echo "export XDG_CURRENT_DESKTOP=XFCE" > /home/docker/.profile-local
 
 # Set UID script for X-server
 COPY docker-init /etc/docker-init
 
 # Run "/etc/docker-init" script
 USER root
-ENV HOME /root
+ENV HOME=/root
+ENV XDG_CURRENT_DESKTOP=XFCE
 WORKDIR /root
 CMD /etc/docker-init

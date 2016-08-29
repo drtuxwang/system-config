@@ -6,8 +6,8 @@ build:
 		../../../config/profile ../../../config/terminalrc ../../../config/vimrc .
 	bin/fmod bin/* *
 	docker build -t ubuntu-lxc .
-	docker images
 	rm -rf bin bashrc docker-init profile terminalrc vimrc
+	docker images
 
 run:
 	@echo "\n*** Running Docker container (with X-windows)***"
