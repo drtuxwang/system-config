@@ -4,10 +4,10 @@
 #
 
 BIN_DIR=`dirname "$0"`
+PYTHON="$BIN_DIR/python3"
+if [ ! -x "$PYTHON" ]; then
+    PYTHON="python3"
+fi
 PY_MAIN="-pyldname=`basename \"$0\"` _`basename \"$0\" | sed -e \"s/-/_/g\"`"
 
-if [ -x "$BIN_DIR/python3" ]; then
-    exec "$BIN_DIR/python3" -B "$BIN_DIR/pyld.py" $PY_MAIN "$@"
-else
-    exec "$BIN_DIR/pyld.py" $PY_MAIN "$@"
-fi
+exec "$PYTHON" -B "$BIN_DIR/pyld.py" $PY_MAIN "$@"
