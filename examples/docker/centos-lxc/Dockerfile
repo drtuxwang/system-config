@@ -3,15 +3,14 @@ FROM centos:7
 # Install packages
 RUN yum -y update && \
     yum -y install net-tools sudo vim wget && \
-    yum -y install xorg-x11-server-utils xorg-x11-utils xterm && \
+    yum -y install xorg-x11-server-utils xorg-x11-utils xfce4-terminal && \
     yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
     yum -y install python34 && \
     wget https://bootstrap.pypa.io/get-pip.py && \
     python3 get-pip.py && \
     rm get-pip.py && \
     yum -y install python-pip.noarch
-RUN python3 -m pip install pep8 pylint && \
-    python -m pip install pep8 pylint
+RUN python3 -m pip install pep8 pylint
 
 # Python scripts
 COPY bin /opt/software/bin
