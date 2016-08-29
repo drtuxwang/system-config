@@ -55,7 +55,7 @@ class Options(object):
 
         if not os.path.isfile(self._args.source[0]):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + self._args.source +
+                sys.argv[0] + ': Cannot find "' + self._args.source[0] +
                 '" file.'
             )
 
