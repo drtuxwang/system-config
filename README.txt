@@ -113,8 +113,6 @@ bin/django-admin-2.7
 bin/django-admin-2.7.bat
 bin/django-admin-3.4
 bin/django-admin-3.4.bat
-bin/django-admin-3.5
-bin/django-admin-3.6
 
 bin/eclipse            eclipse wrapper (allowing non systems port)
 bin/eclipse.py
@@ -211,10 +209,7 @@ bin/flashgot-term      Firefox Flashgot terminal startup script
 
 bin/flask              Python "flask" script wrappers (allowing non systems port)
 bin/flask-2.7
-bin/flask-3.3
 bin/flask-3.4
-bin/flask-3.5
-bin/flask-3.6
 
 bin/flink              Recursively link all files
 bin/flink.py
@@ -512,14 +507,8 @@ bin/2ot3               Python "2to3" script wrappers (allowing non systems port)
 bin/2to3.bat
 bin/2to3-2.7
 bin/2to3-2.7.bat
-bin/2to3-3.0
-bin/2to3-3.1
-bin/2to3-3.2
-bin/2to3-3.3
 bin/2to3-3.4
 bin/2to3-3.4.bat
-bin/2to3-3.5
-bin/2to3-3.6
 
 bin/ipdb               Python "ipdb" script wrappers (allowing non systems port)
 bin/ipdb.bat
@@ -529,11 +518,8 @@ bin/ipdb2.7
 bin/ipdb2.7.bat
 bin/ipdb3
 bin/ipdb3.bat
-bin/ipdb3.3
 bin/ipdb3.4
 bin/ipdb3.4.bat
-bin/ipdb3.5
-bin/ipdb3.6
 
 bin/ipython            Python "ipython" script wrappers (allowing non systems port)
 bin/ipython.bat
@@ -543,21 +529,15 @@ bin/ipython2.7
 bin/ipython2.7.bat
 bin/ipython3
 bin/ipython3.bat
-bin/ipython3.3
 bin/ipython3.4
 bin/ipython3.4.bat
-bin/ipython3.5
-bin/ipython3.6
 
 bin/pep8               Python "pep8" script wrappers (allowing non systems port)
 bin/pep8.bat
 bin/pep8-2.7
 bin/pep8-2.7.bat
-bin/pep8-3.3
 bin/pep8-3.4
 bin/pep8-3.4.bat
-bin/pep8-3.5
-bin/pep8-3.6
 
 bin/pidgin             pidgin wrapper (allowing non systems port)
 bin/pidgin.bat
@@ -571,11 +551,8 @@ bin/pip2.7
 bin/pip2.7.bat
 bin/pip3
 bin/pip3.bat
-bin/pip3.3
 bin/pip3.4
 bin/pip3.4.bat
-bin/pip3.5
-bin/pip3.6
 
 bin/play               Play multimedia file/URL
 bin/play.py            (uses vlc and ffprobe)
@@ -608,14 +585,8 @@ bin/pydoc2.7
 bin/pydoc2.7.bat
 bin/pydoc3
 bin/pydoc3.bat
-bin/pydoc3.0
-bin/pydoc3.1
-bin/pydoc3.2
-bin/pydoc3.3
 bin/pydoc3.4
 bin/pydoc3.4.bat
-bin/pydoc3.5
-bin/pydoc3.6
 
 bin/pyld.py            Load Python main program as module (must have Main class)
 bin/test_pyld.py       Unit testing suite for "pyld.py"
@@ -626,8 +597,6 @@ bin/pylint-2.7
 bin/pylint-2.7.bat
 bin/pylint-3.4
 bin/pylint-3.4.bat
-bin/pylint-3.5
-bin/pylint-3.6
 
 bin/pyprof             Profile Python 3.x program
 bin/pyprof.bat
@@ -658,8 +627,6 @@ bin/pyvenv-2.7
 bin/pyvenv-2.7.bat
 bin/pyvenv-3.4
 bin/pyvenv-3.4.bat
-bin/pyvenv-3.5
-bin/pyvenv-3.6
 
 bin/pyz                Make a Python3 ZIP Application in PYZ format
 bin/pyz.py
