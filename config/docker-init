@@ -32,4 +32,4 @@ fi
 chown -R $USER_ID:$GROUP_ID /home/$USER_NAME
 
 # Switch to user
-su - $USER_NAME
+su - $USER_NAME -c "export DISPLAY=$DISPLAY; exec bash -l"
