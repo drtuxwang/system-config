@@ -11,18 +11,18 @@ RUN python3 -m pip install pep8 pylint
 COPY bin /opt/software/bin
 
 # Root setup
-COPY bashrc /root/.bashrc
-COPY vimrc /root/.vimrc
+COPY config/bashrc /root/.bashrc
+COPY config/vimrc /root/.vimrc
 
 # Create "/home/docker" directory
-COPY profile /home/docker/.profile
-COPY terminalrc /home/docker/.config/xfce4/terminal/terminalrc
-COPY vimrc /home/docker/.vimrc
+COPY config/profile /home/docker/.profile
+COPY config/terminalrc /home/docker/.config/xfce4/terminal/terminalrc
+COPY config/vimrc /home/docker/.vimrc
 RUN mkdir -p /home/docker/Desktop && \
     echo "export XDG_CURRENT_DESKTOP=XFCE" > /home/docker/.profile-local
 
 # Set UID script for X-server
-COPY docker-init /etc/docker-init
+COPY config/docker-init /etc/docker-init
 
 # Run "/etc/docker-init" script
 USER root

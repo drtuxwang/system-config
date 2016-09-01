@@ -2,11 +2,10 @@ default: build
 
 build:
 	@echo "\n*** Building Docker image ***"
-	cp -rp ../../../bin ../../../config/bashrc ../../../config/docker-init \
-		../../../config/profile ../../../config/terminalrc ../../../config/vimrc .
+	cp -rp ../../../bin ../../../config .
 	bin/fmod bin/* *
 	docker build -t debian-lxc .
-	rm -rf bin bashrc docker-init profile terminalrc vimrc
+	rm -rf bin config
 	docker images
 
 run:
