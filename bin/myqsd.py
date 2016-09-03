@@ -16,7 +16,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '2.7.6'
+RELEASE = '2.7.7'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -304,7 +304,7 @@ class Main(object):
             self._restart()
         print('Starting MyQS batch job scheduler...')
         myqsd = command_mod.CommandFile(
-            __file__,
+            __file__[:-3],
             args=['-daemon', str(self._slots)]
         )
         subtask_mod.Daemon(myqsd.get_cmdline()).run()
