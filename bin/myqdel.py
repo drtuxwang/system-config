@@ -12,7 +12,7 @@ import sys
 
 import task_mod
 
-RELEASE = '2.7.6'
+RELEASE = '2.7.7'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -124,7 +124,7 @@ class Main(object):
         if os.path.isfile(file):
             try:
                 with open(file, errors='replace') as ifile:
-                    if not self._force_flag():
+                    if not self._force_flag:
                         print(
                             'MyQS cannot delete batch job with jobid',
                             jobid,

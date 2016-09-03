@@ -16,7 +16,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '2.7.7'
+RELEASE = '2.7.8'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -278,7 +278,7 @@ class Main(object):
                                     errors='stop'
                                 )
                                 subtask_mod.Daemon(
-                                    myqexec.get_cmdline()).run(logfile=logfile)
+                                    myqexec.get_cmdline()).run(file=logfile)
                                 return
 
     def _scheduler_daemon(self):
