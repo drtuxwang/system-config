@@ -136,7 +136,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     fi
     alias ls="ls -C"
     alias quota="quota -v"
-    alias resize='resize; eval `\resize`'
+    alias resize='resize; eval `\\resize`'
     if [ -x /usr/bin/vim ]; then
         alias vi="vim -N -n -i NONE -T xterm"
     fi
