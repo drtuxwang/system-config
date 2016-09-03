@@ -17,9 +17,9 @@ bin/task_mod.py        Python task handling utility module [Draft]
 
 bin/7z                 Make a compressed archive in 7z format
 bin/7z.bat             (uses p7zip or 7zip)
-bin/_7z.py
+bin/7z_.py
 bin/7za
-bin/_7za.py
+bin/7za_.py
 
 bin/aftp               Automatic connection to FTP server anonymously
 bin/aftp.py
@@ -55,11 +55,11 @@ bin/breaktimer         Break reminder timer
 bin/breaktimer.py      (10 min default)
 
 bin/bz2                Compress a file in BZIP2 format (allowing non systems port)
-bin/_bz2.py
+bin/bz2_.py
 
 bin/calendar           Displays month or year calendar
 bin/calendar.bat
-bin/_calendar.py
+bin/calendar_.py
 
 bin/cdspeed            Set CD/DVD drive speed
 bin/cdspeed.py         ("$HOME/.config/cdspeed.json")
