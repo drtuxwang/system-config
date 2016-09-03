@@ -12,9 +12,10 @@ BoldAsFont=no
 ForegroundColour=0,153,0
 BackgroundColour=0,0,0
 CursorColour=255,0,0
+CursorType=block
 
 Black=34,34,34
-BoldBlack=5,85,85
+BoldBlack=85,85,85
 Red=204,34,34
 BoldRed=255,85,85
 Green=34,204,34
