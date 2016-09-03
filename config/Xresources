@@ -6,26 +6,26 @@ xterm*foreground:  #009900
 xterm*background:  #000000
 xterm*cursorColor: #ff0000
 ! Black & Dark Grey
-xterm*color0:  #555555
+xterm*color0:  #222222
 xterm*color8:  #555555
 ! Dark & Light Red
-xterm*color1:  #ff5555
+xterm*color1:  #cc2222
 xterm*color9:  #ff5555
 ! Dark & Light Green
-xterm*color2:  #55ff55
+xterm*color2:  #22cc22
 xterm*color10: #55ff55
 ! Dark & Light Yellow
-xterm*color3:  #ffff55
+xterm*color3:  #cccc22
 xterm*color11: #ffff55
 ! Dark & Light Blue
-xterm*color4:  #5555ff
+xterm*color4:  #2222cc
 xterm*color12: #5555ff
 ! Dark & Light Magenta
-xterm*color5:  #ff55ff
+xterm*color5:  #cc22cc
 xterm*color13: #ff55ff
 ! Dark & Light Cyan
-xterm*color6:  #55ffff
+xterm*color6:  #22cccc
 xterm*color14: #55ffff
 ! Light Grey & White
-xterm*color7:  #ffffff
+xterm*color7:  #cccccc
 xterm*color15: #ffffff
