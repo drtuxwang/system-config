@@ -12,3 +12,5 @@ fi
 # xreset
 # (sleep 1; firefox)
 # (sleep 1; chrome)
+
+# myqsd 1
