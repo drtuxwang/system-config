@@ -4,11 +4,13 @@ Python debugging tools module
 
 Copyright GPL v2: 2015-2016 By Dr Colin Kong
 
-Version 2.1.1 (2016-07-23)
+Version 2.2.0 (2016-09-03)
 """
 
+import os
 import sys
 import time
+import traceback
 
 import jsonpickle
 
@@ -69,3 +71,27 @@ class Dump(object):
         jsonpickle.set_encoder_options('json', indent=indent, sort_keys=True)
         cls.show(name + ' = ' + jsonpickle.encode(
             obj, unpicklable=False), file=file)
+
+    @classmethod
+    def trace(cls, file=None):
+        """
+        Trace process information.
+
+        file = Optional output file to append
+        """
+
+        lines = []
+        for line in traceback.format_stack():
+            lines.extend(line.strip().split('\n'))
+
+        data = {
+            'pid': os.getpid(),
+            'sys.argv': sys.argv,
+            'sys.executable': sys.executable,
+            'traceback': lines,
+        }
+        cls.list('traceback', data, file=file)
+
+
+if __name__ == '__main__':
+    help(__name__)
