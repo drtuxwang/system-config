@@ -126,6 +126,9 @@ ipdb[3-9].[0-9]|pydoc[3-9].[0-9])
 ipdb|pydoc)
     PYEXE="python2"
     ;;
+pep8)
+    PYEXE="python3"
+    ;;
 *[2-9].[0-9])
     PYEXE=`echo "$PYNAME" | sed -e 's/\(^.*\)\(...$\)/python\2/'`  # ie python3.4
     PYNAME=`echo "$PYNAME" | sed -e "s/-*...\$//"`  # ie pylint
