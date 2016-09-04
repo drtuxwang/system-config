@@ -16,10 +16,9 @@ bin/subtask_mod.py     Python sub task handling module
 bin/task_mod.py        Python task handling utility module [Draft]
 
 bin/7z                 Make a compressed archive in 7z format
-bin/7z.bat             (uses p7zip or 7zip)
-bin/7z_.py
+bin/7z.bat             (uses p7zip)
 bin/7za
-bin/7za_.py
+bin/p7zip.py
 
 bin/aftp               Automatic connection to FTP server anonymously
 bin/aftp.py
