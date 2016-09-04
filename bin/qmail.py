@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Quick commandline E-mailer.
+
+"$HOME/.address" stores sender E-mail
 """
 
 import argparse
@@ -9,15 +11,18 @@ import glob
 import os
 import re
 import signal
+import smtplib
 import sys
 
 import command_mod
 import subtask_mod
 
-RELEASE = '2.6.3'
+RELEASE = '3.0.0'
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+
+SOCKET_TIMEOUT = 10
 
 
 class Options(object):
@@ -79,10 +84,11 @@ class Options(object):
                     '" configuration file.'
                 )
         else:
-            my_address = getpass.getuser()
+            my_address = getpass.getuser() + '@localhost'
+            print('Creating "' + file + '"...')
             try:
                 with open(file, 'w', newline='\n') as ofile:
-                    print(my_address.encode(), file=ofile)
+                    print(my_address, file=ofile)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + file +
@@ -132,6 +138,55 @@ class Options(object):
         self._editor.set_args([self._tmpfile])
 
         self._my_address = self._address()
+
+
+class Mailer(object):
+    """
+    E-mail using SMTP servers.
+    """
+
+    def __init__(self, host):
+        """
+        host = SMTP server host
+        """
+        self._host = host
+        self._smtp = None
+
+        try:
+            self._smtp = smtplib.SMTP(host, timeout=SOCKET_TIMEOUT)
+        except Exception:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot connect to STMP server: ' + host)
+
+    def get_host(self):
+        """
+        Return server.
+        """
+        return self._host
+
+    def send(self, text):
+        """
+        Send E-mail to server.
+
+        text = E-mail header and body
+        """
+        sender = ''
+        addresses = []
+        for line in text.split('\n'):
+            if not line:
+                break
+            keyword = line.split(': ', 1)[0].lower()
+            if keyword == 'from':
+                sender = line.split(': ', 1)[1].strip()
+            elif keyword in ('to', 'cc', 'bcc'):
+                for address in line.split(': ', 1)[1].split(','):
+                    addresses.append(address.strip())
+
+        try:
+            self._smtp.sendmail(sender, addresses, text)
+        except Exception:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot send to STMP server: ' + self._host)
 
 
 class Main(object):
@@ -212,23 +267,19 @@ class Main(object):
             addresses = task.get_output()
         return addresses
 
-    def _send(self, options):
+    @staticmethod
+    def _send(options):
         print('Sending E-mail...')
-        sendmail = options.get_sendmail()
-        task = subtask_mod.Batch(sendmail.get_cmdline())
-        task.run(stdin=self._email)
-        if not task.has_output():
-            try:
-                os.remove(options.get_tmpfile())
-            except OSError:
-                pass
-        for line in task.get_output() + task.get_error():
-            print(line)
-        if task.get_exitcode():
-            raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
-            )
+        lines = []
+        with open(options.get_tmpfile(), errors='replace') as ifile:
+            for line in ifile:
+                lines.append(line.rstrip('\r\n'))
+        Mailer('localhost').send('\n'.join(lines))
+
+        try:
+            os.remove(options.get_tmpfile())
+        except OSError:
+            pass
 
     def _update(self):
         isemail = re.compile('(To|Cc|Bcc): ', re.IGNORECASE)
