@@ -9,12 +9,15 @@ let &titlestring=hostname().':%F  %y%r%m %a'
 set mouse=a
 set ttymouse=xterm
 
-" Spell Checking - Use "]=", "[=", "z=", "zg" & "zw"
+" Spell Checking
 set spell spelllang=en_gb
 highlight SpellBad cterm=underline ctermbg=0
 highlight SpellCap cterm=underline ctermbg=0
 highlight SpellLocal cterm=underline ctermbg=0
 highlight SpellRare cterm=underline ctermbg=0
+map n ]s  " Next
+map c zg  " Good word
+map r z=  " Replace word
 
 " Status line
 set ruler
