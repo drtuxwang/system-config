@@ -9,9 +9,12 @@ let &titlestring=hostname().':%F  %y%r%m %a'
 set mouse=a
 set ttymouse=xterm
 
-" Spell Checking - Use "z=", "zg" & "zw" (".vim/spell/en.utf-8.add")
+" Spell Checking - Use "]=", "[=", "z=", "zg" & "zw"
 set spell spelllang=en_gb
 highlight SpellBad cterm=underline ctermbg=0
+highlight SpellCap cterm=underline ctermbg=0
+highlight SpellLocal cterm=underline ctermbg=0
+highlight SpellRare cterm=underline ctermbg=0
 
 " Status line
 set ruler
