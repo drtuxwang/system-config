@@ -5,16 +5,16 @@ set scrolloff=3
 set title
 let &titlestring=hostname().':%F  %y%r%m %a'
 
-" Mouse support
-set mouse=a
-set ttymouse=xterm
-
 " Spell Checking
 set spell spelllang=en_gb
-highlight SpellBad cterm=underline ctermbg=0
-highlight SpellCap cterm=underline ctermbg=0
-highlight SpellLocal cterm=underline ctermbg=0
-highlight SpellRare cterm=underline ctermbg=0
+highlight clear SpellBad
+highlight SpellBad cterm=underline
+highlight clear SpellCap
+highlight SpellCap cterm=underline
+highlight clear SpellLocal
+highlight SpellLocal cterm=underline
+highlight clear SpellRare
+highlight SpellRare cterm=underline
 map n ]s  " Next
 map c zg  " Good word
 map r z=  " Replace word
@@ -26,15 +26,15 @@ set showcmd
 " Syntax highlighting
 syntax on
 set hlsearch
-set list listchars=tab:▸\ ,trail:·
+set list listchars=tab:▸\ ,
 set showmatch
 set tabstop=4
 highlight OverLength ctermbg=0 guibg=lightgrey
 match OverLength /\%101v.\+/
-highlight TabChar ctermbg=0 guibg=lightgrey
-2match TabChar /\t/
 highlight TrailingSpace ctermbg=0 guibg=lightgrey
-match TrailingSpace /\s\+$/
+2match TrailingSpace /\s\+$/
+highlight TabChar ctermbg=0 guibg=lightgrey
+autocmd BufWritePre * %s/▸   /	/ge
 
 " Turn off annoying features
 set lazyredraw
