@@ -14,7 +14,7 @@ MiscCycleTabs=TRUE
 MiscTabCloseButtons=TRUE
 MiscTabCloseMiddleClick=TRUE
 MiscTabPosition=GTK_POS_TOP
-MiscHighlightUrls=TRUE
+MiscHighlightUrls=FALSE
 TitleMode=TERMINAL_TITLE_REPLACE
 CommandUpdateRecords=FALSE
 CommandLoginShell=TRUE
@@ -24,4 +24,5 @@ ColorForeground=#000099990000
 ColorBackground=#000000000000
 ColorPalette=#222222222222;#ffff55555555;#5555ffff5555;#ffffffff5555;#55555555ffff;#ffff5555ffff;#5555ffffffff;#ffffffffffff;#222222222222;#ffff55555555;#5555ffff5555;#ffffffff5555;#55555555ffff;#ffff5555ffff;#5555ffffffff;#ffffffffffff
 ColorCursor=#ffff00000000
+MiscScrollAlternateScreen=TRUE
 
