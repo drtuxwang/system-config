@@ -15,8 +15,8 @@ highlight clear SpellLocal
 highlight SpellLocal cterm=underline
 highlight clear SpellRare
 highlight SpellRare cterm=underline
-map n ]s  " Next
-map c zg  " Good word
+map . ]s  " '>' for Next
+map = zg  " '+' for Good word
 map r z=  " Replace word
 
 " Status line
