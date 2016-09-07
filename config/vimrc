@@ -34,7 +34,7 @@ match OverLength /\%101v.\+/
 highlight TrailingSpace ctermbg=0 guibg=lightgrey
 2match TrailingSpace /\s\+$/
 highlight TabChar ctermbg=0 guibg=lightgrey
-autocmd BufWritePre * %s/▸   /	/ge
+autocmd BufWritePre * %s/▸\   /	/ge
 
 " Turn off annoying features
 set lazyredraw
