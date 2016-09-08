@@ -251,9 +251,6 @@ bin/fsort              Unicode sort lines of a file
 bin/fsort.bat
 bin/fsort.py
 
-bin/fspell             Check spelling of file
-bin/fspell.py          (uses aspell)
-
 bin/fstat              Display file status
 bin/fstat.bat
 bin/fstat.py
