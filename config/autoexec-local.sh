@@ -2,13 +2,13 @@
 
 start_app()
 {
-    for TRY in `seq 3`; do
+    echo "Starting \"$1\"..."
+    "$@" &
+    sleep 5
     if [ ! "`ps | grep \" $1\$\"`" ]; then
-       echo "Starting \"$1\"..."
-       $1 &
+        echo "Restarting \"$1\"..."
+        "$@" &
     fi
-    sleep 3
-    done
 }
 
 
