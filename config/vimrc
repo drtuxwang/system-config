@@ -22,7 +22,7 @@ nmap r z=  " Replace word
 nmap = z=  " Replace word
 nmap * z=  " Replace word
 nmap + zg  " Good word
-nmap - zug  " Good word
+nmap - zug  " Undo good word
 
 " Status line
 set ruler
