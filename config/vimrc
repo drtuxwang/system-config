@@ -17,9 +17,11 @@ highlight clear SpellRare
 highlight SpellRare cterm=underline
 nmap . ]s  " Next
 nmap > ]s  " Next
-nmap + zg  " Good word
 nmap r z=  " Replace word
 nmap = z=  " Replace word
+nmap * z=  " Replace word
+nmap + zg  " Good word
+nmap - zug  " Good word
 
 " Status line
 set ruler
