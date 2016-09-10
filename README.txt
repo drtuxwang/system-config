@@ -106,13 +106,6 @@ bin/df.py              (KB default and fix format problems)
 bin/dhcptable          Shows local DHCP hosts
 bin/dhcptable.py
 
-bin/django-admin       Python "django-admin" script wrappers (allowing non systems port)
-bin/django-admin.bat
-bin/django-admin-2.7
-bin/django-admin-2.7.bat
-bin/django-admin-3.4
-bin/django-admin-3.4.bat
-
 bin/eclipse            eclipse wrapper (allowing non systems port)
 bin/eclipse.py
 
@@ -205,10 +198,6 @@ bin/fixwav             Normalize volume of wave files (-16.0dB rms mean volume)
 bin/fixwav.py          (uses normalize-audio)
 
 bin/flashgot-term      Firefox Flashgot terminal startup script
-
-bin/flask              Python "flask" script wrappers (allowing non systems port)
-bin/flask-2.7
-bin/flask-3.4
 
 bin/flink              Recursively link all files
 bin/flink.py
@@ -499,34 +488,38 @@ bin/pcunix.bat         Start PCUNIX on Windows
 bin/pdf                Create PDF file from text/images/postscript/PDF files
 bin/pdf.py
 
-bin/2ot3               Python "2to3" script wrappers (allowing non systems port)
+bin/2to3               Python 3.x script wrappers (allowing non systems port)
 bin/2to3.bat
-bin/2to3-2.7
-bin/2to3-2.7.bat
 bin/2to3-3.4
 bin/2to3-3.4.bat
-
-bin/ipdb               Python "ipdb" script wrappers (allowing non systems port)
-bin/ipdb.bat
-bin/ipdb2
-bin/ipdb2.bat
-bin/ipdb2.7
-bin/ipdb2.7.bat
+bin/django-admin
+bin/django-admin.bat
+bin/flask
+bin/flask.bat
 bin/ipdb3
 bin/ipdb3.bat
-bin/ipdb3.4
-bin/ipdb3.4.bat
-
-bin/ipython            Python "ipython" script wrappers (allowing non systems port)
+bin/ipython
 bin/ipython.bat
-bin/ipython2
-bin/ipython2.bat
-bin/ipython2.7
-bin/ipython2.7.bat
 bin/ipython3
-bin/ipython3.bat
-bin/ipython3.4
 bin/ipython3.4.bat
+bin/pep8
+bin/pep8.bat
+bin/pip
+bin/pip.bat
+bin/pip3
+bin/pip3.bat
+bin/pip3.4
+bin/pip3.4.bat
+bin/pydoc3
+bin/pydoc3.bat
+bin/pydoc3.4
+bin/pydoc3.4.bat
+bin/pylint
+bin/pylint.bat
+bin/pyvenv
+bin/pyvenv.bat
+bin/pyvenv-3.4
+bin/pyvenv-3.4.bat
 
 bin/pidgin             pidgin wrapper (allowing non systems port)
 bin/pidgin.bat
@@ -556,15 +549,6 @@ bin/pop.py
 bin/procexp            Windows procexp wrapper (allowing non systems port)
 bin/procexp.bat
 bin/procexp.py
-
-bin/pydoc              Python "pydoc" script wrappers (allowing non systems port)
-bin/pydoc.bat
-bin/pydoc2.7
-bin/pydoc2.7.bat
-bin/pydoc3
-bin/pydoc3.bat
-bin/pydoc3.4
-bin/pydoc3.4.bat
 
 bin/pyld.py            Load Python main program as module (must have Main class)
 bin/test_pyld.py       Unit testing suite for "pyld.py"
