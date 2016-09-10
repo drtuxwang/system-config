@@ -528,27 +528,9 @@ bin/ipython3.bat
 bin/ipython3.4
 bin/ipython3.4.bat
 
-bin/pep8               Python "pep8" script wrappers (allowing non systems port)
-bin/pep8.bat
-bin/pep8-2.7
-bin/pep8-2.7.bat
-bin/pep8-3.4
-bin/pep8-3.4.bat
-
 bin/pidgin             pidgin wrapper (allowing non systems port)
 bin/pidgin.bat
 bin/pidgin.py
-
-bin/pip                Python "pip" script wrappers (allowing non systems port)
-bin/pip.bat
-bin/pip2
-bin/pip2.bat
-bin/pip2.7
-bin/pip2.7.bat
-bin/pip3
-bin/pip3.bat
-bin/pip3.4
-bin/pip3.4.bat
 
 bin/play               Play multimedia file/URL
 bin/play.py            (uses vlc and ffprobe)
@@ -587,13 +569,6 @@ bin/pydoc3.4.bat
 bin/pyld.py            Load Python main program as module (must have Main class)
 bin/test_pyld.py       Unit testing suite for "pyld.py"
 
-bin/pylint             Python "pylint" script wrappers (allowing non systems port)
-bin/pylint.bat
-bin/pylint-2.7
-bin/pylint-2.7.bat
-bin/pylint-3.4
-bin/pylint-3.4.bat
-
 bin/pyprof             Profile Python 3.x program
 bin/pyprof.bat
 bin/pyprof.py
@@ -616,13 +591,6 @@ bin/python3.bat
 bin/python3.6
 
 bin/pyuntar.py         Unpack an archive in TAR format.
-
-bin/pyvenv             Python "pyvenv" script wrappers (allowing non systems port)
-bin/pyvenv.bat
-bin/pyvenv-2.7
-bin/pyvenv-2.7.bat
-bin/pyvenv-3.4
-bin/pyvenv-3.4.bat
 
 bin/pyz                Make a Python3 ZIP Application in PYZ format
 bin/pyz.py
