@@ -21,8 +21,9 @@ COPY config/vimrc /home/docker/.vimrc
 RUN mkdir -p /home/docker/Desktop && \
     echo "export XDG_CURRENT_DESKTOP=XFCE" > /home/docker/.profile-local
 
-# Set UID script for X-server
+# Docker startup files
 COPY config/docker-init /etc/docker-init
+COPY config/docker-exec /etc/docker-exec
 
 # Run "/etc/docker-init" script
 USER root

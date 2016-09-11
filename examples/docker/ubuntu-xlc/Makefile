@@ -18,3 +18,8 @@ run:
 		--name ubuntu-lxc \
 		--hostname ubuntu-lxc \
 		--rm ubuntu-lxc || exit 0
+
+exec:
+	@echo "\n*** Execing in Docker container ***"
+	docker exec --interactive --tty \
+		debian-lxc /etc/docker-exec || exit 0

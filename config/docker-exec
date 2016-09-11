@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Docker container exec script
+#
+
+echo -e "Running \"$0\"..."
+
+if [ ! "$ID" ]; then
+    exec /bin/bash -l
+fi
+
+# Process "id" output
+ID=$(echo "$ID" | sed -e "s/[=()]/ /g")
+ARRAY=(${ID//:/ })
+USER_ID=${ARRAY[1]}
+USER_NAME=${ARRAY[2]}
+GROUP_ID=${ARRAY[4]}
+GROUP_NAME=${ARRAY[5]}
+
+# Switch to user
+export HOME=/home/$USER_NAME
+cd $HOME
+su $USER_NAME -c "exec bash -l"
+echo "\"$0\" finished!"

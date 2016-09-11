@@ -17,4 +17,9 @@ run:
 		--env DISPLAY=$(DISPLAY) \
 		--name debian-lxc \
 		--hostname debian-lxc \
-		--rm debian-lxc || exit 0
+		--rm debian-lxc /etc/docker-init || exit 0
+
+exec:
+	@echo "\n*** Execing in Docker container ***"
+	docker exec --interactive --tty \
+		debian-lxc /etc/docker-exec || exit 0

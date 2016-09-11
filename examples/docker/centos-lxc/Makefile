@@ -18,3 +18,8 @@ run:
 		--name centos-lxc \
 		--hostname centos-lxc \
 		--rm centos-lxc || exit 0
+
+exec:
+	@echo "\n*** Execing in Docker container ***"
+	docker exec --interactive --tty \
+		centos-lxc /etc/docker-exec || exit 0

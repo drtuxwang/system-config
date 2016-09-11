@@ -9,7 +9,7 @@ if [ ! "$ID" ]; then
     exec /bin/bash -l
 fi
 
-# Processi "id" output
+# Process "id" output
 ID=$(echo "$ID" | sed -e "s/[=()]/ /g")
 ARRAY=(${ID//:/ })
 USER_ID=${ARRAY[1]}

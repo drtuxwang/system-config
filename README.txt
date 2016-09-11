@@ -935,6 +935,7 @@ config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for lo
 config/bashrc                   Copy to "/root/.bashrc" for "root" account settings
 config/config                   Copy to "$HOME/.ssh/config"
 config/docker-init              Docker init script (changes UID of "docker" user)
+config/docker-exec              Docker exec script
 config/gitconfig                Copy to "$HOME/.gitconfig" and edit
 config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
 config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")

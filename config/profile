@@ -7,7 +7,7 @@
 
 ##set -x
 
-if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
+if [ "$TERM" ]; then
     if [ -x "/usr/bin/tmux" ]; then
         if [ "$TMUX" ]; then
             if [ ! "$TMUX_SHELL" ]; then
