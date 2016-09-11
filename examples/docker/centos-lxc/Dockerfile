@@ -4,7 +4,7 @@ FROM centos:7
 RUN yum -y update && \
     yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
     yum -y install net-tools sudo vim wget && \
-    yum -y install xorg-x11-server-utils xorg-x11-utils xfce4-terminal alsa-lib && \
+    yum -y install xorg-x11-server-utils xorg-x11-utils alsa-lib && \
     yum -y install python34 && \
     wget https://bootstrap.pypa.io/get-pip.py && \
     python3 get-pip.py && \
@@ -20,10 +20,7 @@ COPY config/vimrc /root/.vimrc
 
 # Create "/home/docker" directory
 COPY config/profile /home/docker/.profile
-COPY config/terminalrc /home/docker/.config/xfce4/terminal/terminalrc
 COPY config/vimrc /home/docker/.vimrc
-RUN mkdir -p /home/docker/Desktop && \
-    echo "export XDG_CURRENT_DESKTOP=XFCE" > /home/docker/.profile-local
 
 # Docker startup files
 COPY config/docker-init /etc/docker-init
@@ -32,6 +29,5 @@ COPY config/docker-exec /etc/docker-exec
 # Run "/etc/docker-init" script
 USER root
 ENV HOME=/root
-ENV XDG_CURRENT_DESKTOP=XFCE
 WORKDIR /root
 CMD /etc/docker-init
