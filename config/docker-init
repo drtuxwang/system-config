@@ -26,7 +26,7 @@ $USER_NAME ALL=(ALL) NOPASSWD: ALL
 Defaults umask = 0022
 EOF
 
-# Create "/home/docker" directory
+# Create user home directory
 if [ ! -d "/home/docker" ]; then
     mkdir /home/$USER_NAME
 else
@@ -35,4 +35,7 @@ fi
 chown -R $USER_ID:$GROUP_ID /home/$USER_NAME
 
 # Switch to user
-su - $USER_NAME -c "export DISPLAY=$DISPLAY; exec bash -l"
+export HOME=/home/$USER_NAME
+cd $HOME
+su $USER_NAME -c "exec bash -l"
+echo "\"$0\" finished!"
