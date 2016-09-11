@@ -2,10 +2,9 @@ FROM centos:7
 
 # Install packages
 RUN yum -y update && \
-    yum -y install net-tools sudo vim wget && \
-    yum -y install xorg-x11-server-utils xorg-x11-utils && \
     yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
-    yum -y install xfce4-terminal && \
+    yum -y install net-tools sudo vim wget && \
+    yum -y install xorg-x11-server-utils xorg-x11-utils xfce4-terminal alsa-lib && \
     yum -y install python34 && \
     wget https://bootstrap.pypa.io/get-pip.py && \
     python3 get-pip.py && \
