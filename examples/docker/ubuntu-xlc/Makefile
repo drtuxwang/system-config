@@ -11,7 +11,7 @@ build:
 run:
 	@echo "\n*** Running Docker container ***"
 	docker run --memory=1024mb \
-		--rm
+		--rm \
 		--interactive \
 		--tty \
 		--volume /tmp/.X11-unix:/tmp/.X11-unix \

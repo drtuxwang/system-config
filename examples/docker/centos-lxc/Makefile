@@ -19,7 +19,7 @@ run:
 		--env ID="`id`" \
 		--env DISPLAY=$(DISPLAY) \
 		--name centos-lxc \
-		--hostname centos-lxc 
+		--hostname centos-lxc \
 		centos-lxc /etc/docker-init || exit 0
 
 exec:
