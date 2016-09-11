@@ -20,8 +20,11 @@ GROUP_NAME=${ARRAY[5]}
 # Create user account
 echo "$GROUP_NAME:x:$GROUP_ID:" >> /etc/group
 echo "$USER_NAME:x:$USER_ID:$GROUP_ID:Docker User:/home/$USER_NAME:/bin/bash" >> /etc/passwd
-echo -e "Defaults:$USER_NAME !requiretty\n$USER_NAME ALL=(ALL) NOPASSWD: ALL\nDefaults umask = 0022\
-    >> /etc/sudoers.d/docker
+cat << EOF > /etc/sudoers.d/docker
+Defaults:$USER_NAME !requiretty
+$USER_NAME ALL=(ALL) NOPASSWD: ALL
+Defaults umask = 0022
+EOF
 
 # Create "/home/docker" directory
 if [ ! -d "/home/docker" ]; then
