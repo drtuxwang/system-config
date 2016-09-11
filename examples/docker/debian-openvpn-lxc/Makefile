@@ -7,14 +7,21 @@ build:
 
 run:
 	@echo "\n*** Running Docker container ***"
-	docker run --interactive --tty --memory=1024mb \
+	docker run --memory=1024mb \
+		--privileged \
+		--rm \
+		--interactive \
+		--tty \
 		--volume /tmp/.X11-unix:/tmp/.X11-unix \
 		--volume /shared:/shared \
 		--volume /etc/openvpn:/etc/openvpn:ro \
 		--volume /etc/ssl/certs:/etc/ssl/certs:ro \
 		--env ID="`id`" \
 		--env DISPLAY=$(DISPLAY) \
-		--privileged \
 		--name debian-openvpn-lxc \
 		--hostname debian-openvpn-lxc \
-		--rm debian-openvpn-lxc || exit 0
+		debian-openvpn-lxc /etc/docker-init || exit 0
+
+exec:
+	@echo "\n*** Execing in Docker container ***"
+	docker exec --interactive --tty debian-openvpn-lxc /etc/docker-exec || exit 0
