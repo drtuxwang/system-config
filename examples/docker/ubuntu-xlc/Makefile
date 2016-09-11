@@ -15,4 +15,6 @@ run:
 		--volume /shared:/shared \
 		--env ID="`id`" \
 		--env DISPLAY=$(DISPLAY) \
-		--name ubuntu-lxc --hostname ubuntu-lxc --rm ubuntu-lxc || exit 0
+		--name ubuntu-lxc \
+		--hostname ubuntu-lxc \
+		--rm ubuntu-lxc || exit 0

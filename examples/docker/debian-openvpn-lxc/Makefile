@@ -2,10 +2,7 @@ default: build
 
 build:
 	@echo "\n*** Building Docker image ***"
-	cp -rp ../../../bin ../../../config .
-	bin/fmod bin/* *
-	docker build -t debian-lxc .
-	rm -rf bin config
+	docker build -t debian-openvpn-lxc .
 	docker images
 
 run:
@@ -13,8 +10,11 @@ run:
 	docker run --interactive --tty --memory=1024mb \
 		--volume /tmp/.X11-unix:/tmp/.X11-unix \
 		--volume /shared:/shared \
+		--volume /etc/openvpn:/etc/openvpn:ro \
+		--volume /etc/ssl/certs:/etc/ssl/certs:ro \
 		--env ID="`id`" \
 		--env DISPLAY=$(DISPLAY) \
-		--name debian-lxc \
-		--hostname debian-lxc \
-		--rm debian-lxc || exit 0
+		--privileged \
+		--name debian-openvpn-lxc \
+		--hostname debian-openvpn-lxc \
+		--rm debian-openvpn-lxc || exit 0

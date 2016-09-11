@@ -15,4 +15,6 @@ run:
 		--volume /shared:/shared \
 		--env ID="`id`" \
 		--env DISPLAY=$(DISPLAY) \
-		--name centos-lxc --hostname centos-lxc --rm centos-lxc || exit 0
+		--name centos-lxc \
+		--hostname centos-lxc \
+		--rm centos-lxc || exit 0
