@@ -1,4 +1,5 @@
 [Configuration]
+Encoding=UTF-8
 MiscAlwaysShowTabs=FALSE
 MiscBell=FALSE
 MiscBordersDefault=TRUE
