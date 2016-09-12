@@ -75,6 +75,7 @@ if ( $?TERM ) then
     set history=256
     alias df "df -k"
     alias du "du -k"
+    alias exit 'echo Use \"logout\" to leave the shell.'
     alias ftp "ftp -i -v"
     alias h history 256
     alias ls "ls -C"

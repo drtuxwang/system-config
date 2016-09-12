@@ -8,12 +8,11 @@
 ##set -x
 
 if [ "$TERM" ]; then
+    # Session control
     if [ -x "/usr/bin/tmux" ]; then
         if [ "$TMUX" ]; then
             if [ ! "$TMUX_SHELL" ]; then
                 export TMUX_SHELL="$$"
-                set -o ignoreeof
-                alias exit='echo Use \"tmux detach\" or \"logout\" to destroy session.'
             fi
         elif [ ! "$SSH_CONNECTION" ]; then
             SESSION=`tmux ls | grep -v attached | head -1 | cut -f1 -d:`
@@ -65,6 +64,7 @@ if [ "$TERM" ]; then
 
         complete -f -o default tar
         complete -f -o default wine
+        set -o ignoreeof
     elif [ "`echo $0 | \grep \"ksh$\"`" ]; then
         echo "Running    Login shell /bin/ksh (Korn Shell) on $MYTTY ($TERM)"
         PS1="$MYUNAME@${MYHNAME}_$ "
@@ -128,6 +128,7 @@ if [ "$TERM" ]; then
 
     alias df="df -k"
     alias du="du -k"
+    alias exit='echo Use \"logout\" to leave the shell.'
     alias ftp="ftp -i -v"
     if [ "$BASH" ]; then
         alias h="history 256"
