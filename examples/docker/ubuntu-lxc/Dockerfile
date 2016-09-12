@@ -3,7 +3,7 @@ FROM ubuntu:16.04
 # Install packages
 RUN apt-get update && \
     apt-get install -y net-tools sudo vim wget && \
-    apt-get install -y x11-xserver-utils libgtk-3-0 libasound2 && \
+    apt-get install -y x11-xserver-utils x11-utils libgtk-3-0 libasound2 && \
     apt-get install -y python3 python3-dev python3-pip
 RUN python3 -m pip install pep8 pylint
 

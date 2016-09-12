@@ -20,4 +20,4 @@ GROUP_NAME=${ARRAY[5]}
 # Switch to user
 export HOME=/home/$USER_NAME
 cd $HOME
-exec sudo --preserve-env -u $USER_NAME bash -l
+exec sudo -E -u $USER_NAME bash -l
