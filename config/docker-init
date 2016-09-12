@@ -37,5 +37,5 @@ chown -R $USER_ID:$GROUP_ID /home/$USER_NAME
 # Switch to user
 export HOME=/home/$USER_NAME
 cd $HOME
-su $USER_NAME -c "exec bash -l"
+sudo --preserve-env -u $USER_NAME bash -l
 echo "\"$0\" finished!"

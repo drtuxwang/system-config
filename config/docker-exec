@@ -20,5 +20,4 @@ GROUP_NAME=${ARRAY[5]}
 # Switch to user
 export HOME=/home/$USER_NAME
 cd $HOME
-su $USER_NAME -c "exec bash -l"
-echo "\"$0\" finished!"
+exec sudo --preserve-env -u $USER_NAME bash -l
