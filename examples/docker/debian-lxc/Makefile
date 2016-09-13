@@ -23,7 +23,3 @@ run:
 		--name $(IMAGE) \
 		--hostname $(IMAGE) \
 		$(IMAGE) /etc/docker-init || exit 0
-
-exec:
-	@echo "\n*** Execing in Docker container ***"
-	docker exec --interactive --tty $(IMAGE) /etc/docker-exec || exit 0

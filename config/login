@@ -7,7 +7,7 @@
 
 ##set verbose
 
-if ( $?TERM ) then
+if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     if ( -f $HOME/.login-2bash && -f /bin/bash ) then
         setenv ENV $HOME/.profile; exec /bin/bash -l
     endif

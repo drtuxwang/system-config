@@ -20,9 +20,8 @@ COPY config/profile /home/docker/.profile
 COPY config/terminalrc /home/docker/.config/xfce4/terminal/terminalrc
 COPY config/vimrc /home/docker/.vimrc
 
-# Docker startup files
+# Docker startup file
 COPY config/docker-init /etc/docker-init
-COPY config/docker-exec /etc/docker-exec
 
 # Run "/etc/docker-init" script
 USER root
