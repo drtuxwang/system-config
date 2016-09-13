@@ -342,7 +342,8 @@ class XfceTerminal(GnomeTerminal):
 
     def __init__(self, options):
         super().__init__(options)
-        self._pattern += '|: Failed to connect to socket'
+        self._pattern = ('^$|: Gtk-WARNING|: Failed to connect to socket|'
+                         ': GLib-WARNING |: SESSION_MANAGER')
 
     def _config(self):
         self._command = command_mod.Command(
