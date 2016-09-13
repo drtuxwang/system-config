@@ -9,7 +9,7 @@
 
 if [ "$TERM" ]; then
     # Session control
-    if [ -x "/usr/bin/tmux" ]; then
+    if [ -x "/usr/bin/tmux" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         if [ "$TMUX" ]; then
             if [ ! "$TMUX_SHELL" ]; then
                 export TMUX_SHELL="$$"
