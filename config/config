@@ -2,8 +2,10 @@ Protocol 2
 ForwardAgent no
 ForwardX11 no
 GSSAPIAuthentication no
+IdentityFile=~/.ssh/id_rsa
 PubkeyAuthentication yes
 UseRoaming no
 
 #Host hostname
 #User username
+#IdentityFile=~/.ssh/id_rsa-xxx
