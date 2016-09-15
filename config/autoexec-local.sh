@@ -4,11 +4,13 @@ start_app()
 {
     echo "Starting \"$1\"..."
     "$@" &
-    sleep 5
-    if [ ! "`ps | grep \" $1\$\"`" ]; then
-        echo "Restarting \"$1\"..."
-        "$@" &
-    fi
+    for RETY in `seq 2 `; do
+        sleep 5
+        if [ ! "`ps | grep \" $1\$\"`" ]; then
+            echo "Restarting \"$1\"..."
+            "$@" &
+        fi
+    done
 }
 
 
