@@ -199,7 +199,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         unset command_not_found_handle
         ;;
     esac
-    export PATH="$HOME/software/bin:/opt/software/bin:$PATH"
+    export PATH="$HOME/software/bin:/opt/software/bin:$HOME/.local/bin:$PATH"
 
     # Applying local settings
     if [ -f $HOME/.profile-local ]; then

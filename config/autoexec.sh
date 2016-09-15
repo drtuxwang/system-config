@@ -5,7 +5,8 @@ if [ "$1" != "-start" ]; then
 fi
 
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-PATH="$HOME/software/bin:/opt/software/bin:$PATH"; export PATH
+BASE_PATH=$PATH; export BASE_PATH
+PATH="$HOME/software/bin:/opt/software/bin:$HOME/.local/bin:$PATH"; export PATH
 
 
 if [ -x /usr/bin/ibus-daemon ]; then

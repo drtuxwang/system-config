@@ -141,7 +141,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         setenv LS_COLORS ""
         breaksw
     endsw
-    setenv PATH $HOME/software/bin:/usr/local/bin`echo ":$PATH": | sed -e "s@:$HOME/software/bin:@:@g" -e "s@:/usr/local/bin:@:@g" -e 's/:$//'`
+    setenv PATH "$HOME/software/bin:/usr/local/bin:$HOME/.local/bin:$PATH"
 
     # Applying local settings
     if ( -f $HOME/.login-local ) then
