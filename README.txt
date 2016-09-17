@@ -976,12 +976,16 @@ examples/docker/debian-openvpn-lxc/Makefile
 examples/docker/ubuntu-lxc/Dockerfile                 Ubuntu 16.04 docker image
 examples/docker/ubuntu-lxc/Makefile
 
+examples/kubernetes/debian-lxc/Makefile               Kubernetes example
+examples/kubernetes/debina-lxc/ckong-ns.json
+examples/kubernetes/debian-lxc/debian-rc.json
+examples/kubernetes/debian-lxc/debian-svc.json
+
 examples/python/simple-package/Makefile               Simple Egg & WHL package
 examples/python/simple-package/RUN
 examples/python/simple-package/setup.py
 examples/python/simple-package/hello/__init__.py
 examples/python/simple-pakcage/hello/message.py
-
 examples/python/simple-flask/Makefile                 Simple Flask demo
 examples/python/simple-flask/RUN
 examples/python/simple-flask/simple_flask.py
@@ -991,7 +995,6 @@ examples/terraform-aws/1pxy/aws_config.tf             Terraform AWS: 1pxy exampl
 examples/terraform-aws/1pxy/aws_resources.tf
 examples/terraform-aws/1pxy/pxy_resources.tf
 examples/terraform-aws/1pxy/pxy_variables.tf
-
 examples/terraform-aws/pxy-as/aws_config.tf           Terraform AWS: pxy-as example
 examples/terraform-aws/pxy-as/aws_resources.tf
 examples/terraform-aws/pxy-as/pxy_resources.tf

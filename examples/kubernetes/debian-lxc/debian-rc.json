@@ -1,0 +1,43 @@
+{
+    "kind": "ReplicationController",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "debian-lxc",
+        "namespace": "ckong",
+        "labels": {
+            "app": "debian-lxc"
+        }
+    },
+    "spec": {
+        "replicas": 1,
+        "selector": {
+            "app": "debian-lxc"
+        },
+        "template": {
+            "metadata": {
+                "labels": {
+                    "app": "debian-lxc"
+                }
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "name": "debian-lxc",
+                        "image": "debian:8",
+                        "imagePullPolicy": "IfNotPresent",
+                        "args": [
+                            "sleep",
+                            "86400"
+                        ],
+                        "ports": [
+                            {
+                                "containerPort": 80,
+                                "protocol": "TCP"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

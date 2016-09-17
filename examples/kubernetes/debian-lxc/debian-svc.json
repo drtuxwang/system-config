@@ -1,0 +1,22 @@
+{
+    "kind": "Service",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "debian-lxc",
+        "namespace": "ckong"
+    },
+    "spec": {
+        "type": "ClusterIP",
+        "ports": [
+            {
+                "name": "debian-web",
+                "protocol": "TCP",
+                "port": 80,
+                "targetPort": 80
+            }
+        ],
+        "selector": {
+            "app": "debian-lxc"
+        }
+    }
+}
