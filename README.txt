@@ -496,6 +496,7 @@ bin/django-admin
 bin/django-admin.bat
 bin/flask
 bin/flask.bat
+bin/glances
 bin/ipdb3
 bin/ipdb3.bat
 bin/ipython
