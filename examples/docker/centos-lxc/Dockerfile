@@ -10,7 +10,7 @@ RUN yum -y update && \
     wget https://bootstrap.pypa.io/get-pip.py && \
     python3 get-pip.py && \
     rm get-pip.py
-RUN python3 -m pip install pep8 pylint
+RUN python3 -m pip install Glances pep8 pylint
 
 # Python scripts
 COPY bin /opt/software/bin
