@@ -78,7 +78,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     fi
 
     # Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
-    if [ ! "$BASE_PATH" ]; then
+    if [ ! "$BASE_LD_LIBRARY_PATH" ]; then
         if [ ! "$BASE_MANPATH" ]; then
             export BASE_MANPATH=:
         fi
