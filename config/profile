@@ -79,6 +79,9 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
 
     # Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if [ ! "$BASE_PATH" ]; then
+        if [ ! "$BASE_MANPATH" ]; then
+            export BASE_MANPATH=:
+        fi
         if [ ! "$LM_LICENSE_FILE" ]; then
             export LM_LICENSE_FILE=:
         fi
@@ -128,7 +131,9 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
 
     alias df="df -k"
     alias du="du -k"
-    alias exit='echo Use \"logout\" to leave the shell.'
+    if [ "$SHLVL" = 1 ]; then
+        alias exit='echo Use \"logout\" to logout.'
+    fi
     alias ftp="ftp -i -v"
     if [ "$BASH" ]; then
         alias h="history 256"

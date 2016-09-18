@@ -44,6 +44,9 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
 
     # Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if ( ! $?BASE_PATH ) then
+        if ( ! $?BASE_MANPATH ) then
+            setenv BASE_MANPATH :
+        endif
         if ( ! $?LM_LICENSE_FILE ) then
             setenv LM_LICENSE_FILE :
         endif
@@ -63,6 +66,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         setenv LM_LICENSE_FILE $BASE_LM_LICENSE_FILE
         setenv LD_LIBRARY_PATH $BASE_LD_LIBRARY_PATH
     endif
+			echo debugX2
 
     # General stuff
     umask 027
@@ -75,7 +79,9 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     set history=256
     alias df "df -k"
     alias du "du -k"
-    alias exit 'echo Use \"logout\" to leave the shell.'
+    if ( $?SHLVL && "$SHLVL" == 1 ) then
+        alias exit 'echo Use \"logout\" to logout.'
+    endif
     alias ftp "ftp -i -v"
     alias h history 256
     alias ls "ls -C"
