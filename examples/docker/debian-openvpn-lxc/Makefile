@@ -4,7 +4,9 @@ default: build
 
 build:
 	@echo "\n*** Building Docker image ***"
+	cp -rp ../../../config .
 	docker build -t $(IMAGE) .
+	rm -rf config
 	docker images
 
 run:
@@ -22,4 +24,4 @@ run:
 		--env DISPLAY=$(DISPLAY) \
 		--name $(IMAGE) \
 		--hostname $(IMAGE) \
-		$(IMAGE) /etc/docker-init || exit 0
+		$(IMAGE) /etc/docker-openvpn-init || exit 0

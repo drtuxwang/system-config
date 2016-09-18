@@ -4,5 +4,8 @@ FROM debian-lxc
 RUN apt-get install -y openvpn
 RUN apt-get install -y resolvconf || exit 0
 
-# Run "/etc/docker-init" script
-CMD /etc/docker-init
+# Docker OpenVPN startup file
+COPY config/docker-openvpn-init /etc/docker-openvpn-init
+
+# Run "/etc/docker-openvpn-init" script
+CMD /etc/docker-openvpn-init
