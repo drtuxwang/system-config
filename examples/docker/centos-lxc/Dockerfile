@@ -26,6 +26,7 @@ COPY config/vimrc /home/docker/.vimrc
 
 # Docker startup file
 COPY config/docker-init /etc/docker-init
+COPY config/docker-init-adduser /etc/docker-init-adduser
 
 # Run "/etc/docker-init" script
 USER root

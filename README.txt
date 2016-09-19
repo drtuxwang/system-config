@@ -935,8 +935,9 @@ config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to des
 config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
 config/bashrc                   Copy to "/root/.bashrc" for "root" account settings
 config/config                   Copy to "$HOME/.ssh/config"
-config/docker-init              Docker init script (changes UID of "docker" user)
-config/docker-openvpn-init      Docker OpenVPN init script (fixes "/etc/resolv.conf" readonly)
+config/docker-init              Docker init script
+config/docker-init-adduser      Docker init script plugin for adding user
+config/docker-init-openvpn      Docker init script plugin for OpenVPN
 config/gitconfig                Copy to "$HOME/.gitconfig" and edit
 config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
 config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")

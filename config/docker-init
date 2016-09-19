@@ -3,39 +3,23 @@
 # Docker container init script
 #
 
-echo -e "Running \"$0\"..."
+echo -e "\nRunning \"$0\"..."
 
-if [ ! "$ID" ]; then
-    exec /bin/bash -l
-fi
+# Process plugins
+for FILE in /etc/docker-init-*; do
+    $FILE
+done
 
-# Process "id" output
-ID=$(echo "$ID" | sed -e "s/[=()]/ /g")
-ARRAY=(${ID//:/ })
-USER_ID=${ARRAY[1]}
-USER_NAME=${ARRAY[2]}
-GROUP_ID=${ARRAY[4]}
-GROUP_NAME=${ARRAY[5]}
-
-# Create user account
-echo "$GROUP_NAME:x:$GROUP_ID:" >> /etc/group
-echo "$USER_NAME:x:$USER_ID:$GROUP_ID:Docker User:/home/$USER_NAME:/bin/bash" >> /etc/passwd
-cat << EOF > /etc/sudoers.d/docker
-Defaults:$USER_NAME !requiretty
-$USER_NAME ALL=(ALL) NOPASSWD: ALL
-Defaults umask = 0022
-EOF
-
-# Create user home directory
-if [ ! -d "/home/docker" ]; then
-    mkdir /home/$USER_NAME
+# Switch to user: -env ID=$(id)
+if [ "$ID" ]; then
+    ID=$(echo "$ID" | sed -e "s/[=()]/ /g")
+    ARRAY=(${ID//:/ })
+    USER_NAME=${ARRAY[2]}
+    export HOME=/home/$USER_NAME
+    cd $HOME
+    sudo -E -u $USER_NAME bash -l
 else
-    mv /home/docker /home/$USER_NAME
+    /bin/bash -l
 fi
-chown -R $USER_ID:$GROUP_ID /home/$USER_NAME
 
-# Switch to user
-export HOME=/home/$USER_NAME
-cd $HOME
-sudo -E -u $USER_NAME bash -l
-echo "\"$0\" finished!"
+echo -e "\n\"$0\" finished!"

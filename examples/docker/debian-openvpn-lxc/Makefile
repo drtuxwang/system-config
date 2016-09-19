@@ -24,4 +24,4 @@ run:
 		--env DISPLAY=$(DISPLAY) \
 		--name $(IMAGE) \
 		--hostname $(IMAGE) \
-		$(IMAGE) /etc/docker-openvpn-init || exit 0
+		$(IMAGE) /etc/docker-init || exit 0
