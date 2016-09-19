@@ -14,23 +14,25 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     echo ""
     echo "Processing Startup script ($HOME/.login)"
 
-    # Check terminal and login shell
     setenv MYHNAME `uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-    if ( "$TERM" == "dumb" ) then
-        setenv MYTTY "/dev/???"
-    else
-        setenv MYTTY `\tty`
-        (mesg y) >& /dev/null
-        set autologout=0
-        stty erase "^?"  #  alternative
-        stty intr 
-        stty susp 
+    if ( ! $?MYTTY ) then
+        if ( "$TERM" == "dumb" ) then
+            setenv MYTTY "/dev/???"
+        else
+            setenv MYTTY `\tty`
+            (mesg y) >& /dev/null
+            set autologout=0
+            stty erase "^?"  #  alternative
+            stty intr 
+            stty susp 
+        endif
+        alias exit 'echo Use \"logout\" to leave the shell.'
     endif
 
-    foreach LIMIT ( `limit | \egrep -v "unlimited|-" | \awk '{print $1}'` )
-        if ( "`limit $LIMIT unlimited`" == "" ) then
-            limit $LIMIT unlimited
+    foreach _limit ( `limit | \egrep -v "unlimited|-" | \awk '{print $1}'` )
+        if ( "`limit $_limit unlimited`" == "" ) then
+            limit $_limit unlimited
         endif
     end
 
@@ -43,9 +45,9 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     endif
 
     # Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
-    if ( ! $?BASE_LD_LIBRARY_PATH ) then
-        if ( ! $?BASE_MANPATH ) then
-            setenv BASE_MANPATH :
+    if ( ! $?BASE_MANPATH ) then
+        if ( ! $?BASE_PATH ) then
+            setenv BASE_PATH :
         endif
         if ( ! $?LM_LICENSE_FILE ) then
             setenv LM_LICENSE_FILE :
@@ -78,9 +80,6 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     set history=256
     alias df "df -k"
     alias du "du -k"
-    if ( $?SHLVL && "$SHLVL" == 1 ) then
-        alias exit 'echo Use \"logout\" to logout.'
-    endif
     alias ftp "ftp -i -v"
     alias h history 256
     alias ls "ls -C"
@@ -115,9 +114,9 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
             setenv cd$DIR "$PWD"
         end
     endif
-    foreach DIR (a b c d e f g h i j k l m n o p q r s t u v w x y z)
-        alias mk$DIR 'setenv cd'$DIR' "$PWD"; echo "cd'$DIR'=$cd'$DIR'"'
-        alias cd$DIR 'echo "cd \"$cd'$DIR'\""; cd "$cd'$DIR'"'
+    foreach _dir (a b c d e f g h i j k l m n o p q r s t u v w x y z)
+        alias mk$_dir 'setenv cd'$_dir' "$PWD"; echo "cd'$_dir'=$cd'$_dir'"'
+        alias cd$_dir 'echo "cd \"$cd'$_dir'\""; cd "$cd'$_dir'"'
     end
     alias scd 'env | grep "^cd[a-z]=" | grep -v "=$HOME/Desktop$" | sort'
 

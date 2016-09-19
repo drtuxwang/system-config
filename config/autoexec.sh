@@ -5,9 +5,12 @@ if [ "$1" != "-start" ]; then
 fi
 
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-BASE_PATH=$PATH; export BASE_PATH
-PATH="$HOME/software/bin:/opt/software/bin:$HOME/.local/bin:$PATH"; export PATH
 
+BASE_PATH=$PATH; export BASE_PATH
+BASE_MANPATH=$MANPATH; export MANPATH
+BASE_LM_LICENSE_FILE=$LM_LICENSE_FILE; export LM_LICENSE_FILE
+BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH; export LD_LIBRARY_PATH
+PATH="$HOME/software/bin:/opt/software/bin:$HOME/.local/bin:$PATH"; export PATH
 
 if [ -x /usr/bin/ibus-daemon ]; then
     GTK_IM_MODULE=ibus; export GTK_IM_MODULE

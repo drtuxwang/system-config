@@ -30,24 +30,27 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     echo
     echo "Processing Startup script ($HOME/.profile)"
 
-    # Check terminal and login shell
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-    if [ "$TERM" = "dumb" ]; then
-        MYTTY="/dev/???"
-    else
-        MYTTY=`\tty 2> /dev/null`
-        (mesg y) > /dev/null 2>&1
-        if [ "$TMOUT" != 0 ]; then
-            export TMOUT=0
+    if [ ! "$MYTTY" ]; then
+        if [ "$TERM" = "dumb" ]; then
+            MYTTY="/dev/???"; export MYTTY
+        else
+            MYTTY=`\tty 2> /dev/null`; export MYTTY
+            (mesg y) > /dev/null 2>&1
+            if [ "$TMOUT" != 0 ]; then
+                export TMOUT=0
+            fi
+            stty erase "^?" 2> /dev/null  #  alternative
+            stty intr  2> /dev/null
+            stty susp  2> /dev/null
         fi
-        stty erase "^?" 2> /dev/null  #  alternative
-        stty intr  2> /dev/null
-        stty susp  2> /dev/null
+        alias exit='echo Use \"logout\" to leave the shell.'
+        set -o ignoreeof ''
     fi
 
-    for LIMIT in `\ulimit -a 2> /dev/null | \cut -c1`; do
-        \ulimit -$LIMIT `\ulimit -$LIMIT -H 2> /dev/null` 2> /dev/null
+    for _limit in `\ulimit -a 2> /dev/null | \cut -c1`; do
+        \ulimit -$_limit `\ulimit -$_limit -H 2> /dev/null` 2> /dev/null
     done
 
     if [ "$BASH" ]; then
@@ -64,7 +67,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
 
         complete -f -o default tar
         complete -f -o default wine
-        set -o ignoreeof
     elif [ "`echo $0 | \grep \"ksh$\"`" ]; then
         echo "Running    Login shell /bin/ksh (Korn Shell) on $MYTTY ($TERM)"
         PS1="$MYUNAME@${MYHNAME}_$ "
@@ -78,9 +80,9 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     fi
 
     # Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
-    if [ ! "$BASE_LD_LIBRARY_PATH" ]; then
-        if [ ! "$BASE_MANPATH" ]; then
-            export BASE_MANPATH=:
+    if [ ! "$BASE_MANPATH" ]; then
+        if [ ! "$BASE_PATH" ]; then
+            export BASE_PATH=:
         fi
         if [ ! "$LM_LICENSE_FILE" ]; then
             export LM_LICENSE_FILE=:
@@ -131,9 +133,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
 
     alias df="df -k"
     alias du="du -k"
-    if [ "$SHLVL" = 1 ]; then
-        alias exit='echo Use \"logout\" to logout.'
-    fi
     alias ftp="ftp -i -v"
     if [ "$BASH" ]; then
         alias h="history 256"
@@ -169,13 +168,13 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
 
     # cd[a-z], mk[a-z], scd
     if [ ! "$cdz" ]; then
-        for DIR in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
-            export cd$DIR="$PWD"
+        for _dir in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
+            export cd$_dir="$PWD"
         done
     fi
-    for DIR in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
-        alias mk$DIR='export cd'$DIR'="$PWD"; echo "cd'$DIR'=$cd'$DIR'"'
-        alias cd$DIR='echo "cd \"$cd'$DIR'\""; cd "$cd'$DIR'"'
+    for _dir in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
+        alias mk$_dir='export cd'$_dir'="$PWD"; echo "cd'$_dir'=$cd'$_dir'"'
+        alias cd$_dir='echo "cd \"$cd'$_dir'\""; cd "$cd'$_dir'"'
     done
     alias scd='env | grep "^cd[a-z]=" | grep -v "=$HOME/Desktop$" | sort'
 
