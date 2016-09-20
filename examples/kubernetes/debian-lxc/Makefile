@@ -10,9 +10,9 @@ build:
 
 clean:
 	@echo "\n*** Building replicationcontroller ***"
-	kubectl -s $(SERVER) --namespace=ckong delete rc debian-lxc
-	kubectl -s $(SERVER) --namespace=ckong delete service debian-lxc
-	kubectl -s $(SERVER) delete namespace ckong
+	kubectl -s $(SERVER) --namespace=ckong delete rc debian-lxc ||:
+	kubectl -s $(SERVER) --namespace=ckong delete service debian-lxc ||:
+	kubectl -s $(SERVER) delete namespace ckong ||:
 
 status:
 	@echo "\n*** Checking status ***"

@@ -29,12 +29,42 @@
                             "sleep",
                             "86400"
                         ],
+                        "env": [
+                            {
+                                "name": "NAME",
+                                "value": "VALUE"
+                            }
+                        ],
                         "ports": [
                             {
                                 "containerPort": 80,
                                 "protocol": "TCP"
                             }
+                        ],
+                        "resources": {
+                            "limits": {
+                                "cpu": "1440",
+                                "memory": "1024M"
+                            },
+                            "requests": {
+                                "cpu": "60m",
+                                "memory": "128M"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/shared",
+                                "name": "shared"
+                            }
                         ]
+                    }
+                ],
+                "volumes": [
+                    {
+                        "name": "shared",
+                        "hostPath": {
+                            "path": "/shared"
+                        }
                     }
                 ]
             }
