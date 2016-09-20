@@ -517,10 +517,8 @@ bin/pydoc3.4
 bin/pydoc3.4.bat
 bin/pylint
 bin/pylint.bat
-bin/pyvenv
-bin/pyvenv.bat
-bin/pyvenv-3.4
-bin/pyvenv-3.4.bat
+bin/virtualenv
+bin/virtualenv.bat
 
 bin/pidgin             pidgin wrapper (allowing non systems port)
 bin/pidgin.bat
