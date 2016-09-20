@@ -40,9 +40,6 @@ bin/audacity.py
 bin/avi                Encode AVI video using avconv (libxvid/libmp3lame)
 bin/avi.py
 
-bin/aws                Python "aws" script wrappers (allowing non systems port)
-bin/aws.bat
-
 bin/battery            Linux battery status utility
 bin/battery.py
 
@@ -492,10 +489,15 @@ bin/2to3               Python 3.x script wrappers (allowing non systems port)
 bin/2to3.bat
 bin/2to3-3.4
 bin/2to3-3.4.bat
+bin/aws
+bin/aws.bat
+bin/aws_.py
 bin/django-admin
 bin/django-admin.bat
+bin/django_admin_.py
 bin/flask
 bin/flask.bat
+bin/flask_.py
 bin/glances
 bin/ipdb3
 bin/ipdb3.bat

@@ -1,32 +1,11 @@
 #!/bin/sh
 #
-# Wrapper for Python "bin" script to call Python module
+# Wrapper for Python "bin" script that use package
 #
 VERSION=20160920
 
-PYEXE="python3"
-PYDIR=`dirname "$0"`
-PYMOD=`basename "$0"`
-case  "$PYMOD" in
-2to3)
-    PYMOD="lib2to3"
-    ;;
-ipdb|pydoc)
-    PYEXE="python2"  # Defaults Python 2.7
-    ;;
-ipython)
-    PYMOD="IPython"
-    ;;
-pep8)
-    ;;
-*[2-9].[0-9])
-    PYEXE=`echo "$PYMOD" | sed -e 's/\(^.*\)\(...$\)/python\2/'`  # ie python3.4
-    PYMOD=`echo "$PYMOD" | sed -e "s/-*...\$//"`  # ie pylint
-    ;;
-*[2-9])
-    PYEXE=`echo "$PYMOD" | sed -e 's/\(^.*\)\(.$\)/python\2/'`  # ie python3
-    PYMOD=`echo "$PYMOD" | sed -e "s/-*.\$//"`  # ie pylint
-    ;;
-esac
+DIR=`dirname "$0"`
+PYTHON="$DIR/python3"
+FILE="$DIR/"`basename "$0" | sed -e "s/-/_/g"`_.py
 
-exec "$PYDIR/$PYEXE" -m $PYMOD "$@"
+exec "$PYTHON" -B "$FILE" "$@"
