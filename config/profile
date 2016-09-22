@@ -8,10 +8,17 @@
 ##set -x
 
 if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
-    # Session control
+    if [ ! "$BASH" -a -f $HOME/.profile-2bash -a -f /bin/bash ]; then
+        export ENV=$HOME/.profile; exec /bin/bash -l
+    fi
+    echo
+    echo "Processing Startup script ($HOME/.profile)"
+
+    # TMUX startup/reconnect
     if [ -x "/usr/bin/tmux" ]; then
         if [ "$TMUX" ]; then
             if [ ! "$TMUX_SHELL" ]; then
+                echo "Starting   TMUX session $(tmux display-message -p '#S')."
                 export TMUX_SHELL="$$"
             fi
         elif [ ! "$SSH_CONNECTION" ]; then
@@ -24,15 +31,12 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         fi
     fi
 
-    if [ ! "$BASH" -a -f $HOME/.profile-2bash -a -f /bin/bash ]; then
-        export ENV=$HOME/.profile; exec /bin/bash -l
-    fi
-    echo
-    echo "Processing Startup script ($HOME/.profile)"
-
+    # Session control
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-    if [ ! "$MYTTY" ]; then
+    if [ "$MYTTY" ]; then
+        alias logout='echo Use \"exit\" to exit the shell.'
+    else
         if [ "$TERM" = "dumb" ]; then
             MYTTY="/dev/???"; export MYTTY
         else
@@ -45,16 +49,12 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
             stty intr  2> /dev/null
             stty susp  2> /dev/null
         fi
-        alias exit='echo Use \"logout\" to leave the shell.'
+        alias exec=''
+        alias exit='echo Use \"logout\" to leave the login shell.'
         set -o ignoreeof ''
+        echo "Running    Login shell on $MYTTY ($TERM)"
     fi
-
-    for _limit in `\ulimit -a 2> /dev/null | \cut -c1`; do
-        \ulimit -$_limit `\ulimit -$_limit -H 2> /dev/null` 2> /dev/null
-    done
-
     if [ "$BASH" ]; then
-        echo "Running    Login shell /bin/bash (Bash Shell) on $MYTTY ($TERM)"
         PS1='\[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[31m\]$(__git_ps1 2> /dev/null)\[\033[00m\] \$ '
         precmd() {
             \echo -e "\033]0;$MYHNAME:$PWD\007\c"
@@ -68,49 +68,12 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         complete -f -o default tar
         complete -f -o default wine
     elif [ "`echo $0 | \grep \"ksh$\"`" ]; then
-        echo "Running    Login shell /bin/ksh (Korn Shell) on $MYTTY ($TERM)"
         PS1="$MYUNAME@${MYHNAME}_$ "
         set -o emacs
         alias -x __A=$(print '\020' 2> /dev/null) 2> /dev/null # up    = Last line
         alias -x __B=$(print '\016' 2> /dev/null) 2> /dev/null # down  = Next line
         alias -x __C=$(print '\006' 2> /dev/null) 2> /dev/null # right = Move right
         alias -x __D=$(print '\002' 2> /dev/null) 2> /dev/null # left  = Move left
-    else
-        echo "Running    Login shell /bin/sh (Bourne Shell) on $MYTTY ($TERM)"
-    fi
-
-    # Storing/Applying default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
-    if [ ! "$BASE_MANPATH" ]; then
-        if [ ! "$BASE_PATH" ]; then
-            export BASE_PATH=:
-        fi
-        if [ ! "$LM_LICENSE_FILE" ]; then
-            export LM_LICENSE_FILE=:
-        fi
-        if [ ! "$LD_LIBRARY_PATH" ]; then
-            export LD_LIBRARY_PATH=:
-        fi
-
-        echo "Storing    Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
-        export BASE_PATH=$PATH
-        export BASE_MANPATH=$MANPATH
-        export BASE_LM_LICENSE_FILE=$LM_LICENSE_FILE
-        export BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
-    else
-        echo "Applying   Default settings (PATH, MANPATH, LM_LICENSE_FILE, LD_LIBRARY_PATH)"
-        case `uname` in
-        *NT*)
-            export PATH=`/bin/cygpath --unix --path "$BASE_PATH"`
-            export MANPATH=`/bin/cygpath --unix --path "$BASE_MANPATH"`
-            export LM_LICENSE_FILE=`/bin/cygpath --unix --path "$BASE_LM_LICENSE_FILE"`
-            ;;
-        *)
-            export PATH=$BASE_PATH
-            export MANPATH=$BASE_MANPATH
-            export LM_LICENSE_FILE=$BASE_LM_LICENSE_FILE
-            ;;
-        esac
-        export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
     fi
 
     # General stuff
@@ -158,6 +121,42 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         fi
     fi
     unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
+
+    # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
+    if [ ! "$BASE_MANPATH" ]; then
+        if [ ! "$MANPATH" ]; then
+            export MANPATH=:
+        fi
+        if [ ! "$LM_LICENSE_FILE" ]; then
+            export LM_LICENSE_FILE=:
+        fi
+        if [ ! "$LD_LIBRARY_PATH" ]; then
+            export LD_LIBRARY_PATH=:
+        fi
+        export BASE_PATH=$PATH
+        export BASE_MANPATH=$MANPATH
+        export BASE_LM_LICENSE_FILE=$LM_LICENSE_FILE
+        export BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+    else
+        case `uname` in
+        *NT*)
+            export PATH=`/bin/cygpath --unix --path "$BASE_PATH"`
+            export MANPATH=`/bin/cygpath --unix --path "$BASE_MANPATH"`
+            export LM_LICENSE_FILE=`/bin/cygpath --unix --path "$BASE_LM_LICENSE_FILE"`
+            ;;
+        *)
+            export PATH=$BASE_PATH
+            export MANPATH=$BASE_MANPATH
+            export LM_LICENSE_FILE=$BASE_LM_LICENSE_FILE
+            ;;
+        esac
+        export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
+    fi
+
+    # Removing soft shell limit
+    for _limit in `\ulimit -a 2> /dev/null | \cut -c1`; do
+        \ulimit -$_limit `\ulimit -$_limit -H 2> /dev/null` 2> /dev/null
+    done
 
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop 2> /dev/null
