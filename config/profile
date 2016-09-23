@@ -17,11 +17,11 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     # TMUX startup/reconnect
     if [ -x "/usr/bin/tmux" ]; then
         if [ "$TMUX" ]; then
-            if [ ! "$TMUX_SHELL" ]; then
-                echo "Starting   TMUX session $(tmux display-message -p '#S')."
-                export TMUX_SHELL="$$"
+            if [ ! "$TMUX_SCREEN" ]; then
+                export TMUX_SCREEN=$(tmux display-message -p '#S')
+                echo "Starting   TMUX session $TMUX_SCREEN."
             fi
-            alias logout='tmux detach'
+            alias logout='echo "Reattached TMUX session $TMUX_SCREEN."; tmux detach'
         elif [ ! "$SSH_CONNECTION" ]; then
             SESSION=`tmux ls | grep -v attached | head -1 | cut -f1 -d:`
             if [ "$SESSION" ]; then
