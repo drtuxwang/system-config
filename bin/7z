@@ -10,4 +10,4 @@ if [ ! -x "$PYTHON" ]; then
 fi
 PY_MAIN="-pyldname=`basename \"$0\"` p7zip"
 
-exec "$PYTHON" -B "$BIN_DIR/pyld.py" $PY_MAIN "$@"
+exec "$PYTHON" -B -E "$BIN_DIR/pyld.py" $PY_MAIN "$@"

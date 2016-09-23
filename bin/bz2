@@ -10,4 +10,4 @@ if [ ! -x "$PYTHON" ]; then
 fi
 PY_MAIN="-pyldname=`basename \"$0\"` `basename \"$0\" | sed -e \"s/-/_/g\"`_"
 
-exec "$PYTHON" -B "$BIN_DIR/pyld.py" $PY_MAIN "$@"
+exec "$PYTHON" -B -E "$BIN_DIR/pyld.py" $PY_MAIN "$@"
