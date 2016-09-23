@@ -64,7 +64,7 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Run command on a list of nodes in parallel '
-            '(supply ndoe list as stdin).\n'
+            '(supply node list as stdin).\n'
         )
 
         parser.add_argument(
