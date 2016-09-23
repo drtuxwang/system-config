@@ -166,17 +166,15 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         cd "$HOME/Desktop"
     fi
 
-    # cd[a-z], mk[a-z], scd
-    if [ ! "$cdz" ]; then
-        for _dir in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
-            export cd$_dir="$PWD"
-        done
-    fi
-    for _dir in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
+    # mkinst, cdinst, mksrc, cdsrc, mktest, cdtest, scd
+    for _dir in inst src test; do
         alias mk$_dir='export cd'$_dir'="$PWD"; echo "cd'$_dir'=$cd'$_dir'"'
         alias cd$_dir='echo "cd \"$cd'$_dir'\""; cd "$cd'$_dir'"'
+        if [ ! "$cdtest" ]; then
+            export cd$_dir="$PWD"
+        fi
     done
-    alias scd='env | grep "^cd[a-z]=" | grep -v "=$HOME/Desktop$" | sort'
+    alias scd='env | egrep "^cd(inst|src|test)=" | sort'
 
     # Platform specific
     case `uname` in

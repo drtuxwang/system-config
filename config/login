@@ -108,17 +108,15 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         cd "$HOME/Desktop"
     endif
 
-    # cd[a-z], mk[a-z], scd
-    if ( ! $?cdz ) then
-        foreach DIR (a b c d e f g h i j k l m n o p q r s t u v w x y z)
-            setenv cd$DIR "$PWD"
-        end
-    endif
-    foreach _dir (a b c d e f g h i j k l m n o p q r s t u v w x y z)
+    # mkinst, cdinst, mksrc, cdsrc, mktest, cdtest, scd
+    foreach _dir (inst src test)
         alias mk$_dir 'setenv cd'$_dir' "$PWD"; echo "cd'$_dir'=$cd'$_dir'"'
         alias cd$_dir 'echo "cd \"$cd'$_dir'\""; cd "$cd'$_dir'"'
+        if ( ! $?cdtest ) then
+            setenv cd$_dir "$PWD"
+        endif
     end
-    alias scd 'env | grep "^cd[a-z]=" | grep -v "=$HOME/Desktop$" | sort'
+    alias scd 'env | egrep "^cd(inst|src|test)=" | sort'
 
     # Platform specific
     switch (`uname`)
