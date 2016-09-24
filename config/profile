@@ -32,6 +32,11 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         fi
     fi
 
+    # Removing soft shell limit
+    for _limit in `\ulimit -a 2> /dev/null | \cut -c1`; do
+        \ulimit -$_limit `\ulimit -$_limit -H 2> /dev/null` 2> /dev/null
+    done
+
     # Session control
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
@@ -153,11 +158,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         esac
         export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
     fi
-
-    # Removing soft shell limit
-    for _limit in `\ulimit -a 2> /dev/null | \cut -c1`; do
-        \ulimit -$_limit `\ulimit -$_limit -H 2> /dev/null` 2> /dev/null
-    done
 
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop 2> /dev/null

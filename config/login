@@ -14,6 +14,13 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     echo ""
     echo "Processing Startup script ($HOME/.login)"
 
+    # Removing soft shell limit
+    foreach _limit ( `limit | \egrep -v "unlimited|-" | \awk '{print $1}'` )
+        if ( "`limit $_limit unlimited`" == "" ) then
+            limit $_limit unlimited
+        endif
+    end
+
     # Session control
     setenv MYHNAME `uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
@@ -93,13 +100,6 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         setenv LM_LICENSE_FILE $BASE_LM_LICENSE_FILE
         setenv LD_LIBRARY_PATH $BASE_LD_LIBRARY_PATH
     endif
-
-    # Removing soft shell limit
-    foreach _limit ( `limit | \egrep -v "unlimited|-" | \awk '{print $1}'` )
-        if ( "`limit $_limit unlimited`" == "" ) then
-            limit $_limit unlimited
-        endif
-    end
 
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop >& /dev/null
