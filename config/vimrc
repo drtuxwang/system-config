@@ -17,10 +17,7 @@ highlight SpellLocal cterm=underline
 highlight clear SpellRare
 highlight SpellRare cterm=underline
 nmap . ]s  " Next
-nmap > ]s  " Next
 nmap r z=  " Replace word
-nmap = z=  " Replace word
-nmap * z=  " Replace word
 nmap + zg  " Good word
 nmap - zug  " Undo good word
 
