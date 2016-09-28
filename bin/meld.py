@@ -83,7 +83,8 @@ class Main(object):
         """
         options = Options()
 
-        task = subtask_mod.Task(options.get_meld().get_cmdline())
+        python2 = command_mod.Command('python2', args=['-E'], errors='stop')
+        task = subtask_mod.Task(python2.get_cmdline() + options.get_meld().get_cmdline())
         task.run(pattern=options.get_pattern())
         return task.get_exitcode()
 
