@@ -993,6 +993,8 @@ examples/python/simple-flask/Makefile                 Simple Flask demo
 examples/python/simple-flask/RUN
 examples/python/simple-flask/simple_flask.py
 examples/python/simple-flask/templates/hello.html
+examples/python/simple-tornado/tornado_client.py      Tornado web client example
+examples/python/simple-tornado/tornado_server.py      Tornado web server example
 
 examples/terraform-aws/1pxy/aws_config.tf             Terraform AWS: 1pxy example
 examples/terraform-aws/1pxy/aws_resources.tf
