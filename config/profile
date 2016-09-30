@@ -14,24 +14,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     echo
     echo "Processing Startup script ($HOME/.profile)"
 
-    # TMUX startup/reconnect
-    if [ -x "/usr/bin/tmux" ]; then
-        if [ "$TMUX" ]; then
-            if [ ! "$TMUX_SCREEN" ]; then
-                export TMUX_SCREEN=$(tmux display-message -p '#S')
-                echo "Starting   TMUX session $TMUX_SCREEN."
-            fi
-            alias logout='echo "Reattached TMUX session $TMUX_SCREEN."; tmux detach'
-        elif [ ! "$SSH_CONNECTION" ]; then
-            SESSION=`tmux ls | grep -v attached | head -1 | cut -f1 -d:`
-            if [ "$SESSION" ]; then
-                exec /usr/bin/tmux attach -t $SESSION
-            else
-                exec /usr/bin/tmux new
-            fi
-        fi
-    fi
-
     # Removing soft shell limit
     for _limit in `\ulimit -a 2> /dev/null | \cut -c1`; do
         \ulimit -$_limit `\ulimit -$_limit -H 2> /dev/null` 2> /dev/null
@@ -202,6 +184,16 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         ;;
     esac
     export PATH="$HOME/software/bin:/opt/software/bin:$PATH"
+
+    # Terminal Multiplexer
+    if [ -x "/usr/bin/tmux" ]; then
+        if [ "$TMUX" ]; then
+            alias logout='tmux detach'
+        else
+            echo "Terminal   Multiplexer (tmux)"
+            tmux ls | grep "(created" | sed -e "s/^/  tmux attach -t /" -e "s/:.*) /  # /"
+        fi
+    fi
 
     # Applying local settings
     if [ -f $HOME/.profile-local ]; then

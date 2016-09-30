@@ -145,6 +145,16 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     endsw
     setenv PATH "$HOME/software/bin:/usr/local/bin:$PATH"
 
+    # Terminal Multiplexer
+    if ( -x "/usr/bin/tmux" ) then 
+        if ( "$?TMUX" ) then
+            alias logout 'tmux detach'
+        else
+            echo "Terminal   Multiplexer (tmux)"
+            tmux ls | grep "(created" | sed -e "s/^/  tmux attach -t /" -e "s/:.*) /  # /"
+        endif
+    endif
+
     # Applying local settings
     if ( -f $HOME/.login-local ) then
         echo "Applying   Local settings ($HOME/.login-local)"
