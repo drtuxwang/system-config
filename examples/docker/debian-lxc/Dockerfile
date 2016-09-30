@@ -2,7 +2,7 @@ FROM debian:8
 
 # Install packages
 RUN apt-get update && \
-    apt-get install -y net-tools openssh-client sudo tcsh vim wget && \
+    apt-get install -y net-tools openssh-client sudo tcsh tmux vim wget && \
     apt-get install -y x11-xserver-utils x11-utils xfonts-base && \
     apt-get install -y xfce4-terminal libgtk-3-0 libasound2 && \
     apt-get install -y python3 python3-dev python3-pip
@@ -19,6 +19,7 @@ COPY config/vimrc /root/.vimrc
 COPY config/profile /home/docker/.profile
 COPY config/login /home/docker/.login
 COPY config/terminalrc /home/docker/.config/xfce4/terminal/terminalrc
+COPY config/tmux.conf /home/docker/.tmux.conf
 COPY config/vimrc /home/docker/.vimrc
 
 # Docker startup file
