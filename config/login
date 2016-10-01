@@ -11,8 +11,15 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     if ( -f $HOME/.login-2bash && -f /bin/bash ) then
         setenv ENV $HOME/.profile; exec /bin/bash -l
     endif
-    echo ""
-    echo "Processing Startup script ($HOME/.login)"
+
+    # Terminal Multiplexer
+    if ( -x "/usr/bin/tmux" && $?TMUX ) then
+        if ( ! $?MYMPLEX ) then
+            setenv MYMPLEX "tmux:`tmux display-message -p '#S'`"
+            unsetenv MYTTY
+        endif
+        alias logout 'tmux detach'
+    endif
 
     # Removing soft shell limit
     foreach _limit ( `limit | \egrep -v "unlimited|-" | \awk '{print $1}'` )
@@ -24,9 +31,17 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     # Session control
     setenv MYHNAME `uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+    if ( $?tcsh ) then
+        setenv MYSHELL "TCSH"
+        set prompt="%{\033[01;32m%}%n@%m:%{\033[01;34m%}%~%{\033[00m%} % "
+    else
+        setenv MYSHELL "CSH"
+        set prompt="$MYUNAME@${MYHNAME} % "
+    endif
     if ( $?MYTTY ) then
         alias logout 'echo Use \"exit\" to exit the shell.'
     else
+        setenv MYSHELL "$MYSHELL login"
         if ( "$TERM" == "dumb" ) then
             setenv MYTTY "/dev/???"
         else
@@ -39,12 +54,6 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         endif
         alias exec ''
         alias exit 'echo Use \"logout\" to leave the login shell.'
-        echo "Running    Login shell /bin/tcsh (TC Shell) on $MYTTY ($TERM)"
-    endif
-    if ( $?tcsh ) then
-        set prompt="%{\033[01;32m%}%n@%m:%{\033[01;34m%}%~%{\033[00m%} % "
-    else
-        set prompt="$MYUNAME@${MYHNAME} % "
     endif
 
     # General stuff
@@ -79,7 +88,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     endif
     unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
 
-    # Save/Load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
+    # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if ( ! $?BASE_MANPATH ) then
         if ( ! $?MANPATH ) then
             setenv MANPATH :
@@ -145,21 +154,17 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     endsw
     setenv PATH "$HOME/software/bin:/usr/local/bin:$PATH"
 
-    # Terminal Multiplexer
-    if ( -x "/usr/bin/tmux" ) then 
-        if ( "$?TMUX" ) then
-            alias logout 'tmux detach'
-        else
-            echo "Terminal   Multiplexer (tmux)"
-            tmux ls |& grep "(created" | sed -e "s/^/  tmux attach -t /" -e "s/:.*) /  # /"
-        endif
-    endif
-
     # Applying local settings
     if ( -f $HOME/.login-local ) then
-        echo "Applying   Local settings ($HOME/.login-local)"
         source $HOME/.login-local
     endif
-    echo ""
+
+    echo
+    if ( $?MYMPLEX ) then
+        echo "$MYSHELL shell ($MYTTY, $MYMPLEX)"
+    else
+        echo "$MYSHELL shell ($MYTTY)"
+    endif
+    echo
 
 endif

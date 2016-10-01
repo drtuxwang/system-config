@@ -11,22 +11,14 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     if [ ! "$BASH" -a -f $HOME/.profile-2bash -a -f /bin/bash ]; then
         export ENV=$HOME/.profile; exec /bin/bash -l
     fi
-    echo
-    echo "Processing Startup script ($HOME/.profile)"
 
     # Terminal Multiplexer
-    if [ -x "/usr/bin/tmux" ]; then
-        if [ "$TMUX" ]; then
-            if [ ! "$TMUX_SCREEN" ]; then
-                MYTTY=
-                export TMUX_SCREEN=$(tmux display-message -p '#S')
-                echo "Starting   TMUX session $TMUX_SCREEN."
-            fi
-            alias logout='tmux detach'
-        else
-            echo "Terminal   Multiplexer (tmux)"
-            tmux ls 2> /dev/null | grep "(created" | sed -e "s/^/  tmux attach -t /" -e "s/:.*) /  # /"
+    if [ -x "/usr/bin/tmux" -a "$TMUX" ]; then
+        if [ ! "$MYMPLEX" ]; then
+            export MYMPLEX="tmux:$(tmux display-message -p '#S')"
+            MYTTY=
         fi
+        alias logout='tmux detach'
     fi
 
     # Removing soft shell limit
@@ -37,27 +29,8 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     # Session control
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-    if [ "$MYTTY" ]; then
-        alias logout='echo Use \"exit\" to exit the shell.'
-    else
-        if [ "$TERM" = "dumb" ]; then
-            MYTTY="/dev/???"; export MYTTY
-        else
-            MYTTY=`\tty 2> /dev/null`; export MYTTY
-            (mesg y) > /dev/null 2>&1
-            if [ "$TMOUT" != 0 ]; then
-                export TMOUT=0
-            fi
-            stty erase "^?" 2> /dev/null  #  alternative
-            stty intr  2> /dev/null
-            stty susp  2> /dev/null
-        fi
-        alias exec=''
-        alias exit='echo Use \"logout\" to leave the login shell.'
-        set -o ignoreeof ''
-        echo "Running    Login shell on $MYTTY ($TERM)"
-    fi
     if [ "$BASH" ]; then
+        MYSHELL="BASH"
         PS1='\[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[31m\]$(__git_ps1 2> /dev/null)\[\033[00m\] \$ '
         precmd() {
             \echo -e "\033]0;$MYHNAME:$PWD\007\c"
@@ -71,12 +44,36 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         complete -f -o default tar
         complete -f -o default wine
     elif [ "`echo $0 | \grep \"ksh$\"`" ]; then
+        MYSHELL="KORN"
         PS1="$MYUNAME@${MYHNAME}_$ "
         set -o emacs
         alias -x __A=$(print '\020' 2> /dev/null) 2> /dev/null # up    = Last line
         alias -x __B=$(print '\016' 2> /dev/null) 2> /dev/null # down  = Next line
         alias -x __C=$(print '\006' 2> /dev/null) 2> /dev/null # right = Move right
         alias -x __D=$(print '\002' 2> /dev/null) 2> /dev/null # left  = Move left
+    else
+        MYSHELL="BOURNE"
+    fi
+
+    if [ "$MYTTY" ]; then
+        alias logout='echo Use \"exit\" to exit the shell.'
+    else
+        MYSHELL="$MYSHELL login"
+        if [ "$TERM" = "dumb" ]; then
+            MYTTY="/dev/???"; export MYTTY
+        else
+            MYTTY=`\tty 2> /dev/null`; export MYTTY
+            (mesg y) > /dev/null 2>&1
+            if [ "$TMOUT" != 0 ]; then
+                export TMOUT=0
+            fi
+            stty erase "^?" 2> /dev/null  # ^H alternative
+            stty intr ^C 2> /dev/null
+            stty susp ^Z 2> /dev/null
+        fi
+        alias exec=''
+        alias exit='echo Use \"logout\" to leave the login shell.'
+        set -o ignoreeof ''
     fi
 
     # General stuff
@@ -202,8 +199,14 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
 
     # Applying local settings
     if [ -f $HOME/.profile-local ]; then
-        echo "Applying   Local settings ($HOME/.profile-local)"
         . $HOME/.profile-local
+    fi
+
+    echo
+    if [ "$MYMPLEX" ]; then
+        echo "$MYSHELL shell ($MYTTY, $MYMPLEX)"
+    else
+        echo "$MYSHELL shell ($MYTTY)"
     fi
     echo
 

@@ -671,6 +671,9 @@ bin/tls.py
 bin/tlz                Make a compressed archive in TAR.LZMA format
 bin/tlz.py
 
+bin/tmux               tmux wrapper (allowing non systems port)
+bin/tmux.py
+
 bin/tocapital          Print arguments wth first letter in upper case
 bin/tocapital.bat
 bin/tocapital.py
