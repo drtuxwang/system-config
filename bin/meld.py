@@ -83,10 +83,11 @@ class Main(object):
         """
         options = Options()
 
-        python2 = command_mod.Command('python2', args=['-E'], errors='stop')
-        task = subtask_mod.Task(python2.get_cmdline() + options.get_meld().get_cmdline())
+        os.environ['PYTHONPATH'] = '/usr/lib/python2.7'
+        task = subtask_mod.Task(options.get_meld().get_cmdline())
         task.run(pattern=options.get_pattern())
         return task.get_exitcode()
+
 
 if __name__ == '__main__':
     if '--pydoc' in sys.argv:
