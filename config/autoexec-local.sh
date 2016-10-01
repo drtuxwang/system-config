@@ -34,6 +34,6 @@ fi
 # setxkbmap us  # "gb", "de", "us"
 # xset m 2,16  # Slow mouse
 
-# start_app chrome &
-# start_app firefox &
+# chrome &
+# firefox &
 # myqsd 1
