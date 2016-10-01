@@ -1,7 +1,7 @@
 #!/bin/sh
 
 set_vga()
-{   
+{
     MODELINE=$(gtf 1440 900 60 | grep Modeline | awk '{
         printf("%4.2f %d %d %d %d %d %d %d %d\n", $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     }')
@@ -14,8 +14,8 @@ start_app()
 {
     echo "Starting \"$1\"..."
     "$@" &
-    sleep 4
-    for _ in `seq 11`; do
+    sleep 5
+    for _ in `seq 10`; do
         sleep 1
         if [ ! "`ps | grep \" $1\$\"`" ]; then
             echo "Restarting \"$1\"..."
