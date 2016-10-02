@@ -24,7 +24,7 @@ start_app()
     "$@" &
     for _ in `seq 15`; do
         sleep 1
-        if [ ! "$(ps | egrep " $1(|.py)$")" ]; then
+        if [ ! "$(ps -o "args" | sed -e "s/^/ /" -e "s/\$/ /" | grep "[ /]$1 ")" ]; then
             echo "Restarting \"$1\"..."
             "$@" &
             break
