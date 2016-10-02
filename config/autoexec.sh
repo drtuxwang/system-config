@@ -1,5 +1,38 @@
 #!/bin/sh
 
+set_vbox()
+{
+    sleep 1
+    xrandr --dpi 96
+    sleep 1
+    xrandr -s 1024x768
+}
+
+set_vga()
+{
+    MODELINE=$(gtf 1440 900 60 | grep Modeline | awk '{
+        printf("%4.2f %d %d %d %d %d %d %d %d\n", $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+    }')
+    echo xrandr --newmode $2x${3}_$4 $MODELINE
+    echo xrandr --addmode $1 $2x${3}_$4
+    echo xrandr -s $2x$3
+}
+
+start_app()
+{
+    echo "Starting \"$@\"..."
+    "$@" &
+    for _ in `seq 15`; do
+        sleep 1
+        if [ ! "$(ps | egrep " $1(|.py)$")" ]; then
+            echo "Restarting \"$1\"..."
+            "$@" &
+            break
+        fi
+    done
+}
+
+
 if [ "$1" != "-start" ]; then
     exec $0 -start > ${0%%.sh}.log 2>&1
 fi

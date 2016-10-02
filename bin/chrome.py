@@ -15,7 +15,6 @@ import re
 import shutil
 import signal
 import sys
-import time
 
 import command_mod
 import file_mod
@@ -366,16 +365,6 @@ class Main(object):
 
         subtask_mod.Background(options.get_chrome().get_cmdline()).run(
             pattern=options.get_pattern())
-
-        # Restart Chrome if it fails to start
-        for _ in range(15):
-            time.sleep(1)
-            task = task_mod.Tasks.factory()
-            if len(task.get_descendant_pids(os.getpid())) < 2:  # ps & chrome
-                print('Restarting Chrome...')
-                subtask_mod.Background(options.get_chrome().get_cmdline()).run(
-                    pattern=options.get_pattern())
-                break
 
 
 if __name__ == '__main__':
