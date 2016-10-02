@@ -368,7 +368,7 @@ class Main(object):
             pattern=options.get_pattern())
 
         # Restart Chrome if it fails to start
-        for _ in range(10):
+        for _ in range(15):
             time.sleep(1)
             task = task_mod.Tasks.factory()
             if len(task.get_descendant_pids(os.getpid())) < 2:  # ps & chrome
