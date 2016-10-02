@@ -13,9 +13,9 @@ set_vga()
     MODELINE=$(gtf 1440 900 60 | grep Modeline | awk '{
         printf("%4.2f %d %d %d %d %d %d %d %d\n", $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     }')
-    echo xrandr --newmode $2x${3}_$4 $MODELINE
-    echo xrandr --addmode $1 $2x${3}_$4
-    echo xrandr -s $2x$3
+    xrandr --newmode $2x${3}_$4 $MODELINE
+    xrandr --addmode $1 $2x${3}_$4
+    xrandr -s $2x${3}_$4
 }
 
 start_app()
@@ -24,7 +24,7 @@ start_app()
     "$@" &
     for _ in `seq 15`; do
         sleep 1
-        if [ ! "$(ps -o "pid args " | grep "[ /]$1 ")" ]; then
+        if [ ! "$(ps | egrep " $1(|.py)$")" ]; then
             echo "Restarting \"$1\"..."
             "$@" &
             break

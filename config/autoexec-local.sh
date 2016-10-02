@@ -1,5 +1,5 @@
 # set_vbox &
-# set_vga VGA1 gtf 1440 900 60
+# set_vga VGA1 1440 900 60
 # xreset
 # setxkbmap us  # "gb", "de", "us"
 # xset m 2,16  # Slow mouse
