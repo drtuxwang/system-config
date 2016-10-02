@@ -13,12 +13,17 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     endif
 
     # Terminal Multiplexer
-    if ( -x "/usr/bin/tmux" && $?TMUX ) then
-        if ( ! $?MYMPLEX ) then
-            setenv MYMPLEX "tmux:`tmux display-message -p '#S'`"
-            unsetenv MYTTY
+    if ( -x "/usr/bin/tmux" ) then
+        if ( $?TMUX ) then
+            if ( ! $?MYMPLEX ) then
+                setenv MYMPLEX "tmux:`tmux display-message -p '#S'`"
+                unsetenv MYTTY
+            endif
+            alias logout 'tmux detach'
+        else if ( $?SSH_CONNECTION && "$TERM" == "screen" ) then
+            setenv MYMPLEX "tmux:`echo \"$SSH_CONNECTION\" | sed -e \"s/ .*//\"`"
+            alias tmux 'echo "sessions should be nested with care, ssh client using tmux"'
         endif
-        alias logout 'tmux detach'
     endif
 
     # Removing soft shell limit
@@ -38,6 +43,9 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         setenv MYSHELL "CSH"
         set prompt="$MYUNAME@${MYHNAME} % "
     endif
+    if ( $?SSH_CONNECTION ) then
+        setenv MYSHELL "$MYSHELL remote"
+    endif
     if ( $?MYTTY ) then
         alias logout 'echo Use \"exit\" to exit the shell.'
     else
@@ -52,8 +60,12 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
             stty intr 
             stty susp 
         endif
+        if ( $?SSH_CONNECTION ) then
+            alias exit 'echo Use \"logout\" to leave the remote login shell.'
+        else
+            alias exit 'echo Use \"logout\" to leave the login shell.'
+        endif
         alias exec ''
-        alias exit 'echo Use \"logout\" to leave the login shell.'
     endif
 
     # General stuff
