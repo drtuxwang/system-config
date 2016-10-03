@@ -56,9 +56,13 @@ class Options(object):
         """
         self._tmux = command_mod.Command('tmux', errors='stop')
 
-        if len(args) > 1 or 'TMUX' in os.environ:
+        if len(args) > 1 and os.environ.get('TMUX'):
             self._tmux.set_args(args[1:])
             subtask_mod.Exec(self._tmux.get_cmdline()).run()
+        elif os.environ.get('TERM') == 'screen':
+            raise SystemExit(
+                'sessions should be nested with care, '
+                'already running multiplexer')
 
         self._select()
 
