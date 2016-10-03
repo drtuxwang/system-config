@@ -20,9 +20,9 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
                 unsetenv MYTTY
             endif
             alias logout 'tmux detach'
-        else if ( $?SSH_CONNECTION && "$TERM" == "screen" ) then
-            setenv MYMPLEX "tmux:`echo \"$SSH_CONNECTION\" | sed -e \"s/ .*//\"`"
-            alias tmux 'echo "sessions should be nested with care, ssh client using tmux"'
+        else if ( "$TERM" == "screen" ) then
+            setenv MYMPLEX "tmux:???"
+            alias tmux='echo "sessions should be nested with care, already running multiplexer" #'
         endif
     endif
 

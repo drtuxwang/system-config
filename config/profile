@@ -20,9 +20,9 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
                 MYTTY=
             fi
             alias logout='tmux detach'
-        elif [ "$SSH_CONNECTION" -a "$TERM" = "screen" ]; then
-            export MYMPLEX="tmux:`echo \"$SSH_CONNECTION\" | sed -e \"s/ .*//\"`"
-            alias tmux='echo "sessions should be nested with care, ssh client using tmux"'
+        elif [ "$TERM" = "screen" ]; then
+            export MYMPLEX="tmux:???"
+            alias tmux='echo "sessions should be nested with care, already running multiplexer" #'
         fi
     fi
 
