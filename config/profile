@@ -15,13 +15,13 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     # Terminal Multiplexer
     if [ -x "/usr/bin/tmux" ]; then
         if [ "$TMUX" ]; then
-            if [ ! "$MYMPLEX" ]; then
-                export MYMPLEX="tmux:$(tmux display-message -p '#S')"
+            if [ ! "$MYSCREEN" ]; then
+                export MYSCREEN="tmux:$(tmux display-message -p '#S')"
                 MYTTY=
             fi
             alias logout='tmux detach'
         elif [ "$TERM" = "screen" ]; then
-            export MYMPLEX="tmux:???"
+            export MYSCREEN="tmux:???"
             alias tmux='echo "sessions should be nested with care, already running multiplexer" #'
         fi
     fi
@@ -214,10 +214,10 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     fi
 
     echo
-    if [ "$MYMPLEX" ]; then
-        echo "$MYSHELL shell ($MYTTY, $MYMPLEX)"
+    if [ "$MYSCREEN" ]; then
+        echo "$MYSHELL shell (TERM=$TERM, tty=$MYTTY, screen=$MYSCREEN)"
     else
-        echo "$MYSHELL shell ($MYTTY)"
+        echo "$MYSHELL shell (TERM=$TERM, tty=$MYTTY)"
     fi
     echo
 
