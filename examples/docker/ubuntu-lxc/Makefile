@@ -1,6 +1,11 @@
 IMAGE := ubuntu-lxc
+BASE = ubuntu
 
 default: build
+
+pull:
+	@echo "\n*** Pulling base Docker image ***"
+	docker pull $(BASE)
 
 build:
 	@echo "\n*** Building Docker image ***"
@@ -19,6 +24,7 @@ run:
 		--volume /tmp/.X11-unix:/tmp/.X11-unix \
 		--volume /shared:/shared \
 		--env ID="`id`" \
+		--env TERM=$(TERM) \
 		--env DISPLAY=$(DISPLAY) \
 		--name $(IMAGE) \
 		--hostname $(IMAGE) \

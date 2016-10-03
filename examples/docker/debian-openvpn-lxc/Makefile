@@ -21,6 +21,7 @@ run:
 		--volume /etc/openvpn:/etc/openvpn:ro \
 		--volume /etc/ssl/certs:/etc/ssl/certs:ro \
 		--env ID="`id`" \
+		--env TERM=$(TERM) \
 		--env DISPLAY=$(DISPLAY) \
 		--name $(IMAGE) \
 		--hostname $(IMAGE) \
