@@ -22,7 +22,7 @@ start_app()
 {
     echo "Starting \"$@\"..."
     "$@" &
-    for _ in `seq 15`; do
+    for _ in `seq 20`; do
         sleep 1
         if [ ! "$(ps -o "args" | sed -e "s/^/ /" -e "s/\$/ /" | grep "[ /]$1 ")" ]; then
             echo "Restarting \"$1\"..."
