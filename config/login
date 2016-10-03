@@ -21,7 +21,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
             endif
             alias logout 'tmux detach'
         else if ( "$TERM" == "screen" ) then
-            setenv MYSCREEN "tmux:???"
+            setenv MYSCREEN "???"
             alias tmux='echo "sessions should be nested with care, already running multiplexer" #'
         endif
     endif
@@ -173,9 +173,9 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
 
     echo
     if ( $?MYSCREEN ) then
-        echo "$MYSHELL shell (TERM=$TERM, tty=$MYTTY, screen=$MYSCREEN)"
+        echo "$MYSHELL shell ($MYTTY, screen=$MYSCREEN)"
     else
-        echo "$MYSHELL shell (TERM=$TERM, tty=$MYTTY)"
+        echo "$MYSHELL shell ($MYTTY)"
     endif
     echo
 

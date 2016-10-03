@@ -21,7 +21,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
             fi
             alias logout='tmux detach'
         elif [ "$TERM" = "screen" ]; then
-            export MYSCREEN="tmux:???"
+            export MYSCREEN="???"
             alias tmux='echo "sessions should be nested with care, already running multiplexer" #'
         fi
     fi
@@ -215,9 +215,9 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
 
     echo
     if [ "$MYSCREEN" ]; then
-        echo "$MYSHELL shell (TERM=$TERM, tty=$MYTTY, screen=$MYSCREEN)"
+        echo "$MYSHELL shell ($MYTTY, screen=$MYSCREEN)"
     else
-        echo "$MYSHELL shell (TERM=$TERM, tty=$MYTTY)"
+        echo "$MYSHELL shell (tty=$MYTTY)"
     fi
     echo
 
