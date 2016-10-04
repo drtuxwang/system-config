@@ -1,4 +1,4 @@
-FROM debian
+FROM debian:8
 
 # Install packages
 RUN apt-get update && \

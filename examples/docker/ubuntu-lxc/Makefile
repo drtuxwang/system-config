@@ -1,17 +1,12 @@
 IMAGE := ubuntu-lxc
-BASE = ubuntu
 
 default: build
-
-pull:
-	@echo "\n*** Pulling base Docker image ***"
-	docker pull $(BASE)
 
 build:
 	@echo "\n*** Building Docker image ***"
 	cp -rp ../../../bin ../../../config .
 	bin/fmod bin/* *
-	docker build -t $(IMAGE) .
+	docker build --pull -t $(IMAGE) .
 	rm -rf bin config
 	docker images
 
