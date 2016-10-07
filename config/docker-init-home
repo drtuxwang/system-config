@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# Add user: -env ID=$(id)
+#
+
+echo -e "\nRunning \"$0\"..."
+
+if [ ! "$USER" ]; then
+    exit 1
+fi
+
+GROUP=$(id -g $USER)
+export HOME=$(grep "^$USER:" /etc/passwd | cut -f6 -d:)
+
+# Setup sudoers
+cat << EOF > /etc/sudoers.d/docker
+Defaults:$USER !requiretty
+$USER ALL=(ALL) NOPASSWD: ALL
+Defaults umask = 0022
+EOF
+
+# Create user home directory
+HOME=/home/$USER
+if [ ! -d "$HOME" ]; then
+    mkdir -p $HOME
+fi
+if [ -d "/home/docker" ]; then
+    for FILE in $(find /home/docker -type f | sed -e "s@/home/docker/@@"); do
+        if [ ! -f "$HOME/$FILE" ]; then
+            mkdir -p $(dirname "$HOME/$FILE") 2> /dev/null
+            echo "Creating \"$HOME/$FILE\"..."
+            cp -p "/home/docker/$FILE" "$HOME/$FILE"
+        fi
+    done
+fi
+chown -R $USER:$GROUP $HOME

@@ -939,8 +939,8 @@ config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for lo
 config/bashrc                   Copy to "/root/.bashrc" for "root" account settings
 config/config                   Copy to "$HOME/.ssh/config"
 config/docker-init              Docker init script
-config/docker-init-adduser      Docker init script plugin for adding user
-config/docker-init-openvpn      Docker init script plugin for OpenVPN
+config/docker-init-home         Docker init script plugin for fixing $HOME directory
+config/docker-init-resolvconf   Docker init script plugin for fixing "resolvconf"
 config/gitconfig                Copy to "$HOME/.gitconfig" and edit
 config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
 config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")

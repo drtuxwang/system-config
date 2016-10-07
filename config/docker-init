@@ -10,16 +10,18 @@ for FILE in /etc/docker-init-*; do
     $FILE
 done
 
-# Switch to user: -env ID=$(id)
-if [ "$ID" ]; then
-    ID=$(echo "$ID" | sed -e "s/[=()]/ /g")
-    ARRAY=(${ID//:/ })
-    USER_NAME=${ARRAY[2]}
-    export HOME=/home/$USER_NAME
+# Switch to user $USER
+if [ "$USER" ]; then
+    export HOME=$(grep "^$USER:" /etc/passwd | cut -f6 -d:)
     cd $HOME
-    sudo -E -u $USER_NAME bash -l
+    echo -e "\nStarting \"$USER\" login shell..."
+    sudo -E -u $USER bash -l
 else
+    echo -e "\nStarting \"root\" login shell..."
     /bin/bash -l
 fi
 
-echo -e "\n\"$0\" finished!"
+echo -e "\nFinished \"$0\"..."
+if [ "$$" = 1 ]; then
+    echo "Stopping Docker container!"
+fi

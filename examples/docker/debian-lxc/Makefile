@@ -16,9 +16,11 @@ run:
 		--rm \
 		--interactive \
 		--tty \
-		--volume /tmp/.X11-unix:/tmp/.X11-unix \
-		--volume /shared:/shared \
-		--env ID="`id`" \
+		--volume="/etc/passwd:/etc/passwd:ro" \
+		--volume="/etc/group:/etc/group:ro" \
+		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
+		--volume=/shared:/shared \
+		--env USER=$(USER) \
 		--env TERM=$(TERM) \
 		--env DISPLAY=$(DISPLAY) \
 		--name $(IMAGE) \
