@@ -56,7 +56,7 @@ class Options(object):
         """
         self._tmux = command_mod.Command('tmux', errors='stop')
 
-        if len(args) > 1 and os.environ.get('TMUX'):
+        if len(args) > 1:
             self._tmux.set_args(args[1:])
             subtask_mod.Exec(self._tmux.get_cmdline()).run()
         elif os.environ.get('TERM') == 'screen':
