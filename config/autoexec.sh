@@ -20,16 +20,24 @@ set_vga()
 
 start_app()
 {
+    TIMEOUT=10
+    case $1 in
+    -timeout=*)
+        TIMEOUT=`echo "$1" | cut -f2- -d"="`
+        shift
+        ;;
+    esac
     echo "Starting \"$@\"..."
     "$@" &
-    for _ in `seq 20`; do
+    for DELAY in `seq $TIMEOUT`; do
         sleep 1
         if [ ! "$(ps -o "args" | sed -e "s/^/ /" -e "s/\$/ /" | grep "[ /]$1 ")" ]; then
-            echo "Restarting \"$1\"..."
+            echo "Restarting \"$1\" after $DELAY seconds..."
             "$@" &
-            break
+            return
         fi
     done
+    echo "Running \"$@\"..."
 }
 
 
