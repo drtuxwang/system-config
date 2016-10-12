@@ -2,7 +2,7 @@
     "kind": "ReplicationController",
     "apiVersion": "v1",
     "metadata": {
-        "name": "debian-lxc",
+        "name": "debian-rc",
         "namespace": "ckong",
         "labels": {
             "app": "debian-lxc"

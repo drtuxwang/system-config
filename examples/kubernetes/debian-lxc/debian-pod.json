@@ -1,8 +1,8 @@
 {
-    "kind": "ReplicationController",
+    "kind": "Pod",
     "apiVersion": "v1",
     "metadata": {
-        "name": "debian-lxc",
+        "name": "debian-pod",
         "namespace": "ckong",
         "labels": {
             "app": "debian-lxc"
