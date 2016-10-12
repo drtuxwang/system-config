@@ -984,6 +984,7 @@ examples/docker/ubuntu-lxc/Makefile
 
 examples/kubernetes/debian-lxc/Makefile               Kubernetes example
 examples/kubernetes/debina-lxc/ckong-ns.json
+examples/kubernetes/debian-lxc/debian-pod.json
 examples/kubernetes/debian-lxc/debian-rc.json
 examples/kubernetes/debian-lxc/debian-svc.json
 

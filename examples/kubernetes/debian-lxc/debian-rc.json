@@ -9,7 +9,7 @@
         }
     },
     "spec": {
-        "replicas": 1,
+        "replicas": 2,
         "selector": {
             "app": "debian-lxc"
         },
@@ -25,7 +25,8 @@
                         "name": "debian-lxc",
                         "image": "debian:8",
                         "imagePullPolicy": "IfNotPresent",
-                        "args": [
+                        "command": [
+                            "bash",
                             "sleep",
                             "86400"
                         ],
@@ -42,14 +43,14 @@
                             }
                         ],
                         "resources": {
-                            "limits": {
-                                "cpu": "1440",
-                                "memory": "1024M"
-                            },
                             "requests": {
-                                "cpu": "60m",
-                                "memory": "128M"
+                                "cpu": "250m",
+                                "memory": "64M"
                             }
+                            "limits": {
+                                "cpu": "500m",
+                                "memory": "128M"
+                            },
                         },
                         "volumeMounts": [
                             {

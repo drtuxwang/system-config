@@ -1,0 +1,60 @@
+{
+    "kind": "ReplicationController",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "debian-lxc",
+        "namespace": "ckong",
+        "labels": {
+            "app": "debian-lxc"
+        }
+    },
+    "spec": {
+        "containers": [
+            {
+                "name": "debian-lxc",
+                "image": "debian:8",
+                "imagePullPolicy": "IfNotPresent",
+                "command": [
+                    "bash"
+                ],
+                "env": [
+                    {
+                        "name": "NAME",
+                        "value": "VALUE"
+                    }
+                ],
+                "ports": [
+                    {
+                        "containerPort": 80,
+                        "protocol": "TCP"
+                    }
+                ],
+                "resources": {
+                    "requests": {
+                        "cpu": "250m",
+                        "memory": "64M"
+                    }
+                    "limits": {
+                        "cpu": "500m",
+                        "memory": "128M"
+                    },
+                },
+                "volumeMounts": [
+                    {
+                        "mountPath": "/shared",
+                        "name": "shared"
+                    }
+                ]
+            }
+        ],
+        "volumes": [
+            {
+                "name": "shared",
+                "hostPath": {
+                    "path": "/shared"
+                }
+            }
+        ],
+        "restartPolicy": "Never"
+    }
+}
