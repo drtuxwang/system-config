@@ -120,6 +120,10 @@ bin/extfbfl            Extract Facebook friends list from saved HTML file
 bin/extfbfl.bat
 bin/extfbfl.py
 
+bin/extjs              Extracts Javascript from a HTML file
+bin/extjs.bat
+bin/extjs.py
+
 bin/exturl             Extracts http references from a HTML file
 bin/exturl.bat
 bin/exturl.py
