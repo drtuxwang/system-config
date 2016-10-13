@@ -87,7 +87,6 @@ class Main(object):
         lines = []
         try:
             with open(file, errors='replace') as ifile:
-                urls = []
                 for line in ifile:
                     lines.append(line.strip().replace('SCRIPT>', 'script>'))
         except OSError:
