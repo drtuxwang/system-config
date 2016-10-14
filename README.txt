@@ -362,6 +362,10 @@ bin/gz.py
 
 bin/halt               Fast shutdown using "/proc/sysrq-trigger"
 
+bin/htmlformat         HTML file re-formatter
+bin/htmlformat.bat
+bin/htmlformat.py
+
 bin/httpd              Start a simple Python HTTP server
 bin/httpd.bat
 bin/httpd.py
