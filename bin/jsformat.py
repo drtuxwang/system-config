@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Re-format XML file.
+Re-format Javascript file.
 """
 
 import argparse
@@ -9,7 +9,8 @@ import os
 import shutil
 import signal
 import sys
-import xml.dom.minidom
+
+import jsbeautifier
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -31,7 +32,8 @@ class Options(object):
         return self._args.files
 
     def _parse_args(self, args):
-        parser = argparse.ArgumentParser(description='Re-format XML file.')
+        parser = argparse.ArgumentParser(
+            description='Re-format Javascript file.')
 
         parser.add_argument(
             'files',
@@ -101,13 +103,11 @@ class Main(object):
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "' + file + '" file.')
-            xml_doc = xml.dom.minidom.parseString(''.join(lines))
-            xml_text = xml_doc.toprettyxml(indent='    ', newl='\n')
 
             tmpfile = file + '-tmp' + str(os.getpid())
             try:
                 with open(tmpfile, 'w', newline='\n') as ofile:
-                    print(xml_text, end='', file=ofile)
+                    print(jsbeautifier.beautify(''.join(lines)), file=ofile)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')

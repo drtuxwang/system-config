@@ -392,7 +392,12 @@ bin/javac.py           (Java compiler)
 bin/jpeg2ps            jpeg2ps wrapper (allowing non systems port)
 bin/jpeg2ps.py
 
+bin/jsformat           Javascript file re-formatter
+bin/jsformat.bat
+bin/jsformat.py
+
 bin/jsonformat         JSON file re-formatter
+bin/jsonformat.bat
 bin/jsonformat.py
 
 bin/jython.py
