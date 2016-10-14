@@ -97,11 +97,17 @@ class Main(object):
             yield match.split('</script>')[0]
 
     @staticmethod
-    def _print(script):
-        print('<script>')
-        for line in jsbeautifier.beautify(script).split('\n'):
-            print('    {0:s}'.format(line))
-        print('</script>')
+    def _write(file, script):
+        lines = jsbeautifier.beautify(script).split('\n')
+        print('Writing "{0:s}" with {1:d} lines...'.format(file, len(lines)))
+        try:
+            with open(file, 'w') as ofile:
+                for line in lines:
+                    print(line, file=ofile)
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot write "' + file +
+                '" configuration file.')
 
     @classmethod
     def run(cls):
@@ -114,8 +120,12 @@ class Main(object):
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" HTML file.')
+            number = 0
             for script in cls._extract(file):
-                cls._print(script)
+                number += 1
+                jsfile = '{0:s}-{1:02d}.js'.format(
+                    file.rsplit('.', 1)[0], number)
+                cls._write(jsfile, script)
 
 
 if __name__ == '__main__':
