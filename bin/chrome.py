@@ -313,8 +313,8 @@ class Options(object):
             if file_mod.FileStat(os.path.join(os.path.dirname(
                     self._chrome.get_file()
             ), 'chrome-sandbox')).get_mode() != 104755:
-                self._chrome.extend_args(
-                    ['--test-type', '--disable-setuid-sandbox'])
+                self._chrome.extend_args([
+                    '--no-sandbox', '--disable-infobars'])
 
         self._pattern = (
             '^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
