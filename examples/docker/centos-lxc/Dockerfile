@@ -3,7 +3,8 @@ FROM centos:7
 # Install packages
 RUN yum -y update && \
     yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
-    yum -y install gcc net-tools openssh-clients sudo tcsh tmux vim wget && \
+    yum -y install ksh tcsh && \
+    yum -y install gcc net-tools openssh-clients sudo tmux vim wget && \
     yum -y install xorg-x11-server-utils xorg-x11-utils && \
     yum -y install xfce4-terminal alsa-lib && \
     yum -y install python34 python34-devel && \
