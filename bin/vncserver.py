@@ -49,17 +49,16 @@ class Options(object):
                         print('unset DBUS_SESSION_BUS_ADDRESS', file=ofile)
                         print('unset SESSION_MANAGER', file=ofile)
                         print(
-                            'if [ -x /usr/bin/gnome-session-fallback ]; then',
-                            file=ofile
+                             'if [ -x /usr/bin/gnome-session-fallback ]',
+                             file=ofile
                         )
+                        print('then', file=ofile)
                         print(
                             '    /usr/bin/gnome-session-fallback &',
                             file=ofile
                         )
-                        print(
-                            'elif [ -x /usr/bin/gnome-session ]; then',
-                            file=ofile
-                        )
+                        print('elif [ -x /usr/bin/gnome-session ]', file=ofile)
+                        print('then', file=ofile)
                         print('    /usr/bin/gnome-session &', file=ofile)
                         print('else', file=ofile)
                         print('    gnome &', file=ofile)
@@ -72,7 +71,8 @@ class Options(object):
                             'unset SESSION_MANAGER DBUS_SESSION_BUS_ADDRESS',
                             file=ofile
                         )
-                        print('if [ -x "/usr/bin/vglrun" ]; then', file=ofile)
+                        print('if [ -x "/usr/bin/vglrun" ]', file=ofile)
+                        print('then', file=ofile)
                         print('    vglrun startxfce4 &', file=ofile)
                         print('else', file=ofile)
                         print('    startxfce4 &', file=ofile)

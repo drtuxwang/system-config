@@ -2,12 +2,12 @@
 #
 # Wrapper for Python "bin" script to call Python module
 #
-VERSION=20160920
+VERSION=20161019
 
 PYEXE="python3"
 PYDIR=`dirname "$0"`
 PYMOD=`basename "$0"`
-case  "$PYMOD" in
+case "$PYMOD" in
 2to3)
     PYMOD="lib2to3"
     ;;

@@ -130,7 +130,8 @@ class Main(object):
                 'PUBKEY="' + self._pubkey + '"',
                 'mkdir $HOME/.ssh 2> /dev/null',
                 'if [ ! "`grep \"^$PUBKEY$\" '
-                '$HOME/.ssh/authorized_keys 2> /dev/null`" ]; then',
+                '$HOME/.ssh/authorized_keys 2> /dev/null`" ]',
+                'then',
                 '    echo "Adding public key to \"' + login +
                 ':$HOME/.ssh/authorized_keys\"..."',
                 '    echo "$PUBKEY" >> $HOME/.ssh/authorized_keys',
