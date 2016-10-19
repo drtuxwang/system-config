@@ -4,18 +4,20 @@
 #
 # 1996-2016 By Dr Colin Kong
 #
-VERSION=20160529
-RELEASE="2.6.40-2"
+VERSION=20161019
+RELEASE="2.6.40-3"
 
 # Test for bash echo bug
-if [ "`echo \"\n\"`" = "\n" ]; then
+if [ "`echo \"\n\"`" = "\n" ]
+then
     ECHO="echo -e"
 else
     ECHO=echo
 fi
 
 # Workaround GNU Textutil POSIX 200112 bug
-if [ "`(echo | head -1 | tail +1) 2>&1`" ]; then
+if [ "`(echo | head -1 | tail +1) 2>&1`" ]
+then
     _POSIX2_VERSION=199209
     export _POSIX2_VERSION
 fi
@@ -24,7 +26,8 @@ fi
 unset CDPATH
 
 # HP-UX ps fix
-if [ "`uname`" = HP-UX ]; then
+if [ "`uname`" = HP-UX ]
+then
     UNIX95=a
 fi
 
@@ -34,12 +37,15 @@ fi
 #
 which()
 {
-    if [ "$1" = "`basename $0`" ]; then
+    if [ "$1" = "`basename $0`" ]
+    then
         PATH=`echo ":$PATH:" | sed -e "s@.*:\`dirname \"$0\"\`:@@"`
     fi
-    for CDIR in `echo $PATH | sed -e "s/ /%20/g" -e "s/:/ /g"`; do
+    for CDIR in `echo $PATH | sed -e "s/ /%20/g" -e "s/:/ /g"`
+    do
         CMD=`echo "$CDIR/$1" | sed -e "s/%20/ /g"`
-        if [ -x "$CMD" -a ! -d "$CMD" ]; then
+        if [ -x "$CMD" -a ! -d "$CMD" ]
+        then
             echo "$CMD" | sed -e "s@//*@/@g"
             return
         fi
@@ -52,7 +58,8 @@ which()
 #
 isitset()
 {
-    if [ $# = 0 -o "$1" = 0 ]; then
+    if [ $# = 0 -o "$1" = 0 ]
+    then
         echo Unknown
     else
         echo "$@"
@@ -65,8 +72,10 @@ isitset()
 #
 show_software()
 {
-    if [ ! "`echo \" $@ \" | grep \" value= \"`" ]; then
-        if [ "`echo \" $@ \" | egrep \" (location|value)=[^ ]\"`" ]; then
+    if [ ! "`echo \" $@ \" | grep \" value= \"`" ]
+    then
+        if [ "`echo \" $@ \" | egrep \" (location|value)=[^ ]\"`" ]
+        then
             write_output "$@"
         fi
     fi
@@ -78,43 +87,53 @@ show_software()
 #
 scanbus()
 {
-    LSUSB=`PATH=/sbin:$PATH; export PATH; lsusb 2> /dev/null`
+    LSUSB=`PATH=/sbin:$PATH lsusb 2> /dev/null`
 
     # Audio device detection
-    if [ "`egrep "^ ?[0-9][0-9]* " /proc/asound/cards 2> /dev/null`" ]; then
-        for CARD in `egrep "^ ?[0-9][0-9]* " /proc/asound/cards | awk '{print $1}'`; do
+    if [ "`egrep "^ ?[0-9][0-9]* " /proc/asound/cards 2> /dev/null`" ]
+    then
+        for CARD in `egrep "^ ?[0-9][0-9]* " /proc/asound/cards | awk '{print $1}'`
+        do
             UNIT=`echo $CARD | sed -e "s/^0$//"`
-            if [ "`ls /proc/asound/card$CARD/midi* 2> /dev/null`" ]; then
+            if [ "`ls /proc/asound/card$CARD/midi* 2> /dev/null`" ]
+            then
                 MODEL=`grep "^ $CARD " /proc/asound/cards 2> /dev/null | sed -e "s/^[^:]*: //"`
                 write_output name="Audio device" device="/dev/midi$UNIT" value="$MODEL" comment="MIDI"
             fi
-            if [ "`ls /proc/asound/card$CARD/pcm*c 2> /dev/null`" ]; then
+            if [ "`ls /proc/asound/card$CARD/pcm*c 2> /dev/null`" ]
+            then
                 MODEL=`(grep "^Codec:" /proc/asound/card$CARD/codec*; grep "^ $CARD " /proc/asound/cards) 2> /dev/null | head -1 | sed -e "s/^.*: *//"`
-                if [ -b "/dev/dsp$UNIT" ]; then
+                if [ -b "/dev/dsp$UNIT" ]
+                then
                     DEVICE="/dev/???"
                 else
                     DEVICE="/dev/dsp$UNIT"
                 fi
-                if [ "`ls /proc/asound/card$CARD/pcm*p 2> /dev/null`" ]; then
+                if [ "`ls /proc/asound/card$CARD/pcm*p 2> /dev/null`" ]
+                then
                     write_output name="Audio device" device="$DEVICE" value="$MODEL" comment="MIC/SPK"
                 else
                     write_output name="Audio device" device="$DEVICE" value="$MODEL" comment="MIC"
                 fi
-            elif [ "`ls /proc/asound/card$CARD/pcm*p 2> /dev/null`" ]; then
+            elif [ "`ls /proc/asound/card$CARD/pcm*p 2> /dev/null`" ]
+            then
                 MODEL=`grep "^ $CARD " /proc/asound/cards 2> /dev/null | sed -e "s/^[^:]*: //"`
                 write_output name="Audio device" device="/dev/dsp$UNIT" value="$MODEL" comment="SPK"
             fi
         done
     else
-        for MODEL in `echo "$LSUSB" | grep -i " audio .*:" | sed -e "s@.*: @@" -e "s/ Audio Accelerator//" -e "s/ Audio Controller//" -e "s/ Corp[.]//" -e "s/ /#/g"`; do
+        for MODEL in `echo "$LSUSB" | grep -i " audio .*:" | sed -e "s@.*: @@" -e "s/ Audio Accelerator//" -e "s/ Audio Controller//" -e "s/ Corp[.]//" -e "s/ /#/g"`
+        do
             write_output name="Audio device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/#/ /g\"`"
         done
     fi
 
     # Battery detection
-    for BATTERY in `ls -1d /proc/acpi/battery/BAT* 2> /dev/null`; do
+    for BATTERY in `ls -1d /proc/acpi/battery/BAT* 2> /dev/null`
+    do
         INFO=`cat $BATTERY/info $BATTERY/state 2> /dev/null`
-        if [ "`echo \"$INFO\" | grep \"present:.*yes\"`" ]; then
+        if [ "`echo \"$INFO\" | grep \"present:.*yes\"`" ]
+        then
             BATOEM=`echo "$INFO" | grep "^OEM info:" | sed -e "s/.*: *//"`
             BATNAME=`echo "$INFO" | grep "^model number:" | sed -e "s/.*: *//"`
             BATTYPE=`echo "$INFO" | grep "^battery type:" | sed -e "s/.*: *//"`
@@ -122,14 +141,18 @@ scanbus()
             BATVOLT=`echo "$INFO" | grep "^design voltage:" | sed -e "s/.*: *//" -e "s/ //g"`
             MYCAP=`echo "$INFO" | grep "^remaining capacity:" | sed -e "s/.*: *//" -e "s/ //g"`
             MYRATE=`echo "$INFO" | grep "^present rate:" | sed -e "s/.*: *//" | awk '{print $1}'`
-            if [ "`echo \"$INFO\" | grep \"charging state:.*discharging\"`" ]; then
-                if [ "$MYRATE" = unknown ]; then
+            if [ "`echo \"$INFO\" | grep \"charging state:.*discharging\"`" ]
+            then
+                if [ "$MYRATE" = unknown ]
+                then
                     STATE="-"
                 else
                     STATE="-"`echo "$MYRATE" "$MYCAP" | awk '{printf("%dmA, %3.1fh\n",$1,$2/$1)}'`
                 fi
-            elif [ "`echo \"$INFO\" | grep \"charging state:.*charging\"`" ]; then
-                if [ "$MYRATE" = unknown ]; then
+            elif [ "`echo \"$INFO\" | grep \"charging state:.*charging\"`" ]
+            then
+                if [ "$MYRATE" = unknown ]
+                then
                     STATE="+"
                 else
                     STATE="+"`echo "$MYRATE" | awk '{printf("%dmA\n",$1)}'`
@@ -142,40 +165,51 @@ scanbus()
     done
 
     # CD device detection
-    for DEVICE in `ls /proc/ide 2> /dev/null`; do
-        if [ "`grep ide-cdrom /proc/ide/$DEVICE/driver 2> /dev/null`" ]; then
+    for DEVICE in `ls /proc/ide 2> /dev/null`
+    do
+        if [ "`grep ide-cdrom /proc/ide/$DEVICE/driver 2> /dev/null`" ]
+        then
             MODEL=`sed -e "s/CDRW/CD-RW/" -e "s@ RW/D@ CD-RW/D@" /proc/ide/$DEVICE/model`
             write_output name="CD device" device="/dev/$DEVICE" value="$MODEL"
         fi
     done
     SCSI=`tail +2 /proc/scsi/scsi 2> /dev/null | paste - - - | grep "CD-ROM" |
     sed -e "s/^Host: scsi//" -e "s/Vendor://" -e "s/Model://" -e "s/Rev:.*//" -e "s/CDRW/CD-RW/" -e "s@ RW/D@ CD-RW/D@" | awk '{printf(" %d,%d,%d,%d %s %s %s %s %s\n",$1,$3,$5,$7,$8,$9,$10,$11,$12)}'`
-    for UNIT in `echo "$SCSI" | awk '{print $1}'`; do
+    for UNIT in `echo "$SCSI" | awk '{print $1}'`
+    do
         MODEL=`echo "$SCSI" | grep " $UNIT " | cut -f3- -d" "`
         DEVICE=`ls -ld /sys/block/sr*/device 2> /dev/null | grep "/\`echo $UNIT | sed -e \"s/,/:/g\"\`$" | cut -f4 -d/`
-        if [ ! "$DEVICE" ]; then
+        if [ ! "$DEVICE" ]
+        then
             DEVICE=sr`expr \`echo "$SCSI" | grep -n $UNIT | cut -f1 -d:\` - 1`
         fi
-        if [ -b /dev/`echo $DEVICE | sed -e "s/sr/scd/"` ]; then
+        if [ -b /dev/`echo $DEVICE | sed -e "s/sr/scd/"` ]
+        then
             DEVICE=`echo $DEVICE | sed -e "s/sr/scd/"`
         fi
-        if [ -f /proc/scsi/usb-storage*/`echo $UNIT | cut -f1 -d","` ]; then
+        if [ -f /proc/scsi/usb-storage*/`echo $UNIT | cut -f1 -d","` ]
+        then
             MODEL="$MODEL [USB]"
-        elif [ -f /proc/scsi/ide-scsi*/`echo $UNIT | cut -f1 -d","` ]; then
+        elif [ -f /proc/scsi/ide-scsi*/`echo $UNIT | cut -f1 -d","` ]
+        then
             MODEL="$MODEL [IDE]"
         fi
         write_output name="CD device" device="/dev/$DEVICE" value="$MODEL"
     done
 
     # Disk device detection
-    for DEVICE in `ls /proc/ide 2> /dev/null`; do
-        if [ "`grep ide-disk /proc/ide/$DEVICE/driver 2> /dev/null`" ]; then
+    for DEVICE in `ls /proc/ide 2> /dev/null`
+    do
+        if [ "`grep ide-disk /proc/ide/$DEVICE/driver 2> /dev/null`" ]
+        then
             MODEL=`cat /proc/ide/$DEVICE/model`
-            for PART in `grep " $DEVICE" /proc/partitions 2> /dev/null | awk '{print $4}'`; do
+            for PART in `grep " $DEVICE" /proc/partitions 2> /dev/null | awk '{print $4}'`
+            do
                 SIZE=`egrep " $PART( |$)" /proc/partitions | awk '{print $3}'`
                 case $PART in
                 *[1-9]*)
-                    if [ "`grep \"/dev/$PART \" /proc/swaps 2> /dev/null`" ]; then
+                    if [ "`grep \"/dev/$PART \" /proc/swaps 2> /dev/null`" ]
+                    then
                         write_output name="Disk partition" device="/dev/$PART" value="$SIZE KB" comment="swap"
                     else
                         write_output name="Disk partition" device="/dev/$PART" value="$SIZE KB" comment="`mount 2> /dev/null | grep \"/dev/$PART \" | awk '{printf(\"%s on %s\",$5,$3)}'`"
@@ -189,23 +223,29 @@ scanbus()
         fi
     done
     SCSI=`tail +2 /proc/scsi/scsi 2> /dev/null | paste - - - | grep "Direct-Access" | sed -e "s/^Host: scsi//" -e "s/Vendor://" -e "s/Model://" -e "s/Rev:.*//" | awk '{printf (" %d,%d,%d,%d %s %s %s %s %s \n",$1,$3,$5,$7,$8,$9,$10,$11,$12)}' | sed -e "s/ *$//"`
-    for UNIT in `echo "$SCSI" | awk '{print $1}'`; do
+    for UNIT in `echo "$SCSI" | awk '{print $1}'`
+    do
         MODEL=`echo "$SCSI" | grep " $UNIT " | cut -f3- -d" "`
         DEVICE=`ls -ld /sys/block/sd*/device 2> /dev/null | grep "/\`echo $UNIT | sed -e \"s/,/:/g\"\`$" | cut -f4 -d/`
-        if [ ! "$DEVICE" ]; then
+        if [ ! "$DEVICE" ]
+        then
             DEVICE=sd`echo -e "\14\`echo "$SCSI" | grep -n $UNIT | cut -f1 -d:\`"`
         fi
-        if [ -f /proc/scsi/usb-storage*/`echo $UNIT | cut -f1 -d","` ]; then
-            if [ "`grep \"Attached: No\" /proc/scsi/usb-storage*/\`echo $UNIT | cut -f1 -d\",\"\``" ]; then
+        if [ -f /proc/scsi/usb-storage*/`echo $UNIT | cut -f1 -d","` ]
+        then
+            if [ "`grep \"Attached: No\" /proc/scsi/usb-storage*/\`echo $UNIT | cut -f1 -d\",\"\``" ]
+            then
                 continue
             fi
             MODEL="$MODEL [USB]"
         fi
-        for PART in `grep " $DEVICE" /proc/partitions 2> /dev/null | awk '{print $NF}'`; do
+        for PART in `grep " $DEVICE" /proc/partitions 2> /dev/null | awk '{print $NF}'`
+        do
             SIZE=`grep " $PART$" /proc/partitions | awk '{print $3}'`
             case $PART in
             *[1-9]*)
-                if [ "`grep \"/dev/$PART \" /proc/swaps 2> /dev/null`" ]; then
+                if [ "`grep \"/dev/$PART \" /proc/swaps 2> /dev/null`" ]
+                then
                     write_output name="Disk partition" device="/dev/$PART" value="$SIZE KB" comment="swap"
                 else
                     write_output name="Disk partition" device="/dev/$PART" value="$SIZE KB" comment="`mount 2> /dev/null | grep \"/dev/$PART \" | awk '{printf(\"%s on %s\",$5,$3)}'`"
@@ -221,64 +261,80 @@ scanbus()
     # Disk mounts detection
     MOUNTS=`grep : /proc/mounts | awk '{printf("%s %s %s\n",$3,$1,$2)}' | sort`
     TIMEOUT=`timeout --version 2> /dev/null | grep "^timeout " | sed -e "s/^timeout.*/timeout 1s/"`
-    for MOUNT in `echo "$MOUNTS" | awk '{print $3}'`; do
+    for MOUNT in `echo "$MOUNTS" | awk '{print $3}'`
+    do
         TYPE=`echo "$MOUNTS" | grep " $MOUNT$" | awk '{print $1}'`
         REMOTE=`echo "$MOUNTS" | grep " $MOUNT$" | awk '{print $2}'`
         SIZE=`$TIMEOUT df -k $MOUNT 2> /dev/null | tail +2 | paste - - | awk '{print $2}'`
-        if [ ! "$SIZE" -o "$SIZE" = 0 ]; then
+        if [ ! "$SIZE" -o "$SIZE" = 0 ]
+        then
             SIZE="???"
         fi
         write_output name="Disk $TYPE" device="/dev/???" value="$SIZE KB" comment="$REMOTE on $MOUNT"
     done
 
     # Graphics device detection
-    if [ -f /proc/driver/nvidia/cards/0 ]; then # Upto 19x.x
+    if [ -f /proc/driver/nvidia/cards/0 ]
+    then  # Upto 19x.x
         DRIVER=`grep "Kernel Module" /proc/driver/nvidia/version 2> /dev/null | sed -e "s/.*Kernel Module *//" | awk '{printf("%s driver\n",$1)}'`
-        for GPU in `ls -1 /proc/driver/nvidia/cards`; do
+        for GPU in `ls -1 /proc/driver/nvidia/cards`
+        do
             MODEL="nVidia"`grep "^Model: " /proc/driver/nvidia/cards/$GPU | sed -e "s/^[^:]*:[  ]*//"`
             write_output name="Graphics device" device="/dev/nvidia$GPU" value="$MODEL" comment="$DRIVER"
         done
-    elif [ -d /proc/driver/nvidia/gpus/0 ]; then # From 2xx.x
+    elif [ -d /proc/driver/nvidia/gpus/0 ]
+    then  # From 2xx.x
         DRIVER=`grep "Kernel Module" /proc/driver/nvidia/version 2> /dev/null | sed -e "s/.*Kernel Module *//" | awk '{printf("%s driver\n",$1)}'`
-        for GPU in `ls -1 /proc/driver/nvidia/gpus`; do
+        for GPU in `ls -1 /proc/driver/nvidia/gpus`
+        do
             MODEL="nVidia"`grep "^Model: " /proc/driver/nvidia/gpus/$GPU/information | sed -e "s/^[^:]*:[  ]*//"`
             write_output name="Graphics device" device="/dev/nvidia$GPU" value="$MODEL" comment="$DRIVER"
         done
     else
         MODELS=`echo "$LSPCI" | grep "VGA compatible controller:" | sed -e "s/.*controller: //" -e "s/ /#/g"`
-        for MODEL in $MODELS; do
+        for MODEL in $MODELS
+        do
             write_output name="Graphics device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/#/ /g\"`"
         done
     fi
 
     # Input device detection
-    for MODEL in `echo "$LSUSB" | egrep -i "(Keyboard|Mouse|Scan)" | cut -f7- -d" " | sed -e "s/ /#/g"`; do
+    for MODEL in `echo "$LSUSB" | egrep -i "(Keyboard|Mouse|Scan)" | cut -f7- -d" " | sed -e "s/ /#/g"`
+    do
         write_output name="Input device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/#/ /g\"` [USB]"
     done
 
     # Network device detection
-    for MODEL in `echo "$LSPCI" | grep -i ethernet | sed -e "s/.*: //" -e "s/Semiconductor //" -e "s/Co., //" -e "s/Ltd. //" -e "s/PCI Express //" -e "s/Ethernet.*/Ethernet/" -e "s/ (.*//" -e "s/ /#/g"`; do
+    for MODEL in `echo "$LSPCI" | grep -i ethernet | sed -e "s/.*: //" -e "s/Semiconductor //" -e "s/Co., //" -e "s/Ltd. //" -e "s/PCI Express //" -e "s/Ethernet.*/Ethernet/" -e "s/ (.*//" -e "s/ /#/g"`
+    do
         write_output name="Network device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/#/ /g\"`"
     done
-    if [ "`echo \"$LSPCI\" | egrep -i \"infiniband| ib \"`" ]; then
+    if [ "`echo \"$LSPCI\" | egrep -i \"infiniband| ib \"`" ]
+    then
         echo "$LSPCI" | egrep -i "infiniband| ib " | sed -e "s/.*: //" -e "s/ [iI][bB] / InifiniBand /" -e "s/InfiniHost/InifiniBand/" -e "s/\[//" -e "s/\]//" -e "s/,.*//" -e "s/ (.*//" -e "s/ (.*//"  -e "s@^@ Network device:     /dev/???     @"
-    elif [ "`/sbin/lsmod 2> /dev/null | grep \"^ib_\"`" ]; then
+    elif [ "`/sbin/lsmod 2> /dev/null | grep \"^ib_\"`" ]
+    then
         write_output name="Network device" device="/dev/???" value="Unknown InifiniBand device"
     fi
-    for MODEL in `echo "$LSPCI" | grep "Network controller:" | sed -e "s/.*Network controller: //" -e "s/://" -e "s/ (.*//" -e "s/ /#/g"`; do
+    for MODEL in `echo "$LSPCI" | grep "Network controller:" | sed -e "s/.*Network controller: //" -e "s/://" -e "s/ (.*//" -e "s/ /#/g"`
+    do
         write_output name="Network device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/#/ /g\"`"
     done
 
     # Video device detection
-    for DEVICE in `ls -1 /sys/class/video4linux 2> /dev/null`; do
-        if [ "`grep \"^DEVTYPE=usb_\" /sys/class/video4linux/$DEVICE/device/uevent 2> /dev/null`" ]; then
+    for DEVICE in `ls -1 /sys/class/video4linux 2> /dev/null`
+    do
+        if [ "`grep \"^DEVTYPE=usb_\" /sys/class/video4linux/$DEVICE/device/uevent 2> /dev/null`" ]
+        then
             MODEL=`echo "$LSUSB" | grep "\`grep DEVICE= /sys/class/video4linux/$DEVICE/device/uevent | sed -e \"s@/@ @g\" | awk '{printf(\"Bus %s Device %s:\n\",$5,$6)}'\`" | sed -e "s/.*: ID [^ ]* //"`" [USB]"
-        elif [ -f /sys/class/video4linux/$DEVICE/model ]; then
+        elif [ -f /sys/class/video4linux/$DEVICE/model ]
+        then
             MODEL=`cat /sys/class/video4linux/$DEVICE/model 2> /dev/null | sed -e "s/ *$/)/"`
         else
             MODEL="???"
         fi
-        if [ "$MODEL" ]; then
+        if [ "$MODEL" ]
+        then
             write_output name="Video device" device="/dev/$DEVICE" value="$MODEL"
         fi
     done
@@ -309,12 +365,13 @@ detect()
         ;;
     IRIX*)
         INETS=`isitset \`/usr/etc/ifconfig -a 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
-        if [ "$INETS" = Unknown ]; then
+        if [ "$INETS" = Unknown ]
+        then
             INETS=`/usr/etc/ping -c 1 $MYHNAME 2>&1 | grep "([.0-9]*)" | head -1 | cut -f2 -d"(" | cut -f1 -d")"`
         fi
         ;;
     Linux)
-        INETS=`LANG=en_GB; export LANG; isitset \`/sbin/ifconfig -a 2> /dev/null | grep "inet[6]* addr" | sed -e "s/inet[6]* addr[a-z]*:/ /" | awk '{print $1}'\``
+        INETS=`LANG=en_GB isitset \`/sbin/ifconfig -a 2> /dev/null | grep "inet[6]* addr" | sed -e "s/inet[6]* addr[a-z]*:/ /" | awk '{print $1}'\``
         ;;
     *NT*)
         INETS=`isitset \`ipconfig 2> /dev/null | grep "IP.* Address" | sed -e "s/.*: //"\``
@@ -324,16 +381,18 @@ detect()
         ;;
     esac
 
-    for INET in $INETS; do
+    for INET in $INETS
+    do
         write_output name="INET Address" value="$INET"
     done
-    for HOST in `grep "^[ 	]*nameserver[ 	]*[1-9]" /etc/resolv.conf 2> /dev/null | awk '{print $2}'`; do
+    for HOST in `grep "^[ 	]*nameserver[ 	]*[1-9]" /etc/resolv.conf 2> /dev/null | awk '{print $2}'`
+    do
         write_output name="INET Nameserver" value="$HOST"
     done
 
     # Detect hardware information
     MYTYPE=Unknown
-    MYCPUS=Unknown # Init to unknown
+    MYCPUS=Unknown  # Init to unknown
     MYBIT=Unknown
     MYCLOCK=Unknown
     MYCACHE=Unknown
@@ -350,7 +409,8 @@ detect()
         ;;
 
     IRIX*)
-        if [ "`/bin/uname -R | sed -e 's/.* //' | grep \"^[1-9]\"`" ]; then
+        if [ "`/bin/uname -R | sed -e 's/.* //' | grep \"^[1-9]\"`" ]
+        then
             MYOS="IRIX `/bin/uname -R | sed -e 's/.* //'`"
         else
             MYOS="IRIX `/bin/uname -r`"
@@ -359,30 +419,41 @@ detect()
 
     Linux)
         MYOSX=
-        for FILE in `ls -1 /etc/*release 2> /dev/null | egrep -v "/etc/(lsb|os)-release"`; do
+        for FILE in `ls -1 /etc/*release 2> /dev/null | egrep -v "/etc/(lsb|os)-release"`
+        do
             MYOSX="$MYOSX
-`head -2 $FILE 2> /dev/null | paste - - | sed -e \"s/Linux //\" -e \"s/release //\" -e \"s/(.*[uU]pdate/update/\" -e \"s/[()].*//\" -e \"s/ .*=/ /\" -e \"s/ for.*//\" -e \"s/	/ /g\"`"
+`head -2 $FILE 2> /dev/null | paste - - | sed -e \"s/Linux //\" -e \"s/release //\" -e \"s/\(.*[uU]pdate/update/\" -e \"s/[()].*//\" -e \"s/ .*=/ /\" -e \"s/ for.*//\" -e \"s/	/ /g\"`"
         done
         MYOS=`uname -s -r`
         MYOSX=`echo "$MYOSX" | sort | uniq | paste - - - - | sed -e "s/ *	/, /g" -e "s/^, //" -e "s/[, ]*$//"`
-        if [ ! "$MYOSX" ]; then
-            if [ "`dpkg --list 2> /dev/null | grep \"ii  mepis-auto\"`" ]; then
+        if [ ! "$MYOSX" ]
+        then
+            if [ "`dpkg --list 2> /dev/null | grep \"ii  mepis-auto\"`" ]
+            then
                 MYOSX="MEPIS "`dpkg --list | grep "ii  mepis-auto" | head -1 | awk '{print $3}'`
-            elif [ "`grep \"^DISTRIB_DESCRIPTION=\" /etc/lsb-release 2> /dev/null`" ]; then
+            elif [ "`grep \"^DISTRIB_DESCRIPTION=\" /etc/lsb-release 2> /dev/null`" ]
+            then
                 MYOSX=`grep "^DISTRIB_DESCRIPTION=" /etc/lsb-release | cut -f2 -d"=" | sed -e "s/\"//g"`
-            elif [ "`egrep \"^DISTRIB_ID=|^DISTRIB_RELEASE=\" /etc/lsb-release 2> /dev/null | wc -l | awk '{print $1}'`" = 2 ]; then
+            elif [ "`egrep \"^DISTRIB_ID=|^DISTRIB_RELEASE=\" /etc/lsb-release 2> /dev/null | wc -l | awk '{print $1}'`" = 2 ]
+            then
                 MYOSX="`grep \"^DISTRIB_ID=\" /etc/lsb-release | cut -f2 -d\"=\"` `grep \"^DISTRIB_RELEASE=\" /etc/lsb-release | cut -f2 -d\"=\"`"
-            elif [ -f /etc/kanotix-version ]; then
+            elif [ -f /etc/kanotix-version ]
+            then
                 MYOSX="Kanotix `awk '{print $2}' /etc/kanotix-version`"
-            elif [ -f /etc/knoppix-version ]; then
+            elif [ -f /etc/knoppix-version ]
+            then
                 MYOSX="Knoppix `awk '{print $1}' /etc/knoppix-version`"
-            elif [ -f /etc/DISTRO_SPECS ]; then
-                MYOSX="`grep ^DISTRO_NAME /etc/DISTRO_SPECS | cut -f2 -d= | sed -e \"s/'//g\"` `grep ^DISTRO_VERSION /etc/DISTRO_SPECS | cut -f2 -d=`"
-            elif [ "`dpkg --list 2> /dev/null | grep \"ii  knoppix\"`" ]; then
+            elif [ -f /etc/DISTRO_SPECS ]
+            then
+                MYOSX="`grep ^DISTRO_NAME /etc/DISTRO_SPECS | cut -f2 -d= | sed -e \"s/\'//g\"` `grep ^DISTRO_VERSION /etc/DISTRO_SPECS | cut -f2 -d=`"
+            elif [ "`dpkg --list 2> /dev/null | grep \"ii  knoppix\"`" ]
+            then
                 MYOSX="Knoppix "`dpkg --list | grep "ii  knoppix-g" | awk '{print $3}' | sed -e "s/-.*//"`
-            elif [ "`dpkg --list 2> /dev/null | grep \"ii  kernel.*MEPIS\"`" ]; then
+            elif [ "`dpkg --list 2> /dev/null | grep \"ii  kernel.*MEPIS\"`" ]
+            then
                 MYOSX="MEPIS "`dpkg --list | grep "ii  kernel.*MEPIS" | head -1 | awk '{print $3}' | sed -e "s/MEPIS.//"`
-            elif [ "`dpkg --list 2> /dev/null`" ]; then
+            elif [ "`dpkg --list 2> /dev/null`" ]
+            then
                 MYOSX="Debian "`dpkg --list | grep "ii  base-files" | awk '{print $3}'`
             fi
         fi
@@ -390,11 +461,12 @@ detect()
 
     *NT*)
         WINDIR=`echo "/$WINDIR" | sed -e "s@:\\\\\\@/@"`
-        HARDWARES=`PATH="$WINDIR/system32:$WINDIR/system32/wbem:$PATH"; export PATH; $WINDIR/system32/systeminfo 2> /dev/null`
+        HARDWARES=`PATH="$WINDIR/system32:$WINDIR/system32/wbem:$PATH" $WINDIR/system32/systeminfo 2> /dev/null`
         MYOS="NT "`echo "$HARDWARES" | grep "^OS Version:" | awk '{print $3}'`
         SP=`echo "$HARDWARES" | grep "^OS Version:.*Service Pack" | sed -e "s/.*Service Pack //" | awk '{printf(" SP%s\n",$1)}'`
         MYWINDOW=`echo "$HARDWARES" | grep "^OS Name:" | sed -e "s/^.*: *//" -e "s/(R)//g" -e "s/Microsoft //" -e "s/ $//"`
-        if [ "$MYWINDOW" ]; then
+        if [ "$MYWINDOW" ]
+        then
             MYOS="$MYOS ($MYWINDOW$SP)"
         fi
         ;;
@@ -420,10 +492,12 @@ detect()
     case `uname` in
         *NT*)
             MYUPTIME=`echo "$HARDWARES" | grep "^System Up Time:" | awk '{printf("%d days %02d:%02d\n",$4,$6,$8)}'`
-            if [ ! "$MYUPTIME" ]; then
+            if [ ! "$MYUPTIME" ]
+            then
                 MYUPTIME=Unknown
                 BOOTTIME=`echo "$HARDWARES" | grep "^System Boot Time:" | sed -e "s@[/,:]@ @g" | awk '{printf("%s/%s/%s %02d:%02d:%02d",$6,$5,$4,$7,$8,$9)}'`
-                if [ "$BOOTTIME" ]; then
+                if [ "$BOOTTIME" ]
+                then
                     UPSECS=`echo \`date +'%s' --date "$BOOTTIME"\` \`date +'%s'\` | awk '{print $2-$1}'`
                     UPDAYS=`echo $UPSECS | awk '{printf("%d",$1/86400)}'`
                     UPHOURS=`echo $UPSECS $UPDAYS | awk '{printf("%d",$1/3600-$2*24)}'`
@@ -435,13 +509,13 @@ detect()
             ;;
 
         Darwin)
-            MYOS="$MYOS (`system_profiler SPSoftwareDataType 2> /dev/null | grep \"System Version\" | sed -e \"s/.*: //\" -e \"s/ [(].*//\"`)"
+            MYOS="$MYOS (`system_profiler SPSoftwareDataType 2> /dev/null | grep \"System Version\" | sed -e \"s/.*: //\" -e \"s/ [\(].*//\"`)"
             MYUPTIME=`isitset \`uptime 2> /dev/null | cut -f1-2 -d"," | sed -e "s/.*up //"\``
             MYLOAD=`isitset \`uptime 2> /dev/null | sed -e "s/^.*load averages: //"\``
             ;;
 
-        *)
-            MYUPTIME=`isitset \`w -u 2> /dev/null | head -1 | cut -f1-2 -d"," | sed -e "s/.*up //" -e "s/(s)//" -e "s/  */ /g"\`` # Avoid buggy uptime
+        *)  Avoid buggy uptime
+            MYUPTIME=`isitset \`w -u 2> /dev/null | head -1 | cut -f1-2 -d"," | sed -e "s/.*up //" -e "s/(s)//" -e "s/  */ /g"\``
             MYLOAD=`isitset \`w -u 2> /dev/null | head -1 | sed -e "s/^.*load average: //" -e "s/,//g"\``
             ;;
         esac
@@ -453,8 +527,10 @@ detect()
             case $MYTYPE in
             PowerPC_POWER[45])
                 MYBIT="64bit"
-                for PROC in `lsdev -C 2> /dev/null | grep ^proc | sed -e "s/.*proc//" | awk '{print $1}'`; do
-                    if [ "`expr $PROC / 2 \* 2`" != "$PROC" ]; then
+                for PROC in `lsdev -C 2> /dev/null | grep ^proc | sed -e "s/.*proc//" | awk '{print $1}'`
+                do
+                    if [ "`expr $PROC / 2 \* 2`" != "$PROC" ]
+                    then
                         CORES=2
                         break
                     fi
@@ -468,24 +544,30 @@ detect()
                 ;;
             esac
             MYTYPEX="ppc"
-            if [ "`lsdev -C | grep \"Virtual I/O Bus\"`" ]; then
+            if [ "`lsdev -C | grep \"Virtual I/O Bus\"`" ]
+            then
                 MYCPUS=`isitset \`lsdev -C 2> /dev/null | grep ^proc | wc -l | awk '{print $1}'\``" (Virtual processors)"
             else
                 MYCPUS=`isitset \`lsdev -C 2> /dev/null | grep ^proc | wc -l | awk '{print $1}'\``
-               if [ "`bindprocessor -q 2> /dev/null | sed -e \"s/.*://\" | wc | awk '{print $2/2}'`" = "$MYCPUS" ]; then
-                   if [ "$CORES" ]; then
+                if [ "`bindprocessor -q 2> /dev/null | sed -e \"s/.*://\" | wc | awk '{print $2/2}'`" = "$MYCPUS" ]
+                then
+                   if [ "$CORES" ]
+                   then
                        MYCPUSX="$CORES cores/socket, SMT enabled"
                    else
                        MYCPUSX="SMT enabled"
                    fi
-               elif [ "$CORES" ]; then
+               elif [ "$CORES" ]
+               then
                    MYCPUSX="$CORES cores/socket"
                fi
            fi
            MYCLOCK=`pmcycles 2> /dev/null | sed -e "s/.*at //"`
-           if [ ! "$MYCLOCK" ]; then
+           if [ ! "$MYCLOCK" ]
+           then
                MYCLOCK=`isitset \`lsattr -E -l proc0 2>&1 | grep ^frequency | awk '{printf ("%d\n",$2/1000000+0.5)}'\``" MHz"
-               if [ "$MYCLOCK" = "Unknown MHz" ]; then
+               if [ "$MYCLOCK" = "Unknown MHz" ]
+               then
                    cat > /tmp/hardware$$.c 2> /dev/null << EOF
 #include <stdio.h>
 double rtc(void);
@@ -514,7 +596,8 @@ EOF
             fi
         fi
         MYBUS=`lsattr -E -l sys0 | grep "System Bus Frequency" | awk '{printf("%d MHz",$2/1000000+0.5)}'`
-        if [ "$MYBUS" ]; then
+        if [ "$MYBUS" ]
+        then
             MYCLOCK="$MYCLOCK ($MYBUS System Bus)"
         fi
         MYCACHE=`isitset \`lsattr -E -l L2cache0 2>&1 | grep ^size | awk '{print $2}'\``" KB"
@@ -535,35 +618,42 @@ EOF
             MYTYPEX="ppc"
             ;;
         esac
-        if [ "`echo \"$HARDWARES\" | grep \"hw.cpu64bit_capable: 1$\"`" ]; then
+        if [ "`echo \"$HARDWARES\" | grep \"hw.cpu64bit_capable: 1$\"`" ]
+        then
             MYBIT=64bit
         else
             MYBIT=32bit
         fi
         MYCPUS=`echo "$HARDWARES" | grep "machdep.cpu.core_count: " | awk '{print $2}'`
         CORES=`echo "$HARDWARES" | grep "machdep.cpu.cores_per_package: [1-9]" | awk '{print $2}'`
-        if [ "$CORES" -gt "$MYCPUS" ]; then
+        if [ "$CORES" -gt "$MYCPUS" ]
+        then
             CORES="$MYCPUS"
         fi
         SOCKETS=`expr $MYCPUS / $CORES`
         THREADS=`echo "$HARDWARES" | grep "machdep.cpu.thread_count: " | awk '{print $2}'`
-        if [ "$CORES" ]; then
-            if [ $MYCPUS != $THREADS ]; then
+        if [ "$CORES" ]
+        then
+            if [ $MYCPUS != $THREADS ]
+            then
                 MYCPUSX="$SOCKETS sockets with $CORES cores each, Hyper-threading enabled"
             else
                 MYCPUSX="$SOCKETS sockets with $CORES cores each"
             fi
         else
-            if [ $MYCPUS != $THREADS ]; then
+            if [ $MYCPUS != $THREADS ]
+            then
                 MYCPUSX="Hyper-threading enabled"
             fi
         fi
-        if [ $SOCKETS = 1 ]; then
+        if [ $SOCKETS = 1 ]
+        then
             MYCPUSX=`echo "$MYCPUSX" | sed -e "s/ sockets / socket /" -e "s/ each//"`
         fi
         MYCLOCK=`echo "$HARDWARES" | grep "hw.cpufrequency:" | awk '{printf("%d MHz",$2/1000000+0.5)}'`
         MYBUS=`echo "$HARDWARES" | grep "hw.busfrequency:" | awk '{printf("%d MHz",$2/1000000+0.5)}'`
-        if [ "$MYBUS" ]; then
+        if [ "$MYBUS" ]
+        then
             MYCLOCK="$MYCLOCK ($MYBUS System Bus)"
         fi
         MYCACHE=`echo "$HARDWARES" | grep "hw.l2cachesize: " | awk '{printf("%d KB (L2)",$2/1024)}'`
@@ -572,7 +662,8 @@ EOF
         ;;
 
     HP-UX)
-        if [ "`uname -m`" = ia64 ]; then
+        if [ "`uname -m`" = ia64 ]
+        then
             HARDWARES=`/usr/contrib/bin/machinfo 2> /dev/null`
             MYTYPE=`echo "$HARDWARES" | grep " processor model:" | sed -e "s/.*Intel/Intel/" -e "s/ [pP]rocessor//"`
             MYTYPEX="ia64"
@@ -616,7 +707,8 @@ EOF
             MYTYPE="PA8xxx"
             MYTYPEX="hppa"
             MYCPUS=`isitset \`echo "$HARDWARES" | grep "CPU Count" | awk '{print $4}'\``
-            if [ "`getconf HW_CPU_SUPP_BITS 2>&1 | grep Invalid`" ]; then
+            if [ "`getconf HW_CPU_SUPP_BITS 2>&1 | grep Invalid`" ]
+            then
                 MYBIT="32bit"
             else
                 MYBIT=`isitset \`getconf HW_CPU_SUPP_BITS 2> /dev/null | sed -e "s@.*/@@"\``"bit"
@@ -624,7 +716,7 @@ EOF
             MYCLOCK=`isitset \`echo "$HARDWARES" | grep "CPU Clock" | awk '{print $4}'\``" MHz"
             MYRAM=`isitset \`cat /var/adm/syslog/*syslog.log | grep Physical: | tail -1 | sed -e "s/.*Physical: //" -e "s/ Kbytes.*//" | awk '{printf ("%d\n",$1/1024+0.5)}'\`" MB"`
         fi
-        cp /usr/sbin/swapinfo /tmp/swapinfo$$ 2> /dev/null # Get pass permissions
+        cp /usr/sbin/swapinfo /tmp/swapinfo$$ 2> /dev/null  # Get pass permissions
         MYSWAP=`isitset \`/tmp/swapinfo$$ -t | tail -1 | awk '{printf("%d\n",$2/1024+0.5)}'\``" MB"
         rm -f /tmp/swapinfo$$
         ;;
@@ -693,9 +785,11 @@ EOF
             MYBITSX=`grep "^address sizes" /proc/cpuinfo 2> /dev/null | tail -1 | cut -f2 -d: | awk '{printf("%sbit physical",$1)}'`
             ;;
         i*86)
-            if [ "`grep \"^flags.*sse2\" /proc/cpuinfo 2> /dev/null`" ]; then
+            if [ "`grep \"^flags.*sse2\" /proc/cpuinfo 2> /dev/null`" ]
+            then
                 MYTYPE=`isitset \`grep "^model name" /proc/cpuinfo 2> /dev/null | head -1 | sed -e "s/.*: //" -e "s/Intel(R) [Xx][Ee][Oo][Nn]/Intel(R) Pentium(R) 4 XEON/" -e "s/ CPU.*//"\``
-            elif [ "`grep \"^flags.*sse\" /proc/cpuinfo 2> /dev/null`" ]; then
+            elif [ "`grep \"^flags.*sse\" /proc/cpuinfo 2> /dev/null`" ]
+            then
                 MYTYPE=`isitset \`grep "^model name" /proc/cpuinfo 2> /dev/null | head -1 | sed -e "s/.*: //" -e "s/Intel(R) [Xx][Ee][Oo][Nn]/Intel(R) Pentium III Xeon/" -e "s/ CPU.*//"\``
             else
                 MYTYPE=`isitset \`grep "^model name" /proc/cpuinfo 2> /dev/null | head -1 | sed -e "s/.*: //" -e "s/Intel(R) [Xx][Ee][Oo][Nn]/Intel(R) Pentium II Xeon/" -e "s/ CPU.*//"\``
@@ -717,9 +811,11 @@ EOF
             ;;
         *)
             SOCKETS=`grep "^physical id" /proc/cpuinfo 2> /dev/null | sort | uniq | wc -l | awk '{print $1}'`
-            if [ $SOCKETS = 0 ]; then
+            if [ $SOCKETS = 0 ]
+            then
                 SIBLINGS=`grep "^siblings" /proc/cpuinfo | head -1 | awk '{printf("%d\n",$3)}'`
-                if [ "$SIBLINGS" ]; then
+                if [ "$SIBLINGS" ]
+                then
                     SOCKETS=`expr $THREADS / $SIBLINGS`
                 else
                     SOCKETS=$THREADS
@@ -736,29 +832,35 @@ EOF
                 CORES=`grep "^cpu cores" /proc/cpuinfo | head -1 | awk '{print $4}' | sed -e "s/^1$//"`
                 ;;
             esac
-            if [ "$CORES" ]; then
+            if [ "$CORES" ]
+            then
                 MYCPUS=`expr $SOCKETS \* $CORES`
-                if [ `expr $MYCPUS \* 2` = $THREADS ]; then
+                if [ `expr $MYCPUS \* 2` = $THREADS ]
+                then
                     MYCPUSX="$SOCKETS sockets with $CORES cores each, Hyper-threading enabled"
                 else
                     MYCPUSX="$SOCKETS sockets with $CORES cores each"
                 fi
             else
                 MYCPUS=$SOCKETS
-                if [ $MYCPUS != $THREADS ]; then
+                if [ $MYCPUS != $THREADS ]
+                then
                     MYCPUSX="Hyper-threading enabled"
                 fi
             fi
-            if [ $SOCKETS = 1 ]; then
+            if [ $SOCKETS = 1 ]
+            then
                 MYCPUSX=`echo "$MYCPUSX" | sed -e "s/ sockets / socket /" -e "s/ each//"`
             fi
             ;;
         esac
         MYCLOCK=`isitset \`grep "^cpu MHz" /proc/cpuinfo 2> /dev/null | head -1 | sed -e "s/.*: //" | awk '{printf ("%d\n", $1+0.5)}'\``" MHz"
-        if [ "$MYCLOCK" = "Unknown MHz" ]; then
+        if [ "$MYCLOCK" = "Unknown MHz" ]
+        then
             MYCLOCK=`isitset \`grep "^clock" /proc/cpuinfo 2> /dev/null | head -1 | sed -e "s/.*: //" | awk '{printf ("%d\n", $1+0.5)}'\``" MHz"
         fi
-        if [ -f /proc/pal/cpu0/cache_info ]; then
+        if [ -f /proc/pal/cpu0/cache_info ]
+        then
             MYCACHE=`isitset \`grep Size /proc/pal/cpu0/cache_info 2> /dev/null | tail -2 | head -1 | awk '{printf "%d KB\n",$3/1024}'\``
             MYCACHEX="L2, "`isitset \`grep Size /proc/pal/cpu0/cache_info 2> /dev/null | tail -1 | awk '{printf "%d KB\n",$3/1024}'\``" L3"
         else
@@ -771,10 +873,12 @@ EOF
 
     *NT*)
         MYTYPE=`isitset \`set | grep "^PROCESSOR_IDENTIFIER=" | cut -f2 -d"=" | sed -e "s/'//g"\``
-        if [ "$PROCESSOR_ARCHITEW6432" = AMD64 ]; then
+        if [ "$PROCESSOR_ARCHITEW6432" = AMD64 ]
+        then
             MYTYPEX="x86"
             MYBIT="64bit"
-        elif [ "$PROCESSOR_ARCHITECTURE" = x86 ]; then
+        elif [ "$PROCESSOR_ARCHITECTURE" = x86 ]
+        then
             MYTYPEX="x86"
             MYBIT="32bit"
         fi
@@ -803,10 +907,12 @@ EOF
         ;;
 
     SunOS)
-        if [ "`uname -m`" = i86pc ]; then
+        if [ "`uname -m`" = i86pc ]
+        then
             MYTYPE=`isitset \`grep "cpu0:" \\\`ls -1tr /var/adm/messages*\\\` | tail -1 | sed -e "s/.*: //"\``
             MYTYPEX="x86"
-            if [ -d /lib/amd64 ]; then
+            if [ -d /lib/amd64 ]
+            then
                 MYBIT="64bit"
             else
                 MYBIT="32bit"
@@ -816,9 +922,11 @@ EOF
             MYRAM=`isitset \`/usr/sbin/prtconf 2> /dev/null | grep "^Memory size:" | sed -e "s/^Memory size: //" -e "s/Megabytes/MB/"\``
         else
             HARDWARES=`/usr/platform/\`uname -m\`/sbin/prtdiag 2> /dev/null | sed -e "s/(TM) //"`
-            if [ "`echo \"$HARDWARES\" | grep Fujitsu`" ]; then
+            if [ "`echo \"$HARDWARES\" | grep Fujitsu`" ]
+            then
                 MYTYPE=`isitset \`echo "$HARDWARES" | grep "Fujitsu" | head -1 | sed -e "s/.*SPARC64 /SPARC64-/" -e "s/ [0-9]*.Hz//"\``" ("`echo "$HARDWARES" | grep "Fujitsu" | head -1 | sed -e "s/.*Fujitsu/Fujitsu/" | awk {'printf ("%s %s %s\n",$1,$2,$3)}'`")"
-            elif [ "`echo \"$HARDWARES\" | grep \"Sun Microsystems.*(\"`" ]; then
+            elif [ "`echo \"$HARDWARES\" | grep \"Sun Microsystems.*\(\"`" ]
+            then
                 MYTYPE=`isitset \`echo "$HARDWARES" | grep "Sun Microsystems" | head -1 | cut -f2 -d"(" | cut -f1 -d")" | sed -e "s/.*X //" -e "s/ [0-9]*.Hz//"\``
             else
                 case $HARDWARES in
@@ -839,12 +947,13 @@ EOF
                 MYBIT="32bit"
                 ;;
             esac
-            if [ "`echo \"$HARDWARES\" | grep Fujitsu`" ]; then
+            if [ "`echo \"$HARDWARES\" | grep Fujitsu`" ]
+            then
                 MYCPUS=`isitset \`echo "$HARDWARES" | grep "Sun Microsystems" | head -1 | sed -e "s/x SPARC.*//" -e "s/.* //"\``
             else
                 case $HARDWARES in
-                *UltraSPARC-T1*)
-                    MYCPUS=`isitset \`echo "$HARDWARES" | grep "^MB" | wc -l | awk '{printf("%d (%d cores/socket, 4 threads/core)",$1/4,$1/4)}'\`` # Single socket only
+                *UltraSPARC-T1*)  # Single socket only
+                    MYCPUS=`isitset \`echo "$HARDWARES" | grep "^MB" | wc -l | awk '{printf("%d (%d cores/socket, 4 threads/core)",$1/4,$1/4)}'\``
                     ;;
                 *UltraSPARC-T2*)
                     MYCPUS=`isitset \`echo "$HARDWARES" | grep "^MB" | wc -l | awk '{print $1/8}'\``" (8 cores/socket, 8 threads/core)"
@@ -857,8 +966,8 @@ EOF
             case $MYCPUS in
             [0-9]*)
                 ;;
-            *)
-                MYCPUS=1 # Correction for no CPU number
+            *)  # Correction for no CPU number
+                MYCPUS=1
                 ;;
             esac
             case $HARDWARES in
@@ -871,7 +980,8 @@ EOF
                 MYCACHEX="L2"
                 ;;
             *CPU*Freq*Size*)
-                if [ "`echo \"$HARDWARES\" | grep \"^0.*cpu0\"`" ]; then
+                if [ "`echo \"$HARDWARES\" | grep \"^0.*cpu0\"`" ]
+                then
                     MYCLOCK=`isitset \`echo "$HARDWARES" | grep "^0.*cpu0" | awk '{printf $2}'\``" "`echo "$HARDWARES" | grep "^0.*cpu0" | head -1 | awk '{printf $3}'`
                     MYCACHE=`isitset \`echo "$HARDWARES" | grep "^0.*cpu0" | awk '{printf $4}'\` | sed -e "s/MB/ MB/" -e "s/GB/ GB/"`" (L2)"
                 else
@@ -885,7 +995,8 @@ EOF
                 ;;
             esac
             MYBUS=`echo "$HARDWARES" | grep "System clock frequency:" | sed -e "s/.*: //" -e "s/MHZ/MHz/"`
-            if [ "$MYBUS" ]; then
+            if [ "$MYBUS" ]
+            then
                 MYCLOCK="$MYCLOCK ($MYBUS System Bus)"
             fi
             MYRAM=`echo "$HARDWARES" | grep "Memory size:" | awk '{print $3 $4}' | sed -e "s/GB/ GB/" -e "s/Megabytes/ MB/"`
@@ -902,14 +1013,16 @@ EOF
     write_output name="CPU Addressability" value="$MYBIT" comment="$MYBITSX"
     write_output name="CPU Count" value="$MYCPUS" architecture="$MYCPUSX"
     write_output name="CPU Clock" value="$MYCLOCK"
-    if [ "$MYCACHE" = "Unknown" ]; then
+    if [ "$MYCACHE" = "Unknown" ]
+    then
         write_output name="CPU Cache" value="$MYCACHE"
     else
         write_output name="CPU Cache" value="$MYCACHE" comment="$MYCACHEX"
     fi
     write_output name="Physical Memory" value="$MYRAM"
     write_output name="Swap Space" value="$MYSWAP"
-    if [ "`uname`" = Linux ]; then
+    if [ "`uname`" = Linux ]
+    then
         scanbus
     fi
 
@@ -918,13 +1031,15 @@ EOF
     Linux)
         GLIBC=`ldd /bin/sh | grep libc | sed -e "s/.*=>//" | awk '{print $1}'`
         show_software name="GNU C library" location="$GLIBC" value="`strings $GLIBC 2> /dev/null | grep \"GNU C Library\" | head -1 | sed -e \"s/.*version//\" -e \"s/,//\" | awk '{print $1}'`"
-        if [ "`ls -ld /lib64 2> /dev/null | grep \"/lib64 -> /lib$\"`" ]; then
-            LOADERS=`ls -1 /lib*/ld-*.so.* 2> /dev/null | egrep -v "^/lib(/ld-[^-]+-|[^/]+/ld-[^-]+[.])"` # Debian based
+        if [ "`ls -ld /lib64 2> /dev/null | grep \"/lib64 -> /lib$\"`" ]
+        then  # Debian based
+            LOADERS=`ls -1 /lib*/ld-*.so.* 2> /dev/null | egrep -v "^/lib(/ld-[^-]+-|[^/]+/ld-[^-]+[.])"`
         else
             LOADERS=`ls -1 /lib*/ld-*.so.* 2> /dev/null`
         fi
         show_software name="Linux Loader" `echo "$LOADERS" | grep "/ld-linux.*.so.*" | sed -e "s/^/location=/"`
-        for LSB in `seq 9`; do
+        for LSB in `seq 9`;
+        do
             show_software name="LSB $LSB.x Loader" `echo "$LOADERS" | grep "/ld-lsb.*.so.$LSB" | sed -e "s/^/location=/"`
         done
         ;;
@@ -932,13 +1047,15 @@ EOF
 
     # Detect X-Windows
     XWININFO=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xwininfo -root 2> /dev/null`
-    if [ "$XWININFO" ]; then
+    if [ "$XWININFO" ]
+    then
         XSET=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xset -q 2> /dev/null`
         show_software name="X-Display Power" value="`echo \"$XSET\" | grep \" Standby:.* Suspend:.* Off:\" | sed -e "s/.*Standby://" | awk '{printf(\" %ss %ss %ss\n\",$1,$3,$5)}' | sed -e \"s/ 0s/ Off/g\" -e \"s/^ //\"`" comment="DPMS Standby Suspend Off"
         show_software name="X-Keyboard Repeat" value="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%sms\n\",$4)}'`" comment="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%s characters per second\n\",$7)}'`"
         show_software name="X-Mouse Speed" value="`echo \"$XSET\" | grep \" acceleration:.* threshold: \" | awk '{print $2}'`" comment="acceleration factor"
         XSCREENSAVER=`echo "$XSET" | grep " timeout:.* cycle:" | awk '{print $2}'`
-        if [ "$XSCREENSAVER" != 0 ]; then
+        if [ "$XSCREENSAVER" != 0 ]
+        then
             show_software name="X-Screensaver" value="$XSCREENSAVER" comment="no power saving for LCD but can keep CPU busy"
         fi
         show_software name="X-Windows Server" value="$DISPLAY" comment="`echo \"$XWININFO\" | grep Width: | awk '{print $2}'`x`echo \"$XWININFO\" | grep Height: | awk '{print $2}'`, `echo \"$XWININFO\" | grep Depth: | awk '{print $2}'`bit colour"
@@ -953,7 +1070,8 @@ EOF
 write_output()
 {
     TAGS=
-    while [ "$1" ]; do
+    while [ "$1" ]
+    do
         TAGS="$TAGS
 $1"
         shift
@@ -961,18 +1079,23 @@ $1"
     TAGS=`echo "$TAGS" | egrep -v "^$|=\$" | sed -e "s/	/ /g" -e "s/  */ /" -e "s/= */=\"/" -e "s/ *\$/\"/"`
     NAME=`echo "$TAGS" | grep "^name=" | cut -f2 -d"\"" | sed -e "s/\$/:                  /" | cut -c1-19`
     $ECHO " $NAME\c"
-    if [ "`echo \"$TAGS\" | grep \"^device=\"`" ]; then
+    if [ "`echo \"$TAGS\" | grep \"^device=\"`" ]
+    then
         echo "$TAGS" | grep "^device=" | cut -f2 -d"\"" | awk '{printf(" %-12s",$1)}'
         $ECHO " "`echo "$TAGS" | grep "^value=" | cut -f2 -d"\""`"\c"
-    elif [ "`echo \"$TAGS\" | grep \"^location=\"`" ]; then
+    elif [ "`echo \"$TAGS\" | grep \"^location=\"`" ]
+    then
         $ECHO " "`echo "$TAGS" | grep "^location=" | cut -f2 -d"\""`"\c"
-        if [ "`echo \"$TAGS\" | grep \"^value=\"`" ]; then
+        if [ "`echo \"$TAGS\" | grep \"^value=\"`" ]
+        then
             $ECHO "  "`echo "$TAGS" | grep "^value=" | cut -f2 -d"\""`"\c"
         fi
-    elif [ "`echo \"$TAGS\" | grep \"^value=\"`" ]; then
+    elif [ "`echo \"$TAGS\" | grep \"^value=\"`" ]
+    then
         $ECHO " "`echo "$TAGS" | grep "^value=" | cut -f2 -d"\""`"\c"
     fi
-    if [ "`echo \"$TAGS\" | egrep \"^(architecture|comment)=\"`" ]; then
+    if [ "`echo \"$TAGS\" | egrep \"^(architecture|comment)=\"`" ]
+    then
         $ECHO " ("`echo "$TAGS" | egrep "^(architecture|comment)=" | cut -f2 -d"\""`")\c"
     fi
     echo
