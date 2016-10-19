@@ -171,12 +171,12 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         source $HOME/.login-local
     endif
 
-    echo
+    echo ""
     if ( $?MYSCREEN ) then
         echo "$MYSHELL shell ($MYTTY, screen=$MYSCREEN)"
     else
         echo "$MYSHELL shell ($MYTTY)"
     endif
-    echo
+    echo ""
 
 endif
