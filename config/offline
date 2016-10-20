@@ -6,14 +6,16 @@
 # ALL ALL = NOPASSWD:/usr/local/bin/offline
 #
 
-if [ $# = 0 ]; then
+if [ $# = 0 ]
+then
     echo "Usage: offline command"
     exit 1
 fi
 
 MYUNAME=`/usr/bin/id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 
-if [ "$MYUNAME" = root ]; then
+if [ "$MYUNAME" = root ]
+then
     unshare -n "$@"
 else
     sudo $0 -n sudo -u $MYUNAME "$@"

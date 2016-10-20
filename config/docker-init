@@ -6,12 +6,14 @@
 echo -e "\nRunning \"$0\"..."
 
 # Process plugins
-for FILE in /etc/docker-init-*; do
+for FILE in /etc/docker-init-*
+do
     $FILE
 done
 
 # Switch to user $USER
-if [ "$USER" ]; then
+if [ "$USER" ]
+then
     export HOME=$(grep "^$USER:" /etc/passwd | cut -f6 -d:)
     cd $HOME
     echo -e "\nStarting \"$USER\" login shell..."
@@ -22,6 +24,7 @@ else
 fi
 
 echo -e "\nFinished \"$0\"..."
-if [ "$$" = 1 ]; then
+if [ "$$" = 1 ]
+then
     echo "Stopping Docker container!"
 fi

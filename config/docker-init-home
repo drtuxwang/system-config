@@ -5,7 +5,8 @@
 
 echo -e "\nRunning \"$0\"..."
 
-if [ ! "$USER" ]; then
+if [ ! "$USER" ]
+then
     exit 1
 fi
 
@@ -21,12 +22,16 @@ EOF
 
 # Create user home directory
 HOME=/home/$USER
-if [ ! -d "$HOME" ]; then
+if [ ! -d "$HOME" ]
+then
     mkdir -p $HOME
 fi
-if [ -d "/home/docker" ]; then
-    for FILE in $(find /home/docker -type f | sed -e "s@/home/docker/@@"); do
-        if [ ! -f "$HOME/$FILE" ]; then
+if [ -d "/home/docker" ]
+then
+    for FILE in $(find /home/docker -type f | sed -e "s@/home/docker/@@")
+    do
+        if [ ! -f "$HOME/$FILE" ]
+        then
             mkdir -p $(dirname "$HOME/$FILE") 2> /dev/null
             echo "Creating \"$HOME/$FILE\"..."
             cp -p "/home/docker/$FILE" "$HOME/$FILE"

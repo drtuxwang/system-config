@@ -3,12 +3,14 @@ export PATH="/opt/software/bin:$PATH"
 alias df="df -k"
 alias du="du -k"
 alias ftp="ftp -i"
-if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]; then
+if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]
+then
     alias ls="ls -C --time-style=long-iso --color=always"
 else
     alias ls="ls -C --color=always"
 fi
-if [ -x /usr/bin/vim ]; then
+if [ -x /usr/bin/vim ]
+then
     alias vi="vim -N -n -i NONE -T xterm"
 fi
 unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
