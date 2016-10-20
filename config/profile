@@ -72,7 +72,7 @@ then
         alias -x __C=$(print '\006' 2> /dev/null) 2> /dev/null # right = Move right
         alias -x __D=$(print '\002' 2> /dev/null) 2> /dev/null # left  = Move left
     else
-        MYSHELL="BOURNE"
+        MYSHELL="BOURNE style"
     fi
     if [ "$SSH_CONNECTION" ]
     then
