@@ -28,7 +28,7 @@ then
 fi
 if [ -d "/home/docker" ]
 then
-    for FILE in $(find /home/docker -type f | sed -e "s@/home/docker/@@")
+    for FILE in $(find /home/docker -type f | sed -e "s@/home/docker/@@" | sort)
     do
         if [ ! -f "$HOME/$FILE" ]
         then
