@@ -29,7 +29,7 @@ start_app()
     esac
     echo "Starting \"$@\"..."
     "$@" &
-    for DELAY in `seq $TIMEOUT`
+    for DELAY in $(seq $TIMEOUT)
     do
         sleep 1
         if [ ! "$(ps -o "args" | sed -e "s/^/ /" -e "s/\$/ /" | grep "[ /]$1 ")" ]
@@ -50,11 +50,11 @@ fi
 
 MYUNAME=$(id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/')
 
-export BASE_PATH=$PATH
-export BASE_MANPATH=$MANPATH
-export BASE_LM_LICENSE_FILE=$LM_LICENSE_FILE
-export BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
-export PATH="$HOME/software/bin:/opt/software/bin:$HOME/.local/bin:$PATH"
+export BASE_PATH="$PATH"
+export BASE_MANPATH="$MANPATH"
+export BASE_LM_LICENSE_FILE="$LM_LICENSE_FILE"
+export BASE_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
+export PATH="$HOME/software/bin:/opt/software/bin:$PATH"
 
 if [ -x /usr/bin/ibus-daemon ]
 then
@@ -64,7 +64,7 @@ then
 fi
 
 chmod go= $HOME/Desktop data/private .??*/* 2> /dev/null
-for HOST in "" `xhost | grep "^INET:"`
+for HOST in "" $(xhost | grep "^INET:")
 do
     xhost -$HOST
 done
@@ -79,7 +79,7 @@ xset s blank s 0 # Use 300 for CRT
 (sleep 4 && xset dpms 0 0 0) &
 
 rm -rf $HOME/.thumbnails $HOME/.gnome2/evince/ev-metadata.xml
-if [ "$GNOME_DESKTOP_SESSION_ID" -o "`echo \"$DESKTOP_SESSION\" | grep gnome`" ]
+if [ "$GNOME_DESKTOP_SESSION_ID" -o "$(echo "$DESKTOP_SESSION" | grep gnome)" ]
 then
     gnome-sound-applet &
 elif [ -d $HOME/.cache/sessions ]
@@ -93,7 +93,7 @@ do
     mkdir -p $FILE 2> /dev/null
 done
 
-eval `/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg` 2> /dev/null
+eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg) 2> /dev/null
 menu
 
 if [ -f $HOME/.config/autoexec-local.sh ]
