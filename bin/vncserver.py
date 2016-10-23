@@ -71,12 +71,7 @@ class Options(object):
                             'unset SESSION_MANAGER DBUS_SESSION_BUS_ADDRESS',
                             file=ofile
                         )
-                        print('if [ -x "/usr/bin/vglrun" ]', file=ofile)
-                        print('then', file=ofile)
-                        print('    vglrun startxfce4 &', file=ofile)
-                        print('else', file=ofile)
-                        print('    startxfce4 &', file=ofile)
-                        print('fi', file=ofile)
+                        print('startxfce4 &', file=ofile)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create ".vnc/xstartup" file.')
