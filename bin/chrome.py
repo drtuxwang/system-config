@@ -239,7 +239,8 @@ class Options(object):
                 ):
                     print('Removing "{0:s}"...'.format(directory))
                     self._remove(directory)
-                for file in glob.glob(os.path.join(directory, 'Local Storage', 'https*')):
+                for file in glob.glob(os.path.join(
+                        directory, 'Local Storage', 'https*')):
                     self._remove(file)
 
     @classmethod

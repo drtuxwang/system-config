@@ -49,8 +49,8 @@ class Options(object):
                         print('unset DBUS_SESSION_BUS_ADDRESS', file=ofile)
                         print('unset SESSION_MANAGER', file=ofile)
                         print(
-                             'if [ -x /usr/bin/gnome-session-fallback ]',
-                             file=ofile
+                            'if [ -x /usr/bin/gnome-session-fallback ]',
+                            file=ofile
                         )
                         print('then', file=ofile)
                         print(

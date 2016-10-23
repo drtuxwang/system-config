@@ -35,11 +35,21 @@ class Options(object):
         if 'HOME' in os.environ:
             os.chdir(os.environ['HOME'])
 
+    @staticmethod
+    def _setenv(args):
+        directory = os.path.dirname(os.path.abspath(args[0]))
+        if directory not in os.environ['PATH'].split(os.pathsep):
+            os.environ['PATH'] = os.pathsep.join([
+                directory,
+                os.environ['PATH']
+            ])
+
     def parse(self, args):
         """
         Parse arguments
         """
         self._config()
+        self._setenv(args)
         self._menu = command_mod.Command('menu_main.tcl', errors='stop')
 
 
