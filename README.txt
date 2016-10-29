@@ -304,7 +304,7 @@ bin/fzero.py
 
 bin/g++                g++ wrapper (allowing non systems port)
 bin/g++.bat
-bin/gxx.py
+bin/gxx_.py
 
 bin/gcc                gcc wrapper (allowing non systems port)
 bin/gcc.bat

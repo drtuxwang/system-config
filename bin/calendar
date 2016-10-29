@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Wrapper for generic Python 3.x program (change "-" to "_" and prefix underscore)
+# Wrapper for generic Python 3.x program (change "-" to "_" and postfix underscore)
 #
 
 BIN_DIR=`dirname "$0"`
