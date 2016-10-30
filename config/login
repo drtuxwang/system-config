@@ -178,11 +178,15 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     endif
 
     echo
-    if ( $?MYSCREEN ) then
-        echo "$MYSHELL shell (tty=$MYTTY, ssh-add=$SSH_KEYS, screen=$MYSCREEN)"
-    else
-        echo "$MYSHELL shell (tty=$MYTTY, ssh-add=$SSH_KEYS)"
+    setenv MYINFO "$MYSHELL shell (tty=$MYTTY"
+    if ( "$SSH_KEYS" != 0 ) then
+        setenv MYINFO "$MYINFO, ssh-add=$SSH_KEYS"
     endif
+    if ( $?MYSCREEN ) then
+        setenv MYINFO "$MYINFO, screen=$MYSCREEN"
+    endif
+    setenv MYINFO "$MYINFO)"
+    echo "$MYINFO"
     echo
 
 endif

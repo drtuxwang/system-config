@@ -223,11 +223,15 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     fi
 
     echo
-    if [ "$MYSCREEN" ]; then
-        echo "$MYSHELL shell (tty=$MYTTY, ssh-add=$SSH_KEYS, screen=$MYSCREEN)"
-    else
-        echo "$MYSHELL shell (tty=$MYTTY, ssh-add=$SSH_KEYS"
+    MYINFO="$MYSHELL shell (tty=$MYTTY"
+    if [ "$SSH_KEYS" != 0 ]; then
+        MYINFO="$MYINFO, ssh-add=$SSH_KEYS"
     fi
+    if [ "$MYSCREEN" ]; then
+        MYINFO="$MYINFO, screen=$MYSCREEN"
+    fi
+    MYINFO="$MYINFO)"
+    echo "$MYINFO"
     echo
 
 fi
