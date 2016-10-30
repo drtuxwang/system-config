@@ -23,17 +23,15 @@ start_app()
     TIMEOUT=10
     case $1 in
     -timeout=*)
-        TIMEOUT=${1#*=}
+        TIMEOUT=`echo "$1" | cut -f2- -d"="`
         shift
         ;;
     esac
     echo "Starting \"$@\"..."
     "$@" &
-    for DELAY in $(seq $TIMEOUT)
-    do
+    for DELAY in `seq $TIMEOUT`; do
         sleep 1
-        if [ ! "$(ps -o "args" | sed -e "s/^/ /" -e "s/\$/ /" | grep "[ /]$1 ")" ]
-        then
+        if [ ! "$(ps -o "args" | sed -e "s/^/ /" -e "s/\$/ /" | grep "[ /]$1 ")" ]; then
             echo "Restarting \"$1\" after $DELAY seconds..."
             "$@" &
             return
@@ -43,29 +41,26 @@ start_app()
 }
 
 
-if [ "$1" != "-start" ]
-then
+if [ "$1" != "-start" ]; then
     exec $0 -start > ${0%%.sh}.log 2>&1
 fi
 
-MYUNAME=$(id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/')
+MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 
-export BASE_PATH="$PATH"
-export BASE_MANPATH="$MANPATH"
-export BASE_LM_LICENSE_FILE="$LM_LICENSE_FILE"
-export BASE_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
-export PATH="$HOME/software/bin:/opt/software/bin:$PATH"
+BASE_PATH=$PATH; export BASE_PATH
+BASE_MANPATH=$MANPATH; export MANPATH
+BASE_LM_LICENSE_FILE=$LM_LICENSE_FILE; export LM_LICENSE_FILE
+BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH; export LD_LIBRARY_PATH
+PATH="$HOME/software/bin:/opt/software/bin:$HOME/.local/bin:$PATH"; export PATH
 
-if [ -x /usr/bin/ibus-daemon ]
-then
-    export GTK_IM_MODULE=ibus
-    export QT_IM_MODULE=ibus
-    export XMODIFIERS=@im=ibus
+if [ -x /usr/bin/ibus-daemon ]; then
+    GTK_IM_MODULE=ibus; export GTK_IM_MODULE
+    QT_IM_MODULE=ibus; export QT_IM_MODULE
+    XMODIFIERS=@im=ibus; export XMODIFIERS
 fi
 
 chmod go= $HOME/Desktop data/private .??*/* 2> /dev/null
-for HOST in "" $(xhost | grep "^INET:")
-do
+for HOST in "" `xhost | grep "^INET:"`; do
     xhost -$HOST
 done
 xhost +si:localuser:$MYUNAME
@@ -76,27 +71,25 @@ xset b off
 xset m 4,16
 xset r rate 500 25
 xset s blank s 0 # Use 300 for CRT
-(sleep 4 && xset dpms 0 0 0) &
+(sleep 4; xset dpms 0 0 0) &
 
 rm -rf $HOME/.thumbnails $HOME/.gnome2/evince/ev-metadata.xml
-if [ "$GNOME_DESKTOP_SESSION_ID" -o "$(echo "$DESKTOP_SESSION" | grep gnome)" ]
-then
+if [ "$GNOME_DESKTOP_SESSION_ID" -o "`echo \"$DESKTOP_SESSION\" | grep gnome`" ]; then
     gnome-sound-applet &
-elif [ -d $HOME/.cache/sessions ]
-then
-    rm -rf $HOME/.cache/sessions
-    touch $HOME/.cache/sessions
+elif [ -d $HOME/.cache/sessions ]; then
+    rm -rf $HOME/.cache/sessions; touch $HOME/.cache/sessions
 fi
-for FILE in .recently-used.xbel .local/share/recently-used.xbel
-do
+for FILE in .recently-used.xbel .local/share/recently-used.xbel; do
     rm -f $FILE 2> /dev/null
     mkdir -p $FILE 2> /dev/null
 done
 
-eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh) 2> /dev/null
+export SSH_AUTH_SOCK=$(ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
+if [ ! "$SSH_AUTH_SOCK" ]; then
+    eval $(ssh-agent)
+fi
 menu
 
-if [ -f $HOME/.config/autoexec-local.sh ]
-then
+if [ -f $HOME/.config/autoexec-local.sh ]; then
     . $HOME/.config/autoexec-local.sh
 fi
