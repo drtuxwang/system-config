@@ -47,7 +47,6 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         setenv MYSHELL "$MYSHELL remote"
     endif
     setenv SSH_AUTH_SOCK `/bin/sh -c "ls -1t /tmp/ssh-*/* 2> /dev/null | head -1"`
-    setenv SSH_KEYS `ssh-add -l |& grep ":.*:" | wc -l | awk '{print $1}'`
 
     if ( "$SSH_AUTH_SOCK" == "" ) then
         eval `ssh-agent -c` >& /dev/null
@@ -178,15 +177,8 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     endif
 
     echo
-    setenv MYINFO "$MYSHELL shell (tty=$MYTTY"
-    if ( "$SSH_KEYS" != 0 ) then
-        setenv MYINFO "$MYINFO, ssh-add=$SSH_KEYS"
-    endif
-    if ( $?MYSCREEN ) then
-        setenv MYINFO "$MYINFO, screen=$MYSCREEN"
-    endif
-    setenv MYINFO "$MYINFO)"
-    echo "$MYINFO"
+    setenv SSH_KEYS `ssh-add -l |& grep ":.*:" | wc -l | awk '{print $1}'`
+    echo "$MYSHELL shell (tty=$MYTTY, screen=$MYSCREEN, ssh-add=$SSH_KEYS)"
     echo
 
 endif

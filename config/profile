@@ -70,7 +70,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     if [ ! "$SSH_AUTH_SOCK" ]; then
         eval $(ssh-agent) > /dev/null
     fi
-    SSH_KEYS=`ssh-add -l 2> /dev/null | grep ":.*:" | wc -l | awk '{print $1}'`
     if [ "$MYTTY" ]; then
         alias logout='echo Use \"exit\" to exit the shell.'
     else
@@ -223,15 +222,8 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     fi
 
     echo
-    MYINFO="$MYSHELL shell (tty=$MYTTY"
-    if [ "$SSH_KEYS" != 0 ]; then
-        MYINFO="$MYINFO, ssh-add=$SSH_KEYS"
-    fi
-    if [ "$MYSCREEN" ]; then
-        MYINFO="$MYINFO, screen=$MYSCREEN"
-    fi
-    MYINFO="$MYINFO)"
-    echo "$MYINFO"
+    SSH_KEYS=`ssh-add -l 2>&1 | grep :.*: | wc -l | awk '{print $1}'`
+    echo "$MYSHELL shell (tty=$MYTTY, screen=$MYSCREEN, ssh-add=$SSH_KEYS)"
     echo
 
 fi
