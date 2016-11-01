@@ -3,7 +3,7 @@ FROM debian:8
 # Install packages
 RUN apt-get update && \
     apt-get install -y csh ksh tcsh && \
-    apt-get install -y net-tools openssh-client sudo tmux vim wget && \
+    apt-get install -y net-tools openssh-client pciutils sudo tmux vim wget && \
     apt-get install -y x11-xserver-utils x11-utils xfonts-base && \
     apt-get install -y xfce4-terminal libgtk-3-0 libasound2 && \
     apt-get install -y python3 python3-dev python3-pip

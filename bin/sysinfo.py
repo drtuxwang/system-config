@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.8.7'
-VERSION = 20160820
+RELEASE = '4.8.8'
+VERSION = 20161101
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -1684,9 +1684,16 @@ class LinuxSystem(PosixSystem):
         self._scan_cpu_model(info, lines)
         threads = self._get_cpu_threads(lines)
         vitual_machine = self._get_virtual_machine()
+        container = self._get_container()
         if vitual_machine:
             info['CPU Cores'] = str(threads)
-            info['CPU Cores X'] = vitual_machine + ' VM'
+            if container:
+                info['CPU Cores X'] = '{0:s} container, {1:s} VM'.format(
+                    container,
+                    vitual_machine
+                )
+            else:
+                info['CPU Cores X'] = vitual_machine + ' VM'
             info['CPU Threads'] = info['CPU Cores']
             info['CPU Threads X'] = info['CPU Cores X']
         else:
@@ -1694,6 +1701,8 @@ class LinuxSystem(PosixSystem):
             cpu_cores = self._get_cpu_cores(info, lines, sockets, threads)
             info['CPU Sockets'] = str(sockets)
             info['CPU Cores'] = str(cpu_cores)
+            if container:
+                info['CPU Cores X'] = container + ' container'
             info['CPU Threads'] = str(threads)
 
         self._scan_frequency(info, lines)
@@ -1721,6 +1730,19 @@ class LinuxSystem(PosixSystem):
         except OSError:
             pass
         return info
+
+    @staticmethod
+    def _get_container():
+        name = None
+        try:
+            with open('/proc/1/cgroup', errors='replace') as ifile:
+                for line in ifile:
+                    if '/docker/' in line:
+                        name = 'Docker'
+                        break
+        except OSError:
+            pass
+        return name
 
     def _get_virtual_machine(self):
         name = None
