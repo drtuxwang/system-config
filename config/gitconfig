@@ -6,7 +6,7 @@
 	xdiff = difftool --tool=meld --dir-diff
 	xmerge = mergetool --tool=meld
 	find-commit = branch -a --contains
-	find-merge = "!sh -c 'git log --graph $0^..HEAD'"
+	find-merge = "!bash -c 'git log --graph $0^..${1:-HEAD}'"
 [color]
 	ui = auto
 [core]
