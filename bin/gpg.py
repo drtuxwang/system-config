@@ -23,6 +23,7 @@ class Options(object):
 
     def __init__(self):
         self._args = None
+        self._config()
         self.parse(sys.argv)
 
     def _config_encoder(self):
@@ -64,6 +65,8 @@ class Options(object):
                 os.chmod(gpgdir, int('700', 8))
             except OSError:
                 return
+        if 'DISPLAY' in os.environ:
+            del os.environ['DISPLAY']
 
     def get_gpg(self):
         """
