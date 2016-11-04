@@ -82,8 +82,12 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     setenv TMP /tmp; setenv TMPDIR $TMP; rm -rf $HOME/tmp >& /dev/null
     setenv WINEDITOR vi
 
-    set history=256
-    alias df "df -k"
+    set history=1024
+    if ( "`df --help |& grep \" --portability\"`" ) then
+        alias df "df -k --portability"
+    else
+        alias df "df -k"
+    endif
     alias du "du -k"
     alias ftp "ftp -i -v"
     alias h history 256

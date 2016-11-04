@@ -114,13 +114,17 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     export WINEDITOR=vi
     ENV=
 
-    alias df="df -k"
+    if [ "`df --help 2>&1 | grep \" --portability\"`" ]; then
+        alias df="df -k --portability"
+    else
+        alias df="df -k"
+    fi
     alias du="du -k"
     alias ftp="ftp -i -v"
     if [ "$BASH" ]; then
-        alias h="history 256"
+        alias h="history 1024"
     else
-        alias h='fc -l 1 2> /dev/null | tail -256'
+        alias h='fc -l 1 2> /dev/null | tail -1024'
     fi
     alias ls="ls -C"
     alias quota="quota -v"
