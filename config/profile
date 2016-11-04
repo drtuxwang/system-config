@@ -66,9 +66,11 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     if [ "$SSH_CONNECTION" ]; then
         MYSHELL="$MYSHELL remote"
     fi
-    export SSH_AUTH_SOCK=$(ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
     if [ ! "$SSH_AUTH_SOCK" ]; then
-        eval $(ssh-agent) > /dev/null
+        export SSH_AUTH_SOCK=$(ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
+        if [ ! "$SSH_AUTH_SOCK" ]; then
+            eval $(ssh-agent) > /dev/null
+        fi
     fi
     SSH_KEYS=`ssh-add -l 2> /dev/null | grep ":.*:" | wc -l | awk '{print $1}'`
     if [ "$MYTTY" ]; then
