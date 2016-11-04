@@ -76,7 +76,7 @@ class Options(object):
             xterm.set_args([
                 '-fn', '-misc-fixed-bold-r-normal--18-*-iso8859-1', '-fg',
                 FG_COLOUR, '-bg', BG_COLOUR, '-cr', '#880000', '-geometry',
-                '15x3', '-ut', '+sb', '-e', sys.argv[0]
+                '15x4', '-ut', '+sb', '-e', sys.argv[0]
             ] + args[2:])
             subtask_mod.Daemon(xterm.get_cmdline()).run()
             raise SystemExit(0)
