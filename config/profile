@@ -149,34 +149,41 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
-    if [ ! "$BASE_MANPATH" ]; then
-        if [ ! "$MANPATH" ]; then
-            export MANPATH=:
-        fi
+    if [ ! "$BASE_PATH" ]; then
         if [ ! "$LM_LICENSE_FILE" ]; then
-            export LM_LICENSE_FILE=:
+            export LM_LICENSE_FILE=
         fi
         if [ ! "$LD_LIBRARY_PATH" ]; then
-            export LD_LIBRARY_PATH=:
+            export LD_LIBRARY_PATH=
+        fi
+        if [ ! "$PYTHONPATH" ]; then
+            export PYTHONPATH=
+        fi
+        if [ ! "$MANPATH" ]; then
+            export MANPATH=
         fi
         export BASE_PATH=$PATH
-        export BASE_MANPATH=$MANPATH
         export BASE_LM_LICENSE_FILE=$LM_LICENSE_FILE
         export BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+        export BASE_PYTHONPATH=$MANPATH
+        export BASE_MANPATH=$MANPATH
     else
         case `uname` in
         *NT*)
             export PATH=`/bin/cygpath --unix --path "$BASE_PATH"`
-            export MANPATH=`/bin/cygpath --unix --path "$BASE_MANPATH"`
+            export LD_LIBRARY_PATH=`/bin/cygpath --unix --path "$BASE_LD_LIBRARY_PATH"`
             export LM_LICENSE_FILE=`/bin/cygpath --unix --path "$BASE_LM_LICENSE_FILE"`
+            export PYTHONPATH=`/bin/cygpath --unix --path "$BASE_PYTHONPATH"`
+            export MANPATH=`/bin/cygpath --unix --path "$BASE_MANPATH"`
             ;;
         *)
             export PATH=$BASE_PATH
-            export MANPATH=$BASE_MANPATH
             export LM_LICENSE_FILE=$BASE_LM_LICENSE_FILE
+            export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
+            export PYTHONPATH=$BASE_PYTHONPATH
+            export MANPATH=$BASE_MANPATH
             ;;
         esac
-        export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
     fi
 
     # Change to $HOME/Desktop

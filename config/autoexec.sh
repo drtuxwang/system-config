@@ -47,16 +47,19 @@ fi
 
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 
-BASE_PATH=$PATH; export BASE_PATH
-BASE_MANPATH=$MANPATH; export MANPATH
-BASE_LM_LICENSE_FILE=$LM_LICENSE_FILE; export LM_LICENSE_FILE
-BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH; export LD_LIBRARY_PATH
-PATH="$HOME/software/bin:/opt/software/bin:$HOME/.local/bin:$PATH"; export PATH
+if [ ! "$BASE_PATH" ]; then
+    export BASE_PATH=$PATH
+    export BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+    export BASE_LM_LICENSE_FILE=$LM_LICENSE_FILE
+    export BASE_PYTHONPATH=$PYTHONPATH
+    export BASE_MANPATH=$MANPATH
+    export PATH="$HOME/software/bin:/opt/software/bin:$HOME/.local/bin:$PATH"
+fi
 
 if [ -x /usr/bin/ibus-daemon ]; then
-    GTK_IM_MODULE=ibus; export GTK_IM_MODULE
-    QT_IM_MODULE=ibus; export QT_IM_MODULE
-    XMODIFIERS=@im=ibus; export XMODIFIERS
+    export GTK_IM_MODULE=ibus
+    export QT_IM_MODULE=ibus
+    export XMODIFIERS=@im=ibus
 fi
 
 chmod go= $HOME/Desktop data/private .??*/* 2> /dev/null

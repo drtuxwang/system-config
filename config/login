@@ -112,7 +112,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
-    if ( ! $?BASE_MANPATH ) then
+    if ( ! $?BASE_PATH ) then
         if ( ! $?MANPATH ) then
             setenv MANPATH :
         endif
@@ -123,14 +123,16 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
             setenv LD_LIBRARY_PATH :
         endif
         setenv BASE_PATH $PATH
-        setenv BASE_MANPATH $MANPATH
         setenv BASE_LM_LICENSE_FILE $LM_LICENSE_FILE
         setenv BASE_LD_LIBRARY_PATH $LD_LIBRARY_PATH
+        setenv BASE_PYTHONPATH $PYTHONPATH
+        setenv BASE_MANPATH $MANPATH
     else
         setenv PATH $BASE_PATH
-        setenv MANPATH $BASE_MANPATH
         setenv LM_LICENSE_FILE $BASE_LM_LICENSE_FILE
         setenv LD_LIBRARY_PATH $BASE_LD_LIBRARY_PATH
+        setenv PYTHONPATH $BASE_PYTHONPATH
+        setenv MANPATH $BASE_MANPATH
     endif
 
     # Change to $HOME/Desktop
