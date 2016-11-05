@@ -42,7 +42,10 @@ class Options(object):
         """
         self._meld = command_mod.Command('meld', errors='stop')
         self._meld.set_args(args[1:])
-        self._pattern = ': GtkWarning: | self.recent_manager =| gtk.main()'
+        self._pattern = (
+            ': GtkWarning: | self.recent_manager =| gtk.main()|'
+            'accessibility bus address:'
+        )
 
 
 class Main(object):
