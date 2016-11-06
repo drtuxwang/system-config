@@ -6,20 +6,22 @@ set title
 let &titlestring=hostname().':%F  %y%r%m %a'
 
 " Spell Checking
-set spell spelllang=en_gb
-set spellcapcheck=
-highlight clear SpellBad
-highlight SpellBad cterm=underline
-highlight clear SpellCap
-highlight SpellCap cterm=underline
-highlight clear SpellLocal
-highlight SpellLocal cterm=underline
-highlight clear SpellRare
-highlight SpellRare cterm=underline
-nmap . ]s  " Next
-nmap r z=  " Replace word
-nmap + zg  " Good word
-nmap - zug  " Undo good word
+if has("spell")
+    set spell spelllang=en_gb
+    set spellcapcheck=
+    highlight clear SpellBad
+    highlight SpellBad cterm=underline
+    highlight clear SpellCap
+    highlight SpellCap cterm=underline
+    highlight clear SpellLocal
+    highlight SpellLocal cterm=underline
+    highlight clear SpellRare
+    highlight SpellRare cterm=underline
+    nmap . ]s  " Next
+    nmap r z=  " Replace word
+    nmap + zg  " Good word
+    nmap - zug  " Undo good word
+endif
 
 " Status line
 set ruler
@@ -34,7 +36,9 @@ set tabstop=4
 highlight OverLength ctermbg=0 guibg=lightgrey
 match OverLength /\%101v.\+/
 highlight TrailingSpace ctermbg=0 guibg=lightgrey
-2match TrailingSpace /\s\+$/
+if version >= 700
+    2match TrailingSpace /\s\+$/
+endif
 autocmd BufWritePre * %s/▸\   /	/ge
 
 " Turn off annoying features
