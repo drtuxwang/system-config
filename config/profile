@@ -7,36 +7,46 @@
 
 ##set -x
 
-if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
-    if [ ! "$BASH" -a -f $HOME/.profile-2bash -a -f /bin/bash ]; then
-        export ENV=$HOME/.profile; exec /bin/bash -l
+if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]
+    then
+    if [ ! "$BASH" -a -f $HOME/.profile-2bash -a -f /bin/bash ]
+    then
+        export ENV=$HOME/.profile
+        exec /bin/bash -l
     fi
 
     # Terminal Multiplexer
-    if [ -x "/usr/bin/tmux" ]; then
-        if [ "$TMUX" ]; then
-            if [ ! "$MYSCREEN" ]; then
+    if [ -x "/usr/bin/tmux" ]
+    then
+        if [ "$TMUX" ]
+        then
+            if [ ! "$MYSCREEN" ]
+            then
                 export MYSCREEN="tmux:$(tmux display-message -p '#S')"
                 MYTTY=
             fi
             alias logout='tmux detach'
-        elif [ "$TERM" = "screen" ]; then
+        elif [ "$TERM" = "screen" ]
+        then
             export MYSCREEN="???"
             alias tmux='echo "sessions should be nested with care, already running multiplexer" #'
         fi
     fi
 
     # Removing soft shell limit
-    for _limit in `\ulimit -a 2> /dev/null | \cut -c1`; do
+    for _limit in `\ulimit -a 2> /dev/null | \cut -c1`
+    do
         \ulimit -$_limit `\ulimit -$_limit -H 2> /dev/null` 2> /dev/null
     done
 
     # Session control
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-    if [ "$BASH" ]; then
+    if [ "$BASH" ]
+    then
         MYSHELL="BASH"
-        if [ "`git --version 2> /dev/null | grep \"^git version\"`" ]; then
+        if [ "`git --version 2> /dev/null | grep \"^git version\"`" ]
+        then
             PS1='\[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[31m\]$(__git_ps1)\[\033[00m\] \$ '
         else
             PS1='\[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[00m\] \$ '
@@ -52,7 +62,8 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
 
         complete -f -o default tar
         complete -f -o default wine
-    elif [ "`echo $0 | \grep \"ksh$\"`" ]; then
+    elif [ "`echo $0 | \grep \"ksh$\"`" ]
+    then
         MYSHELL="KORN"
         PS1="$MYUNAME@${MYHNAME}_$ "
         set -o emacs
@@ -63,32 +74,35 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     else
         MYSHELL="BOURNE"
     fi
-    if [ "$SSH_CONNECTION" ]; then
+    if [ "$SSH_CONNECTION" ]
+    then
         MYSHELL="$MYSHELL remote"
     fi
     export SSH_AUTH_SOCK=$(\ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
-    if [ ! "$SSH_AUTH_SOCK" ]; then
+    if [ ! "$SSH_AUTH_SOCK" ]
+    then
         eval $(ssh-agent) > /dev/null
     fi
     SSH_KEYS=`ssh-add -l 2> /dev/null | grep ":.*:" | wc -l | awk '{print $1}'`
-    if [ "$MYTTY" ]; then
+    if [ "$MYTTY" ]
+    then
         alias logout='echo Use \"exit\" to exit the shell.'
     else
         MYSHELL="$MYSHELL login"
-        if [ "$TERM" = "dumb" ]; then
-            MYTTY="/dev/???"; export MYTTY
+        if [ "$TERM" = "dumb" ]
+        then
+            export MYTTY="/dev/???"
         else
-            MYTTY=`\tty 2> /dev/null`; export MYTTY
+            export MYTTY=`\tty 2> /dev/null`
             (mesg y) > /dev/null 2>&1
-            if [ "$TMOUT" != 0 ]; then
-                export TMOUT=0
-            fi
+            export TMOUT=0
             stty erase "^?" 2> /dev/null  # ^H alternative
             stty intr ^C 2> /dev/null
             stty susp ^Z 2> /dev/null
         fi
         set -o ignoreeof ''
-        if [ "$SSH_CONNECTION" ]; then
+        if [ "$SSH_CONNECTION" ]
+        then
             alias exit='echo Use \"logout\" to leave the remote login shell.'
         else
             alias exit='echo Use \"logout\" to leave the login shell.'
@@ -99,7 +113,8 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     # General stuff
     rm()
     {
-        if [ "`echo \" $@ \" | grep \" $HOME/* \"`" ]; then
+        if [ "`echo \" $@ \" | grep \" $HOME/* \"`" ]
+        then
             echo "rm: Removing \"$HOME\" home directory is dangerous."
         else
             /bin/rm "$@"
@@ -110,35 +125,44 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     export HISTFILE=
     export _POSIX2_VERSION=199209
     export PYTHONDONTWRITEBYTECODE=1
-    export TMP=/tmp; export TMPDIR=$TMP; rm -rf $HOME/tmp 2> /dev/null
+    export TMP=/tmp
+    export TMPDIR=$TMP
+    rm -rf $HOME/tmp 2> /dev/null
     export WINEDITOR=vi
     ENV=
 
-    if [ "`df --help 2>&1 | grep \" --portability\"`" ]; then
+    if [ "`df --help 2>&1 | grep \" --portability\"`" ]
+    then
         alias df="df -k --portability"
     else
         alias df="df -k"
     fi
     alias du="du -k"
     alias ftp="ftp -i -v"
-    if [ "$BASH" ]; then
+    if [ "$BASH" ]
+    then
         alias h="history 1024"
     else
         alias h='fc -l 1 2> /dev/null | tail -1024'
     fi
     alias ls="ls -C"
     alias quota="quota -v"
-    alias resize='resize; eval `\\resize`'
-    if [ -x /usr/bin/vim ]; then
+    alias resize='resiz && eval `\\resize`'
+    if [ -x /usr/bin/vim ]
+    then
         alias vi="vim -N -n -i NONE -T xterm"
     fi
-    if [ -x /usr/sbin/ping ]; then
+    if [ -x /usr/sbin/ping ]
+    then
         alias ping="/usr/sbin/ping"
-    elif [ -x /usr/etc/ping ]; then
+    elif [ -x /usr/etc/ping ]
+    then
         alias ping="/usr/etc/ping"
     fi
-    if [ -f $HOME/.ssh/config ]; then
-        if [ "`ssh -version 2>&1 | grep \"^OpenSSH_\"`" ]; then
+    if [ -f $HOME/.ssh/config ]
+    then
+        if [ "`ssh -version 2>&1 | grep \"^OpenSSH_\"`" ]
+        then
             alias scp="scp -F $HOME/.ssh/config -o ServerAliveInterval=1799"
         else
             alias scp="scp -F $HOME/.ssh/config"
@@ -147,17 +171,22 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
-    if [ ! "$BASE_PATH" ]; then
-        if [ ! "$LM_LICENSE_FILE" ]; then
+    if [ ! "$BASE_PATH" ]
+    then
+        if [ ! "$LM_LICENSE_FILE" ]
+        then
             export LM_LICENSE_FILE=
         fi
-        if [ ! "$LD_LIBRARY_PATH" ]; then
+        if [ ! "$LD_LIBRARY_PATH" ]
+        then
             export LD_LIBRARY_PATH=
         fi
-        if [ ! "$PYTHONPATH" ]; then
+        if [ ! "$PYTHONPATH" ]
+        then
             export PYTHONPATH=
         fi
-        if [ ! "$MANPATH" ]; then
+        if [ ! "$MANPATH" ]
+        then
             export MANPATH=
         fi
         export BASE_PATH=$PATH
@@ -187,15 +216,18 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop 2> /dev/null
     chmod go= $HOME/Desktop .??*/* 2> /dev/null
-    if [ "$PWD" = "$HOME" -o "$PWD" = "/" ]; then
+    if [ "$PWD" = "$HOME" -o "$PWD" = "/" ]
+    then
         cd "$HOME/Desktop"
     fi
 
     # mkinst, cdinst, mksrc, cdsrc, mktest, cdtest, scd
-    for _dir in inst src test; do
-        alias mk$_dir='export cd'$_dir'="$PWD"; echo "cd'$_dir'=$cd'$_dir'"'
-        alias cd$_dir='echo "cd \"$cd'$_dir'\""; cd "$cd'$_dir'"'
-        if [ ! "$cdtest" ]; then
+    for _dir in inst src test
+    do
+        alias mk$_dir='export cd'$_dir'="$PWD" && echo "cd'$_dir'=$cd'$_dir'"'
+        alias cd$_dir='echo "cd \"$cd'$_dir'\"" && cd "$cd'$_dir'"'
+        if [ ! "$cdtest" ]
+        then
             export cd$_dir="$PWD"
         fi
     done
@@ -204,7 +236,8 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     # Platform specific
     case `uname` in
     Darwin)
-        if [ -d /usr/local/opt/coreutils/libexec/gnubin ]; then
+        if [ -d /usr/local/opt/coreutils/libexec/gnubin ]
+        then
             export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
             alias ls="ls -C --time-style=long-iso --color=always"
         else
@@ -213,13 +246,15 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
         ;;
 
     Linux|*NT*)
-        if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]; then
+        if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]
+        then
             alias ls="ls -C --time-style=long-iso --color=always"
         else
             alias ls="ls -C --color=always"
         fi
         # Defend against stubborn Linux distributions
-        if [ -f /etc/ksh.kshrc ]; then
+        if [ -f /etc/ksh.kshrc ]
+        then
             alias test='return 2> /dev/null'
         fi
         unset CDPATH LS_COLORS
@@ -229,16 +264,19 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]; then
     export PATH="$HOME/software/bin:/opt/software/bin:$PATH"
 
     # Applying local settings
-    if [ -f $HOME/.profile-local ]; then
+    if [ -f $HOME/.profile-local ]
+    then
         . $HOME/.profile-local
     fi
 
     echo
     MYINFO="$MYSHELL shell (tty=$MYTTY"
-    if [ "$SSH_KEYS" != 0 ]; then
+    if [ "$SSH_KEYS" != 0 ]
+    then
         MYINFO="$MYINFO, ssh-add=$SSH_KEYS"
     fi
-    if [ "$MYSCREEN" ]; then
+    if [ "$MYSCREEN" ]
+    then
         MYINFO="$MYINFO, screen=$MYSCREEN"
     fi
     MYINFO="$MYINFO)"

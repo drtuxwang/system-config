@@ -9,7 +9,8 @@
 
 if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     if ( -f $HOME/.login-2bash && -f /bin/bash ) then
-        setenv ENV $HOME/.profile; exec /bin/bash -l
+        setenv ENV $HOME/.profile
+        exec /bin/bash -l
     endif
 
     # Terminal Multiplexer
@@ -78,11 +79,13 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     setenv LC_COLLATE C
     setenv _POSIX2_VERSION 199209
     setenv PYTHONDONTWRITEBYTECODE 1
-    setenv TMP /tmp; setenv TMPDIR $TMP; rm -rf $HOME/tmp >& /dev/null
+    setenv TMP /tmp
+    setenv TMPDIR $TMP
+    rm -rf $HOME/tmp >& /dev/null
     setenv WINEDITOR vi
 
     set history=1024
-    if ( "`df --help |& grep \" --portability\"`" ) then
+    if ( "`df --help |& grep ' --portability'`" != "" ) then
         alias df "df -k --portability"
     else
         alias df "df -k"
@@ -142,8 +145,8 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
 
     # mkinst, cdinst, mksrc, cdsrc, mktest, cdtest, scd
     foreach _dir (inst src test)
-        alias mk$_dir 'setenv cd'$_dir' "$PWD"; echo "cd'$_dir'=$cd'$_dir'"'
-        alias cd$_dir 'echo "cd \"$cd'$_dir'\""; cd "$cd'$_dir'"'
+        alias mk$_dir 'setenv cd'$_dir' "$PWD" && echo "cd'$_dir'=$cd'$_dir'"'
+        alias cd$_dir 'echo "cd \"$cd'$_dir'\"" && cd "$cd'$_dir'"'
         if ( ! $?cdtest ) then
             setenv cd$_dir "$PWD"
         endif
