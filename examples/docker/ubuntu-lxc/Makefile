@@ -8,9 +8,12 @@ build:
 	@echo "\n*** Building Docker image ***"
 	cp -rp ../../../bin ../../../config .
 	bin/fmod -R *
-	docker build --pull -t $(IMAGE) .
+	docker build -t $(IMAGE) .
 	rm -rf bin config
 	docker images
+
+pull:
+	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 run:
 	@echo "\n*** Running Docker container ***"
