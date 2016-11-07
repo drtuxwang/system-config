@@ -5,7 +5,7 @@
 	merge = merge --no-ff
 	xdiff = difftool --tool=meld --dir-diff
 	xmerge = mergetool --tool=meld
-	find-commit = branch -a --contains
+	find-commit = "!bash -c 'git fetch --all && git branch -a --contains $0'"
 	find-merge = "!bash -c 'git log --graph $0^..${1:-HEAD}'"
 [color]
 	ui = auto
