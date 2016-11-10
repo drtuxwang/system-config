@@ -3,7 +3,7 @@
     "apiVersion": "v1",
     "metadata": {
         "name": "debian-rc",
-        "namespace": "ckong",
+        "namespace": "test",
         "labels": {
             "app": "debian-lxc"
         }
@@ -24,7 +24,7 @@
                     {
                         "name": "debian-lxc",
                         "image": "debian:8",
-                        "imagePullPolicy": "IfNotPresent",
+                        "imagePullPolicy": "Always",
                         "command": [
                             "bash",
                             "sleep",
@@ -46,11 +46,11 @@
                             "requests": {
                                 "cpu": "100m",
                                 "memory": "64M"
-                            }
+                            },
                             "limits": {
                                 "cpu": "1000m",
                                 "memory": "1024M"
-                            },
+                            }
                         },
                         "volumeMounts": [
                             {
@@ -67,7 +67,10 @@
                             "path": "/shared"
                         }
                     }
-                ]
+                ],
+                "nodeSelector": {
+                    "kubernetes.io/hostname": "test01"
+                }
             }
         }
     }

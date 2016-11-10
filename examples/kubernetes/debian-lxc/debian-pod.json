@@ -3,7 +3,7 @@
     "apiVersion": "v1",
     "metadata": {
         "name": "debian-pod",
-        "namespace": "ckong",
+        "namespace": "test",
         "labels": {
             "app": "debian-lxc"
         }

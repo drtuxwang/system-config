@@ -3,7 +3,7 @@
     "apiVersion": "v1",
     "metadata": {
         "name": "debian-lxc",
-        "namespace": "ckong"
+        "namespace": "test"
     },
     "spec": {
         "type": "ClusterIP",
