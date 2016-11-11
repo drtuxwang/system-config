@@ -110,7 +110,7 @@ class Main(object):
             tmpfile = file + '-tmp' + str(os.getpid())
             try:
                 with open(tmpfile, 'w', newline='\n') as ofile:
-                    print(html_text, end='', file=ofile)
+                    print(html_text, file=ofile)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
