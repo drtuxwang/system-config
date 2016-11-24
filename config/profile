@@ -51,14 +51,18 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]
         else
             PS1='\[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[00m\] \$ '
         fi
-        precmd() {
-            \echo -e "\033]0;$MYHNAME:$PWD\007\c"
-        }
-        PROMPT_COMMAND="precmd"
-        preexec() {
-            \echo -e "\033]0;$MYHNAME:$PWD $ $BASH_COMMAND\007\c"
-        }
-        trap 'preexec' DEBUG
+        case $TERM in
+        screen|xterm)
+            precmd() {
+                \echo -e "\033]0;$MYHNAME:$PWD\007\c"
+            }
+            PROMPT_COMMAND="precmd"
+            preexec() {
+                \echo -e "\033]0;$MYHNAME:$PWD $ $BASH_COMMAND\007\c"
+            }
+            trap 'preexec' DEBUG
+            ;;
+        esac
 
         complete -f -o default tar
         complete -f -o default wine
