@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# Wrapper for Python pip installed scripts
+#
+VERSION=20161124
+
+PYEXE="python3"
+MYDIR=${0%/*}
+MYFILE=${0##*/}
+case $MYFILE in
+ansible*)
+    PACKAGE="ansible"
+    ;;
+esac
+DIR=$("$MYDIR/$PYEXE" -m pip show $PACKAGE 2> /dev/null | grep "^Location: " | sed -e "s/Location: //")
+PYFILE="${DIR%/lib/*}/bin/$MYFILE"
+if [ ! "$PYFILE" ]
+then
+    echo "***ERROR*** Cannot find required \"$PYFILE\" software." 1>&2
+    exit 1
+fi
+
+exec "$MYDIR/$PYEXE" "$PYFILE" "$@"
