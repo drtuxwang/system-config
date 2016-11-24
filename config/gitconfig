@@ -2,11 +2,12 @@
 	name = ???
 	email = ???
 [alias]
-	checkout-all = "!bash -c 'git checkout $0; git submodule foreach \"git checkout $0||:\"'"
-	pull-all = "!bash -c 'git pull; git submodule foreach \"git pull||:\"'"
-	find-commit = "!bash -c 'git fetch --all && git branch -a --contains $0'"
-	find-merge = "!bash -c 'git log --graph $0^..${1:-HEAD}'"
+	checkout-all = "!f() { git checkout $1; git submodule foreach \"git checkout $1||:\"; }; f"
+	find-commit = "!f() { git fetch --all; git branch -a --contains $1; }; f"
+	find-merge = "!f() { git log --graph $1^..${2:-HEAD}; }; f"
+	grep-all = "!f() { git --no-pager grep \"$1\"; git submodule foreach \"git --no-pager grep '$1'||:\"; }; f"
 	merge = merge --no-ff
+	pull-all = "!f() { git pull; git submodule foreach \"git pull||:\"; }; f"
 	xdiff = difftool --tool=meld --dir-diff
 	xmerge = mergetool --tool=meld
 [color]
