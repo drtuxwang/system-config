@@ -83,18 +83,15 @@ class Options(object):
         except OSError:
             pass
 
-        for file in (
-                os.path.join(os.environ['HOME'], '.cache', 'google-chrome'),
-                os.path.join(configdir, 'Pepper Data')
-        ):
-            if not os.path.isfile(file):
-                try:
-                    if os.path.isdir(file):
-                        shutil.rmtree(file)
-                    with open(file, 'wb'):
-                        pass
-                except OSError:
+        file =  os.path.join(os.environ['HOME'], '.cache', 'google-chrome')
+        if not os.path.isfile(file):
+            try:
+                if os.path.isdir(file):
+                    shutil.rmtree(file)
+                with open(file, 'wb'):
                     pass
+            except OSError:
+                pass
 
     @staticmethod
     def _clean_preferences(configdir):
