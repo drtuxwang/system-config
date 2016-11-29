@@ -2,16 +2,7 @@
 #
 # Wrapper for "python"
 #
-VERSION=20161019
-
-#
-# Test for GNU Textutil POSIX 200112 bug
-#
-if [ "`(echo | head -1 | tail +1) 2>&1`" ]
-then
-    _POSIX2_VERSION=199209; export _POSIX2_VERSION
-fi
-
+VERSION=20161129
 
 #
 # Function to locate command
