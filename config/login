@@ -77,7 +77,6 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     # General stuff
     umask 027
     setenv LC_COLLATE C
-    setenv _POSIX2_VERSION 199209
     setenv PYTHONDONTWRITEBYTECODE 1
     setenv TMP /tmp
     setenv TMPDIR $TMP

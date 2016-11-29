@@ -127,7 +127,6 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]
     umask 027
     export LC_COLLATE=C
     export HISTFILE=
-    export _POSIX2_VERSION=199209
     export PYTHONDONTWRITEBYTECODE=1
     export TMP=/tmp
     export TMPDIR=$TMP
