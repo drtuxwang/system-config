@@ -1,5 +1,5 @@
 Protocol 2
-ConnectTimeout 2
+ConnectTimeout 5
 ForwardAgent no
 ForwardX11 no
 GSSAPIAuthentication no
