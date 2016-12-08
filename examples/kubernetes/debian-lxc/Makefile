@@ -1,4 +1,5 @@
 SERVER := http://kubernetes.local:8080
+NAMESPACE := default
 
 default: build
 
@@ -11,16 +12,16 @@ build:
 
 clean:
 	@echo "\n*** Building replicationcontroller ***"
-	kubectl -s $(SERVER) --namespace=test delete rc debian-lxc ||:
-	kubectl -s $(SERVER) --namespace=test delete service debian-lxc ||:
-	kubectl -s $(SERVER) delete namespace test ||:
+	kubectl -s $(SERVER) --namespace=$(NAMESPACE) delete rc debian-lxc ||:
+	kubectl -s $(SERVER) --namespace=$(NAMESPACE) delete service debian-lxc ||:
+	kubectl -s $(SERVER) delete namespace $(NAMESPACE) ||:
 
 status:
 	@echo "\n*** Checking status ***"
 	kubectl -s $(SERVER) get namespaces
-	kubectl -s $(SERVER) --namespace=test get services
-	kubectl -s $(SERVER) --namespace=test get rc
-	kubectl -s $(SERVER) --namespace=test get pods
+	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get services
+	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get rc
+	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get pods
 
 test: pep8
 	@echo "\n*** Tests successfull ***"
