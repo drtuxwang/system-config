@@ -987,14 +987,14 @@ examples/cloudformation/multi-stacks/pxy_stack.json
 examples/cloudformation/multi-stacks/sg_stack.json
 examples/cloudformation/multi-stacks/submit.sh
 
-examples/docker/centos-lxc/Dockerfile                 CentOS docker image
-examples/docker/centos-lxc/Makefile
-examples/docker/debian-lxc/Dockerfile                 Debian docker image
-examples/docker/debian-lxc/Makefile
-examples/docker/debian-openvpn-lxc/Dockerfile         Debian OpenVPN docker image
-examples/docker/debian-openvpn-lxc/Makefile
-examples/docker/ubuntu-lxc/Dockerfile                 Ubuntu docker image
-examples/docker/ubuntu-lxc/Makefile
+examples/docker/centos/Dockerfile                     CentOS docker image
+examples/docker/centos/Makefile
+examples/docker/debian/Dockerfile                     Debian docker image
+examples/docker/debian/Makefile
+examples/docker/debian-openvpn/Dockerfile             Debian OpenVPN docker image
+examples/docker/debian-openvpn/Makefile
+examples/docker/ubuntu/Dockerfile                     Ubuntu docker image
+examples/docker/ubuntu/Makefile
 
 examples/kubernetes/debian-lxc/Makefile               Kubernetes example
 examples/kubernetes/debina-lxc/test-ns.json

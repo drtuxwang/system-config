@@ -1,4 +1,4 @@
-FROM debian-lxc
+FROM debian-base
 
 # Install packages
 RUN apt-get install -y openvpn

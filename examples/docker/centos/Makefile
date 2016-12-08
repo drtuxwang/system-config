@@ -1,4 +1,4 @@
-IMAGE := centos-lxc
+IMAGE := centos-base
 CPUSHARE := --cpu-shares=100000 --cpu-quota=1000000
 MEMLIMIT :=  -memory-reservation=64m --memory=1024m
 
