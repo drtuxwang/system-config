@@ -1,0 +1,21 @@
+FROM debian-base
+
+# Install packages
+RUN apt-get install -y csh ksh tcsh && \
+    apt-get install -y sudo tmux wget && \
+    apt-get install -y python3 python3-dev python3-pip && \
+    python3 -m pip install Glances pep8 pylint
+
+# Add scripts
+COPY bin/ /opt/software/bin/
+COPY config/docker-init /etc/
+COPY config/docker-init-home /etc/
+
+# Docker account
+COPY config/login /home/docker/.login
+COPY config/profile /home/docker/.profile
+COPY config/tmux.conf /home/docker/.tmux.conf
+COPY config/vimrc /home/docker/.vimrc
+
+# Setup start
+CMD /etc/docker-init

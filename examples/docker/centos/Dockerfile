@@ -2,38 +2,17 @@ FROM centos:7
 
 # Install packages
 RUN yum -y update && \
-    yum -y install epel-release && \
-    yum -y install ksh tcsh && \
-    yum -y install gcc net-tools openssh-clients pciutils sudo tmux vim wget && \
-    yum -y install xorg-x11-server-utils xorg-x11-utils && \
-    yum -y install xfce4-terminal alsa-lib && \
-    yum -y install python34 python34-devel && \
-    wget https://bootstrap.pypa.io/get-pip.py && \
-    python3 get-pip.py && \
-    rm get-pip.py
-RUN python3 -m pip install Glances pep8 pylint
+    yum -y install net-tools openssh-clients pciutils vim
 
-# Python scripts
-COPY bin /opt/software/bin
+# Add scripts
+COPY bin/sysinfo.sh /opt/software/bin/
 
-# Root setup
+# Root account
 COPY config/bashrc /root/.bashrc
 COPY config/vimrc /root/.vimrc
 
-# Create "/home/docker" directory
-COPY config/profile /home/docker/.profile
-COPY config/login /home/docker/.login
-COPY config/terminalrc /home/docker/.config/xfce4/terminal/terminalrc
-COPY config/tmux.conf /home/docker/.tmux.conf
-COPY config/vimrc /home/docker/.vimrc
-
-# Docker startup file
-COPY config/docker-init /etc/docker-init
-COPY config/docker-init-home /etc/docker-init-home
-
-# Run "/etc/docker-init" script
+# Configure start
 USER root
 ENV HOME=/root
-ENV XDG_CURRENT_DESKTOP=XFCE
 WORKDIR /root
-CMD /etc/docker-init
+CMD bash -l

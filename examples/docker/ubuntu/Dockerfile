@@ -2,34 +2,17 @@ FROM ubuntu:16.04
 
 # Install packages
 RUN apt-get update && \
-    apt-get install -y csh ksh tcsh && \
-    apt-get install -y net-tools openssh-client pciutils sudo tmux vim wget && \
-    apt-get install -y x11-xserver-utils x11-utils xfonts-base && \
-    apt-get install -y xfce4-terminal libgtk-3-0 libasound2 && \
-    apt-get install -y python3 python3-dev python3-pip
-RUN python3 -m pip install Glances pep8 pylint
+    apt-get install -y iputils-ping net-tools openssh-client pciutils vim
 
-# Python scripts
-COPY bin /opt/software/bin
+# Add scripts
+COPY bin/sysinfo.sh /opt/software/bin/
 
-# Root setup
+# Root account
 COPY config/bashrc /root/.bashrc
 COPY config/vimrc /root/.vimrc
 
-# Create "/home/docker" directory
-COPY config/profile /home/docker/.profile
-COPY config/login /home/docker/.login
-COPY config/terminalrc /home/docker/.config/xfce4/terminal/terminalrc
-COPY config/tmux.conf /home/docker/.tmux.conf
-COPY config/vimrc /home/docker/.vimrc
-
-# Docker startup file
-COPY config/docker-init /etc/docker-init
-COPY config/docker-init-home /etc/docker-init-home
-
-# Run "/etc/docker-init" script
+# Configure start
 USER root
 ENV HOME=/root
-ENV XDG_CURRENT_DESKTOP=XFCE
 WORKDIR /root
-CMD /etc/docker-init
+CMD bash -l

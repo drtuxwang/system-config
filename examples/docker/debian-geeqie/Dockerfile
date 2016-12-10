@@ -1,4 +1,4 @@
-FROM debian-base
+FROM debian-base-xshell
 
 # Install packages
 RUN apt-get install -y geeqie

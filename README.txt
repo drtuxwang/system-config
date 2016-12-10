@@ -987,23 +987,25 @@ examples/cloudformation/multi-stacks/pxy_stack.json
 examples/cloudformation/multi-stacks/sg_stack.json
 examples/cloudformation/multi-stacks/submit.sh
 
-examples/docker/centos/Dockerfile                     CentOS docker base image
+examples/docker/centos/Dockerfile                     Docker: CentOS base image
 examples/docker/centos/Makefile
-examples/docker/debian/Dockerfile                     Debian docker base image
+examples/docker/debian/Dockerfile                     Docker: Debian base images
+examples/docker/debian/Dockerfile-shell
+examples/docker/debian/Dockerfile-xshell
 examples/docker/debian/Makefile
-examples/docker/debian-geeqie/Dockerfile              Debian Geeqie docker app image
+examples/docker/debian-geeqie/Dockerfile              Docker: Geeqie app image
 examples/docker/debian-geeqie/Makefile
 examples/docker/debian-geeqie/geeqie
-examples/docker/debian-openvpn/Dockerfile             Debian OpenVPN docker app image
+examples/docker/debian-openvpn/Dockerfile             Docker: OpenVPN app image
 examples/docker/debian-openvpn/Makefile
-examples/docker/ubuntu/Dockerfile                     Ubuntu docker base image
+examples/docker/ubuntu/Dockerfile                     Docker: Ubuntu base image
 examples/docker/ubuntu/Makefile
 
-examples/kubernetes/debian-lxc/Makefile               Kubernetes example
-examples/kubernetes/debina-lxc/test-ns.json
-examples/kubernetes/debian-lxc/debian-pod.json
-examples/kubernetes/debian-lxc/debian-rc.json
-examples/kubernetes/debian-lxc/debian-svc.json
+examples/kubernetes/debian/Makefile                   Kubernetes: Debian example
+examples/kubernetes/debina/test-ns.json
+examples/kubernetes/debian/debian-pod.json
+examples/kubernetes/debian/debian-rc.json
+examples/kubernetes/debian/debian-svc.json
 
 examples/python/simple-package/Makefile               Simple Egg & WHL package
 examples/python/simple-package/RUN
