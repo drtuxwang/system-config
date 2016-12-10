@@ -8,8 +8,6 @@ mkdir -p $HOME/.config/geeqie 2> /dev/null
 DIR=$PWD
 docker run --cpu-period=100000 $CPUSHARE $MEMLIMIT \
     --rm \
-    --interactive \
-    --tty \
     --volume="/etc/passwd:/etc/passwd:ro" \
     --volume="/etc/group:/etc/group:ro" \
     --volume=/tmp/.X11-unix:/tmp/.X11-unix \
@@ -21,4 +19,5 @@ docker run --cpu-period=100000 $CPUSHARE $MEMLIMIT \
     --env DISPLAY=$DISPLAY \
     --name $IMAGE \
     --hostname $IMAGE \
+    --network none \
     $IMAGE /etc/docker-init /opt/software/bin/gqview
