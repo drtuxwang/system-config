@@ -23,7 +23,7 @@ ScrollingLines=9999
 FontName=Monospace 11
 ColorForeground=#000099990000
 ColorBackground=#000000000000
-ColorPalette=#222222222222;#ffff55555555;#5555ffff5555;#ffffffff5555;#55555555ffff;#ffff5555ffff;#5555ffffffff;#ffffffffffff;#222222222222;#ffff55555555;#5555ffff5555;#ffffffff5555;#55555555ffff;#ffff5555ffff;#5555ffffffff;#ffffffffffff
+ColorPalette=#333333333333;#ffff55555555;#5555ffff5555;#ffffffff5555;#55555555ffff;#ffff5555ffff;#5555ffffffff;#ffffffffffff;#333333333333;#ffff55555555;#5555ffff5555;#ffffffff5555;#55555555ffff;#ffff5555ffff;#5555ffffffff;#ffffffffffff
 ColorCursor=#ffff00000000
 MiscScrollAlternateScreen=TRUE
 

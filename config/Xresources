@@ -6,8 +6,8 @@ xterm*foreground:  #009900
 xterm*background:  #000000
 xterm*cursorColor: #ff0000
 ! Black & Dark Grey
-xterm*color0:  #222222
-xterm*color8:  #222222
+xterm*color0:  #333333
+xterm*color8:  #333333
 ! Dark & Light Red
 xterm*color1:  #ff5555
 xterm*color9:  #ff5555
