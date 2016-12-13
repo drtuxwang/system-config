@@ -502,6 +502,7 @@ bin/2to3               Python 3.x script wrappers (allowing non systems port)
 bin/2to3.bat
 bin/2to3-3.4
 bin/2to3-3.4.bat
+bin/ansible
 bin/ansible-playbook
 bin/aws
 bin/aws.bat
