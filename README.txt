@@ -978,6 +978,17 @@ etc/setbin.bat            Windows Command prompt initialization
 etc/setbin.ps1            Windows Power shell initialization
 etc/python3-requirements  Python requirements "python3 -m pip install -r requirements.txt"
 
+examples/ansible/test/Makefile                        Ansible playbook example
+examples/ansible/test/ansible.cfg
+examples/ansible/test/group_vars/test
+examples/ansible/test/hosts
+examples/ansible/test/roles/test-work/files/test.sh
+examples/ansible/test/roles/test-work/tasks/create-files.yml
+examples/ansible/test/roles/test-work/tasks/main.yml
+examples/ansible/test/roles/test-work/templates/test-file.txt
+examples/ansible/test/roles/test-work/vars/main.yml
+examples/ansible/test/setup-test.yml
+
 examples/cloudformation/1pxy/1pxy.json                CloudFormation: 1pxy example
 examples/cloudformation/1pxy/Makefile
 examples/cloudformation/1pxy/submit.sh

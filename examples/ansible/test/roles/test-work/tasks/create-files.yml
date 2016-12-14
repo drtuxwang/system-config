@@ -1,0 +1,9 @@
+
+- name: "Creates {{ HOME }}/{{ test_directory }}"
+  file: path={{ HOME }}/{{ test_directory }} state=directory
+
+- name: "Copy test.sh"
+  copy: src=test.sh dest={{ HOME }}/{{ test_directory }}/test.sh
+
+- name: "Create test-file.txt"
+  template: src=test-file.txt dest={{ HOME }}/{{ test_directory }}/test-file.txt

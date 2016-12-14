@@ -1,0 +1,4 @@
+delay: 10
+word: hello
+sentence: "{{ word }} word"
+size: 256KB

@@ -1,0 +1,7 @@
+[test:children]
+test-nodes
+
+[test-nodes]
+rocky                  ansible_user=ckong   HOME=/home/ckong
+ditty                  ansible_user=ckong   HOME=/home/ckong
+

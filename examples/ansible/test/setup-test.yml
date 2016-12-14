@@ -1,0 +1,4 @@
+- hosts: test-nodes
+  roles:
+      - role: test-work
+        become: yes
