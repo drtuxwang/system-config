@@ -4,8 +4,8 @@
 #
 # 1996-2016 By Dr Colin Kong
 #
-VERSION=20161019
-RELEASE="2.6.40-3"
+VERSION=20161214
+RELEASE="2.6.40-4"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -422,7 +422,7 @@ detect()
         for FILE in `ls -1 /etc/*release 2> /dev/null | egrep -v "/etc/(lsb|os)-release"`
         do
             MYOSX="$MYOSX
-`head -2 $FILE 2> /dev/null | paste - - | sed -e \"s/Linux //\" -e \"s/release //\" -e \"s/\(.*[uU]pdate/update/\" -e \"s/[()].*//\" -e \"s/ .*=/ /\" -e \"s/ for.*//\" -e \"s/	/ /g\"`"
+`head -2 $FILE 2> /dev/null | paste - - | sed -e \"s/Linux //\" -e \"s/release //\" -e \"s/[(].*[uU]pdate/update/\" -e \"s/[()].*//\" -e \"s/ .*=/ /\" -e \"s/ for.*//\" -e \"s/	/ /g\"`"
         done
         MYOS=`uname -s -r`
         MYOSX=`echo "$MYOSX" | sort | uniq | paste - - - - | sed -e "s/ *	/, /g" -e "s/^, //" -e "s/[, ]*$//"`
