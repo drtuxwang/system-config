@@ -37,10 +37,22 @@ class Options(object):
         """
         return self._args.recursive_flag
 
+    def get_remove_flag(self):
+        """
+        Return remove flag.
+        """
+        return self._args.remove_flag
+
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Show files with same MD5 checksums.')
 
+        parser.add_argument(
+            '-rm',
+            dest='remove_flag',
+            action='store_true',
+            help='Delete obsolete files in target directory.'
+        )
         parser.add_argument(
             '-R',
             dest='recursive_flag',
@@ -133,6 +145,16 @@ class Main(object):
                 sys.argv[0] + ': Cannot read "' + file + '" file.')
         return md5.hexdigest()
 
+    @staticmethod
+    def _remove(files):
+        for file in files:
+            print('  Removing "{0:s}" duplicated file'.format(file))
+            try:
+                os.remove(file)
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot remove "' + file + '" file.')
+
     def run(self):
         """
         Start program
@@ -144,7 +166,10 @@ class Main(object):
 
         for files in sorted(self._md5files.values()):
             if len(files) > 1:
-                print(command_mod.Command.args2cmd(sorted(files)))
+                sorted_files = sorted(files)
+                print(command_mod.Command.args2cmd(sorted_files))
+                if options.get_remove_flag():
+                    self._remove(sorted_files[1:])
 
 
 if __name__ == '__main__':
