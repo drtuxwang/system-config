@@ -55,7 +55,7 @@ class Options(object):
             return os.path.join('.config', 'google-chrome')
 
     @staticmethod
-    def _clean_adobe(configdir):
+    def _clean_adobe():
         adobe = os.path.join(
             os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
         macromedia = os.path.join(
@@ -83,7 +83,7 @@ class Options(object):
         except OSError:
             pass
 
-        file =  os.path.join(os.environ['HOME'], '.cache', 'google-chrome')
+        file = os.path.join(os.environ['HOME'], '.cache', 'google-chrome')
         if not os.path.isfile(file):
             try:
                 if os.path.isdir(file):
@@ -149,7 +149,7 @@ class Options(object):
             configdir = os.path.join(
                 os.environ['HOME'], self._get_profiles_dir(), 'Default')
 
-            self._clean_adobe(configdir)
+            self._clean_adobe()
             if os.path.isdir(configdir):
                 self._clean_preferences(configdir)
                 self._clean_junk_files(configdir)
