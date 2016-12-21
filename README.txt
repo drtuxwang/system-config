@@ -999,6 +999,8 @@ examples/cloudformation/multi-stacks/pxy_stack.json
 examples/cloudformation/multi-stacks/sg_stack.json
 examples/cloudformation/multi-stacks/submit.sh
 
+examples/docker/alpine/Dockerfile                     Docker: Alpine base image
+examples/docker/alpine/Makefile
 examples/docker/centos/Dockerfile                     Docker: CentOS base image
 examples/docker/centos/Makefile
 examples/docker/debian/Dockerfile                     Docker: Debian base images

@@ -23,4 +23,4 @@ run:
 		--tty \
 		--name $(IMAGE) \
 		--hostname $(IMAGE) \
-		$(IMAGE) bash -l || exit 0
+		$(IMAGE) bash || exit 0

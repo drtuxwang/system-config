@@ -15,4 +15,4 @@ COPY config/vimrc /root/.vimrc
 USER root
 ENV HOME=/root
 WORKDIR /root
-CMD bash -l
+CMD bash
