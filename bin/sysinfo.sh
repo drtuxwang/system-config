@@ -4,8 +4,8 @@
 #
 # 1996-2016 By Dr Colin Kong
 #
-VERSION=20161214
-RELEASE="2.6.40-4"
+VERSION=20161221
+RELEASE="2.6.40-5"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -428,7 +428,10 @@ detect()
         MYOSX=`echo "$MYOSX" | sort | uniq | paste - - - - | sed -e "s/ *	/, /g" -e "s/^, //" -e "s/[, ]*$//"`
         if [ ! "$MYOSX" ]
         then
-            if [ "`dpkg --list 2> /dev/null | grep \"ii  mepis-auto\"`" ]
+            if [ "`grep "^PRETTY_NAME=" /etc/os-release 2> /dev/null`" ]
+            then
+                MYOSX=`grep "^PRETTY_NAME=" /etc/os-release | cut -f2 -d'"' | sed -e "s/ *[(].*//"`
+            elif [ "`dpkg --list 2> /dev/null | grep \"ii  mepis-auto\"`" ]
             then
                 MYOSX="MEPIS "`dpkg --list | grep "ii  mepis-auto" | head -1 | awk '{print $3}'`
             elif [ "`grep \"^DISTRIB_DESCRIPTION=\" /etc/lsb-release 2> /dev/null`" ]
