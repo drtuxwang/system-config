@@ -6,7 +6,7 @@ default: build
 
 build:
 	@echo "\n*** Building Docker image ***"
-	cp -rp ../../../bin ../../../config .
+	cp -rp ../../../../bin ../../../../config .
 	bin/fmod -R *
 	docker build -t $(IMAGE) .
 	rm -rf bin config

@@ -1007,11 +1007,11 @@ examples/docker/debian/Dockerfile                     Docker: Debian base images
 examples/docker/debian/Dockerfile-shell
 examples/docker/debian/Dockerfile-xshell
 examples/docker/debian/Makefile
-examples/docker/debian-geeqie/Dockerfile              Docker: Geeqie app image
-examples/docker/debian-geeqie/Makefile
-examples/docker/debian-geeqie/geeqie
-examples/docker/debian-openvpn/Dockerfile             Docker: OpenVPN app image
-examples/docker/debian-openvpn/Makefile
+examples/docker/debian/debian-geeqie/Dockerfile       Docker: Geeqie app image
+examples/docker/debian/debian-geeqie/Makefile
+examples/docker/debian/debian-geeqie/geeqie
+examples/docker/debian/debian-openvpn/Dockerfile      Docker: OpenVPN app image
+examples/docker/debian/debian-openvpn/Makefile
 examples/docker/ubuntu/Dockerfile                     Docker: Ubuntu base image
 examples/docker/ubuntu/Makefile
 
