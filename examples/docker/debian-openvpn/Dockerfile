@@ -1,4 +1,4 @@
-FROM debian-base-xshell
+FROM debian-xshell:latest
 
 # Install packages
 RUN apt-get install -y openvpn && \

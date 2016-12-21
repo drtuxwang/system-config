@@ -1,4 +1,4 @@
-FROM debian-base-shell
+FROM debian-shell:latest
 
 # Install packages
 RUN apt-get install -y x11-xserver-utils x11-utils xfonts-base && \

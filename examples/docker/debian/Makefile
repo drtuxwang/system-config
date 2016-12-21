@@ -1,4 +1,4 @@
-IMAGE := debian-base
+IMAGE := debian
 CPUSHARE := --cpu-shares=100000 --cpu-quota=1000000
 MEMLIMIT :=  -memory-reservation=64m --memory=1024m
 
@@ -8,7 +8,7 @@ build:
 	@echo "\n*** Building Docker image ***"
 	cp -rp ../../../bin ../../../config .
 	bin/fmod -R *
-	docker build -t $(IMAGE) .
+	docker build -t $(IMAGE)-base .
 	docker build -f Dockerfile-shell -t $(IMAGE)-shell .
 	docker build -f Dockerfile-xshell -t $(IMAGE)-xshell .
 	rm -rf bin config

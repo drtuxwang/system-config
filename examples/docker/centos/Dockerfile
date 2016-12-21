@@ -1,4 +1,4 @@
-FROM centos
+FROM centos:latest
 
 # Install packages
 RUN yum -y update && \
