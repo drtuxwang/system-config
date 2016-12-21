@@ -5,7 +5,7 @@
 # 1996-2016 By Dr Colin Kong
 #
 VERSION=20161221
-RELEASE="2.6.40-6"
+RELEASE="2.6.40-7"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -452,6 +452,9 @@ detect()
             elif [ "`dpkg --list 2> /dev/null | grep \"ii  kernel.*MEPIS\"`" ]
             then
                 MYOSX="MEPIS "`dpkg --list | grep "ii  kernel.*MEPIS" | head -1 | awk '{print $3}' | sed -e "s/MEPIS.//"`
+            elif [ -f "/etc/debian_version" ]
+            then
+                MYOSX="Debian "`cat /etc/debian_version`
             elif [ "`dpkg --list 2> /dev/null`" ]
             then
                 MYOSX="Debian "`dpkg --list | grep "ii  base-files" | awk '{print $3}'`
