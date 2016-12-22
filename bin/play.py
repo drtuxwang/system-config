@@ -66,7 +66,7 @@ class Options(object):
             'files',
             nargs='+',
             metavar='file',
-            help='Multimedia fiel or URL.'
+            help='Multimedia file or URL.'
         )
 
         self._args = parser.parse_args(args)

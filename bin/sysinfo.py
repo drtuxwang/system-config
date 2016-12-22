@@ -27,7 +27,7 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.9.0'
+RELEASE = '4.9.1'
 VERSION = 20161222
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -1452,7 +1452,7 @@ class LinuxSystem(PosixSystem):
                 with open('/etc/os-release', errors='replace') as ifile:
                     for line in ifile:
                         if line.startswith('PRETTY_NAME="'):
-                            info['OS Name'] = line.split('"')[1].split( '(')[0]
+                            info['OS Name'] = line.split('"')[1].split('(')[0]
                             break
             except OSError:
                 pass
@@ -1466,12 +1466,12 @@ class LinuxSystem(PosixSystem):
         info = super().get_os_info()
 
         for scan_method in (
-            self._scan_etc_release,
-            self._scan_etc_lsb_release,
-            self._scan_etc_version,
-            self._scan_dpkg_version,
-            self._scan_os_release
-         ):
+                self._scan_etc_release,
+                self._scan_etc_lsb_release,
+                self._scan_etc_version,
+                self._scan_dpkg_version,
+                self._scan_os_release
+        ):
             info.update(scan_method())
             if info['OS Name'] != 'Unknown':
                 break
