@@ -4,8 +4,8 @@
 #
 # 1996-2016 By Dr Colin Kong
 #
-VERSION=20161221
-RELEASE="2.6.40-7"
+VERSION=20161222
+RELEASE="2.6.40-8"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -446,6 +446,9 @@ detect()
             elif [ -f /etc/DISTRO_SPECS ]
             then
                 MYOSX="`grep ^DISTRO_NAME /etc/DISTRO_SPECS | cut -f2 -d= | sed -e \"s/\'//g\"` `grep ^DISTRO_VERSION /etc/DISTRO_SPECS | cut -f2 -d=`"
+            elif [ -f /etc/alpine-release ]
+            then
+                MYOSX="Alpine `cat /etc/alpine-release`"
             elif [ "`dpkg --list 2> /dev/null | grep \"ii  knoppix\"`" ]
             then
                 MYOSX="Knoppix "`dpkg --list | grep "ii  knoppix-g" | awk '{print $3}' | sed -e "s/-.*//"`

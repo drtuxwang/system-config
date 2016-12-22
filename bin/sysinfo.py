@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.8.9'
-VERSION = 20161221
+RELEASE = '4.9.0'
+VERSION = 20161222
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -1325,6 +1325,12 @@ class LinuxSystem(PosixSystem):
                                 pass
             except OSError:
                 info['OS Name'] = 'Unknown'
+        elif os.path.isfile('/etc/alpine-release'):
+            try:
+                with open('/etc/alpine-release', errors='replace') as ifile:
+                    info['OS Name'] = ifile.readline().rstrip('\r\n')
+            except OSError:
+                pass
 
         return info
 
