@@ -260,6 +260,8 @@ bin/gittime            Modify file time to original GIT author time
 bin/gittime.py
 bin/gnomine            gnome-mines/gnomine wrapper (allowing non systems port)
 bin/gnomine.py         (can pick using old gnomines name)
+bin/go                 Go wrapper (golang)
+bin/go.py
 bin/google             Google search engine submission
 bin/google.py
 bin/gpg                gpg wrapper (allowing non systems port)
