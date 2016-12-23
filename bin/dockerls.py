@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-List all images in Docker registry
+List images in Docker registry
 
 http://localhost:5000/v1/search
 http://localhost:5000/v1/repositories/<repository>/tags
@@ -14,6 +14,7 @@ import argparse
 import glob
 import json
 import os
+import re
 import signal
 import sys
 
@@ -44,14 +45,26 @@ class Options(object):
         """
         return self._args.server[0]
 
+    def get_pattern(self):
+        """
+        Return regular expression pattern.
+        """
+        return self._args.pattern
+
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='List all images in Docker registry.')
+            description='List images in Docker registry.')
 
         parser.add_argument(
             'server',
             nargs=1,
             help='Server address (ie "http://localhost:5000").'
+        )
+        parser.add_argument(
+            'pattern',
+            nargs='?',
+            default='.*',
+            help='Regular expression.'
         )
 
         self._args = parser.parse_args(args)
@@ -99,54 +112,58 @@ class Main(object):
         print('#{0:s}/v1/search'.format(options.get_server()))
         api = options.get_server() + '/v1/repositories/{0:s}/tags'
         prefix = options.get_server().split('://')[-1]
+        ismatch = re.compile(options.get_pattern())
 
         for repository in sorted(repositories):
-            try:
-                response = requests.get(
-                    api.format(repository),
-                    headers={'User-Agent': USER_AGENT},
-                    allow_redirects=True,
-                    verify=True
-                )
-            except Exception as exception:
-                raise SystemExit(str(exception))
-            if response.status_code != 200:
-                raise SystemExit(
-                    'Requests "{0:s}" response code: {1:d}'.format(
+            if ismatch.search(repository):
+                try:
+                    response = requests.get(
                         api.format(repository),
-                        response.status_code
+                        headers={'User-Agent': USER_AGENT},
+                        allow_redirects=True,
+                        verify=True
                     )
-                )
-            tags = json.loads(response.text).keys()
-            for tag in sorted(tags):
-                print('{0:s}/{1:s}:{2:s}'.format(prefix, repository, tag))
+                except Exception as exception:
+                    raise SystemExit(str(exception))
+                if response.status_code != 200:
+                    raise SystemExit(
+                        'Requests "{0:s}" response code: {1:d}'.format(
+                            api.format(repository),
+                            response.status_code
+                        )
+                    )
+                tags = json.loads(response.text).keys()
+                for tag in sorted(tags):
+                    print('{0:s}/{1:s}:{2:s}'.format(prefix, repository, tag))
 
     @staticmethod
     def _check_registry2(options, repositories):
         print('#{0:s}/v2/_catalog'.format(options.get_server()))
         api = options.get_server() + '/v2/{0:s}/tags/list'
         prefix = options.get_server().split('://')[-1]
+        ismatch = re.compile(options.get_pattern())
 
         for repository in sorted(repositories):
-            try:
-                response = requests.get(
-                    api.format(repository),
-                    headers={'User-Agent': USER_AGENT},
-                    allow_redirects=True,
-                    verify=True
-                )
-            except Exception as exception:
-                raise SystemExit(str(exception))
-            if response.status_code != 200:
-                raise SystemExit(
-                    'Requests "{0:s}" response code: {1:d}'.format(
+            if ismatch.search(repository):
+                try:
+                    response = requests.get(
                         api.format(repository),
-                        response.status_code
+                        headers={'User-Agent': USER_AGENT},
+                        allow_redirects=True,
+                        verify=True
                     )
-                )
-            tags = json.loads(response.text)['tags']
-            for tag in sorted(tags):
-                print('{0:s}/{1:s}:{2:s}'.format(prefix, repository, tag))
+                except Exception as exception:
+                    raise SystemExit(str(exception))
+                if response.status_code != 200:
+                    raise SystemExit(
+                        'Requests "{0:s}" response code: {1:d}'.format(
+                            api.format(repository),
+                            response.status_code
+                        )
+                    )
+                tags = json.loads(response.text)['tags']
+                for tag in sorted(tags):
+                    print('{0:s}/{1:s}:{2:s}'.format(prefix, repository, tag))
 
     @classmethod
     def run(cls):
