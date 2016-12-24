@@ -14,8 +14,8 @@ BackgroundColour=0,0,0
 CursorColour=255,0,0
 CursorType=block
 
-Black=34,34,34
-BoldBlack=34,34,34
+Black=51,51,51
+BoldBlack=51,51,51
 Red=255,85,85
 BoldRed=255,85,85
 Green=85,255,85
