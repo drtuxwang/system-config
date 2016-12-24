@@ -80,9 +80,9 @@ bin/df                 df wrapper (allowing non systems port)
 bin/df.py              (KB default and fix format problems)
 bin/dhcptable          Shows local DHCP hosts
 bin/dhcptable.py
-bin/dockerls           List all images in a Docker Registry
-bin/dockerls.bat
-bin/dockerls.py
+bin/dockerfind         List all images in a Docker Registry
+bin/dockerfind.bat
+bin/dockerfind.py
 bin/eclipse            eclipse wrapper (allowing non systems port)
 bin/eclipse.py
 bin/espeak             espeak wrapper (allowing non systems port)
