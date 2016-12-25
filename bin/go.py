@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for generic command
+GO compiler wrapper (sets GOROOT automatically)
 """
 
 import glob
@@ -51,11 +51,14 @@ class Main(object):
         """
         Start program
         """
-        name = os.path.basename(sys.argv[0]).replace('.py', '')
+        golang = command_mod.Command(os.path.join('bin', 'go'), errors='stop')
+        golang.extend_args(sys.argv[1:])
 
-        command = command_mod.Command(name, errors='stop')
-        command.set_args(sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        goroot = os.path.dirname(os.path.dirname(golang.get_file()))
+        if os.path.isdir(os.path.join(goroot, 'pkg')):
+            os.environ['GOROOT'] = goroot
+
+        subtask_mod.Exec(golang.get_cmdline()).run()
 
 
 if __name__ == '__main__':
