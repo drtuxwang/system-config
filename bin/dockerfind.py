@@ -113,11 +113,15 @@ class DockerRegistry(object):
         except Exception as exception:
             raise SystemExit(str(exception))
         if response.status_code == 200:
-            results = json.loads(response.text)['results']
-            self._repositories = [
-                result['name'].replace('library/', '')
-                for result in results
-            ]
+            try:
+                results = json.loads(response.text)['results']
+            except ValueError:
+                self._repositories = None
+            else:
+                self._repositories = [
+                    result['name'].replace('library/', '')
+                    for result in results
+                ]
         else:
             self._repositories = None
 
@@ -150,7 +154,10 @@ class DockerRegistry2(DockerRegistry):
         except Exception as exception:
             raise SystemExit(str(exception))
         if response.status_code == 200:
-            self._repositories = json.loads(response.text)['repositories']
+            try:
+                self._repositories = json.loads(response.text)['repositories']
+            except ValueError:
+                self._repositories = None
         else:
             self._repositories = None
 
