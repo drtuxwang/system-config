@@ -2,7 +2,7 @@
 #
 # Wrapper for "python"
 #
-VERSION=20161129
+VERSION=20161228
 
 #
 # Function to locate command
@@ -85,7 +85,7 @@ locate_python() {
         esac
         ;;
     *NT*)
-        PYEXE="python.exe"
+        PYEXE="$PYEXE.exe"
         if  [ "$PROCESSOR_ARCHITEW6432" = AMD64 ]
         then
             LOCATE=`ls -1t $LOCAL/*/windows64_*-x86*/$PYEXE 2> /dev/null | head -1`
