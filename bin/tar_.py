@@ -1,21 +1,17 @@
 #!/usr/bin/env python3
 """
-Make a compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/
-TAR.7Z/TGZ/TBZ|TLZ|TXZ format.
+Make a compressed archive in TAR format.
 """
 
 import argparse
 import glob
 import os
-import re
 import signal
 import sys
+import tarfile
 
-import command_mod
-import subtask_mod
-
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 
 class Options(object):
@@ -46,8 +42,7 @@ class Options(object):
         parser.add_argument(
             'archive',
             nargs=1,
-            metavar='file.tar|file.tar.gz|file.tar.bz2|file.tar.lzma|'
-            'file.tar.xz|file.tar.7z|file.tgz|file.tbz|file.tlz|file.txz',
+            metavar='file.tar',
             help='Archive file.'
         )
         parser.add_argument(
@@ -69,8 +64,7 @@ class Options(object):
             self._archive = os.path.abspath(self._args.archive[0]) + '.tar'
         else:
             self._archive = self._args.archive[0]
-        isarchive = re.compile('[.](tar|tar[.](gz|bz2|lzma|xz|7z)|t[gblx]z)$')
-        if not isarchive.search(self._archive):
+        if not self._archive.endswith('.tar'):
             raise SystemExit(
                 sys.argv[0] + ': Unsupported "' + self._archive +
                 '" archive format.'
@@ -138,32 +132,13 @@ class Main(object):
         options = Options()
 
         os.umask(int('022', 8))
-        tar = command_mod.Command('tar', errors='stop')
-        archive = options.get_archive()
-        if archive.endswith('.tar.7z'):
-            tar.set_args(['cf', '-'] + options.get_files())
-            p7zip = command_mod.Command('7z', errors='stop')
-            p7zip.set_args([
-                'a',
-                '-m0=lzma2',
-                '-mmt=2',
-                '-mx=9',
-                '-ms=on',
-                '-y',
-                '-si',
-                archive
-            ])
-            subtask_mod.Task(
-                tar.get_cmdline() + ['|'] + p7zip.get_cmdline()).run()
-        else:
-            if archive.endswith('.tar'):
-                tar.set_args(['cfv', archive] + options.get_files())
-            else:
-                tar.set_args(['cfva', archive] + options.get_files())
-                os.environ['GZIP'] = '-9'
-                os.environ['BZIP2'] = '-9'
-                os.environ['XZ_OPT'] = '-9 -e --lzma2=dict=128MiB --threads=1'
-            subtask_mod.Exec(tar.get_cmdline()).run()
+        try:
+            self._archive = tarfile.open(options.get_archive(), 'w:')
+        except OSError:
+            raise SystemExit(sys.argv[0] + ': Cannot create "' +
+                             options.get_archive() + '" archive file.')
+        self._addfile(options.get_files())
+        self._archive.close()
 
 
 if __name__ == '__main__':

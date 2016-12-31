@@ -453,7 +453,6 @@ bin/python3.4.bat
 bin/python3.5
 bin/python3.bat
 bin/python3.6
-bin/pyuntar.py         Unpack an archive in TAR format.
 bin/pyz                Make a Python3 ZIP Application in PYZ format
 bin/pyz.py
 bin/qmail              Qwikmail, commandline E-mailer
@@ -498,6 +497,7 @@ bin/sysinfo.sh         Old Bourne shell version
 bin/tar                tar wrapper (allowing non systems port)
 bin/tar.bat            (with Python enhancements)
 bin/tar.py
+bin/tar_.py
 bin/terraform          terraform wrapper (allowing non systems port)
 bin/terraform.py
 bin/tbz                Make a compressed archive in TAR.BZ2
@@ -571,6 +571,7 @@ bin/unsql.py
 bin/untar              Unpack a compressed archive in
 bin/untar.bat          TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.
 bin/untar.py
+bin/untar_.py
 bin/untbz              Unpack a compressed archive in TAR.BZ2 format
 bin/untbz.bat
 bin/untbz.py
