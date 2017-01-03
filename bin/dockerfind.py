@@ -69,6 +69,9 @@ class Options(object):
 
         self._args = parser.parse_args(args)
 
+        if '://' not in self._args.server[0]:
+            self._args.server[0] = 'http://' + self._args.server[0]
+
     def parse(self, args):
         """
         Parse arguments
