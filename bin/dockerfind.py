@@ -2,11 +2,14 @@
 """
 List images in Docker registry
 
-http://localhost:5000/v1/search
-http://localhost:5000/v1/repositories/<repository>/tags
-http://localhost:5000/v2/_catalog
-http://localhost:5000/v2/<repository>/tags/list
-http://localhost:5000/v2/<repository>/manifests/<tag>
+curl http://localhost:5000/v1/search
+curl http://localhost:5000/v1/repositories/<name>/tags
+
+curl http://localhost:5000/v2/_catalog
+curl http://localhost:5000/v2/<name>/tags/list
+curl http://localhost:5000/v2/<name>/manifests/<tag>
+curl -H "Accept: application/vnd.docker.distribution.manifest.v2+json" -i http://localhost:5000/v2/<name>/manifests/<tag>
+curl -X DELETE http://localhost:5000/v2/<name>/manifests/sha256:<digest>
 
 """
 
