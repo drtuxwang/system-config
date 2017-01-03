@@ -75,6 +75,9 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
+        if '://' not in self._args.server[0]:
+            raise SystemExit(sys.argv[0] + ': Expected "://" missing in URL')
+
 
 class DockerRegistry(object):
     """
