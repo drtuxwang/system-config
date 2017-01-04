@@ -113,25 +113,8 @@ class Main(object):
                     argv.append(arg)
             sys.argv = argv
 
-    def _addfile(self, files):
-        for file in sorted(files):
-            print(file)
-            try:
-                self._archive.add(file, recursive=False)
-            except OSError:
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot open "' + file + '" file.')
-            if os.path.isdir(file) and not os.path.islink(file):
-                try:
-                    self._addfile(
-                        [os.path.join(file, x) for x in os.listdir(file)])
-                except PermissionError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot open "' + file +
-                        '" directory.'
-                    )
-
-    def run(self):
+    @staticmethod
+    def run():
         """
         Start program
         """
