@@ -8,8 +8,9 @@ curl http://localhost:5000/v1/repositories/<name>/tags
 curl http://localhost:5000/v2/_catalog
 curl http://localhost:5000/v2/<name>/tags/list
 curl http://localhost:5000/v2/<name>/manifests/<tag>
-curl -H "Accept: application/vnd.docker.distribution.manifest.v2+json" -i http://localhost:5000/v2/<name>/manifests/<tag>
-curl -X DELETE http://localhost:5000/v2/<name>/manifests/sha256:<digest>
+curl -v -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+    http://localhost:5000/v2/<name>/manifests/<tag>
+curl -X DELETE http://localhost:5000/v2/<name>/manifests/<etag>
 
 """
 
@@ -242,8 +243,11 @@ class Main(object):
         print('#' + registry.get_url())
         for repository in sorted(registry.get_repositories()):
             if ismatch.search(repository):
-                for tag in sorted(registry.get_tags(repository)):
-                    print('{0:s}/{1:s}:{2:s}'.format(prefix, repository, tag))
+                tags = registry.get_tags(repository)
+                if tags:
+                    for tag in sorted(tags):
+                        print('{0:s}/{1:s}:{2:s}'.format(
+                            prefix, repository, tag))
 
 
 if __name__ == '__main__':
