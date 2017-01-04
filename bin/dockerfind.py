@@ -7,11 +7,11 @@ curl http://localhost:5000/v1/repositories/<name>/tags
 
 curl http://localhost:5000/v2/_catalog
 curl http://localhost:5000/v2/<name>/tags/list
-curl http://localhost:5000/v2/<name>/manifests/<tag>
 curl -v -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
     http://localhost:5000/v2/<name>/manifests/<tag>
 curl -X DELETE http://localhost:5000/v2/<name>/manifests/<etag>
-
+registry garbage-collect --dry-run /etc/docker/registry/config.yml
+registry garbage-collect /etc/docker/registry/config.yml  # Then restart registry
 """
 
 import argparse
