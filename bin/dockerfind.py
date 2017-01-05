@@ -9,9 +9,9 @@ curl http://localhost:5000/v2/_catalog
 curl http://localhost:5000/v2/<name>/tags/list
 curl -v -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
     http://localhost:5000/v2/<name>/manifests/<tag>
-curl -X DELETE http://localhost:5000/v2/<name>/manifests/<etag>
+curl -X DELETE http://localhost:5000/v2/<name>/manifests/<digest>
 registry garbage-collect --dry-run /etc/docker/registry/config.yml
-registry garbage-collect /etc/docker/registry/config.yml  # Then restart registry
+registry garbage-collect /etc/docker/registry/config.yml  # Reqistry restart
 """
 
 import argparse
@@ -32,6 +32,10 @@ requests.packages.urllib3.disable_warnings()
 USER_AGENT = (
     'Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0'
 )
+V2_HEADER = {
+    'User-Agent': USER_AGENT,
+    'Accept': 'application/vnd.docker.distribution.manifest.v2+json'
+}
 
 
 class Options(object):
@@ -108,13 +112,8 @@ class DockerRegistry(object):
         return self._repositories
 
     @staticmethod
-    def _get_url(url):
-        return requests.get(
-            url,
-            headers={'User-Agent': USER_AGENT},
-            allow_redirects=True,
-            verify=True
-        )
+    def _get_url(url, headers={'User-Agent': USER_AGENT}):
+        return requests.get(url, headers=headers)
 
     def _config(self):
         self._url = self._server + '/v1/search'
@@ -137,7 +136,7 @@ class DockerRegistry(object):
 
     def get_tags(self, repository):
         """
-        Return tags.
+        Return dictionay of tags mapped to keys
         """
         url = self._server + '/v1/repositories/' + repository + '/tags'
         try:
@@ -151,7 +150,7 @@ class DockerRegistry(object):
                 url,
                 response.status_code
             ))
-        return json.loads(response.text).keys()
+        return json.loads(response.text)
 
 
 class DockerRegistry2(DockerRegistry):
@@ -182,14 +181,28 @@ class DockerRegistry2(DockerRegistry):
             response = self._get_url(url)
         except Exception as exception:
             raise SystemExit(str(exception))
+        digests = {}
         if response.status_code != 200:
             if response.status_code == 404:
-                return {"tags": []}
+                return digests
             raise SystemExit('Requests "{0:s}" response code: {1:d}'.format(
                 url,
                 response.status_code
             ))
-        return json.loads(response.text)['tags']
+        for tag in json.loads(response.text)['tags']:
+            url = self._server + '/v2/' + repository + '/manifests/' + tag
+            try:
+                response = self._get_url(url, headers=V2_HEADER)
+            except Exception as exception:
+                raise SystemExit(str(exception))
+            digest = response.headers['docker-content-digest']
+            if response.status_code != 200:
+                raise SystemExit(
+                    'Requests "{0:s}" response code: {1:d}'.format(
+                        url, response.status_code))
+            digests[tag] = response.headers['docker-content-digest']
+
+        return digests
 
 
 class Main(object):
@@ -247,11 +260,10 @@ class Main(object):
         print('#' + registry.get_url())
         for repository in sorted(registry.get_repositories()):
             if ismatch.search(repository):
-                tags = registry.get_tags(repository)
-                if tags:
-                    for tag in sorted(tags):
-                        print('{0:s}/{1:s}:{2:s}'.format(
-                            prefix, repository, tag))
+                digests = registry.get_tags(repository)
+                for tag in sorted(digests.keys()):
+                    print('{0:s}/{1:s}:{2:s}  {3:s}'.format(
+                        prefix, repository, tag, digests[tag]))
 
 
 if __name__ == '__main__':
