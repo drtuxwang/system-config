@@ -153,7 +153,8 @@ class DockerRegistry(object):
             response = requests.delete(url, headers={'User-Agent': USER_AGENT})
         except Exception as exception:
             raise SystemExit(str(exception))
-        if response.status_code not in (200, 202):  # v2 returns 202
+        # v2 returns 202, shared tags can 404
+        if response.status_code not in (200, 202, 404):
             raise SystemExit('Requests "{0:s}" response code: {1:d}'.format(
                 url,
                 response.status_code
