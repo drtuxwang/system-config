@@ -32,10 +32,6 @@ requests.packages.urllib3.disable_warnings()
 USER_AGENT = (
     'Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0'
 )
-V2_HEADER = {
-    'User-Agent': USER_AGENT,
-    'Accept': 'application/vnd.docker.distribution.manifest.v2+json'
-}
 
 
 class Options(object):
@@ -101,7 +97,7 @@ class DockerRegistry(object):
 
     def get_url(self):
         """
-        Return list url.
+        Return url.
         """
         return self._url
 
@@ -112,8 +108,8 @@ class DockerRegistry(object):
         return self._repositories
 
     @staticmethod
-    def _get_url(url, headers={'User-Agent': USER_AGENT}):
-        return requests.get(url, headers=headers)
+    def _get_url(url):
+        return requests.get(url, headers={'User-Agent': USER_AGENT})
 
     def _config(self):
         self._url = self._server + '/v1/search'
@@ -158,6 +154,13 @@ class DockerRegistry2(DockerRegistry):
     Docker Registry v2 class
     """
 
+    @staticmethod
+    def _get_url(url):
+        return requests.get(url, headers={
+            'User-Agent': USER_AGENT,
+            'Accept': 'application/vnd.docker.distribution.manifest.v2+json'
+        })
+
     def _config(self):
         self._url = self._server + '/v2/_catalog'
         try:
@@ -192,10 +195,9 @@ class DockerRegistry2(DockerRegistry):
         for tag in json.loads(response.text)['tags']:
             url = self._server + '/v2/' + repository + '/manifests/' + tag
             try:
-                response = self._get_url(url, headers=V2_HEADER)
+                response = self._get_url(url)
             except Exception as exception:
                 raise SystemExit(str(exception))
-            digest = response.headers['docker-content-digest']
             if response.status_code != 200:
                 raise SystemExit(
                     'Requests "{0:s}" response code: {1:d}'.format(
@@ -257,13 +259,12 @@ class Main(object):
         registry = cls._get_registry(server)
         prefix = server.split('://')[-1]
         ismatch = re.compile(options.get_pattern())
-        print('#' + registry.get_url())
         for repository in sorted(registry.get_repositories()):
             if ismatch.search(repository):
                 digests = registry.get_tags(repository)
                 for tag in sorted(digests.keys()):
-                    print('{0:s}/{1:s}:{2:s}  {3:s}'.format(
-                        prefix, repository, tag, digests[tag]))
+                    print('{0:s}  {1:s}/{2:s}:{3:s}'.format(
+                        digests[tag], prefix, repository, tag))
 
 
 if __name__ == '__main__':
