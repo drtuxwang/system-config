@@ -15,10 +15,10 @@ registry garbage-collect /etc/docker/registry/config.yml  # Reqistry restart
 """
 
 import argparse
+import fnmatch
 import glob
 import json
 import os
-import re
 import signal
 import sys
 
@@ -43,47 +43,30 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_server(self):
+    def get_urls(self):
         """
-        Return server address.
+        Return URls.
         """
-        return self._args.server[0]
-
-    def get_pattern(self):
-        """
-        Return regular expression pattern.
-        """
-        return self._args.pattern
+        return self._args.urls
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='List images in Docker registry.')
 
         parser.add_argument(
-            'server',
-            nargs=1,
-            help='Server address (ie "http://localhost:5000").'
-        )
-        parser.add_argument(
-            'pattern',
-            nargs='?',
-            default='.*',
-            help='Regular expression.'
+            'urls',
+            nargs='+',
+            metavar='url',
+            help='Registry URL (ie "http://localhost:5000", "http://localhost:5000/debian*").'
         )
 
         self._args = parser.parse_args(args)
-
-        if '://' not in self._args.server[0]:
-            self._args.server[0] = 'http://' + self._args.server[0]
 
     def parse(self, args):
         """
         Parse arguments
         """
         self._parse_args(args[1:])
-
-        if '://' not in self._args.server[0]:
-            raise SystemExit(sys.argv[0] + ': Expected "://" missing in URL')
 
 
 class DockerRegistry(object):
@@ -248,23 +231,42 @@ class Main(object):
             return registry
         raise SystemExit('Cannot find Docker Registry:' + server)
 
+    @staticmethod
+    def _breakup_url(url):
+        if '://' not in url:
+            url = 'http://' + url
+        columns = url.split('/')
+        server = '/'.join(columns[:3])
+        repo_match = '/'.join(columns[3:])
+        if repo_match:
+            if ':' in repo_match:
+                repo_match, tag_match = repo_match.split(':', 1)
+            else:
+                tag_match = '*'
+        else:
+            repo_match = '*'
+            tag_match = '*'
+        return (server, repo_match, tag_match)
+
     @classmethod
     def run(cls):
         """
         Run check
         """
         options = Options()
-        server = options.get_server()
 
-        registry = cls._get_registry(server)
-        prefix = server.split('://')[-1]
-        ismatch = re.compile(options.get_pattern())
-        for repository in sorted(registry.get_repositories()):
-            if ismatch.search(repository):
-                digests = registry.get_tags(repository)
-                for tag in sorted(digests.keys()):
-                    print('{0:s}  {1:s}/{2:s}:{3:s}'.format(
-                        digests[tag], prefix, repository, tag))
+        for url  in options.get_urls():
+            server, repo_match, tag_match = cls._breakup_url(url)
+
+            registry = cls._get_registry(server)
+            prefix = server.split('://')[-1]
+            for repository in sorted(registry.get_repositories()):
+                if fnmatch.fnmatch(repository, repo_match):
+                    digests = registry.get_tags(repository)
+                    for tag in sorted(digests.keys()):
+                        if fnmatch.fnmatch(tag, tag_match):
+                            print('{0:s}  {1:s}/{2:s}:{3:s}'.format(
+                                digests[tag], prefix, repository, tag))
 
 
 if __name__ == '__main__':
