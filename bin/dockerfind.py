@@ -145,6 +145,8 @@ class DockerRegistry(object):
         except Exception as exception:
             raise SystemExit(str(exception))
         if response.status_code != 200:
+            if response.status_code == 404:
+                return {}
             raise SystemExit('Requests "{0:s}" response code: {1:d}'.format(
                 url,
                 response.status_code
@@ -181,6 +183,8 @@ class DockerRegistry2(DockerRegistry):
         except Exception as exception:
             raise SystemExit(str(exception))
         if response.status_code != 200:
+            if response.status_code == 404:
+                return {"tags": []}
             raise SystemExit('Requests "{0:s}" response code: {1:d}'.format(
                 url,
                 response.status_code
