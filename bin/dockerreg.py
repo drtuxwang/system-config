@@ -4,6 +4,7 @@ List images in Docker registry
 
 curl http://localhost:5000/v1/search
 curl http://localhost:5000/v1/repositories/<name>/tags
+curl -X DELETE http://localhost:5000/v1/repositories/<name>/tags/<tag>
 
 curl http://localhost:5000/v2/_catalog
 curl http://localhost:5000/v2/<name>/tags/list
@@ -43,6 +44,12 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
+    def get_remove_flag(self):
+        """
+        Return remove flag.
+        """
+        return self._args.remove_flag
+
     def get_urls(self):
         """
         Return URls.
@@ -54,10 +61,19 @@ class Options(object):
             description='List images in Docker registry.')
 
         parser.add_argument(
+            '-rm',
+            dest='remove_flag',
+            action='store_true',
+            help='Remove images.'
+        )
+        parser.add_argument(
             'urls',
             nargs='+',
             metavar='url',
-            help='Registry URL (ie "http://localhost:5000", "http://localhost:5000/debian*").'
+            help=(
+                'Registry URL (ie "http://localhost:5000", '
+                '"http://localhost:5000/debian*").'
+            )
         )
 
         self._args = parser.parse_args(args)
@@ -131,6 +147,29 @@ class DockerRegistry(object):
             ))
         return json.loads(response.text)
 
+    @staticmethod
+    def _delete_url(url):
+        try:
+            response = requests.delete(url, headers={'User-Agent': USER_AGENT})
+        except Exception as exception:
+            raise SystemExit(str(exception))
+        if response.status_code not in (200, 202):  # v2 returns 202
+            raise SystemExit('Requests "{0:s}" response code: {1:d}'.format(
+                url,
+                response.status_code
+            ))
+
+    @classmethod
+    def delete(cls, server, repository, tag, digest):
+        """
+        Delete image
+        """
+        print('{0:s}  {1:s}/{2:s}:{3:s}  DELETE'.format(
+            digest, server.split('://')[-1], repository, tag))
+        url = '{0:s}/v1/repositories/{1:s}/tags/{2:s}'.format(
+            server, repository, tag)
+        cls._delete_url(url)
+
 
 class DockerRegistry2(DockerRegistry):
     """
@@ -175,19 +214,32 @@ class DockerRegistry2(DockerRegistry):
                 url,
                 response.status_code
             ))
-        for tag in json.loads(response.text)['tags']:
-            url = self._server + '/v2/' + repository + '/manifests/' + tag
-            try:
-                response = self._get_url(url)
-            except Exception as exception:
-                raise SystemExit(str(exception))
-            if response.status_code != 200:
-                raise SystemExit(
-                    'Requests "{0:s}" response code: {1:d}'.format(
-                        url, response.status_code))
-            digests[tag] = response.headers['docker-content-digest']
+        tags = json.loads(response.text)['tags']
+        if tags:
+            for tag in tags:
+                url = self._server + '/v2/' + repository + '/manifests/' + tag
+                try:
+                    response = self._get_url(url)
+                except Exception as exception:
+                    raise SystemExit(str(exception))
+                if response.status_code != 200:
+                    raise SystemExit(
+                        'Requests "{0:s}" response code: {1:d}'.format(
+                            url, response.status_code))
+                digests[tag] = response.headers['docker-content-digest']
 
         return digests
+
+    @classmethod
+    def delete(cls, server, repository, tag, digest):
+        """
+        Delete image
+        """
+        print('{0:s}  {1:s}/{2:s}:{3:s}  DELETE'.format(
+            digest, server.split('://')[-1], repository, tag))
+        url = '{0:s}/v2/{1:s}/manifests/{2:s}'.format(
+            server, repository, digest)
+        cls._delete_url(url)
 
 
 class Main(object):
@@ -238,6 +290,7 @@ class Main(object):
         columns = url.split('/')
         server = '/'.join(columns[:3])
         repo_match = '/'.join(columns[3:])
+
         if repo_match:
             if ':' in repo_match:
                 repo_match, tag_match = repo_match.split(':', 1)
@@ -246,6 +299,7 @@ class Main(object):
         else:
             repo_match = '*'
             tag_match = '*'
+
         return (server, repo_match, tag_match)
 
     @classmethod
@@ -254,19 +308,27 @@ class Main(object):
         Run check
         """
         options = Options()
+        remove = options.get_remove_flag()
+        if remove:
+            if input('\nPlease confirm image removal mode (y/n)? ') != 'y':
+                raise SystemExit('Aborted!')
 
-        for url  in options.get_urls():
+        for url in options.get_urls():
             server, repo_match, tag_match = cls._breakup_url(url)
-
             registry = cls._get_registry(server)
             prefix = server.split('://')[-1]
+
             for repository in sorted(registry.get_repositories()):
                 if fnmatch.fnmatch(repository, repo_match):
                     digests = registry.get_tags(repository)
                     for tag in sorted(digests.keys()):
                         if fnmatch.fnmatch(tag, tag_match):
-                            print('{0:s}  {1:s}/{2:s}:{3:s}'.format(
-                                digests[tag], prefix, repository, tag))
+                            if remove:
+                                registry.delete(
+                                    server, repository, tag, digests[tag])
+                            else:
+                                print('{0:s}  {1:s}/{2:s}:{3:s}'.format(
+                                    digests[tag], prefix, repository, tag))
 
 
 if __name__ == '__main__':
