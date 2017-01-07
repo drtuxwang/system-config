@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for 'chrome' command
+Wrapper for "chromium" & "google-chome" commands
 
 Use '-copy' to copy profile to '/tmp'
 Use '-reset' to clean junk from profile
@@ -46,13 +46,19 @@ class Options(object):
         """
         return self._chrome
 
-    @staticmethod
-    def _get_profiles_dir():
-        if command_mod.Platform.get_system() == 'macos':
-            return os.path.join(
-                'Library', 'Application Support', 'Google', 'Chrome')
+    def _get_profiles_dir(self):
+        if os.path.basename(self._chrome.get_file()) == 'chromium':
+            if command_mod.Platform.get_system() == 'macos':
+                return os.path.join(
+                    'Library', 'Application Support', 'Chromium')
+            else:
+                return os.path.join('.config', 'chromium')
         else:
-            return os.path.join('.config', 'google-chrome')
+            if command_mod.Platform.get_system() == 'macos':
+                return os.path.join(
+                    'Library', 'Application Support', 'Google', 'Chrome')
+            else:
+                return os.path.join('.config', 'google-chrome')
 
     @staticmethod
     def _clean_adobe():
@@ -240,12 +246,11 @@ class Options(object):
                         directory, 'Local Storage', 'https*')):
                     self._remove(file)
 
-    @classmethod
-    def _restart(cls):
+    def _restart(self):
         if 'HOME' in os.environ:
             configdir = os.path.join(
                 os.environ['HOME'],
-                cls._get_profiles_dir()
+                self._get_profiles_dir()
             )
             try:
                 pid = os.readlink(
@@ -265,18 +270,22 @@ class Options(object):
                 else:
                     os.environ['LD_LIBRARY_PATH'] = libdir
 
+    @staticmethod
+    def _locate():
+        chrome = command_mod.Command('chromium', errors='ignore')
+        if not chrome.is_found():
+            chrome = command_mod.Command('chrome', errors='ignore')
+            if not chrome.is_found():
+                chrome = command_mod.Command('google-chrome', errors='ignore')
+                if not chrome.is_found():
+                    chrome = command_mod.Command('chrome', errors='stop')
+        return chrome
+
     def parse(self, args):
         """
         Parse arguments
         """
-        self._chrome = command_mod.Command('chrome', errors='ignore')
-        if not self._chrome.is_found():
-            self._chrome = command_mod.Command(
-                'google-chrome',
-                errors='ignore'
-            )
-            if not self._chrome.is_found():
-                self._chrome = command_mod.Command('chrome', errors='stop')
+        self._chrome = self._locate()
 
         if len(args) > 1:
             if args[1] == '-version':
