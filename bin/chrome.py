@@ -272,11 +272,11 @@ class Options(object):
 
     @staticmethod
     def _locate():
-        chrome = command_mod.Command('chromium', errors='ignore')
+        chrome = command_mod.Command('chrome', errors='ignore')
         if not chrome.is_found():
-            chrome = command_mod.Command('chrome', errors='ignore')
+            chrome = command_mod.Command('google-chrome', errors='ignore')
             if not chrome.is_found():
-                chrome = command_mod.Command('google-chrome', errors='ignore')
+                chrome = command_mod.Command('chromium', errors='ignore')
                 if not chrome.is_found():
                     chrome = command_mod.Command('chrome', errors='stop')
         return chrome
