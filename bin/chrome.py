@@ -47,7 +47,9 @@ class Options(object):
         return self._chrome
 
     def _get_profiles_dir(self):
-        if os.path.basename(self._chrome.get_file()) == 'chromium':
+        task = subtask_mod.Batch(self._chrome.get_cmdline() + ['-version'])
+        task.run(pattern='^Chromium ')
+        if task.has_output():
             if command_mod.Platform.get_system() == 'macos':
                 return os.path.join(
                     'Library', 'Application Support', 'Chromium')
@@ -220,6 +222,7 @@ class Options(object):
         if 'HOME' not in os.environ:
             return
 
+        print('debugX1', self._get_profiles_dir())
         configdir = os.path.join(os.environ['HOME'], self._get_profiles_dir())
         if os.path.isdir(configdir):
             keep_list = (
@@ -272,14 +275,12 @@ class Options(object):
 
     @staticmethod
     def _locate():
-        chrome = command_mod.Command('chrome', errors='ignore')
-        if not chrome.is_found():
-            chrome = command_mod.Command('google-chrome', errors='ignore')
-            if not chrome.is_found():
-                chrome = command_mod.Command('chromium', errors='ignore')
-                if not chrome.is_found():
-                    chrome = command_mod.Command('chrome', errors='stop')
-        return chrome
+        commands = ['chromium', 'chromium-browser', 'google-chrome']
+        for command in commands:
+            chrome = command_mod.Command(command, errors='ignore')
+            if chrome.is_found():
+                return chrome
+        return command_mod.Command('chrome', errors='stop')
 
     def parse(self, args):
         """
