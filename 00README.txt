@@ -549,6 +549,8 @@ bin/unbz2              Uncompress a file in BZIP2 format (allowing non systems p
 bin/unbz2.py
 bin/undeb              Unpack a compressed archive in DEB format
 bin/undeb.py
+bin/undmg              Unpack a compressed DMG disk file
+bin/undmg.py
 bin/unetbootin         unetbootin wrapper (allowing non systems port)
 bin/unetbootin.bat
 bin/unetbootin.py
