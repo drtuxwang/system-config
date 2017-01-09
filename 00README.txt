@@ -744,6 +744,7 @@ config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for Li
 config/terminalrc               Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
 config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults
 config/com.googlecode.iterm2.plist Copy to "$HOME/Library/Preference" for iTerm2 on Mac
+config/weather-7.rc             Copy to "$HOME/.config/xfce4/panel/weather-7.rc" for XFCE Weather
 config/xscreensaver             Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
 
 etc/setbin                Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
