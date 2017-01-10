@@ -51,7 +51,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     if ( "$SSH_AUTH_SOCK" == "" ) then
         eval `ssh-agent -c` >& /dev/null
     endif
-    setenv SSH_KEYS `ssh-add -l |& grep ":.*:" | wc -l | awk '{print $1}'`
+    setenv SSH_KEYS `ssh-add -l |& grep ".:." | wc -l | awk '{print $1}'`
     if ( $?MYTTY ) then
         alias logout 'echo Use \"exit\" to exit the shell.'
     else
