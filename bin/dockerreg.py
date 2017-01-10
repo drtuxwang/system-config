@@ -131,7 +131,7 @@ class DockerRegistry(object):
 
     def get_tags(self, repository):
         """
-        Return dictionay of tags mapped to keys
+        Return dictionary of tags mapped to keys
         """
         url = self._server + '/v1/repositories/' + repository + '/tags'
         try:
@@ -277,12 +277,12 @@ class Main(object):
     @staticmethod
     def _get_registry(server):
         registry2 = DockerRegistry2(server)
-        if registry2.get_repositories():
+        if registry2.get_repositories() != None:
             return registry2
         registry = DockerRegistry(server)
-        if registry.get_repositories():
+        if registry.get_repositories() != None:
             return registry
-        raise SystemExit('Cannot find Docker Registry:' + server)
+        raise SystemExit('Cannot find Docker Registry: ' + server)
 
     @staticmethod
     def _breakup_url(url):
