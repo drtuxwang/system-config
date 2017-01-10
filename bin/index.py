@@ -125,13 +125,13 @@ class Main(object):
                 checksum + '  ' + os.path.basename(file))
 
         directories = {}
-        for directory in sorted(fsums.keys()):
+        for directory in sorted(fsums):
             depth = directory.count(os.sep)
             if depth not in directories:
                 directories[depth] = [directory]
             directories[depth].append(directory)
 
-        for depth in sorted(directories.keys(), reverse=True):
+        for depth in sorted(directories, reverse=True):
             for directory in directories[depth]:
                 file = os.path.join(directory, '..fsum')
                 time_new = 0

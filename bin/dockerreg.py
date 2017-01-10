@@ -277,10 +277,10 @@ class Main(object):
     @staticmethod
     def _get_registry(server):
         registry2 = DockerRegistry2(server)
-        if registry2.get_repositories() != None:
+        if registry2.get_repositories() is not None:
             return registry2
         registry = DockerRegistry(server)
-        if registry.get_repositories() != None:
+        if registry.get_repositories() is not None:
             return registry
         raise SystemExit('Cannot find Docker Registry: ' + server)
 
