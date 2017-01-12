@@ -413,26 +413,21 @@ class TestPythonLoader(unittest.TestCase):
     def tearDown(self):
         os.chdir(self._start_directory)
 
-    def test_dump(self):
+    @unittest.mock.patch('pyld.PythonLoader.dump', return_value=None)
+    def test_dump(self, _):
         """
         Test object dumping does not fail.
         """
-        patch_dump = unittest.mock.patch.object(
-            pyld.PythonLoader, 'dump', return_value=None)
-        patch_dump.start()
-
         python_loader = pyld.PythonLoader(self._mock_options)
         python_loader.dump()
 
         self.assertTrue(python_loader.dump.called)
 
-    def test_run_dump_flag(self):
+    @unittest.mock.patch('pyld.PythonLoader.dump', return_value=None)
+    def test_run_dump_flag(self, _):
         """
         Test run with dump flag set.
         """
-        patch_dump = unittest.mock.patch.object(
-            pyld.PythonLoader, 'dump', return_value=None)
-        patch_dump.start()
         self._mock_options.get_dump_flag = unittest.mock.MagicMock(
             return_value=True)
 
