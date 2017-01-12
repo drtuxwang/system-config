@@ -780,6 +780,8 @@ docker/debian/Dockerfile                              Docker: Debian base images
 docker/debian/Dockerfile-shell
 docker/debian/Dockerfile-xshell
 docker/debian/Makefile
+docker/debian/debian-builder/Dockerfile               Docker: Debian compiler environment image
+docker/debian/debian-builder/Makefile
 docker/debian/debian-geeqie/Dockerfile                Docker: Geeqie app image
 docker/debian/debian-geeqie/Makefile
 docker/debian/debian-geeqie/geeqie

@@ -19,7 +19,7 @@ pull:
 
 run:
 	@echo "\n*** Running Docker container ***"
-	docker run --cpu-period=100000 $(CPUSHARE) $(MEMLIMIT) \
+	docker run $(CPUSHARE) $(MEMLIMIT) \
 		--rm \
 		--interactive \
 		--tty \
@@ -27,7 +27,6 @@ run:
 		--volume="/etc/group:/etc/group:ro" \
 		--volume=/shared:/shared \
 		--env USER=$(USER) \
-		--env TERM=$(TERM) \
 		--name $(IMAGE)-shell \
 		--hostname $(IMAGE)-shell \
 		$(IMAGE)-shell /etc/docker-init || exit 0
