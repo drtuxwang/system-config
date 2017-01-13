@@ -6,7 +6,7 @@ curl http://localhost:5000/v1/search
 curl http://localhost:5000/v1/repositories/<name>/tags
 curl -X DELETE http://localhost:5000/v1/repositories/<name>/tags/<tag>
 
-curl http://localhost:5000/v2/_catalog
+curl http://localhost:5000/v2/_catalog?n=9999
 curl http://localhost:5000/v2/<name>/tags/list
 curl -v -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
     http://localhost:5000/v2/<name>/manifests/<tag>
@@ -27,6 +27,10 @@ import requests
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+
+# Maxium number of Docker Registry v2 repositories
+# Effects Go array size and huge number crashes Registry
+MAXREPO = "9999"
 
 requests.packages.urllib3.disable_warnings()
 
@@ -185,7 +189,7 @@ class DockerRegistry2(DockerRegistry):
         })
 
     def _config(self):
-        self._url = self._server + '/v2/_catalog'
+        self._url = self._server + '/v2/_catalog?n=' + MAXREPO
         try:
             response = self._get_url(self._url)
         except Exception as exception:
