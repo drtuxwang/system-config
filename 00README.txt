@@ -725,6 +725,7 @@ config/Xresources               Copy to "$HOME/.Xresources" to set xterm resourc
 config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
 config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
 config/bashrc                   Copy to "/root/.bashrc" for "root" account settings
+config/com.googlecode.iterm2.plist Copy to "$HOME/Library/Preference" for iTerm2 on Mac
 config/config                   Copy to "$HOME/.ssh/config"
 config/docker-init              Docker init script
 config/docker-init-home         Docker init script plugin for fixing $HOME directory
@@ -742,8 +743,8 @@ config/rc.local                 Copy to "/etc/rc.local" for auto running command
 config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
 config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
 config/terminalrc               Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
+config/vboxmount.bat            Mount VirtualBox "/shared" to "s:\" in Windows Guest OS
 config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults
-config/com.googlecode.iterm2.plist Copy to "$HOME/Library/Preference" for iTerm2 on Mac
 config/weather-7.rc             Copy to "$HOME/.config/xfce4/panel/weather-7.rc" for XFCE Weather
 config/xscreensaver             Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
 
