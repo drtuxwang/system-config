@@ -23,7 +23,7 @@ start_app()
     esac
     echo "Starting \"$@\"..."
     "$@" &
-    sleep 1
+    sleep 2
     for DELAY in $((TIMEOUT - 2))
     do
         sleep 1
