@@ -64,15 +64,17 @@ class Main(object):
         """
         aria2c = command_mod.Command('aria2c', errors='stop')
         self._set_libraries(aria2c)
+        args = sys.argv[1:]
+        if '--remote-time=true' not in args:
+            aria2c.set_args(['--remote-time=true'] + args)
+        else:
+            aria2c.set_args(args)
 
         shaper = network_mod.Shaper()
         if shaper.is_found():
-            subtask_mod.Exec(
-                shaper.get_cmdline() + aria2c.get_cmdline() +
-                sys.argv[1:]
-            ).run()
+            subtask_mod.Exec(shaper.get_cmdline() + aria2c.get_cmdline()).run()
         else:
-            subtask_mod.Exec(aria2c.get_cmdline() + sys.argv[1:]).run()
+            subtask_mod.Exec(aria2c.get_cmdline()).run()
 
 
 if __name__ == '__main__':
