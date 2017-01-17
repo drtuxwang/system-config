@@ -18,7 +18,6 @@ registry garbage-collect /etc/docker/registry/config.yml  # Reqistry restart
 import argparse
 import fnmatch
 import glob
-import json
 import os
 import signal
 import sys
@@ -122,7 +121,7 @@ class DockerRegistry(object):
             raise SystemExit(str(exception))
         if response.status_code == 200:
             try:
-                results = json.loads(response.text)['results']
+                results = response.json()['results']
             except ValueError:
                 self._repositories = None
             else:
@@ -149,7 +148,7 @@ class DockerRegistry(object):
                 url,
                 response.status_code
             ))
-        return json.loads(response.text)
+        return response.json()
 
     @staticmethod
     def _delete_url(url):
@@ -196,7 +195,7 @@ class DockerRegistry2(DockerRegistry):
             raise SystemExit(str(exception))
         if response.status_code == 200:
             try:
-                self._repositories = json.loads(response.text)['repositories']
+                self._repositories = response.json()['repositories']
             except ValueError:
                 self._repositories = None
         else:
@@ -219,7 +218,7 @@ class DockerRegistry2(DockerRegistry):
                 url,
                 response.status_code
             ))
-        tags = json.loads(response.text)['tags']
+        tags = response.json()['tags']
         if tags:
             for tag in tags:
                 url = self._server + '/v2/' + repository + '/manifests/' + tag

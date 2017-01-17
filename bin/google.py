@@ -5,7 +5,6 @@ Google search.
 
 import argparse
 import glob
-import json
 import os
 import signal
 import sys
@@ -109,7 +108,7 @@ class Main(object):
                 'Requests response code: ' + str(response.status_code))
 
         print(response.url)
-        for page in json.loads(response.text)['responseData']['results']:
+        for page in response.json()['responseData']['results']:
             print('    {0:s}'.format(page['unescapedUrl']))
             print('        {0:s}'.format(page['titleNoFormatting']))
 
