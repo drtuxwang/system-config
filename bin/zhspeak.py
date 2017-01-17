@@ -18,7 +18,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '4.0.0'
+RELEASE = '4.0.1'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -359,7 +359,7 @@ class ChineseDictionary(object):
             with open(file, 'rb') as ifile:
                 for line in ifile.readlines():
                     line = line.decode('utf-8', 'replace')
-                    if line.startswith('//') or line.startswith('$'):
+                    if line.startswith(('//', '$')):
                         continue
                     elif '\t' in line:
                         text, sounds = self._isjunk.sub(
