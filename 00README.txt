@@ -783,9 +783,6 @@ docker/debian/Dockerfile-xshell
 docker/debian/Makefile
 docker/debian/debian-builder/Dockerfile               Docker: Debian compiler environment image
 docker/debian/debian-builder/Makefile
-docker/debian/debian-geeqie/Dockerfile                Docker: Geeqie app image
-docker/debian/debian-geeqie/Makefile
-docker/debian/debian-geeqie/geeqie
 docker/debian/debian-openvpn/Dockerfile               Docker: OpenVPN app image
 docker/debian/debian-openvpn/Makefile
 docker/ubuntu/Dockerfile                              Docker: Ubuntu base image
