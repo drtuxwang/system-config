@@ -3,14 +3,16 @@
 List images in Docker registry
 
 curl http://localhost:5000/v1/search
-curl http://localhost:5000/v1/repositories/<name>/tags
-curl -X DELETE http://localhost:5000/v1/repositories/<name>/tags/<tag>
+curl http://localhost:5000/v1/repositories/<repository>/tags
+curl -X DELETE http://localhost:5000/v1/repositories/<repository>/tags/<tag>
 
 curl http://localhost:5000/v2/_catalog?n=9999
-curl http://localhost:5000/v2/<name>/tags/list
+curl http://localhost:5000/v2/<repository>/tags/list
 curl -v -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-    http://localhost:5000/v2/<name>/manifests/<tag>
-curl -X DELETE http://localhost:5000/v2/<name>/manifests/<digest>
+    http://localhost:5000/v2/<repository>/manifests/<tag>
+curl -X DELETE -I http://localhost:5500/v2/<repository>/blobs/<digest>
+curl -X DELETE -I http://localhost:5000/v2/<repository>/manifests/<digest>
+curl -X DELETE -I http://localhost:5000/v2/<repository>/blobmanifests/<digest>
 registry garbage-collect --dry-run /etc/docker/registry/config.yml
 registry garbage-collect /etc/docker/registry/config.yml  # Reqistry restart
 """
@@ -34,7 +36,7 @@ MAXREPO = "9999"
 requests.packages.urllib3.disable_warnings()
 
 USER_AGENT = (
-    'Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0'
+    'Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/51.0'
 )
 
 
@@ -163,7 +165,6 @@ class DockerRegistry(object):
                 response.status_code
             ))
 
-    @classmethod
     def delete(cls, server, repository, tag, digest):
         """
         Delete image
@@ -230,19 +231,27 @@ class DockerRegistry2(DockerRegistry):
                     raise SystemExit(
                         'Requests "{0:s}" response code: {1:d}'.format(
                             url, response.status_code))
-                digests[tag] = response.headers['docker-content-digest']
-
+                manifest_digest = response.headers['docker-content-digest']
+                blob_digests = [
+                    layer['digest'] for layer in response.json()['layers']
+                ]
+                digests[tag] = (manifest_digest, blob_digests)
         return digests
 
     @classmethod
     def delete(cls, server, repository, tag, digest):
         """
-        Delete image
+        Delete image by untagging blobs before untagging manifest
         """
+        manifest_digest, blob_digests = digest
         print('{0:s}  {1:s}/{2:s}:{3:s}  DELETE'.format(
-            digest, server.split('://')[-1], repository, tag))
+            manifest_digest, server.split('://')[-1], repository, tag))
+        for blob_digest in blob_digests:
+            url = '{0:s}/v2/{1:s}/blobs/{2:s}'.format(
+                server, repository, blob_digest)
+            cls._delete_url(url)
         url = '{0:s}/v2/{1:s}/manifests/{2:s}'.format(
-            server, repository, digest)
+            server, repository, manifest_digest)
         cls._delete_url(url)
 
 
@@ -332,7 +341,7 @@ class Main(object):
                                     server, repository, tag, digests[tag])
                             else:
                                 print('{0:s}  {1:s}/{2:s}:{3:s}'.format(
-                                    digests[tag], prefix, repository, tag))
+                                    digests[tag][0], prefix, repository, tag))
 
 
 if __name__ == '__main__':
