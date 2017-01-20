@@ -134,9 +134,9 @@ class DockerRegistry(object):
         else:
             self._repositories = None
 
-    def get_tags(self, repository):
+    def get_digests(self, repository):
         """
-        Return dictionary of tags mapped to keys
+        Return digests dictionary (manifests_digest,) for tags.
         """
         url = self._server + '/v1/repositories/' + repository + '/tags'
         try:
@@ -150,7 +150,10 @@ class DockerRegistry(object):
                 url,
                 response.status_code
             ))
-        return response.json()
+        digests = response.json()
+        for tag in digests:
+            digests[tag] = (digests[tag],)
+        return digests
 
     @staticmethod
     def _delete_url(url):
@@ -203,9 +206,9 @@ class DockerRegistry2(DockerRegistry):
         else:
             self._repositories = None
 
-    def get_tags(self, repository):
+    def get_digests(self, repository):
         """
-        Return tags.
+        Return digests dictionary (manifests_digest, blob_digests) for tags.
         """
         url = self._server + '/v2/' + repository + '/tags/list'
         try:
@@ -334,7 +337,7 @@ class Main(object):
 
             for repository in sorted(registry.get_repositories()):
                 if fnmatch.fnmatch(repository, repo_match):
-                    digests = registry.get_tags(repository)
+                    digests = registry.get_digests(repository)
                     for tag in sorted(digests.keys()):
                         if fnmatch.fnmatch(tag, tag_match):
                             if remove:
