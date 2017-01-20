@@ -29,8 +29,8 @@ import requests
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-# Maximum number of Docker Registry v2 repositories
-# Effects Go array size and huge number crashes Registry
+# Maximum number of repositories (bug in Registry v2 returns only 100)
+# Effects Go array size and huge number can crash Registry
 MAXREPO = "9999"
 
 requests.packages.urllib3.disable_warnings()
