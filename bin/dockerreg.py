@@ -165,6 +165,7 @@ class DockerRegistry(object):
                 response.status_code
             ))
 
+    @classmethod
     def delete(cls, server, repository, tag, digest):
         """
         Delete image
