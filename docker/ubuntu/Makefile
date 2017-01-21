@@ -21,6 +21,6 @@ run:
 		--rm \
 		--interactive \
 		--tty \
-		--name $(IMAGE) \
-		--hostname $(IMAGE) \
+		--name $(IMAGE)-dock \
+		--hostname $(IMAGE)-dock \
 		$(IMAGE) bash || exit 0

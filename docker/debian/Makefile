@@ -32,8 +32,8 @@ run: $(PASSWD)
 		--volume="/etc/group:/etc/group:ro" \
 		--volume=/shared:/shared \
 		--env USER=$(USER) \
-		--name $(IMAGE)-shell \
-		--hostname $(IMAGE)-shell \
+		--name $(IMAGE)-shell-dock \
+		--hostname $(IMAGE)-shell-dock \
 		$(IMAGE)-shell /etc/docker-init || exit 0
 
 xrun: $(PASSWD)
@@ -49,6 +49,6 @@ xrun: $(PASSWD)
 		--env USER=$(USER) \
 		--env TERM=$(TERM) \
 		--env DISPLAY=$(DISPLAY) \
-		--name $(IMAGE)-xshell \
-		--hostname $(IMAGE)-xshell \
+		--name $(IMAGE)-xshell-dock \
+		--hostname $(IMAGE)-xshell-dock \
 		$(IMAGE)-xshell /etc/docker-init || exit 0
