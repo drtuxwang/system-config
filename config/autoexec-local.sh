@@ -4,6 +4,6 @@
 # setxkbmap us  # "gb", "de", "us"
 # xset m 2,16  # Slow mouse
 
-# start_app -timeout=60 chrome &
+# start_app -pname=chromium -timeout=60 chrome &
 # start_app firefox &
 # myqsd 1

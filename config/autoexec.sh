@@ -14,22 +14,34 @@ set_vga()
 
 start_app()
 {
+    NAME=
     TIMEOUT=10
-    case $1 in
-    -timeout=*)
-        TIMEOUT=`echo "$1" | cut -f2- -d"="`
+    while [[ $1 = -* ]]
+    do
+        case $1 in
+        -pname=*)
+            NAME=`echo "$1" | cut -f2- -d"="`
+            ;;
+        -timeout=*)
+            TIMEOUT=`echo "$1" | cut -f2- -d"="`
+            ;;
+        esac
         shift
-        ;;
-    esac
+    done
+    if [ ! "$NAME" ]
+    then
+        NAME=$1
+    fi
+
     echo "Starting \"$@\"..."
     "$@" &
-    sleep 2
+    sleep 5
     for DELAY in $((TIMEOUT - 2))
     do
         sleep 1
-        if [ ! "$(ps -o "args" | sed -e "s/^/ /" -e "s/\$/ /" | grep "[ /]$1 ")" ]
+        if [ ! "$(ps -o "args" | sed -e "s/^/ /" -e "s/\$/ /" | grep "[ /]$NAME ")" ]
         then
-            echo "Restarting \"$1\" after $DELAY seconds..."
+            echo "Restarting \"$1\" after $((DELAY + 5)) seconds..."
             "$@" &
             return
         fi
