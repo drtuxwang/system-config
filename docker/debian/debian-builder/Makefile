@@ -24,6 +24,7 @@ run: $(PASSWD)
 		--volume="/etc/group:/etc/group:ro" \
 		--volume=/shared:/shared \
 		--env USER=$(USER) \
+		--network none \
 		--name $(IMAGE)-dock \
 		--hostname $(IMAGE)-dock \
 		$(IMAGE) /etc/docker-init || exit 0
