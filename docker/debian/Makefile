@@ -45,9 +45,9 @@ xrun: $(PASSWD)
 	@echo "\n*** Running Docker container (with Graphics)***"
 	docker run $(FLAGS) \
 		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
+		--env DISPLAY=$(DISPLAY) \
 		--env TERM=$(TERM) \
 		--env USER=$(USER) \
-		--env DISPLAY=$(DISPLAY) \
 		--name $(IMAGE)-xshell-dock \
 		--hostname $(IMAGE)-xshell-dock \
 		$(IMAGE)-xshell /etc/docker-init || exit 0
