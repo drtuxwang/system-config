@@ -1,7 +1,17 @@
 IMAGE := debian-builder
-CPUSHARE := --cpu-shares=100000 --cpu-quota=1000000
-MEMLIMIT :=  -memory-reservation=64m --memory=1024m
 PASSWD := $(HOME)/.docker-passwd
+FLAGS := --rm \
+	--interactive \
+	--tty \
+	--cpu-period=100000 \
+	--cpu-shares=100000 \
+	--cpu-quota=1000000 \
+	--memory-reservation=64m \
+	--memory=1024m \
+	--volume=/etc/group:/etc/group:ro \
+	--volume=$(PASSWD):/etc/passwd:ro \
+	--volume=/shared:/shared
+
 
 default: build
 
@@ -16,15 +26,19 @@ $(PASSWD):
 
 run: $(PASSWD)
 	@echo "\n*** Running Docker container ***"
-	docker run $(CPUSHARE) $(MEMLIMIT) \
-		--rm \
-		--interactive \
-		--tty \
-		--volume="$(PASSWD):/etc/passwd:ro" \
-		--volume="/etc/group:/etc/group:ro" \
-		--volume=/shared:/shared \
+	docker run $(FLAGS) \
+		--env TERM=$(TERM) \
 		--env USER=$(USER) \
 		--network none \
+		--name $(IMAGE)-dock \
+		--hostname $(IMAGE)-dock \
+		$(IMAGE) /etc/docker-init || exit 0
+
+irun: $(PASSWD)
+	@echo "\n*** Running Docker container (with network)***"
+	docker run $(FLAGS) \
+		--env TERM=$(TERM) \
+		--env USER=$(USER) \
 		--name $(IMAGE)-dock \
 		--hostname $(IMAGE)-dock \
 		$(IMAGE) /etc/docker-init || exit 0

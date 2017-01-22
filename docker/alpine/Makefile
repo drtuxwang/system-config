@@ -1,6 +1,13 @@
 IMAGE := alpine-base
-CPUSHARE := --cpu-shares=100000 --cpu-quota=1000000
-MEMLIMIT :=  -memory-reservation=64m --memory=1024m
+FLAGS := --rm \
+	--interactive \
+	--tty \
+	--cpu-period=100000 \
+	--cpu-shares=100000 \
+	--cpu-quota=1000000 \
+	--memory-reservation=64m \
+	--memory=1024m
+
 
 default: build
 
@@ -17,10 +24,7 @@ pull:
 
 run:
 	@echo "\n*** Running Docker container ***"
-	docker run --cpu-period=100000 $(CPUSHARE) $(MEMLIMIT) \
-		--rm \
-		--interactive \
-		--tty \
+	docker run $(FLAGS) \
 		--name $(IMAGE)-dock \
 		--hostname $(IMAGE)-dock \
 		$(IMAGE) bash || exit 0

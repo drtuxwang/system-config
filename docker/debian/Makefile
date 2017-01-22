@@ -1,7 +1,17 @@
 IMAGE := debian
-CPUSHARE := --cpu-shares=100000 --cpu-quota=1000000
-MEMLIMIT :=  -memory-reservation=64m --memory=1024m
 PASSWD := $(HOME)/.docker-passwd
+FLAGS := --rm \
+	--interactive \
+	--tty \
+	--cpu-period=100000 \
+	--cpu-shares=100000 \
+	--cpu-quota=1000000 \
+	--memory-reservation=64m \
+	--memory=1024m \
+	--volume=/etc/group:/etc/group:ro \
+	--volume=$(PASSWD):/etc/passwd:ro \
+	--volume=/shared:/shared
+
 
 default: build
 
@@ -24,30 +34,19 @@ $(PASSWD):
 
 run: $(PASSWD)
 	@echo "\n*** Running Docker container ***"
-	docker run $(CPUSHARE) $(MEMLIMIT) \
-		--rm \
-		--interactive \
-		--tty \
-		--volume="$(PASSWD):/etc/passwd:ro" \
-		--volume="/etc/group:/etc/group:ro" \
-		--volume=/shared:/shared \
+	docker run $(FLAGS) \
+		--env TERM=$(TERM) \
 		--env USER=$(USER) \
 		--name $(IMAGE)-shell-dock \
 		--hostname $(IMAGE)-shell-dock \
 		$(IMAGE)-shell /etc/docker-init || exit 0
 
 xrun: $(PASSWD)
-	@echo "\n*** Running Docker container ***"
-	docker run --cpu-period=100000 $(CPUSHARE) $(MEMLIMIT) \
-		--rm \
-		--interactive \
-		--tty \
-		--volume="$(PASSWD):/etc/passwd:ro" \
-		--volume="/etc/group:/etc/group:ro" \
+	@echo "\n*** Running Docker container (with Graphics)***"
+	docker run $(FLAGS) \
 		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
-		--volume=/shared:/shared \
-		--env USER=$(USER) \
 		--env TERM=$(TERM) \
+		--env USER=$(USER) \
 		--env DISPLAY=$(DISPLAY) \
 		--name $(IMAGE)-xshell-dock \
 		--hostname $(IMAGE)-xshell-dock \
