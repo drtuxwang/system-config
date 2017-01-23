@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
 Download http/https/ftp/file URLs.
+
+REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt  # Debian
+REQUESTS_CA_BUNDLE=/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt  # Redhat
 """
 
 import argparse
