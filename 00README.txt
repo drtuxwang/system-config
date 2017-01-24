@@ -617,6 +617,8 @@ bin/wget               wget wrapper (allowing non systems port)
 bin/wget.py            (bandwidth 512KB limit default using "trickle", "$HOME/.config/trickle.json)
 bin/wine               wine wrapper (allowing non systems port)
 bin/wine.py
+bin/wine64             wine64 wrapper (allowing non systems port)
+bin/wine64.py
 bin/wipe               wipe wrapper (allowing non systems port)
 bin/wipe.py            (wipe is C disk wiper)
 bin/xcalc              Start GNOME/KDE/XFCE calculator
