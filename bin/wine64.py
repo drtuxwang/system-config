@@ -52,10 +52,11 @@ class Options(object):
     def _config(cls):
         signal.signal(signal.SIGINT, cls._signal_ignore)
         signal.signal(signal.SIGTERM, cls._signal_ignore)
-        if sys.argv[0].endswith('wine64'):
-            os.environ['WINEARCH'] = 'win64'
-        else:
-            os.environ['WINEARCH'] = 'win32'
+        if 'WINEARCH' not in os.environ:
+            if sys.argv[0].endswith('wine64'):
+                os.environ['WINEARCH'] = 'win64'
+            else:
+                os.environ['WINEARCH'] = 'win32'
 
     def parse(self, args):
         """

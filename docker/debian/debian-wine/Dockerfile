@@ -7,5 +7,3 @@ RUN dpkg --add-architecture i386 && \
 
 # Install packages
 RUN apt-get install -y wine64 wine:i386
-
-ENV WINEARCH=win32
