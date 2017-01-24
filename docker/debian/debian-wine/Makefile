@@ -1,4 +1,4 @@
-IMAGE := debian-builder
+IMAGE := debian-wine
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -17,7 +17,10 @@ default: build
 
 build:
 	@echo "\n*** Building Docker image ***"
+	cp -rp ../../../bin ../../../config .
+	bin/fmod -R *
 	docker build -t $(IMAGE) .
+	rm -rf bin config
 	docker images
 
 $(PASSWD):
@@ -27,6 +30,8 @@ $(PASSWD):
 run: $(PASSWD)
 	@echo "\n*** Running Docker container ***"
 	docker run $(FLAGS) \
+		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
+		--env DISPLAY=$(DISPLAY) \
 		--env TERM=$(TERM) \
 		--env USER=$(USER) \
 		--network none \
@@ -37,6 +42,8 @@ run: $(PASSWD)
 irun: $(PASSWD)
 	@echo "\n*** Running Docker container (with network) ***"
 	docker run $(FLAGS) \
+		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
+		--env DISPLAY=$(DISPLAY) \
 		--env TERM=$(TERM) \
 		--env USER=$(USER) \
 		--name $(IMAGE)-dock \

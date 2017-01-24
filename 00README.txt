@@ -785,6 +785,8 @@ docker/debian/debian-builder/Dockerfile               Docker: Debian compiler en
 docker/debian/debian-builder/Makefile
 docker/debian/debian-openvpn/Dockerfile               Docker: OpenVPN app image
 docker/debian/debian-openvpn/Makefile
+docker/debian/debian-wine/Dockerfile                  Docker: WINE app image
+docker/debian/debian-wine/Makefile
 docker/ubuntu/Dockerfile                              Docker: Ubuntu base image
 docker/ubuntu/Makefile
 
