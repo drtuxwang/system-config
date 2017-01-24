@@ -6,4 +6,4 @@ RUN dpkg --add-architecture i386 && \
     apt-get update
 
 # Install packages
-RUN apt-get install -y wine64 wine:i386
+RUN apt-get install --no-install-recommends -y wine64 wine:i386

@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 
 # Install packages
 RUN apt-get update && \
-    apt-get install -y iputils-ping net-tools openssh-client pciutils vim
+    apt-get install --no-install-recommends -y iputils-ping net-tools openssh-client pciutils vim
 
 # Add scripts
 COPY bin/sysinfo.sh /opt/software/bin/

@@ -1,8 +1,8 @@
 FROM debian-shell:latest
 
 # Install packages
-RUN apt-get install -y x11-xserver-utils x11-utils xfonts-base && \
-    apt-get install -y xfce4-terminal libgtk-3-0 libasound2
+RUN apt-get install --no-install-recommends -y x11-xserver-utils x11-utils xfonts-base && \
+    apt-get install --no-install-recommends -y xfce4-terminal libgtk-3-0 libasound2
 
 # Docker setup
 COPY config/terminalrc /home/docker/.config/xfce4/terminal/terminalrc
