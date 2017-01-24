@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
 Download http/https/ftp/file URLs.
-
-REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt  # Debian
-REQUESTS_CA_BUNDLE=/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt  # Redhat
 """
 
 import argparse
@@ -31,6 +28,7 @@ class Options(object):
 
     def __init__(self):
         self._args = None
+        self._config()
         self.parse(sys.argv)
 
     def get_urls(self):
@@ -38,6 +36,19 @@ class Options(object):
         Return list of urls.
         """
         return self._args.urls
+
+    @staticmethod
+    def _config():
+        if 'REQUESTS_CA_BUNDLE' not in os.environ:
+            for file in (
+                    # Debian/Ubuntu
+                    '/etc/ssl/certs/ca-certificates.crt',
+                    # RHEL/CentOS
+                    '/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt'
+            ):
+                if os.path.isfile(file):
+                    os.environ['REQUESTS_CA_BUNDLE'] = file
+                    break
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(

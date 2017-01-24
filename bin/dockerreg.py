@@ -33,10 +33,8 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
 # Effects Go array size and huge number can crash Registry
 MAXREPO = "9999"
 
-requests.packages.urllib3.disable_warnings()
-
 USER_AGENT = (
-    'Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/51.0'
+    'Mozilla/5.0 (X11; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0'
 )
 
 
@@ -47,6 +45,7 @@ class Options(object):
 
     def __init__(self):
         self._args = None
+        self._config()
         self.parse(sys.argv)
 
     def get_remove_flag(self):
@@ -60,6 +59,19 @@ class Options(object):
         Return URls.
         """
         return self._args.urls
+
+    @staticmethod
+    def _config():
+        if 'REQUESTS_CA_BUNDLE' not in os.environ:
+            for file in (
+                    # Debian/Ubuntu
+                    '/etc/ssl/certs/ca-certificates.crt',
+                    # RHEL/CentOS
+                    '/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt'
+            ):
+                if os.path.isfile(file):
+                    os.environ['REQUESTS_CA_BUNDLE'] = file
+                    break
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
