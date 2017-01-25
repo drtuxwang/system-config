@@ -7,6 +7,7 @@ curl http://localhost:5000/v1/search
 curl http://localhost:5000/v1/repositories/<repository>/tags
 curl -X DELETE http://localhost:5000/v1/repositories/<repository>/tags/<tag>
 
+curl http://localhost:5000/v2/
 curl http://localhost:5000/v2/_catalog?n=9999
 curl http://localhost:5000/v2/<repository>/tags/list
 curl -v -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
