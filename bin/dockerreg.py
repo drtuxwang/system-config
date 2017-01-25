@@ -2,6 +2,7 @@
 """
 List images in Docker registry
 
+curl http://localhost:5000/v1/_ping
 curl http://localhost:5000/v1/search
 curl http://localhost:5000/v1/repositories/<repository>/tags
 curl -X DELETE http://localhost:5000/v1/repositories/<repository>/tags/<tag>
