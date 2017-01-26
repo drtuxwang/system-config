@@ -1,4 +1,4 @@
-IMAGE := debian-wine-dock
+IMAGE := debian-wine
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \

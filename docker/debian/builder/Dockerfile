@@ -1,4 +1,4 @@
-FROM debian-dock
+FROM debian-xfce
 
 # Install compiler packages (Fortran needed by OpenMPI)
 RUN apt-get install --no-install-recommends -y \

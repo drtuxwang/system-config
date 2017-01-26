@@ -1,4 +1,4 @@
-IMAGE := debian-builder-dock
+IMAGE := debian-builder
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -16,7 +16,7 @@ FLAGS := --rm \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
 	--name $(IMAGE)-dock \
-	--hostname $(IMAGE)
+	--hostname $(IMAGE)-dock
 
 
 default: build

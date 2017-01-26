@@ -3,7 +3,7 @@
 # Add user: -env ID=$(id)
 #
 
-echo -e "\nRunning \"$0\"..."
+echo "Running \"$0\"..."
 
 if [ ! "$USER" ]
 then
@@ -33,7 +33,6 @@ then
         if [ ! -f "$HOME/$FILE" ]
         then
             mkdir -p $(dirname "$HOME/$FILE") 2> /dev/null
-            echo "Creating \"$HOME/$FILE\"..."
             cp -p "/home/docker/$FILE" "$HOME/$FILE"
         fi
     done

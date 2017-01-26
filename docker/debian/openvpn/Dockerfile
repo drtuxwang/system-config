@@ -1,4 +1,4 @@
-FROM debian-dock:latest
+FROM debian-xfce
 
 # Install OpenVPN packages
 RUN apt-get install --no-install-recommends -y openvpn && \

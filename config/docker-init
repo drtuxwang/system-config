@@ -3,7 +3,7 @@
 # Docker container init script
 #
 
-echo -e "\nRunning \"$0\"..."
+echo "Running \"$0\"..."
 
 # Process plugins
 for FILE in /etc/docker-init-*
@@ -18,22 +18,22 @@ then
     cd $HOME
     if [ $# != 0 ]
     then
-        echo -e "\nStarting \"$@\" app..."
+        echo "Starting \"$@\" app..."
         sudo -E -u $USER "$@"
         while [ "$(ps -fu $USER 2> /dev/null | grep "^$USER ")" ]
         do
             sleep 1
         done
     else
-        echo -e "\nStarting \"$USER\" login shell..."
+        echo "Starting \"$USER\" login shell..."
         sudo -E -u $USER bash -l
     fi
 else
-    echo -e "\nStarting \"root\" login shell..."
+    echo "Starting \"root\" login shell..."
     /bin/bash -l
 fi
 
-echo -e "\nFinished \"$0\"..."
+echo "Finished \"$0\"..."
 if [ "$$" = 1 ]
 then
     echo "Stopping Docker container!"

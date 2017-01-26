@@ -1,4 +1,4 @@
-IMAGE := alpine-dock
+IMAGE := alpine-base
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -7,8 +7,8 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
-	--name $(IMAGE) \
-	--hostname $(IMAGE)
+	--name $(IMAGE)-dock \
+	--hostname $(IMAGE)-dock
 
 
 default: build

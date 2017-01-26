@@ -1,4 +1,4 @@
-IMAGE := debian-dock
+IMAGE := debian-xfce
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -15,8 +15,8 @@ FLAGS := --rm \
 	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
-	--name $(IMAGE) \
-	--hostname $(IMAGE)
+	--name $(IMAGE)-dock \
+	--hostname $(IMAGE)-dock
 
 
 default: build
@@ -26,7 +26,8 @@ build:
 	mkdir tmpdir ||:
 	cp -rp ../../bin ../../config tmpdir
 	tmpdir/bin/fmod -R *
-	docker build -t $(IMAGE) .
+	docker build -t debian-base .
+	docker build -f Dockerfile-xfce -t $(IMAGE) .
 	rm -rf tmpdir
 	docker images
 

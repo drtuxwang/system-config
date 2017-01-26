@@ -1,4 +1,4 @@
-IMAGE := debian-openvpn-dock
+IMAGE := debian-openvpn
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -15,8 +15,8 @@ FLAGS := --rm \
 	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
-	--name $(IMAGE) \
-	--hostname $(IMAGE)
+	--name $(IMAGE)-dock \
+	--hostname $(IMAGE)-dock
 
 
 default: build
