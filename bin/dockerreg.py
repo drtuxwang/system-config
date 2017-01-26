@@ -305,12 +305,14 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
-    def _get_registry(server):
+    def _get_registry(server, url):
         registry2 = DockerRegistry2(server)
         if registry2.get_repositories() is not None:
+            print(url, '(API v2)')
             return registry2
         registry = DockerRegistry(server)
         if registry.get_repositories() is not None:
+            print(url, '(API v1)')
             return registry
         raise SystemExit('Cannot find Docker Registry: ' + server)
 
@@ -346,7 +348,7 @@ class Main(object):
 
         for url in options.get_urls():
             server, repo_match, tag_match = cls._breakup_url(url)
-            registry = cls._get_registry(server)
+            registry = cls._get_registry(server, url)
             prefix = server.split('://')[-1]
 
             for repository in sorted(registry.get_repositories()):
