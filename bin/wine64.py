@@ -52,6 +52,8 @@ class Options(object):
     def _config(cls):
         signal.signal(signal.SIGINT, cls._signal_ignore)
         signal.signal(signal.SIGTERM, cls._signal_ignore)
+        if 'WINEDLLOVERRIDES' not in os.environ:
+            os.environ['WINEDLLOVERRIDES'] = "mscoree,mshtml="
         if 'WINEARCH' not in os.environ:
             if sys.argv[0].endswith('wine64'):
                 os.environ['WINEARCH'] = 'win64'
