@@ -1,4 +1,4 @@
-IMAGE := debian-builder
+IMAGE := debian-wine-dock
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -10,7 +10,13 @@ FLAGS := --rm \
 	--memory=1024m \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=$(PASSWD):/etc/passwd:ro \
-	--volume=/shared:/shared
+	--volume=/shared:/shared \
+	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
+	--env DISPLAY=$(DISPLAY) \
+	--env TERM=$(TERM) \
+	--env USER=$(USER) \
+	--name $(IMAGE)-dock \
+	--hostname $(IMAGE)-dock
 
 
 default: build
@@ -25,20 +31,9 @@ $(PASSWD):
 	$(HOME)/.docker-passwd
 
 run: $(PASSWD)
-	@echo "\n*** Running Docker container ***"
-	docker run $(FLAGS) \
-		--env TERM=$(TERM) \
-		--env USER=$(USER) \
-		--network none \
-		--name $(IMAGE)-dock \
-		--hostname $(IMAGE)-dock \
-		$(IMAGE) /etc/docker-init || exit 0
+	@echo "\n*** Running Docker container (offline) ***"
+	docker run $(FLAGS) --network none $(IMAGE) /etc/docker-init || exit 0
 
 irun: $(PASSWD)
 	@echo "\n*** Running Docker container (with network) ***"
-	docker run $(FLAGS) \
-		--env TERM=$(TERM) \
-		--env USER=$(USER) \
-		--name $(IMAGE)-dock \
-		--hostname $(IMAGE)-dock \
-		$(IMAGE) /etc/docker-init || exit 0
+	docker run $(FLAGS) $(IMAGE) /etc/docker-init || exit 0

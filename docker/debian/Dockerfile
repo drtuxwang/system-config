@@ -1,18 +1,43 @@
 FROM debian:8
 
-# Install packages
-RUN apt-get update && \
+# Install base packages
+RUN dpkg --add-architecture i386 && \
+    sed -i "s/^deb http/deb [arch=amd64,i386] http/" /etc/apt/sources.list && \
+    apt-get update && \
     apt-get install --no-install-recommends -y net-tools openssh-client pciutils vim
 
+# Install extra packages
+RUN apt-get install --no-install-recommends -y csh ksh tcsh && \
+    apt-get install --no-install-recommends -y sudo tmux wget && \
+    apt-get install --no-install-recommends -y python3 python3-dev python3-pip && \
+    python3 -m pip install pep8 pylint
+
+# Install X-windows packages
+RUN apt-get install --no-install-recommends -y x11-xserver-utils x11-utils xfonts-base && \
+    apt-get install --no-install-recommends -y xfce4-terminal libgtk-3-0 libasound2
+
 # Add scripts
-COPY bin/sysinfo.sh /opt/software/bin/
+COPY tmpdir/bin/ /opt/software/bin/
+COPY tmpdir/config/docker-init /etc/
+COPY tmpdir/config/docker-init-home /etc/
 
 # Root account
-COPY config/bashrc /root/.bashrc
-COPY config/vimrc /root/.vimrc
+COPY tmpdir/config/bashrc /root/.bashrc
+COPY tmpdir/config/vimrc /root/.vimrc
+
+# Docker account
+COPY tmpdir/config/login /home/docker/.login
+COPY tmpdir/config/profile /home/docker/.profile
+COPY tmpdir/config/terminalrc /home/docker/.config/xfce4/terminal/terminalrc
+COPY tmpdir/config/tmux.conf /home/docker/.tmux.conf
+COPY tmpdir/config/vimrc /home/docker/.vimrc
 
 # Configure start
 USER root
 ENV HOME=/root
 WORKDIR /root
 CMD bash
+
+# Setup start
+ENV XDG_CURRENT_DESKTOP=XFCE
+CMD /etc/docker-init

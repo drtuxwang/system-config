@@ -1,4 +1,4 @@
-IMAGE := debian-dock
+IMAGE := debian-builder-dock
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -15,7 +15,7 @@ FLAGS := --rm \
 	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
-	--name $(IMAGE) \
+	--name $(IMAGE)-dock \
 	--hostname $(IMAGE)
 
 
@@ -23,20 +23,17 @@ default: build
 
 build:
 	@echo "\n*** Building Docker image ***"
-	mkdir tmpdir ||:
-	cp -rp ../../bin ../../config tmpdir
-	tmpdir/bin/fmod -R *
 	docker build -t $(IMAGE) .
-	rm -rf tmpdir
 	docker images
-
-pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 $(PASSWD):
 	echo "root:x:0:0:root:/root:/bin/bash\n$(USER):x:`id -u`:`id -g`:-:$(HOME):/bin/bash" > \
 	$(HOME)/.docker-passwd
 
 run: $(PASSWD)
+	@echo "\n*** Running Docker container (offline) ***"
+	docker run $(FLAGS) --network none $(IMAGE) /etc/docker-init || exit 0
+
+irun: $(PASSWD)
 	@echo "\n*** Running Docker container ***"
 	docker run $(FLAGS) $(IMAGE) /etc/docker-init || exit 0

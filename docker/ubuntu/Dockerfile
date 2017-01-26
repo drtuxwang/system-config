@@ -1,15 +1,15 @@
 FROM ubuntu:16.04
 
-# Install packages
+# Install base packages
 RUN apt-get update && \
     apt-get install --no-install-recommends -y iputils-ping net-tools openssh-client pciutils vim
 
 # Add scripts
-COPY bin/sysinfo.sh /opt/software/bin/
+COPY tmpdir/bin/sysinfo.sh /opt/software/bin/
 
 # Root account
-COPY config/bashrc /root/.bashrc
-COPY config/vimrc /root/.vimrc
+COPY tmpdir/config/bashrc /root/.bashrc
+COPY tmpdir/config/vimrc /root/.vimrc
 
 # Configure start
 USER root

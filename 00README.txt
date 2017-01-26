@@ -780,15 +780,13 @@ docker/alpine/Makefile
 docker/centos/Dockerfile                              Docker: CentOS base image
 docker/centos/Makefile
 docker/debian/Dockerfile                              Docker: Debian base images
-docker/debian/Dockerfile-shell
-docker/debian/Dockerfile-xshell
 docker/debian/Makefile
-docker/debian/debian-builder/Dockerfile               Docker: Debian compiler environment image
-docker/debian/debian-builder/Makefile
-docker/debian/debian-openvpn/Dockerfile               Docker: OpenVPN app image
-docker/debian/debian-openvpn/Makefile
-docker/debian/debian-wine/Dockerfile                  Docker: WINE app image
-docker/debian/debian-wine/Makefile
+docker/debian/builder/Dockerfile                      Docker: Debian compiler environment image
+docker/debian/builder/Makefile
+docker/debian/openvpn/Dockerfile                      Docker: OpenVPN app image
+docker/debian/openvpn/Makefile
+docker/debian/wine/Dockerfile                         Docker: WINE app image
+docker/debian/wine/Makefile
 docker/ubuntu/Dockerfile                              Docker: Ubuntu base image
 docker/ubuntu/Makefile
 

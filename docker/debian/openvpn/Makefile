@@ -1,4 +1,4 @@
-IMAGE := debian-openvpn
+IMAGE := debian-openvpn-dock
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -10,17 +10,24 @@ FLAGS := --rm \
 	--memory=1024m \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=$(PASSWD):/etc/passwd:ro \
-	--volume=/shared:/shared
+	--volume=/shared:/shared \
+	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
+	--env DISPLAY=$(DISPLAY) \
+	--env TERM=$(TERM) \
+	--env USER=$(USER) \
+	--name $(IMAGE) \
+	--hostname $(IMAGE)
 
 
 default: build
 
 build:
 	@echo "\n*** Building Docker image ***"
-	cp -rp ../../../bin ../../../config .
-	bin/fmod -R *
+	mkdir tmpdir ||:
+	cp -rp ../../../bin ../../../config tmpdir
+	tmpdir/bin/fmod -R *
 	docker build -t $(IMAGE) .
-	rm -rf bin config
+	rm -rf tmpdir
 	docker images
 
 $(PASSWD):
@@ -29,11 +36,4 @@ $(PASSWD):
 
 run: $(PASSWD)
 	@echo "\n*** Running Docker container ***"
-	docker run $(FLAGS) \
-		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
-		--env DISPLAY=$(DISPLAY) \
-		--env TERM=$(TERM) \
-		--env USER=$(USER) \
-		--name $(IMAGE)-dock \
-		--hostname $(IMAGE)-dock \
-		$(IMAGE) /etc/docker-init || exit 0
+	docker run $(FLAGS) $(IMAGE) /etc/docker-init || exit 0

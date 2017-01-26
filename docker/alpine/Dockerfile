@@ -1,14 +1,14 @@
 FROM alpine:3.4
 
-# Install packages
+# Install base packages
 RUN apk update && \
     apk add bash openssh-client vim
 
 # Add scripts
-COPY bin/sysinfo.sh /opt/software/bin/
+COPY tmpdir/bin/sysinfo.sh /opt/software/bin/
 
 # Root account
-COPY config/bashrc /root/.bashrc
+COPY tmpdir/config/bashrc /root/.bashrc
 
 # Configure start
 USER root
