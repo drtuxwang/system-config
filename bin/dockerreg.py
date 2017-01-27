@@ -39,6 +39,8 @@ USER_AGENT = (
     'Mozilla/5.0 (X11; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0'
 )
 
+requests.packages.urllib3.disable_warnings()
+
 
 class Options(object):
     """
@@ -90,8 +92,7 @@ class Options(object):
             nargs='+',
             metavar='url',
             help=(
-                'Registry URL (ie "http://localhost:5000", '
-                '"http://localhost:5000/debian*").'
+                'Registry URL (ie "localhost:5000", "localhost:5000/debian*").'
             )
         )
 
@@ -319,7 +320,10 @@ class Main(object):
     @staticmethod
     def _breakup_url(url):
         if '://' not in url:
-            url = 'http://' + url
+            if url.startswith('localhost'):
+                url = 'http://' + url
+            else:
+                url = 'https://' + url
         columns = url.split('/')
         server = '/'.join(columns[:3])
         repo_match = '/'.join(columns[3:])
