@@ -187,6 +187,7 @@ class Main(object):
 
     @classmethod
     def _update_packages_list(cls, distribution_file, wget, urls):
+        print()
         lines = []
         for url in urls:
             lines.extend(cls._get_packages_list(wget, url))
@@ -223,7 +224,7 @@ class Main(object):
 
         for distribution_file in options.get_distribution_files():
             if distribution_file.endswith('.dist'):
-                print('\n*** Checking "{0:s}" distribution file...\n'.format(
+                print('*** Checking "{0:s}" distribution file...'.format(
                     distribution_file
                 ))
                 urls = cls._get_urls(distribution_file)
