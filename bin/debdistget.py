@@ -113,16 +113,10 @@ class Main(object):
     def _get_packages_list(cls, wget, url):
         archive = os.path.basename(url)
         cls._remove()
-        task = subtask_mod.Batch(wget.get_cmdline() + [url])
+        task = subtask_mod.Task(wget.get_cmdline() + [url])
         task.run()
-        if task.is_match_error(' saved '):
-            print(
-                '  [' + file_mod.FileStat(archive).get_date_local() + ']', url)
-        elif not task.is_match_error('^Server file no newer'):
-            print('  [File  Error]', url)
-            cls._remove()
-            raise SystemExit(1)
-        elif task.get_exitcode():
+        if task.get_exitcode() != 0:
+            print('  [ERROR (', task.get_exitcode, ')]', url)
             cls._remove()
             raise SystemExit(
                 sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
@@ -197,8 +191,9 @@ class Main(object):
         for url in urls:
             lines.extend(cls._get_packages_list(wget, url))
 
+        file = distribution_file[:-4] + 'packages'
+        print('*** Creating "{0:s}" packages file...'.format(file))
         try:
-            file = distribution_file[:-4] + 'packages'
             with open(file + '-new', 'w', newline='\n') as ofile:
                 for line in lines:
                     print(line, file=ofile)
@@ -228,10 +223,9 @@ class Main(object):
 
         for distribution_file in options.get_distribution_files():
             if distribution_file.endswith('.dist'):
-                print(
-                    'Checking "' + distribution_file +
-                    '" distribution file...'
-                )
+                print('\n*** Checking "{0:s}" distribution file...\n'.format(
+                    distribution_file
+                ))
                 urls = cls._get_urls(distribution_file)
                 if cls._has_changed(distribution_file, urls):
                     cls._update_packages_list(distribution_file, wget, urls)
