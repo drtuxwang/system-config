@@ -35,13 +35,13 @@ start_app()
 
     echo "Starting \"$@\"..."
     "$@" &
-    sleep 5
-    for DELAY in $((TIMEOUT - 2))
+    sleep 4
+    for DELAY in $(seq 5 $TIMEOUT)
     do
         sleep 1
         if [ ! "$(ps -o "args" | sed -e "s/^/ /" -e "s/\$/ /" | grep "[ /]$NAME ")" ]
         then
-            echo "Restarting \"$1\" after $((DELAY + 5)) seconds..."
+            echo "Restarting \"$1\" after $DELAY seconds..."
             "$@" &
             return
         fi
