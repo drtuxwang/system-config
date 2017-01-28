@@ -98,7 +98,7 @@ class Options(object):
 
         self._command = command_mod.Command(
             self._args.command[0],
-            args=args[2:],
+            args=args[3:],
             errors='stop'
         )
 
