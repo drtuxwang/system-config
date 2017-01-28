@@ -386,7 +386,7 @@ class Encoder(object):
             'compatible_brands:|Stream|concat:|Program|service|lastkeyframe)|'
             '^(In|Out)put | : |^Press|^Truncating|bitstream (filter|'
             'malformed)|Buffer queue|buffer underflow|message repeated|'
-            r'^\[|p11-kit:'
+            r'^\[|p11-kit:|Side data:|cpb: bitrate'
         )
 
         while True:
