@@ -2,7 +2,7 @@
 
 set_vga()
 {
-    MODELINE=$(gtf 1440 900 60 | grep Modeline | awk '{
+    MODELINE=$(gtf $1 $2 $3 | grep Modeline | awk '{
         printf("%4.2f %d %d %d %d %d %d %d %d\n", $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     }')
     xrandr --newmode $2x${3}_$4 $MODELINE
@@ -35,16 +35,16 @@ start_app()
 
     echo "Starting \"$@\"..."
     "$@" &
-    sleep 4
-    for DELAY in $(seq 5 $TIMEOUT)
+    sleep 10
+    for DELAY in $(seq 11 $TIMEOUT)
     do
-        sleep 1
         if [ ! "$(ps -o "args" | sed -e "s/^/ /" -e "s/\$/ /" | grep "[ /]$NAME ")" ]
         then
             echo "Restarting \"$1\" after $DELAY seconds..."
             "$@" &
             return
         fi
+        sleep 1
     done
     echo "Running \"$@\"..."
 }
