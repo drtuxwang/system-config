@@ -35,11 +35,10 @@ build-all: build
 	cd wine && make build
 
 build:
-	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	mkdir tmpdir ||:
-	cp -rp ../../bin ../../config tmpdir
-	tmpdir/bin/fmod -R *
+	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
+	@echo "\n*** Building \"debian-base\" Docker image ***"
 	docker build -t debian-base .
+	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -f Dockerfile-xfce -t $(IMAGE) .
 	rm -rf tmpdir
 

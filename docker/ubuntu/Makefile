@@ -23,13 +23,10 @@ pull:
 build-all: build
 
 build:
+	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	mkdir tmpdir ||:
-	cp -rp ../../bin ../../config tmpdir
-	tmpdir/bin/fmod -R *
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
-	rm -rf bin config
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
