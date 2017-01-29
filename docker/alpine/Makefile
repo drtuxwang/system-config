@@ -21,7 +21,6 @@ pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 build-all: build
-	cd docker && make build
 
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"

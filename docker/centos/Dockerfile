@@ -2,7 +2,7 @@ FROM centos:7
 
 # Install base packages
 RUN yum -y update && \
-    yum -y install net-tools openssh-clients pciutils vim
+	yum -y install net-tools openssh-clients pciutils vim
 
 # Add scripts
 COPY tmpdir/bin/sysinfo.sh /opt/software/bin/

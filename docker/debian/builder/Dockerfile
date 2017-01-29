@@ -7,12 +7,12 @@ RUN apt-get install --no-install-recommends -y \
 
 # Install Dev packages (building Python)
 RUN apt-get install --no-install-recommends -y \
-	libbz2-dev \
-	libdb5.3-dev \
-	libreadline6-dev \
-	libsqlite3-dev \
-	libssl-dev \
-	zlib1g-dev
+		libbz2-dev \
+		libdb5.3-dev \
+		libreadline6-dev \
+		libsqlite3-dev \
+		libssl-dev \
+		zlib1g-dev
 
 # Install Dev packages (building TMUX)
 RUN apt-get install --no-install-recommends -y \

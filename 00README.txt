@@ -777,17 +777,17 @@ cloudformation/multi-stacks/submit.sh
 
 docker/alpine/Dockerfile                              Docker: Alpine base image
 docker/alpine/Makefile
-docker/alpine/docker/Dockerfile                       Docker: Alpine docker image
-docker/alpine/docker/Makefile
 docker/centos/Dockerfile                              Docker: CentOS base image
 docker/centos/Makefile
 docker/debian/Dockerfile                              Docker: Debian base images
 docker/debian/Makefile
-docker/debian/builder/Dockerfile                      Docker: Debian compiler environment image
+docker/debian/builder/Dockerfile                      Docker: Debian Compiler environment image
 docker/debian/builder/Makefile
-docker/debian/openvpn/Dockerfile                      Docker: OpenVPN app image
+docker/debian/docker/Dockerfile                       Docker: Debian Docker app image
+docker/debian/docker/Makefile
+docker/debian/openvpn/Dockerfile                      Docker: Debian OpenVPN app image
 docker/debian/openvpn/Makefile
-docker/debian/wine/Dockerfile                         Docker: WINE app image
+docker/debian/wine/Dockerfile                         Docker: Debian WINE app image
 docker/debian/wine/Makefile
 docker/ubuntu/Dockerfile                              Docker: Ubuntu base image
 docker/ubuntu/Makefile

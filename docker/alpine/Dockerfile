@@ -2,7 +2,7 @@ FROM alpine:3.4
 
 # Install base packages
 RUN apk update && \
-    apk add bash openssh-client vim
+	apk add bash openssh-client vim
 
 # Add scripts
 COPY tmpdir/bin/sysinfo.sh /opt/software/bin/

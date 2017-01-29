@@ -2,7 +2,7 @@ FROM debian:8
 
 # Install base packages
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y net-tools openssh-client pciutils vim
+	apt-get install --no-install-recommends -y net-tools openssh-client pciutils vim
 
 # Add scripts
 COPY tmpdir/bin/sysinfo.sh /opt/software/bin/
