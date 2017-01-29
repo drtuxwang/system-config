@@ -777,6 +777,8 @@ cloudformation/multi-stacks/submit.sh
 
 docker/alpine/Dockerfile                              Docker: Alpine base image
 docker/alpine/Makefile
+docker/alpine/docker/Dockerfile                       Docker: Alpine docker image
+docker/alpine/docker/Makefile
 docker/centos/Dockerfile                              Docker: CentOS base image
 docker/centos/Makefile
 docker/debian/Dockerfile                              Docker: Debian base images
