@@ -1,4 +1,4 @@
-IMAGE := debian-xfce
+IMAGE := debian-docker
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -15,6 +15,8 @@ FLAGS := --rm \
 	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
+	--privileged=true \
+	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--name $(IMAGE)-dock \
 	--hostname $(IMAGE)-dock
 
@@ -22,25 +24,15 @@ FLAGS := --rm \
 default: build
 	docker images
 
-all: build-all
+all: build
 	docker images
-
-pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-
-build-all: build
-	cd builder && make build
-	cd dock && make build
-	cd openvpn && make build
-	cd wine && make build
 
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	mkdir tmpdir ||:
-	cp -rp ../../bin ../../config tmpdir
+	cp -rp ../../../bin ../../../config tmpdir
 	tmpdir/bin/fmod -R *
-	docker build -t debian-base .
-	docker build -f Dockerfile-xfce -t $(IMAGE) .
+	docker build -t $(IMAGE) .
 	rm -rf tmpdir
 
 $(PASSWD):
