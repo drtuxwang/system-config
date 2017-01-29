@@ -12,5 +12,5 @@ pull:
 build-all:
 	cd alpine && make build-all
 	cd centos && make build-all
-	cd debian && make build-all
 	cd ubuntu && make build-all
+	cd debian && make build-all

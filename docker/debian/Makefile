@@ -29,9 +29,9 @@ pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 build-all: build
-	cd builder && make build
-	cd dock && make build
 	cd openvpn && make build
+	cd docker && make build
+	cd builder && make build
 	cd wine && make build
 
 build:
