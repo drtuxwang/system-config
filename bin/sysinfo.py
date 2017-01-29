@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.9.1'
-VERSION = 20161222
+RELEASE = '4.10.0'
+VERSION = 20170129
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -979,7 +979,11 @@ class LinuxSystem(PosixSystem):
             for line in task.get_output():
                 try:
                     device, _, mount_point, _, mount_type = (line.split()[:5])
-                    info['mounts'][device] = (mount_point, mount_type)
+                    mount_info = (mount_point, mount_type)
+                    if device in info['mounts']:
+                        info['mounts'][device].append(mount_info)
+                    else:
+                        info['mounts'][device] = [mount_info]
                 except IndexError:
                     pass
 
@@ -1022,15 +1026,26 @@ class LinuxSystem(PosixSystem):
                             if device in info['swaps']:
                                 comment = 'swap'
                             elif device in info['mounts']:
-                                mount_point, mount_type = info[
-                                    'mounts'][device]
-                                comment = mount_type + ' on ' + mount_point
+                                for mount_point, mount_type in info[
+                                        'mounts'][device]:
+                                    comment = mount_type + ' on ' + mount_point
+                                    Writer.output(
+                                        name='Disk device',
+                                        device=device,
+                                        value=size + ' KB',
+                                        comment=comment
+                                    )
+                                continue
                             else:
                                 comment = '??? on ???'
                             if device in info['crypts']:
                                 comment = 'crypt:' + comment
-                            Writer.output(name='Disk device', device=device,
-                                          value=size + ' KB', comment=comment)
+                            Writer.output(
+                                name='Disk device',
+                                device=device,
+                                value=size + ' KB',
+                                comment=comment
+                            )
 
     @staticmethod
     def _detect_disk_sys_scsi(info, file):
@@ -1072,15 +1087,28 @@ class LinuxSystem(PosixSystem):
                 if device in info['swaps']:
                     comment = 'swap'
                 elif device in info['mounts']:
-                    mount_point, mount_type = info['mounts'][device]
-                    comment = mount_type + ' on ' + mount_point
+                    for mount_point, mount_type in info['mounts'][device]:
+                        comment = mount_type + ' on ' + mount_point
+                        Writer.output(
+                            name='Disk device',
+                            device=device,
+                            value=size + ' KB',
+                            comment=comment
+                        )
+                    continue
                 elif (
                         device in info['uuids'] and
                         info['uuids'][device] in info['mounts']
                 ):
-                    mount_point, mount_type = info[
-                        'mounts'][info['uuids'][device]]
-                    comment = mount_type + ' on ' + mount_point
+                    for mount_point, mount_type in info[
+                            'mounts'][info['uuids'][device]]:
+                        comment = mount_type + ' on ' + mount_point
+                        Writer.output(
+                            name='Disk device',
+                            device=device,
+                            value=size + ' KB',
+                            comment=comment
+                        )
                 else:
                     comment = '??? on ???'
                 if device in info['crypts']:
