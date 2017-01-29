@@ -20,11 +20,14 @@ FLAGS := --rm \
 
 
 default: build
+	docker images
+
+all: build
+	docker images
 
 build:
-	@echo "\n*** Building Docker image ***"
+	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
-	docker images
 
 $(PASSWD):
 	echo "root:x:0:0:root:/root:/bin/bash\n$(USER):x:`id -u`:`id -g`:-:$(HOME):/bin/bash" > \
@@ -35,5 +38,5 @@ run: $(PASSWD)
 	docker run $(FLAGS) --network none $(IMAGE) /etc/docker-init || exit 0
 
 irun: $(PASSWD)
-	@echo "\n*** Running Docker container (with network) ***"
+	@echo "\n*** Running \"$(IMAGE)\" Docker container (with network) ***"
 	docker run $(FLAGS) $(IMAGE) /etc/docker-init || exit 0

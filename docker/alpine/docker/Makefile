@@ -14,15 +14,15 @@ FLAGS := --rm \
 
 
 default: build
+	docker images
 
 build:
-	@echo "\n*** Building Docker image ***"
+	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
-	docker images
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 run:
-	@echo "\n*** Running Docker container ***"
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(IMAGE) bash || exit 0

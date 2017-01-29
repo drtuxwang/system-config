@@ -20,20 +20,23 @@ FLAGS := --rm \
 
 
 default: build
+	docker images
+
+all: build
+	docker images
 
 build:
-	@echo "\n*** Building Docker image ***"
+	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	mkdir tmpdir ||:
 	cp -rp ../../../bin ../../../config tmpdir
 	tmpdir/bin/fmod -R *
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
-	docker images
 
 $(PASSWD):
 	echo "root:x:0:0:root:/root:/bin/bash\n$(USER):x:`id -u`:`id -g`:-:$(HOME):/bin/bash" > \
 	$(HOME)/.docker-passwd
 
 run: $(PASSWD)
-	@echo "\n*** Running Docker container ***"
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(IMAGE) /etc/docker-init || exit 0

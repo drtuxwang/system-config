@@ -12,19 +12,24 @@ FLAGS := --rm \
 
 
 default: build
+	docker images
 
-build:
-	@echo "\n*** Building Docker image ***"
-	mkdir tmpdir ||:
-	cp -rp ../../bin ../../config tmpdir
-	tmpdir/bin/fmod -R *
-	docker build -t $(IMAGE) .
-	rm -rf tmpdir
+all: build-all
 	docker images
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
+build-all: build
+
+build:
+	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
+	mkdir tmpdir ||:
+	cp -rp ../../bin ../../config tmpdir
+	tmpdir/bin/fmod -R *
+	docker build -t $(IMAGE) .
+	rm -rf tmpdir
+
 run:
-	@echo "\n*** Running Docker container ***"
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(IMAGE) bash || exit 0

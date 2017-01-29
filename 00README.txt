@@ -791,6 +791,7 @@ docker/debian/wine/Dockerfile                         Docker: WINE app image
 docker/debian/wine/Makefile
 docker/ubuntu/Dockerfile                              Docker: Ubuntu base image
 docker/ubuntu/Makefile
+docker/Dockerfile                                     Makefile for building all images
 
 kubernetes/debian/Makefile                            Kubernetes: Debian example
 kubernetes/debina/test-ns.json
