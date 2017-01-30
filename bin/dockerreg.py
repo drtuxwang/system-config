@@ -189,7 +189,7 @@ class DockerRegistry(object):
         Delete image
         """
         print('{0:s}  {1:s}/{2:s}:{3:s}  DELETE'.format(
-            digest, server.split('://')[-1], repository, tag))
+            digest[0], server.split('://')[-1], repository, tag))
         url = '{0:s}/v1/repositories/{1:s}/tags/{2:s}'.format(
             server, repository, tag)
         cls._delete_url(url)
