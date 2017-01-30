@@ -137,7 +137,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
 
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop >& /dev/null
-    chmod go= $HOME/Desktop .??*/* >& /dev/null
+    chmod go= $HOME/Desktop $HOME/.ssh $HOME/.??*/* >& /dev/null
     if ( "$PWD" == "$HOME" ) then
         cd "$HOME/Desktop"
     endif
