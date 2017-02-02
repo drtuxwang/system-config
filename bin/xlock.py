@@ -55,12 +55,15 @@ class Main(object):
         Start program
         """
         desktop = desktop_mod.Desktop.detect()
+        tasks = task_mod.Tasks.factory()
+
         xlock = command_mod.Command(
             'light-locker-command',
             args=['--lock'],
             errors='ignore'
         )
         if xlock.is_found():
+            tasks.killpname('gnome-screensaver')
             if not task_mod.Tasks.factory().haspname('light-locker'):
                 command = command_mod.Command('light-locker', errors='stop')
                 subtask_mod.Daemon(command.get_cmdline()).run()
@@ -71,7 +74,7 @@ class Main(object):
                 args=['--lock'],
                 errors='stop'
             )
-            if not task_mod.Tasks.factory().haspname('gnome-screensaver'):
+            if not tasks.haspname('gnome-screensaver'):
                 command = command_mod.Command(
                     'gnome-screensaver',
                     errors='stop'
