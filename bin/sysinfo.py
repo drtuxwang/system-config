@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.10.0'
-VERSION = 20170129
+RELEASE = '4.11.0'
+VERSION = 20170202
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -558,43 +558,6 @@ class PosixSystem(OperatingSystem):
                               value=str(battery.get_capacity()) + 'mAh',
                               comment=model + ' [' + state + ']')
 
-    @staticmethod
-    def _detect_mounts():
-        mount = command_mod.Command('mount', errors='ignore')
-        if mount.is_found():
-            task = subtask_mod.Batch(mount.get_cmdline())
-            task.run(pattern=':')
-            command = command_mod.Command(
-                'df',
-                args=['-k'],
-                errors='ignore'
-            )
-            for line in sorted(task.get_output()):
-                try:
-                    device, _, directory = line.split()[:3]
-                except IndexError:
-                    continue
-                size = '??? KB'
-                if command.is_found():
-                    command.set_args([directory])
-                    thread = CommandThread(command)
-                    thread.start()
-                    end_time = time.time() + 1  # One second delay limit
-                    while thread.is_alive():
-                        if time.time() > end_time:
-                            thread.kill()
-                            break
-                    try:
-                        size = thread.get_output().split()[-5] + ' KB'
-                    except IndexError:
-                        pass
-                Writer.output(
-                    name='Disk nfs',
-                    device='/dev/???',
-                    value=size,
-                    comment=device + ' on ' + directory
-                )
-
     @classmethod
     def detect_devices(cls):
         """
@@ -933,59 +896,39 @@ class LinuxSystem(PosixSystem):
     def _get_disk_info():
         info = {}
         info['partitions'] = []
-        info['crypts'] = []
         info['swaps'] = []
-
         try:
             with open('/proc/partitions', errors='replace') as ifile:
                 for line in ifile:
                     info['partitions'].append(line.rstrip('\r\n'))
         except OSError:
             pass
-
-        info['uuids'] = {}
-        for file in glob.glob('/dev/disk/by-uuid/*'):
-            try:
-                info['uuids']['/dev/' + os.path.basename(
-                    os.readlink(file))] = file
-            except OSError:
-                pass
-
-        lsblk = command_mod.Command('lsblk', args=['-l'], errors='ignore')
-        if lsblk.is_found():
-            task = subtask_mod.Batch(lsblk.get_cmdline())
-            task.run()
-            device = None
-            for line in task.get_output():
-                if ' crypt ' in line:
-                    info['crypts'].append(device)
-                    if '[SWAP]' in line:
-                        info['swaps'].append(device)
-                    else:
-                        info['uuids'][device] = (
-                            '/dev/mapper/' + line.split()[0])
-                else:
-                    device = '/dev/' + line.split()[0]
-
+        try:
+            with open('/proc/swaps', errors='replace') as ifile:
+                for line in ifile:
+                    if line.startswith('/dev/'):
+                        info['swaps'].append(line.split()[0])
+        except OSError:
+            pass
         return info
 
     @staticmethod
     def _scan_mounts(info):
         info['mounts'] = {}
-        mount = command_mod.Command('mount', errors='ignore')
-        if mount.is_found():
-            task = subtask_mod.Batch(mount.get_cmdline())
-            task.run(pattern='^/dev/')
-            for line in task.get_output():
-                try:
-                    device, _, mount_point, _, mount_type = (line.split()[:5])
-                    mount_info = (mount_point, mount_type)
-                    if device in info['mounts']:
-                        info['mounts'][device].append(mount_info)
-                    else:
-                        info['mounts'][device] = [mount_info]
-                except IndexError:
-                    pass
+        try:
+            with open('/proc/mounts', errors='replace') as ifile:
+                for line in ifile:
+                    try:
+                        device, mount_point, mount_type = line.split()[:3]
+                        mount_info = (mount_point, mount_type)
+                        if device in info['mounts']:
+                            info['mounts'][device].append(mount_info)
+                        else:
+                            info['mounts'][device] = [mount_info]
+                    except IndexError:
+                        pass
+        except OSError:
+            pass
 
         try:
             with open('/proc/swaps', errors='replace') as ifile:
@@ -996,7 +939,46 @@ class LinuxSystem(PosixSystem):
             pass
 
     @staticmethod
-    def _detect_disk_ide(info, directory):
+    def _detect_ide_partition(info, model, hdx, partition):
+        if partition.endswith(hdx) or hdx + ' ' in partition:
+            try:
+                size = partition.split()[2]
+            except IndexError:
+                size = '???'
+            Writer.output(
+                name='Disk device',
+                device='/dev/' + hdx,
+                value=size + ' KB',
+                comment=model
+            )
+        elif hdx in partition:
+            size, hdxn = partition.split()[2:4]
+            device = '/dev/' + hdxn
+            comment = ''
+            if device in info['swaps']:
+                comment = 'swap'
+            elif device in info['mounts']:
+                for mount_point, mount_type in info[
+                        'mounts'][device]:
+                    comment = mount_type + ' on ' + mount_point
+                    Writer.output(
+                        name='Disk device',
+                        device=device,
+                        value=size + ' KB',
+                        comment=comment
+                    )
+                return
+            else:
+                comment = ''
+            Writer.output(
+                name='Disk device',
+                device=device,
+                value=size + ' KB',
+                comment=comment
+            )
+
+    @classmethod
+    def _detect_disk_ide(cls, info, directory):
         with open(
             os.path.join(directory, 'driver'),
             errors='replace'
@@ -1008,47 +990,10 @@ class LinuxSystem(PosixSystem):
                         model = ifile2.readline().rstrip('\r\n')
                     hdx = os.path.basename(directory)
                     for partition in info['partitions']:
-                        if partition.endswith(hdx) or hdx + ' ' in partition:
-                            try:
-                                size = partition.split()[2]
-                            except IndexError:
-                                size = '???'
-                            Writer.output(
-                                name='Disk device',
-                                device='/dev/' + hdx,
-                                value=size + ' KB',
-                                comment=model
-                            )
-                        elif hdx in partition:
-                            size, hdxn = partition.split()[2:4]
-                            device = '/dev/' + hdxn
-                            comment = ''
-                            if device in info['swaps']:
-                                comment = 'swap'
-                            elif device in info['mounts']:
-                                for mount_point, mount_type in info[
-                                        'mounts'][device]:
-                                    comment = mount_type + ' on ' + mount_point
-                                    Writer.output(
-                                        name='Disk device',
-                                        device=device,
-                                        value=size + ' KB',
-                                        comment=comment
-                                    )
-                                continue
-                            else:
-                                comment = '??? on ???'
-                            if device in info['crypts']:
-                                comment = 'crypt:' + comment
-                            Writer.output(
-                                name='Disk device',
-                                device=device,
-                                value=size + ' KB',
-                                comment=comment
-                            )
+                        cls._detect_ide_partition(info, model, hdx, partition)
 
     @staticmethod
-    def _detect_disk_sys_scsi(info, file):
+    def _get_disk_sys_scsi_model(file):
         try:
             identity = os.path.basename(os.readlink(file))
         except OSError:
@@ -1067,6 +1012,12 @@ class LinuxSystem(PosixSystem):
                     model += ' ' + ifile.readline().strip()
         except OSError:
             model = '???'
+
+        return model
+
+    @classmethod
+    def _detect_disk_sys_scsi(cls, info, file):
+        model = cls._get_disk_sys_scsi_model(file)
 
         sdx = os.path.basename(os.path.dirname(file))
         for partition in info['partitions']:
@@ -1096,23 +1047,10 @@ class LinuxSystem(PosixSystem):
                             comment=comment
                         )
                     continue
-                elif (
-                        device in info['uuids'] and
-                        info['uuids'][device] in info['mounts']
-                ):
-                    for mount_point, mount_type in info[
-                            'mounts'][info['uuids'][device]]:
-                        comment = mount_type + ' on ' + mount_point
-                        Writer.output(
-                            name='Disk device',
-                            device=device,
-                            value=size + ' KB',
-                            comment=comment
-                        )
+                elif glob.glob('/sys/class/block/dm-*/slaves/' + sdxn):
+                    comment = 'devicemapper'
                 else:
-                    comment = '??? on ???'
-                if device in info['crypts']:
-                    comment = 'crypt:' + comment
+                    comment = ''
                 Writer.output(
                     name='Disk device',
                     device=device,
@@ -1145,7 +1083,7 @@ class LinuxSystem(PosixSystem):
                         mount_point, mount_type = info['mounts'][device]
                         comment = mount_type + ' on ' + mount_point
                     else:
-                        comment = '??? on ???'
+                        comment = ''
                     Writer.output(
                         name='Disk device',
                         device=device,
@@ -1170,6 +1108,86 @@ class LinuxSystem(PosixSystem):
         except OSError:
             pass
 
+    @staticmethod
+    def _detect_mapped_disks(info):
+        for directory in glob.glob('/sys/class/block/dm-*'):
+            file = os.path.join(directory, 'dm/name')
+            try:
+                with open(file, errors='replace') as ifile:
+                    device = '/dev/mapper/' + ifile.readline().strip()
+            except OSError:
+                device = '???'
+            mount_info = info['mounts'].get(device, ())
+
+            slaves = '+'.join([os.path.basename(file) for file in glob.glob(
+                os.path.join(directory, 'slaves', '*')
+            )])
+
+            file = os.path.join(directory, 'size')
+            try:
+                with open(file, errors='replace') as ifile:
+                    size = '{0:d} KB'.format(int(ifile.readline()) >> 1)
+            except (OSError, ValueError):
+                size = '??? KB'
+
+            file = os.path.join(directory, 'dm', 'uuid')
+            try:
+                with open(file, errors='replace') as ifile:
+                    slaves = ifile.readline().split('-')[0] + ':' + slaves
+            except (OSError, ValueError):
+                slaves = '???:' + slaves
+
+            if '/dev/' + os.path.basename(directory) in info['swaps']:
+                Writer.output(
+                    name='Disk device',
+                    device=device,
+                    value=size,
+                    comment='swap, ' + slaves
+                )
+            else:
+                for mount_point, mount_type in mount_info:
+                    Writer.output(
+                        name='Disk device',
+                        device=device,
+                        value=size,
+                        comment='{0:s} on {1:s}, {2:s}'.format(
+                            mount_type,
+                            mount_point,
+                            slaves
+                        )
+                    )
+
+    @staticmethod
+    def _detect_remote_disks(info):
+        command = command_mod.Command(
+            'df',
+            args=['-k'],
+            errors='ignore'
+        )
+        for device in sorted(info['mounts']):
+            if ':' in device:
+                mount_point, mount_type = info['mounts'][device][0]
+                size = '??? KB'
+                if command.is_found():
+                    command.set_args([mount_point])
+                    thread = CommandThread(command)
+                    thread.start()
+                    end_time = time.time() + 1  # One second delay limit
+                    while thread.is_alive():
+                        if time.time() > end_time:
+                            thread.kill()
+                            break
+                    try:
+                        size = thread.get_output().split()[-5] + ' KB'
+                    except IndexError:
+                        pass
+                Writer.output(
+                    name='Disk device',
+                    device=device,
+                    value=size,
+                    comment=mount_type + ' on ' + mount_point
+                )
+
     @classmethod
     def _detect_disk(cls):
         info = cls._get_disk_info()
@@ -1186,6 +1204,8 @@ class LinuxSystem(PosixSystem):
                 cls._detect_disk_sys_scsi(info, file)
         else:
             cls._detect_disk_proc_scsi(info)
+        cls._detect_mapped_disks(info)
+        cls._detect_remote_disks(info)
 
     def _detect_ethernet(self):
         # Ethernet device detection
@@ -1299,7 +1319,6 @@ class LinuxSystem(PosixSystem):
         self._detect_battery()
         self._detect_cd()
         self._detect_disk()
-        self._detect_mounts()
         self._detect_ethernet()
         self._detect_firewire()
         self._detect_graphics()
@@ -1855,7 +1874,7 @@ class MacSystem(PosixSystem):
         mount = command_mod.Command('mount', errors='ignore')
         if mount.is_found():
             task = subtask_mod.Batch(mount.get_cmdline())
-            task.run(pattern='/dev/')
+            task.run(pattern='/dev/|:')
             for line in sorted(task.get_output()):
                 try:
                     device, _, directory, type_ = line.replace(
