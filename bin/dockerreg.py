@@ -151,7 +151,7 @@ class DockerRegistry(object):
 
     def get_digests(self, repository):
         """
-        Return digests dictionary (manifests_digest,) for tags.
+        Return digests dictionary for tags.
         """
         url = self._server + '/v1/repositories/' + repository + '/tags'
         try:
@@ -167,7 +167,7 @@ class DockerRegistry(object):
             ))
         digests = response.json()
         for tag in digests:
-            digests[tag] = (digests[tag],)
+            digests[tag] = digests[tag]
         return digests
 
     @staticmethod
@@ -189,7 +189,7 @@ class DockerRegistry(object):
         Delete image
         """
         print('{0:s}  {1:s}/{2:s}:{3:s}  DELETE'.format(
-            digest[0], server.split('://')[-1], repository, tag))
+            digest, server.split('://')[-1], repository, tag))
         url = '{0:s}/v1/repositories/{1:s}/tags/{2:s}'.format(
             server, repository, tag)
         cls._delete_url(url)
@@ -223,7 +223,7 @@ class DockerRegistry2(DockerRegistry):
 
     def get_digests(self, repository):
         """
-        Return digests dictionary (manifests_digest, blob_digests) for tags.
+        Return digests dictionary for tags.
         """
         url = self._server + '/v2/' + repository + '/tags/list'
         try:
@@ -250,11 +250,7 @@ class DockerRegistry2(DockerRegistry):
                     raise SystemExit(
                         'Requests "{0:s}" response code: {1:d}'.format(
                             url, response.status_code))
-                manifest_digest = response.headers['docker-content-digest']
-                blob_digests = [
-                    layer['digest'] for layer in response.json()['layers']
-                ]
-                digests[tag] = (manifest_digest, blob_digests)
+                digests[tag] = response.headers['docker-content-digest']
         return digests
 
     @classmethod
@@ -262,15 +258,10 @@ class DockerRegistry2(DockerRegistry):
         """
         Delete image by untagging blobs before untagging manifest
         """
-        manifest_digest, blob_digests = digest
         print('{0:s}  {1:s}/{2:s}:{3:s}  DELETE'.format(
-            manifest_digest, server.split('://')[-1], repository, tag))
-        for blob_digest in blob_digests:
-            url = '{0:s}/v2/{1:s}/blobs/{2:s}'.format(
-                server, repository, blob_digest)
-            cls._delete_url(url)
+            digest, server.split('://')[-1], repository, tag))
         url = '{0:s}/v2/{1:s}/manifests/{2:s}'.format(
-            server, repository, manifest_digest)
+            server, repository, digest)
         cls._delete_url(url)
 
 
@@ -365,7 +356,7 @@ class Main(object):
                                     server, repository, tag, digests[tag])
                             else:
                                 print('{0:s}  {1:s}/{2:s}:{3:s}'.format(
-                                    digests[tag][0], prefix, repository, tag))
+                                    digests[tag], prefix, repository, tag))
 
 
 if __name__ == '__main__':
