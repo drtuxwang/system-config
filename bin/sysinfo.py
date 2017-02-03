@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.11.0'
-VERSION = 20170202
+RELEASE = '4.11.1'
+VERSION = 20170203
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -1026,12 +1026,24 @@ class LinuxSystem(PosixSystem):
                     size = partition.split()[2]
                 except IndexError:
                     size = '???'
-                Writer.output(
-                    name='Disk device',
-                    device='/dev/' + sdx,
-                    value=size + ' KB',
-                    comment=model
-                )
+                device = '/dev/' + sdx
+                if device in info['mounts']:
+                    for mount_point, mount_type in info['mounts'][device]:
+                        comment = mount_type + ' on ' + mount_point
+                        Writer.output(
+                            name='Disk device',
+                            device=device,
+                            value=size + ' KB',
+                            comment=comment + ', ' + model
+                        )
+                    continue
+                else:
+                    Writer.output(
+                        name='Disk device',
+                        device='/dev/' + sdx,
+                        value=size + ' KB',
+                        comment=model
+                    )
             elif sdx in partition:
                 size, sdxn = partition.split()[2:4]
                 device = '/dev/' + sdxn
