@@ -2,10 +2,10 @@
 #
 # System configuration detection tool
 #
-# 1996-2016 By Dr Colin Kong
+# 1996-2017 By Dr Colin Kong
 #
-VERSION=20161222
-RELEASE="2.6.40-8"
+VERSION=20170203
+RELEASE="2.6.40-9"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -124,7 +124,7 @@ scanbus()
     else
         for MODEL in `echo "$LSUSB" | grep -i " audio .*:" | sed -e "s@.*: @@" -e "s/ Audio Accelerator//" -e "s/ Audio Controller//" -e "s/ Corp[.]//" -e "s/ /#/g"`
         do
-            write_output name="Audio device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/#/ /g\"`"
+            write_output name="Audio device" device="/dev/???" value=`echo "$MODEL" | sed -e "s/#/ /g"`
         done
     fi
 
@@ -197,7 +197,7 @@ scanbus()
         write_output name="CD device" device="/dev/$DEVICE" value="$MODEL"
     done
 
-    # Disk device detection
+    # Disk IDE device detection
     for DEVICE in `ls /proc/ide 2> /dev/null`
     do
         if [ "`grep ide-disk /proc/ide/$DEVICE/driver 2> /dev/null`" ]
@@ -210,9 +210,9 @@ scanbus()
                 *[1-9]*)
                     if [ "`grep \"/dev/$PART \" /proc/swaps 2> /dev/null`" ]
                     then
-                        write_output name="Disk partition" device="/dev/$PART" value="$SIZE KB" comment="swap"
+                        write_output name="Disk device" device="/dev/$PART" value="$SIZE KB" comment="swap"
                     else
-                        write_output name="Disk partition" device="/dev/$PART" value="$SIZE KB" comment="`mount 2> /dev/null | grep \"/dev/$PART \" | awk '{printf(\"%s on %s\",$5,$3)}'`"
+                        write_output name="Disk device" device="/dev/$PART" value="$SIZE KB" comment="`mount 2> /dev/null | grep \"/dev/$PART \" | awk '{printf(\"%s on %s\",$5,$3)}'`"
                     fi
                     ;;
                 *)
@@ -222,55 +222,122 @@ scanbus()
             done
         fi
     done
-    SCSI=`tail +2 /proc/scsi/scsi 2> /dev/null | paste - - - | grep "Direct-Access" | sed -e "s/^Host: scsi//" -e "s/Vendor://" -e "s/Model://" -e "s/Rev:.*//" | awk '{printf (" %d,%d,%d,%d %s %s %s %s %s \n",$1,$3,$5,$7,$8,$9,$10,$11,$12)}' | sed -e "s/ *$//"`
-    for UNIT in `echo "$SCSI" | awk '{print $1}'`
-    do
-        MODEL=`echo "$SCSI" | grep " $UNIT " | cut -f3- -d" "`
-        DEVICE=`ls -ld /sys/block/sd*/device 2> /dev/null | grep "/\`echo $UNIT | sed -e \"s/,/:/g\"\`$" | cut -f4 -d/`
-        if [ ! "$DEVICE" ]
-        then
-            DEVICE=sd`echo -e "\14\`echo "$SCSI" | grep -n $UNIT | cut -f1 -d:\`"`
-        fi
-        if [ -f /proc/scsi/usb-storage*/`echo $UNIT | cut -f1 -d","` ]
-        then
-            if [ "`grep \"Attached: No\" /proc/scsi/usb-storage*/\`echo $UNIT | cut -f1 -d\",\"\``" ]
-            then
-                continue
-            fi
-            MODEL="$MODEL [USB]"
-        fi
-        for PART in `grep " $DEVICE" /proc/partitions 2> /dev/null | awk '{print $NF}'`
+
+    # Disk SCSI device detection ("/sys/bus/scsi/devices" new method)
+    if [ -d "/sys/bus/scsi/devices" ]
+    then
+        for DIR in /sys/block/sd*/device
         do
-            SIZE=`grep " $PART$" /proc/partitions | awk '{print $3}'`
-            case $PART in
-            *[1-9]*)
-                if [ "`grep \"/dev/$PART \" /proc/swaps 2> /dev/null`" ]
+            IDENTITY=`ls -ld "$DIR" | sed -e "s@.*/@@"`
+            if [ "$IDENTITY" ]
+            then
+                MODEL=`sed -e "s/ *//g" /sys/bus/scsi/devices/$IDENTITY/vendor /sys/bus/scsi/devices/$IDENTITY/model | paste - - -d" "`
+                SDX=`basename \`dirname $DIR\``
+                SIZE=`grep " $SDX" /proc/partitions | head -1 | awk '{print $3}'`
+                MOUNT=`grep "^/dev/$SDX " /proc/mounts | awk '{print $2}'`
+                if [ "$MOUNT" ]
                 then
-                    write_output name="Disk partition" device="/dev/$PART" value="$SIZE KB" comment="swap"
+                    TYPE=`grep "^/dev/$SDX " /proc/mounts | awk '{print $3}'`
+                    write_output name="Disk device" device="/dev/$SDX" value="$SIZE KB" comment="$TYPE on $MOUNT, $MODEL"
                 else
-                    write_output name="Disk partition" device="/dev/$PART" value="$SIZE KB" comment="`mount 2> /dev/null | grep \"/dev/$PART \" | awk '{printf(\"%s on %s\",$5,$3)}'`"
+                    write_output name="Disk device" device="/dev/$SDX" value="$SIZE KB" comment="$MODEL"
                 fi
-                ;;
-            *)
-                write_output name="Disk device" device="/dev/$PART" value="$SIZE KB" comment="`echo $SIZE | awk '{printf(\"%dGB '\"$MODEL\"'\",$1*1024/1000000000)}'`"
-                ;;
-            esac
+                for SDXN in `grep " $SDX[1-9]" /proc/partitions | awk '{print $NF}'`
+                do
+                    SIZE=`grep " $SDXN$" /proc/partitions | head -1 | awk '{print $3}'`
+                    MOUNT=`grep "^/dev/$SDXN " /proc/mounts | awk '{print $2}'`
+                    if [ "$MOUNT" ]
+                    then
+                        TYPE=`grep "^/dev/$SDXN " /proc/mounts | awk '{print $3}'`
+                        write_output name="Disk device" device="/dev/$SDXN" value="$SIZE KB" comment="$TYPE on $MOUNT"
+                    elif [ "`ls /sys/class/block/dm-*/slaves/$SDXN 2> /dev/null`" ]
+                    then
+                        write_output name="Disk device" device="/dev/$SDXN" value="$SIZE KB" comment="devicemapper"
+                    else
+                        write_output name="Disk device" device="/dev/$SDXN" value="$SIZE KB"
+                    fi
+                done
+            fi
         done
+
+    # Disk SCSI device detection ("/proc/scsi/scsi" old method)
+    else
+        SCSI=`tail +2 /proc/scsi/scsi 2> /dev/null | paste - - - | grep "Direct-Access" | sed -e "s/^Host: scsi//" -e "s/Vendor://" -e "s/Model://" -e "s/Rev:.*//" | awk '{printf (" %d,%d,%d,%d %s %s %s %s %s \n",$1,$3,$5,$7,$8,$9,$10,$11,$12)}' | sed -e "s/ *$//"`
+        for UNIT in `echo "$SCSI" | awk '{print $1}'`
+        do
+            MODEL=`echo "$SCSI" | grep " $UNIT " | cut -f3- -d" "`
+            DEVICE=`ls -ld /sys/block/sd*/device 2> /dev/null | grep "/\`echo $UNIT | sed -e \"s/,/:/g\"\`$" | cut -f4 -d/`
+            if [ ! "$DEVICE" ]
+            then
+                DEVICE=sd`echo -e "\14\`echo "$SCSI" | grep -n $UNIT | cut -f1 -d:\`"`
+            fi
+            if [ -f /proc/scsi/usb-storage*/`echo $UNIT | cut -f1 -d","` ]
+            then
+                if [ "`grep \"Attached: No\" /proc/scsi/usb-storage*/\`echo $UNIT | cut -f1 -d\",\"\``" ]
+                then
+                    continue
+                fi
+                MODEL="$MODEL [USB]"
+            fi
+            for PART in `grep " $DEVICE" /proc/partitions 2> /dev/null | awk '{print $NF}'`
+            do
+                SIZE=`grep " $PART$" /proc/partitions | awk '{print $3}'`
+                case $PART in
+                *[1-9]*)
+                    if [ "`grep \"/dev/$PART \" /proc/swaps 2> /dev/null`" ]
+                    then
+                        write_output name="Disk device" device="/dev/$PART" value="$SIZE KB" comment="swap"
+                    else
+                        for MOUNT in `mount 2> /dev/null | grep "/dev/$PART " | awk '{printf("%s,%s\n",$5,$3)}'`
+                        do
+                            write_output name="Disk device" device="/dev/$PART" value="$SIZE KB" comment="`echo \"$MOUNT\" | sed -e \"s/,/ on /\"`"
+                        done
+                    fi
+                    ;;
+                *)
+                    write_output name="Disk device" device="/dev/$PART" value="$SIZE KB" comment="`echo $SIZE | awk '{printf(\"%dGB '\"$MODEL\"'\",$1*1024/1000000000)}'`"
+                    ;;
+                esac
+            done
+        done
+    fi
+
+    # Disk mapper detection
+    MOUNTS=`grep "/dev/mapper/" /proc/mounts | sort`
+    TIMEOUT=`timeout --version 2> /dev/null | grep "^timeout " | sed -e "s/^timeout.*/timeout 1s/"`
+    for DIR in /sys/class/block/dm-*
+    do
+        if [ -f "$DIR/dm/name" ]
+        then
+            DEVICE="/dev/mapper/`cat \"$DIR/dm/name\"`"
+            SIZE=`cat "$DIR/size" | awk '{print $1/2}'`
+            SLAVES=`cut -f1 -d"-" $DIR/dm/uuid`:`ls -1 $DIR/slaves | awk '{printf("%s+", $1)}' | sed -e "s/+$//"`
+            if [ "`grep ^/dev/\`basename $DIR\` /proc/swaps`" ]
+            then
+                write_output name="Disk device" device="$DEVICE" value="$SIZE KB" comment="swap, $SLAVES"
+            else
+                for MOUNT in `echo "$MOUNTS" | grep "^$DEVICE " | awk '{print $2}'`
+                do
+                    TYPE=`echo "$MOUNTS" | grep " $MOUNT " | awk '{print $3}'`
+                    write_output name="Disk device" device="$DEVICE" value="$SIZE KB" comment="$TYPE on $MOUNT, $SLAVES"
+                done
+            fi
+        fi
     done
 
-    # Disk mounts detection
-    MOUNTS=`grep : /proc/mounts | awk '{printf("%s %s %s\n",$3,$1,$2)}' | sort`
+    # Disk remote detection
+    MOUNTS=`grep ":" /proc/mounts | awk '{printf("%s %s %s\n",$1,$3,$2)}' | sort`
     TIMEOUT=`timeout --version 2> /dev/null | grep "^timeout " | sed -e "s/^timeout.*/timeout 1s/"`
     for MOUNT in `echo "$MOUNTS" | awk '{print $3}'`
     do
-        TYPE=`echo "$MOUNTS" | grep " $MOUNT$" | awk '{print $1}'`
-        REMOTE=`echo "$MOUNTS" | grep " $MOUNT$" | awk '{print $2}'`
+        DEVICE=`echo "$MOUNTS" | grep " $MOUNT$" | awk '{print $1}'`
+        TYPE=`echo "$MOUNTS" | grep " $MOUNT$" | awk '{print $2}'`
         SIZE=`$TIMEOUT df -k $MOUNT 2> /dev/null | tail +2 | paste - - | awk '{print $2}'`
         if [ ! "$SIZE" -o "$SIZE" = 0 ]
         then
             SIZE="???"
         fi
-        write_output name="Disk $TYPE" device="/dev/???" value="$SIZE KB" comment="$REMOTE on $MOUNT"
+        write_output name="Disk device" device="$DEVICE" value="$SIZE KB" comment="$TYPE on $MOUNT"
     done
 
     # Graphics device detection
