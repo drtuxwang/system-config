@@ -108,10 +108,7 @@ class Main(object):
     def _show(self):
         devices = {}
         for file in glob.glob('/dev/disk/by-uuid/*'):
-            try:
-                devices[file] = '/dev/' + os.path.basename(os.readlink(file))
-            except OSError:
-                pass
+            devices[file] = os.path.realpath(file)
 
         print(
             'Filesystem       1K-blocks       Used  Available Use% Mounted on')

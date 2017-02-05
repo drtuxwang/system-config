@@ -103,17 +103,12 @@ class Main(object):
 
         for file in options.get_files():
             if os.path.islink(file):
-                try:
-                    link = os.readlink(file)
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + file + '" link.')
-                target = os.path.join(os.path.dirname(file), link)
+                target = os.path.realpath(file)
                 if os.path.isfile(target):
                     print('Copy file:', file, '->', target)
                     self._copy(file, target)
                 elif not os.path.isdir(target):
-                    print('Null link:', file, '->', link)
+                    print('Null link:', file, '->', os.readlink(file))
             elif not os.path.exists(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
