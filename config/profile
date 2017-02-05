@@ -88,7 +88,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]
         eval $(ssh-agent) > /dev/null 2>&1
     fi
     SSH_KEYS=`ssh-add -l 2> /dev/null | grep ".:." | wc -l | awk '{print $1}'`
-    if [ "$MYTTY" ]
+    if [ "$MYTTY" = "`\tty 2> /dev/null`" ]
     then
         alias logout='echo Use \"exit\" to exit the shell.'
     else

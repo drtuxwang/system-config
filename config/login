@@ -38,6 +38,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     setenv MYHNAME `uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
     if ( $?tcsh ) then
+        setenv MYSHELL "TCSH"
         set prompt="%{[%P] \033[01;32m%}%n@%m:%{\033[01;34m%}%~%{\033[00m%} % "
         set prompt="%{\033[01;32m%}%n@%m:%{\033[01;34m%}%~%{\033[00m%} % "
     else
@@ -52,6 +53,11 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
         eval `ssh-agent -c` >& /dev/null
     endif
     setenv SSH_KEYS `ssh-add -l |& grep ".:." | wc -l | awk '{print $1}'`
+    if ( $?MYTTY ) then
+        if  ( "$MYTTY" != "`\tty`" ) then
+            unsetenv MYTTY
+        endif
+    endif
     if ( $?MYTTY ) then
         alias logout 'echo Use \"exit\" to exit the shell.'
     else
@@ -185,7 +191,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     endif
 
     echo
-    setenv MYINFO "$MYSHELL shell (tty=$MYTTY"
+    setenv MYINFO "$MYSHELL shell (tty=$MYTTY)"
     if ( "$SSH_KEYS" != 0 ) then
         setenv MYINFO "$MYINFO, ssh-add=$SSH_KEYS"
     endif
