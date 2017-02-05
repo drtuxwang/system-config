@@ -39,4 +39,4 @@ run: $(PASSWD)
 
 irun: $(PASSWD)
 	@echo "\n*** Running \"$(IMAGE)\" Docker container (with network) ***"
-	docker run $(FLAGS) $(IMAGE) /etc/docker-init || exit 0
+	docker run $(FLAGS) $(IMAGE) || exit 0

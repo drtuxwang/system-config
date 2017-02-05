@@ -24,4 +24,4 @@ COPY tmpdir/config/vimrc /home/docker/.vimrc
 
 # Configure start
 ENV XDG_CURRENT_DESKTOP=XFCE
-CMD /etc/docker-init
+ENTRYPOINT ["/etc/docker-init"]
