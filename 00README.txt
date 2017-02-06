@@ -775,23 +775,29 @@ cloudformation/multi-stacks/pxy_stack.json
 cloudformation/multi-stacks/sg_stack.json
 cloudformation/multi-stacks/submit.sh
 
-docker/alpine/Dockerfile                              Docker: Alpine base image
+docker/alpine/Dockerfile                              Docker: Alpine 3.4 base image
 docker/alpine/Makefile
-docker/centos/Dockerfile                              Docker: CentOS base image
+docker/centos/Dockerfile                              Docker: CentOS 7 base image
 docker/centos/Makefile
-docker/debian/Dockerfile                              Docker: Debian base images
+docker/debian/Dockerfile                              Docker: Debian 8 base images
 docker/debian/Makefile
-docker/debian/builder/Dockerfile                      Docker: Debian Compiler environment image
+docker/debian/builder/Dockerfile                      Docker: Debian 8 build environment image
 docker/debian/builder/Makefile
-docker/debian/docker/Dockerfile                       Docker: Debian Docker app image
+docker/debian/docker/Dockerfile                       Docker: Debian 8 Docker app image
 docker/debian/docker/Makefile
-docker/debian/openvpn/Dockerfile                      Docker: Debian OpenVPN app image
+docker/debian/openvpn/Dockerfile                      Docker: Debian 8 OpenVPN app image
 docker/debian/openvpn/Makefile
-docker/debian/wine/Dockerfile                         Docker: Debian WINE app image
+docker/debian/wine/Dockerfile                         Docker: Debian 8 WINE app image
 docker/debian/wine/Makefile
-docker/ubuntu/Dockerfile                              Docker: Ubuntu base image
+docker/debian-test/Dockerfile                         Docker: Debian 9 base images
+docker/debian-test/Dockerfile-xfce
+docker/debian-test/Makefile                           Docker: Debian 9 build environment image
+docker/debian-test/builder/Makefile
+docker/debian-test/builder/Dockerfile
+docker/Dockerfile                                     Docker: Ubuntu 16.04 base image
+docker/ubuntu/Dockerfile
 docker/ubuntu/Makefile
-docker/Dockerfile                                     Makefile for building all images
+docker/Makefile                                       Makefile for building all images
 
 kubernetes/debian/Makefile                            Kubernetes: Debian example
 kubernetes/debina/test-ns.json
