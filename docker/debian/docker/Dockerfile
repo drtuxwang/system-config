@@ -2,8 +2,8 @@ FROM debian-xfce
 
 # Install Docker package (stable instead of latest)
 RUN apt-get install --no-install-recommends -y \
-		iptables \
 		init-system-helpers \
+		iptables \
 		libapparmor1 \
 		libltdl7 && \
 	wget --progress=bar:force \
