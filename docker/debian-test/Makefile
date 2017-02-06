@@ -16,8 +16,8 @@ FLAGS := --rm \
 	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
-	--name $(IMAGE)-dock \
-	--hostname $(IMAGE)-dock
+	--name $(IMAGE2)-dock \
+	--hostname $(IMAGE2)-dock
 
 
 default: build

@@ -1,4 +1,5 @@
-IMAGE := debian-xfce
+IMAGE := debian-base
+IMAGE2 := debian-xfce
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -15,8 +16,8 @@ FLAGS := --rm \
 	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
-	--name $(IMAGE)-dock \
-	--hostname $(IMAGE)-dock
+	--name $(IMAGE2)-dock \
+	--hostname $(IMAGE2)-dock
 
 
 default: build
@@ -36,10 +37,10 @@ build-all: build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
-	@echo "\n*** Building \"debian-base\" Docker image ***"
-	docker build -t debian-base .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -f Dockerfile-xfce -t $(IMAGE) .
+	docker build -t $(IMAGE) .
+	@echo "\n*** Building \"$(IMAGE2)\" Docker image ***"
+	docker build -f Dockerfile-xfce -t $(IMAGE2) .
 	rm -rf tmpdir
 
 $(PASSWD):
@@ -47,5 +48,5 @@ $(PASSWD):
 	$(HOME)/.docker-passwd
 
 run: $(PASSWD)
-	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) || exit 0
+	@echo "\n*** Running \"$(IMAGE2)\" Docker container ***"
+	docker run $(FLAGS) $(IMAGE2) || exit 0
