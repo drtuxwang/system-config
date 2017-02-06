@@ -1,5 +1,5 @@
-IMAGE := debian-base
-IMAGE2 := debian-xfce
+IMAGE := debian8-base
+IMAGE2 := debian8-xfce
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \

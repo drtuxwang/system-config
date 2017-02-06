@@ -779,7 +779,14 @@ docker/alpine/Dockerfile                              Docker: Alpine 3.4 base im
 docker/alpine/Makefile
 docker/centos/Dockerfile                              Docker: CentOS 7 base image
 docker/centos/Makefile
-docker/debian/Dockerfile                              Docker: Debian 8 base images
+
+docker/debian7/Dockerfile
+docker/debian7/Dockerfile-xfce                        Docker: Debian 7 XFCE image
+docker/debian7/Makefile
+docker/debian7/builder/Dockerfile                     Docker: Debian 7 build environment imag
+docker/debian7/builder/Makefile
+docker/debian/Dockerfile
+docker/debian/Dockerfile-xfce                         Docker: Debian 8 XFCE image
 docker/debian/Makefile
 docker/debian/builder/Dockerfile                      Docker: Debian 8 build environment image
 docker/debian/builder/Makefile
@@ -789,10 +796,10 @@ docker/debian/openvpn/Dockerfile                      Docker: Debian 8 OpenVPN a
 docker/debian/openvpn/Makefile
 docker/debian/wine/Dockerfile                         Docker: Debian 8 WINE app image
 docker/debian/wine/Makefile
-docker/debian-test/Dockerfile                         Docker: Debian 9 base images
-docker/debian-test/Dockerfile-xfce
-docker/debian-test/Makefile                           Docker: Debian 9 build environment image
-docker/debian-test/builder/Makefile
+docker/debian-test/Dockerfile
+docker/debian-test/Dockerfile-xfce                    Docker: Debian 9 XFCE image
+docker/debian-test/Makefile
+docker/debian-test/builder/Makefile                   Docker: Debian 9 build environment image
 docker/debian-test/builder/Dockerfile
 docker/Dockerfile                                     Docker: Ubuntu 16.04 base image
 docker/ubuntu/Dockerfile

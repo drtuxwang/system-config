@@ -1,4 +1,4 @@
-FROM debian-test-xfce
+FROM debian9-xfce
 
 # Install compiler packages (Fortran needed by OpenMPI)
 RUN apt-get install --no-install-recommends -y \

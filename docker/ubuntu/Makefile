@@ -1,4 +1,4 @@
-IMAGE := ubuntu-base
+IMAGE := ubuntu1604-base
 FLAGS := --rm \
 	--interactive \
 	--tty \

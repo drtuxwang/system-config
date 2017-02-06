@@ -1,4 +1,4 @@
-FROM debian-xfce
+FROM debian8-xfce
 
 # Install OpenVPN packages
 RUN apt-get install --no-install-recommends -y openvpn && \

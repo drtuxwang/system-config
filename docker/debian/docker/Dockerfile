@@ -1,4 +1,4 @@
-FROM debian-xfce
+FROM debian8-xfce
 
 # Install Docker package (stable instead of latest)
 RUN apt-get install --no-install-recommends -y \

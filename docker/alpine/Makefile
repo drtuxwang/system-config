@@ -1,4 +1,4 @@
-IMAGE := alpine-base
+IMAGE := alpine34-base
 FLAGS := --rm \
 	--interactive \
 	--tty \

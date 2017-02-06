@@ -1,4 +1,4 @@
-FROM debian8-xfce
+FROM debian7-xfce
 
 # Install compiler packages (Fortran needed by OpenMPI)
 RUN apt-get install --no-install-recommends -y \
@@ -8,7 +8,7 @@ RUN apt-get install --no-install-recommends -y \
 # Install Dev packages (building Python)
 RUN apt-get install --no-install-recommends -y \
 	libbz2-dev \
-	libdb5.3-dev \
+	libdb5.1-dev \
 	libreadline6-dev \
 	libsqlite3-dev \
 	libssl-dev \

@@ -1,4 +1,4 @@
-IMAGE := centos-base
+IMAGE := centos7-base
 FLAGS := --rm \
 	--interactive \
 	--tty \

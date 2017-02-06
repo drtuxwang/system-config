@@ -1,4 +1,4 @@
-IMAGE := debian-builder
+IMAGE := debian9-builder
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \

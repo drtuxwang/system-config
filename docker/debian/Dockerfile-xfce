@@ -1,4 +1,4 @@
-FROM debian-base
+FROM debian8-base
 
 # Install extra packages
 RUN apt-get install --no-install-recommends -y \

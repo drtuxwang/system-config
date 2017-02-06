@@ -1,4 +1,5 @@
-IMAGE := debian8-openvpn
+IMAGE := debian7-base
+IMAGE2 := debian7-xfce
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -15,20 +16,31 @@ FLAGS := --rm \
 	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
-	--name $(IMAGE)-dock \
-	--hostname $(IMAGE)-dock
+	--name $(IMAGE2)-dock \
+	--hostname $(IMAGE2)-dock
 
 
 default: build
 	docker images
 
-all: build
+all: build-all
 	docker images
 
+pull:
+	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+
+build-all: build
+	cd openvpn && make build
+	cd docker && make build
+	cd builder && make build
+	cd wine && make build
+
 build:
-	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *
+	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
+	@echo "\n*** Building \"$(IMAGE2)\" Docker image ***"
+	docker build -f Dockerfile-xfce -t $(IMAGE2) .
 	rm -rf tmpdir
 
 $(PASSWD):
@@ -36,5 +48,5 @@ $(PASSWD):
 	$(HOME)/.docker-passwd
 
 run: $(PASSWD)
-	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) || exit 0
+	@echo "\n*** Running \"$(IMAGE2)\" Docker container ***"
+	docker run $(FLAGS) $(IMAGE2) || exit 0

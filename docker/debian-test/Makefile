@@ -1,5 +1,5 @@
-IMAGE := debian-test-base
-IMAGE2 := debian-test-xfce
+IMAGE := debian9-base
+IMAGE2 := debian9-xfce
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
