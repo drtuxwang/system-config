@@ -1,5 +1,6 @@
-IMAGE := debian9-base
-IMAGE2 := debian9-xfce
+IMAGE_BASE := drtuxwang/debian-base:testing
+IMAGE := drtuxwang/debian-xfce:testing
+HOSTNAME := stretch-dock
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -16,14 +17,14 @@ FLAGS := --rm \
 	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
-	--name $(IMAGE2)-dock \
-	--hostname $(IMAGE2)-dock
+	--name $(HOSTNAME) \
+	--hostname $(HOSTNAME)
 
 
 default: build
 	docker images
 
-all: build build-all
+all: build-all
 	docker images
 
 pull:
@@ -34,10 +35,10 @@ build-all: build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
+	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
+	docker build -t $(IMAGE_BASE) .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
-	@echo "\n*** Building \"$(IMAGE2)\" Docker image ***"
-	docker build -f Dockerfile-xfce -t $(IMAGE2) .
+	docker build -f Dockerfile-xfce -t $(IMAGE) .
 	rm -rf tmpdir
 
 $(PASSWD):
@@ -45,5 +46,5 @@ $(PASSWD):
 	$(HOME)/.docker-passwd
 
 run: $(PASSWD)
-	@echo "\n*** Running \"$(IMAGE2)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE2) || exit 0
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
+	docker run $(FLAGS) $(IMAGE) || exit 0

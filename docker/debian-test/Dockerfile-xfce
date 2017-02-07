@@ -1,4 +1,4 @@
-FROM debian9-base
+FROM drtuxwang/debian-base:testing
 
 # Install extra packages
 RUN apt-get install --no-install-recommends -y \

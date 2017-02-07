@@ -1,4 +1,5 @@
-IMAGE := debian8-openvpn
+IMAGE := drtuxwang/debian-docker
+HOSTNAME := jessie-docker-dock
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -15,8 +16,10 @@ FLAGS := --rm \
 	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
-	--name $(IMAGE)-dock \
-	--hostname $(IMAGE)-dock
+	--privileged=true \
+	--volume /var/run/docker.sock:/var/run/docker.sock \
+	--name $(HOSTNAME) \
+	--hostname $(HOSTNAME)
 
 
 default: build

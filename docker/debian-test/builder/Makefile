@@ -1,4 +1,5 @@
-IMAGE := debian9-builder
+IMAGE := drtuxwang/debian-builder:testing
+HOSTNAME := stretch-builder-dock
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -15,8 +16,8 @@ FLAGS := --rm \
 	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
-	--name $(IMAGE)-dock \
-	--hostname $(IMAGE)-dock
+	--name $(HOSTNAME) \
+	--hostname $(HOSTNAME)
 
 
 default: build

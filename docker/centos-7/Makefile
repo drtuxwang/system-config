@@ -1,4 +1,5 @@
-IMAGE := ubuntu1604-base
+IMAGE := drtuxwang/centos-base
+HOSTNAME := centos-dock
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -7,8 +8,8 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
-	--name $(IMAGE)-dock \
-	--hostname $(IMAGE)-dock
+	--name $(HOSTNAME) \
+	--hostname $(HOSTNAME)
 
 
 default: build
@@ -30,5 +31,4 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
-		$(IMAGE) bash || exit 0
+	docker run $(FLAGS) $(IMAGE) bash || exit 0

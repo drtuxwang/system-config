@@ -1,4 +1,4 @@
-1996-2016 By Dr Colin Kong
+1996-2017 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -775,35 +775,33 @@ cloudformation/multi-stacks/pxy_stack.json
 cloudformation/multi-stacks/sg_stack.json
 cloudformation/multi-stacks/submit.sh
 
-docker/alpine/Dockerfile                              Docker: Alpine 3.4 base image
-docker/alpine/Makefile
-docker/centos/Dockerfile                              Docker: CentOS 7 base image
-docker/centos/Makefile
-
-docker/debian7/Dockerfile
-docker/debian7/Dockerfile-xfce                        Docker: Debian 7 XFCE image
-docker/debian7/Makefile
-docker/debian7/builder/Dockerfile                     Docker: Debian 7 build environment imag
-docker/debian7/builder/Makefile
-docker/debian/Dockerfile
-docker/debian/Dockerfile-xfce                         Docker: Debian 8 XFCE image
-docker/debian/Makefile
-docker/debian/builder/Dockerfile                      Docker: Debian 8 build environment image
-docker/debian/builder/Makefile
-docker/debian/docker/Dockerfile                       Docker: Debian 8 Docker app image
-docker/debian/docker/Makefile
-docker/debian/openvpn/Dockerfile                      Docker: Debian 8 OpenVPN app image
-docker/debian/openvpn/Makefile
-docker/debian/wine/Dockerfile                         Docker: Debian 8 WINE app image
-docker/debian/wine/Makefile
+docker/alpine-3.4/Dockerfile                          Docker: Alpine 3.4 base image
+docker/alpine-3.4/Makefile
+docker/centos-7/Dockerfile                            Docker: CentOS 7 base image
+docker/centos-7/Makefile
+docker/debian-7/Dockerfile
+docker/debian-7/Dockerfile-xfce                       Docker: Debian 7 XFCE image
+docker/debian-7/Makefile
+docker/debian-7/builder/Dockerfile                    Docker: Debian 7 builder app image
+docker/debian-7/builder/Makefile
+docker/debian-8/Dockerfile
+docker/debian-8/Dockerfile-xfce                       Docker: Debian 8 XFCE image
+docker/debian-8/Makefile
+docker/debian-8/builder/Dockerfile                    Docker: Debian 8 builder app image
+docker/debian-8/builder/Makefile
+docker/debian-8/docker/Dockerfile                     Docker: Debian 8 Docker app image
+docker/debian-8/docker/Makefile
+docker/debian-8/openvpn/Dockerfile                    Docker: Debian 8 OpenVPN app image
+docker/debian-8/openvpn/Makefile
+docker/debian-8/wine/Dockerfile                       Docker: Debian 8 WINE app image
+docker/debian-8/wine/Makefile
 docker/debian-test/Dockerfile
 docker/debian-test/Dockerfile-xfce                    Docker: Debian 9 XFCE image
 docker/debian-test/Makefile
-docker/debian-test/builder/Makefile                   Docker: Debian 9 build environment image
+docker/debian-test/builder/Makefile                   Docker: Debian 9 builder app image
 docker/debian-test/builder/Dockerfile
-docker/Dockerfile                                     Docker: Ubuntu 16.04 base image
-docker/ubuntu/Dockerfile
-docker/ubuntu/Makefile
+docker/ubuntu-16.04/Dockerfile                        Docker: Ubuntu 16.04 base image
+docker/ubuntu-16.04/Makefile
 docker/Makefile                                       Makefile for building all images
 
 kubernetes/debian/Makefile                            Kubernetes: Debian example

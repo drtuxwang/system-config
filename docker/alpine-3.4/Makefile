@@ -1,4 +1,5 @@
-IMAGE := centos7-base
+IMAGE := drtuxwang/alpine-base
+HOSTNAME := alpine-dock
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -7,8 +8,8 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
-	--name $(IMAGE)-dock \
-	--hostname $(IMAGE)-dock
+	--name $(HOSTNAME) \
+	--hostname $(HOSTNAME)
 
 
 default: build
@@ -23,7 +24,7 @@ pull:
 build-all: build
 
 build:
-	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir &&tmpdir/bin/fmod -R *
+	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir

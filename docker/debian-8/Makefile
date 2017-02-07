@@ -1,4 +1,6 @@
-IMAGE := debian8-builder
+IMAGE_BASE := drtuxwang/debian-base
+IMAGE := drtuxwang/debian-xfce
+HOSTNAME := jessie-dock
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
@@ -15,28 +17,37 @@ FLAGS := --rm \
 	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
-	--name $(IMAGE)-dock \
-	--hostname $(IMAGE)-dock
+	--name $(HOSTNAME) \
+	--hostname $(HOSTNAME)
 
 
 default: build
 	docker images
 
-all: build
+all: build-all
 	docker images
 
+pull:
+	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+
+build-all: build
+	cd openvpn && make build
+	cd docker && make build
+	cd builder && make build
+	cd wine && make build
+
 build:
+	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
+	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
+	docker build -t $(IMAGE_BASE) .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build -f Dockerfile-xfce -t $(IMAGE) .
+	rm -rf tmpdir
 
 $(PASSWD):
 	echo "root:x:0:0:root:/root:/bin/bash\n$(USER):x:`id -u`:`id -g`:-:$(HOME):/bin/bash" > \
 	$(HOME)/.docker-passwd
 
 run: $(PASSWD)
-	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
-	docker run $(FLAGS) --network none $(IMAGE) /etc/docker-init || exit 0
-
-irun: $(PASSWD)
-	@echo "\n*** Running \"$(IMAGE)\" Docker container (with network) ***"
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(IMAGE) || exit 0

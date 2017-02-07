@@ -1,4 +1,5 @@
-IMAGE := alpine34-base
+IMAGE := drtuxwang/ubuntu-base
+HOSTNAME := xenial-dock
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -7,8 +8,8 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
-	--name $(IMAGE)-dock \
-	--hostname $(IMAGE)-dock
+	--name $(HOSTNAME) \
+	--hostname $(HOSTNAME)
 
 
 default: build
