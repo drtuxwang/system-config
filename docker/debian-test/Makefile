@@ -36,9 +36,9 @@ build-all: build
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
-	docker build -t $(IMAGE_BASE) .
+	docker build --force-rm=true -t $(IMAGE_BASE) .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -f Dockerfile-xfce -t $(IMAGE) .
+	docker build --force-rm=true -f Dockerfile-xfce -t $(IMAGE) .
 	rm -rf tmpdir
 
 $(PASSWD):

@@ -31,7 +31,7 @@ all: build
 build:
 	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build --force-rm=true -t $(IMAGE) .
 	rm -rf tmpdir
 
 $(PASSWD):
