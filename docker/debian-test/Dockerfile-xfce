@@ -13,16 +13,15 @@ RUN apt-get install --no-install-recommends -y \
 		tmux \
 		wget && \
 	apt-get install --no-install-recommends -y ksh ||: && \
-	python3 -m pip install pep8 pylint
-
-# Install X-windows packages
-RUN apt-get install --no-install-recommends -y \
-	libasound2 \
-	libgtk-3-0 \
-	x11-xserver-utils \
-	x11-utils \
-	xfce4-terminal \
-	xfonts-base
+	python3 -m pip install pep8 pylint && \
+	apt-get install --no-install-recommends -y \
+		libasound2 \
+		libgtk-3-0 \
+		x11-xserver-utils \
+		x11-utils \
+		xfce4-terminal \
+		xfonts-base && \
+	apt-get clean
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

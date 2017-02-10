@@ -6,6 +6,7 @@ RUN apt-get install --no-install-recommends -y \
 		iptables \
 		libapparmor1 \
 		libltdl7 && \
+	apt-get clean && \
 	wget --progress=bar:force \
 		http://apt.dockerproject.org/repo/pool/main/d/docker-engine/docker-engine_1.12.6-0~debian-jessie_amd64.deb && \
 	dpkg -i docker-engine_* && \

@@ -9,16 +9,15 @@ RUN apt-get install --no-install-recommends -y \
 		tcsh \
 		sudo \
 		tmux \
-		wget
-
-# Install X-windows packages
-RUN apt-get install --no-install-recommends -y \
-	libasound2 \
-	libgtk-3-0 \
-	x11-xserver-utils \
-	x11-utils \
-	xfce4-terminal \
-	xfonts-base
+		wget && \
+	apt-get install --no-install-recommends -y \
+		libasound2 \
+		libgtk-3-0 \
+		x11-xserver-utils \
+		x11-utils \
+		xfce4-terminal \
+		xfonts-base && \
+	apt-get clean
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
