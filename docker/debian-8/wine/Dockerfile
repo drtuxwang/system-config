@@ -1,4 +1,4 @@
-FROM drtuxwang/debian-xfce
+FROM drtuxwang/debian-xshell
 
 # Install WINE packages
 RUN dpkg --add-architecture i386 && \

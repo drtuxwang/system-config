@@ -1,4 +1,4 @@
-FROM drtuxwang/debian-xfce:testing
+FROM drtuxwang/debian-shell:testing
 
 # Install compiler & dev packages
 RUN apt-get install --no-install-recommends -y \

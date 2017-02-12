@@ -1,5 +1,6 @@
 IMAGE_BASE := drtuxwang/debian-base
-IMAGE := drtuxwang/debian-xfce
+IMAGE_SHELL := drtuxwang/debian-shell
+IMAGE_XSHELL := drtuxwang/debian-xshell
 HOSTNAME := jessie-dock
 PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
@@ -13,8 +14,6 @@ FLAGS := --rm \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=$(PASSWD):/etc/passwd:ro \
 	--volume=/shared:/shared \
-	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
-	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
 	--name $(HOSTNAME) \
@@ -40,8 +39,10 @@ build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
 	docker build --force-rm=true -t $(IMAGE_BASE) .
-	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build --force-rm=true -f Dockerfile-xfce -t $(IMAGE) .
+	@echo "\n*** Building \"$(IMAGE_SHELL)\" Docker image ***"
+	docker build --force-rm=true -f Dockerfile-shell -t $(IMAGE_SHELL) .
+	@echo "\n*** Building \"$(IMAGE_XSHELL)\" Docker image ***"
+	docker build --force-rm=true -f Dockerfile-xshell -t $(IMAGE_XSHELL) .
 	rm -rf tmpdir
 
 $(PASSWD):
@@ -49,5 +50,12 @@ $(PASSWD):
 	$(HOME)/.docker-passwd
 
 run: $(PASSWD)
-	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) || exit 0
+	@echo "\n*** Running \"$(IMAGE_SHELL)\" Docker container ***"
+	docker run $(FLAGS) $(IMAGE_SHELL) || exit 0
+
+xrun: $(PASSWD)
+	@echo "\n*** Running \"$(IMAGE_XSHELL)\" Docker container ***"
+	docker run $(FLAGS) \
+		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
+		--env DISPLAY=$(DISPLAY) \
+		$(IMAGE_XSHELL) || exit 0

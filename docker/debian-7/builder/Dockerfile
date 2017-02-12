@@ -1,4 +1,4 @@
-FROM drtuxwang/debian-xfce:7
+FROM drtuxwang/debian-shell:7
 
 # Install compiler & dev packages
 RUN apt-get install --no-install-recommends -y \

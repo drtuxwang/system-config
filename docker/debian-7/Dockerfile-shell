@@ -10,13 +10,6 @@ RUN apt-get install --no-install-recommends -y \
 		sudo \
 		tmux \
 		wget && \
-	apt-get install --no-install-recommends -y \
-		libasound2 \
-		libgtk-3-0 \
-		x11-xserver-utils \
-		x11-utils \
-		xfce4-terminal \
-		xfonts-base && \
 	apt-get clean
 
 # Add scripts
@@ -27,10 +20,8 @@ COPY tmpdir/config/docker-init-home /etc/
 # Docker account
 COPY tmpdir/config/login /home/docker/.login
 COPY tmpdir/config/profile /home/docker/.profile
-COPY tmpdir/config/terminalrc /home/docker/.config/xfce4/terminal/terminalrc
 COPY tmpdir/config/tmux.conf /home/docker/.tmux.conf
 COPY tmpdir/config/vimrc /home/docker/.vimrc
 
 # Configure start
-ENV XDG_CURRENT_DESKTOP=XFCE
 ENTRYPOINT ["/etc/docker-init"]

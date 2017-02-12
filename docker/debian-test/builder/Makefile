@@ -12,8 +12,6 @@ FLAGS := --rm \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=$(PASSWD):/etc/passwd:ro \
 	--volume=/shared:/shared \
-	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
-	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
 	--name $(HOSTNAME) \
