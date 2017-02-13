@@ -370,6 +370,18 @@ class Main(object):
             )
         return 'text file "' + file + '" with ' + str(chars) + ' columns'
 
+    @staticmethod
+    def _get_command(options):
+        if options.get_view_flag():
+            command = command_mod.Command('evince', errors='stop')
+        else:
+            command = command_mod.Command('lp', errors='stop')
+            command.set_args(['-U', 'someone', '-d', options.get_printer(),
+                              '-o', 'number-up=' + str(options.get_pages())])
+            if options.get_double_side_flag():
+                command.extend_args(['-o', 'sides=two-sided-long-edge'])
+        return command
+
     def run(self):
         """
         Start program
@@ -378,16 +390,11 @@ class Main(object):
 
         self._tmpfile = os.sep + os.path.join(
             'tmp', 'fprint-' + getpass.getuser() + '.' + str(os.getpid()))
-        if options.get_view_flag():
-            evince = command_mod.Command('evince', errors='stop')
+        command = self._get_command(options)
+        if options.get_double_side_flag():
+            sides = 'double sides'
         else:
-            command = command_mod.Command('lp', errors='stop')
-            command.set_args(['-U', 'someone', '-d', options.get_printer(),
-                              '-o', 'number-up=' + str(options.get_pages())])
             sides = 'single side'
-            if options.get_double_side_flag():
-                command.extend_args(['-o', 'sides=two-sided-long-edge'])
-                sides = 'double sides'
 
         for file in options.get_files():
             if not os.path.isfile(file):
@@ -404,7 +411,7 @@ class Main(object):
                 message = self._text(options, file)
             if options.get_view_flag():
                 print('Spooling', message, 'to printer previewer')
-                subtask_mod.Task(evince.get_cmdline() + [self._tmpfile]).run()
+                subtask_mod.Task(command.get_cmdline() + [self._tmpfile]).run()
             else:
                 print('Spooling {0:s} to printer "{1:s}" ({2:s})'.format(
                     message, options.get_printer(), sides))
