@@ -780,14 +780,15 @@ docker/alpine-3.4/Makefile
 docker/centos-7/Dockerfile                            Docker: CentOS 7 base image
 docker/centos-7/Makefile
 docker/debian-7/Dockerfile
-docker/debian-7/Dockerfile-xfce                       Docker: Debian 7 XFCE image
+docker/debian-7/Dockerfile-shell                      Docker: Debian 7 login shell image
 docker/debian-7/Makefile
-docker/debian-7/builder/Dockerfile                    Docker: Debian 7 builder app image
+docker/debian-7/builder/Dockerfile                    Docker: Debian 7 software builder app image
 docker/debian-7/builder/Makefile
 docker/debian-8/Dockerfile
-docker/debian-8/Dockerfile-xfce                       Docker: Debian 8 XFCE image
+docker/debian-8/Dockerfile-shell                      Docker: Debian 8 login shell image
+docker/debian-8/Dockerfile-xshell                     Docker: Debian 8 login shell with GUI image
 docker/debian-8/Makefile
-docker/debian-8/builder/Dockerfile                    Docker: Debian 8 builder app image
+docker/debian-8/builder/Dockerfile                    Docker: Debian 8 software builder app image
 docker/debian-8/builder/Makefile
 docker/debian-8/docker/Dockerfile                     Docker: Debian 8 Docker app image
 docker/debian-8/docker/Makefile
@@ -796,9 +797,9 @@ docker/debian-8/openvpn/Makefile
 docker/debian-8/wine/Dockerfile                       Docker: Debian 8 WINE app image
 docker/debian-8/wine/Makefile
 docker/debian-test/Dockerfile
-docker/debian-test/Dockerfile-xfce                    Docker: Debian 9 XFCE image
+docker/debian-test/Dockerfile-shell                   Docker: Debian 9 login shell image
 docker/debian-test/Makefile
-docker/debian-test/builder/Makefile                   Docker: Debian 9 builder app image
+docker/debian-test/builder/Makefile                   Docker: Debian 9 software builder app image
 docker/debian-test/builder/Dockerfile
 docker/ubuntu-16.04/Dockerfile                        Docker: Ubuntu 16.04 base image
 docker/ubuntu-16.04/Makefile
