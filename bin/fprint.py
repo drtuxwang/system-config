@@ -380,6 +380,8 @@ class Main(object):
                               '-o', 'number-up=' + str(options.get_pages())])
             if options.get_double_side_flag():
                 command.extend_args(['-o', 'sides=two-sided-long-edge'])
+            else:
+                command.extend_args(['-o', 'Duplex=None'])
         return command
 
     def run(self):
