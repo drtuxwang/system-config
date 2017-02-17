@@ -801,6 +801,8 @@ docker/debian-test/Dockerfile-shell                   Docker: Debian 9 login she
 docker/debian-test/Makefile
 docker/debian-test/builder/Makefile                   Docker: Debian 9 software builder app image
 docker/debian-test/builder/Dockerfile
+docker/jailbreak/Dockerfile                           Docker: empty app image for jail breaking
+docker/jailbreak/Makefile
 docker/ubuntu-16.04/Dockerfile                        Docker: Ubuntu 16.04 base image
 docker/ubuntu-16.04/Makefile
 docker/Makefile                                       Makefile for building all images

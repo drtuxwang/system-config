@@ -18,7 +18,6 @@ COPY tmpdir/config/bashrc /root/.bashrc
 COPY tmpdir/config/vimrc /root/.vimrc
 
 # Configure start
-USER root
 ENV HOME=/root
 WORKDIR /root
 CMD bash

@@ -15,13 +15,8 @@ FLAGS := --rm \
 default: build
 	docker images
 
-all: build-all
-	docker images
-
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-
-build-all: build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *

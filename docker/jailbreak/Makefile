@@ -1,5 +1,5 @@
-IMAGE := drtuxwang/alpine-base
-HOSTNAME := alpine-dock
+IMAGE := drtuxwang/jailbreak
+HOSTNAME := `uname -n`-jailbreak-dock
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -8,6 +8,9 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
+	`ls -1d /* | grep -v "/proc$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}'` \
+	--volume="/etc/passwd:/etc/passwd:ro" \
+	--volume="/etc/group:/etc/group:ro" \
 	--name $(HOSTNAME) \
 	--hostname $(HOSTNAME)
 
@@ -15,15 +18,10 @@ FLAGS := --rm \
 default: build
 	docker images
 
-pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-
 build:
-	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build --force-rm=true -t $(IMAGE) .
-	rm -rf tmpdir
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) bash || exit 0
+	docker run $(FLAGS) $(IMAGE) || exit 0
