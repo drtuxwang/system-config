@@ -1,6 +1,5 @@
 IMAGE := drtuxwang/debian-openvpn
 HOSTNAME := jessie-openvpn-dock
-PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -9,7 +8,7 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
-	--volume=$(PASSWD):/etc/passwd:ro \
+	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
 	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
@@ -32,10 +31,6 @@ build:
 	docker build --force-rm=true -t $(IMAGE) .
 	rm -rf tmpdir
 
-$(PASSWD):
-	echo "root:x:0:0:root:/root:/bin/bash\n$(USER):x:`id -u`:`id -g`:-:$(HOME):/bin/bash" > \
-	$(HOME)/.docker-passwd
-
-run: $(PASSWD)
+run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(IMAGE) || exit 0

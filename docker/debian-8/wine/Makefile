@@ -1,6 +1,5 @@
 IMAGE := drtuxwang/debian-wine
 HOSTNAME := jessie-wine-dock
-PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -9,7 +8,7 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
-	--volume=$(PASSWD):/etc/passwd:ro \
+	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
 	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
@@ -30,14 +29,10 @@ build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build --force-rm=true -t $(IMAGE) .
 
-$(PASSWD):
-	echo "root:x:0:0:root:/root:/bin/bash\n$(USER):x:`id -u`:`id -g`:-:$(HOME):/bin/bash" > \
-	$(HOME)/.docker-passwd
-
-run: $(PASSWD)
-	@echo "\n*** Running Docker container (offline) ***"
+run:
+	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
 	docker run $(FLAGS) --network none $(IMAGE) /etc/docker-init || exit 0
 
-irun: $(PASSWD)
+irun:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container (with network) ***"
 	docker run $(FLAGS) $(IMAGE) || exit 0

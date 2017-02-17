@@ -2,7 +2,6 @@ IMAGE_BASE := drtuxwang/debian-base
 IMAGE_SHELL := drtuxwang/debian-shell
 IMAGE_XSHELL := drtuxwang/debian-xshell
 HOSTNAME := jessie-dock
-PASSWD := $(HOME)/.docker-passwd
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -11,7 +10,7 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
-	--volume=$(PASSWD):/etc/passwd:ro \
+	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
 	--env TERM=$(TERM) \
@@ -45,16 +44,12 @@ build:
 	docker build --force-rm=true -f Dockerfile-xshell -t $(IMAGE_XSHELL) .
 	rm -rf tmpdir
 
-$(PASSWD):
-	echo "root:x:0:0:root:/root:/bin/bash\n$(USER):x:`id -u`:`id -g`:-:$(HOME):/bin/bash" > \
-	$(HOME)/.docker-passwd
-
-run: $(PASSWD)
+run:
 	@echo "\n*** Running \"$(IMAGE_SHELL)\" Docker container ***"
 	docker run $(FLAGS) $(IMAGE_SHELL) || exit 0
 
 xrun: $(PASSWD)
-	@echo "\n*** Running \"$(IMAGE_XSHELL)\" Docker container ***"
+	@echo "\n*** Running \"$(IMAGE_XSHELL)\" Docker container (with graphics) ***"
 	docker run $(FLAGS) \
 		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
 		--env DISPLAY=$(DISPLAY) \
