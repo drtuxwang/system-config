@@ -61,8 +61,12 @@ class Options(object):
             'Flash_Player',
             'AssetCache'
         )
-        macromedia = os.path.join(os.environ['HOME'], '.macromedia',
-                                  'Flash_Player', 'macromedia.com')
+        macromedia = os.path.join(
+            os.environ['HOME'],
+            '.macromedia',
+            'Flash_Player',
+            'macromedia.com'
+        )
         if not os.path.isfile(adobe) or not os.path.isfile(macromedia):
             try:
                 shutil.rmtree(os.path.join(os.environ['HOME'], '.adobe'))
