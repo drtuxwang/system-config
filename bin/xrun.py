@@ -18,7 +18,7 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
 
 FG_COLOUR = '#000000'
 BG_COLOUR = '#ffffdd'
-SLEEP = '20'
+SLEEP = '10'
 
 
 class Options(object):
@@ -53,7 +53,7 @@ class Options(object):
         Parse arguments
         """
         if len(args) == 1:
-            self._parse_args(args)
+            self._parse_args(args[1:])
 
         self._xterm = command_mod.Command('xterm', errors='stop')
         self._xterm.set_args([
