@@ -56,6 +56,7 @@ class Options(object):
             self._parse_args(args[1:])
 
         self._xterm = command_mod.Command('xterm', errors='stop')
+        command = command_mod.Command.args2cmd(args[1:])
         self._xterm.set_args([
             '-fn',
             '-misc-fixed-bold-r-normal--18-*-iso8859-1',
@@ -68,9 +69,9 @@ class Options(object):
             '-geometry',
             '100x10',
             '-T',
-            args[1] + ' ... ' + args[-1],
+            'xrun: ' + command,
             '-e',
-            command_mod.Command.args2cmd(args[1:]) + '; sleep ' + SLEEP
+            command + '; sleep ' + SLEEP
         ])
 
 
