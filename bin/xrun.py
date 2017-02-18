@@ -113,8 +113,6 @@ class Main(object):
         options = Options()
 
         xterm = options.get_xterm()
-        print('debugX1', subprocess.list2cmdline(sys.argv))
-        print('debugX2', xterm.get_cmdline())
         subtask_mod.Background(xterm.get_cmdline()).run()
 
 
