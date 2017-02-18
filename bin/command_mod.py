@@ -2,9 +2,9 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2016 By Dr Colin Kong
+Copyright GPL v2: 2006-2017 By Dr Colin Kong
 
-Version 2.0.10 (2016-07-23)
+Version 2.0.11 (2017-02-18)
 """
 
 import distutils.version
@@ -183,8 +183,18 @@ class Command(object):
         Join list of arguments into a command string.
 
         args = List of arguments
+
+        subprocess.list2cmdline() does not handle "&" properly)
         """
-        return subprocess.list2cmdline(args)
+        nargs = []
+        for arg in args:
+            if '"' in arg or ' ' in arg or '&' in arg:
+                nargs.append(
+                    '"' + arg.replace('\\', '\\\\').replace('"', '\\"') + '"'
+                )
+            else:
+                nargs.append(arg)
+        return ' '.join(nargs)
 
     @staticmethod
     def _cmd2chars(cmd):
