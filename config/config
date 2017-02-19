@@ -10,3 +10,8 @@ UseRoaming no
 #Host hostname
 #User username
 #IdentityFile=~/.ssh/id_rsa-xxx
+
+#Host *.local
+#User owner
+#StrictHostKeyChecking no
+#UserKnownHostsFile=/dev/null
