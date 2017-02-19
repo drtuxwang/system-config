@@ -5,7 +5,7 @@
 	checkout-all = "!f() { git checkout $1; git submodule foreach \"git checkout $1||:\"; }; f"
 	find-commit = "!f() { git fetch --all; git branch -a --contains $1; }; f"
 	find-merge = "!f() { git log --graph $1^..${2:-HEAD}; }; f"
-	grep-all = "!f() { git --no-pager grep -in \"$1\"; git submodule foreach \"git --no-pager grep -in '$1'||:\"; }; f"
+	grep-all = "!f() { git --no-pager grep \"$1\"; git submodule foreach \"git --no-pager grep '$1'||:\"; }; f"
 	grep-commit = "!f() { git --no-pager grep -n \"$1\" $(git rev-list --all); }; f"
 	merge = merge --no-ff
 	pull-all = "!f() { git pull; git submodule foreach \"git pull||:\"; }; f"
