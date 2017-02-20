@@ -21,7 +21,7 @@ pull:
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build --force-rm=true -t $(IMAGE) .
+	docker build -t $(IMAGE) .
 	rm -rf tmpdir
 
 run:

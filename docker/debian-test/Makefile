@@ -33,9 +33,9 @@ build-all: build
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
-	docker build --force-rm=true -t $(IMAGE_BASE) .
+	docker build -t $(IMAGE_BASE) .
 	@echo "\n*** Building \"$(IMAGE_SHELL)\" Docker image ***"
-	docker build --force-rm=true -f Dockerfile-shell -t $(IMAGE_SHELL) .
+	docker build -f Dockerfile-shell -t $(IMAGE_SHELL) .
 	rm -rf tmpdir
 
 run:

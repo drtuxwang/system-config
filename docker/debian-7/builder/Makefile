@@ -25,7 +25,7 @@ all: build
 
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build --force-rm=true -t $(IMAGE) .
+	docker build -t $(IMAGE) .
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
