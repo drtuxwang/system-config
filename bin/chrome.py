@@ -222,7 +222,6 @@ class Options(object):
         if 'HOME' not in os.environ:
             return
 
-        print('debugX1', self._get_profiles_dir())
         configdir = os.path.join(os.environ['HOME'], self._get_profiles_dir())
         if os.path.isdir(configdir):
             keep_list = (
