@@ -15,10 +15,36 @@ import subtask_mod
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-OFFICE_EXTS = {
-    'doc', 'docx', 'odf', 'odg', 'ods', 'odt', 'ppt', 'pptx', 'wpd',
-    'xls', 'xlsx'
+BROWSER = 'firefox'
+MAPPINGS = {
+    'htm': BROWSER,
+    'html': BROWSER,
+    'xhtml': BROWSER,
+    'mp3': 'audacity',
+    'ogg': 'audacity',
+    'wav': 'audacity',
+    'ps': 'evince',
+    'eps': 'evince',
+    'pdf': 'evince',
+    'gif': 'gimp',
+    'jpeg': 'gimp',
+    'jpg': 'gimp',
+    'png': 'gimp',
+    'doc': 'soffice',
+    'docx': 'soffice',
+    'odf': 'soffice',
+    'odg': 'soffice',
+    'ods': 'soffice',
+    'odt': 'soffice',
+    'ppt': 'soffice',
+    'pptx': 'soffice',
+    'wpd': 'soffice',
+    'xls': 'soffice',
+    'xlsx': 'soffice',
+    'json': 'xedit',
+    'txt': 'xedit'
 }
+URL_PREFIXS = ('http', 'https', 'ftp')
 
 
 class Options(object):
@@ -107,24 +133,16 @@ class Main(object):
 
             if os.path.isdir(file):
                 self._spawn('xdesktop', file)
-            elif prefix in ('http', 'https', 'ftp'):
-                self._spawn('firefox', file)
+            elif prefix in URL_PREFIXS:
+                self._spawn(BROWSER, file)
             elif not os.path.isfile(file):
                 print(file + ': cannot find file.')
-            elif extension in ('mp3', 'ogg', 'wav'):
-                self._spawn('audacity', file)
-            elif extension in ('eps', 'ps', 'pdf'):
-                self._spawn('evince', file)
-            elif extension in ('htm', 'html', 'xhtml'):
-                self._spawn('firefox', file)
-            elif extension in ('jpg', 'jpeg', 'png'):
-                self._spawn('gimp', file)
-            elif extension in OFFICE_EXTS:
-                self._spawn('soffice', file)
-            elif extension in ('txt', 'json'):
-                self._spawn('xedit', file)
             else:
-                print(file + ': unknown file extension.')
+                command = MAPPINGS.get(extension)
+                if command:
+                    self._spawn(command, file)
+                else:
+                    print(file + ': unknown file extension.')
 
 
 if __name__ == '__main__':
