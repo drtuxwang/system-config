@@ -17,8 +17,7 @@ RUN apt-get install --no-install-recommends -y \
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
-COPY tmpdir/config/docker-init /etc/
-COPY tmpdir/config/docker-init-home /etc/
+COPY tmpdir/config/docker-init tmpdir/config/docker-init-home /etc/
 
 # Docker account
 COPY tmpdir/config/login /home/docker/.login
