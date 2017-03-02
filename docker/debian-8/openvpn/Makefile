@@ -22,8 +22,8 @@ FLAGS := --rm \
 default: build
 	docker images
 
-all: build
-	docker images
+clean:
+	docker rmi -f $(IMAGE) ||:
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *

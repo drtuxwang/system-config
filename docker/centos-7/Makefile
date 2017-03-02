@@ -15,6 +15,9 @@ FLAGS := --rm \
 default: build
 	docker images
 
+clean:
+	docker rmi -f $(IMAGE) ||:
+
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 

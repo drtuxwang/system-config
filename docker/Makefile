@@ -3,6 +3,15 @@ default: all
 all: build-all
 	docker images
 
+clean:
+	cd alpine-3.4 && make clean ||:
+	cd centos-7 && make clean ||:
+	cd jailbreak && make clean ||:
+	cd ubuntu-16.04 && make clean ||:
+	cd debian-7 && make clean ||:
+	cd debian-8 && make clean ||:
+	cd debian-test && make clean ||:
+
 pull:
 	cd alpine-3.4 && make pull
 	cd centos-7 && make pull

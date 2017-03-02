@@ -20,8 +20,8 @@ FLAGS := --rm \
 default: build
 	docker images
 
-all: build
-	docker images
+clean:
+	docker rmi -f $(IMAGE) ||:
 
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"

@@ -18,6 +18,9 @@ FLAGS := --rm \
 default: build
 	docker images
 
+clean:
+	docker rmi -f $(IMAGE) ||:
+
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build --force-rm=true -t $(IMAGE) .

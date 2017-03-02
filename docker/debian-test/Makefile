@@ -24,6 +24,10 @@ default: build
 all: build-all
 	docker images
 
+clean:
+	docker rmi -f $(IMAGE_BASE) $(IMAGE_SHELL) ||:
+	cd builder && make clean
+
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
