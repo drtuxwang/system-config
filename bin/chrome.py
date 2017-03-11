@@ -314,7 +314,8 @@ class Options(object):
             self._chrome.extend_args([
                 '--disable-background-mode',
                 '--disable-geolocation',
-                '--disk-cache-size=0'
+                '--disk-cache-dir=/dev/null',
+                '--disk-cache-size=1'
             ])
 
         # Suid sandbox workaround
