@@ -648,6 +648,7 @@ bin/xreset             Reset to default screen resolution
 bin/xreset.py
 bin/xrun               Run command in new terminal session
 bin/xrun.py
+bin/xrun.tcl
 bin/xsnapshot          Start GNOME/KDE/XFCE screen snapshot
 bin/xsnapshot.py
 bin/xsudo              Run sudo command in new terminal session

@@ -7,7 +7,6 @@ import argparse
 import glob
 import os
 import signal
-import subprocess
 import sys
 
 import command_mod
@@ -41,6 +40,12 @@ class Options(object):
             description='Run command in a Xterm.')
 
         parser.add_argument(
+            '-split',
+            action='store_true',
+            dest='split_flag',
+            help='Split command into arguments.'
+        )
+        parser.add_argument(
             'command',
             nargs=1,
             help='Command with optional arguments.'
@@ -54,9 +59,14 @@ class Options(object):
         """
         if len(args) == 1:
             self._parse_args(args[1:])
+        if args[1] == "-split":
+            if len(args) != 3:
+                self._parse_args(args[1:])
+            command = args[2]
+        else:
+            command = command_mod.Command.args2cmd(args[1:])
 
         self._xterm = command_mod.Command('xterm', errors='stop')
-        command = command_mod.Command.args2cmd(args[1:])
         self._xterm.set_args([
             '-fn',
             '-misc-fixed-bold-r-normal--18-*-iso8859-1',

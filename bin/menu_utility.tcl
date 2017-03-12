@@ -44,6 +44,11 @@ frame .system -bg "#cccccc"
        exec VirtualBox &
    }
    pack .system.vbox -side top
+
+   button .system.xrun -width 10 -bg "#ffff00" -text "Xrun" -command {
+       exec xrun.tcl &
+   }
+   pack .system.xrun -side top
 pack .system -side top -fill x
 
 frame .menu -bg "#cccccc"
