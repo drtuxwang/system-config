@@ -4,7 +4,7 @@ Python task handling utility module
 
 Copyright GPL v2: 2006-2016 By Dr Colin Kong
 
-Version 2.0.7 (2016-07-23)
+Version 2.0.8 (2017-03-13)
 """
 
 import functools
@@ -204,31 +204,35 @@ class PosixTasks(Tasks):
     def _config(self, user):
         if 'COLUMNS' not in os.environ:
             os.environ['COLUMNS'] = '1024'  # Fix Linux ps width
+        command = [
+            'ps',
+            '-o',
+            'ruser pid ppid pgid pri nice tty vsz time etime args'
+        ]
+        if user == '<all>':
+            command.append('-e')
+        else:
+            command.extend(['-u', user])
+
         try:
-            lines = _System.run_program([
-                'ps',
-                '-o',
-                'ruser pid ppid pgid pri nice tty vsz time etime args',
-                '-e',
-            ])
+            lines = _System.run_program(command)
         except (CommandNotFoundError, ExecutableCallError) as exception:
             raise SystemExit(exception)
 
         for line in lines[1:]:
             process = {}
             process['USER'] = line.split()[0]
-            if user in (process['USER'], '<all>'):
-                pid = int(line.split()[1])
-                process['PPID'] = int(line.split()[2])
-                process['PGID'] = int(line.split()[3])
-                process['PRI'] = line.split()[4]
-                process['NICE'] = line.split()[5]
-                process['TTY'] = line.split()[6]
-                process['MEMORY'] = int(line.split()[7])
-                process['CPUTIME'] = line.split()[8]
-                process['ETIME'] = line.split()[9]
-                process['COMMAND'] = ' '.join(line.split()[10:])
-                self._process[pid] = process
+            pid = int(line.split()[1])
+            process['PPID'] = int(line.split()[2])
+            process['PGID'] = int(line.split()[3])
+            process['PRI'] = line.split()[4]
+            process['NICE'] = line.split()[5]
+            process['TTY'] = line.split()[6]
+            process['MEMORY'] = int(line.split()[7])
+            process['CPUTIME'] = line.split()[8]
+            process['ETIME'] = line.split()[9]
+            process['COMMAND'] = ' '.join(line.split()[10:])
+            self._process[pid] = process
 
     def pname2pids(self, pname):
         """
