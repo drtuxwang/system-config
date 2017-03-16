@@ -51,7 +51,7 @@ class Options(object):
             '-rm',
             dest='remove_flag',
             action='store_true',
-            help='Delete obsolete files in target directory.'
+            help='Delete all extra copies of duplicated files.'
         )
         parser.add_argument(
             '-R',
