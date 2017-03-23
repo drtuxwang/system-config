@@ -67,7 +67,7 @@ class Options(object):
             ' g_bookmark_file_get_size:|recently-used.xbel|^ sRGB |^lcms: |'
             'pixmap_path: |in <module>| import |wrong ELF class:|'
             ': LibGimpBase-WARNING |^Traceback |: undefined symbol:|'
-            ' XMP metadata:|: No XMP packet found'
+            ' XMP metadata:|: No XMP packet found|: GEGL-gegl-operation.c'
         )
         self._config()
 
