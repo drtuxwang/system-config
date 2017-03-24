@@ -4,8 +4,8 @@
 #
 # 1996-2017 By Dr Colin Kong
 #
-VERSION=20170203
-RELEASE="2.6.40-9"
+VERSION=20170324
+RELEASE="2.6.40-10"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -420,6 +420,7 @@ detect()
 
     # Detect host information
     MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
+    MYFQDN=`isitset \`host $MYHNAME 2> /dev/null | grep "has address" | awk '{printf("%s.", $1)}'\``
     case `uname` in
     AIX)
         INETS=`isitset \`/usr/sbin/ifconfig -a 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
@@ -448,6 +449,8 @@ detect()
         ;;
     esac
 
+    write_output name="Hostname" value="$MYHNAME"
+    write_output name="Net FQDN" value="$MYFQDN"
     for INET in $INETS
     do
         write_output name="INET Address" value="$INET"
