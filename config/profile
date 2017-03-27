@@ -16,7 +16,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]
     fi
 
     # Terminal Multiplexer
-    if [ -x "/usr/bin/tmux" ]
+    if [ "`tmux -V 2> /dev/null | grep \"^tmux \"`" ]
     then
         if [ "$TMUX" ]
         then

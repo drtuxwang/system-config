@@ -14,7 +14,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     endif
 
     # Terminal Multiplexer
-    if ( -x "/usr/bin/tmux" ) then
+    if ( "`tmux -V |& \grep '^tmux '`" != "" ) then
         if ( $?TMUX ) then
             if ( ! $?MYSCREEN ) then
                 setenv MYSCREEN "tmux:`timeout --signal=KILL 1 tmux display-message -p '#S'`"
