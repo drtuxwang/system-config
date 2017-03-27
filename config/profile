@@ -22,7 +22,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]
         then
             if [ ! "$MYSCREEN" ]
             then
-                export MYSCREEN="tmux:$(tmux display-message -p '#S')"
+                export MYSCREEN="tmux:$(timeout --signal=KILL 1 tmux display-message -p '#S' 2> /dev/null)"
                 MYTTY=
             fi
             alias logout='tmux detach'
@@ -45,7 +45,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]
     if [ "$BASH" ]
     then
         MYSHELL="BASH"
-        if [ "`git --version 2> /dev/null | grep \"^git version\"`" ]
+        if [ "`timeout --signal=KILL 1 git --version 2> /dev/null | grep \"^git version\"`" ]
         then
             PS1='[\t] \[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[31m\]$(__git_ps1)\[\033[00m\] \$ '
         else

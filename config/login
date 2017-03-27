@@ -17,7 +17,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     if ( -x "/usr/bin/tmux" ) then
         if ( $?TMUX ) then
             if ( ! $?MYSCREEN ) then
-                setenv MYSCREEN "tmux:`tmux display-message -p '#S'`"
+                setenv MYSCREEN "tmux:`timeout --signal=KILL 1 tmux display-message -p '#S'`"
                 unsetenv MYTTY
             endif
             alias logout 'tmux detach'
