@@ -30,6 +30,7 @@ MAPPINGS = {
     'jpeg': 'gimp',
     'jpg': 'gimp',
     'png': 'gimp',
+    'csv': 'soffice',
     'doc': 'soffice',
     'docx': 'soffice',
     'odf': 'soffice',
