@@ -27,18 +27,20 @@ all: build-all
 
 clean:
 	docker rmi -f $(IMAGE_BASE) $(IMAGE_SHELL) $(IMAGE_XSHELL) ||:
-	cd openvpn && make clean
-	cd docker && make clean
 	cd builder && make clean
+	cd docker && make clean
+	cd nginx && make clean
+	cd openvpn && make clean
 	cd wine && make clean
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 build-all: build
-	cd openvpn && make build
-	cd docker && make build
 	cd builder && make build
+	cd docker && make build
+	cd nginx && make build
+	cd openvpn && make build
 	cd wine && make build
 
 build:

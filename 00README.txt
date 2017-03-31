@@ -793,6 +793,9 @@ docker/debian-8/builder/Dockerfile                    Docker: Debian 8 software 
 docker/debian-8/builder/Makefile
 docker/debian-8/docker/Dockerfile                     Docker: Debian 8 Docker app image
 docker/debian-8/docker/Makefile
+docker/debian-8/nginx/Makefile                        Docker: Debian 8 NGINX proxy app image
+docker/debian-8/nginx/Dockerfile
+docker/debian-8/nginx/files/nginx-proxy.conf
 docker/debian-8/openvpn/Dockerfile                    Docker: Debian 8 OpenVPN app image
 docker/debian-8/openvpn/Makefile
 docker/debian-8/wine/Dockerfile                       Docker: Debian 8 WINE app image
