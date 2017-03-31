@@ -76,6 +76,9 @@ bin/debdistget
 bin/debdistget.py
 bin/debdistinfo
 bin/debdistinfo.py
+bin/devpi              PYPI regbistry tool
+bin/devpi.bat
+bin/devpi_.py
 bin/df                 df wrapper (allowing non systems port)
 bin/df.py              (KB default and fix format problems)
 bin/dhcptable          Shows local DHCP hosts
