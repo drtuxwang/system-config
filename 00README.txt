@@ -1,4 +1,4 @@
-1996-2017 By Dr Colin Kong
+19962017 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -61,7 +61,6 @@ bin/clam.bat
 bin/clam.py
 bin/cluster            Run command on a subnet in parallel
 bin/cluster.py
-bin/cmd                wine wrapper (allowing non systems port)
 bin/deb                Debian package management tools
 bin/deb.py             (support offline repository searching and update checks
 bin/debchkdir
@@ -76,9 +75,6 @@ bin/debdistget
 bin/debdistget.py
 bin/debdistinfo
 bin/debdistinfo.py
-bin/devpi              PYPI regbistry tool
-bin/devpi.bat
-bin/devpi_.py
 bin/df                 df wrapper (allowing non systems port)
 bin/df.py              (KB default and fix format problems)
 bin/dhcptable          Shows local DHCP hosts
@@ -229,12 +225,15 @@ bin/fwrapper.py
 bin/fzero              Zero device or create zero file
 bin/fzero.bat
 bin/fzero.py
-bin/g++                g++ wrapper (allowing non systems port)
-bin/g++.bat
-bin/gxx_.py
-bin/gcc                gcc wrapper (allowing non systems port)
+bin/gcc                GNU compiler wrappers (allowing non systems port)
 bin/gcc.bat
 bin/gcc.py
+bin/g++
+bin/g++.bat
+bin/gxx_.py
+bin/gfortran
+bin/gfortran.bat
+bin/gfortran.py
 bin/gedit              gedit wrapper (allowing non systems port)
 bin/gedit.py
 bin/gem                Wrapper to select "umask 022"
@@ -244,9 +243,6 @@ bin/getip.bat
 bin/getip.py
 bin/geturl             Multi-threaded download accelerator
 bin/geturl.py          (use aria2c)
-bin/gfortran           gfortran wrapper (allowing non systems port)
-bin/gfortran.bat
-bin/gfortran.py
 bin/gimp               gimp wrapper (allowing non systems port)
 bin/gimp.bat
 bin/gimp.py
@@ -385,6 +381,9 @@ bin/ansible-playbook
 bin/aws
 bin/aws.bat
 bin/aws_.py
+bin/devpi
+bin/devpi.bat
+bin/devpi_.py
 bin/django-admin
 bin/django-admin.bat
 bin/django_admin_.py
@@ -622,6 +621,7 @@ bin/wine               wine wrapper (allowing non systems port)
 bin/wine.py
 bin/wine64             wine64 wrapper (allowing non systems port)
 bin/wine64.py
+bin/cmd
 bin/wipe               wipe wrapper (allowing non systems port)
 bin/wipe.py            (wipe is C disk wiper)
 bin/xcalc              Start GNOME/KDE/XFCE calculator
