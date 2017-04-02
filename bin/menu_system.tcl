@@ -42,7 +42,7 @@ pack .session -side top -fill x
 
 frame .menu -bg "#cccccc"
     button .menu.lock -width 10 -bg "#ff0000" -text "Lock Screen" -command {
-        exec lock &
+        exec xlock &
     }
     pack .menu.lock -side top
 
