@@ -71,7 +71,7 @@ class Options(object):
 
         self._pattern = (
             '^$|: GtkWarning: |: Gtk-CRITICAL |^  buttons =|^  gtk.main|'
-            'recently-used.xbel'
+            'recently-used.xbel|: Allocating size to GtkVBox '
         )
 
 
