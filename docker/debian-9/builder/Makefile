@@ -1,4 +1,4 @@
-IMAGE := drtuxwang/debian-builder:testing
+IMAGE := drtuxwang/debian-builder:9
 HOSTNAME := stretch-builder-dock
 FLAGS := --rm \
 	--interactive \
@@ -24,8 +24,10 @@ clean:
 	docker rmi -f $(IMAGE) ||:
 
 build:
+	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
+	rm -rf tmpdir
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"

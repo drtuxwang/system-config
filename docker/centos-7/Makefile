@@ -1,4 +1,4 @@
-IMAGE := drtuxwang/centos-base
+IMAGE := drtuxwang/centos:7
 HOSTNAME := centos-dock
 FLAGS := --rm \
 	--interactive \

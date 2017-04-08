@@ -1,4 +1,4 @@
-IMAGE := drtuxwang/nginx-demo
+IMAGE := drtuxwang/debian-nginx:8
 HOSTNAME := nginx-dock
 FLAGS := --rm \
 	--interactive \
@@ -26,7 +26,6 @@ pull:
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
-	rm -rf tmpdir
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"

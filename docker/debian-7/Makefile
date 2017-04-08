@@ -1,3 +1,4 @@
+IMAGE := drtuxwang/debian:7
 IMAGE_BASE := drtuxwang/debian-base:7
 IMAGE_SHELL := drtuxwang/debian-shell:7
 HOSTNAME := wheezy-dock
@@ -25,7 +26,7 @@ all: build-all
 	docker images
 
 clean:
-	docker rmi -f $(IMAGE_BASE) $(IMAGE_SHELL) ||:
+	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_SHELL) ||:
 	cd builder && make clean
 
 pull:
@@ -36,10 +37,12 @@ build-all: build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
+	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
+	docker build -t $(IMAGE) .
 	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
-	docker build -t $(IMAGE_BASE) .
+	docker build -f Dockerfile-base -t $(IMAGE_BASE) .
 	@echo "\n*** Building \"$(IMAGE_SHELL)\" Docker image ***"
-	docker build --force-rm=true -f Dockerfile-shell -t $(IMAGE_SHELL) .
+	docker build -f Dockerfile-shell -t $(IMAGE_SHELL) .
 	rm -rf tmpdir
 
 run:

@@ -1,30 +1,26 @@
-FROM drtuxwang/debian-base:testing
+FROM drtuxwang/debian-base:9
 
-# Install extra packages
+# Install compiler & dev packages
 RUN apt-get install --no-install-recommends -y \
-		csh \
-		file \
-		python3 \
-		python3-dev \
-		python3-pip \
-		python3-setuptools \
-		sudo \
-		tcsh \
-		tmux \
-		wget && \
-	apt-get install --no-install-recommends -y ksh ||: && \
-	python3 -m pip install pep8 pylint && \
+		g++ \
+		gfortran && \
+	apt-get install --no-install-recommends -y \
+		libbz2-dev \
+		libdb5.3-dev \
+		libreadline6-dev \
+		libsqlite3-dev \
+		libssl-dev \
+		zlib1g-dev && \
+	apt-get install --no-install-recommends -y \
+		libevent-dev \
+		libncurses5-dev && \
 	apt-get clean
 
-# Add scripts
+# Bash shell full setup
 COPY tmpdir/bin/ /opt/software/bin/
 COPY tmpdir/config/docker-init tmpdir/config/docker-init-home /etc/
-
-# Docker account
 COPY tmpdir/config/login /home/docker/.login
 COPY tmpdir/config/profile /home/docker/.profile
 COPY tmpdir/config/tmux.conf /home/docker/.tmux.conf
 COPY tmpdir/config/vimrc /home/docker/.vimrc
-
-# Configure start
 ENTRYPOINT ["/etc/docker-init"]

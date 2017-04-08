@@ -1,4 +1,4 @@
-IMAGE := drtuxwang/debian-wine
+IMAGE := drtuxwang/debian-wine:8
 HOSTNAME := jessie-wine-dock
 FLAGS := --rm \
 	--interactive \
@@ -26,8 +26,10 @@ clean:
 	docker rmi -f $(IMAGE) ||:
 
 build:
+	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
+	rm -rf tmpdir
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"

@@ -1,4 +1,4 @@
-IMAGE := drtuxwang/debian-docker
+IMAGE := drtuxwang/debian-docker:8
 HOSTNAME := jessie-docker-dock
 FLAGS := --rm \
 	--interactive \

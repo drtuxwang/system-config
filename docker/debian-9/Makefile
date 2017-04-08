@@ -1,5 +1,6 @@
-IMAGE_BASE := drtuxwang/debian-base:testing
-IMAGE_SHELL := drtuxwang/debian-shell:testing
+IMAGE := drtuxwang/debian:9
+IMAGE_BASE := drtuxwang/debian-base:9
+IMAGE_SHELL := drtuxwang/debian-shell:9
 HOSTNAME := stretch-dock
 FLAGS := --rm \
 	--interactive \
@@ -25,7 +26,7 @@ all: build-all
 	docker images
 
 clean:
-	docker rmi -f $(IMAGE_BASE) $(IMAGE_SHELL) ||:
+	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_SHELL) ||:
 	cd builder && make clean
 
 pull:
@@ -36,8 +37,10 @@ build-all: build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
+	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
+	docker build -t $(IMAGE) .
 	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
-	docker build -t $(IMAGE_BASE) .
+	docker build -f Dockerfile-base -t $(IMAGE_BASE) .
 	@echo "\n*** Building \"$(IMAGE_SHELL)\" Docker image ***"
 	docker build -f Dockerfile-shell -t $(IMAGE_SHELL) .
 	rm -rf tmpdir

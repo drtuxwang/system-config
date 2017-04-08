@@ -1,4 +1,4 @@
-IMAGE := drtuxwang/ubuntu-base
+IMAGE := drtuxwang/ubuntu:16.04
 HOSTNAME := xenial-dock
 FLAGS := --rm \
 	--interactive \

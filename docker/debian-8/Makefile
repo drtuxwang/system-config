@@ -1,6 +1,8 @@
-IMAGE_BASE := drtuxwang/debian-base
-IMAGE_SHELL := drtuxwang/debian-shell
-IMAGE_XSHELL := drtuxwang/debian-xshell
+IMAGE := drtuxwang/debian:8
+IMAGE_BASE := drtuxwang/debian-base:8
+IMAGE_SHELL := drtuxwang/debian-shell:8
+IMAGE_XBASE := drtuxwang/debian-xbase:8
+IMAGE_XSHELL := drtuxwang/debian-xshell:8
 HOSTNAME := jessie-dock
 FLAGS := --rm \
 	--interactive \
@@ -26,7 +28,7 @@ all: build-all
 	docker images
 
 clean:
-	docker rmi -f $(IMAGE_BASE) $(IMAGE_SHELL) $(IMAGE_XSHELL) ||:
+	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_SHELL) $(IMAGE_XBASE) $(IMAGE_XSHELL) ||:
 	cd builder && make clean
 	cd docker && make clean
 	cd nginx && make clean
@@ -45,10 +47,14 @@ build-all: build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
+	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
+	docker build -t $(IMAGE) .
 	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
-	docker build -t $(IMAGE_BASE) .
+	docker build -f Dockerfile-base -t $(IMAGE_BASE) .
 	@echo "\n*** Building \"$(IMAGE_SHELL)\" Docker image ***"
 	docker build -f Dockerfile-shell -t $(IMAGE_SHELL) .
+	@echo "\n*** Building \"$(IMAGE_XBASE)\" Docker image ***"
+	docker build -f Dockerfile-xbase -t $(IMAGE_XBASE) .
 	@echo "\n*** Building \"$(IMAGE_XSHELL)\" Docker image ***"
 	docker build --force-rm=true -f Dockerfile-xshell -t $(IMAGE_XSHELL) .
 	rm -rf tmpdir

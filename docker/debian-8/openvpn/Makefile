@@ -1,4 +1,4 @@
-IMAGE := drtuxwang/debian-openvpn
+IMAGE := drtuxwang/debian-openvpn:8
 HOSTNAME := jessie-openvpn-dock
 FLAGS := --rm \
 	--interactive \

@@ -1,4 +1,4 @@
-FROM drtuxwang/debian-shell:7
+FROM drtuxwang/debian-base:7
 
 # Install compiler & dev packages
 RUN apt-get install --no-install-recommends -y \
@@ -15,3 +15,12 @@ RUN apt-get install --no-install-recommends -y \
 		libevent-dev \
 		libncurses5-dev && \
 	apt-get clean
+
+# Bash shell full setup
+COPY tmpdir/bin/ /opt/software/bin/
+COPY tmpdir/config/docker-init tmpdir/config/docker-init-home /etc/
+COPY tmpdir/config/login /home/docker/.login
+COPY tmpdir/config/profile /home/docker/.profile
+COPY tmpdir/config/tmux.conf /home/docker/.tmux.conf
+COPY tmpdir/config/vimrc /home/docker/.vimrc
+ENTRYPOINT ["/etc/docker-init"]

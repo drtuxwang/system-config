@@ -1,4 +1,4 @@
-19962017 By Dr Colin Kong
+1996-2017 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -784,12 +784,15 @@ docker/alpine-3.4/Makefile
 docker/centos-7/Dockerfile                            Docker: CentOS 7 base image
 docker/centos-7/Makefile
 docker/debian-7/Dockerfile
+docker/debian-7/Dockerfile-base
 docker/debian-7/Dockerfile-shell                      Docker: Debian 7 login shell image
 docker/debian-7/Makefile
 docker/debian-7/builder/Dockerfile                    Docker: Debian 7 software builder app image
 docker/debian-7/builder/Makefile
 docker/debian-8/Dockerfile
+docker/debian-8/Dockerfile-base
 docker/debian-8/Dockerfile-shell                      Docker: Debian 8 login shell image
+docker/debian-8/Dockerfile-xbase
 docker/debian-8/Dockerfile-xshell                     Docker: Debian 8 login shell with GUI image
 docker/debian-8/Makefile
 docker/debian-8/builder/Dockerfile                    Docker: Debian 8 software builder app image
@@ -803,11 +806,12 @@ docker/debian-8/openvpn/Dockerfile                    Docker: Debian 8 OpenVPN a
 docker/debian-8/openvpn/Makefile
 docker/debian-8/wine/Dockerfile                       Docker: Debian 8 WINE app image
 docker/debian-8/wine/Makefile
-docker/debian-test/Dockerfile
-docker/debian-test/Dockerfile-shell                   Docker: Debian 9 login shell image
-docker/debian-test/Makefile
-docker/debian-test/builder/Makefile                   Docker: Debian 9 software builder app image
-docker/debian-test/builder/Dockerfile
+docker/debian-9/Dockerfile
+docker/debian-9/Dockerfile-base
+docker/debian-9/Dockerfile-shell                   Docker: Debian 9 login shell image
+docker/debian-9/Makefile
+docker/debian-9/builder/Makefile                   Docker: Debian 9 software builder app image
+docker/debian-9/builder/Dockerfile
 docker/jailbreak/Dockerfile                           Docker: empty app image for jail breaking
 docker/jailbreak/Makefile
 docker/ubuntu-16.04/Dockerfile                        Docker: Ubuntu 16.04 base image
@@ -840,4 +844,3 @@ terraform-aws/pxy-as/aws_config.tf                    Terraform AWS: pxy-as exam
 terraform-aws/pxy-as/aws_resources.tf
 terraform-aws/pxy-as/pxy_resources.tf
 terraform-aws/pxy-as/pxy_variables.tf
-

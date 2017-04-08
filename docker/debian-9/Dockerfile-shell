@@ -1,4 +1,4 @@
-FROM drtuxwang/debian-base:8
+FROM drtuxwang/debian-base:9
 
 # Bash shell full setup
 COPY tmpdir/bin/ /opt/software/bin/
