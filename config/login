@@ -39,7 +39,7 @@ if ( $?TERM && "`\tty | \grep -v ' '`" != "" ) then
     setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
     if ( $?tcsh ) then
         setenv MYSHELL "TCSH"
-        set prompt="[%P] %{\033[01;34m%}%~%{\n%}%{\033[01;32m%}%n@%m%{\033[00m%} % "
+        set prompt="%{\033[01;32m%}[%P] %{\033[01;34m%}%~%{\n%}%{\033[01;32m%}%n@%m%{\033[00m%} % "
     else
         setenv MYSHELL "CSH"
         set prompt="$MYUNAME@${MYHNAME}%{\n%}% "
