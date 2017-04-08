@@ -47,9 +47,9 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]
         MYSHELL="BASH"
         if [ "`timeout --signal=KILL 1 git --version 2> /dev/null | grep \"^git version\"`" ]
         then
-            PS1='[\t] \[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[31m\]$(__git_ps1)\[\033[00m\] \$ '
+            PS1='[\t] \[\033[01;34m\]\w\[\033[31m\]$(__git_ps1)\n\[\033[32m\]\u@\h\[\033[00m\] \$ '
         else
-            PS1='[\t] \[\033[01;32m\]\u@\h:\[\033[34m\]\w\[\033[00m\] \$ '
+            PS1='[\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h\[\033[00m\] \$ '
         fi
         case $TERM in
         screen|xterm)
@@ -69,7 +69,7 @@ if [ "$TERM" -a "`\tty 2> /dev/null | \grep -v ' '`" ]
     elif [ "`echo $0 | \grep \"ksh$\"`" ]
     then
         MYSHELL="KORN"
-        PS1="$MYUNAME@${MYHNAME}_$ "
+        PS1="$MYUNAME@${MYHNAME} \$ "
         set -o emacs
         alias -x __A=$(print '\020' 2> /dev/null) 2> /dev/null # up    = Last line
         alias -x __B=$(print '\016' 2> /dev/null) 2> /dev/null # down  = Next line
