@@ -76,6 +76,7 @@ class Options(object):
             BG_COLOUR,
             '-cr',
             '#ff0000',
+            '-ut',
             '-geometry',
             '100x10',
             '-T',
