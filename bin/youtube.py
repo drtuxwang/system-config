@@ -64,27 +64,13 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._youtubedl = command_mod.Command(
-            os.path.join('bin', 'youtube-dl'),
-            errors='ignore'
-        )
-        if not self._youtubedl.is_found():
-            youtube = command_mod.Command(
-                'youtube',
-                args=args[1:],
-                errors='ignore'
-            )
-            if youtube.is_found():
-                subtask_mod.Exec(youtube.get_cmdline()).run()
-            self._youtubedl = command_mod.Command(
-                'youtube-dl',
-                errors='stop'
-            )
+        self._youtubedl = command_mod.CommandFile(sys.executable)
+        self._youtubedl.set_args(['-m', 'youtube_dl'])
 
         if self._args.view_flag:
-            self._youtubedl.set_args(['--list-formats'])
+            self._youtubedl.extend_args(['--list-formats'])
         elif self._args.format:
-            self._youtubedl.set_args(
+            self._youtubedl.extend_args(
                 ['--title', '--format', str(self._args.format[0])])
         self._youtubedl.extend_args(self._args.urls)
 
