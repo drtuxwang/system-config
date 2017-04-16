@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# Wrapper for Python "bin" script that use package
+#
+VERSION=20160920
+
+DIR=`dirname "$0"`
+PYTHON="$DIR/python3"
+FILE="$DIR/"`basename "$0" | sed -e "s/-/_/g"`_.py
+
+exec "$PYTHON" -B "$FILE" "$@"

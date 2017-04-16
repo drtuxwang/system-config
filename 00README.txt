@@ -413,6 +413,9 @@ bin/pylint
 bin/pylint.bat
 bin/virtualenv
 bin/virtualenv.bat
+bin/youtube-dl
+bin/youtube-dl.bat
+bin/youtube_dl_.py
 bin/pidgin             pidgin wrapper (allowing non systems port)
 bin/pidgin.bat
 bin/pidgin.py
