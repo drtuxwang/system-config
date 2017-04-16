@@ -62,9 +62,14 @@ class Options(object):
         if args[1] == "-split":
             if len(args) != 3:
                 self._parse_args(args[1:])
-            command = args[2]
-        else:
-            command = command_mod.Command.args2cmd(args[1:])
+            args[1:] = command_mod.Command.cmd2args(args[2])
+        if len(args) == 2:
+            if args[1].startswith("https://www.youtube.com/watch?"):
+                args.insert(1, 'youtube')
+            elif args[1].startswith(('http://', 'https://', 'ftp://')):
+                args.insert(1, 'wget')
+                args.extend(['--output-document', os.path.basename(args[-1])])
+        command = command_mod.Command.args2cmd(args[1:])
 
         self._xterm = command_mod.Command('xterm', errors='stop')
         self._xterm.set_args([
