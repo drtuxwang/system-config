@@ -36,12 +36,13 @@ class Options(object):
             description='Youtube video downloader.')
 
         parser.add_argument(
-            '-f',
+            '-s',
             nargs=1,
             type=int,
-            dest='format',
-            metavar='code',
-            help='Select video format code.'
+            dest='height',
+            metavar='height',
+            default=360,
+            help='Select video height (default 360).'
         )
         parser.add_argument(
             '-v',
@@ -69,9 +70,12 @@ class Options(object):
 
         if self._args.view_flag:
             self._youtubedl.extend_args(['--list-formats'])
-        elif self._args.format:
-            self._youtubedl.extend_args(
-                ['--title', '--format', str(self._args.format[0])])
+        elif self._args.height:
+            self._youtubedl.extend_args([
+                '--format',
+                'bestvideo[ext=mp4][height={0:d}]+bestaudio[ext=m4a]/'
+                'best[height<=480]'.format(self._args.height)
+            ])
         self._youtubedl.extend_args(self._args.urls)
 
 
