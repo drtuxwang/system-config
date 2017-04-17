@@ -8,8 +8,7 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
-	--publish 80:80 \
-	--publish 443:443 \
+	--publish 8080:80 \
 	--name $(HOSTNAME) \
 	--hostname $(HOSTNAME)
 
