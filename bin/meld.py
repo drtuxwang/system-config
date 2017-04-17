@@ -44,7 +44,7 @@ class Options(object):
         self._meld.set_args(args[1:])
         self._pattern = (
             ': GtkWarning: | self.recent_manager =| gtk.main()|'
-            'accessibility bus address:'
+            'accessibility bus address:|: GLib-GIO-CRITICAL'
         )
 
 
