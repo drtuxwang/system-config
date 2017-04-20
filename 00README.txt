@@ -397,6 +397,9 @@ bin/ipython
 bin/ipython.bat
 bin/ipython3
 bin/ipython3.4.bat
+bin/jenkins-jobs
+bin/jenkins-jobs.bat
+bin/jenkins_jobs_.py
 bin/pep8
 bin/pep8.bat
 bin/pip
