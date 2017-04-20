@@ -67,7 +67,8 @@ class Main(object):
                     sys.argv[0] + ': Cannot find required "ogg123" or '
                     '"cvlc" software.'
                 )
-        bell.set_args(['--play-and-exit', sound])
+            bell.set_args(['--play-and-exit'])
+        bell.append_arg(sound)
 
         subtask_mod.Background(bell.get_cmdline()).run()
 
