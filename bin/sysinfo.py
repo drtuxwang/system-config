@@ -692,9 +692,9 @@ class LinuxSystem(PosixSystem):
                     '/proc/driver/nvidia/version',
                     errors='replace'
                 ) as ifile:
-                    for line in ifile:
-                        if 'Kernel Module ' in line:
-                            device = 'nvidia driver ' + line.split(
+                    for line2 in ifile:
+                        if 'Kernel Module ' in line2:
+                            device = 'nvidia driver ' + line2.split(
                                 'Kernel Module ')[1].split()[0]
             except OSError:
                 pass
@@ -788,9 +788,9 @@ class LinuxSystem(PosixSystem):
                         '/proc/asound/card' + card + '/pcm*[cp]/info')):
                     try:
                         with open(file, errors='replace') as ifile:
-                            for line in ifile:
-                                if line.startswith('name: '):
-                                    name = model + ' ' + line.rstrip(
+                            for line2 in ifile:
+                                if line2.startswith('name: '):
+                                    name = model + ' ' + line2.rstrip(
                                         '\r\n').replace('name: ', '', 1)
                     except (IndexError, OSError):
                         continue
@@ -1898,8 +1898,8 @@ class MacSystem(PosixSystem):
                 )
                 task = subtask_mod.Batch(command.get_cmdline())
                 task.run(pattern='^' + device + ' .* ')
-                for line in task.get_output():
-                    size = line.split()[1]
+                for line2 in task.get_output():
+                    size = line2.split()[1]
                     break
                 else:
                     size = '???'

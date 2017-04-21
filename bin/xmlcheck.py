@@ -81,10 +81,14 @@ class XmlDataHandler(xml.sax.ContentHandler):
                 print(
                     '.'.join(self._elements + [key]), "='", value, "'", sep='')
 
-    def characters(self, text):
+    def characters(self, content):
         if self._view_flag:
-            print('.'.join(self._elements + ['text']), "='" +
-                  text.replace('\\', '\\\\').replace('\n', '\\n'), "'", sep='')
+            print(
+                '.'.join(self._elements + ['text']),
+                "='" + content.replace('\\', '\\\\').replace('\n', '\\n'),
+                "'",
+                sep=''
+            )
 
     def endElement(self, name):
         self._elements.pop()

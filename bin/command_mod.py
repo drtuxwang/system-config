@@ -4,7 +4,7 @@ Python sub task handling module
 
 Copyright GPL v2: 2006-2017 By Dr Colin Kong
 
-Version 2.0.11 (2017-02-18)
+Version 2.0.12 (2017-04-21)
 """
 
 import distutils.version
@@ -299,19 +299,12 @@ class Command(object):
 
 class CommandFile(Command):
     """
-    This class stores a command (uses supplied executable)
+    This class stores a command (uses supplied executable location)
     """
 
-    def __init__(self, file, **kwargs):
-        """
-        file = Full PATH to executable
-        args = Optional command arguments list
-        """
-        super().__init__(file, **kwargs)
-
     @staticmethod
-    def _locate(file, info):
-        return file
+    def _locate(program, info):
+        return program
 
 
 class Platform(object):
