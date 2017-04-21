@@ -94,14 +94,12 @@ class Main(object):
         is_bad_char = re.compile(r'^-|[ !\'$&`"()*<>?\[\]\\\\|]')
         for file in options.get_files():
             newfile = is_bad_char.sub('_', file)
-            if newfile != file:
-                if not os.path.isfile(newfile):
-                    if not os.path.isdir(newfile):
-                        if not os.path.islink(newfile):
-                            try:
-                                shutil.move(file, newfile)
-                            except OSError:
-                                pass
+            if newfile != file and not os.path.isfile(newfile):
+                if not os.path.isdir(newfile) and not os.path.islink(newfile):
+                    try:
+                        shutil.move(file, newfile)
+                    except OSError:
+                        pass
 
 
 if __name__ == '__main__':

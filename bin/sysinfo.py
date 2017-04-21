@@ -27,7 +27,7 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.11.2'
+RELEASE = '4.11.3'
 VERSION = 20170421
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -2157,7 +2157,7 @@ class WindowsSystem(OperatingSystem):
             task = subtask_mod.Batch(self._systeminfo.get_cmdline())
             task.run()
             memory = task.get_output(':.*MB$')
-            if len(memory) > 0:
+            if memory:
                 info['System Memory'] = memory[0].split()[-2].replace(',', '')
             if len(memory) > 2:
                 info['System Swap Space'] = (

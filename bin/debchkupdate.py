@@ -228,11 +228,11 @@ class Main(object):
                             )
                             print(file, '(Replaces', version + ')')
                             print(file, file=ofile)
-                            for name in sorted(self._depends(
+                            for dependency in sorted(self._depends(
                                     versions,
                                     self._packages[name].get_depends()
                             )):
-                                if name in self._packages:
+                                if dependency in self._packages:
                                     file = self._local(
                                         distribution,
                                         self._packages[name].get_url()

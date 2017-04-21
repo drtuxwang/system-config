@@ -18,7 +18,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '4.0.2-1'
+RELEASE = '4.0.2-2'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -266,6 +266,24 @@ class Chinese(Language):
                 ' "ffplay" (libav-tools) or "avplay" (ffmpeg).'
             )
 
+    def _speak(self, sounds):
+        files = []
+        for sound in sounds:
+            if os.path.isfile(
+                    os.path.join(self._ogg_dir, sound + '.ogg')):
+                files.append(sound + '.ogg')
+        if files:
+            # Pause after every 100 words if no punctuation marks
+            for i in range(0, len(files), 10):
+                exitcode = self._ogg_player.run(files[i:i + 10])
+                if exitcode:
+                    raise SystemExit(
+                        sys.argv[0] + ': Error code ' +
+                        str(exitcode) + ' received from "' +
+                        self._ogg_player.get_player() + '".'
+                    )
+                time.sleep(0.25)
+
     def text2speech(self, phrases):
         """
         Text to speech conversion
@@ -274,22 +292,7 @@ class Chinese(Language):
             for sounds in self._dictionary.map_speech(phrase):
                 print(' '.join(sounds))
                 if self._options.get_sound_flag():
-                    files = []
-                    for sound in sounds:
-                        if os.path.isfile(
-                                os.path.join(self._ogg_dir, sound + '.ogg')):
-                            files.append(sound + '.ogg')
-                    if files:
-                        # Pause after every 100 words if no punctuation marks
-                        for i in range(0, len(files), 10):
-                            exitcode = self._ogg_player.run(files[i:i + 10])
-                            if exitcode:
-                                raise SystemExit(
-                                    sys.argv[0] + ': Error code ' +
-                                    str(exitcode) + ' received from "' +
-                                    self._ogg_player.get_player() + '".'
-                                )
-                            time.sleep(0.25)
+                    self._speak(sounds)
 
 
 class ChineseDictionary(object):

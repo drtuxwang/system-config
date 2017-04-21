@@ -331,6 +331,24 @@ class Main(object):
         return (server, repo_match, tag_match)
 
     @classmethod
+    def _check(cls, remove, url):
+        server, repo_match, tag_match = cls._breakup_url(url)
+        registry = cls._get_registry(server, url)
+        prefix = server.split('://')[-1]
+
+        for repository in sorted(registry.get_repositories()):
+            if fnmatch.fnmatch(repository, repo_match):
+                digests = registry.get_digests(repository)
+                for tag in sorted(digests.keys()):
+                    if fnmatch.fnmatch(tag, tag_match):
+                        if remove:
+                            registry.delete(
+                                server, repository, tag, digests[tag])
+                        else:
+                            print('{0:s}  {1:s}/{2:s}:{3:s}'.format(
+                                digests[tag], prefix, repository, tag))
+
+    @classmethod
     def run(cls):
         """
         Run check
@@ -342,21 +360,7 @@ class Main(object):
                 raise SystemExit('Aborted!')
 
         for url in options.get_urls():
-            server, repo_match, tag_match = cls._breakup_url(url)
-            registry = cls._get_registry(server, url)
-            prefix = server.split('://')[-1]
-
-            for repository in sorted(registry.get_repositories()):
-                if fnmatch.fnmatch(repository, repo_match):
-                    digests = registry.get_digests(repository)
-                    for tag in sorted(digests.keys()):
-                        if fnmatch.fnmatch(tag, tag_match):
-                            if remove:
-                                registry.delete(
-                                    server, repository, tag, digests[tag])
-                            else:
-                                print('{0:s}  {1:s}/{2:s}:{3:s}'.format(
-                                    digests[tag], prefix, repository, tag))
+            cls._check(remove, url)
 
 
 if __name__ == '__main__':
