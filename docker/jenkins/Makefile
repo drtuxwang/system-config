@@ -1,6 +1,7 @@
 IMAGE := jenkins
 HOSTNAME := jenkins-dock
 FLAGS := --rm \
+	--privileged=true \
 	--interactive \
 	--tty \
 	--cpu-period=100000 \

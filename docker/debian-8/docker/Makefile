@@ -1,6 +1,7 @@
 IMAGE := drtuxwang/debian-docker:8
 HOSTNAME := jessie-docker-dock
 FLAGS := --rm \
+	--privileged=true \
 	--interactive \
 	--tty \
 	--cpu-period=100000 \
@@ -13,7 +14,6 @@ FLAGS := --rm \
 	--volume=/shared:/shared \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
-	--privileged=true \
 	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--name $(HOSTNAME) \
 	--hostname $(HOSTNAME)
