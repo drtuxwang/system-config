@@ -92,7 +92,7 @@ class Main(object):
         string = ''
         while True:
             data = pipe.read(4096)
-            if len(data) == 0:
+            if not data:
                 break
             for byte in data:
                 if byte > 31 and byte < 127:
@@ -110,7 +110,7 @@ class Main(object):
         """
         options = Options()
 
-        if len(options.get_files()) == 0:
+        if not options.get_files():
             self._pipe(sys.stdin.buffer)
         else:
             for file in options.get_files():
