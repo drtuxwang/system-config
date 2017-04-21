@@ -814,12 +814,16 @@ docker/debian-8/wine/Dockerfile                       Docker: Debian 8 WINE app 
 docker/debian-8/wine/Makefile
 docker/debian-9/Dockerfile
 docker/debian-9/Dockerfile-base
-docker/debian-9/Dockerfile-shell                   Docker: Debian 9 login shell image
+docker/debian-9/Dockerfile-shell                      Docker: Debian 9 login shell image
 docker/debian-9/Makefile
-docker/debian-9/builder/Makefile                   Docker: Debian 9 software builder app image
+docker/debian-9/builder/Makefile                      Docker: Debian 9 software builder app image
 docker/debian-9/builder/Dockerfile
 docker/jailbreak/Dockerfile                           Docker: empty app image for jail breaking
 docker/jailbreak/Makefile
+docker/jenkins/Makefile                               Docker: Jenkins
+docker/registry-2/Dockerfile                          Docker: Registry 2
+docker/registry-2/Makefile
+docker/registry-2/files/config.yml
 docker/ubuntu-16.04/Dockerfile                        Docker: Ubuntu 16.04 base image
 docker/ubuntu-16.04/Makefile
 docker/Makefile                                       Makefile for building all images

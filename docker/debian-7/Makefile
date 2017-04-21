@@ -26,7 +26,18 @@ all: build-all
 	docker images
 
 clean:
+	cd builder && make clean
 	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_SHELL) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "`
+
+pull:
+	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+
+build-all: build
+	cd builder && make build
+
+build:
+	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	cd builder && make clean
 
 pull:

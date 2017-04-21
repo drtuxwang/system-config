@@ -1,6 +1,5 @@
-IMAGE_BASE := ubuntu:16.04
-IMAGE := drtuxwang/ubuntu:16.04
-HOSTNAME := xenial-dock
+IMAGE := drtuxwang/registry:2
+HOSTNAME := registry2-dock
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -9,6 +8,8 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
+	--volume=/var/lib/registry:/var/lib/registry \
+	--publish 5000:5000 \
 	--name $(HOSTNAME) \
 	--hostname $(HOSTNAME)
 
@@ -17,17 +18,16 @@ default: build
 	docker images
 
 clean:
-	docker rmi -f $(IMAGE_BASE) $(IMAGE) ||:
+	docker rmi -f $(IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "`
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 build:
-	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
-	rm -rf tmpdir
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) bash || exit 0
+	docker run $(FLAGS) $(IMAGE) || exit 0

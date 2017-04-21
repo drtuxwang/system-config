@@ -28,12 +28,13 @@ all: build-all
 	docker images
 
 clean:
-	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_SHELL) $(IMAGE_XBASE) $(IMAGE_XSHELL) ||:
 	cd builder && make clean
 	cd docker && make clean
 	cd nginx && make clean
 	cd openvpn && make clean
 	cd wine && make clean
+	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_SHELL) $(IMAGE_XBASE) $(IMAGE_XSHELL) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "`
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`

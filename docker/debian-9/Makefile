@@ -26,8 +26,9 @@ all: build-all
 	docker images
 
 clean:
-	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_SHELL) ||:
 	cd builder && make clean
+	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_SHELL) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "`
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
