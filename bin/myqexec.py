@@ -13,7 +13,7 @@ import time
 import command_mod
 import subtask_mod
 
-RELEASE = '2.7.4'
+RELEASE = '2.7.5'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
@@ -107,8 +107,7 @@ class Main(object):
     def _get_command(file):
         if os.path.isfile(file):
             return command_mod.CommandFile(os.path.abspath(file))
-        else:
-            return command_mod.Command(file, errors='stop')
+        return command_mod.Command(file, errors='stop')
 
     def _spawn(self, options):
         try:

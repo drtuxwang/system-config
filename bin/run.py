@@ -79,8 +79,7 @@ class Options(object):
         file = os.path.join(directory, command)
         if os.path.isfile(file):
             return command_mod.CommandFile(file)
-        else:
-            return command_mod.Command(command)
+        return command_mod.Command(command)
 
     def parse(self, args):
         """

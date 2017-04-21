@@ -50,10 +50,9 @@ class Options(object):
     def _get_ping():
         if os.path.isfile('/usr/sbin/ping'):
             return command_mod.CommandFile('/usr/sbin/ping')
-        elif os.path.isfile('/usr/etc/ping'):
+        if os.path.isfile('/usr/etc/ping'):
             return command_mod.CommandFile('/usr/etc/ping')
-        else:
-            return command_mod.Command('ping')
+        return command_mod.Command('ping')
 
     def parse(self, args):
         """

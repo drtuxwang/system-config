@@ -53,14 +53,11 @@ class Options(object):
             if command_mod.Platform.get_system() == 'macos':
                 return os.path.join(
                     'Library', 'Application Support', 'Chromium')
-            else:
-                return os.path.join('.config', 'chromium')
-        else:
-            if command_mod.Platform.get_system() == 'macos':
-                return os.path.join(
-                    'Library', 'Application Support', 'Google', 'Chrome')
-            else:
-                return os.path.join('.config', 'google-chrome')
+            return os.path.join('.config', 'chromium')
+        if command_mod.Platform.get_system() == 'macos':
+            return os.path.join(
+                'Library', 'Application Support', 'Google', 'Chrome')
+        return os.path.join('.config', 'google-chrome')
 
     @staticmethod
     def _clean_adobe():

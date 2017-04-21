@@ -68,10 +68,9 @@ class Options(object):
     def _get_ping():
         if os.path.isfile('/usr/sbin/ping'):
             return command_mod.CommandFile('/usr/sbin/ping')
-        elif os.path.isfile('/usr/etc/ping'):
+        if os.path.isfile('/usr/etc/ping'):
             return command_mod.CommandFile('/usr/etc/ping')
-        else:
-            return command_mod.Command('ping')
+        return command_mod.Command('ping')
 
     def parse(self, args):
         """
@@ -137,8 +136,7 @@ class Main(object):
         task.run(pattern=options.get_pattern())
         if task.has_output():
             return options.get_host() + ' is alive'
-        else:
-            return options.get_host() + ' is dead'
+        return options.get_host() + ' is dead'
 
     def run(self):
         """

@@ -86,9 +86,8 @@ class Options(object):
                 self._args.command[0],
                 args=args[len(my_args):]
             )
-        else:
-            return command_mod.Command(
-                self._args.command[0], args=args[len(my_args):], errors='stop')
+        return command_mod.Command(
+            self._args.command[0], args=args[len(my_args):], errors='stop')
 
     def parse(self, args):
         """

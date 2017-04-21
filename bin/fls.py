@@ -174,8 +174,7 @@ class Main(object):
             file_stats = sorted(file_stats, key=lambda s: s.get_size())
         if options.get_reverse_flag():
             return reversed(file_stats)
-        else:
-            return file_stats
+        return file_stats
 
     def run(self):
         """

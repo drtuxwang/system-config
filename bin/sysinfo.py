@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.11.1'
-VERSION = 20170203
+RELEASE = '4.11.2'
+VERSION = 20170421
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -414,10 +414,9 @@ class OperatingSystem(object):
         fqdn = (socket.getfqdn()).lower()
         if fqdn.count('.') < 2:
             return 'Unknown'
-        elif fqdn.endswith('.'):
+        if fqdn.endswith('.'):
             return fqdn
-        else:
-            return fqdn + '.'
+        return fqdn + '.'
 
     @classmethod
     def get_net_info(cls):
@@ -493,8 +492,7 @@ class OperatingSystem(object):
     def _isitset(values, name):
         if name in values:
             return values[name][0]
-        else:
-            return 'Unknown'
+        return 'Unknown'
 
     @staticmethod
     def factory():

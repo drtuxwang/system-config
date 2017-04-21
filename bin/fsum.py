@@ -55,8 +55,7 @@ class Options(object):
         """
         if self._args.update_file:
             return self._args.update_file[0]
-        else:
-            return None
+        return None
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(

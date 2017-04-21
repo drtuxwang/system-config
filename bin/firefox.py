@@ -50,8 +50,7 @@ class Options(object):
         if command_mod.Platform.get_system() == 'macos':
             return os.path.join(
                 'Library', 'Application Support', 'Firefox', 'Profiles')
-        else:
-            return os.path.join('.mozilla', 'firefox')
+        return os.path.join('.mozilla', 'firefox')
 
     @staticmethod
     def _clean_adobe():
