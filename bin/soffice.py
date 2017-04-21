@@ -87,7 +87,7 @@ class Main(object):
         if sys.argv[1:] == ['--version']:
             subtask_mod.Exec(self._soffice.get_cmdline()).run()
         self._pattern = (
-            '^$|: GLib-CRITICAL |: GLib-GObject-WARNING |: Gtk-WARNING |'
+            '^$|: GLib-CRITICAL |: GLib-GObject-WARNING |: G[dt]k-WARNING |'
             ': wrong ELF class:|: Could not find a Java Runtime|'
             ': failed to read path from javaldx|^Failed to load module:|'
             'unary operator expected|: unable to get gail version number|'
