@@ -147,7 +147,7 @@ class Options(object):
 
         py_args = []
         mod_args = []
-        while len(args):
+        while args:
             if args[0] in {
                     '-pyldv',
                     '-pyldvv',

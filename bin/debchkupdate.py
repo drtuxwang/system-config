@@ -158,7 +158,7 @@ class Main(object):
             with open(pin_file, errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
-                    if len(columns) != 0:
+                    if columns:
                         pattern = columns[0]
                         if pattern[:1] != '#':
                             file = os.path.join(
@@ -184,7 +184,7 @@ class Main(object):
             with open(file, errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
-                    if len(columns) != 0:
+                    if columns:
                         name = columns[0]
                         if name[:1] != '#':
                             if name in self._packages:

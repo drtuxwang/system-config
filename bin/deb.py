@@ -153,7 +153,7 @@ class Options(object):
             self._package_names = self._args.args
         elif self._args.option:
             self._dpkg.set_args([self._args.option] + self._args.args)
-        elif len(self._args.args) and self._args.args[0].endswith('.deb'):
+        elif self._args.args and self._args.args[0].endswith('.deb'):
             self._dpkg = command_mod.Command('dpkg-deb', errors='stop')
             self._dpkg.set_args(['-b', os.curdir, self._args.args[0]])
         elif self._args.args:

@@ -2,9 +2,9 @@
 """
 Python file handling utility module
 
-Copyright GPL v2: 2006-2016 By Dr Colin Kong
+Copyright GPL v2: 2006-2017 By Dr Colin Kong
 
-Version 2.1.1 (2016-07-23)
+Version 2.1.2 (2017-04-21)
 """
 
 import os
@@ -180,7 +180,7 @@ class FileUtil(object):
                 string = ''
                 while True:
                     data = ifile.read(4096)
-                    if len(data) == 0:
+                    if not data:
                         break
                     for byte in data:
                         if byte > 31 and byte < 127:

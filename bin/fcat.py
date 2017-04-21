@@ -75,7 +75,7 @@ class Main(object):
     def _pipe(pipe):
         while True:
             data = pipe.read(4096)
-            if len(data) == 0:
+            if not data:
                 break
             # pylint: disable = no-member
             sys.stdout.buffer.write(data)
@@ -104,7 +104,7 @@ class Main(object):
         """
         options = Options()
 
-        if len(options.get_files()) == 0:
+        if not options.get_files():
             self._pipe(sys.stdin.buffer)
         else:
             for file in options.get_files():

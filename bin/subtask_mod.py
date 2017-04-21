@@ -2,9 +2,9 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2016 By Dr Colin Kong
+Copyright GPL v2: 2006-2017 By Dr Colin Kong
 
-Version 2.1.0 (2016-08-20)
+Version 2.1.1 (2017-04-21)
 """
 
 import copy
@@ -359,7 +359,7 @@ class Batch(Task):
             with open(file, mode) as ofile:
                 while True:
                     chunk = child.stdout.read(4096)
-                    if not len(chunk):
+                    if not chunk:
                         break
                     ofile.write(chunk)
         except KeyboardInterrupt:

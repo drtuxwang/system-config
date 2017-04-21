@@ -87,7 +87,7 @@ class Main(object):
         options = Options()
 
         lines = []
-        if len(options.get_files()):
+        if options.get_files():
             for file in options.get_files():
                 try:
                     with open(file, errors='replace') as ifile:

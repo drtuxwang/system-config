@@ -64,7 +64,7 @@ class Options(object):
         )
 
         my_args = []
-        while len(args):
+        while args:
             my_args.append(args[0])
             if not args[0].startswith('-'):
                 break
