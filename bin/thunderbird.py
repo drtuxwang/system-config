@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for generic command
+Wrapper for 'thunderbird' command
 """
 
 import glob
@@ -14,6 +14,37 @@ import subtask_mod
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+
+class Options(object):
+    """
+    Options class
+    """
+
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
+
+    def get_pattern(self):
+        """
+        Return filter patern.
+        """
+        return self._pattern
+
+    def get_thunderbird(self):
+        """
+        Return Thunderbird Command class object.
+        """
+        return self._thunderbird
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._thunderbird = command_mod.Command(
+            os.path.basename(args[0]).replace('.py', ''), errors='stop')
+
+        self._thunderbird.extend_args(args[1:])
+        self._pattern = ('^$|: GLib-GObject-CRITICAL |calBackendLoader')
 
 class Main(object):
     """
@@ -51,11 +82,10 @@ class Main(object):
         """
         Start program
         """
-        name = os.path.basename(sys.argv[0]).replace('.py', '')
+        options = Options()
 
-        command = command_mod.Command(name, errors='stop')
-        command.set_args(sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        subtask_mod.Background(options.get_thunderbird().get_cmdline()).run(
+            pattern=options.get_pattern())
 
 
 if __name__ == '__main__':
