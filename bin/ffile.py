@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 """
-Wrapper for 'thunderbird' command
+Determine file type
 """
 
+import argparse
 import glob
 import os
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+import magic
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
 
 
 class Options(object):
@@ -24,27 +25,30 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_pattern(self):
+    def get_files(self):
         """
-        Return filter patern.
+        Return list of files.
         """
-        return self._pattern
+        return self._args.files
 
-    def get_thunderbird(self):
-        """
-        Return Thunderbird Command class object.
-        """
-        return self._thunderbird
+    def _parse_args(self, args):
+        parser = argparse.ArgumentParser(
+            description='determine file type.')
+
+        parser.add_argument(
+            'files',
+            nargs='+',
+            metavar='file',
+            help='File to view.'
+        )
+
+        self._args = parser.parse_args(args)
 
     def parse(self, args):
         """
         Parse arguments
         """
-        self._thunderbird = command_mod.Command(
-            os.path.basename(args[0]).replace('.py', ''), errors='stop')
-
-        self._thunderbird.extend_args(args[1:])
-        self._pattern = ('^$|: GLib-GObject-CRITICAL |calBackendLoader')
+        self._parse_args(args[1:])
 
 
 class Main(object):
@@ -85,8 +89,9 @@ class Main(object):
         """
         options = Options()
 
-        subtask_mod.Background(options.get_thunderbird().get_cmdline()).run(
-            pattern=options.get_pattern())
+        with magic.Magic() as checker:
+            for file in options.get_files():
+                print('{0:s}: {1:s}'.format(file, checker.id_filename(file)))
 
 
 if __name__ == '__main__':

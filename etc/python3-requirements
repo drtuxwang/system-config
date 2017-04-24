@@ -6,6 +6,7 @@ boto3>=1.2.6
 botocore>=1.4.93
 devpi-client>=2.6.4
 django>=1.9.13
+filemagic>=1.6
 flask>=0.11
 glances>=2.8.8
 ipdb>=0.9.4

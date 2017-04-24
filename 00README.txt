@@ -123,6 +123,9 @@ bin/fdiff.py
 bin/fdu                Show file disk usage
 bin/fdu.bat            (like du but same values independent of file system including Windows)
 bin/fdu.py
+bin/ffile              Determine file type
+bin/ffile.bat
+bin/ffile.py
 bin/ffind              Find file or directory
 bin/ffind.bat          (uses regular expression)
 bin/ffind.py
