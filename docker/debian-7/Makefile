@@ -38,16 +38,6 @@ build-all: build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
-	cd builder && make clean
-
-pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-
-build-all: build
-	cd builder && make build
-
-build:
-	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
