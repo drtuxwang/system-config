@@ -61,7 +61,7 @@ class Options(object):
         if self._args.test_flag:
             self._bzip2.set_args(['-t'])
         else:
-            self._bzip2.set_args(['-d'])
+            self._bzip2.set_args(['-d', '-k'])
         self._bzip2.extend_args(self._args.archives)
 
 

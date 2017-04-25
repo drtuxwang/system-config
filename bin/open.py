@@ -17,33 +17,55 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
 
 BROWSER = 'chrome'
 MAPPINGS = {
-    'htm': BROWSER,
-    'html': BROWSER,
-    'xhtml': BROWSER,
-    'mp3': 'audacity',
-    'ogg': 'audacity',
-    'wav': 'audacity',
-    'ps': 'evince',
-    'eps': 'evince',
-    'pdf': 'evince',
-    'gif': 'gimp',
-    'jpeg': 'gimp',
-    'jpg': 'gimp',
-    'png': 'gimp',
+    '7z': 'un7z',
+    'ace': 'unace',
+    'bz2': 'unbz2',
     'csv': 'soffice',
+    'deb': 'undeb',
+    'dmg': 'undmg',
     'doc': 'soffice',
     'docx': 'soffice',
+    'gpg': 'ungpg',
+    'gif': 'gimp',
+    'gz': 'ungz',
+    'htm': BROWSER,
+    'html': BROWSER,
+    'iso': 'un7z',
+    'jar': 'un7z',
+    'jpeg': 'gimp',
+    'jpg': 'gimp',
+    'json': 'xedit',
+    'mp3': 'audacity',
     'odf': 'soffice',
     'odg': 'soffice',
     'ods': 'soffice',
     'odt': 'soffice',
+    'ogg': 'audacity',
+    'png': 'gimp',
     'ppt': 'soffice',
     'pptx': 'soffice',
+    'pdf': 'unpdf',
+    'rar': 'un7z',
+    'rpm': 'unrpm',
+    'run': 'un7z',
+    'sqlite': 'unsqlite',
+    'tar': 'untar',
+    'tar.bz2': 'untar',
+    'tar.gz': 'untar',
+    'tar.lzma': 'untar',
+    'tar.xz': 'untar',
+    'tbz': 'untar',
+    'tgz': 'untar',
+    'tlz': 'untar',
+    'txt': 'xedit',
+    'txz': 'untar',
+    'wav': 'audacity',
     'wpd': 'soffice',
+    'xhtml': BROWSER,
     'xls': 'soffice',
     'xlsx': 'soffice',
-    'json': 'xedit',
-    'txt': 'xedit'
+    'xz': 'unxz',
+    'zip': 'un7z',
 }
 URL_PREFIXS = ('http', 'https', 'ftp')
 
@@ -126,24 +148,25 @@ class Main(object):
         """
         options = Options()
 
-        files = options.get_files()
-
-        for file in files:
-            prefix = file.split(':', 1)[0]
-            extension = file.rsplit('.', 1)[-1].lower()
-
+        for file in options.get_files():
             if os.path.isdir(file):
                 self._spawn('xdesktop', file)
-            elif prefix in URL_PREFIXS:
+            elif file.split(':', 1)[0] in URL_PREFIXS:
                 self._spawn(BROWSER, file)
             elif not os.path.isfile(file):
                 print(file + ': cannot find file.')
             else:
-                command = MAPPINGS.get(extension)
+                command = MAPPINGS.get(
+                    '.'.join(file.rsplit('.', 2)[-2:]).lower()
+                )
                 if command:
                     self._spawn(command, file)
                 else:
-                    print(file + ': unknown file extension.')
+                    command = MAPPINGS.get(file.rsplit('.', 1)[-1].lower())
+                    if command:
+                        self._spawn(command, file)
+                    else:
+                        print(file + ': unknown file extension.')
 
 
 if __name__ == '__main__':

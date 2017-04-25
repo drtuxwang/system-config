@@ -62,7 +62,7 @@ class Options(object):
         self._parse_args(args[1:])
 
         self._command = command_mod.Command('xz', errors='stop')
-        self._command.set_args(['-d'] + self._args.archives)
+        self._command.set_args(['-d', '-k'] + self._args.archives)
         self._set_libraries(self._command)
 
 

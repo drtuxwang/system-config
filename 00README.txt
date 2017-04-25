@@ -579,8 +579,8 @@ bin/unrar              Unpack a compressed archive in RAR format
 bin/unrar.py
 bin/unrpm              Unpack a compressed archive in RPM format
 bin/unrpm.py
-bin/unsql              Unpack a sqlite database file
-bin/unsql.py
+bin/unsqlite              Unpack a sqlite database file
+bin/unsqlite.py
 bin/untar              Unpack a compressed archive in
 bin/untar.bat          TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.
 bin/untar.py

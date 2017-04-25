@@ -51,7 +51,7 @@ class Options(object):
         self._parse_args(args[1:])
 
         self._bzip2 = command_mod.Command('bzip2', errors='stop')
-        self._bzip2.set_args(['-9'] + self._args.files)
+        self._bzip2.set_args(['-9', '-k'] + self._args.files)
 
 
 class Main(object):

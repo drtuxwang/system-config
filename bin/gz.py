@@ -51,7 +51,7 @@ class Options(object):
         self._parse_args(args[1:])
 
         self._gzip = command_mod.Command('gzip', errors='stop')
-        self._gzip.set_args(['-9'] + self._args.files)
+        self._gzip.set_args(['-9', '-k'] + self._args.files)
 
 
 class Main(object):
