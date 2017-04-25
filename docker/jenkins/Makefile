@@ -20,6 +20,9 @@ default:
 clean:
 	docker rmi -f $(IMAGE) ||:
 
+pull:
+	docker pull $(IMAGE)
+
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(IMAGE) || exit 0

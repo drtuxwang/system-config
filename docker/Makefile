@@ -20,6 +20,7 @@ pull:
 	cd debian-7 && make pull
 	cd debian-8 && make pull
 	cd debian-9 && make pull
+	cd jenkins && make pull
 	cd registry-2 && make pull
 	cd ubuntu-16.04 && make pull
 
