@@ -22,6 +22,7 @@ clean:
 
 pull:
 	docker pull $(IMAGE)
+	docker inspect $(IMAGE) | grep JENKINS_VERSION | uniq
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
