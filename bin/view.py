@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Open files using default application.
+View files using default application.
 """
 
 import argparse
@@ -17,55 +17,51 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
 
 BROWSER = ['chrome']
 MAPPINGS = {
-    '7z': ['un7z'],
-    'ace': ['unace'],
-    'bz2': ['unbz2'],
+    '7z': ['un7z', '-v'],
+    'ace': ['unace', '-v'],
+    'bz2': ['unbz2', '-v'],
     'csv': ['soffice'],
-    'deb': ['undeb'],
-    'dmg': ['undmg'],
+    'deb': ['undeb', '-v'],
+    'dmg': ['undmg', '-v'],
     'doc': ['soffice'],
     'docx': ['soffice'],
-    'gpg': ['ungpg'],
-    'gif': ['gimp'],
-    'gz': ['ungz'],
+    'gif': ['gqview'],
     'htm': BROWSER,
     'html': BROWSER,
-    'iso': ['un7z'],
-    'jar': ['un7z'],
-    'jpeg': ['gimp'],
-    'jpg': ['gimp'],
+    'iso': ['un7z', '-v'],
+    'jar': ['un7z', '-v'],
+    'jpeg': ['gqview'],
+    'jpg': ['gqview'],
     'json': ['xedit'],
-    'mp3': ['audacity'],
+    'mp3': ['play'],
     'odf': ['soffice'],
     'odg': ['soffice'],
     'ods': ['soffice'],
     'odt': ['soffice'],
-    'ogg': ['audacity'],
-    'png': ['gimp'],
+    'ogg': ['play'],
+    'png': ['gqview'],
     'ppt': ['soffice'],
     'pptx': ['soffice'],
-    'pdf': ['unpdf'],
-    'rar': ['un7z'],
-    'rpm': ['unrpm'],
-    'run': ['un7z'],
-    'sqlite': ['unsqlite'],
-    'tar': ['untar'],
-    'tar.bz2': ['untar'],
-    'tar.gz': ['untar'],
-    'tar.lzma': ['untar'],
-    'tar.xz': ['untar'],
-    'tbz': ['untar'],
-    'tgz': ['untar'],
-    'tlz': ['untar'],
+    'pdf': ['evince'],
+    'rar': ['un7z', '-v'],
+    'rpm': ['unrpm', '-v'],
+    'run': ['un7z', '-v'],
+    'tar': ['untar', '-v'],
+    'tar.bz2': ['untar', '-v'],
+    'tar.gz': ['untar', '-v'],
+    'tar.lzma': ['untar', '-v'],
+    'tar.xz': ['untar', '-v'],
+    'tbz': ['untar', '-v'],
+    'tgz': ['untar', '-v'],
+    'tlz': ['untar', '-v'],
     'txt': ['xedit'],
-    'txz': ['untar'],
-    'wav': ['audacity'],
+    'txz': ['untar', '-v'],
+    'wav': ['play'],
     'wpd': ['soffice'],
     'xhtml': BROWSER,
     'xls': ['soffice'],
     'xlsx': ['soffice'],
-    'xz': ['unxz'],
-    'zip': ['un7z'],
+    'zip': ['un7z', '-v'],
 }
 URL_PREFIXS = ('http', 'https', 'ftp')
 
@@ -163,8 +159,10 @@ class Main(object):
                 if not command:
                     command = MAPPINGS.get(file.rsplit('.', 1)[-1].lower())
                     if not command:
-                        raise SystemExit(
-                            sys.argv[0] + ': unknown file extension: ' + file)
+                        view = command_mod.Command('view', errors='stop')
+                        view.set_args([file])
+                        subtask_mod.Task(view.get_cmdline()).run()
+                        continue
             self._spawn(command, file)
 
 

@@ -363,8 +363,8 @@ bin/ocr                Convert image file to text using OCR
 bin/ocr.py             (uses tesseract)
 bin/ogg                Encode OGG audio using avconv (libvorbis)
 bin/ogg.py
-bin/open               Open files using default application
-bin/open.py            (hardwired application list)
+bin/open               Open files using hardwired application mapping
+bin/open.py
 bin/pause              Pause until user presses <ENTER/RETURN> key
 bin/pause.bat
 bin/pause.py
@@ -606,6 +606,8 @@ bin/vbox.py            (uses VBoxManage)
 bin/vi                 vi wrapper (allowing non systems port)
 bin/vi.bat
 bin/vi.py
+bin/view               View files using hardwired application mapping
+bin/view.py
 bin/vim                vim wrapper (allowing non systems port)
 bin/vim.bat
 bin/vim.py
