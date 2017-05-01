@@ -121,18 +121,10 @@ class Main(object):
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" PDF file.')
-            directory = file[:-4]
-            if not os.path.isdir(directory):
-                try:
-                    os.mkdir(directory)
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + directory +
-                        '" directory.'
-                    )
-            print('Unpacking "' + directory + os.sep + '*.jpg" file...')
+            prefix = os.path.basename(file).rsplit('.', 1)[0]
+            print('Unpacking "{0:s}-*.jpg" file...'.format(prefix))
             task = subtask_mod.Task(command.get_cmdline() + [
-                '-sOutputFile=' + directory + os.sep + '%08d.jpg',
+                '-sOutputFile=' + prefix + '-%02d.jpg',
                 '-c',
                 'save',
                 'pop',
