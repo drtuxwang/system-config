@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "chromium" & "google-chome" commands
+Wrapper for "google-chrome" & chromium" commands
 
 Use '-copy' to copy profile to '/tmp'
 Use '-reset' to clean junk from profile
@@ -271,7 +271,7 @@ class Options(object):
 
     @staticmethod
     def _locate():
-        commands = ['chromium', 'chromium-browser', 'google-chrome']
+        commands = ['google-chrome', 'chromium-browser', 'chromium']
         for command in commands:
             chrome = command_mod.Command(command, errors='ignore')
             if chrome.is_found():
