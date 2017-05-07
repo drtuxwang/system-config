@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Wrapper for "google-chrome" commands
+Wrapper for "chromium" commands
 
 Use '-copy' to copy profile to '/tmp'
 Use '-reset' to clean junk from profile
-Use '-restart' to restart chrome
+Use '-restart' to restart chromium
 """
 
 import getpass
@@ -49,8 +49,8 @@ class Options(object):
     def _get_profiles_dir(self):
         if command_mod.Platform.get_system() == 'macos':
             return os.path.join(
-                'Library', 'Application Support', 'Google', 'Chrome')
-        return os.path.join('.config', 'google-chrome')
+                'Library', 'Application Support', 'Chromium')
+        return os.path.join('.config', 'chromium')
 
     @staticmethod
     def _clean_adobe():
@@ -81,7 +81,7 @@ class Options(object):
         except OSError:
             pass
 
-        file = os.path.join(os.environ['HOME'], '.cache', 'google-chrome')
+        file = os.path.join(os.environ['HOME'], '.cache', 'chromium')
         if not os.path.isfile(file):
             try:
                 if os.path.isdir(file):
@@ -264,12 +264,12 @@ class Options(object):
 
     @staticmethod
     def _locate():
-        commands = ['google-chrome']
+        commands = ['chromium-browser', 'chromium']
         for command in commands:
             chrome = command_mod.Command(command, errors='ignore')
             if chrome.is_found():
                 return chrome
-        return command_mod.Command('chrome', errors='stop')
+        return command_mod.Command('chromium', errors='stop')
 
     def parse(self, args):
         """

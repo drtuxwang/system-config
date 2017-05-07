@@ -54,6 +54,9 @@ bin/chrome-proxy
 bin/chrome-proxy.bat
 bin/chrome.bat
 bin/chrome.py
+bin/chromium           chromium wapper (allowing non systems port)
+bin/chromium.bat
+bin/chromium.py
 bin/chroot             chroot wrapper (allowing non systems port)
 bin/chroot.py          (creates /shared mount automatically)
 bin/clam               Run ClamAV anti-virus scanner
