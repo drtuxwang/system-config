@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Open files using default application.
+Open files using default application (uses "open.json").
 """
 
 import argparse
 import glob
+import json
 import os
 import signal
 import sys
@@ -15,58 +16,7 @@ import subtask_mod
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
-BROWSER = ['chrome']
-MAPPINGS = {
-    '7z': ['un7z'],
-    'ace': ['unace'],
-    'bz2': ['unbz2'],
-    'csv': ['soffice'],
-    'deb': ['undeb'],
-    'dmg': ['undmg'],
-    'doc': ['soffice'],
-    'docx': ['soffice'],
-    'gpg': ['ungpg'],
-    'gif': ['gimp'],
-    'gz': ['ungz'],
-    'htm': BROWSER,
-    'html': BROWSER,
-    'iso': ['un7z'],
-    'jar': ['un7z'],
-    'jpeg': ['gimp'],
-    'jpg': ['gimp'],
-    'json': ['xedit'],
-    'mp3': ['audacity'],
-    'odf': ['soffice'],
-    'odg': ['soffice'],
-    'ods': ['soffice'],
-    'odt': ['soffice'],
-    'ogg': ['audacity'],
-    'png': ['gimp'],
-    'ppt': ['soffice'],
-    'pptx': ['soffice'],
-    'pdf': ['unpdf'],
-    'rar': ['un7z'],
-    'rpm': ['unrpm'],
-    'run': ['un7z'],
-    'sqlite': ['unsqlite'],
-    'tar': ['untar'],
-    'tar.bz2': ['untar'],
-    'tar.gz': ['untar'],
-    'tar.lzma': ['untar'],
-    'tar.xz': ['untar'],
-    'tbz': ['untar'],
-    'tgz': ['untar'],
-    'tlz': ['untar'],
-    'txt': ['xedit'],
-    'txz': ['untar'],
-    'wav': ['audacity'],
-    'wpd': ['soffice'],
-    'xhtml': BROWSER,
-    'xls': ['soffice'],
-    'xlsx': ['soffice'],
-    'xz': ['unxz'],
-    'zip': ['un7z'],
-}
+XDESKTOP = {'command': ['xesktop'], 'daemon': False}
 URL_PREFIXS = ('http', 'https', 'ftp')
 
 
@@ -137,35 +87,44 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
-    def _spawn(command, file):
+    def _spawn(action, file):
+        command = action.get('command')
+        if not command:
+            raise SystemExit(sys.argv[0] + ': cannot find action: ' + file)
         print(file + ': opening with "' + command[0] + '"...')
         program = command_mod.Command(command[0], errors='stop')
         program.set_args(command[1:] + [file])
-        subtask_mod.Daemon(program.get_cmdline()).run()
+        if action.get('daemon'):
+            subtask_mod.Daemon(program.get_cmdline()).run()
+        else:
+            subtask_mod.Task(program.get_cmdline()).run()
 
     def run(self):
         """
         Start program
         """
         options = Options()
+        file = os.path.join(os.path.dirname(sys.argv[0]), 'open.json')
+        with open(file) as ifile:
+            mappings = json.load(ifile)
 
         for file in options.get_files():
             if os.path.isdir(file):
-                command = ['xdesktop']
+                action = XDESKTOP
             elif file.split(':', 1)[0] in URL_PREFIXS:
-                command = BROWSER
+                action = mappings.get('html')
             elif not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': cannot find file: ' + file)
             else:
-                command = MAPPINGS.get(
+                action = mappings.get(
                     '.'.join(file.rsplit('.', 2)[-2:]).lower()
                 )
-                if not command:
-                    command = MAPPINGS.get(file.rsplit('.', 1)[-1].lower())
-                    if not command:
+                if not action:
+                    action = mappings.get(file.rsplit('.', 1)[-1].lower())
+                    if not action:
                         raise SystemExit(
                             sys.argv[0] + ': unknown file extension: ' + file)
-            self._spawn(command, file)
+            self._spawn(action, file)
 
 
 if __name__ == '__main__':

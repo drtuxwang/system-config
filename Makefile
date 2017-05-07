@@ -1,6 +1,6 @@
 default: test
 
-test: py_compile requirements pep8 pylint unittest
+test: py_compile requirements pep8 pylint unittest jsonformat
 	@echo "\n*** Tests successfull ***"
 
 py_compile:
@@ -24,3 +24,7 @@ pylint:
 unittest:
 	@echo "\n*** Running Python 3 UNITTEST check ***"
 	python3 -m unittest discover --buffer bin
+
+jsonformat:
+	@echo "\n*** Running JSON formatting ***"
+	find -name '*.json' -exec bin/jsonformat {} +

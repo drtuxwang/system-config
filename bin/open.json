@@ -1,0 +1,296 @@
+{
+    "7z": {
+        "command": [
+            "un7z"
+        ],
+        "daemon": false
+    },
+    "ace": {
+        "command": [
+            "unace"
+        ],
+        "daemon": false
+    },
+    "bz2": {
+        "command": [
+            "unbz2"
+        ],
+        "daemon": false
+    },
+    "csv": {
+        "command": [
+            "soffice"
+        ],
+        "daemon": true
+    },
+    "deb": {
+        "command": [
+            "undeb"
+        ],
+        "daemon": false
+    },
+    "dmg": {
+        "command": [
+            "undmg"
+        ],
+        "daemon": false
+    },
+    "doc": {
+        "command": [
+            "soffice"
+        ],
+        "daemon": true
+    },
+    "docx": {
+        "command": [
+            "soffice"
+        ],
+        "daemon": true
+    },
+    "gpg": {
+        "command": [
+            "ungpg"
+        ],
+        "daemon": false
+    },
+    "gif": {
+        "command": [
+            "gimp"
+        ],
+        "daemon": true
+    },
+    "gz": {
+        "command": [
+            "ungz"
+        ],
+        "daemon": false
+    },
+    "htm": {
+        "command": [
+            "chrome"
+        ],
+        "daemon": true
+    },
+    "html": {
+        "command": [
+            "chrome"
+        ],
+        "daemon": true
+    },
+    "iso": {
+        "command": [
+            "un7z"
+        ],
+        "daemon": false
+    },
+    "jar": {
+        "command": [
+            "un7z"
+        ],
+        "daemon": false
+    },
+    "jpeg": {
+        "command": [
+            "gimp"
+        ],
+        "daemon": true
+    },
+    "jpg": {
+        "command": [
+            "gimp"
+        ],
+        "daemon": true
+    },
+    "json": {
+        "command": [
+            "xedit"
+        ],
+        "daemon": true
+    },
+    "mp3": {
+        "command": [
+            "audacity"
+        ],
+        "daemon": true
+    },
+    "odf": {
+        "command": [
+            "soffice"
+        ],
+        "daemon": true
+    },
+    "odg": {
+        "command": [
+            "soffice"
+        ],
+        "daemon": true
+    },
+    "ods": {
+        "command": [
+            "soffice"
+        ],
+        "daemon": true
+    },
+    "odt": {
+        "command": [
+            "soffice"
+        ],
+        "daemon": true
+    },
+    "ogg": {
+        "command": [
+            "audacity"
+        ],
+        "daemon": true
+    },
+    "png": {
+        "command": [
+            "gimp"
+        ],
+        "daemon": true
+    },
+    "ppt": {
+        "command": [
+            "soffice"
+        ],
+        "daemon": true
+    },
+    "pptx": {
+        "command": [
+            "soffice"
+        ],
+        "daemon": true
+    },
+    "pdf": {
+        "command": [
+            "unpdf"
+        ],
+        "daemon": false
+    },
+    "rar": {
+        "command": [
+            "un7z"
+        ],
+        "daemon": false
+    },
+    "rpm": {
+        "command": [
+            "unrpm"
+        ],
+        "daemon": false
+    },
+    "run": {
+        "command": [
+            "un7z"
+        ],
+        "daemon": false
+    },
+    "sqlite": {
+        "command": [
+            "unsqlite"
+        ],
+        "daemon": false
+    },
+    "tar": {
+        "command": [
+            "untar"
+        ],
+        "daemon": false
+    },
+    "tar.bz2": {
+        "command": [
+            "untar"
+        ],
+        "daemon": false
+    },
+    "tar.gz": {
+        "command": [
+            "untar"
+        ],
+        "daemon": false
+    },
+    "tar.lzma": {
+        "command": [
+            "untar"
+        ],
+        "daemon": false
+    },
+    "tar.xz": {
+        "command": [
+            "untar"
+        ],
+        "daemon": false
+    },
+    "tbz": {
+        "command": [
+            "untar"
+        ],
+        "daemon": false
+    },
+    "tgz": {
+        "command": [
+            "untar"
+        ],
+        "daemon": false
+    },
+    "tlz": {
+        "command": [
+            "untar"
+        ],
+        "daemon": false
+    },
+    "txt": {
+        "command": [
+            "xedit"
+        ],
+        "daemon": true
+    },
+    "txz": {
+        "command": [
+            "untar"
+        ],
+        "daemon": false
+    },
+    "wav": {
+        "command": [
+            "audacity"
+        ],
+        "daemon": true
+    },
+    "wpd": {
+        "command": [
+            "soffice"
+        ],
+        "daemon": true
+    },
+    "xhtml": {
+        "command": [
+            "chrome"
+        ],
+        "daemon": true
+    },
+    "xls": {
+        "command": [
+            "soffice"
+        ],
+        "daemon": true
+    },
+    "xlsx": {
+        "command": [
+            "soffice"
+        ],
+        "daemon": true
+    },
+    "xz": {
+        "command": [
+            "unxz"
+        ],
+        "daemon": false
+    },
+    "zip": {
+        "command": [
+            "un7z"
+        ],
+        "daemon": false
+    }
+}

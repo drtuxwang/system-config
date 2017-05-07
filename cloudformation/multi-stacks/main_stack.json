@@ -10,7 +10,7 @@
                     "subnet-d886877f",
                     "subnet-5dc85320"
                 ]
-            }
+            },
             "us-west-2": {
                 "ImageId": "ami-c1fe12a0",
                 "Subnets": [

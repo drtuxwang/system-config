@@ -365,6 +365,7 @@ bin/ogg                Encode OGG audio using avconv (libvorbis)
 bin/ogg.py
 bin/open               Open files using hardwired application mapping
 bin/open.py
+bin/open.json
 bin/pause              Pause until user presses <ENTER/RETURN> key
 bin/pause.bat
 bin/pause.py
@@ -608,6 +609,7 @@ bin/vi.bat
 bin/vi.py
 bin/view               View files using hardwired application mapping
 bin/view.py
+bin/view.json
 bin/vim                vim wrapper (allowing non systems port)
 bin/vim.bat
 bin/vim.py
