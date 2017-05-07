@@ -60,13 +60,13 @@
     },
     "htm": {
         "command": [
-            "chromium"
+            "chrome"
         ],
         "daemon": true
     },
     "html": {
         "command": [
-            "chromium"
+            "chrome"
         ],
         "daemon": true
     },
@@ -266,7 +266,7 @@
     },
     "xhtml": {
         "command": [
-            "chromium"
+            "chrome"
         ],
         "daemon": true
     },

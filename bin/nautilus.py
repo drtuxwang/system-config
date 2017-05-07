@@ -98,7 +98,7 @@ class Options(object):
                 'soffice'
             )
             self._userapp(configdir, 'image/jpeg', 'gqview')
-            self._userapp(configdir, 'text/html', 'chromium')
+            self._userapp(configdir, 'text/html', 'chrome')
 
     @staticmethod
     def _userapp(configdir, mime_type, app_name):

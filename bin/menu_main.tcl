@@ -14,7 +14,7 @@ frame .shell -bg "#cccccc"
     pack .shell.desktop -side top
 
     button .shell.browser -width 10 -bg "#ffff00" -text "Browser" -command {
-         exec chromium &
+         exec chrome &
     }
     pack .shell.browser -side top
 pack .shell -side top -fill x
