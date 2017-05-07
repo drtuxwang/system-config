@@ -46,7 +46,8 @@ class Options(object):
         """
         return self._chrome
 
-    def _get_profiles_dir(self):
+    @staticmethod
+    def _get_profiles_dir():
         if command_mod.Platform.get_system() == 'macos':
             return os.path.join(
                 'Library', 'Application Support', 'Google', 'Chrome')
