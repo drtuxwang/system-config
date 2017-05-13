@@ -394,6 +394,8 @@ bin/devpi_.py
 bin/django-admin
 bin/django-admin.bat
 bin/django_admin_.py
+bin/docker-compose
+bin/docker-compose.bat
 bin/flask
 bin/flask.bat
 bin/flask_.py

@@ -2,7 +2,7 @@
 #
 # Wrapper for Python "bin" script to call Python module
 #
-VERSION=20161019
+VERSION=20170512
 
 PYEXE="python3"
 PYDIR=`dirname "$0"`
@@ -10,6 +10,9 @@ PYMOD=`basename "$0"`
 case "$PYMOD" in
 2to3)
     PYMOD="lib2to3"
+    ;;
+docker-compose)
+    PYMOD="compose"
     ;;
 ipdb|pydoc)
     PYEXE="python2"  # Defaults Python 2.7
