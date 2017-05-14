@@ -141,11 +141,11 @@ class Main(object):
 
     @staticmethod
     def _remove():
-        try:
-            os.remove('Packages')
-            os.remove('Packages.bz2')
-        except OSError:
-            pass
+        for file in glob.glob('Packages*'):
+            try:
+                os.remove(file)
+            except OSError:
+                pass
 
     @staticmethod
     def _has_changed(distribution_file, urls):
