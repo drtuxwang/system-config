@@ -49,6 +49,10 @@ start_app()
     echo "Running \"$@\"..."
 }
 
+# Remove crap
+rm -rf .config/pulse
+rm -rf .local/share/gvfs-metadata
+rm -rf .local/share/recently-usd.xbel*
 
 if [ "$1" != "-start" ]
 then
