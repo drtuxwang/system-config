@@ -1,6 +1,8 @@
-default: test
+default: check
 
-test: jsonformat py_compile requirements pep8 pylint unittest
+test: check
+
+check: jsonformat py_compile requirements pep8 pylint unittest
 	@echo "\n*** Tests successfull ***"
 
 jsonformat:
