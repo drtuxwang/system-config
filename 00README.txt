@@ -640,6 +640,9 @@ bin/wine.py
 bin/wine64             wine64 wrapper (allowing non systems port)
 bin/wine64.py
 bin/cmd
+bin/weather            Current weather search
+bin/weather.bat
+bin/weather.py
 bin/wipe               wipe wrapper (allowing non systems port)
 bin/wipe.py            (wipe is C disk wiper)
 bin/xcalc              Start GNOME/KDE/XFCE calculator
