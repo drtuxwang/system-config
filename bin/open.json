@@ -69,13 +69,13 @@
         "command": [
             "chrome"
         ],
-        "daemon": true
+        "daemon": false
     },
     "html": {
         "command": [
             "chrome"
         ],
-        "daemon": true
+        "daemon": false
     },
     "iso": {
         "command": [
@@ -267,7 +267,7 @@
         "command": [
             "chrome"
         ],
-        "daemon": true
+        "daemon": false
     },
     "xls": {
         "command": [
