@@ -772,7 +772,7 @@ config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for Li
 config/terminalrc               Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
 config/vboxmount.bat            Mount VirtualBox "/shared" to "s:\" in Windows Guest OS
 config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults
-config/weather-7.rc             Copy to "$HOME/.config/xfce4/panel/weather-7.rc" for XFCE Weather
+config/genmon-7.rc              Copy to "$HOME/.config/xfce4/panel/genmon-7.rc" for XFCE Weather
 config/xscreensaver             Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
 
 etc/setbin                Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization

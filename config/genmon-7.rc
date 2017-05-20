@@ -1,0 +1,6 @@
+Command=/opt/software/bin/weather http://www.accuweather.com/en/gb/london/ec4a-2/weather-forecast/328328
+UseLabel=0
+Text=(genmon)
+UpdatePeriod=300000
+Font=(default)
+
