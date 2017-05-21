@@ -775,10 +775,10 @@ config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults
 config/genmon-7.rc              Copy to "$HOME/.config/xfce4/panel/genmon-7.rc" for XFCE Weather
 config/xscreensaver             Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
 
-etc/setbin                Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
-etc/setbin.bat            Windows Command prompt initialization
-etc/setbin.ps1            Windows Power shell initialization
-etc/python3-requirements  Python requirements "python3 -m pip install -r requirements.txt"
+etc/python3-requirements.txt    Python 3 requirements file
+etc/setbin                      Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
+etc/setbin.bat                  Windows Command prompt initialization
+etc/setbin.ps1                  Windows Power shell initialization
 
 ansible/test/Makefile                                 Ansible playbook example
 ansible/test/ansible.cfg
