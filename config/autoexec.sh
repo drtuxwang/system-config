@@ -52,7 +52,7 @@ start_app()
 # Remove crap
 rm -rf .config/pulse
 rm -rf .local/share/gvfs-metadata
-rm -rf .local/share/recently-usd.xbel*
+rm -rf .local/share/recently-used.xbel*
 
 if [ "$1" != "-start" ]
 then
