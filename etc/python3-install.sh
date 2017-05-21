@@ -19,5 +19,3 @@ do
         $INSTALL ${PIP/>=/==}
     fi
 done
-
-$INSTALL -r ${0%/*}/python3-requirements.txt
