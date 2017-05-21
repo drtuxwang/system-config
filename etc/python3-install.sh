@@ -10,11 +10,12 @@ else
     INSTALL="python3 -m pip install --user"
 fi
 
-LIST=$(python3 -m pip list)
+umask 022
+LIST=$(python3 -m pip list 2> /dev/null)
 for PIP in $(cat ${0%/*}/python3-requirements.txt 2> /dev/null)
 do
     MODULE=$(echo "$PIP" | sed -e "s/[>=].*//")
-    if [ ! "${MODULE%?=*}" ]
+    if [ ! "$(echo "$LIST" | grep "^$MODULE ")" ]
     then
         $INSTALL ${PIP/>=/==}
     fi
