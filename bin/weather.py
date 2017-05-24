@@ -15,6 +15,10 @@ import requests
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
 
+USER_AGENT = (
+    'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'
+)
+
 requests.packages.urllib3.disable_warnings()
 
 
@@ -89,13 +93,8 @@ class Main(object):
 
     @staticmethod
     def _search(url):
-        user_agent = (
-            'Mozilla/5.0 (X11; Linux x86_64; rv:45.0) '
-            'Gecko/20100101 Firefox/45.0'
-        )
-
         try:
-            response = requests.get(url, headers={'User-Agent': user_agent})
+            response = requests.get(url, headers={'User-Agent': USER_AGENT})
         except Exception as exception:
             raise SystemExit(str(exception))
         if response.status_code != 200:
