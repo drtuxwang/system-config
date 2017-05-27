@@ -15,8 +15,8 @@ LIST=$(python3 -m pip list 2> /dev/null)
 for PIP in $(cat ${0%/*}/python3-requirements.txt 2> /dev/null)
 do
     MODULE=$(echo "$PIP" | sed -e "s/[>=].*//")
-    if [ ! "$(echo "$LIST" | grep "^$MODULE ")" ]
+    if [ ! "$(echo "$LIST" | grep -i "^$MODULE ")" ]
     then
-        $INSTALL ${PIP/>=/==}
+        echo debugX $INSTALL ${PIP/>=/==}
     fi
 done
