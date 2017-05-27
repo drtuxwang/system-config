@@ -17,6 +17,6 @@ do
     MODULE=$(echo "$PIP" | sed -e "s/[>=].*//")
     if [ ! "$(echo "$LIST" | grep -i "^$MODULE ")" ]
     then
-        echo debugX $INSTALL ${PIP/>=/==}
+        $INSTALL ${PIP/>=/==}
     fi
 done
