@@ -36,7 +36,7 @@ class Options(object):
         """
         Return url.
         """
-        return self._args.url
+        return self._args.url[0]
 
     @staticmethod
     def _config():
@@ -96,22 +96,23 @@ class Main(object):
         try:
             response = requests.get(url, headers={'User-Agent': USER_AGENT})
         except Exception as exception:
-            raise SystemExit(str(exception))
-        if response.status_code != 200:
-            raise SystemExit(
-                'Requests response code: ' + str(response.status_code))
+            pass
+        else:
+            if response.status_code == 200:
+                data = response.text.split(
+                    '>Current Weather<'
+                )[-1].split('<!--')[0]
+                if '<span class="large-temp">' in data:
+                    temp = data.split(
+                        '<span class="large-temp">'
+                    )[1].split('<')[0].replace('&deg;', 'C')
+                    if '<span class="cond">' in data:
+                        condition = data.split(
+                            '<span class="cond">'
+                        )[1].split('<')[0]
+                        return '{0:s} ({1:s})'.format(temp, condition)
 
-        data = response.text.split('>Current Weather<')[-1].split('<!--')[0]
-        if '<span class="large-temp">' in data:
-            temp = data.split('<span class="large-temp">')[1].split('<')[0]
-            if '<span class="cond">' in data:
-                condition = data.split('<span class="cond">')[1].split('<')[0]
-                print('{0:s} ({1:s})'.format(
-                    temp.replace('&deg;', 'C'),
-                    condition
-                ))
-                return
-        print('???C (???)')
+        return '???C (???)'
 
     @classmethod
     def run(cls):
@@ -119,7 +120,7 @@ class Main(object):
         Start program
         """
         options = Options()
-        cls._search(" ".join(options.get_url()))
+        print(cls._search(options.get_url()))
 
 
 if __name__ == '__main__':
