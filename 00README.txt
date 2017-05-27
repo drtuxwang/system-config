@@ -489,6 +489,9 @@ bin/say.py             (uses espeak)
 bin/scp.bat            Windows scp wrapper (uses PuTTY)
 bin/sdd                Securely backup/restore partitions using SSH protocol
 bin/sdd.py
+bin/sequence           Generate sequences with optional commas
+bin/sequence.bat
+bin/sequence.py
 bin/sftp.bat           Windows sftp wrapper (uses PuTTY)
 bin/shuffle            Print arguments in random order
 bin/shuffle.bat
