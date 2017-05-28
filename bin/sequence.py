@@ -39,7 +39,7 @@ class Options(object):
         """
         Number generator.
         """
-        for number in range(self._args.first[0], self._args.last[0]):
+        for number in range(self._args.first[0], self._args.last[0]+1):
             yield str(number)
 
     def _parse_args(self, args):
