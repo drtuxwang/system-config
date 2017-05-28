@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Current weather search (using accuweahther)
+Current weather search (using accuweather)
 
 London: http://www.accuweather.com/en/gb/london/ec4a-2/weather-forecast/328328
 """
