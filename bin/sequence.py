@@ -111,6 +111,7 @@ class Main(object):
 
         for number, comma in zip(options.get_numbers(), options.get_commas()):
             print(number, comma, sep='', end='')
+        print()
 
 
 if __name__ == '__main__':
