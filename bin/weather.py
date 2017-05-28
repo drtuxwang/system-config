@@ -95,7 +95,7 @@ class Main(object):
     def _search(url):
         try:
             response = requests.get(url, headers={'User-Agent': USER_AGENT})
-        except Exception as exception:
+        except requests.RequestException:
             pass
         else:
             if response.status_code == 200:
