@@ -55,18 +55,23 @@ class Main(object):
         ntpdate = command_mod.Command(
             'ntpdate',
             pathextra=['/usr/sbin'],
+            args=['pool.ntp.org'],
             errors='stop'
         )
-        ntpdate.set_args(['pool.ntp.org'])
-
         if len(sys.argv) == 1 or sys.argv[1] != '-u':
-            subtask_mod.Exec(ntpdate.get_cmdline()).run()
+            subtask_mod.Exec(ntpdate.get_cmdline() + sys.argv[1:]).run()
 
-        task = subtask_mod.Batch(ntpdate.get_cmdline())
+        task = subtask_mod.Task(ntpdate.get_cmdline())
+        hwclock = command_mod.Command('hwclock', errors='stop')
         while True:
             task.run()
             if not task.has_error():
-                print('NTP Time updated =', time.strftime('%Y-%m-%d-%H:%M:%S'))
+                subtask_mod.Task(hwclock.get_cmdline() + ['-w']).run()
+                subtask_mod.Task(hwclock.get_cmdline()).run()
+                print(
+                    '*** System & HWClock time updated =',
+                    time.strftime('%Y-%m-%d-%H:%M:%S')
+                )
                 time.sleep(86340)
             time.sleep(60)
 
