@@ -9,7 +9,6 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=2048m \
-	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--volume=/var/lib/jenkins:/var/lib/jenkins \
 	--publish 8080:8080 \
 	--name $(HOSTNAME) \
