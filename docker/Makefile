@@ -4,7 +4,7 @@ all: build-all
 	docker images
 
 clean:
-	cd alpine-3.4 && make clean ||:
+	cd alpine-3.5 && make clean ||:
 	cd centos-7 && make clean ||:
 	cd debian-7 && make clean ||:
 	cd debian-8 && make clean ||:
@@ -15,7 +15,7 @@ clean:
 	cd ubuntu-16.04 && make clean ||:
 
 pull:
-	cd alpine-3.4 && make pull
+	cd alpine-3.5 && make pull
 	cd centos-7 && make pull
 	cd debian-7 && make pull
 	cd debian-8 && make pull
@@ -25,7 +25,7 @@ pull:
 	cd ubuntu-16.04 && make pull
 
 build-all:
-	cd alpine-3.4 && make build
+	cd alpine-3.5 && make build
 	cd centos-7 && make build
 	cd debian-7 && make build-all
 	cd debian-8 && make build-all

@@ -1,4 +1,4 @@
-IMAGE := drtuxwang/alpine:3.4
+IMAGE := drtuxwang/alpine:3.5
 HOSTNAME := alpine-dock
 FLAGS := --rm \
 	--interactive \

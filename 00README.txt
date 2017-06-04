@@ -804,8 +804,8 @@ cloudformation/multi-stacks/pxy_stack.json
 cloudformation/multi-stacks/sg_stack.json
 cloudformation/multi-stacks/submit.sh
 
-docker/alpine-3.4/Dockerfile                          Docker: Alpine 3.4 base image
-docker/alpine-3.4/Makefile
+docker/alpine-3.5/Dockerfile                          Docker: Alpine 3.5 base image
+docker/alpine-3.5/Makefile
 docker/centos-7/Dockerfile                            Docker: CentOS 7 base image
 docker/centos-7/Makefile
 docker/debian-7/Dockerfile
