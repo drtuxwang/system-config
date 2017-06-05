@@ -686,6 +686,9 @@ bin/xvolume            Desktop audio volume utility
 bin/xvolume.py         (uses pacmd)
 bin/xz                 Compress a file in XZ format (allowing non systems port)
 bin/xz.py
+bin/yamlformat         YAML file re-formatter
+bin/yamlformat.bat
+bin/yamlformat.py
 bin/youtube            Youtube video downloader
 bin/youtube.py         (uses youtube-dl)
 bin/yping              Ping a host until a connection is made
