@@ -89,7 +89,7 @@ class Main(object):
             ': Illegal character|^undefined|'
             ': Page additional action object.*is wrong type|'
             ' Unimplemented annotation:|: No current point in closepath|:'
-            ' Invalid Font Weight|: invalid value'
+            ' Invalid Font Weight|: invalid value|accessibility bus address:'
         )
         self._config()
         self._setenv()
