@@ -12,13 +12,14 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
+	--name $(HOSTNAME) \
+	--hostname $(HOSTNAME)
+FLAGS_SHELL := \
 	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
 	--env TERM=$(TERM) \
-	--env USER=$(USER) \
-	--name $(HOSTNAME) \
-	--hostname $(HOSTNAME)
+	--env USER=$(USER)
 
 
 default: build
@@ -61,12 +62,16 @@ build:
 	rm -rf tmpdir
 
 run:
-	@echo "\n*** Running \"$(IMAGE_SHELL)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE_SHELL) || exit 0
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
+	docker run $(FLAGS) $(IMAGE) || exit 0
 
-xrun: $(PASSWD)
+shell:
+	@echo "\n*** Running \"$(IMAGE_SHELL)\" Docker container ***"
+	docker run $(FLAGS) $(FLAGS_SHELL) $(IMAGE_SHELL) || exit 0
+
+xshell:
 	@echo "\n*** Running \"$(IMAGE_XSHELL)\" Docker container (with graphics) ***"
-	docker run $(FLAGS) \
+	docker run $(FLAGS) $(FLAGS_SHELL) \
 		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
 		--env DISPLAY=$(DISPLAY) \
 		$(IMAGE_XSHELL) || exit 0

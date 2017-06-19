@@ -807,17 +807,17 @@ cloudformation/multi-stacks/pxy_stack.json
 cloudformation/multi-stacks/sg_stack.json
 cloudformation/multi-stacks/submit.sh
 
-docker/alpine-3.5/Dockerfile                          Docker: Alpine 3.5 base image
+docker/alpine-3.5/Dockerfile                          Docker: Alpine 3.5 basic image
 docker/alpine-3.5/Makefile
-docker/centos-7/Dockerfile                            Docker: CentOS 7 base image
+docker/centos-7/Dockerfile                            Docker: CentOS 7 basic image
 docker/centos-7/Makefile
-docker/debian-7/Dockerfile
+docker/debian-7/Dockerfile                            Docker: Debian 7 basic image
 docker/debian-7/Dockerfile-base
 docker/debian-7/Dockerfile-shell                      Docker: Debian 7 login shell image
 docker/debian-7/Makefile
 docker/debian-7/builder/Dockerfile                    Docker: Debian 7 software builder app image
 docker/debian-7/builder/Makefile
-docker/debian-8/Dockerfile
+docker/debian-8/Dockerfile                            Docker: Debian 8 basic image
 docker/debian-8/Dockerfile-base
 docker/debian-8/Dockerfile-shell                      Docker: Debian 8 login shell image
 docker/debian-8/Dockerfile-xbase
@@ -834,7 +834,7 @@ docker/debian-8/openvpn/Dockerfile                    Docker: Debian 8 OpenVPN a
 docker/debian-8/openvpn/Makefile
 docker/debian-8/wine/Dockerfile                       Docker: Debian 8 WINE app image
 docker/debian-8/wine/Makefile
-docker/debian-9/Dockerfile
+docker/debian-9/Dockerfile                            Docker: Debian 9 basic image
 docker/debian-9/Dockerfile-base
 docker/debian-9/Dockerfile-shell                      Docker: Debian 9 login shell image
 docker/debian-9/Makefile
@@ -846,7 +846,7 @@ docker/jenkins/Makefile                               Docker: Jenkins
 docker/registry-2/Dockerfile                          Docker: Registry 2
 docker/registry-2/Makefile
 docker/registry-2/files/config.yml
-docker/ubuntu-16.04/Dockerfile                        Docker: Ubuntu 16.04 base image
+docker/ubuntu-16.04/Dockerfile                        Docker: Ubuntu 16.04 basic image
 docker/ubuntu-16.04/Makefile
 docker/Makefile                                       Makefile for building all images
 

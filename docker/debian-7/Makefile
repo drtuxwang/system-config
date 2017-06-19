@@ -10,13 +10,14 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
+	--name $(HOSTNAME) \
+	--hostname $(HOSTNAME)
+FLAGS_SHELL := \
 	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
 	--env TERM=$(TERM) \
-	--env USER=$(USER) \
-	--name $(HOSTNAME) \
-	--hostname $(HOSTNAME)
+	--env USER=$(USER)
 
 
 default: build
@@ -47,5 +48,9 @@ build:
 	rm -rf tmpdir
 
 run:
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
+	docker run $(FLAGS) $(IMAGE) || exit 0
+
+shell:
 	@echo "\n*** Running \"$(IMAGE_SHELL)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE_SHELL) || exit 0
+	docker run $(FLAGS) $(FLAGS_SHELL) $(IMAGE_SHELL) || exit 0
