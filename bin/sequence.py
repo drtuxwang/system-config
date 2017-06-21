@@ -25,10 +25,12 @@ class Options(object):
         """
         Comma generator.
         """
-        if self._args.alldays:
+        if self._args.alldays or self._args.weekdays and self._args.weekends:
             commas = (' ', ' ', ' ', ' ', ',', ' ', ',')
         elif self._args.weekdays:
             commas = (' ', ' ', ' ', ' ', ',')
+        elif self._args.weekends:
+            commas = (' ', ',')
         else:
             commas = (' ')
 
@@ -47,16 +49,22 @@ class Options(object):
             description='Dump the first and last few bytes of a binary file.')
 
         parser.add_argument(
-            '-w',
+            '-a',
+            dest='alldays',
+            action='store_true',
+            help='Add comma every 5 and 2 numbers'
+        )
+        parser.add_argument(
+            '-d',
             dest='weekdays',
             action='store_true',
             help='Add comma every 5 numbers'
         )
         parser.add_argument(
-            '-a',
-            dest='alldays',
+            '-e',
+            dest='weekends',
             action='store_true',
-            help='Add comma every 5 and 2 numbers'
+            help='Add comma every 2 numbers'
         )
         parser.add_argument(
             'first',
