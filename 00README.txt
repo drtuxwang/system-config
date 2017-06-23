@@ -842,7 +842,8 @@ docker/debian-9/builder/Makefile                      Docker: Debian 9 software 
 docker/debian-9/builder/Dockerfile
 docker/jailbreak/Dockerfile                           Docker: empty app image for jail breaking
 docker/jailbreak/Makefile
-docker/jenkins/Makefile                               Docker: Jenkins
+docker/jenkins/Makefile                               Docker: Jenkins server
+docker/oracle-xe/Makefile                             Docker: Oracle XE database
 docker/registry-2/Dockerfile                          Docker: Registry 2
 docker/registry-2/Makefile
 docker/registry-2/files/config.yml
