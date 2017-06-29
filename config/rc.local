@@ -6,9 +6,16 @@ ntpdate -u > /dev/null 2>&1 < /dev/null &
 xlight -reset &
 (rmdir /media/*/* /media/* && rm /media/*) &
 
+# Restore corrupt grub.cfg
 if [ "`diff /boot/grub/grub.cfg /boot/grub/grub.cfg-ok`" ]
 then
     cp -p /boot/grub/grub.cfg-ok /boot/grub/grub.cfg
+fi
+
+# Fix VPN client incorrect termination 
+if [ -f /etc/resolvconf/run/resolv.conf ]
+then
+    ln -sf /etc/resolvconf/run/resolv.conf /etc/resolv.conf
 fi
 
 if [ -f /etc/rc.mount ]
