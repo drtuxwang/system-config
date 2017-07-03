@@ -3,11 +3,6 @@
 . config -bg "#cccccc"
 
 frame .tools -bg "#cccccc"
-   button .tools.alarmclock -width 10 -bg "#ffcc00" -text "Alarm Clock" -command {
-        exec alarmclock &
-   }
-   pack .tools.alarmclock -side top
-
    button .tools.breaktimer -width 10 -bg "#ffcc00" -text "Break Timer" -command {
        exec breaktimer -g 10 &
    }

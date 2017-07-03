@@ -21,8 +21,6 @@ bin/7za
 bin/p7zip.py
 bin/aftp               Automatic connection to FTP server anonymously
 bin/aftp.py
-bin/alarmclock         alarmclock wrapper (allowing non systems port)
-bin/alarmclock.py
 bin/aplay              Play MP3/OGG/WAV audio files in directory
 bin/aplay.py           (uses vlc)
 bin/aria2c             aria2c wrapper (allowing non systems port)

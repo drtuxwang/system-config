@@ -25,11 +25,6 @@ frame .other -bg "#cccccc"
     }
     pack .other.radiotuner -side top
 
-    button .other.skype -width 10 -bg "#ffff00" -text "Skype" -command {
-        exec skype &
-    }
-    pack .other.skype -side top
-
     button .other.vncviewer -width 10 -bg "#ffff00" -text "VNC Viewer" -command {
         exec vncviewer &
     }
@@ -39,11 +34,6 @@ frame .other -bg "#cccccc"
         exec xfreerdp.tcl &
     }
     pack .other.xfreerdp -side top
-
-    button .other.zoom -width 10 -bg "#ffff00" -text "Zoom" -command {
-        exec zoom &
-    }
-    pack .other.zoom -side top
 pack .other -side top -fill x
 
 frame .menu -bg "#cccccc"
