@@ -1,6 +1,5 @@
-IMAGE_BASE := ubuntu:16.04
 IMAGE := drtuxwang/ubuntu:16.04
-HOSTNAME := xenial-dock
+HOSTNAME := ubuntu-old-dock
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -17,13 +16,14 @@ default: build
 	docker images
 
 clean:
-	docker rmi -f $(IMAGE_BASE) $(IMAGE) ||:
+	docker rmi -f $(IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "`
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 build:
-	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
+	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir

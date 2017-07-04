@@ -1,9 +1,9 @@
-IMAGE := drtuxwang/debian:8
-IMAGE_BASE := drtuxwang/debian-base:8
-IMAGE_SHELL := drtuxwang/debian-shell:8
-IMAGE_XBASE := drtuxwang/debian-xbase:8
-IMAGE_XSHELL := drtuxwang/debian-xshell:8
-HOSTNAME := jessie-dock
+IMAGE := drtuxwang/ubuntu:16.04
+IMAGE_BASE := drtuxwang/ubuntu-base:16.04
+IMAGE_SHELL := drtuxwang/ubuntu-shell:16.04
+IMAGE_XBASE := drtuxwang/ubuntu-xbase:16.04
+IMAGE_XSHELL := drtuxwang/ubuntu-xshell:16.04
+HOSTNAME := ubuntu-dock
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -14,12 +14,6 @@ FLAGS := --rm \
 	--memory=1024m \
 	--name $(HOSTNAME) \
 	--hostname $(HOSTNAME)
-FLAGS_SHELL := \
-	--volume=/etc/passwd:/etc/passwd:ro \
-	--volume=/etc/group:/etc/group:ro \
-	--volume=/shared:/shared \
-	--env TERM=$(TERM) \
-	--env USER=$(USER)
 
 
 default: build
@@ -29,23 +23,19 @@ all: build-all
 	docker images
 
 clean:
-	cd builder && make clean
-	cd docker && make clean
-	cd nginx && make clean
-	cd openvpn && make clean
-	cd wine && make clean
 	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_SHELL) $(IMAGE_XBASE) $(IMAGE_XSHELL) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "`
+	cd old && make clean
+	cd test && make clean
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	cd old && make pull
+	cd test && make pull
 
 build-all: build
-	cd builder && make build
-	cd docker && make build
-	cd nginx && make build
-	cd openvpn && make build
-	cd wine && make build
+	cd old && make build
+	cd test && make build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *

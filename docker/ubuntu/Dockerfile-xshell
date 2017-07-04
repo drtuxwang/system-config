@@ -1,4 +1,8 @@
-FROM drtuxwang/debian-base:7
+FROM drtuxwang/ubuntu-xbase:16.04
+
+# X-windows full setup
+COPY tmpdir/config/terminalrc /home/docker/.config/xfce4/terminal/terminalrc
+ENV XDG_CURRENT_DESKTOP=XFCE
 
 # Bash shell full setup
 COPY tmpdir/bin/ /opt/software/bin/

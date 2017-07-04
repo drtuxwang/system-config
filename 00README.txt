@@ -805,48 +805,50 @@ cloudformation/multi-stacks/pxy_stack.json
 cloudformation/multi-stacks/sg_stack.json
 cloudformation/multi-stacks/submit.sh
 
-docker/alpine-3.5/Dockerfile                          Docker: Alpine 3.5 basic image
-docker/alpine-3.5/Makefile
-docker/centos-7/Dockerfile                            Docker: CentOS 7 basic image
-docker/centos-7/Makefile
-docker/debian-7/Dockerfile                            Docker: Debian 7 basic image
-docker/debian-7/Dockerfile-base
-docker/debian-7/Dockerfile-shell                      Docker: Debian 7 login shell image
-docker/debian-7/Makefile
-docker/debian-7/builder/Dockerfile                    Docker: Debian 7 software builder app image
-docker/debian-7/builder/Makefile
-docker/debian-8/Dockerfile                            Docker: Debian 8 basic image
-docker/debian-8/Dockerfile-base
-docker/debian-8/Dockerfile-shell                      Docker: Debian 8 login shell image
-docker/debian-8/Dockerfile-xbase
-docker/debian-8/Dockerfile-xshell                     Docker: Debian 8 login shell with GUI image
-docker/debian-8/Makefile
-docker/debian-8/builder/Dockerfile                    Docker: Debian 8 software builder app image
-docker/debian-8/builder/Makefile
-docker/debian-8/docker/Dockerfile                     Docker: Debian 8 Docker app image
-docker/debian-8/docker/Makefile
-docker/debian-8/nginx/Makefile                        Docker: Debian 8 NGINX proxy app image
-docker/debian-8/nginx/Dockerfile
-docker/debian-8/nginx/files/nginx-proxy.conf
-docker/debian-8/openvpn/Dockerfile                    Docker: Debian 8 OpenVPN app image
-docker/debian-8/openvpn/Makefile
-docker/debian-8/wine/Dockerfile                       Docker: Debian 8 WINE app image
-docker/debian-8/wine/Makefile
-docker/debian-9/Dockerfile                            Docker: Debian 9 basic image
-docker/debian-9/Dockerfile-base
-docker/debian-9/Dockerfile-shell                      Docker: Debian 9 login shell image
-docker/debian-9/Makefile
-docker/debian-9/builder/Makefile                      Docker: Debian 9 software builder app image
-docker/debian-9/builder/Dockerfile
+docker/alpine/Dockerfile                              Docker: Alpine 3.5 basic image
+docker/alpine/Makefile
+docker/centos/Dockerfile                              Docker: CentOS 7 basic image
+docker/centos/Makefile
+docker/centos/old/Dockerfile                          Docker: CentOS 6 basic image
+docker/centos/old/Makefile
+docker/debian/Dockerfile                              Docker: Debian 8 basic image
+docker/debian/Dockerfile-base
+docker/debian/Dockerfile-shell                        Docker: Debian 8 login shell image
+docker/debian/Dockerfile-xbase
+docker/debian/Dockerfile-xshell                       Docker: Debian 8 login shell with GUI image
+docker/debian/Makefile
+docker/debian/builder/Dockerfile                      Docker: Debian 8 software builder app image
+docker/debian/builder/Makefile
+docker/debian/docker/Dockerfile                       Docker: Debian 8 Docker app image
+docker/debian/docker/Makefile
+docker/debian/nginx/Makefile                          Docker: Debian 8 NGINX proxy app image
+docker/debian/nginx/Dockerfile
+docker/debian/nginx/files/nginx-proxy.conf
+docker/debian/openvpn/Dockerfile                      Docker: Debian 8 OpenVPN app image
+docker/debian/openvpn/Makefile
+docker/debian/wine/Dockerfile                         Docker: Debian 8 WINE app image
+docker/debian/wine/Makefile
+docker/debian/old/Dockerfile                          Docker: Debian 7 basic image
+docker/debian/old/Makefile
+docker/debian/new/Dockerfile                          Docker: Debian 9 basic image
+docker/debian/new/Makefile
 docker/jailbreak/Dockerfile                           Docker: empty app image for jail breaking
 docker/jailbreak/Makefile
 docker/jenkins/Makefile                               Docker: Jenkins server
 docker/oracle-xe/Makefile                             Docker: Oracle XE database
-docker/registry-2/Dockerfile                          Docker: Registry 2
-docker/registry-2/Makefile
-docker/registry-2/files/config.yml
-docker/ubuntu-16.04/Dockerfile                        Docker: Ubuntu 16.04 basic image
-docker/ubuntu-16.04/Makefile
+docker/registry/Dockerfile                            Docker: Registry 2
+docker/registry/Makefile
+docker/registry/files/config.yml
+docker/ubuntu/Dockerfile                              Docker: Ubuntu 16.04 basic image
+docker/ubuntu/Dockerfile-base
+docker/ubuntu/Dockerfile-shell                        Docker: Ubuntu 16.04 login shell image
+docker/ubuntu/Dockerfile-xbase
+docker/ubuntu/Dockerfile-xshell                       Docker: Ubuntu 16.04 login shell with GUI image
+docker/ubuntu/Makefile
+docker/ubuntu/old/Dockerfile                          Docker: Ubuntu 14.04 old basic image
+docker/ubuntu/old/Makefile
+docker/ubuntu/test/Dockerfile                         Docker: Ubuntu 17.04 testing basic image
+docker/ubuntu/test/Makefile
 docker/Makefile                                       Makefile for building all images
 
 kubernetes/debian/Makefile                            Kubernetes: Debian example

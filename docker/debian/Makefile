@@ -1,7 +1,9 @@
-IMAGE := drtuxwang/debian:9
-IMAGE_BASE := drtuxwang/debian-base:9
-IMAGE_SHELL := drtuxwang/debian-shell:9
-HOSTNAME := stretch-dock
+IMAGE := drtuxwang/debian:8
+IMAGE_BASE := drtuxwang/debian-base:8
+IMAGE_SHELL := drtuxwang/debian-shell:8
+IMAGE_XBASE := drtuxwang/debian-xbase:8
+IMAGE_XSHELL := drtuxwang/debian-xshell:8
+HOSTNAME := jessie-dock
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -28,14 +30,28 @@ all: build-all
 
 clean:
 	cd builder && make clean
-	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_SHELL) ||:
+	cd docker && make clean
+	cd nginx && make clean
+	cd openvpn && make clean
+	cd wine && make clean
+	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_SHELL) $(IMAGE_XBASE) $(IMAGE_XSHELL) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "`
+	cd old && make clean
+	cd new && make clean
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	cd old && make pull
+	cd new && make pull
 
 build-all: build
 	cd builder && make build
+	cd docker && make build
+	cd nginx && make build
+	cd openvpn && make build
+	cd wine && make build
+	cd old && make build
+	cd new && make build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
@@ -45,6 +61,10 @@ build:
 	docker build -f Dockerfile-base -t $(IMAGE_BASE) .
 	@echo "\n*** Building \"$(IMAGE_SHELL)\" Docker image ***"
 	docker build -f Dockerfile-shell -t $(IMAGE_SHELL) .
+	@echo "\n*** Building \"$(IMAGE_XBASE)\" Docker image ***"
+	docker build -f Dockerfile-xbase -t $(IMAGE_XBASE) .
+	@echo "\n*** Building \"$(IMAGE_XSHELL)\" Docker image ***"
+	docker build --force-rm=true -f Dockerfile-xshell -t $(IMAGE_XSHELL) .
 	rm -rf tmpdir
 
 run:
@@ -54,3 +74,10 @@ run:
 shell:
 	@echo "\n*** Running \"$(IMAGE_SHELL)\" Docker container ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) $(IMAGE_SHELL) || exit 0
+
+xshell:
+	@echo "\n*** Running \"$(IMAGE_XSHELL)\" Docker container (with graphics) ***"
+	docker run $(FLAGS) $(FLAGS_SHELL) \
+		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
+		--env DISPLAY=$(DISPLAY) \
+		$(IMAGE_XSHELL) || exit 0

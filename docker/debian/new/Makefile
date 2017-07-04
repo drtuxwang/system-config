@@ -1,5 +1,5 @@
-IMAGE := drtuxwang/debian-builder:7
-HOSTNAME := wheezy-builder-dock
+IMAGE := drtuxwang/debian:9
+HOSTNAME := debian-new-dock
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -8,11 +8,6 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m \
-	--volume=/etc/passwd:/etc/passwd:ro \
-	--volume=/etc/group:/etc/group:ro \
-	--volume=/shared:/shared \
-	--env TERM=$(TERM) \
-	--env USER=$(USER) \
 	--name $(HOSTNAME) \
 	--hostname $(HOSTNAME)
 
@@ -22,6 +17,10 @@ default: build
 
 clean:
 	docker rmi -f $(IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "`
+
+pull:
+	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *
@@ -30,9 +29,5 @@ build:
 	rm -rf tmpdir
 
 run:
-	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
-	docker run $(FLAGS) --network none $(IMAGE) /etc/docker-init || exit 0
-
-irun:
-	@echo "\n*** Running \"$(IMAGE)\" Docker container (with network) ***"
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(IMAGE) || exit 0
