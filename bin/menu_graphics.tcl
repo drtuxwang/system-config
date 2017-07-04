@@ -13,6 +13,11 @@ frame .tool -bg "#cccccc"
     }
     pack .tool.geeqie -side top
 
+    button .tool.inkscape -width 10 -bg "#ffcc00" -text "Inkscape" -command {
+        exec inkscape &
+    }
+    pack .tool.inkscape -side top
+
     button .tool.xsane -width 10 -bg "#ffcc00" -text "Xsane" -command {
         exec xsane &
     }

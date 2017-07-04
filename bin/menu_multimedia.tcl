@@ -8,10 +8,15 @@ frame .audio -bg "#cccccc"
     }
     pack .audio.audacity -side top
 
-    button .audio.audiomixer -width 10 -bg "#ffcc00" -text "Audio Mixer" -command {
+    button .audio.xmixer -width 10 -bg "#ffcc00" -text "Audio Mixer" -command {
         exec xmixer &
     }
-    pack .audio.audiomixer -side top
+    pack .audio.xmixer -side top
+
+    button .audio.lmms -width 10 -bg "#ffcc00" -text "LMMS" -command {
+        exec lmms &
+    }
+    pack .audio.lmms -side top
 
     button .audio.zhspeak -width 10 -bg "#ffcc00" -text "ZHSpeak" -command {
         exec zhspeak -g &
