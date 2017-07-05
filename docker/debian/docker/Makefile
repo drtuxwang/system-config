@@ -1,5 +1,6 @@
-IMAGE := drtuxwang/debian-docker:8
-HOSTNAME := jessie-docker-dock
+NAME := debian
+VERSION = 8
+IMAGE := drtuxwang/$(NAME)-docker:$(VERSION)
 FLAGS := --rm \
 	--privileged=true \
 	--interactive \
@@ -8,15 +9,14 @@ FLAGS := --rm \
 	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
-	--memory=1024m \
+	--memory=1024m
+FLAGS_SHELL := \
 	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
-	--env TERM=$(TERM) \
-	--env USER=$(USER) \
 	--volume /var/run/docker.sock:/var/run/docker.sock \
-	--name $(HOSTNAME) \
-	--hostname $(HOSTNAME)
+	--env TERM=$(TERM) \
+	--env USER=$(USER)
 
 
 default: build
@@ -33,4 +33,8 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) || exit 0
+	docker run $(FLAGS) $(FLAGS_SHELL) \
+		--name $(NAME)-docker-dock \
+		--hostname $(NAME)-docker-dock \
+		$(IMAGE) || exit 0
+

@@ -814,11 +814,12 @@ docker/centos/Makefile
 docker/centos/old/Dockerfile                          Docker: CentOS 6 basic image
 docker/centos/old/Makefile
 docker/debian/Dockerfile                              Docker: Debian 8 basic image
-docker/debian/Dockerfile-base
-docker/debian/Dockerfile-shell                        Docker: Debian 8 login shell image
-docker/debian/Dockerfile-xbase
-docker/debian/Dockerfile-xshell                       Docker: Debian 8 login shell with GUI image
 docker/debian/Makefile
+docker/debian/shell/Dockerfile-base
+docker/debian/shell/Dockerfile-shell                  Docker: Debian 8 login shell image
+docker/debian/shell/Dockerfile-xbase
+docker/debian/shell/Dockerfile-xshell                 Docker: Debian 8 login shell with GUI image
+docker/debian/shell/Makefile
 docker/debian/builder/Dockerfile                      Docker: Debian 8 software builder app image
 docker/debian/builder/Makefile
 docker/debian/docker/Dockerfile                       Docker: Debian 8 Docker app image
@@ -841,12 +842,14 @@ docker/oracle-xe/Makefile                             Docker: Oracle XE database
 docker/registry/Dockerfile                            Docker: Registry 2
 docker/registry/Makefile
 docker/registry/files/config.yml
-docker/ubuntu/Dockerfile                              Docker: Ubuntu 16.04 basic image
-docker/ubuntu/Dockerfile-base
-docker/ubuntu/Dockerfile-shell                        Docker: Ubuntu 16.04 login shell image
-docker/ubuntu/Dockerfile-xbase
-docker/ubuntu/Dockerfile-xshell                       Docker: Ubuntu 16.04 login shell with GUI image
 docker/ubuntu/Makefile
+docker/ubuntu/Dockerfile                              Docker: Ubuntu 16.04 basic image
+docker/ubuntu/Makefile
+docker/ubuntu/shell/Dockerfile-base
+docker/ubuntu/shell/Dockerfile-shell                  Docker: Ubuntu 16.04 login shell image
+docker/ubuntu/shell/Dockerfile-xbase
+docker/ubuntu/shell/Dockerfile-xshell                 Docker: Ubuntu 16.04 login shell with GUI image
+docker/ubuntu/shell/Makefile
 docker/ubuntu/old/Dockerfile                          Docker: Ubuntu 14.04 old basic image
 docker/ubuntu/old/Makefile
 docker/ubuntu/test/Dockerfile                         Docker: Ubuntu 17.04 testing basic image

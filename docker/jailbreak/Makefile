@@ -1,5 +1,6 @@
-IMAGE := drtuxwang/jailbreak
-HOSTNAME := `uname -n`-jailbreak-dock
+NAME := jailbreak
+VERSION = latest
+IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -7,13 +8,7 @@ FLAGS := --rm \
 	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
-	--memory=1024m \
-	`ls -1d /* | grep -v "/proc$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}'` \
-	--volume="/etc/passwd:/etc/passwd:ro" \
-	--volume="/etc/group:/etc/group:ro" \
-	--workdir $(PWD) \
-	--name $(HOSTNAME) \
-	--hostname $(HOSTNAME)
+	--memory=1024m
 
 
 default: build
@@ -28,4 +23,11 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) || exit 0
+	docker run $(FLAGS) \
+		`ls -1d /* | grep -v "/proc$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}'` \
+		--volume="/etc/passwd:/etc/passwd:ro" \
+		--volume="/etc/group:/etc/group:ro" \
+		--workdir $(PWD) \
+		--name $(NAME)-dock \
+		--hostname $(NAME)-dock \
+		$(IMAGE) bash || exit 0

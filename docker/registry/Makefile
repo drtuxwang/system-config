@@ -1,5 +1,6 @@
-IMAGE := drtuxwang/registry:2
-HOSTNAME := registry2-dock
+NAME := registry
+VERSION = 2
+IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -7,11 +8,7 @@ FLAGS := --rm \
 	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
-	--memory=1024m \
-	--volume=/var/lib/registry:/var/lib/registry \
-	--publish 5000:5000 \
-	--name $(HOSTNAME) \
-	--hostname $(HOSTNAME)
+	--memory=1024m
 
 
 default: build
@@ -30,4 +27,11 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) || exit 0
+	docker run $(FLAGS) \
+		--volume=/var/lib/registry:/var/lib/registry \
+		--publish 5000:5000 \
+		--name $(NAME) \
+		--hostname $(NAME) \
+		--name $(NAME)-dock \
+		--hostname $(NAME)-dock \
+		$(IMAGE) || exit 0

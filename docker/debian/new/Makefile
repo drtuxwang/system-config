@@ -1,5 +1,6 @@
-IMAGE := drtuxwang/debian:9
-HOSTNAME := debian-new-dock
+NAME := debian
+VERSION = 9
+IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -7,9 +8,7 @@ FLAGS := --rm \
 	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
-	--memory=1024m \
-	--name $(HOSTNAME) \
-	--hostname $(HOSTNAME)
+	--memory=1024m
 
 
 default: build
@@ -30,4 +29,8 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) || exit 0
+	docker run $(FLAGS) \
+		--name $(NAME)-new-dock \
+		--hostname $(NAME)-new-dock \
+		$(IMAGE) || exit 0
+

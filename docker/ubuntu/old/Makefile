@@ -1,5 +1,6 @@
-IMAGE := drtuxwang/ubuntu:16.04
-HOSTNAME := ubuntu-old-dock
+NAME := ubuntu
+VERSION = 14.04
+IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -7,9 +8,7 @@ FLAGS := --rm \
 	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
-	--memory=1024m \
-	--name $(HOSTNAME) \
-	--hostname $(HOSTNAME)
+	--memory=1024m
 
 
 default: build
@@ -30,4 +29,8 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) bash || exit 0
+	docker run $(FLAGS) \
+		--name $(NAME)-old-dock \
+		--hostname $(NAME)-old-dock \
+		$(IMAGE) || exit 0
+

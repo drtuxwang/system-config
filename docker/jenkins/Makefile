@@ -1,18 +1,14 @@
-IMAGE := jenkins
-HOSTNAME := jenkins-dock
+NAME := jenkins
+VERSION = latest
+IMAGE := $(NAME):$(VERSION)
 FLAGS := --rm \
-	--privileged=true \
 	--interactive \
 	--tty \
 	--cpu-period=100000 \
 	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
-	--memory=2048m \
-	--volume=/var/lib/jenkins:/var/lib/jenkins \
-	--publish 8080:8080 \
-	--name $(HOSTNAME) \
-	--hostname $(HOSTNAME)
+	--memory=2048m
 
 
 default:
@@ -26,4 +22,12 @@ pull:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) || exit 0
+	docker run $(FLAGS) \
+		--privileged=true \
+		--volume=/var/lib/jenkins:/var/lib/jenkins \
+		--publish 8080:8080 \
+		--name $(NAME) \
+		--hostname $(NAME) \
+		--name $(NAME)-dock \
+		--hostname $(NAME)-dock \
+		$(IMAGE) || exit 0

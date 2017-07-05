@@ -1,9 +1,6 @@
-IMAGE := drtuxwang/debian:8
-IMAGE_BASE := drtuxwang/debian-base:8
-IMAGE_SHELL := drtuxwang/debian-shell:8
-IMAGE_XBASE := drtuxwang/debian-xbase:8
-IMAGE_XSHELL := drtuxwang/debian-xshell:8
-HOSTNAME := jessie-dock
+NAME := debian
+VERSION = 8
+IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -11,15 +8,7 @@ FLAGS := --rm \
 	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
-	--memory=1024m \
-	--name $(HOSTNAME) \
-	--hostname $(HOSTNAME)
-FLAGS_SHELL := \
-	--volume=/etc/passwd:/etc/passwd:ro \
-	--volume=/etc/group:/etc/group:ro \
-	--volume=/shared:/shared \
-	--env TERM=$(TERM) \
-	--env USER=$(USER)
+	--memory=1024m
 
 
 default: build
@@ -34,8 +23,9 @@ clean:
 	cd nginx && make clean
 	cd openvpn && make clean
 	cd wine && make clean
-	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_SHELL) $(IMAGE_XBASE) $(IMAGE_XSHELL) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "`
+	cd shell && make clean
+	docker rmi -f $(IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
 	cd old && make clean
 	cd new && make clean
 
@@ -45,6 +35,7 @@ pull:
 	cd new && make pull
 
 build-all: build
+	cd shell && make build
 	cd builder && make build
 	cd docker && make build
 	cd nginx && make build
@@ -57,27 +48,11 @@ build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
-	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
-	docker build -f Dockerfile-base -t $(IMAGE_BASE) .
-	@echo "\n*** Building \"$(IMAGE_SHELL)\" Docker image ***"
-	docker build -f Dockerfile-shell -t $(IMAGE_SHELL) .
-	@echo "\n*** Building \"$(IMAGE_XBASE)\" Docker image ***"
-	docker build -f Dockerfile-xbase -t $(IMAGE_XBASE) .
-	@echo "\n*** Building \"$(IMAGE_XSHELL)\" Docker image ***"
-	docker build --force-rm=true -f Dockerfile-xshell -t $(IMAGE_XSHELL) .
 	rm -rf tmpdir
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) || exit 0
-
-shell:
-	@echo "\n*** Running \"$(IMAGE_SHELL)\" Docker container ***"
-	docker run $(FLAGS) $(FLAGS_SHELL) $(IMAGE_SHELL) || exit 0
-
-xshell:
-	@echo "\n*** Running \"$(IMAGE_XSHELL)\" Docker container (with graphics) ***"
-	docker run $(FLAGS) $(FLAGS_SHELL) \
-		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
-		--env DISPLAY=$(DISPLAY) \
-		$(IMAGE_XSHELL) || exit 0
+	docker run $(FLAGS) \
+		--name $(NAME)-dock \
+		--hostname $(NAME)-dock \
+		$(IMAGE) || exit 0

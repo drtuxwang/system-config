@@ -1,5 +1,6 @@
-IMAGE := drtuxwang/debian-nginx:8
-HOSTNAME := nginx-dock
+NAME := debian
+VERSION = 8
+IMAGE := drtuxwang/$(NAME)-nginx:$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -7,10 +8,7 @@ FLAGS := --rm \
 	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
-	--memory=1024m \
-	--publish 8080:80 \
-	--name $(HOSTNAME) \
-	--hostname $(HOSTNAME)
+	--memory=1024m
 
 
 default: build
@@ -28,4 +26,9 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) || exit 0
+	docker run $(FLAGS) \
+		--publish 8080:80 \
+		--name $(NAME)-nginx-dock \
+		--hostname $(NAME)-nginx-dock \
+		$(IMAGE) || exit 0
+

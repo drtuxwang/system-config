@@ -1,5 +1,6 @@
-IMAGE := drtuxwang/debian-openvpn:8
-HOSTNAME := jessie-openvpn-dock
+NAME := debian
+VERSION = 8
+IMAGE := drtuxwang/$(NAME)-openvpn:$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -7,16 +8,15 @@ FLAGS := --rm \
 	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
-	--memory=1024m \
+	--memory=1024m
+FLAGS_SHELL := \
 	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
 	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
 	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
-	--env USER=$(USER) \
-	--name $(HOSTNAME) \
-	--hostname $(HOSTNAME)
+	--env USER=$(USER)
 
 
 default: build
@@ -33,4 +33,7 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(IMAGE) || exit 0
+	docker run $(FLAGS) $(FLAGS_SHELL) \
+		--name $(NAME)-openvpn-dock \
+		--hostname $(NAME)-openvpn-dock \
+		$(IMAGE) || exit 0
