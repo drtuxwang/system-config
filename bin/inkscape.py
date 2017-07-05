@@ -5,7 +5,6 @@ Wrapper for 'inkscape' command
 
 import glob
 import os
-import shutil
 import signal
 import sys
 
