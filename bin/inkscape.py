@@ -37,25 +37,6 @@ class Options(object):
         """
         return self._inkscape
 
-    @staticmethod
-    def _config():
-        if 'HOME' in os.environ:
-            if os.path.isdir(os.path.join(os.environ['HOME'], '.thumbnails')):
-                try:
-                    shutil.rmtree(
-                        os.path.join(os.environ['HOME'], '.thumbnails'))
-                except OSError:
-                    pass
-            for file in glob.glob(
-                    os.path.join(os.environ['HOME'], '.inkscape*', 'inkscaperc')):
-                try:
-                    with open(file, errors='replace') as ifile:
-                        if '(thumbnail-size none)\n' not in ifile.readlines():
-                            with open(file, 'a', newline='\n') as ofile:
-                                print('(thumbnail-size none)', file=ofile)
-                except OSError:
-                    continue
-
     def parse(self, args):
         """
         Parse arguments
@@ -63,7 +44,6 @@ class Options(object):
         self._inkscape = command_mod.Command('inkscape', errors='stop')
         self._inkscape.set_args(args[1:])
         self._pattern = '^$|: Gtk-WARNING'
-        self._config()
 
 
 class Main(object):
