@@ -1,9 +1,7 @@
 NAME := ubuntu
 VERSION = 16.04
-IMAGE_BASE := drtuxwang/$(NAME)-base:$(VERSION)
-IMAGE_SHELL := drtuxwang/$(NAME)-shell:$(VERSION)
-IMAGE_XBASE := drtuxwang/$(NAME)-xbase:$(VERSION)
-IMAGE_XSHELL := drtuxwang/$(NAME)-xshell:$(VERSION)
+IMAGE := drtuxwang/$(NAME)-shell:$(VERSION)
+IMAGE_X := drtuxwang/$(NAME)-xshell:$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -24,32 +22,28 @@ default: build
 	docker images
 
 clean:
-	docker rmi -f $(IMAGE_BASE) $(IMAGE_SHELL) $(IMAGE_XBASE) $(IMAGE_XSHELL) ||:
+	docker rmi -f $(IMAGE) $(IMAGE_X) ||:
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *
-	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
-	docker build -f Dockerfile-base -t $(IMAGE_BASE) .
-	@echo "\n*** Building \"$(IMAGE_SHELL)\" Docker image ***"
-	docker build -f Dockerfile-shell -t $(IMAGE_SHELL) .
-	@echo "\n*** Building \"$(IMAGE_XBASE)\" Docker image ***"
-	docker build -f Dockerfile-xbase -t $(IMAGE_XBASE) .
-	@echo "\n*** Building \"$(IMAGE_XSHELL)\" Docker image ***"
-	docker build --force-rm=true -f Dockerfile-xshell -t $(IMAGE_XSHELL) .
+	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
+	docker build -f Dockerfile-shell -t $(IMAGE) .
+	@echo "\n*** Building \"$(IMAGE_X)\" Docker image ***"
+	docker build --force-rm=true -f Dockerfile-xshell -t $(IMAGE_X) .
 	rm -rf tmpdir
 
 run:
-	@echo "\n*** Running \"$(IMAGE_SHELL)\" Docker container ***"
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
 		--name $(NAME)-shell-dock \
 		--hostname $(NAME)-shell-dock \
-		$(IMAGE_SHELL) || exit 0
+		$(IMAGE) || exit 0
 
 xrun:
-	@echo "\n*** Running \"$(IMAGE_XSHELL)\" Docker container (with graphics) ***"
+	@echo "\n*** Running \"$(IMAGE_X)\" Docker container (with graphics) ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
 		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
 		--env DISPLAY=$(DISPLAY) \
 		--name $(NAME)-xshell-dock \
 		--hostname $(NAME)-xshell-dock \
-		$(IMAGE_XSHELL) || exit 0
+		$(IMAGE_X) || exit 0

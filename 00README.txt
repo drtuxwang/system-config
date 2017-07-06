@@ -787,7 +787,7 @@ etc/setbin                      Hybrid Bourne/C-shell script for sh/ksh/bash/csh
 etc/setbin.bat                  Windows Command prompt initialization
 etc/setbin.ps1                  Windows Power shell initialization
 
-ansible/test/Makefile                                 Ansible playbook example
+ansible/test/Makefile                             Ansible playbook example
 ansible/test/ansible.cfg
 ansible/test/group_vars/test
 ansible/test/hosts
@@ -798,87 +798,82 @@ ansible/test/roles/test-work/templates/test-file.txt
 ansible/test/roles/test-work/vars/main.yml
 ansible/test/setup-test.yml
 
-cloudformation/1pxy/1pxy.json                         CloudFormation: 1pxy example
+cloudformation/1pxy/1pxy.json                     CloudFormation: 1pxy example
 cloudformation/1pxy/Makefile
 cloudformation/1pxy/submit.sh
-cloudformation/multi-stacks/Makefile                  CloudFormation: multi-stacks example
+cloudformation/multi-stacks/Makefile              CloudFormation: multi-stacks example
 cloudformation/multi-stacks/main_stack.json
 cloudformation/multi-stacks/pxy_stack.json
 cloudformation/multi-stacks/sg_stack.json
 cloudformation/multi-stacks/submit.sh
 
-docker/alpine/Dockerfile                              Docker: Alpine 3.5 basic image
+docker/alpine/Dockerfile                          Docker: Alpine 3.5 basic image
 docker/alpine/Makefile
-docker/centos/Dockerfile                              Docker: CentOS 7 basic image
+docker/centos/Dockerfile                          Docker: CentOS 7 basic image
 docker/centos/Makefile
-docker/centos/old/Dockerfile                          Docker: CentOS 6 basic image
+docker/centos/old/Dockerfile                      Docker: CentOS 6 basic image
 docker/centos/old/Makefile
-docker/debian/Dockerfile                              Docker: Debian 8 basic image
+docker/debian/Dockerfile                          Docker: Debian 8 basic image
 docker/debian/Makefile
-docker/debian/shell/Dockerfile-base
-docker/debian/shell/Dockerfile-shell                  Docker: Debian 8 login shell image
-docker/debian/shell/Dockerfile-xbase
-docker/debian/shell/Dockerfile-xshell                 Docker: Debian 8 login shell with GUI image
-docker/debian/shell/Makefile
-docker/debian/builder/Dockerfile                      Docker: Debian 8 software builder app image
-docker/debian/builder/Makefile
-docker/debian/docker/Dockerfile                       Docker: Debian 8 Docker app image
-docker/debian/docker/Makefile
-docker/debian/nginx/Makefile                          Docker: Debian 8 NGINX proxy app image
-docker/debian/nginx/Dockerfile
-docker/debian/nginx/files/nginx-proxy.conf
-docker/debian/openvpn/Dockerfile                      Docker: Debian 8 OpenVPN app image
-docker/debian/openvpn/Makefile
-docker/debian/wine/Dockerfile                         Docker: Debian 8 WINE app image
-docker/debian/wine/Makefile
-docker/debian/old/Dockerfile                          Docker: Debian 7 basic image
-docker/debian/old/Makefile
-docker/debian/new/Dockerfile                          Docker: Debian 9 basic image
+docker/debian/new/Dockerfile                      Docker: Debian 9 basic image
 docker/debian/new/Makefile
-docker/jailbreak/Dockerfile                           Docker: empty app image for jail breaking
+docker/debian/old/Dockerfile                      Docker: Debian 7 basic image
+docker/debian/old/Makefile
+docker/jailbreak/Dockerfile                       Docker: empty app image for jail breaking
 docker/jailbreak/Makefile
-docker/jenkins/Makefile                               Docker: Jenkins server
-docker/oracle-xe/Makefile                             Docker: Oracle XE database
-docker/registry/Dockerfile                            Docker: Registry 2
+docker/jenkins/Makefile                           Docker: Jenkins server
+docker/oracle-xe/Makefile                         Docker: Oracle XE database
+docker/registry/Dockerfile                        Docker: Registry 2
 docker/registry/Makefile
 docker/registry/files/config.yml
 docker/ubuntu/Makefile
-docker/ubuntu/Dockerfile                              Docker: Ubuntu 16.04 basic image
+docker/ubuntu/Dockerfile                          Docker: Ubuntu 16.04 basic image
+docker/ubuntu/Dockerfile-base
+docker/ubuntu/Dockerfile-xbase
 docker/ubuntu/Makefile
-docker/ubuntu/shell/Dockerfile-base
-docker/ubuntu/shell/Dockerfile-shell                  Docker: Ubuntu 16.04 login shell image
-docker/ubuntu/shell/Dockerfile-xbase
-docker/ubuntu/shell/Dockerfile-xshell                 Docker: Ubuntu 16.04 login shell with GUI image
-docker/ubuntu/shell/Makefile
-docker/ubuntu/old/Dockerfile                          Docker: Ubuntu 14.04 old basic image
+docker/ubuntu/builder/Dockerfile                  Docker: Ubuntu 16.04 software builder app image
+docker/ubuntu/builder/Makefile
+docker/ubuntu/docker/Dockerfile                   Docker: Ubuntu 16.04 Docker app image
+docker/ubuntu/docker/Makefile
+docker/ubuntu/nginx/Makefile                      Docker: Ubuntu 16.04 NGINX proxy app image
+docker/ubuntu/nginx/Dockerfile
+docker/ubuntu/nginx/files/nginx-proxy.conf
+docker/ubuntu/old/Dockerfile                      Docker: Ubuntu 14.04 old basic image
 docker/ubuntu/old/Makefile
-docker/ubuntu/test/Dockerfile                         Docker: Ubuntu 17.04 testing basic image
+docker/ubuntu/openvpn/Dockerfile                  Docker: Ubuntu 16.04 OpenVPN app image
+docker/ubuntu/openvpn/Makefile
+docker/ubuntu/shell/Dockerfile-shell              Docker: Ubuntu 16.04 login shell image
+docker/ubuntu/shell/Dockerfile-xshell             Docker: Ubuntu 16.04 login shell with GUI image
+docker/ubuntu/shell/Makefile
+docker/ubuntu/test/Dockerfile                     Docker: Ubuntu 17.04 testing basic image
 docker/ubuntu/test/Makefile
-docker/Makefile                                       Makefile for building all images
+docker/ubuntu/wine/Dockerfile                     Docker: Ubuntu 16.04 WINE app image
+docker/ubuntu/wine/Makefile
+docker/Makefile                                   Makefile for building all images
 
-kubernetes/debian/Makefile                            Kubernetes: Debian example
+kubernetes/debian/Makefile                        Kubernetes: Debian example
 kubernetes/debina/test-ns.json
 kubernetes/debian/debian-pod.json
 kubernetes/debian/debian-rc.json
 kubernetes/debian/debian-svc.json
 
-python/simple-package/Makefile                        Simple Egg & WHL package
+python/simple-package/Makefile                    Simple Egg & WHL package
 python/simple-package/RUN
 python/simple-package/setup.py
 python/simple-package/hello/__init__.py
 python/simple-package/hello/message.py
-python/simple-flask/Makefile                          Simple Flask demo
+python/simple-flask/Makefile                      Simple Flask demo
 python/simple-flask/RUN
 python/simple-flask/simple_flask.py
 python/simple-flask/templates/hello.html
-python/simple-tornado/tornado_client.py               Tornado web client example
-python/simple-tornado/tornado_server.py               Tornado web server example
+python/simple-tornado/tornado_client.py           Tornado web client example
+python/simple-tornado/tornado_server.py           Tornado web server example
 
-terraform-aws/1pxy/aws_config.tf                      Terraform AWS: 1pxy example
+terraform-aws/1pxy/aws_config.tf                  Terraform AWS: 1pxy example
 terraform-aws/1pxy/aws_resources.tf
 terraform-aws/1pxy/pxy_resources.tf
 terraform-aws/1pxy/pxy_variables.tf
-terraform-aws/pxy-as/aws_config.tf                    Terraform AWS: pxy-as example
+terraform-aws/pxy-as/aws_config.tf                Terraform AWS: pxy-as example
 terraform-aws/pxy-as/aws_resources.tf
 terraform-aws/pxy-as/pxy_resources.tf
 terraform-aws/pxy-as/pxy_variables.tf

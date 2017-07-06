@@ -1,8 +1,7 @@
-FROM drtuxwang/debian-xbase:8
+FROM drtuxwang/ubuntu-xbase:16.04
 
 # Install OpenVPN packages
 RUN apt-get install --no-install-recommends -y openvpn && \
-	apt-get install --no-install-recommends -y resolvconf ||: && \
 	apt-get clean
 
 # Add scripts

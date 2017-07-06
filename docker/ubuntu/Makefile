@@ -1,6 +1,8 @@
 NAME := ubuntu
 VERSION = 16.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
+IMAGE_BASE := drtuxwang/$(NAME)-base:$(VERSION)
+IMAGE_XBASE := drtuxwang/$(NAME)-xbase:$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -18,8 +20,13 @@ all: build-all
 	docker images
 
 clean:
+	cd builder && make clean
+	cd docker && make clean
+	cd nginx && make clean
+	cd openvpn && make clean
+	cd wine && make clean
 	cd shell && make clean
-	docker rmi -f $(IMAGE) ||:
+	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_XBASE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
 	cd old && make clean
 	cd test && make clean
@@ -30,14 +37,23 @@ pull:
 	cd test && make pull
 
 build-all: build
-	cd shell && make build
 	cd old && make build
 	cd test && make build
+	cd builder && make build
+	cd docker && make build
+	cd nginx && make build
+	cd openvpn && make build
+	cd shell && make build
+	cd wine && make build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
+	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
+	docker build -f Dockerfile-base -t $(IMAGE_BASE) .
+	@echo "\n*** Building \"$(IMAGE_XBASE)\" Docker image ***"
+	docker build -f Dockerfile-xbase -t $(IMAGE_XBASE) .
 	rm -rf tmpdir
 
 run:

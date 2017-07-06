@@ -1,8 +1,7 @@
-NAME := debian
-VERSION = 8
-IMAGE := drtuxwang/$(NAME)-docker:$(VERSION)
+NAME := ubuntu
+VERSION = 16.04
+IMAGE := drtuxwang/$(NAME)-builder:$(VERSION)
 FLAGS := --rm \
-	--privileged=true \
 	--interactive \
 	--tty \
 	--cpu-period=100000 \
@@ -14,7 +13,6 @@ FLAGS_SHELL := \
 	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
-	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--env TERM=$(TERM) \
 	--env USER=$(USER)
 
@@ -32,9 +30,17 @@ build:
 	rm -rf tmpdir
 
 run:
+	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
+	docker run $(FLAGS) $(FLAGS_SHELL) \
+		--network none \
+		--name $(NAME)-builder-dock \
+		--hostname $(NAME)-builder-dock \
+		$(IMAGE) /etc/docker-init || exit 0
+
+irun:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
-		--name $(NAME)-docker-dock \
-		--hostname $(NAME)-docker-dock \
+		--name $(NAME)-ibuilder-dock \
+		--hostname $(NAME)-ibuilder-dock \
 		$(IMAGE) || exit 0
 

@@ -1,6 +1,6 @@
-NAME := debian
-VERSION = 8
-IMAGE := drtuxwang/$(NAME)-openvpn:$(VERSION)
+NAME := ubuntu
+VERSION = 16.04
+IMAGE := drtuxwang/$(NAME)-wine:$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -32,8 +32,17 @@ build:
 	rm -rf tmpdir
 
 run:
+	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
+	docker run $(FLAGS) $(FLAGS_SHELL) \
+		--network none \
+		--name $(NAME)-wine-dock \
+		--hostname $(NAME)-wine-dock \
+		$(IMAGE) /etc/docker-init || exit 0
+
+irun:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
-		--name $(NAME)-openvpn-dock \
-		--hostname $(NAME)-openvpn-dock \
+		--name $(NAME)-iwine-dock \
+		--hostname $(NAME)-iwine-dock \
 		$(IMAGE) || exit 0
+

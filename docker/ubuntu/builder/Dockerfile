@@ -1,4 +1,4 @@
-FROM drtuxwang/debian-base:8
+FROM drtuxwang/ubuntu-base:16.04
 
 # Install compiler & dev packages
 RUN apt-get install --no-install-recommends -y \
