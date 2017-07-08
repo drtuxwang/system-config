@@ -7,10 +7,13 @@ RUN apt-get install --no-install-recommends -y \
 	apt-get install --no-install-recommends -y \
 		libbz2-dev \
 		libdb5.3-dev \
+		libgdbm-dev \
+		liblzma-dev \
+		libncurses5-dev \
 		libreadline6-dev \
 		libsqlite3-dev \
 		libssl-dev \
-		zlib1g-dev && \
+		tk8.6-dev && \
 	apt-get install --no-install-recommends -y \
 		libevent-dev \
 		libncurses5-dev && \
