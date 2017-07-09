@@ -246,11 +246,29 @@ class Main(object):
                             indent + '  ' + self._packages[i].get_url(),
                             '[Installed]'
                         )
-                    elif self._packages[i].get_checked_flag():
-                        print(indent + '  ' + self._packages[i].get_url())
-                    elif not self._packages[name].get_installed_flag():
+                    elif (
+                            not self._packages[i].get_checked_flag() and
+                            not self._packages[name].get_installed_flag()
+                    ):
                         self._check_package_install(
                             distribution, ofile, indent + '  ', i)
+                    self._packages[i].set_checked_flag(True)
+
+    def _read_distribution_blacklist(self, file):
+        try:
+            with open(file, errors='replace') as ifile:
+                for line in ifile:
+                    columns = line.split()
+                    if columns:
+                        name = columns[0]
+                        if name[:1] != '#':
+                            if name in self._packages:
+                                if (columns[1] == '*' or
+                                        columns[1] ==
+                                        self._packages[name].get_version()):
+                                    del self._packages[name]
+        except OSError:
+            return
 
     def _check_distribution_install(self, distribution, list_file, names):
         urlfile = os.path.basename(
@@ -301,6 +319,12 @@ class Main(object):
         self._read_distribution_pin_packages(
             options.get_distribution() + '.pinlist')
         self._read_distribution_installed(options.get_list_file())
+
+        ispattern = re.compile('[.]debs-?.*$')
+        distribution = ispattern.sub('', options.get_list_file())
+        self._read_distribution_blacklist(
+             distribution + '.blacklist')
+
         self._check_distribution_install(
             options.get_distribution(),
             options.get_list_file(),
