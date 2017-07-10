@@ -322,8 +322,7 @@ class Main(object):
 
         ispattern = re.compile('[.]debs-?.*$')
         distribution = ispattern.sub('', options.get_list_file())
-        self._read_distribution_blacklist(
-             distribution + '.blacklist')
+        self._read_distribution_blacklist(distribution + '.blacklist')
 
         self._check_distribution_install(
             options.get_distribution(),

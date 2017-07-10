@@ -37,7 +37,10 @@ class Options(object):
     @staticmethod
     def _reset():
         if 'HOME' in os.environ:
-            directory = os.path.join(os.environ['HOME'], '.wine')
+            if sys.argv[0].endswith('wine64'):
+                directory = os.path.join(os.environ['HOME'], '.wine64')
+            else:
+                directory = os.path.join(os.environ['HOME'], '.wine')
             if os.path.isdir(directory):
                 print('Removing "{0:s}"...'.format(directory))
                 try:
@@ -54,11 +57,15 @@ class Options(object):
         signal.signal(signal.SIGTERM, cls._signal_ignore)
         if 'WINEDLLOVERRIDES' not in os.environ:
             os.environ['WINEDLLOVERRIDES'] = "mscoree,mshtml="
-        if 'WINEARCH' not in os.environ:
-            if sys.argv[0].endswith('wine64'):
-                os.environ['WINEARCH'] = 'win64'
-            else:
-                os.environ['WINEARCH'] = 'win32'
+        if sys.argv[0].endswith('wine64'):
+            directory = os.path.join(os.environ['HOME'], '.wine64')
+            os.environ['HOME'] = directory
+            os.environ['WINEARCH'] = 'win64'
+            if not os.path.isdir(directory):
+                os.mkdir(directory)
+                os.symlink('.', os.path.join(directory, '.wine'))
+        elif os.environ.get('WINEARCH') is None:
+            os.environ['WINEARCH'] = 'win32'
 
     def parse(self, args):
         """
