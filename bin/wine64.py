@@ -64,6 +64,11 @@ class Options(object):
             if not os.path.isdir(directory):
                 os.mkdir(directory)
                 os.symlink('.', os.path.join(directory, '.wine'))
+                os.symlink('../.cache', os.path.join(directory, '.cache'))
+                os.symlink(
+                    '../.fontconfig',
+                    os.path.join(directory, '.fontconfig')
+                )
         elif os.environ.get('WINEARCH') is None:
             os.environ['WINEARCH'] = 'win32'
 
