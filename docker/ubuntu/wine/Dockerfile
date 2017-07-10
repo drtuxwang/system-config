@@ -4,7 +4,7 @@ FROM drtuxwang/ubuntu-xbase:16.04
 RUN dpkg --add-architecture i386 && \
 	sed -i "s/^deb http/deb [arch=amd64,i386] http/" /etc/apt/sources.list && \
 	apt-get update && \
-	apt-get install --no-install-recommends -y wine:i386 && \
+	apt-get install --no-install-recommends -y wine && \
 	apt-get clean
 
 # X-windows full setup
