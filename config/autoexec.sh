@@ -2,7 +2,7 @@
 
 set_vga()
 {
-    MODELINE=$(gtf $1 $2 $3 | grep Modeline | awk '{
+    MODELINE=$(gtf $2 $3 $4 | grep Modeline | awk '{
         printf("%4.2f %d %d %d %d %d %d %d %d\n", $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     }')
     xrandr --newmode $2x${3}_$4 $MODELINE
