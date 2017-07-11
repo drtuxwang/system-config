@@ -89,6 +89,7 @@ class Package(object):
     def __init__(self, depends=(), url=''):
         self._checked_flag = False
         self._installed_flag = False
+        self._version = None
         self._depends = depends
         self._url = url
 
@@ -134,6 +135,20 @@ class Package(object):
         """
         self._installed_flag = installed_flag
 
+    def get_version(self):
+        """
+        Return version.
+        """
+        return self._version
+
+    def set_version(self, version):
+        """
+        Set package version.
+
+        version = package version.
+        """
+        self._version = version
+
     def get_url(self):
         """
         Return package url.
@@ -174,6 +189,10 @@ class Main(object):
                     line = line.rstrip('\r\n')
                     if line.startswith('Package: '):
                         name = line.replace('Package: ', '')
+                        name = line.replace('Package: ', '')
+                    elif line.startswith('Version: '):
+                        package.set_version(
+                            line.replace('Version: ', '').split(':')[-1])
                     elif line.startswith('Depends: '):
                         depends = []
                         for i in line.replace('Depends: ', '').split(', '):
@@ -263,9 +282,10 @@ class Main(object):
                         name = columns[0]
                         if name[:1] != '#':
                             if name in self._packages:
-                                if (columns[1] == '*' or
-                                        columns[1] ==
-                                        self._packages[name].get_version()):
+                                if columns[1] == (
+                                        '*',
+                                        self._packages[name].get_version()
+                                ):
                                     del self._packages[name]
         except OSError:
             return
