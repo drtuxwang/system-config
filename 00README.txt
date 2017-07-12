@@ -811,14 +811,14 @@ docker/alpine/Dockerfile                          Docker: Alpine 3.5 basic image
 docker/alpine/Makefile
 docker/centos/Dockerfile                          Docker: CentOS 7 basic image
 docker/centos/Makefile
-docker/centos/old/Dockerfile                      Docker: CentOS 6 basic image
-docker/centos/old/Makefile
-docker/debian/Dockerfile                          Docker: Debian 8 basic image
+docker/centos/centos-old/Dockerfile               Docker: CentOS 6 basic old image
+docker/centos/centos-old/Makefile
+docker/debian/Dockerfile                          Docker: Debian 9 basic image
 docker/debian/Makefile
-docker/debian/new/Dockerfile                      Docker: Debian 9 basic image
-docker/debian/new/Makefile
-docker/debian/old/Dockerfile                      Docker: Debian 7 basic image
-docker/debian/old/Makefile
+docker/debian/debian-old/Dockerfile               Docker: Debian 8 basic old image
+docker/debian/debian-old/Makefile
+docker/debian/debian-test/Dockerfile              Docker: Debian testing basic test image
+docker/debian/debian-test/Makefile
 docker/jailbreak/Dockerfile                       Docker: empty app image for jail breaking
 docker/jailbreak/Makefile
 docker/jenkins/Makefile                           Docker: Jenkins server
@@ -838,15 +838,15 @@ docker/ubuntu/docker/Makefile
 docker/ubuntu/nginx/Makefile                      Docker: Ubuntu 16.04 NGINX proxy app image
 docker/ubuntu/nginx/Dockerfile
 docker/ubuntu/nginx/files/nginx-proxy.conf
-docker/ubuntu/old/Dockerfile                      Docker: Ubuntu 14.04 old basic image
-docker/ubuntu/old/Makefile
+docker/ubuntu/ubuntu-old/Dockerfile               Docker: Ubuntu 14.04 basic old image
+docker/ubuntu/ubuntu-old/Makefile
 docker/ubuntu/openvpn/Dockerfile                  Docker: Ubuntu 16.04 OpenVPN app image
 docker/ubuntu/openvpn/Makefile
 docker/ubuntu/shell/Dockerfile-shell              Docker: Ubuntu 16.04 login shell image
 docker/ubuntu/shell/Dockerfile-xshell             Docker: Ubuntu 16.04 login shell with GUI image
 docker/ubuntu/shell/Makefile
-docker/ubuntu/test/Dockerfile                     Docker: Ubuntu 17.04 testing basic image
-docker/ubuntu/test/Makefile
+docker/ubuntu/ubuntu-test/Dockerfile              Docker: Ubuntu 17.04 basic test image
+docker/ubuntu/ubuntu-test/Makefile
 docker/ubuntu/wine/Dockerfile                     Docker: Ubuntu 16.04 WINE app image
 docker/ubuntu/wine/Makefile
 docker/Makefile                                   Makefile for building all images

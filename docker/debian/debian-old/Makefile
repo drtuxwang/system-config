@@ -1,5 +1,5 @@
 NAME := debian
-VERSION = 9
+VERSION = 8
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
@@ -16,7 +16,7 @@ default: build
 
 clean:
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "`
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
@@ -30,7 +30,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
-		--name $(NAME)-new-dock \
-		--hostname $(NAME)-new-dock \
+		--name $(NAME)-old-dock \
+		--hostname $(NAME)-old-dock \
 		$(IMAGE) || exit 0
 

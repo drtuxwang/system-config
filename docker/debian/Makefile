@@ -1,5 +1,5 @@
 NAME := debian
-VERSION = 8
+VERSION = 9
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
@@ -18,19 +18,19 @@ all: build-all
 	docker images
 
 clean:
-	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_XBASE) ||:
+	docker rmi -f $(IMAGE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
-	cd old && make clean
-	cd new && make clean
+	cd $(NAME)-old && make clean
+	cd $(NAME)-test && make clean
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-	cd old && make pull
-	cd new && make pull
+	cd $(NAME)-old && make pull
+	cd $(NAME)-test && make pull
 
 build-all: build
-	cd old && make build
-	cd new && make build
+	cd $(NAME)-old && make build
+	cd $(NAME)-test && make build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *

@@ -1,4 +1,4 @@
-FROM debian:9
+FROM debian:testing
 
 # Install base packages
 RUN apt-get update && \

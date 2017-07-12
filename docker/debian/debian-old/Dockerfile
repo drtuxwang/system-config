@@ -1,4 +1,4 @@
-FROM debian:7
+FROM debian:8
 
 # Install base packages
 RUN apt-get update && \

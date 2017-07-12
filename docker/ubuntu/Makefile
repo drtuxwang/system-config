@@ -28,17 +28,17 @@ clean:
 	cd shell && make clean
 	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_XBASE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
-	cd old && make clean
-	cd test && make clean
+	cd $(NAME)-old && make clean
+	cd $(NAME)-test && make clean
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-	cd old && make pull
-	cd test && make pull
+	cd $(NAME)-old && make pull
+	cd $(NAME)-test && make pull
 
 build-all: build
-	cd old && make build
-	cd test && make build
+	cd $(NAME)-old && make build
+	cd $(NAME)-test && make build
 	cd builder && make build
 	cd docker && make build
 	cd nginx && make build
