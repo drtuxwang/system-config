@@ -2,7 +2,7 @@
 """
 System configuration detection tool.
 
-1996-2016 By Dr Colin Kong
+1996-2017 By Dr Colin Kong
 """
 
 import functools
@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.11.3'
-VERSION = 20170421
+RELEASE = '4.12.0'
+VERSION = 20170719
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
@@ -1351,10 +1351,12 @@ class LinuxSystem(PosixSystem):
         env = {}
         if 'LANG' not in os.environ:
             env['LANG'] = 'en_US'
-        ifconfig = command_mod.CommandFile('/sbin/ifconfig', args=['-a'])
-        task = subtask_mod.Batch(ifconfig.get_cmdline())
-        task.run(env=env, pattern='inet[6]?( addr)?')
-        isjunk = re.compile('.*inet[6]? (addr[a-z]*[: ])?')
+        command = command_mod.CommandFile('/bin/ip', args=['address'])
+        if not command.is_found():
+            command = command_mod.CommandFile('/sbin/ifconfig', args=['-a'])
+        task = subtask_mod.Batch(command.get_cmdline())
+        task.run(env=env, pattern='^ *inet6? ')
+        isjunk = re.compile('^ *inet6? (addr[a-z]*[: ])?')
         for line in task.get_output():
             info['Net IPvx Address'].append(isjunk.sub(' ', line).split()[0])
         return info

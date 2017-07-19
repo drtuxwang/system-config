@@ -4,8 +4,8 @@
 #
 # 1996-2017 By Dr Colin Kong
 #
-VERSION=20170324
-RELEASE="2.6.40-10"
+VERSION=20170719
+RELEASE="2.6.40-11"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -439,7 +439,12 @@ detect()
         fi
         ;;
     Linux)
-        INETS=`LANG=en_GB isitset \`/sbin/ifconfig -a 2> /dev/null | grep "inet[6]* addr" | sed -e "s/inet[6]* addr[a-z]*:/ /" | awk '{print $1}'\``
+        if [ -x "/bin/ip" ]
+        then
+            INETS=`/bin/ip address 2> /dev/null | grep "^ *inet[6]* " | awk '{print $2}'`
+        else
+            INETS=`LANG=en_GB isitset \`/sbin/ifconfig -a 2> /dev/null | grep "^ *inet6* addr" | sed -e "s/inet[6]* addr[a-z]*:/ /" | awk '{print $1}'\``
+        fi
         ;;
     *NT*)
         INETS=`isitset \`ipconfig 2> /dev/null | grep "IP.* Address" | sed -e "s/.*: //"\``
