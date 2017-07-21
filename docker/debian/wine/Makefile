@@ -1,8 +1,7 @@
-NAME := ubuntu
-VERSION = 16.04
-IMAGE := drtuxwang/$(NAME)-docker:$(VERSION)
+NAME := debian
+VERSION = 9
+IMAGE := drtuxwang/$(NAME)-wine:$(VERSION)
 FLAGS := --rm \
-	--privileged=true \
 	--interactive \
 	--tty \
 	--cpu-period=100000 \
@@ -14,7 +13,8 @@ FLAGS_SHELL := \
 	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
-	--volume /var/run/docker.sock:/var/run/docker.sock \
+	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
+	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
 	--env USER=$(USER)
 
@@ -32,9 +32,17 @@ build:
 	rm -rf tmpdir
 
 run:
+	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
+	docker run $(FLAGS) $(FLAGS_SHELL) \
+		--network none \
+		--name $(NAME)-wine-dock \
+		--hostname $(NAME)-wine-dock \
+		$(IMAGE) /etc/docker-init || exit 0
+
+irun:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
-		--name $(NAME)-docker-dock \
-		--hostname $(NAME)-docker-dock \
+		--name $(NAME)-iwine-dock \
+		--hostname $(NAME)-iwine-dock \
 		$(IMAGE) || exit 0
 

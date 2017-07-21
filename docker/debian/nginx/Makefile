@@ -1,5 +1,5 @@
-NAME := ubuntu
-VERSION = 16.04
+NAME := debian
+VERSION = 9
 IMAGE := drtuxwang/$(NAME)-nginx:$(VERSION)
 FLAGS := --rm \
 	--interactive \

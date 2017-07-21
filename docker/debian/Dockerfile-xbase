@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-base:16.04
+FROM drtuxwang/debian-base:9
 
 # Install extra packages
 RUN apt-get install --no-install-recommends -y \

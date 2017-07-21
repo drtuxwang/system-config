@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-base:16.04
+FROM drtuxwang/debian-base:9
 
 # Bash shell full setup
 COPY tmpdir/bin/ /opt/software/bin/

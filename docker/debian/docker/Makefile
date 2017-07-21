@@ -1,7 +1,8 @@
-NAME := ubuntu
-VERSION = 16.04
-IMAGE := drtuxwang/$(NAME)-openvpn:$(VERSION)
+NAME := debian
+VERSION = 9
+IMAGE := drtuxwang/$(NAME)-docker:$(VERSION)
 FLAGS := --rm \
+	--privileged=true \
 	--interactive \
 	--tty \
 	--cpu-period=100000 \
@@ -13,8 +14,7 @@ FLAGS_SHELL := \
 	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
-	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
-	--env DISPLAY=$(DISPLAY) \
+	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--env TERM=$(TERM) \
 	--env USER=$(USER)
 
@@ -34,6 +34,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
-		--name $(NAME)-openvpn-dock \
-		--hostname $(NAME)-openvpn-dock \
+		--name $(NAME)-docker-dock \
+		--hostname $(NAME)-docker-dock \
 		$(IMAGE) || exit 0
+

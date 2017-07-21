@@ -1,4 +1,11 @@
-FROM drtuxwang/ubuntu-xbase:16.04
+FROM drtuxwang/debian-xbase:9
+
+# Install WINE packages
+RUN dpkg --add-architecture i386 && \
+	sed -i "s/^deb http/deb [arch=amd64,i386] http/" /etc/apt/sources.list && \
+	apt-get update && \
+	apt-get install --no-install-recommends -y wine wine64 wine32:i386 && \
+	apt-get clean
 
 # X-windows full setup
 COPY tmpdir/config/terminalrc /home/docker/.config/xfce4/terminal/terminalrc
