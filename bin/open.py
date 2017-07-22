@@ -87,12 +87,19 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
-    def _spawn(action, file):
+    def _get_program(command):
+        file = os.path.join(os.path.dirname(sys.argv[0]), command[0])
+        if os.path.isfile(file):
+            return command_mod.CommandFile(file)
+        return command_mod.Command(command[0], errors='stop')
+
+    @classmethod
+    def _spawn(cls, action, file):
         command = action.get('command')
         if not command:
             raise SystemExit(sys.argv[0] + ': cannot find action: ' + file)
         print(file + ': opening with "' + command[0] + '"...')
-        program = command_mod.Command(command[0], errors='stop')
+        program = cls._get_program(command)
         program.set_args(command[1:] + [file])
         if action.get('daemon'):
             subtask_mod.Daemon(program.get_cmdline()).run()
