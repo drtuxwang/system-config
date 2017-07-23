@@ -1,15 +1,12 @@
-FROM drtuxwang/debian-base:9
+FROM drtuxwang/ubuntu-base:16.04
 
 # Install Docker package (stable instead of latest)
 RUN apt-get install --no-install-recommends -y \
 		iptables \
-		libapparmor1 \
-		libdevmapper1.02.1 \
-		libltdl7 \
-		libseccomp2 && \
+		libltdl7 && \
 	apt-get clean && \
 	wget --progress=bar:force \
-		http://apt.dockerproject.org/repo/pool/main/d/docker-engine/docker-engine_1.12.6-0~debian-stretch_amd64.deb && \
+		http://apt.dockerproject.org/repo/pool/main/d/docker-engine/docker-engine_1.12.6-0~ubuntu-xenial_amd64.deb && \
 	dpkg -i docker-engine_* && \
 	rm docker-engine_*
 

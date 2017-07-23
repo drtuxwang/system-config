@@ -1,5 +1,5 @@
-NAME := debian
-VERSION = 9
+NAME := ubuntu
+VERSION = 16.04
 IMAGE := drtuxwang/$(NAME)-builder:$(VERSION)
 FLAGS := --rm \
 	--interactive \

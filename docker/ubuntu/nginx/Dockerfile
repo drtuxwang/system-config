@@ -1,4 +1,4 @@
-FROM drtuxwang/debian-xbase:9
+FROM drtuxwang/ubuntu-xbase:16.04
 
 RUN apt-get install --no-install-recommends -y nginx-light
 
