@@ -145,7 +145,7 @@ class Main(object):
                 tar.set_args(['cfva', archive] + options.get_files())
                 os.environ['GZIP'] = '-9'
                 os.environ['BZIP2'] = '-9'
-                os.environ['XZ_OPT'] = '-9 -e --lzma2=dict=128MiB --threads=1'
+                os.environ['XZ_OPT'] = '-9 -e --threads=1'
             subtask_mod.Exec(tar.get_cmdline()).run()
 
 

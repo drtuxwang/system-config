@@ -62,9 +62,12 @@ class Main(object):
         Start program
         """
         command = command_mod.Command('xz', errors='stop')
+        if len(sys.argv) > 1 and os.path.isfile(sys.argv[1]):
+            command.set_args(['-9', '-e'])
+        command.extend_args(sys.argv[1:])
         self._set_libraries(command)
 
-        subtask_mod.Exec(command.get_cmdline() + sys.argv[1:]).run()
+        subtask_mod.Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':
