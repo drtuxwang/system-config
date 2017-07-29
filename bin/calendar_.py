@@ -170,10 +170,27 @@ class Main(object):
 
     @staticmethod
     def _short(year, month):
-        if month == 0:
-            print(calendar.TextCalendar(6).formatyear(year))
+        if month == 1:
+            data = calendar.TextCalendar(6).formatmonth(year-1, 12)
         else:
-            print(calendar.TextCalendar(6).formatmonth(year, month))
+            data = calendar.TextCalendar(6).formatmonth(year, month-1)
+        last_month = data.split('\n')+['']
+
+        data = calendar.TextCalendar(6).formatmonth(year, month)
+        current_month = data.split('\n')+['']
+
+        if month == 12:
+            data = calendar.TextCalendar(6).formatmonth(year+1, 1)
+        else:
+            data = calendar.TextCalendar(6).formatmonth(year, month+1)
+        next_month = data.split('\n')+['']
+
+        for index in range(8):
+            print("  {0:20s}   {1:20s}   {2:20s}".format(
+                last_month[index],
+                current_month[index],
+                next_month[index]
+            ))
 
     @classmethod
     def run(cls):
@@ -182,10 +199,11 @@ class Main(object):
         """
         options = Options()
 
-        if options.get_long_flag():
-            cls._long(options.get_year(), options.get_month())
+        month = options.get_month()
+        if options.get_long_flag() or month == 0:
+            cls._long(options.get_year(), month)
         else:
-            cls._short(options.get_year(), options.get_month())
+            cls._short(options.get_year(), month)
 
 
 if __name__ == '__main__':
