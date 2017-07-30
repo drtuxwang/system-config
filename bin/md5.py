@@ -11,7 +11,7 @@ import signal
 import sys
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -156,11 +156,11 @@ class Main(object):
                         '" md5sum file.'
                     )
         if nmiss > 0:
-            print('md5: Cannot find', nmiss, 'of', nfiles, 'listed files.')
+            print("md5: Cannot find", nmiss, "of", nfiles, "listed files.")
         if nfail > 0:
             print(
-                'md5: Mismatch in', nfail, 'of', nfiles - nmiss,
-                'computed checksums.'
+                "md5: Mismatch in", nfail, "of", nfiles - nmiss,
+                "computed checksums."
             )
 
     @staticmethod

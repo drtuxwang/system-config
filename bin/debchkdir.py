@@ -12,7 +12,7 @@ import sys
 import file_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -108,16 +108,16 @@ class Main(object):
             version = os.path.basename(file).split('_')[1]
             if name in packages:
                 if file_stat.get_time() > packages[name].get_time():
-                    print('rm', packages[name].get_file())
-                    print('# ', file)
+                    print("rm", packages[name].get_file())
+                    print("# ", file)
                     packages[name] = Package(
                         file,
                         file_stat.get_time(),
                         version
                     )
                 else:
-                    print('rm', file)
-                    print('# ', packages[name].get_file())
+                    print("rm", file)
+                    print("# ", packages[name].get_file())
             else:
                 packages[name] = Package(file, file_stat.get_time(), version)
         return packages
@@ -192,17 +192,17 @@ class Main(object):
                         packages_white_list[name] in
                         ('*', packages_files[name])):
                     continue
-                print('rm', packages_files[name].get_file(), '# Unused')
+                print("rm", packages_files[name].get_file(), "# Unused")
             elif (
                     packages_files[name].get_version() !=
                     packages_used[name].get_version()
             ):
-                print('rm', packages_files[name].get_file(), '# Unused')
-                print('# ', packages_used[name].get_file(), 'Missing')
+                print("rm", packages_files[name].get_file(), "# Unused")
+                print("# ", packages_used[name].get_file(), "Missing")
 
         for name in names_used:
             if name not in names_files:
-                print('# ', packages_used[name].get_file(), 'Missing')
+                print("# , packages_used[name].get_file(), Missing")
 
     @staticmethod
     def config():

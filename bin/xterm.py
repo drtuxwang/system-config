@@ -16,7 +16,7 @@ import desktop_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 FG_COLOUR = '#009900'
 BG_COLOUR = '#000000'
@@ -225,9 +225,9 @@ class Xterm(Terminal):
             if not os.path.isfile(sshconfig):
                 try:
                     with open(sshconfig, 'w', newline='\n') as ofile:
-                        print('Protocol 2\n', file=ofile)
-                        print('#Host hostname', file=ofile)
-                        print('#User username\n', file=ofile)
+                        print("Protocol 2\n", file=ofile)
+                        print("#Host hostname", file=ofile)
+                        print("#User username\n", file=ofile)
                 except OSError:
                     return
             try:

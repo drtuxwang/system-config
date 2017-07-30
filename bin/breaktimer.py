@@ -14,7 +14,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 FG_COLOUR = '#000000'
 BG_COLOUR = '#ffffdd'
@@ -118,7 +118,7 @@ class Main(object):
 
     def _alert(self):
         if self._alarm < 601:
-            sys.stdout.write('\033]11;#ff8888\007')
+            sys.stdout.write("\033]11;#ff8888\007")
             sys.stdout.flush()
             subtask_mod.Batch(self._bell.get_cmdline()).run()
             self._options.get_pop().set_args(
@@ -136,7 +136,7 @@ class Main(object):
         self._alarm = None
 
         while True:
-            sys.stdout.write('\033]11;#ffffdd\007')
+            sys.stdout.write("\033]11;#ffffdd\007")
             start = int(time.time())
             elapsed = 0
             self._alarm = 0
@@ -148,7 +148,7 @@ class Main(object):
                     time.sleep(1)
                     elapsed = int(time.time()) - start
                     sys.stdout.write(
-                        ' \r ' + time.strftime('%H:%M ') +
+                        " \r " + time.strftime('%H:%M ') +
                         str(self._limit - elapsed)
                     )
                     sys.stdout.flush()

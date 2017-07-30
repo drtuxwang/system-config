@@ -10,7 +10,7 @@ import signal
 import sys
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -127,7 +127,7 @@ class Main(object):
 
         if len(options.get_files()) > 1:
             for file in options.get_files():
-                print('==>', file, '<==')
+                print("==>", file, "<==")
                 self._file(options, file)
         elif len(options.get_files()) == 1:
             self._file(options, options.get_files()[0])

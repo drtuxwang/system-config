@@ -11,7 +11,7 @@ import signal
 import sys
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -92,7 +92,8 @@ class Main(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
             print(
-                'Converting "' + file + '" file to "\\r" newline format...')
+                'Converting "' + file + '" file to "\\r" newline format...'
+            )
             try:
                 with open(file, errors='replace') as ifile:
                     tmpfile = file + '-tmp' + str(os.getpid())

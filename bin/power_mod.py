@@ -2,9 +2,7 @@
 """
 Python power handling module
 
-Copyright GPL v2: 2011-2016 By Dr Colin Kong
-
-Version 2.1.3 (2016-07-23)
+Copyright GPL v2: 2011-2017 By Dr Colin Kong
 """
 
 import functools
@@ -15,7 +13,10 @@ import subprocess
 import sys
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
+
+RELEASE = '2.1.4'
+VERSION = 20160730
 
 
 class Battery(object):

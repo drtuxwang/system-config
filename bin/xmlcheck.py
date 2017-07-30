@@ -12,7 +12,7 @@ import sys
 import xml.sax
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -133,7 +133,7 @@ class Main(object):
                     with open('xmlcheck.xml', 'w', newline='\n') as ofile:
                         for line in ifile:
                             if line.startswith('<!DOCTYPE html'):
-                                ofile.write('\n')
+                                ofile.write("\n")
                             else:
                                 ofile.write(line.replace('&', '.'))
                 except OSError:

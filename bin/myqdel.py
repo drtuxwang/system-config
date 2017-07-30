@@ -12,10 +12,10 @@ import sys
 
 import task_mod
 
-RELEASE = '2.7.7'
-
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+RELEASE = '2.7.8'
 
 
 class Options(object):

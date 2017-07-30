@@ -13,10 +13,10 @@ import time
 
 import task_mod
 
-RELEASE = '2.7.7'
-
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+RELEASE = '2.7.8'
 
 
 class Options(object):
@@ -169,7 +169,7 @@ class Main(object):
                     state = 'STOP'
         else:
             etime = '-'
-        print('{0:5d}  {1:9s}  {2:42s}  {3:>3s}   {4:5s} {5:>5s}'.format(
+        print("{0:5d}  {1:9s}  {2:42s}  {3:>3s}   {4:5s} {5:>5s}".format(
             jobid,
             info['QUEUE'],
             info['COMMAND'],

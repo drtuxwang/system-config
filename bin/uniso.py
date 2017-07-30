@@ -14,7 +14,7 @@ import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -105,44 +105,51 @@ class Main(object):
             )
             if size > 9400000000:
                 sys.stderr.write(
-                    '**WARNING** This ISO image file does not fit onto '
-                    '9.4GB/240min Duel Layer DVD media.\n'
+                    "**WARNING** This ISO image file does not fit onto "
+                    "9.4GB/240min Duel Layer DVD media.\n"
                 )
                 sys.stderr.write(
-                    '        ==> Please split your data into '
-                    'multiple images.\n'
+                    "        ==> Please split your data into "
+                    "multiple images.\n"
                 )
             elif size > 4700000000:
                 sys.stderr.write(
-                    '**WARNING** This ISO image file does not fit onto '
-                    '4.7GB/120min DVD media.\n'
+                    "**WARNING** This ISO image file does not fit onto "
+                    "4.7GB/120min DVD media.\n"
                 )
                 sys.stderr.write(
-                    '        ==> Please use Duel Layer DVD media or split '
-                    'your data into multiple images.\n')
+                    "        ==> Please use Duel Layer DVD media or split "
+                    "your data into multiple images.\n")
             else:
                 sys.stderr.write(
-                    '**WARNING** This ISO image file does not fit onto '
-                    '700MB/80min CD media.\n')
+                    "**WARNING** This ISO image file does not fit onto "
+                    "700MB/80min CD media.\n"
+                )
                 sys.stderr.write(
-                    '        ==> Please use DVD media or split your '
-                    'data into multiple images.\n')
-            print('')
+                    "        ==> Please use DVD media or split your "
+                    "data into multiple images.\n"
+                )
+            print("")
         else:
             minutes, remainder = divmod(size, 734003200 / 80)
             seconds = remainder * 4800 / 734003200.
             print(
-                '\n*** {0:s}: {1:4.2f} MB ({2:.0f} min '
-                '{3:05.2f} sec) ***\n'.format(
-                    image, size/1048576., minutes, seconds)
+                "\n*** {0:s}: {1:4.2f} MB ({2:.0f} min "
+                "{3:05.2f} sec) ***\n".format(
+                    image,
+                    size/1048576.,
+                    minutes,
+                    seconds
+                )
             )
             if size > 681574400:
                 sys.stderr.write(
-                    '**WARNING** This ISO image file does not fit onto '
-                    '650MB/74min CD media.\n'
+                    "'**WARNING** This ISO image file does not fit onto "
+                    "'650MB/74min CD media.\n"
                 )
                 sys.stderr.write(
-                    '        ==> Please use 700MB/80min CD media instead.\n')
+                    "'        ==> Please use 700MB/80min CD media instead.\n"
+                )
 
     def run(self):
         """

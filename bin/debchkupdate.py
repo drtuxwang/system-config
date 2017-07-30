@@ -15,7 +15,7 @@ import sys
 import file_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -237,8 +237,8 @@ class Main(object):
                                         distribution,
                                         self._packages[name].get_url()
                                     )
-                                    print('  ' + file, '(New dependency)')
-                                    print('  ' + file, file=ofile)
+                                    print("  " + file, "(New dependency)")
+                                    print("  " + file, file=ofile)
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + urlfile + '" file.')

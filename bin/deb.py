@@ -13,7 +13,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -163,17 +163,17 @@ class Options(object):
             )
         else:
             print(
-                'usage: deb.py [-h] [-l] [-s] [-L] [-d] [-P] [-S] [-i] [-I]',
+                "usage: deb.py [-h] [-l] [-s] [-L] [-d] [-P] [-S] [-i] [-I]",
                 file=sys.stderr
             )
             print(
-                '              [package.deb|package|arch '
-                '[package.deb|package|arch ...]]',
+                "              [package.deb|package|arch "
+                "[package.deb|package|arch ...]]",
                 file=sys.stderr
             )
             print(
-                'deb.py: error: the following arguments are required: '
-                'package.deb',
+                "deb.py: error: the following arguments are required: "
+                "package.deb",
                 file=sys.stderr
             )
             raise SystemExit(1)
@@ -352,7 +352,7 @@ class Main(object):
                     continue
             elif ':' in name:
                 continue
-            print('{0:35s} {1:15s} {2:5d}KB {3:s}'.format(
+            print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(
                 name.split(':')[0], package.get_version(), package.get_size(),
                 package.get_description()))
 

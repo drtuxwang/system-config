@@ -11,7 +11,7 @@ import signal
 import sys
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -105,10 +105,10 @@ class Main(object):
             if os.path.islink(file):
                 target = os.path.realpath(file)
                 if os.path.isfile(target):
-                    print('Copy file:', file, '->', target)
+                    print("Copy file:", file, '->', target)
                     self._copy(file, target)
                 elif not os.path.isdir(target):
-                    print('Null link:', file, '->', os.readlink(file))
+                    print("Null link:", file, '->', os.readlink(file))
             elif not os.path.exists(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')

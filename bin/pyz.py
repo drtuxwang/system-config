@@ -13,7 +13,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -134,7 +134,7 @@ class Main(object):
     def _make_pyz(self, archive):
         try:
             with open(archive, 'wb') as ofile:
-                ofile.write(b'#!/usr/bin/env python3\n')
+                ofile.write(b"#!/usr/bin/env python3\n")
                 with open(archive + '-zip', 'rb') as ifile:
                     self._copy(ifile, ofile)
         except OSError:

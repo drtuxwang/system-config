@@ -12,7 +12,7 @@ import sys
 import file_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -85,10 +85,10 @@ class Main(object):
     def _create(file, link):
         try:
             with open(link, 'w', newline='\n') as ofile:
-                print('#!/bin/bash', file=ofile)
-                print('#', file=ofile)
-                print('# fwrapper.py generated script', file=ofile)
-                print('#\n', file=ofile)
+                print("#!/bin/bash", file=ofile)
+                print("#", file=ofile)
+                print("# fwrapper.py generated script", file=ofile)
+                print("#\n", file=ofile)
                 print('MYDIR=$(dirname "$0")', file=ofile)
                 if file == os.path.abspath(file):
                     directory = os.path.dirname(file)
@@ -97,7 +97,7 @@ class Main(object):
                         directory + '@")',
                         file=ofile
                     )
-                    print('export PATH\n', file=ofile)
+                    print("export PATH\n", file=ofile)
                     print('exec "' + file + '" "$@"', file=ofile)
                 else:
                     print('exec "$MYDIR/' + file + '" "$@"', file=ofile)

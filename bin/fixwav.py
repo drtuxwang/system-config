@@ -14,7 +14,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -171,13 +171,13 @@ class Main(object):
                 )
             volume, pvolume = self._view(file)
             sys.stdout.write(
-                file + ': ' + volume + ' dB (' + pvolume + ' dB peak)')
+                file + ": " + volume + " dB (" + pvolume + " dB peak)")
             if not options.get_view_flag():
                 for npass in range(4):
                     self._adjust(file, volume)
-                    sys.stdout.write(' ' + str(npass) + '>> ')
+                    sys.stdout.write(" " + str(npass) + ">> ")
                     volume, pvolume = self._view(file)
-                    sys.stdout.write(volume + ' dB (' + pvolume + ' dB peak)')
+                    sys.stdout.write(volume + " dB (" + pvolume + " dB peak)")
                     if volume.startswith('-16.'):
                         break
             print()

@@ -14,7 +14,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 IMAGE_EXTS = {'bmp', 'gif', 'jpeg', 'jpg', 'pcx', 'png', 'svg', 'tif', 'tiff'}
 
@@ -140,13 +140,13 @@ class Main(object):
                 if file.split('.')[-1].lower() in IMAGE_EXTS:
                     ix_size, iy_size = self._imagesize(file)
                     imegs = ix_size * iy_size / 1000000
-                    print('{0:s}: {1:d} x {2:d} ({3:4.2f})'.format(
+                    print("{0:s}: {1:d} x {2:d} ({3:4.2f})".format(
                         file, ix_size, iy_size, imegs), end='')
                     resize = math.sqrt(megs / imegs)
                     ox_size = int(ix_size*resize + 0.5)
                     oy_size = int(iy_size*resize + 0.5)
                     if ox_size < ix_size and oy_size < iy_size:
-                        print(' => {0:d} x {1:d} ({2:4.2f})'.format(
+                        print(" => {0:d} x {1:d} ({2:4.2f})".format(
                             ox_size,
                             oy_size,
                             ox_size * oy_size / 1000000

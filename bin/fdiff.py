@@ -12,7 +12,7 @@ import sys
 import file_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -112,7 +112,7 @@ class Main(object):
                         os.path.join(directory2, os.path.basename(file))
                     )
                 else:
-                    print('only ', file + os.sep)
+                    print("only ", file + os.sep)
             elif os.path.isfile(file):
                 if os.path.isfile(
                         os.path.join(directory2, os.path.basename(file))):
@@ -121,17 +121,17 @@ class Main(object):
                         os.path.join(directory2, os.path.basename(file))
                     )
                 else:
-                    print('only ', file)
+                    print("only ", file)
 
         for file in files2:
             if os.path.isdir(file):
                 if not os.path.isdir(
                         os.path.join(directory1, os.path.basename(file))):
-                    print('only ', file + os.sep)
+                    print("only ", file + os.sep)
             elif os.path.isfile(file):
                 if not os.path.isfile(
                         os.path.join(directory1, os.path.basename(file))):
-                    print('only ', file)
+                    print("only ", file)
 
     @staticmethod
     def _difffile(file1, file2):
@@ -139,23 +139,23 @@ class Main(object):
         file_stat2 = file_mod.FileStat(file2)
 
         if file_stat1.get_size() != file_stat2.get_size():
-            print('diff ', file1 + '  ' + file2)
+            print("diff ", file1 + "  " + file2)
         elif file_stat1.get_time() != file_stat2.get_time():
             try:
                 ifile1 = open(file1, 'rb')
             except OSError:
-                print('diff ', file1 + '  ' + file2)
+                print("diff ", file1 + '  ' + file2)
                 return
             try:
                 ifile2 = open(file2, 'rb')
             except OSError:
-                print('diff ', file1 + '  ' + file2)
+                print("diff ", file1 + '  ' + file2)
                 return
             for _ in range(0, file_stat1.get_size(), 131072):
                 chunk1 = ifile1.read(131072)
                 chunk2 = ifile2.read(131072)
                 if chunk1 != chunk2:
-                    print('diff ', file1 + '  ' + file2)
+                    print("diff ", file1 + '  ' + file2)
                     return
             ifile1.close()
             ifile2.close()

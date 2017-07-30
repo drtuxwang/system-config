@@ -2,9 +2,7 @@
 """
 Python task handling utility module
 
-Copyright GPL v2: 2006-2016 By Dr Colin Kong
-
-Version 2.0.8 (2017-03-13)
+Copyright GPL v2: 2006-2017 By Dr Colin Kong
 """
 
 import functools
@@ -14,8 +12,12 @@ import re
 import subprocess
 import sys
 
+RELEASE = '2.0.9'
+VERSION = 20170730
+
+
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Tasks(object):

@@ -11,7 +11,7 @@ import signal
 import sys
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
@@ -38,14 +38,14 @@ class Options(object):
         print('            "libpath":', str(self._args.libpath) + ',')
         print('            "module":' + str(self._args.module) + ',')
         print('            "verbosity":', self._args.verbosity)
-        print('        },')
+        print("        },")
         print('        "_dump_flag":', str(self._dump_flag) + ',')
         print('        "_library_path":', str(self._library_path) + ',')
         print('        "_module_name":', str(self._module_name) + ',')
         print('        "_module_args":', str(self._module_args) + ',')
         print('        "_module_dir": "', self._module_dir, '",')
         print('        "_verbose_flag":', self._verbose_flag)
-        print('    },')
+        print("    },")
 
     def __init__(self, args):
         """
@@ -212,7 +212,7 @@ class PythonLoader(object):
         print('"pyloader": {')
         self._options.dump()
         print('    "_sysArgv":', self._sys_argv)
-        print('}')
+        print("}")
 
     def __init__(self, options):
         """
@@ -234,7 +234,7 @@ class PythonLoader(object):
         if self._options.get_library_path():
             sys.path = self._options.get_library_path() + sys.path
             if self._options.get_verbose_flag():
-                print('sys.path =', sys.path)
+                print("sys.path =", sys.path)
 
         directory = self._options.get_module_dir()
         if directory not in sys.path:
@@ -246,7 +246,7 @@ class PythonLoader(object):
 
         sys.argv = self._sys_argv
         if self._options.get_verbose_flag():
-            print('sys.argv =', sys.argv)
+            print("sys.argv =", sys.argv)
             print()
 
         main = importlib.machinery.SourceFileLoader(

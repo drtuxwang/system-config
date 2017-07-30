@@ -18,7 +18,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 IMAGE_EXTS = {'bmp', 'gif', 'jpeg', 'jpg', 'pcx', 'png', 'svg', 'tif', 'tiff'}
 
@@ -282,7 +282,7 @@ class Main(object):
                 try:
                     with open(self._tmpfile, 'wb') as ofile:
                         for line in ifile:
-                            ofile.write(line.rstrip(b'\r\n\004') + b'\n')
+                            ofile.write(line.rstrip(b"\r\n\004") + b'\n')
                 except OSError:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' +
@@ -412,7 +412,7 @@ class Main(object):
             else:
                 message = self._text(options, file)
             if options.get_view_flag():
-                print('Spooling', message, 'to printer previewer')
+                print("Spooling", message, "to printer previewer")
                 subtask_mod.Task(command.get_cmdline() + [self._tmpfile]).run()
             else:
                 print('Spooling {0:s} to printer "{1:s}" ({2:s})'.format(

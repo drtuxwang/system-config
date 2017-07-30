@@ -12,7 +12,7 @@ import sys
 import file_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -150,7 +150,7 @@ class Main(object):
             elif os.path.isfile(file):
                 file_stats.append(file_mod.FileStat(file))
         for file_stat in self._sorted(options, file_stats):
-            print('{0:10d} [{1:s}] {2:s}'.format(
+            print("{0:10d} [{1:s}] {2:s}".format(
                 file_stat.get_size(),
                 file_stat.get_time_local(),
                 file_stat.get_file()

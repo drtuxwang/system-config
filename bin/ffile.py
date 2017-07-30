@@ -13,7 +13,7 @@ import magic
 
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -91,7 +91,7 @@ class Main(object):
 
         with magic.Magic() as checker:
             for file in options.get_files():
-                print('{0:s}: {1:s}'.format(file, checker.id_filename(file)))
+                print("{0:s}: {1:s}".format(file, checker.id_filename(file)))
 
 
 if __name__ == '__main__':

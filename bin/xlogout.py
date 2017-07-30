@@ -12,7 +12,7 @@ import sys
 import task_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -98,7 +98,8 @@ class Main(object):
         if not options.get_force_flag():
             try:
                 answer = input(
-                    'Do you really want to logout of X-session? (y/n) [n] ')
+                    "Do you really want to logout of X-session? (y/n) [n] "
+                )
                 if answer.lower() != 'y':
                     raise SystemExit(1)
             except EOFError:

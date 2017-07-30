@@ -12,7 +12,7 @@ import sys
 import file_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -133,28 +133,28 @@ class Main(object):
         for file in options.get_files():
             try:
                 with open(file, 'rb') as ifile:
-                    print('\nFile:', file)
+                    print("\nFile:", file)
                     file_stat = file_mod.FileStat(file)
                     if options.get_all_flag() or file_stat.get_size() < 128:
                         for position in range(1, file_stat.get_size() + 1, 16):
-                            print('{0:07d}{1:s}'.format(
+                            print("{0:07d}{1:s}".format(
                                 position,
                                 self._format(options, ifile.read(16))
                             ))
                     else:
                         for position in range(1, 65, 16):
-                            print('{0:07d}{1:s}'.format(
+                            print("{0:07d}{1:s}".format(
                                 position,
                                 self._format(options, ifile.read(16))
                             ))
-                        print('...')
+                        print("...")
                         ifile.seek(file_stat.get_size() - 64)
                         for position in range(
                                 file_stat.get_size() - 63,
                                 file_stat.get_size() + 1,
                                 16
                         ):
-                            print('{0:07d}{1:s}'.format(
+                            print("{0:07d}{1:s}".format(
                                 position,
                                 self._format(options, ifile.read(16))
                             ))

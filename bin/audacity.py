@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for 'audacity' command
+Wrapper for "audacity" command
 """
 
 import glob
@@ -12,7 +12,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Main(object):
@@ -60,9 +60,9 @@ class Main(object):
                             os.path.join(audacitydir, 'audacity.cfg')):
                         with open(os.path.join(audacitydir, 'audacity.cfg'),
                                   'w', newline='\n') as ofile:
-                            print('[AudioIO]', file=ofile)
-                            print('PlaybackDevice=ALSA: pulse', file=ofile)
-                            print('RecordingDevice=ALSA: pulse', file=ofile)
+                            print("[AudioIO]", file=ofile)
+                            print("PlaybackDevice=ALSA: pulse", file=ofile)
+                            print("RecordingDevice=ALSA: pulse", file=ofile)
 
     def run(self):
         """

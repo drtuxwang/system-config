@@ -14,7 +14,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -199,7 +199,7 @@ class Main(object):
 
         private_key = os.path.join(self._sshdir, 'id_rsa')
         if not os.path.isfile(private_key):
-            print('\nGenerating 4096bit RSA private/public key pair...')
+            print("\nGenerating 4096bit RSA private/public key pair...")
             ssh_keygen = command_mod.Command('ssh-keygen', errors='stop')
             ssh_keygen.set_args(
                 ['-t', 'rsa', '-b', '4096', '-f', private_key, '-N', ''])

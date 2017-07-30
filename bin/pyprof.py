@@ -14,7 +14,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -151,7 +151,7 @@ class Main(object):
         task = subtask_mod.Task(python3.get_cmdline() + command.get_cmdline())
         task.run()
 
-        print('pyprof:', command.args2cmd([command.get_file()] + module_args))
+        print("pyprof:", command.args2cmd([command.get_file()] + module_args))
         return stats_file
 
     @staticmethod

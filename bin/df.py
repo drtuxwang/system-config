@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for 'df' command
+Wrapper for "df" command
 """
 
 import glob
@@ -14,7 +14,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class CommandThread(threading.Thread):
@@ -111,7 +111,8 @@ class Main(object):
             devices[file] = os.path.realpath(file)
 
         print(
-            'Filesystem       1K-blocks       Used  Available Use% Mounted on')
+            "Filesystem       1K-blocks       Used  Available Use% Mounted on"
+        )
         for mount in self._mounts:
             self._command.set_args([mount])
             thread = CommandThread(self._command)
@@ -131,8 +132,8 @@ class Main(object):
                         print(device)
                         device = ''
                     print(
-                        '{0:15s} {1:>10s} {2:>10s} {3:>10s} '
-                        '{4:>4s} {5:s}'.format(
+                        "{0:15s} {1:>10s} {2:>10s} {3:>10s} "
+                        "{4:>4s} {5:s}".format(
                             device, blocks, used, avail, ratio, directory)
                     )
             except (IndexError, ValueError):

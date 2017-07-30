@@ -12,7 +12,7 @@ import sys
 import task_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -137,16 +137,16 @@ class Main(object):
         apids = task.get_ancestor_pids(mypid)
         for pid in pids:
             if pid == mypid:
-                print('Process', pid, 'is my own process ID')
+                print("Process", pid, "is my own process ID")
             elif pid in apids:
-                print('Process', pid, 'is my ancestor process')
+                print("Process", pid, "is my ancestor process")
             else:
                 if not options.get_force_flag():
-                    answer = input('Kill process ' + str(pid) + ' (y/n): ')
+                    answer = input("Kill process " + str(pid) + " (y/n): ")
                     if answer not in ('y', 'Y'):
                         continue
                 task.killpids([pid])
-                print('Process', pid, 'killed')
+                print("Process", pid, "killed")
 
     def run(self):
         """

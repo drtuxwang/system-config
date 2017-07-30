@@ -13,7 +13,7 @@ import sys
 
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -138,24 +138,24 @@ class Main(object):
     @staticmethod
     def _long(year, month):
         print(
-            '\n' + ' '*18 +
-            '[ ', calendar.month_name[month] + ' ', year, ' ]\n'
+            "\n" + " "*18 +
+            "[ ", calendar.month_name[month] + " ", year, " ]\n"
         )
         for line in calendar.TextCalendar(6).formatmonth(
                 year, month).split(os.linesep)[1:]:
-            print('  ' + '_'*51 + '  ', line)
+            print("  " + "_"*51 + "  ", line)
         print()
-        print('  ' + '_'*76 + '  ')
-        print(' ' + ('|'+' '*10)*7 + '| ')
-        print(' ' + ('|'+' '*10)*7 + '| ')
+        print("  " + "_"*76 + "  ")
+        print(" " + ("|"+" "*10)*7 + "| ")
+        print(" " + ("|"+" "*10)*7 + "| ")
         print(
-            ' | Sunday   | Monday   | Tuesday  | Wednesday| Thursday'
-            ' | Friday   | Saturday |'
+            " | Sunday   | Monday   | Tuesday  | Wednesday| Thursday"
+            " | Friday   | Saturday |"
         )
-        print(' ' + ('|'+' '*10)*7 + '| ')
-        print(' ' + ('|'+'_'*10)*7 + '| ')
+        print(" " + ("|"+" "*10)*7 + "| ")
+        print(" " + ("|"+"_"*10)*7 + "| ")
         for week in calendar.Calendar(6).monthdays2calendar(year, month):
-            print(' ' + ('|'+' '*10)*7 + '| ')
+            print(" " + ("|"+" "*10)*7 + "| ")
             line = ''
             for day in week:
                 if day[0] == 0:
@@ -165,8 +165,8 @@ class Main(object):
             line += ' |'
             print(line)
             for _ in range(5):
-                print(' ' + ('|'+' '*10)*7 + '| ')
-            print(' ' + ('|'+'_'*10)*7 + '| ')
+                print(" " + ("|"+" "*10)*7 + "| ")
+            print(" " + ("|"+"_"*10)*7 + "| ")
 
     @staticmethod
     def _short(year, month):

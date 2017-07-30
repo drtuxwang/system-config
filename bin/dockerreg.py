@@ -29,7 +29,7 @@ import sys
 import requests
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 # Maximum number of repositories (bug in Registry v2 returns only 100)
 # Effects Go array size and huge number can crash Registry
@@ -188,9 +188,9 @@ class DockerRegistry(object):
         """
         Delete image
         """
-        print('{0:s}  {1:s}/{2:s}:{3:s}  DELETE'.format(
+        print("{0:s}  {1:s}/{2:s}:{3:s}  DELETE".format(
             digest, server.split('://')[-1], repository, tag))
-        url = '{0:s}/v1/repositories/{1:s}/tags/{2:s}'.format(
+        url = "{0:s}/v1/repositories/{1:s}/tags/{2:s}".format(
             server, repository, tag)
         cls._delete_url(url)
 
@@ -258,7 +258,7 @@ class DockerRegistry2(DockerRegistry):
         """
         Delete image by untagging blobs before untagging manifest
         """
-        print('{0:s}  {1:s}/{2:s}:{3:s}  DELETE'.format(
+        print("{0:s}  {1:s}/{2:s}:{3:s}  DELETE".format(
             digest, server.split('://')[-1], repository, tag))
         url = '{0:s}/v2/{1:s}/manifests/{2:s}'.format(
             server, repository, digest)
@@ -300,13 +300,13 @@ class Main(object):
     def _get_registry(server, url):
         registry2 = DockerRegistry2(server)
         if registry2.get_repositories() is not None:
-            print('Docker Registry API v2:', url.split('://')[-1])
+            print("Docker Registry API v2:", url.split('://')[-1])
             return registry2
         registry = DockerRegistry(server)
         if registry.get_repositories() is not None:
-            print('Docker Registry API v1:', url.split('://')[-1])
+            print("Docker Registry API v1:", url.split('://')[-1])
             return registry
-        raise SystemExit('Cannot find Docker Registry: ' + server)
+        raise SystemExit("Cannot find Docker Registry: " + server)
 
     @staticmethod
     def _breakup_url(url):
@@ -345,7 +345,7 @@ class Main(object):
                             registry.delete(
                                 server, repository, tag, digests[tag])
                         else:
-                            print('{0:s}  {1:s}/{2:s}:{3:s}'.format(
+                            print("{0:s}  {1:s}/{2:s}:{3:s}".format(
                                 digests[tag], prefix, repository, tag))
 
     @classmethod
@@ -356,8 +356,8 @@ class Main(object):
         options = Options()
         remove = options.get_remove_flag()
         if remove:
-            if input('\nPlease confirm image removal mode (y/n)? ') != 'y':
-                raise SystemExit('Aborted!')
+            if input("\nPlease confirm image removal mode (y/n)? ") != 'y':
+                raise SystemExit("Aborted!")
 
         for url in options.get_urls():
             cls._check(remove, url)

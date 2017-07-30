@@ -13,7 +13,7 @@ import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -130,11 +130,11 @@ class Main(object):
                     ' received from "' + task.get_file() + '".'
                 )
             for line in task.get_output():
-                print('  ' + line)
+                print("  " + line)
             if not os.path.isfile(target):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + target +
-                    '" Java class file.'
+                    " Java class file."
                 )
 
     def _create_manifest(self):
@@ -149,7 +149,7 @@ class Main(object):
             )
             try:
                 with open(self._manifest, 'w', newline='\n') as ofile:
-                    print('Main-Class:', main, file=ofile)
+                    print("Main-Class:", main, file=ofile)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + self._manifest +

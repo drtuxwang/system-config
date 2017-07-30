@@ -27,11 +27,11 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.12.0'
-VERSION = 20170719
-
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+RELEASE = '4.12.1'
+VERSION = 20170730
 
 # pylint: disable = too-many-lines
 
@@ -326,8 +326,8 @@ class Detect(object):
         Show banner.
         """
         timestamp = time.strftime('%Y-%m-%d-%H:%M:%S')
-        print('\n' + self._author, '- System configuration detection tool')
-        print('\n*** Detected at', timestamp, '***')
+        print("\n" + self._author, "- System configuration detection tool")
+        print("\n*** Detected at", timestamp, "***")
 
     def show_info(self):
         """

@@ -11,7 +11,7 @@ import signal
 import sys
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -171,7 +171,7 @@ class Main(object):
         try:
             os.chmod(directory, self._xmod)
         except OSError:
-            print('Permission denied:', directory + os.sep)
+            print("Permission denied:", directory + os.sep)
         if self._recursive_flag:
             try:
                 self._setmod([
@@ -201,7 +201,7 @@ class Main(object):
             else:
                 os.chmod(file, self._fmod)
         except OSError:
-            print('Permission denied:', file)
+            print("Permission denied:", file)
 
     def _setmod(self, files):
         for file in sorted(files):

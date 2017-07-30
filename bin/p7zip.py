@@ -14,7 +14,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -156,7 +156,7 @@ class Main(object):
         return sfx
 
     def _make_sfx(self, archive, sfx):
-        print('Adding SFX code')
+        print("Adding SFX code")
         with open(archive + '-sfx', 'wb') as ofile:
             try:
                 with open(sfx, 'rb') as ifile:

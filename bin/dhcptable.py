@@ -13,7 +13,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -152,13 +152,13 @@ class Main(object):
             network = thread.get_network()
             ip_address = thread.get_ip()
             if ip_address == network[1]:
-                print('{0:15s} [{1:s}]   0.000ms  {2:s}'.format(
+                print("{0:15s} [{1:s}]   0.000ms  {2:s}".format(
                     network[1], network[2], self._reverse_dns(ip_address)))
             else:
                 for line in thread.get_output().split('\n'):
                     if line.startswith('Unicast reply from ' + ip_address):
                         mac, ping = line.split()[4:6]
-                        print('{0:15s} {1:s} {2:>9s}  {3:s}'.format(
+                        print("{0:15s} {1:s} {2:>9s}  {3:s}".format(
                             ip_address,
                             mac,
                             ping,

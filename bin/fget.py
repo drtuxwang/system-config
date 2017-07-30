@@ -18,7 +18,7 @@ import file_mod
 import task_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -190,7 +190,7 @@ class Main(object):
 
         file, size, mtime = self._get_file_stat(url, conn)
         if self._check_file(file, size, mtime):
-            print('  => {0:s} [{1:d}/{2:d}]'.format(file, size, size))
+            print("  => {0:s} [{1:d}/{2:d}]".format(file, size, size))
             return
         tmpfile = file + '.part'
 
@@ -221,7 +221,7 @@ class Main(object):
                         break
                     tmpsize += len(chunk)
                     ofile.write(chunk)
-                    print('\r  => {0:s} [{1:d}/{2:d}]'.format(
+                    print("\r  => {0:s} [{1:d}/{2:d}]".format(
                         file, tmpsize, size), end='')
         except PermissionError:
             raise SystemExit(

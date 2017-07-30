@@ -14,7 +14,7 @@ import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -96,7 +96,7 @@ class Main(object):
 
         task = subtask_mod.Task(clamscan.get_cmdline())
         task.run()
-        print('---------- VIRUS DATABASE ----------')
+        print("---------- VIRUS DATABASE ----------")
         if os.name == 'nt':
             os.chdir(os.path.join(os.path.dirname(task.get_file())))
             directory = 'database'
@@ -106,7 +106,7 @@ class Main(object):
             directory = '/var/lib/clamav'
         for file in sorted(glob.glob(os.path.join(directory, '*c[lv]d'))):
             file_stat = file_mod.FileStat(file)
-            print('{0:10d} [{1:s}] {2:s}'.format(
+            print("{0:10d} [{1:s}] {2:s}".format(
                 file_stat.get_size(), file_stat.get_time_local(), file))
 
         return task.get_exitcode()

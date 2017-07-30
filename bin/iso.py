@@ -16,7 +16,7 @@ import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -209,51 +209,58 @@ class Main(object):
             print(
                 "\n*** {0:s}: {1:4.2f} MB ({2:5.3f} "
                 "salesman's GB) ***\n".format(
-                    image, size/1048576., size/1000000000.)
+                    image, size/1048576.,
+                    size/1000000000.
+                )
             )
             if size > 9400000000:
                 sys.stderr.write(
-                    '**WARNING** This ISO image file does not fit onto '
-                    '9.4GB/240min Duel Layer DVD media.\n'
+                    "**WARNING** This ISO image file does not fit onto "
+                    "9.4GB/240min Duel Layer DVD media.\n"
                 )
                 sys.stderr.write(
-                    '        ==> Please split your data into '
-                    'multiple images.\n'
+                    "        ==> Please split your data into "
+                    "multiple images.\n"
                 )
             elif size > 4700000000:
                 sys.stderr.write(
-                    '**WARNING** This ISO image file does not fit onto'
-                    ' 4.7GB/120min DVD media.\n'
+                    "**WARNING** This ISO image file does not fit onto "
+                    "4.7GB/120min DVD media.\n"
                 )
                 sys.stderr.write(
-                    '        ==> Please use Duel Layer DVD media or split your'
-                    ' data into multiple images.\n'
+                    "        ==> Please use Duel Layer DVD media or split "
+                    "your data into multiple images.\n"
                 )
             else:
                 sys.stderr.write(
-                    '**WARNING** This ISO image file does not fit onto'
-                    ' 700MB/80min CD media.\n'
+                    "**WARNING** This ISO image file does not fit onto "
+                    "700MB/80min CD media.\n"
                 )
                 sys.stderr.write(
-                    '        ==> Please use DVD media or split your data'
-                    ' into multiple images.\n'
+                    "        ==> Please use DVD media or split your data "
+                    "into multiple images.\n"
                 )
-            print('')
+            print("")
         else:
             minutes, remainder = divmod(size, 734003200 / 80)
             seconds = remainder * 4800 / 734003200.
             print(
-                '\n*** {0:s}: {1:4.2f} MB ({2:.0f} min '
-                '{3:05.2f} sec) ***\n'.format(
-                    image, size/1048576., minutes, seconds)
+                "\n*** {0:s}: {1:4.2f} MB ({2:.0f} min "
+                "{3:05.2f} sec) ***\n".format(
+                    image,
+                    size/1048576.,
+                    minutes,
+                    seconds
+                )
             )
             if size > 681574400:
                 sys.stderr.write(
-                    '**WARNING** This ISO image file does not fit onto'
-                    ' 650MB/74min CD media.\n'
+                    "**WARNING** This ISO image file does not fit onto "
+                    "650MB/74min CD media.\n"
                 )
                 sys.stderr.write(
-                    '        ==> Please use 700MB/80min CD media instead.\n')
+                    "        ==> Please use 700MB/80min CD media instead.\n"
+                )
 
     @staticmethod
     def _md5sum(file):
@@ -296,9 +303,9 @@ class Main(object):
                     )
                     if task2.has_output():
                         print(
-                            'Using mode 444 for all plain files (' +
+                            "Using mode 444 for all plain files (" +
                             task2.get_output()[0].split()[4] +
-                            ' disk detected)...'
+                            " disk detected)..."
                         )
                         self._genisoimage.extend_args(['-file-mode', '444'])
 
@@ -310,25 +317,25 @@ class Main(object):
 
         image = options.get_image()
 
-        print('Creating portable CD/DVD image file: ' + image + '...')
-        print('Adding ISO9660 Level 3 standard file syslib...')
-        print('Adding ROCK RIDGE extensions for UNIX file syslib...')
+        print("Creating portable CD/DVD image file: " + image + "...")
+        print("Adding ISO9660 Level 3 standard file syslib...")
+        print("Adding ROCK RIDGE extensions for UNIX file syslib...")
         print(
-            'Adding JOLIET long extensions for Microsoft Windows '
-            'FAT32 file syslib...'
+            "Adding JOLIET long extensions for Microsoft Windows "
+            "FAT32 file syslib..."
         )
-        print('Adding individual files shared by all three file systems...')
+        print("Adding individual files shared by all three file systems...")
         print(
-            '   ==> Directory and file names limit is  31 '
-            'characters for ISO9660.'
-        )
-        print(
-            '   ==> Directory and file names limit is 255 '
-            'characters for ROCK RIDGE.'
+            "   ==> Directory and file names limit is  31 "
+            "characters for ISO9660."
         )
         print(
-            '   ==> Directory and file names limit is 103 '
-            'characters for JOLIET.'
+            "   ==> Directory and file names limit is 255 "
+            "characters for ROCK RIDGE."
+        )
+        print(
+            "   ==> Directory and file names limit is 103 "
+            "characters for JOLIET."
         )
 
         self._genisoimage = options.get_genisoimage()
@@ -358,7 +365,7 @@ class Main(object):
                 )
             self._isosize(image, file_mod.FileStat(image).get_size())
             if options.get_md5_flag():
-                print('Creating MD5 check sum of ISO file.')
+                print("Creating MD5 check sum of ISO file.")
                 md5sum = self._md5sum(image)
                 if not md5sum:
                     raise SystemExit(

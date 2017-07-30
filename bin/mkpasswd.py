@@ -12,7 +12,7 @@ import string
 import sys
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -110,7 +110,7 @@ class Main(object):
         if options.get_symbols_flag():
             chars += '!@#$%^&*()'
 
-        print(''.join(random.choice(chars) for i in range(
+        print("".join(random.choice(chars) for i in range(
             options.get_length())))
 
 

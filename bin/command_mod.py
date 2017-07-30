@@ -3,8 +3,6 @@
 Python sub task handling module
 
 Copyright GPL v2: 2006-2017 By Dr Colin Kong
-
-Version 2.0.12 (2017-04-21)
 """
 
 import distutils.version
@@ -17,7 +15,10 @@ import subprocess
 import sys
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+
+RELEASE = '2.0.13'
+VERSION = 20170730
 
 
 class Command(object):

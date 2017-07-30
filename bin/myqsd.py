@@ -16,10 +16,10 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '2.7.8'
-
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+RELEASE = '2.7.9'
 
 
 class Options(object):
@@ -298,11 +298,11 @@ class Main(object):
                 )
         lock = Lock(os.path.join(self._myqsdir, 'myqsd.pid'))
         if lock.check():
-            print('Stopping MyQS batch job scheduler...')
+            print("Stopping MyQS batch job scheduler...")
             lock.remove()
         else:
             self._restart()
-        print('Starting MyQS batch job scheduler...')
+        print("Starting MyQS batch job scheduler...")
         myqsd = command_mod.CommandFile(
             __file__[:-3],
             args=['-daemon', str(self._slots)]

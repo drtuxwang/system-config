@@ -16,7 +16,7 @@ import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -240,10 +240,10 @@ class Main(object):
     @staticmethod
     def _scan():
         cdrom = Cdrom()
-        print('Scanning for CD/DVD devices...')
+        print("Scanning for CD/DVD devices...")
         devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
-            print('  {0:10s}  {1:s}'.format(key, value))
+            print("  {0:10s}  {1:s}".format(key, value))
 
     def _tao(self, device, file):
         isoinfo = command_mod.Command('isoinfo', errors='stop')
@@ -309,7 +309,7 @@ class Main(object):
         if pad > 0 and pad < 16777216:
             print(pad, 'bytes flushing from CD/DVD prefetch bug...')
             with open(file, 'ab') as ofile:
-                ofile.write(b'\0' * pad)
+                ofile.write(b"\0" * pad)
         self._isosize(file, file_mod.FileStat(file).get_size())
 
     @staticmethod
@@ -322,47 +322,52 @@ class Main(object):
                 )
             if size > 9400000000:
                 sys.stderr.write(
-                    '**WARNING** This ISO image file does not fit onto '
-                    '9.4GB/240min Duel Layer DVD media.\n'
+                    "**WARNING** This ISO image file does not fit onto "
+                    "9.4GB/240min Duel Layer DVD media.\n"
                 )
                 sys.stderr.write(
-                    '        ==> Please split your data into '
-                    'multiple images.\n'
+                    "        ==> Please split your data into "
+                    "multiple images.\n"
                 )
             elif size > 4700000000:
                 sys.stderr.write(
-                    '**WARNING** This ISO image file does not fit onto '
-                    '4.7GB/120min DVD media.\n'
+                    "**WARNING** This ISO image file does not fit onto "
+                    "4.7GB/120min DVD media.\n"
                 )
                 sys.stderr.write(
-                    '        ==> Please use Duel Layer DVD media or split '
-                    'your data into multiple images.\n'
+                    "        ==> Please use Duel Layer DVD media or split "
+                    "your data into multiple images.\n"
                 )
             else:
                 sys.stderr.write(
-                    '**WARNING** This ISO image file does not fit onto '
-                    '700MB/80min CD media.\n'
+                    "**WARNING** This ISO image file does not fit onto "
+                    "700MB/80min CD media.\n"
                 )
                 sys.stderr.write(
-                    '        ==> Please use DVD media or split your data '
-                    'into multiple images.\n'
+                    "        ==> Please use DVD media or split your data "
+                    "into multiple images.\n"
                 )
             print()
         else:
             minutes, remainder = divmod(size, 734003200 / 80)
             seconds = remainder * 4800 / 734003200.
             print(
-                '\n*** {0:s}: {1:4.2f} MB ({2:.0f} min '
-                '{3:05.2f} sec) ***\n'.format(
-                    image, size/1048576, minutes, seconds)
+                "\n*** {0:s}: {1:4.2f} MB ({2:.0f} min "
+                "{3:05.2f} sec) ***\n".format(
+                    image,
+                    size/1048576,
+                    minutes,
+                    seconds
+                )
             )
             if size > 681574400:
                 sys.stderr.write(
-                    '**WARNING** This ISO image file does not fit onto '
-                    '650MB/74min CD media.\n'
+                    "**WARNING** This ISO image file does not fit onto "
+                    "650MB/74min CD media.\n"
                 )
                 sys.stderr.write(
-                    '        ==> Please use 700MB/80min CD media instead.\n')
+                    "        ==> Please use 700MB/80min CD media instead.\n"
+                )
 
     def run(self):
         """
@@ -391,7 +396,7 @@ class Main(object):
             else:
                 self._tao(device, file)
             if options.get_md5_flag():
-                print('Creating MD5 check sum of ISO file.')
+                print("Creating MD5 check sum of ISO file.")
                 md5sum = self._md5sum(file)
                 if not md5sum:
                     raise SystemExit(

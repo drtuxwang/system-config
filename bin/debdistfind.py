@@ -11,7 +11,7 @@ import signal
 import sys
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -168,7 +168,7 @@ class Main(object):
                 if ispattern.search(name) or ispattern.search(
                         self._packages[name].get_description()
                 ):
-                    print('{0:25s} {1:15s} {2:5d}KB {3:s}'.format(
+                    print("{0:25s} {1:15s} {2:5d}KB {3:s}".format(
                         name.split(':')[0],
                         package.get_version(),
                         package.get_size(),

@@ -13,7 +13,7 @@ import sys
 import file_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -157,7 +157,7 @@ class Main(object):
                 if not md5sum:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot read "' + file + '" file.')
-                print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(
+                print("{0:s}/{1:010d}/{2:d}  {3:s}".format(
                     md5sum,
                     file_stat.get_size(),
                     file_stat.get_time(),
@@ -166,7 +166,7 @@ class Main(object):
                 if options.get_create_flag():
                     try:
                         with open(file + '.fsum', 'w', newline='\n') as ofile:
-                            print('{0:s}/{1:010d}/{2:d}  {3:s}'.format(
+                            print("{0:s}/{1:010d}/{2:d}  {3:s}".format(
                                 md5sum,
                                 file_stat.get_size(),
                                 file_stat.get_time(),
@@ -229,11 +229,13 @@ class Main(object):
             for file in self._extra(directory, found):
                 print(file, '# EXTRA file found')
         if nmiss > 0:
-            print('fsum: Cannot find', nmiss, 'of', nfiles, 'listed files.')
+            print("fsum: Cannot find", nmiss, "of", nfiles, "listed files.")
         if nfail > 0:
             print(
-                'fsum: Mismatch in {0:s} of {1:s} computed checksums.'.format(
-                    nfail, nfiles - nmiss)
+                "fsum: Mismatch in {0:s} of {1:s} computed checksums.".format(
+                    nfail,
+                    nfiles - nmiss
+                )
             )
 
     def _extra(self, directory, found):

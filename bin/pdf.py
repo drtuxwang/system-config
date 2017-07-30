@@ -18,7 +18,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -205,7 +205,7 @@ class Main(object):
                     try:
                         with open(self._tmpfile, 'wb') as ofile:
                             for line in ifile:
-                                ofile.write(line.rstrip(b'\r\n\004') + b'\n')
+                                ofile.write(line.rstrip(b"\r\n\004") + b"\n")
                     except OSError:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' + self._tmpfile +
@@ -362,7 +362,7 @@ class Main(object):
 
         args = ['-sOutputFile=' + options.get_archive(), '-c', '.setpdfwrite']
         for file in options.get_files():
-            print('Packing', file)
+            print("Packing", file)
             if not options.get_archive():
                 args = [
                     '-sOutputFile=' + file.rsplit('.', 1)[0] + '.pdf',

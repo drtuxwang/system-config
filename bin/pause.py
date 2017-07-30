@@ -7,7 +7,7 @@ import signal
 import sys
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
 
 class Main(object):
@@ -37,7 +37,7 @@ class Main(object):
         """
         Start program
         """
-        input('Please press <ENTER/RETURN> key to continue: ')
+        input("Please press <ENTER/RETURN> key to continue: ")
 
 
 if __name__ == '__main__':

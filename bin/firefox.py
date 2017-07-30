@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for 'firefox' command
+Wrapper for "firefox" command
 
 Use '-copy' to copy profile to '/tmp' and use '-no-remote about:'
 Use '-no-remote' to avoid using current instance
@@ -21,7 +21,7 @@ import subtask_mod
 import task_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -347,7 +347,7 @@ class Options(object):
                         for setting in settings:
                             if 'user_pref(' + setting + ');\n' not in lines:
                                 print(
-                                    'user_pref(' + setting + ');',
+                                    "user_pref(" + setting + ");",
                                     file=ofile
                                 )
                 except OSError:

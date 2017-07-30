@@ -18,7 +18,7 @@ import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -116,7 +116,7 @@ class Main(object):
         task = subtask_mod.Task(wget.get_cmdline() + [url])
         task.run()
         if task.get_exitcode() != 0:
-            print('  [ERROR (', task.get_exitcode, ')]', url)
+            print("  [ERROR (", task.get_exitcode, ")]", url)
             cls._remove()
             raise SystemExit(
                 sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
@@ -156,7 +156,7 @@ class Main(object):
             try:
                 conn = urllib.request.urlopen(url)
             except Exception:
-                raise SystemExit('Error: Cannot fetch URL: ' + url)
+                raise SystemExit("Error: Cannot fetch URL: " + url)
 
             info = conn.info()
             url_time = time.mktime(time.strptime(

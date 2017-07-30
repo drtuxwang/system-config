@@ -15,7 +15,7 @@ import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -222,10 +222,10 @@ class Main(object):
     @staticmethod
     def _scan():
         cdrom = Cdrom()
-        print('Scanning for CD/DVD devices...')
+        print("Scanning for CD/DVD devices...")
         devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
-            print('  {0:10s}  {1:s}'.format(key, value))
+            print("  {0:10s}  {1:s}".format(key, value))
 
     def _disk_at_once_data(self, options):
         cdrdao = command_mod.Command('cdrdao', errors='stop')
@@ -266,14 +266,14 @@ class Main(object):
 
         wodim = command_mod.Command('wodim', errors='stop')
         print(
-            'If your media is a rewrite-able CD/DVD its contents '
-            'will be deleted.'
+            "If your media is a rewrite-able CD/DVD its contents "
+            "will be deleted."
         )
         answer = input(
-            'Do you really want to burn data to this CD/DVD disk? (y/n) [n] ')
+            "Do you really want to burn data to this CD/DVD disk? (y/n) [n] ")
         if answer.lower() != 'y':
             raise SystemExit(1)
-        print('Using AUDIO mode for WAVE files (Audio tracks detected)...')
+        print("Using AUDIO mode for WAVE files (Audio tracks detected)...")
         wodim.set_args([
             '-v',
             '-shorttrack',
@@ -328,7 +328,8 @@ class Main(object):
             'be deleted.'
         )
         answer = input(
-            'Do you really want to burn data to this CD/DVD disk? (y/n) [n] ')
+            "Do you really want to burn data to this CD/DVD disk? (y/n) [n] "
+        )
         if answer.lower() != 'y':
             raise SystemExit(1)
         wodim.set_args(['-v', '-shorttrack', '-eject'])
@@ -350,7 +351,7 @@ class Main(object):
             )
 
         if options.get_md5_flag():
-            print('Verifying MD5 check sum of data CD/DVD:')
+            print("Verifying MD5 check sum of data CD/DVD:")
             command = command_mod.Command('dd', errors='stop')
             command.set_args([
                 'if=' + self._device,

@@ -10,7 +10,7 @@ import signal
 import sys
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -82,7 +82,7 @@ class Main(object):
         options = Options()
 
         words = options.get_words()
-        print(' '.join(words).upper())
+        print(" ".join(words).upper())
 
 
 if __name__ == '__main__':

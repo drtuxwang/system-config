@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for 'rpm' command (adds 'rpm -l')
+Wrapper for "rpm" command (adds 'rpm -l')
 """
 
 import glob
@@ -12,7 +12,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -164,7 +164,7 @@ class Main(object):
     @staticmethod
     def _show_packages_info(packages):
         for name, package in sorted(packages.items()):
-            print('{0:35s} {1:15s} {2:5d}KB {3:s}'.format(
+            print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(
                 name.split(':')[0], package.get_version(), package.get_size(),
                 package.get_description()))
 

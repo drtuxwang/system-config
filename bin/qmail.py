@@ -17,10 +17,10 @@ import sys
 import command_mod
 import subtask_mod
 
-RELEASE = '3.0.0'
-
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+RELEASE = '3.0.1'
 
 SOCKET_TIMEOUT = 10
 
@@ -221,7 +221,7 @@ class Main(object):
             sys.argv = argv
 
     def _create(self, options):
-        subject = input('Subject: ')
+        subject = input("Subject: ")
         addresses = self._mail_alias(options.get_addresses())
         email = [
             'Subject: ' + subject,
@@ -269,7 +269,7 @@ class Main(object):
 
     @staticmethod
     def _send(options):
-        print('Sending E-mail...')
+        print("Sending E-mail...")
         lines = []
         with open(options.get_tmpfile(), errors='replace') as ifile:
             for line in ifile:
@@ -302,12 +302,12 @@ class Main(object):
             self._email = self._edit(options)
             self._update()
             self._header()
-            answer = input('Do you want to send E-mail (y/n)? ')
+            answer = input("Do you want to send E-mail (y/n)? ")
             if answer.lower() == 'y':
                 self._send(options)
                 break
             else:
-                answer = input('Do you want to delete E-mail (y/n)? ')
+                answer = input("Do you want to delete E-mail (y/n)? ")
                 if answer.lower() == 'y':
                     break
 

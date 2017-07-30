@@ -14,7 +14,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -47,9 +47,9 @@ class Options(object):
                     with open(file, 'w', newline='\n') as ofile:
                         user = getpass.getuser()
                         host = socket.gethostname().split('.')[0].lower()
-                        print('[user]', file=ofile)
-                        print('        name =', user, file=ofile)
-                        print('        email =', user + '@' + host, file=ofile)
+                        print("[user]", file=ofile)
+                        print("        name =", user, file=ofile)
+                        print("        email =", user + '@' + host, file=ofile)
                 except OSError:
                     pass
 

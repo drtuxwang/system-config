@@ -13,10 +13,10 @@ import time
 import command_mod
 import subtask_mod
 
-RELEASE = '2.7.5'
-
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+
+RELEASE = '2.7.6'
 
 
 class Options(object):
@@ -140,12 +140,12 @@ class Main(object):
             '\nMyQS v' + options.get_release() +
             ', My Queuing System batch job exec.\n'
         )
-        print('MyQS JOBID  =', self._jobid)
-        print('MyQS QUEUE  =', info['QUEUE'])
-        print('MyQS NCPUS  =', info['NCPUS'])
-        print('MyQS PGID   =', pgid)
-        print('MyQS START  =', time.strftime('%Y-%m-%d-%H:%M:%S'))
-        print('-'*80)
+        print("MyQS JOBID  =", self._jobid)
+        print("MyQS QUEUE  =", info['QUEUE'])
+        print("MyQS NCPUS  =", info['NCPUS'])
+        print("MyQS PGID   =", pgid)
+        print("MyQS START  =", time.strftime('%Y-%m-%d-%H:%M:%S'))
+        print("-"*80)
         sys.stdout.flush()
         os.environ['PATH'] = info['PATH']
         command = self._get_command(info['COMMAND'])
@@ -188,8 +188,8 @@ class Main(object):
             args=['-spawn', self._jobid]
         )
         subtask_mod.Task(myqexec.get_cmdline()).run()
-        print('-'*80)
-        print('MyQS FINISH =', time.strftime('%Y-%m-%d-%H:%M:%S'))
+        print("-"*80)
+        print("MyQS FINISH =", time.strftime('%Y-%m-%d-%H:%M:%S'))
         time.sleep(1)
         try:
             os.remove(os.path.join(self._myqsdir, self._jobid + '.r'))

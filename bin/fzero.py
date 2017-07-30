@@ -11,7 +11,7 @@ import sys
 import time
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -115,12 +115,12 @@ class Main(object):
                     for _ in range(64):
                         ofile.write(chunk)
                     size += 1
-                    sys.stdout.write('\r' + str(size) + ' MB')
+                    sys.stdout.write("\r{0:s} MB".format(size))
                     sys.stdout.flush()
         except (KeyboardInterrupt, OSError):
             pass
         elapsed_time = time.time() - start_time
-        print(', {0:4.2f} seconds, {1:.0f} MB/s'.format(
+        print(", {0:4.2f} seconds, {1:.0f} MB/s".format(
             elapsed_time, size / elapsed_time))
 
 

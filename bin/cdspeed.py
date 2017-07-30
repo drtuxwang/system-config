@@ -2,7 +2,7 @@
 """
 Set CD/DVD drive speed.
 
-'$HOME/.config/cdspeed.json' contain configuration information.
+"$HOME/.config/cdspeed.json" contain configuration information.
 """
 
 import argparse
@@ -18,7 +18,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -106,7 +106,7 @@ class Options(object):
 
         self._hdparm = command_mod.CommandFile(
             '/sbin/hdparm', args=['-E', str(self._speed), self._device])
-        print('Setting CD/DVD drive speed to ', self._speed, 'X', sep='')
+        print("Setting CD/DVD drive speed to ", self._speed, "X", sep="")
 
 
 class Configuration(object):

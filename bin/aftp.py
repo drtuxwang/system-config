@@ -13,7 +13,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -39,10 +39,10 @@ class Options(object):
             try:
                 with open(netrc, 'w', newline='\n') as ofile:
                     print(
-                        'machine',
+                        "machine",
                         host,
-                        'login anonymous password '
-                        'someone@somehost.somecompany.com',
+                        "login anonymous password "
+                        "someone@somehost.somecompany.com",
                         file=ofile
                     )
             except OSError:

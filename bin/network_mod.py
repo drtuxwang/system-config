@@ -2,9 +2,7 @@
 """
 Python network handling utility module
 
-Copyright GPL v2: 2015-2016 By Dr Colin Kong
-
-Version 2.0.2 (2016-02-28)
+Copyright GPL v2: 2015-2017 By Dr Colin Kong
 """
 
 import json
@@ -14,7 +12,10 @@ import sys
 import command_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+
+RELEASE = '2.0.3'
+VERSION = 20170730
 
 
 class Shaper(command_mod.Command):

@@ -15,7 +15,7 @@ import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -288,10 +288,10 @@ class Main(object):
     @staticmethod
     def _scan():
         cdrom = Cdrom()
-        print('Scanning for CD/DVD devices...')
+        print("Scanning for CD/DVD devices...")
         devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
-            print('  {0:10s}  {1:s}'.format(key, value))
+            print("  {0:10s}  {1:s}".format(key, value))
 
     def _read_toc(self):
         self._icedax.set_args([

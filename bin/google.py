@@ -12,7 +12,7 @@ import sys
 import requests
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 USER_AGENT = (
     'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'
@@ -123,8 +123,8 @@ class Main(object):
 
         print(response.url)
         for page in response.json()['responseData']['results']:
-            print('    {0:s}'.format(page['unescapedUrl']))
-            print('        {0:s}'.format(page['titleNoFormatting']))
+            print("    {0:s}".format(page['unescapedUrl']))
+            print("        {0:s}".format(page['titleNoFormatting']))
 
     @classmethod
     def run(cls):

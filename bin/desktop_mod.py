@@ -2,9 +2,7 @@
 """
 Python X-windows desktop module
 
-Copyright GPL v2: 2013-2016 By Dr Colin Kong
-
-Version 2.0.3 (2016-07-23)
+Copyright GPL v2: 2013-2017 By Dr Colin Kong
 """
 
 import functools
@@ -12,7 +10,10 @@ import os
 import sys
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
+
+RELEASE = '2.0.4'
+VERSION = 20170730
 
 
 class Desktop(object):

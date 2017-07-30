@@ -18,10 +18,10 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '4.0.3'
+RELEASE = '4.0.3-1'
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -290,7 +290,7 @@ class Chinese(Language):
         """
         for phrase in phrases:
             for sounds in self._dictionary.map_speech(phrase):
-                print(' '.join(sounds))
+                print(" ".join(sounds))
                 if self._options.get_sound_flag():
                     self._speak(sounds)
 

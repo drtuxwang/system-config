@@ -14,7 +14,7 @@ import sys
 
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -262,8 +262,8 @@ class Main(object):
                 if i in self._packages:
                     if self._packages[i].get_installed_flag():
                         print(
-                            indent + '  ' + self._packages[i].get_url(),
-                            '[Installed]'
+                            indent + "  " + self._packages[i].get_url(),
+                            "[Installed]"
                         )
                     elif (
                             not self._packages[i].get_checked_flag() and

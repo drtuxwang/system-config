@@ -2,9 +2,7 @@
 """
 Python debugging tools module
 
-Copyright GPL v2: 2015-2016 By Dr Colin Kong
-
-Version 2.2.0 (2016-09-03)
+Copyright GPL v2: 2015-2017 By Dr Colin Kong
 """
 
 import os
@@ -15,7 +13,10 @@ import traceback
 import jsonpickle
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
+
+RELEASE = '2.2.1'
+VERSION = 20170730
 
 
 class Dump(object):

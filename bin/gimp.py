@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for 'gimp' command
+Wrapper for "gimp" command
 """
 
 import glob
@@ -13,7 +13,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -52,7 +52,7 @@ class Options(object):
                     with open(file, errors='replace') as ifile:
                         if '(thumbnail-size none)\n' not in ifile.readlines():
                             with open(file, 'a', newline='\n') as ofile:
-                                print('(thumbnail-size none)', file=ofile)
+                                print("(thumbnail-size none)", file=ofile)
                 except OSError:
                     continue
 

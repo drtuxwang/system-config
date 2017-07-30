@@ -12,7 +12,7 @@ import sys
 import file_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -108,7 +108,7 @@ class Main(object):
                     size += int(
                         (file_mod.FileStat(file).get_size() + 1023) / 1024)
         if not options.get_summary_flag():
-            print('{0:7d} {1:s}'.format(size, directory))
+            print("{0:7d} {1:s}".format(size, directory))
         return size
 
     def run(self):
@@ -119,18 +119,18 @@ class Main(object):
 
         for file in options.get_files():
             if os.path.islink(file):
-                print('{0:7d} {1:s}'.format(0, file))
+                print("{0:7d} {1:s}".format(0, file))
             else:
                 if os.path.isdir(file):
                     size = self._usage(options, file)
                     if options.get_summary_flag():
-                        print('{0:7d} {1:s}'.format(size, file))
+                        print("{0:7d} {1:s}".format(size, file))
                 elif os.path.isfile(file):
                     size = int(
                         (file_mod.FileStat(file).get_size() + 1023) / 1024)
-                    print('{0:7d} {1:s}'.format(size, file))
+                    print("{0:7d} {1:s}".format(size, file))
                 else:
-                    print('{0:7d} {1:s}'.format(0, file))
+                    print("{0:7d} {1:s}".format(0, file))
 
 
 if __name__ == '__main__':

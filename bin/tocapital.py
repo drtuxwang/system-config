@@ -10,7 +10,7 @@ import signal
 import sys
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -89,7 +89,7 @@ class Main(object):
             for part in word.split('-'):
                 cparts.append(part[:1].upper() + part[1:].lower())
             cwords.append('-'.join(cparts))
-        print(' '.join(cwords))
+        print(" ".join(cwords))
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for 'tinyproxy' command
+Wrapper for "tinyproxy" command
 """
 
 import getpass
@@ -13,7 +13,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -35,31 +35,31 @@ class Options(object):
     def _create_config():
         try:
             with open('tinyproxy.conf', 'w', newline='\n') as ofile:
-                print('Port 8888', file=ofile)
+                print("Port 8888", file=ofile)
                 print('PidFile "tinyproxy.pid"', file=ofile)
                 print('LogFile "tinyproxy.log"', file=ofile)
-                print('#', file=ofile)
-                print('##LogLevel Critical', file=ofile)
-                print('##LogLevel Error', file=ofile)
-                print('LogLevel Warning', file=ofile)
-                print('##LogLevel Notice', file=ofile)
-                print('##LogLevel Connect', file=ofile)
-                print('##LogLevel Info', file=ofile)
-                print('#', file=ofile)
+                print("#", file=ofile)
+                print("##LogLevel Critical", file=ofile)
+                print("##LogLevel Error", file=ofile)
+                print("LogLevel Warning", file=ofile)
+                print("##LogLevel Notice", file=ofile)
+                print("##LogLevel Connect", file=ofile)
+                print("##LogLevel Info", file=ofile)
+                print("", file=ofile)
                 print('ViaProxyName "tinyproxy"', file=ofile)
-                print('Timeout 600', file=ofile)
-                print('MaxClients 100', file=ofile)
-                print('MinSpareServers 5', file=ofile)
-                print('MaxSpareServers 20', file=ofile)
-                print('StartServers 10', file=ofile)
-                print('MaxRequestsPerChild 0', file=ofile)
-                print('#', file=ofile)
-                print('# SSL', file=ofile)
-                print('ConnectPort 443', file=ofile)
-                print('ConnectPort 563', file=ofile)
-                print('#', file=ofile)
-                print('# Restrict clients', file=ofile)
-                print('##Allow 127.0.0.1', file=ofile)
+                print("Timeout 600", file=ofile)
+                print("MaxClients 100", file=ofile)
+                print("MinSpareServers 5", file=ofile)
+                print("MaxSpareServers 20", file=ofile)
+                print("StartServers 10", file=ofile)
+                print("MaxRequestsPerChild 0", file=ofile)
+                print("#", file=ofile)
+                print("# SSL", file=ofile)
+                print("ConnectPort 443", file=ofile)
+                print("ConnectPort 563", file=ofile)
+                print("#", file=ofile)
+                print("# Restrict clients", file=ofile)
+                print("##Allow 127.0.0.1", file=ofile)
         except OSError:
             raise SystemExit(
                 sys.argv[0] +

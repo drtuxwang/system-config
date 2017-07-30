@@ -10,7 +10,7 @@ import signal
 import sys
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -108,8 +108,8 @@ class Main(object):
                 except UnicodeDecodeError:  # Non text file
                     continue
                 print(
-                    '{0:s}: {1:d} lines (max length of {2:d} '
-                    'on line {3:d})'.format(file, nlines, maxcols, lline)
+                    "{0:s}: {1:d} lines (max length of {2:d} "
+                    "on line {3:d})".format(file, nlines, maxcols, lline)
                 )
 
 

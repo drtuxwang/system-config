@@ -18,7 +18,7 @@ import threading
 import paramiko
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -165,7 +165,9 @@ class SecureShell(object):
             )
             with open(self._host + '.txt', 'a', newline='\n') as ofile:
                 print(
-                    time.strftime('%Y-%m-%d-%H:%M:%S: connected'), file=ofile)
+                    time.strftime('%Y-%m-%d-%H:%M:%S: connected'),
+                    file=ofile
+                )
                 for line in stdout:
                     print(line.rstrip('\r\n'), file=ofile)
         except Exception as exception:
@@ -222,7 +224,7 @@ class WorkQueue(object):
                 logging.warning(host + ': ' + message)
             else:
                 message = 'ok'
-            print('[{0:d}/{1:d},{2:d}] {3:s}: {4:s}'.format(
+            print("[{0:d}/{1:d},{2:d}] {3:s}: {4:s}".format(
                 self._nitems - self._queue.qsize() + 1, self._nitems,
                 int(time.time() - self._time0), host, message))
             self._queue.task_done()
@@ -324,7 +326,7 @@ class Main(object):
         self._config_logging()
         self._config_directory()
         logging.info(50 * '-')
-        logging.info('INIT %d threads: run on %d nodes', threads, len(nodes))
+        logging.info("INIT %d threads: run on %d nodes", threads, len(nodes))
 
         work_queue = WorkQueue(
             threads,

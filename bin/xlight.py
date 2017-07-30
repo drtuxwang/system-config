@@ -15,7 +15,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -185,7 +185,7 @@ class Backlight(object):
                 brightness = self._default
             self.set_brightness(brightness)
         else:
-            print('{0:3.1f} / {1:3.1f}'.format(
+            print("{0:3.1f} / {1:3.1f}".format(
                 float(self.get_brightness() + 0.01), float(self._max + 0.01)))
 
 

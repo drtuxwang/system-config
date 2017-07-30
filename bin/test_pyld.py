@@ -11,7 +11,7 @@ import unittest.mock
 import pyld
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 # pylint: disable = invalid-name, no-member, too-many-public-methods
 
@@ -535,5 +535,5 @@ if __name__ == '__main__':
     if '--pydoc' in sys.argv:
         help(__name__)
     else:
-        print('\n' + __file__ + ':unittest.main(verbosity=2, buffer=True):')
+        print("\n" + __file__ + ":unittest.main(verbosity=2, buffer=True):")
         unittest.main(verbosity=2, buffer=True)

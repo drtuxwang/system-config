@@ -14,10 +14,10 @@ import time
 
 import task_mod
 
-RELEASE = '2.7.7'
-
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+RELEASE = '2.7.8'
 
 
 class Options(object):
@@ -210,11 +210,11 @@ class Main(object):
             jobid = self._lastjob()
             try:
                 with open(tmpfile, 'w', newline='\n') as ofile:
-                    print('COMMAND=' + file, file=ofile)
-                    print('DIRECTORY=' + os.getcwd(), file=ofile)
-                    print('PATH=' + os.environ['PATH'], file=ofile)
-                    print('QUEUE=' + queue, file=ofile)
-                    print('NCPUS=' + str(ncpus), file=ofile)
+                    print("COMMAND=" + file, file=ofile)
+                    print("DIRECTORY=" + os.getcwd(), file=ofile)
+                    print("PATH=" + os.environ['PATH'], file=ofile)
+                    print("QUEUE=" + queue, file=ofile)
+                    print("NCPUS=" + str(ncpus), file=ofile)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + tmpfile +

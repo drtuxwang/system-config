@@ -15,7 +15,7 @@ import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -382,7 +382,7 @@ class Media(object):
         Print information
         """
         if self.is_valid():
-            print('{0:s}    = Type:  {1:s} ({2:s}), {3:s} bytes'.format(
+            print("{0:s}    = Type:  {1:s} ({2:s}), {3:s} bytes".format(
                 self._file,
                 self._type,
                 self._length,

@@ -10,7 +10,7 @@ import signal
 import sys
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -120,7 +120,7 @@ class Main(object):
         if not found:
             print(program, 'not in:')
             for directory in self._path.split(os.pathsep):
-                print(' ', directory)
+                print(" ", directory)
         raise SystemExit(1)
 
     def run(self):

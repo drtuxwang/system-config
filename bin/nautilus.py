@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for 'nautilus' command
+Wrapper for "nautilus" command
 """
 
 import glob
@@ -12,7 +12,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -53,43 +53,43 @@ class Options(object):
             if not os.path.isfile(file):
                 try:
                     with open(file, 'w', newline='\n') as ofile:
-                        print('[Added Associations]', file=ofile)
-                        print('audio/ac3=vlc.desktop;', file=ofile)
-                        print('audio/mp4=vlc.desktop;', file=ofile)
-                        print('audio/mpeg=vlc.desktop;', file=ofile)
+                        print("[Added Associations]", file=ofile)
+                        print("audio/ac3=vlc.desktop;", file=ofile)
+                        print("audio/mp4=vlc.desktop;", file=ofile)
+                        print("audio/mpeg=vlc.desktop;", file=ofile)
                         print(
-                            'audio/vnd.rn-realaudio=vlc.desktop;', file=ofile)
-                        print('audio/vorbis=vlc.desktop;', file=ofile)
-                        print('audio/x-adpcm=vlc.desktop;', file=ofile)
-                        print('audio/x-matroska=vlc.desktop;', file=ofile)
-                        print('audio/x-mpegurl=vlc.desktop;', file=ofile)
-                        print('audio/x-mp2=vlc.desktop;', file=ofile)
-                        print('audio/x-mp3=vlc.desktop;', file=ofile)
-                        print('audio/x-ms-wma=vlc.desktop;', file=ofile)
-                        print('audio/x-scpls=vlc.desktop;', file=ofile)
-                        print('audio/x-vorbis=vlc.desktop;', file=ofile)
-                        print('audio/x-wav=vlc.desktop;', file=ofile)
-                        print('image/jpeg=gqview.desktop;', file=ofile)
-                        print('video/avi=vlc.desktop;', file=ofile)
-                        print('video/mp4=vlc.desktop;', file=ofile)
-                        print('video/mpeg=vlc.desktop;', file=ofile)
-                        print('video/quicktime=vlc.desktop;', file=ofile)
+                            "audio/vnd.rn-realaudio=vlc.desktop;", file=ofile)
+                        print("audio/vorbis=vlc.desktop;", file=ofile)
+                        print("audio/x-adpcm=vlc.desktop;", file=ofile)
+                        print("audio/x-matroska=vlc.desktop;", file=ofile)
+                        print("audio/x-mpegurl=vlc.desktop;", file=ofile)
+                        print("audio/x-mp2=vlc.desktop;", file=ofile)
+                        print("audio/x-mp3=vlc.desktop;", file=ofile)
+                        print("audio/x-ms-wma=vlc.desktop;", file=ofile)
+                        print("audio/x-scpls=vlc.desktop;", file=ofile)
+                        print("audio/x-vorbis=vlc.desktop;", file=ofile)
+                        print("audio/x-wav=vlc.desktop;", file=ofile)
+                        print("image/jpeg=gqview.desktop;", file=ofile)
+                        print("video/avi=vlc.desktop;", file=ofile)
+                        print("video/mp4=vlc.desktop;", file=ofile)
+                        print("video/mpeg=vlc.desktop;", file=ofile)
+                        print("video/quicktime=vlc.desktop;", file=ofile)
                         print(
-                            'video/vnd.rn-realvideo=vlc.desktop;', file=ofile)
-                        print('video/x-matroska=vlc.desktop;', file=ofile)
-                        print('video/x-ms-asf=vlc.desktop;', file=ofile)
-                        print('video/x-msvideo=vlc.desktop;', file=ofile)
-                        print('video/x-ms-wmv=vlc.desktop;', file=ofile)
-                        print('video/x-ogm=vlc.desktop;', file=ofile)
-                        print('video/x-theora=vlc.desktop;', file=ofile)
+                            "video/vnd.rn-realvideo=vlc.desktop;", file=ofile)
+                        print("video/x-matroska=vlc.desktop;", file=ofile)
+                        print("video/x-ms-asf=vlc.desktop;", file=ofile)
+                        print("video/x-msvideo=vlc.desktop;", file=ofile)
+                        print("video/x-ms-wmv=vlc.desktop;", file=ofile)
+                        print("video/x-ogm=vlc.desktop;", file=ofile)
+                        print("video/x-theora=vlc.desktop;", file=ofile)
                         print(
                             '\n# xdg-open (ie "xdg-mime default vlc.desktop '
                             'x-scheme-handler/rtsp"', file=ofile
                         )
-                        print('[Default Applications]', file=ofile)
-                        print('x-scheme-handler/mms=vlc.desktop', file=ofile)
-                        print('x-scheme-handler/mms=vlc.desktop', file=ofile)
-                        print('x-scheme-handler/rtsp=vlc.desktop', file=ofile)
+                        print("[Default Applications]", file=ofile)
+                        print("x-scheme-handler/mms=vlc.desktop", file=ofile)
+                        print("x-scheme-handler/mms=vlc.desktop", file=ofile)
+                        print("x-scheme-handler/rtsp=vlc.desktop", file=ofile)
                 except OSError:
                     return
             self._userapp(
@@ -106,11 +106,11 @@ class Options(object):
         if not os.path.isfile(file):
             try:
                 with open(file, 'w', newline='\n') as ofile:
-                    print('[Desktop Entry]', file=ofile)
-                    print('Name=' + app_name, file=ofile)
-                    print('Exec=' + app_name, ' %f', file=ofile)
-                    print('Type=Application', file=ofile)
-                    print('NoDisplay=true', file=ofile)
+                    print("[Desktop Entry]", file=ofile)
+                    print("Name=" + app_name, file=ofile)
+                    print("Exec=" + app_name, ' %f', file=ofile)
+                    print("Type=Application", file=ofile)
+                    print("NoDisplay=true", file=ofile)
             except OSError:
                 return
 
@@ -118,7 +118,7 @@ class Options(object):
         try:
             if not os.path.isfile(file):
                 with open(file, 'w', newline='\n') as ofile:
-                    print('[MIME Cache]', file=ofile)
+                    print("[MIME Cache]", file=ofile)
             with open(file, errors='replace') as ifile:
                 if mime_type + '=' + app_name + '-userapp.desktop' in ifile:
                     return

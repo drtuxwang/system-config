@@ -12,7 +12,7 @@ import sys
 import time
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.3, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
 class Options(object):
@@ -129,22 +129,23 @@ class Main(object):
 
         file = time.strftime('facebook-%Y%m%d.csv', time.localtime())
         print(
-            'Writing "' + file + '" with', len(self._profiles.keys()),
-            'friends...'
+            'Writing "' + file + '" with',
+            len(self._profiles.keys()),
+            "friends..."
         )
         try:
             with open(file, 'w', newline='\n') as ofile:
-                print('uid,name,profile_url', file=ofile)
+                print("uid,name,profile_url", file=ofile)
                 for uid, profile in sorted(self._profiles.items()):
                     if uid < 0:
-                        print('???', end='', file=ofile)
+                        print("???", end='', file=ofile)
                     else:
                         print(uid, end='', file=ofile)
                     if ' ' in profile.get_name():
                         print(',"{0:s}",{1:s}'.format(
                             profile.get_name(), profile.get_url()), file=ofile)
                     else:
-                        print(',{0:s},{1:s}'.format(
+                        print(",{0:s},{1:s}".format(
                             profile.get_name(), profile.get_url()), file=ofile)
         except OSError:
             raise SystemExit(

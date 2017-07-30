@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for 'vncserver' command
+Wrapper for "vncserver" command
 """
 
 import glob
@@ -12,7 +12,7 @@ import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.2, < 4.0).')
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -41,37 +41,38 @@ class Options(object):
         xstartup = os.path.join(os.environ['HOME'], '.vnc', 'xstartup')
         if not os.path.isfile(xstartup):
             answer = input(
-                'Would you like to use GNOME(g), KDE(k) or XFCE(x)? ')
+                "Would you like to use GNOME(g), KDE(k) or XFCE(x)? "
+            )
             try:
                 with open(xstartup, 'w', newline='\n') as ofile:
-                    print('#!/bin/sh', file=ofile)
+                    print("#!/bin/sh", file=ofile)
                     if answer[0].lower() == 'g':
-                        print('unset DBUS_SESSION_BUS_ADDRESS', file=ofile)
-                        print('unset SESSION_MANAGER', file=ofile)
+                        print("unset DBUS_SESSION_BUS_ADDRESS", file=ofile)
+                        print("unset SESSION_MANAGER", file=ofile)
                         print(
-                            'if [ -x /usr/bin/gnome-session-fallback ]',
+                            "if [ -x /usr/bin/gnome-session-fallback ]",
                             file=ofile
                         )
-                        print('then', file=ofile)
+                        print("then", file=ofile)
                         print(
-                            '    /usr/bin/gnome-session-fallback &',
+                            "    /usr/bin/gnome-session-fallback &",
                             file=ofile
                         )
-                        print('elif [ -x /usr/bin/gnome-session ]', file=ofile)
-                        print('then', file=ofile)
-                        print('    /usr/bin/gnome-session &', file=ofile)
-                        print('else', file=ofile)
-                        print('    gnome &', file=ofile)
-                        print('fi', file=ofile)
+                        print("elif [ -x /usr/bin/gnome-session ]", file=ofile)
+                        print("then", file=ofile)
+                        print("    /usr/bin/gnome-session &", file=ofile)
+                        print("else", file=ofile)
+                        print("    gnome &", file=ofile)
+                        print("fi", file=ofile)
                     elif answer[0].lower() == 'k':
-                        print('SESSION_MANAGER=', file=ofile)
-                        print('startkde &', file=ofile)
+                        print("SESSION_MANAGER=", file=ofile)
+                        print("startkde &", file=ofile)
                     elif answer[0].lower() == 'x':
                         print(
-                            'unset SESSION_MANAGER DBUS_SESSION_BUS_ADDRESS',
+                            "unset SESSION_MANAGER DBUS_SESSION_BUS_ADDRESS",
                             file=ofile
                         )
-                        print('startxfce4 &', file=ofile)
+                        print("startxfce4 &", file=ofile)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create ".vnc/xstartup" file.')
