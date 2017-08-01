@@ -70,8 +70,8 @@ class Options(object):
             raise SystemExit(sys.argv[0] + ': Cannot compare two directories.')
 
         self._pattern = (
-            '^$|: GtkWarning: |: Gtk-CRITICAL |^  buttons =|^  gtk.main|'
-            'recently-used.xbel|: Allocating size to GtkVBox '
+            '^$|: Gtk-WARNING |: GtkWarning: |: Gtk-CRITICAL |^  buttons =|'
+            '^  gtk.main|recently-used.xbel|: Allocating size to GtkVBox '
         )
 
 
