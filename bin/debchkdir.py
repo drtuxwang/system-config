@@ -202,7 +202,7 @@ class Main(object):
 
         for name in names_used:
             if name not in names_files:
-                print("# , packages_used[name].get_file(), Missing")
+                print("# ", packages_used[name].get_file(), "Missing")
 
     @staticmethod
     def config():
