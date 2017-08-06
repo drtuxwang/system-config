@@ -13,7 +13,7 @@ which() {
         PATH=`echo ":$PATH:" | sed -e "s@.*:\`dirname \"$0\"\`:@@"`
     fi
 
-    for CDIR in `echo $PATH | sed -e "s/ /%20/g" -e "s/:/ /g"`
+    for CDIR in `echo $PATH | sed -e "s/ /%20/g;s/:/ /g"`
     do
         CMD=`echo "$CDIR/$1" | sed -e "s/%20/ /g"`
         if [ -x "$CMD" -a ! -d "$CMD" ]

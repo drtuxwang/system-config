@@ -2,7 +2,7 @@
 #
 # Wrapper for "python"
 #
-VERSION=20161228
+VERSION=20170806
 
 #
 # Function to locate command
@@ -110,7 +110,7 @@ which() {
         PATH=`echo ":$PATH:" | sed -e "s@.*:\`dirname \"$0\"\`:@@"`
     fi
 
-    for CDIR in `echo $PATH | sed -e "s/ /%20/g" -e "s/:/ /g"`
+    for CDIR in `echo $PATH | sed -e "s/ /%20/g;s/:/ /g"`
     do
         CMD=`echo "$CDIR/$1" | sed -e "s/%20/ /g"`
         if [ -x "$CMD" -a ! -d "$CMD" ]
@@ -154,9 +154,9 @@ then
     do
         if [ -f "$1" ]
         then
-            ARG=`cygpath -w "$1" 2> /dev/null | sed -e "s/%/%25/g" -e "s/ /%20/g"`
+            ARG=`cygpath -w "$1" 2> /dev/null | sed -e "s/%/%25/g;s/ /%20/g"`
         else
-            ARG=`echo "$1" | sed -e "s/%/%25/g" -e "s/ /%20/g"`
+            ARG=`echo "$1" | sed -e "s/%/%25/g;s/ /%20/g"`
         fi
         if [ "$ARGS" ]
         then
@@ -169,7 +169,7 @@ $ARG"
     done
     for ARG in $ARGS
     do
-        set -- "$@" "`echo \"$ARG\" | sed -e 's/%20/ /g' -e 's/%25/%/g'`"
+        set -- "$@" "`echo \"$ARG\" | sed -e 's/%20/ /g;s/%25/%/g'`"
     done
 fi
 
