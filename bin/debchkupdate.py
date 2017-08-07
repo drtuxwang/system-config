@@ -235,7 +235,7 @@ class Main(object):
                                 if dependency in self._packages:
                                     file = self._local(
                                         distribution,
-                                        self._packages[name].get_url()
+                                        self._packages[dependency].get_url()
                                     )
                                     print("  " + file, "(New dependency)")
                                     print("  " + file, file=ofile)
