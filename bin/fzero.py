@@ -115,7 +115,7 @@ class Main(object):
                     for _ in range(64):
                         ofile.write(chunk)
                     size += 1
-                    sys.stdout.write("\r{0:s} MB".format(size))
+                    sys.stdout.write("\r{0:d} MB".format(size))
                     sys.stdout.flush()
         except (KeyboardInterrupt, OSError):
             pass
