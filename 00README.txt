@@ -381,8 +381,8 @@ bin/pdf                Create PDF file from text/images/postscript/PDF files
 bin/pdf.py
 bin/2to3               Python 3.x script wrappers (allowing non systems port)
 bin/2to3.bat
-bin/2to3-3.4
-bin/2to3-3.4.bat
+bin/2to3-3.5
+bin/2to3-3.5.bat
 bin/ansible
 bin/ansible-playbook
 bin/aws
@@ -415,12 +415,12 @@ bin/pip
 bin/pip.bat
 bin/pip3
 bin/pip3.bat
-bin/pip3.4
-bin/pip3.4.bat
+bin/pip3.5
+bin/pip3.5.bat
 bin/pydoc3
 bin/pydoc3.bat
-bin/pydoc3.4
-bin/pydoc3.4.bat
+bin/pydoc3.5
+bin/pydoc3.5.bat
 bin/pylint
 bin/pylint.bat
 bin/virtualenv
@@ -466,8 +466,8 @@ bin/python3.1
 bin/python3.2
 bin/python3.3
 bin/python3.4
-bin/python3.4.bat
 bin/python3.5
+bin/python3.5.bat
 bin/python3.bat
 bin/python3.6
 bin/pyz                Make a Python3 ZIP Application in PYZ format
