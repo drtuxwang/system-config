@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.12.1'
-VERSION = 20170730
+RELEASE = '4.12.2'
+VERSION = 20170813
 
 # pylint: disable = too-many-lines
 
@@ -1090,8 +1090,15 @@ class LinuxSystem(PosixSystem):
                     if device in info['swaps']:
                         comment = 'swap'
                     elif device in info['mounts']:
-                        mount_point, mount_type = info['mounts'][device]
-                        comment = mount_type + ' on ' + mount_point
+                        for mount_point, mount_type in info['mounts'][device]:
+                            comment = mount_type + ' on ' + mount_point
+                            Writer.output(
+                                name='Disk device',
+                                device=device,
+                                value=size + ' KB',
+                                comment=comment
+                            )
+                        continue
                     else:
                         comment = ''
                     Writer.output(
