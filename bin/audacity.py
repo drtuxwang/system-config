@@ -73,7 +73,7 @@ class Main(object):
         pattern = (
             '^$|^HCK OnTimer|: Gtk-WARNING | LIBDBUSMENU-GLIB-WARNING |'
             '^ALSA lib |alsa.c|^Cannot connect to server socket|'
-            '^jack server|Debug: '
+            '^jack server|Debug: |^JackShmReadWrite|^[01]|^-1|^Cannot connect'
         )
         self._config()
 
