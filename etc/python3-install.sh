@@ -11,12 +11,8 @@ else
 fi
 
 umask 022
-LIST=$(python3 -m pip list 2> /dev/null)
+python3 -m pip install --upgrade pip
 for PIP in $(cat ${0%/*}/python3-requirements.txt 2> /dev/null)
 do
-    MODULE=$(echo "$PIP" | sed -e "s/[>=].*//")
-    if [ ! "$(echo "$LIST" | grep -i "^$MODULE ")" ]
-    then
-        $INSTALL ${PIP/>=/==}
-    fi
+    $INSTALL ${PIP/>=/==}
 done
