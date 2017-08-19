@@ -110,7 +110,7 @@ class Options(object):
             'image',
             nargs=1,
             metavar='image.iso|image.bin|directory|scan',
-            help='ISO/BIn image file, audio or scan'
+            help='ISO/Bin image file, audio or scan'
         )
 
         self._args = parser.parse_args(args)
