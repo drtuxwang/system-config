@@ -164,12 +164,12 @@ class Main(object):
         isoinfo = command_mod.Command('isoinfo', errors='stop')
 
         tmpfile = os.sep + os.path.join(
-            'tmp', 'fprint-' + getpass.getuser() + '.' + str(os.getpid()))
+            'tmp', 'md5cd-' + getpass.getuser() + '.' + str(os.getpid()))
         command = command_mod.Command('dd', errors='stop')
         command.set_args([
             'if=' + device,
-            'bs=' + str(2048*4096),
-            'count=1',
+            'bs=2048',
+            'count=4096',
             'of=' + tmpfile
         ])
         task = subtask_mod.Batch(command.get_cmdline())
@@ -186,7 +186,7 @@ class Main(object):
             )
 
         isoinfo.set_args(['-d', '-i', tmpfile])
-        task2 = subtask_mod.Task(isoinfo.get_cmdline())
+        task2 = subtask_mod.Batch(isoinfo.get_cmdline())
         task2.run(pattern='^Volume size is: ')
         if not task2.has_output():
             raise SystemExit(
