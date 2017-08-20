@@ -25,6 +25,11 @@ frame .audio -bg "#cccccc"
 pack .audio -side top -fill x
 
 frame .video -bg "#cccccc"
+    button .video.cheese -width 10 -bg "#ffff00" -text "Cheese" -command {
+        exec cheese &
+    }
+    pack .video.cheese -side top
+
     button .video.openshot -width 10 -bg "#ffff00" -text "Openshot" -command {
         exec openshot &
     }
