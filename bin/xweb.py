@@ -50,11 +50,10 @@ class Main(object):
 
     @staticmethod
     def _get_default():
-        home = os.environ.get('HOME')
-        if home in os.environ:
-            file = os.path.join(home, 'software', 'web-data', 'index.xhtml')
-            if os.path.isfile(file):
-                return file
+        home = os.environ.get('HOME', '')
+        file = os.path.join(home, 'software', 'web-data', 'index.xhtml')
+        if os.path.isfile(file):
+            return file
         return DEFAULT_URL
 
     @classmethod
