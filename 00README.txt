@@ -663,6 +663,8 @@ bin/xlock              Start GNOME/KDE/XFCE screen lock
 bin/xlock.py
 bin/xlogout            Shutdown X-windows
 bin/xlogout.py
+bin/xmail              Start E-mail in web browser
+bin/xmail.py
 bin/xmixer             Start GNOME/KDE/XFCE audio mixer
 bin/xmixer.py
 bin/xmlcheck           Check XML file for errors
@@ -682,8 +684,10 @@ bin/xsudo              Run sudo command in new terminal session
 bin/xsudo.py
 bin/xterm              Start GNOME/KDE/XFCE/Invisible terminal session
 bin/xterm.py
-bin/xvolume            Desktop audio volume utility
-bin/xvolume.py         (uses pacmd)
+bin/xvolume            Desktop audio volume utility (uses pacmd)
+bin/xvolume.py
+bin/xweb               Start web browser
+bin/xweb.py
 bin/xz                 Compress a file in XZ format (allowing non systems port)
 bin/xz.py
 bin/yamlformat         YAML file re-formatter
