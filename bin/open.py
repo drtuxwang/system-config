@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
-Open files using default application (uses "open.json").
+Open files using default application (uses "file_mod.yaml").
 """
 
 import argparse
 import glob
-import json
 import os
 import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-XDESKTOP = {'command': ['xesktop'], 'daemon': False}
+XDESKTOP = {'command': ['xdesktop'], 'daemon': False}
 URL_PREFIXS = ('http', 'https', 'ftp')
 
 
@@ -95,13 +95,13 @@ class Main(object):
 
     @classmethod
     def _spawn(cls, action, file):
-        command = action.get('command')
+        command, daemon = action
         if not command:
             raise SystemExit(sys.argv[0] + ': cannot find action: ' + file)
         print(file + ': opening with "' + command[0] + '"...')
         program = cls._get_program(command)
         program.set_args(command[1:] + [file])
-        if action.get('daemon'):
+        if daemon:
             subtask_mod.Daemon(program.get_cmdline()).run()
         else:
             subtask_mod.Task(program.get_cmdline()).run()
@@ -111,23 +111,23 @@ class Main(object):
         Start program
         """
         options = Options()
-        file = os.path.join(os.path.dirname(sys.argv[0]), 'open.json')
-        with open(file) as ifile:
-            mappings = json.load(ifile)
+        mappings = file_mod.FileMap()
 
         for file in options.get_files():
             if os.path.isdir(file):
                 action = XDESKTOP
             elif file.split(':', 1)[0] in URL_PREFIXS:
-                action = mappings.get('html')
+                action = mappings.get_app('web_browser')
             elif not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': cannot find file: ' + file)
             else:
-                action = mappings.get(
+                action = mappings.get_open_app(
                     '.'.join(file.rsplit('.', 2)[-2:]).lower()
                 )
                 if not action:
-                    action = mappings.get(file.rsplit('.', 1)[-1].lower())
+                    action = mappings.get_open_app(
+                        file.rsplit('.', 1)[-1].lower()
+                    )
                     if not action:
                         raise SystemExit(
                             sys.argv[0] + ': unknown file extension: ' + file)

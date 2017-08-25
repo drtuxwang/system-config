@@ -9,12 +9,59 @@ import os
 import re
 import sys
 import time
+import yaml
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
-RELEASE = '2.1.3'
-VERSION = 20170730
+RELEASE = '3.0.0'
+VERSION = 20170825
+
+
+class FileMap(object):
+    """
+    This class deals with mapping apps file to extensions.
+    """
+    def __init__(self):
+        file = os.path.join(os.path.dirname(__file__), 'file_mod.yaml')
+        with open(file) as ifile:
+            mappings = yaml.load(ifile)
+        self._apps = mappings['apps']
+        self._bindings = mappings['bindings']
+
+    def get_app(self, app_name, view=False):
+        """
+        Return (command, daemon_flag) or None
+        """
+        app = self._apps.get(app_name)
+        if app_name:
+            command = app['command']
+            if view and 'view_flag' in app:
+                command.append(app['view_flag'])
+            daemon = app.get('daemon') is True
+            return (command, daemon)
+
+        return None
+
+    def get_open_app(self, extension):
+        """
+        Return (command, daemon_flag) or None
+        """
+        app_name = self._bindings.get(extension, {}).get('open')
+        if app_name:
+            return self.get_app(app_name)
+
+        return None
+
+    def get_view_app(self, extension):
+        """
+        Return (command, daemon_flag) or None
+        """
+        app_name = self._bindings.get(extension, {}).get('view')
+        if app_name:
+            return self.get_app(app_name, view=True)
+
+        return None
 
 
 class FileStat(object):

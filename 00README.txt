@@ -10,6 +10,7 @@ bin/command_mod.py     Python command line handling module
 bin/debug_mod.py       Python debugging tools module
 bin/desktop_mod.py     Python X-windows desktop module
 bin/file_mod.py        Python file handling utility module
+bin/file_mod.yaml      Apps map for file extensions
 bin/network_mod.py     Python network handling utility module
 bin/power_mod.py       Python power handling module
 bin/subtask_mod.py     Python sub task handling module
@@ -368,7 +369,6 @@ bin/ogg                Encode OGG audio using avconv (libvorbis)
 bin/ogg.py
 bin/open               Open files using hardwired application mapping
 bin/open.py
-bin/open.json
 bin/pause              Pause until user presses <ENTER/RETURN> key
 bin/pause.bat
 bin/pause.py
@@ -617,7 +617,6 @@ bin/vi.bat
 bin/vi.py
 bin/view               View files using hardwired application mapping
 bin/view.py
-bin/view.json
 bin/vim                vim wrapper (allowing non systems port)
 bin/vim.bat
 bin/vim.py
