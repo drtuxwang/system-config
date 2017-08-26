@@ -36,7 +36,8 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
 MAXREPO = "9999"
 
 USER_AGENT = (
-    'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)"
+    "Chrome/59.0.3071.115 Safari/537.36"
 )
 
 requests.packages.urllib3.disable_warnings()
