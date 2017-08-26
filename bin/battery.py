@@ -3,6 +3,7 @@
 Monitor laptop battery
 """
 
+import argparse
 import signal
 import sys
 
@@ -10,6 +11,40 @@ import power_mod
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
+
+
+class Options(object):
+    """
+    Options class
+    """
+
+    def __init__(self):
+        self._args = None
+        self.parse(sys.argv)
+
+    def get_summary_flag(self):
+        """
+        Return summary flag.
+        """
+        return self._args.summary_flag
+
+    def _parse_args(self, args):
+        parser = argparse.ArgumentParser(description='Monitor laptop battery.')
+
+        parser.add_argument(
+            '-s',
+            action='store_true',
+            dest='summary_flag',
+            help='Show summary'
+        )
+
+        self._args = parser.parse_args(args)
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
 
 class Main(object):
@@ -35,7 +70,7 @@ class Main(object):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def _show(battery):
+    def _show_battery(battery):
         model = (
             battery.get_oem() + ' ' + battery.get_name() + ' ' +
             battery.get_type() + ' ' + str(battery.get_capacity_max()) +
@@ -68,15 +103,37 @@ class Main(object):
             sep=""
         )
 
+    @staticmethod
+    def _show_summary(batteries):
+        capacity = 0
+        rate = 0
+        for battery in batteries:
+            if battery.is_exist():
+                capacity += battery.get_capacity()
+                if battery.get_charge() == '-':
+                    rate -= battery.get_rate()
+                elif battery.get_charge() == '+':
+                    rate += battery.get_rate()
+
+        if capacity:
+            if rate:
+                print("{0:d}mAh [{1:+d}mAh]".format(capacity, rate))
+            else:
+                print("{0:d}mAh [Unused]".format(capacity))
+
     def run(self):
         """
         Start program
         """
+        options = Options()
         batteries = power_mod.Battery.factory()
 
-        for battery in batteries:
-            if battery.is_exist():
-                self._show(battery)
+        if options.get_summary_flag():
+            self._show_summary(batteries)
+        else:
+            for battery in batteries:
+                if battery.is_exist():
+                    self._show_battery(battery)
 
 
 if __name__ == '__main__':
