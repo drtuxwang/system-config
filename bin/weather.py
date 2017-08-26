@@ -16,7 +16,8 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 USER_AGENT = (
-    "Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0"
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)"
+    "Chrome/59.0.3071.115 Safari/537.36"
 )
 
 requests.packages.urllib3.disable_warnings()
@@ -31,6 +32,12 @@ class Options(object):
         self._args = None
         self._config()
         self.parse(sys.argv)
+
+    def get_quiet_flag(self):
+        """
+        Return quiet flag.
+        """
+        return self._args.quiet_flag
 
     def get_url(self):
         """
@@ -54,6 +61,12 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Current weather search.')
 
+        parser.add_argument(
+            '-q',
+            action='store_true',
+            dest='quiet_flag',
+            help='Disable error messages'
+        )
         parser.add_argument(
             'url',
             nargs=1,
@@ -92,9 +105,12 @@ class Main(object):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def _search(url):
+    def _search(options):
         try:
-            response = requests.get(url, headers={'User-Agent': USER_AGENT})
+            response = requests.get(
+                options.get_url(),
+                headers={'User-Agent': USER_AGENT}
+            )
         except requests.RequestException:
             pass
         else:
@@ -112,6 +128,8 @@ class Main(object):
                         )[1].split('<')[0]
                         return '{0:s} ({1:s})'.format(temp, condition)
 
+        if options.get_quiet_flag():
+            return ''
         return '???C (???)'
 
     @classmethod
@@ -120,7 +138,7 @@ class Main(object):
         Start program
         """
         options = Options()
-        print(cls._search(options.get_url()))
+        print(cls._search(options))
 
 
 if __name__ == '__main__':
