@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export PATH="/opt/software/bin:$PATH"
+export PYTHONDONTWRITEBYTECODE=1
 
 ntpdate -u > /dev/null 2>&1 < /dev/null &
 xlight -reset &
@@ -12,7 +13,7 @@ then
     cp -p /boot/grub/grub.cfg-ok /boot/grub/grub.cfg
 fi
 
-# Fix VPN client incorrect termination 
+# Fix VPN client incorrect termination
 if [ -f /etc/resolvconf/run/resolv.conf ]
 then
     ln -sf /etc/resolvconf/run/resolv.conf /etc/resolv.conf
