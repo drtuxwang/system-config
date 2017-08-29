@@ -12,13 +12,10 @@ import sys
 
 import requests
 
+import config_mod
+
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-
-USER_AGENT = (
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)"
-    "Chrome/59.0.3071.115 Safari/537.36"
-)
 
 requests.packages.urllib3.disable_warnings()
 
@@ -106,10 +103,12 @@ class Main(object):
 
     @staticmethod
     def _search(options):
+        user_agent = config_mod.Config().get('user_agent')
+
         try:
             response = requests.get(
                 options.get_url(),
-                headers={'User-Agent': USER_AGENT}
+                headers={'User-Agent': user_agent}
             )
         except requests.RequestException:
             pass

@@ -10,11 +10,10 @@ import signal
 import sys
 
 import file_mod
+import config_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
-
-IMAGE_EXTS = {'bmp', 'gif', 'jpeg', 'jpg', 'pcx', 'png', 'svg', 'tif', 'tiff'}
 
 
 class Options(object):
@@ -82,10 +81,11 @@ class Gallery(object):
     def __init__(self, directory, height):
         self._directory = directory
         self._height = height
+        images_extensions = config_mod.Config().get('image_extensions')
 
         try:
             self._files = [x for x in sorted(os.listdir(
-                directory)) if x.split('.')[-1].lower() in IMAGE_EXTS]
+                directory)) if x.split('.')[-1].lower() in images_extensions]
         except PermissionError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot open "' + directory + '" directory.')

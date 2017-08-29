@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-View files using default application (uses "file_mod.yaml").
+View files using default application
 """
 
 import argparse
@@ -10,14 +10,11 @@ import signal
 import sys
 
 import command_mod
-import file_mod
+import config_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-
-XDESKTOP = {'command': ['xdesktop'], 'daemon': False}
-URL_PREFIXS = ('http', 'https', 'ftp')
 
 
 class Options(object):
@@ -111,21 +108,21 @@ class Main(object):
         Start program
         """
         options = Options()
-        mappings = file_mod.FileMap()
+        config = config_mod.Config()
 
         for file in options.get_files():
             if os.path.isdir(file):
-                action = XDESKTOP
-            elif file.split(':', 1)[0] in URL_PREFIXS:
-                action = mappings.get_app('web_browser')
+                action = config.get_app('file_manager')
+            elif file.split(':', 1)[0] in config.get('web_uri'):
+                action = config.get_app('web_browser')
             elif not os.path.isfile(file):
                 raise SystemExit(sys.argv[0] + ': cannot find file: ' + file)
             else:
-                action = mappings.get_view_app(
+                action = config.get_view_app(
                     '.'.join(file.rsplit('.', 2)[-2:]).lower()
                 )
                 if not action:
-                    action = mappings.get_view_app(
+                    action = config.get_view_app(
                         file.rsplit('.', 1)[-1].lower()
                     )
                     if not action:

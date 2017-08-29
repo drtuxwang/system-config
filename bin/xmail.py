@@ -9,15 +9,11 @@ import signal
 import sys
 
 import command_mod
+import config_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-
-WEBMAIL_URL = (
-    'https://accounts.google.com/ServiceLogin?service='
-    'mail&continue=https://mail.google.com'
-)
 
 
 class Main(object):
@@ -56,8 +52,9 @@ class Main(object):
         """
         Start program
         """
-        command = command_mod.Command('open', errors='stop')
-        command.set_args([WEBMAIL_URL])
+        url = config_mod.Config().get('web_mail')
+
+        command = command_mod.Command('open', args=[url], errors='stop')
         subtask_mod.Exec(command.get_cmdline()).run()
 
 

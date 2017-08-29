@@ -10,12 +10,11 @@ import shutil
 import signal
 import sys
 
+import config_mod
 import file_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-
-IMAGE_EXTS = {'bmp', 'gif', 'jpeg', 'jpg', 'pcx', 'png', 'svg', 'tif', 'tiff'}
 
 
 class Options(object):
@@ -158,6 +157,7 @@ class Main(object):
         startdir = os.getcwd()
         reset_flag = options.get_reset_flag()
         number = options.get_start()
+        images_extensions = config_mod.Config().get('image_extensions')
 
         for directory in options.get_directories():
             if reset_flag:
@@ -166,7 +166,7 @@ class Main(object):
                 os.chdir(directory)
                 file_stats = []
                 for file in glob.glob('*.*'):
-                    if file.split('.')[-1].lower() in IMAGE_EXTS:
+                    if file.split('.')[-1].lower() in images_extensions:
                         file_stats.append(file_mod.FileStat(file))
                 newfiles = []
                 mypid = os.getpid()

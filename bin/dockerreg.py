@@ -28,17 +28,14 @@ import sys
 
 import requests
 
+import config_mod
+
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 # Maximum number of repositories (bug in Registry v2 returns only 100)
 # Effects Go array size and huge number can crash Registry
 MAXREPO = "9999"
-
-USER_AGENT = (
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)"
-    "Chrome/59.0.3071.115 Safari/537.36"
-)
 
 requests.packages.urllib3.disable_warnings()
 
@@ -114,6 +111,8 @@ class DockerRegistry(object):
     def __init__(self, server):
         self._server = server
         self._config()
+        config = config_mod.Config()
+        self._user_agent = config.get('user_agent')
 
     def get_url(self):
         """
@@ -127,9 +126,8 @@ class DockerRegistry(object):
         """
         return self._repositories
 
-    @staticmethod
-    def _get_url(url):
-        return requests.get(url, headers={'User-Agent': USER_AGENT})
+    def _get_url(self, url):
+        return requests.get(url, headers={'User-Agent': self._user_agent})
 
     def _config(self):
         self._url = self._server + '/v1/search'
@@ -171,10 +169,12 @@ class DockerRegistry(object):
             digests[tag] = digests[tag]
         return digests
 
-    @staticmethod
-    def _delete_url(url):
+    def _delete_url(self, url):
         try:
-            response = requests.delete(url, headers={'User-Agent': USER_AGENT})
+            response = requests.delete(
+                url,
+                headers={'User-Agent': self._user_agent}
+            )
         except Exception as exception:
             raise SystemExit(str(exception))
         # v2 returns 202, shared tags can 404
@@ -184,8 +184,7 @@ class DockerRegistry(object):
                 response.status_code
             ))
 
-    @classmethod
-    def delete(cls, server, repository, tag, digest):
+    def delete(self, server, repository, tag, digest):
         """
         Delete image
         """
@@ -193,7 +192,7 @@ class DockerRegistry(object):
             digest, server.split('://')[-1], repository, tag))
         url = "{0:s}/v1/repositories/{1:s}/tags/{2:s}".format(
             server, repository, tag)
-        cls._delete_url(url)
+        self._delete_url(url)
 
 
 class DockerRegistry2(DockerRegistry):
@@ -201,10 +200,9 @@ class DockerRegistry2(DockerRegistry):
     Docker Registry v2 class
     """
 
-    @staticmethod
-    def _get_url(url):
+    def _get_url(self, url):
         return requests.get(url, headers={
-            'User-Agent': USER_AGENT,
+            'User-Agent': self._user_agent,
             'Accept': 'application/vnd.docker.distribution.manifest.v2+json'
         })
 
@@ -254,8 +252,7 @@ class DockerRegistry2(DockerRegistry):
                 digests[tag] = response.headers['docker-content-digest']
         return digests
 
-    @classmethod
-    def delete(cls, server, repository, tag, digest):
+    def delete(self, server, repository, tag, digest):
         """
         Delete image by untagging blobs before untagging manifest
         """
@@ -263,7 +260,7 @@ class DockerRegistry2(DockerRegistry):
             digest, server.split('://')[-1], repository, tag))
         url = '{0:s}/v2/{1:s}/manifests/{2:s}'.format(
             server, repository, digest)
-        cls._delete_url(url)
+        self._delete_url(url)
 
 
 class Main(object):

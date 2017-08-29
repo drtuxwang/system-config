@@ -9,10 +9,10 @@ import os
 import signal
 import sys
 
+import config_mod
+
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-
-IMAGE_EXTS = {'bmp', 'gif', 'jpeg', 'jpg', 'pcx', 'png', 'svg', 'tif', 'tiff'}
 
 
 class Options(object):
@@ -99,10 +99,11 @@ class Main(object):
         Start program
         """
         options = Options()
+        images_extensions = config_mod.Config().get('image_extensions')
 
         for directory in options.get_directories():
             for file in sorted(glob.glob(os.path.join(directory, '*'))):
-                if file.split('.')[-1].lower() in IMAGE_EXTS:
+                if file.split('.')[-1].lower() in images_extensions:
                     link = os.path.basename(
                         directory + '_' + os.path.basename(file))
                     if not os.path.islink(link):

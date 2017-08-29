@@ -18,6 +18,9 @@ apps:
         command:
         - evince
         daemon: true
+    file_manager:
+        command:
+        - xdesktop
     image_editor:
         command:
         - gimp
@@ -217,3 +220,21 @@ bindings:
     zip:
         open: archive_unpacker
         view: archive_unpacker
+parameters:
+    homepage: http://www.drtuxwang.talktalk.net/bookmarks.xhtml
+    image_extensions:
+    - bmp
+    - gif
+    - jpeg
+    - jpg
+    - pcx
+    - png
+    - svg
+    - tif
+    - tiff
+    user_agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36
+    web_mail: https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com
+    web_uri:
+    - ftp
+    - http
+    - https

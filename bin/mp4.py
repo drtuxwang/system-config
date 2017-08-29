@@ -11,13 +11,12 @@ import signal
 import sys
 
 import command_mod
+import config_mod
 import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-
-IMAGE_EXTS = {'bmp', 'gif', 'jpeg', 'jpg', 'pcx', 'png', 'svg', 'tif', 'tiff'}
 
 
 class Options(object):
@@ -371,9 +370,11 @@ class Encoder(object):
 
     @staticmethod
     def _all_images(files):
+        images_extensions = config_mod.Config().get('image_extensions')
+
         for file in files:
             extension = file.split('.')[-1]
-            if extension not in IMAGE_EXTS:
+            if extension not in images_extensions:
                 return False
         return True
 

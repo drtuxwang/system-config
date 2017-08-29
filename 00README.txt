@@ -7,10 +7,11 @@ the years. Now most of the scripts are written in Python 3.
 Makefile               Makefile for testing
 
 bin/command_mod.py     Python command line handling module
+bin/config_mod.py      Python config module for handling "config_mod.yaml)
+bin/config_mod.yaml    Configuration file apps, bindings & parameters
 bin/debug_mod.py       Python debugging tools module
 bin/desktop_mod.py     Python X-windows desktop module
 bin/file_mod.py        Python file handling utility module
-bin/file_mod.yaml      Apps map for file extensions
 bin/network_mod.py     Python network handling utility module
 bin/power_mod.py       Python power handling module
 bin/subtask_mod.py     Python sub task handling module

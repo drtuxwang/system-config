@@ -15,12 +15,11 @@ import textwrap
 import time
 
 import command_mod
+import config_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
-
-IMAGE_EXTS = {'bmp', 'gif', 'jpeg', 'jpg', 'pcx', 'png', 'svg', 'tif', 'tiff'}
 
 
 class Options(object):
@@ -397,13 +396,14 @@ class Main(object):
             sides = 'double sides'
         else:
             sides = 'single side'
+        images_extensions = config_mod.Config().get('image_extensions')
 
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
             ext = file.split('.')[-1].lower()
-            if ext in IMAGE_EXTS:
+            if ext in images_extensions:
                 message = self._image(file)
             elif ext == 'pdf':
                 message = self._pdf(file)

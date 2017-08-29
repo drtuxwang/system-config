@@ -9,12 +9,11 @@ import signal
 import sys
 
 import command_mod
+import config_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-
-DEFAULT_URL = 'http://www.drtuxwang.talktalk.net/bookmarks.xhtml'
 
 
 class Main(object):
@@ -54,7 +53,8 @@ class Main(object):
         file = os.path.join(home, 'software', 'web-data', 'index.xhtml')
         if os.path.isfile(file):
             return file
-        return DEFAULT_URL
+
+        return config_mod.Config().get('homepage')
 
     @classmethod
     def run(cls):
