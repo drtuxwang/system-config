@@ -12,8 +12,8 @@ import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
-RELEASE = '2.0.4'
-VERSION = 20170730
+RELEASE = '2.1.0'
+VERSION = 20170830
 
 
 class Desktop(object):
@@ -22,19 +22,21 @@ class Desktop(object):
     """
 
     @staticmethod
-    def has_xfce():
+    def has_xfce(guess=True):
         """
         Return true if running XFCE
         """
-        keys = os.environ.keys()
-        if ('XDG_MENU_PREFIX' in keys and
-                os.environ['XDG_MENU_PREFIX'] == 'xfce-'):
+        if os.environ.get('XDG_MENU_PREFIX', '').startswith('xfce-'):
             return True
-        elif ('XDG_CURRENT_DESKTOP' in keys and
-              os.environ['XDG_CURRENT_DESKTOP'] == 'XFCE'):
+        elif os.environ.get('XDG_CURRENT_DESKTOP') == 'XFCE':
             return True
-        elif ('XDG_DATA_DIRS' in keys and
-              '/xfce' in os.environ['XDG_DATA_DIRS']):
+        elif '/xfce' in os.environ.get('XDG_DATA_DIRS', ''):
+            return True
+        elif (
+                guess and
+                os.path.isfile('/usr/bin/thunar') and
+                os.path.isfile('/usr/bin/xfce4-terminal')
+        ):
             return True
         return False
 
@@ -44,8 +46,7 @@ class Desktop(object):
         Return true if running Gnome
         """
         keys = os.environ.keys()
-        if ('DESKTOP_SESSION' in keys and
-                'gnome' in os.environ['DESKTOP_SESSION']):
+        if 'gnome' in os.environ.get('DESKTOP_SESSION', ''):
             return True
         elif 'GNOME_DESKTOP_SESSION_ID' in keys:
             return True
@@ -56,9 +57,7 @@ class Desktop(object):
         """
         Return true if running KDE
         """
-        keys = os.environ.keys()
-        if ('DESKTOP_SESSION' in keys and
-                'kde' in os.environ['DESKTOP_SESSION']):
+        if 'kde' in os.environ.get('DESKTOP_SESSION', ''):
             return True
         return False
 
@@ -77,16 +76,18 @@ class Desktop(object):
         """
         Return desktop name (xfce, gnome, kde or Unknown)
         """
-        if cls.has_macos():
-            name = 'macos'
-        elif cls.has_xfce():
-            name = 'xfce'
-        elif cls.has_gnome():
-            name = 'gnome'
-        elif cls.has_kde():
-            name = 'kde'
-        else:
-            name = 'Unknown'
+        name = 'Unknown'
+        if 'DISPLAY' in os.environ:
+            if cls.has_macos():
+                name = 'macos'
+            elif cls.has_xfce():
+                name = 'xfce'
+            elif cls.has_gnome():
+                name = 'gnome'
+            elif cls.has_kde():
+                name = 'kde'
+            elif cls.has_xfce(guess=True):
+                name = 'xfce'
 
         return name
 
