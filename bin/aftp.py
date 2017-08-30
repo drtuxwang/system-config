@@ -33,22 +33,23 @@ class Options(object):
 
     @staticmethod
     def _netrc(host):
-        if 'HOME' in os.environ:
-            netrc = os.path.join(os.environ['HOME'], '.netrc')
-            umask = os.umask(int('077', 8))
-            try:
-                with open(netrc, 'w', newline='\n') as ofile:
-                    print(
-                        "machine",
-                        host,
-                        "login anonymous password "
-                        "someone@somehost.somecompany.com",
-                        file=ofile
-                    )
-            except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create "' + netrc +
-                                 '" configuration file.')
-            os.umask(umask)
+        netrc = os.path.join(os.environ.get('HOME', ''), '.netrc')
+        umask = os.umask(int('077', 8))
+        try:
+            with open(netrc, 'w', newline='\n') as ofile:
+                print(
+                    "machine",
+                    host,
+                    "login anonymous password "
+                    "someone@somehost.somecompany.com",
+                    file=ofile
+                )
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + netrc +
+                '" configuration file.'
+            )
+        os.umask(umask)
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(

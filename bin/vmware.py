@@ -38,47 +38,47 @@ class Options(object):
 
     @staticmethod
     def _config():
-        if 'HOME' in os.environ:
-            configfile = os.path.join(os.environ['HOME'], '.vmware', 'config')
-            if os.path.isfile(configfile):
+        home = os.environ.get('HOME', '')
+        configfile = os.path.join(home, '.vmware', 'config')
+        if os.path.isfile(configfile):
+            try:
+                with open(configfile, errors='replace') as ifile:
+                    configdata = ifile.readlines()
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "' + configfile +
+                    '" configuration file.'
+                )
+            if 'xkeymap.nokeycodeMap = true\n' in configdata:
+                ifile.close()
+                return
+            try:
+                ofile = open(configfile, 'ab')
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot modify "' + configfile +
+                    '" configuration file.'
+                )
+        else:
+            configdir = os.path.dirname(configfile)
+            if not os.path.isdir(configdir):
                 try:
-                    with open(configfile, errors='replace') as ifile:
-                        configdata = ifile.readlines()
+                    os.mkdir(configdir)
                 except OSError:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + configfile +
-                        '" configuration file.'
+                        sys.argv[0] + ': Cannot create "' + configdir +
+                        '" directory.'
                     )
-                if 'xkeymap.nokeycodeMap = true\n' in configdata:
-                    ifile.close()
-                    return
-                try:
-                    ofile = open(configfile, 'ab')
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot modify "' + configfile +
-                        '" configuration file.'
-                    )
-            else:
-                configdir = os.path.dirname(configfile)
-                if not os.path.isdir(configdir):
-                    try:
-                        os.mkdir(configdir)
-                    except OSError:
-                        raise SystemExit(
-                            sys.argv[0] + ': Cannot create "' + configdir +
-                            '" directory.'
-                        )
-                try:
-                    ofile = open(configfile, 'w', newline='\n')
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + configfile +
-                        '" configuration file.'
-                    )
-            # Workaround VMWare Player 2.5 keymap bug
-            print("xkeymap.nokeycodeMap = true")
-            ofile.close()
+            try:
+                ofile = open(configfile, 'w', newline='\n')
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' + configfile +
+                    '" configuration file.'
+                )
+        # Workaround VMWare Player 2.5 keymap bug
+        print("xkeymap.nokeycodeMap = true")
+        ofile.close()
 
     def parse(self, args):
         """

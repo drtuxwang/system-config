@@ -48,19 +48,19 @@ class Main(object):
 
     @staticmethod
     def _config():
-        if 'HOME' in os.environ:
-            file = os.path.join(
-                os.environ['HOME'], '.gnome2', 'evince', 'print-settings')
-            if os.path.isfile(file):
-                try:
-                    os.remove(file)
-                except OSError:
-                    pass
+        home = os.environ.get('HOME', '')
+        file = os.path.join(home, '.gnome2', 'evince', 'print-settings')
+        if os.path.isfile(file):
+            try:
+                os.remove(file)
+            except OSError:
+                pass
 
     @staticmethod
     def _setenv():
-        if 'LC_PAPER' not in os.environ:  # Default to A4
-            os.environ['LC_PAPER'] = 'en_GB.UTF-8'
+        # Default to A4
+        os.environ['LC_PAPER'] = os.environ.get('LC_PAPER', 'en_GB.UTF-8')
+
         if 'PRINTER' not in os.environ:
             lpstat = command_mod.Command(
                 'lpstat',

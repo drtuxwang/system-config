@@ -50,31 +50,31 @@ class Main(object):
 
     @staticmethod
     def _config():
-        if 'HOME' in os.environ:
-            configdir = os.path.join(os.environ['HOME'], '.purple')
-            configfile = os.path.join(configdir, 'prefs.xml')
-            try:
-                with open(configfile, errors='replace') as ifile:
-                    try:
-                        with open(
-                            configfile + '-new',
-                            'w',
-                            newline='\n'
-                        ) as ofile:
-                            # Disable logging of chats
-                            islog = re.compile('log_.*type="bool"')
-                            for line in ifile:
-                                if islog.search(line):
-                                    line = line.rstrip().replace('1', '0')
-                                print(line, file=ofile)
-                    except OSError:
-                        return
-            except OSError:
-                return
-            try:
-                shutil.move(configfile + '-new', configfile)
-            except OSError:
-                pass
+        home = os.environ.get('HOME', '')
+        configdir = os.path.join(home, '.purple')
+        configfile = os.path.join(configdir, 'prefs.xml')
+        try:
+            with open(configfile, errors='replace') as ifile:
+                try:
+                    with open(
+                        configfile + '-new',
+                        'w',
+                        newline='\n'
+                    ) as ofile:
+                        # Disable logging of chats
+                        islog = re.compile('log_.*type="bool"')
+                        for line in ifile:
+                            if islog.search(line):
+                                line = line.rstrip().replace('1', '0')
+                            print(line, file=ofile)
+                except OSError:
+                    return
+        except OSError:
+            return
+        try:
+            shutil.move(configfile + '-new', configfile)
+        except OSError:
+            pass
 
     def run(self):
         """

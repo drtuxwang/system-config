@@ -39,38 +39,33 @@ class Options(object):
 
     @staticmethod
     def _config():
-        if 'HOME' in os.environ:
-            file = os.path.join(
-                os.environ['HOME'],
-                '.config',
-                'vlc',
-                'vlc-qt-interface.conf'
-            )
+        home = os.environ.get('HOME', '')
+        file = os.path.join(home, '.config', 'vlc', 'vlc-qt-interface.conf')
+        try:
+            with open(file, errors='replace') as ifile:
+                with open(file + '-new', 'w', newline='\n') as ofile:
+                    for line in ifile:
+                        if line.startswith('geometry='):
+                            print(
+                                'geometry=@ByteArray(\\x1\\xd9\\xd0\\xcb'
+                                '\\0\\x1\\0\\0\\0\\0\\0z\\0\\0\\0\\x32\\0'
+                                '\\0\\x2\\x62\\0\\0\\0~\\0\\0\\0z\\0\\0\\0'
+                                '\\x32\\0\\0\\x2\\x62\\0\\0\\0~\\0\\0\\0'
+                                '\\0\\0\\0)',
+                                file=ofile
+                            )
+                        else:
+                            print(line, file=ofile)
+        except OSError:
             try:
-                with open(file, errors='replace') as ifile:
-                    with open(file + '-new', 'w', newline='\n') as ofile:
-                        for line in ifile:
-                            if line.startswith('geometry='):
-                                print(
-                                    'geometry=@ByteArray(\\x1\\xd9\\xd0\\xcb'
-                                    '\\0\\x1\\0\\0\\0\\0\\0z\\0\\0\\0\\x32\\0'
-                                    '\\0\\x2\\x62\\0\\0\\0~\\0\\0\\0z\\0\\0\\0'
-                                    '\\x32\\0\\0\\x2\\x62\\0\\0\\0~\\0\\0\\0'
-                                    '\\0\\0\\0)',
-                                    file=ofile
-                                )
-                            else:
-                                print(line, file=ofile)
+                os.remove(file + '-new')
             except OSError:
-                try:
-                    os.remove(file + '-new')
-                except OSError:
-                    pass
-            else:
-                try:
-                    shutil.move(file + '-new', file)
-                except OSError:
-                    pass
+                pass
+        else:
+            try:
+                shutil.move(file + '-new', file)
+            except OSError:
+                pass
 
     def parse(self, args):
         """

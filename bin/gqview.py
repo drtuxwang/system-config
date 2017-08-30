@@ -33,65 +33,63 @@ class Options(object):
 
     @staticmethod
     def _config_geeqie():
-        if 'HOME' in os.environ:
-            configdir = os.path.join(os.environ['HOME'], '.config', 'geeqie')
-            if not os.path.isdir(configdir):
+        home = os.environ.get('HOME', '')
+        configdir = os.path.join(home, '.config', 'geeqie')
+        if not os.path.isdir(configdir):
+            try:
+                os.makedirs(configdir)
+            except OSError:
+                return
+        file = os.path.join(configdir, 'history')
+        if not os.path.isdir(file):
+            try:
+                if os.path.isfile(file):
+                    os.remove(file)
+                os.mkdir(file)
+            except OSError:
+                pass
+        for file in (
+                os.path.join(home, '.local', 'share', 'geeqie'),
+                os.path.join(home, '.cache', 'geeqie', 'thumbnails')
+        ):
+            if not os.path.isfile(file):
                 try:
-                    os.makedirs(configdir)
-                except OSError:
-                    return
-            file = os.path.join(configdir, 'history')
-            if not os.path.isdir(file):
-                try:
-                    if os.path.isfile(file):
-                        os.remove(file)
-                    os.mkdir(file)
+                    if os.path.isdir(file):
+                        shutil.rmtree(file)
+                    with open(file, 'wb'):
+                        pass
                 except OSError:
                     pass
-            for file in (
-                    os.path.join(
-                        os.environ['HOME'], '.local', 'share', 'geeqie'),
-                    os.path.join(
-                        os.environ['HOME'], '.cache', 'geeqie', 'thumbnails')
-            ):
-                if not os.path.isfile(file):
-                    try:
-                        if os.path.isdir(file):
-                            shutil.rmtree(file)
-                        with open(file, 'wb'):
-                            pass
-                    except OSError:
-                        pass
 
     @staticmethod
     def _config_gqview():
-        if 'HOME' in os.environ:
-            configdir = os.path.join(os.environ['HOME'], '.gqview')
-            if not os.path.isdir(configdir):
+        home = os.environ.get('HOME', '')
+        configdir = os.path.join(home, '.gqview')
+        if not os.path.isdir(configdir):
+            try:
+                os.makedirs(configdir)
+            except OSError:
+                return
+        for directory in (
+                'collections', 'history', 'metadata', 'thumbnails'
+        ):
+            file = os.path.join(configdir, directory)
+            if not os.path.isfile(file):
                 try:
-                    os.makedirs(configdir)
-                except OSError:
-                    return
-            for directory in (
-                    'collections', 'history', 'metadata', 'thumbnails'
-            ):
-                file = os.path.join(configdir, directory)
-                if not os.path.isfile(file):
-                    try:
-                        if os.path.isdir(file):
-                            shutil.rmtree(file)
-                        with open(file, 'wb'):
-                            pass
-                    except OSError:
+                    if os.path.isdir(file):
+                        shutil.rmtree(file)
+                    with open(file, 'wb'):
                         pass
-            file = os.path.join(configdir, 'history')
-            if not os.path.isdir(file):
-                try:
-                    if os.path.isfile(file):
-                        os.remove(file)
-                    os.mkdir(file)
                 except OSError:
                     pass
+        file = os.path.join(configdir, 'history')
+        if not os.path.isdir(file):
+            try:
+                if os.path.isfile(file):
+                    os.remove(file)
+                os.mkdir(file)
+            except OSError:
+                pass
 
     def parse(self, args):
         """

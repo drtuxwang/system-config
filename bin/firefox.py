@@ -13,7 +13,6 @@ import os
 import re
 import shutil
 import signal
-import sqlite3
 import sys
 
 import command_mod
@@ -171,54 +170,56 @@ class Options(object):
 
     @classmethod
     def _copy(cls):
-        if 'HOME' in os.environ:
-            task = task_mod.Tasks.factory()
-            for directory in glob.glob(os.path.join(
-                    '/tmp',
-                    'firefox-' + getpass.getuser() + '.*'
-            )):
-                try:
-                    if not task.pgid2pids(int(directory.split('.')[-1])):
-                        print(
-                            'Removing copy of Firefox profile in "' +
-                            directory + '"...'
-                        )
-                        try:
-                            shutil.rmtree(directory)
-                        except OSError:
-                            pass
-                except ValueError:
-                    pass
-
-            os.umask(int('077', 8))
-            firefoxdir = os.path.join(
-                os.environ['HOME'],
-                cls._get_profiles_dir()
-            )
-            mypid = os.getpid()
-            os.setpgid(mypid, mypid)  # New PGID
-            newhome = os.path.join(
+        task = task_mod.Tasks.factory()
+        for directory in glob.glob(os.path.join(
                 '/tmp',
-                'firefox-' + getpass.getuser() + '.' + str(mypid)
-            )
-            os.environ['TMPDIR'] = newhome
-            print('Creating copy of Firefox profile in "' + newhome + '"...')
-
-            if not os.path.isdir(newhome):
-                try:
-                    shutil.copytree(
-                        firefoxdir,
-                        os.path.join(newhome, '.mozilla', 'firefox')
+                'firefox-' + getpass.getuser() + '.*'
+        )):
+            try:
+                if not task.pgid2pids(int(directory.split('.')[-1])):
+                    print(
+                        'Removing copy of Firefox profile in "' +
+                        directory + '"...'
                     )
-                except (OSError, shutil.Error):  # Ignore 'lock' file error
-                    pass
-            for directory in ('Desktop', '.cups'):
-                try:
-                    os.symlink(os.path.join(os.environ['HOME'], directory),
-                               os.path.join(newhome, directory))
-                except OSError:
-                    pass
-            os.environ['HOME'] = newhome
+                    try:
+                        shutil.rmtree(directory)
+                    except OSError:
+                        pass
+            except ValueError:
+                pass
+
+        os.umask(int('077', 8))
+        firefoxdir = os.path.join(
+            os.environ['HOME'],
+            cls._get_profiles_dir()
+        )
+        mypid = os.getpid()
+        os.setpgid(mypid, mypid)  # New PGID
+        newhome = os.path.join(
+            '/tmp',
+            'firefox-' + getpass.getuser() + '.' + str(mypid)
+        )
+        os.environ['TMPDIR'] = newhome
+        print('Creating copy of Firefox profile in "' + newhome + '"...')
+
+        if not os.path.isdir(newhome):
+            try:
+                shutil.copytree(
+                    firefoxdir,
+                    os.path.join(newhome, '.mozilla', 'firefox')
+                )
+            except (OSError, shutil.Error):  # Ignore 'lock' file error
+                pass
+        home = os.environ.get('HOME', '')
+        for directory in ('Desktop', '.cups'):
+            try:
+                os.symlink(
+                    os.path.join(home, directory),
+                    os.path.join(newhome, directory)
+                )
+            except OSError:
+                pass
+        os.environ['HOME'] = newhome
 
     @staticmethod
     def _remove(file):
@@ -231,10 +232,8 @@ class Options(object):
             pass
 
     def _reset(self):
-        if 'HOME' not in os.environ:
-            return
-
-        firefoxdir = os.path.join(os.environ['HOME'], self._get_profiles_dir())
+        home = os.environ.get('HOME', '')
+        firefoxdir = os.path.join(home, self._get_profiles_dir())
         if os.path.isdir(firefoxdir):
             keep_list = (
                 'adblockplus',
@@ -353,28 +352,6 @@ class Options(object):
                 except OSError:
                     pass
 
-    @classmethod
-    def _ublock(cls):
-        firefoxdir = os.path.join(os.environ['HOME'], cls._get_profiles_dir())
-        for file in glob.glob(os.path.join(
-                firefoxdir,
-                '*',
-                'extension-data',
-                'ublock0.sqlite'
-        )):
-            if os.path.isfile(file):
-                with sqlite3.connect(file) as conn:
-                    try:
-                        cursor = conn.cursor()
-                        cursor.execute(
-                            "UPDATE settings SET value = '{}' "
-                            "WHERE name = 'cached_asset_entries'"
-                        )
-                        cursor.execute(
-                            "DELETE FROM settings WHERE name = 'selfie'")
-                    except sqlite3.DatabaseError:
-                        pass
-
     def parse(self, args):
         """
         Parse arguments
@@ -422,10 +399,8 @@ class Options(object):
             ': Connection reset by peer|'
         )
 
-        if 'HOME' in os.environ:
-            self._config()
-            self._prefs(updates)
-            # self._ublock()
+        self._config()
+        self._prefs(updates)
 
 
 class Main(object):

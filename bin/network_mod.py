@@ -27,10 +27,10 @@ class Shaper(command_mod.Command):
         super().__init__('trickle', errors=errors)
 
         self._drate = 512
-        if 'HOME' in os.environ:
-            file = os.path.join(os.environ['HOME'], '.config', 'trickle.json')
-            if not self.read(file):
-                self.write(file)
+        home = os.environ.get('HOME', '')
+        file = os.path.join(home, '.config', 'trickle.json')
+        if not self.read(file):
+            self.write(file)
 
         if drate:
             self._drate = drate

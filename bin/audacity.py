@@ -48,21 +48,22 @@ class Main(object):
 
     @staticmethod
     def _config():
-        if 'HOME' in os.environ:
-            audacitydir = os.path.join(os.environ['HOME'], '.audacity-data')
-            if not os.path.isdir(audacitydir):
-                try:
-                    os.mkdir(audacitydir)
-                except OSError:
-                    pass
-                else:
-                    if not os.path.isfile(
-                            os.path.join(audacitydir, 'audacity.cfg')):
-                        with open(os.path.join(audacitydir, 'audacity.cfg'),
-                                  'w', newline='\n') as ofile:
-                            print("[AudioIO]", file=ofile)
-                            print("PlaybackDevice=ALSA: pulse", file=ofile)
-                            print("RecordingDevice=ALSA: pulse", file=ofile)
+        home = os.environ.get('HOME', '')
+        audacitydir = os.path.join(home, '.audacity-data')
+        if not os.path.isdir(audacitydir):
+            try:
+                os.mkdir(audacitydir)
+            except OSError:
+                pass
+            else:
+                if not os.path.isfile(
+                        os.path.join(audacitydir, 'audacity.cfg')
+                ):
+                    with open(os.path.join(audacitydir, 'audacity.cfg'),
+                              'w', newline='\n') as ofile:
+                        print("[AudioIO]", file=ofile)
+                        print("PlaybackDevice=ALSA: pulse", file=ofile)
+                        print("RecordingDevice=ALSA: pulse", file=ofile)
 
     def run(self):
         """

@@ -40,18 +40,18 @@ class Options(object):
 
     @staticmethod
     def _config():
-        if 'HOME' in os.environ:
-            file = os.path.join(os.environ['HOME'], '.gitconfig')
-            if not os.path.isfile(file):
-                try:
-                    with open(file, 'w', newline='\n') as ofile:
-                        user = getpass.getuser()
-                        host = socket.gethostname().split('.')[0].lower()
-                        print("[user]", file=ofile)
-                        print("        name =", user, file=ofile)
-                        print("        email =", user + '@' + host, file=ofile)
-                except OSError:
-                    pass
+        home = os.environ.get('HOME', '')
+        file = os.path.join(home, '.gitconfig')
+        if not os.path.isfile(file):
+            try:
+                with open(file, 'w', newline='\n') as ofile:
+                    user = getpass.getuser()
+                    host = socket.gethostname().split('.')[0].lower()
+                    print("[user]", file=ofile)
+                    print("        name =", user, file=ofile)
+                    print("        email =", user + '@' + host, file=ofile)
+            except OSError:
+                pass
 
     def parse(self, args):
         """

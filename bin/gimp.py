@@ -39,22 +39,21 @@ class Options(object):
 
     @staticmethod
     def _config():
-        if 'HOME' in os.environ:
-            if os.path.isdir(os.path.join(os.environ['HOME'], '.thumbnails')):
-                try:
-                    shutil.rmtree(
-                        os.path.join(os.environ['HOME'], '.thumbnails'))
-                except OSError:
-                    pass
-            for file in glob.glob(
-                    os.path.join(os.environ['HOME'], '.gimp*', 'gimprc')):
-                try:
-                    with open(file, errors='replace') as ifile:
-                        if '(thumbnail-size none)\n' not in ifile.readlines():
-                            with open(file, 'a', newline='\n') as ofile:
-                                print("(thumbnail-size none)", file=ofile)
-                except OSError:
-                    continue
+        home = os.environ.get('HOME', '')
+        if os.path.isdir(os.path.join(home, '.thumbnails')):
+            try:
+                shutil.rmtree(os.path.join(home, '.thumbnails'))
+            except OSError:
+                pass
+        for file in glob.glob(
+                os.path.join(home, '.gimp*', 'gimprc')):
+            try:
+                with open(file, errors='replace') as ifile:
+                    if '(thumbnail-size none)\n' not in ifile.readlines():
+                        with open(file, 'a', newline='\n') as ofile:
+                            print("(thumbnail-size none)", file=ofile)
+            except OSError:
+                continue
 
     def parse(self, args):
         """

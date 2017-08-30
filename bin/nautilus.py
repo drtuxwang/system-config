@@ -37,68 +37,63 @@ class Options(object):
         return self._nautilus
 
     def _config(self):
-        if 'HOME' in os.environ:
-            configdir = os.path.join(
-                os.environ['HOME'],
-                '.local',
-                'share',
-                'applications'
-            )
-            if not os.path.isdir(configdir):
-                try:
-                    os.makedirs(configdir)
-                except OSError:
-                    return
-            file = os.path.join(configdir, 'mimeapps.list')
-            if not os.path.isfile(file):
-                try:
-                    with open(file, 'w', newline='\n') as ofile:
-                        print("[Added Associations]", file=ofile)
-                        print("audio/ac3=vlc.desktop;", file=ofile)
-                        print("audio/mp4=vlc.desktop;", file=ofile)
-                        print("audio/mpeg=vlc.desktop;", file=ofile)
-                        print(
-                            "audio/vnd.rn-realaudio=vlc.desktop;", file=ofile)
-                        print("audio/vorbis=vlc.desktop;", file=ofile)
-                        print("audio/x-adpcm=vlc.desktop;", file=ofile)
-                        print("audio/x-matroska=vlc.desktop;", file=ofile)
-                        print("audio/x-mpegurl=vlc.desktop;", file=ofile)
-                        print("audio/x-mp2=vlc.desktop;", file=ofile)
-                        print("audio/x-mp3=vlc.desktop;", file=ofile)
-                        print("audio/x-ms-wma=vlc.desktop;", file=ofile)
-                        print("audio/x-scpls=vlc.desktop;", file=ofile)
-                        print("audio/x-vorbis=vlc.desktop;", file=ofile)
-                        print("audio/x-wav=vlc.desktop;", file=ofile)
-                        print("image/jpeg=gqview.desktop;", file=ofile)
-                        print("video/avi=vlc.desktop;", file=ofile)
-                        print("video/mp4=vlc.desktop;", file=ofile)
-                        print("video/mpeg=vlc.desktop;", file=ofile)
-                        print("video/quicktime=vlc.desktop;", file=ofile)
-                        print(
-                            "video/vnd.rn-realvideo=vlc.desktop;", file=ofile)
-                        print("video/x-matroska=vlc.desktop;", file=ofile)
-                        print("video/x-ms-asf=vlc.desktop;", file=ofile)
-                        print("video/x-msvideo=vlc.desktop;", file=ofile)
-                        print("video/x-ms-wmv=vlc.desktop;", file=ofile)
-                        print("video/x-ogm=vlc.desktop;", file=ofile)
-                        print("video/x-theora=vlc.desktop;", file=ofile)
-                        print(
-                            '\n# xdg-open (ie "xdg-mime default vlc.desktop '
-                            'x-scheme-handler/rtsp"', file=ofile
-                        )
-                        print("[Default Applications]", file=ofile)
-                        print("x-scheme-handler/mms=vlc.desktop", file=ofile)
-                        print("x-scheme-handler/mms=vlc.desktop", file=ofile)
-                        print("x-scheme-handler/rtsp=vlc.desktop", file=ofile)
-                except OSError:
-                    return
-            self._userapp(
-                configdir,
-                'application/vnd.oasis.opendocument.text',
-                'soffice'
-            )
-            self._userapp(configdir, 'image/jpeg', 'gqview')
-            self._userapp(configdir, 'text/html', 'xweb')
+        home = os.environ.get('HOME', '')
+        configdir = os.path.join(home, '.local', 'share', 'applications')
+        if not os.path.isdir(configdir):
+            try:
+                os.makedirs(configdir)
+            except OSError:
+                return
+        file = os.path.join(configdir, 'mimeapps.list')
+        if not os.path.isfile(file):
+            try:
+                with open(file, 'w', newline='\n') as ofile:
+                    print("[Added Associations]", file=ofile)
+                    print("audio/ac3=vlc.desktop;", file=ofile)
+                    print("audio/mp4=vlc.desktop;", file=ofile)
+                    print("audio/mpeg=vlc.desktop;", file=ofile)
+                    print(
+                        "audio/vnd.rn-realaudio=vlc.desktop;", file=ofile)
+                    print("audio/vorbis=vlc.desktop;", file=ofile)
+                    print("audio/x-adpcm=vlc.desktop;", file=ofile)
+                    print("audio/x-matroska=vlc.desktop;", file=ofile)
+                    print("audio/x-mpegurl=vlc.desktop;", file=ofile)
+                    print("audio/x-mp2=vlc.desktop;", file=ofile)
+                    print("audio/x-mp3=vlc.desktop;", file=ofile)
+                    print("audio/x-ms-wma=vlc.desktop;", file=ofile)
+                    print("audio/x-scpls=vlc.desktop;", file=ofile)
+                    print("audio/x-vorbis=vlc.desktop;", file=ofile)
+                    print("audio/x-wav=vlc.desktop;", file=ofile)
+                    print("image/jpeg=gqview.desktop;", file=ofile)
+                    print("video/avi=vlc.desktop;", file=ofile)
+                    print("video/mp4=vlc.desktop;", file=ofile)
+                    print("video/mpeg=vlc.desktop;", file=ofile)
+                    print("video/quicktime=vlc.desktop;", file=ofile)
+                    print(
+                        "video/vnd.rn-realvideo=vlc.desktop;", file=ofile)
+                    print("video/x-matroska=vlc.desktop;", file=ofile)
+                    print("video/x-ms-asf=vlc.desktop;", file=ofile)
+                    print("video/x-msvideo=vlc.desktop;", file=ofile)
+                    print("video/x-ms-wmv=vlc.desktop;", file=ofile)
+                    print("video/x-ogm=vlc.desktop;", file=ofile)
+                    print("video/x-theora=vlc.desktop;", file=ofile)
+                    print(
+                        '\n# xdg-open (ie "xdg-mime default vlc.desktop '
+                        'x-scheme-handler/rtsp"', file=ofile
+                    )
+                    print("[Default Applications]", file=ofile)
+                    print("x-scheme-handler/mms=vlc.desktop", file=ofile)
+                    print("x-scheme-handler/mms=vlc.desktop", file=ofile)
+                    print("x-scheme-handler/rtsp=vlc.desktop", file=ofile)
+            except OSError:
+                return
+        self._userapp(
+            configdir,
+            'application/vnd.oasis.opendocument.text',
+            'soffice'
+        )
+        self._userapp(configdir, 'image/jpeg', 'gqview')
+        self._userapp(configdir, 'text/html', 'xweb')
 
     @staticmethod
     def _userapp(configdir, mime_type, app_name):

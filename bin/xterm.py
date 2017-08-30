@@ -213,27 +213,27 @@ class Xterm(Terminal):
 
     @staticmethod
     def _ssh():
-        if 'HOME' in os.environ:
-            sshdir = os.path.join(os.environ['HOME'], '.ssh')
-            if not os.path.isdir(sshdir):
-                try:
-                    os.mkdir(sshdir)
-                except OSError:
-                    return
-            os.chmod(sshdir, int('700', 8))
-            sshconfig = os.path.join(sshdir, 'config')
-            if not os.path.isfile(sshconfig):
-                try:
-                    with open(sshconfig, 'w', newline='\n') as ofile:
-                        print("Protocol 2\n", file=ofile)
-                        print("#Host hostname", file=ofile)
-                        print("#User username\n", file=ofile)
-                except OSError:
-                    return
+        home = os.environ.get('HOME', '')
+        sshdir = os.path.join(home, '.ssh')
+        if not os.path.isdir(sshdir):
             try:
-                os.chmod(sshconfig, int('600', 8))
+                os.mkdir(sshdir)
             except OSError:
                 return
+        os.chmod(sshdir, int('700', 8))
+        sshconfig = os.path.join(sshdir, 'config')
+        if not os.path.isfile(sshconfig):
+            try:
+                with open(sshconfig, 'w', newline='\n') as ofile:
+                    print("Protocol 2\n", file=ofile)
+                    print("#Host hostname", file=ofile)
+                    print("#User username\n", file=ofile)
+            except OSError:
+                return
+        try:
+            os.chmod(sshconfig, int('600', 8))
+        except OSError:
+            return
 
     def run(self):
         """

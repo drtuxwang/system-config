@@ -53,18 +53,18 @@ class Options(object):
 
     @staticmethod
     def _config():
-        if 'HOME' in os.environ:
-            os.umask(int('077', 8))
-            gpgdir = os.path.join(os.environ['HOME'], '.gnupg')
-            if not os.path.isdir(gpgdir):
-                try:
-                    os.mkdir(gpgdir)
-                except OSError:
-                    return
+        os.umask(int('077', 8))
+        home = os.environ.get('HOME', '')
+        gpgdir = os.path.join(home, '.gnupg')
+        if not os.path.isdir(gpgdir):
             try:
-                os.chmod(gpgdir, int('700', 8))
+                os.mkdir(gpgdir)
             except OSError:
                 return
+        try:
+            os.chmod(gpgdir, int('700', 8))
+        except OSError:
+            return
         if 'DISPLAY' in os.environ:
             del os.environ['DISPLAY']
 

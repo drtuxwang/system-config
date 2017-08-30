@@ -144,60 +144,60 @@ class Options(object):
                     continue
 
     def _config(self):
-        if 'HOME' in os.environ:
-            configdir = os.path.join(
-                os.environ['HOME'], self._get_profiles_dir(), 'Default')
+        home = os.environ.get('HOME', '')
+        configdir = os.path.join(home, self._get_profiles_dir(), 'Default')
 
-            self._clean_adobe()
-            if os.path.isdir(configdir):
-                self._clean_preferences(configdir)
-                self._clean_junk_files(configdir)
+        self._clean_adobe()
+        if os.path.isdir(configdir):
+            self._clean_preferences(configdir)
+            self._clean_junk_files(configdir)
 
     def _copy(self):
-        if 'HOME' in os.environ:
-            task = task_mod.Tasks.factory()
-            for directory in glob.glob(os.path.join(
-                    '/tmp',
-                    'chrome-' + getpass.getuser() + '.*'
-            )):
-                try:
-                    if not task.pgid2pids(int(directory.split('.')[-1])):
-                        print(
-                            'Removing copy of Chrome profile in "' +
-                            directory + '"...'
-                        )
-                        try:
-                            shutil.rmtree(directory)
-                        except OSError:
-                            pass
-                except ValueError:
-                    pass
-            os.umask(int('077', 8))
-            configdir = os.path.join(
-                os.environ['HOME'],
-                self._get_profiles_dir()
-            )
-            mypid = os.getpid()
-            os.setpgid(mypid, mypid)  # New PGID
-            newhome = os.path.join(
+        task = task_mod.Tasks.factory()
+        for directory in glob.glob(os.path.join(
                 '/tmp',
-                'chrome-' + getpass.getuser() + '.' + str(mypid)
-            )
-            print('Creating copy of Chrome profile in "' + newhome + '"...')
-            if not os.path.isdir(newhome):
-                try:
-                    shutil.copytree(
-                        configdir,
-                        os.path.join(newhome, self._get_profiles_dir())
-                    )
-                except (OSError, shutil.Error):  # Ignore 'lock' file error
-                    pass
+                'chrome-' + getpass.getuser() + '.*'
+        )):
             try:
-                os.symlink(os.path.join(os.environ['HOME'], 'Desktop'),
-                           os.path.join(newhome, 'Desktop'))
-            except OSError:
+                if not task.pgid2pids(int(directory.split('.')[-1])):
+                    print(
+                        'Removing copy of Chrome profile in "' +
+                        directory + '"...'
+                    )
+                    try:
+                        shutil.rmtree(directory)
+                    except OSError:
+                        pass
+            except ValueError:
                 pass
-            os.environ['HOME'] = newhome
+        os.umask(int('077', 8))
+        configdir = os.path.join(
+            os.environ['HOME'],
+            self._get_profiles_dir()
+        )
+        mypid = os.getpid()
+        os.setpgid(mypid, mypid)  # New PGID
+        newhome = os.path.join(
+            '/tmp',
+            'chrome-' + getpass.getuser() + '.' + str(mypid)
+        )
+        print('Creating copy of Chrome profile in "' + newhome + '"...')
+        if not os.path.isdir(newhome):
+            try:
+                shutil.copytree(
+                    configdir,
+                    os.path.join(newhome, self._get_profiles_dir())
+                )
+            except (OSError, shutil.Error):  # Ignore 'lock' file error
+                pass
+        try:
+            os.symlink(
+                os.path.join(os.environ.get('HOME', ''), 'Desktop'),
+                os.path.join(newhome, 'Desktop')
+            )
+        except OSError:
+            pass
+        os.environ['HOME'] = newhome
 
     @staticmethod
     def _remove(file):

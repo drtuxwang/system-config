@@ -1356,8 +1356,7 @@ class LinuxSystem(PosixSystem):
         """
         info = super().get_net_info()
         env = {}
-        if 'LANG' not in os.environ:
-            env['LANG'] = 'en_US'
+        env['LANG'] = os.environ.get('LANG', 'en_US')
         command = command_mod.CommandFile('/bin/ip', args=['address'])
         if not command.is_found():
             command = command_mod.CommandFile('/sbin/ifconfig', args=['-a'])

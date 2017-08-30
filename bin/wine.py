@@ -36,17 +36,17 @@ class Options(object):
 
     @staticmethod
     def _reset():
-        if 'HOME' in os.environ:
-            if sys.argv[0].endswith('wine64'):
-                directory = os.path.join(os.environ['HOME'], '.wine64')
-            else:
-                directory = os.path.join(os.environ['HOME'], '.wine')
-            if os.path.isdir(directory):
-                print('Removing "{0:s}"...'.format(directory))
-                try:
-                    shutil.rmtree(directory)
-                except OSError:
-                    pass
+        home = os.environ.get('HOME', '')
+        if sys.argv[0].endswith('wine64'):
+            directory = os.path.join(home, '.wine64')
+        else:
+            directory = os.path.join(home, '.wine')
+        if os.path.isdir(directory):
+            print('Removing "{0:s}"...'.format(directory))
+            try:
+                shutil.rmtree(directory)
+            except OSError:
+                pass
 
     def _signal_ignore(self, sig, frame):
         pass
@@ -55,10 +55,12 @@ class Options(object):
     def _config(cls):
         signal.signal(signal.SIGINT, cls._signal_ignore)
         signal.signal(signal.SIGTERM, cls._signal_ignore)
-        if 'WINEDLLOVERRIDES' not in os.environ:
-            os.environ['WINEDLLOVERRIDES'] = "mscoree,mshtml="
+        os.environ['WINEDLLOVERRIDES'] = os.environ.get(
+            'WINEDLLOVERRIDES',
+            'mscoree,mshtml='
+        )
         if sys.argv[0].endswith('wine64'):
-            directory = os.path.join(os.environ['HOME'], '.wine64')
+            directory = os.path.join(os.environ.get('HOME', ''), '.wine64')
             os.environ['HOME'] = directory
             os.environ['WINEARCH'] = 'win64'
             if not os.path.isdir(directory):

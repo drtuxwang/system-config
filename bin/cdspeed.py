@@ -47,32 +47,31 @@ class Options(object):
         else:
             speed = 0
 
-        if 'HOME' in os.environ:
-            configdir = os.path.join(os.environ['HOME'], '.config')
-            if not os.path.isdir(configdir):
-                try:
-                    os.mkdir(configdir)
-                except OSError:
-                    return
-            configfile = os.path.join(configdir, 'cdspeed.json')
-            if os.path.isfile(configfile):
-                config = Configuration(configfile)
-                old_speed = config.get_speed(self._device)
-                if old_speed:
-                    if speed == 0:
-                        speed = old_speed
-                    elif speed == old_speed:
-                        return speed
-            else:
-                config = Configuration()
-            config.set_speed(self._device, speed)
-            config.write(configfile + '-new')
+        configdir = os.path.join(os.environ.get('HOME', ''), '.config')
+        if not os.path.isdir(configdir):
             try:
-                shutil.move(configfile + '-new', configfile)
+                os.mkdir(configdir)
             except OSError:
-                os.remove(configfile + '-new')
+                return
+        configfile = os.path.join(configdir, 'cdspeed.json')
+        if os.path.isfile(configfile):
+            config = Configuration(configfile)
+            old_speed = config.get_speed(self._device)
+            if old_speed:
+                if speed == 0:
+                    speed = old_speed
+                elif speed == old_speed:
+                    return speed
+        else:
+            config = Configuration()
+        config.set_speed(self._device, speed)
+        config.write(configfile + '-new')
+        try:
+            shutil.move(configfile + '-new', configfile)
+        except OSError:
+            os.remove(configfile + '-new')
 
-            return speed
+        return speed
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Set CD/DVD drive speed.')
