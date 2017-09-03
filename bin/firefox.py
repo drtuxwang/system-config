@@ -237,6 +237,7 @@ class Options(object):
         if os.path.isdir(firefoxdir):
             keep_list = (
                 'adblockplus',
+                'browser-extension-data',
                 'extensions',
                 'extension-data',
                 'extensions.json',
