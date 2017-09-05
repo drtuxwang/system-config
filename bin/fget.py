@@ -202,11 +202,10 @@ class Main(object):
             return
         elif 'Accept-Ranges' in conn.info() and check == 'resume':
             tmpsize = file_mod.FileStat(file + '.part').get_size()
-            headers = {
+            req = urllib.request.Request(url, headers={
                 'Range': 'bytes='+str(tmpsize)+'-',
                 'User-Agent': config_mod.Config().get('user_agent'),
-            }
-            req = urllib.request.Request(url, headers=headers)
+            })
             conn = urllib.request.urlopen(req)
             mode = 'ab'
         else:
