@@ -17,7 +17,6 @@ import signal
 import sys
 
 import command_mod
-import file_mod
 import subtask_mod
 import task_mod
 
@@ -309,13 +308,9 @@ class Options(object):
                 '--disk-cache-size=1'
             ])
 
-        # Suid sandbox workaround
-        if 'HOME' in os.environ:
-            if file_mod.FileStat(os.path.join(os.path.dirname(
-                    self._chrome.get_file()
-            ), 'chrome-sandbox')).get_mode() != 104755:
-                self._chrome.extend_args([
-                    '--no-sandbox', '--disable-infobars'])
+        # No sandbox workaround
+        if not os.path.isfile('/usr/lib/chromium-browser/chrome-sandbox'):
+            self._chrome.extend_args(['--no-sandbox', '--disable-infobars'])
 
         self._pattern = (
             '^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
