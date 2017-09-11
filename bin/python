@@ -2,7 +2,7 @@
 #
 # Wrapper for "python"
 #
-VERSION=20170910
+VERSION=20170912
 
 #
 # Function to locate command
@@ -121,20 +121,7 @@ which() {
 }
 
 
-PYTHON=
-case `basename $0` in
-python[23].[0-9]|python[23])
-    PYEXE=`basename $0`
-    ;;
-*)
-    if [ "$PYTHON3" ]
-    then
-        PYEXE="python3.?"
-    else
-        PYEXE="python2.?"
-    fi
-esac
-
+PYEXE=`basename $0`
 PYTHON=`locate_python "$@"`
 if [ ! "$PYTHON" ]
 then
