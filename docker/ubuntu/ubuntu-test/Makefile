@@ -1,5 +1,5 @@
 NAME := ubuntu
-VERSION = 17.04
+VERSION = 17.10
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
