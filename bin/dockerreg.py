@@ -110,9 +110,9 @@ class DockerRegistry(object):
 
     def __init__(self, server):
         self._server = server
-        self._config()
         config = config_mod.Config()
         self._user_agent = config.get('user_agent')
+        self._config()
 
     def get_url(self):
         """
