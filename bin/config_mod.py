@@ -18,10 +18,10 @@ VERSION = 20170829
 
 class Config(object):
     """
-    This class deals with "config_mod.yaml" configuration file.
+    This class deals with "config_mod.yml" configuration file.
     """
     def __init__(self):
-        file = os.path.join(os.path.dirname(__file__), 'config_mod.yaml')
+        file = os.path.join(os.path.dirname(__file__), 'config_mod.yml')
         with open(file) as ifile:
             mappings = yaml.load(ifile)
         self._apps = mappings.get('apps', {})
