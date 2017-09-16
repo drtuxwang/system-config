@@ -86,7 +86,9 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
-        self._gpg = command_mod.Command('gpg', errors='stop')
+        self._gpg = command_mod.Command('gpg2', errors='ignore')
+        if not self._gpg.is_found():
+            self._gpg = command_mod.Command('gpg', errors='stop')
 
         self._config()
         self._set_libraries(self._gpg)
