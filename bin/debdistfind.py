@@ -154,7 +154,7 @@ class Main(object):
                         package.set_description(
                             line.replace('Description: ', '', 1))
                         self._packages[name] = package
-                        package = Package('', '0', '')
+                        package = Package('', 0, '')
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + packages_file +
