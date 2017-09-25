@@ -107,7 +107,7 @@ locate_python() {
 which() {
     if [ "$1" = "`basename $0`" ]
     then
-        PATH=`echo ":$PATH:" | sed -e "s@.*:\`dirname \"$0\"\`:@@"`
+        PATH=`echo ":$PATH:" | sed -e "s@:\`dirname \"$0\"\`:@@"`
     fi
 
     for CDIR in `echo $PATH | sed -e "s/ /%20/g;s/:/ /g"`
@@ -120,12 +120,11 @@ which() {
     done
 }
 
-
 PYEXE=`basename $0`
 PYTHON=`locate_python "$@"`
 if [ ! "$PYTHON" ]
 then
-    PYTHON=`which \`basename "$0" | sed -e "s/[.]py$//"\``
+    PYTHON=`which \`basename "$0"\``
     if [ ! "$PYTHON" ]
     then
         echo "***ERROR*** Cannot find required \"`basename \"$0\"`\" software." 1>&2
