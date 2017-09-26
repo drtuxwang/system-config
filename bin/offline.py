@@ -115,9 +115,7 @@ class Main(object):
     def _get_unshare():
         unshare = command_mod.Command('unshare', errors='ignore')
         if unshare.is_found():
-            task = subtask_mod.Batch(
-                cmdline = unshare.get_cmdline() + ['--help']
-            )
+            task = subtask_mod.Batch(unshare.get_cmdline() + ['--help'])
             task.run(pattern='--map-root-user')
             if task.has_output():
                 return unshare.get_cmdline() + ['--net', '--map-root-user']
@@ -133,7 +131,9 @@ class Main(object):
         cmdline = cls._get_unshare()
         if cmdline:
             print('Unsharing network namespace...')
-        subtask_mod.Exec(cmdline + options.get_command().get_cmdline())
+        task = subtask_mod.Exec(cmdline + options.get_command().get_cmdline())
+        task.run()
+
 
 if __name__ == '__main__':
     if '--pydoc' in sys.argv:
