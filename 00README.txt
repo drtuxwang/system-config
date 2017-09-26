@@ -429,6 +429,8 @@ bin/virtualenv.bat
 bin/youtube-dl
 bin/youtube-dl.bat
 bin/youtube_dl_.py
+bin/offline            Run a command without network access
+bin/offline.py
 bin/pidgin             pidgin wrapper (allowing non systems port)
 bin/pidgin.bat
 bin/pidgin.py
@@ -773,7 +775,6 @@ config/login                    Copy to "$HOME/.login" for csh/tcsh shells (tran
 config/mimeapps.list            Copy to "$HOME/.local/share/applications" for Mime definitions
 config/minttyrc                 Copy to "$HOME/.minttyrc" for MSYS2 terminal
 config/tmux.conf                Copy to "$HOME/.tmux.conf" fro TMUX terminal
-config/offline                  Wrapper script to run any command in off line mode (read comments)
 config/profile                  Copy to "$HOME/.profile" for ksh/bash shells
 config/profile-local            Copy to "$HOME/.profile-local" for ksh/bash shells
 config/rc.local                 Copy to "/etc/rc.local" for auto running commands
