@@ -209,10 +209,8 @@ class Options(object):
             pass
 
     def _reset(self):
-        if 'HOME' not in os.environ:
-            return
-
-        configdir = os.path.join(os.environ['HOME'], self._get_profiles_dir())
+        home = os.environ.get('HOME', '')
+        configdir = os.path.join(home, self._get_profiles_dir())
         if os.path.isdir(configdir):
             keep_list = (
                 'Extensions',
@@ -239,17 +237,14 @@ class Options(object):
                     self._remove(file)
 
     def _restart(self):
-        if 'HOME' in os.environ:
-            configdir = os.path.join(
-                os.environ['HOME'],
-                self._get_profiles_dir()
-            )
-            try:
-                pid = os.readlink(
-                    os.path.join(configdir, 'SingletonLock')).split('-')[1]
-                task_mod.Tasks.factory().killpids([pid])
-            except (IndexError, OSError):
-                pass
+        home = os.environ.get('HOME', '')
+        configdir = os.path.join(home, self._get_profiles_dir())
+        try:
+            pid = os.readlink(
+                os.path.join(configdir, 'SingletonLock')).split('-')[1]
+            task_mod.Tasks.factory().killpids([pid])
+        except (IndexError, OSError):
+            pass
 
     @staticmethod
     def _set_libraries(command):
@@ -305,12 +300,13 @@ class Options(object):
                 '--disable-background-mode',
                 '--disable-geolocation',
                 '--disk-cache-dir=/dev/null',
-                '--disk-cache-size=1'
+                '--disk-cache-size=1',
+                '--disable-infobars',
             ])
 
         # No sandbox workaround
         if not os.path.isfile('/usr/lib/chromium-browser/chrome-sandbox'):
-            self._chrome.extend_args(['--no-sandbox', '--disable-infobars'])
+            self._chrome.append_arg('--no-sandbox')
 
         self._pattern = (
             '^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'

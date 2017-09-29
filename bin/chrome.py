@@ -170,8 +170,10 @@ class Options(object):
             except ValueError:
                 pass
         os.umask(int('077', 8))
-        home = os.environ.get('HOME', '')
-        configdir = os.path.join(home, self._get_profiles_dir())
+        configdir = os.path.join(
+            os.environ['HOME'],
+            self._get_profiles_dir()
+        )
         mypid = os.getpid()
         os.setpgid(mypid, mypid)  # New PGID
         newhome = os.path.join(
@@ -189,7 +191,7 @@ class Options(object):
                 pass
         try:
             os.symlink(
-                os.path.join(os.environ['HOME'], 'Desktop'),
+                os.path.join(os.environ.get('HOME', ''), 'Desktop'),
                 os.path.join(newhome, 'Desktop')
             )
         except OSError:
@@ -298,12 +300,13 @@ class Options(object):
                 '--disable-background-mode',
                 '--disable-geolocation',
                 '--disk-cache-dir=/dev/null',
-                '--disk-cache-size=1'
+                '--disk-cache-size=1',
+                '--disable-infobars',
             ])
 
         # No sandbox workaround
-        if not os.path.isfile('/opt/google/chrome/chrome-sandbox'):
-            self._chrome.extend_args(['--no-sandbox', '--disable-infobars'])
+        if not os.path.isfile('/usr/lib/chromium-browser/chrome-sandbox'):
+            self._chrome.append_arg('--no-sandbox')
 
         self._pattern = (
             '^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
