@@ -88,7 +88,8 @@ class Main(object):
         try:
             with open(file, errors='replace') as ifile:
                 for line in ifile:
-                    lines.append(line.strip().replace('SCRIPT>', 'script>'))
+                    lines.append(line.strip().replace('&gt;', '>').replace(
+                        '&lt;', '<').replace('SCRIPT>', 'script>'))
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read ' + file + ' HTML file.')
