@@ -30,7 +30,7 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.13.0'
+RELEASE = '4.13.1'
 VERSION = 20171007
 
 # pylint: disable = too-many-lines
@@ -1775,17 +1775,17 @@ class LinuxSystem(PosixSystem):
         lines = self._get_proc_cpuinfo()
         self._scan_cpu_model(info, lines)
         threads = self._get_cpu_threads(lines)
-        vitual_machine = self._get_virtual_machine()
+        virtual_machine = self._get_virtual_machine()
         container = self._get_container()
-        if vitual_machine:
+        if virtual_machine:
             info['CPU Cores'] = str(threads)
             if container:
                 info['CPU Cores X'] = '{0:s} container, {1:s} VM'.format(
                     container,
-                    vitual_machine
+                    virtual_machine
                 )
             else:
-                info['CPU Cores X'] = vitual_machine + ' VM'
+                info['CPU Cores X'] = virtual_machine + ' VM'
             info['CPU Threads'] = info['CPU Cores']
             info['CPU Threads X'] = info['CPU Cores X']
         else:

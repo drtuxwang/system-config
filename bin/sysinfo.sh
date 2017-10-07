@@ -5,7 +5,7 @@
 # 1996-2017 By Dr Colin Kong
 #
 VERSION=20171007
-RELEASE="2.6.40-13"
+RELEASE="2.6.40-14"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -885,22 +885,40 @@ EOF
         THREADS=`grep "^processor" /proc/cpuinfo 2> /dev/null | wc -l | awk '{print $1}'`
         LSPCI=`PATH=/sbin:$PATH; lspci 2> /dev/null`
         DEVICES=`(dmesg; echo "$LSPCI"; cat /proc/ide/hd?/model /proc/scsi/scsi) 2> /dev/null`
+        CONTAINER=
+        VM=
+
         if [ "`echo \"$DEVICES\" | egrep '^(.*Hyper-V|hv_'`" ]
         then
-            MYCPUS="$THREADS"
-            MYCPUSX="Hyper-V virtual processors"
+            VM="Hyper-V"
         elif [ "`echo \"$DEVICES\" | egrep '^(.* VBOX |VBOX)'`" ]
         then
-            MYCPUS="$THREADS"
-            MYCPUSX="VirtualBox virtual processors"
+            VM="VirtualBox"
         elif [ "`echo \"$DEVICES\" | egrep '^(.*  VMware |VM[Ww]are)'`" ]
         then
-            MYCPUS="$THREADS"
-            MYCPUSX="VMware virtual processors"
+            VM="VMware"
         elif [ "`echo \"$DEVICES\" | grep ' xen_'`" ]
         then
+            VM="Xen"
+        fi
+        if [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
+        then
+            CONTAINER="Docker"
+        fi
+
+        if [ "$VM" ]
+        then
             MYCPUS="$THREADS"
-            MYCPUSX="Xen virtual processors"
+            if [ "$CONTAINER" ]
+            then
+                MYCPUSX="$CONTAINER container, $VM VM"
+            else
+                MYCPUSX="$VM VM"
+            fi
+        elif [ "$CONTAINER" ]
+        then
+            MYCPUS="$THREADS"
+            MYCPUSX="$CONTAINER container"
         else
             SOCKETS=`grep "^physical id" /proc/cpuinfo 2> /dev/null | sort | uniq | wc -l | awk '{print $1}'`
             if [ $SOCKETS = 0 ]
