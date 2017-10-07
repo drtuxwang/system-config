@@ -4,8 +4,8 @@
 #
 # 1996-2017 By Dr Colin Kong
 #
-VERSION=20170719
-RELEASE="2.6.40-11"
+VERSION=20171007
+RELEASE="2.6.40-13"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -884,16 +884,24 @@ EOF
         esac
         THREADS=`grep "^processor" /proc/cpuinfo 2> /dev/null | wc -l | awk '{print $1}'`
         LSPCI=`PATH=/sbin:$PATH; lspci 2> /dev/null`
-        case `(echo "$LSPCI"; cat /proc/ide/hd?/model /proc/scsi/scsi) 2> /dev/null` in
-        *VBOX\ *)
+        DEVICES=`(dmesg; echo "$LSPCI"; cat /proc/ide/hd?/model /proc/scsi/scsi) 2> /dev/null`
+        if [ "`echo \"$DEVICES\" | egrep '^(.*Hyper-V|hv_'`" ]
+        then
+            MYCPUS="$THREADS"
+            MYCPUSX="Hyper-V virtual processors"
+        elif [ "`echo \"$DEVICES\" | egrep '^(.* VBOX |VBOX)'`" ]
+        then
             MYCPUS="$THREADS"
             MYCPUSX="VirtualBox virtual processors"
-            ;;
-        *VM[Ww]are\ *)
+        elif [ "`echo \"$DEVICES\" | egrep '^(.*  VMware |VM[Ww]are)'`" ]
+        then
             MYCPUS="$THREADS"
             MYCPUSX="VMware virtual processors"
-            ;;
-        *)
+        elif [ "`echo \"$DEVICES\" | grep ' xen_'`" ]
+        then
+            MYCPUS="$THREADS"
+            MYCPUSX="Xen virtual processors"
+        else
             SOCKETS=`grep "^physical id" /proc/cpuinfo 2> /dev/null | sort | uniq | wc -l | awk '{print $1}'`
             if [ $SOCKETS = 0 ]
             then
@@ -936,8 +944,7 @@ EOF
             then
                 MYCPUSX=`echo "$MYCPUSX" | sed -e "s/ sockets / socket /" -e "s/ each//"`
             fi
-            ;;
-        esac
+        fi
         MYCLOCK=`isitset \`grep "^cpu MHz" /proc/cpuinfo 2> /dev/null | head -1 | sed -e "s/.*: //" | awk '{printf ("%d\n", $1+0.5)}'\``" MHz"
         if [ "$MYCLOCK" = "Unknown MHz" ]
         then

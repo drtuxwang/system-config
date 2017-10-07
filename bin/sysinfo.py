@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.12.2'
-VERSION = 20170813
+RELEASE = '4.13.0'
+VERSION = 20171007
 
 # pylint: disable = too-many-lines
 
@@ -1836,21 +1836,47 @@ class LinuxSystem(PosixSystem):
             pass
         return name
 
+    @staticmethod
+    def _check_virtual_machine(data, mapping):
+        for vendor, text in mapping.items():
+            if text in data:
+                return vendor
+        return None
+
     def _get_virtual_machine(self):
+        mappings = {
+            'dmesg': {
+                'Hyper-V': 'Hyper-V',
+                'VirtualBox': ' VBOX ',
+                'VMware': ' VMware ',
+                'Xen': ' xen_',
+            },
+            'devices': {
+                'VirtualBox': 'VirtualBox',
+                'VMware': 'vmware',
+                'Xen': ' Xen ',
+            },
+            'scsi': {
+                'VirtualBox': 'VBOX ',
+                'VMware': 'vmware',
+            },
+        }
         name = None
-        if os.path.isdir('/sys/devices/xen'):
-            name = 'Xen'
+
+        command = command_mod.Command('dmesg', errors='ignore')
+        if command.is_found():
+            task = subtask_mod.Batch(command.get_cmdline())
+            task.run()
+            name = self._check_virtual_machine(
+                ' '.join(task.get_output()),
+                mappings['dmesg']
+            )
 
         if not name:
-            data = ' '.join(self._devices)
-            if 'RHEV' in data:
-                name = 'RHEV'
-            elif 'VirtualBox' in data:
-                name = 'VirtualBox'
-            elif 'vmware' in data.lower():
-                name = 'VMware'
-            elif ' Xen ' in data:
-                name = 'Xen'
+            name = self._check_virtual_machine(
+                ' '.join(self._devices),
+                mappings['devices']
+            )
 
         if not name:
             for file in (
@@ -1860,13 +1886,10 @@ class LinuxSystem(PosixSystem):
             ):
                 try:
                     with open(file, errors='replace') as ifile:
-                        data = ' '.join(ifile.readlines())
-                        if 'RHEV' in data:
-                            name = 'RHEV'
-                        elif 'VBOX ' in data:
-                            name = 'VirtualBox'
-                        elif 'vmware' in data.lower():
-                            name = 'VMware'
+                        name = self._check_virtual_machine(
+                            ' '.join(ifile.readlines()),
+                            mappings['scsi']
+                        )
                 except OSError:
                     pass
 
