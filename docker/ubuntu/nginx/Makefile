@@ -28,7 +28,7 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
 		--publish 8080:80 \
-		--name $(NAME)-nginx-dock \
-		--hostname $(NAME)-nginx-dock \
+		--name $(NAME)-nginx \
+		--hostname $(NAME)-nginx \
 		$(IMAGE) || exit 0
 

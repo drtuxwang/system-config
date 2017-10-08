@@ -28,6 +28,6 @@ run:
 		--volume="/etc/passwd:/etc/passwd:ro" \
 		--volume="/etc/group:/etc/group:ro" \
 		--workdir $(PWD) \
-		--name $(NAME)-dock \
-		--hostname $(NAME)-dock \
+		--name $(NAME) \
+		--hostname $(NAME) \
 		$(IMAGE) bash || exit 0

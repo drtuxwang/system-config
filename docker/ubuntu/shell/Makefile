@@ -35,8 +35,8 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
-		--name $(NAME)-shell-dock \
-		--hostname $(NAME)-shell-dock \
+		--name $(NAME)-shell \
+		--hostname $(NAME)-shell \
 		$(IMAGE) || exit 0
 
 xrun:
@@ -44,6 +44,6 @@ xrun:
 	docker run $(FLAGS) $(FLAGS_SHELL) \
 		--volume=/tmp/.X11-unix:/tmp/.X11-unix \
 		--env DISPLAY=$(DISPLAY) \
-		--name $(NAME)-xshell-dock \
-		--hostname $(NAME)-xshell-dock \
+		--name $(NAME)-xshell \
+		--hostname $(NAME)-xshell \
 		$(IMAGE_X) || exit 0

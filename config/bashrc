@@ -15,3 +15,16 @@ then
 fi
 unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 unset command_not_found_handle
+
+# Container detection
+if [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
+then
+    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](docker)\[\033[00m\] $ '
+elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
+then
+    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](docker)\[\033[00m\] $ '
+elif [ "`awk '$5=="/" {print $1}' < /proc/1/mountinfo`" != "`awk '$5=="/" {print $1}' < /proc/$$/mountinfo`" ]
+then
+    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](chroot)\[\033[00m\] $ '
+fi
+

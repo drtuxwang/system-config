@@ -30,7 +30,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
-		--name $(NAME)-old-dock \
-		--hostname $(NAME)-old-dock \
+		--name $(NAME)-old \
+		--hostname $(NAME)-old \
 		$(IMAGE) || exit 0
 

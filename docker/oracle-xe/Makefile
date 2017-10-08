@@ -26,6 +26,4 @@ run:
 		--publish 1521:1521 \
 		--name $(NAME) \
 		--hostname $(NAME) \
-		--name $(NAME)-dock \
-		--hostname $(NAME)-dock \
 		$(IMAGE) || exit 0

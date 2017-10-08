@@ -28,6 +28,4 @@ run:
 		--publish 8080:8080 \
 		--name $(NAME) \
 		--hostname $(NAME) \
-		--name $(NAME)-dock \
-		--hostname $(NAME)-dock \
 		$(IMAGE) || exit 0

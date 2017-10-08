@@ -32,6 +32,4 @@ run:
 		--publish 5000:5000 \
 		--name $(NAME) \
 		--hostname $(NAME) \
-		--name $(NAME)-dock \
-		--hostname $(NAME)-dock \
 		$(IMAGE) || exit 0

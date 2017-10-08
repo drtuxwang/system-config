@@ -8,7 +8,7 @@
 ##set -x
 
 if [ "$TERM" -a -e "`\tty`" ]
-    then
+then
     if [ ! "$BASH" -a -f $HOME/.profile-2bash -a -f /bin/bash ]
     then
         export ENV=$HOME/.profile
@@ -45,11 +45,10 @@ if [ "$TERM" -a -e "`\tty`" ]
     if [ "$BASH" ]
     then
         MYSHELL="BASH"
+        PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h\[\033[00m\] $ '
         if [ "`timeout --signal=KILL 1 git --version 2> /dev/null | grep \"^git version\"`" ]
         then
-            PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\[\033[01;31m\]$(__git_ps1)\n\[\033[01;32m\]\u@\h\[\033[00m\] $ '
-        else
-            PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h\[\033[00m\] $ '
+            PS1=$(echo "$PS1" | sed -e 's/\\n/\\[\\033[01;31m\\]$(__git_ps1)\\n/')
         fi
         case $TERM in
         screen|xterm)
@@ -286,4 +285,16 @@ if [ "$TERM" -a -e "`\tty`" ]
     echo "$MYINFO"
     echo
 
+fi
+
+# Container detection
+if [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
+then
+    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](docker)\[\033[00m\] $ '
+elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
+then
+    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](docker)\[\033[00m\] $ '
+elif [ "`awk '$5=="/" {print $1}' < /proc/1/mountinfo`" != "`awk '$5=="/" {print $1}' < /proc/$$/mountinfo`" ]
+then
+    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](chroot)\[\033[00m\] $ '
 fi

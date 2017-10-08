@@ -33,14 +33,14 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
 		--network none \
-		--name $(NAME)-builder-dock \
-		--hostname $(NAME)-builder-dock \
+		--name $(NAME)-builder \
+		--hostname $(NAME)-builder \
 		$(IMAGE) /etc/docker-init || exit 0
 
 irun:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
-		--name $(NAME)-ibuilder-dock \
-		--hostname $(NAME)-ibuilder-dock \
+		--name $(NAME)-ibuilder \
+		--hostname $(NAME)-ibuilder \
 		$(IMAGE) || exit 0
 

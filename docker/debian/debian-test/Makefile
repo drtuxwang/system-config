@@ -30,6 +30,6 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
-		--name $(NAME)-test-dock \
-		--hostname $(NAME)-test-dock \
+		--name $(NAME)-test \
+		--hostname $(NAME)-test \
 		$(IMAGE) || exit 0
