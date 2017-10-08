@@ -50,6 +50,17 @@ then
         then
             PS1=$(echo "$PS1" | sed -e 's/\\n/\\[\\033[01;31m\\]$(__git_ps1)\\n/')
         fi
+        # Container detection
+        if [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
+        then
+            PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](docker)/')
+        elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
+        then
+            PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](lxc)/')
+        elif [ "`awk '$5=="/" {print $1}' < /proc/1/mountinfo`" != "`awk '$5=="/" {print $1}' < /proc/$$/mountinfo`" ]
+        then
+            PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](chroot)/')
+        fi
         case $TERM in
         screen|xterm)
             precmd() {
@@ -285,15 +296,13 @@ then
     echo "$MYINFO"
     echo
 
-fi
-
 # Container detection
-if [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
+elif [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
 then
-    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](docker)\[\033[00m\] $ '
+    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](chroot)\[\033[00m\] $ '
 elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
 then
-    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](docker)\[\033[00m\] $ '
+    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](lxc)\[\033[00m\] $ '
 elif [ "`awk '$5=="/" {print $1}' < /proc/1/mountinfo`" != "`awk '$5=="/" {print $1}' < /proc/$$/mountinfo`" ]
 then
     PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](chroot)\[\033[00m\] $ '
