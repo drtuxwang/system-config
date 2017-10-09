@@ -23,7 +23,7 @@ then
 elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
 then
     PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](lxc)/')
-elif [ "`awk '$5=="/" {print $1}' < /proc/1/mountinfo`" != "`awk '$5=="/" {print $1}' < /proc/$$/mountinfo`" ]
+elif [ "`awk '$5=="/" {print $1}' /proc/1/mountinfo`" != "`awk '$5=="/" {print $1}' /proc/$$/mountinfo`" ]
 then
     PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](chroot)/')
 fi
