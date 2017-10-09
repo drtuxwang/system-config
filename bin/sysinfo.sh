@@ -4,8 +4,8 @@
 #
 # 1996-2017 By Dr Colin Kong
 #
-VERSION=20171007
-RELEASE="2.6.40-14"
+VERSION=20171009
+RELEASE="2.6.40-15"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -226,7 +226,7 @@ scanbus()
     # Disk SCSI device detection ("/sys/bus/scsi/devices" new method)
     if [ -d "/sys/bus/scsi/devices" ]
     then
-        for DIR in /sys/block/sd*/device
+        for DIR in /sys/block/*d[a-z]*/device
         do
             IDENTITY=`ls -ld "$DIR" | sed -e "s@.*/@@"`
             if [ "$IDENTITY" ]
@@ -884,26 +884,28 @@ EOF
         esac
         THREADS=`grep "^processor" /proc/cpuinfo 2> /dev/null | wc -l | awk '{print $1}'`
         LSPCI=`PATH=/sbin:$PATH; lspci 2> /dev/null`
-        DEVICES=`(dmesg; echo "$LSPCI"; cat /proc/ide/hd?/model /proc/scsi/scsi) 2> /dev/null`
+        DEVICES=`($LSPCI; cat /proc/ide/hd?/model /proc/scsi/scsi; /sbin/lsmod) 2> /dev/null`
         CONTAINER=
         VM=
-
         if [ "`echo \"$DEVICES\" | egrep '^(.*Hyper-V|hv_'`" ]
         then
             VM="Hyper-V"
-        elif [ "`echo \"$DEVICES\" | egrep '^(.* VBOX |VBOX)'`" ]
+        elif [ "`echo \"$DEVICES\" | egrep '^(VBOX|vbox)'`" ]
         then
             VM="VirtualBox"
-        elif [ "`echo \"$DEVICES\" | egrep '^(.*  VMware |VM[Ww]are)'`" ]
+        elif [ "`echo \"$DEVICES\" | egrep '^(VM[Ww]are)|vmw_'`" ]
         then
             VM="VMware"
-        elif [ "`echo \"$DEVICES\" | grep ' xen_'`" ]
+        elif [ "`echo \"$DEVICES\" | grep '^xen_blkfront'`" ]
         then
             VM="Xen"
         fi
         if [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
         then
             CONTAINER="Docker"
+        elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
+        then
+            CONTAINER="LXC"
         fi
 
         if [ "$VM" ]

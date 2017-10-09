@@ -16,14 +16,32 @@ fi
 unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 unset command_not_found_handle
 
-# Container detection
+# VM/Container detection
 if [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
 then
-    PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](docker)/')
+    PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Docker)/')
 elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
 then
-    PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](lxc)/')
+    PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](LXC)/')
 elif [ "`awk '$5=="/" {print $1}' /proc/1/mountinfo`" != "`awk '$5=="/" {print $1}' /proc/$$/mountinfo`" ]
 then
     PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](chroot)/')
+elif [ -d "/proc/xen" ]
+then
+    PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Xen)/')
+else
+    case $(cat /proc/ide/hd?/model /proc/scsi/scsi 2> /dev/null; /sbin/lsmod 2> /dev/null) in
+    *Hyper-V*|*hv_*)
+        PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Hyper-V)/')
+        ;;
+    *VBOX*|*vbox*)
+        PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](VirtualBox)/')
+        ;;
+    *VM[Ww]are*|*vmw_*)
+        PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](VMware)/')
+        ;;
+    *xen_blkfront*)
+        PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Xen)/')
+        ;;
+    esac
 fi

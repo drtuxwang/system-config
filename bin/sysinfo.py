@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.13.1'
-VERSION = 20171007
+RELEASE = '4.13.2'
+VERSION = 20171009
 
 # pylint: disable = too-many-lines
 
@@ -1217,7 +1217,7 @@ class LinuxSystem(PosixSystem):
                 pass
 
         if os.path.isdir('/sys/bus/scsi/devices'):  # New kernels
-            for file in sorted(glob.glob('/sys/block/sd*/device')):
+            for file in sorted(glob.glob('/sys/block/*d[a-z]*/device')):
                 cls._detect_disk_sys_scsi(info, file)
         else:
             cls._detect_disk_proc_scsi(info)
@@ -1832,6 +1832,9 @@ class LinuxSystem(PosixSystem):
                     if '/docker/' in line:
                         name = 'Docker'
                         break
+                    elif '/lxc/' in line:
+                        name = 'LXC'
+                        break
         except OSError:
             pass
         return name
@@ -1845,12 +1848,6 @@ class LinuxSystem(PosixSystem):
 
     def _get_virtual_machine(self):
         mappings = {
-            'dmesg': {
-                'Hyper-V': 'Hyper-V',
-                'VirtualBox': ' VBOX ',
-                'VMware': ' VMware ',
-                'Xen': ' xen_',
-            },
             'devices': {
                 'VirtualBox': 'VirtualBox',
                 'VMware': 'vmware',
@@ -1860,19 +1857,18 @@ class LinuxSystem(PosixSystem):
                 'VirtualBox': 'VBOX ',
                 'VMware': 'vmware',
             },
+            'lsmod': {
+                'Hyper-V': 'hv_',
+                'VirtualBox': 'vbox',
+                'VMware': 'vmw_',
+                'Xen': 'xen_blkfront',
+            },
         }
         name = None
 
-        command = command_mod.Command('dmesg', errors='ignore')
-        if command.is_found():
-            task = subtask_mod.Batch(command.get_cmdline())
-            task.run()
-            name = self._check_virtual_machine(
-                ' '.join(task.get_output()),
-                mappings['dmesg']
-            )
-
-        if not name:
+        if os.path.isdir('/proc/xen'):
+            name = 'Xen'
+        elif not name:
             name = self._check_virtual_machine(
                 ' '.join(self._devices),
                 mappings['devices']
@@ -1893,6 +1889,15 @@ class LinuxSystem(PosixSystem):
                 except OSError:
                     pass
 
+        if not name:
+            lsmod = command_mod.CommandFile('/sbin/lsmod', errors='ignore')
+            if lsmod.is_found():
+                task = subtask_mod.Batch(lsmod.get_cmdline())
+                task.run()
+                name = self._check_virtual_machine(
+                    ' '.join(task.get_output()),
+                    mappings['lsmod']
+                )
         return name
 
 

@@ -50,16 +50,34 @@ then
         then
             PS1=$(echo "$PS1" | sed -e 's/\\n/\\[\\033[01;31m\\]$(__git_ps1)\\n/')
         fi
-        # Container detection
+        # VM/VContainer detection
         if [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
         then
-            PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](docker)/')
+            PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Docker)/')
         elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
         then
-            PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](lxc)/')
+            PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](LXC)/')
         elif [ "`awk '$5=="/" {print $1}' /proc/1/mountinfo`" != "`awk '$5=="/" {print $1}' /proc/$$/mountinfo`" ]
         then
             PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](chroot)/')
+        elif [ -d "/proc/xen" ]
+        then
+            PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Xen)/')
+        else
+            case $(cat /proc/ide/hd?/model /proc/scsi/scsi 2> /dev/null; /sbin/lsmod 2> /dev/null) in
+            *Hyper-V*|*hv_*)
+                PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Hyper-V)/')
+                ;;
+            *VBOX*|*vbox*)
+                PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](VirtualBox)/')
+                ;;
+            *VM[Ww]are*|*vmw_*)
+                PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](VMware)/')
+                ;;
+            *xen_blkfront*)
+                PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Xen)/')
+                ;;
+            esac
         fi
         case $TERM in
         screen|xterm)
@@ -299,11 +317,11 @@ then
 # Container detection
 elif [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
 then
-    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](chroot)\[\033[00m\] $ '
+    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](Docker)\[\033[00m\] $ '
 elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
 then
-    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](lxc)\[\033[00m\] $ '
-elif [ "`awk '$5=="/" {print $1}' /proc/1/mountinfo`" != "`awk '$5=="/" {print $1}' /proc/$$/mountinfo`" ]
+    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](LXC)\[\033[00m\] $ '
+elif [ "`awk '$5=="/" {print $1}' < /proc/1/mountinfo`" != "`awk '$5=="/" {print $1}' < /proc/$$/mountinfo`" ]
 then
     PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](chroot)\[\033[00m\] $ '
 fi
