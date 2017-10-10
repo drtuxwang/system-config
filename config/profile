@@ -68,7 +68,7 @@ then
             *Hyper-V*|*hv_*)
                 PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Hyper-V)/')
                 ;;
-            *VBOX*|*vbox*)
+            *VBOX*|*vboxguest*)
                 PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](VirtualBox)/')
                 ;;
             *VM[Ww]are*|*vmw_*)

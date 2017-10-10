@@ -4,8 +4,8 @@
 #
 # 1996-2017 By Dr Colin Kong
 #
-VERSION=20171009
-RELEASE="2.6.40-15"
+VERSION=20171010
+RELEASE="2.6.40-16"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -890,7 +890,7 @@ EOF
         if [ "`echo \"$DEVICES\" | egrep '^(.*Hyper-V|hv_'`" ]
         then
             VM="Hyper-V"
-        elif [ "`echo \"$DEVICES\" | egrep '^(VBOX|vbox)'`" ]
+        elif [ "`echo \"$DEVICES\" | egrep '^(VBOX|vboxguest)'`" ]
         then
             VM="VirtualBox"
         elif [ "`echo \"$DEVICES\" | egrep '^(VM[Ww]are)|vmw_'`" ]
