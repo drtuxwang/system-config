@@ -298,11 +298,11 @@ class Main(object):
     def _get_registry(server, url):
         registry2 = DockerRegistry2(server)
         if registry2.get_repositories() is not None:
-            print("Docker Registry API v2:", url.split('://')[-1])
+            print("\nDocker Registry API v2:", url.split('://')[-1])
             return registry2
         registry = DockerRegistry(server)
         if registry.get_repositories() is not None:
-            print("Docker Registry API v1:", url.split('://')[-1])
+            print("\nDocker Registry API v1:", url.split('://')[-1])
             return registry
         raise SystemExit("Cannot find Docker Registry: " + server)
 
@@ -329,7 +329,7 @@ class Main(object):
         return (server, repo_match, tag_match)
 
     @classmethod
-    def _check(cls, remove, url):
+    def _check(cls, url, remove=False):
         server, repo_match, tag_match = cls._breakup_url(url)
         registry = cls._get_registry(server, url)
         prefix = server.split('://')[-1]
@@ -352,13 +352,16 @@ class Main(object):
         Run check
         """
         options = Options()
-        remove = options.get_remove_flag()
-        if remove:
-            if input("\nPlease confirm image removal mode (y/n)? ") != 'y':
-                raise SystemExit("Aborted!")
-
         for url in options.get_urls():
-            cls._check(remove, url)
+            cls._check(url)
+
+            if options.get_remove_flag():
+                if input("\nPlease confirm image removal mode (y/n)? ") == 'y':
+                    for url in options.get_urls():
+                        cls._check(url, remove=True)
+                else:
+                    print("Aborted!")
+                     
 
 
 if __name__ == '__main__':
