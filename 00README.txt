@@ -864,11 +864,11 @@ docker/ubuntu/wine/Dockerfile                     Docker: Ubuntu 16.04 WINE app 
 docker/ubuntu/wine/Makefile
 docker/Makefile                                   Makefile for building all images
 
-kubernetes/debian/Makefile                        Kubernetes: Debian example
-kubernetes/debina/test-ns.json
-kubernetes/debian/debian-pod.json
-kubernetes/debian/debian-rc.json
-kubernetes/debian/debian-svc.json
+kubernetes/ubuntu/Makefile                        Kubernetes: Ubuntu example
+kubernetes/ubuntu/test-ns.json
+kubernetes/ubuntu/ubuntu-pod.json
+kubernetes/ubuntu/ubuntu-rc.json
+kubernetes/ubuntu/ubuntu-svc.json
 
 python/simple-package/Makefile                    Simple Egg & WHL package
 python/simple-package/RUN

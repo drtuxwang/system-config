@@ -2,28 +2,28 @@
     "kind": "ReplicationController",
     "apiVersion": "v1",
     "metadata": {
-        "name": "debian-rc",
+        "name": "ubuntu-rc",
         "namespace": "default",
         "labels": {
-            "app": "debian-lxc"
+            "app": "ubuntu-lxc"
         }
     },
     "spec": {
         "replicas": 2,
         "selector": {
-            "app": "debian-lxc"
+            "app": "ubuntu-lxc"
         },
         "template": {
             "metadata": {
                 "labels": {
-                    "app": "debian-lxc"
+                    "app": "ubuntu-lxc"
                 }
             },
             "spec": {
                 "containers": [
                     {
-                        "name": "debian-lxc",
-                        "image": "debian:8",
+                        "name": "ubuntu-lxc",
+                        "image": "ubuntu:16.04",
                         "imagePullPolicy": "Always",
                         "command": [
                             "sleep",

@@ -6,14 +6,14 @@ default: build
 build:
 	@echo "\n*** Building replicationcontroller ***"
 	kubectl -s $(SERVER) create -f test-ns.json
-	kubectl -s $(SERVER) create -f debian-svc.json
-	# kubectl -s $(SERVER) create -f debian-pod.json
-	kubectl -s $(SERVER) create -f debian-rc.json
+	kubectl -s $(SERVER) create -f ubuntu-svc.json
+	# kubectl -s $(SERVER) create -f ubuntu-pod.json
+	kubectl -s $(SERVER) create -f ubuntu-rc.json
 
 clean:
 	@echo "\n*** Building replicationcontroller ***"
-	kubectl -s $(SERVER) --namespace=$(NAMESPACE) delete rc debian-lxc ||:
-	kubectl -s $(SERVER) --namespace=$(NAMESPACE) delete service debian-lxc ||:
+	kubectl -s $(SERVER) --namespace=$(NAMESPACE) delete rc ubuntu-lxc ||:
+	kubectl -s $(SERVER) --namespace=$(NAMESPACE) delete service ubuntu-lxc ||:
 	kubectl -s $(SERVER) delete namespace $(NAMESPACE) ||:
 
 status:

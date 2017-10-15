@@ -2,21 +2,21 @@
     "kind": "Service",
     "apiVersion": "v1",
     "metadata": {
-        "name": "debian-lxc",
+        "name": "ubuntu-lxc",
         "namespace": "default"
     },
     "spec": {
         "type": "ClusterIP",
         "ports": [
             {
-                "name": "debian-web",
+                "name": "ubuntu-web",
                 "protocol": "TCP",
                 "port": 80,
                 "targetPort": 80
             }
         ],
         "selector": {
-            "app": "debian-lxc"
+            "app": "ubuntu-lxc"
         }
     }
 }
