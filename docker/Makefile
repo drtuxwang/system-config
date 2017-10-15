@@ -27,3 +27,6 @@ build-all:
 	cd jailbreak && make build
 	cd registry && make build
 	cd ubuntu && make build-all
+
+project:
+	python3 -m cookiecutter ../cookiecutter/docker

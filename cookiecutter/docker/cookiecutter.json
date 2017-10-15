@@ -1,0 +1,6 @@
+{
+    "project_name" : "my_project",
+    "image_name" : "my_image",
+    "image_version" : "latest",
+    "upstream_image" : "ubuntu:latest"
+}

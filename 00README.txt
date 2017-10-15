@@ -812,6 +812,12 @@ cloudformation/multi-stacks/pxy_stack.json
 cloudformation/multi-stacks/sg_stack.json
 cloudformation/multi-stacks/submit.sh
 
+cookiecutter/docker                               Docker project template
+cookiecutter/docker/{{cookiecutter.project_name}}
+cookiecutter/docker/{{cookiecutter.project_name}}/Dockerfile
+cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
+cookiecutter/docker/cookiecutter.json
+
 docker/alpine/Dockerfile                          Docker: Alpine 3.5 basic image
 docker/alpine/Makefile
 docker/centos/Dockerfile                          Docker: CentOS 7 basic image
