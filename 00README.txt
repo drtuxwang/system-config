@@ -389,6 +389,8 @@ bin/ansible-playbook
 bin/aws
 bin/aws.bat
 bin/aws_.py
+bin/cookiecutter
+bin/cookiecutter.bat
 bin/devpi
 bin/devpi.bat
 bin/devpi_.py
