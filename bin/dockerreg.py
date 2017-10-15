@@ -355,13 +355,12 @@ class Main(object):
         for url in options.get_urls():
             cls._check(url)
 
-            if options.get_remove_flag():
-                if input("\nPlease confirm image removal mode (y/n)? ") == 'y':
-                    for url in options.get_urls():
-                        cls._check(url, remove=True)
-                else:
-                    print("Aborted!")
-                     
+        if options.get_remove_flag():
+            if input("\nPlease confirm image removal mode (y/n)? ") == 'y':
+                for url in options.get_urls():
+                    cls._check(url, remove=True)
+            else:
+                print("Aborted!")
 
 
 if __name__ == '__main__':
