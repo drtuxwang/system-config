@@ -59,6 +59,5 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
-		--name $(NAME) \
 		--hostname $(NAME) \
 		$(IMAGE) || exit 0

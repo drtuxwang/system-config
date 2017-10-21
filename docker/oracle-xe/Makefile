@@ -24,6 +24,5 @@ run:
 	docker run $(FLAGS) \
 		--privileged=true \
 		--publish 1521:1521 \
-		--name $(NAME) \
 		--hostname $(NAME) \
 		$(IMAGE) || exit 0
