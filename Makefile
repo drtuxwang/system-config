@@ -16,7 +16,7 @@ py_compile:
 
 requirements:
 	@echo "\n*** Running Python 3 requirements check ***"
-	umask 022 && python3 -m pip install -q -r etc/python3-requirements.txt
+	umask 022 && python3 -m pip install -r etc/python3-requirements.txt 2>&1
 
 pep8:
 	@echo "\n*** Running Python 3 PEP8 check ***"

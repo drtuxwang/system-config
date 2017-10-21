@@ -10,9 +10,10 @@ else
     INSTALL="python3 -m pip install --user"
 fi
 
+echo "Processing \"${0%/*}/python3-requirements.txt\"..."
 umask 022
-python3 -m pip install --upgrade pip
+python3 -m pip install --upgrade pip 2>&1 | grep -v "Requirement already satisfied:"
 for PIP in $(cat ${0%/*}/python3-requirements.txt 2> /dev/null)
 do
-    $INSTALL ${PIP/>=/==}
+    $INSTALL ${PIP/>=/==} 2>&1 | grep -v "Requirement already satisfied:"
 done
