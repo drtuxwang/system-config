@@ -28,6 +28,5 @@ run:
 		--volume="/etc/passwd:/etc/passwd:ro" \
 		--volume="/etc/group:/etc/group:ro" \
 		--workdir $(PWD) \
-		--name $(NAME) \
-		--hostname $(NAME) \
+		--hostname `uname -n`-$(NAME) \
 		$(IMAGE) bash || exit 0

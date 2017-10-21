@@ -30,6 +30,5 @@ run:
 	docker run $(FLAGS) \
 		--volume=/var/lib/registry:/var/lib/registry \
 		--publish 5000:5000 \
-		--name $(NAME) \
 		--hostname $(NAME) \
 		$(IMAGE) || exit 0

@@ -35,14 +35,12 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
 		--network none \
-		--name $(NAME)-wine \
 		--hostname $(NAME)-wine \
 		$(IMAGE) /etc/docker-init || exit 0
 
 irun:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
-		--name $(NAME)-iwine \
 		--hostname $(NAME)-iwine \
 		$(IMAGE) || exit 0
 

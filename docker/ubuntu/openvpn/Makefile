@@ -34,6 +34,5 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
-		--name $(NAME)-openvpn \
 		--hostname $(NAME)-openvpn \
 		$(IMAGE) || exit 0

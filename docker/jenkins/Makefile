@@ -26,6 +26,5 @@ run:
 		--privileged=true \
 		--volume=/var/lib/jenkins:/var/lib/jenkins \
 		--publish 8080:8080 \
-		--name $(NAME) \
 		--hostname $(NAME) \
 		$(IMAGE) || exit 0
