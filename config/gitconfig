@@ -16,7 +16,7 @@
 [core]
 	editor = vim
 [diff]
-	ignoreSubmodules=all
+	ignoreSubmodules = all
 [log]
 	decorate = full
 [push]
