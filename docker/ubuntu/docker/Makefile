@@ -2,7 +2,6 @@ NAME := ubuntu
 VERSION = 16.04
 IMAGE := drtuxwang/$(NAME)-docker:$(VERSION)
 FLAGS := --rm \
-	--privileged=true \
 	--interactive \
 	--tty \
 	--cpu-period=100000 \
@@ -34,6 +33,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
+		--privileged=true \
 		--hostname $(NAME)-docker \
 		$(IMAGE) || exit 0
 

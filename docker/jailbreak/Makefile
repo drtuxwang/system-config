@@ -24,6 +24,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
+		--privileged=true \
 		`ls -1d /* | grep -v "/proc$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}'` \
 		--volume="/etc/passwd:/etc/passwd:ro" \
 		--volume="/etc/group:/etc/group:ro" \
