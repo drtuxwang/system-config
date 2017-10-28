@@ -306,6 +306,9 @@ bin/jpeg2ps.py
 bin/jsformat           Javascript file re-formatter
 bin/jsformat.bat
 bin/jsformat.py
+bin/json2yaml          Convert JSON to YAML
+bin/json2yaml.bat
+bin/json2yaml.py
 bin/jsonformat         JSON file re-formatter
 bin/jsonformat.bat
 bin/jsonformat.py
@@ -694,6 +697,9 @@ bin/xweb               Start web browser
 bin/xweb.py
 bin/xz                 Compress a file in XZ format (allowing non systems port)
 bin/xz.py
+bin/yaml2json          Convert YAML to JSON
+bin/yaml2json.bat
+bin/yaml2json.py
 bin/yamlformat         YAML file re-formatter
 bin/yamlformat.bat
 bin/yamlformat.py
