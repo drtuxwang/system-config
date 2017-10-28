@@ -7,13 +7,14 @@ Copyright GPL v2: 2017 By Dr Colin Kong
 
 import os
 import sys
+
 import yaml
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
-RELEASE = '1.0.0'
-VERSION = 20170829
+RELEASE = '1.0.1'
+VERSION = 20171028
 
 
 class Config(object):
