@@ -86,7 +86,7 @@ class Main(object):
     @staticmethod
     def _write_yaml(file, data):
         tmpfile = file + '-tmp' + str(os.getpid())
-        yaml_data = yaml.dump(data, indent=4, default_flow_style=False)
+        yaml_data = yaml.dump(data, indent=2, default_flow_style=False)
 
         try:
             with open(tmpfile, 'w', newline='\n') as ofile:

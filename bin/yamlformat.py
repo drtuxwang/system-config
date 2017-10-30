@@ -100,7 +100,7 @@ class Main(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "' + file + '" file.')
 
-            print(yaml.dump(data, indent=4, default_flow_style=False))
+            print(yaml.dump(data, indent=2, default_flow_style=False))
 
 
 if __name__ == '__main__':
