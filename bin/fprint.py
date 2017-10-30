@@ -117,7 +117,7 @@ class Options(object):
             '-v',
             dest='view_flag',
             action='store_true',
-            help='Select view instead of priiting.'
+            help='Select view instead of printing.'
         )
         parser.add_argument(
             'files',
@@ -390,7 +390,9 @@ class Main(object):
         options = Options()
 
         self._tmpfile = os.sep + os.path.join(
-            'tmp', 'fprint-' + getpass.getuser() + '.' + str(os.getpid()))
+            'tmp',
+            'fprint-{0:s}.{1:d}.ps'.format(getpass.getuser(),os.getpid())
+        )
         command = self._get_command(options)
         if options.get_double_side_flag():
             sides = 'double sides'
