@@ -4,7 +4,7 @@ metadata:
   labels:
     app: ubuntu-lxc
     matchLabels:
-  name: ubuntu-rc
+  name: ubuntu-deploy
   namespace: default
 spec:
   replicas: 2
