@@ -391,7 +391,7 @@ class Main(object):
 
         self._tmpfile = os.sep + os.path.join(
             'tmp',
-            'fprint-{0:s}.{1:d}.ps'.format(getpass.getuser(),os.getpid())
+            'fprint-{0:s}.{1:d}.ps'.format(getpass.getuser(), os.getpid())
         )
         command = self._get_command(options)
         if options.get_double_side_flag():
