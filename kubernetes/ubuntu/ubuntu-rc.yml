@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    app: ubuntu-lxc
+  name: ubuntu-rc
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    app: ubuntu-lxc
+  template:
+    metadata:
+      labels:
+        app: ubuntu-lxc
+    spec:
+      containers:
+      - command:
+        - sleep
+        - '86400'
+        env:
+        - name: NAME
+          value: VALUE
+        image: ubuntu:16.04
+        imagePullPolicy: Always
+        name: ubuntu-lxc
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024M
+          requests:
+            cpu: 100m
+            memory: 64M
+        volumeMounts:
+        - mountPath: /shared
+          name: shared
+      nodeSelector:
+        kubernetes.io/hostname: test01
+      volumes:
+      - hostPath:
+          path: /shared
+        name: shared

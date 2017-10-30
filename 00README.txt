@@ -871,10 +871,11 @@ docker/ubuntu/wine/Makefile
 docker/Makefile                                   Makefile for building all images
 
 kubernetes/ubuntu/Makefile                        Kubernetes: Ubuntu example
-kubernetes/ubuntu/test-ns.json
-kubernetes/ubuntu/ubuntu-pod.json
-kubernetes/ubuntu/ubuntu-rc.json
-kubernetes/ubuntu/ubuntu-svc.json
+kubernetes/ubuntu/test-ns.yml
+kubernetes/ubuntu/ubuntu-deploy.yml
+kubernetes/ubuntu/ubuntu-pod.yml
+kubernetes/ubuntu/ubuntu-rc.yml
+kubernetes/ubuntu/ubuntu-svc.yml
 
 python/simple-package/Makefile                    Simple Egg & WHL package
 python/simple-package/RUN

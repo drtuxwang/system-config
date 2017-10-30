@@ -90,7 +90,7 @@ class Main(object):
 
         try:
             with open(tmpfile, 'w', newline='\n') as ofile:
-                print(yaml_data, file=ofile)
+                print(yaml_data, end='', file=ofile)
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
