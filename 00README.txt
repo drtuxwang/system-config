@@ -841,6 +841,7 @@ docker/debian/debian-test/Makefile
 docker/jailbreak/Dockerfile                       Docker: empty app image for jail breaking
 docker/jailbreak/Makefile
 docker/jenkins/Makefile                           Docker: Jenkins server
+docker/mongodb/Makefile                           Docker: MongoDB database
 docker/oracle-xe/Makefile                         Docker: Oracle XE database
 docker/registry/Dockerfile                        Docker: Registry 2
 docker/registry/Makefile
