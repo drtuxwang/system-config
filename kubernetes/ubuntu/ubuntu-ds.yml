@@ -1,13 +1,11 @@
 apiVersion: extensions/v1beta1
-kind: Deployment
+kind: DaemonSet
 metadata:
   labels:
     app: ubuntu
-    matchLabels:
   name: ubuntu
   namespace: default
 spec:
-  replicas: 2
   selector:
     matchLabels:
       app: ubuntu
@@ -39,8 +37,6 @@ spec:
         volumeMounts:
         - mountPath: /shared
           name: shared
-      nodeSelector:
-        kubernetes.io/hostname: test01
       terminationGracePeriodSeconds: 10
       volumes:
       - hostPath:

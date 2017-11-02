@@ -10,6 +10,8 @@ build:
 	# kubectl -s $(SERVER) create -f ubuntu-pod.yml
 	# kubectl -s $(SERVER) create -f ubuntu-rc.yml
 	kubectl -s $(SERVER) create -f ubuntu-deploy.yml
+	# kubectl -s $(SERVER) create -f ubuntu-ds.yml
+	# kubectl -s $(SERVER) create -f ubuntu-statefulset.yml
 
 clean:
 	@echo "\n*** Building replicationcontroller ***"
@@ -22,4 +24,7 @@ status:
 	kubectl -s $(SERVER) get namespaces
 	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get services
 	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get rc
+	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get deploy
+	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get ds
+	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get statefulset
 	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get pods

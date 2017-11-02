@@ -1,9 +1,24 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
   labels:
     app: ubuntu
-    matchLabels:
+  name: ubuntu
+spec:
+  clusterIP: None
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: ubuntu
+--
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  labels:
+    app: ubuntu
   name: ubuntu
   namespace: default
 spec:
@@ -11,6 +26,7 @@ spec:
   selector:
     matchLabels:
       app: ubuntu
+  serviceName: ubuntu
   template:
     metadata:
       labels:
@@ -39,8 +55,6 @@ spec:
         volumeMounts:
         - mountPath: /shared
           name: shared
-      nodeSelector:
-        kubernetes.io/hostname: test01
       terminationGracePeriodSeconds: 10
       volumes:
       - hostPath:

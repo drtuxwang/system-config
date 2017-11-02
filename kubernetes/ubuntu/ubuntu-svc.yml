@@ -1,14 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ubuntu-lxc
-  namespace: default
+  labels:
+    app: ubuntu
+  name: ubuntu
 spec:
   ports:
-  - name: ubuntu-web
+  - name: web
     port: 80
     protocol: TCP
     targetPort: 80
   selector:
-    app: ubuntu-lxc
+    app: ubuntu
   type: ClusterIP
