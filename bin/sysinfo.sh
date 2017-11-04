@@ -5,7 +5,7 @@
 # 1996-2017 By Dr Colin Kong
 #
 VERSION=20171104
-RELEASE="2.6.40-17"
+RELEASE="2.6.40-18"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -30,6 +30,7 @@ if [ "`uname`" = HP-UX ]
 then
     UNIX95=a
 fi
+		echo debugXXX
 
 
 #
@@ -143,7 +144,7 @@ scanbus() {
                 then
                     STATE="-"
                 else
-                    STATE="-"`echo "$MYRATE" "$MYCAP" | awk '{printf("%dmA, %3.1fh\n",$1,$2/$1)}'`
+                    STATE="-"`echo "$MYRATE" "$MYCAP" | awk '{printf("%dmA, %3.1fh\n", $1, $2/$1)}'`
                 fi
             elif [ "`echo \"$INFO\" | grep \"charging state:.*charging\"`" ]
             then
@@ -170,7 +171,7 @@ scanbus() {
         fi
     done
     SCSI=`tail +2 /proc/scsi/scsi 2> /dev/null | paste - - - | grep "CD-ROM" |
-    sed -e "s/^Host: scsi//" -e "s/Vendor://" -e "s/Model://" -e "s/Rev:.*//" -e "s/CDRW/CD-RW/" -e "s@ RW/D@ CD-RW/D@" | awk '{printf(" %d,%d,%d,%d %s %s %s %s %s\n",$1,$3,$5,$7,$8,$9,$10,$11,$12)}'`
+    sed -e "s/^Host: scsi//" -e "s/Vendor://" -e "s/Model://" -e "s/Rev:.*//" -e "s/CDRW/CD-RW/" -e "s@ RW/D@ CD-RW/D@" | awk '{printf(" %d,%d,%d,%d %s %s %s %s %s\n", $1, $3, $5, $7, $8, $9, $10, $11, $12)}'`
     for UNIT in `echo "$SCSI" | awk '{print $1}'`
     do
         MODEL=`echo "$SCSI" | grep " $UNIT " | cut -f3- -d" "`
@@ -258,7 +259,7 @@ scanbus() {
 
     # Disk SCSI device detection ("/proc/scsi/scsi" old method)
     else
-        SCSI=`tail +2 /proc/scsi/scsi 2> /dev/null | paste - - - | grep "Direct-Access" | sed -e "s/^Host: scsi//" -e "s/Vendor://" -e "s/Model://" -e "s/Rev:.*//" | awk '{printf (" %d,%d,%d,%d %s %s %s %s %s \n",$1,$3,$5,$7,$8,$9,$10,$11,$12)}' | sed -e "s/ *$//"`
+        SCSI=`tail +2 /proc/scsi/scsi 2> /dev/null | paste - - - | grep "Direct-Access" | sed -e "s/^Host: scsi//" -e "s/Vendor://" -e "s/Model://" -e "s/Rev:.*//" | awk '{printf (" %d,%d,%d,%d %s %s %s %s %s \n", $1, $3, $5, $7, $8, $9, $10, $11, $12)}' | sed -e "s/ *$//"`
         for UNIT in `echo "$SCSI" | awk '{print $1}'`
         do
             MODEL=`echo "$SCSI" | grep " $UNIT " | cut -f3- -d" "`
@@ -322,7 +323,7 @@ scanbus() {
     done
 
     # Disk remote detection
-    MOUNTS=`grep ":" /proc/mounts | awk '{printf("%s %s %s\n",$1,$3,$2)}' | sort`
+    MOUNTS=`grep ":" /proc/mounts | awk '{printf("%s %s %s\n", $1, $3, $2)}' | sort`
     TIMEOUT=`timeout --version 2> /dev/null | grep "^timeout " | sed -e "s/^timeout.*/timeout 1s/"`
     for MOUNT in `echo "$MOUNTS" | awk '{print $3}'`
     do
@@ -357,20 +358,20 @@ scanbus() {
         MODELS=`echo "$LSPCI" | grep "VGA compatible controller:" | sed -e "s/.*controller: //" -e "s/ /#/g"`
         for MODEL in $MODELS
         do
-            write_output name="Graphics device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/#/ /g\"`"
+            write_output name="Graphics device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/\#/ /g\"`"
         done
     fi
 
     # Input device detection
     for MODEL in `echo "$LSUSB" | egrep -i "(Keyboard|Mouse|Scan)" | cut -f7- -d" " | sed -e "s/ /#/g"`
     do
-        write_output name="Input device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/#/ /g\"` [USB]"
+        write_output name="Input device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/\#/ /g\"` [USB]"
     done
 
     # Network device detection
     for MODEL in `echo "$LSPCI" | grep -i ethernet | sed -e "s/.*: //" -e "s/Semiconductor //" -e "s/Co., //" -e "s/Ltd. //" -e "s/PCI Express //" -e "s/Ethernet.*/Ethernet/" -e "s/ (.*//" -e "s/ /#/g"`
     do
-        write_output name="Network device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/#/ /g\"`"
+        write_output name="Network device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/\#/ /g\"`"
     done
     if [ "`echo \"$LSPCI\" | egrep -i \"infiniband| ib \"`" ]
     then
@@ -381,7 +382,7 @@ scanbus() {
     fi
     for MODEL in `echo "$LSPCI" | grep "Network controller:" | sed -e "s/.*Network controller: //" -e "s/://" -e "s/ (.*//" -e "s/ /#/g"`
     do
-        write_output name="Network device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/#/ /g\"`"
+        write_output name="Network device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/\#/ /g\"`"
     done
 
     # Video device detection
@@ -823,7 +824,7 @@ EOF
         esac
         MYCPUS=`isitset \`echo "$HARDWARES" | grep "^[1-9].*IP.*Processor" | awk '{print $1}'\``
         MYCLOCK=`isitset \`echo "$HARDWARES" | grep "^[1-9].*IP.*Processor" | awk '{printf ("%s %s\n",$2,$3)}' | sed -e "s/MHZ/MHz/" -e "s/GHZ/GHz/"\``
-        MYCACHE=`isitset \`echo "$HARDWARES" | grep "^Secondary.*cache" | sed -e "s/.*: //" -e "s/Mbyte/MB/" -e "s/Gbyte/GB/" | awk '{printf ("%s %s\n",$1,$2)}'\``
+        MYCACHE=`isitset \`echo "$HARDWARES" | grep "^Secondary.*cache" | sed -e "s/.*: //" -e "s/Mbyte/MB/" -e "s/Gbyte/GB/" | awk '{printf ("%s %s\n", $1, $2)}'\``
         MYCACHEX="L2"
         MYRAM=`isitset \`echo "$HARDWARES" | grep "Main memory size:" | sed -e "s/Main memory size: //" -e "s/Mbytes/MB/" -e "s/Gbytes/GB/"\``
         MYSWAP=`expr \`swap -l | tail +2 | awk '{printf "%d + ",$4}'\` 0 | awk '{printf("%d\n",$1/2048+0.5)}'`" MB"
@@ -1029,7 +1030,8 @@ EOF
             HARDWARES=`/usr/platform/\`uname -m\`/sbin/prtdiag 2> /dev/null | sed -e "s/(TM) //"`
             if [ "`echo \"$HARDWARES\" | grep Fujitsu`" ]
             then
-                MYTYPE=`isitset \`echo "$HARDWARES" | grep "Fujitsu" | head -1 | sed -e "s/.*SPARC64 /SPARC64-/" -e "s/ [0-9]*.Hz//"\``" ("`echo "$HARDWARES" | grep "Fujitsu" | head -1 | sed -e "s/.*Fujitsu/Fujitsu/" | awk {'printf ("%s %s %s\n",$1,$2,$3)}'`")"
+                MYTYPE=`isitset \`echo "$HARDWARES" | grep "Fujitsu" | head -1 | sed -e "s/.*SPARC64 /SPARC64-/" -e "s/ [0-9]*.Hz//"\``" ("`echo "$HARDWARES" | grep "Fujitsu" | head -1 | sed -e "s/.*Fujitsu/Fujitsu/" | awk '{printf("%s %s %s\n", $1, $2, $3)}'`")"
+``
             elif [ "`echo \"$HARDWARES\" | grep \"Sun Microsystems.*\(\"`" ]
             then
                 MYTYPE=`isitset \`echo "$HARDWARES" | grep "Sun Microsystems" | head -1 | cut -f2 -d"(" | cut -f1 -d")" | sed -e "s/.*X //" -e "s/ [0-9]*.Hz//"\``
@@ -1155,7 +1157,7 @@ EOF
     if [ "$XWININFO" ]
     then
         XSET=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xset -q 2> /dev/null`
-        show_software name="X-Display Power" value="`echo \"$XSET\" | grep \" Standby:.* Suspend:.* Off:\" | sed -e "s/.*Standby://" | awk '{printf(\" %ss %ss %ss\n\",$1,$3,$5)}' | sed -e \"s/ 0s/ Off/g\" -e \"s/^ //\"`" comment="DPMS Standby Suspend Off"
+        show_software name="X-Display Power" value="`echo \"$XSET\" | grep \" Standby:.* Suspend:.* Off:\" | sed -e "s/.*Standby://" | awk '{printf(\" %ss %ss %ss\n\", $1, $3, $5)}' | sed -e \"s/ 0s/ Off/g\" -e \"s/^ //\"`" comment="DPMS Standby Suspend Off"
         show_software name="X-Keyboard Repeat" value="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%sms\n\",$4)}'`" comment="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%s characters per second\n\",$7)}'`"
         show_software name="X-Mouse Speed" value="`echo \"$XSET\" | grep \" acceleration:.* threshold: \" | awk '{print $2}'`" comment="acceleration factor"
         XSCREENSAVER=`echo "$XSET" | grep " timeout:.* cycle:" | awk '{print $2}'`
