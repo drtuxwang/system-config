@@ -143,8 +143,7 @@ then
     fi
 
     # General stuff
-    rm()
-    {
+    rm() {
         if [ "`echo \" $@ \" | grep \" $HOME/* \"`" ]
         then
             echo "rm: Removing \"$HOME\" home directory is dangerous."

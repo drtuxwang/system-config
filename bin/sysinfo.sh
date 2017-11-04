@@ -4,8 +4,8 @@
 #
 # 1996-2017 By Dr Colin Kong
 #
-VERSION=20171010
-RELEASE="2.6.40-16"
+VERSION=20171104
+RELEASE="2.6.40-17"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -35,8 +35,7 @@ fi
 #
 # Function to return location of program
 #
-which()
-{
+which() {
     if [ "$1" = "`basename $0`" ]
     then
         PATH=`echo ":$PATH:" | sed -e "s@.*:\`dirname \"$0\"\`:@@"`
@@ -56,8 +55,7 @@ which()
 #
 # Set to Unknown if not set
 #
-isitset()
-{
+isitset() {
     if [ $# = 0 -o "$1" = 0 ]
     then
         echo Unknown
@@ -70,8 +68,7 @@ isitset()
 #
 # Show software info if found
 #
-show_software()
-{
+show_software() {
     if [ ! "`echo \" $@ \" | grep \" value= \"`" ]
     then
         if [ "`echo \" $@ \" | egrep \" (location|value)=[^ ]\"`" ]
@@ -85,8 +82,7 @@ show_software()
 #
 # Function to scan system bus (Linux only)
 #
-scanbus()
-{
+scanbus() {
     LSUSB=`PATH=/sbin:$PATH lsusb 2> /dev/null`
 
     # Audio device detection
@@ -411,8 +407,7 @@ scanbus()
 #
 # Function to detect configurations
 #
-detect()
-{
+detect() {
     AUTHOR="Sysinfo $RELEASE (`echo $VERSION | cut -c1-4`-`echo $VERSION | cut -c5-6`-`echo $VERSION | cut -c7-8`)"
     TIME=`date +'%Y-%m-%d-%H:%M:%S'`
     $ECHO "\n$AUTHOR - System configuration detection tool"
@@ -655,8 +650,7 @@ detect()
                    cat > /tmp/hardware$$.c 2> /dev/null << EOF
 #include <stdio.h>
 double rtc(void);
-void main()
-{
+void main() {
   int i, isum, iter, maxiter;
   double freq, maxfreq, time1, time2;
   maxiter = 10;
@@ -1178,8 +1172,7 @@ EOF
 #
 # Function to write output
 #
-write_output()
-{
+write_output() {
     TAGS=
     while [ "$1" ]
     do
