@@ -25,7 +25,7 @@ frame .toolbar -bg "#cccccc"
     pack .toolbar.map -side left
 
     button .toolbar.set -width 3 -bg "#00ff00" -text Set -command {
-        setxkbmap ${map} &
+        exec setxkbmap ${map} &
     }
     pack .toolbar.set -side right
 pack .toolbar -side top -fill x
