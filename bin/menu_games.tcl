@@ -46,7 +46,7 @@ frame .large -bg "#cccccc"
     pack .large.0ad -side top
 
     button .large.assaultcube -width 10 -bg "#ffff00" -text "AssaultCube" -command {
-        exec xrun assaultcube &
+        exec assaultcube &
     }
     pack .large.assaultcube -side top
 
@@ -66,7 +66,7 @@ frame .large -bg "#cccccc"
     pack .large.et_bba -side top
 
     button .large.tuxracer -width 10 -bg "#ffff00" -text "Tux Racer" -command {
-        exec xrun etracer &
+        exec etr &
     }
     pack .large.tuxracer -side top
 
