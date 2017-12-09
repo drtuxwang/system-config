@@ -302,6 +302,7 @@ class Options(object):
                 '--disk-cache-dir=/dev/null',
                 '--disk-cache-size=1',
                 '--disable-infobars',
+                '--process-per-site',
             ])
 
         # No sandbox workaround
