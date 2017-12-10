@@ -865,7 +865,7 @@ docker/ubuntu/openvpn/Makefile
 docker/ubuntu/shell/Dockerfile-shell              Docker: Ubuntu 16.04 login shell image
 docker/ubuntu/shell/Dockerfile-xshell             Docker: Ubuntu 16.04 login shell with GUI image
 docker/ubuntu/shell/Makefile
-docker/ubuntu/ubuntu-test/Dockerfile              Docker: Ubuntu 17.04 basic test image
+docker/ubuntu/ubuntu-test/Dockerfile              Docker: Ubuntu 18.04 basic test image
 docker/ubuntu/ubuntu-test/Makefile
 docker/ubuntu/wine/Dockerfile                     Docker: Ubuntu 16.04 WINE app image
 docker/ubuntu/wine/Makefile
