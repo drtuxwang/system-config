@@ -826,7 +826,7 @@ cookiecutter/docker/{{cookiecutter.project_name}}/Dockerfile
 cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
 cookiecutter/docker/cookiecutter.json
 
-docker/alpine/Dockerfile                          Docker: Alpine 3.5 basic image
+docker/alpine/Dockerfile                          Docker: Alpine 3.6 basic image
 docker/alpine/Makefile
 docker/centos/Dockerfile                          Docker: CentOS 7 basic image
 docker/centos/Makefile

@@ -1,5 +1,5 @@
 NAME := alpine
-VERSION = 3.5
+VERSION = 3.6
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
