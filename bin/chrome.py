@@ -299,10 +299,9 @@ class Options(object):
             self._chrome.extend_args([
                 '--disable-background-mode',
                 '--disable-geolocation',
+                '--disable-infobars',
                 '--disk-cache-dir=/dev/null',
                 '--disk-cache-size=1',
-                '--disable-infobars',
-                '--process-per-site',
             ])
 
         # No sandbox workaround
