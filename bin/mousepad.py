@@ -42,7 +42,10 @@ class Options(object):
         """
         self._mousepad = command_mod.Command('mousepad', errors='stop')
         self._mousepad.set_args(args[1:])
-        self._pattern = '^$|recently-used.xbel'
+        self._pattern = (
+            '^$|recently-used.xbel|: Error retrieving accessibility bus|'
+            ': GLib-CRITICAL |: GtkSourceView-CRITICAL'
+        )
 
 
 class Main(object):
