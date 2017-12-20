@@ -134,7 +134,7 @@ class Main(object):
                     except ValueError:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot read corrupt "' + file +
-                            '" package list file.'
+                            '" package ".debs" list file.'
                         )
                     packages[name] = Package(os.path.join(
                         distribution,
@@ -152,7 +152,7 @@ class Main(object):
                     except ValueError:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot read corrupt "' + file +
-                            '" package list file.'
+                            '" package ".debs" list file.'
                         )
                     if name in packages:
                         if packages[name].get_file() == os.path.join(

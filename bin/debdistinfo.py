@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Show information about packages in Debian packages list file.
+Show information about packages in Debian packages '.debs' list file.
 """
 
 import argparse
 import glob
+import json
 import os
 import signal
 import sys
@@ -38,14 +39,14 @@ class Options(object):
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Show information about packages in Debian '
-            'packages list file.'
+            'packages ".debs" list file.'
         )
 
         parser.add_argument(
             'packages_file',
             nargs=1,
-            metavar='distribution.package',
-            help='Debian package list file.'
+            metavar='distribution.json',
+            help='Debian package ".debs" list file.'
         )
         parser.add_argument(
             'package_names',
@@ -78,34 +79,6 @@ class Main(object):
         except SystemExit as exception:
             sys.exit(exception)
 
-    def _read_distribution_packages(self, packages_file):
-        self._packages = {}
-        name = ''
-        lines = []
-        try:
-            with open(packages_file, errors='replace') as ifile:
-                for line in ifile:
-                    line = line.rstrip('\r\n')
-                    if line.startswith('Package: '):
-                        name = line.replace('Package: ', '')
-                        lines = [line]
-                    elif line:
-                        lines.append(line)
-                    else:
-                        self._packages[name] = lines
-        except OSError:
-            raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + packages_file +
-                '" packages file.'
-            )
-
-    def _show_distribution_packages(self, package_names):
-        for name in package_names:
-            if name in self._packages:
-                for line in self._packages[name]:
-                    print(line)
-                print()
-
     @staticmethod
     def config():
         """
@@ -122,6 +95,43 @@ class Main(object):
                 else:
                     argv.append(arg)
             sys.argv = argv
+
+    @staticmethod
+    def _read_data(file):
+        try:
+            with open(file) as ifile:
+                data = json.load(ifile)
+        except (OSError, json.decoder.JSONDecodeError):
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" json file.'
+            )
+
+        return data
+
+    def _read_distribution_packages(self, packages_file):
+        distribution_data = self._read_data(packages_file)
+        lines = []
+        for url in distribution_data['urls']:
+            lines.extend(distribution_data['data'][url]['text'])
+
+        self._packages = {}
+        name = ''
+        for line in lines:
+            line = line.rstrip('\r\n')
+            if line.startswith('Package: '):
+                name = line.replace('Package: ', '')
+                lines = [line]
+            elif line:
+                lines.append(line)
+            else:
+                self._packages[name] = lines
+
+    def _show_distribution_packages(self, package_names):
+        for name in package_names:
+            if name in self._packages:
+                for line in self._packages[name]:
+                    print(line)
+                print()
 
     def run(self):
         """

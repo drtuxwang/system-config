@@ -6,6 +6,7 @@ Check whether installed debian packages in '.debs' list have updated versions.
 import argparse
 import copy
 import glob
+import json
 import os
 import re
 import signal
@@ -43,7 +44,7 @@ class Options(object):
             'list_files',
             nargs='+',
             metavar='distribution.debs',
-            help='Debian installed packages list file.'
+            help='Debian installed packages ".debs" list file.'
         )
 
         self._args = parser.parse_args(args)
@@ -123,33 +124,60 @@ class Main(object):
             sys.exit(exception)
 
     @staticmethod
-    def _read_distribution_packages(packages_file):
+    def config():
+        """
+        Configure program
+        """
+        if hasattr(signal, 'SIGPIPE'):
+            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        if os.name == 'nt':
+            argv = []
+            for arg in sys.argv:
+                files = glob.glob(arg)  # Fixes Windows globbing bug
+                if files:
+                    argv.extend(files)
+                else:
+                    argv.append(arg)
+            sys.argv = argv
+
+    @staticmethod
+    def _read_data(file):
+        try:
+            with open(file) as ifile:
+                data = json.load(ifile)
+        except (OSError, json.decoder.JSONDecodeError):
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" json file.'
+            )
+
+        return data
+
+    @classmethod
+    def _read_distribution_packages(cls, packages_file):
+        distribution_data = cls._read_data(packages_file)
+        lines = []
+        for url in distribution_data['urls']:
+            lines.extend(distribution_data['data'][url]['text'])
+
         packages = {}
         name = ''
         package = Package()
-        try:
-            with open(packages_file, errors='replace') as ifile:
-                for line in ifile:
-                    line = line.rstrip('\r\n')
-                    if line.startswith('Package: '):
-                        name = line.replace('Package: ', '')
-                    elif line.startswith('Version: '):
-                        package.set_version(
-                            line.replace('Version: ', '').split(':')[-1])
-                    elif line.startswith('Depends: '):
-                        depends = []
-                        for i in line.replace('Depends: ', '').split(', '):
-                            depends.append(i.split()[0])
-                        package.set_depends(depends)
-                    elif line.startswith('Filename: '):
-                        package.set_url(line[10:])
-                        packages[name] = package
-                        package = Package()
-        except OSError:
-            raise SystemExit(
-                sys.argv[0] + ': Cannot open "' + packages_file +
-                '" packages file.'
-            )
+        for line in lines:
+            line = line.rstrip('\r\n')
+            if line.startswith('Package: '):
+                name = line.replace('Package: ', '')
+            elif line.startswith('Version: '):
+                package.set_version(
+                    line.replace('Version: ', '').split(':')[-1])
+            elif line.startswith('Depends: '):
+                depends = []
+                for i in line.replace('Depends: ', '').split(', '):
+                    depends.append(i.split()[0])
+                package.set_depends(depends)
+            elif line.startswith('Filename: '):
+                package.set_url(line[10:])
+                packages[name] = package
+                package = Package()
         return packages
 
     def _read_distribution_pin_packages(self, pin_file):
@@ -164,7 +192,7 @@ class Main(object):
                             file = os.path.join(
                                 os.path.dirname(pin_file),
                                 columns[1]
-                            ) + '.packages'
+                            ) + '.json'
                             if file not in packages_cache:
                                 packages_cache[file] = (
                                     self._read_distribution_packages(file))
@@ -265,23 +293,6 @@ class Main(object):
             return 'file://' + os.path.abspath(file)
         return url
 
-    @staticmethod
-    def config():
-        """
-        Configure program
-        """
-        if hasattr(signal, 'SIGPIPE'):
-            signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-        if os.name == 'nt':
-            argv = []
-            for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
-                if files:
-                    argv.extend(files)
-                else:
-                    argv.append(arg)
-            sys.argv = argv
-
     def run(self):
         """
         Start program
@@ -296,7 +307,7 @@ class Main(object):
                         distribution = ispattern.sub('', list_file)
                         print('\nChecking "' + list_file + '" list file...')
                         self._packages = self._read_distribution_packages(
-                            distribution + '.packages')
+                            distribution + '.json')
                         self._read_distribution_pin_packages(
                             distribution + '.pinlist')
                         self._read_distribution_blacklist(

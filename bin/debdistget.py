@@ -6,6 +6,7 @@ Download Debian packages list files.
 import argparse
 import functools
 import glob
+import json
 import os
 import shutil
 import signal
@@ -14,7 +15,6 @@ import time
 import urllib.request
 
 import command_mod
-import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -109,36 +109,6 @@ class Main(object):
             )
         return urls
 
-    @classmethod
-    def _get_packages_list(cls, wget, url):
-        archive = os.path.basename(url)
-        cls._remove()
-        task = subtask_mod.Task(wget.get_cmdline() + [url])
-        task.run()
-        if task.get_exitcode() != 0:
-            print("  [ERROR (", task.get_exitcode, ")]", url)
-            cls._remove()
-            raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
-            )
-        cls._unpack(archive)
-        site = url[:url.find('/dists/') + 1]
-        lines = []
-        try:
-            with open('Packages', errors='replace') as ifile:
-                for line in ifile:
-                    if line.startswith('Filename: '):
-                        lines.append(line.rstrip('\r\n').replace(
-                            'Filename: ', 'Filename: ' + site, 1))
-                    else:
-                        lines.append(line.rstrip('\r\n'))
-        except OSError:
-            raise SystemExit(
-                sys.argv[0] + ': Cannot read "Packages" packages file.')
-        cls._remove()
-        return lines
-
     @staticmethod
     def _remove():
         for file in glob.glob('Packages*'):
@@ -146,25 +116,6 @@ class Main(object):
                 os.remove(file)
             except OSError:
                 pass
-
-    @staticmethod
-    def _has_changed(distribution_file, urls):
-        file = distribution_file[:-4] + 'packages'
-        file_time = file_mod.FileStat(file).get_time()
-
-        for url in urls:
-            try:
-                conn = urllib.request.urlopen(url)
-            except Exception:
-                raise SystemExit("Error: Cannot fetch URL: " + url)
-
-            info = conn.info()
-            url_time = time.mktime(time.strptime(
-                info.get('Last-Modified'), '%a, %d %b %Y %H:%M:%S %Z'))
-            if url_time > file_time:
-                return True
-
-        return False
 
     @staticmethod
     @functools.lru_cache(maxsize=4)
@@ -186,18 +137,64 @@ class Main(object):
                 sys.argv[0] + ': Cannot unpack "' + file + '" package file.')
 
     @classmethod
-    def _update_packages_list(cls, distribution_file, wget, urls):
-        print()
-        lines = []
-        for url in urls:
-            lines.extend(cls._get_packages_list(wget, url))
+    def _get_packages(cls, data, wget, url):
+        try:
+            conn = urllib.request.urlopen(url)
+        except Exception:
+            raise SystemExit("Error: Cannot fetch URL: " + url)
 
-        file = distribution_file[:-4] + 'packages'
+        url_time = time.mktime(time.strptime(
+            conn.info().get('Last-Modified'), '%a, %d %b %Y %H:%M:%S %Z'))
+        if url_time > data['time']:
+            archive = os.path.basename(url)
+            cls._remove()
+            task = subtask_mod.Task(wget.get_cmdline() + [url])
+            task.run()
+            if task.get_exitcode() != 0:
+                print("  [ERROR (", task.get_exitcode, ")]", url)
+                cls._remove()
+                raise SystemExit(
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
+                )
+            cls._unpack(archive)
+            site = url[:url.find('/dists/') + 1]
+
+            lines = []
+            try:
+                with open('Packages', errors='replace') as ifile:
+                    for line in ifile:
+                        if line.startswith('Filename: '):
+                            lines.append(line.rstrip('\r\n').replace(
+                                'Filename: ', 'Filename: ' + site, 1))
+                        else:
+                            lines.append(line.rstrip('\r\n'))
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "Packages" packages file.')
+            data = {'time': url_time, 'text': lines}
+            cls._remove()
+
+        return data
+
+    @staticmethod
+    def _read_data(file):
+        try:
+            with open(file) as ifile:
+                data = json.load(ifile)
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" json file.'
+            )
+
+        return data
+
+    @staticmethod
+    def _write_data(file, data):
         print('*** Creating "{0:s}" packages file...'.format(file))
         try:
             with open(file + '-new', 'w', newline='\n') as ofile:
-                for line in lines:
-                    print(line, file=ofile)
+                print(json.dumps(data), file=ofile)
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + file + '-new" file.')
@@ -227,9 +224,35 @@ class Main(object):
                 print('*** Checking "{0:s}" distribution file...'.format(
                     distribution_file
                 ))
+
+                json_file = distribution_file[:-4] + 'json'
+                if os.path.isfile(json_file):
+                    distribution_data = cls._read_data(json_file)
+                else:
+                    distribution_data = {
+                        'data': {},
+                        'urls': []
+                    }
+                old_time = max([0] + [
+                    data['time']
+                    for data in distribution_data['data'].values()
+                ])
+
                 urls = cls._get_urls(distribution_file)
-                if cls._has_changed(distribution_file, urls):
-                    cls._update_packages_list(distribution_file, wget, urls)
+                for url in urls:
+                    distribution_data['data'][url] = cls._get_packages(
+                        distribution_data['data'].get(url, {'time': 0}),
+                        wget,
+                        url
+                    )
+
+                new_time = max([
+                    data['time']
+                    for data in distribution_data['data'].values()
+                ])
+                if new_time > old_time or distribution_data['urls'] != urls:
+                    distribution_data['urls'] = urls
+                    cls._write_data(json_file, distribution_data)
 
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@ Search for packages that match regular expression in Debian package file.
 
 import argparse
 import glob
+import json
 import os
 import re
 import signal
@@ -44,7 +45,7 @@ class Options(object):
         parser.add_argument(
             'packages_file',
             nargs=1,
-            metavar='distribution.package',
+            metavar='distribution.json',
             help='Debian package file.'
         )
         parser.add_argument(
@@ -127,39 +128,48 @@ class Main(object):
         except SystemExit as exception:
             sys.exit(exception)
 
+    @staticmethod
+    def _read_data(file):
+        try:
+            with open(file) as ifile:
+                data = json.load(ifile)
+        except (OSError, json.decoder.JSONDecodeError):
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" json file.'
+            )
+
+        return data
+
     def _read_distribution_packages(self, packages_file):
+        distribution_data = self._read_data(packages_file)
+        lines = []
+        for url in distribution_data['urls']:
+            lines.extend(distribution_data['data'][url]['text'])
+
         self._packages = {}
         name = ''
         package = Package('', -1, '')
-        try:
-            with open(packages_file, errors='replace') as ifile:
-                for line in ifile:
-                    line = line.rstrip('\r\n')
-                    if line.startswith('Package: '):
-                        name = line.replace('Package: ', '')
-                    elif line.startswith('Version: '):
-                        package.set_version(
-                            line.replace('Version: ', '', 1).split(':')[-1])
-                    elif line.startswith('Installed-Size: '):
-                        try:
-                            package.set_size(
-                                int(line.replace('Installed-Size: ', '', 1)))
-                        except ValueError:
-                            raise SystemExit(
-                                sys.argv[0] + ': Package "' + name +
-                                '" in "/var/lib/dpkg/info" '
-                                'has non integer size.'
-                            )
-                    elif line.startswith('Description: '):
-                        package.set_description(
-                            line.replace('Description: ', '', 1))
-                        self._packages[name] = package
-                        package = Package('', 0, '')
-        except OSError:
-            raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + packages_file +
-                '" packages file.'
-            )
+        for line in lines:
+            line = line.rstrip('\r\n')
+            if line.startswith('Package: '):
+                name = line.replace('Package: ', '')
+            elif line.startswith('Version: '):
+                package.set_version(
+                    line.replace('Version: ', '', 1).split(':')[-1])
+            elif line.startswith('Installed-Size: '):
+                try:
+                    package.set_size(
+                        int(line.replace('Installed-Size: ', '', 1)))
+                except ValueError:
+                    raise SystemExit(
+                        sys.argv[0] + ': Package "' + name +
+                        '" in "/var/lib/dpkg/info" has non integer size.'
+                    )
+            elif line.startswith('Description: '):
+                package.set_description(
+                    line.replace('Description: ', '', 1))
+                self._packages[name] = package
+                package = Package('', 0, '')
 
     def _search_distribution_packages(self, patterns):
         for pattern in patterns:
