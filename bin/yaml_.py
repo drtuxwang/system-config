@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """
-Re-format YAML file.
+Convert JSON/YMAL to YAML file.
 """
 
 import argparse
 import glob
+import json
 import os
+import shutil
 import signal
 import sys
+
 import yaml
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -31,13 +34,13 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='re-format YAML file.')
+            description='Convert JSON/YAML to YAML file.')
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to re-format.'
+            help='File to convert.'
         )
 
         self._args = parser.parse_args(args)
@@ -81,7 +84,41 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def _write_yaml(file, data):
+        tmpfile = file + '-tmp' + str(os.getpid())
+        yaml_data = yaml.dump(data, indent=2, default_flow_style=False)
+
+        try:
+            with open(tmpfile, 'w', newline='\n') as ofile:
+                print(yaml_data, end='', file=ofile)
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
+        try:
+            shutil.move(tmpfile, file)
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot rename "' + tmpfile +
+                '" file to "' + file + '".'
+            )
+
+    @classmethod
+    def _convert(cls, file):
+        yaml_file = file.rsplit('.')[0] + '.yml'
+        print('Converting "{0:s}" to "{1:s}"...'.format(file, yaml_file))
+        try:
+            with open(file) as ifile:
+                if file.endswith('.json'):
+                    data = json.load(ifile)
+                else:
+                    data = yaml.load(ifile)
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "{0:s}" file.'.format(file))
+        cls._write_yaml(yaml_file, data)
+
+    @classmethod
+    def run(cls):
         """
         Start program
         """
@@ -91,16 +128,8 @@ class Main(object):
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
-            print('# Re-formatted "' + file + '" YAML file...')
-
-            try:
-                with open(file) as ifile:
-                    data = yaml.load(ifile)
-            except OSError:
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + file + '" file.')
-
-            print(yaml.dump(data, indent=2, default_flow_style=False))
+            elif file.endswith(('.json', 'yaml', 'yml')):
+                cls._convert(file)
 
 
 if __name__ == '__main__':

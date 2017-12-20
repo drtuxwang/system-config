@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Convert JSON to YAML file.
+Convert JSON/YAML to JSON file.
 """
 
 import argparse
@@ -34,7 +34,7 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Convert JSON to YAML file.')
+            description='Convert JSON/YAML to JSON file.')
 
         parser.add_argument(
             'files',
@@ -84,13 +84,13 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
-    def _write_yaml(file, data):
+    def _write_json(file, data):
         tmpfile = file + '-tmp' + str(os.getpid())
-        yaml_data = yaml.dump(data, indent=2, default_flow_style=False)
+        json_data = json.dumps(data, indent=4, sort_keys=True)
 
         try:
             with open(tmpfile, 'w', newline='\n') as ofile:
-                print(yaml_data, end='', file=ofile)
+                print(json_data, file=ofile)
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
@@ -103,16 +103,19 @@ class Main(object):
             )
 
     @classmethod
-    def _convert_json(cls, file):
-        yaml_file = file[:-5] + '.yml'
-        print('Converting "{0:s}" to "{1:s}"...'.format(file, yaml_file))
+    def _convert(cls, file):
+        json_file = file.rsplit('.')[0] + '.json'
+        print('Converting "{0:s}" to "{1:s}"...'.format(file, json_file))
         try:
             with open(file) as ifile:
-                data = json.load(ifile)
+                if file.endswith('.json'):
+                    data = json.load(ifile)
+                else:
+                    data = yaml.load(ifile)
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "{0:s}" file.'.format(file))
-        cls._write_yaml(yaml_file, data)
+        cls._write_json(json_file, data)
 
     @classmethod
     def run(cls):
@@ -125,8 +128,8 @@ class Main(object):
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
-            elif file.endswith('json'):
-                cls._convert_json(file)
+            elif file.endswith(('.json', 'yaml', 'yml')):
+                cls._convert(file)
 
 
 if __name__ == '__main__':
