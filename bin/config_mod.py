@@ -13,8 +13,8 @@ import yaml
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
-RELEASE = '1.0.1'
-VERSION = 20171028
+RELEASE = '1.0.2'
+VERSION = 20171220
 
 
 class Config(object):
@@ -45,7 +45,7 @@ class Config(object):
             if view and 'view_flag' in app:
                 command.append(app['view_flag'])
             daemon = app.get('daemon') is True
-            return (command, daemon)
+            return command, daemon
 
         return None
 

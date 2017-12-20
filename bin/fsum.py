@@ -268,9 +268,9 @@ class Main(object):
             size = int(size)
             mtime = int(mtime)
             file = line[i+2:]
-            return (md5sum, size, mtime, file)
+            return md5sum, size, mtime, file
         except ValueError:
-            return ('', -1, -1, '')
+            return '', -1, -1, ''
 
     @staticmethod
     def _md5sum(file):

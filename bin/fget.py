@@ -139,7 +139,7 @@ class Main(object):
         except TypeError:
             size = -1
 
-        return (file, size, mtime)
+        return file, size, mtime
 
     @staticmethod
     def _check_resume(file, data):

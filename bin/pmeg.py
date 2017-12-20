@@ -124,7 +124,7 @@ class Main(object):
             )
         x_size, y_size = task.get_output(
             )[0].split('+')[0].split()[-1].split('x')
-        return (int(x_size), int(y_size))
+        return int(x_size), int(y_size)
 
     def run(self):
         """

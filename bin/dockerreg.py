@@ -326,7 +326,7 @@ class Main(object):
             repo_match = '*'
             tag_match = '*'
 
-        return (server, repo_match, tag_match)
+        return server, repo_match, tag_match
 
     @classmethod
     def _check(cls, url, remove=False):

@@ -17,8 +17,8 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-RELEASE = '2.0.13'
-VERSION = 20170730
+RELEASE = '2.0.14'
+VERSION = 20171220
 
 
 class Command(object):
@@ -552,7 +552,7 @@ class _System(Platform):
         try:
             return mapping[_platform]
         except KeyError:
-            return ()
+            return {}
 
 
 class CommandError(Exception):

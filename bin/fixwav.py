@@ -150,7 +150,7 @@ class Main(object):
             )
         volume = task.get_output()[0].split()[-2]
         pvolume = task.get_output()[1].split()[-2]
-        return (volume, pvolume)
+        return volume, pvolume
 
     def run(self):
         """
