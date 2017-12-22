@@ -34,7 +34,7 @@ then
     fi
 
     # Removing soft shell limit
-    for _limit in `\ulimit -a 2> /dev/null | \cut -c1`
+    for _limit in `\ulimit -a 2> /dev/null | sed -e "s/.*-//" | \cut -c1`
     do
         \ulimit -$_limit `\ulimit -$_limit -H 2> /dev/null` 2> /dev/null
     done
