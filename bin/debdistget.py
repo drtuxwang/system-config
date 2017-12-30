@@ -4,6 +4,7 @@ Download Debian packages list files.
 """
 
 import argparse
+import datetime
 import functools
 import glob
 import json
@@ -136,6 +137,18 @@ class Main(object):
             raise SystemExit(
                 sys.argv[0] + ': Cannot unpack "' + file + '" package file.')
 
+    @staticmethod
+    def _show_times(old_utime, new_utime):
+        new_utc = datetime.datetime.fromtimestamp(new_utime)
+        if old_utime:
+            old_utc = datetime.datetime.fromtimestamp(old_utime)
+            print("*** [{0:s}] packages metadata stored is out of date".format(
+                old_utc.strftime('%Y-%m-%d-%H:%M:%S'),
+            ))
+        print("*** [{0:s}] packages metadata new file data fetching".format(
+            new_utc.strftime('%Y-%m-%d-%H:%M:%S'),
+        ))
+
     @classmethod
     def _get_packages(cls, data, wget, url):
         try:
@@ -146,6 +159,7 @@ class Main(object):
         url_time = time.mktime(time.strptime(
             conn.info().get('Last-Modified'), '%a, %d %b %Y %H:%M:%S %Z'))
         if url_time > data['time']:
+            cls._show_times(data['time'], url_time)
             archive = os.path.basename(url)
             cls._remove()
             task = subtask_mod.Task(wget.get_cmdline() + [url])
@@ -172,8 +186,8 @@ class Main(object):
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "Packages" packages file.')
-            data = {'time': url_time, 'text': lines}
             cls._remove()
+            data = {'time': url_time, 'text': lines}
 
         return data
 
