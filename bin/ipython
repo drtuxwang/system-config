@@ -1,35 +1,55 @@
 #!/bin/sh
 #
-# Wrapper for Python "bin" script to call Python module
+# Wrapper for "python"
 #
-VERSION=20170512
+VERSION=20171231
 
-PYEXE="python3"
-PYDIR=`dirname "$0"`
-PYMOD=`basename "$0"`
-case "$PYMOD" in
-2to3)
-    PYMOD="lib2to3"
+. `dirname "$0"`/pyld_mod.sh
+
+PY_MAIN=`basename "$0"`
+case $PY_MAIN in
+python*)
+    PYEXE="$PY_MAIN"
     ;;
-docker-compose)
-    PYMOD="compose"
-    ;;
-ipdb|pip|pydoc)
-    PYEXE="python2"  # Defaults Python 2.7
-    ;;
-ipython)
-    PYMOD="IPython"
-    ;;
-pep8)
-    ;;
-*[2-9].[0-9])
-    PYEXE=`echo "$PYMOD" | sed -e 's/\(^.*\)\(...$\)/python\2/'`  # ie python3.4
-    PYMOD=`echo "$PYMOD" | sed -e "s/-*...\$//"`  # ie pylint
-    ;;
-*[2-9])
-    PYEXE=`echo "$PYMOD" | sed -e 's/\(^.*\)\(.$\)/python\2/'`  # ie python3
-    PYMOD=`echo "$PYMOD" | sed -e "s/-*.\$//"`  # ie pylint
+*)
+    PYEXE=python3
     ;;
 esac
 
-exec "$PYDIR/$PYEXE" -m $PYMOD "$@"
+PYTHON=`locate_python "$@"`
+if [ "$PYTHON" ]
+then
+    if [ "$PYEXE" != "$PY_MAIN" ]
+    then
+        BIN_DIR=`dirname "$PYTHON"`
+        TOOL=`locate_python_tool "$BIN_DIR" "$PY_MAIN"`
+        if [ "$TOOL" ]
+        then
+            exec $PYTHON $TOOL "$@"
+        fi
+    fi
+else
+    PYTHON=`which \`basename "$0"\``
+    if [ ! "$PYTHON" ]
+    then
+        echo "***ERROR*** Cannot find required \"`basename \"$0\"`\" software." 1>&2
+        exit 1
+    fi
+fi
+
+unset PYTHONSTARTUP PYTHONHOME
+if [ ! "`echo \":$PATH:\" | grep \":\`dirname $0\`:\"`" ]
+then
+    PATH=`dirname $0`:$PATH; export PATH
+fi
+
+if [ "$PYEXE" = "$PY_MAIN" ]
+then
+    exec $PYTHON "$@"
+else
+    if [ ! "`which \"$PY_MAIN\"`" ]
+    then
+        echo "***ERROR*** Cannot find required \"$PY_NAME\" software." 1>&2
+    fi
+    exec `which "$PY_MAIN"` "$@"
+fi
