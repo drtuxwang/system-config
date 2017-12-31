@@ -167,7 +167,7 @@ class Main(object):
         for files in sorted(self._md5files.values()):
             if len(files) > 1:
                 sorted_files = sorted(files)
-                print(command_mod.Command.args2cmd(sorted_files))
+                print('***', command_mod.Command.args2cmd(sorted_files), '***')
                 if options.get_remove_flag():
                     self._remove(sorted_files[1:])
 
