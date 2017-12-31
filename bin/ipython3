@@ -11,6 +11,9 @@ case $PY_MAIN in
 python*)
     PYEXE="$PY_MAIN"
     ;;
+pip)
+    PYEXE=python
+    ;;
 *)
     PYEXE=python3
     ;;

@@ -1,2 +1,2 @@
 @echo off
-%~dp0..\sbin\python3.bat -m pep8 %*
+%~dp0..\sbin\python3.bat %~n0 %*

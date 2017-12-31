@@ -1,2 +1,2 @@
 @echo off
-%~dp0..\sbin\python2.bat %~n0 %*
+%~dp0..\sbin\python.bat %~n0 %*
