@@ -1,23 +1,55 @@
-#!/bin/bash
+#!/bin/sh
 #
-# Wrapper for Python pip installed scripts
+# Wrapper for "python"
 #
-VERSION=20161124
+VERSION=20171231
 
-PYEXE="python3"
-MYDIR=${0%/*}
-MYFILE=${0##*/}
-case $MYFILE in
-ansible*)
-    PACKAGE="ansible"
+. `dirname "$0"`/pyld_mod.sh
+
+PY_MAIN=`basename "$0"`
+case $PY_MAIN in
+python*)
+    PYEXE="$PY_MAIN"
+    ;;
+*)
+    PYEXE=python3
     ;;
 esac
-DIR=$("$MYDIR/$PYEXE" -m pip show $PACKAGE 2> /dev/null | grep "^Location: " | sed -e "s/Location: //")
-PYFILE="${DIR%/lib/*}/bin/$MYFILE"
-if [ ! "$PYFILE" ]
+
+PYTHON=`locate_python "$@"`
+if [ "$PYTHON" ]
 then
-    echo "***ERROR*** Cannot find required \"$PYFILE\" software." 1>&2
-    exit 1
+    if [ "$PYEXE" != "$PY_MAIN" ]
+    then
+        BIN_DIR=`dirname "$PYTHON"`
+        TOOL=`locate_python_tool "$BIN_DIR" "$PY_MAIN"`
+        if [ "$TOOL" ]
+        then
+            exec $PYTHON $TOOL "$@"
+        fi
+    fi
+else
+    PYTHON=`which \`basename "$0"\``
+    if [ ! "$PYTHON" ]
+    then
+        echo "***ERROR*** Cannot find required \"`basename \"$0\"`\" software." 1>&2
+        exit 1
+    fi
 fi
 
-exec "$MYDIR/$PYEXE" "$PYFILE" "$@"
+unset PYTHONSTARTUP PYTHONHOME
+if [ ! "`echo \":$PATH:\" | grep \":\`dirname $0\`:\"`" ]
+then
+    PATH=`dirname $0`:$PATH; export PATH
+fi
+
+if [ "$PYEXE" = "$PY_MAIN" ]
+then
+    exec $PYTHON "$@"
+else
+    if [ ! "`which \"$PY_MAIN\"`" ]
+    then
+        echo "***ERROR*** Cannot find required \"$PY_NAME\" software." 1>&2
+    fi
+    exec `which "$PY_MAIN"` "$@"
+fi

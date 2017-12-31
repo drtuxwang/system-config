@@ -14,6 +14,7 @@ bin/desktop_mod.py     Python X-windows desktop module
 bin/file_mod.py        Python file handling utility module
 bin/network_mod.py     Python network handling utility module
 bin/power_mod.py       Python power handling module
+bin/pyld_mod.sh        Python loading module for sh/ksh/bash wrapper scripts
 bin/subtask_mod.py     Python sub task handling module
 bin/task_mod.py        Python task handling utility module [Draft]
 
