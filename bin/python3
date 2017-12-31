@@ -2,7 +2,8 @@
 #
 # Wrapper for "python"
 #
-VERSION=20170912
+VERSION=20171231
+
 
 #
 # Function to locate command
@@ -120,17 +121,8 @@ which() {
     done
 }
 
-PYEXE=`basename $0`
-PYTHON=`locate_python "$@"`
-if [ ! "$PYTHON" ]
-then
-    PYTHON=`which \`basename "$0"\``
-    if [ ! "$PYTHON" ]
-    then
-        echo "***ERROR*** Cannot find required \"`basename \"$0\"`\" software." 1>&2
-        exit 1
-    fi
-elif [ "$OSTYPE" = "cygwin" ]
+
+if [ "$OSTYPE" = "cygwin" ]
 then
     ARGS=
     while [ $# -gt 0 ]
@@ -156,11 +148,22 @@ $ARG"
     done
 fi
 
-unset PYTHONSTARTUP PYTHONHOME
+PYEXE=`basename $0`
+PYTHON=`locate_python "$@"`
 
+if [ ! "$PYTHON" ]
+then
+    PYTHON=`which \`basename "$0"\``
+    if [ ! "$PYTHON" ]
+    then
+        echo "***ERROR*** Cannot find required \"`basename \"$0\"`\" software." 1>&2
+        exit 1
+    fi
+fi
+
+unset PYTHONSTARTUP PYTHONHOME
 if [ ! "`echo \":$PATH:\" | grep \":\`dirname $0\`:\"`" ]
 then
     PATH=`dirname $0`:$PATH; export PATH
 fi
-
 exec $PYTHON "$@"
