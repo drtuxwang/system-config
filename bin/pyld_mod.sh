@@ -138,30 +138,83 @@ which() {
 
 
 #
-# Fix CYGWIN path
+# Execute Python or Python tool
 #
-if [ "$OSTYPE" = "cygwin" ]
-then
-    ARGS=
-    while [ $# -gt 0 ]
-    do
-        if [ -f "$1" ]
+exec_python() {
+    PY_MAIN=`basename "$0"`
+    case $PY_MAIN in
+    python*)
+        PYEXE="$PY_MAIN"
+        ;;
+    ipdb|pip|pydoc)
+        PYEXE=python
+        ;;
+    *)
+        PYEXE=python3
+        ;;
+    esac
+
+    if [ "$OSTYPE" = "cygwin" ]
+    then
+        ARGS=
+        while [ $# -gt 0 ]
+        do
+            if [ -f "$1" ]
+            then
+                ARG=`cygpath -w "$1" 2> /dev/null | sed -e "s/%/%25/g;s/ /%20/g"`
+            else
+                ARG=`echo "$1" | sed -e "s/%/%25/g;s/ /%20/g"`
+            fi
+            if [ "$ARGS" ]
+            then
+                ARGS="$ARGS
+    $ARG"
+            else
+                ARGS="$ARG"
+            fi
+            shift
+        done
+        for ARG in $ARGS
+        do
+            set -- "$@" "`echo \"$ARG\" | sed -e 's/%20/ /g;s/%25/%/g'`"
+        done
+    fi
+
+    PYTHON=`locate_python "$@"`
+    if [ "$PYTHON" ]
+    then
+        if [ "$PYEXE" != "$PY_MAIN" ]
         then
-            ARG=`cygpath -w "$1" 2> /dev/null | sed -e "s/%/%25/g;s/ /%20/g"`
-        else
-            ARG=`echo "$1" | sed -e "s/%/%25/g;s/ /%20/g"`
+            BIN_DIR=`dirname "$PYTHON"`
+            TOOL=`locate_python_tool "$BIN_DIR" "$PY_MAIN"`
+            if [ "$TOOL" ]
+            then
+                exec $PYTHON $TOOL "$@"
+            fi
         fi
-        if [ "$ARGS" ]
+    else
+        PYTHON=`which \`basename "$0"\``
+        if [ ! "$PYTHON" ]
         then
-            ARGS="$ARGS
-$ARG"
-        else
-            ARGS="$ARG"
+            echo "***ERROR*** Cannot find required \"`basename \"$0\"`\" software." 1>&2
+            exit 1
         fi
-        shift
-    done
-    for ARG in $ARGS
-    do
-        set -- "$@" "`echo \"$ARG\" | sed -e 's/%20/ /g;s/%25/%/g'`"
-    done
-fi
+    fi
+
+    unset PYTHONSTARTUP PYTHONHOME
+    if [ ! "`echo \":$PATH:\" | grep \":\`dirname $0\`:\"`" ]
+    then
+        PATH=`dirname $0`:$PATH; export PATH
+    fi
+
+    if [ "$PYEXE" = "$PY_MAIN" ]
+    then
+        exec $PYTHON "$@"
+    else
+        if [ ! "`which \"$PY_MAIN\"`" ]
+        then
+            echo "***ERROR*** Cannot find required \"$PY_NAME\" software." 1>&2
+        fi
+        exec `which "$PY_MAIN"` "$@"
+    fi
+}
