@@ -415,6 +415,10 @@ bin/ipython3.4.bat
 bin/jenkins-jobs
 bin/jenkins-jobs.bat
 bin/jenkins_jobs_.py
+bin/mid3iconv
+bin/mid3iconv.bat
+bin/mid3v2
+bin/mid3v2.bat
 bin/pep8
 bin/pep8.bat
 bin/pip
