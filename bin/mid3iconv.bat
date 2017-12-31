@@ -1,2 +1,2 @@
 @echo off
-%~dp0..\sbin\python3.bat mid3iconv %*
+%~dp0..\sbin\%~n0.bat %*

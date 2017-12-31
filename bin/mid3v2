@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Wrapper for Python 3.x "bin" scripts
+# Wrapper for "python"
 #
 VERSION=20171231
 
@@ -9,6 +9,11 @@ VERSION=20171231
 # Function to locate command
 #
 locate_python() {
+    case $1 in
+    */ibus/*|*/meld)  # Must use system Python
+        return
+    esac
+
     case $0 in
     /*)
         LOCAL=`dirname \`dirname "$0"\``
@@ -143,25 +148,36 @@ $ARG"
     done
 fi
 
-PYEXE=python3
-PYTHON=`locate_python "$@"`
 PY_MAIN=`basename "$0"`
+case $PY_MAIN in
+python*)
+    PYEXE="$PY_MAIN"
+    ;;
+*)
+    PYEXE=python3
+    ;;
+esac
+
+PYTHON=`locate_python "$@"`
 
 if [ "$PYTHON" ]
 then
-    BIN_DIR=`dirname "$PYTHON"`
-    if [ -f "$BIN_DIR/$PY_MAIN.py" ]
+    if [ "$PYEXE" != "$PY_MAIN" ]
     then
-        exec $PYTHON $BIN_DIR/$PY_MAIN.py "$@"
-    elif [ -f "$BIN_DIR/$PY_MAIN" ]
-    then
-        exec $PYTHON $BIN_DIR/$PY_MAIN "$@"
-    elif [ -f "$BIN_DIR/Tools/scripts/$PY_MAIN.py" ]
-    then
-        exec $PYTHON $BIN_DIR/Tools/scripts/$PY_MAIN.py "$@"
-    elif [ -f "$BIN_DIR/Tools/scripts/$PY_MAIN" ]
-    then
-        exec $PYTHON $BIN_DIR/Tools/scripts/$PY_MAIN "$@"
+        BIN_DIR=`dirname "$PYTHON"`
+        if [ -f "$BIN_DIR/$PY_MAIN.py" ]
+        then
+            exec $PYTHON $BIN_DIR/$PY_MAIN.py "$@"
+        elif [ -f "$BIN_DIR/$PY_MAIN" ]
+        then
+            exec $PYTHON $BIN_DIR/$PY_MAIN "$@"
+        elif [ -f "$BIN_DIR/Tools/scripts/$PY_MAIN.py" ]
+        then
+            exec $PYTHON $BIN_DIR/Tools/scripts/$PY_MAIN.py "$@"
+        elif [ -f "$BIN_DIR/Tools/scripts/$PY_MAIN" ]
+        then
+            exec $PYTHON $BIN_DIR/Tools/scripts/$PY_MAIN "$@"
+        fi
     fi
 else
     PYTHON=`which \`basename "$0"\``
@@ -178,8 +194,13 @@ then
     PATH=`dirname $0`:$PATH; export PATH
 fi
 
-if [ ! "`which \"$PY_MAIN\"`" ]
+if [ "$PYEXE" = "$PY_MAIN" ]
 then
-    echo "***ERROR*** Cannot find required \"$PY_NAME\" software." 1>&2
+    exec $PYTHON "$@"
+else
+    if [ ! "`which \"$PY_MAIN\"`" ]
+    then
+        echo "***ERROR*** Cannot find required \"$PY_NAME\" software." 1>&2
+    fi
+    exec `which "$PY_MAIN"` "$@"
 fi
-exec `which "$PY_MAIN"` "$@"
