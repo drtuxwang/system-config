@@ -392,20 +392,16 @@ bin/ansible
 bin/ansible-playbook
 bin/aws
 bin/aws.bat
-bin/aws_.py
 bin/cookiecutter
 bin/cookiecutter.bat
 bin/devpi
 bin/devpi.bat
-bin/devpi_.py
 bin/django-admin
 bin/django-admin.bat
-bin/django_admin_.py
 bin/docker-compose
 bin/docker-compose.bat
 bin/flask
 bin/flask.bat
-bin/flask_.py
 bin/glances
 bin/ipdb3
 bin/ipdb3.bat
@@ -415,7 +411,6 @@ bin/ipython3
 bin/ipython3.4.bat
 bin/jenkins-jobs
 bin/jenkins-jobs.bat
-bin/jenkins_jobs_.py
 bin/mid3iconv
 bin/mid3iconv.bat
 bin/mid3v2
@@ -438,7 +433,6 @@ bin/virtualenv
 bin/virtualenv.bat
 bin/youtube-dl
 bin/youtube-dl.bat
-bin/youtube_dl_.py
 bin/offline            Run a command without network access
 bin/offline.py
 bin/pidgin             pidgin wrapper (allowing non systems port)
