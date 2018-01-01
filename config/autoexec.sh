@@ -1,7 +1,6 @@
 #!/bin/bash
 
-set_vga()
-{
+set_vga() {
     MODELINE=$(gtf $2 $3 $4 | grep Modeline | awk '{
         printf("%4.2f %d %d %d %d %d %d %d %d\n", $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     }')
@@ -12,8 +11,7 @@ set_vga()
     xrandr -s $2x${3}_$4
 }
 
-start_app()
-{
+start_app() {
     NAME=
     TIMEOUT=10
     while [[ $1 = -* ]]
