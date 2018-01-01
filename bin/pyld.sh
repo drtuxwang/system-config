@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# Python loader module
+# Python loader for starting system/non system Python or Python tools/modules
 #
-VERSION=20171231
+VERSION=20180101
 
 
 #
@@ -141,16 +141,31 @@ which() {
 # Execute Python or Python tool
 #
 exec_python() {
+    PYEXE=python3
+    PYLD_FLAGS=
     PY_MAIN=`basename "$0"`
     case $PY_MAIN in
-    python*)
-        PYEXE="$PY_MAIN"
+    7z|7za)
+        PYLD_FLAGS="-pyldname=$PY_MAIN"
+        PY_MAIN="p7zip"
+        ;;
+    bz2|calendar|json|yaml)
+        PYLD_FLAGS="-pyldname=$PY_MAIN"
+        PY_MAIN="${PY_MAIN}_"
+        ;;
+    g++)
+        PYLD_FLAGS="-pyldname=$PY_MAIN"
+        PY_MAIN="gxx_"
         ;;
     ipdb|pip|pydoc)
         PYEXE=python
         ;;
-    *)
-        PYEXE=python3
+    python*)
+        PYEXE="$PY_MAIN"
+        ;;
+    vi|vim)
+        PYLD_FLAGS="-pyldname=$PY_MAIN"
+        PY_MAIN="vi"
         ;;
     esac
 
@@ -193,7 +208,7 @@ exec_python() {
             fi
         fi
     else
-        PYTHON=`which \`basename "$0"\``
+        PYTHON=`which $PYEXE`
         if [ ! "$PYTHON" ]
         then
             echo "***ERROR*** Cannot find required \"`basename \"$0\"`\" software." 1>&2
@@ -207,9 +222,13 @@ exec_python() {
         PATH=`dirname $0`:$PATH; export PATH
     fi
 
+    BIN_DIR=`dirname "$0"`
     if [ "$PYEXE" = "$PY_MAIN" ]
     then
         exec $PYTHON "$@"
+    elif [ -f "$BIN_DIR/$PY_MAIN.py" ]
+    then
+        exec "$PYTHON" -B -E "$BIN_DIR/pyld.py" $PYLD_FLAGS $PY_MAIN "$@"
     else
         if [ ! "`which \"$PY_MAIN\"`" ]
         then
@@ -218,3 +237,6 @@ exec_python() {
         exec `which "$PY_MAIN"` "$@"
     fi
 }
+
+
+exec_python "$@"

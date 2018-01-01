@@ -1,14 +1,2 @@
 #!/bin/sh
-#
-# Wrapper for "p7zip" command
-#
-
-BIN_DIR=`dirname "$0"`
-PYTHON="$BIN_DIR/python3"
-if [ ! -x "$PYTHON" ]
-then
-    PYTHON="python3"
-fi
-PY_MAIN="-pyldname=`basename \"$0\"` p7zip"
-
-exec "$PYTHON" -B -E "$BIN_DIR/pyld.py" $PY_MAIN "$@"
+. `dirname "$0"`/pyld.sh

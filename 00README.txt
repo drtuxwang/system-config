@@ -14,7 +14,6 @@ bin/desktop_mod.py     Python X-windows desktop module
 bin/file_mod.py        Python file handling utility module
 bin/network_mod.py     Python network handling utility module
 bin/power_mod.py       Python power handling module
-bin/pyld_mod.sh        Python loading module for sh/ksh/bash wrapper scripts
 bin/subtask_mod.py     Python sub task handling module
 bin/task_mod.py        Python task handling utility module [Draft]
 
@@ -456,6 +455,7 @@ bin/pop.py
 bin/procexp            Windows procexp wrapper (allowing non systems port)
 bin/procexp.bat
 bin/procexp.py
+bin/pyld.sh            Python loading module for sh/ksh/bash wrapper scripts
 bin/pyld.py            Load Python main program as module (must have Main class)
 bin/test_pyld.py       Unit testing suite for "pyld.py"
 bin/pyprof             Profile Python 3.x program
@@ -621,12 +621,11 @@ bin/vbox               VirtualBox virtual machine manager
 bin/vbox.py            (uses VBoxManage)
 bin/vi                 vi wrapper (allowing non systems port)
 bin/vi.bat
+bin/vim                vim wrapper (allowing non systems port)
+bin/vim.bat
 bin/vi.py
 bin/view               View files using hardwired application mapping
 bin/view.py
-bin/vim                vim wrapper (allowing non systems port)
-bin/vim.bat
-bin/vim.py
 bin/vlc                vlc wrapper (allowing non systems port)
 bin/vlc.bat
 bin/vlc.py

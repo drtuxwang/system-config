@@ -1,7 +1,2 @@
 #!/bin/sh
-#
-# Wrapper for "python"
-#
-
-. `dirname "$0"`/pyld_mod.sh
-exec_python "$@"
+. `dirname "$0"`/pyld.sh
