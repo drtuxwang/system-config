@@ -82,14 +82,18 @@ class Main(object):
         os.utime('index.fsum', (time_new, time_new))
 
     def _checkfile(self, isbadfile, directory=''):
-        for file in sorted(glob.glob(os.path.join(directory, '.*')) +
-                           glob.glob(os.path.join(directory, '*'))):
+        for file in sorted(
+                glob.glob(os.path.join(directory, '.*')) +
+                glob.glob(os.path.join(directory, '*'))
+        ):
             if not os.path.islink(file):
                 if os.path.isdir(file):
                     self._checkfile(isbadfile, file)
                 elif isbadfile.search(os.path.basename(file)):
-                    raise SystemExit(
-                        sys.argv[0] + ': Found "' + file + '" file.')
+                    raise SystemExit('{0:s}: Found "{1:s}" file.'.format(
+                        sys.argv[0],
+                        os.path.abspath(file),
+                    ))
 
     def _read_fsums(self, ofile, directory):
         fsum = os.path.join(directory, '..fsum')
