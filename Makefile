@@ -2,7 +2,7 @@ default: check
 
 test: check
 
-check: jsonformat py_compile requirements pep8 pylint unittest
+check: jsonformat py_compile requirements pycodestyle pylint unittest
 	@echo "\n*** Tests successfull ***"
 
 jsonformat:
@@ -18,9 +18,9 @@ requirements:
 	@echo "\n*** Running Python 3 requirements check ***"
 	umask 022 && python3 -m pip install -r etc/python3-requirements.txt 2>&1
 
-pep8:
-	@echo "\n*** Running Python 3 PEP8 check ***"
-	python3 -m pep8 --max-line-length=79 bin/*.py
+pycodestyle:
+	@echo "\n*** Running Python 3 PYCODESTYLE (PEP*) check ***"
+	python3 -m pycodestyle --max-line-length=79 bin/*.py
 
 pylint:
 	@echo "\n*** Running Python 3 LINT check ***"

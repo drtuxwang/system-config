@@ -416,6 +416,8 @@ bin/mid3v2
 bin/mid3v2.bat
 bin/pep8
 bin/pep8.bat
+bin/pycodestyle
+bin/pycodestyle.bat
 bin/pip
 bin/pip.bat
 bin/pip3

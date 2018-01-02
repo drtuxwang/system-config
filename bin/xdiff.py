@@ -117,6 +117,7 @@ class Main(object):
         task.run(pattern=options.get_pattern())
         return task.get_exitcode()
 
+
 if __name__ == '__main__':
     if '--pydoc' in sys.argv:
         help(__name__)
