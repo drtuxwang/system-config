@@ -19,7 +19,7 @@ requirements:
 	umask 022 && python3 -m pip install -r etc/python3-requirements.txt 2>&1
 
 pycodestyle:
-	@echo "\n*** Running Python 3 PYCODESTYLE (PEP*) check ***"
+	@echo "\n*** Running Python 3 PYCODESTYLE (PEP8) check ***"
 	python3 -m pycodestyle --max-line-length=79 bin/*.py
 
 pylint:
