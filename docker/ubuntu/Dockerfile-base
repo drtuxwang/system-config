@@ -11,5 +11,5 @@ RUN apt-get install --no-install-recommends -y \
 		tcsh \
 		tmux \
 		wget && \
-	python3 -m pip install pep8 pylint && \
+	python3 -m pip install pycodestyle pep8==1.7.0 pylint && \
 	apt-get clean
