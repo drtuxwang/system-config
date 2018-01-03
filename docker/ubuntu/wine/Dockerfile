@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-xbase:16.04
+FROM drtuxwang/ubuntu-xbase:latest
 
 # Install WINE packages
 RUN dpkg --add-architecture i386 && \

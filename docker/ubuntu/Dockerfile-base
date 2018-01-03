@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu:16.04
+FROM drtuxwang/ubuntu:latest
 
 # Install extra packages
 RUN apt-get install --no-install-recommends -y \

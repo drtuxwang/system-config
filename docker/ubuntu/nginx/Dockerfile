@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-xbase:16.04
+FROM drtuxwang/ubuntu-xbase:latest
 
 RUN apt-get install --no-install-recommends -y nginx-light
 

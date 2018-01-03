@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-xbase:16.04
+FROM drtuxwang/ubuntu-xbase:latest
 
 # Install OpenVPN packages
 RUN apt-get install --no-install-recommends -y openvpn && \

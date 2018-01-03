@@ -1,6 +1,6 @@
-NAME := debian
+NAME := ubuntu
 VERSION = latest
-IMAGE := drtuxwang/$(NAME):$(VERSION)
+IMAGE := drtuxwang/$(NAME)-devpi:$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -14,32 +14,20 @@ FLAGS := --rm \
 default: build
 	docker images
 
-all: build-all
-	docker images
-
 clean:
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
-	cd $(NAME)-testing && make clean
-	cd $(NAME)-8 && make clean
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-	cd $(NAME)-8 && make pull
-	cd $(NAME)-testing && make pull
-
-build-all: build
-	cd $(NAME)-testing && make build
-	cd $(NAME)-8 && make build
 
 build:
-	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
-	rm -rf tmpdir
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
-		--hostname $(NAME) \
+		--publish 8080:8080 \
+		--hostname $(NAME)-devpi \
 		$(IMAGE) || exit 0
+

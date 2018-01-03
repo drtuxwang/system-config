@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-xbase:16.04
+FROM drtuxwang/ubuntu-xbase:latest
 
 # X-windows full setup
 COPY tmpdir/config/terminalrc /home/docker/.config/xfce4/terminal/terminalrc

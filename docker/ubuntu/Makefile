@@ -1,5 +1,5 @@
 NAME := ubuntu
-VERSION = 16.04
+VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 IMAGE_BASE := drtuxwang/$(NAME)-base:$(VERSION)
 IMAGE_XBASE := drtuxwang/$(NAME)-xbase:$(VERSION)
@@ -21,6 +21,7 @@ all: build-all
 
 clean:
 	cd builder && make clean
+	cd devpi && make clean
 	cd docker && make clean
 	cd nginx && make clean
 	cd openvpn && make clean
@@ -28,23 +29,24 @@ clean:
 	cd shell && make clean
 	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_XBASE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
-	cd $(NAME)-old && make clean
-	cd $(NAME)-test && make clean
+	cd $(NAME)-testing && make clean
+	cd $(NAME)-14.04 && make clean
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-	cd $(NAME)-old && make pull
-	cd $(NAME)-test && make pull
+	cd $(NAME)-testing && make pull
+	cd $(NAME)-14.04 && make pull
 
 build-all: build
-	cd $(NAME)-old && make build
-	cd $(NAME)-test && make build
 	cd builder && make build
+	cd devpi && make build
 	cd docker && make build
 	cd nginx && make build
 	cd openvpn && make build
 	cd shell && make build
 	cd wine && make build
+	cd $(NAME)-testing && make build
+	cd $(NAME)-14.04 && make build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *

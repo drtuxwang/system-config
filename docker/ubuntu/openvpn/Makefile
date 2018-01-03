@@ -1,5 +1,5 @@
 NAME := ubuntu
-VERSION = 16.04
+VERSION = latest
 IMAGE := drtuxwang/$(NAME)-openvpn:$(VERSION)
 FLAGS := --rm \
 	--interactive \

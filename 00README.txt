@@ -827,14 +827,14 @@ docker/alpine/Dockerfile                          Docker: Alpine 3.6 basic image
 docker/alpine/Makefile
 docker/centos/Dockerfile                          Docker: CentOS 7 basic image
 docker/centos/Makefile
-docker/centos/centos-old/Dockerfile               Docker: CentOS 6 basic old image
-docker/centos/centos-old/Makefile
+docker/centos/centos-6/Dockerfile                 Docker: CentOS 6 basic old image
+docker/centos/centos-6/Makefile
 docker/debian/Dockerfile                          Docker: Debian 9 basic image
 docker/debian/Makefile
-docker/debian/debian-old/Dockerfile               Docker: Debian 8 basic old image
-docker/debian/debian-old/Makefile
-docker/debian/debian-test/Dockerfile              Docker: Debian testing basic test image
-docker/debian/debian-test/Makefile
+docker/debian/debian-8/Dockerfile                 Docker: Debian 8 basic old image
+docker/debian/debian-8/Makefile
+docker/debian/debian-testing/Dockerfile           Docker: Debian testing basic test image
+docker/debian/debian-testing/Makefile
 docker/jailbreak/Dockerfile                       Docker: empty app image for jail breaking
 docker/jailbreak/Makefile
 docker/jenkins/Makefile                           Docker: Jenkins server
@@ -850,18 +850,20 @@ docker/ubuntu/Dockerfile-xbase
 docker/ubuntu/Makefile
 docker/ubuntu/builder/Dockerfile                  Docker: Ubuntu 16.04 software builder app image
 docker/ubuntu/builder/Makefile
+docker/ubuntu/devpi/Dockerfile                    Docker: Ubuntu 16.04 devpi server app image
+docker/ubuntu/devpi/Makefile
 docker/ubuntu/docker/Dockerfile                   Docker: Ubuntu 16.04 Docker app image
 docker/ubuntu/docker/Makefile
-docker/ubuntu/nginx/Makefile                      Docker: Ubuntu 16.04 NGINX proxy app image
+docker/ubuntu/nginx/Makefile                      Docker: Ubuntu 16.04 NGINX proxy server app image
 docker/ubuntu/nginx/Dockerfile
 docker/ubuntu/nginx/files/nginx-proxy.conf
-docker/ubuntu/ubuntu-old/Dockerfile               Docker: Ubuntu 14.04 basic old image
-docker/ubuntu/ubuntu-old/Makefile
 docker/ubuntu/openvpn/Dockerfile                  Docker: Ubuntu 16.04 OpenVPN app image
 docker/ubuntu/openvpn/Makefile
 docker/ubuntu/shell/Dockerfile-shell              Docker: Ubuntu 16.04 login shell image
 docker/ubuntu/shell/Dockerfile-xshell             Docker: Ubuntu 16.04 login shell with GUI image
 docker/ubuntu/shell/Makefile
+docker/ubuntu/ubuntu-14.04/Dockerfile             Docker: Ubuntu 14.04 basic old image
+docker/ubuntu/ubuntu-14.04/Makefile
 docker/ubuntu/ubuntu-test/Dockerfile              Docker: Ubuntu 18.04 basic test image
 docker/ubuntu/ubuntu-test/Makefile
 docker/ubuntu/wine/Dockerfile                     Docker: Ubuntu 16.04 WINE app image

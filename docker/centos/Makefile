@@ -1,5 +1,5 @@
 NAME= centos
-VERSION = 7
+VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
@@ -20,14 +20,14 @@ all: build-all
 clean:
 	docker rmi -f $(IMAGE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
-	cd $(NAME)-old && make clean
+	cd $(NAME)-6 && make clean
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-	cd $(NAME)-old && make pull
+	cd $(NAME)-6 && make pull
 
 build-all: build
-	cd $(NAME)-old && make build
+	cd $(NAME)-6 && make build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *

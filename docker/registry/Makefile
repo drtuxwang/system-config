@@ -1,5 +1,5 @@
 NAME := registry
-VERSION = 2
+VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
