@@ -2,7 +2,6 @@
 #
 # Python loader for starting system/non system Python or Python tools/modules
 #
-VERSION=20180101
 
 
 #
@@ -103,28 +102,10 @@ locate_python() {
 
 
 #
-# Function to locate Python tool
-#
-locate_python_tool() {
-    for TOOL in $1/$2.py $1/$2 $1/Tools/scripts/$2.py $1/Scripts/$2.exe
-    do
-        if [ -f "$TOOL" ]
-        then
-            echo "$TOOL"
-            return
-        fi
-    done
-}
-
-
-#
 # Function to return location of program
 #
 which() {
-    if [ "$1" = "`basename $0`" ]
-    then
-        PATH=`echo ":$PATH:" | sed -e "s@:\`dirname \"$0\"\`:@@"`
-    fi
+    PATH=`echo ":$PATH:" | sed -e "s@:\`dirname \"$0\"\`:@@"`
 
     for CDIR in `echo $PATH | sed -e "s/ /%20/g;s/:/ /g"`
     do
@@ -132,6 +113,25 @@ which() {
         if [ -x "$CMD" -a ! -d "$CMD" ]
         then
             echo "$CMD" | sed -e "s@//*@/@g"; return
+        fi
+    done
+}
+
+
+#
+# Function to locate Python tool
+#
+locate_python_tool() {
+    for TOOL in $HOME/.local/bin/$2 /usr/local/bin/$2 $1/$2 $1/Tools/scripts/$2 $1/Scripts/$2.exe
+    do
+        if [ -f "$TOOL.py" ]
+        then
+            echo "$TOOL.py"
+            return
+        elif [ -f "$TOOL" ]
+        then
+            echo "$TOOL"
+            return
         fi
     done
 }
@@ -196,18 +196,8 @@ exec_python() {
     fi
 
     PYTHON=`locate_python "$@"`
-    if [ "$PYTHON" ]
+    if [ ! "$PYTHON" ]
     then
-        if [ "$PYEXE" != "$PY_MAIN" ]
-        then
-            BIN_DIR=`dirname "$PYTHON"`
-            TOOL=`locate_python_tool "$BIN_DIR" "$PY_MAIN"`
-            if [ "$TOOL" ]
-            then
-                exec $PYTHON $TOOL "$@"
-            fi
-        fi
-    else
         PYTHON=`which $PYEXE`
         if [ ! "$PYTHON" ]
         then
@@ -230,9 +220,19 @@ exec_python() {
     then
         exec "$PYTHON" -B -E "$BIN_DIR/pyld.py" $PYLD_FLAGS $PY_MAIN "$@"
     else
+        if [ "$PYEXE" != "$PY_MAIN" ]
+        then
+            BIN_DIR=`dirname "$PYTHON"`
+            locate_python_tool "$BIN_DIR" "$PY_MAIN"
+            TOOL=`locate_python_tool "$BIN_DIR" "$PY_MAIN"`
+            if [ "$TOOL" ]
+            then
+                exec $PYTHON $TOOL "$@"
+            fi
+        fi
         if [ ! "`which \"$PY_MAIN\"`" ]
         then
-            echo "***ERROR*** Cannot find required \"$PY_NAME\" software." 1>&2
+            echo "***ERROR*** Cannot find required \"$PY_MAIN\" software." 1>&2
         fi
         exec `which "$PY_MAIN"` "$@"
     fi
