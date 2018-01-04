@@ -20,14 +20,14 @@ all: build-all
 clean:
 	docker rmi -f $(IMAGE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
-	cd $(NAME)-6 && make clean
+	cd $(NAME)-previous && make clean
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-	cd $(NAME)-6 && make pull
+	cd $(NAME)-previous && make pull
 
 build-all: build
-	cd $(NAME)-6 && make build
+	cd $(NAME)-previous && make build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *

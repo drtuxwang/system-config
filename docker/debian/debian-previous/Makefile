@@ -1,5 +1,5 @@
-NAME := ubuntu
-VERSION = 14.04
+NAME := debian
+VERSION = previous
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \

@@ -1,5 +1,5 @@
-NAME= centos
-VERSION = 6
+NAME := ubuntu
+VERSION = previous
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
@@ -31,4 +31,5 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
 		--hostname $(NAME)-old \
-		$(IMAGE) bash || exit 0
+		$(IMAGE) || exit 0
+

@@ -29,13 +29,13 @@ clean:
 	cd shell && make clean
 	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_XBASE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
+	cd $(NAME)-previous && make clean
 	cd $(NAME)-testing && make clean
-	cd $(NAME)-14.04 && make clean
 
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	cd $(NAME)-previous && make pull
 	cd $(NAME)-testing && make pull
-	cd $(NAME)-14.04 && make pull
 
 build-all: build
 	cd builder && make build
@@ -45,8 +45,8 @@ build-all: build
 	cd openvpn && make build
 	cd shell && make build
 	cd wine && make build
+	cd $(NAME)-previous && make build
 	cd $(NAME)-testing && make build
-	cd $(NAME)-14.04 && make build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
