@@ -227,7 +227,16 @@ exec_python() {
             TOOL=`locate_python_tool "$BIN_DIR" "$PY_MAIN"`
             if [ "$TOOL" ]
             then
-                exec $PYTHON $TOOL "$@"
+                case "$TOOL" in
+                *.exe)
+                    exec $PYTHON $TOOL "$@"
+                    ;;
+                esac
+                if [ "`head -1 \"$TOOL\" | grep '#!.*python'`" ]
+                then
+                    exec $PYTHON $TOOL "$@"
+                fi
+                exec $TOOL "$@"
             fi
         fi
         if [ ! "`which \"$PY_MAIN\"`" ]
