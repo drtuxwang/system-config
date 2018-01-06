@@ -223,7 +223,6 @@ exec_python() {
         if [ "$PYEXE" != "$PY_MAIN" ]
         then
             BIN_DIR=`dirname "$PYTHON"`
-            locate_python_tool "$BIN_DIR" "$PY_MAIN"
             TOOL=`locate_python_tool "$BIN_DIR" "$PY_MAIN"`
             if [ "$TOOL" ]
             then
