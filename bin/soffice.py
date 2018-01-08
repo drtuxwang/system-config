@@ -97,12 +97,7 @@ class Main(object):
         self._config()
         self._setenv()
 
-        offline = command_mod.Command('offline', errors='ignore')
-        if offline.is_found():
-            task = subtask_mod.Background(
-                offline.get_cmdline() + self._soffice.get_cmdline())
-        else:
-            task = subtask_mod.Background(self._soffice.get_cmdline())
+        task = subtask_mod.Background(self._soffice.get_cmdline())
         task.run(pattern=self._pattern)
 
 
