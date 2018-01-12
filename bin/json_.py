@@ -7,6 +7,7 @@ import argparse
 import glob
 import json
 import os
+import re
 import shutil
 import signal
 import sys
@@ -84,13 +85,24 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
+    def _split_jsons(text):
+        """
+        Split multiple JSONs in string and return list of JSONs.
+        """
+        text = re.sub('^ *{|} *$', '', text)
+        return ['{%s}' % block for block in re.split('}[ \\n]*{', text)]
+
+    @staticmethod
     def _write_json(file, data):
         tmpfile = file + '-tmp' + str(os.getpid())
-        json_data = json.dumps(data, indent=4, sort_keys=True)
 
         try:
             with open(tmpfile, 'w', newline='\n') as ofile:
-                print(json_data, file=ofile)
+                for block in data:
+                    print(
+                        json.dumps(block, indent=4, sort_keys=True),
+                        file=ofile
+                    )
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
@@ -109,9 +121,13 @@ class Main(object):
         try:
             with open(file) as ifile:
                 if file.endswith('.json'):
-                    data = json.load(ifile)
+                    print('debugX', cls._split_jsons(ifile.read()))
+                    data = [
+                        json.loads(block)
+                        for block in cls._split_jsons(ifile.read())
+                    ]
                 else:
-                    data = yaml.load(ifile)
+                    data = [yaml.load(ifile)]
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "{0:s}" file.'.format(file))
