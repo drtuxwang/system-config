@@ -1,4 +1,4 @@
-1996-2017 By Dr Colin Kong
+1996-2018 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -373,6 +373,9 @@ bin/ogg                Encode OGG audio using avconv (libvorbis)
 bin/ogg.py
 bin/open               Open files using hardwired application mapping
 bin/open.py
+bin/par2               par2 wrapper
+bin/par2.bat
+bin/par2.py
 bin/pause              Pause until user presses <ENTER/RETURN> key
 bin/pause.bat
 bin/pause.py
