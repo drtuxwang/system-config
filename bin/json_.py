@@ -121,7 +121,6 @@ class Main(object):
         try:
             with open(file) as ifile:
                 if file.endswith('.json'):
-                    print('debugX', cls._split_jsons(ifile.read()))
                     data = [
                         json.loads(block)
                         for block in cls._split_jsons(ifile.read())

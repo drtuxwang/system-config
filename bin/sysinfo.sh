@@ -2,10 +2,10 @@
 #
 # System configuration detection tool
 #
-# 1996-2017 By Dr Colin Kong
+# 1996-2018 By Dr Colin Kong
 #
-VERSION=20171104
-RELEASE="2.6.40-18"
+VERSION=20180113
+RELEASE="2.6.40-19"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -30,7 +30,6 @@ if [ "`uname`" = HP-UX ]
 then
     UNIX95=a
 fi
-		echo debugXXX
 
 
 #

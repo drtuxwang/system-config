@@ -94,7 +94,6 @@ class Main(object):
                 par_file = file + '.par2'
                 if file_time != file_mod.FileStat(par_file).get_time():
                     size = file_stat.get_size() // 400 * 4 + 4
-                    print('debugX1', size)
                     task = subtask_mod.Task(cmdline + ['-s' + str(size), file])
                     task.run()
                     if task.get_exitcode() == 0:
