@@ -162,11 +162,22 @@ class Main(object):
         options = Options()
 
         self._md5files = {}
-        self._calc(options, options.get_files())
+        files = []
+        for file in options.get_files():
+            if os.path.isdir(file):
+                files.extend(sorted(
+                    [os.path.join(file, x) for x in os.listdir(file)]
+                ))
+            else:
+                files.append(file)
+        self._calc(options, files)
 
         for files in sorted(self._md5files.values()):
             if len(files) > 1:
-                sorted_files = sorted(files)
+                sorted_files = [
+                    os.path.abspath(file)
+                    for file in sorted(files)
+                ]
                 print('***', command_mod.Command.args2cmd(sorted_files), '***')
                 if options.get_remove_flag():
                     self._remove(sorted_files[1:])

@@ -383,6 +383,9 @@ bin/pbsetup            pbsetup wrapper (allowing non systems port)
 bin/pbsetup.py         (Punk Buster)
 bin/pcheck             Check JPEG picture files
 bin/pcheck.py
+bin/psame              Show picture files with same finger print
+bin/psame.bat
+bin/psame.py
 bin/pcunix.bat         Start PCUNIX on Windows
 bin/pdf                Create PDF file from text/images/postscript/PDF files
 bin/pdf.py

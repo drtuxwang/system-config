@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Parity and repair tool.
+Wrapper for "par2" parity and repair tool.
 """
 
 import argparse
