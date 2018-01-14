@@ -17,6 +17,8 @@ import subtask_mod
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
+IGNORE_EXTENSION = ('fsum', 'md5', 'md5sum', 'par2')
+
 
 class Options(object):
     """
@@ -99,13 +101,15 @@ class Main(object):
             if os.path.isdir(file):
                 cls._par2(cmdline, sorted(glob.glob(os.path.join(file, '*'))))
             elif os.path.isfile(file):
-                if file.endswith('.par2'):
-                    if not os.path.isfile(file[:-5]):
-                        print('\nDeleting old:', file)
-                        try:
-                            os.remove(file)
-                        except OSError:
-                            pass
+                extension = file.rsplit('.', 1)[-1]
+                if extension in IGNORE_EXTENSION:
+                    if extension == '.par2':
+                        if not os.path.isfile(file[:-5]):
+                            print('\nDeleting old:', file)
+                            try:
+                                os.remove(file)
+                            except OSError:
+                                pass
                     continue
 
                 file_stat = file_mod.FileStat(file)
