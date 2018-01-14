@@ -169,6 +169,9 @@ bin/fmod.py
 bin/fmv                Move or rename files
 bin/fmv.bat
 bin/fmv.py
+bin/fpar2              Parity and repair tool
+bin/fpar2.bat
+bin/fpar2.py
 bin/fpeek              Dump the first and last few bytes of a binary file
 bin/fpeek.bat
 bin/fpeek.py
@@ -373,9 +376,6 @@ bin/ogg                Encode OGG audio using avconv (libvorbis)
 bin/ogg.py
 bin/open               Open files using hardwired application mapping
 bin/open.py
-bin/par2               par2 wrapper
-bin/par2.bat
-bin/par2.py
 bin/pause              Pause until user presses <ENTER/RETURN> key
 bin/pause.bat
 bin/pause.py

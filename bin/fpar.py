@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-Wrapper for "par2" command
+Parity and repair tool.
 """
 
+import argparse
 import glob
 import os
 import shutil
@@ -30,7 +31,7 @@ class Options(object):
         """
         Return list of file.
         """
-        return self._files
+        return self._args.files
 
     def get_par2(self):
         """
@@ -38,18 +39,27 @@ class Options(object):
         """
         return self._par2
 
+    def _parse_args(self, args):
+        parser = argparse.ArgumentParser(
+            description='Parity and repair tool.')
+
+        parser.add_argument(
+            'files',
+            nargs='*',
+            metavar='file',
+            help='File or directory.'
+        )
+
+        self._args = parser.parse_args(args)
+
     def parse(self, args):
         """
         Parse arguments
         """
         self._par2 = command_mod.Command('par2', errors='stop')
-
-        if len(args) == 1 or not os.path.exists(args[1]):
-            self._par2.set_args(args[1:])
-            subtask_mod.Exec(self._par2.get_cmdline()).run()
-
         self._par2.set_args(['c', '-n1', '-r1'])
-        self._files = args[1:]
+
+        self._parse_args(args[1:])
 
 
 class Main(object):
@@ -88,7 +98,16 @@ class Main(object):
         for file in files:
             if os.path.isdir(file):
                 cls._par2(cmdline, sorted(glob.glob(os.path.join(file, '*'))))
-            elif os.path.isfile(file) and not file.endswith('.par2'):
+            elif os.path.isfile(file):
+                if file.endswith('.par2'):
+                    if not os.path.isfile(file[:-5]):
+                        print('\nDeleting old:', file)
+                        try:
+                            os.remove(file)
+                        except OSError:
+                            pass
+                    continue
+
                 file_stat = file_mod.FileStat(file)
                 file_time = file_stat.get_time()
                 par_file = file + '.par2'
