@@ -96,35 +96,35 @@ class Main(object):
             sys.argv = argv
 
     @classmethod
-    def _par2(cls, cmdline, files):
-        for file in files:
-            if os.path.isdir(file):
-                cls._par2(cmdline, sorted(glob.glob(os.path.join(file, '*'))))
-            elif os.path.isfile(file):
-                extension = file.rsplit('.', 1)[-1]
-                if extension in IGNORE_EXTENSION:
-                    if extension == '.par2':
-                        if not os.path.isfile(file[:-5]):
-                            print('\nDeleting old:', file)
-                            try:
-                                os.remove(file)
-                            except OSError:
-                                pass
-                    continue
-
-                file_stat = file_mod.FileStat(file)
-                file_time = file_stat.get_time()
-                par_file = file + '.par2'
-                if file_time != file_mod.FileStat(par_file).get_time():
-                    size = file_stat.get_size() // 400 * 4 + 4
-                    task = subtask_mod.Task(cmdline + ['-s' + str(size), file])
-                    task.run()
-                    if task.get_exitcode() == 0:
+    def _par2(cls, cmdline, file):
+        if os.path.isdir(file):
+            for file2 in sorted(glob.glob(os.path.join(file, '*'))):
+                cls._par2(cmdline, file2)
+        elif os.path.isfile(file):
+            extension = file.rsplit('.', 1)[-1]
+            if extension in IGNORE_EXTENSION:
+                if extension == '.par2':
+                    if not os.path.isfile(file[:-5]):
+                        print('\nDeleting old:', file)
                         try:
-                            shutil.move(file + '.vol0+1.par2', par_file)
-                            os.utime(par_file, (file_time, file_time))
+                            os.remove(file)
                         except OSError:
                             pass
+                return
+
+            file_stat = file_mod.FileStat(file)
+            file_time = file_stat.get_time()
+            par_file = file + '.par2'
+            if file_time != file_mod.FileStat(par_file).get_time():
+                size = file_stat.get_size() // 400 * 4 + 4
+                task = subtask_mod.Task(cmdline + ['-s' + str(size), file])
+                task.run()
+                if task.get_exitcode() == 0:
+                    try:
+                        shutil.move(file + '.vol0+1.par2', par_file)
+                        os.utime(par_file, (file_time, file_time))
+                    except OSError:
+                        pass
 
     @classmethod
     def run(cls):
@@ -133,7 +133,9 @@ class Main(object):
         """
         options = Options()
 
-        cls._par2(options.get_par2().get_cmdline(), options.get_files())
+        cmdline = options.get_par2().get_cmdline()
+        for file in options.get_files():
+            cls._par2(cmdline, file)
 
 
 if __name__ == '__main__':
