@@ -106,10 +106,17 @@ class Main(object):
             findimagedupes.append_arg('-R')
         findimagedupes.extend_args(options.get_files())
 
-        task = subtask_mod.Batch(findimagedupes.get_cmdline())
+        files = findimagedupes.get_cmdline()
+        task = subtask_mod.Batch(files)
         task.run()
-        for line in sorted(task.get_output()):
-            print('***', line, '***')
+
+        cwd = os.getcwd()
+        for line in task.get_output():
+            sorted_files = sorted([
+                os.path.relpath('/' + file, cwd)
+                for file in (' ' + line).split(' /')[1:]
+            ])
+            print('***', command_mod.Command.args2cmd(sorted_files), '***')
 
 
 if __name__ == '__main__':
