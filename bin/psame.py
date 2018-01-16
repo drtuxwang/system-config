@@ -9,11 +9,15 @@ import os
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+import PIL
+import imagehash
 
-if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+import command_mod
+
+if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+
+MAX_DISTANCE_IDENTICAL = 21
 
 
 class Options(object):
@@ -94,29 +98,72 @@ class Main(object):
                     argv.append(arg)
             sys.argv = argv
 
+    def _ahash_check(self, options, files):
+        for file in files:
+            if os.path.isdir(file):
+                if not os.path.islink(file) and options.get_recursive_flag():
+                    try:
+                        self._ahash_check(options, sorted([
+                            os.path.join(file, x)
+                            for x in os.listdir(file)
+                        ]))
+                    except PermissionError:
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot open "' +
+                            file + '" directory.'
+                        )
+            elif os.path.isfile(file):
+                try:
+                    ahash = imagehash.average_hash(PIL.Image.open(file))
+                except OSError:
+                    continue
+                if ahash in self._ahashfiles:
+                    self._ahashfiles[ahash].append(file)
+                else:
+                    self._ahashfiles[ahash] = [file]
+
     @staticmethod
-    def run():
+    def _phash_check(files):
+        phashes = {
+            file: imagehash.phash(PIL.Image.open(file))
+            for file in files
+        }
+
+        sorted_files = files
+        for i, file1 in enumerate(sorted_files):
+            same_files = []
+            phash = phashes[file1]
+            for file2 in sorted_files[i+1:]:
+                if phashes[file2] - phash <= MAX_DISTANCE_IDENTICAL:
+                    same_files.append(file2)
+            if same_files:
+                return [file1] + same_files
+        return []
+
+    def run(self):
         """
         Start program
         """
         options = Options()
 
-        findimagedupes = command_mod.Command('findimagedupes', errors='stop')
-        if options.get_recursive_flag():
-            findimagedupes.append_arg('-R')
-        findimagedupes.extend_args(options.get_files())
+        self._ahashfiles = {}
+        files = []
+        for file in options.get_files():
+            if os.path.isdir(file):
+                files.extend(sorted(
+                    [os.path.join(file, x) for x in os.listdir(file)]
+                ))
+            else:
+                files.append(file)
+        self._ahash_check(options, files)
 
-        files = findimagedupes.get_cmdline()
-        task = subtask_mod.Batch(files)
-        task.run()
-
-        cwd = os.getcwd()
-        for line in task.get_output():
-            sorted_files = sorted([
-                os.path.relpath('/' + file, cwd)
-                for file in (' ' + line).split(' /')[1:]
-            ])
-            print('***', command_mod.Command.args2cmd(sorted_files), '***')
+        for files in sorted(self._ahashfiles.values()):
+            if len(files) > 1:
+                sorted_files = self._phash_check(files)
+                if sorted_files:
+                    print('*** {0:s} ***'.format(
+                        command_mod.Command.args2cmd(sorted_files)
+                    ))
 
 
 if __name__ == '__main__':

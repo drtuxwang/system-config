@@ -11,6 +11,7 @@ docker-compose>=1.13.0
 filemagic>=1.6
 Flask>=0.11.1
 Glances>=2.8.8
+ImageHash>=3.7
 ipdb>=0.9.4
 ipython>=5.2.2
 jenkins-job-builder>=1.6.2
