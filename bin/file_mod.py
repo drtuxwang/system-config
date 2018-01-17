@@ -13,8 +13,8 @@ import time
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
-RELEASE = '2.2.0'
-VERSION = 20170829
+RELEASE = '2.2.1'
+VERSION = 20180117
 
 
 class FileStat(object):
@@ -144,7 +144,7 @@ class FileUtil(object):
         nfile = ''
         nfile_time = -1
         for file in files:
-            file_time = FileStat(file).get_time()
+            file_time = os.path.getmtime(file)
             if file_time > nfile_time:
                 nfile = file
                 nfile_time = file_time
@@ -163,7 +163,7 @@ class FileUtil(object):
         nfile = ''
         nfile_time = float('inf')
         for file in files:
-            file_time = FileStat(file).get_time()
+            file_time = os.path.getmtime(file)
             if file_time < nfile_time:
                 nfile = file
                 nfile_time = file_time

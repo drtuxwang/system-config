@@ -11,7 +11,6 @@ import sys
 import time
 
 import command_mod
-import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -335,7 +334,7 @@ class Main(object):
         wodim.set_args(['-v', '-shorttrack', '-eject'])
 
         # Pad to avoid dd read problem
-        if file_mod.FileStat(file).get_size() < 2097152:
+        if os.path.getsize(file) < 2097152:
             wodim.append_arg('-pad')
         wodim.set_args([
             'dev=' + self._device,

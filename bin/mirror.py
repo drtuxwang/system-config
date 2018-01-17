@@ -226,24 +226,21 @@ class Main(object):
                     target_file + '" link.'
                 )
         elif os.path.isfile(target_file):
-            source_file_stat = file_mod.FileStat(source_file)
-            target_file_stat = file_mod.FileStat(target_file)
-            if source_file_stat.get_size() == target_file_stat.get_size():
+            if os.path.getsize(target_file) == os.path.getsize(target_file):
                 # Allow FAT16/FAT32/NTFS 1h daylight saving
                 # and 1 sec rounding error
                 if abs(
-                        source_file_stat.get_time() -
-                        target_file_stat.get_time()
+                        os.path.getmtime(source_file) -
+                        os.path.getmtime(target_file)
                 ) in (0, 1, 3599, 3600, 3601):
                     return
-            self._size += int((source_file_stat.get_size() + 1023) / 1024)
+            self._size += int((os.path.getsize(source_file) + 1023) / 1024)
             print(
                 '[', self._size, ',', int(time.time()) - self._start,
                 '] Updating "', target_file, '" file...', sep=''
             )
         else:
-            source_file_stat = file_mod.FileStat(source_file)
-            self._size += int((source_file_stat.get_size() + 1023) / 1024)
+            self._size += int((os.path.getsize(source_file) + 1023) / 1024)
             print(
                 '[', self._size, ',', int(time.time()) - self._start,
                 '] Creating "', target_file, '" file...', sep=''
@@ -266,8 +263,8 @@ class Main(object):
 
     @staticmethod
     def _mirror_directory_time(source_dir, target_dir):
-        source_time = file_mod.FileStat(source_dir).get_time()
-        target_time = file_mod.FileStat(target_dir).get_time()
+        source_time = os.path.getmtime(source_dir)
+        target_time = os.path.getmtime(target_dir)
         if source_time != target_time:
             try:
                 os.utime(target_dir, (source_time, source_time))

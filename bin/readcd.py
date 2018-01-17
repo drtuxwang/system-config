@@ -12,7 +12,6 @@ import sys
 import time
 
 import command_mod
-import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -305,12 +304,12 @@ class Main(object):
                 sys.argv[0] + ': Cannot find CD/DVD media. '
                 'Please check drive.'
             )
-        pad = int(blocks * 2048 - file_mod.FileStat(file).get_size())
+        pad = int(blocks * 2048 - os.path.getsize(file))
         if pad > 0 and pad < 16777216:
             print(pad, 'bytes flushing from CD/DVD prefetch bug...')
             with open(file, 'ab') as ofile:
                 ofile.write(b"\0" * pad)
-        self._isosize(file, file_mod.FileStat(file).get_size())
+        self._isosize(file, os.path.getsize(file))
 
     @staticmethod
     def _isosize(image, size):

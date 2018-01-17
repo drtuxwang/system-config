@@ -9,8 +9,6 @@ import os
 import signal
 import sys
 
-import file_mod
-
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
@@ -105,8 +103,7 @@ class Main(object):
                 if os.path.isdir(file):
                     size += self._usage(options, file)
                 else:
-                    size += int(
-                        (file_mod.FileStat(file).get_size() + 1023) / 1024)
+                    size += int((os.path.getsize(file) + 1023) / 1024)
         if not options.get_summary_flag():
             print("{0:7d} {1:s}".format(size, directory))
         return size
@@ -126,8 +123,7 @@ class Main(object):
                     if options.get_summary_flag():
                         print("{0:7d} {1:s}".format(size, file))
                 elif os.path.isfile(file):
-                    size = int(
-                        (file_mod.FileStat(file).get_size() + 1023) / 1024)
+                    size = int((os.path.getsize(file) + 1023) / 1024)
                     print("{0:7d} {1:s}".format(size, file))
                 else:
                     print("{0:7d} {1:s}".format(0, file))

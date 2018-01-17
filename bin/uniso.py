@@ -10,7 +10,6 @@ import signal
 import sys
 
 import command_mod
-import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -196,7 +195,7 @@ class Main(object):
                         str(task.get_exitcode()) + ' received from "' +
                         task.get_file() + '".'
                     )
-                self._isosize(image, file_mod.FileStat(image).get_size())
+                self._isosize(image, os.path.getsize(image))
 
 
 if __name__ == '__main__':

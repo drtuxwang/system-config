@@ -9,8 +9,6 @@ import os
 import signal
 import sys
 
-import file_mod
-
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
@@ -90,7 +88,7 @@ class Main(object):
                     ])
                 except PermissionError:
                     pass
-            elif file_mod.FileStat(file).get_size() == 0:
+            elif os.path.getsize(file) == 0:
                 print(file)
 
     def run(self):

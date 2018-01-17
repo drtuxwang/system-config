@@ -9,8 +9,6 @@ import os
 import signal
 import sys
 
-import file_mod
-
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
@@ -126,8 +124,9 @@ class Main(object):
         try:
             with open(options.get_file(), 'rb') as ifile:
                 for part in range(int(
-                        file_mod.FileStat(options.get_file()).get_size(
-                            )/options.get_max_size() + 1)):
+                        os.path.getsize(options.get_file()) /
+                        options.get_max_size() + 1
+                )):
                     try:
                         file = options.get_file(
                             ) + '.' + str(part + 1).zfill(3)

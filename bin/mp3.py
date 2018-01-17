@@ -11,7 +11,6 @@ import signal
 import sys
 
 import command_mod
-import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -406,7 +405,7 @@ class Media(object):
                 self._file,
                 self._type,
                 self._length,
-                str(file_mod.FileStat(self._file).get_size())
+                str(os.path.getsize(self._file))
             ))
             for stream, information in self.get_stream():
                 print(self._file + '[' + str(stream) + '] =', information)

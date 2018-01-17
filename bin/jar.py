@@ -9,7 +9,6 @@ import signal
 import sys
 
 import command_mod
-import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -110,8 +109,7 @@ class Main(object):
                 '" Java source file.'
             )
         if os.path.isfile(target):
-            if file_mod.FileStat(
-                    source).get_time() > file_mod.FileStat(target).get_time():
+            if os.path.getmtime(source) > os.path.getmtime(target):
                 try:
                     os.remove(target)
                 except OSError:

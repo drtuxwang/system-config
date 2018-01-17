@@ -185,7 +185,7 @@ class Main(object):
                     '-no-emul-boot',
                     '-boot-info-table'
                 ])
-            elif file_mod.FileStat(bootimg).get_size() == 2048:
+            elif os.path.getsize(bootimg) == 2048:
                 self._genisoimage.extend_args([
                     '-eltorito-boot',
                     os.path.basename(bootimg),
@@ -363,7 +363,7 @@ class Main(object):
                     sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                     ' received from "' + task.get_file() + '".'
                 )
-            self._isosize(image, file_mod.FileStat(image).get_size())
+            self._isosize(image, os.path.getsize(image))
             if options.get_md5_flag():
                 print("Creating MD5 check sum of ISO file.")
                 md5sum = self._md5sum(image)

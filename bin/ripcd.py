@@ -11,7 +11,6 @@ import signal
 import sys
 
 import command_mod
-import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -269,7 +268,7 @@ class Main(object):
     @staticmethod
     def _pregap(wavfile):
         # 1s = 176400 bytes
-        size = file_mod.FileStat(wavfile).get_size()
+        size = os.path.getsize(wavfile)
         with open(wavfile, 'rb+') as ifile:
             ifile.seek(size - 2097152)
             data = ifile.read(2097152)

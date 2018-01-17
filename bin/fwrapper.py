@@ -9,7 +9,6 @@ import os
 import signal
 import sys
 
-import file_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
@@ -103,7 +102,7 @@ class Main(object):
                     print('exec "$MYDIR/' + file + '" "$@"', file=ofile)
 
             os.chmod(link, int('755', 8))
-            file_time = file_mod.FileStat(file).get_time()
+            file_time = os.path.getmtime(file)
             os.utime(link, (file_time, file_time))
         except OSError:
             raise SystemExit(

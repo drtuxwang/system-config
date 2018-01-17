@@ -11,7 +11,6 @@ import signal
 import sys
 
 import command_mod
-import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -112,11 +111,10 @@ class Main(object):
                             pass
                 return
 
-            file_stat = file_mod.FileStat(file)
-            file_time = file_stat.get_time()
+            file_time = os.path.getmtime(file)
             par_file = file + '.par2'
-            if file_time != file_mod.FileStat(par_file).get_time():
-                size = file_stat.get_size() // 400 * 4 + 4
+            if file_time != os.path.getmtime(par_file):
+                size = os.path.getsize(file) // 400 * 4 + 4
                 task = subtask_mod.Task(cmdline + ['-s' + str(size), file])
                 task.run()
                 if task.get_exitcode() == 0:

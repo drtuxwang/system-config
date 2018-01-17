@@ -201,7 +201,7 @@ class Main(object):
         if check == 'skip':
             return
         elif 'Accept-Ranges' in conn.info() and check == 'resume':
-            tmpsize = file_mod.FileStat(file + '.part').get_size()
+            tmpsize = os.path.getsize(file + '.part')
             req = urllib.request.Request(url, headers={
                 'Range': 'bytes='+str(tmpsize)+'-',
                 'User-Agent': config_mod.Config().get('user_agent'),
