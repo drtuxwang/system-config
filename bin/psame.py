@@ -118,9 +118,9 @@ class Main(object):
                 except OSError:
                     continue
                 if ahash in self._ahashfiles:
-                    self._ahashfiles[ahash].append(file)
+                    self._ahashfiles[ahash].add(file)
                 else:
-                    self._ahashfiles[ahash] = [file]
+                    self._ahashfiles[ahash] = set([file])
 
     @staticmethod
     def _phash_check(files):
@@ -129,11 +129,10 @@ class Main(object):
             for file in files
         }
 
-        sorted_files = files
-        for i, file1 in enumerate(sorted_files):
+        for i, file1 in enumerate(files):
             same_files = []
             phash = phashes[file1]
-            for file2 in sorted_files[i+1:]:
+            for file2 in files[i+1:]:
                 if phashes[file2] - phash <= MAX_DISTANCE_IDENTICAL:
                     same_files.append(file2)
             if same_files:
@@ -159,7 +158,7 @@ class Main(object):
 
         for files in sorted(self._ahashfiles.values()):
             if len(files) > 1:
-                sorted_files = self._phash_check(files)
+                sorted_files = self._phash_check(sorted(files))
                 if sorted_files:
                     print('*** {0:s} ***'.format(
                         command_mod.Command.args2cmd(sorted_files)

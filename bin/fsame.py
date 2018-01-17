@@ -126,9 +126,9 @@ class Main(object):
                     raise SystemExit(
                         sys.argv[0] + ': Cannot read "' + file + '" file.')
                 if md5sum in self._md5files:
-                    self._md5files[md5sum].append(file)
+                    self._md5files[md5sum].add(file)
                 else:
-                    self._md5files[md5sum] = [file]
+                    self._md5files[md5sum] = set([file])
 
     @staticmethod
     def _md5sum(file):
