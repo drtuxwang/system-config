@@ -226,7 +226,7 @@ class Main(object):
                     target_file + '" link.'
                 )
         elif os.path.isfile(target_file):
-            if os.path.getsize(target_file) == os.path.getsize(target_file):
+            if os.path.getsize(source_file) == os.path.getsize(target_file):
                 # Allow FAT16/FAT32/NTFS 1h daylight saving
                 # and 1 sec rounding error
                 if abs(
