@@ -113,7 +113,10 @@ class Main(object):
 
             file_time = os.path.getmtime(file)
             par_file = file + '.par2'
-            if file_time != os.path.getmtime(par_file):
+            if (
+                    not os.path.isfile(par_file) or
+                    file_time != os.path.getmtime(par_file)
+            ):
                 size = os.path.getsize(file) // 400 * 4 + 4
                 task = subtask_mod.Task(cmdline + ['-s' + str(size), file])
                 task.run()
