@@ -229,10 +229,10 @@ class Main(object):
             if os.path.getsize(source_file) == os.path.getsize(target_file):
                 # Allow FAT16/FAT32/NTFS 1h daylight saving
                 # and 1 sec rounding error
-                if abs(
+                if int(abs(
                         os.path.getmtime(source_file) -
                         os.path.getmtime(target_file)
-                ) in (0, 1, 3599, 3600, 3601):
+                )) in (0, 1, 3599, 3600, 3601):
                     return
             self._size += int((os.path.getsize(source_file) + 1023) / 1024)
             print(
