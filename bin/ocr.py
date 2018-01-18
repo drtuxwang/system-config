@@ -11,6 +11,7 @@ import signal
 import sys
 
 import command_mod
+import config_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -118,13 +119,14 @@ class Main(object):
 
         tmpfile = os.sep + os.path.join(
             'tmp', 'ocr-' + getpass.getuser() + str(os.getpid()) + '.tif')
+        images_extensions = config_mod.Config().get('image_extensions')
+
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" image file.')
-            ext = file.split('.')[-1].lower()
-            name = file.rsplit('.', 1)[0]
-            if ext in ('bmp', 'jpg', 'jpeg', 'png', 'pcx'):
+            name, ext = os.path.splitext(file.lower())
+            if ext in images_extensions:
                 print(
                     'Converting "' + file + '" to "' + name + '.txt' + '"...')
                 task = subtask_mod.Task(

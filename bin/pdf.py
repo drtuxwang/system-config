@@ -15,6 +15,7 @@ import textwrap
 import time
 
 import command_mod
+import config_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
@@ -357,8 +358,7 @@ class Main(object):
             '-sPAPERSIZE=' + options.get_paper().lower()
         ])
 
-        images_exts = {
-            'bmp', 'gif', 'jpeg', 'jpg', 'pcx', 'png', 'svg', 'tif', 'tiff'}
+        images_extensions = config_mod.Config().get('image_extensions')
 
         args = ['-sOutputFile=' + options.get_archive(), '-c', '.setpdfwrite']
         for file in options.get_files():
@@ -372,12 +372,12 @@ class Main(object):
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
-            ext = file.split('.')[-1].lower()
-            if ext == 'pdf':
+            _, ext = os.path.splitext(file.lower())
+            if ext == '.pdf':
                 args.extend(['-f', file])
             else:
                 self._tmpfile = tmpfile + str(len(self._tempfiles) + 1)
-                if ext in images_exts:
+                if ext in images_extensions:
                     self._image(file)
                     self._tempfiles.append(self._tmpfile + '.jpg')
                 elif ext in ('ps', 'eps'):

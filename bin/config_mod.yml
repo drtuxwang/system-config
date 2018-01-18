@@ -223,15 +223,15 @@ bindings:
 parameters:
   homepage: http://www.drtuxwang.talktalk.net/bookmarks.xhtml
   image_extensions:
-  - bmp
-  - gif
-  - jpeg
-  - jpg
-  - pcx
-  - png
-  - svg
-  - tif
-  - tiff
+  - .bmp
+  - .gif
+  - .jpeg
+  - .jpg
+  - .pcx
+  - .png
+  - .svg
+  - .tif
+  - .tiff
   user_agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)
     Chrome/63.0.3239.84 Safari/537.36
   web_mail: https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com

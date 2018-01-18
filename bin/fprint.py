@@ -404,12 +404,12 @@ class Main(object):
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
-            ext = file.split('.')[-1].lower()
+            _, ext = os.path.splitext(file.lower())
             if ext in images_extensions:
                 message = self._image(file)
-            elif ext == 'pdf':
+            elif ext == '.pdf':
                 message = self._pdf(file)
-            elif ext in ('ps', 'eps'):
+            elif ext in ('.ps', '.eps'):
                 message = self._postscript(file)
             else:
                 message = self._text(options, file)
