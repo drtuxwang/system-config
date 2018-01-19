@@ -221,7 +221,7 @@ class WorkQueue(object):
                 ssh.close()
             except SecureShellError as exception:
                 message = str(exception)
-                logging.warning(host + ': ' + message)
+                logging.warning('\033[33m%s: %s\033[0m', host, message)
             else:
                 message = 'ok'
             print("[{0:d}/{1:d},{2:d}] {3:s}: {4:s}".format(
@@ -306,13 +306,13 @@ class Main(object):
                 os.mkdir(directory)
             except OSError:
                 message = 'Cannot create "' + directory + '" directory.'
-                logging.error(message)
+                logging.error('\033[31m%s\033[0m', message)
                 raise SystemExit(sys.argv[0] + ': ' + message)
         try:
             os.chdir(directory)
         except OSError:
             message = 'Cannot change to "' + directory + '" directory.'
-            logging.error(message)
+            logging.error('\033[31m%s\033[0m', message)
             raise SystemExit(sys.argv[0] + ': ' + message)
 
     def run(self):
