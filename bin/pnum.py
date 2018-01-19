@@ -166,15 +166,15 @@ class Main(object):
                 os.chdir(directory)
                 file_stats = []
                 for file in glob.glob('*.*'):
-                    if file.split('.')[-1].lower() in images_extensions:
+                    if os.path.splitext(file)[1].lower() in images_extensions:
                         file_stats.append(file_mod.FileStat(file))
                 newfiles = []
                 mypid = os.getpid()
                 for file_stat in self._sorted(options, file_stats):
-                    newfile = 'pic{0:05d}.{1:s}'.format(
+                    newfile = 'pic{0:05d}{1:s}'.format(
                         number,
-                        file_stat.get_file().split('.')[-1].lower(
-                            ).replace('jpeg', 'jpg'))
+                        os.path.splitext(file_stat.get_file())[1].lower(
+                            ).replace('.jpeg', '.jpg'))
                     newfiles.append(newfile)
                     try:
                         shutil.move(

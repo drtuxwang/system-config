@@ -379,8 +379,7 @@ class Encoder(object):
         image_extensions = config_mod.Config().get('image_extensions')
 
         for file in files:
-            extension = file.split('.')[-1]
-            if extension not in image_extensions:
+            if os.path.splitext(file)[1] not in image_extensions:
                 return False
         return True
 

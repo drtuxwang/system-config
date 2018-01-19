@@ -169,7 +169,7 @@ bin/fmod.py
 bin/fmv                Move or rename files
 bin/fmv.bat
 bin/fmv.py
-bin/fpar2              Parity and repair tool
+bin/fpar2              Calculate PAR2 parity checksum and repair tool.
 bin/fpar2.bat
 bin/fpar2.py
 bin/fpeek              Dump the first and last few bytes of a binary file
@@ -442,7 +442,10 @@ bin/youtube-dl
 bin/youtube-dl.bat
 bin/offline            Run a command without network access
 bin/offline.py
-bin/pidgin             pidgin wrapper (allowing non systems port)
+bin/par2               par2 wrapper (allowing non systems port)
+bin/par2.bat
+bin/par2.py
+bin/pidgin             Pidgin wrapper (allowing non systems port)
 bin/pidgin.bat
 bin/pidgin.py
 bin/play               Play multimedia file/URL

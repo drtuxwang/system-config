@@ -84,8 +84,11 @@ class Gallery(object):
         images_extensions = config_mod.Config().get('image_extensions')
 
         try:
-            self._files = [x for x in sorted(os.listdir(
-                directory)) if x.split('.')[-1].lower() in images_extensions]
+            self._files = [
+                x
+                for x in sorted(os.listdir(directory))
+                if os.path.splitext(x)[1].lower() in images_extensions
+            ]
         except PermissionError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot open "' + directory + '" directory.')

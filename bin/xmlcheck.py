@@ -156,7 +156,7 @@ class Main(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot open "' + file + '" XML file.')
             try:
-                if file.split('.')[-1] in ('htm', 'html', 'xhtml'):
+                if os.path.splitext(file)[1] in ('.htm', '.html', '.xhtml'):
                     # Workaround for bug in xml.sax call to urllib
                     # requiring 'http_proxy'
                     self._fixhtml(file)

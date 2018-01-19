@@ -100,7 +100,7 @@ class Main(object):
             if os.path.isdir(directory):
                 files = []
                 for file in glob.glob(os.path.join(directory, '*.*')):
-                    if file.split('.')[-1].lower() in ('jpg', 'jpeg'):
+                    if os.path.splitext(file)[1].lower() in ('.jpg', '.jpeg'):
                         files.append(file)
                 if files:
                     task = subtask_mod.Batch(jpeginfo.get_cmdline() + files)

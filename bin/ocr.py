@@ -125,10 +125,10 @@ class Main(object):
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" image file.')
-            name, ext = os.path.splitext(file.lower())
+            root, ext = os.path.splitext(file.lower())
             if ext in images_extensions:
                 print(
-                    'Converting "' + file + '" to "' + name + '.txt' + '"...')
+                    'Converting "' + file + '" to "' + root + '.txt' + '"...')
                 task = subtask_mod.Task(
                     convert.get_cmdline() + [file, tmpfile])
                 task.run()
@@ -138,15 +138,15 @@ class Main(object):
                         str(task.get_exitcode()) + ' received from "' +
                         task.get_file() + '".'
                     )
-                self._ocr(tmpfile, name)
+                self._ocr(tmpfile, root)
                 try:
                     os.remove(tmpfile)
                 except OSError:
                     pass
             elif ext in ('tif', 'tiff'):
                 print(
-                    'Converting "' + file + '" to "' + name + '.txt' + '"...')
-                self._ocr(file, name)
+                    'Converting "' + file + '" to "' + root + '.txt' + '"...')
+                self._ocr(file, root)
             else:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot OCR non image file "' +

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "par2" parity and repair tool.
+Calculate PAR2 parity and repair tool.
 """
 
 import argparse
@@ -16,7 +16,7 @@ import subtask_mod
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-IGNORE_EXTENSION = ('fsum', 'md5', 'md5sum', 'par2')
+IGNORE_EXTENSION = ('.fsum', '.md5', '.md5sum', '.par2')
 
 
 class Options(object):
@@ -27,6 +27,12 @@ class Options(object):
     def __init__(self):
         self._args = None
         self.parse(sys.argv)
+
+    def get_check_flag(self):
+        """
+        Return check flag.
+        """
+        return self._args.check_flag
 
     def get_files(self):
         """
@@ -45,6 +51,12 @@ class Options(object):
             description='Parity and repair tool.')
 
         parser.add_argument(
+            '-c',
+            dest='check_flag',
+            action='store_true',
+            help='Check and repair files.'
+        )
+        parser.add_argument(
             'files',
             nargs='*',
             metavar='file',
@@ -58,7 +70,6 @@ class Options(object):
         Parse arguments
         """
         self._par2 = command_mod.Command('par2', errors='stop')
-        self._par2.set_args(['c', '-n1', '-r1'])
 
         self._parse_args(args[1:])
 
@@ -95,15 +106,19 @@ class Main(object):
             sys.argv = argv
 
     @classmethod
-    def _par2(cls, cmdline, file):
+    def _create(cls, cmdline, file):
         if os.path.isdir(file):
-            for file2 in sorted(glob.glob(os.path.join(file, '*'))):
-                cls._par2(cmdline, file2)
+            for file2 in sorted(
+                    glob.glob(os.path.join(file, '..*.par2')) +
+                    glob.glob(os.path.join(file, '*'))
+            ):
+                cls._create(cmdline, file2)
         elif os.path.isfile(file):
-            extension = file.rsplit('.', 1)[-1]
-            if extension in IGNORE_EXTENSION:
-                if extension == '.par2':
-                    if not os.path.isfile(file[:-5]):
+            directory, name = os.path.split(file)
+            root, ext = os.path.splitext(name)
+            if ext in IGNORE_EXTENSION:
+                if ext == '.par2'and root.startswith('..'):
+                    if not os.path.isfile(os.path.join(directory, root[2:])):
                         print('\nDeleting old:', file)
                         try:
                             os.remove(file)
@@ -112,20 +127,41 @@ class Main(object):
                 return
 
             file_time = os.path.getmtime(file)
-            par_file = file + '.par2'
+            par_file = os.path.join(directory, '..{0}.par2'.format(name))
             if (
                     not os.path.isfile(par_file) or
                     file_time != os.path.getmtime(par_file)
             ):
                 size = os.path.getsize(file) // 400 * 4 + 4
-                task = subtask_mod.Task(cmdline + ['-s' + str(size), file])
+                task = subtask_mod.Task(cmdline + [
+                    '-s'+str(size),
+                    '-a'+par_file,
+                    file
+                ])
                 task.run()
                 if task.get_exitcode() == 0:
                     try:
-                        shutil.move(file + '.vol0+1.par2', par_file)
+                        shutil.move(os.path.join(
+                            directory,
+                            '..{0:s}.vol0+1.par2'.format(name)
+                        ), par_file)
                         os.utime(par_file, (file_time, file_time))
                     except OSError:
                         pass
+
+    @classmethod
+    def _repair(cls, cmdline, file):
+        if os.path.isdir(file):
+            for file2 in sorted(glob.glob(os.path.join(file, '*'))):
+                cls._repair(cmdline, file2)
+        elif os.path.isfile(file):
+            par_file = '..{0:s}.par2'.format(file)
+            if (
+                    os.path.isfile(par_file) and
+                    os.path.getmtime(file) == os.path.getmtime(par_file)
+            ):
+                task = subtask_mod.Task(cmdline + [par_file])
+                task.run()
 
     @classmethod
     def run(cls):
@@ -135,8 +171,14 @@ class Main(object):
         options = Options()
 
         cmdline = options.get_par2().get_cmdline()
-        for file in options.get_files():
-            cls._par2(cmdline, file)
+        if options.get_check_flag():
+            cmdline.append('r')
+            for file in options.get_files():
+                cls._repair(cmdline, file)
+        else:
+            cmdline.extend(['c', '-n1', '-r1'])
+            for file in options.get_files():
+                cls._create(cmdline, file)
 
 
 if __name__ == '__main__':

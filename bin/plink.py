@@ -103,7 +103,7 @@ class Main(object):
 
         for directory in options.get_directories():
             for file in sorted(glob.glob(os.path.join(directory, '*'))):
-                if file.split('.')[-1].lower() in images_extensions:
+                if os.path.splitext(file)[1].lower() in images_extensions:
                     link = os.path.basename(
                         directory + '_' + os.path.basename(file))
                     if not os.path.islink(link):

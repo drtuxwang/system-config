@@ -137,7 +137,7 @@ class Main(object):
 
         for directory in options.get_directories():
             for file in sorted(glob.glob(os.path.join(directory, '*'))):
-                if file.split('.')[-1].lower() in images_extensions:
+                if os.path.splitext(file)[1].lower() in images_extensions:
                     ix_size, iy_size = self._imagesize(file)
                     imegs = ix_size * iy_size / 1000000
                     print("{0:s}: {1:d} x {2:d} ({3:4.2f})".format(
