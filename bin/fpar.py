@@ -138,7 +138,10 @@ class Main(object):
                     '-a'+par_file,
                     file
                 ])
-                task.run(pattern='^$')
+                task.run(pattern='^$', replace=(
+                    'Opening: ',
+                    'Opening: {0:s}{1:s}'.format(directory, os.sep)
+                ))
                 if task.get_exitcode() == 0:
                     try:
                         shutil.move(os.path.join(
@@ -162,7 +165,10 @@ class Main(object):
                     os.path.getmtime(file) == os.path.getmtime(par_file)
             ):
                 task = subtask_mod.Task(cmdline + [par_file])
-                task.run(pattern='^$|^Loading')
+                task.run( pattern='^$|^Loading', replace=(
+                    'Target: "',
+                    'Target: {0:s}{1:s}'.format(directory, os.sep)
+                ))
 
     @classmethod
     def run(cls):
