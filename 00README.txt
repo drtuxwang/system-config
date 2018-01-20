@@ -894,17 +894,18 @@ kubernetes/ubuntu/ubuntu-svc.yml
 
 python/simple-cython/Makefile                     Simple Cython example
 python/simple-cython/cython_example.pyx
+python/simple-cython/run.py
 python/simple-flask/Makefile                      Simple Flask demo
-python/simple-flask/RUN
 python/simple-flask/simple_flask.py
 python/simple-flask/templates/hello.html
 python/simple-package/Makefile                    Simple Egg & WHL package
-python/simple-package/RUN
+python/simple-package/run.py
 python/simple-package/setup.py
 python/simple-package/hello/__init__.py
 python/simple-package/hello/message.py
-python/simple-tornado/tornado_client.py           Tornado web client example
-python/simple-tornado/tornado_server.py           Tornado web server example
+python/simple-tornado/Makefile                    Tornado examples
+python/simple-tornado/tornado_client.py
+python/simple-tornado/tornado_server.py
 
 terraform-aws/1pxy/aws_config.tf                  Terraform AWS: 1pxy example
 terraform-aws/1pxy/aws_resources.tf

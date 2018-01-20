@@ -2,6 +2,14 @@
 """
 Simple CPython example
 """
-# cython: language_level=3
 
-print('I am compiled Cython module:', __name__)
+
+def area(height, width):
+    """
+    Return area
+    """
+    print("args:", height, width)
+    return height * width
+
+
+print("I am compiled Cython module:", __name__)

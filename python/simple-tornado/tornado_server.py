@@ -12,11 +12,14 @@ from tornado.ioloop import IOLoop, PeriodicCallback
 
 # pylint: disable = abstract-method
 class MainHandler(tornado.web.RequestHandler):
+    """
+    Main event handler
+    """
 
     @tornado.web.asynchronous
     @gen.engine
-    def get(self):
-        print("Request received sleep 0.5 sec...")
+    def get(self, *args, **kwargs):
+        print("Request received sleep 0.5 sec:", args, kwargs)
         yield gen.Task(IOLoop.instance().add_timeout, time.time() + 0.5)
         self.write("Hello from Tornado web server: {0:s}".format(
             time.strftime('%Y-%m-%d-%H:%M:%S')))
@@ -26,17 +29,26 @@ class MainHandler(tornado.web.RequestHandler):
 
 
 def heartbeat():
+    """
+    Print message
+    """
     print('heartbeat:', time.strftime('%Y-%m-%d-%H:%M:%S'))
 
 
 @gen.engine
 def shutdown(delay):
+    """
+    Shutdown web server
+    """
     yield gen.Task(IOLoop.instance().add_timeout, time.time() + delay)
     print("Shutting down web server...")
     IOLoop.instance().stop()
 
 
-if __name__ == '__main__':
+def main():
+    """
+    Run web server
+    """
     print("Web server on port 8888...")
     app = tornado.web.Application([("/", MainHandler), ])
     app.listen(8888)
@@ -49,3 +61,7 @@ if __name__ == '__main__':
 
     print("Starting IOLoop:", time.strftime('%Y-%m-%d-%H:%M:%S'))
     IOLoop.instance().start()
+
+
+if __name__ == '__main__':
+    main()

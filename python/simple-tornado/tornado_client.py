@@ -42,9 +42,13 @@ def get_request(url):
     """
     text = yield async_request(url)
     print("get_request: {0:d} characters".format(len(text)))
+    print(text[:1024])
 
 
-if __name__ == '__main__':
+def main():
+    """
+    Start client to fetch "http://google.com"
+    """
     client = tornado.httpclient.AsyncHTTPClient()
     client.fetch('http://google.com', handle_request)
 
@@ -52,3 +56,7 @@ if __name__ == '__main__':
 
     print("Starting IOLoop:", time.strftime('%Y-%m-%d-%H:%M:%S'))
     IOLoop.instance().start()
+
+
+if __name__ == '__main__':
+    main()

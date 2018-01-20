@@ -33,4 +33,5 @@ requests>=2.11.1
 scipy>=1.0.0
 tornado>=4.4.3
 virtualenv>=14.0.6
+wheel>=0.30.0
 youtube-dl>=2017.8.13

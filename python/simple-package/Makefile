@@ -3,7 +3,7 @@ default: build
 clean:
 	rm -rf build dist simple.egg-info
 
-test: py_compile pep8 pylint unittest
+test: py_compile pycodestyle pylint unittest
 	@echo "\n*** Tests successfull ***"
 
 py_compile:
@@ -11,9 +11,9 @@ py_compile:
 	python3 -m py_compile *.py */*.py
 	rm -rf __pycache__ */__pycache__
 
-pep8:
-	@echo "\n*** Running Python 3 PEP8 check ***"
-	python3 -m pep8 --max-line-length=79 *.py */*.py
+pycodestyle:
+	@echo "\n*** Running Python 3 PYCODESTYLE (PEP8) check ***"
+	python3 -m pycodestyle --ignore=E402 --max-line-length=79 *.py */*.py
 
 pylint:
 	@echo "\n*** Running Python 3 LINT check ***"
@@ -24,9 +24,13 @@ unittest:
 	@echo "\n*** Running Python 3 UNITTEST check ***"
 	python3 -m unittest discover --buffer .
 
-build: test clean
+build: clean test
 	@echo "\n*** Building Python packages ***"
 	python3 setup.py bdist_egg
 	python3 setup.py bdist_wheel
 	ls -l dist/*
 	@echo "\n*** Building packages successfull ***"
+
+run:
+	@echo "\n*** Running simple package example ***"
+	PYTHONPATH=`pwd`/dist ./run.py
