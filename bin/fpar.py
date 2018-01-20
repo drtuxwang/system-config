@@ -113,7 +113,7 @@ class Main(object):
                     glob.glob(os.path.join(file, '*'))
             ):
                 cls._create(cmdline, file2)
-        elif os.path.isfile(file):
+        elif os.path.isfile(file) and not os.path.islink(file):
             directory, name = os.path.split(file)
             root, ext = os.path.splitext(name)
             if ext in IGNORE_EXTENSION:
