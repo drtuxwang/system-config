@@ -138,7 +138,7 @@ class Main(object):
                     '-a'+par_file,
                     file
                 ])
-                task.run()
+                task.run(pattern='^$')
                 if task.get_exitcode() == 0:
                     try:
                         shutil.move(os.path.join(
@@ -155,13 +155,14 @@ class Main(object):
             for file2 in sorted(glob.glob(os.path.join(file, '*'))):
                 cls._repair(cmdline, file2)
         elif os.path.isfile(file):
-            par_file = '..{0:s}.par2'.format(file)
+            directory, name = os.path.split(file)
+            par_file = os.path.join(directory, '..{0}.par2'.format(name))
             if (
                     os.path.isfile(par_file) and
                     os.path.getmtime(file) == os.path.getmtime(par_file)
             ):
                 task = subtask_mod.Task(cmdline + [par_file])
-                task.run()
+                task.run(pattern='^$|^Loading')
 
     @classmethod
     def run(cls):
@@ -172,11 +173,11 @@ class Main(object):
 
         cmdline = options.get_par2().get_cmdline()
         if options.get_check_flag():
-            cmdline.append('r')
+            cmdline.extend(['r', '-q'])
             for file in options.get_files():
                 cls._repair(cmdline, file)
         else:
-            cmdline.extend(['c', '-n1', '-r1'])
+            cmdline.extend(['c', '-q', '-n1', '-r1'])
             for file in options.get_files():
                 cls._create(cmdline, file)
 
