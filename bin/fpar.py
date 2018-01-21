@@ -128,7 +128,7 @@ class Main(object):
         for file in sorted(files):
             directory, name = os.path.split(file)
             if os.path.isdir(file):
-                cls._check_fpar_directory(os.path.join(directory, '..fpar'))
+                cls._check_fpar_directory(os.path.join(file, '..fpar'))
                 cls._update(cmdline, glob.glob(os.path.join(file, '*')))
             elif (
                     os.path.isfile(file) and
