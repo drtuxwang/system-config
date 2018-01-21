@@ -16,7 +16,7 @@ import subtask_mod
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-IGNORE_SUFFICE = ('..fsum', '.fsum', '.md5', '.md5sum', '.par2')
+IGNORE_EXTENSIONS = ('.fsum', '.md5', '.md5sum', '.par2')
 
 
 class Options(object):
@@ -138,7 +138,7 @@ class Main(object):
                 fpar_directory = os.path.join(directory, '..fpar')
                 cls._create_fpar_directory(fpar_directory)
 
-                if name.endswith(IGNORE_SUFFICE):
+                if name.endswith(IGNORE_EXTENSIONS):
                     continue
 
                 file_time = os.path.getmtime(file)
