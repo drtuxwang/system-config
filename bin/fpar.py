@@ -16,7 +16,7 @@ import subtask_mod
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-IGNORE_EXTENSION = ('.fsum', '.md5', '.md5sum', '.par2')
+IGNORE_SUFFICE = ('..fsum', '.fsum', '.md5', '.md5sum', '.par2')
 
 
 class Options(object):
@@ -119,9 +119,9 @@ class Main(object):
                     file = os.path.join(directory, os.pardir, par_file[:-5])
                     if os.path.isfile(file):
                         continue
-                file = os.path.join(directory, par_file)
-                print('\nDeleting old:', file)
-                cls._delete_file(file)
+                    file = os.path.join(directory, par_file)
+                    print('\nDeleting old:', file)
+                    cls._delete_file(file)
 
     @classmethod
     def _update(cls, cmdline, files):
@@ -138,7 +138,7 @@ class Main(object):
                 fpar_directory = os.path.join(directory, '..fpar')
                 cls._create_fpar_directory(fpar_directory)
 
-                if os.path.splitext(name)[1] in IGNORE_EXTENSION:
+                if name.endswith(IGNORE_SUFFICE):
                     continue
 
                 file_time = os.path.getmtime(file)
