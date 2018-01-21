@@ -6,6 +6,7 @@ Make a compressed archive in TAR.GZ format.
 import argparse
 import glob
 import os
+import shutil
 import signal
 import sys
 import tarfile
@@ -110,11 +111,12 @@ class Main(object):
                     argv.append(arg)
             sys.argv = argv
 
-    def _addfile(self, files):
+    @classmethod
+    def _addfile(cls, ofile, files):
         for file in sorted(files):
             print(file)
             try:
-                self._archive.add(file, recursive=False)
+                ofile.add(file, recursive=False)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot add "' + file +
@@ -122,8 +124,10 @@ class Main(object):
                 )
             if os.path.isdir(file) and not os.path.islink(file):
                 try:
-                    self._addfile(
-                        [os.path.join(file, x) for x in os.listdir(file)])
+                    cls._addfile(
+                        ofile,
+                        [os.path.join(file, x) for x in os.listdir(file)]
+                    )
                 except PermissionError:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot open "' + file +
@@ -136,14 +140,20 @@ class Main(object):
         """
         options = Options()
 
+        os.umask(int('022', 8))
+        archive = options.get_archive()
         try:
-            self._archive = tarfile.open(options.get_archive(), 'w:gz')
+            with tarfile.open(options.get_archive(), 'w:gz') as ofile:
+                self._addfile(ofile, options.get_files())
         except OSError:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + options.get_archive() +
-                '" archive file.'
+                sys.argv[0] + ': Cannot create "' +
+                archive + '-part" archive file.'
             )
-        self._addfile(options.get_files())
+        try:
+            shutil.move(archive+'-part', archive)
+        except OSError:
+            pass
 
 
 if __name__ == '__main__':

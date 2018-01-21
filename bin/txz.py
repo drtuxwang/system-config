@@ -6,6 +6,7 @@ Make a compressed archive in TAR.XZ format.
 import argparse
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -24,6 +25,12 @@ class Options(object):
     def __init__(self):
         self._args = None
         self.parse(sys.argv)
+
+    def get_archive(self):
+        """
+        Return archive location.
+        """
+        return self._archive
 
     def get_tar(self):
         """
@@ -75,7 +82,7 @@ class Options(object):
             self._files = os.listdir()
 
         self._tar = command_mod.Command('tar', errors='stop')
-        self._tar.set_args(['cfvJ', self._archive] + self._files)
+        self._tar.set_args(['cfvJ', self._archive+'-part'] + self._files)
 
         os.environ['XZ_OPT'] = '-9 -e --threads=1'
 
@@ -118,7 +125,14 @@ class Main(object):
         """
         options = Options()
 
+        os.umask(int('022', 8))
+        archive = options.get_archive()
+
         subtask_mod.Exec(options.get_tar().get_cmdline()).run()
+        try:
+            shutil.move(archive+'-part', archive)
+        except OSError:
+            pass
 
 
 if __name__ == '__main__':
