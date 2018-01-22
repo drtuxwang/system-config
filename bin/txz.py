@@ -128,7 +128,7 @@ class Main(object):
         os.umask(int('022', 8))
         archive = options.get_archive()
 
-        subtask_mod.Exec(options.get_tar().get_cmdline()).run()
+        subtask_mod.Task(options.get_tar().get_cmdline()).run()
         try:
             shutil.move(archive+'-part', archive)
         except OSError:
