@@ -120,7 +120,7 @@ class Main(object):
                     if os.path.isfile(file):
                         continue
                     file = os.path.join(directory, par_file)
-                    print('\nDeleting old:', file)
+                    print('Deleting old:', file)
                     cls._delete_file(file)
 
     @classmethod
