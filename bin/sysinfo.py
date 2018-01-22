@@ -2,7 +2,7 @@
 """
 System configuration detection tool.
 
-1996-2017 By Dr Colin Kong
+1996-2018 By Dr Colin Kong
 """
 
 import functools
@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.13.3'
-VERSION = 20171010
+RELEASE = '4.14.0'
+VERSION = 20180122
 
 # pylint: disable = too-many-lines
 
@@ -995,7 +995,7 @@ class LinuxSystem(PosixSystem):
         try:
             identity = os.path.basename(os.readlink(file))
         except OSError:
-            return
+            return None
 
         try:
             if os.path.isdir('/sys/bus/scsi/devices/' + identity):

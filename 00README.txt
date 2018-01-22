@@ -440,6 +440,10 @@ bin/pydoc3.5
 bin/pydoc3.5.bat
 bin/pylint
 bin/pylint.bat
+bin/pytest
+bin/pytest.bat
+bin/tox
+bin/tox.bat
 bin/virtualenv
 bin/virtualenv.bat
 bin/youtube-dl

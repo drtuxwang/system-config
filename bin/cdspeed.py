@@ -52,7 +52,7 @@ class Options(object):
             try:
                 os.mkdir(configdir)
             except OSError:
-                return
+                return None
         configfile = os.path.join(configdir, 'cdspeed.json')
         if os.path.isfile(configfile):
             config = Configuration(configfile)

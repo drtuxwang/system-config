@@ -15,8 +15,8 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-RELEASE = '2.1.3'
-VERSION = 20170830
+RELEASE = '2.1.4'
+VERSION = 20180122
 
 BUFFER_SIZE = 131072
 
@@ -106,6 +106,7 @@ class Task(object):
         for line in self._status['error']:
             if ispattern.search(line):
                 return True
+        return False
 
     def get_error(self, pattern=''):
         """

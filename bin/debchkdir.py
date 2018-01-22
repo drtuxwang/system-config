@@ -100,7 +100,7 @@ class Main(object):
         try:
             files = sorted(glob.glob(os.path.join(distribution, '*.deb')))
         except OSError:
-            return
+            return None
         packages = {}
         for file in files:
             name = os.path.basename(file).split('_')[0]
