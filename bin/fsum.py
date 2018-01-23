@@ -185,7 +185,6 @@ class Main(object):
 
     def _check(self, files):
         found = []
-        nfiles = 0
         nfail = 0
         nmiss = 0
 
@@ -199,7 +198,6 @@ class Main(object):
                         md5sum, size, mtime, file = self._getfsum(line)
                         file = os.path.join(directory, file)
                         found.append(file)
-                        nfiles += 1
                         file_stat = file_mod.FileStat(file)
                         try:
                             if not os.path.isfile(file):
@@ -229,12 +227,15 @@ class Main(object):
             for file in self._extra(directory, found):
                 print(file, '# EXTRA file found')
         if nmiss > 0:
-            print("fsum: Cannot find", nmiss, "of", nfiles, "listed files.")
+            print("fsum: Cannot find {0:d} of {1:d} listed files.".format(
+                nmiss,
+                len(found)
+            ))
         if nfail > 0:
             print(
-                "fsum: Mismatch in {0:s} of {1:s} computed checksums.".format(
+                "fsum: Mismatch in {0:d} of {1:d} computed checksums.".format(
                     nfail,
-                    nfiles - nmiss
+                    len(found) - nmiss
                 )
             )
 

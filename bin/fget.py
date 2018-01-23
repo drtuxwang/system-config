@@ -193,7 +193,6 @@ class Main(object):
         if self._check_file(file, size, mtime):
             print("  => {0:s} [{1:d}/{2:d}]".format(file, size, size))
             return
-        tmpfile = file + '.part'
 
         data = {'size': size, 'time': int(mtime)}
         check = self._check_resume(file, data)
@@ -215,7 +214,7 @@ class Main(object):
         self._write_resume(file, data)
 
         try:
-            with open(tmpfile, mode) as ofile:
+            with open(file+'.part', mode) as ofile:
                 while True:
                     chunk = conn.read(self._chunk_size)
                     if not chunk:
@@ -229,10 +228,10 @@ class Main(object):
                 sys.argv[0] + ': Cannot create "' + file + '" file.')
         print()
 
-        os.utime(tmpfile, (mtime, mtime))
+        os.utime(file+'.part', (mtime, mtime))
         try:
-            shutil.move(tmpfile, file)
-            os.remove(tmpfile + '.json')
+            shutil.move(file+'.part', file)
+            os.remove(file+'.part'+'.json')
         except OSError:
             pass
 
