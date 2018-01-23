@@ -236,14 +236,11 @@ class Options(object):
         firefoxdir = os.path.join(home, self._get_profiles_dir())
         if os.path.isdir(firefoxdir):
             keep_list = (
-                'adblockplus',
+                'addonStartup.json.lz4',
                 'browser-extension-data',
                 'extensions',
-                'extension-data',
                 'extensions.json',
                 'extensions.sqlite',
-                'localstore.rdf',
-                'mimeTypes.rdf',
                 'permissions.sqlite',
                 'prefs.js',
                 'user.js',
