@@ -32,6 +32,12 @@ class Options(object):
         """
         return self._mirrors
 
+    def get_recursive_flag(self):
+        """
+        Return recursive flag.
+        """
+        return self._args.recursive_flag
+
     def get_remove_flag(self):
         """
         Return remove flag.
@@ -44,6 +50,12 @@ class Options(object):
             'into mirror directory.'
         )
 
+        parser.add_argument(
+            '-R',
+            dest='recursive_flag',
+            action='store_true',
+            help='Mirror directories recursively.'
+        )
         parser.add_argument(
             '-rm',
             dest='remove_flag',
@@ -319,10 +331,10 @@ class Main(object):
             )
             if os.path.islink(source_file):
                 self._mirror_link(source_file, target_file)
-            elif os.path.isdir(source_file):
-                self._mirror(source_file, target_file)
-            else:
+            elif os.path.isfile(source_file):
                 self._mirror_file(source_file, target_file)
+            elif os.path.isdir(source_file) and self._recursive:
+                self._mirror(source_file, target_file)
 
         self._mirror_directory_time(source_dir, target_dir)
 
@@ -337,6 +349,7 @@ class Main(object):
         """
         self._options = Options()
 
+        self._recursive = self._options.get_recursive_flag()
         self._size = 0
         self._start = int(time.time())
         for mirror in self._options.get_mirrors():
