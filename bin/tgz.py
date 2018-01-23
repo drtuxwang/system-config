@@ -148,10 +148,10 @@ class Main(object):
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' +
-                archive + '-part" archive file.'
+                archive + '.part" archive file.'
             )
         try:
-            shutil.move(archive+'-part', archive)
+            shutil.move(archive+'.part', archive)
         except OSError:
             pass
 

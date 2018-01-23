@@ -82,7 +82,7 @@ class Options(object):
             self._files = os.listdir()
 
         self._tar = command_mod.Command('tar', errors='stop')
-        self._tar.set_args(['cfvJ', self._archive+'-part'] + self._files)
+        self._tar.set_args(['cfvJ', self._archive+'.part'] + self._files)
 
         os.environ['XZ_OPT'] = '-9 -e --threads=1'
 
@@ -130,7 +130,7 @@ class Main(object):
 
         subtask_mod.Task(options.get_tar().get_cmdline()).run()
         try:
-            shutil.move(archive+'-part', archive)
+            shutil.move(archive+'.part', archive)
         except OSError:
             pass
 

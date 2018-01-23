@@ -143,15 +143,15 @@ class Main(object):
         os.umask(int('022', 8))
         archive = options.get_archive()
         try:
-            with tarfile.open(archive+'-part', 'w:bz2') as ofile:
+            with tarfile.open(archive+'.part', 'w:bz2') as ofile:
                 self._addfile(ofile, options.get_files())
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' +
-                archive + '-part" archive file.'
+                archive + '.part" archive file.'
             )
         try:
-            shutil.move(archive+'-part', archive)
+            shutil.move(archive+'.part', archive)
         except OSError:
             pass
 
