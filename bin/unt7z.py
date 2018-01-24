@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unpack a compressed archive in TAR.LZMA format.
+Unpack a compressed archive in TAR.7Z format.
 """
 
 import argparse
@@ -39,7 +39,8 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Unpack a compressed archive in TAR.LZMA format.')
+            description='Unpack a compressed archive in TAR.7Z format.'
+        )
 
         parser.add_argument(
             '-v',
@@ -50,14 +51,14 @@ class Options(object):
         parser.add_argument(
             'archives',
             nargs='+',
-            metavar='file.tar.lzma|file.tlz',
+            metavar='file.tar.7z|file.t7z',
             help='Archive file.'
         )
 
         self._args = parser.parse_args(args)
 
         for archive in self._args.archives:
-            if not archive.endswith(('.tar.lzma', '.tlz')):
+            if not archive.endswith(('.tar.7z', '.t7z')):
                 raise SystemExit(
                     sys.argv[0] + ': Unsupported "' + archive +
                     '" archive format.'
@@ -101,22 +102,40 @@ class Main(object):
                     argv.append(arg)
             sys.argv = argv
 
-    @staticmethod
-    def run():
+    def _unpack(self, archive):
+        p7zip = command_mod.Command('7z', errors='stop')
+        p7zip.set_args(['x', '-y', '-so', archive])
+        self._tar.set_args(['xfv', '-'])
+        subtask_mod.Task(
+            p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()
+        ).run()
+
+    def _view(self, archive):
+        p7zip = command_mod.Command('7z', errors='stop')
+        p7zip.set_args(['x', '-y', '-so', archive])
+        self._tar.set_args(['tfv', '-'])
+        subtask_mod.Task(
+            p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()
+        ).run()
+
+    def run(self):
         """
         Start program
         """
         options = Options()
 
         os.umask(int('022', 8))
-        tar = command_mod.Command('tar', errors='stop')
+        if os.name == 'nt':
+            self._tar = command_mod.Command('tar.exe', errors='stop')
+        else:
+            self._tar = command_mod.Command('tar', errors='stop')
+
         for archive in options.get_archives():
             print(archive + ':')
             if options.get_view_flag():
-                tar.set_args(['tfv', archive])
+                self._view(archive)
             else:
-                tar.set_args(['xfv', archive])
-            subtask_mod.Task(tar.get_cmdline()).run()
+                self._unpack(archive)
 
 
 if __name__ == '__main__':

@@ -6,6 +6,7 @@ Make a compressed archive in ZIP format.
 import argparse
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -24,6 +25,12 @@ class Options(object):
     def __init__(self):
         self._args = None
         self.parse(sys.argv)
+
+    def get_archive(self):
+        """
+        Return archive location.
+        """
+        return self._archive
 
     def get_archiver(self):
         """
@@ -81,11 +88,16 @@ class Options(object):
         self._parse_args(args[1:])
 
         if os.path.isdir(self._args.archive[0]):
-            self._archiver.append_arg(
-                os.path.abspath(self._args.archive[0] + '.7z'))
+            self._archive = os.path.abspath(self._args.archive[0]) + '.zip'
         else:
-            self._archiver.append_arg(self._args.archive[0])
+            self._archive = self._args.archive[0]
+        if not self._archive.endswith('.zip'):
+            raise SystemExit(
+                sys.argv[0] + ': Unsupported "' + self._archive +
+                '" archive format.'
+            )
 
+        self._archiver.append_arg(self._archive)
         if self._args.files:
             self._archiver.extend_args(self._args.files)
         else:
@@ -129,8 +141,23 @@ class Main(object):
         Start program
         """
         options = Options()
+        archive = options.get_archive()
 
-        subtask_mod.Exec(options.get_archiver().get_cmdline()).run()
+        os.umask(int('022', 8))
+
+        task = subtask_mod.Exec(options.get_archiver().get_cmdline())
+        task.run()
+        try:
+            if task.get_exitcode():
+                raise OSError
+            shutil.move(archive+'.part', archive)
+        except OSError:
+            raise SystemExit(
+                '{0:s}: Cannot create "{1:s}" archive file.'.format(
+                    sys.argv[0],
+                    archive
+                )
+            )
 
 
 if __name__ == '__main__':

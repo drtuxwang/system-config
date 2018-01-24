@@ -110,7 +110,7 @@ class Options(object):
             self._archive = os.path.abspath(self._args.archive[0]) + '.7z'
         else:
             self._archive = self._args.archive[0]
-        self._archiver.extend_args([self._archive])
+        self._archiver.append_arg(self._archive+'.part')
 
         if self._args.files:
             self._archiver.extend_args(self._args.files)
@@ -219,6 +219,16 @@ class Main(object):
 
         if sfx:
             self._make_sfx(archive, sfx)
+
+        try:
+            shutil.move(archive+'.part', archive)
+        except OSError:
+            raise SystemExit(
+                '{0:s}: Cannot create "{1:s}" archive file.'.format(
+                    sys.argv[0],
+                    archive
+                )
+            )
 
 
 if __name__ == '__main__':

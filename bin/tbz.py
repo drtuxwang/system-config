@@ -65,10 +65,7 @@ class Options(object):
             self._archive = os.path.abspath(self._args.archive[0]) + '.tar.bz2'
         else:
             self._archive = self._args.archive[0]
-        if (
-                not self._archive.endswith('.tar.bz2') and
-                not self._archive.endswith('.tbz')
-        ):
+        if not self._archive.endswith(('.tar.bz2', '.tbz')):
             raise SystemExit(
                 sys.argv[0] + ': Unsupported "' + self._archive +
                 '" archive format.'
@@ -153,7 +150,12 @@ class Main(object):
         try:
             shutil.move(archive+'.part', archive)
         except OSError:
-            pass
+            raise SystemExit(
+                '{0:s}: Cannot create "{1:s}" archive file.'.format(
+                    sys.argv[0],
+                    archive
+                )
+            )
 
 
 if __name__ == '__main__':

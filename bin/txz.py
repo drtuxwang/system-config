@@ -67,10 +67,7 @@ class Options(object):
             self._archive = os.path.abspath(self._args.archive[0]) + '.tar.xz'
         else:
             self._archive = self._args.archive[0]
-        if (
-                not self._archive.endswith('.tar.xz') and
-                not self._archive.endswith('.txz')
-        ):
+        if not self._archive.endswith(('.tar.xz', '.txz')):
             raise SystemExit(
                 sys.argv[0] + ': Unsupported "' + self._archive +
                 '" archive format.'
@@ -124,15 +121,23 @@ class Main(object):
         Start program
         """
         options = Options()
-
-        os.umask(int('022', 8))
         archive = options.get_archive()
 
-        subtask_mod.Task(options.get_tar().get_cmdline()).run()
+        os.umask(int('022', 8))
+
+        task = subtask_mod.Task(options.get_tar().get_cmdline())
+        task.run()
         try:
+            if task.get_exitcode():
+                raise OSError
             shutil.move(archive+'.part', archive)
         except OSError:
-            pass
+            raise SystemExit(
+                '{0:s}: Cannot create "{1:s}" archive file.'.format(
+                    sys.argv[0],
+                    archive
+                )
+            )
 
 
 if __name__ == '__main__':

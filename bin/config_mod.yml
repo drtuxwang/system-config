@@ -170,6 +170,9 @@ bindings:
   tar:
     open: untar
     view: untar
+  tar.7z:
+    open: untar
+    view: untar
   tar.bz2:
     open: untar
     view: untar
@@ -180,6 +183,9 @@ bindings:
     open: untar
     view: untar
   tar.xz:
+    open: untar
+    view: untar
+  t7z:
     open: untar
     view: untar
   tbz:

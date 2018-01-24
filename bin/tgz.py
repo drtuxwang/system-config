@@ -65,10 +65,7 @@ class Options(object):
             self._archive = os.path.abspath(self._args.archive[0]) + '.tar.gz'
         else:
             self._archive = self._args.archive[0]
-        if (
-                not self._archive.endswith('.tar.gz') and
-                not self._archive.endswith('.tgz')
-        ):
+        if not self._archive.endswith(('.tar.gz', '.tgz')):
             raise SystemExit(
                 sys.argv[0] + ': Unsupported "' + self._archive +
                 '" archive format.'
@@ -143,7 +140,7 @@ class Main(object):
         os.umask(int('022', 8))
         archive = options.get_archive()
         try:
-            with tarfile.open(options.get_archive(), 'w:gz') as ofile:
+            with tarfile.open(options.get_archive()+'.part', 'w:gz') as ofile:
                 self._addfile(ofile, options.get_files())
         except OSError:
             raise SystemExit(
@@ -153,7 +150,12 @@ class Main(object):
         try:
             shutil.move(archive+'.part', archive)
         except OSError:
-            pass
+            raise SystemExit(
+                '{0:s}: Cannot create "{1:s}" archive file.'.format(
+                    sys.argv[0],
+                    archive
+                )
+            )
 
 
 if __name__ == '__main__':

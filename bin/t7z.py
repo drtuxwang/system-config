@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Make a compressed archive in TAR format.
+Make a compressed archive in TAR.7Z format.
 """
 
 import argparse
@@ -9,10 +9,12 @@ import os
 import shutil
 import signal
 import sys
-import tarfile
 
-if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+import command_mod
+import subtask_mod
+
+if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
 class Options(object):
@@ -43,7 +45,7 @@ class Options(object):
         parser.add_argument(
             'archive',
             nargs=1,
-            metavar='file.tar',
+            metavar='file.tar.7z|file.t7z',
             help='Archive file.'
         )
         parser.add_argument(
@@ -62,10 +64,10 @@ class Options(object):
         self._parse_args(args[1:])
 
         if os.path.isdir(self._args.archive[0]):
-            self._archive = os.path.abspath(self._args.archive[0]) + '.tar'
+            self._archive = os.path.abspath(self._args.archive[0]) + '.tar.7z'
         else:
             self._archive = self._args.archive[0]
-        if not self._archive.endswith('.tar'):
+        if not self._archive.endswith(('.tar.7z', '.t7z')):
             raise SystemExit(
                 sys.argv[0] + ': Unsupported "' + self._archive +
                 '" archive format.'
@@ -108,46 +110,36 @@ class Main(object):
                     argv.append(arg)
             sys.argv = argv
 
-    @classmethod
-    def _addfile(cls, ofile, files):
-        for file in sorted(files):
-            print(file)
-            try:
-                ofile.add(file, recursive=False)
-            except OSError:
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot add "' + file +
-                    '" file to archive.'
-                )
-            if os.path.isdir(file) and not os.path.islink(file):
-                try:
-                    cls._addfile(
-                        ofile,
-                        [os.path.join(file, x) for x in os.listdir(file)]
-                    )
-                except PermissionError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot open "' + file +
-                        '" directory.'
-                    )
-
-    def run(self):
+    @staticmethod
+    def run():
         """
         Start program
         """
         options = Options()
 
         os.umask(int('022', 8))
+        tar = command_mod.Command('tar', errors='stop')
         archive = options.get_archive()
+        tar.set_args(['cf', '-'] + options.get_files())
+        p7zip = command_mod.Command('7z', errors='stop')
+        p7zip.set_args([
+            'a',
+            '-m0=lzma2',
+            '-mmt=2',
+            '-mx=9',
+            '-ms=on',
+            '-y',
+            '-si',
+            archive+'.part'
+        ])
+        task = subtask_mod.Task(
+            tar.get_cmdline() + ['|'] + p7zip.get_cmdline()
+        )
+
+        task.run()
         try:
-            with tarfile.open(archive+'.part', 'w') as ofile:
-                self._addfile(ofile, options.get_files())
-        except OSError:
-            raise SystemExit(
-                sys.argv[0] + ': Cannot create "' +
-                archive + '.part" archive file.'
-            )
-        try:
+            if task.get_exitcode():
+                raise OSError
             shutil.move(archive+'.part', archive)
         except OSError:
             raise SystemExit(

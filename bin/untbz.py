@@ -55,10 +55,7 @@ class Options(object):
         self._args = parser.parse_args(args)
 
         for archive in self._args.archives:
-            if (
-                    not archive.endswith('.tar.bz2') and
-                    not archive.endswith('.tbz')
-            ):
+            if not archive.endswith(('.tar.bz2', '.tbz')):
                 raise SystemExit(
                     sys.argv[0] + ': Unsupported "' + archive +
                     '" archive format.'

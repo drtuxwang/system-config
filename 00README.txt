@@ -540,8 +540,10 @@ bin/sysinfo            System configuration detection tool
 bin/sysinfo.bat
 bin/sysinfo.py
 bin/sysinfo.sh         Old Bourne shell version
-bin/tar                tar wrapper (allowing non systems port)
-bin/tar.bat            (with Python enhancements)
+bin/t7z                Make a compressed archive in TAR.&Z format
+bin/t7z.py
+bin/tar                Make a compressed archive in TAR format
+bin/tar.bat
 bin/tar.py
 bin/tar_.py
 bin/terraform          terraform wrapper (allowing non systems port)
@@ -614,8 +616,10 @@ bin/unrar              Unpack a compressed archive in RAR format
 bin/unrar.py
 bin/unrpm              Unpack a compressed archive in RPM format
 bin/unrpm.py
-bin/unsqlite              Unpack a sqlite database file
+bin/unsqlite           Unpack a sqlite database file
 bin/unsqlite.py
+bin/unt7z              pack a compressed archive in TAR.7Z format
+bin/unt7z.py
 bin/untar              Unpack a compressed archive in
 bin/untar.bat          TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.
 bin/untar.py
