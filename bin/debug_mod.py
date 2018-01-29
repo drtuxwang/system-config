@@ -15,8 +15,8 @@ import jsonpickle
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
-RELEASE = '2.2.1'
-VERSION = 20170730
+RELEASE = '2.2.2'
+VERSION = 20180126
 
 
 class Dump(object):
@@ -83,7 +83,7 @@ class Dump(object):
 
         lines = []
         for line in traceback.format_stack():
-            lines.extend(line.strip().split('\n'))
+            lines.extend(line.strip().splitlines())
 
         data = {
             'pid': os.getpid(),

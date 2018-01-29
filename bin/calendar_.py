@@ -167,6 +167,7 @@ class Main(object):
             for _ in range(5):
                 print(" " + ("|"+" "*10)*7 + "| ")
             print(" " + ("|"+"_"*10)*7 + "| ")
+        print()
 
     @staticmethod
     def _short(year, month):
@@ -174,16 +175,16 @@ class Main(object):
             data = calendar.TextCalendar(6).formatmonth(year-1, 12)
         else:
             data = calendar.TextCalendar(6).formatmonth(year, month-1)
-        last_month = data.split('\n')+['']
+        last_month = data.splitlines()+['']
 
         data = calendar.TextCalendar(6).formatmonth(year, month)
-        current_month = data.split('\n')+['']
+        current_month = data.splitlines()+['']
 
         if month == 12:
             data = calendar.TextCalendar(6).formatmonth(year+1, 1)
         else:
             data = calendar.TextCalendar(6).formatmonth(year, month+1)
-        next_month = data.split('\n')+['']
+        next_month = data.splitlines()+['']
 
         for index in range(8):
             print("  {0:20s}   {1:20s}   {2:20s}".format(

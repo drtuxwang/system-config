@@ -99,7 +99,7 @@ class Main(object):
 
     @staticmethod
     def _write(file, script):
-        lines = jsbeautifier.beautify(script).split('\n')
+        lines = jsbeautifier.beautify(script).splitlines()
         print('Writing "{0:s}" with {1:d} lines...'.format(file, len(lines)))
         try:
             with open(file, 'w') as ofile:

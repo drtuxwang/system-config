@@ -172,7 +172,7 @@ class Mailer(object):
         """
         sender = ''
         addresses = []
-        for line in text.split('\n'):
+        for line in text.splitlines():
             if not line:
                 break
             keyword = line.split(': ', 1)[0].lower()
