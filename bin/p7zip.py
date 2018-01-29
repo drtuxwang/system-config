@@ -135,17 +135,28 @@ class Main(object):
             sys.exit(exception)
 
     @staticmethod
-    def _check_sfx(archiver, archive):
-        file = os.path.basename(archive)
-        if file.endswith('.bin'):
-            sfx = os.path.join(
-                os.path.dirname(archiver.get_file()), '7zCon.sfx')
-        elif file.endswith('.exe'):
-            sfx = os.path.join(
-                os.path.dirname(archiver.get_file()), '7zExe.sfx')
-        else:
-            return ''
+    def _copy(ifile, ofile):
+        while True:
+            chunk = ifile.read(131072)
+            if not chunk:
+                break
+            ofile.write(chunk)
 
+    @classmethod
+    def _make_exe(cls, archiver, archive):
+        command = command_mod.Command(
+            '7z.sfx',
+            platform='windows-x86',
+            errors='ignore'
+        )
+        if not command.is_found():
+            command = command_mod.Command(
+                '7z.sfx',
+                directory=os.path.dirname(archiver.get_file()),
+                platform='windows-x86',
+                errors='ignore'
+            )
+        sfx = command.get_file()
         if not os.path.isfile(sfx):
             archiver = command_mod.Command(
                 archiver.get_file(), args=sys.argv[1:], errors='ignore')
@@ -153,19 +164,17 @@ class Main(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + sfx + '" SFX file.')
             subtask_mod.Exec(archiver.get_cmdline()).run()
-        return sfx
 
-    def _make_sfx(self, archive, sfx):
         print("Adding SFX code")
         with open(archive + '-sfx', 'wb') as ofile:
             try:
                 with open(sfx, 'rb') as ifile:
-                    self._copy(ifile, ofile)
+                    cls._copy(ifile, ofile)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "' + sfx + '" SFX file.')
             with open(archive, 'rb') as ifile:
-                self._copy(ifile, ofile)
+                cls._copy(ifile, ofile)
 
         try:
             os.chmod(archive + '-sfx', int('755', 8))
@@ -173,14 +182,6 @@ class Main(object):
         except OSError:
             raise SystemExit(sys.argv[0] + ': Cannot rename "' + archive +
                              '-sfx" file to "' + archive + '".')
-
-    @staticmethod
-    def _copy(ifile, ofile):
-        while True:
-            chunk = ifile.read(131072)
-            if not chunk:
-                break
-            ofile.write(chunk)
 
     @staticmethod
     def config():
@@ -208,7 +209,6 @@ class Main(object):
         options = Options()
         archiver = options.get_archiver()
         archive = options.get_archive()
-        sfx = self._check_sfx(archiver, archive)
 
         task = subtask_mod.Task(archiver.get_cmdline())
         task.run()
@@ -217,8 +217,8 @@ class Main(object):
                   ' received from "' + task.get_file() + '".', file=sys.stderr)
             raise SystemExit(task.get_exitcode())
 
-        if sfx:
-            self._make_sfx(archive, sfx)
+        if archive.endswith('.exe'):
+            self._make_exe(archiver, archive+'.part')
 
         try:
             shutil.move(archive+'.part', archive)

@@ -2,7 +2,7 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2017 By Dr Colin Kong
+Copyright GPL v2: 2006-2018 By Dr Colin Kong
 """
 
 import distutils.version
@@ -17,8 +17,8 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-RELEASE = '2.0.14'
-VERSION = 20171220
+RELEASE = '2.1.0'
+VERSION = 20180129
 
 
 class Command(object):
@@ -30,12 +30,13 @@ class Command(object):
         """
         program = Command program name (ie 'evince', 'bin/acroread')
         args = Optional command arguments list
+        directory = Optional directory for searching local software
         pathextra = Optional extra PATH to prefix in search
         platform = Optional platform (ie 'windows-x86_64' for WINE)
         errors = Optional error handling ('stop' or 'ignore')
         """
         info = self._parse_keys(
-            ('args', 'errors', 'pathextra', 'platform'),
+            ('args', 'directory', 'errors', 'pathextra', 'platform'),
             **kwargs
         )
         self._args = [self._locate(program, info)]
@@ -71,7 +72,9 @@ class Command(object):
             _platform = _System.get_platform()
         extensions = cls._get_extensions(_platform)
 
-        directory = os.path.dirname(os.path.abspath(sys.argv[0]))
+        directory = info['directory']
+        if not directory:
+            directory = os.path.dirname(os.path.abspath(sys.argv[0]))
         if os.path.basename(directory) == 'bin':
             directory = os.path.dirname(directory)
             file = cls._search_ports(directory, _platform, program, extensions)
