@@ -135,6 +135,9 @@ bindings:
   odg:
     open: doc_editor
     view: doc_editor
+  odp:
+    open: doc_editor
+    view: doc_editor
   ods:
     open: doc_editor
     view: doc_editor

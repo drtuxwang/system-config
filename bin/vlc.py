@@ -40,6 +40,17 @@ class Options(object):
     @staticmethod
     def _config():
         home = os.environ.get('HOME', '')
+
+        file = os.path.join(home, '.cache', 'vlc')
+        if not os.path.isfile(file):
+            try:
+                if os.path.isdir(file):
+                    shutil.rmtree(file)
+                with open(file, 'wb'):
+                    pass
+            except OSError:
+                pass
+
         file = os.path.join(home, '.config', 'vlc', 'vlc-qt-interface.conf')
         try:
             with open(file, errors='replace') as ifile:

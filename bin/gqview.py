@@ -49,8 +49,9 @@ class Options(object):
             except OSError:
                 pass
         for file in (
-                os.path.join(home, '.local', 'share', 'geeqie'),
                 os.path.join(home, '.cache', 'geeqie', 'thumbnails')
+                os.path.join(home, '.local', 'share', 'geeqie'),
+                os.path.join(home, '.cache', 'thumbnails')
         ):
             if not os.path.isfile(file):
                 try:

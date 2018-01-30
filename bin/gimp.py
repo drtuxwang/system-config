@@ -40,6 +40,17 @@ class Options(object):
     @staticmethod
     def _config():
         home = os.environ.get('HOME', '')
+
+        file = os.path.join(home, '.cache', 'thumbnails')
+        if not os.path.isfile(file):
+            try:
+                if os.path.isdir(file):
+                    shutil.rmtree(file)
+                with open(file, 'wb'):
+                    pass
+            except OSError:
+                pass
+
         if os.path.isdir(os.path.join(home, '.thumbnails')):
             try:
                 shutil.rmtree(os.path.join(home, '.thumbnails'))
