@@ -1,4 +1,4 @@
-FROM centos:7
+FROM centos:6
 
 # Install base packages
 RUN yum -y install epel-release && \

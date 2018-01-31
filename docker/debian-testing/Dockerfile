@@ -1,17 +1,18 @@
-FROM ubuntu:18.04
+FROM debian:testing
 
 # Install base packages
 RUN apt-get update && \
 	apt-get install --no-install-recommends -y \
-		iputils-ping \
 		net-tools \
 		openssh-client \
 		pciutils \
+		python3 \
+		python3-pip \
 		vim && \
 	apt-get clean
 
 # Add scripts
-COPY tmpdir/bin/sysinfo.sh /opt/software/bin/
+COPY tmpdir/bin/ /opt/software/bin/
 
 # Root account
 COPY tmpdir/config/bashrc /root/.bashrc

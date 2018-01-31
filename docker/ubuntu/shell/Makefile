@@ -21,9 +21,6 @@ FLAGS_SHELL := \
 default: build
 	docker images
 
-clean:
-	docker rmi -f $(IMAGE) $(IMAGE_X) ||:
-
 build:
 	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
@@ -45,3 +42,6 @@ xrun:
 		--env DISPLAY=$(DISPLAY) \
 		--hostname $(NAME)-xshell \
 		$(IMAGE_X) || exit 0
+
+clean:
+	docker rmi -f $(IMAGE) $(IMAGE_X) ||:

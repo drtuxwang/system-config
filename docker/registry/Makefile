@@ -14,10 +14,6 @@ FLAGS := --rm \
 default: build
 	docker images
 
-clean:
-	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
-
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
@@ -32,3 +28,7 @@ run:
 		--publish 5000:5000 \
 		--hostname $(NAME) \
 		$(IMAGE) || exit 0
+
+clean:
+	docker rmi -f $(IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

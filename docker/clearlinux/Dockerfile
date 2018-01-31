@@ -1,11 +1,10 @@
-FROM centos:6
+FROM clearlinux:latest
 
 # Install base packages
-RUN yum -y update && \
-	yum -y install net-tools openssh-clients pciutils vim
+RUN swupd bundle-add network-basic editors
 
 # Add scripts
-COPY tmpdir/bin/sysinfo.sh /opt/software/bin/
+COPY tmpdir/bin/ /opt/software/bin/
 
 # Root account
 COPY tmpdir/config/bashrc /root/.bashrc

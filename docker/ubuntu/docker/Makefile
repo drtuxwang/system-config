@@ -21,9 +21,6 @@ FLAGS_SHELL := \
 default: build
 	docker images
 
-clean:
-	docker rmi -f $(IMAGE) ||:
-
 build:
 	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
@@ -37,3 +34,5 @@ run:
 		--hostname $(NAME)-docker \
 		$(IMAGE) || exit 0
 
+clean:
+	docker rmi -f $(IMAGE) ||:

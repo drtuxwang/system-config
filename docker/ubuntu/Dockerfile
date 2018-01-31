@@ -7,11 +7,13 @@ RUN apt-get update && \
 		net-tools \
 		openssh-client \
 		pciutils \
+		python3 \
+		python3-pip \
 		vim && \
 	apt-get clean
 
 # Add scripts
-COPY tmpdir/bin/sysinfo.sh /opt/software/bin/
+COPY tmpdir/bin/ /opt/software/bin/
 
 # Root account
 COPY tmpdir/config/bashrc /root/.bashrc

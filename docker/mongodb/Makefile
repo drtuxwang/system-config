@@ -13,9 +13,6 @@ FLAGS := --rm \
 
 default: pull
 
-clean:
-	docker rmi -f $(IMAGE) ||:
-
 pull:
 	docker pull $(IMAGE)
 
@@ -26,3 +23,6 @@ run:
 		--publish 27017:27017 \
 		--hostname $(NAME) \
 		$(IMAGE) || exit 0
+
+clean:
+	docker rmi -f $(IMAGE) ||:

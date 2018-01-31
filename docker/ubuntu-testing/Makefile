@@ -14,15 +14,11 @@ FLAGS := --rm \
 default: build
 	docker images
 
-clean:
-	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
-
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 build:
-	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *
+	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
@@ -33,3 +29,6 @@ run:
 		--hostname $(NAME)-old \
 		$(IMAGE) || exit 0
 
+clean:
+	docker rmi -f $(IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

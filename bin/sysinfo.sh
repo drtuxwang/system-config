@@ -4,8 +4,8 @@
 #
 # 1996-2018 By Dr Colin Kong
 #
-VERSION=20180113
-RELEASE="2.6.40-19"
+VERSION=20180131
+RELEASE="2.6.40-20"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -534,6 +534,9 @@ detect() {
             elif [ "`grep "^PRETTY_NAME=" /etc/os-release 2> /dev/null`" ]
             then
                 MYOSX=`grep "^PRETTY_NAME=" /etc/os-release | cut -f2 -d'"' | sed -e "s/ *[(].*//"`
+            elif [ -f "/usr/share/clear/version" ]
+            then
+                MYOSX="Clear Linux `cat /usr/share/clear/version`"
             fi
         fi
         ;;

@@ -1,5 +1,5 @@
-NAME := jailbreak
-VERSION = latest
+NAME := debian
+VERSION = previous
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
@@ -14,20 +14,21 @@ FLAGS := --rm \
 default: build
 	docker images
 
+pull:
+	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+
 build:
+	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build --force-rm=true -t $(IMAGE) .
+	docker build -t $(IMAGE) .
+	rm -rf tmpdir
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
-		--privileged=true \
-		`ls -1d /* | grep -v "/proc$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}'` \
-		--volume="/etc/passwd:/etc/passwd:ro" \
-		--volume="/etc/group:/etc/group:ro" \
-		--workdir $(PWD) \
-		--hostname `uname -n`-$(NAME) \
-		$(IMAGE) bash || exit 0
+		--hostname $(NAME)-old \
+		$(IMAGE) || exit 0
 
 clean:
 	docker rmi -f $(IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

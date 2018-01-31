@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.14.0'
-VERSION = 20180122
+RELEASE = '4.15.1'
+VERSION = 20180131
 
 # pylint: disable = too-many-lines
 
@@ -1357,7 +1357,12 @@ class LinuxSystem(PosixSystem):
         info = super().get_net_info()
         env = {}
         env['LANG'] = os.environ.get('LANG', 'en_US')
-        command = command_mod.CommandFile('/bin/ip', args=['address'])
+        command = command_mod.Command(
+            'ip',
+            args=['address'],
+            pathextra=['bin', '/sbin'],
+            errors='ignore'
+        )
         if not command.is_found():
             command = command_mod.CommandFile('/sbin/ifconfig', args=['-a'])
         task = subtask_mod.Batch(command.get_cmdline())
@@ -1512,15 +1517,26 @@ class LinuxSystem(PosixSystem):
     def _scan_os_release():
         info = {}
 
-        if os.path.isfile('/etc/os-release'):
-            try:
-                with open('/etc/os-release', errors='replace') as ifile:
-                    for line in ifile:
-                        if line.startswith('PRETTY_NAME="'):
-                            info['OS Name'] = line.split('"')[1].split('(')[0]
-                            break
-            except OSError:
-                pass
+        try:
+            with open('/etc/os-release', errors='replace') as ifile:
+                for line in ifile:
+                    if line.startswith('PRETTY_NAME="'):
+                        info['OS Name'] = line.split('"')[1].split('(')[0]
+                        break
+        except OSError:
+            pass
+
+        return info
+
+    @staticmethod
+    def _scan_clear_version():
+        info = {}
+
+        try:
+            with open('/usr/share/clear/version', errors='replace') as ifile:
+                info['OS Name'] = 'Clear Linux ' + ifile.readline().strip()
+        except OSError:
+            pass
 
         return info
 
@@ -1535,7 +1551,8 @@ class LinuxSystem(PosixSystem):
                 self._scan_etc_lsb_release,
                 self._scan_etc_version,
                 self._scan_dpkg_version,
-                self._scan_os_release
+                self._scan_os_release,
+                self._scan_clear_version,
         ):
             info.update(scan_method())
             if info['OS Name'] != 'Unknown':
@@ -1890,7 +1907,11 @@ class LinuxSystem(PosixSystem):
                     pass
 
         if not name:
-            lsmod = command_mod.CommandFile('/sbin/lsmod', errors='ignore')
+            lsmod = command_mod.Command(
+                'lsmod',
+                pathextra=['/sbin'],
+                errors='ignore'
+            )
             if lsmod.is_found():
                 task = subtask_mod.Batch(lsmod.get_cmdline())
                 task.run()

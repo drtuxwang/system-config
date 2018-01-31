@@ -1,32 +1,33 @@
-default: all
+PULL_IMAGES := alpine centos centos-previous clearlinux debian debian-previous debian-testing \
+               registry ubuntu ubuntu-previous ubuntu-testing
+BUILD_IMAGES := $(PULL_IMAGES) jailbreak
+CLEAN_IMAGES := $(BUILD_IMAGES) jenkins oracle-xe
 
-all: build-all
-	docker images
 
-clean:
-	cd alpine && make clean ||:
-	cd centos && make clean ||:
-	cd debian && make clean ||:
-	cd jailbreak && make clean ||:
-	cd jenkins && make clean ||:
-	cd oracle-xe && make clean ||:
-	cd registry && make clean ||:
-	cd ubuntu && make clean ||:
-
-pull:
-	cd alpine && make pull
-	cd centos && make pull
-	cd debian && make pull
-	cd registry && make pull
-	cd ubuntu && make pull
-
-build-all:
-	cd alpine && make build
-	cd centos && make build-all
-	cd debian && make build-all
-	cd jailbreak && make build
-	cd registry && make build
-	cd ubuntu && make build-all
+default: build
 
 project:
 	python3 -m cookiecutter ../cookiecutter/docker
+
+pull:
+	for IMAGE in $(PULL_IMAGES); do \
+		make -C $$IMAGE pull || exit 1; \
+	done
+	docker images
+
+build:
+	for IMAGE in $(BUILD_IMAGES); do \
+		make -C $$IMAGE build || exit 1; \
+	done
+	docker images
+
+gc:
+	docker ps -f status=exited -q | xargs -r docker rm -v
+	docker images -f dangling=true -q | xargs -r docker rmi
+	docker volume ls -qf dangling=true | xargs -r docker volume rm
+
+clean: gc
+	for IMAGE in $(CLEAN_IMAGES); do \
+		make -C $$IMAGE clean; \
+	done
+	docker images

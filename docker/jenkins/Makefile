@@ -13,9 +13,6 @@ FLAGS := --rm \
 
 default:
 
-clean:
-	docker rmi -f $(IMAGE) ||:
-
 pull:
 	docker pull $(IMAGE)
 	docker inspect $(IMAGE) | grep JENKINS_VERSION | uniq
@@ -28,3 +25,6 @@ run:
 		--publish 8080:8080 \
 		--hostname $(NAME) \
 		$(IMAGE) || exit 0
+
+clean:
+	docker rmi -f $(IMAGE) ||:

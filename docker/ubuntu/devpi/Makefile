@@ -14,9 +14,6 @@ FLAGS := --rm \
 default: build
 	docker images
 
-clean:
-	docker rmi -f $(IMAGE) ||:
-
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
@@ -31,3 +28,5 @@ run:
 		--hostname $(NAME)-devpi \
 		$(IMAGE) || exit 0
 
+clean:
+	docker rmi -f $(IMAGE) ||:

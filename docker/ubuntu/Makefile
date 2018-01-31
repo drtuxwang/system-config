@@ -1,8 +1,9 @@
 NAME := ubuntu
 VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-IMAGE_BASE := drtuxwang/$(NAME)-base:$(VERSION)
-IMAGE_XBASE := drtuxwang/$(NAME)-xbase:$(VERSION)
+BASE_IMAGE := drtuxwang/$(NAME)-base:$(VERSION)
+XBASE_IMAGE := drtuxwang/$(NAME)-xbase:$(VERSION)
+DEPENDENT_IMAGES := builder devpi docker nginx openvpn shell wine
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -16,50 +17,32 @@ FLAGS := --rm \
 default: build
 	docker images
 
-all: build-all
-	docker images
-
-clean:
-	cd builder && make clean
-	cd devpi && make clean
-	cd docker && make clean
-	cd nginx && make clean
-	cd openvpn && make clean
-	cd wine && make clean
-	cd shell && make clean
-	docker rmi -f $(IMAGE) $(IMAGE_BASE) $(IMAGE_XBASE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
-	cd $(NAME)-previous && make clean
-	cd $(NAME)-testing && make clean
-
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-	cd $(NAME)-previous && make pull
-	cd $(NAME)-testing && make pull
-
-build-all: build
-	cd builder && make build
-	cd devpi && make build
-	cd docker && make build
-	cd nginx && make build
-	cd openvpn && make build
-	cd shell && make build
-	cd wine && make build
-	cd $(NAME)-previous && make build
-	cd $(NAME)-testing && make build
 
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
-	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
-	docker build -f Dockerfile-base -t $(IMAGE_BASE) .
-	@echo "\n*** Building \"$(IMAGE_XBASE)\" Docker image ***"
-	docker build -f Dockerfile-xbase -t $(IMAGE_XBASE) .
+	@echo "\n*** Building \"$(BASE_IMAGE)\" Docker image ***"
+	docker build -f Dockerfile-base -t $(BASE_IMAGE) .
+	@echo "\n*** Building \"$(XBASE_IMAGE)\" Docker image ***"
+	docker build -f Dockerfile-xbase -t $(XBASE_IMAGE) .
 	rm -rf tmpdir
+
+	for IMAGE in $(DEPENDENT_IMAGES); do \
+		make -C $$IMAGE build || exit 1; \
+	done
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
 		--hostname $(NAME) \
 		$(IMAGE) || exit 0
+
+clean:
+	for IMAGE in $(DEPENDENT_IMAGES); do \
+		make -C $$IMAGE clean; \
+	done
+	docker rmi -f $(IMAGE) $(BASE_IMAGE) $(XBASE_IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
