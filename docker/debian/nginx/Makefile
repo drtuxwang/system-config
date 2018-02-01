@@ -1,4 +1,4 @@
-NAME := jailbreak
+NAME := debian-nginx
 VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
@@ -16,17 +16,13 @@ default: build
 
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build --force-rm=true -t $(IMAGE) .
+	docker build -t $(IMAGE) .
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
-		--privileged=true \
-		`ls -1d /* | grep -v "/proc$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}'` \
-		--volume="/etc/passwd:/etc/passwd:ro" \
-		--volume="/etc/group:/etc/group:ro" \
-		--workdir $(PWD) \
-		--hostname `uname -n`-$(NAME) \
+		--publish 8080:80 \
+		--hostname $(NAME) \
 		$(IMAGE) || exit 0
 
 clean:

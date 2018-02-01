@@ -1,5 +1,6 @@
-PULL_IMAGES := alpine centos centos-previous clearlinux debian debian-previous debian-testing \
-               registry ubuntu ubuntu-previous ubuntu-testing
+PULL_IMAGES := \
+		alpine busybox centos centos-previous clearlinux debian debian-previous \
+		debian-testing registry ubuntu ubuntu-previous ubuntu-testing
 BUILD_IMAGES := $(PULL_IMAGES) jailbreak
 CLEAN_IMAGES := $(BUILD_IMAGES) jenkins oracle-xe
 
@@ -25,9 +26,10 @@ gc:
 	docker ps -f status=exited -q | xargs -r docker rm -v
 	docker images -f dangling=true -q | xargs -r docker rmi
 	docker volume ls -qf dangling=true | xargs -r docker volume rm
+	docker images
 
-clean: gc
+clean:
 	for IMAGE in $(CLEAN_IMAGES); do \
 		make -C $$IMAGE clean; \
 	done
-	docker images
+	make gc

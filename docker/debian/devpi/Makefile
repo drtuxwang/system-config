@@ -1,6 +1,6 @@
-NAME := ubuntu
+NAME := debian-devpi
 VERSION = latest
-IMAGE := drtuxwang/$(NAME)-devpi:$(VERSION)
+IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -14,9 +14,6 @@ FLAGS := --rm \
 default: build
 	docker images
 
-pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
@@ -25,7 +22,7 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
 		--publish 8080:8080 \
-		--hostname $(NAME)-devpi \
+		--hostname $(NAME) \
 		$(IMAGE) || exit 0
 
 clean:

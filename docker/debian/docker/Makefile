@@ -1,6 +1,6 @@
-NAME := ubuntu
+NAME := debian-docker
 VERSION = latest
-IMAGE := drtuxwang/$(NAME)-wine:$(VERSION)
+IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -13,8 +13,7 @@ FLAGS_SHELL := \
 	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
-	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
-	--env DISPLAY=$(DISPLAY) \
+	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--env TERM=$(TERM) \
 	--env USER=$(USER)
 
@@ -29,16 +28,10 @@ build:
 	rm -rf tmpdir
 
 run:
-	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
-	docker run $(FLAGS) $(FLAGS_SHELL) \
-		--network none \
-		--hostname $(NAME)-wine \
-		$(IMAGE) /etc/docker-init || exit 0
-
-irun:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(FLAGS_SHELL) \
-		--hostname $(NAME)-iwine \
+		--privileged=true \
+		--hostname $(NAME) \
 		$(IMAGE) || exit 0
 
 clean:

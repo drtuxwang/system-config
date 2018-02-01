@@ -1,6 +1,6 @@
-NAME := ubuntu
+NAME := busybox
 VERSION = latest
-IMAGE := drtuxwang/$(NAME)-nginx:$(VERSION)
+IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -18,15 +18,17 @@ pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 build:
+	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
+	rm -rf tmpdir
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
-		--publish 8080:80 \
-		--hostname $(NAME)-nginx \
+		--hostname $(NAME) \
 		$(IMAGE) || exit 0
 
 clean:
 	docker rmi -f $(IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

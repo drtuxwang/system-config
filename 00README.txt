@@ -846,6 +846,8 @@ cookiecutter/docker/cookiecutter.json
 
 docker/alpine/Dockerfile                          Docker: Alpine 3.6 basic image
 docker/alpine/Makefile
+docker/busybox/Dockerfile                         Docker: Busybox basic image
+docker/busybox/Makefile
 docker/centos/Dockerfile                          Docker: CentOS 7 basic image
 docker/centos/Makefile
 docker/centos-previous/Dockerfile                 Docker: CentOS 6 basic image
@@ -853,7 +855,21 @@ docker/centos-previous/Makefile
 docker/clearlinux/Dockerfile                      Docker: Clear Linux basic image
 docker/clearlinux/Makefile
 docker/debian/Dockerfile                          Docker: Debian 9 basic image
+docker/debian/Dockerfile-xfce                     Docker: Debian 9 XFCE image
 docker/debian/Makefile
+docker/debian/builder/Dockerfile                  Docker: Debian 9 software builder app image
+docker/debian/builder/Makefile
+docker/debian/devpi/Makefile                      Docker: Debian 9 devpi server app image
+docker/debian/devpi/Dockerfile
+docker/debian/docker/Dockerfile                   Docker: Debian 9 Docker app image
+docker/debian/docker/Makefile
+docker/debian/nginx/Makefile                      Docker: Debian 9 NGINX proxy server app image
+docker/debian/nginx/Dockerfile
+docker/debian/nginx/files/nginx-proxy.conf
+docker/debian/openvpn/Dockerfile                  Docker: Debian 9 OpenVPN app image
+docker/debian/openvpn/Makefile
+docker/debian/wine/Dockerfile                     Docker: Debian 9 WINE app image
+docker/debian/wine/Makefile
 docker/debian-previous/Dockerfile                 Docker: Debian 8 basic image
 docker/debian-previous/Makefile
 docker/debian-testing/Dockerfile                  Docker: Debian testing basic image

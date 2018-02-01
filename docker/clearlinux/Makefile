@@ -27,7 +27,7 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
 		--hostname $(NAME) \
-		$(IMAGE) bash || exit 0
+		$(IMAGE) || exit 0
 
 clean:
 	docker rmi -f $(IMAGE) ||:

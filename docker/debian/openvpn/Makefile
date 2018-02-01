@@ -1,4 +1,4 @@
-NAME := ubuntu
+NAME := debian-openvpn
 VERSION = latest
 IMAGE := drtuxwang/$(NAME)-openvpn:$(VERSION)
 FLAGS := --rm \
@@ -9,14 +9,14 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m
-FLAGS_SHELL := \
+XFLAGS := \
 	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
 	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
-	--env DISPLAY=$(DISPLAY) \
 	--env TERM=$(TERM) \
-	--env USER=$(USER)
+	--env USER=$(USER) \
+	--env DISPLAY=$(DISPLAY)
 
 
 default: build
@@ -30,8 +30,8 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(FLAGS_SHELL) \
-		--hostname $(NAME)-openvpn \
+	docker run $(FLAGS) $(XFLAGS) \
+		--hostname $(NAME) \
 		$(IMAGE) || exit 0
 
 clean:
