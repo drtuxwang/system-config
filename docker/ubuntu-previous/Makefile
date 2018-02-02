@@ -18,7 +18,8 @@ pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 build:
-	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
+	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir
+	../../bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir

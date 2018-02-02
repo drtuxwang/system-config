@@ -1,6 +1,6 @@
-NAME := debian-openvpn
+NAME := debian-xfce-openvpn
 VERSION = latest
-IMAGE := drtuxwang/$(NAME)-openvpn:$(VERSION)
+IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -23,7 +23,8 @@ default: build
 	docker images
 
 build:
-	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *
+	mkdir tmpdir ||: && cp -rp ../../../../config tmpdir
+	../../../../bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir

@@ -1,6 +1,7 @@
-NAME := debian-builder
+NAME := debian-xfce
 VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
+DEPENDENT_IMAGES := openvpn
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -21,24 +22,36 @@ XFLAGS := \
 default: build
 	docker images
 
+pull:
+	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+
 build:
-	mkdir tmpdir ||: && cp -rp ../../../bin ../../../config tmpdir && tmpdir/bin/fmod -R *
+	mkdir tmpdir ||: && cp -rp ../../../config ../../../etc tmpdir
+	../../../bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
+
+	for IMAGE in $(DEPENDENT_IMAGES); do \
+		make -C $$IMAGE build || exit 1; \
+	done
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) $(XFLAGS) \
 		--hostname $(NAME) \
-		$(IMAGE) /etc/docker-init || exit 0
+		$(IMAGE) || exit 0
 
 run-offline:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
 	docker run $(FLAGS) $(XFLAGS) \
 		--network none \
 		--hostname $(NAME)-offline \
-		$(IMAGE) /etc/docker-init || exit 0
+		$(IMAGE) || exit 0
 
 clean:
+	for IMAGE in $(DEPENDENT_IMAGES); do \
+		make -C $$IMAGE clean; \
+	done
 	docker rmi -f $(IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
