@@ -141,9 +141,15 @@ class Main(object):
     def _sorted(options, file_stats):
         order = options.get_order()
         if order == 'mtime':
-            file_stats = sorted(file_stats, key=lambda s: s.get_time())
+            file_stats = sorted(
+                file_stats,
+                key=lambda s: (s.get_time(), s.get_file())
+            )
         elif order == 'ctime':
-            file_stats = sorted(file_stats, key=lambda s: s.get_time_change())
+            file_stats = sorted(
+                file_stats,
+                key=lambda s: (s.get_time_change(), s.get_file())
+            )
         else:
             file_stats = sorted(file_stats, key=lambda s: s.get_file())
         return file_stats
