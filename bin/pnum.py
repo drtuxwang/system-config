@@ -55,17 +55,9 @@ class Options(object):
             description='Renumber picture files into a numerical series.')
 
         parser.add_argument(
-            '-ctime',
+            '-time',
             action='store_const',
-            const='ctime',
-            dest='order',
-            default='file',
-            help='Sort using meta data change time.'
-        )
-        parser.add_argument(
-            '-mtime',
-            action='store_const',
-            const='mtime',
+            const='time',
             dest='order',
             default='file',
             help='Sort using modification time.'
@@ -140,15 +132,10 @@ class Main(object):
     @staticmethod
     def _sorted(options, file_stats):
         order = options.get_order()
-        if order == 'mtime':
+        if order == 'time':
             file_stats = sorted(
                 file_stats,
                 key=lambda s: (s.get_time(), s.get_file())
-            )
-        elif order == 'ctime':
-            file_stats = sorted(
-                file_stats,
-                key=lambda s: (s.get_time_change(), s.get_file())
             )
         else:
             file_stats = sorted(file_stats, key=lambda s: s.get_file())
