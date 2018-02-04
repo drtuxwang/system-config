@@ -1,3 +1,9 @@
+#
+# .config/mimeapps.list
+#   Determine mimetype: xdg-mime query filetype <file>
+#   Reads desktop from: .local/share/applications/ /usr/share/applications/
+#
+
 [Default Applications]
 #
 # EVINCE bindings
@@ -74,6 +80,7 @@ application/x-extension-mp4=vlc.desktop
 application/x-flac=vlc.desktop
 application/x-matroska=vlc.desktop
 application/x-ogg=vlc.desktop
+application/x-partial-download=vlc.desktop
 application/x-shockwave-flash=vlc.desktop
 application/xspf+xml=vlc.desktop
 audio/amr=vlc.desktop
