@@ -155,6 +155,15 @@ class Main(object):
                         target_file + '" file.'
                     )
 
+    def _get_stats(self):
+        elapsed = time.time() - self._start
+        copied = self._size/1024
+        return "{0:d}:{1:d},{2:d}".format(
+            int(elapsed),
+            int(copied),
+            int(copied/elapsed)
+        )
+
     def _remove_old_files(self, source_dir, source_files, target_files):
         for target_file in target_files:
             if os.path.join(
@@ -170,10 +179,10 @@ class Main(object):
                             target_file + '" link.'
                         )
                 elif os.path.isdir(target_file):
-                    print(
-                        '[', self._size, ',', int(time.time()) - self._start,
-                        '] Removing "', target_file, '" directory.', sep=''
-                    )
+                    print('[{0:s}] Removing "{1:s}" directory...'. format(
+                        self._get_stats(),
+                        target_file
+                    ))
                     try:
                         shutil.rmtree(target_file)
                     except OSError:
@@ -182,10 +191,10 @@ class Main(object):
                             target_file + '" directory.'
                         )
                 else:
-                    print(
-                        '[', self._size, ',', int(time.time()) - self._start,
-                        '] Removing "', target_file, '" file.', sep=''
-                    )
+                    print('[{0:s}] Removing "{1:s}" file...'. format(
+                        self._get_stats(),
+                        target_file
+                    ))
                     try:
                         os.remove(target_file)
                     except OSError:
@@ -202,10 +211,10 @@ class Main(object):
                 target_link = os.readlink(target_file)
                 if target_link == source_link:
                     return
-            print(
-                '[', self._size, ',', int(time.time()) - self._start,
-                '] Updating "', target_file, '" link...', sep=''
-            )
+            print('[{0:s}] Updating "{1:s}" link...'. format(
+                self._get_stats(),
+                target_file
+            ))
             try:
                 if os.path.isdir(target_file) and not (
                         os.path.islink(target_file)):
@@ -218,10 +227,10 @@ class Main(object):
                     target_file + '" link.'
                 )
         else:
-            print(
-                '[', self._size, ',', int(time.time()) - self._start,
-                '] Creating "', target_file, '" link...', sep=''
-            )
+            print('[{0:s}] Creating "{1:s}" link...'. format(
+                self._get_stats(),
+                target_file
+            ))
         try:
             os.symlink(source_link, target_file)
         except OSError:
@@ -246,17 +255,17 @@ class Main(object):
                         os.path.getmtime(target_file)
                 )) in (0, 1, 3599, 3600, 3601):
                     return
+            print('[{0:s}] Updating "{1:s}" file...'. format(
+                self._get_stats(),
+                target_file
+            ))
             self._size += int((os.path.getsize(source_file) + 1023) / 1024)
-            print(
-                '[', self._size, ',', int(time.time()) - self._start,
-                '] Updating "', target_file, '" file...', sep=''
-            )
         else:
+            print('[{0:s}] Creating "{1:s}" file...'. format(
+                self._get_stats(),
+                target_file
+            ))
             self._size += int((os.path.getsize(source_file) + 1023) / 1024)
-            print(
-                '[', self._size, ',', int(time.time()) - self._start,
-                '] Creating "', target_file, '" file...', sep=''
-            )
         try:
             shutil.copy2(source_file, target_file)
         except OSError as exception:
@@ -308,10 +317,10 @@ class Main(object):
                 )
         else:
             target_files = []
-            print(
-                '[', self._size, ',', int(time.time()) - self._start,
-                '] Creating "', target_dir, '" directory...', sep=''
-            )
+            print('[{0:s}] Creating "{1:s}" directory...'. format(
+                self._get_stats(),
+                target_dir
+            ))
             try:
                 os.mkdir(target_dir)
                 os.chmod(
@@ -355,8 +364,7 @@ class Main(object):
         for mirror in self._options.get_mirrors():
             self._automount(mirror[1], 8)
             self._mirror(mirror[0], mirror[1])
-        print(
-            '[', self._size, ',', int(time.time()) - self._start, ']', sep='')
+        print('[{0:s}] Finished!...'. format(self._get_stats()))
 
 
 if __name__ == '__main__':
