@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate 'index.xhtml' & 'index.fsum' files plus '..fsum' cache files
+Generate 'index.xhtml' & 'index.fsum' files plus '.../fsum' cache files
 """
 
 import glob
@@ -96,8 +96,8 @@ class Main(object):
                     ))
 
     def _read_fsums(self, ofile, directory):
-        fsum = os.path.join(directory, '..fsum')
-        if directory and os.listdir(directory) == ['..fsum']:
+        fsum = os.path.join(directory, '...', 'fsum')
+        if directory and os.listdir(directory) == ['...']:
             try:
                 os.remove(fsum)
             except OSError:
@@ -118,7 +118,18 @@ class Main(object):
                     self._read_fsums(ofile, file)
 
     @staticmethod
-    def _write_fsums(lines):
+    def _create_directory(directory):
+        if not os.path.isdir(directory):
+            try:
+                os.mkdir(directory)
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' +
+                    directory + '" directory.'
+                )
+
+    @classmethod
+    def _write_fsums(cls, lines):
         fsums = {}
         for line in lines:
             checksum, file = line.split('  ', 1)
@@ -137,7 +148,9 @@ class Main(object):
 
         for depth in sorted(directories, reverse=True):
             for directory in directories[depth]:
-                file = os.path.join(directory, '..fsum')
+                directory_3dot = os.path.join(directory, '...')
+                cls._create_directory(directory_3dot)
+                file = os.path.join(directory_3dot, 'fsum')
                 time_new = 0
                 try:
                     with open(file, 'w', newline='\n') as ofile:

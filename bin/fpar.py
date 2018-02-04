@@ -95,7 +95,7 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
-    def _create_fpar_directory(directory):
+    def _create_3dot_directory(directory):
         if not os.path.isdir(directory):
             try:
                 os.mkdir(directory)
@@ -112,7 +112,7 @@ class Main(object):
             pass
 
     @classmethod
-    def _check_fpar_directory(cls, directory):
+    def _check_3dot_directory(cls, directory):
         if os.path.isdir(directory):
             for par_file in sorted(os.listdir(directory)):
                 if par_file.endswith('.par2'):
@@ -127,27 +127,29 @@ class Main(object):
     def _update(cls, cmdline, files):
         for file in sorted(files):
             directory, name = os.path.split(file)
+            if not directory:
+                directory = os.curdir
             if os.path.isdir(file):
-                cls._check_fpar_directory(os.path.join(file, '..fpar'))
+                cls._check_3dot_directory(os.path.join(file, '...'))
                 cls._update(cmdline, glob.glob(os.path.join(file, '*')))
             elif (
                     os.path.isfile(file) and
                     not os.path.islink(file) and
                     os.path.getsize(file)
             ):
-                fpar_directory = os.path.join(directory, '..fpar')
-                cls._create_fpar_directory(fpar_directory)
+                fpar_directory = os.path.join(directory, '...')
+                cls._create_3dot_directory(fpar_directory)
 
                 if name.endswith(IGNORE_EXTENSIONS):
                     continue
 
                 file_time = os.path.getmtime(file)
-                par_file = os.path.join(directory, '..fpar', name+'.par2')
+                par_file = os.path.join(directory, '...', name+'.par2')
                 if (
                         not os.path.isfile(par_file) or
                         file_time != os.path.getmtime(par_file)
                 ):
-                    tmpfile = os.path.join(directory, '..fpar.par2')
+                    tmpfile = os.path.join(directory, '....par2')
                     size = os.path.getsize(file) // 400 * 4 + 4
                     task = subtask_mod.Task(
                         cmdline + ['-s'+str(size), tmpfile, file]
@@ -160,7 +162,7 @@ class Main(object):
                         cls._delete_file(tmpfile)
                         try:
                             shutil.move(
-                                os.path.join(directory, '..fpar.vol0+1.par2'),
+                                os.path.join(directory, '....vol0+1.par2'),
                                 par_file
                             )
                             os.utime(par_file, (file_time, file_time))
