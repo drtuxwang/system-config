@@ -179,7 +179,7 @@ class Main(object):
                             target_file + '" link.'
                         )
                 elif os.path.isdir(target_file):
-                    print('[{0:s}] Removing "{1:s}" directory...'. format(
+                    print('[{0:s}] Removing "{1:s}" directory...'.format(
                         self._get_stats(),
                         target_file
                     ))
@@ -191,7 +191,7 @@ class Main(object):
                             target_file + '" directory.'
                         )
                 else:
-                    print('[{0:s}] Removing "{1:s}" file...'. format(
+                    print('[{0:s}] Removing "{1:s}" file...'.format(
                         self._get_stats(),
                         target_file
                     ))
@@ -211,7 +211,7 @@ class Main(object):
                 target_link = os.readlink(target_file)
                 if target_link == source_link:
                     return
-            print('[{0:s}] Updating "{1:s}" link...'. format(
+            print('[{0:s}] Updating "{1:s}" link...'.format(
                 self._get_stats(),
                 target_file
             ))
@@ -227,7 +227,7 @@ class Main(object):
                     target_file + '" link.'
                 )
         else:
-            print('[{0:s}] Creating "{1:s}" link...'. format(
+            print('[{0:s}] Creating "{1:s}" link...'.format(
                 self._get_stats(),
                 target_file
             ))
@@ -247,25 +247,37 @@ class Main(object):
                     target_file + '" link.'
                 )
         elif os.path.isfile(target_file):
-            if os.path.getsize(source_file) == os.path.getsize(target_file):
+            source_stat = file_mod.FileStat(source_file)
+            target_stat = file_mod.FileStat(target_file)
+            if source_stat.get_size() == target_stat.get_size():
                 # Allow FAT16/FAT32/NTFS 1h daylight saving
                 # and 1 sec rounding error
-                if int(abs(
-                        os.path.getmtime(source_file) -
-                        os.path.getmtime(target_file)
-                )) in (0, 1, 3599, 3600, 3601):
+                if int(
+                        abs(source_stat.get_time() - target_stat.get_time())
+                ) in (0, 1, 3599, 3600, 3601):
+                    if source_stat.get_mode() != target_stat.get_mode():
+                        print('[{0:s}] Updating "{1:s}" permissions...'.format(
+                            self._get_stats(),
+                            target_file
+                        ))
+                        try:
+                            os.chmod(target_file, source_stat.get_mode())
+                        except OSError:
+                            raise SystemExit(
+                                sys.argv[0] + ': Cannot update "' +
+                                target_file + '" permissions.'
+                            )
                     return
-            print('[{0:s}] Updating "{1:s}" file...'. format(
+            print('[{0:s}] Updating "{1:s}" file...'.format(
                 self._get_stats(),
                 target_file
             ))
-            self._size += int((os.path.getsize(source_file) + 1023) / 1024)
         else:
-            print('[{0:s}] Creating "{1:s}" file...'. format(
+            print('[{0:s}] Creating "{1:s}" file...'.format(
                 self._get_stats(),
                 target_file
             ))
-            self._size += int((os.path.getsize(source_file) + 1023) / 1024)
+        self._size += int((os.path.getsize(source_file) + 1023) / 1024)
         try:
             shutil.copy2(source_file, target_file)
         except OSError as exception:
@@ -317,7 +329,7 @@ class Main(object):
                 )
         else:
             target_files = []
-            print('[{0:s}] Creating "{1:s}" directory...'. format(
+            print('[{0:s}] Creating "{1:s}" directory...'.format(
                 self._get_stats(),
                 target_dir
             ))
@@ -364,7 +376,7 @@ class Main(object):
         for mirror in self._options.get_mirrors():
             self._automount(mirror[1], 8)
             self._mirror(mirror[0], mirror[1])
-        print('[{0:s}] Finished!...'. format(self._get_stats()))
+        print('[{0:s}] Finished!...'.format(self._get_stats()))
 
 
 if __name__ == '__main__':
