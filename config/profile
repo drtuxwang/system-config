@@ -42,9 +42,9 @@ then
     # Session control
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-    if [ "$BASH" ]
+    if [ "$BASH" -o "`echo $0 | \grep \"ash$\"`" ]
     then
-        MYSHELL="BASH"
+        MYSHELL="${0/-/}"
         PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h\[\033[00m\] $ '
         if [ "`timeout --signal=KILL 1 git --version 2> /dev/null | grep \"^git version\"`" ]
         then
@@ -88,12 +88,12 @@ then
             preexec() {
                 \echo -e "\033]0;$MYHNAME:$PWD $ $BASH_COMMAND\007\c"
             }
-            trap 'preexec' DEBUG
+            trap 'preexec' DEBUG 2> /dev/null
             ;;
         esac
 
-        complete -f -o default tar
-        complete -f -o default wine
+        complete -f -o default tar 2> /dev/null
+        complete -f -o default wine 2> /dev/null
     elif [ "`echo $0 | \grep \"ksh$\"`" ]
     then
         MYSHELL="KORN"
@@ -113,7 +113,7 @@ then
     export SSH_AUTH_SOCK=$(\ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
     if [ ! "$SSH_AUTH_SOCK" ]
     then
-        eval $(ssh-agent) > /dev/null 2>&1
+        eval $(ssh-agent 2> /dev/null) > /dev/null
     fi
     SSH_KEYS=`ssh-add -l 2> /dev/null | grep ".:." | wc -l | awk '{print $1}'`
     if [ "$MYTTY" = "`\tty 2> /dev/null`" ]
@@ -140,6 +140,7 @@ then
             alias exit='echo Use \"logout\" to leave the login shell.'
         fi
         alias exec=''
+        alias logout=\\exit  # required by ash
     fi
 
     # General stuff

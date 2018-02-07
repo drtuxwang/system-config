@@ -23,6 +23,7 @@ build:
 	mkdir -p tmpdir/bin tmpdir/config
 	cp -p $(TOPDIR)/bin/sysinfo.sh tmpdir/bin/
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
+	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.profile
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .

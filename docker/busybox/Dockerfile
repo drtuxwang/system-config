@@ -1,7 +1,7 @@
 FROM busybox:latest
 
 # Root account
-COPY tmpdir/config/.bashrc /root/
+COPY tmpdir/config/.bashrc tmpdir/config/.profile /root/
 
 # Add scripts
 COPY tmpdir/bin/sysinfo.sh /opt/software/bin/
@@ -9,4 +9,4 @@ COPY tmpdir/bin/sysinfo.sh /opt/software/bin/
 # Configure start
 ENV HOME=/root
 WORKDIR /root
-CMD busybox sh
+CMD busybox ash -l
