@@ -11,12 +11,11 @@ RUN apt-get update && \
 		vim && \
 	apt-get clean
 
+# Root account
+COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
+
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/config/bashrc /root/.bashrc
-COPY tmpdir/config/vimrc /root/.vimrc
 
 # Configure start
 ENV HOME=/root

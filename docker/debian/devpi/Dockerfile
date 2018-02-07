@@ -1,9 +1,15 @@
-FROM drtuxwang/debian:latest
+FROM drtuxwang/debian-base:latest
 
 RUN apt-get install --no-install-recommends -y \
 		python3-setuptools && \
 	python3 -m pip install devpi-server devpi-web && \
 	devpi-server --init --serverdir=/var/lib/devpi
+
+# Root account
+COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
+
+# Add scripts
+COPY tmpdir/bin/ /opt/software/bin/
 
 # Configure start
 ENV PYTHONDONTWRITEBYTECODE 1

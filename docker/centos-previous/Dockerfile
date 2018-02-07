@@ -6,12 +6,11 @@ RUN yum -y install epel-release && \
 	yum -y install net-tools openssh-clients pciutils python34 vim && \
 	curl https://bootstrap.pypa.io/get-pip.py | python3.4
 
+# Root account
+COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
+
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/config/bashrc /root/.bashrc
-COPY tmpdir/config/vimrc /root/.vimrc
 
 # Configure start
 ENV HOME=/root

@@ -17,14 +17,28 @@ XFLAGS := \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
 	--env DISPLAY=$(DISPLAY)
+TOPDIR := ../../../..
 
 
 default: build
 	docker images
 
 build:
-	mkdir tmpdir ||: && cp -rp ../../../../config tmpdir
-	../../../../bin/fmod -R *
+	rm -rf tmpdir
+	mkdir -p tmpdir/bin tmpdir/config tmpdir/etc
+	cp -p $(TOPDIR)/bin/* tmpdir/bin/
+	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
+	cp -p $(TOPDIR)/config/docker-init \
+		$(TOPDIR)/config/docker-init-home \
+		$(TOPDIR)/config/docker-init-resolvconf \
+		tmpdir/config/
+	cp -p $(TOPDIR)/config/login tmpdir/config/.login
+	cp -p $(TOPDIR)/config/profile tmpdir/config/.profile
+	cp -p $(TOPDIR)/config/terminalrc tmpdir/config/
+	cp -p $(TOPDIR)/config/tmux.conf tmpdir/config/.tmux.conf
+	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
+	cp -p $(TOPDIR)/etc/python3-requirements.txt tmpdir/etc/
+	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir

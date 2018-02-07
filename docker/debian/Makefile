@@ -1,5 +1,6 @@
 NAME := debian
 VERSION = latest
+BASE_IMAGE := drtuxwang/$(NAME)-base:$(VERSION)
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 DEPENDENT_IMAGES := devpi docker nginx xfce
 FLAGS := --rm \
@@ -10,6 +11,8 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m
+TOPDIR := ../..
+
 
 default: build
 	docker images
@@ -18,8 +21,14 @@ pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 build:
-	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir
-	../../bin/fmod -R *
+	rm -rf tmpdir
+	mkdir -p tmpdir/bin tmpdir/config
+	cp -p $(TOPDIR)/bin/* tmpdir/bin/
+	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
+	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
+	$(TOPDIR)/bin/fmod -R *
+	@echo "\n*** Building \"$(BASE_IMAGE)\" Docker image ***"
+	docker build -f Dockerfile-base -t $(BASE_IMAGE) .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
@@ -38,5 +47,5 @@ clean:
 	for IMAGE in $(DEPENDENT_IMAGES); do \
 		make -C $$IMAGE clean; \
 	done
-	docker rmi -f $(IMAGE) ||:
+	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

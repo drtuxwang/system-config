@@ -855,6 +855,7 @@ docker/centos-previous/Makefile
 docker/clearlinux/Dockerfile                      Docker: Clear Linux basic image
 docker/clearlinux/Makefile
 docker/debian/Dockerfile                          Docker: Debian 9 basic image
+docker/debian/Dockerfile-base
 docker/debian/Makefile
 docker/debian/devpi/Makefile                      Docker: Debian 9 devpi server app image
 docker/debian/devpi/Dockerfile
@@ -863,7 +864,8 @@ docker/debian/docker/Makefile
 docker/debian/nginx/Makefile                      Docker: Debian 9 NGINX proxy server app image
 docker/debian/nginx/Dockerfile
 docker/debian/nginx/files/nginx-proxy.conf
-docker/debian/xfce/Dockerfile-xfce                Docker: Debian 9 compilers/wine/XFCE image
+docker/debian/xfce/Dockerfile                     Docker: Debian 9 compilers/wine/XFCE image
+docker/debian/xfce/Dockerfile-xbase
 docker/debian/xfce/Makefile
 docker/debian/xfce/openvpn/Dockerfile             Docker: Debian 9 OpenVPN/XFCE image
 docker/debian/xfce/openvpn/Makefile

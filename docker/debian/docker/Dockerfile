@@ -13,3 +13,14 @@ RUN apt-get install --no-install-recommends -y \
 	dpkg -i docker-engine_* && \
 	dpkg -P wget && \
 	rm docker-engine_*
+
+# Root account
+COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
+
+# Add scripts
+COPY tmpdir/bin/ /opt/software/bin/
+
+# Configure start
+ENV HOME=/root
+WORKDIR /root
+CMD bash

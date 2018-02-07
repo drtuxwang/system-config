@@ -4,12 +4,11 @@ FROM alpine:3.6
 RUN apk update && \
 	apk add bash openssh-client python3 vim
 
+# Root account
+COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
+
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/config/bashrc /root/.bashrc
-COPY tmpdir/config/vimrc /root/.vimrc
 
 # Configure start
 ENV HOME=/root

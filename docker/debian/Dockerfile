@@ -1,22 +1,10 @@
-FROM debian:9
+FROM drtuxwang/debian-base:latest
 
-# Install base packages
-RUN apt-get update && \
-	apt-get install --no-install-recommends -y \
-		net-tools \
-		openssh-client \
-		pciutils \
-		python3 \
-		python3-pip \
-		vim && \
-	apt-get clean
+# Root account
+COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/config/bashrc /root/.bashrc
-COPY tmpdir/config/vimrc /root/.vimrc
 
 # Configure start
 ENV HOME=/root

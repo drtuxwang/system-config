@@ -29,6 +29,7 @@ gc:
 	docker images
 
 clean:
+	make gc
 	for IMAGE in $(CLEAN_IMAGES); do \
 		make -C $$IMAGE clean; \
 	done

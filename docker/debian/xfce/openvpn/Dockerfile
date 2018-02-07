@@ -4,5 +4,20 @@ FROM drtuxwang/debian-xfce:latest
 RUN apt-get install --no-install-recommends -y openvpn && \
 	apt-get clean
 
+# Root account
+COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
+
+# User account
+COPY tmpdir/config/docker-init tmpdir/config/docker-init-home tmpdir/config/docker-init-resolvconf /etc/
+COPY tmpdir/config/.bashrc \
+	tmpdir/config/.login \
+	tmpdir/config/.profile \
+	tmpdir/config/.tmux.conf \
+	tmpdir/config/.vimrc \
+	/home/docker/
+
 # Add scripts
-COPY tmpdir/config/docker-init-resolvconf /etc/
+COPY tmpdir/bin/ /opt/software/bin/
+
+# Configure start
+ENTRYPOINT ["/etc/docker-init"]

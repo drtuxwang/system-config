@@ -7,17 +7,16 @@ RUN apt-get update && \
 		net-tools \
 		openssh-client \
 		pciutils \
+		python3 \
+		python3-pip \
 		vim && \
 	apt-get clean
-##		python3 \
-##		python3-pip \
+
+# Root account
+COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/config/bashrc /root/.bashrc
-COPY tmpdir/config/vimrc /root/.vimrc
 
 # Configure start
 ENV HOME=/root
