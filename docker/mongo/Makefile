@@ -1,4 +1,4 @@
-NAME := oracle-xe
+NAME := mongo
 VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
@@ -31,7 +31,7 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
 		--privileged=true \
-		--publish 1521:1521 \
+		--publish 27017:27017 \
 		--hostname $(NAME) \
 		$(IMAGE) || exit 0
 

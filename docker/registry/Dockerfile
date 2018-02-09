@@ -2,10 +2,15 @@ FROM registry:2
 
 COPY ./files/config.yml /etc/docker/registry/
 
-EXPOSE 5000
+# Root account
+COPY tmpdir/config/.bashrc /root/
+RUN ln -s .bashrc /root/.profile
 
-ENTRYPOINT ["/entrypoint.sh"]
+# Add scripts
+COPY tmpdir/bin/bash /bin/bash
 
+# Configure start
 ENV REGISTRY_STORAGE_DELETE_ENABLED=true
-
+EXPOSE 5000
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/etc/docker/registry/config.yml"]

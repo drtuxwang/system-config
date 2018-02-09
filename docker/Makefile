@@ -1,8 +1,22 @@
 PULL_IMAGES := \
-		alpine busybox centos centos-previous clearlinux debian debian-previous \
-		debian-testing etcd registry ubuntu ubuntu-previous ubuntu-testing
+	alpine \
+	busybox \
+	centos \
+	centos-previous \
+	clearlinux \
+	debian \
+	debian-previous \
+	debian-testing \
+	etcd \
+	jenkins \
+	mongo \
+	oracle-xe \
+	registry \
+	ubuntu \
+	ubuntu-previous \
+	ubuntu-testing
 BUILD_IMAGES := $(PULL_IMAGES) jailbreak
-CLEAN_IMAGES := $(BUILD_IMAGES) jenkins oracle-xe
+CLEAN_IMAGES := $(BUILD_IMAGES)
 
 
 default: build

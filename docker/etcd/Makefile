@@ -40,3 +40,4 @@ run:
 
 clean:
 	docker rmi -f $(IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

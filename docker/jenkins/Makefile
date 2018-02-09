@@ -1,6 +1,6 @@
 NAME := jenkins
 VERSION = latest
-IMAGE := $(NAME):$(VERSION)
+IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -9,13 +9,23 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=2048m
+TOPDIR := ../..
 
 
-default:
+default: build
+	docker images
 
 pull:
-	docker pull $(IMAGE)
-	docker inspect $(IMAGE) | grep JENKINS_VERSION | uniq
+	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+
+build:
+	rm -rf tmpdir
+	mkdir -p tmpdir/config
+	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
+	$(TOPDIR)/bin/fmod -R *
+	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
+	docker build -t $(IMAGE) .
+	rm -rf tmpdir
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
@@ -28,3 +38,4 @@ run:
 
 clean:
 	docker rmi -f $(IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

@@ -878,9 +878,12 @@ docker/etcd/Dockerfile                            Docker: Etcd 3.2.15
 docker/etcd/Makefile
 docker/jailbreak/Dockerfile                       Docker: empty app image for jail breaking
 docker/jailbreak/Makefile
-docker/jenkins/Makefile                           Docker: Jenkins server
-docker/mongodb/Makefile                           Docker: MongoDB database
-docker/oracle-xe/Makefile                         Docker: Oracle XE database
+docker/jenkins/Dockerfile                         Docker: Jenkins server
+docker/jenkins/Makefile
+docker/mongo/Dockerfile                           Docker: MongoDB database
+docker/mongo/Makefile
+docker/oracle-xe/Dockerfile                       Docker: Oracle XE database
+docker/oracle-xe/Makefile
 docker/registry/Dockerfile                        Docker: Registry 2
 docker/registry/Makefile
 docker/registry/files/config.yml
