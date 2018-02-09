@@ -1,4 +1,4 @@
-NAME := busybox
+NAME := etcd
 VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
@@ -8,7 +8,7 @@ FLAGS := --rm \
 	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
-	--memory=1024m
+	--memory=2048m
 TOPDIR := ../..
 
 
@@ -32,9 +32,11 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
+		--volume=/var/lib/registry:/var/lib/registry \
+		--publish 2379:2379 \
+		--publish 2380:2380 \
 		--hostname $(NAME) \
-		$(IMAGE) || exit 0
+		$(IMAGE) etcd --name my_etcd || exit 0
 
 clean:
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

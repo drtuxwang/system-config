@@ -787,6 +787,7 @@ bin/scd.bat
 bin/mka.bat            Show settings of %cda%..%cdz% environmental variables
 
 config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
+config/ash-2bash                Wrapper to run ash as bash shell
 config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
 config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
 config/bashrc                   Copy to "/root/.bashrc" for "root" account settings
@@ -873,6 +874,8 @@ docker/debian-previous/Dockerfile                 Docker: Debian 8 basic image
 docker/debian-previous/Makefile
 docker/debian-testing/Dockerfile                  Docker: Debian testing basic image
 docker/debian-testing/Makefile
+docker/etcd/Dockerfile                            Docker: Etcd 3.2.15
+docker/etcd/Makefile
 docker/jailbreak/Dockerfile                       Docker: empty app image for jail breaking
 docker/jailbreak/Makefile
 docker/jenkins/Makefile                           Docker: Jenkins server
