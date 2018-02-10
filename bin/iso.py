@@ -125,7 +125,7 @@ class Options(object):
 
         if not os.path.isdir(self._args.directory[0]):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + self._args.directory +
+                sys.argv[0] + ': Cannot find "' + self._args.directory[0] +
                 '" directory.'
             )
         if self._args.image:
