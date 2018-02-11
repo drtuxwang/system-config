@@ -856,20 +856,7 @@ docker/centos-previous/Makefile
 docker/clearlinux/Dockerfile                      Docker: Clear Linux basic image
 docker/clearlinux/Makefile
 docker/debian/Dockerfile                          Docker: Debian 9 basic image
-docker/debian/Dockerfile-base
 docker/debian/Makefile
-docker/debian/devpi/Makefile                      Docker: Debian 9 devpi server app image
-docker/debian/devpi/Dockerfile
-docker/debian/docker/Dockerfile                   Docker: Debian 9 Docker app image
-docker/debian/docker/Makefile
-docker/debian/nginx/Makefile                      Docker: Debian 9 NGINX proxy server app image
-docker/debian/nginx/Dockerfile
-docker/debian/nginx/files/nginx-proxy.conf
-docker/debian/xfce/Dockerfile                     Docker: Debian 9 compilers/wine/XFCE image
-docker/debian/xfce/Dockerfile-xbase
-docker/debian/xfce/Makefile
-docker/debian/xfce/openvpn/Dockerfile             Docker: Debian 9 OpenVPN/XFCE image
-docker/debian/xfce/openvpn/Makefile
 docker/debian-previous/Dockerfile                 Docker: Debian 8 basic image
 docker/debian-previous/Makefile
 docker/debian-testing/Dockerfile                  Docker: Debian testing basic image
@@ -890,28 +877,23 @@ docker/registry/files/config.yml
 docker/ubuntu/Makefile
 docker/ubuntu/Dockerfile                          Docker: Ubuntu 16.04 basic image
 docker/ubuntu/Dockerfile-base
-docker/ubuntu/Dockerfile-xbase
 docker/ubuntu/Makefile
-docker/ubuntu/builder/Dockerfile                  Docker: Ubuntu 16.04 software builder app image
-docker/ubuntu/builder/Makefile
-docker/ubuntu/devpi/Dockerfile                    Docker: Ubuntu 16.04 devpi server app image
-docker/ubuntu/devpi/Makefile
-docker/ubuntu/docker/Dockerfile                   Docker: Ubuntu 16.04 Docker app image
+docker/ubuntu/devpi/Makefile                      Docker: Ubuntu 9 devpi server app image
+docker/ubuntu/devpi/Dockerfile
+docker/ubuntu/docker/Dockerfile                   Docker: Ubuntu 9 Docker app image
 docker/ubuntu/docker/Makefile
-docker/ubuntu/nginx/Makefile                      Docker: Ubuntu 16.04 NGINX proxy server app image
+docker/ubuntu/nginx/Makefile                      Docker: Ubuntu 9 NGINX proxy server app image
 docker/ubuntu/nginx/Dockerfile
 docker/ubuntu/nginx/files/nginx-proxy.conf
-docker/ubuntu/openvpn/Dockerfile                  Docker: Ubuntu 16.04 OpenVPN app image
-docker/ubuntu/openvpn/Makefile
-docker/ubuntu/shell/Dockerfile-shell              Docker: Ubuntu 16.04 login shell image
-docker/ubuntu/shell/Dockerfile-xshell             Docker: Ubuntu 16.04 login shell with GUI image
-docker/ubuntu/shell/Makefile
+docker/ubuntu/xfce/Dockerfile                     Docker: Ubuntu 9 compilers/wine/XFCE image
+docker/ubuntu/xfce/Dockerfile-xbase
+docker/ubuntu/xfce/Makefile
+docker/ubuntu/xfce/openvpn/Dockerfile             Docker: Ubuntu 9 OpenVPN/XFCE image
+docker/ubuntu/xfce/openvpn/Makefile
 docker/ubuntu-previous/Dockerfile                 Docker: Ubuntu 14.04 basic image
 docker/ubuntu-previous/Makefile
 docker/ubuntu-testing/Dockerfile                  Docker: Ubuntu 18.04 basic image
 docker/ubuntu-testing/Makefile
-docker/ubuntu/wine/Dockerfile                     Docker: Ubuntu 16.04 WINE app image
-docker/ubuntu/wine/Makefile
 docker/Makefile                                   Makefile for building all images
 
 kubernetes/ubuntu/Makefile                        Kubernetes: Ubuntu example

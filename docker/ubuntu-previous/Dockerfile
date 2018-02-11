@@ -9,7 +9,8 @@ RUN apt-get update && \
 		pciutils \
 		python3-pip \
 		vim && \
-	apt-get clean
+	apt-get clean && \
+	python3 -m pip install --upgrade pip
 
 # Root account
 COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/

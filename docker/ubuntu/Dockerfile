@@ -1,16 +1,4 @@
-FROM ubuntu:16.04
-
-# Install base packages
-RUN apt-get update && \
-	apt-get install --no-install-recommends -y \
-		iputils-ping \
-		net-tools \
-		openssh-client \
-		pciutils \
-		python3 \
-		python3-pip \
-		vim && \
-	apt-get clean
+FROM drtuxwang/ubuntu-base:latest
 
 # Root account
 COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/

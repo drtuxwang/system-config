@@ -1,4 +1,4 @@
-FROM drtuxwang/debian:latest
+FROM drtuxwang/ubuntu-base:latest
 
 # Install Docker package (stable instead of latest)
 RUN apt-get install --no-install-recommends -y \
@@ -9,7 +9,7 @@ RUN apt-get install --no-install-recommends -y \
 		libseccomp2 \
 		wget && \
 	wget --progress=bar:force \
-		http://apt.dockerproject.org/repo/pool/main/d/docker-engine/docker-engine_1.12.6-0~debian-stretch_amd64.deb && \
+		http://apt.dockerproject.org/repo/pool/main/d/docker-engine/docker-engine_1.12.5-0~ubuntu-xenial_amd64.deb && \
 	dpkg -i docker-engine_* && \
 	dpkg -P wget && \
 	rm docker-engine_*

@@ -4,7 +4,8 @@ FROM centos:7
 RUN yum -y install epel-release && \
 	yum -y update && \
 	yum -y install net-tools openssh-clients pciutils python34 vim && \
-	curl https://bootstrap.pypa.io/get-pip.py | python3.4
+	curl https://bootstrap.pypa.io/get-pip.py | python3.4 && \
+	python3 -m pip install --upgrade pip
 
 # Root account
 COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/

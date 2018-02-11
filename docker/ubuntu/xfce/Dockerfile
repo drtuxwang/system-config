@@ -1,14 +1,10 @@
-FROM drtuxwang/debian-xfce:latest
-
-# Install OpenVPN packages
-RUN apt-get install --no-install-recommends -y openvpn && \
-	apt-get clean
+FROM drtuxwang/ubuntu-xbase:latest
 
 # Root account
 COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
 
 # User account
-COPY tmpdir/config/docker-init tmpdir/config/docker-init-home tmpdir/config/docker-init-resolvconf /etc/
+COPY tmpdir/config/docker-init tmpdir/config/docker-init-home /etc/
 COPY tmpdir/config/.bashrc \
 	tmpdir/config/.login \
 	tmpdir/config/.profile \

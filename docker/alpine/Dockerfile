@@ -2,7 +2,8 @@ FROM alpine:3.6
 
 # Install base packages
 RUN apk update && \
-	apk add bash openssh-client python3 vim
+	apk add bash openssh-client python3 vim && \
+	python3 -m pip install --upgrade pip
 
 # Root account
 COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/

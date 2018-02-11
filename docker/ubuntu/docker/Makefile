@@ -1,4 +1,4 @@
-NAME := debian-nginx
+NAME := ubuntu-docker
 VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
@@ -9,6 +9,13 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--memory-reservation=64m \
 	--memory=1024m
+FLAGS_SHELL := \
+	--volume=/etc/passwd:/etc/passwd:ro \
+	--volume=/etc/group:/etc/group:ro \
+	--volume=/shared:/shared \
+	--volume /var/run/docker.sock:/var/run/docker.sock \
+	--env TERM=$(TERM) \
+	--env USER=$(USER)
 
 
 default: build
@@ -27,8 +34,8 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
-		--publish 8080:80 \
+	docker run $(FLAGS) $(FLAGS_SHELL) \
+		--privileged=true \
 		--hostname $(NAME) \
 		$(IMAGE) || exit 0
 

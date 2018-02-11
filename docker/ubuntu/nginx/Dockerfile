@@ -1,4 +1,4 @@
-FROM drtuxwang/debian:latest
+FROM drtuxwang/ubuntu-base:latest
 
 RUN apt-get install --no-install-recommends -y nginx-light
 

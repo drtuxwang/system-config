@@ -1,8 +1,6 @@
-NAME := debian
+NAME := ubuntu-xfce-openvpn
 VERSION = latest
-XBASE_IMAGE := drtuxwang/$(NAME)-xbase:$(VERSION)
-IMAGE := drtuxwang/$(NAME)-xfce:$(VERSION)
-DEPENDENT_IMAGES := openvpn
+IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -19,21 +17,21 @@ XFLAGS := \
 	--env TERM=$(TERM) \
 	--env USER=$(USER) \
 	--env DISPLAY=$(DISPLAY)
-TOPDIR := ../../..
+TOPDIR := ../../../..
 
 
 default: build
 	docker images
-
-pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/config tmpdir/etc
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
-	cp -p $(TOPDIR)/config/docker-init $(TOPDIR)/config/docker-init-home tmpdir/config/
+	cp -p $(TOPDIR)/config/docker-init \
+		$(TOPDIR)/config/docker-init-home \
+		$(TOPDIR)/config/docker-init-resolvconf \
+		tmpdir/config/
 	cp -p $(TOPDIR)/config/login tmpdir/config/.login
 	cp -p $(TOPDIR)/config/profile tmpdir/config/.profile
 	cp -p $(TOPDIR)/config/terminalrc tmpdir/config/
@@ -41,15 +39,9 @@ build:
 	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
 	cp -p $(TOPDIR)/etc/python3-requirements.txt tmpdir/etc/
 	$(TOPDIR)/bin/fmod -R *
-	@echo "\n*** Building \"$(XBASE_IMAGE)\" Docker image ***"
-	docker build -f Dockerfile-xbase -t $(XBASE_IMAGE) .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
-
-	for IMAGE in $(DEPENDENT_IMAGES); do \
-		make -C $$IMAGE build || exit 1; \
-	done
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
@@ -57,16 +49,5 @@ run:
 		--hostname $(NAME) \
 		$(IMAGE) || exit 0
 
-run-offline:
-	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
-	docker run $(FLAGS) $(XFLAGS) \
-		--network none \
-		--hostname $(NAME)-offline \
-		$(IMAGE) || exit 0
-
 clean:
-	for IMAGE in $(DEPENDENT_IMAGES); do \
-		make -C $$IMAGE clean; \
-	done
-	docker rmi -f $(IMAGE) $(XBASE_IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
+	docker rmi -f $(IMAGE) ||:

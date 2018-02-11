@@ -1,6 +1,8 @@
 NAME := ubuntu
 VERSION = latest
+BASE_IMAGE := drtuxwang/$(NAME)-base:$(VERSION)
 IMAGE := drtuxwang/$(NAME):$(VERSION)
+DEPENDENT_IMAGES := devpi docker nginx xfce
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -25,9 +27,15 @@ build:
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
 	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
 	$(TOPDIR)/bin/fmod -R *
+	@echo "\n*** Building \"$(BASE_IMAGE)\" Docker image ***"
+	docker build -f Dockerfile-base -t $(BASE_IMAGE) .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
+
+	for IMAGE in $(DEPENDENT_IMAGES); do \
+		make -C $$IMAGE build || exit 1; \
+	done
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
@@ -36,5 +44,8 @@ run:
 		$(IMAGE) || exit 0
 
 clean:
-	docker rmi -f $(IMAGE) ||:
+	for IMAGE in $(DEPENDENT_IMAGES); do \
+		make -C $$IMAGE clean; \
+	done
+	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

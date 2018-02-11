@@ -1,4 +1,16 @@
-FROM drtuxwang/debian-base:latest
+FROM debian:9
+
+# Install base packages
+RUN apt-get update && \
+	apt-get install --no-install-recommends -y \
+		net-tools \
+		openssh-client \
+		pciutils \
+		python3 \
+		python3-pip \
+		vim && \
+	apt-get clean && \
+	python3 -m pip install --upgrade pip
 
 # Root account
 COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
