@@ -81,7 +81,7 @@ class Options(object):
         self._tar = command_mod.Command('tar', errors='stop')
         self._tar.set_args(['cfvJ', self._archive+'.part'] + self._files)
 
-        os.environ['XZ_OPT'] = '-9 -e --threads=1'
+        os.environ['XZ_OPT'] = '-9 -e --lzma2=dict=128MiB --threads=1'
 
 
 class Main(object):

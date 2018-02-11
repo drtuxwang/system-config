@@ -63,7 +63,7 @@ class Main(object):
         """
         command = command_mod.Command('xz', errors='stop')
         if len(sys.argv) > 1 and os.path.isfile(sys.argv[1]):
-            command.set_args(['-9', '-e'])
+            command.set_args(['-9', '-e', '--lzma2=dict=128MiB'])
         command.extend_args(sys.argv[1:])
         self._set_libraries(command)
 
