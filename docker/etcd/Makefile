@@ -32,11 +32,15 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
-		--volume=/var/lib/registry:/var/lib/registry \
+		--volume="/var/lib/etcd:/var/lib/etcd" \
 		--publish 2379:2379 \
 		--publish 2380:2380 \
 		--hostname $(NAME) \
-		$(IMAGE) etcd --name my_etcd || exit 0
+		$(IMAGE) \
+			etcd 
+			--name my_etcd \
+			--data-dir /var/lib/etcd/data \
+			--wal-dir /var/lib/etcd/wal || exit 0
 
 clean:
 	docker rmi -f $(IMAGE) ||:
