@@ -33,14 +33,40 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
 		--volume="/var/lib/etcd:/var/lib/etcd" \
+		--env ETCDCTL_API=3 \
 		--publish 2379:2379 \
 		--publish 2380:2380 \
 		--hostname $(NAME) \
 		$(IMAGE) \
-			etcd 
-			--name my_etcd \
+			etcd \
+			--name my_etcd0 \
 			--data-dir /var/lib/etcd/data \
 			--wal-dir /var/lib/etcd/wal || exit 0
+
+migrate:
+	@echo "\n*** Running \"$(IMAGE)\" Docker container to migrate v2 key store ***"
+	docker run $(FLAGS) \
+		--volume="/var/lib/etcd:/var/lib/etcd" \
+		--env ETCDCTL_API=3 \
+		--hostname $(NAME) \
+		$(IMAGE) \
+			etcdctl \
+			--data-dir /var/lib/etcd/data \
+			--wal-dir /var/lib/etcd/wal \
+			migrate || exit 0
+
+restore:
+	@echo "\n*** Running \"$(IMAGE)\" Docker container to restore from snapshot ***"
+	docker run $(FLAGS) \
+		--volume="/var/lib/etcd:/var/lib/etcd" \
+		--env ETCDCTL_API=3 \
+		--hostname $(NAME) \
+		$(IMAGE) \
+			etcdctl \
+			--name my_etcd0 \
+			--data-dir /var/lib/etcd/data \
+			--wal-dir /var/lib/etcd/wal \
+			snapshot restore /var/lib/etcd/snapshot.db || exit 0
 
 clean:
 	docker rmi -f $(IMAGE) ||:
