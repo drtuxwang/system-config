@@ -182,8 +182,8 @@ class Main(object):
 
     @staticmethod
     def _compare(packages_files, packages_white_list, packages_used):
-        names_files = sorted(packages_files.keys())
-        names_white_list = sorted(packages_white_list.keys())
+        names_files = sorted(packages_files)
+        names_white_list = sorted(packages_white_list)
         names_used = packages_used.keys()
 
         for name in names_files:

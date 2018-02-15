@@ -69,6 +69,22 @@ class Options(object):
             help='Show all installed packages (optional arch).'
         )
         parser.add_argument(
+            '-d',
+            action='store_const',
+            const='depends',
+            dest='mode',
+            default='dpkg',
+            help='Show dependency tree for selected installed packages.'
+        )
+        parser.add_argument(
+            '-c',
+            action='store_const',
+            const='nodepends',
+            dest='mode',
+            default='dpkg',
+            help='Show only installed packages without dependents.'
+        )
+        parser.add_argument(
             '-s',
             action='store_const',
             const='-s',
@@ -83,19 +99,11 @@ class Options(object):
             help='Show files owned by selected installed packages.'
         )
         parser.add_argument(
-            '-d',
-            action='store_const',
-            const='depends',
-            dest='mode',
-            default='dpkg',
-            help='Show dependency tree for selected installed packages.'
-        )
-        parser.add_argument(
             '-P',
             action='store_const',
             const='-P',
             dest='option',
-            help='Remove selected installed packages.'
+            help='Purge selected installed packages.'
         )
         parser.add_argument(
             '-S',
@@ -149,7 +157,7 @@ class Options(object):
                 self._arch_sub = self._args.args[0]
             else:
                 self._arch_sub = ''
-        elif self._args.mode == 'depends':
+        elif self._args.mode in ('depends', 'nodepends'):
             self._package_names = self._args.args
         elif self._args.option:
             self._dpkg.set_args([self._args.option] + self._args.args)
@@ -162,20 +170,7 @@ class Options(object):
                 self._args.args[0] + '".'
             )
         else:
-            print(
-                "usage: deb.py [-h] [-l] [-s] [-L] [-d] [-P] [-S] [-i] [-I]",
-                file=sys.stderr
-            )
-            print(
-                "              [package.deb|package|arch "
-                "[package.deb|package|arch ...]]",
-                file=sys.stderr
-            )
-            print(
-                "deb.py: error: the following arguments are required: "
-                "package.deb",
-                file=sys.stderr
-            )
+            self._parse_args(['-h'])
             raise SystemExit(1)
 
 
@@ -353,13 +348,16 @@ class Main(object):
             elif ':' in name:
                 continue
             print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(
-                name.split(':')[0], package.get_version(), package.get_size(),
-                package.get_description()))
+                name.split(':')[0],
+                package.get_version(),
+                package.get_size(),
+                package.get_description()
+            ))
 
     def _show_dependent_packages(self, names, checked=None, ident=''):
         if not checked:
             checked = []
-        keys = sorted(self._packages.keys())
+        keys = sorted(self._packages)
         for name in names:
             if name in self._packages:
                 print(ident + name)
@@ -372,6 +370,23 @@ class Main(object):
                                 checked,
                                 ident + '  '
                             )
+
+    def _show_nodependent_packages(self):
+        keys = sorted(self._packages)
+
+        for name in keys:
+            package = self._packages.get(name)
+            if package:
+                for key in keys:
+                    if name in self._packages[key].get_depends():
+                        break
+                else:
+                    print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(
+                        name.split(':')[0],
+                        package.get_version(),
+                        package.get_size(),
+                        package.get_description()
+                    ))
 
     def run(self):
         """
@@ -386,6 +401,8 @@ class Main(object):
         elif mode == 'depends':
             for packagename in self._options.get_package_names():
                 self._show_dependent_packages([packagename], checked=[])
+        elif mode == 'nodepends':
+            self._show_nodependent_packages()
         else:
             subtask_mod.Exec(self._options.get_dpkg().get_cmdline()).run()
 

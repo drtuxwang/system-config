@@ -12,8 +12,8 @@ import re
 import subprocess
 import sys
 
-RELEASE = '2.0.9'
-VERSION = 20170730
+RELEASE = '2.0.10'
+VERSION = 20180214
 
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -187,7 +187,7 @@ class Tasks(object):
         """
         Return list of process IDs.
         """
-        return sorted(self._process.keys())
+        return sorted(self._process)
 
     def get_process(self, pid):
         """

@@ -63,7 +63,7 @@ class Options(object):
             if not cdrom.get_devices().keys():
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find any CD/DVD device.')
-            device = sorted(cdrom.get_devices().keys())[0]
+            device = sorted(cdrom.get_devices())[0]
         if not os.path.exists(device):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + device + '" CD/DVD device.')

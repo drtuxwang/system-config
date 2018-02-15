@@ -337,7 +337,7 @@ class Main(object):
         for repository in sorted(registry.get_repositories()):
             if fnmatch.fnmatch(repository, repo_match):
                 digests = registry.get_digests(repository)
-                for tag in sorted(digests.keys()):
+                for tag in sorted(digests):
                     if fnmatch.fnmatch(tag, tag_match):
                         if remove:
                             registry.delete(
