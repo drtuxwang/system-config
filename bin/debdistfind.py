@@ -175,9 +175,7 @@ class Main(object):
         for pattern in patterns:
             ispattern = re.compile(pattern, re.IGNORECASE)
             for name, package in sorted(self._packages.items()):
-                if ispattern.search(name) or ispattern.search(
-                        self._packages[name].get_description()
-                ):
+                if ispattern.search(name):
                     print("{0:25s} {1:15s} {2:5d}KB {3:s}".format(
                         name.split(':')[0],
                         package.get_version(),
