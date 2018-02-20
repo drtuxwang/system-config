@@ -876,7 +876,7 @@ docker/registry/Makefile
 docker/registry/files/config.yml
 docker/ubuntu/Makefile
 docker/ubuntu/Dockerfile                          Docker: Ubuntu 16.04 basic image
-docker/ubuntu/Dockerfile-base
+docker/ubuntu/Dockerfile2
 docker/ubuntu/Makefile
 docker/ubuntu/devpi/Makefile                      Docker: Ubuntu 9 devpi server app image
 docker/ubuntu/devpi/Dockerfile
@@ -886,7 +886,7 @@ docker/ubuntu/nginx/Makefile                      Docker: Ubuntu 9 NGINX proxy s
 docker/ubuntu/nginx/Dockerfile
 docker/ubuntu/nginx/files/nginx-proxy.conf
 docker/ubuntu/xfce/Dockerfile                     Docker: Ubuntu 9 compilers/wine/XFCE image
-docker/ubuntu/xfce/Dockerfile-xbase
+docker/ubuntu/xfce/Dockerfile2
 docker/ubuntu/xfce/Makefile
 docker/ubuntu/xfce/openvpn/Dockerfile             Docker: Ubuntu 9 OpenVPN/XFCE image
 docker/ubuntu/xfce/openvpn/Makefile

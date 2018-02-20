@@ -28,9 +28,9 @@ build:
 	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(BASE_IMAGE)\" Docker image ***"
-	docker build -f Dockerfile-base -t $(BASE_IMAGE) .
+	docker build -f Dockerfile -t $(BASE_IMAGE) .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build -f Dockerfile2 -t $(IMAGE) .
 	rm -rf tmpdir
 
 	for IMAGE in $(DEPENDENT_IMAGES); do \

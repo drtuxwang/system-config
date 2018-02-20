@@ -42,9 +42,9 @@ build:
 	cp -p $(TOPDIR)/etc/python3-requirements.txt tmpdir/etc/
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(XBASE_IMAGE)\" Docker image ***"
-	docker build -f Dockerfile-xbase -t $(XBASE_IMAGE) .
+	docker build -f Dockerfile -t $(XBASE_IMAGE) .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build -f Dockerfile2 -t $(IMAGE) .
 	rm -rf tmpdir
 
 	for IMAGE in $(DEPENDENT_IMAGES); do \

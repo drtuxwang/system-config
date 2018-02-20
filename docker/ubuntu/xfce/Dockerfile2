@@ -1,0 +1,19 @@
+FROM drtuxwang/ubuntu-xbase:latest
+
+# Root account
+COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
+
+# User account
+COPY tmpdir/config/docker-init tmpdir/config/docker-init-home /etc/
+COPY tmpdir/config/.bashrc \
+	tmpdir/config/.login \
+	tmpdir/config/.profile \
+	tmpdir/config/.tmux.conf \
+	tmpdir/config/.vimrc \
+	/home/docker/
+
+# Add scripts
+COPY tmpdir/bin/ /opt/software/bin/
+
+# Configure start
+ENTRYPOINT ["/etc/docker-init"]
