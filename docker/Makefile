@@ -26,21 +26,22 @@ project:
 
 pull:
 	for IMAGE in $(PULL_IMAGES); do \
-		make -C $$IMAGE pull || exit 1; \
+		make -C $$IMAGE pull ||:; \
 	done
 	docker images
 
 build:
 	for IMAGE in $(BUILD_IMAGES); do \
-		make -C $$IMAGE build || exit 1; \
+		make -C $$IMAGE build ||:; \
 	done
 	docker images
 
 gc:
 	docker ps -f status=exited -q | xargs -r docker rm -v
 	docker images -f dangling=true -q | xargs -r docker rmi
-	docker volume ls -qf dangling=true | xargs -r docker volume rm
 	docker images
+	docker volume ls
+	docker ps
 
 clean:
 	make gc

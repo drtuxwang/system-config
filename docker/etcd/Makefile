@@ -4,11 +4,10 @@ IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
-	--cpu-period=100000 \
-	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
-	--memory-reservation=64m \
-	--memory=2048m
+	--cpu-shares=50000 \
+	--memory=1000m \
+	--memory-reservation=50m
 TOPDIR := ../..
 
 
@@ -33,15 +32,16 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
 		--volume="/var/lib/etcd:/var/lib/etcd" \
-		--env ETCDCTL_API=3 \
+		--env ETCDCTL_API=2 \
 		--publish 2379:2379 \
 		--publish 2380:2380 \
 		--hostname $(NAME) \
+		--workdir /var/lib/etcd \
 		$(IMAGE) \
 			etcd \
 			--name my_etcd0 \
 			--data-dir /var/lib/etcd/data \
-			--wal-dir /var/lib/etcd/wal || exit 0
+			--wal-dir /var/lib/etcd/wal ||:
 
 migrate:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container to migrate v2 key store ***"
@@ -53,7 +53,7 @@ migrate:
 			etcdctl \
 			--data-dir /var/lib/etcd/data \
 			--wal-dir /var/lib/etcd/wal \
-			migrate || exit 0
+			migrate ||:
 
 restore:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container to restore from snapshot ***"
@@ -66,7 +66,7 @@ restore:
 			--name my_etcd0 \
 			--data-dir /var/lib/etcd/data \
 			--wal-dir /var/lib/etcd/wal \
-			snapshot restore /var/lib/etcd/snapshot.db || exit 0
+			snapshot restore /var/lib/etcd/snapshot.db ||:
 
 clean:
 	docker rmi -f $(IMAGE) ||:

@@ -6,11 +6,10 @@ DEPENDENT_IMAGES := openvpn
 FLAGS := --rm \
 	--interactive \
 	--tty \
-	--cpu-period=100000 \
-	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
-	--memory-reservation=64m \
-	--memory=1024m
+	--cpu-shares=50000 \
+	--memory=2000m \
+	--memory-reservation=50m
 XFLAGS := \
 	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \

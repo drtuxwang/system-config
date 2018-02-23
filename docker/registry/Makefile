@@ -4,11 +4,10 @@ IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
-	--cpu-period=100000 \
-	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
-	--memory-reservation=64m \
-	--memory=1024m
+	--cpu-shares=50000 \
+	--memory=1000m \
+	--memory-reservation=50m
 TOPDIR := ../..
 
 
@@ -34,7 +33,8 @@ run:
 		--volume=/var/lib/registry:/var/lib/registry \
 		--publish 5000:5000 \
 		--hostname $(NAME) \
-		$(IMAGE) || exit 0
+		--workdir /var/lib/registry \
+		$(IMAGE) ||:
 
 clean:
 	docker rmi -f $(IMAGE) ||:

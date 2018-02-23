@@ -4,11 +4,10 @@ IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
 	--tty \
-	--cpu-period=100000 \
-	--cpu-shares=100000 \
 	--cpu-quota=1000000 \
-	--memory-reservation=64m \
-	--memory=1024m
+	--cpu-shares=50000 \
+	--memory=1000m \
+	--memory-reservation=50m
 
 
 default: build
@@ -30,6 +29,7 @@ run:
 	docker run $(FLAGS) \
 		--publish 8080:80 \
 		--hostname $(NAME) \
+		--workdir /var/lib/nginx \
 		$(IMAGE) || exit 0
 
 clean:

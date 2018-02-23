@@ -847,7 +847,7 @@ cookiecutter/docker/cookiecutter.json
 
 docker/alpine/Dockerfile                          Docker: Alpine 3.6 basic image
 docker/alpine/Makefile
-docker/busybox/Dockerfile                         Docker: Busybox basic image
+docker/busybox/Dockerfile                         Docker: Busybox 1.28 basic image
 docker/busybox/Makefile
 docker/centos/Dockerfile                          Docker: CentOS 7 basic image
 docker/centos/Makefile
@@ -861,15 +861,20 @@ docker/debian-previous/Dockerfile                 Docker: Debian 8 basic image
 docker/debian-previous/Makefile
 docker/debian-testing/Dockerfile                  Docker: Debian testing basic image
 docker/debian-testing/Makefile
-docker/etcd/Dockerfile                            Docker: Etcd 3.2.15
+docker/etcd/Dockerfile                            Docker: Etcd 3.2.16
 docker/etcd/Makefile
+docker/etcd/cluster/Dockerfile                    Docker: Etcd cluster
+docker/etcd/cluster/Makefile
+docker/etcd/cluster/docker-compose.yml
+docker/etcd/cluster/docker-compose-migrate.yml
+docker/etcd/cluster/docker-compose-restore.yml
 docker/jailbreak/Dockerfile                       Docker: empty app image for jail breaking
 docker/jailbreak/Makefile
-docker/jenkins/Dockerfile                         Docker: Jenkins server
+docker/jenkins/Dockerfile                         Docker: Jenkins 2.60.3 server
 docker/jenkins/Makefile
-docker/mongo/Dockerfile                           Docker: MongoDB database
+docker/mongo/Dockerfile                           Docker: Mongo 3.4.13 database
 docker/mongo/Makefile
-docker/oracle-xe/Dockerfile                       Docker: Oracle XE database
+docker/oracle-xe/Dockerfile                       Docker: Oracle XE 11 database
 docker/oracle-xe/Makefile
 docker/registry/Dockerfile                        Docker: Registry 2
 docker/registry/Makefile
@@ -878,17 +883,17 @@ docker/ubuntu/Makefile
 docker/ubuntu/Dockerfile                          Docker: Ubuntu 16.04 basic image
 docker/ubuntu/Dockerfile2
 docker/ubuntu/Makefile
-docker/ubuntu/devpi/Makefile                      Docker: Ubuntu 9 devpi server app image
+docker/ubuntu/devpi/Makefile                      Docker: Ubuntu 16.04 devpi server app image
 docker/ubuntu/devpi/Dockerfile
-docker/ubuntu/docker/Dockerfile                   Docker: Ubuntu 9 Docker app image
+docker/ubuntu/docker/Dockerfile                   Docker: Ubuntu 16.04 Docker app image
 docker/ubuntu/docker/Makefile
-docker/ubuntu/nginx/Makefile                      Docker: Ubuntu 9 NGINX proxy server app image
+docker/ubuntu/nginx/Makefile                      Docker: Ubuntu 16.04 NGINX proxy server app image
 docker/ubuntu/nginx/Dockerfile
 docker/ubuntu/nginx/files/nginx-proxy.conf
-docker/ubuntu/xfce/Dockerfile                     Docker: Ubuntu 9 compilers/wine/XFCE image
+docker/ubuntu/xfce/Dockerfile                     Docker: Ubuntu 16.04 compilers/wine/XFCE image
 docker/ubuntu/xfce/Dockerfile2
 docker/ubuntu/xfce/Makefile
-docker/ubuntu/xfce/openvpn/Dockerfile             Docker: Ubuntu 9 OpenVPN/XFCE image
+docker/ubuntu/xfce/openvpn/Dockerfile             Docker: Ubuntu 16.04 OpenVPN/XFCE image
 docker/ubuntu/xfce/openvpn/Makefile
 docker/ubuntu-previous/Dockerfile                 Docker: Ubuntu 14.04 basic image
 docker/ubuntu-previous/Makefile

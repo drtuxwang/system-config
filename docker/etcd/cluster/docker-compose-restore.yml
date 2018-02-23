@@ -1,0 +1,41 @@
+version: "2.0"
+services:
+    etcda:
+        command: >
+            etcdctl
+            --name my_etcd0
+            --data-dir /var/lib/etcd/data
+            --wal-dir /var/lib/etcd/wal
+            snapshot restore /var/lib/etcd/snapshot.db
+        cpu_quota: 1000000
+        cpu_shares: 50000
+        environment:
+            - ETCDCTL_API=3
+        hostname: etcda
+        image: drtuxwang/etcd:latest
+        mem_limit: 1000m
+        mem_reservation: 50m
+        volumes:
+            - etcda:/var/lib/etcd
+        working_dir: /var/lib/etcd
+    etcdb:
+        command: >
+            etcdctl
+            --name my_etcd1
+            --data-dir /var/lib/etcd/data
+            --wal-dir /var/lib/etcd/wal
+            snapshot restore /var/lib/etcd/snapshot.db
+        cpu_quota: 1000000
+        cpu_shares: 50000
+        environment:
+            - ETCDCTL_API=3
+        hostname: etcdb
+        image: drtuxwang/etcd:latest
+        mem_limit: 1000m
+        mem_reservation: 50m
+        volumes:
+            - etcdb:/var/lib/etcd
+        working_dir: /var/lib/etcd
+volumes:
+    etcda:
+    etcdb:
