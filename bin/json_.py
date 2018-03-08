@@ -27,6 +27,12 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
+    def get_check_flag(self):
+        """
+        Return check flag.
+        """
+        return self._args.check_flag
+
     def get_files(self):
         """
         Return list of files.
@@ -37,6 +43,12 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Convert JSON/YAML to JSON file.')
 
+        parser.add_argument(
+            '-c',
+            dest='check_flag',
+            action='store_true',
+            help='Check JSON/YAML format only.'
+        )
         parser.add_argument(
             'files',
             nargs='+',
@@ -93,6 +105,32 @@ class Main(object):
         return ['{%s}' % block for block in re.split('}[ \\n]*{', text)]
 
     @staticmethod
+    def _split_yamls(text):
+        """
+        Split multiple YAMLs in string and return list of YAMLs.
+        """
+        return re.split('\n--', text)
+
+    @classmethod
+    def _read_file(cls, file):
+        try:
+            with open(file) as ifile:
+                if file.endswith('.json'):
+                    data = [
+                        json.loads(block)
+                        for block in cls._split_jsons(ifile.read())
+                    ]
+                else:
+                    data = [
+                        yaml.load(block)
+                        for block in cls._split_yamls(ifile.read())
+                    ]
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "{0:s}" file.'.format(file))
+        return data
+
+    @staticmethod
     def _write_json(file, data):
         tmpfile = file + '-tmp' + str(os.getpid())
 
@@ -115,24 +153,6 @@ class Main(object):
             )
 
     @classmethod
-    def _convert(cls, file):
-        json_file = file.rsplit('.')[0] + '.json'
-        print('Converting "{0:s}" to "{1:s}"...'.format(file, json_file))
-        try:
-            with open(file) as ifile:
-                if file.endswith('.json'):
-                    data = [
-                        json.loads(block)
-                        for block in cls._split_jsons(ifile.read())
-                    ]
-                else:
-                    data = [yaml.load(ifile)]
-        except OSError:
-            raise SystemExit(
-                sys.argv[0] + ': Cannot read "{0:s}" file.'.format(file))
-        cls._write_json(json_file, data)
-
-    @classmethod
     def run(cls):
         """
         Start program
@@ -144,7 +164,18 @@ class Main(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
             elif file.endswith(('.json', 'yaml', 'yml')):
-                cls._convert(file)
+                if options.get_check_flag():
+                    print('Checking "{0:s}" config file...'.format(file))
+                    cls._read_file(file)
+                else:
+                    name, _ = os.path.splitext(file)
+                    json_file = name + '.json'
+                    print('Converting "{0:s}" to "{1:s}"...'.format(
+                        file,
+                        json_file
+                    ))
+                    data = cls._read_file(file)
+                    cls._write_json(json_file, data)
 
 
 if __name__ == '__main__':

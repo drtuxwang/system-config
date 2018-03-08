@@ -170,6 +170,9 @@ bindings:
     view: archive_unpacker
   sqlite:
     open: unsqlite
+  t7z:
+    open: untar
+    view: untar
   tar:
     open: untar
     view: untar
@@ -186,9 +189,6 @@ bindings:
     open: untar
     view: untar
   tar.xz:
-    open: untar
-    view: untar
-  t7z:
     open: untar
     view: untar
   tbz:
