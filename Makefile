@@ -26,7 +26,7 @@ config_check:
 py_lint:
 	@echo "\n*** Running Python 3 PYCODESTYLE (PEP8) check ***"
 	python3 -m pycodestyle --max-line-length=79 bin/*.py
-	@echo "*** Running Python 3 PYLINT check ***"
+	@echo "\n*** Running Python 3 PYLINT check ***"
 	python3 -m pylint --disable=locally-disabled,locally-enabled --max-line-length=79 \
 		--rcfile=/dev/null --output-format=parseable --reports=n -j 2 bin/*.py
 
