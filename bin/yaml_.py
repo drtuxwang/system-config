@@ -14,7 +14,7 @@ import sys
 
 import yaml
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
@@ -101,8 +101,7 @@ class Main(object):
         """
         Split multiple JSONs in string and return list of JSONs.
         """
-        text = re.sub('^ *{|} *$', '', text)
-        return ['{%s}' % block for block in re.split('}[ \\n]*{', text)]
+        return re.sub('}[ \\n]*{', '}}{{', text).split('}{')
 
     @staticmethod
     def _split_yamls(text):
@@ -165,8 +164,13 @@ class Main(object):
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
             elif file.endswith(('.json', 'yaml', 'yml')):
                 if options.get_check_flag():
-                    print('Checking "{0:s}" config file...'.format(file))
-                    cls._read_file(file)
+                    try:
+                        cls._read_file(file)
+                    except (
+                            json.decoder.JSONDecodeError,
+                            yaml.parser.ParserError
+                    ) as exception:
+                        print("{0:s}: {1:s}".format(file, str(exception)))
                 else:
                     name, _ = os.path.splitext(file)
                     yaml_file = name + '.yml'
