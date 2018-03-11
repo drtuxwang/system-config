@@ -122,6 +122,8 @@ class Main(object):
                     file = os.path.join(directory, par_file)
                     print('Deleting old:', file)
                     cls._delete_file(file)
+            if not os.listdir(directory):
+                os.removedirs(directory)
 
     @classmethod
     def _update(cls, cmdline, files):
