@@ -19,9 +19,9 @@ py_check:
 
 config_check:
 	@echo "\n*** Running JSON check ***"
-	find -name '*.json' -exec bin/json -c {} +
+	PATH=`pwd`/bin:${PATH} find -name '*.json' -exec bin/json -c {} +
 	@echo "\n*** Running YAML check ***"
-	find -name '*.yml' -exec bin/yaml -c {} +
+	PATH=`pwd`/bin:${PATH} find -name '*.yml' -exec bin/yaml -c {} +
 
 py_lint:
 	@echo "\n*** Running Python 3 PYCODESTYLE (PEP8) check ***"
