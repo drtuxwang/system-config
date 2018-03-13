@@ -177,6 +177,9 @@ bin/fpeek.bat
 bin/fpeek.py
 bin/fprint             Sends text/images/postscript/PDF to printer
 bin/fprint.py
+bin/freplace           Replace multi-lines patterns in files
+bin/freplace.bat       (uses regular expression to match text)
+bin/freplace.py
 bin/frm                Remove files or directories
 bin/frm.bat
 bin/frm.py
@@ -195,7 +198,7 @@ bin/fstat.py
 bin/fstrings           Print the strings of printable characters in files
 bin/fstrings.bat       (like strings)
 bin/fstrings.py
-bin/fsub               Replace contents of multiple files
+bin/fsub               Substitute patterns on lines in files
 bin/fsub.bat           (uses regular expression to match text)
 bin/fsub.py
 bin/fsum               Calculate checksum using MD5, file size and file modification time
