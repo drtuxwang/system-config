@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Convert BSON/JSON/YAML to JSON file.
+Convert BSON/JSON/YAML to BSON file.
 """
 
 import argparse
@@ -32,7 +32,7 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Convert BSON/JSON/YAML to JSON file.')
+            description='Convert BSON/JSON/YAML to BSON file.')
 
         parser.add_argument(
             'files',
@@ -102,13 +102,13 @@ class Main(object):
                     )
 
                 name, _ = os.path.splitext(file)
-                json_file = name + '.json'
+                bson_file = name + '.bson'
                 print('Converting "{0:s}" to "{1:s}"...'.format(
                     file,
-                    json_file
+                    bson_file
                 ))
                 try:
-                    data.write(json_file)
+                    data.write(bson_file)
                 except config_mod.WriteConfigError as exception:
                     raise SystemExit(
                         "{0:s}: {1:s}".format(file, str(exception))

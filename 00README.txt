@@ -37,6 +37,9 @@ bin/battery.py
 bin/bell               Play bell.ogg sound
 bin/bell.ogg           (uses cvlc or ogg123)
 bin/bell.py
+bin/bson               Convert BSON/JSON/YAML to BSON
+bin/bson.bat
+bin/bson_.py
 bin/breaktimer         Break reminder timer
 bin/breaktimer.py      (10 min default)
 bin/bz2                Compress a file in BZIP2 format (allowing non systems port)
@@ -46,6 +49,9 @@ bin/calendar.bat
 bin/calendar_.py
 bin/cdspeed            Set CD/DVD drive speed
 bin/cdspeed.py         ("$HOME/.config/cdspeed.json")
+bin/chkconfig          Check BSON/JSON/YAML configuration files for errors
+bin/chkconfig.bat
+bin/chkconfig.py
 bin/chkpath            Check PATH and return correct settings
 bin/chkpath.bat
 bin/chkpath.py
@@ -312,7 +318,7 @@ bin/jpeg2ps.py
 bin/jsformat           Javascript file re-formatter
 bin/jsformat.bat
 bin/jsformat.py
-bin/json               Convert JSON/YAML to JSON
+bin/json               Convert BSON/JSON/YAML to JSON
 bin/json.bat
 bin/json_.py
 bin/jsonformat         JSON file re-formatter
@@ -721,7 +727,7 @@ bin/xweb               Start web browser
 bin/xweb.py
 bin/xz                 Compress a file in XZ format (allowing non systems port)
 bin/xz.py
-bin/yaml               Convert JSON/YAML to YAML
+bin/yaml               Convert BSON/JSON/YAML to YAML
 bin/yaml.bat
 bin/yaml_.py
 bin/youtube            Youtube video downloader

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Convert BSON/JSON/YAML to JSON file.
+Check BSON/JSON/YAML configuration files for errors.
 """
 
 import argparse
@@ -32,13 +32,13 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Convert BSON/JSON/YAML to JSON file.')
+            description='Check BSON/JSON/YAML configuration files for errors.')
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to convert.'
+            help='File to check.'
         )
 
         self._args = parser.parse_args(args)
@@ -88,31 +88,20 @@ class Main(object):
         """
         options = Options()
         data = config_mod.Data()
+        error = 0
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" file.')
-            if file.endswith(('.json', 'yaml', 'yml', '.bson')):
+                print("{0:s}: Cannot find file".format(file))
+                error = 1
+            elif file.endswith(('.json', 'yaml', 'yml', '.bson')):
                 try:
-                    data.read(file)
+                    data.read(file, check=True)
                 except config_mod.ReadConfigError as exception:
-                    raise SystemExit(
-                        "{0:s}: {1:s}".format(file, str(exception))
-                    )
+                    print("{0:s}: {1:s}".format(file, str(exception)))
+                    error = 1
 
-                name, _ = os.path.splitext(file)
-                json_file = name + '.json'
-                print('Converting "{0:s}" to "{1:s}"...'.format(
-                    file,
-                    json_file
-                ))
-                try:
-                    data.write(json_file)
-                except config_mod.WriteConfigError as exception:
-                    raise SystemExit(
-                        "{0:s}: {1:s}".format(file, str(exception))
-                    )
+        return error
 
 
 if __name__ == '__main__':
