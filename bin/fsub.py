@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Replace contents of multiple files.
+Substitute patterns on lines in files.
 """
 
 import argparse
@@ -46,7 +46,7 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Replace contents of multiple files.')
+            description='Substitute patterns on lines in files.')
 
         parser.add_argument(
             'pattern',
@@ -129,8 +129,7 @@ class Main(object):
                                 nchange += 1
                 except OSError:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' +
-                        newfile + '" file.'
+                        sys.argv[0] + ': Cannot create "' + newfile + '" file.'
                     )
         except OSError:
             raise SystemExit(
