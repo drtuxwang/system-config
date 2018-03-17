@@ -12,8 +12,8 @@ import re
 import subprocess
 import sys
 
-RELEASE = '2.0.10'
-VERSION = 20180214
+RELEASE = '2.1.0'
+VERSION = 20180317
 
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
@@ -155,6 +155,19 @@ class Tasks(object):
             if ppid in self._process:
                 apids.extend([ppid] + self.get_ancestor_pids(ppid))
         return apids
+
+    def get_child_pids(self, ppid):
+        """
+        Return list of child process IDs.
+
+        pid = Parent process ID
+        """
+        cpids = []
+        if ppid in self._process:
+            for pid, process in sorted(self._process.items()):
+                if process['PPID'] == ppid:
+                    cpids.append(pid)
+        return cpids
 
     def get_descendant_pids(self, ppid):
         """
