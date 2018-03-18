@@ -854,59 +854,58 @@ cookiecutter/docker/{{cookiecutter.project_name}}/Dockerfile
 cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
 cookiecutter/docker/cookiecutter.json
 
-docker/alpine/Dockerfile                          Docker: Alpine 3.6 basic image
+docker/alpine/Dockerfile                          Docker: alpine:3.6 based linux
 docker/alpine/Makefile
-docker/busybox/Dockerfile                         Docker: Busybox 1.28 basic image
+docker/busybox/Dockerfile                         Docker: busybox:1.28 based shell
 docker/busybox/Makefile
-docker/centos/Dockerfile                          Docker: CentOS 7 basic image
+docker/centos/Dockerfile                          Docker: centos:7 based linux
 docker/centos/Makefile
-docker/centos-previous/Dockerfile                 Docker: CentOS 6 basic image
+docker/centos-previous/Dockerfile                 Docker: centos:6 based linux
 docker/centos-previous/Makefile
-docker/clearlinux/Dockerfile                      Docker: Clear Linux basic image
+docker/clearlinux/Dockerfile                      Docker: clearlinux:latest based linux
 docker/clearlinux/Makefile
-docker/debian/Dockerfile                          Docker: Debian 9 basic image
+docker/debian/Dockerfile                          Docker: debian:9 based linux
 docker/debian/Makefile
-docker/debian-previous/Dockerfile                 Docker: Debian 8 basic image
+docker/debian-previous/Dockerfile                 Docker: debian:8 based linux
 docker/debian-previous/Makefile
-docker/debian-testing/Dockerfile                  Docker: Debian testing basic image
+docker/debian-testing/Dockerfile                  Docker: debian:testing based linux
 docker/debian-testing/Makefile
-docker/etcd/Dockerfile                            Docker: Etcd 3.2.16
+docker/etcd/Dockerfile                            Docker: gcr.io/etcd-development/etcd:v3.2.16 based server
 docker/etcd/Makefile
-docker/etcd/cluster/Dockerfile                    Docker: Etcd cluster
-docker/etcd/cluster/Makefile
+docker/etcd/cluster/Makefile                      Docker: gcr.io/etcd-development/etcd:v3.2.16 based cluster
 docker/etcd/cluster/docker-compose.yml
 docker/etcd/cluster/docker-compose-migrate.yml
 docker/etcd/cluster/docker-compose-restore.yml
-docker/jailbreak/Dockerfile                       Docker: empty app image for jail breaking
+docker/jailbreak/Dockerfile                       Docker: jailbreak image
 docker/jailbreak/Makefile
-docker/jenkins/Dockerfile                         Docker: Jenkins 2.60.3 server
+docker/jenkins/Dockerfile                         Docker: jenkins/jenkins:lts based server
 docker/jenkins/Makefile
-docker/mongo/Dockerfile                           Docker: Mongo 3.4.13 database
+docker/mongo/Dockerfile                           Docker: mongo:3.4.13 based database
 docker/mongo/Makefile
-docker/oracle-xe/Dockerfile                       Docker: Oracle XE 11 database
+docker/oracle-xe/Dockerfile                       Docker: wnameless/oracle-xe-11g:latest based database
 docker/oracle-xe/Makefile
-docker/registry/Dockerfile                        Docker: Registry 2
+docker/registry/Dockerfile                        Docker: registry:2.6 based server
 docker/registry/Makefile
 docker/registry/files/config.yml
 docker/ubuntu/Makefile
-docker/ubuntu/Dockerfile                          Docker: Ubuntu 16.04 basic image
+docker/ubuntu/Dockerfile                          Docker: ubuntu:16.04 based linux
 docker/ubuntu/Dockerfile2
 docker/ubuntu/Makefile
-docker/ubuntu/devpi/Makefile                      Docker: Ubuntu 16.04 devpi server app image
+docker/ubuntu/devpi/Makefile                      Docker: ubuntu:16.04 based devpi server
 docker/ubuntu/devpi/Dockerfile
-docker/ubuntu/docker/Dockerfile                   Docker: Ubuntu 16.04 Docker app image
+docker/ubuntu/docker/Dockerfile                   Docker: ubuntu:16.04 based docker client
 docker/ubuntu/docker/Makefile
-docker/ubuntu/nginx/Makefile                      Docker: Ubuntu 16.04 NGINX proxy server app image
+docker/ubuntu/nginx/Makefile                      Docker: ubuntu:16.04 based NGINX proxy
 docker/ubuntu/nginx/Dockerfile
 docker/ubuntu/nginx/files/nginx-proxy.conf
-docker/ubuntu/xfce/Dockerfile                     Docker: Ubuntu 16.04 compilers/wine/XFCE image
+docker/ubuntu/xfce/Dockerfile                     Docker: ubuntu:16.04 based compiler environment
 docker/ubuntu/xfce/Dockerfile2
 docker/ubuntu/xfce/Makefile
-docker/ubuntu/xfce/openvpn/Dockerfile             Docker: Ubuntu 16.04 OpenVPN/XFCE image
+docker/ubuntu/xfce/openvpn/Dockerfile             Docker: ubuntu:16.04 based OpenVPN client
 docker/ubuntu/xfce/openvpn/Makefile
-docker/ubuntu-previous/Dockerfile                 Docker: Ubuntu 14.04 basic image
+docker/ubuntu-previous/Dockerfile                 Docker: ubuntu:14.04 based linux
 docker/ubuntu-previous/Makefile
-docker/ubuntu-testing/Dockerfile                  Docker: Ubuntu 18.04 basic image
+docker/ubuntu-testing/Dockerfile                  Docker: ubuntu:18.04 based linux
 docker/ubuntu-testing/Makefile
 docker/Makefile                                   Makefile for building all images
 
