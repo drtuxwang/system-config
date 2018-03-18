@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+import time
 
 import task_mod
 
@@ -30,16 +31,30 @@ class Options(object):
         """
         return self._args.force_flag
 
-    def get_keyword(self):
+    def get_time_delay(self):
+        """
+        Return time delay in seconds.
+        """
+        return self._args.timeDelay[0]
+
+    def get_keywords(self):
         """
         Return process ID or keyword.
         """
-        return self._args.task[0]
+        return self._args.task
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Kill tasks by process ID or name.')
 
+        parser.add_argument(
+            '-delay',
+            nargs=1,
+            type=int,
+            dest='timeDelay',
+            default=[0],
+            help='Delay kill in seconds.'
+        )
         parser.add_argument(
             '-f',
             dest='force_flag',
@@ -48,7 +63,7 @@ class Options(object):
         )
         parser.add_argument(
             'task',
-            nargs=1,
+            nargs='+',
             metavar='pid|keyword',
             help='Process ID or keyword.'
         )
@@ -95,15 +110,14 @@ class Main(object):
 
     @staticmethod
     def _filter(options):
+        pids = []
         task = task_mod.Tasks.factory()
-        keyword = options.get_keyword()
-        if keyword.isdigit():
-            if task.haspid(int(keyword)):
-                pids = [int(keyword)]
+        for keyword in options.get_keywords():
+            if keyword.isdigit():
+                if task.haspid(int(keyword)):
+                    pids.append(int(keyword))
             else:
-                pids = []
-        else:
-            pids = task.pname2pids('.*' + keyword + '.*')
+                pids.extend(task.pname2pids('.*' + keyword + '.*'))
 
         print(
             'RUSER      PID  PPID  PGID PRI  NI TTY      MEMORY  '
@@ -154,6 +168,7 @@ class Main(object):
         """
         options = Options()
 
+        time.sleep(options.get_time_delay())
         pids = self._filter(options)
         self._ykill(options, pids)
 
