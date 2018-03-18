@@ -7,7 +7,8 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
 	--memory=2000m \
-	--memory-reservation=50m
+	--memory-reservation=50m \
+	--volume=/shared:/shared
 TOPDIR := ../..
 
 

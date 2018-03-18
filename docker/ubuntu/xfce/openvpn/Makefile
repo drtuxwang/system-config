@@ -7,8 +7,7 @@ FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
 	--memory=2000m \
-	--memory-reservation=50m
-XFLAGS := \
+	--memory-reservation=50m \
 	--volume=/etc/passwd:/etc/passwd:ro \
 	--volume=/etc/group:/etc/group:ro \
 	--volume=/shared:/shared \
@@ -44,7 +43,7 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) $(XFLAGS) \
+	docker run $(FLAGS) \
 		--hostname $(NAME) \
 		$(IMAGE) || exit 0
 

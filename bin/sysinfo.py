@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.15.1'
-VERSION = 20180131
+RELEASE = '4.16.0'
+VERSION = 20180318
 
 # pylint: disable = too-many-lines
 
@@ -1398,7 +1398,9 @@ class LinuxSystem(PosixSystem):
         elif os.path.isfile('/etc/alpine-release'):
             try:
                 with open('/etc/alpine-release', errors='replace') as ifile:
-                    info['OS Name'] = ifile.readline().rstrip('\r\n')
+                    info['OS Name'] = (
+                        'Alpine ' + ifile.readline().rstrip('\r\n')
+                    )
             except OSError:
                 pass
 
