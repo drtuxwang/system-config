@@ -15,7 +15,6 @@ import re
 import shutil
 import signal
 import sys
-import time
 
 import command_mod
 import subtask_mod
@@ -358,13 +357,18 @@ class Main(object):
         """
         options = Options()
 
-        subtask_mod.Background(options.get_chrome().get_cmdline()).run(
+        cmdline = options.get_chrome().get_cmdline()
+        subtask_mod.Background(cmdline).run(
             pattern=options.get_pattern())
 
         # Kill filtering process after start up to avoid hang
-        time.sleep(1)
-        task = task_mod.Tasks.factory()
-        task.killpids(task.get_child_pids(os.getpid()))
+        tkill = command_mod.Command(
+            'tkill',
+            args=['-delay', '10', '-f', 'python3.* {0:s} '.format(cmdline[0])],
+            errors='ignore'
+        )
+        if tkill.is_found():
+            subtask_mod.Daemon(tkill.get_cmdline()).run()
 
 
 if __name__ == '__main__':
