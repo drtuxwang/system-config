@@ -314,6 +314,7 @@ class Options(object):
             '^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
             ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
             'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|'
+            ': cannot adjust line'
         )
         self._config()
         self._set_libraries(self._chrome)
@@ -358,8 +359,7 @@ class Main(object):
         options = Options()
 
         cmdline = options.get_chrome().get_cmdline()
-        subtask_mod.Background(cmdline).run(
-            pattern=options.get_pattern())
+        subtask_mod.Background(cmdline).run(pattern=options.get_pattern())
 
         # Kill filtering process after start up to avoid hang
         tkill = command_mod.Command(
