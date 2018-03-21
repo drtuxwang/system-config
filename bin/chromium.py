@@ -364,7 +364,7 @@ class Main(object):
         # Kill filtering process after start up to avoid hang
         tkill = command_mod.Command(
             'tkill',
-            args=['-delay', '10', '-f', 'python3.* {0:s} '.format(cmdline[0])],
+            args=['-delay', '60', '-f', 'python3.* {0:s} '.format(cmdline[0])],
             errors='ignore'
         )
         if tkill.is_found():

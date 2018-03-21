@@ -439,8 +439,17 @@ class Main(object):
         """
         options = Options()
 
-        subtask_mod.Background(options.get_firefox().get_cmdline()).run(
-            pattern=options.get_pattern())
+        cmdline = options.get_firefox().get_cmdline()
+        subtask_mod.Background(cmdline).run(pattern=options.get_pattern())
+
+        # Kill filtering process after start up to avoid hang
+        tkill = command_mod.Command(
+            'tkill',
+            args=['-delay', '60', '-f', 'python3.* {0:s} '.format(cmdline[0])],
+            errors='ignore'
+        )
+        if tkill.is_found():
+            subtask_mod.Daemon(tkill.get_cmdline()).run()
 
 
 if __name__ == '__main__':
