@@ -84,23 +84,14 @@ class Options(object):
                     sys.argv[0] + ': Invalid "' + str(self._year) +
                     '" year. Use 2-9999.'
                 )
+        if self._args.month:
             self._month = self._args.month
             if self._month < 0 or self._month > 12:
                 raise SystemExit(
                     sys.argv[0] + ': Invalid "' + str(self._month) +
-                    '" month. Use 1-12 or 0 for year.'
+                    '" month. Use 1-12.'
                 )
-        elif self._args.month:
-            self._month = self._args.month
-            if self._month < 0 or self._month > 9999:
-                raise SystemExit(
-                    sys.argv[0] + ': Invalid "' + str(self._month) +
-                    '" month or year. Use 1-12 for month or 13-9999 for year.'
-                )
-            elif self._month > 12:
-                self._year = self._month
-                self._month = 0
-            elif self._month < now.month:
+            if self._month < now.month:
                 self._year += 1  # Next year
 
 
