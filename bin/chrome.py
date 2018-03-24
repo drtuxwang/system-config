@@ -314,7 +314,8 @@ class Options(object):
             '^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
             ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
             'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|'
-            ': cannot adjust line'
+            ': cannot adjust line|^Using PPAPI|--ppapi-flash-path|'
+            '^Created new window'
         )
         self._config()
         self._set_libraries(self._chrome)
