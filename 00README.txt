@@ -55,6 +55,9 @@ bin/chkconfig.py
 bin/chkpath            Check PATH and return correct settings
 bin/chkpath.bat
 bin/chkpath.py
+bin/chksequence        Check for missing sequence in numbered files
+bin/chksequence.bat
+bin/chksequence.py
 bin/chrome             chrome wrapper (allowing non systems port)
 bin/chrome-proxy
 bin/chrome-proxy.bat
