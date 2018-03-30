@@ -7,7 +7,7 @@
 
 ##set -x
 
-if [ "$TERM" ]
+if [ "$TERM" -a -e "`\tty`" ]
 then
     if [ ! "$BASH" -a -f $HOME/.profile-2bash -a -f /bin/bash ]
     then
@@ -116,8 +116,10 @@ then
         eval $(ssh-agent 2> /dev/null) > /dev/null
     fi
     SSH_KEYS=`ssh-add -l 2> /dev/null | grep ".:." | wc -l | awk '{print $1}'`
-    if [ ! "$MYTTY" ]
+    if [ "$MYTTY" = "`\tty 2> /dev/null`" ]
     then
+        alias logout='echo Use \"exit\" to exit the shell.'
+    else
         MYSHELL="$MYSHELL login"
         if [ "$TERM" = "dumb" ]
         then
@@ -139,9 +141,6 @@ then
         fi
         alias exec=''
         alias logout=\\exit  # required by ash
-    elif [ "$MYTTY" = "`\tty 2> /dev/null`" ]
-    then
-        alias logout='echo Use \"exit\" to exit the shell.'
     fi
 
     # General stuff
