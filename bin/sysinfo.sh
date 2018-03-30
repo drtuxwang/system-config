@@ -4,8 +4,8 @@
 #
 # 1996-2018 By Dr Colin Kong
 #
-VERSION=20180131
-RELEASE="2.6.40-20"
+VERSION=20180330
+RELEASE="2.6.40-21"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -542,7 +542,10 @@ detect() {
         ;;
 
     *NT*)
-        WINDIR=`echo "/$WINDIR" | sed -e "s@:\\\\\\@/@"`
+        if [ ! "`echo \"$WINDIR\" | grep \":/\"`" ]
+        then
+            WINDIR=`echo "/$WINDIR" | sed -e "s@:\\\\\\@/@"`
+        fi
         HARDWARES=`PATH="$WINDIR/system32:$WINDIR/system32/wbem:$PATH" $WINDIR/system32/systeminfo 2> /dev/null`
         MYOS="NT "`echo "$HARDWARES" | grep "^OS Version:" | awk '{print $3}'`
         SP=`echo "$HARDWARES" | grep "^OS Version:.*Service Pack" | sed -e "s/.*Service Pack //" | awk '{printf(" SP%s\n",$1)}'`
@@ -990,7 +993,7 @@ EOF
             MYTYPEX="x86"
             MYBIT="32bit"
         fi
-        MYCPUS=`isitset \`set | grep "^NUMBER_OF_PROCESSORS=" | cut -f2 -d"="\``
+        MYCPUS=`isitset "$NUMBER_OF_PROCESSORS"`
         case "$HARDWARES" in
         *VirtualBox*)
             MYCPUSX="VirtualBox virtual processors"
