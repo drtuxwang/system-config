@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.16.0'
-VERSION = 20180318
+RELEASE = '4.16.1'
+VERSION = 20180402
 
 # pylint: disable = too-many-lines
 
@@ -2169,6 +2169,13 @@ class WindowsSystem(OperatingSystem):
         Return CPU information dictionary.
         """
         info = super().get_cpu_info()
+        if 'AMD64' in (
+                os.environ.get('PROCESSOR_ARCHITEW6432'),
+                os.environ.get('PROCESSOR_ARCHITECTURE'),
+        ):
+            info['CPU Addressability'] = '64bit'
+        else:
+            info['CPU Addressability'] = '32bit'
         subkeys, values = self._reg_read(
             winreg.HKEY_LOCAL_MACHINE,
             r'HARDWARE\DESCRIPTION\System\CentralProcessor'
@@ -2222,10 +2229,10 @@ class WindowsSystem(OperatingSystem):
                 info['System Swap Space'] = (
                     memory[4].split()[-2].replace(',', ''))
             try:
-                uptime = task.get_output('^System Up Time:')[0].split()
-                info['System Uptime'] = (
-                    uptime[3] + ' days ' + uptime[5].zfill(2) + ':' +
-                    uptime[7].zfill(2)
+                info['System Uptime'] = re.sub(
+                    '^[^:]*: *',
+                    '',
+                    task.get_output('^System Boot Time:')[0]
                 )
             except IndexError:
                 pass

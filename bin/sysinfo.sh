@@ -4,8 +4,8 @@
 #
 # 1996-2018 By Dr Colin Kong
 #
-VERSION=20180330
-RELEASE="2.6.40-21"
+VERSION=20180402
+RELEASE="2.6.40-22"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -442,7 +442,7 @@ detect() {
         fi
         ;;
     *NT*)
-        INETS=`isitset \`ipconfig 2> /dev/null | grep "IP.* Address" | sed -e "s/.*: //"\``
+        INETS=`isitset \`$WINDIR/system32/ipconfig 2> /dev/null | grep "IP.* Address" | sed -e "s/.*: //"\``
         ;;
     OSF1|SunOS|*)
         INETS=`isitset \`/sbin/ifconfig -a 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
@@ -575,85 +575,72 @@ detect() {
     esac
 
     case `uname` in
-        *NT*)
-            MYUPTIME=`echo "$HARDWARES" | grep "^System Up Time:" | awk '{printf("%d days %02d:%02d\n",$4,$6,$8)}'`
-            if [ ! "$MYUPTIME" ]
-            then
-                MYUPTIME=Unknown
-                BOOTTIME=`echo "$HARDWARES" | grep "^System Boot Time:" | sed -e "s@[/,:]@ @g" | awk '{printf("%s/%s/%s %02d:%02d:%02d",$6,$5,$4,$7,$8,$9)}'`
-                if [ "$BOOTTIME" ]
+    *NT*)
+        MYUPTIME=`isitset \`echo "$HARDWARES" | grep "^System Boot Time:" | sed -e "s/.*: //"\``
+        MYLOAD=Unknown
+        ;;
+
+    Darwin)
+        MYOS="$MYOS (`system_profiler SPSoftwareDataType 2> /dev/null | grep \"System Version\" | sed -e \"s/.*: //\" -e \"s/ [\(].*//\"`)"
+        MYUPTIME=`isitset \`uptime 2> /dev/null | cut -f1-2 -d"," | sed -e "s/.*up //"\``
+        MYLOAD=`isitset \`uptime 2> /dev/null | sed -e "s/^.*load averages: //"\``
+        ;;
+
+    *)  # Avoid buggy uptime
+        MYUPTIME=`isitset \`w -u 2> /dev/null | head -1 | cut -f1-2 -d"," | sed -e "s/.*up //" -e "s/(s)//" -e "s/  */ /g"\``
+        MYLOAD=`isitset \`w -u 2> /dev/null | head -1 | sed -e "s/^.*load average: //" -e "s/,//g"\``
+        ;;
+    esac
+
+    case `uname` in
+    AIX)
+        MYTYPE=`isitset \`lsattr -E -l proc0 2>&1 | grep ^type | awk '{print $2}'\``
+        CORES=
+        case $MYTYPE in
+        PowerPC_POWER[45])
+            MYBIT="64bit"
+            for PROC in `lsdev -C 2> /dev/null | grep ^proc | sed -e "s/.*proc//" | awk '{print $1}'`
+            do
+                if [ "`expr $PROC / 2 \* 2`" != "$PROC" ]
                 then
-                    UPSECS=`echo \`date +'%s' --date "$BOOTTIME"\` \`date +'%s'\` | awk '{print $2-$1}'`
-                    UPDAYS=`echo $UPSECS | awk '{printf("%d",$1/86400)}'`
-                    UPHOURS=`echo $UPSECS $UPDAYS | awk '{printf("%d",$1/3600-$2*24)}'`
-                    UPMINS=`echo $UPSECS $UPDAYS $UPHOURS | awk '{printf("%02d",$1/60-$2*1440-$3*60)}'`
-                    MYUPTIME="$UPDAYS days, $UPHOURS:$UPMINS"
+                    CORES=2
+                    break
                 fi
-            fi
-            MYLOAD=Unknown
+            done
             ;;
-
-        Darwin)
-            MYOS="$MYOS (`system_profiler SPSoftwareDataType 2> /dev/null | grep \"System Version\" | sed -e \"s/.*: //\" -e \"s/ [\(].*//\"`)"
-            MYUPTIME=`isitset \`uptime 2> /dev/null | cut -f1-2 -d"," | sed -e "s/.*up //"\``
-            MYLOAD=`isitset \`uptime 2> /dev/null | sed -e "s/^.*load averages: //"\``
+        PowerPC_POWER*|PowerPC_RS64*)
+            MYBIT="64bit"
             ;;
-
-        *)  Avoid buggy uptime
-            MYUPTIME=`isitset \`w -u 2> /dev/null | head -1 | cut -f1-2 -d"," | sed -e "s/.*up //" -e "s/(s)//" -e "s/  */ /g"\``
-            MYLOAD=`isitset \`w -u 2> /dev/null | head -1 | sed -e "s/^.*load average: //" -e "s/,//g"\``
+        *)
+            MYBIT="32bit"
             ;;
         esac
-
-        case `uname` in
-        AIX)
-            MYTYPE=`isitset \`lsattr -E -l proc0 2>&1 | grep ^type | awk '{print $2}'\``
-            CORES=
-            case $MYTYPE in
-            PowerPC_POWER[45])
-                MYBIT="64bit"
-                for PROC in `lsdev -C 2> /dev/null | grep ^proc | sed -e "s/.*proc//" | awk '{print $1}'`
-                do
-                    if [ "`expr $PROC / 2 \* 2`" != "$PROC" ]
-                    then
-                        CORES=2
-                        break
-                    fi
-                done
-                ;;
-            PowerPC_POWER*|PowerPC_RS64*)
-                MYBIT="64bit"
-                ;;
-            *)
-                MYBIT="32bit"
-                ;;
-            esac
-            MYTYPEX="ppc"
-            if [ "`lsdev -C | grep \"Virtual I/O Bus\"`" ]
+        MYTYPEX="ppc"
+        if [ "`lsdev -C | grep \"Virtual I/O Bus\"`" ]
+        then
+            MYCPUS=`isitset \`lsdev -C 2> /dev/null | grep ^proc | wc -l | awk '{print $1}'\``" (Virtual processors)"
+        else
+            MYCPUS=`isitset \`lsdev -C 2> /dev/null | grep ^proc | wc -l | awk '{print $1}'\``
+            if [ "`bindprocessor -q 2> /dev/null | sed -e \"s/.*://\" | wc | awk '{print $2/2}'`" = "$MYCPUS" ]
             then
-                MYCPUS=`isitset \`lsdev -C 2> /dev/null | grep ^proc | wc -l | awk '{print $1}'\``" (Virtual processors)"
-            else
-                MYCPUS=`isitset \`lsdev -C 2> /dev/null | grep ^proc | wc -l | awk '{print $1}'\``
-                if [ "`bindprocessor -q 2> /dev/null | sed -e \"s/.*://\" | wc | awk '{print $2/2}'`" = "$MYCPUS" ]
+                if [ "$CORES" ]
                 then
-                   if [ "$CORES" ]
-                   then
-                       MYCPUSX="$CORES cores/socket, SMT enabled"
-                   else
-                       MYCPUSX="SMT enabled"
-                   fi
-               elif [ "$CORES" ]
-               then
-                   MYCPUSX="$CORES cores/socket"
-               fi
-           fi
-           MYCLOCK=`pmcycles 2> /dev/null | sed -e "s/.*at //"`
-           if [ ! "$MYCLOCK" ]
-           then
-               MYCLOCK=`isitset \`lsattr -E -l proc0 2>&1 | grep ^frequency | awk '{printf ("%d\n",$2/1000000+0.5)}'\``" MHz"
-               if [ "$MYCLOCK" = "Unknown MHz" ]
-               then
-                   cat > /tmp/hardware$$.c 2> /dev/null << EOF
+                    MYCPUSX="$CORES cores/socket, SMT enabled"
+                else
+                    MYCPUSX="SMT enabled"
+                fi
+            elif [ "$CORES" ]
+            then
+                MYCPUSX="$CORES cores/socket"
+            fi
+        fi
+        MYCLOCK=`pmcycles 2> /dev/null | sed -e "s/.*at //"`
+        if [ ! "$MYCLOCK" ]
+        then
+            MYCLOCK=`isitset \`lsattr -E -l proc0 2>&1 | grep ^frequency | awk '{printf ("%d\n",$2/1000000+0.5)}'\``" MHz"
+            if [ "$MYCLOCK" = "Unknown MHz" ]
+            then
+                cat > /tmp/hardware$$.c 2> /dev/null << EOF
 #include <stdio.h>
 double rtc(void);
 void main() {
@@ -984,15 +971,16 @@ EOF
 
     *NT*)
         MYTYPE=`isitset \`set | grep "^PROCESSOR_IDENTIFIER=" | cut -f2 -d"=" | sed -e "s/'//g"\``
-        if [ "$PROCESSOR_ARCHITEW6432" = AMD64 ]
-        then
+        case $PROCESSOR_ARCHITEW6432$PROCESSOR_ARCHITECTURE in
+        AMD64)
             MYTYPEX="x86"
             MYBIT="64bit"
-        elif [ "$PROCESSOR_ARCHITECTURE" = x86 ]
-        then
+            ;;
+        x86)
             MYTYPEX="x86"
             MYBIT="32bit"
-        fi
+            ;;
+        esac
         MYCPUS=`isitset "$NUMBER_OF_PROCESSORS"`
         case "$HARDWARES" in
         *VirtualBox*)
