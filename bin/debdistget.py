@@ -8,6 +8,7 @@ import datetime
 import functools
 import glob
 import json
+import logging
 import os
 import shutil
 import signal
@@ -15,11 +16,30 @@ import sys
 import time
 import urllib.request
 
+import coloredlogs
+
 import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+# pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
+# pylint: enable=invalid-name
+coloredlogs.install(
+    logger=logger,
+    level='INFO',
+    milliseconds=True,
+    fmt='%(asctime)s %(levelname)-8s %(message)s',
+    field_styles={
+        'asctime': {'color': 'green'},
+        'levelname': {'color': 'black', 'bold': True},
+    },
+)
 
 
 class Options(object):
@@ -142,12 +162,14 @@ class Main(object):
         new_utc = datetime.datetime.fromtimestamp(new_utime)
         if old_utime:
             old_utc = datetime.datetime.fromtimestamp(old_utime)
-            print("*** [{0:s}] packages metadata stored is out of date".format(
+            logger.warning(
+                "[%s] packages metadata stored is out of date",
                 old_utc.strftime('%Y-%m-%d-%H:%M:%S'),
-            ))
-        print("*** [{0:s}] packages metadata new file data fetching".format(
+            )
+        logger.info(
+            "[%s] packages metadata new file data fetching",
             new_utc.strftime('%Y-%m-%d-%H:%M:%S'),
-        ))
+        )
 
     @classmethod
     def _get_packages(cls, data, wget, url):
@@ -205,7 +227,7 @@ class Main(object):
 
     @staticmethod
     def _write_data(file, data):
-        print('*** Creating "{0:s}" packages file...'.format(file))
+        logger.info('Creating "%s" packages file.', file)
         try:
             with open(file + '-new', 'w', newline='\n') as ofile:
                 print(json.dumps(data), file=ofile)
@@ -235,9 +257,10 @@ class Main(object):
 
         for distribution_file in options.get_distribution_files():
             if distribution_file.endswith('.dist'):
-                print('*** Checking "{0:s}" distribution file...'.format(
-                    distribution_file
-                ))
+                logger.info(
+                    'Checking "%s" distribution file.',
+                    distribution_file,
+                )
 
                 json_file = distribution_file[:-4] + 'json'
                 if os.path.isfile(json_file):

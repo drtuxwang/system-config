@@ -6,10 +6,13 @@ Make a portable CD/DVD archive in ISO9660 format.
 import argparse
 import glob
 import hashlib
+import logging
 import re
 import os
 import signal
 import sys
+
+import coloredlogs
 
 import command_mod
 import file_mod
@@ -17,6 +20,20 @@ import subtask_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+# pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
+# pylint: enable=invalid-name
+coloredlogs.install(
+    logger=logger,
+    level='INFO',
+    milliseconds=True,
+    fmt='%(asctime)s %(levelname)-8s %(message)s',
+    field_styles={
+        'asctime': {'color': 'green'},
+        'levelname': {'color': 'black', 'bold': True},
+    },
+)
 
 
 class Options(object):
@@ -206,61 +223,54 @@ class Main(object):
     @staticmethod
     def _isosize(image, size):
         if size > 734003200:
-            print(
-                "\n*** {0:s}: {1:4.2f} MB ({2:5.3f} "
-                "salesman's GB) ***\n".format(
-                    image, size/1048576.,
-                    size/1000000000.
-                )
+            logger.info(
+                "%s: %4.2f MB (%5.3f salesman's GB)",
+                image, size/1048576.,
+                size/1000000000.,
             )
             if size > 9400000000:
-                sys.stderr.write(
-                    "**WARNING** This ISO image file does not fit onto "
-                    "9.4GB/240min Duel Layer DVD media.\n"
+                logger.warning(
+                    "This ISO image file does not fit onto "
+                    "9.4GB/240min Duel Layer DVD media."
                 )
-                sys.stderr.write(
-                    "        ==> Please split your data into "
-                    "multiple images.\n"
+                logger.warning(
+                    "==> Please split your data into multiple images."
                 )
             elif size > 4700000000:
-                sys.stderr.write(
-                    "**WARNING** This ISO image file does not fit onto "
-                    "4.7GB/120min DVD media.\n"
+                logger.warning(
+                    "This ISO image file does not fit onto "
+                    "4.7GB/120min DVD media."
                 )
-                sys.stderr.write(
-                    "        ==> Please use Duel Layer DVD media or split "
-                    "your data into multiple images.\n"
+                logger.warning(
+                    "==> Please use Duel Layer DVD media or split "
+                    "your data into multiple images."
                 )
             else:
-                sys.stderr.write(
-                    "**WARNING** This ISO image file does not fit onto "
-                    "700MB/80min CD media.\n"
+                logger.warning(
+                    "This ISO image file does not fit onto "
+                    "700MB/80min CD media."
                 )
-                sys.stderr.write(
-                    "        ==> Please use DVD media or split your data "
-                    "into multiple images.\n"
+                logger.warning(
+                    "==> Please use DVD media or split your data "
+                    "into multiple images."
                 )
             print("")
         else:
             minutes, remainder = divmod(size, 734003200 / 80)
             seconds = remainder * 4800 / 734003200.
-            print(
-                "\n*** {0:s}: {1:4.2f} MB ({2:.0f} min "
-                "{3:05.2f} sec) ***\n".format(
-                    image,
-                    size/1048576.,
-                    minutes,
-                    seconds
-                )
+            logger.info(
+                "%s: %4.2f MB (%.0f min %05.2f sec)",
+                image,
+                size/1048576.,
+                minutes,
+                seconds,
             )
             if size > 681574400:
-                sys.stderr.write(
-                    "**WARNING** This ISO image file does not fit onto "
-                    "650MB/74min CD media.\n"
+                logger.warning(
+                    "This ISO image file does not fit onto "
+                    "650MB/74min CD media."
                 )
-                sys.stderr.write(
-                    "        ==> Please use 700MB/80min CD media instead.\n"
-                )
+                logger.warning("==> Please use 700MB/80min CD media instead.")
 
     @staticmethod
     def _md5sum(file):
@@ -317,25 +327,23 @@ class Main(object):
 
         image = options.get_image()
 
-        print("Creating portable CD/DVD image file: " + image + "...")
-        print("Adding ISO9660 Level 3 standard file syslib...")
-        print("Adding ROCK RIDGE extensions for UNIX file syslib...")
-        print(
-            "Adding JOLIET long extensions for Microsoft Windows "
-            "FAT32 file syslib..."
+        logger.info("Creating portable CD/DVD image file: %s", image)
+        logger.info("Adding ISO9660 Level 3 standard file system")
+        logger.info("Adding ROCK RIDGE extensions for UNIX file system")
+        logger.info(
+            "Adding JOLIET long extensions for Microsoft Windows FAT32 "
+            "file system"
         )
-        print("Adding individual files shared by all three file systems...")
-        print(
-            "   ==> Directory and file names limit is  31 "
-            "characters for ISO9660."
+        logger.info("Adding individual files shared by all three file systems")
+        logger.info(
+            "==> Directory and file names limit is  31 characters for ISO9660."
         )
-        print(
-            "   ==> Directory and file names limit is 255 "
+        logger.info(
+            "==> Directory and file names limit is 255 "
             "characters for ROCK RIDGE."
         )
-        print(
-            "   ==> Directory and file names limit is 103 "
-            "characters for JOLIET."
+        logger.info(
+            "==> Directory and file names limit is 103 characters for JOLIET."
         )
 
         self._genisoimage = options.get_genisoimage()

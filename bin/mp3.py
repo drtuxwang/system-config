@@ -5,16 +5,33 @@ Encode MP3 audio using ffmpeg (libmp3lame).
 
 import argparse
 import glob
+import logging
 import os
 import re
 import signal
 import sys
+
+import coloredlogs
 
 import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+
+# pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
+# pylint: enable=invalid-name
+coloredlogs.install(
+    logger=logger,
+    level='INFO',
+    milliseconds=True,
+    fmt='%(asctime)s %(levelname)-8s %(message)s',
+    field_styles={
+        'asctime': {'color': 'green'},
+        'levelname': {'color': 'black', 'bold': True},
+    },
+)
 
 
 class Options(object):
@@ -245,13 +262,12 @@ class Encoder(object):
                 line = ''
 
         if not ispattern.search(line):
-            print(line)
+            logger.info(line)
         exitcode = child.wait()
         if exitcode:
             sys.exit(exitcode)
 
     def _single(self):
-        print()
         self._config(self._options.get_files()[0])
         if len(self._options.get_files()) > 1:
             args = []
@@ -272,17 +288,16 @@ class Encoder(object):
         self._ffmpeg.extend_args(
             ['-f', 'mp3', '-y', self._options.get_file_new()])
         self._run()
-        Media(self._options.get_file_new()).print()
+        Media(self._options.get_file_new()).show()
 
     def _multi(self):
         for file in self._options.get_files():
             if not file.endswith('.mp3'):
-                print()
                 self._config(file)
                 file_new = file.rsplit('.', 1)[0] + '.mp3'
                 self._ffmpeg.extend_args(['-f', 'mp3', '-y', file_new])
                 self._run()
-                Media(file_new).print()
+                Media(file_new).show()
 
     def config(self, options):
         """
@@ -396,19 +411,20 @@ class Media(object):
         """
         return self._type != 'Unknown'
 
-    def print(self):
+    def show(self):
         """
-        Print information
+        Show information
         """
         if self.is_valid():
-            print("{0:s}    = Type:  {1:s} ({2:s}), {3:s} bytes".format(
+            logger.info(
+                "%s    = Type:  %s (%s), %d bytes",
                 self._file,
                 self._type,
                 self._length,
-                str(os.path.getsize(self._file))
-            ))
+                os.path.getsize(self._file),
+            )
             for stream, information in self.get_stream():
-                print(self._file + '[' + str(stream) + '] =', information)
+                logger.info("%s[%d] = %s", self._file, stream, information)
 
 
 class Main(object):

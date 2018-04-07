@@ -6,14 +6,31 @@ Show files with same MD5 checksums.
 import argparse
 import glob
 import hashlib
+import logging
 import os
 import signal
 import sys
+
+import coloredlogs
 
 import command_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+# pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
+# pylint: enable=invalid-name
+coloredlogs.install(
+    logger=logger,
+    level='INFO',
+    milliseconds=True,
+    fmt='%(asctime)s %(levelname)-8s %(message)s',
+    field_styles={
+        'asctime': {'color': 'green'},
+        'levelname': {'color': 'black', 'bold': True},
+    },
+)
 
 
 class Options(object):
@@ -175,7 +192,10 @@ class Main(object):
         for files in sorted(self._md5files.values()):
             if len(files) > 1:
                 sorted_files = sorted(files)
-                print('***', command_mod.Command.args2cmd(sorted_files), '***')
+                logger.warning(
+                    "Identical: %s",
+                    command_mod.Command.args2cmd(sorted_files)
+                )
                 if options.get_remove_flag():
                     self._remove(sorted_files[1:])
 

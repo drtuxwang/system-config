@@ -5,16 +5,33 @@ Copy all files/directory inside a directory into mirror directory.
 
 import argparse
 import glob
+import logging
 import os
 import shutil
 import signal
 import sys
 import time
 
+import coloredlogs
+
 import file_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+# pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
+# pylint: enable=invalid-name
+coloredlogs.install(
+    logger=logger,
+    level='INFO',
+    milliseconds=True,
+    fmt='%(asctime)s %(levelname)-8s %(message)s',
+    field_styles={
+        'asctime': {'color': 'green'},
+        'levelname': {'color': 'black', 'bold': True},
+    },
+)
 
 
 class Options(object):
@@ -140,20 +157,14 @@ class Main(object):
                     os.path.basename(target_file)
             ) not in source_files:
                 if os.path.islink(target_file):
-                    print(
-                        '**WARNING** No source for "' +
-                        target_file + '" link.'
-                    )
+                    logger.warning('No source for "%s" link.', target_file)
                 elif os.path.isdir(target_file):
-                    print(
-                        '**WARNING** No source for "' +
-                        target_file + '" directory.'
+                    logger.warning(
+                        'No source for "%s" directory.',
+                        target_file
                     )
                 else:
-                    print(
-                        '**WARNING** No source for "' +
-                        target_file + '" file.'
-                    )
+                    logger.warning('No source for "%s" file.', target_file)
 
     def _get_stats(self):
         elapsed = time.time() - self._start
@@ -179,10 +190,11 @@ class Main(object):
                             target_file + '" link.'
                         )
                 elif os.path.isdir(target_file):
-                    print('[{0:s}] Removing "{1:s}" directory...'.format(
+                    logger.info(
+                        '[{%s}] Removing "{%s}" directory',
                         self._get_stats(),
-                        target_file
-                    ))
+                        target_file,
+                    )
                     try:
                         shutil.rmtree(target_file)
                     except OSError:
@@ -191,10 +203,11 @@ class Main(object):
                             target_file + '" directory.'
                         )
                 else:
-                    print('[{0:s}] Removing "{1:s}" file...'.format(
+                    logger.warning(
+                        '[%s] Removing "%s" file.',
                         self._get_stats(),
-                        target_file
-                    ))
+                        target_file,
+                    )
                     try:
                         os.remove(target_file)
                     except OSError:
@@ -211,10 +224,11 @@ class Main(object):
                 target_link = os.readlink(target_file)
                 if target_link == source_link:
                     return
-            print('[{0:s}] Updating "{1:s}" link...'.format(
+            logger.info(
+                '[%s] Updating "%s" link.',
                 self._get_stats(),
-                target_file
-            ))
+                target_file,
+            )
             try:
                 if os.path.isdir(target_file) and not (
                         os.path.islink(target_file)):
@@ -227,10 +241,11 @@ class Main(object):
                     target_file + '" link.'
                 )
         else:
-            print('[{0:s}] Creating "{1:s}" link...'.format(
+            logger.info(
+                '[%s] Creating "%s" link.',
                 self._get_stats(),
-                target_file
-            ))
+                target_file,
+            )
         try:
             os.symlink(source_link, target_file)
         except OSError:
@@ -256,10 +271,11 @@ class Main(object):
                         abs(source_stat.get_time() - target_stat.get_time())
                 ) in (0, 1, 3599, 3600, 3601):
                     if source_stat.get_mode() != target_stat.get_mode():
-                        print('[{0:s}] Updating "{1:s}" permissions...'.format(
+                        logger.info(
+                            '[%s] Updating "%s" permissions.',
                             self._get_stats(),
-                            target_file
-                        ))
+                            target_file,
+                        )
                         try:
                             os.chmod(target_file, source_stat.get_mode())
                         except OSError:
@@ -268,15 +284,17 @@ class Main(object):
                                 target_file + '" permissions.'
                             )
                     return
-            print('[{0:s}] Updating "{1:s}" file...'.format(
+            logger.info(
+                '[%s] Updating "%s" file.',
                 self._get_stats(),
-                target_file
-            ))
+                target_file,
+            )
         else:
-            print('[{0:s}] Creating "{1:s}" file...'.format(
+            logger.info(
+                '[%s] Creating "%s" file.',
                 self._get_stats(),
-                target_file
-            ))
+                target_file,
+            )
         self._size += int((os.path.getsize(source_file) + 1023) / 1024)
         try:
             shutil.copy2(source_file, target_file)
@@ -329,10 +347,11 @@ class Main(object):
                 )
         else:
             target_files = []
-            print('[{0:s}] Creating "{1:s}" directory...'.format(
+            logger.info(
+                '[%s] Creating "%s" directory.',
                 self._get_stats(),
-                target_dir
-            ))
+                target_dir,
+            )
             try:
                 os.mkdir(target_dir)
                 os.chmod(
@@ -376,7 +395,7 @@ class Main(object):
         for mirror in self._options.get_mirrors():
             self._automount(mirror[1], 8)
             self._mirror(mirror[0], mirror[1])
-        print('[{0:s}] Finished!...'.format(self._get_stats()))
+        logger.info('[%s] Finished!', self._get_stats())
 
 
 if __name__ == '__main__':

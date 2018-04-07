@@ -5,17 +5,34 @@ Play multimedia file/URL.
 
 import argparse
 import glob
+import logging
 import random
 import re
 import os
 import signal
 import sys
 
+import coloredlogs
+
 import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+
+# pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
+# pylint: enable=invalid-name
+coloredlogs.install(
+    logger=logger,
+    level='INFO',
+    milliseconds=True,
+    fmt='%(asctime)s %(levelname)-8s %(message)s',
+    field_styles={
+        'asctime': {'color': 'green'},
+        'levelname': {'color': 'black', 'bold': True},
+    },
+)
 
 
 class Options(object):
@@ -155,17 +172,20 @@ class Media(object):
         """
         return self._type != 'Unknown'
 
-    def print(self):
+    def show(self):
         """
         Show information
         """
         if self.is_valid():
-            print(
-                self._file + '    = Type: ', self._type, '(' + self._length +
-                '),', str(os.path.getsize(self._file)) + ' bytes'
+            logger.info(
+                "%s    = Type: %s (%s), %d bytes",
+                self._file,
+                self._type,
+                self._length,
+                os.path.getsize(self._file),
             )
             for stream, information in self.get_stream():
-                print(self._file + '[' + str(stream) + '] =', information)
+                logger.info("%s[%d] = %s", self._file, stream, information)
 
 
 class Main(object):
@@ -203,7 +223,7 @@ class Main(object):
     def _view(files):
         for file in files:
             if os.path.isfile(file):
-                Media(file).print()
+                Media(file).show()
 
     @staticmethod
     def _play(files):
