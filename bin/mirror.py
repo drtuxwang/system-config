@@ -190,8 +190,8 @@ class Main(object):
                             target_file + '" link.'
                         )
                 elif os.path.isdir(target_file):
-                    logger.info(
-                        '[{%s}] Removing "{%s}" directory',
+                    logger.warning(
+                        '[%s] Removing "{%s}" directory',
                         self._get_stats(),
                         target_file,
                     )
