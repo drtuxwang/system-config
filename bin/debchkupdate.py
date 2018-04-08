@@ -7,14 +7,31 @@ import argparse
 import copy
 import glob
 import json
+import logging
 import os
 import re
 import signal
 import sre_constants
 import sys
 
+import coloredlogs
+
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+# pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
+# pylint: enable=invalid-name
+coloredlogs.install(
+    logger=logger,
+    level='INFO',
+    milliseconds=True,
+    fmt='%(asctime)s %(levelname)-8s %(message)s',
+    field_styles={
+        'asctime': {'color': 'green'},
+        'levelname': {'color': 'black', 'bold': True},
+    },
+)
 
 
 class Options(object):
@@ -252,7 +269,7 @@ class Main(object):
                                 distribution,
                                 self._packages[name].get_url()
                             )
-                            print(file, '(Replaces', version + ')')
+                            logger.info("%s (Replaces %s)", file, version)
                             print(file, file=ofile)
                             for dependency in sorted(self._depends(
                                     versions,
@@ -263,7 +280,7 @@ class Main(object):
                                         distribution,
                                         self._packages[dependency].get_url()
                                     )
-                                    print("  " + file, "(New dependency)")
+                                    logger.warning("%s (New dependency)", file)
                                     print("  " + file, file=ofile)
         except OSError:
             raise SystemExit(
@@ -299,11 +316,14 @@ class Main(object):
 
         ispattern = re.compile('[.]debs-?.*$')
         for list_file in options.get_list_files():
+            if not os.path.isfile(list_file):
+                logger.error('Cannot fine "%s" list file.', list_file)
+                continue
             if os.path.getsize(list_file) > 0:
                 if os.path.isfile(list_file):
                     if ispattern.search(list_file):
                         distribution = ispattern.sub('', list_file)
-                        print('\nChecking "' + list_file + '" list file...')
+                        logger.info('Checking "%s" list file.', list_file)
                         self._packages = self._read_distribution_packages(
                             distribution + '.json')
                         self._read_distribution_pin_packages(

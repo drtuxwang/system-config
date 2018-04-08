@@ -7,15 +7,31 @@ import argparse
 import copy
 import glob
 import json
+import logging
 import os
 import re
 import signal
 import sre_constants
 import sys
 
+import coloredlogs
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+# pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
+# pylint: enable=invalid-name
+coloredlogs.install(
+    logger=logger,
+    level='INFO',
+    milliseconds=True,
+    fmt='%(asctime)s %(levelname)-8s %(message)s',
+    field_styles={
+        'asctime': {'color': 'green'},
+        'levelname': {'color': 'black', 'bold': True},
+    },
+)
 
 
 class Options(object):
@@ -278,20 +294,25 @@ class Main(object):
         if name in self._packages:
             self._packages[name].set_checked_flag(True)
             if self._packages[name].get_installed_flag():
-                print(indent + self._packages[name].get_url(), '[Installed]')
+                logger.info(
+                    "%s%s [Installed]",
+                    indent,
+                    self._packages[name].get_url(),
+                )
             else:
                 file = self._local(
                     distribution,
                     self._packages[name].get_url()
                 )
-                print(indent + file)
+                logger.warning("%s", file)
                 print(indent + file, file=ofile)
             for i in self._packages[name].get_depends():
                 if i in self._packages:
                     if self._packages[i].get_installed_flag():
-                        print(
-                            indent + "  " + self._packages[i].get_url(),
-                            "[Installed]"
+                        logger.info(
+                            "%s  %s [Installed]",
+                            indent,
+                            self._packages[i].get_url(),
                         )
                     elif (
                             not self._packages[i].get_checked_flag() and
