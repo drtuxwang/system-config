@@ -191,7 +191,7 @@ class Main(object):
                         )
                 elif os.path.isdir(target_file):
                     logger.warning(
-                        '[%s] Removing "{%s}" directory',
+                        '[%s] Removing "%s" directory',
                         self._get_stats(),
                         target_file,
                     )
