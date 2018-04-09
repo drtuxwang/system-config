@@ -5,10 +5,13 @@ Calculate PAR2 parity and repair tool.
 
 import argparse
 import glob
+import logging
 import os
 import shutil
 import signal
 import sys
+
+import coloredlogs
 
 import command_mod
 import subtask_mod
@@ -17,6 +20,20 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 IGNORE_EXTENSIONS = ('.fsum', '.md5', '.md5sum', '.par2')
+
+# pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
+# pylint: enable=invalid-name
+coloredlogs.install(
+    logger=logger,
+    level='INFO',
+    milliseconds=True,
+    fmt='%(asctime)s %(levelname)-8s %(message)s',
+    field_styles={
+        'asctime': {'color': 'green'},
+        'levelname': {'color': 'black', 'bold': True},
+    },
+)
 
 
 class Options(object):
@@ -120,7 +137,7 @@ class Main(object):
                     if os.path.isfile(file):
                         continue
                     file = os.path.join(directory, par_file)
-                    print('Deleting old:', file)
+                    logger.warning("Deleting old: %s", file)
                     cls._delete_file(file)
             if not os.listdir(directory):
                 os.removedirs(directory)

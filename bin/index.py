@@ -4,16 +4,33 @@ Generate 'index.xhtml' & 'index.fsum' files plus '.../fsum' cache files
 """
 
 import glob
+import logging
 import os
 import re
 import signal
 import sys
+
+import coloredlogs
 
 import command_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+
+# pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
+# pylint: enable=invalid-name
+coloredlogs.install(
+    logger=logger,
+    level='INFO',
+    milliseconds=True,
+    fmt='%(asctime)s %(levelname)-8s %(message)s',
+    field_styles={
+        'asctime': {'color': 'green'},
+        'levelname': {'color': 'black', 'bold': True},
+    },
+)
 
 
 class Main(object):
@@ -48,7 +65,7 @@ class Main(object):
             sys.argv = argv
 
     def _checksum(self):
-        print('Generating "index.fsum"...')
+        logger.info('Generating "index.fsum"')
         try:
             with open('index.fsum', 'a', newline='\n') as ofile:
                 self._read_fsums(ofile, '')
