@@ -5,9 +5,14 @@ alias du="du -k"
 alias ftp="ftp -i"
 if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]
 then
-    alias ls="ls -C --time-style=long-iso --color=always"
+    alias ls="ls -C --time-style=long-iso --color=auto"
 else
-    alias ls="ls -C --color=always"
+    alias ls="ls -C --color=auto"
+fi
+if [ "`\grep --help 2>&1 | \grep \" --color\"`" ]
+then
+    alias grep="grep --color=auto"
+    alias grep="egrep --color=auto"
 fi
 if [ -x /usr/bin/vim ]
 then

@@ -162,7 +162,9 @@ if ( $?TERM && -e "`\tty`" ) then
     case Darwin:
         if ( -d /usr/local/opt/coreutils/libexec/gnubin ) then
             setenv PATH "/usr/local/opt/coreutils/libexec/gnubin:${PATH}"
-            alias ls "ls -C --time-style=long-iso --color=always"
+            alias ls "ls -C --time-style=long-iso --color=auto"
+            alias grep "grep --color=auto"
+            alias egrep "egrep --color=auto"
         else
             alias ls "ls -C -G"
         endif
@@ -175,9 +177,13 @@ if ( $?TERM && -e "`\tty`" ) then
     case Linux:
     case *NT*:
         if ( "`\ls --help |& \grep '^ *--time-style'`" != "" ) then
-            alias ls "ls -C --time-style=long-iso --color=always"
+            alias ls "ls -C --time-style=long-iso --color=auto"
         else
-            alias ls "ls -C --color=always"
+            alias ls "ls -C --color=auto"
+        endif
+        if ( "`\grep --help |& \grep '^ *--color'`" != "" ) then
+            alias grep "grep --color=auto"
+            alias egrep "egrep --color=auto"
         endif
         setenv LS_COLORS ""
         breaksw

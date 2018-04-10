@@ -285,7 +285,9 @@ then
         if [ -d /usr/local/opt/coreutils/libexec/gnubin ]
         then
             export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
-            alias ls="ls -C --time-style=long-iso --color=always"
+            alias ls="ls -C --time-style=long-iso --color=auto"
+            alias grep="grep --color=auto"
+            alias egrep="egrep --color=auto"
         else
             alias ls="ls -C -G"
         fi
@@ -294,9 +296,14 @@ then
     Linux|*NT*)
         if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]
         then
-            alias ls="ls -C --time-style=long-iso --color=always"
+            alias ls="ls -C --time-style=long-iso --color=auto"
         else
-            alias ls="ls -C --color=always"
+            alias ls="ls -C --color=auto"
+        fi
+        if [ "`\grep --help 2>&1 | \grep \" --color\"`" ]
+        then
+            alias grep="grep --color=auto"
+            alias egrep="egrep --color=auto"
         fi
         # Defend against stubborn Linux distributions
         if [ -f /etc/ksh.kshrc ]
