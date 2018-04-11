@@ -304,7 +304,7 @@ class Main(object):
                     distribution,
                     self._packages[name].get_url()
                 )
-                logger.warning("%s", file)
+                logger.warning("%s%s", indent, file)
                 print(indent + file, file=ofile)
             for i in self._packages[name].get_depends():
                 if i in self._packages:
