@@ -1,4 +1,4 @@
-FROM gcr.io/etcd-development/etcd:v3.2.16
+FROM gcr.io/etcd-development/etcd:v3.2.18
 
 # Root account
 COPY tmpdir/config/.bashrc /root/
