@@ -14,24 +14,18 @@ import signal
 import sre_constants
 import sys
 
-import coloredlogs
+import logging_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 # pylint: disable=invalid-name
 logger = logging.getLogger(__name__)
+console_handler = logging.StreamHandler()
 # pylint: enable=invalid-name
-coloredlogs.install(
-    logger=logger,
-    level='INFO',
-    milliseconds=True,
-    fmt='%(asctime)s %(levelname)-8s %(message)s',
-    field_styles={
-        'asctime': {'color': 'green'},
-        'levelname': {'color': 'black', 'bold': True},
-    },
-)
+console_handler.setFormatter(logging_mod.ColoredFormatter())
+logger.addHandler(console_handler)
+logger.setLevel(logging.INFO)
 
 
 class Options(object):
