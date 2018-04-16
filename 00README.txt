@@ -800,6 +800,7 @@ bin/scd.bat
 bin/mka.bat            Show settings of %cda%..%cdz% environmental variables
 
 config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
+config/adblock.txt              Adblock filter list
 config/ash-2bash                Wrapper to run ash as bash shell
 config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
 config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
