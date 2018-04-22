@@ -139,7 +139,7 @@ class DropboxClient(object):
 
         path = url.split('dropbox:/', 1)[1]
         file = os.path.basename(url)
-        logger.info('Downloading "dropbox:%s" to "%s".', path, file)
+        logger.info('Downloading "%s" to "%s".', url, file)
 
         try:
             metadata, response = self._client.files_download(path)
@@ -169,7 +169,7 @@ class DropboxClient(object):
 
         path = url.split('dropbox:/', 1)[1]
         file = os.path.basename(url)
-        logger.info('Uploading "%s" to "dropbox:%s".', file, path)
+        logger.info('Uploading "%s" to "%s".', file, url)
 
         try:
             with open(file, 'rb') as ifile:
