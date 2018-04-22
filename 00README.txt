@@ -199,6 +199,9 @@ bin/frn.py
 bin/fsame              Show files with same MD5 checksums
 bin/fsame.bat
 bin/fsame.py
+bin/fshare             File sharing utility (currently dropbox only)
+bin/fshare.bat
+bin/fshare.py
 bin/fsort              Unicode sort lines of a file
 bin/fsort.bat
 bin/fsort.py

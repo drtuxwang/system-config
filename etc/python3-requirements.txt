@@ -11,6 +11,7 @@ Cython>=0.27.3
 devpi-client>=2.6.4
 Django>=1.10.7
 docker-compose>=1.13.0
+dropbox==8.7.1
 filemagic>=1.6
 Flask>=0.11.1
 Glances>=2.8.8
