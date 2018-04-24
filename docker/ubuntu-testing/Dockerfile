@@ -3,6 +3,7 @@ FROM ubuntu:18.04
 # Install base packages
 RUN apt-get update && \
 	apt-get install --no-install-recommends -y \
+		dh-python \
 		iputils-ping \
 		net-tools \
 		openssh-client \

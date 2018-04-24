@@ -26,13 +26,13 @@ project:
 
 pull:
 	for IMAGE in $(PULL_IMAGES); do \
-		make -C $$IMAGE pull ||:; \
+		make -C $$IMAGE pull || exit 1; \
 	done
 	docker images
 
 build:
 	for IMAGE in $(BUILD_IMAGES); do \
-		make -C $$IMAGE build ||:; \
+		make -C $$IMAGE build || exit 1:; \
 	done
 	docker images
 

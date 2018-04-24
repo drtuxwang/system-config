@@ -878,9 +878,9 @@ docker/debian-previous/Dockerfile                 Docker: debian:8 based linux
 docker/debian-previous/Makefile
 docker/debian-testing/Dockerfile                  Docker: debian:testing based linux
 docker/debian-testing/Makefile
-docker/etcd/Dockerfile                            Docker: gcr.io/etcd-development/etcd:v3.2.16 based server
+docker/etcd/Dockerfile                            Docker: gcr.io/etcd-development/etcd:v3.2.18 based server
 docker/etcd/Makefile
-docker/etcd/cluster/Makefile                      Docker: gcr.io/etcd-development/etcd:v3.2.16 based cluster
+docker/etcd/cluster/Makefile                      Docker: gcr.io/etcd-development/etcd:v3.2.18 based cluster
 docker/etcd/cluster/docker-compose.yml
 docker/etcd/cluster/docker-compose-migrate.yml
 docker/etcd/cluster/docker-compose-restore.yml
@@ -888,7 +888,7 @@ docker/jailbreak/Dockerfile                       Docker: jailbreak image
 docker/jailbreak/Makefile
 docker/jenkins/Dockerfile                         Docker: jenkins/jenkins:lts based server
 docker/jenkins/Makefile
-docker/mongo/Dockerfile                           Docker: mongo:3.4.13 based database
+docker/mongo/Dockerfile                           Docker: mongo:3.4.14 based database
 docker/mongo/Makefile
 docker/oracle-xe/Dockerfile                       Docker: wnameless/oracle-xe-11g:latest based database
 docker/oracle-xe/Makefile
