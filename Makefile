@@ -4,7 +4,7 @@ test: check lint
 
 check:
 	@echo "\n*** Running Python 3 requirements check ***"
-	umask 022 && python3 -m pip install -r etc/python3-requirements.txt 2>&1
+	umask 022 && python3 -m pip install -q -r etc/python3-requirements.txt
 
 	@echo "\n*** Running Python 3 compilation check ***"
 	python3 -m py_compile bin/*.py
@@ -14,7 +14,7 @@ check:
 	python3 -m unittest discover --buffer bin
 
 	@echo "\n*** Running BSON/JSON/YAML check ***"
-	PATH=`pwd`/bin:${PATH} find -regex  '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} +
+	PATH=`pwd`/bin:${PATH} find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} +
 
 	@echo "\n*** Check successfull ***"
 
