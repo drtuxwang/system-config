@@ -311,7 +311,7 @@ class Main(object):
         ispattern = re.compile('[.]debs-?.*$')
         for list_file in options.get_list_files():
             if not os.path.isfile(list_file):
-                logger.error('Cannot fine "%s" list file.', list_file)
+                logger.error('Cannot find "%s" list file.', list_file)
                 continue
             if os.path.getsize(list_file) > 0:
                 if os.path.isfile(list_file):
