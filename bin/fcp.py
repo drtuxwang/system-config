@@ -26,12 +26,6 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_copy_link_flag(self):
-        """
-        Return copy link flag.
-        """
-        return self._args.copyLink_flag
-
     def get_sources(self):
         """
         Return list of source files.
@@ -48,12 +42,6 @@ class Options(object):
         parser = argparse.ArgumentParser(
             description='Copy files and directories.')
 
-        parser.add_argument(
-            '-f',
-            dest='copyLink_flag',
-            action='store_true',
-            help='Follow links and copy file/directory.'
-        )
         parser.add_argument(
             'sources',
             nargs='+',
@@ -119,7 +107,8 @@ class Main(object):
     def _copy_link(source, target):
         print('Copying "' + source + '" link...')
         source_link = os.readlink(source)
-        if os.path.islink(target) or os.path.isfile(target):
+
+        if os.path.isfile(target):
             try:
                 os.remove(target)
             except OSError:
@@ -178,7 +167,7 @@ class Main(object):
                         sys.argv[0] + ': Cannot create "' + target + '" file.')
 
     def _copy(self, source, target):
-        if self._options.get_copy_link_flag() and os.path.islink(source):
+        if os.path.islink(source):
             self._copy_link(source, target)
         elif os.path.isdir(source):
             self._copy_directory(source, target)
