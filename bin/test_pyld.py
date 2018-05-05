@@ -450,7 +450,7 @@ class TestPythonLoader(unittest.TestCase):
 
         python_loader = pyld.PythonLoader(self._mock_options)
 
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaises(ImportError):
             python_loader.run()
 
         self.assertTrue(python_loader.dump.called)
@@ -461,7 +461,7 @@ class TestPythonLoader(unittest.TestCase):
         """
         python_loader = pyld.PythonLoader(self._mock_options)
 
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaises(ImportError):
             python_loader.run()
 
     def test_run_import_main(self):
@@ -490,7 +490,7 @@ class TestPythonLoader(unittest.TestCase):
 
         python_loader = pyld.PythonLoader(self._mock_options)
 
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaises(ImportError):
             python_loader.run()
         self.assertIn('directory1', sys.path)
         self.assertIn('directory2', sys.path)
@@ -504,7 +504,7 @@ class TestPythonLoader(unittest.TestCase):
 
         python_loader = pyld.PythonLoader(self._mock_options)
 
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaises(ImportError):
             python_loader.run()
 
         result = pyld.sys.stdout.getvalue()

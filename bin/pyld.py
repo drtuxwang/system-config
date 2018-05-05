@@ -5,7 +5,6 @@ Load Python main program as module (must have Main class).
 
 import argparse
 import glob
-import importlib.machinery
 import os
 import signal
 import sys
@@ -249,10 +248,7 @@ class PythonLoader(object):
             print("sys.argv =", sys.argv)
             print()
 
-        main = importlib.machinery.SourceFileLoader(
-            "module.name",
-            os.path.join(directory, module) + '.py'
-        ).load_module()
+        main = __import__(module)
         main.Main()
 
     def get_options(self):
