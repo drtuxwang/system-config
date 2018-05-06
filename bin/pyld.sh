@@ -8,11 +8,6 @@
 # Function to locate Python command
 #
 locate_python() {
-    case $1 in
-    */ibus/*|*/meld)  # Must use system Python
-        return
-    esac
-
     case $0 in
     /*)
         LOCAL=`dirname \`dirname "$0"\``
