@@ -24,6 +24,12 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
+    def get_check_all(self):
+        """
+        Return check all (including description).
+        """
+        return self._args.check_all
+
     def get_packages_file(self):
         """
         Return packages file location.
@@ -42,6 +48,12 @@ class Options(object):
             'expression in Debian package file.'
         )
 
+        parser.add_argument(
+            '-a',
+            dest='check_all',
+            action='store_true',
+            help='Check description as well.'
+        )
         parser.add_argument(
             'packages_file',
             nargs=1,
@@ -171,11 +183,16 @@ class Main(object):
                 self._packages[name] = package
                 package = Package('', 0, '')
 
-    def _search_distribution_packages(self, patterns):
+    def _search_distribution_packages(self, patterns, check_all=False):
         for pattern in patterns:
             ispattern = re.compile(pattern, re.IGNORECASE)
             for name, package in sorted(self._packages.items()):
-                if ispattern.search(name):
+                if (
+                        ispattern.search(name) or
+                        check_all and ispattern.search(
+                            self._packages[name].get_description()
+                        )
+                ):
                     print("{0:25s} {1:15s} {2:5d}KB {3:s}".format(
                         name.split(':')[0],
                         package.get_version(),
@@ -207,7 +224,10 @@ class Main(object):
         options = Options()
 
         self._read_distribution_packages(options.get_packages_file())
-        self._search_distribution_packages(options.get_patterns())
+        self._search_distribution_packages(
+            options.get_patterns(),
+            options.get_check_all()
+        )
 
 
 if __name__ == '__main__':
