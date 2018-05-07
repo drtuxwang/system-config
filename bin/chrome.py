@@ -228,7 +228,7 @@ class Options(object):
                             self._remove(file)
                 elif (
                         os.path.basename(directory) not in
-                        {'First Run', 'Local State'}
+                        {'Extensions', 'First Run', 'Local State'}
                 ):
                     print('Removing "{0:s}"...'.format(directory))
                     self._remove(directory)

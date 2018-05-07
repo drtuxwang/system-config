@@ -830,8 +830,8 @@ config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults
 config/genmon-7.rc              Copy to "$HOME/.config/xfce4/panel/genmon-7.rc" for XFCE Weather
 config/xscreensaver             Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
 
-etc/python3-install.sh          Python 3 pip installer (installs minimum requirements)
-etc/python3-requirements.txt    Python 3 pip requirements file
+etc/python-install.sh           Python pip installer (installs minimum requirements)
+etc/python-requirements.txt     Python pip requirements file
 etc/setbin                      Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
 etc/setbin.bat                  Windows Command prompt initialization
 etc/setbin.ps1                  Windows Power shell initialization
