@@ -119,11 +119,12 @@ which() {
 locate_python_tool() {
     for TOOL in $HOME/.local/bin/$2 /usr/local/bin/$2 $1/$2 $1/Tools/scripts/$2 $1/Scripts/$2.exe
     do
-        if [ -f "$TOOL.py" ]
+        if [ -f "$TOOL.py" -a `basename "$TOOL.py"` != "pip3.py" ]  # pip3.py is broken
         then
             echo "$TOOL.py"
             return
-        elif [ -f "$TOOL" ]
+        fi
+        if [ -f "$TOOL" ]
         then
             echo "$TOOL"
             return
