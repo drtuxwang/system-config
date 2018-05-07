@@ -120,7 +120,7 @@ class Main(object):
                 if '<span class="large-temp">' in data:
                     temp = data.split(
                         '<span class="large-temp">'
-                    )[1].split('<')[0].replace('&deg;', 'C')
+                    )[1].split('<')[0].replace('&deg;', '°C')
                     if '<span class="cond">' in data:
                         condition = data.split(
                             '<span class="cond">'
