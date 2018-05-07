@@ -86,7 +86,6 @@ class Main(object):
         """
         options = Options()
 
-        os.environ['PYTHONPATH'] = '/usr/lib/python2.7'
         task = subtask_mod.Task(options.get_meld().get_cmdline())
         task.run(pattern=options.get_pattern())
         return task.get_exitcode()
