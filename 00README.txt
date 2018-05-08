@@ -99,8 +99,10 @@ bin/eclipse            eclipse wrapper (allowing non systems port)
 bin/eclipse.py
 bin/espeak             espeak wrapper (allowing non systems port)
 bin/espeak.py
-bin/et                 et wrapper (allowing non systems port)
-bin/et.py              (fix sound problems)
+bin/et                 ET wrapper (allowing non systems port)
+bin/et.py
+bin/etl                ET legacy wrapper (allowing non systems port)
+bin/etl.py
 bin/evince             evince wrapper (allowing non systems port)
 bin/evince.bat
 bin/evince.py

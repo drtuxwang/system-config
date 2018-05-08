@@ -4,7 +4,7 @@ test: check lint
 
 check:
 	@echo "\n*** Running Python 3 requirements check ***"
-	umask 022 && python3 -m pip install -q -r etc/python3-requirements.txt
+	umask 022 && python3 -m pip install -q -r etc/python-requirements.txt
 
 	@echo "\n*** Running Python 3 compilation check ***"
 	python3 -m py_compile bin/*.py
