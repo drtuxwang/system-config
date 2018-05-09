@@ -1,20 +1,20 @@
 PULL_IMAGES := \
-	alpine \
-	busybox \
-	centos \
-	centos-previous \
+	alpine-3.6 \
+	busybox-1.28 \
+	centos-6 \
+	centos-7 \
 	clearlinux \
-	debian \
-	debian-previous \
+	debian-8 \
+	debian-9 \
 	debian-testing \
-	etcd \
-	jenkins \
-	mongo \
+	etcd-3.2.18 \
+	jenkins-lts \
+	mongo-3.4.14 \
 	oracle-xe \
-	registry \
-	ubuntu \
-	ubuntu-previous \
-	ubuntu-testing
+	registry-2.6 \
+	ubuntu-14.04 \
+	ubuntu-16.04 \
+	ubuntu-18.04
 BUILD_IMAGES := $(PULL_IMAGES) jailbreak
 CLEAN_IMAGES := $(BUILD_IMAGES)
 

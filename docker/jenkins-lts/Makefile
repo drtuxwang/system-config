@@ -1,5 +1,5 @@
-NAME := debian
-VERSION = testing
+NAME := jenkins
+VERSION = lts
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
@@ -20,10 +20,8 @@ pull:
 
 build:
 	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/config
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
+	mkdir -p tmpdir/config
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
-	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
@@ -31,7 +29,13 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME)-test $(IMAGE) ||:
+	docker run $(FLAGS) \
+		--privileged=true \
+		--volume=/var/lib/jenkins:/var/lib/jenkins \
+		--publish 8080:8080 \
+		--hostname $(NAME) \
+		--workdir /var/lib/jenkins \
+		$(IMAGE) ||:
 
 clean:
 	docker rmi -f $(IMAGE) ||:

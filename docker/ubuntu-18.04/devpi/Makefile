@@ -1,5 +1,5 @@
-NAME := debian
-VERSION = testing
+NAME := ubuntu-devpi
+VERSION = 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
@@ -9,14 +9,11 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
-TOPDIR := ../..
+TOPDIR := ../../..
 
 
 default: build
 	docker images
-
-pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
 build:
 	rm -rf tmpdir
@@ -31,8 +28,11 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME)-test $(IMAGE) ||:
+	docker run $(FLAGS) \
+		--publish 8080:8080 \
+		--hostname $(NAME) \
+		--workdir /var/lib/devpi \
+		$(IMAGE) || exit 0
 
 clean:
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

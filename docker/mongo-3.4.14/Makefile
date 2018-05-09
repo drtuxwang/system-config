@@ -1,5 +1,5 @@
-NAME := debian
-VERSION = testing
+NAME := mongo
+VERSION = 3.4.14
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
@@ -20,10 +20,8 @@ pull:
 
 build:
 	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/config
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
+	mkdir -p tmpdir/config
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
-	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
@@ -31,7 +29,12 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME)-test $(IMAGE) ||:
+	docker run $(FLAGS) \
+		--privileged=true \
+		--publish 27017:27017 \
+		--hostname $(NAME) \
+		--workdir /data/db \
+		$(IMAGE) ||:
 
 clean:
 	docker rmi -f $(IMAGE) ||:

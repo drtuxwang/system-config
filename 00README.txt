@@ -864,60 +864,74 @@ cookiecutter/docker/{{cookiecutter.project_name}}/Dockerfile
 cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
 cookiecutter/docker/cookiecutter.json
 
-docker/alpine/Dockerfile                          Docker: alpine:3.6 based linux
-docker/alpine/Makefile
-docker/busybox/Dockerfile                         Docker: busybox:1.28 based shell
-docker/busybox/Makefile
-docker/centos/Dockerfile                          Docker: centos:7 based linux
-docker/centos/Makefile
-docker/centos-previous/Dockerfile                 Docker: centos:6 based linux
-docker/centos-previous/Makefile
-docker/clearlinux/Dockerfile                      Docker: clearlinux:latest based linux
-docker/clearlinux/Makefile
-docker/debian/Dockerfile                          Docker: debian:9 based linux
-docker/debian/Makefile
-docker/debian-previous/Dockerfile                 Docker: debian:8 based linux
-docker/debian-previous/Makefile
-docker/debian-testing/Dockerfile                  Docker: debian:testing based linux
-docker/debian-testing/Makefile
-docker/etcd/Dockerfile                            Docker: gcr.io/etcd-development/etcd:v3.2.18 based server
-docker/etcd/Makefile
-docker/etcd/cluster/Makefile                      Docker: gcr.io/etcd-development/etcd:v3.2.18 based cluster
-docker/etcd/cluster/docker-compose.yml
-docker/etcd/cluster/docker-compose-migrate.yml
-docker/etcd/cluster/docker-compose-restore.yml
-docker/jailbreak/Dockerfile                       Docker: jailbreak image
-docker/jailbreak/Makefile
-docker/jenkins/Dockerfile                         Docker: jenkins/jenkins:lts based server
-docker/jenkins/Makefile
-docker/mongo/Dockerfile                           Docker: mongo:3.4.14 based database
-docker/mongo/Makefile
-docker/oracle-xe/Dockerfile                       Docker: wnameless/oracle-xe-11g:latest based database
-docker/oracle-xe/Makefile
-docker/registry/Dockerfile                        Docker: registry:2.6 based server
-docker/registry/Makefile
-docker/registry/files/config.yml
-docker/ubuntu/Makefile
-docker/ubuntu/Dockerfile                          Docker: ubuntu:16.04 based linux
-docker/ubuntu/Dockerfile2
-docker/ubuntu/Makefile
-docker/ubuntu/devpi/Makefile                      Docker: ubuntu:16.04 based devpi server
-docker/ubuntu/devpi/Dockerfile
-docker/ubuntu/docker/Dockerfile                   Docker: ubuntu:16.04 based docker client
-docker/ubuntu/docker/Makefile
-docker/ubuntu/nginx/Makefile                      Docker: ubuntu:16.04 based NGINX proxy
-docker/ubuntu/nginx/Dockerfile
-docker/ubuntu/nginx/files/nginx-proxy.conf
-docker/ubuntu/xfce/Dockerfile                     Docker: ubuntu:16.04 based compiler environment
-docker/ubuntu/xfce/Dockerfile2
-docker/ubuntu/xfce/Makefile
-docker/ubuntu/xfce/openvpn/Dockerfile             Docker: ubuntu:16.04 based OpenVPN client
-docker/ubuntu/xfce/openvpn/Makefile
-docker/ubuntu-previous/Dockerfile                 Docker: ubuntu:14.04 based linux
-docker/ubuntu-previous/Makefile
-docker/ubuntu-testing/Dockerfile                  Docker: ubuntu:18.04 based linux
-docker/ubuntu-testing/Makefile
 docker/Makefile                                   Makefile for building all images
+
+docker/alpine-3.6/Makefile                        Docker: alpine:3.6 based linux
+docker/alpine/Dockerfile
+docker/busybox-1.28/Makefile                      Docker: busybox:1.28 based shell
+docker/busybox-1.28/Dockerfile
+docker/centos-6/Makefile                          Docker: centos:6 based linux
+docker/centos-6/Dockerfile
+docker/centos-7/Makefile                          Docker: centos:7 based linux
+docker/centos-7/Dockerfile
+docker/clearlinux/Makefile                        Docker: clearlinux:latest based linux
+docker/clearlinux/Dockerfile
+docker/debian-8/Makefile                          Docker: debian:8 based linux
+docker/debian-8/Dockerfile
+docker/debian-9/Makefile                          Docker: debian:9 based linux
+docker/debian-9/Dockerfile
+docker/debian-testing/Makefile                    Docker: debian:testing based linux
+docker/debian-testing/Dockerfile
+docker/etcd-3.2.18/Makefile                       Docker: gcr.io/etcd-development/etcd:v3.2.18 based server
+docker/etcd-3.2.18/Dockerfile
+docker/etcd-3.2.18/cluster/Makefile               Docker: gcr.io/etcd-development/etcd:v3.2.18 based cluster
+docker/etcd-3.2.18/cluster/docker-compose.yml
+docker/etcd-3.2.18/cluster/docker-compose-migrate.yml
+docker/etcd-3.2.18/cluster/docker-compose-restore.yml
+docker/jailbreak/Makefile                         Docker: jailbreak image
+docker/jailbreak/Dockerfile
+docker/jenkins-lts/Makefile                       Docker: jenkins/jenkins:lts based server
+docker/jenkins-lts/Dockerfile
+docker/mongo-3.4.14/Makefile                      Docker: mongo:3.4.14 based database
+docker/mongo-3.4.14/Dockerfile
+docker/oracle-xe/Makefile                         Docker: wnameless/oracle-xe-11g:latest based database
+docker/oracle-xe/Dockerfile
+docker/registry-2.6/Makefile                      Docker: registry:2.6 based server
+docker/registry-2.6/Dockerfile
+docker/registry-2.6/files/config.yml
+
+docker/ubuntu-14.04/Makefile                      Docker: ubuntu:14.04 based linux
+docker/ubuntu-14.04/Dockerfile
+docker/ubuntu-16.04/Makefile                      Docker: ubuntu:16.04 based linux
+docker/ubuntu-16.04/Dockerfile
+docker/ubuntu-16.04/Dockerfile2
+docker/ubuntu-16.04/devpi/Makefile                Docker: ubuntu:16.04 based devpi server
+docker/ubuntu-16.04/devpi/Dockerfile
+docker/ubuntu-16.04/docker/Makefile               Docker: ubuntu:16.04 based docker client
+docker/ubuntu-16.04/docker/Dockerfile
+docker/ubuntu-16.04/nginx/Makefile                Docker: ubuntu:16.04 based NGINX proxy
+docker/ubuntu-16.04/nginx/Dockerfile
+docker/ubuntu-16.04/nginx/files/nginx-proxy.conf
+docker/ubuntu-16.04/xfce/Makefile                 Docker: ubuntu:16.04 based compiler environment
+docker/ubuntu-16.04/xfce/Dockerfile
+docker/ubuntu-16.04/xfce/Dockerfile2
+docker/ubuntu-16.04/xfce/openvpn/Makefile         Docker: ubuntu:16.04 based OpenVPN client
+docker/ubuntu-16.04/xfce/openvpn/Dockerfile
+docker/ubuntu-18.04/Makefile                      Docker: ubuntu:18.04 based linux
+docker/ubuntu-18.04/Dockerfile
+docker/ubuntu-18.04/Dockerfile2
+docker/ubuntu-18.04/devpi/Makefile                Docker: ubuntu:18.04 based devpi server
+docker/ubuntu-18.04/devpi/Dockerfile
+docker/ubuntu-18.04/docker/Makefile               Docker: ubuntu:18.04 based docker client
+docker/ubuntu-18.04/docker/Dockerfile
+docker/ubuntu-18.04/nginx/Makefile                Docker: ubuntu:18.04 based NGINX proxy
+docker/ubuntu-18.04/nginx/Dockerfile
+docker/ubuntu-18.04/nginx/files/nginx-proxy.conf
+docker/ubuntu-18.04/xfce/Makefile                 Docker: ubuntu:18.04 based compiler environment
+docker/ubuntu-18.04/xfce/Dockerfile
+docker/ubuntu-18.04/xfce/Dockerfile2
+docker/ubuntu-18.04/xfce/openvpn/Makefile         Docker: ubuntu:18.04 based OpenVPN client
+docker/ubuntu-18.04/xfce/openvpn/Dockerfile
 
 kubernetes/ubuntu/Makefile                        Kubernetes: Ubuntu example
 kubernetes/ubuntu/test-ns.yml

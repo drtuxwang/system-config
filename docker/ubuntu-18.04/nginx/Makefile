@@ -1,5 +1,5 @@
-NAME := debian
-VERSION = testing
+NAME := ubuntu-nginx
+VERSION = 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
@@ -9,30 +9,29 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
-TOPDIR := ../..
 
 
 default: build
 	docker images
 
-pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
-
 build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/config
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
-	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
-	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
-	$(TOPDIR)/bin/fmod -R *
+	cp -p ../../../bin/* tmpdir/bin/
+	cp -p ../../../config/bashrc tmpdir/config/.bashrc
+	cp -p ../../../config/vimrc tmpdir/config/.vimrc
+	../../../bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME)-test $(IMAGE) ||:
+	docker run $(FLAGS) \
+		--publish 8080:80 \
+		--hostname $(NAME) \
+		--workdir /var/lib/nginx \
+		$(IMAGE) || exit 0
 
 clean:
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

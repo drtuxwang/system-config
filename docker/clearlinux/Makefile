@@ -31,9 +31,7 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
-		--hostname $(NAME) \
-		$(IMAGE) ||:
+	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) ||:
 
 clean:
 	docker rmi -f $(IMAGE) ||:

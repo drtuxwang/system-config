@@ -1,5 +1,5 @@
-NAME := debian
-VERSION = testing
+NAME := alpine
+VERSION = 3.6
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
@@ -31,7 +31,7 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME)-test $(IMAGE) ||:
+	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) ||:
 
 clean:
 	docker rmi -f $(IMAGE) ||:

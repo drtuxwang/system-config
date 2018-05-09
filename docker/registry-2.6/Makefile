@@ -1,5 +1,5 @@
-NAME := debian
-VERSION = testing
+NAME := registry
+VERSION = 2.6
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
@@ -21,9 +21,8 @@ pull:
 build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/config
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
+	cp -p $(TOPDIR)/config/ash-2bash tmpdir/bin/bash
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
-	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
@@ -31,7 +30,12 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME)-test $(IMAGE) ||:
+	docker run $(FLAGS) \
+		--volume=/var/lib/registry:/var/lib/registry \
+		--publish 5000:5000 \
+		--hostname $(NAME) \
+		--workdir /var/lib/registry \
+		$(IMAGE) ||:
 
 clean:
 	docker rmi -f $(IMAGE) ||:

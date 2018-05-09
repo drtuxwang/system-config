@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "wine" command
+Wrapper for "wine" & "wine64" command
 
 Use "-reset" to clean ".wine" junk
 """
@@ -37,10 +37,7 @@ class Options(object):
     @staticmethod
     def _reset():
         home = os.environ.get('HOME', '')
-        if sys.argv[0].endswith('wine64'):
-            directory = os.path.join(home, '.wine64')
-        else:
-            directory = os.path.join(home, '.wine')
+        directory = os.path.join(home, '.wine')
         if os.path.isdir(directory):
             print('Removing "{0:s}"...'.format(directory))
             try:
@@ -55,30 +52,19 @@ class Options(object):
     def _config(cls):
         signal.signal(signal.SIGINT, cls._signal_ignore)
         signal.signal(signal.SIGTERM, cls._signal_ignore)
-        os.environ['WINEDLLOVERRIDES'] = os.environ.get(
-            'WINEDLLOVERRIDES',
-            'mscoree,mshtml='
-        )
-        if sys.argv[0].endswith('wine64'):
-            directory = os.path.join(os.environ.get('HOME', ''), '.wine64')
-            os.environ['HOME'] = directory
-            os.environ['WINEARCH'] = 'win64'
-            if not os.path.isdir(directory):
-                os.mkdir(directory)
-                os.symlink('.', os.path.join(directory, '.wine'))
-                os.symlink('../.cache', os.path.join(directory, '.cache'))
-                os.symlink(
-                    '../.fontconfig',
-                    os.path.join(directory, '.fontconfig')
-                )
-        elif os.environ.get('WINEARCH') is None:
-            os.environ['WINEARCH'] = 'win32'
+#        os.environ['WINEDLLOVERRIDES'] = os.environ.get(
+#            'WINEDLLOVERRIDES',
+#            'mscoree,mshtml='
+#        )
 
     def parse(self, args):
         """
         Parse arguments
         """
-        self._wine = command_mod.Command('wine', errors='stop')
+        self._wine = command_mod.Command(
+            os.path.basename(sys.argv[0]),
+            errors='stop'
+        )
 
         if len(args) > 1:
             if args[1].endswith('.bat'):
