@@ -307,7 +307,7 @@ class Options(object):
             ])
 
         # No sandbox workaround
-        if not os.path.isfile('/usr/lib/chromium-browser/chrome-sandbox'):
+        if not os.path.isfile('/opt/google/chrome/chrome-sandbox'):
             self._chrome.append_arg('--no-sandbox')
 
         self._pattern = (

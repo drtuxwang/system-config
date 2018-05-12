@@ -8,10 +8,10 @@ frame .browser -bg "#cccccc"
     }
     pack .browser.chrome -side top
 
-    button .browser.chromium -width 10 -bg "#ffcc00" -text "Chromium" -command {
-        exec chromium &
+    button .browser.chrome -width 10 -bg "#ffcc00" -text "Chromium" -command {
+        exec chrome &
     }
-    pack .browser.chromium -side top
+    pack .browser.chrome -side top
 
     button .browser.firefox -width 10 -bg "#ffcc00" -text "Firefox" -command {
         exec firefox &
