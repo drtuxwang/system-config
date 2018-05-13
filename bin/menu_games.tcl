@@ -3,6 +3,11 @@
 . config -bg "#cccccc"
 
 frame .small -bg "#cccccc"
+    button .small.chromium_bsu -width 10 -bg "#ffcc00" -text "Chromium BSU" -command {
+        exec chromium-bsu &
+    }
+    pack .small.chromium_bsu -side top
+
     button .small.chess -width 10 -bg "#ffcc00" -text "Dream Chess" -command {
         exec dreamchess &
     }
@@ -12,11 +17,6 @@ frame .small -bg "#cccccc"
         exec frozen-bubble &
     }
     pack .small.frozenbubble -side top
-
-    button .small.hearts -width 10 -bg "#ffcc00" -text "Hearts" -command {
-        exec gnome-hearts &
-    }
-    pack .small.hearts -side top
 
     button .small.mines -width 10 -bg "#ffcc00" -text "Mines" -command {
        exec gnomine &
