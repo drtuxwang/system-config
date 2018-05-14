@@ -73,7 +73,7 @@ apps:
     - unxz
   web_browser:
     command:
-    - chromium
+    - chrome
 bindings:
   7z:
     open: archive_unpacker
