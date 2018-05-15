@@ -1,0 +1,18 @@
+#!/bin/bash
+
+case ${1,,} in
+*.bat|cmd|*.cmd|*.com|*.exe|.msi)
+    export COMMAND="${0##*/} $@"
+    ;;
+?*)
+    export COMMAND=" $@"
+    ;;
+*)
+    export COMMAND="${0##*/} cmd"
+    ;;
+esac
+
+export EXTRA_FLAGS="--volume $PWD:$PWD --workdir $PWD"
+
+make -C ${0%/*}/../alpine-i386/wine run
+exit $?

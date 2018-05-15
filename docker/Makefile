@@ -1,5 +1,6 @@
 PULL_IMAGES := \
-	alpine-3.6 \
+	alpine \
+	alpine-i386 \
 	busybox-1.28 \
 	centos-6 \
 	centos-7 \
@@ -23,6 +24,9 @@ default: build
 
 project:
 	python3 -m cookiecutter ../cookiecutter/docker
+
+check-base:
+	grep "^FROM" */Dockerfile* | sort
 
 pull:
 	for IMAGE in $(PULL_IMAGES); do \

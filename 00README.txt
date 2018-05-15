@@ -866,8 +866,20 @@ cookiecutter/docker/cookiecutter.json
 
 docker/Makefile                                   Makefile for building all images
 
-docker/alpine-3.6/Makefile                        Docker: alpine:3.6 based linux
+docker/bin/runtime32                              Starts 32bit runtime container app
+docker/bin/wine                                   Starts 32bit wine container app
+docker/bin/wine64                                 Starts 64bit wine container app
+
+docker/alpine/Makefile                            Docker: alpine:3.7 based linux
 docker/alpine/Dockerfile
+docker/alpine/wine/Makefile                       Docker: 64bit wine app
+docker/alpine/wine/Dockerfile
+docker/alpine-i386/Makefile                       Docker: i386/alpine:3.7 based linux
+docker/alpine-i386/Dockerfile
+docker/alpine-i386/runtime/Makefile               Docker: 32bit runtime libraries
+docker/alpine-i386/runtime/Dockerfile
+docker/alpine-i386/wine/Makefile                  Docker: 32bit wine app
+docker/alpine-i386/wine/Dockerfile
 docker/busybox-1.28/Makefile                      Docker: busybox:1.28 based shell
 docker/busybox-1.28/Dockerfile
 docker/centos-6/Makefile                          Docker: centos:6 based linux

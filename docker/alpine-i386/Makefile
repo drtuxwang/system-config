@@ -1,6 +1,7 @@
-NAME := alpine
-VERSION = 3.6
+NAME := alpine-i386
+VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
+DEPENDENT_IMAGES := runtime wine
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -28,6 +29,10 @@ build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
+
+	for IMAGE in $(DEPENDENT_IMAGES); do \
+		make -C $$IMAGE build || exit 1; \
+	done
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
