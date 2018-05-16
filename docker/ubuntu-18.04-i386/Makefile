@@ -1,8 +1,8 @@
 NAME := ubuntu
-VERSION = 18.04
+VERSION = 18.04-i386
 BASE_IMAGE := drtuxwang/$(NAME)-base:$(VERSION)
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-DEPENDENT_IMAGES := builder devpi docker nginx
+DEPENDENT_IMAGES := wine
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -24,6 +24,7 @@ build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/config
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
+	cp -p $(TOPDIR)/config/docker-uname-i386 tmpdir/config/
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
 	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
 	$(TOPDIR)/bin/fmod -R *
@@ -39,7 +40,7 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) || exit 0
+	docker run $(FLAGS) --hostname $(NAME)-i386 $(IMAGE) || exit 0
 
 clean:
 	for IMAGE in $(DEPENDENT_IMAGES); do \

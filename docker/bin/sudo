@@ -1,0 +1,11 @@
+#!/bin/bash
+
+case $1 in
+-s|su)
+    make -C ${0%/*}/../sudo run
+    exit $?
+    ;;
+*)
+    exec /usr/bin/sudo "$@"
+    ;;
+esac

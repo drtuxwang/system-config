@@ -12,7 +12,7 @@ case ${1,,} in
     ;;
 esac
 
-export EXTRA_FLAGS="--volume $PWD:$PWD --workdir $PWD"
+export FLAGS="--volume $PWD:$PWD --workdir $PWD"
 
-make -C ${0%/*}/../alpine-i386/wine run
+make -C ${0%/*}/../ubuntu-18.04-i386/wine run
 exit $?

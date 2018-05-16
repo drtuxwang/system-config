@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.16.1'
-VERSION = 20180402
+RELEASE = '4.17.0'
+VERSION = 20180516
 
 # pylint: disable = too-many-lines
 
@@ -372,25 +372,8 @@ class OperatingSystem(object):
                         location=glibc,
                         value=version
                     )
-
-        files = sorted(glob.glob('/lib*/ld*so.*'), reverse=True)
-        loaders = []
-        for file in files:
-            if '/ld-linux' in file:
-                loaders.append(file)
-        if loaders:
-            Writer.output(name='Linux Loader', location=' '.join(loaders))
-
-        for version in range(1, 10):
-            loaders = []
-            for file in files:
-                if '/ld-lsb' in file and file.endswith('.so.' + str(version)):
-                    loaders.append(file)
-            if loaders:
-                Writer.output(
-                    name='LSB ' + str(version) + '.x Loader',
-                    location=' '.join(loaders)
-                )
+        for linker in sorted(glob.glob('/lib*/ld-*so*')):
+            Writer.output(name='Dynamic linker', location=linker)
 
     @staticmethod
     def has_devices():

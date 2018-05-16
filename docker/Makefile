@@ -1,6 +1,6 @@
 PULL_IMAGES := \
-	alpine \
-	alpine-i386 \
+	alpine-3.7 \
+	alpine-3.7-i386 \
 	busybox-1.28 \
 	centos-6 \
 	centos-7 \
@@ -8,15 +8,15 @@ PULL_IMAGES := \
 	debian-8 \
 	debian-9 \
 	debian-testing \
-	etcd-3.2.18 \
+	etcd-3.2.20 \
 	jenkins-lts \
 	mongo-3.4.14 \
 	oracle-xe \
 	registry-2.6 \
-	ubuntu-14.04 \
 	ubuntu-16.04 \
-	ubuntu-18.04
-BUILD_IMAGES := $(PULL_IMAGES) jailbreak
+	ubuntu-18.04 \
+	ubuntu-18.04-i386
+BUILD_IMAGES := $(PULL_IMAGES) sudo
 CLEAN_IMAGES := $(BUILD_IMAGES)
 
 

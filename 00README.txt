@@ -812,9 +812,8 @@ config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for lo
 config/bashrc                   Copy to "/root/.bashrc" for "root" account settings
 config/com.googlecode.iterm2.plist Copy to "$HOME/Library/Preference" for iTerm2 on Mac
 config/config                   Copy to "$HOME/.ssh/config"
-config/docker-init              Docker init script
-config/docker-init-home         Docker init script plugin for fixing $HOME directory
-config/docker-init-resolvconf   Docker init script plugin for fixing "resolvconf"
+config/docker-uname-i386        Docker uname 32bit image fix
+config/docker-xinit             Docker X-init script for access to X-windows server
 config/gitconfig                Copy to "$HOME/.gitconfig" and edit
 config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
 config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
@@ -865,85 +864,64 @@ cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
 cookiecutter/docker/cookiecutter.json
 
 docker/Makefile                                   Makefile for building all images
-
-docker/bin/runtime32                              Starts 32bit runtime container app
+docker/bin/sudo                                   Use Docker jail breaking for "sudo -s" & "sudo su"
 docker/bin/wine                                   Starts 32bit wine container app
-docker/bin/wine64                                 Starts 64bit wine container app
 
-docker/alpine/Makefile                            Docker: alpine:3.7 based linux
-docker/alpine/Dockerfile
-docker/alpine/wine/Makefile                       Docker: 64bit wine app
-docker/alpine/wine/Dockerfile
-docker/alpine-i386/Makefile                       Docker: i386/alpine:3.7 based linux
-docker/alpine-i386/Dockerfile
-docker/alpine-i386/runtime/Makefile               Docker: 32bit runtime libraries
-docker/alpine-i386/runtime/Dockerfile
-docker/alpine-i386/wine/Makefile                  Docker: 32bit wine app
-docker/alpine-i386/wine/Dockerfile
-docker/busybox-1.28/Makefile                      Docker: busybox:1.28 based shell
+docker/alpine-3.7/Makefile                        alpine:3.7 based linux
+docker/alpine-3.7/Dockerfile
+docker/alpine-3.7-i386/Makefile                   i386/alpine:3.7 based linux
+docker/alpine-3.7-i386/Dockerfile
+docker/busybox-1.28/Makefile                      busybox:1.28 based linux
 docker/busybox-1.28/Dockerfile
-docker/centos-6/Makefile                          Docker: centos:6 based linux
+docker/centos-6/Makefile                          centos:6 based linux
 docker/centos-6/Dockerfile
-docker/centos-7/Makefile                          Docker: centos:7 based linux
+docker/centos-7/Makefile                          centos:7 based linux
 docker/centos-7/Dockerfile
-docker/clearlinux/Makefile                        Docker: clearlinux:latest based linux
+docker/clearlinux/Makefile                        clearlinux:latest based linux
 docker/clearlinux/Dockerfile
-docker/debian-8/Makefile                          Docker: debian:8 based linux
+docker/debian-8/Makefile                          debian:8 based linux
 docker/debian-8/Dockerfile
-docker/debian-9/Makefile                          Docker: debian:9 based linux
+docker/debian-9/Makefile                          debian:9 based linux
 docker/debian-9/Dockerfile
-docker/debian-testing/Makefile                    Docker: debian:testing based linux
+docker/debian-testing/Makefile                    debian:testing based linux
 docker/debian-testing/Dockerfile
-docker/etcd-3.2.18/Makefile                       Docker: gcr.io/etcd-development/etcd:v3.2.18 based server
-docker/etcd-3.2.18/Dockerfile
-docker/etcd-3.2.18/cluster/Makefile               Docker: gcr.io/etcd-development/etcd:v3.2.18 based cluster
-docker/etcd-3.2.18/cluster/docker-compose.yml
-docker/etcd-3.2.18/cluster/docker-compose-migrate.yml
-docker/etcd-3.2.18/cluster/docker-compose-restore.yml
-docker/jailbreak/Makefile                         Docker: jailbreak image
-docker/jailbreak/Dockerfile
-docker/jenkins-lts/Makefile                       Docker: jenkins/jenkins:lts based server
+docker/etcd-3.2.20/Makefile                       gcr.io/etcd-development/etcd:v3.2.20 based app
+docker/etcd-3.2.20/Dockerfile
+docker/etcd-3.2.20/cluster/Makefile               gcr.io/etcd-development/etcd:v3.2.20 based cluster
+docker/etcd-3.2.20/cluster/docker-compose.yml
+docker/etcd-3.2.20/cluster/docker-compose-migrate.yml
+docker/etcd-3.2.20/cluster/docker-compose-restore.yml
+docker/sudo/Makefile                              sudo scratch image for jail breaking app
+docker/sudo/Dockerfile
+docker/jenkins-lts/Makefile                       jenkins/jenkins:lts based server app
 docker/jenkins-lts/Dockerfile
-docker/mongo-3.4.14/Makefile                      Docker: mongo:3.4.14 based database
+docker/mongo-3.4.14/Makefile                      Docker: mongo:3.4.14 based database app
 docker/mongo-3.4.14/Dockerfile
-docker/oracle-xe/Makefile                         Docker: wnameless/oracle-xe-11g:latest based database
+docker/oracle-xe/Makefile                         wnameless/oracle-xe-11g:latest based database app
 docker/oracle-xe/Dockerfile
-docker/registry-2.6/Makefile                      Docker: registry:2.6 based server
+docker/registry-2.6/Makefile                      registry:2.6 based server app
 docker/registry-2.6/Dockerfile
 docker/registry-2.6/files/config.yml
 
-docker/ubuntu-14.04/Makefile                      Docker: ubuntu:14.04 based linux
-docker/ubuntu-14.04/Dockerfile
-docker/ubuntu-16.04/Makefile                      Docker: ubuntu:16.04 based linux
+docker/ubuntu-16.04/Makefile                      ubuntu:16.04 based linux
 docker/ubuntu-16.04/Dockerfile
-docker/ubuntu-16.04/Dockerfile2
-docker/ubuntu-16.04/devpi/Makefile                Docker: ubuntu:16.04 based devpi server
-docker/ubuntu-16.04/devpi/Dockerfile
-docker/ubuntu-16.04/docker/Makefile               Docker: ubuntu:16.04 based docker client
-docker/ubuntu-16.04/docker/Dockerfile
-docker/ubuntu-16.04/nginx/Makefile                Docker: ubuntu:16.04 based NGINX proxy
-docker/ubuntu-16.04/nginx/Dockerfile
-docker/ubuntu-16.04/nginx/files/nginx-proxy.conf
-docker/ubuntu-16.04/xfce/Makefile                 Docker: ubuntu:16.04 based compiler environment
-docker/ubuntu-16.04/xfce/Dockerfile
-docker/ubuntu-16.04/xfce/Dockerfile2
-docker/ubuntu-16.04/xfce/openvpn/Makefile         Docker: ubuntu:16.04 based OpenVPN client
-docker/ubuntu-16.04/xfce/openvpn/Dockerfile
 docker/ubuntu-18.04/Makefile                      Docker: ubuntu:18.04 based linux
+docker/ubuntu-18.04/Dockerfile-base
 docker/ubuntu-18.04/Dockerfile
-docker/ubuntu-18.04/Dockerfile2
-docker/ubuntu-18.04/devpi/Makefile                Docker: ubuntu:18.04 based devpi server
+docker/ubuntu-18.04/builder/Makefile              ubuntu:18.04 based build environment app
+docker/ubuntu-18.04/builder/Dockerfile
+docker/ubuntu-18.04/devpi/Makefile                ubuntu:18.04 based devpi server aoo
 docker/ubuntu-18.04/devpi/Dockerfile
-docker/ubuntu-18.04/docker/Makefile               Docker: ubuntu:18.04 based docker client
+docker/ubuntu-18.04/docker/Makefile               ubuntu:18.04 based docker client app
 docker/ubuntu-18.04/docker/Dockerfile
-docker/ubuntu-18.04/nginx/Makefile                Docker: ubuntu:18.04 based NGINX proxy
+docker/ubuntu-18.04/nginx/Makefile                ubuntu:18.04 based NGINX proxy app
 docker/ubuntu-18.04/nginx/Dockerfile
 docker/ubuntu-18.04/nginx/files/nginx-proxy.conf
-docker/ubuntu-18.04/xfce/Makefile                 Docker: ubuntu:18.04 based compiler environment
-docker/ubuntu-18.04/xfce/Dockerfile
-docker/ubuntu-18.04/xfce/Dockerfile2
-docker/ubuntu-18.04/xfce/openvpn/Makefile         Docker: ubuntu:18.04 based OpenVPN client
-docker/ubuntu-18.04/xfce/openvpn/Dockerfile
+docker/ubuntu-18.04-i386/Makefile                 i386/ubuntu:18.04 based linux
+docker/ubuntu-18.04-i386/Dockerfile-base
+docker/ubuntu-18.04-i386/Dockerfile
+docker/ubuntu-18.04-i386/wine/Makefile            i386/ubuntu:18.04 based wine app
+docker/ubuntu-18.04-i386/wine/Dockerfile
 
 kubernetes/ubuntu/Makefile                        Kubernetes: Ubuntu example
 kubernetes/ubuntu/test-ns.yml

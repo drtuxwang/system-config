@@ -4,8 +4,8 @@
 #
 # 1996-2018 By Dr Colin Kong
 #
-VERSION=20180402
-RELEASE="2.6.40-22"
+VERSION=20180516
+RELEASE="2.6.41"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -855,7 +855,7 @@ EOF
             MYBIT="64bit"
             MYBITSX=`grep "^address sizes" /proc/cpuinfo 2> /dev/null | tail -1 | cut -f2 -d: | awk '{printf("%sbit physical",$1)}'`
             ;;
-        i*86)
+        i*86|x86)
             if [ "`grep \"^flags.*sse2\" /proc/cpuinfo 2> /dev/null`" ]
             then
                 MYTYPE=`isitset \`grep "^model name" /proc/cpuinfo 2> /dev/null | head -1 | sed -e "s/.*: //" -e "s/Intel(R) [Xx][Ee][Oo][Nn]/Intel(R) Pentium(R) 4 XEON/" -e "s/ CPU.*//"\``
@@ -1131,16 +1131,9 @@ EOF
     Linux)
         GLIBC=`ldd /bin/sh | grep libc | sed -e "s/.*=>//" | awk '{print $1}'`
         show_software name="GNU C library" location="$GLIBC" value="`strings $GLIBC 2> /dev/null | grep \"GNU C Library\" | head -1 | sed -e \"s/.*version//\" -e \"s/,//\" | awk '{print $1}'`"
-        if [ "`ls -ld /lib64 2> /dev/null | grep \"/lib64 -> /lib$\"`" ]
-        then  # Debian based
-            LOADERS=`ls -1 /lib*/ld-*.so.* 2> /dev/null | egrep -v "^/lib(/ld-[^-]+-|[^/]+/ld-[^-]+[.])"`
-        else
-            LOADERS=`ls -1 /lib*/ld-*.so.* 2> /dev/null`
-        fi
-        show_software name="Linux Loader" `echo "$LOADERS" | grep "/ld-linux.*.so.*" | sed -e "s/^/location=/"`
-        for LSB in `seq 9`;
+        for LINKER in $(ls -1 /lib*/ld-*so* 2> /dev/null)
         do
-            show_software name="LSB $LSB.x Loader" `echo "$LOADERS" | grep "/ld-lsb.*.so.$LSB" | sed -e "s/^/location=/"`
+            show_software name="Dynamic linker" location="$LINKER"
         done
         ;;
     esac

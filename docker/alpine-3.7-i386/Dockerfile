@@ -1,17 +1,12 @@
-FROM ubuntu:16.04
+FROM i386/alpine:3.7
 
 # Install base packages
-RUN apt-get update && \
-	apt-get install --no-install-recommends -y \
-		iputils-ping \
-		net-tools \
-		openssh-client \
-		pciutils \
-		python3 \
-		python3-pip \
-		vim && \
-	apt-get clean && \
+RUN apk update && \
+	apk add bash openssh-client python3 vim && \
 	python3 -m pip install --upgrade pip
+
+# 32bit fix
+COPY tmpdir/config/docker-uname-i386 /usr/local/bin/uname
 
 # Root account
 COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/

@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-base:18.04
+FROM drtuxwang/ubuntu-base:18.04-i386
 
 # Root account
 COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/

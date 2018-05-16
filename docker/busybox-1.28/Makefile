@@ -1,5 +1,5 @@
 NAME := busybox
-VERSION = 1.28
+VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 FLAGS := --rm \
 	--interactive \
