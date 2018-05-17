@@ -3,6 +3,7 @@
 	email = ???
 [alias]
 	checkout-all = "!f() { git checkout \"$1\" ||: ; git submodule foreach \"git checkout '$1' ||:\"; }; f"
+	find-base = "!f() { git merge-base master $1; }; f"
 	find-commit = "!f() { git fetch --all; git branch -a --contains $1; }; f"
 	find-merge = "!f() { git log --graph $1^..${2:-HEAD}; }; f"
 	find-nomerge = "!f() { git log --no-merges origin/master..$1 --author \"$(git config user.name)\" --oneline; git submodule foreach \"git log --no-merges origin/master..$1 --author \\\"$(git config user.name)\\\" --oneline;\"; }; f"
