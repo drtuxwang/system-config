@@ -95,6 +95,8 @@ bin/dhcptable.py
 bin/dockerreg          Docker Registry tool
 bin/dockerreg.bat
 bin/dockerreg.py
+bin/docker-sudo        Starts Docker jail breaking container app
+bin/docker-wine        Starts 32bit wine container app
 bin/eclipse            eclipse wrapper (allowing non systems port)
 bin/eclipse.py
 bin/espeak             espeak wrapper (allowing non systems port)
@@ -864,9 +866,6 @@ cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
 cookiecutter/docker/cookiecutter.json
 
 docker/Makefile                                   Makefile for building all images
-docker/bin/sudo                                   Use Docker jail breaking for "sudo -s" & "sudo su"
-docker/bin/wine                                   Starts 32bit wine container app
-
 docker/alpine-3.7/Makefile                        alpine:3.7 based linux
 docker/alpine-3.7/Dockerfile
 docker/alpine-3.7-i386/Makefile                   i386/alpine:3.7 based linux

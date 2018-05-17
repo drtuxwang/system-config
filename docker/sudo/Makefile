@@ -1,6 +1,9 @@
 NAME := sudo
 VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
+ifndef COMMAND
+	COMMAND=
+endif
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -27,7 +30,7 @@ run:
 		--volume="/etc/group:/etc/group:ro" \
 		--workdir $(PWD) \
 		--hostname `uname -n`-$(NAME) \
-		$(IMAGE) ||:
+		$(IMAGE) $(COMMAND) ||:
 
 clean:
 	docker rmi -f $(IMAGE) ||:

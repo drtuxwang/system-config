@@ -1,0 +1,17 @@
+#!/bin/bash
+
+PROJECT="docker/sudo"
+
+export COMMAND="$@"
+
+if [ -f "${0%/bin/docker-sudo}/$PROJECT/Makefile" ]
+then
+    make -C ${0%/bin/docker-sudo}/$PROJECT run
+elif [ -f "$HOME/git/system-config/$PROJECT/Makefile" ]
+then
+    make -C $HOME/git/system-config/$PROJECT run
+else
+    echo "Error: Cannot locate \"$PROJECT\""
+    exit 1
+fi
+exit $?
