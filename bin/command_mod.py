@@ -17,8 +17,8 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-RELEASE = '2.2.0'
-VERSION = 20180516
+RELEASE = '2.2.1'
+VERSION = 20180517
 
 
 class Command(object):
@@ -324,7 +324,7 @@ class Platform(object):
             if (
                     glob.glob('/lib*/ld-*') and
                     not glob.glob('/lib*/ld-*x86[_-]64*')
-                ):
+            ):
                 arch = 'x86'
             else:
                 arch = 'x86_64'
