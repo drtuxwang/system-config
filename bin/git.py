@@ -62,12 +62,13 @@ class Options(object):
         self._git.set_args(args[1:])
 
         self._env = {}
-        git_home = os.path.dirname(os.path.dirname(self._git.get_file()))
-        if git_home not in ('/usr', '/usr/local', '/opt/software'):
-            self._env['GIT_EXEC_PATH'] = os.path.join(
-                git_home, 'libexec', 'git-core')
-            self._env['GIT_TEMPLATE_DIR'] = os.path.join(
-                git_home, 'share', 'git-core', 'templates')
+        if not os.path.isfile(self._git.get_cmdline()[0] + '.py'):
+            git_home = os.path.dirname(os.path.dirname(self._git.get_file()))
+            if git_home not in ('/usr', '/usr/local', '/opt/software'):
+                self._env['GIT_EXEC_PATH'] = os.path.join(
+                    git_home, 'libexec', 'git-core')
+                self._env['GIT_TEMPLATE_DIR'] = os.path.join(
+                    git_home, 'share', 'git-core', 'templates')
 
         self._config()
 
