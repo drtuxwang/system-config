@@ -5,6 +5,8 @@ Load Python main program as module (must have Main class).
 
 import argparse
 import glob
+import importlib.machinery
+import importlib.util
 import os
 import signal
 import sys
@@ -224,6 +226,21 @@ class PythonLoader(object):
             os.path.join(options.get_module_dir(), name)
         ] + options.get_module_args()
 
+    @staticmethod
+    def _load_module(file):
+        loader = importlib.machinery.SourceFileLoader('module.name', file)
+        if sys.version_info >= (3, 5):
+            main = importlib.util.module_from_spec(
+                importlib.util.spec_from_loader(loader.name, loader)
+            )
+            loader.exec_module(main)
+            return main
+
+        # Old Python 3.3/3.4 method
+        # pylint: disable=deprecated-method
+        return loader.load_module()
+        # pylint: enable=deprecated-method
+
     def run(self):
         """
         Load main module and run 'Main()' class
@@ -248,7 +265,7 @@ class PythonLoader(object):
             print("sys.argv =", sys.argv)
             print()
 
-        main = __import__(module)
+        main = self._load_module(os.path.join(directory, module)+'.py')
         main.Main()
 
     def get_options(self):
