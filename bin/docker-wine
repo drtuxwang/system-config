@@ -1,29 +1,26 @@
 #!/bin/bash
 
-PROJECT="docker/ubuntu-18.04-i386/wine"
+export FLAGS="--volume $PWD:$PWD --workdir $PWD"
 
 case ${1,,} in
 *.bat|cmd|*.cmd|*.com|*.exe|.msi)
     export COMMAND="wine $@"
     ;;
 ?*)
-    export COMMAND=" $@"
+    export COMMAND="$@"
     ;;
 *)
     export COMMAND="wine cmd"
     ;;
 esac
 
-export FLAGS="--volume $PWD:$PWD --workdir $PWD"
 
-if [ -f "${0%/bin/docker-wine}/$PROJECT/Makefile" ]
-then
-    make -C ${0%/bin/docker-wine}/$PROJECT run
-elif [ -f "$HOME/git/system-config/$PROJECT/Makefile" ]
-then
-    make -C $HOME/git/system-config/$PROJECT run
-else
-    echo "Error: Cannot locate \"$PROJECT\""
-    exit 1
-fi
-exit $?
+for FILE in ${0%/bin/docker-wine}/docker/Makefile $HOME/git/system-config/docker/Makefile
+do
+    if [ -f "$FILE" ]
+    then
+        exec make --quiet -C ${FILE%/*} run-wine
+    fi
+done
+echo "Error: Cannot locate \"git/system-config/docker/Makefile\""
+exit 1

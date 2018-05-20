@@ -3,6 +3,8 @@ VERSION = 18.04
 BASE_IMAGE := drtuxwang/$(NAME)-base:$(VERSION)
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 DEPENDENT_IMAGES := builder devpi docker nginx
+TOPDIR := ../..
+
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -11,7 +13,6 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
-TOPDIR := ../..
 
 
 default: build

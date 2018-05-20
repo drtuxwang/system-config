@@ -1,9 +1,8 @@
 NAME := ubuntu-wine
 VERSION = 18.04-i386
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-ifndef COMMAND
-	COMMAND=
-endif
+TOPDIR := ../../..
+
 ifndef FLAGS
 	FLAGS=
 endif
@@ -19,8 +18,10 @@ FLAGS := --rm \
 	--env DISPLAY=$(DISPLAY) \
 	--env XAUTH="`xauth list $(DISPLAY)`" \
 	$(FLAGS)
+ifndef COMMAND
+	COMMAND=
+endif
 
-TOPDIR := ../../..
 
 default: build
 	docker images

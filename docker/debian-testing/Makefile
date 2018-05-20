@@ -1,6 +1,8 @@
 NAME := debian
 VERSION = testing
 IMAGE := drtuxwang/$(NAME):$(VERSION)
+TOPDIR := ../..
+
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -9,7 +11,6 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
-TOPDIR := ../..
 
 
 default: build

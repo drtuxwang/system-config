@@ -1,6 +1,8 @@
 NAME := ubuntu-builder
 VERSION = 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
+TOPDIR := ../../..
+
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -11,7 +13,6 @@ FLAGS := --rm \
 	--volume=/shared:/shared \
 	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
 	--env DISPLAY=$(DISPLAY)
-TOPDIR := ../../..
 
 
 default: build

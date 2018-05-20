@@ -4,14 +4,12 @@ PROJECT="docker/sudo"
 
 export COMMAND="$@"
 
-if [ -f "${0%/bin/docker-sudo}/$PROJECT/Makefile" ]
-then
-    make -C ${0%/bin/docker-sudo}/$PROJECT run
-elif [ -f "$HOME/git/system-config/$PROJECT/Makefile" ]
-then
-    make -C $HOME/git/system-config/$PROJECT run
-else
-    echo "Error: Cannot locate \"$PROJECT\""
-    exit 1
-fi
-exit $?
+for FILE in ${0%/bin/docker-wine}/docker/Makefile $HOME/git/system-config/docker/Makefile
+do
+    if [ -f "$FILE" ]
+    then
+        exec make --quiet -C ${FILE%/*} run-sudo
+    fi
+done
+echo "Error: Cannot locate \"git/system-config/docker/Makefile\""
+exit 1

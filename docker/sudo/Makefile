@@ -1,9 +1,7 @@
 NAME := sudo
 VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-ifndef COMMAND
-	COMMAND=
-endif
+
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -12,6 +10,9 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
+ifndef COMMAND
+	COMMAND=
+endif
 
 
 default: build

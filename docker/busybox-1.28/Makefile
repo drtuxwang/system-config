@@ -1,6 +1,8 @@
 NAME := busybox
 VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
+TOPDIR := ../..
+
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -8,7 +10,6 @@ FLAGS := --rm \
 	--cpu-shares=50000 \
 	--memory=1000m \
 	--memory-reservation=50m
-TOPDIR := ../..
 
 
 default: build

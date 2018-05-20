@@ -1,6 +1,7 @@
 NAME := ubuntu-nginx
 VERSION = 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
+
 FLAGS := --rm \
 	--interactive \
 	--tty \
