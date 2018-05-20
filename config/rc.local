@@ -14,9 +14,9 @@ then
 fi
 
 # Fix VPN client incorrect termination
-if [ -f /etc/resolvconf/run/resolv.conf ]
+if [ -f /run/resolvconf/resolv.conf ]
 then
-    ln -sf /etc/resolvconf/run/resolv.conf /etc/resolv.conf
+    ln -sf /run/resolvconf/resolv.conf /etc/resolv.conf
 fi
 
 if [ -f /etc/rc.mount ]
