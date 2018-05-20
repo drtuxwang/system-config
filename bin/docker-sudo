@@ -1,6 +1,14 @@
 #!/bin/bash
 
-PROJECT="docker/sudo"
+export FLAGS=
+for FILE in .bashrc .profile .vimrc
+do
+    if [ -f "$HOME/$FILE" ]
+    then
+        FLAGS="$FLAGS--volume=$HOME/$FILE:/root/$FILE:ro "
+    fi
+done
+export FLAGS="$FLAGS--workdir $PWD"
 
 export COMMAND="$@"
 

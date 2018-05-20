@@ -2,6 +2,9 @@ NAME := sudo
 VERSION = latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 
+ifndef FLAGS
+	FLAGS=
+endif
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -9,7 +12,10 @@ FLAGS := --rm \
 	--cpu-shares=50000 \
 	--memory=1000m \
 	--memory-reservation=50m \
-	--volume=/shared:/shared
+	`ls -1d /* | grep -v "/proc$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}'` \
+	--volume="/etc/passwd:/etc/passwd:ro" \
+	--volume="/etc/group:/etc/group:ro" \
+	$(FLAGS)
 ifndef COMMAND
 	COMMAND=
 endif
@@ -26,10 +32,6 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
 		--privileged=true \
-		`ls -1d /* | grep -v "/proc$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}'` \
-		--volume="/etc/passwd:/etc/passwd:ro" \
-		--volume="/etc/group:/etc/group:ro" \
-		--workdir $(PWD) \
 		--hostname `uname -n`-$(NAME) \
 		$(IMAGE) $(COMMAND) ||:
 
