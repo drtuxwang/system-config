@@ -19,7 +19,7 @@ for FILE in ${0%/bin/docker-wine}/docker/Makefile $HOME/git/system-config/docker
 do
     if [ -f "$FILE" ]
     then
-        exec make --quiet -C ${FILE%/*} run-wine
+        exec make --quiet -C ${FILE%/*} run-wine-i386
     fi
 done
 echo "Error: Cannot locate \"git/system-config/docker/Makefile\""

@@ -19,13 +19,6 @@ PULL_IMAGES := \
 BUILD_IMAGES := $(PULL_IMAGES) sudo
 CLEAN_IMAGES := $(BUILD_IMAGES)
 
-ifndef FLAGS
-	FLAGS=
-endif
-ifndef COMMAND
-	COMMAND=
-endif
-
 
 default: build
 
@@ -62,7 +55,10 @@ clean:
 	make gc
 
 run-sudo:
-	FLAGS="$(FLAGS)" COMMAND="$(COMMAND)" make --quiet -C sudo run
+	make --quiet -C sudo run
 
-run-wine:
-	FLAGS="$(FLAGS)" COMMAND="$(COMMAND)" make --quiet -C ubuntu-18.04-i386/wine run
+run-sandbox-i386:
+	make --quiet -C ubuntu-18.04-i386/sandbox run
+
+run-wine-i386:
+	make --quiet -C ubuntu-18.04-i386/wine run

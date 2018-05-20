@@ -1,0 +1,34 @@
+#!/bin/bash
+
+export FLAGS="--volume $PWD:$PWD --workdir $PWD"
+while [ $# -gt 0 ]
+do
+    case $1 in
+    -audio)
+        FLAGS="$FLAGS --device=/dev/snd:/dev/snd"
+        ;;
+    -display)
+        FLAGS="$FLAGS --volume=/tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY --env XAUTH=\"$(xauth list $DISPLAY)\""
+        ;;
+    -gpu)
+        FLAGS="$FLAGS --device=/dev/dri:/dev/dri"
+        ;;
+    *)
+        echo "Usage: $0 [-audio] [-display] [-gpu] [command]"
+        exit 1
+        ;;
+    esac
+    shift
+done
+
+export COMMAND="$@"
+
+for FILE in ${0%/bin/docker-wine}/docker/Makefile $HOME/git/system-config/docker/Makefile
+do
+    if [ -f "$FILE" ]
+    then
+        exec make --quiet -C ${FILE%/*} run-sandbox-i386
+    fi
+done
+echo "Error: Cannot locate \"git/system-config/docker/Makefile\""
+exit 1
