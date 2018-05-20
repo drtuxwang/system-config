@@ -4,8 +4,8 @@
 #
 # 1996-2018 By Dr Colin Kong
 #
-VERSION=20180516
-RELEASE="2.6.41"
+VERSION=20180520
+RELEASE="2.6.42"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -1139,10 +1139,9 @@ EOF
     esac
 
     # Detect X-Windows
-    XWININFO=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xwininfo -root 2> /dev/null`
-    if [ "$XWININFO" ]
+    XSET=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xset -q 2> /dev/null`
+    if [ "$XSET" ]
     then
-        XSET=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xset -q 2> /dev/null`
         show_software name="X-Display Power" value="`echo \"$XSET\" | grep \" Standby:.* Suspend:.* Off:\" | sed -e "s/.*Standby://" | awk '{printf(\" %ss %ss %ss\n\", $1, $3, $5)}' | sed -e \"s/ 0s/ Off/g\" -e \"s/^ //\"`" comment="DPMS Standby Suspend Off"
         show_software name="X-Keyboard Repeat" value="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%sms\n\",$4)}'`" comment="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%s characters per second\n\",$7)}'`"
         show_software name="X-Mouse Speed" value="`echo \"$XSET\" | grep \" acceleration:.* threshold: \" | awk '{print $2}'`" comment="acceleration factor"
@@ -1151,7 +1150,17 @@ EOF
         then
             show_software name="X-Screensaver" value="$XSCREENSAVER" comment="no power saving for LCD but can keep CPU busy"
         fi
-        show_software name="X-Windows Server" value="$DISPLAY" comment="`echo \"$XWININFO\" | grep Width: | awk '{print $2}'`x`echo \"$XWININFO\" | grep Height: | awk '{print $2}'`, `echo \"$XWININFO\" | grep Depth: | awk '{print $2}'`bit colour"
+    fi
+    XRANDR=`xrandr 2> /dev/null`
+    if [ "$XRANDR" ]
+    then
+        show_software name="X-Windows Display" value="$DISPLAY" comment=`echo "$XRANDR" | grep "^Screen .* current " | sed -e "s/.*current //;s/,.*//;s/ //g"`
+    else
+        XWININFO=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xwininfo -root 2> /dev/null`
+        if [ "$XWININFO" ]
+        then
+            show_software name="X-Windows Display" value="$DISPLAY" comment="`echo \"$XWININFO\" | grep Width: | awk '{print $2}'`x`echo \"$XWININFO\" | grep Height: | awk '{print $2}'`"
+        fi
     fi
     echo
 }

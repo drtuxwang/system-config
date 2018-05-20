@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.17.0'
-VERSION = 20180516
+RELEASE = '4.18.0'
+VERSION = 20180520
 
 # pylint: disable = too-many-lines
 
@@ -252,14 +252,22 @@ class Detect(object):
                 pass
 
     @staticmethod
-    def _xrandr():
+    def _xdisplay(display):
         xrandr = command_mod.Command('xrandr', errors='ignore')
         if xrandr.is_found():
             task = subtask_mod.Batch(xrandr.get_cmdline())
-            task.run(pattern=' connected ')
+            task.run(pattern='^Screen .* current | connected ')
             for line in task.get_output():
                 try:
-                    if ' connected ' in line:
+                    if line.startswith('Screen ') and ' current ' in line:
+                        comment = line.split(
+                            'current ')[-1].split(',')[0].replace(' ', '')
+                        Writer.output(
+                            name='X-Windows Display',
+                            value=display,
+                            comment=comment
+                        )
+                    elif ' connected ' in line:
                         columns = line.replace(
                             'primary ', '').replace('mm', '').split()
                         screen, _, resolution, *_, width, _, height = columns
@@ -283,43 +291,36 @@ class Detect(object):
                             )
                 except (IndexError, ValueError):
                     pass
-
-    @staticmethod
-    def _xwindows_screen(lines):
-        if 'DISPLAY' in os.environ:
-            width = '???'
-            height = '???'
-            try:
-                for line in lines:
-                    if 'Width:' in line:
-                        width = line.split()[1]
-                    elif 'Height:' in line:
-                        height = line.split()[1]
-                    elif 'Depth:' in line:
-                        Writer.output(
-                            name='X-Windows Server',
-                            value=os.environ['DISPLAY'],
-                            comment=width + 'x' + height + ', ' +
-                            line.split()[1] + 'bit colour'
-                        )
-            except IndexError:
-                pass
+        else:
+            xwininfo = command_mod.Command(
+                'xwininfo',
+                pathextra=['/usr/bin/X11', '/usr/openwin/bin'],
+                args=['-root'],
+                errors='ignore'
+            )
+            if xwininfo.is_found():
+                task = subtask_mod.Batch(xwininfo.get_cmdline())
+                task.run()
+                width = '???'
+                try:
+                    for line in task.get_output():
+                        if 'Width:' in line:
+                            width = line.split()[1]
+                        elif 'Height:' in line:
+                            Writer.output(
+                                name='X-Windows Display',
+                                value=display,
+                                comment=width + 'x' + line.split()[1]
+                            )
+                except IndexError:
+                    pass
 
     @classmethod
     def _xwindows(cls):
-        xwininfo = command_mod.Command(
-            'xwininfo',
-            pathextra=['/usr/bin/X11', '/usr/openwin/bin'],
-            args=['-root'],
-            errors='ignore'
-        )
-        if xwininfo.is_found():
-            task = subtask_mod.Batch(xwininfo.get_cmdline())
-            task.run()
-            if task.has_output():
-                cls._xset()
-                cls._xrandr()
-                cls._xwindows_screen(task.get_output())
+        display = os.environ.get('DISPLAY')
+        if display:
+            cls._xset()
+            cls._xdisplay(display)
 
     def show_banner(self):
         """
