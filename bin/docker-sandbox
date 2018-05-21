@@ -1,9 +1,13 @@
 #!/bin/bash
 
 export FLAGS="--volume $PWD:$PWD --workdir $PWD"
+CONTAINER="sandbox-i386"
 while [ $# -gt 0 ]
 do
     case $1 in
+    -64)
+        CONTAINER="sandbox-amd64"
+        ;;
     -audio)
         FLAGS="$FLAGS --device=/dev/snd:/dev/snd"
         ;;
@@ -27,7 +31,7 @@ for FILE in ${0%/bin/docker-wine}/docker/Makefile $HOME/git/system-config/docker
 do
     if [ -f "$FILE" ]
     then
-        exec make --quiet -C ${FILE%/*} run-sandbox-i386
+        exec make --quiet -C ${FILE%/*} run-$CONTAINER
     fi
 done
 echo "Error: Cannot locate \"git/system-config/docker/Makefile\""

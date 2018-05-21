@@ -57,6 +57,9 @@ clean:
 run-sudo:
 	make --quiet -C sudo run
 
+run-sandbox-amd64:
+	make --quiet -C ubuntu-18.04/sandbox run
+
 run-sandbox-i386:
 	make --quiet -C ubuntu-18.04-i386/sandbox run
 

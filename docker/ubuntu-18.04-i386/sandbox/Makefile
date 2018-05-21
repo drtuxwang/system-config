@@ -37,8 +37,6 @@ build:
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
 	cp -p $(TOPDIR)/config/docker-xinit tmpdir/config/
 	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
-	cp -p $(TOPDIR)/etc/python-install.sh tmpdir/etc/
-	cp -p $(TOPDIR)/etc/python-requirements.txt tmpdir/etc/
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -f Dockerfile -t $(IMAGE) .

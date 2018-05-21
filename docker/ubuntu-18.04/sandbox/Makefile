@@ -1,8 +1,15 @@
-NAME := ubuntu-builder
+NAME := ubuntu-sandbox
 VERSION = 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../../..
 
+ifndef FLAGS
+	FLAGS=--volume=/tmp/.X11-unix:/tmp/.X11-unix \
+		--env DISPLAY=$(DISPLAY) \
+		--env XAUTH="`xauth list $(DISPLAY)`" \
+		--device=/dev/dri:/dev/dri \
+		--device=/dev/snd:/dev/snd
+endif
 FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -11,8 +18,10 @@ FLAGS := --rm \
 	--memory=2000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared \
-	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
-	--env DISPLAY=$(DISPLAY)
+	$(FLAGS)
+ifndef COMMAND
+	COMMAND=
+endif
 
 
 default: build
@@ -28,8 +37,6 @@ build:
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
 	cp -p $(TOPDIR)/config/docker-xinit tmpdir/config/
 	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
-	cp -p $(TOPDIR)/etc/python-install.sh tmpdir/etc/
-	cp -p $(TOPDIR)/etc/python-requirements.txt tmpdir/etc/
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -f Dockerfile -t $(IMAGE) .

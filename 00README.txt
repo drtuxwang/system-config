@@ -908,8 +908,6 @@ docker/ubuntu-16.04/Dockerfile
 docker/ubuntu-18.04/Makefile                      Docker: ubuntu:18.04 based linux
 docker/ubuntu-18.04/Dockerfile-base
 docker/ubuntu-18.04/Dockerfile
-docker/ubuntu-18.04/builder/Makefile              ubuntu:18.04 based build environment app
-docker/ubuntu-18.04/builder/Dockerfile
 docker/ubuntu-18.04/devpi/Makefile                ubuntu:18.04 based devpi server aoo
 docker/ubuntu-18.04/devpi/Dockerfile
 docker/ubuntu-18.04/docker/Makefile               ubuntu:18.04 based docker client app
@@ -917,6 +915,8 @@ docker/ubuntu-18.04/docker/Dockerfile
 docker/ubuntu-18.04/nginx/Makefile                ubuntu:18.04 based NGINX proxy app
 docker/ubuntu-18.04/nginx/Dockerfile
 docker/ubuntu-18.04/nginx/files/nginx-proxy.conf
+docker/ubuntu-18.04/sandbox/Makefile              ubuntu:18.04 based sandbox app
+docker/ubuntu-18.04/sandbox/Dockerfile
 docker/ubuntu-18.04-i386/Makefile                 i386/ubuntu:18.04 based linux
 docker/ubuntu-18.04-i386/Dockerfile-base
 docker/ubuntu-18.04-i386/Dockerfile
