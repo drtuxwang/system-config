@@ -2,7 +2,7 @@ NAME := ubuntu
 VERSION = 18.04-i386
 BASE_IMAGE := drtuxwang/$(NAME)-base:$(VERSION)
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-DEPENDENT_IMAGES := sandbox wine
+DEPENDENT_IMAGES := sandbox
 TOPDIR := ../..
 
 FLAGS := --rm \

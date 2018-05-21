@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.18.0'
-VERSION = 20180520
+RELEASE = '4.18.1'
+VERSION = 20180521
 
 # pylint: disable = too-many-lines
 
@@ -302,18 +302,15 @@ class Detect(object):
                 task = subtask_mod.Batch(xwininfo.get_cmdline())
                 task.run()
                 width = '???'
-                try:
-                    for line in task.get_output():
-                        if 'Width:' in line:
-                            width = line.split()[1]
-                        elif 'Height:' in line:
-                            Writer.output(
-                                name='X-Windows Display',
-                                value=display,
-                                comment=width + 'x' + line.split()[1]
-                            )
-                except IndexError:
-                    pass
+                for line in task.get_output():
+                    if 'Width:' in line:
+                        width = line.split()[-1]
+                    elif 'Height:' in line:
+                        Writer.output(
+                            name='X-Windows Display',
+                            value=display,
+                            comment=width + 'x' + line.split()[-1]
+                        )
 
     @classmethod
     def _xwindows(cls):

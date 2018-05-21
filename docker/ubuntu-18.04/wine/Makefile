@@ -1,10 +1,10 @@
 NAME := ubuntu-wine
-VERSION = 18.04-i386
+VERSION = 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../../..
 
 ifndef FLAGS
-	FLAGS=
+	FLAGS=--network none
 endif
 FLAGS := --rm \
 	--interactive \
@@ -14,9 +14,6 @@ FLAGS := --rm \
 	--memory=2000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared \
-	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
-	--env DISPLAY=$(DISPLAY) \
-	--env XAUTH="`xauth list $(DISPLAY)`" \
 	$(FLAGS)
 ifndef COMMAND
 	COMMAND=
@@ -43,11 +40,7 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME)-i386 $(IMAGE) $(COMMAND) || exit 0
-
-run-offline:
-	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
-	docker run $(FLAGS) --network none --hostname $(NAME)-i386-offline $(IMAGE) $(COMMAND) || exit 0
+	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) $(COMMAND) || exit 0
 
 clean:
 	docker rmi -f $(IMAGE) ||:

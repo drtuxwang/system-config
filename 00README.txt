@@ -97,7 +97,7 @@ bin/dockerreg.bat
 bin/dockerreg.py
 bin/docker-sandbox     Starts Docker sandbox app
 bin/docker-sudo        Starts Docker sudo app
-bin/docker-wine        Starts 32bit wine app
+bin/docker-wine        Starts Docker wine app
 bin/eclipse            eclipse wrapper (allowing non systems port)
 bin/eclipse.py
 bin/espeak             espeak wrapper (allowing non systems port)
@@ -915,6 +915,8 @@ docker/ubuntu-18.04/docker/Dockerfile
 docker/ubuntu-18.04/nginx/Makefile                ubuntu:18.04 based NGINX proxy app
 docker/ubuntu-18.04/nginx/Dockerfile
 docker/ubuntu-18.04/nginx/files/nginx-proxy.conf
+docker/ubuntu-18.04/wine/Makefile                 ubuntu:18.04 based wine app
+docker/ubuntu-18.04/wine/Dockerfile
 docker/ubuntu-18.04/sandbox/Makefile              ubuntu:18.04 based sandbox app
 docker/ubuntu-18.04/sandbox/Dockerfile
 docker/ubuntu-18.04-i386/Makefile                 i386/ubuntu:18.04 based linux
@@ -922,8 +924,6 @@ docker/ubuntu-18.04-i386/Dockerfile-base
 docker/ubuntu-18.04-i386/Dockerfile
 docker/ubuntu-18.04-i386/sandbox/Makefile         i386/ubuntu:18.04 based sandbox app
 docker/ubuntu-18.04-i386/sandbox/Dockerfile
-docker/ubuntu-18.04-i386/wine/Makefile            i386/ubuntu:18.04 based wine app
-docker/ubuntu-18.04-i386/wine/Dockerfile
 
 kubernetes/ubuntu/Makefile                        Kubernetes: Ubuntu example
 kubernetes/ubuntu/test-ns.yml

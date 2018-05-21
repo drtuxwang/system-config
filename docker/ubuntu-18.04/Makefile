@@ -2,7 +2,7 @@ NAME := ubuntu
 VERSION = 18.04
 BASE_IMAGE := drtuxwang/$(NAME)-base:$(VERSION)
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-DEPENDENT_IMAGES := devpi docker nginx sandbox
+DEPENDENT_IMAGES := devpi docker nginx sandbox wine
 TOPDIR := ../..
 
 FLAGS := --rm \

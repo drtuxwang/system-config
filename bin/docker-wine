@@ -1,16 +1,53 @@
 #!/bin/bash
+#
+# 32bit/64bit Wine sandbox (no dri, net, snd & x11 as default)
+#
 
-export FLAGS="--volume $PWD:$PWD --workdir $PWD"
+export FLAGS="--volume=$PWD:$PWD --workdir=$PWD --network=none"
+while [ $# -gt 0 ]
+do
+    case $1 in
+    -dri)
+        FLAGS="$FLAGS --device=/dev/dri:/dev/dri"
+        ;;
+    -net)
+        FLAGS="$FLAGS --network=bridge"
+        ;;
+    -snd)
+        FLAGS="$FLAGS --device=/dev/snd:/dev/snd"
+        ;;
+    -x11)
+        FLAGS="$FLAGS --volume=/tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY --env XAUTH=\"$(xauth list $DISPLAY)\""
+        ;;
+    -*)
+        echo "usage: $0 [-dri] [-net] [-snd] [-x11] [command]"
+        echo
+        echo "optional arguments:"
+        echo "   -dri        Enable direct rendering device access."
+        echo "   -net        Enable network device access."
+        echo "   -snd        Enable sound device access."
+        echo "   -x11        Enable X11 display access."
+        exit 1
+        ;;
+    *)
+        break
+        ;;
+    esac
+    shift
+done
 
 case ${1,,} in
-*.bat|cmd|*.cmd|*.com|*.exe|.msi)
+*.bat|*.cmd)
+    export COMMAND="wine cmd /c $@"
+    ;;
+cmd)
+    export COMMAND="wine cmd"
+    ;;
+*.exe|*.msi)
     export COMMAND="wine $@"
     ;;
-?*)
-    export COMMAND="$@"
-    ;;
 *)
-    export COMMAND="wine cmd"
+    export COMMAND="$@"
     ;;
 esac
 
@@ -19,7 +56,7 @@ for FILE in ${0%/bin/docker-wine}/docker/Makefile $HOME/git/system-config/docker
 do
     if [ -f "$FILE" ]
     then
-        exec make --quiet -C ${FILE%/*} run-wine-i386
+        exec make --quiet -C ${FILE%/*} run-wine
     fi
 done
 echo "Error: Cannot locate \"git/system-config/docker/Makefile\""

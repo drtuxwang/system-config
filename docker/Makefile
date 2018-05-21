@@ -55,13 +55,13 @@ clean:
 	make gc
 
 run-sudo:
-	make --quiet -C sudo run
+	make -C sudo run
 
-run-sandbox-amd64:
-	make --quiet -C ubuntu-18.04/sandbox run
+run-sandbox:
+	make -C ubuntu-18.04/sandbox run
 
 run-sandbox-i386:
-	make --quiet -C ubuntu-18.04-i386/sandbox run
+	make -C ubuntu-18.04-i386/sandbox run
 
-run-wine-i386:
-	make --quiet -C ubuntu-18.04-i386/wine run
+run-wine:
+	make -C ubuntu-18.04/wine run

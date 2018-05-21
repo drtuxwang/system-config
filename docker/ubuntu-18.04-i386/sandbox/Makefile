@@ -4,11 +4,7 @@ IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../../..
 
 ifndef FLAGS
-	FLAGS=--volume=/tmp/.X11-unix:/tmp/.X11-unix \
-		--env DISPLAY=$(DISPLAY) \
-		--env XAUTH="`xauth list $(DISPLAY)`" \
-		--device=/dev/dri:/dev/dri \
-		--device=/dev/snd:/dev/snd
+	FLAGS=--network none
 endif
 FLAGS := --rm \
 	--interactive \
@@ -44,11 +40,7 @@ build:
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) || exit 0
-
-run-offline:
-	@echo "\n*** Running \"$(IMAGE)\" Docker container (offline) ***"
-	docker run $(FLAGS) --network none --hostname $(NAME)-offline $(IMAGE) || exit 0
+	docker run $(FLAGS) --hostname $(NAME)-i386 $(IMAGE) || exit 0
 
 clean:
 	docker rmi -f $(IMAGE) ||:
