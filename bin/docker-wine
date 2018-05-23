@@ -7,25 +7,17 @@ export FLAGS="--volume=$PWD:$PWD --workdir=$PWD --network=none"
 while [ $# -gt 0 ]
 do
     case $1 in
-    -dri)
-        FLAGS="$FLAGS --device=/dev/dri:/dev/dri"
-        ;;
     -net)
         FLAGS="$FLAGS --network=bridge"
-        ;;
-    -snd)
-        FLAGS="$FLAGS --device=/dev/snd:/dev/snd"
         ;;
     -x11)
         FLAGS="$FLAGS --volume=/tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY --env XAUTH=\"$(xauth list $DISPLAY)\""
         ;;
     -*)
-        echo "usage: $0 [-dri] [-net] [-snd] [-x11] [command]"
+        echo "usage: $0 [-net] [-x11] [command]"
         echo
         echo "optional arguments:"
-        echo "   -dri        Enable direct rendering device access."
         echo "   -net        Enable network device access."
-        echo "   -snd        Enable sound device access."
         echo "   -x11        Enable X11 display access."
         exit 1
         ;;

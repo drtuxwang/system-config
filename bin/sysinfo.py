@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.18.1'
-VERSION = 20180521
+RELEASE = '4.18.2'
+VERSION = 20180523
 
 # pylint: disable = too-many-lines
 
@@ -1830,7 +1830,7 @@ class LinuxSystem(PosixSystem):
             with open('/proc/1/cgroup', errors='replace') as ifile:
                 for line in ifile:
                     if '/docker/' in line:
-                        name = 'Docker'
+                        name = 'Docker ' + line.rsplit('/', 1)[1][:12]
                         break
                     elif '/lxc/' in line:
                         name = 'LXC'

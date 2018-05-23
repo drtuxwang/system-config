@@ -4,8 +4,8 @@
 #
 # 1996-2018 By Dr Colin Kong
 #
-VERSION=20180520
-RELEASE="2.6.42"
+VERSION=20180523
+RELEASE="2.6.42-1"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -889,7 +889,7 @@ EOF
         fi
         if [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
         then
-            CONTAINER="Docker"
+            CONTAINER="Docker `head -1 /proc/1/cgroup | sed -e \"s@.*/docker/\(.\{12\}\).*@\1@\"`"
         elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
         then
             CONTAINER="LXC"

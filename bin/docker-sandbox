@@ -1,8 +1,19 @@
 #!/bin/bash
 
 CONTAINER="sandbox"
+DOCKER_UID=$(id -u)
 
-export FLAGS="--volume=$PWD:$PWD --workdir=$PWD --network=none"
+export FLAGS="--volume=$PWD:$PWD --workdir=$PWD --network=none --user=$(id -u)"
+# Default user
+FLAGS="$FLAGS --volume=/etc/passwd:/etc/passwd:ro --user=$(id -u)"
+for FILE in .bashrc .profile .vimrc
+do
+    if [ -f "$HOME/$FILE" ]
+    then
+        FLAGS="$FLAGS --volume=$HOME/$FILE:/root/$FILE:ro --volume=$HOME/$FILE:$HOME/$FILE:ro"
+    fi
+done
+
 while [ $# -gt 0 ]
 do
     case $1 in
@@ -12,23 +23,35 @@ do
     -dri)
         FLAGS="$FLAGS --device=/dev/dri:/dev/dri"
         ;;
+    -ipc)
+        FLAGS="$FLAGS --ipc=host"
+        ;;
     -net)
         FLAGS="$FLAGS --network=bridge"
         ;;
+    -root)
+        FLAGS="$FLAGS --user=0"
+        ;;
     -snd)
         FLAGS="$FLAGS --device=/dev/snd:/dev/snd"
+        ;;
+    -v=*)
+        FLAGS="$FLAGS --volume=${1#*=}:${1#*=}"
         ;;
     -x11)
         FLAGS="$FLAGS --volume=/tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY --env XAUTH=\"$(xauth list $DISPLAY)\""
         ;;
     -*)
-        echo "usage: $0 [-32] [-dri] [-net] [-snd] [-x11] [command]"
+        echo "usage: $0 [-32] [-dri] [-net] [-root] [-snd] [-v] [-x11] [command]"
         echo
         echo "optional arguments:"
         echo "   -32         Select 32bit sandbox environment."
         echo "   -dri        Enable direct rendering device access."
+        echo "   -ipc        Enable shmem for internet process communications."
         echo "   -net        Enable network device access."
+        echo "   -root       Run as root user."
         echo "   -snd        Enable sound device access."
+        echo "   -v=<path>   Bind mount a volume."
         echo "   -x11        Enable X11 display access."
         exit 1
         ;;
