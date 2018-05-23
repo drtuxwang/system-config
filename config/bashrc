@@ -24,7 +24,7 @@ unset command_not_found_handle
 # VM/Container detection
 if [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
 then
-    PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Docker '$(head -1 /proc/1/cgroup | sed -e "s@.*/docker/\(.\{12\}\).*@\1@")')/')
+    PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Docker '$(head -1 /proc/1/cgroup | sed -e "s@.*/@@" | cut -c-12)')/')
 elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
 then
     PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](LXC)/')
