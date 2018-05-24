@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-base:16.04
+FROM drtuxwang/ubuntu-base:14.04
 
 # Root account
 COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/

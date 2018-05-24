@@ -1,5 +1,5 @@
 NAME := ubuntu
-VERSION = 16.04
+VERSION = 14.04
 BASE_IMAGE := drtuxwang/$(NAME)-base:$(VERSION)
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 DEPENDENT_IMAGES := sandbox

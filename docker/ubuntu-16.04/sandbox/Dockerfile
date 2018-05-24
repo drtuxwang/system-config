@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-base:18.04
+FROM drtuxwang/ubuntu-base:16.04
 
 # Install sandbox environment packages
 RUN apt-get install --no-install-recommends -y \
@@ -12,7 +12,7 @@ RUN apt-get install --no-install-recommends -y \
 	apt-get clean
 
 # Install compiler & dev packages
-RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+RUN apt-get install --no-install-recommends -y \
 		g++ \
 		gfortran \
 		libbz2-dev \

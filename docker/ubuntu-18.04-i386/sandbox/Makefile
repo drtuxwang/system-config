@@ -31,8 +31,10 @@ build:
 	mkdir -p tmpdir/bin tmpdir/config tmpdir/etc
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
-	cp -p $(TOPDIR)/config/docker-xinit tmpdir/config/
+	cp -p $(TOPDIR)/config/profile tmpdir/config/.profile
+	cp -p $(TOPDIR)/config/tmux.conf tmpdir/config/.tmux.conf
 	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
+	cp -p $(TOPDIR)/config/docker-xinit tmpdir/etc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -f Dockerfile -t $(IMAGE) .

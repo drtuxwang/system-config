@@ -1,24 +1,38 @@
 #!/bin/bash
 
-CONTAINER="sandbox"
-DOCKER_UID=$(id -u)
+# Default sandbox environment
+export DISTRO="ubuntu-18.04"
 
+# Locate Sandbox Makefile
+if [ -f "$(readlink -m "$0"/../..)/docker/Makefile" ]
+then
+    DIR="$(readlink -m "$0"/../..)"
+elif [ -f "$HOME/git/system-config/docker/Makefile" ]
+then
+    DIR="$HOME/git/system-config"
+else
+    echo "Error: Cannot locate \"git/system-config/docker/Makefile\""
+    exit 1
+fi
+
+# Share current working directory
 export FLAGS="--volume=$PWD:$PWD --workdir=$PWD --network=none --user=$(id -u)"
+
 # Default user
 FLAGS="$FLAGS --volume=/etc/passwd:/etc/passwd:ro --user=$(id -u)"
-for FILE in .bashrc .profile .vimrc
+for FILE in profile vimrc tmux.conf
 do
-    if [ -f "$HOME/$FILE" ]
-    then
-        FLAGS="$FLAGS --volume=$HOME/$FILE:/root/$FILE:ro --volume=$HOME/$FILE:$HOME/$FILE:ro"
-    fi
+    FLAGS="$FLAGS --volume=$DIR/config/$FILE:$HOME/.$FILE:ro"
 done
 
 while [ $# -gt 0 ]
 do
     case $1 in
     -32)
-        CONTAINER="sandbox-i386"
+        DISTRO="${DISTRO%-i386}-i386"
+        ;;
+    -dist=*)
+        DISTRO=${1#*=}
         ;;
     -dri)
         FLAGS="$FLAGS --device=/dev/dri:/dev/dri"
@@ -36,23 +50,25 @@ do
         FLAGS="$FLAGS --device=/dev/snd:/dev/snd"
         ;;
     -v=*)
-        FLAGS="$FLAGS --volume=${1#*=}:${1#*=}"
+        MOUNT=${1#*=}
+        FLAGS="$FLAGS --volume=${MOUNT%:ro}:$MOUNT"
         ;;
     -x11)
         FLAGS="$FLAGS --volume=/tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY --env XAUTH=\"$(xauth list $DISPLAY)\""
         ;;
     -*)
-        echo "usage: $0 [-32] [-dri] [-net] [-root] [-snd] [-v] [-x11] [command]"
+        echo "usage: $0 [-32] [-dist=<name>] [-dri] [-net] [-root] [-snd] [-v=<path>[:ro]] [-x11] [command]"
         echo
         echo "optional arguments:"
-        echo "   -32         Select 32bit sandbox environment."
-        echo "   -dri        Enable direct rendering device access."
-        echo "   -ipc        Enable shmem for internet process communications."
-        echo "   -net        Enable network device access."
-        echo "   -root       Run as root user."
-        echo "   -snd        Enable sound device access."
-        echo "   -v=<path>   Bind mount a volume."
-        echo "   -x11        Enable X11 display access."
+        echo "   -32            Select 32bit sandbox environment."
+        ls -1d $DIR/docker/*/sandbox/Makefile 2> /dev/null | sed -e "s@.*/docker/@   -dist=@;s@/.*@  Select sandbox environment.@"
+        echo "   -dri           Enable direct rendering device access."
+        echo "   -ipc           Enable shmem for internet process communications."
+        echo "   -net           Enable network device access."
+        echo "   -root          Run as root user."
+        echo "   -snd           Enable sound device access."
+        echo "   -v=<path>[:ro] Bind mount a volume (ie \"-v=/path\" & \"-v=/path:ro\")"
+        echo "   -x11           Enable X11 display access."
         exit 1
         ;;
     *)
@@ -64,12 +80,10 @@ done
 
 export COMMAND="$@"
 
-for FILE in ${0%/bin/docker-wine}/docker/Makefile $HOME/git/system-config/docker/Makefile
-do
-    if [ -f "$FILE" ]
-    then
-        exec make --quiet -C ${FILE%/*} run-$CONTAINER
-    fi
-done
-echo "Error: Cannot locate \"git/system-config/docker/Makefile\""
-exit 1
+if [ ! -f "$DIR/docker/$DISTRO/sandbox/Makefile" ]
+then
+     echo "Error: Cannot locate \"$DIR/docker/$DISTRO/sandbox/Makefile\""
+     exit 1
+fi
+
+exec make --quiet -C $DIR/docker run-sandbox

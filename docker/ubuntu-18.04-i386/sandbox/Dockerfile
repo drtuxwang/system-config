@@ -1,9 +1,12 @@
 FROM drtuxwang/ubuntu-base:18.04-i386
 
-# Install audio/video packages
+# Install sandbox environment packages
 RUN apt-get install --no-install-recommends -y \
+		file \
 		libgl1-mesa-glx \
 		libsdl1.2debian \
+		tmux \
+		wget \
 		x11-xserver-utils \
 		xauth && \
 	apt-get clean
@@ -26,12 +29,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
 		tk8.6-dev && \
 	apt-get clean
 
-# Root account
-COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
-
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
 
+# Root account
+COPY tmpdir/config/.??* /root/
+
 # Configure start
-COPY tmpdir/config/docker-xinit /etc/
+COPY tmpdir/etc/docker-xinit /etc/
 ENTRYPOINT ["/etc/docker-xinit"]

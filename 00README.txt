@@ -874,9 +874,15 @@ docker/alpine-3.7-i386/Dockerfile
 docker/busybox-1.28/Makefile                      busybox:1.28 based linux
 docker/busybox-1.28/Dockerfile
 docker/centos-6/Makefile                          centos:6 based linux
+docker/centos-6/Dockerfile-base
 docker/centos-6/Dockerfile
+docker/centos-6/sandbox/Dockerfile                centos:6 based sandbox app
+docker/centos-6/sandbox/Makefile
 docker/centos-7/Makefile                          centos:7 based linux
+docker/centos-7/Dockerfile-base
 docker/centos-7/Dockerfile
+docker/centos-7/sandbox/Dockerfile                centos:7 based sandbox app
+docker/centos-7/sandbox/Makefile
 docker/clearlinux/Makefile                        clearlinux:latest based linux
 docker/clearlinux/Dockerfile
 docker/debian-8/Makefile                          debian:8 based linux
@@ -895,17 +901,24 @@ docker/sudo/Makefile                              sudo scratch image for jail br
 docker/sudo/Dockerfile
 docker/jenkins-lts/Makefile                       jenkins/jenkins:lts based server app
 docker/jenkins-lts/Dockerfile
-docker/mongo-3.4.14/Makefile                      Docker: mongo:3.4.14 based database app
+docker/mongo-3.4.14/Makefile                      mongo:3.4.14 based database app
 docker/mongo-3.4.14/Dockerfile
 docker/oracle-xe/Makefile                         wnameless/oracle-xe-11g:latest based database app
 docker/oracle-xe/Dockerfile
 docker/registry-2.6/Makefile                      registry:2.6 based server app
 docker/registry-2.6/Dockerfile
 docker/registry-2.6/files/config.yml
-
+docker/ubuntu-14.04/Makefile                      ubuntu:14.04 based linux
+docker/ubuntu-14.04/Dockerfile
+docker/ubuntu-14.04/Dockerfile-base
+docker/ubuntu-14.04/sandbox/Makefile              ubuntu:14.04 based sandbox app
+docker/ubuntu-14.04/sandbox/Dockerfile
 docker/ubuntu-16.04/Makefile                      ubuntu:16.04 based linux
 docker/ubuntu-16.04/Dockerfile
-docker/ubuntu-18.04/Makefile                      Docker: ubuntu:18.04 based linux
+docker/ubuntu-16.04/Dockerfile-base
+docker/ubuntu-16.04/sandbox/Makefile              ubuntu:16.04 based sandbox app
+docker/ubuntu-16.04/sandbox/Dockerfile
+docker/ubuntu-18.04/Makefile                      ubuntu:18.04 based linux
 docker/ubuntu-18.04/Dockerfile-base
 docker/ubuntu-18.04/Dockerfile
 docker/ubuntu-18.04/devpi/Makefile                ubuntu:18.04 based devpi server aoo

@@ -13,11 +13,17 @@ PULL_IMAGES := \
 	mongo-3.4.14 \
 	oracle-xe \
 	registry-2.6 \
+	ubuntu-14.04 \
 	ubuntu-16.04 \
 	ubuntu-18.04 \
 	ubuntu-18.04-i386
 BUILD_IMAGES := $(PULL_IMAGES) sudo
 CLEAN_IMAGES := $(BUILD_IMAGES)
+
+# Default Sandbox distro
+ifndef DISTRO
+	DISTRO=ubuntu-18.04
+endif
 
 
 default: build
@@ -54,14 +60,11 @@ clean:
 	done
 	make gc
 
+run-sandbox:
+	make -C $(DISTRO)/sandbox run
+
 run-sudo:
 	make -C sudo run
-
-run-sandbox:
-	make -C ubuntu-18.04/sandbox run
-
-run-sandbox-i386:
-	make -C ubuntu-18.04-i386/sandbox run
 
 run-wine:
 	make -C ubuntu-18.04/wine run
