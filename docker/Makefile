@@ -1,6 +1,6 @@
 PULL_IMAGES := \
-	alpine-3.7 \
-	alpine-3.7-i386 \
+	alpine-3.6 \
+	alpine-3.6-i386 \
 	busybox-1.28 \
 	centos-6 \
 	centos-7 \
@@ -21,8 +21,8 @@ BUILD_IMAGES := $(PULL_IMAGES) sudo
 CLEAN_IMAGES := $(BUILD_IMAGES)
 
 # Default Sandbox distro
-ifndef DISTRO
-	DISTRO=ubuntu-18.04
+ifndef DIST
+	DIST=ubuntu-18.04
 endif
 
 
@@ -61,7 +61,7 @@ clean:
 	make gc
 
 run-sandbox:
-	make -C $(DISTRO)/sandbox run
+	make -C $(DIST)/sandbox run
 
 run-sudo:
 	make -C sudo run

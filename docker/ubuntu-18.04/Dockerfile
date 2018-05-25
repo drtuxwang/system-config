@@ -1,10 +1,10 @@
 FROM drtuxwang/ubuntu-base:18.04
 
-# Root account
-COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
-
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
+
+# Root account
+COPY tmpdir/root/.??* /root/
 
 # Configure start
 ENV HOME=/root

@@ -16,21 +16,17 @@ else
 fi
 
 # Share current working directory
-export FLAGS="--volume=$PWD:$PWD --workdir=$PWD --network=none --user=$(id -u)"
+export FLAGS="--volume=$PWD:$PWD --workdir=$PWD --network=none"
 
 # Default user
-FLAGS="$FLAGS --volume=/etc/passwd:/etc/passwd:ro --user=$(id -u)"
-for FILE in profile vimrc tmux.conf
-do
-    FLAGS="$FLAGS --volume=$DIR/config/$FILE:$HOME/.$FILE:ro"
-done
+FLAGS="$FLAGS --volume=/etc/passwd:/etc/passwd:ro --volume=/etc/group:/etc/group:ro --env SANDBOX_USER=$(id -un)"
 
-export DISTRO=
+export DIST=
 while [ $# -gt 0 ]
 do
     case $1 in
     -dist=*)
-        DISTRO=${1#*=}
+        DIST=${1#*=}
         ;;
     -dri)
         FLAGS="$FLAGS --device=/dev/dri:/dev/dri"
@@ -42,7 +38,7 @@ do
         FLAGS="$FLAGS --network=bridge"
         ;;
     -root)
-        FLAGS="$FLAGS --user=0"
+        FLAGS="$FLAGS --env SANDBOX_ROOT=1"
         ;;
     -snd)
         FLAGS="$FLAGS --device=/dev/snd:/dev/snd"
@@ -77,9 +73,9 @@ done
 
 export COMMAND="$@"
 
-if [ ! -f "$DIR/docker/$DISTRO/sandbox/Makefile" ]
+if [ "$DIST" -a ! -f "$DIR/docker/$DIST/sandbox/Makefile" ]
 then
-     echo "Error: Cannot locate \"$DIR/docker/$DISTRO/sandbox/Makefile\""
+     echo "Error: Cannot locate \"$DIR/docker/$DIST/sandbox/Makefile\""
      exit 1
 fi
 

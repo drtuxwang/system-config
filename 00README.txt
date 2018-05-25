@@ -815,7 +815,6 @@ config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for lo
 config/bashrc                   Copy to "/root/.bashrc" for "root" account settings
 config/com.googlecode.iterm2.plist Copy to "$HOME/Library/Preference" for iTerm2 on Mac
 config/config                   Copy to "$HOME/.ssh/config"
-config/docker-uname-i386        Docker uname 32bit image fix
 config/docker-xinit             Docker X-init script for access to X-windows server
 config/gitconfig                Copy to "$HOME/.gitconfig" and edit
 config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
@@ -867,10 +866,10 @@ cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
 cookiecutter/docker/cookiecutter.json
 
 docker/Makefile                                   Makefile for building all images
-docker/alpine-3.7/Makefile                        alpine:3.7 based linux
-docker/alpine-3.7/Dockerfile
-docker/alpine-3.7-i386/Makefile                   i386/alpine:3.7 based linux
-docker/alpine-3.7-i386/Dockerfile
+docker/alpine-3.6/Makefile                        alpine:3.6 based linux
+docker/alpine-3.6/Dockerfile
+docker/alpine-3.6-i386/Makefile                   i386/alpine:3.6 based linux
+docker/alpine-3.6-i386/Dockerfile
 docker/busybox-1.28/Makefile                      busybox:1.28 based linux
 docker/busybox-1.28/Dockerfile
 docker/centos-6/Makefile                          centos:6 based linux

@@ -12,7 +12,6 @@ RUN apt-get update && \
 		python3-pip \
 		vim && \
 	apt-get clean && \
-	python3 -m pip install --upgrade pip
-
-# 32bit fix
-COPY tmpdir/config/docker-uname-i386 /usr/local/bin/uname
+	python3 -m pip install --upgrade pip && \
+	echo -e '#!/bin/bash\n/bin/uname "$@" | sed -e "s/x86_64/i386/g"' > /usr/local/bin/uname && \
+	chmod ugo+rx /usr/local/bin/uname

@@ -33,7 +33,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
 COPY tmpdir/bin/ /opt/software/bin/
 
 # Root account
-COPY tmpdir/config/.??* /root/
+COPY tmpdir/root/.??* /root/
 
 # Configure start
 COPY tmpdir/etc/docker-xinit /etc/

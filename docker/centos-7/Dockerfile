@@ -1,10 +1,10 @@
 FROM drtuxwang/centos-base:7
 
-# Root account
-COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
-
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
+
+# Root account
+COPY tmpdir/root/.??* /root/
 
 # Configure start
 ENV HOME=/root

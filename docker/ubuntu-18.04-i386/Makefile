@@ -19,15 +19,14 @@ default: build
 	docker images
 
 pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	docker pull `grep FROM Dockerfile-base | cut -f2 -d" "`
 
 build:
 	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/config
+	mkdir -p tmpdir/bin tmpdir/root
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
-	cp -p $(TOPDIR)/config/docker-uname-i386 tmpdir/config/
-	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
-	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
+	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
+	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(BASE_IMAGE)\" Docker image ***"
 	docker build -f Dockerfile-base -t $(BASE_IMAGE) .

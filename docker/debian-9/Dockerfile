@@ -12,11 +12,11 @@ RUN apt-get update && \
 	apt-get clean && \
 	python3 -m pip install --upgrade pip
 
-# Root account
-COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
-
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
+
+# Root account
+COPY tmpdir/root/.??* /root/
 
 # Configure start
 ENV HOME=/root
