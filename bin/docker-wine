@@ -1,7 +1,19 @@
 #!/bin/bash
 #
-# 32bit/64bit Wine sandbox (no dri, net, snd & x11 as default)
+# 32bit/64bit Wine sandbox (no net & x11 default)
 #
+
+# Locate GIT
+if [ -f "$(readlink -m "$0"/../..)/docker/Makefile" ]
+then
+    DIR="$(readlink -m "$0"/../..)"
+elif [ -f "$HOME/git/system-config/docker/Makefile" ]
+then
+    DIR="$HOME/git/system-config"
+else
+    echo "Error: Cannot locate \"git/system-config/docker/Makefile\""
+    exit 1
+fi
 
 export FLAGS="--volume=$PWD:$PWD --workdir=$PWD --network=none"
 while [ $# -gt 0 ]
@@ -43,13 +55,4 @@ cmd)
     ;;
 esac
 
-
-for FILE in ${0%/bin/docker-wine}/docker/Makefile $HOME/git/system-config/docker/Makefile
-do
-    if [ -f "$FILE" ]
-    then
-        exec make --quiet -C ${FILE%/*} run-wine
-    fi
-done
-echo "Error: Cannot locate \"git/system-config/docker/Makefile\""
-exit 1
+exec make --quiet -C $DIR/docker run-wine

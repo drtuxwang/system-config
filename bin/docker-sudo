@@ -1,22 +1,25 @@
 #!/bin/bash
 
+# Locate GIT
+if [ -f "$(readlink -m "$0"/../..)/docker/Makefile" ]
+then
+    DIR="$(readlink -m "$0"/../..)"
+elif [ -f "$HOME/git/system-config/docker/Makefile" ]
+then
+    DIR="$HOME/git/system-config"
+else
+    echo "Error: Cannot locate \"git/system-config/docker/Makefile\""
+    exit 1
+fi
+
+# Use current working directory
 export FLAGS="--workdir=$PWD"
-for FILE in .bashrc .profile .vimrc
+
+# Root user
+for FILE in profile vimrc tmux.conf
 do
-    if [ -f "$HOME/$FILE" ]
-    then
-        FLAGS="$FLAGS --volume=$HOME/$FILE:/root/$FILE:ro"
-    fi
+    FLAGS="$FLAGS --volume=$DIR/config/$FILE:/root/.$FILE:ro"
 done
 
 export COMMAND="$@"
-
-for FILE in ${0%/bin/docker-wine}/docker/Makefile $HOME/git/system-config/docker/Makefile
-do
-    if [ -f "$FILE" ]
-    then
-        exec make --quiet -C ${FILE%/*} run-sudo
-    fi
-done
-echo "Error: Cannot locate \"git/system-config/docker/Makefile\""
-exit 1
+exec make --quiet -C $DIR/docker run-sudo

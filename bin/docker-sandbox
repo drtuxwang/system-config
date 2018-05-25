@@ -1,9 +1,9 @@
 #!/bin/bash
+#
+# 32bit/64bit build/run sandboxes (no dri, ipc, net, snd, root & x11 default)
+#
 
-# Default sandbox environment
-export DISTRO="ubuntu-18.04"
-
-# Locate Sandbox Makefile
+# Locate GIT
 if [ -f "$(readlink -m "$0"/../..)/docker/Makefile" ]
 then
     DIR="$(readlink -m "$0"/../..)"
@@ -25,12 +25,10 @@ do
     FLAGS="$FLAGS --volume=$DIR/config/$FILE:$HOME/.$FILE:ro"
 done
 
+export DISTRO=
 while [ $# -gt 0 ]
 do
     case $1 in
-    -32)
-        DISTRO="${DISTRO%-i386}-i386"
-        ;;
     -dist=*)
         DISTRO=${1#*=}
         ;;
@@ -57,10 +55,9 @@ do
         FLAGS="$FLAGS --volume=/tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY --env XAUTH=\"$(xauth list $DISPLAY)\""
         ;;
     -*)
-        echo "usage: $0 [-32] [-dist=<name>] [-dri] [-net] [-root] [-snd] [-v=<path>[:ro]] [-x11] [command]"
+        echo "usage: $0 [-dist=<name>] [-dri] [-net] [-root] [-snd] [-v=<path>[:ro]] [-x11] [command]"
         echo
         echo "optional arguments:"
-        echo "   -32            Select 32bit sandbox environment."
         ls -1d $DIR/docker/*/sandbox/Makefile 2> /dev/null | sed -e "s@.*/docker/@   -dist=@;s@/.*@  Select sandbox environment.@"
         echo "   -dri           Enable direct rendering device access."
         echo "   -ipc           Enable shmem for internet process communications."
