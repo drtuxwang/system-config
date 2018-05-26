@@ -64,9 +64,9 @@ then
             esac
             ;;
         *)
-            if [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
+            if [ "$(grep ":name=.*/docker/" /proc/1/cgroup 2> /dev/null)" ]
             then
-                PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Docker '$(head -1 /proc/1/cgroup | sed -e "s@.*/docker/\(.\{12\}\).*@\1@")')/')
+                PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Docker '$(grep ":name=.*/docker/" /proc/1/cgroup | sed -e "s@.*/docker/\(.\{12\}\).*@\1@")')/')
             elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
             then
                 PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](LXC)/')
@@ -337,9 +337,9 @@ then
     echo
 
 # Container detection
-elif [ "`grep /docker/ /proc/1/cgroup 2> /dev/null`" ]
+elif [ "`grep  ":name=.*/docker/" /proc/1/cgroup 2> /dev/null`" ]
 then
-    PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Docker '$(head -1 /proc/1/cgroup | sed -e "s@.*/docker/\(.\{12\}\).*@\1@")')/')
+    PS1=`echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Docker '\`grep ":name=.*/docker/" /proc/1/cgroup | sed -e "s@.*/docker/\(.\{12\}\).*@\1@"\`')/'`
 elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
 then
     PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](LXC)\[\033[00m\] $ '
