@@ -22,10 +22,10 @@ unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 unset command_not_found_handle
 
 # VM/Container detection
-if [ "` grep ":name=.*/docker/" /proc/1/cgroup 2> /dev/null`" ]
+if [ "$(grep ":name=.*/docker/" /proc/1/cgroup 2> /dev/null)" ]
 then
-    PS1=`echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Docker '\`grep ":name=.*/docker/" /proc/1/cgroup | sed -e "s@.*/@@" | cut -c-12)'\`/'`
-elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
+    PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Docker '$(grep ":name=.*/docker/" /proc/1/cgroup | sed -e "s@.*/@@" | cut -c-12)'/')
+elif [ "$(grep /lxc/ /proc/1/cgroup 2> /dev/null)" ]
 then
     PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](LXC)/')
 elif [ "`awk '$5=="/" {print $1}' /proc/1/mountinfo 2> /dev/null`" != "`awk '$5=="/" {print $1}' /proc/$$/mountinfo 2> /dev/null`" ]
