@@ -1,8 +1,0 @@
-#
-# .local/share/applications/gqview-userapp.desktop
-#
-[Desktop Entry]
-Name=gqview
-Exec=gqview %f
-Type=Application
-NoDisplay=true

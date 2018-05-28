@@ -1,0 +1,8 @@
+#
+# .local/share/applications/userapp-soffice.desktop
+#
+[Desktop Entry]
+Name=soffice
+Exec=/opt/software/bin/soffice %f
+Type=Application
+NoDisplay=true

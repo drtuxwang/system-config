@@ -816,8 +816,8 @@ config/bashrc                   Copy to "/root/.bashrc" for "root" account setti
 config/com.googlecode.iterm2.plist Copy to "$HOME/Library/Preference" for iTerm2 on Mac
 config/config                   Copy to "$HOME/.ssh/config"
 config/docker-xinit             Docker X-init script for access to X-windows server
+config/genmon-7.rc              Copy to "$HOME/.config/xfce4/panel/genmon-7.rc" for XFCE Weather
 config/gitconfig                Copy to "$HOME/.gitconfig" and edit
-config/gqview-userapp.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
 config/login                    Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
 config/mimeapps.list            Copy to "$HOME/.local/share/applications" for Mime definitions
 config/minttyrc                 Copy to "$HOME/.minttyrc" for MSYS2 terminal
@@ -826,13 +826,13 @@ config/profile                  Copy to "$HOME/.profile" for ksh/bash shells
 config/profile-local            Copy to "$HOME/.profile-local" for ksh/bash shells
 config/rc.local                 Copy to "/etc/rc.local" for auto running commands
 config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
-config/soffice-userapp.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
 config/terminalrc               Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
 config/vboxmount.bat            Mount VirtualBox "/shared" to "s:\" in Windows Guest OS
 config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults
-config/genmon-7.rc              Copy to "$HOME/.config/xfce4/panel/genmon-7.rc" for XFCE Weather
+config/userapp-gqview.desktop   Copy to "$HOME/.local/share/applications" for Geeqie
+config/userapp-soffice.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
+config/userapp-vlc.desktop      Copy to "$HOME/.local/share/applications" for VLC
 config/xscreensaver             Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
-
 etc/python-install.sh           Python pip installer (installs minimum requirements)
 etc/python-requirements.txt     Python pip requirements file
 etc/setbin                      Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization

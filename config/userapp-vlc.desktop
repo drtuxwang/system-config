@@ -1,0 +1,8 @@
+#
+# .local/share/applications/userapp-vlc.desktop
+#
+[Desktop Entry]
+Name=vlc
+Exec=/opt/software/bin/vlc %f
+Type=Application
+NoDisplay=true

@@ -126,8 +126,12 @@ class Main(object):
         """
         options = Options()
 
+        # Fix QT 5 button size scaling bug
+        os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '0'
+
         subtask_mod.Background(options.get_vlc().get_cmdline()).run(
-            pattern=options.get_pattern())
+            pattern=options.get_pattern()
+        )
 
 
 if __name__ == '__main__':
