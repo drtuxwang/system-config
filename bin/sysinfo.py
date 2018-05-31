@@ -30,7 +30,7 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.19.0'
+RELEASE = '4.19.1'
 VERSION = 20180531
 
 # pylint: disable = too-many-lines
@@ -2217,7 +2217,10 @@ class Writer(object):
         """
         line = ' {0:19s}'.format(name + ':')
         if 'device' in kwargs and kwargs['device']:
-            line += ' {0:12s}'.format(kwargs['device']) + ' ' + kwargs['value']
+            device = kwargs['device']
+            if device != '/dev/???' and not os.path.exists(device):
+                return
+            line += ' {0:12s}'.format(device) + ' ' + kwargs['value']
         elif 'location' in kwargs and kwargs['location']:
             line += ' ' + kwargs['location']
             if 'value' in kwargs and kwargs['value']:
