@@ -4,8 +4,8 @@
 #
 # 1996-2018 By Dr Colin Kong
 #
-VERSION=20180523
-RELEASE="2.6.42-1"
+VERSION=20180531
+RELEASE="2.6.43"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -86,43 +86,31 @@ scanbus() {
     LSUSB=`PATH=/sbin:$PATH lsusb 2> /dev/null`
 
     # Audio device detection
-    if [ "`egrep "^ ?[0-9][0-9]* " /proc/asound/cards 2> /dev/null`" ]
-    then
-        for CARD in `egrep "^ ?[0-9][0-9]* " /proc/asound/cards | awk '{print $1}'`
+    for CARD in `egrep "^ ?[0-9][0-9]* " /proc/asound/cards | awk '{print $1}'`
+    do
+        UNIT=`echo $CARD | sed -e "s/^0$//"`
+        if [ "`ls /proc/asound/card$CARD/midi* 2> /dev/null`" ]
+        then
+            MODEL=`grep "^ $CARD " /proc/asound/cards 2> /dev/null | sed -e "s/^[^:]*: //"`
+            write_output name="Audio device" device="/dev/midi$UNIT" value="$MODEL" comment="MIDI"
+        fi
+        for FILE in `ls -1 /proc/asound/card$CARD/pcm*[cp]/info`
         do
-            UNIT=`echo $CARD | sed -e "s/^0$//"`
-            if [ "`ls /proc/asound/card$CARD/midi* 2> /dev/null`" ]
+            NAME="`grep \" $CARD \" /proc/asound/cards | sed -e "s/.*- //"` `grep \"^name: \" $FILE | sed -e "s/name: //"`"
+            DEVICE="/dev/snd/pcmC${CARD}D`echo $FILE | sed -e "s@.*pcm@@;s@/.*@@"`"
+            if [ -e $DEVICE ]
             then
-                MODEL=`grep "^ $CARD " /proc/asound/cards 2> /dev/null | sed -e "s/^[^:]*: //"`
-                write_output name="Audio device" device="/dev/midi$UNIT" value="$MODEL" comment="MIDI"
-            fi
-            if [ "`ls /proc/asound/card$CARD/pcm*c 2> /dev/null`" ]
-            then
-                MODEL=`(grep "^Codec:" /proc/asound/card$CARD/codec*; grep "^ $CARD " /proc/asound/cards) 2> /dev/null | head -1 | sed -e "s/^.*: *//"`
-                if [ -b "/dev/dsp$UNIT" ]
-                then
-                    DEVICE="/dev/???"
-                else
-                    DEVICE="/dev/dsp$UNIT"
-                fi
-                if [ "`ls /proc/asound/card$CARD/pcm*p 2> /dev/null`" ]
-                then
-                    write_output name="Audio device" device="$DEVICE" value="$MODEL" comment="MIC/SPK"
-                else
-                    write_output name="Audio device" device="$DEVICE" value="$MODEL" comment="MIC"
-                fi
-            elif [ "`ls /proc/asound/card$CARD/pcm*p 2> /dev/null`" ]
-            then
-                MODEL=`grep "^ $CARD " /proc/asound/cards 2> /dev/null | sed -e "s/^[^:]*: //"`
-                write_output name="Audio device" device="/dev/dsp$UNIT" value="$MODEL" comment="SPK"
+                case $FILE in
+                */pcm*p/*)
+                    write_output name="Audio device" device="$DEVICE" value="$NAME" comment="SPK"
+                    ;;
+                *)
+                    write_output name="Audio device" device="$DEVICE" value="$NAME" comment="MIC"
+                    ;;
+                esac
             fi
         done
-    else
-        for MODEL in `echo "$LSUSB" | grep -i " audio .*:" | sed -e "s@.*: @@" -e "s/ Audio Accelerator//" -e "s/ Audio Controller//" -e "s/ Corp[.]//" -e "s/ /#/g"`
-        do
-            write_output name="Audio device" device="/dev/???" value=`echo "$MODEL" | sed -e "s/#/ /g"`
-        done
-    fi
+    done
 
     # Battery detection
     for BATTERY in `ls -1d /proc/acpi/battery/BAT* 2> /dev/null`
@@ -337,51 +325,54 @@ scanbus() {
     done
 
     # Graphics device detection
-    if [ -f /proc/driver/nvidia/cards/0 ]
-    then  # Upto 19x.x
-        DRIVER=`grep "Kernel Module" /proc/driver/nvidia/version 2> /dev/null | sed -e "s/.*Kernel Module *//" | awk '{printf("%s driver\n",$1)}'`
-        for GPU in `ls -1 /proc/driver/nvidia/cards`
+    if [ -d "/dev/dri" ]
+    then
+        GPUS=`ls -1d /sys/bus/pci/devices/*/drm/card* 2> /dev/null`
+    else
+        GPUS=`ls -1d /sys/bus/pci/devices/*/graphics/fb* 2> /dev/null`
+    fi
+    if [ "$GPUS" ]
+    then
+        for GPU in $GPUS
         do
-            MODEL="nVidia"`grep "^Model: " /proc/driver/nvidia/cards/$GPU | sed -e "s/^[^:]*:[  ]*//"`
-            write_output name="Graphics device" device="/dev/nvidia$GPU" value="$MODEL" comment="$DRIVER"
-        done
-    elif [ -d /proc/driver/nvidia/gpus/0 ]
-    then  # From 2xx.x
-        DRIVER=`grep "Kernel Module" /proc/driver/nvidia/version 2> /dev/null | sed -e "s/.*Kernel Module *//" | awk '{printf("%s driver\n",$1)}'`
-        for GPU in `ls -1 /proc/driver/nvidia/gpus`
-        do
-            MODEL="nVidia"`grep "^Model: " /proc/driver/nvidia/gpus/$GPU/information | sed -e "s/^[^:]*:[  ]*//"`
-            write_output name="Graphics device" device="/dev/nvidia$GPU" value="$MODEL" comment="$DRIVER"
+            if [ -d "/dev/dri" ]
+            then
+                DEVICE=/dev/dri/`basename $GPU`
+            else
+                DEVICE=/dev/`basename $GPU`
+            fi
+            if [ -e "$DEVICE" ]
+            then
+                MODEL=`echo "$LSPCI" | grep "^\`echo "$GPU" | sed -e "s@.*/[^:]*:@@;s@/.*@@"\` " | sed -e "s/.*controller: //"`
+                write_output name="Graphics device" device="$DEVICE" value="$MODEL"
+            fi
         done
     else
-        MODELS=`echo "$LSPCI" | grep "VGA compatible controller:" | sed -e "s/.*controller: //" -e "s/ /#/g"`
-        for MODEL in $MODELS
-        do
-            write_output name="Graphics device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/\#/ /g\"`"
-        done
+        if [ "`xrandr 2> /dev/null`" ]
+        then
+            MODELS=`echo "$LSPCI" | grep "VGA compatible controller:" | sed -e "s/.*controller: //" -e "s/ /#/g"`
+            for MODEL in $MODELS
+            do
+                write_output name="Graphics device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/\#/ /g\"`"
+            done
+        fi
     fi
 
     # Input device detection
-    for MODEL in `echo "$LSUSB" | egrep -i "(Keyboard|Mouse|Scan)" | cut -f7- -d" " | sed -e "s/ /#/g"`
+    INPUTS=`egrep "^(N|H):"  /proc/bus/input/devices 2> /dev/null | paste - -`
+    EVENTS=`ls -l /dev/input/by-path/* 2> /dev/null | grep "/event" | sed -e "s@.*/@@"`
+    for EVENT in $EVENTS
     do
-        write_output name="Input device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/\#/ /g\"` [USB]"
+        MODEL=`echo "$INPUTS" | grep "$EVENT " | cut -f2 -d'"'`
+        write_output name="Input device" device="/dev/input/$EVENT" value="$MODEL"
     done
 
     # Network device detection
-    for MODEL in `echo "$LSPCI" | grep -i ethernet | sed -e "s/.*: //" -e "s/Semiconductor //" -e "s/Co., //" -e "s/Ltd. //" -e "s/PCI Express //" -e "s/Ethernet.*/Ethernet/" -e "s/ (.*//" -e "s/ /#/g"`
+    for NETWORK in `ls -1d /sys/bus/pci/devices/*/net/* /sys/bus/pci/devices/*/net:* 2> /dev/null | sed -e "s@net:@net/@"`
     do
-        write_output name="Network device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/\#/ /g\"`"
-    done
-    if [ "`echo \"$LSPCI\" | egrep -i \"infiniband| ib \"`" ]
-    then
-        echo "$LSPCI" | egrep -i "infiniband| ib " | sed -e "s/.*: //" -e "s/ [iI][bB] / InifiniBand /" -e "s/InfiniHost/InifiniBand/" -e "s/\[//" -e "s/\]//" -e "s/,.*//" -e "s/ (.*//" -e "s/ (.*//"  -e "s@^@ Network device:     /dev/???     @"
-    elif [ "`/sbin/lsmod 2> /dev/null | grep \"^ib_\"`" ]
-    then
-        write_output name="Network device" device="/dev/???" value="Unknown InifiniBand device"
-    fi
-    for MODEL in `echo "$LSPCI" | grep "Network controller:" | sed -e "s/.*Network controller: //" -e "s/://" -e "s/ (.*//" -e "s/ /#/g"`
-    do
-        write_output name="Network device" device="/dev/???" value="`echo \"$MODEL\" | sed -e \"s/\#/ /g\"`"
+        MODEL=`echo "$LSPCI" | grep "^\`echo "$NETWORK" | sed -e \"s@.*/[^:]*:@@;s@/.*@@\"\` " | sed -e "s/.*controller: //"`
+        MODEL=`echo "$LSPCI" | grep "^\`echo "$NETWORK" | sed -e \"s@.*/[^:]*:@@;s@/.*@@\"\` " | sed -e "s/.*: //;s/Semiconductor//;s/Co., //;s/Ltd. //;s/PCI Express //"`
+        write_output name="Network device" device="net/`basename $NETWORK`" value="`isitset $MODEL`"
     done
 
     # Video device detection
@@ -455,7 +446,7 @@ detect() {
     do
         write_output name="INET Address" value="$INET"
     done
-    for HOST in `grep "^[ 	]*nameserver[ 	]*[1-9]" /etc/resolv.conf 2> /dev/null | awk '{print $2}'`
+    for HOST in `grep "^[     ]*nameserver[     ]*[1-9]" /etc/resolv.conf 2> /dev/null | awk '{print $2}'`
     do
         write_output name="INET Nameserver" value="$HOST"
     done
@@ -1177,23 +1168,34 @@ write_output() {
 $1"
         shift
     done
-    TAGS=`echo "$TAGS" | egrep -v "^$|=\$" | sed -e "s/	/ /g" -e "s/  */ /" -e "s/= */=\"/" -e "s/ *\$/\"/"`
+    TAGS=`echo "$TAGS" | egrep -v "^$|=\$" | sed -e "s/▸/ /g" -e "s/  */ /" -e "s/= */=\"/" -e "s/ *\$/\"/"`
     NAME=`echo "$TAGS" | grep "^name=" | cut -f2 -d"\"" | sed -e "s/\$/:                  /" | cut -c1-19`
-    $ECHO " $NAME\c"
     if [ "`echo \"$TAGS\" | grep \"^device=\"`" ]
     then
-        echo "$TAGS" | grep "^device=" | cut -f2 -d"\"" | awk '{printf(" %-12s",$1)}'
+        DEVICE=`echo "$TAGS" | grep "^device=" | cut -f2 -d"\""`
+        case $DEVICE in
+        /dev/???)
+            ;;
+        /dev/*)
+            if [ ! -e "$DEVICE" ]
+            then
+                return
+            fi
+            ;;
+        esac
+        $ECHO " $NAME\c"
+        echo " $TAGS" | grep "^device=" | cut -f2 -d"\"" | awk '{printf(" %-12s",$1)}'
         $ECHO " "`echo "$TAGS" | grep "^value=" | cut -f2 -d"\""`"\c"
     elif [ "`echo \"$TAGS\" | grep \"^location=\"`" ]
     then
-        $ECHO " "`echo "$TAGS" | grep "^location=" | cut -f2 -d"\""`"\c"
+        $ECHO " $NAME "`echo "$TAGS" | grep "^location=" | cut -f2 -d"\""`"\c"
         if [ "`echo \"$TAGS\" | grep \"^value=\"`" ]
         then
             $ECHO "  "`echo "$TAGS" | grep "^value=" | cut -f2 -d"\""`"\c"
         fi
     elif [ "`echo \"$TAGS\" | grep \"^value=\"`" ]
     then
-        $ECHO " "`echo "$TAGS" | grep "^value=" | cut -f2 -d"\""`"\c"
+        $ECHO " $NAME "`echo "$TAGS" | grep "^value=" | cut -f2 -d"\""`"\c"
     fi
     if [ "`echo \"$TAGS\" | egrep \"^(architecture|comment)=\"`" ]
     then

@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.18.2'
-VERSION = 20180523
+RELEASE = '4.19.0'
+VERSION = 20180531
 
 # pylint: disable = too-many-lines
 
@@ -688,103 +688,48 @@ class LinuxSystem(PosixSystem):
 
         return device
 
-    @staticmethod
-    def _detect_audio_device(device, name):
-        if device.endswith('p'):
-            Writer.output(
-                name='Audio device',
-                device=device,
-                value=name,
-                comment='SPK'
-            )
-        else:
-            Writer.output(
-                name='Audio device',
-                device=device,
-                value=name,
-                comment='MIC'
-            )
-
-    @staticmethod
-    def _detect_audio_proc(card, model):
-        if card == '0':
-            unit = ''
-        else:
-            unit = card
-        if glob.glob('/proc/asound/card' + card + '/midi*'):
-            device = '/dev/midi' + unit
-            if not os.path.exists(device):
-                device = '/dev/???'
-            Writer.output(
-                name='Audio device',
-                device=device,
-                value=model,
-                comment='MIDI'
-            )
-        device = '/dev/dsp' + unit
-        if not os.path.exists(device):
-            device = '/dev/???'
-        if glob.glob('/proc/asound/card' + card + '/pcm*c'):
-            if glob.glob('/proc/asound/card' + card + '/pcm*p'):
-                Writer.output(
-                    name='Audio device',
-                    device=device,
-                    value=model,
-                    comment='MIC/SPK'
-                )
-            else:
-                Writer.output(
-                    name='Audio device',
-                    device=device,
-                    value=model,
-                    comment='MIC'
-                )
-        elif glob.glob('/proc/asound/card' + card + '/pcm*p'):
-            Writer.output(
-                name='Audio device',
-                device=device,
-                value=model,
-                comment='SPK'
-            )
-
     @classmethod
     def _detect_audio(cls):
-        lines = []
+        info = {}
         ispattern = re.compile(r' ?\d+ ')
         try:
             with open('/proc/asound/cards', errors='replace') as ifile:
                 for line in ifile:
                     if ispattern.match(line):
-                        lines.append(line.rstrip('\r\n'))
+                        try:
+                            card = line.split()[0]
+                            info[card] = line.split('-')[-1].strip()
+                        except IndexError:
+                            continue
         except OSError:
             pass
-        if lines:
-            for line in lines:
+
+        for card, model in info.items():
+            for file in sorted(glob.glob(
+                    '/proc/asound/card' + card + '/pcm*[cp]/info')):
                 try:
-                    card = line.split()[0]
-                    model = line.split(': ')[1].split('- ')[-1]
-                except IndexError:
+                    with open(file, errors='replace') as ifile:
+                        for line in ifile:
+                            if line.startswith('name: '):
+                                name = model + ' ' + line.rstrip(
+                                    '\r\n').replace('name: ', '', 1)
+                except (IndexError, OSError):
                     continue
-                for file in sorted(glob.glob(
-                        '/proc/asound/card' + card + '/pcm*[cp]/info')):
-                    try:
-                        with open(file, errors='replace') as ifile:
-                            for line2 in ifile:
-                                if line2.startswith('name: '):
-                                    name = model + ' ' + line2.rstrip(
-                                        '\r\n').replace('name: ', '', 1)
-                    except (IndexError, OSError):
-                        continue
 
-                    device = (
-                        '/dev/snd/pcmC' + card + 'D' +
-                        os.path.dirname(file).split('pcm')[-1]
-                    )
-
-                    if os.path.exists(device):
-                        cls._detect_audio_device(device, name)
-                    else:
-                        cls._detect_audio_proc(card, model)
+                device = (
+                    '/dev/snd/pcmC' + card + 'D' +
+                    os.path.dirname(file).split('pcm')[-1]
+                )
+                if device.endswith('p'):
+                    comment = 'SPK'
+                else:
+                    comment = 'MIC'
+                Writer.output(
+                    name='Audio device',
+                    device=device,
+                    value=name,
+                    comment=comment
+                )
 
     @staticmethod
     def _detect_cd_proc_ide():
@@ -1205,87 +1150,91 @@ class LinuxSystem(PosixSystem):
         cls._detect_mapped_disks(info)
         cls._detect_remote_disks(info)
 
-    def _detect_ethernet(self):
-        # Ethernet device detection
-        for line, device in sorted(self._devices.items()):
-            if 'Ethernet controller: ' in line:
-                model = line.split('Ethernet controller: ')[1].replace(
-                    'Semiconductor ', '').replace('Co., ', '').replace(
-                        'Ltd. ', '').replace('PCI Express ', '')
-                Writer.output(
-                    name='Ethernet device',
-                    device='/dev/???',
-                    value=model,
-                    comment=device
-                )
-
-    def _detect_firewire(self):
-        for line, device in sorted(self._devices.items()):
-            if 'FireWire (IEEE 1394): ' in line:
-                model = line.split('FireWire (IEEE 1394): ')[1]
-                Writer.output(
-                    name='Firewire device',
-                    device='/dev/???',
-                    value=model,
-                    comment=device)
-
     def _detect_graphics(self):
-        for line, device in sorted(self._devices.items()):
-            if 'VGA compatible controller: ' in line:
-                model = line.split('VGA compatible controller: ')[1].strip()
-                Writer.output(
-                    name='Graphics device',
-                    device='/dev/???',
-                    value=model,
-                    comment=device
-                )
-
-    def _detect_inifiniband(self):
-        for line, device in sorted(self._devices.items()):
-            if 'InfiniBand: ' in line:
-                model = line.split(
-                    'InfiniBand: ')[1].replace('InfiniHost', 'InifiniBand')
-                Writer.output(
-                    name='InifiniBand device',
-                    device='/dev/???',
-                    value=model,
-                    comment=device
-                )
+        if os.path.isdir('/dev/dri'):
+            gpus = glob.glob('/sys/bus/pci/devices/*/drm/card*')
+        else:
+            gpus = glob.glob('/sys/bus/pci/devices/*/graphics/fb*')
+        if gpus:
+            for gpu in sorted(gpus):
+                if os.path.isdir('/dev/dri'):
+                    device = os.path.join('/dev/dri', os.path.basename(gpu))
+                else:
+                    device = os.path.join('/dev', os.path.basename(gpu))
+                if os.path.exists(device):
+                    pci_id = gpu.split('/')[-3].split(':', 1)[-1]
+                    model, comment = self._match_pci(pci_id)
+                    Writer.output(
+                        name='Graphics device',
+                        device=device,
+                        value=model,
+                        comment=comment
+                    )
+        else:
+            xrandr = command_mod.Command('xrandr', errors='ignore')
+            if xrandr.is_found():
+                task = subtask_mod.Batch(xrandr.get_cmdline())
+                task.run()
+                if task.has_output():
+                    for key, value in self._devices.items():
+                        if 'VGA compatible controller:' in key:
+                            model = key.split(': ', 1)[-1]
+                            comment = value
+                            Writer.output(
+                                name='Graphics device',
+                                device='/dev/???',
+                                value=model,
+                                comment=comment
+                            )
 
     @staticmethod
     def _detect_input():
         info = {}
-        for file in glob.glob('/dev/input/by-path/*event*'):
-            try:
-                device = '/dev/input/' + os.path.basename(os.readlink(file))
-                if os.path.exists(device):
-                    info[device] = os.path.basename(
-                        file).replace('-event', '').replace('-', ' ')
-            except OSError:
-                continue
-
-        isjunk = re.compile(r'/usb-\w{4}_\w{4}-')
-        for file in glob.glob('/dev/input/by-id/*event*'):
-            try:
-                device = '/dev/input/' + os.path.basename(os.readlink(file))
-                if os.path.exists(device) and not isjunk.search(file):
-                    info[device] = os.path.basename(
-                        file).split('-')[1].replace('_', ' ')
-            except (IndexError, OSError):
-                continue
-        for key, value in sorted(info.items()):
-            Writer.output(name='Input device', device=key, value=value)
+        model = '???'
+        try:
+            with open('/proc/bus/input/devices', errors='replace') as ifile:
+                for line in ifile:
+                    if line.startswith('N: Name="'):
+                        model = line.split('"')[1]
+                    elif line.startswith('H: Handlers='):
+                        event = line.split('event')[-1].split()[0]
+                        info['/dev/input/event' + event] = model
+        except OSError:
+            pass
+        devices = [
+            os.path.join('/dev/input', os.path.basename(os.readlink(file)))
+            for file in glob.glob('/dev/input/by-path/*')
+            if 'event' in file
+        ]
+        for device in sorted(devices):
+            if os.path.exists(device):
+                Writer.output(
+                    name='Input device',
+                    device=device,
+                    value=info[device]
+                )
 
     def _detect_network(self):
-        for line, device in sorted(self._devices.items()):
-            if 'Network controller: ' in line:
-                model = line.split(': ', 1)[1].split(' (')[0]
-                Writer.output(
-                    name='Network device',
-                    device='/dev/???',
-                    value=model,
-                    comment=device
-                )
+        networks = [
+            network.replace('net:', 'net/')
+            for network in (
+                glob.glob('/sys/bus/pci/devices/*/net/*') +
+                glob.glob('/sys/bus/pci/devices/*/net:*')
+            )
+        ]
+        for network in sorted(networks):
+            device = 'net/' + os.path.basename(network)
+            pci_id = network.split('/')[-3].split(':', 1)[-1]
+            model, comment = self._match_pci(pci_id)
+            model = model.replace(
+                'Semiconductor ', '').replace('Co., ', '').replace(
+                    'Ltd. ', '').replace('PCI Express ', '')
+            Writer.output(
+                name='Network device',
+                device=device,
+                value=model,
+                comment=comment
+            )
 
     @staticmethod
     def _detect_video():
@@ -1309,6 +1258,16 @@ class LinuxSystem(PosixSystem):
                 device='/dev/' + device, value='???'
             )
 
+    def _match_pci(self, pci_id):
+        model = '???'
+        comment = ''
+        for key, value in self._devices.items():
+            if key.startswith(pci_id):
+                model = key.split(': ', 1)[-1]
+                comment = value
+                break
+        return model, comment
+
     def detect_devices(self):
         """
         Detect devices
@@ -1317,10 +1276,7 @@ class LinuxSystem(PosixSystem):
         self._detect_battery()
         self._detect_cd()
         self._detect_disk()
-        self._detect_ethernet()
-        self._detect_firewire()
         self._detect_graphics()
-        self._detect_inifiniband()
         self._detect_input()
         self._detect_network()
         self._detect_video()
