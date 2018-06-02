@@ -261,7 +261,7 @@ class Main(object):
         self._eject()
 
     def _track_at_once_audio(self):
-        files = glob.glob(os.path.join(self._image, '*.wav'))
+        files = sorted(glob.glob(os.path.join(self._image, '*.wav')))
 
         wodim = command_mod.Command('wodim', errors='stop')
         print(
