@@ -884,12 +884,21 @@ docker/centos-7/sandbox/Dockerfile                centos:7 based sandbox app
 docker/centos-7/sandbox/Makefile
 docker/clearlinux/Makefile                        clearlinux:latest based linux
 docker/clearlinux/Dockerfile
-docker/debian-8/Makefile                          debian:8 based linux
+docker/debian-8/Makefile                          debian:8-slim based linux
 docker/debian-8/Dockerfile
-docker/debian-9/Makefile                          debian:9 based linux
+docker/debian-8/Dockerfile-base
+docker/debian-8/sandbox/Makefile                  debian:8-slim based sandbox app
+docker/debian-8/sandbox/Dockerfile
+docker/debian-9/Makefile                          debian:9-slim based linux
 docker/debian-9/Dockerfile
-docker/debian-testing/Makefile                    debian:testing based linux
+docker/debian-9/Dockerfile-base
+docker/debian-9/sandbox/Makefile                  debian:9-slim based sandbox app
+docker/debian-9/sandbox/Dockerfile
+docker/debian-testing/Makefile                    debian:testing-slim based linux
 docker/debian-testing/Dockerfile
+docker/debian-testing/Dockerfile-base
+docker/debian-testing/sandbox/Makefile            debina:testing-slim based sandbox app
+docker/debian-testing/sandbox/Dockerfile
 docker/etcd-3.2.20/Makefile                       gcr.io/etcd-development/etcd:v3.2.20 based app
 docker/etcd-3.2.20/Dockerfile
 docker/etcd-3.2.20/cluster/Makefile               gcr.io/etcd-development/etcd:v3.2.20 based cluster

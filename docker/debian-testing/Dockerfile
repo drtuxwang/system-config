@@ -1,24 +1,13 @@
-FROM debian:testing
-
-# Install base packages
-RUN apt-get update && \
-	apt-get install --no-install-recommends -y \
-		net-tools \
-		openssh-client \
-		pciutils \
-		python3 \
-		python3-pip \
-		vim && \
-	apt-get clean && \
-	python3 -m pip install --upgrade pip
-
-# Root account
-COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
+FROM drtuxwang/debian-base:testing
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
+
+# Root account
+COPY tmpdir/root/.??* /root/
 
 # Configure start
 ENV HOME=/root
 WORKDIR /root
 CMD bash
+
