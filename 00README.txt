@@ -133,6 +133,8 @@ bin/fcp.py
 bin/fcpall             Copy a file to multiple target files
 bin/fcpall.bat
 bin/fcpall.py
+bin/fcpclip            Copy file from clipboard location
+bin/fcpclip.py
 bin/fcplink            Replace symbolic link to files with copies
 bin/fcplink.py
 bin/fdiff              Show summary of differences between two directories recursively
