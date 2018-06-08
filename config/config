@@ -5,6 +5,7 @@ ForwardX11 no
 GSSAPIAuthentication no
 IdentityFile=~/.ssh/id_rsa
 PubkeyAuthentication yes
+ServerAliveInterval 5
 UseRoaming no
 
 #Host hostname
