@@ -12,6 +12,11 @@ frame .tools -bg "#cccccc"
     }
     pack .tools.kill -side top
 
+    button .tools.hardinfo -width 10 -bg "#ffcc00" -text "Hardware Info" -command {
+        exec hardinfo &
+    }
+    pack .tools.hardinfo -side top
+
     button .tools.settimezone -width 10 -bg "#ffcc00" -text "Set Time Zone" -command {
         exec xsudo sh -c "dpkg-reconfigure tzdata; ntpdate pool.ntp.org" &
     }
