@@ -563,6 +563,8 @@ bin/sysinfo            System configuration detection tool
 bin/sysinfo.bat
 bin/sysinfo.py
 bin/sysinfo.sh         Old Bourne shell version
+bin/systemd-analyze    systemd-analyze wrapper (filter buggy firmware/loader timings)
+bin/systemd_analyze.py
 bin/t7z                Make a compressed archive in TAR.&Z format
 bin/t7z.py
 bin/tar                Make a compressed archive in TAR format

@@ -163,6 +163,9 @@ exec_python() {
         PYLD_FLAGS="-pyldname=$PY_MAIN"
         PY_MAIN="vi"
         ;;
+    *-*)
+        PY_MAIN=`echo "$PY_MAIN" | sed -e "s/-/_/g"`
+        ;;
     esac
 
     if [ "$OSTYPE" = "cygwin" ]
@@ -241,6 +244,5 @@ exec_python() {
         exec `which "$PY_MAIN"` "$@"
     fi
 }
-
 
 exec_python "$@"
