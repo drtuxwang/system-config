@@ -30,8 +30,8 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.19.1'
-VERSION = 20180531
+RELEASE = '4.19.2'
+VERSION = 20180610
 
 # pylint: disable = too-many-lines
 
@@ -362,6 +362,8 @@ class OperatingSystem(object):
                     version = file_mod.FileUtil.strings(
                         glibc, 'GNU C Library').split(
                             'version')[1].replace(',', ' ').split()[0]
+                    if version.endswith('.'):
+                        version = version[:-1]
                 except IndexError:
                     pass
                 else:
