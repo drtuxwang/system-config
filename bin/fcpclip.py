@@ -78,7 +78,7 @@ class Main(object):
         task = subtask_mod.Batch(xclip.get_cmdline())
         task.run()
 
-        source = ''.join(task.get_output())
+        source = ''.join(task.get_output()).strip("'")
         if os.path.isfile(source):
             print('Copying "' + source + '" file...')
             target = os.path.basename(source)
@@ -87,6 +87,8 @@ class Main(object):
             except shutil.Error:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot copy to "' + target + '" file.')
+        else:
+            print('Invalid "' + source + '" file...')
 
 
 if __name__ == '__main__':
