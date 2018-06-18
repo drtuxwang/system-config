@@ -162,9 +162,9 @@ class Main(object):
     def _get_stats(self):
         elapsed = time.time() - self._start
         copied = self._size/1024
-        return "{0:d}:{1:d},{2:d}".format(
-            int(elapsed),
+        return "{0:d}/{1:d}={2:d}".format(
             int(copied),
+            int(elapsed),
             int(copied/elapsed)
         )
 
