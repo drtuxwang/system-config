@@ -159,12 +159,12 @@ exec_python() {
     python*)
         PYEXE="$PY_MAIN"
         ;;
+    systemd-analyze)
+        PY_MAIN=`echo "$PY_MAIN" | sed -e "s/-/_/g"`
+        ;;
     vi|vim)
         PYLD_FLAGS="-pyldname=$PY_MAIN"
         PY_MAIN="vi"
-        ;;
-    *-*)
-        PY_MAIN=`echo "$PY_MAIN" | sed -e "s/-/_/g"`
         ;;
     esac
 
@@ -210,39 +210,41 @@ exec_python() {
     then
         PATH=`dirname $0`:$PATH; export PATH
     fi
-
     BIN_DIR=`dirname "$0"`
+
     if [ "$PYEXE" = "$PY_MAIN" ]
     then
         exec $PYTHON "$@"
-    elif [ -f "$BIN_DIR/$PY_MAIN.py" ]
+    fi
+
+    if [ -f "$BIN_DIR/$PY_MAIN.py" ]
     then
         exec "$PYTHON" -B -E "$BIN_DIR/pyld.py" $PYLD_FLAGS $PY_MAIN "$@"
-    else
-        if [ "$PYEXE" != "$PY_MAIN" ]
-        then
-            BIN_DIR=`dirname "$PYTHON"`
-            TOOL=`locate_python_tool "$BIN_DIR" "$PY_MAIN"`
-            if [ "$TOOL" ]
-            then
-                case "$TOOL" in
-                *.exe)
-                    exec $PYTHON $TOOL "$@"
-                    ;;
-                esac
-                if [ "`head -1 \"$TOOL\" | grep '#!.*python'`" ]
-                then
-                    exec $PYTHON $TOOL "$@"
-                fi
-                exec $TOOL "$@"
-            fi
-        fi
-        if [ ! "`which \"$PY_MAIN\"`" ]
-        then
-            echo "***ERROR*** Cannot find required \"$PY_MAIN\" software." 1>&2
-        fi
-        exec `which "$PY_MAIN"` "$@"
     fi
+
+    if [ "$PYEXE" != "$PY_MAIN" ]
+    then
+        BIN_DIR=`dirname "$PYTHON"`
+        TOOL=`locate_python_tool "$BIN_DIR" "$PY_MAIN"`
+        if [ "$TOOL" ]
+        then
+            case "$TOOL" in
+            *.exe)
+                exec $PYTHON $TOOL "$@"
+                ;;
+            esac
+            if [ "`head -1 \"$TOOL\" | grep '#!.*python'`" ]
+            then
+                exec $PYTHON $TOOL "$@"
+            fi
+            exec $TOOL "$@"
+        fi
+    fi
+    if [ ! "`which \"$PY_MAIN\"`" ]
+    then
+        echo "***ERROR*** Cannot find required \"$PY_MAIN\" software." 1>&2
+    fi
+    exec `which "$PY_MAIN"` "$@"
 }
 
 exec_python "$@"
