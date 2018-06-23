@@ -25,15 +25,21 @@ class Options(object):
         self._args = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_directory(self):
         """
-        Return list of files.
+        Return directory.
         """
-        return self._args.files
+        return self._args.directory[0]
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Copy file from clipboard location.')
+            description='Copy file from clipboard location to directory.')
+
+        parser.add_argument(
+            'directory',
+            nargs=1,
+            help='Directory to copy file.'
+        )
 
         self._args = parser.parse_args(args)
 
@@ -71,24 +77,26 @@ class Main(object):
         """
         Start program
         """
-        Options()
+        options = Options()
 
         xclip = command_mod.Command('xclip', errors='stop')
         xclip.set_args(['-out', '-selection', '-c', 'test'])
         task = subtask_mod.Batch(xclip.get_cmdline())
         task.run()
 
-        source = ''.join(task.get_output()).strip("'")
+        source = ''.join(task.get_output())
         if os.path.isfile(source):
-            print('Copying "' + source + '" file...')
-            target = os.path.basename(source)
+            target = os.path.join(
+                options.get_directory(),
+                os.path.basename(source),
+            )
+
+            print('Copying "{0:s}" file to "{1:s}"...'.format(source, target))
             try:
                 shutil.copy2(source, target)
             except shutil.Error:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot copy to "' + target + '" file.')
-        else:
-            print('Invalid "' + source + '" file...')
 
 
 if __name__ == '__main__':
