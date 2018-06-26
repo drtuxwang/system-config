@@ -84,7 +84,7 @@ class Main(object):
     def _check_missing(seq_name, numbers):
         sequence = set(range(min(numbers), max(numbers)+1))
         name, ext = seq_name
-        for missing in sequence - numbers:
+        for missing in sorted(sequence - numbers):
             print("Missing file in sequence: {0:s}_{1:02d}{2:s}".format(
                 name,
                 missing,
