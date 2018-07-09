@@ -86,15 +86,14 @@ class Main(object):
 
         source = ''.join(task.get_output())
         if os.path.isfile(source):
-            target = os.path.join(
-                options.get_directory(),
-                os.path.basename(source),
-            )
-
+            directory = options.get_directory()
+            target = os.path.join(directory, os.path.basename(source))
             print('Copying "{0:s}" file to "{1:s}"...'.format(source, target))
             try:
+                if not os.path.isdir(directory):
+                    os.makedirs(directory)
                 shutil.copy2(source, target)
-            except shutil.Error:
+            except (OSError, shutil.Error):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot copy to "' + target + '" file.')
 
