@@ -266,7 +266,7 @@ class Main(object):
             del os.environ['LANG']  # Avoids locale problems
         if 'a2ps' not in self._cache:
             self._cache['a2ps'] = command_mod.Command('a2ps', errors='stop')
-            self._cache['a2ps'].set_flags([
+            self._cache['a2ps'].set_args([
                 '--media=A4',
                 '--columns=1',
                 '--header=',
@@ -280,7 +280,7 @@ class Main(object):
         a2ps = self._cache['a2ps']
         chars = options.get_chars()
 
-        a2ps.set_args([
+        a2ps.extend_args([
             '--portrait',
             '--chars-per-line=' + str(chars),
             '--left-title=' + time.strftime('%Y-%m-%d-%H:%M:%S'),
@@ -304,25 +304,25 @@ class Main(object):
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + file + '" text file.')
+        task = subtask_mod.Batch(a2ps.get_cmdline())
         if options.get_pages() == 1:
-            a2ps.run(mode='batch', stdin=stdin, output_file=self._tmpfile)
-            if a2ps.get_exitcode():
+            task.run(stdin=stdin, file=self._tmpfile)
+            if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(a2ps.get_exitcode()) +
-                    ' received from "' + a2ps.get_file() + '".'
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
                 )
             return 'text file "' + file + '" with ' + str(chars) + ' columns'
         else:
-            a2ps.run(
-                mode='batch',
+            task.run(
                 pipes=[self._psnup],
                 stdin=stdin,
-                output_file=self._tmpfile
+                file=self._tmpfile
             )
-            if a2ps.get_exitcode():
+            if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(a2ps.get_exitcode()) +
-                    ' received from "' + a2ps.get_file() + '".'
+                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                    ' received from "' + task.get_file() + '".'
                 )
             return (
                 'text file "' + file + '" with ' + str(chars) +
