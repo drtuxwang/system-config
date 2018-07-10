@@ -58,57 +58,66 @@ class Main(object):
         tasks = task_mod.Tasks.factory()
 
         xlock = command_mod.Command(
-            'light-locker-command',
-            args=['--lock'],
+            'loginctl',
+            args=['lock-session'],
             errors='ignore'
         )
-        if xlock.is_found():
-            tasks.killpname('gnome-screensaver')
-            if not task_mod.Tasks.factory().haspname('light-locker'):
-                command = command_mod.Command('light-locker', errors='stop')
-                subtask_mod.Daemon(command.get_cmdline()).run()
-                time.sleep(1)
-        elif desktop == 'gnome':
+        if not xlock.is_found():
             xlock = command_mod.Command(
-                'gnome-screensaver-command',
+                'light-locker-command',
                 args=['--lock'],
-                errors='stop'
+                errors='ignore'
             )
-            if not tasks.haspname('gnome-screensaver'):
-                command = command_mod.Command(
-                    'gnome-screensaver',
+            if xlock.is_found():
+                tasks.killpname('gnome-screensaver')
+                if not task_mod.Tasks.factory().haspname('light-locker'):
+                    command = command_mod.Command(
+                        'light-locker',
+                        errors='stop'
+                    )
+                    subtask_mod.Daemon(command.get_cmdline()).run()
+                    time.sleep(1)
+            elif desktop == 'gnome':
+                xlock = command_mod.Command(
+                    'gnome-screensaver-command',
+                    args=['--lock'],
                     errors='stop'
                 )
-                subtask_mod.Task(command.get_cmdline()).run()
-        elif desktop == 'kde':
-            xlock = command_mod.Command(
-                'qdbus',
-                args=['org.freedesktop.ScreenSaver', '/ScreenSaver', 'Lock'],
-                errors='stop'
-            )
-        elif desktop == 'xfce':
-            xlock = command_mod.Command('xflock4', errors='stop')
-        elif desktop == 'macos':
+                if not tasks.haspname('gnome-screensaver'):
+                    command = command_mod.Command(
+                        'gnome-screensaver',
+                        errors='stop'
+                    )
+                    subtask_mod.Task(command.get_cmdline()).run()
+            elif desktop == 'kde':
+                xlock = command_mod.Command('qdbus', args=[
+                    'org.freedesktop.ScreenSaver',
+                    '/ScreenSaver',
+                    'Lock'
+                ], errors='stop')
+            elif desktop == 'xfce':
+                xlock = command_mod.Command('xflock4', errors='stop')
+            elif desktop == 'macos':
+                xlock = command_mod.Command(
+                    '/System/Library/CoreServices/Menu Extras/User.menu/'
+                    'Contents/Resources/CGSession',
+                    args=['-suspend'],
+                    errors='stop'
+                )
+            else:
+                xlock = command_mod.Command('xlock', args=[
+                    '-allowroot',
+                    '+nolock',
+                    '-mode',
+                    'blank',
+                    '-fg',
+                    'red',
+                    '-bg',
+                    'black',
+                    '-timeout',
+                    '10'
+                    ], errors='stop')
 
-            xlock = command_mod.Command(
-                '/System/Library/CoreServices/Menu Extras/User.menu/'
-                'Contents/Resources/CGSession',
-                args=['-suspend'],
-                errors='stop'
-            )
-        else:
-            xlock = command_mod.Command('xlock', args=[
-                '-allowroot',
-                '+nolock',
-                '-mode',
-                'blank',
-                '-fg',
-                'red',
-                '-bg',
-                'black',
-                '-timeout',
-                '10'
-            ], errors='stop')
         if 'VNCDESKTOP' in os.environ:
             os.environ['DISPLAY'] = ':0'
         subtask_mod.Background(xlock.get_cmdline() + sys.argv[1:]).run()
