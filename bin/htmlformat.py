@@ -104,13 +104,19 @@ class Main(object):
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "' + file + '" file.')
-            soup = bs4.BeautifulSoup(''.join(lines), 'html.parser')
+            soup = bs4.BeautifulSoup(
+                ''.join(lines).replace('&nbsp;', '&amp;nbsp;'),
+                'html.parser'
+            )
             html_text = indent.sub(r'\1\1', soup.prettify())
 
             tmpfile = file + '-tmp' + str(os.getpid())
             try:
                 with open(tmpfile, 'w', newline='\n') as ofile:
-                    print(html_text, file=ofile)
+                    print(
+                        html_text.replace('&amp;nbsp;', '&nbsp;'),
+                        file=ofile
+                    )
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
