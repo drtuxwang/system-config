@@ -2,18 +2,22 @@
 """
 Python X-windows desktop module
 
-Copyright GPL v2: 2013-2017 By Dr Colin Kong
+Copyright GPL v2: 2013-2018 By Dr Colin Kong
 """
 
 import functools
+import getpass
 import os
 import sys
+
+import psutil
+
 
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
-RELEASE = '2.1.0'
-VERSION = 20170830
+RELEASE = '2.2.0'
+VERSION = 20180711
 
 
 class Desktop(object):
@@ -22,21 +26,17 @@ class Desktop(object):
     """
 
     @staticmethod
-    def has_xfce(guess=True):
+    def has_xfce():
         """
         Return true if running XFCE
         """
+        if os.environ.get('DESKTOP_SESSION') == 'xfce':
+            return True
         if os.environ.get('XDG_MENU_PREFIX', '').startswith('xfce-'):
             return True
-        elif os.environ.get('XDG_CURRENT_DESKTOP') == 'XFCE':
+        if os.environ.get('XDG_CURRENT_DESKTOP') == 'XFCE':
             return True
-        elif '/xfce' in os.environ.get('XDG_DATA_DIRS', ''):
-            return True
-        elif (
-                guess and
-                os.path.isfile('/usr/bin/thunar') and
-                os.path.isfile('/usr/bin/xfce4-terminal')
-        ):
+        if '/xfce' in os.environ.get('XDG_DATA_DIRS', ''):
             return True
         return False
 
@@ -45,10 +45,9 @@ class Desktop(object):
         """
         Return true if running Gnome
         """
-        keys = os.environ.keys()
-        if 'gnome' in os.environ.get('DESKTOP_SESSION', ''):
+        if os.environ.get('DESKTOP_SESSION', '') == 'gnome':
             return True
-        elif 'GNOME_DESKTOP_SESSION_ID' in keys:
+        if 'GNOME_DESKTOP_SESSION_ID' in os.environ.keys():
             return True
         return False
 
@@ -57,7 +56,7 @@ class Desktop(object):
         """
         Return true if running KDE
         """
-        if 'kde' in os.environ.get('DESKTOP_SESSION', ''):
+        if os.environ.get('DESKTOP_SESSION', '') in ('kde', 'plasma'):
             return True
         return False
 
@@ -70,24 +69,45 @@ class Desktop(object):
             return True
         return False
 
+    @staticmethod
+    def guess():
+        """
+        Guess desktop based on session user is running. Return name or Unknown.
+        """
+        username = getpass.getuser()
+        names = set([
+            process.name()
+            for process in psutil.process_iter()
+            if process.username() == username
+        ])
+
+        if 'xfce4-session' in names:
+            return 'xfce'
+        if set(['gnome-session', 'gnome-session-binary']) & names:
+            return 'gnome'
+        if 'startkde' in names:
+            return 'kde'
+
+        return 'Unknown'
+
     @classmethod
     @functools.lru_cache(maxsize=1)
     def detect(cls):
         """
-        Return desktop name (xfce, gnome, kde or Unknown)
+        Return desktop name or Unknown)
         """
         name = 'Unknown'
         if 'DISPLAY' in os.environ:
-            if cls.has_macos():
-                name = 'macos'
-            elif cls.has_xfce():
+            if cls.has_xfce():
                 name = 'xfce'
             elif cls.has_gnome():
                 name = 'gnome'
             elif cls.has_kde():
                 name = 'kde'
-            elif cls.has_xfce(guess=True):
-                name = 'xfce'
+            if cls.has_macos():
+                name = 'macos'
+            else:
+                name = cls.guess()
 
         return name
 

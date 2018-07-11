@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for GNOME/KDE/XFCE screen lock
+Wrapper for Linux/Mac screen locking
 """
 
 import glob
@@ -62,7 +62,7 @@ class Main(object):
             args=['lock-session'],
             errors='ignore'
         )
-        if not xlock.is_found():
+        if not xlock.is_found() or desktop == 'xfce':
             xlock = command_mod.Command(
                 'light-locker-command',
                 args=['--lock'],
