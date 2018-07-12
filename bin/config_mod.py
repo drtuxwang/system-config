@@ -16,11 +16,11 @@ import shutil
 import bson
 import yaml
 
-if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.4, < 4.0).")
 
-RELEASE = '1.1.0'
-VERSION = 20180313
+RELEASE = '1.1.1'
+VERSION = 20180712
 
 
 class Data(object):

@@ -13,8 +13,8 @@ import sys
 import psutil
 
 
-if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
+if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.4, < 4.0).")
 
 RELEASE = '2.2.0'
 VERSION = 20180711

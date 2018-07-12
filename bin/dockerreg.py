@@ -30,8 +30,8 @@ import requests
 
 import config_mod
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.4, < 4.0).")
 
 # Maximum number of repositories (bug in Registry v2 returns only 100)
 # Effects Go array size and huge number can crash Registry
