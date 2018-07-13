@@ -1,22 +1,22 @@
 PULL_IMAGES := \
-	alpine-3.6 \
-	alpine-3.6-i386 \
-	busybox-1.28 \
-	centos-6 \
-	centos-7 \
+	alpine \
+	alpine-i386 \
+	busybox \
+	centos-old \
+	centos \
 	clearlinux \
-	debian-8 \
-	debian-9 \
-	debian-testing \
-	etcd-3.2.20 \
-	jenkins-lts \
-	mongo-3.4.14 \
+	debian-old \
+	debian \
+	debian-test \
+	etcd \
+	jenkins \
+	mongo \
 	oracle-xe \
-	registry-2.6 \
-	ubuntu-14.04 \
-	ubuntu-16.04 \
-	ubuntu-18.04 \
-	ubuntu-18.04-i386
+	registry \
+	ubuntu-old \
+	ubuntu \
+	ubuntu-i386 \
+	ubuntu-test
 BUILD_IMAGES := $(PULL_IMAGES) sudo
 CLEAN_IMAGES := $(BUILD_IMAGES)
 
@@ -45,6 +45,11 @@ build:
 		make -C $$IMAGE build || exit 1:; \
 	done
 	docker images
+
+version:
+	@for IMAGE in $(BUILD_IMAGES); do \
+		make --no-print-directory -C $$IMAGE version || exit 1; \
+	done
 
 gc:
 	docker ps -f status=exited -q | xargs -r docker rm -v

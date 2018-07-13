@@ -35,5 +35,8 @@ run:
 		--hostname `uname -n`-$(NAME) \
 		$(IMAGE) $(COMMAND) ||:
 
+version:
+	@echo "`pwd`: scratch"
+
 clean:
 	docker rmi -f $(IMAGE) ||:

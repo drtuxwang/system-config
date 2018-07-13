@@ -870,85 +870,85 @@ cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
 cookiecutter/docker/cookiecutter.json
 
 docker/Makefile                                   Makefile for building all images
-docker/alpine-3.6/Makefile                        alpine:3.6 based linux
-docker/alpine-3.6/Dockerfile
-docker/alpine-3.6-i386/Makefile                   i386/alpine:3.6 based linux
-docker/alpine-3.6-i386/Dockerfile
-docker/busybox-1.28/Makefile                      busybox:1.28 based linux
-docker/busybox-1.28/Dockerfile
-docker/centos-6/Makefile                          centos:6 based linux
-docker/centos-6/Dockerfile-base
-docker/centos-6/Dockerfile
-docker/centos-6/sandbox/Dockerfile                centos:6 based sandbox app
-docker/centos-6/sandbox/Makefile
-docker/centos-7/Makefile                          centos:7 based linux
-docker/centos-7/Dockerfile-base
-docker/centos-7/Dockerfile
-docker/centos-7/sandbox/Dockerfile                centos:7 based sandbox app
-docker/centos-7/sandbox/Makefile
+docker/alpine/Makefile                            alpine:3.6 based linux
+docker/alpine/Dockerfile
+docker/alpine-i386/Makefile                       i386/alpine:3.6 based linux
+docker/alpine-i386/Dockerfile
+docker/busybox/Makefile                           busybox:1.28 based linux
+docker/busybox/Dockerfile
+docker/centos-old/Makefile                        centos:6 based linux
+docker/centos-old/Dockerfile-base
+docker/centos-old/Dockerfile
+docker/centos-old/sandbox/Dockerfile              centos:6 based sandbox app
+docker/centos-old/sandbox/Makefile
+docker/centos/Makefile                            centos:7 based linux
+docker/centos/Dockerfile-base
+docker/centos/Dockerfile
+docker/centos/sandbox/Dockerfile                  centos:7 based sandbox app
+docker/centos/sandbox/Makefile
 docker/clearlinux/Makefile                        clearlinux:latest based linux
 docker/clearlinux/Dockerfile
-docker/debian-8/Makefile                          debian:8-slim based linux
-docker/debian-8/Dockerfile
-docker/debian-8/Dockerfile-base
-docker/debian-8/sandbox/Makefile                  debian:8-slim based sandbox app
-docker/debian-8/sandbox/Dockerfile
-docker/debian-9/Makefile                          debian:9-slim based linux
-docker/debian-9/Dockerfile
-docker/debian-9/Dockerfile-base
-docker/debian-9/sandbox/Makefile                  debian:9-slim based sandbox app
-docker/debian-9/sandbox/Dockerfile
-docker/debian-testing/Makefile                    debian:testing-slim based linux
-docker/debian-testing/Dockerfile
-docker/debian-testing/Dockerfile-base
-docker/debian-testing/sandbox/Makefile            debina:testing-slim based sandbox app
-docker/debian-testing/sandbox/Dockerfile
-docker/etcd-3.2.20/Makefile                       gcr.io/etcd-development/etcd:v3.2.20 based app
-docker/etcd-3.2.20/Dockerfile
-docker/etcd-3.2.20/cluster/Makefile               gcr.io/etcd-development/etcd:v3.2.20 based cluster
-docker/etcd-3.2.20/cluster/docker-compose.yml
-docker/etcd-3.2.20/cluster/docker-compose-migrate.yml
-docker/etcd-3.2.20/cluster/docker-compose-restore.yml
+docker/debian-old/Makefile                        debian:8-slim based linux
+docker/debian-old/Dockerfile
+docker/debian-old/Dockerfile-base
+docker/debian-old/sandbox/Makefile                debian:8-slim based sandbox app
+docker/debian-old/sandbox/Dockerfile
+docker/debian/Makefile                            debian:9-slim based linux
+docker/debian/Dockerfile
+docker/debian/Dockerfile-base
+docker/debian/sandbox/Makefile                    debian:9-slim based sandbox app
+docker/debian/sandbox/Dockerfile
+docker/debian-test/Makefile                       debian:testing-slim based linux
+docker/debian-test/Dockerfile
+docker/debian-test/Dockerfile-base
+docker/debian-test/sandbox/Makefile               debian:testing-slim based sandbox app
+docker/debian-test/sandbox/Dockerfile
+docker/etcd/Makefile                              gcr.io/etcd-development/etcd:v3.2.20 based app
+docker/etcd/Dockerfile
+docker/etcd/cluster/Makefile                      gcr.io/etcd-development/etcd:v3.2.20 based cluster
+docker/etcd/cluster/docker-compose.yml
+docker/etcd/cluster/docker-compose-migrate.yml
+docker/etcd/cluster/docker-compose-restore.yml
 docker/sudo/Makefile                              sudo scratch image for jail breaking app
 docker/sudo/Dockerfile
-docker/jenkins-lts/Makefile                       jenkins/jenkins:lts based server app
-docker/jenkins-lts/Dockerfile
-docker/mongo-3.4.14/Makefile                      mongo:3.4.14 based database app
-docker/mongo-3.4.14/Dockerfile
+docker/jenkins/Makefile                           jenkins/jenkins:lts based server app
+docker/jenkins/Dockerfile
+docker/mongo/Makefile                             mongo:3.4.14 based database app
+docker/mongo/Dockerfile
 docker/oracle-xe/Makefile                         wnameless/oracle-xe-11g:latest based database app
 docker/oracle-xe/Dockerfile
-docker/registry-2.6/Makefile                      registry:2.6 based server app
-docker/registry-2.6/Dockerfile
-docker/registry-2.6/files/config.yml
-docker/ubuntu-14.04/Makefile                      ubuntu:14.04 based linux
-docker/ubuntu-14.04/Dockerfile
-docker/ubuntu-14.04/Dockerfile-base
-docker/ubuntu-14.04/sandbox/Makefile              ubuntu:14.04 based sandbox app
-docker/ubuntu-14.04/sandbox/Dockerfile
-docker/ubuntu-16.04/Makefile                      ubuntu:16.04 based linux
-docker/ubuntu-16.04/Dockerfile
-docker/ubuntu-16.04/Dockerfile-base
-docker/ubuntu-16.04/sandbox/Makefile              ubuntu:16.04 based sandbox app
-docker/ubuntu-16.04/sandbox/Dockerfile
-docker/ubuntu-18.04/Makefile                      ubuntu:18.04 based linux
-docker/ubuntu-18.04/Dockerfile-base
-docker/ubuntu-18.04/Dockerfile
-docker/ubuntu-18.04/devpi/Makefile                ubuntu:18.04 based devpi server aoo
-docker/ubuntu-18.04/devpi/Dockerfile
-docker/ubuntu-18.04/docker/Makefile               ubuntu:18.04 based docker client app
-docker/ubuntu-18.04/docker/Dockerfile
-docker/ubuntu-18.04/nginx/Makefile                ubuntu:18.04 based NGINX proxy app
-docker/ubuntu-18.04/nginx/Dockerfile
-docker/ubuntu-18.04/nginx/files/nginx-proxy.conf
-docker/ubuntu-18.04/wine/Makefile                 ubuntu:18.04 based wine app
-docker/ubuntu-18.04/wine/Dockerfile
-docker/ubuntu-18.04/sandbox/Makefile              ubuntu:18.04 based sandbox app
-docker/ubuntu-18.04/sandbox/Dockerfile
-docker/ubuntu-18.04-i386/Makefile                 i386/ubuntu:18.04 based linux
-docker/ubuntu-18.04-i386/Dockerfile-base
-docker/ubuntu-18.04-i386/Dockerfile
-docker/ubuntu-18.04-i386/sandbox/Makefile         i386/ubuntu:18.04 based sandbox app
-docker/ubuntu-18.04-i386/sandbox/Dockerfile
+docker/registry/Makefile                          registry:2.6 based Docker Registry server app
+docker/registry/Dockerfile
+docker/registry/files/config.yml
+docker/ubuntu-old/Makefile                        ubuntu:16.04 based linux
+docker/ubuntu-old/Dockerfile
+docker/ubuntu-old/Dockerfile-base
+docker/ubuntu-old/sandbox/Makefile                ubuntu:16.04 based sandbox app
+docker/ubuntu-old/sandbox/Dockerfile
+docker/ubuntu/Makefile                            ubuntu:18.04 based linux
+docker/ubuntu/Dockerfile-base
+docker/ubuntu/Dockerfile
+docker/ubuntu/devpi/Makefile                      ubuntu:18.04 based devpi server aoo
+docker/ubuntu/devpi/Dockerfile
+docker/ubuntu/docker/Makefile                     ubuntu:18.04 based docker client app
+docker/ubuntu/docker/Dockerfile
+docker/ubuntu/nginx/Makefile                      ubuntu:18.04 based NGINX proxy app
+docker/ubuntu/nginx/Dockerfile
+docker/ubuntu/nginx/files/nginx-proxy.conf
+docker/ubuntu/wine/Makefile                       ubuntu:18.04 based wine app
+docker/ubuntu/wine/Dockerfile
+docker/ubuntu/sandbox/Makefile                    ubuntu:18.04 based sandbox app
+docker/ubuntu/sandbox/Dockerfile
+docker/ubuntu-i386/Makefile                       i386/ubuntu:18.04 based linux
+docker/ubuntu-i386/Dockerfile-base
+docker/ubuntu-i386/Dockerfile
+docker/ubuntu-i386/sandbox/Makefile               i386/ubuntu:18.04 based sandbox app
+docker/ubuntu-i386/sandbox/Dockerfile
+docker/ubuntu-test/Makefile                       ubuntu:18.10 based linux
+docker/ubuntu-test/Dockerfile
+docker/ubuntu-test/Dockerfile-base
+docker/ubuntu-test/sandbox/Makefile               ubuntu:18.10 based sandbox app
+docker/ubuntu-test/sandbox/Dockerfile
 
 kubernetes/ubuntu/Makefile                        Kubernetes: Ubuntu example
 kubernetes/ubuntu/test-ns.yml

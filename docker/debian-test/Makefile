@@ -1,6 +1,8 @@
-NAME := clearlinux
-VERSION = latest
+NAME := debian
+VERSION = testing
+BASE_IMAGE := drtuxwang/$(NAME)-base:$(VERSION)
 IMAGE := drtuxwang/$(NAME):$(VERSION)
+DEPENDENT_IMAGES := sandbox
 TOPDIR := ../..
 
 FLAGS := --rm \
@@ -17,7 +19,7 @@ default: build
 	docker images
 
 pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	docker pull `grep FROM Dockerfile-base | cut -f2 -d" "`
 
 build:
 	rm -rf tmpdir
@@ -26,17 +28,26 @@ build:
 	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
 	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
 	$(TOPDIR)/bin/fmod -R *
+	@echo "\n*** Building \"$(BASE_IMAGE)\" Docker image ***"
+	docker build -f Dockerfile-base -t $(BASE_IMAGE) .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build -f Dockerfile -t $(IMAGE) .
 	rm -rf tmpdir
+
+	for IMAGE in $(DEPENDENT_IMAGES); do \
+		make -C $$IMAGE build || exit 1; \
+	done
 
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) ||:
+	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) || exit 0
 
 version:
-	@docker run $(FLAGS) $(IMAGE) cat /usr/share/clear/version 2> /dev/null | awk '{print $1}' | sed -e "s@^@`pwd`: Clear @"
+	@docker run $(FLAGS) $(IMAGE) cat /etc/debian_version 2> /dev/null | sed -e "s@^@`pwd`: Debian @"
 
 clean:
-	docker rmi -f $(IMAGE) ||:
+	for IMAGE in $(DEPENDENT_IMAGES); do \
+		make -C $$IMAGE clean; \
+	done
+	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

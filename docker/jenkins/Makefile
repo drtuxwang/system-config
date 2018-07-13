@@ -1,5 +1,5 @@
-NAME := oracle-xe
-VERSION = latest
+NAME := jenkins
+VERSION = lts
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../..
 
@@ -8,7 +8,7 @@ FLAGS := --rm \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
-	--memory=2000m \
+	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
 
@@ -32,13 +32,14 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
 		--privileged=true \
-		--publish 1521:1521 \
+		--volume=/var/lib/jenkins:/var/lib/jenkins \
+		--publish 8080:8080 \
 		--hostname $(NAME) \
-		--workdir /u01/app/oracle/product/11.2.0/xe \
+		--workdir /var/lib/jenkins \
 		$(IMAGE) ||:
 
 version:
-	@docker run -it $(FLAGS) $(IMAGE) bash -i -c dbv 2> /dev/null | grep "^DBVERIFY: Release" | sed -e "s@^DBVERIFY: Release@`pwd`: Oracle XE@;s@ -.*@@"
+	@docker run $(FLAGS) --entrypoint bash $(IMAGE) jenkins.sh --version 2> /dev/null | sed -e "s@^@`pwd`: Jenkins @"
 
 clean:
 	docker rmi -f $(IMAGE) ||:

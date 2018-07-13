@@ -1,5 +1,5 @@
-NAME := oracle-xe
-VERSION = latest
+NAME := registry
+VERSION = 2.6
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../..
 
@@ -8,7 +8,7 @@ FLAGS := --rm \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
-	--memory=2000m \
+	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
 
@@ -21,7 +21,8 @@ pull:
 
 build:
 	rm -rf tmpdir
-	mkdir -p tmpdir/config
+	mkdir -p tmpdir/bin tmpdir/config
+	cp -p $(TOPDIR)/config/ash-2bash tmpdir/bin/bash
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
@@ -31,14 +32,14 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
-		--privileged=true \
-		--publish 1521:1521 \
+		--volume=/var/lib/registry:/var/lib/registry \
+		--publish 5000:5000 \
 		--hostname $(NAME) \
-		--workdir /u01/app/oracle/product/11.2.0/xe \
+		--workdir /var/lib/registry \
 		$(IMAGE) ||:
 
 version:
-	@docker run -it $(FLAGS) $(IMAGE) bash -i -c dbv 2> /dev/null | grep "^DBVERIFY: Release" | sed -e "s@^DBVERIFY: Release@`pwd`: Oracle XE@;s@ -.*@@"
+	@docker run $(FLAGS) $(IMAGE) registry --version 2> /dev/null | sed -e "s@.* v@`pwd`: Registry @"
 
 clean:
 	docker rmi -f $(IMAGE) ||:
