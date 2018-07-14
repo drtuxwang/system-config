@@ -35,7 +35,7 @@ run:
 	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) ||:
 
 version:
-	@docker run $(FLAGS) $(IMAGE) cat /usr/share/clear/version 2> /dev/null | awk '{print $1}' | sed -e "s@^@`pwd`: Clear @"
+	@docker run $(FLAGS) $(IMAGE) cat /usr/share/clear/version 2> /dev/null | awk '{print $1}' | sed -e "s@^@`pwd`: Clear Linux @"
 
 clean:
 	docker rmi -f $(IMAGE) ||:

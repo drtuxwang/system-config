@@ -43,7 +43,8 @@ run:
 	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) || exit 0
 
 version:
-	@docker run $(FLAGS) $(IMAGE) cat /etc/system-release 2> /dev/null | sed -e "s@.*release @`pwd`: @" | awk '{printf("%s CentOS %s\n", $$1, $$2)}'
+	@docker run $(FLAGS) $(IMAGE) cat /etc/system-release 2> /dev/null | \
+		sed -e "s@.*release @`pwd`: @" | awk '{printf("%s CentOS Linux %s\n", $$1, $$2)}'
 
 clean:
 	for IMAGE in $(DEPENDENT_IMAGES); do \

@@ -38,7 +38,8 @@ run:
 		$(IMAGE) ||:
 
 version:
-	@docker run $(FLAGS) $(IMAGE) mongod --version 2> /dev/null | grep "^db version v" | sed -e "s@^.*version v@`pwd`: Mongo @"
+	@docker run $(FLAGS) $(IMAGE) mongod --version 2> /dev/null \
+		| grep "^db version v" | sed -e "s@^@`pwd`: Mongo @;s@version v@@"
 
 clean:
 	docker rmi -f $(IMAGE) ||:

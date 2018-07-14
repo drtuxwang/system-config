@@ -35,7 +35,8 @@ run:
 	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) ||:
 
 version:
-	@docker run $(FLAGS) $(IMAGE) cat /etc/alpine-release 2> /dev/null | sed -e "s@^@`pwd`: Alpine @"
+	@docker run $(FLAGS) $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
+		sed -e "s@^@`pwd`: Alpine Linux @"
 
 clean:
 	docker rmi -f $(IMAGE) ||:

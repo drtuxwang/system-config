@@ -43,7 +43,8 @@ run:
 	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) || exit 0
 
 version:
-	@docker run $(FLAGS) $(IMAGE) cat /etc/os-release 2> /dev/null | grep "^VERSION=" | sed -e "s@.*=\"@`pwd`: Ubuntu @;s@ (.*@@"
+	@docker run $(FLAGS) $(IMAGE) cat /etc/os-release 2> /dev/null | \
+		grep "^VERSION=" | sed -e "s@.*=\"@`pwd`: Ubuntu Linux @;s@ (.*@@"
 
 clean:
 	for IMAGE in $(DEPENDENT_IMAGES); do \

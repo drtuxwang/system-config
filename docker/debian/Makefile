@@ -43,7 +43,8 @@ run:
 	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) || exit 0
 
 version:
-	@docker run $(FLAGS) $(IMAGE) cat /etc/debian_version 2> /dev/null | sed -e "s@^@`pwd`: Debian @"
+	@docker run $(FLAGS) $(IMAGE) cat /etc/debian_version 2> /dev/null | \
+		sed -e "s@^@`pwd`: Debian Linux @"
 
 clean:
 	for IMAGE in $(DEPENDENT_IMAGES); do \
