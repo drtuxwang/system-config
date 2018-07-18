@@ -13,6 +13,7 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	`ls -1d /* | grep -v "/proc$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}'` \
+	--volume="/etc/hosts:/etc/hosts" \
 	--volume="/etc/passwd:/etc/passwd:ro" \
 	--volume="/etc/group:/etc/group:ro" \
 	$(FLAGS)
