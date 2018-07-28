@@ -22,7 +22,7 @@ CLEAN_IMAGES := $(BUILD_IMAGES)
 
 # Default Sandbox distro
 ifndef DIST
-	DIST=ubuntu-18.04
+	DIST=ubuntu
 endif
 
 
@@ -72,4 +72,4 @@ run-sudo:
 	make -C sudo run
 
 run-wine:
-	make -C ubuntu-18.04/wine run
+	make -C ubuntu/wine run
