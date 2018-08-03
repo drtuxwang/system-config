@@ -142,11 +142,12 @@ class Main(object):
             task2 = subtask_mod.Task(self._tar.get_cmdline() + [control_file])
             task2.run(replace=(os.curdir, 'DEBIAN'))
         else:
-            try:
-                os.mkdir('DEBIAN')
-            except OSError:
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot create "DEBIAN" directory.')
+            if not os.path.isdir('DEBIAN'):
+                try:
+                    os.mkdir('DEBIAN')
+                except OSError:
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot create "DEBIAN" directory.')
             task2 = subtask_mod.Task(self._tar.get_cmdline() + [
                 os.path.join(os.pardir, control_file)
             ])
