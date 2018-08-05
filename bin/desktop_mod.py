@@ -8,16 +8,70 @@ Copyright GPL v2: 2013-2018 By Dr Colin Kong
 import functools
 import getpass
 import os
+import subprocess
 import sys
 
-import psutil
+
+if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+RELEASE = '2.3.0'
+VERSION = 20180805
 
 
-if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.4, < 4.0).")
+class _System(object):
 
-RELEASE = '2.2.0'
-VERSION = 20180711
+    @staticmethod
+    def is_windows():
+        """
+        Return True if running on Windows.
+        """
+        if os.name == 'posix':
+            if os.uname()[0].startswith('cygwin'):
+                return True
+        elif os.name == 'nt':
+            return True
+
+        return False
+
+    @staticmethod
+    def _locate_program(program):
+        for directory in os.environ['PATH'].split(os.pathsep):
+            file = os.path.join(directory, program)
+            if os.path.isfile(file):
+                break
+        else:
+            return None
+        return file
+
+    @classmethod
+    def run_program(cls, command):
+        """
+        Run program in batch mode and return list of lines.
+        """
+        program = cls._locate_program(command[0])
+        if not program:
+            return []
+
+        try:
+            child = subprocess.Popen(
+                [program] + command[1:],
+                shell=False,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+            )
+        except OSError:
+            return []
+
+        lines = []
+        while True:
+            try:
+                line = child.stdout.readline().decode('utf-8', 'replace')
+            except (KeyboardInterrupt, OSError):
+                break
+            if not line:
+                break
+            lines.append(line.rstrip('\r\n'))
+        return lines
 
 
 class Desktop(object):
@@ -74,16 +128,13 @@ class Desktop(object):
         """
         Guess desktop based on session user is running. Return name or Unknown.
         """
-        username = getpass.getuser()
-        names = set([
-            process.name()
-            for process in psutil.process_iter()
-            if process.username() == username
-        ])
+        command = ['ps', '-o', 'args', '-u', getpass.getuser()]
+        lines = _System.run_program(command)
+        names = set([os.path.basename(line.split()[0]) for line in lines])
 
         if 'xfce4-session' in names:
             return 'xfce'
-        if set(['gnome-session', 'gnome-session-binary']) & names:
+        if set(['gnome-panel', 'gnome-session', 'gnome-session-binary']) & names:
             return 'gnome'
         if 'startkde' in names:
             return 'kde'
@@ -106,7 +157,7 @@ class Desktop(object):
                 name = 'kde'
             if cls.has_macos():
                 name = 'macos'
-            else:
+            elif not _System.is_windows():
                 name = cls.guess()
 
         return name
