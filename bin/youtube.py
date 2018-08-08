@@ -41,8 +41,8 @@ class Options(object):
             type=int,
             dest='height',
             metavar='height',
-            default=360,
-            help='Select video height (default 360).'
+            default=480,
+            help='Select video height (default 480).'
         )
         parser.add_argument(
             '-v',
