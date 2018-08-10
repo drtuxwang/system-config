@@ -16,9 +16,9 @@ then
     then
         if [ $# = 0 ]
         then
-            exec su - $SANDBOX_USER
+            HOME=$(grep "^$SANDBOX_USER:" /etc/passwd | cut -f6 -d:) exec su -p - $SANDBOX_USER
         else
-            echo "$@" | su - $SANDBOX_USER -c bash
+            echo "$@" | HOME=$(grep "^$SANDBOX_USER:" /etc/passwd | cut -f6 -d:) su -p - $SANDBOX_USER -c bash
             exit $?
         fi
     fi
