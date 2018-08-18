@@ -18,6 +18,84 @@ bin/power_mod.py       Python power handling module
 bin/subtask_mod.py     Python sub task handling module
 bin/task_mod.py        Python task handling utility module
 
+bin/python             Python startup (allowing non systems port)
+bin/python.bat
+bin/python2
+bin/python2.7
+bin/python2.7.bat
+bin/python2.bat
+bin/python3
+bin/python3.0
+bin/python3.1
+bin/python3.2
+bin/python3.3
+bin/python3.4
+bin/python3.5
+bin/python3.5.bat
+bin/python3.bat
+bin/python3.6
+bin/2to3               Python 3.x script wrappers (allowing non systems port)
+bin/2to3.bat
+bin/2to3-3.5
+bin/2to3-3.5.bat
+bin/ansible
+bin/ansible-playbook
+bin/aws
+bin/aws.bat
+bin/cookiecutter
+bin/cookiecutter.bat
+bin/cython
+bin/cython.bat
+bin/cythonize
+bin/cythonize.bat
+bin/devpi
+bin/devpi.bat
+bin/django-admin
+bin/django-admin.bat
+bin/docker-compose
+bin/docker-compose.bat
+bin/flask
+bin/flask.bat
+bin/glances
+bin/ipdb3
+bin/ipdb3.bat
+bin/ipython
+bin/ipython.bat
+bin/ipython3
+bin/ipython3.4.bat
+bin/jenkins-jobs
+bin/jenkins-jobs.bat
+bin/mid3iconv
+bin/mid3iconv.bat
+bin/mid3v2
+bin/mid3v2.bat
+bin/pep8
+bin/pep8.bat
+bin/pycodestyle
+bin/pycodestyle.bat
+bin/pip
+bin/pip.bat
+bin/pip3
+bin/pip3.bat
+bin/pip3.5
+bin/pip3.5.bat
+bin/pydoc3
+bin/pydoc3.bat
+bin/pydoc3.5
+bin/pydoc3.5.bat
+bin/pylint
+bin/pylint.bat
+bin/pytest
+bin/pytest.bat
+bin/tox
+bin/tox.bat
+bin/uncompyle6
+bin/uncompyle6.bat
+bin/virtualenv
+bin/virtualenv.bat
+bin/youtube-dl
+bin/youtube-dl.bat
+
 bin/7z                 Make a compressed archive in 7z format
 bin/7z.bat             (uses p7zip)
 bin/7za
@@ -393,12 +471,17 @@ bin/normalize          normalize wrapper (allowing non systems port)
 bin/normalize.py
 bin/ntpdate            Run daemon to update time once every 24 hours
 bin/ntpdate.py
-bin/ocr                Convert image file to text using OCR
-bin/ocr.py             (uses tesseract)
+bin/ocr                Convert image file to text using OCR (uses tesseract)
+bin/ocr.py
+bin/offline            Run a command without network access
+bin/offline.py
 bin/ogg                Encode OGG audio using avconv (libvorbis)
 bin/ogg.py
 bin/open               Open files using hardwired application mapping
 bin/open.py
+bin/par2               par2 wrapper (allowing non systems port)
+bin/par2.bat
+bin/par2.py
 bin/pause              Pause until user presses <ENTER/RETURN> key
 bin/pause.bat
 bin/pause.py
@@ -406,76 +489,9 @@ bin/pbsetup            pbsetup wrapper (allowing non systems port)
 bin/pbsetup.py         (Punk Buster)
 bin/pcheck             Check JPEG picture files
 bin/pcheck.py
-bin/psame              Show picture files with same finger print
-bin/psame.bat
-bin/psame.py
 bin/pcunix.bat         Start PCUNIX on Windows
 bin/pdf                Create PDF file from text/images/postscript/PDF files
 bin/pdf.py
-bin/2to3               Python 3.x script wrappers (allowing non systems port)
-bin/2to3.bat
-bin/2to3-3.5
-bin/2to3-3.5.bat
-bin/ansible
-bin/ansible-playbook
-bin/aws
-bin/aws.bat
-bin/cookiecutter
-bin/cookiecutter.bat
-bin/cython
-bin/cython.bat
-bin/cythonize
-bin/cythonize.bat
-bin/devpi
-bin/devpi.bat
-bin/django-admin
-bin/django-admin.bat
-bin/docker-compose
-bin/docker-compose.bat
-bin/flask
-bin/flask.bat
-bin/glances
-bin/ipdb3
-bin/ipdb3.bat
-bin/ipython
-bin/ipython.bat
-bin/ipython3
-bin/ipython3.4.bat
-bin/jenkins-jobs
-bin/jenkins-jobs.bat
-bin/mid3iconv
-bin/mid3iconv.bat
-bin/mid3v2
-bin/mid3v2.bat
-bin/pep8
-bin/pep8.bat
-bin/pycodestyle
-bin/pycodestyle.bat
-bin/pip
-bin/pip.bat
-bin/pip3
-bin/pip3.bat
-bin/pip3.5
-bin/pip3.5.bat
-bin/pydoc3
-bin/pydoc3.bat
-bin/pydoc3.5
-bin/pydoc3.5.bat
-bin/pylint
-bin/pylint.bat
-bin/pytest
-bin/pytest.bat
-bin/tox
-bin/tox.bat
-bin/virtualenv
-bin/virtualenv.bat
-bin/youtube-dl
-bin/youtube-dl.bat
-bin/offline            Run a command without network access
-bin/offline.py
-bin/par2               par2 wrapper (allowing non systems port)
-bin/par2.bat
-bin/par2.py
 bin/pidgin             Pidgin wrapper (allowing non systems port)
 bin/pidgin.bat
 bin/pidgin.py
@@ -497,28 +513,15 @@ bin/pop.py
 bin/procexp            Windows procexp wrapper (allowing non systems port)
 bin/procexp.bat
 bin/procexp.py
+bin/psame              Show picture files with same finger print
+bin/psame.bat
+bin/psame.py
 bin/pyld.sh            Python loading module for sh/ksh/bash wrapper scripts
 bin/pyld.py            Load Python main program as module (must have Main class)
 bin/test_pyld.py       Unit testing suite for "pyld.py"
 bin/pyprof             Profile Python 3.x program
 bin/pyprof.bat
 bin/pyprof.py
-bin/python             Python startup (allowing non systems port)
-bin/python.bat
-bin/python2
-bin/python2.7
-bin/python2.7.bat
-bin/python2.bat
-bin/python3
-bin/python3.0
-bin/python3.1
-bin/python3.2
-bin/python3.3
-bin/python3.4
-bin/python3.5
-bin/python3.5.bat
-bin/python3.bat
-bin/python3.6
 bin/pyz                Make a Python3 ZIP Application in PYZ format
 bin/pyz.py
 bin/qmail              Qwikmail, commandline E-mailer
