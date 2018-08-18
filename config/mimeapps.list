@@ -1,25 +1,5 @@
 [Added Associations]
-application/oxps=evince.desktop
-application/pdf=evince.desktop
-application/postscript=evince.desktop
-application/vnd.ms-xpsdocument=evince.desktop
-application/x-bzdvi=evince.desktop
-application/x-bzpdf=evince.desktop
-application/x-bzpostscript=evince.desktop
-application/x-cb7=evince.desktop
-application/x-cbr=evince.desktop
-application/x-cbt=evince.desktop
-application/x-cbz=evince.desktop
-application/x-dvi=evince.desktop
-application/x-gzdvi=evince.desktop
-application/x-gzpdf=evince.desktop
-application/x-gzpostscript=evince.desktop
-application/x-xzpdf=evince.desktop
-image/tiff=evince.desktop
-image/vnd.djvu=evince.desktop
-image/x-bzeps=evince.desktop
-image/x-eps=evince.desktop
-image/x-gzeps=evince.desktop
+application/pdf=chromium-browser.desktop
 image/bmp=userapp-gqview.desktop
 image/gif=userapp-gqview.desktop
 image/jpeg=userapp-gqview.desktop
