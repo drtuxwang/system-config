@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: ubuntu
-    matchLabels:
+    matchLabels: ubuntu
   name: ubuntu
   namespace: default
 spec:
