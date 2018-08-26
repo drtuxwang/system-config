@@ -14,10 +14,6 @@ apps:
     command:
     - soffice
     daemon: true
-  doc_viewer:
-    command:
-    - evince
-    daemon: true
   file_manager:
     command:
     - xdesktop
@@ -28,6 +24,10 @@ apps:
   image_viewer:
     command:
     - gqview
+    daemon: true
+  pdf_annotator:
+    command:
+    - xournal
     daemon: true
   text_editor:
     command:
@@ -54,9 +54,6 @@ apps:
   ungz:
     command:
     - ungz
-  unpdf:
-    command:
-    - unpdf
   unrpm:
     command:
     - unrpm
@@ -148,8 +145,8 @@ bindings:
     open: audio_editor
     view: audio_player
   pdf:
-    open: unpdf
-    view: doc_viewer
+    open: pdf_annotator
+    view: web_browser
   png:
     open: image_editor
     view: image_viewer
@@ -221,6 +218,9 @@ bindings:
   xlsx:
     open: doc_editor
     view: doc_editor
+  xoj:
+    open: pdf_annotator
+    view: pdf_annotator
   xz:
     open: unxz
   yaml:

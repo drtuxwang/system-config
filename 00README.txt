@@ -729,6 +729,8 @@ bin/xmlcheck.py
 bin/xmlformat          XML file re-formatter
 bin/xmlformat.bat
 bin/xmlformat.py
+bin/xournal            PDF annotator
+bin/xournal.py
 bin/xreset             Reset to default screen resolution
 bin/xreset.py
 bin/xrun               Run command in new terminal session
