@@ -14,6 +14,10 @@ apps:
     command:
     - soffice
     daemon: true
+  doc_viewer:
+    command:
+    - evince
+    daemon: true
   file_manager:
     command:
     - xdesktop
@@ -145,7 +149,7 @@ bindings:
     view: audio_player
   pdf:
     open: unpdf
-    view: web_browser
+    view: doc_viewer
   png:
     open: image_editor
     view: image_viewer
