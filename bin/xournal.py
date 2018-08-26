@@ -46,7 +46,8 @@ class Main(object):
                     argv.append(arg)
             sys.argv = argv
 
-    def run(self):
+    @staticmethod
+    def run():
         """
         Start program
         """
@@ -57,7 +58,6 @@ class Main(object):
         )
         pattern = ('^$|: Gtk-WARNING ')
 
-        task = subtask_mod.Background(xournal.get_cmdline())
         subtask_mod.Background(xournal.get_cmdline()).run(pattern=pattern)
 
 
