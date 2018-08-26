@@ -8,6 +8,11 @@ frame .tool -bg "#cccccc"
     }
     pack .tool.libreoffice -side top
 
+    button .tool.xournal -width 10 -bg "#ffcc00" -text Xournal -command {
+        exec xournal &
+    }
+    pack .tool.xournal -side top
+
     button .tool.xedit -width 10 -bg "#ffcc00" -text Xedit -command {
         exec xedit &
     }
