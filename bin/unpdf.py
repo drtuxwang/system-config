@@ -122,9 +122,9 @@ class Main(object):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" PDF file.')
             prefix = os.path.basename(file).rsplit('.', 1)[0]
-            print('Unpacking "{0:s}-*.jpg" file...'.format(prefix))
+            print('Unpacking "{0:s}-page*.jpg" file...'.format(prefix))
             task = subtask_mod.Task(command.get_cmdline() + [
-                '-sOutputFile=' + prefix + '-%02d.jpg',
+                '-sOutputFile=' + prefix + '-page%02d.jpg',
                 '-c',
                 'save',
                 'pop',
