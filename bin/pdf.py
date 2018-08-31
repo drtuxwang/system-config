@@ -175,8 +175,6 @@ class Main(object):
             )
         convert = self._cache['convert']
 
-        # Imagemagick low quality method A4 = 595x842,
-        # rotate/resize to 545x790 and add 20x20 border
         task = subtask_mod.Batch(
             convert.get_cmdline() + ['-verbose', file, '/dev/null'])
         task.run(pattern='^' + file + ' ', error2output=True)
@@ -185,12 +183,14 @@ class Main(object):
                 sys.argv[0] + ': Cannot read "' + file + '" image file.')
         xsize, ysize = task.get_output(
             )[0].split('+')[0].split()[-1].split('x')
+        cmdline = convert.get_cmdline() + ['-page', 'a4']
+        if 'page' not in file:
+            cmdline.extend(['-border', '30', '-bordercolor', 'white'])
         if int(xsize) > int(ysize):
-            task = subtask_mod.Batch(convert.get_cmdline() + [
-                '-page', 'a4', '-rotate', '90', file, 'ps:' + self._tmpfile])
-        else:
-            task = subtask_mod.Batch(convert.get_cmdline() + [
-                '-page', 'a4', file, 'ps:' + self._tmpfile])
+            cmdline.extend(['-rotate', '270'])
+        cmdline.extend([file, 'pdf:' + self._tmpfile])
+
+        task = subtask_mod.Batch(cmdline)
         task.run()
         if task.get_exitcode():
             raise SystemExit(
