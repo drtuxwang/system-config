@@ -61,7 +61,8 @@ class Main(object):
         """
         Start program
         """
-        command = command_mod.Command('open', errors='stop')
+        browser, *flags = config_mod.Config().get_app('web_browser')[0]
+        command = command_mod.Command(browser, args=flags, errors='stop')
         if len(sys.argv) > 1:
             command.set_args(sys.argv[1:])
         else:
