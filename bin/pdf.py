@@ -49,18 +49,6 @@ class Options(object):
         """
         return self._files
 
-    def get_pages(self):
-        """
-        Return pages per page.
-        """
-        return self._args.pages[0]
-
-    def get_paper(self):
-        """
-        Return paper size.
-        """
-        return self._args.paper[0]
-
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Create PDF file from text/images/'
@@ -73,20 +61,6 @@ class Options(object):
             type=int,
             default=[100],
             help='Select characters per line.'
-        )
-        parser.add_argument(
-            '-pages',
-            nargs=1,
-            type=int,
-            choices=[1, 2, 4, 6, 8],
-            default=[1],
-            help='Select pages per page (1, 2, 4, 6, 8).'
-        )
-        parser.add_argument(
-            '-paper',
-            nargs=1,
-            default=['A4'],
-            help='Select paper type. Default is A4.'
         )
         parser.add_argument(
             'files',
@@ -108,11 +82,6 @@ class Options(object):
             raise SystemExit(
                 sys.argv[0] + ': You must specific a positive integer for '
                 'characters per line.'
-            )
-        if self._args.pages[0] < 1:
-            raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
-                'pages per page.'
             )
 
         if self._args.files[0].endswith('.pdf'):
@@ -199,38 +168,20 @@ class Main(object):
             )
         return 'IMAGE file "' + file + '"'
 
-    def _postscript(self, options, file):
+    def _postscript(self, file):
         try:
             with open(file, 'rb') as ifile:
-                if options.get_pages() == 1:
-                    try:
-                        with open(self._tmpfile, 'wb') as ofile:
-                            for line in ifile:
-                                ofile.write(line.rstrip(b"\r\n\004") + b"\n")
-                    except OSError:
-                        raise SystemExit(
-                            sys.argv[0] + ': Cannot create "' + self._tmpfile +
-                            '" temporary file.'
-                        )
-                    self._postscript_fix(self._tmpfile)
-                    return 'Postscript file "' + file + '"'
-                else:
-                    stdin = []
-                    for line in ifile:
-                        stdin.append(line.rstrip('\r\n' + chr(4)) + '\n')
-                    task = subtask_mod.Batch(self._psnup.get_cmdline())
-                    task.run(stdin=stdin, file=self._tmpfile)
-                    if task.get_exitcode():
-                        raise SystemExit(
-                            sys.argv[0] + ': Error code ' +
-                            str(task.get_exitcode()) + ' received from "' +
-                            task.get_file() + '".'
-                        )
-                    self._postscript_fix(self._tmpfile)
-                    return (
-                        'Postscript file "' + file + '" with ' +
-                        str(options.get_pages()) + ' pages per page'
+                try:
+                    with open(self._tmpfile, 'wb') as ofile:
+                        for line in ifile:
+                            ofile.write(line.rstrip(b"\r\n\004") + b"\n")
+                except OSError:
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot create "' + self._tmpfile +
+                        '" temporary file.'
                     )
+                self._postscript_fix(self._tmpfile)
+                return 'Postscript file "' + file + '"'
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + file + '" postscript file.')
@@ -267,7 +218,7 @@ class Main(object):
         if 'a2ps' not in self._cache:
             self._cache['a2ps'] = command_mod.Command('a2ps', errors='stop')
             self._cache['a2ps'].set_args([
-                '--media=A4',
+                '--media=a4',
                 '--columns=1',
                 '--header=',
                 '--left-footer=',
@@ -305,29 +256,13 @@ class Main(object):
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + file + '" text file.')
         task = subtask_mod.Batch(a2ps.get_cmdline())
-        if options.get_pages() == 1:
-            task.run(stdin=stdin, file=self._tmpfile)
-            if task.get_exitcode():
-                raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
-                )
-            return 'text file "' + file + '" with ' + str(chars) + ' columns'
-        else:
-            task.run(
-                pipes=[self._psnup],
-                stdin=stdin,
-                file=self._tmpfile
+        task.run(stdin=stdin, file=self._tmpfile)
+        if task.get_exitcode():
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
             )
-            if task.get_exitcode():
-                raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
-                )
-            return (
-                'text file "' + file + '" with ' + str(chars) +
-                ' columns and ' + str(options.get_pages()) + ' pages per page'
-            )
+        return 'text file "' + file + '" with ' + str(chars) + ' columns'
 
     def run(self):
         """
@@ -336,26 +271,18 @@ class Main(object):
         options = Options()
         self._cache = {}
 
-        tmpfile = (os.sep + os.path.join(
-            'tmp', 'pdf-' + getpass.getuser() + '.' + str(os.getpid())) + '-')
-        if options.get_pages() != 1:
-            self._psnup = command_mod.Command('psnup', errors='stop')
-            self._psnup.set_args([
-                '-p' + options.get_paper(),
-                '-m5',
-                '-' + str(options.get_pages())
-            ])
-        command = command_mod.Command(
-            'gs',
-            errors='stop'
-        )
+        tmpfile = os.sep + os.path.join(
+            'tmp',
+            'pdf-' + getpass.getuser() + '.' + str(os.getpid()),
+        ) + '-'
+        command = command_mod.Command('gs', errors='stop')
         command.set_args([
             '-q',
             '-dNOPAUSE',
             '-dBATCH',
             '-dSAFER',
             '-sDEVICE=pdfwrite',
-            '-sPAPERSIZE=' + options.get_paper().lower()
+            '-sPAPERSIZE=a4',
         ])
 
         images_extensions = config_mod.Config().get('image_extensions')
@@ -381,7 +308,7 @@ class Main(object):
                     self._image(file)
                     self._tempfiles.append(self._tmpfile + '.jpg')
                 elif ext in ('ps', 'eps'):
-                    self._postscript(options, file)
+                    self._postscript(file)
                 else:
                     self._text(options, file)
                 self._tempfiles.append(self._tmpfile)
