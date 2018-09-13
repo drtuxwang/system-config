@@ -47,7 +47,23 @@ class Main(object):
             sys.argv = argv
 
     @staticmethod
-    def _filter_run(command):
+    def _get_time(delays):
+        """
+        Convert delay to seconds.
+        """
+        seconds = 0
+        for delay in delays:
+            if delay.endswith('min'):
+                seconds += float(delay[:-3]) * 60
+            elif delay.endswith('ms'):
+                seconds += float(delay[:-2]) / 1000
+            else:
+                seconds += float(delay[:-1])
+
+        return seconds
+
+    @classmethod
+    def _filter_run(cls, command):
         """
         Remove buggy firmware & loader timings.
         """
@@ -60,13 +76,10 @@ class Main(object):
                 for timing in line.split(
                         'Startup finished in '
                 )[-1].split(' = ')[0].split(' + '):
-                    delay, name = timing.split()
+                    *delays, name = timing.split()
                     if name not in ('(firmware)', '(loader)'):
                         timings.append(timing)
-                        if delay.endswith('ms'):
-                            boot_time += float(delay[:-2])/1000
-                        else:
-                            boot_time += float(delay[:-1])
+                        boot_time += cls._get_time(delays)
                 print("Startup finished in {0:s} = {1:5.3f}s".format(
                     ' + '.join(timings),
                     boot_time
