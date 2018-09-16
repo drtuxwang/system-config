@@ -113,9 +113,9 @@ class Main(object):
             print("Sending to browser for printing: {0:s}".format(file))
             task = subtask_mod.Daemon(xweb.get_cmdline() + [tmpfile])
             task.run()
-            time.sleep(0.2)
+            time.sleep(0.5)
 
-        time.sleep(1)
+        time.sleep(2)
         shutil.rmtree(tmpdir)
 
     @classmethod
