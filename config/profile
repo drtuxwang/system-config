@@ -194,7 +194,6 @@ then
     alias ls="ls -C"
     alias quota="quota -v"
     alias resize='resize && eval `\\resize`'
-    alias sudo="\sudo -k; \sudo"
     if [ -x /usr/bin/vim ]
     then
         alias vi="vim -N -n -i NONE -T xterm"

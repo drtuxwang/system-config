@@ -558,6 +558,8 @@ bin/soffice.py
 bin/ssh.bat            Windows ssh wrapper (uses PuTTY)
 bin/ssync              Securely synchronize file system using SSH protocol
 bin/ssync.py           (uses rsync)
+bin/sudo               Wrapper for "sudo" command
+bin/sudo,py
 bin/sumount            Unmount file system securely mounted with SSH protocol
 bin/sumount.py
 bin/svncviewer         Securely connect to VNC server using SSH protocol

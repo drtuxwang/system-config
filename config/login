@@ -99,7 +99,6 @@ if ( $?TERM && -e "`\tty`" ) then
     alias h history 256
     alias ls "ls -C"
     alias quota "quota -v"
-    alias sudo "\sudo -k; \sudo"
     if ( -x /usr/bin/vim ) then
         alias vi "vim -N -n -i NONE -T xterm"
     endif
