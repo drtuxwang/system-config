@@ -346,6 +346,8 @@ class Main(object):
                 target_dir,
             )
             try:
+                if os.path.islink(target_dir):
+                    os.remove(target_dir)
                 os.mkdir(target_dir)
                 os.chmod(
                     target_dir,
