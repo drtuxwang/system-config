@@ -274,7 +274,10 @@ class Main(object):
                                         distribution,
                                         self._packages[dependency].get_url()
                                     )
-                                    logger.warning("  %s (New dependency)", file)
+                                    logger.warning(
+                                        "  %s (New dependency)",
+                                        file,
+                                    )
                                     print("  " + file, file=ofile)
         except OSError:
             raise SystemExit(
