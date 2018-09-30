@@ -1,12 +1,12 @@
-- name: "Ensure {{ home_directory }}/.config directory exists"
+- name: "Ensure .config directory exists"
   file:
     path={{ home_directory }}/.config/ state=directory
 
-- name: "Check for {{ home_directory }}/.config/mimeapps.list file"
+- name: "Check .config/mimeapps.list file"
   stat: path="{{ home_directory }}/.config/mimeapps.list"
   register: mimeapps_list
 
-- name: "Copy mimeapps.list file to {{ home_directory }}/.config directory"
+- name: "Copy mimeapps.list file to .config directory"
   when: not mimeapps_list.stat.exists
   copy:
     src={{ config_directory }}/mimeapps_list
@@ -14,11 +14,11 @@
     owner={{ user }}
     group={{ group }}
 
-- name: "Ensure {{ home_directory }}/.local/share/applications directory exists"
+- name: "Ensure .local/share/applications directory exists"
   file:
     path={{ home_directory }}/.local/share/applications/ state=directory
 
-- name: "Copy {{ item }} file to {{ home_directory }}/.local/share/applications directory"
+- name: "Copy item file to .local/share/applications directory"
   copy:
     src={{ config_directory }}/{{ item }}
     dest={{ home_directory }}/.local/share/applications/{{ item }}

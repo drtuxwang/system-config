@@ -1,15 +1,14 @@
 - hosts: owner-nodes
   roles:
-  - role: system-config
-    become: yes
   - role: user-config
     user: owner
     group: users
-    become: yes
+  - role: system-config
+    become: True
 
 - hosts: guest-nodes
   roles:
     - role: user-config
       user: guest
       group: users
-      become: yes
+      become: True

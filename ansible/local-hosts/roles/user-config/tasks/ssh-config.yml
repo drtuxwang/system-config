@@ -1,4 +1,4 @@
-- name: "Ensure {{ home_directory }}/.ssh directory exists"
+- name: "Ensure .ssh directory exists"
   file:
     path={{ home_directory }}/.ssh/
     state=directory
@@ -6,11 +6,11 @@
     group={{ group }}
     mode=700
 
-- name: "Check for {{ home_directory }}/.ssh/config file"
+- name: "Check .ssh/config file"
   stat: path="{{ home_directory }}/.ssh/config"
   register: ssh_config
 
-- name: "Copy config file to {{ home_directory }}/.ssh directory"
+- name: "Copy config file to .ssh directory"
   when: not ssh_config.stat.exists
   copy:
     src={{ config_directory }}/config
