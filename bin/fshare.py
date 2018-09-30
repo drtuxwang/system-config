@@ -49,8 +49,7 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Copy all files/directory inside a directory '
-            'into mirror directory.'
+            description='File sharing utility (currently dropbox only)'
         )
 
         parser.add_argument(
