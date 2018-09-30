@@ -851,16 +851,21 @@ etc/setbin                      Hybrid Bourne/C-shell script for sh/ksh/bash/csh
 etc/setbin.bat                  Windows Command prompt initialization
 etc/setbin.ps1                  Windows Power shell initialization
 
-ansible/test/Makefile                             Ansible playbook example
-ansible/test/ansible.cfg
-ansible/test/group_vars/test
-ansible/test/hosts
-ansible/test/roles/test-work/files/test.sh
-ansible/test/roles/test-work/tasks/create-files.yml
-ansible/test/roles/test-work/tasks/main.yml
-ansible/test/roles/test-work/templates/test-file.txt
-ansible/test/roles/test-work/vars/main.yml
-ansible/test/setup-test.yml
+ansible/local-hosts/Makefile                      Ansible local hosts playbook
+ansible/local-hosts/ansible.cfg
+ansible/local-hosts/inventory/group_vars/all
+ansible/local-hosts/inventory/group_vars/local-hosts
+ansible/local-hosts/inventory/local-hosts
+ansible/local-hosts/roles/system-config/tasks/etc-files.yml
+ansible/local-hosts/roles/system-config/tasks/main.yml
+ansible/local-hosts/roles/system-config/tasks/root-home.yml
+ansible/local-hosts/roles/system-config/vars/main.yml
+ansible/local-hosts/roles/user-config/tasks/main.yml
+ansible/local-hosts/roles/user-config/tasks/mimeapps-config.yml
+ansible/local-hosts/roles/user-config/tasks/ssh-config.yml
+ansible/local-hosts/roles/user-config/tasks/user-home.yml
+ansible/local-hosts/roles/user-config/vars/main.yml
+ansible/local-hosts/setup-local.yml
 
 cloudformation/1pxy/1pxy.json                     CloudFormation: 1pxy example
 cloudformation/1pxy/Makefile

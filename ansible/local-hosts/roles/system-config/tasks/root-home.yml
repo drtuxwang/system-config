@@ -1,0 +1,8 @@
+- name: "Ensure /root home directory exists"
+  file: path=/root/ state=directory mode=700
+
+- name: "Copy .{{ item }} file to /root directory"
+  copy: src={{ config_directory }}/{{ item }} dest=/root/.{{ item }}
+  loop:
+  - bashrc
+  - vimrc

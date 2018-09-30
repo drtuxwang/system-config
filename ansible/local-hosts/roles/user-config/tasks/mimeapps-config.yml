@@ -1,0 +1,30 @@
+- name: "Ensure {{ home_directory }}/.config directory exists"
+  file:
+    path={{ home_directory }}/.config/ state=directory
+
+- name: "Check for {{ home_directory }}/.config/mimeapps.list file"
+  stat: path="{{ home_directory }}/.config/mimeapps.list"
+  register: mimeapps_list
+
+- name: "Copy mimeapps.list file to {{ home_directory }}/.config directory"
+  when: not mimeapps_list.stat.exists
+  copy:
+    src={{ config_directory }}/mimeapps_list
+    dest={{ home_directory }}/.config/mimeapps.list
+    owner={{ user }}
+    group={{ group }}
+
+- name: "Ensure {{ home_directory }}/.local/share/applications directory exists"
+  file:
+    path={{ home_directory }}/.local/share/applications/ state=directory
+
+- name: "Copy {{ item }} file to {{ home_directory }}/.local/share/applications directory"
+  copy:
+    src={{ config_directory }}/{{ item }}
+    dest={{ home_directory }}/.local/share/applications/{{ item }}
+    owner={{ user }}
+    group={{ group }}
+  loop:
+  - userapp-gqview.desktop
+  - userapp-soffice.desktop
+  - userapp-vlc.desktop

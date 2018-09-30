@@ -1,0 +1,3 @@
+home_disk: /home
+owner_home: {{ home }}/owner
+guest_home: {{ home }}/guest

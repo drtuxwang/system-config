@@ -1,0 +1,2 @@
+config_directory: "{{ software_archive }}/config"
+home_directory: "/home/{{ user }}"
