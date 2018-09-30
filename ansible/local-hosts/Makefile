@@ -1,4 +1,6 @@
-HOST := hotdog.local
+ifndef HOST
+	HOST=hotdog.local
+endif
 
 default: test
 
