@@ -1,13 +1,13 @@
-- name: "Ensure etc directory exists"
+- name: "Ensure /etc directory exists"
   file: path=/etc/ state=directory mode=755
 
-- name: "Copy rc.local file to etc directory"
+- name: "Copy rc.local file to /etc directory"
   copy: src={{ config_directory }}/rc.local dest=/etc/rc.local
 
-- name: "Check rc.mount file"
+- name: "Check /etc/rc.mount file"
   stat: path=/etc/rc.mount
   register: rc_mount
 
-- name: "Copy rc.mount file to etc directory"
+- name: "Copy rc.mount file to /etc directory"
   when: not rc_mount.stat.exists
   copy: src={{ config_directory }}/rc.mount dest=/etc/rc.mount
