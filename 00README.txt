@@ -816,8 +816,7 @@ bin/mkw.bat
 bin/mkx.bat
 bin/mky.bat
 bin/mkz.bat
-bin/scd.bat
-bin/mka.bat            Show settings of %cda%..%cdz% environmental variables
+bin/scd.bat            Show settings of %cda%..%cdz% environmental variables
 
 config/Xresources               Copy to "$HOME/.Xresources" to set xterm resources
 config/adblock.txt              Adblock filter list
