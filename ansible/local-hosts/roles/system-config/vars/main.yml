@@ -1,1 +1,0 @@
-config_directory: "{{ software_archive }}/config"

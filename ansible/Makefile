@@ -1,5 +1,5 @@
 ifndef HOST
-	HOST=hotdog.local
+	HOST=`hostname`.local
 endif
 
 default: test
