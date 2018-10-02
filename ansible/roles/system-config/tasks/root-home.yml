@@ -1,7 +1,7 @@
 - name: "Ensure /root directory exists"
   file: path=/root/ state=directory mode=700
 
-- name: "Copy item file to /root directory"
+- name: "Copy files to /root directory"
   copy: src={{ config_directory }}/{{ item }} dest=/root/.{{ item }}
   loop:
   - bashrc

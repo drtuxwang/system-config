@@ -18,7 +18,7 @@
   file:
     path={{ home_directory }}/.local/share/applications/ state=directory
 
-- name: "Copy item file to {{ home_directory }}.local/share/applications directory"
+- name: "Copy files to {{ home_directory }}.local/share/applications directory"
   copy:
     src={{ config_directory }}/{{ item }}
     dest={{ home_directory }}/.local/share/applications/{{ item }}

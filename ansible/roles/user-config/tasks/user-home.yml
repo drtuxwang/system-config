@@ -6,7 +6,7 @@
     group={{ group }}
     mode=755
 
-- name: "Copy item file to {{ home_directory }} directory"
+- name: "Copy files to {{ home_directory }} directory"
   copy:
     src={{ config_directory }}/{{ item }}
     dest={{ home_directory }}/.{{ item }}
