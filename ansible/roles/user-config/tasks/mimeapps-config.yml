@@ -19,12 +19,12 @@
     path={{ home_directory }}/.local/share/applications/ state=directory
 
 - name: "Copy files to {{ home_directory }}.local/share/applications directory"
+  loop:
+  - userapp-gqview.desktop
+  - userapp-soffice.desktop
+  - userapp-vlc.desktop
   copy:
     src={{ config_directory }}/{{ item }}
     dest={{ home_directory }}/.local/share/applications/{{ item }}
     owner={{ user }}
     group={{ group }}
-  loop:
-  - userapp-gqview.desktop
-  - userapp-soffice.desktop
-  - userapp-vlc.desktop

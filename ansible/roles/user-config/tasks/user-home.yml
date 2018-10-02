@@ -7,17 +7,17 @@
     mode=755
 
 - name: "Copy files to {{ home_directory }} directory"
-  copy:
-    src={{ config_directory }}/{{ item }}
-    dest={{ home_directory }}/.{{ item }}
-    owner={{ user }}
-    group={{ group }}
   loop:
   - login
   - profile
   - tmux.conf
   - vimrc
   - Xresources
+  copy:
+    src={{ config_directory }}/{{ item }}
+    dest={{ home_directory }}/.{{ item }}
+    owner={{ user }}
+    group={{ group }}
 
 - name: "Check {{ home_directory }}/.profile-local file"
   stat: path="{{ home_directory }}/.profile-local"

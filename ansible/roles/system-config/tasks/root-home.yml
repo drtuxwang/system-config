@@ -2,7 +2,7 @@
   file: path=/root/ state=directory mode=700
 
 - name: "Copy files to /root directory"
-  copy: src={{ config_directory }}/{{ item }} dest=/root/.{{ item }}
   loop:
   - bashrc
   - vimrc
+  copy: src={{ config_directory }}/{{ item }} dest=/root/.{{ item }}
