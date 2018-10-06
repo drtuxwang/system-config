@@ -40,6 +40,7 @@ bin/2to3-3.5
 bin/2to3-3.5.bat
 bin/ansible
 bin/ansible-playbook
+bin/ansible-vault
 bin/aws
 bin/aws.bat
 bin/cookiecutter
