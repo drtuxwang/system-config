@@ -62,7 +62,10 @@ class Options(object):
         if args[1] == "-split":
             if len(args) != 3:
                 self._parse_args(args[1:])
-            args[1:] = command_mod.Command.cmd2args(args[2])
+            cmdline = args[2]
+            if '"' not in cmdline:
+                cmdline = cmdline.replace("'", '"')
+            args[1:] = command_mod.Command.cmd2args(cmdline)
         if len(args) == 2:
             if args[1].startswith("https://www.youtube.com/watch?"):
                 args.insert(1, 'youtube')
