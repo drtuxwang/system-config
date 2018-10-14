@@ -183,18 +183,19 @@ class Main(object):
                             target_file + '" link.'
                         )
                 elif os.path.isdir(target_file):
-                    logger.warning(
-                        '[%s] Removing "%s" directory',
-                        self._get_stats(),
-                        target_file,
-                    )
-                    try:
-                        shutil.rmtree(target_file)
-                    except OSError:
-                        raise SystemExit(
-                            sys.argv[0] + ': Cannot remove "' +
-                            target_file + '" directory.'
+                    if self._recursive:
+                        logger.warning(
+                            '[%s] Removing "%s" directory',
+                            self._get_stats(),
+                            target_file,
                         )
+                        try:
+                            shutil.rmtree(target_file)
+                        except OSError:
+                            raise SystemExit(
+                                sys.argv[0] + ': Cannot remove "' +
+                                target_file + '" directory.'
+                            )
                 else:
                     logger.warning(
                         '[%s] Removing "%s" file.',
