@@ -1,5 +1,5 @@
 NAME := etcd
-VERSION = latest
+VERSION := latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 
 FLAGS := --rm \

@@ -1,5 +1,5 @@
 NAME := registry
-VERSION = 2.6
+VERSION := 2.6
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../..
 

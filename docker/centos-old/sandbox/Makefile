@@ -1,5 +1,5 @@
 NAME := centos-sandbox
-VERSION = 6
+VERSION := 6
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../../..
 

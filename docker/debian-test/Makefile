@@ -1,5 +1,5 @@
 NAME := debian
-VERSION = testing
+VERSION := testing
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 DEPENDENT_IMAGES := sandbox
 TOPDIR := ../..

@@ -1,5 +1,5 @@
 NAME := ubuntu-devpi
-VERSION = 18.04
+VERSION := 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../../..
 

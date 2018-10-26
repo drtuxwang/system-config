@@ -1,5 +1,5 @@
 NAME := oracle-xe
-VERSION = latest
+VERSION := latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../..
 

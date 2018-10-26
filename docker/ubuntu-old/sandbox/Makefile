@@ -1,5 +1,5 @@
 NAME := ubuntu-sandbox
-VERSION = 16.04
+VERSION := 16.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../../..
 

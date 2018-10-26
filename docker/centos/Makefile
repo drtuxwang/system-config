@@ -1,5 +1,5 @@
-NAME= centos
-VERSION = 7
+NAME := centos
+VERSION := 7
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 DEPENDENT_IMAGES := sandbox
 TOPDIR := ../..

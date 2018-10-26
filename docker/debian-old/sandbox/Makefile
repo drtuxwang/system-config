@@ -1,5 +1,5 @@
 NAME := debian-sandbox
-VERSION = 8
+VERSION := 8
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../../..
 

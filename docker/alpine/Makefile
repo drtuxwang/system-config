@@ -1,5 +1,5 @@
 NAME := alpine
-VERSION = 3.6
+VERSION := 3.6
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../..
 

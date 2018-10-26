@@ -1,5 +1,5 @@
 NAME := ubuntu
-VERSION = 18.04
+VERSION := 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 DEPENDENT_IMAGES := devpi docker nginx sandbox wine
 TOPDIR := ../..

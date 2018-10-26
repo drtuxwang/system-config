@@ -1,5 +1,5 @@
 NAME := etcd
-VERSION = 3.2.20
+VERSION := 3.2.20
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../..
 

@@ -1,5 +1,5 @@
 NAME := busybox
-VERSION = latest
+VERSION := latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../..
 

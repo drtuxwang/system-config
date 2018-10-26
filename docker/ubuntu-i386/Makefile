@@ -1,5 +1,5 @@
 NAME := ubuntu
-VERSION = 18.04-i386
+VERSION := 18.04-i386
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 DEPENDENT_IMAGES := sandbox
 TOPDIR := ../..

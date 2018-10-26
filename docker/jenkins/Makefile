@@ -1,5 +1,5 @@
 NAME := jenkins
-VERSION = lts
+VERSION := lts
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../..
 

@@ -1,5 +1,5 @@
 NAME := sudo
-VERSION = latest
+VERSION := latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 
 ifndef FLAGS
