@@ -921,8 +921,8 @@ docker/etcd/cluster/Makefile                      gcr.io/etcd-development/etcd:v
 docker/etcd/cluster/docker-compose.yml
 docker/etcd/cluster/docker-compose-migrate.yml
 docker/etcd/cluster/docker-compose-restore.yml
-docker/sudo/Makefile                              sudo scratch image for jail breaking app
-docker/sudo/Dockerfile
+docker/golang/Makefile                            golang:1.10.4-alpine3.8 based compiler app
+docker/golang/Dockerfile
 docker/jenkins/Makefile                           jenkins/jenkins:lts based server app
 docker/jenkins/Dockerfile
 docker/mongodb/Makefile                           mongo:3.4.14 based database app
@@ -932,6 +932,8 @@ docker/oracle-xe/Dockerfile
 docker/registry/Makefile                          registry:2.6 based Docker Registry server app
 docker/registry/Dockerfile
 docker/registry/files/config.yml
+docker/sudo/Makefile                              sudo scratch image for jail breaking app
+docker/sudo/Dockerfile
 docker/ubuntu-old/Makefile                        ubuntu:16.04 based linux
 docker/ubuntu-old/Dockerfile
 docker/ubuntu-old/Dockerfile-base

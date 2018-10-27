@@ -9,6 +9,7 @@ PULL_IMAGES := \
 	debian \
 	debian-test \
 	etcd \
+	golang \
 	jenkins \
 	mongodb \
 	oracle-xe \
