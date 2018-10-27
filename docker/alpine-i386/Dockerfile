@@ -1,4 +1,4 @@
-FROM i386/alpine:3.6
+FROM i386/alpine:3.8
 
 # Install base packages
 RUN apk update && \

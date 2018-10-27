@@ -882,9 +882,9 @@ cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
 cookiecutter/docker/cookiecutter.json
 
 docker/Makefile                                   Makefile for building all images
-docker/alpine/Makefile                            alpine:3.6 based linux
+docker/alpine/Makefile                            alpine:3.8 based linux
 docker/alpine/Dockerfile
-docker/alpine-i386/Makefile                       i386/alpine:3.6 based linux
+docker/alpine-i386/Makefile                       i386/alpine:3.8 based linux
 docker/alpine-i386/Dockerfile
 docker/busybox/Makefile                           busybox:1.28 based linux
 docker/busybox/Dockerfile

@@ -1,5 +1,5 @@
 NAME := alpine
-VERSION := 3.6-i386
+VERSION := 3.8-i386
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../..
 
