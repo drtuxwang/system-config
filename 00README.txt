@@ -925,8 +925,8 @@ docker/sudo/Makefile                              sudo scratch image for jail br
 docker/sudo/Dockerfile
 docker/jenkins/Makefile                           jenkins/jenkins:lts based server app
 docker/jenkins/Dockerfile
-docker/mongo/Makefile                             mongo:3.4.14 based database app
-docker/mongo/Dockerfile
+docker/mongodb/Makefile                           mongo:3.4.14 based database app
+docker/mongodb/Dockerfile
 docker/oracle-xe/Makefile                         wnameless/oracle-xe-11g:latest based database app
 docker/oracle-xe/Dockerfile
 docker/registry/Makefile                          registry:2.6 based Docker Registry server app

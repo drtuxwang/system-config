@@ -1,4 +1,4 @@
-NAME := mongo
+NAME := mongodb
 VERSION := 3.4.14
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../..

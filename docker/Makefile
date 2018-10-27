@@ -10,7 +10,7 @@ PULL_IMAGES := \
 	debian-test \
 	etcd \
 	jenkins \
-	mongo \
+	mongodb \
 	oracle-xe \
 	registry \
 	ubuntu-old \
