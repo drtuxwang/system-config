@@ -921,7 +921,7 @@ docker/etcd/cluster/Makefile                      gcr.io/etcd-development/etcd:v
 docker/etcd/cluster/docker-compose.yml
 docker/etcd/cluster/docker-compose-migrate.yml
 docker/etcd/cluster/docker-compose-restore.yml
-docker/golang/Makefile                            golang:1.10.4-alpine3.8 based compiler app
+docker/golang/Makefile                            golang:1.10.4-alpine based compiler app
 docker/golang/Dockerfile
 docker/jenkins/Makefile                           jenkins/jenkins:lts based server app
 docker/jenkins/Dockerfile
