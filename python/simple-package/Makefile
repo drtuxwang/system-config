@@ -1,7 +1,7 @@
-default: build
+# PHONY targets
+.PHONY: test py_compile pycodestyle pylint unittest build run clean
 
-clean:
-	rm -rf build dist simple.egg-info
+default: build
 
 test: py_compile pycodestyle pylint unittest
 	@echo "\n*** Tests successfull ***"
@@ -34,3 +34,6 @@ build: clean test
 run:
 	@echo "\n*** Running simple package example ***"
 	PYTHONPATH=`pwd`/dist ./run.py
+
+clean:
+	rm -rf build dist simple.egg-info

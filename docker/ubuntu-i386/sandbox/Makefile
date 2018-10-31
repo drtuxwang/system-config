@@ -19,6 +19,8 @@ ifndef COMMAND
 	COMMAND=
 endif
 
+# PHONY targets
+.PHONY: pull build run clean
 
 default: build
 	docker images

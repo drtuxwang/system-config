@@ -11,6 +11,8 @@ FLAGS := --rm \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
 
+# PHONY targets
+.PHONY: build run clean
 
 default: build
 	docker images

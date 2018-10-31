@@ -26,6 +26,8 @@ ifndef DIST
 	DIST=ubuntu
 endif
 
+# PHONY targets
+.PHONY: project check-base pull build version gc clean
 
 default: build
 

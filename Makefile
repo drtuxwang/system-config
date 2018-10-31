@@ -1,3 +1,8 @@
+# PHONY targets
+.PHONY: test check lint
+
+PHONY := test check lint
+
 default: test
 
 test: check lint

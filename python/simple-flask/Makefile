@@ -4,6 +4,9 @@
 FLASK_APP = "simple_flask"
 FLAGS =
 
+# PHONY targets
+.PHONY: test py_compile pycodestyle pylint unittest run
+
 default: test
 
 test: py_compile pycodestyle pylint unittest

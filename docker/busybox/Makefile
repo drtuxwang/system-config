@@ -11,6 +11,8 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m
 
+# PHONY targets
+.PHONY: pull build run version clean
 
 default: build
 	docker images

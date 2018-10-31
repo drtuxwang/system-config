@@ -16,6 +16,8 @@ FLAGS := --rm \
 	--env TERM=$(TERM) \
 	--env USER=$(USER)
 
+# PHONY targets
+.PHONY: build run clean
 
 default: build
 	docker images

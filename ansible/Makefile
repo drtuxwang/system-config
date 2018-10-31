@@ -2,6 +2,9 @@ ifndef HOST
 	HOST=`hostname`.local
 endif
 
+# PHONY targets
+.PHONY: test run
+
 default: test
 
 test:

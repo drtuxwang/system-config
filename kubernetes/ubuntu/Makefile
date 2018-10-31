@@ -1,6 +1,9 @@
 SERVER := http://kubernetes.local:8080
 NAMESPACE := default
 
+# PHONY targets
+.PHONY: build clean status
+
 default: build
 
 build:

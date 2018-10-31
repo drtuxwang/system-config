@@ -1,7 +1,7 @@
-default: build
+# PHONY targets
+.PHONY: pull build run version clean
 
-clean:
-	rm -rf build *.c *.so
+default: test py_compile pycodestyle pylint unittest build run clean
 
 test: py_compile pycodestyle pylint unittest
 	@echo "\n*** Tests successfull ***"
@@ -31,3 +31,7 @@ build: clean test
 run:
 	@echo "\n*** Running Cython example ***"
 	./run.py
+
+clean:
+	rm -rf build *.c *.so
+

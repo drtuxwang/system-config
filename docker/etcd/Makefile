@@ -12,6 +12,8 @@ FLAGS := --rm \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
 
+# PHONY targets
+.PHONY: pull build run version migrate restore clean
 
 default: build
 	docker images

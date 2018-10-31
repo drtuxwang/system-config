@@ -1,3 +1,6 @@
+# PHONY targets
+.PHONY: test pep8
+
 default: test
 
 test: pep8

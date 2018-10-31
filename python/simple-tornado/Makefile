@@ -1,3 +1,6 @@
+# PHONY targets
+.PHONY: test y_compile pycodestyle pylint unittest run
+
 default: test
 
 test: py_compile pycodestyle pylint unittest
