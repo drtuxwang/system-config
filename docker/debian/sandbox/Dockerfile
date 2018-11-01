@@ -5,6 +5,7 @@ RUN apt-get install --no-install-recommends -y \
 		file \
 		libgl1-mesa-glx \
 		libsdl1.2debian \
+		procps \
 		tmux \
 		wget \
 		x11-xserver-utils \
