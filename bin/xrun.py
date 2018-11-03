@@ -70,8 +70,11 @@ class Options(object):
             if args[1].startswith("https://www.youtube.com/watch?"):
                 args.insert(1, 'youtube')
             elif args[1].startswith(('http://', 'https://', 'ftp://')):
-                args.insert(1, 'wget')
-                args.extend(['--output-document', os.path.basename(args[-1])])
+                args = args[:1] + [
+                    'wget',
+                    '--output-document',
+                    os.path.basename(args[-1]).split('?', 1)[0],
+                ] + args[1:]
         command = command_mod.Command.args2cmd(args[1:])
 
         self._xterm = command_mod.Command('xterm', errors='stop')
