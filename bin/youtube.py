@@ -76,7 +76,12 @@ class Options(object):
                 'bestvideo[ext=mp4][height={0:d}]+bestaudio[ext=m4a]/'
                 'best[height<=480]'.format(self._args.height)
             ])
-        self._youtubedl.extend_args(self._args.urls)
+
+        for url in self._args.urls:
+            if '&index=' in url:  # Fix download one video for series
+                self._youtubedl.append_arg(url.split('&')[0])
+            else:
+                self._youtubedl.append_arg(url)
 
 
 class Main(object):
