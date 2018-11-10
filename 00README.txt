@@ -21,19 +21,19 @@ bin/task_mod.py        Python task handling utility module
 bin/python             Python startup (allowing non systems port)
 bin/python.bat
 bin/python2
+bin/python2.bat
 bin/python2.7
 bin/python2.7.bat
-bin/python2.bat
 bin/python3
+bin/python3.bat
 bin/python3.0
 bin/python3.1
 bin/python3.2
 bin/python3.3
 bin/python3.4
 bin/python3.5
-bin/python3.5.bat
-bin/python3.bat
 bin/python3.6
+bin/python3.6.bat
 bin/2to3               Python 3.x script wrappers (allowing non systems port)
 bin/2to3.bat
 bin/2to3-3.5
@@ -66,6 +66,9 @@ bin/ipython3
 bin/ipython3.4.bat
 bin/jenkins-jobs
 bin/jenkins-jobs.bat
+bin/markdown.py
+bin/markdown_py
+bin/markdown_py.bat
 bin/mid3iconv
 bin/mid3iconv.bat
 bin/mid3v2
@@ -421,6 +424,8 @@ bin/jsonformat.bat
 bin/jsonformat.py
 bin/jython.py
 bin/keymap.tcl         TCL/TK widget for setting keymaps
+bin/markdown           Markdown wrapper (for markdown_py)
+bin/markdown.bat
 bin/md5                Calculate MD5 checksums of files
 bin/md5.bat
 bin/md5.py
