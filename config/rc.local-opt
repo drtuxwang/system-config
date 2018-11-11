@@ -4,8 +4,6 @@
 ##modprobe vboxsf
 ##mount -t vboxsf -o uid=owner,gid=users shared /shared &
 
-##sed -i "s/^unmanaged-devices=/##unmanaged-devices=/" /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf
-
 ##mount -t ext4 -o noatime,data=ordered UUID=<uuid-from-blkid> /data2 &
 
 exit 0
