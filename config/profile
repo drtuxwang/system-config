@@ -317,9 +317,9 @@ then
     export PATH="$HOME/software/bin:/opt/software/bin:$PATH"
 
     # Applying local settings
-    if [ -f $HOME/.profile-local ]
+    if [ -f $HOME/.profile-opt ]
     then
-        . $HOME/.profile-local
+        . $HOME/.profile-opt
     fi
 
     echo

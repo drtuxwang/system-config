@@ -830,7 +830,7 @@ config/Xresources               Copy to "$HOME/.Xresources" to set xterm resourc
 config/adblock.txt              Adblock filter list
 config/ash-2bash                Wrapper to run ash as bash shell
 config/autoexec.sh              Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
-config/autoexec-local.sh        Copy to "$HOME/.config/autoexec-local.sh" for local settings
+config/autoexec-opt.sh          Copy to "$HOME/.config/autoexec-opt.sh" for optional settings
 config/bashrc                   Copy to "/root/.bashrc" for "root" account settings
 config/com.googlecode.iterm2.plist Copy to "$HOME/Library/Preference" for iTerm2 on Mac
 config/config                   Copy to "$HOME/.ssh/config"
@@ -841,10 +841,10 @@ config/login                    Copy to "$HOME/.login" for csh/tcsh shells (tran
 config/mimeapps.list            Copy to "$HOME/.local/share/applications" for Mime definitions
 config/minttyrc                 Copy to "$HOME/.minttyrc" for MSYS2 terminal
 config/tmux.conf                Copy to "$HOME/.tmux.conf" fro TMUX terminal
-config/profile                  Copy to "$HOME/.profile" for ksh/bash shells
-config/profile-local            Copy to "$HOME/.profile-local" for ksh/bash shells
-config/rc.local                 Copy to "/etc/rc.local" for auto running commands
-config/rc.mount                 Copy to "/etc/rc.mount" for mounting removable disks
+config/profile                  Copy to "$HOME/.profile" for ksh/bash shells settings
+config/profile-opt              Copy to "$HOME/.profile-optl" for optional ksh/bash shells settings
+config/rc.local                 Copy to "/etc/rc.local" for system startup commands
+config/rc.local-opt             Copy to "/etc/rc.local-opt" for optional system startup commands
 config/terminalrc               Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
 config/vboxmount.bat            Mount VirtualBox "/shared" to "s:\" in Windows Guest OS
 config/vimrc                    Copy to "$HOME/.vimrc" for VIM defaults

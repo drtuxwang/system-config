@@ -19,9 +19,9 @@ then
     ln -sf /run/resolvconf/resolv.conf /etc/resolv.conf
 fi
 
-if [ -f /etc/rc.mount ]
+if [ -f /etc/rc.local-opt ]
 then
-    . /etc/rc.mount
+    . /etc/rc.local-opt
 fi
 
 exit 0

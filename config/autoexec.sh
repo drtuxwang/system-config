@@ -113,7 +113,7 @@ then
 fi
 menu
 
-if [ -f $HOME/.config/autoexec-local.sh ]
+if [ -f $HOME/.config/autoexec-opt.sh ]
 then
-    . $HOME/.config/autoexec-local.sh
+    . $HOME/.config/autoexec-opt.sh
 fi
