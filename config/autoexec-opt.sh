@@ -3,6 +3,7 @@
 # xreset DVI-I=1360x768
 # pactl set-card-profile 0 output:hdmi-stereo+input:analog-stereo  # HDMI-1
 # pactl set-card-profile 0 output:hdmi-stereo-extra1+input:analog-stereo  # HDMI-2
+# pactl set-card-profile 0 off
 # setxkbmap us  # "gb", "de", "us"
 # xset m 2,16  # Slow mouse
 
