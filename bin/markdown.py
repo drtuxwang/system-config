@@ -56,7 +56,6 @@ class Main(object):
             args=sys.argv[1:],
             errors='stop'
         )
-        pattern = ('^$|: Gtk-WARNING ')
 
         subtask_mod.Exec(markdown.get_cmdline()).run()
 

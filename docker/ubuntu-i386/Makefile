@@ -13,15 +13,14 @@ FLAGS := --rm \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
 
-# PHONY targets
-.PHONY: pull build run version clean
-
 default: build
 	docker images
 
+.PHONY: pull
 pull:
 	docker pull `grep FROM Dockerfile-base | cut -f2 -d" "`
 
+.PHONY: build
 build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/root
@@ -38,14 +37,17 @@ build:
 		make -C $$IMAGE build || exit 1; \
 	done
 
+.PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) --hostname $(NAME)-i386 $(IMAGE) || exit 0
 
+.PHONY: version
 version:
 	@docker run $(FLAGS) $(IMAGE) cat /etc/os-release 2> /dev/null | \
 		grep "^VERSION=" | sed -e "s@.*=\"@`pwd`: Ubuntu Linux @;s@ (.*@@"
 
+.PHONY: clean
 clean:
 	for IMAGE in $(DEPENDENT_IMAGES); do \
 		make -C $$IMAGE clean; \

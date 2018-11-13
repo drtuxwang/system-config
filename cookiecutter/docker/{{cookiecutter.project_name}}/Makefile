@@ -9,25 +9,26 @@ FLAGS := --rm \
 	--memory-reservation=50m \
 	--memory=1000m
 
-# PHONY targets
-.PHONY: clean pull build run
-
 default: build
 	docker images
 
+.PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
 
+.PHONY: pull
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
+.PHONY: build
 build:
 	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && tmpdir/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
 
+.PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \

@@ -12,15 +12,14 @@ FLAGS := --rm \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
 
-# PHONY targets
-.PHONY: pull build run version migrate restore clean
-
 default: build
 	docker images
 
+.PHONY: pull
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
+.PHONY: build
 build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/config
@@ -32,6 +31,7 @@ build:
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
 
+.PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
@@ -47,9 +47,11 @@ run:
 			--data-dir /var/lib/etcd/data \
 			--wal-dir /var/lib/etcd/wal ||:
 
+.PHONY: version
 version:
 	@docker run $(FLAGS) $(IMAGE) etcd --version 2> /dev/null | grep "^etcd " | sed -e "s@^.* @`pwd`: etcd @"
 
+.PHONY: migrate
 migrate:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container to migrate v2 key store ***"
 	docker run $(FLAGS) \
@@ -62,6 +64,7 @@ migrate:
 			--wal-dir /var/lib/etcd/wal \
 			migrate ||:
 
+.PHONY: restore
 restore:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container to restore from snapshot ***"
 	docker run $(FLAGS) \
@@ -75,6 +78,7 @@ restore:
 			--wal-dir /var/lib/etcd/wal \
 			snapshot restore /var/lib/etcd/snapshot.db ||:
 
+.PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

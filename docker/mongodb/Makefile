@@ -12,15 +12,14 @@ FLAGS := --rm \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
 
-# PHONY targets
-.PHONY: pull build run version clean
-
 default: build
 	docker images
 
+.PHONY: pull
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
+.PHONY: build
 build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/config
@@ -30,6 +29,7 @@ build:
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
 
+.PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
@@ -39,10 +39,12 @@ run:
 		--workdir /data/db \
 		$(IMAGE) ||:
 
+.PHONY: version
 version:
 	@docker run $(FLAGS) $(IMAGE) mongod --version 2> /dev/null \
 		| grep "^db version v" | sed -e "s@^@`pwd`: Mongo @;s@version v@@"
 
+.PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

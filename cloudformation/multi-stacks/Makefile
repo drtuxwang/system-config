@@ -1,11 +1,10 @@
-# PHONY targets
-.PHONY: test pep8
-
 default: test
 
-test: pep8
+.PHONY: test
+test: lint
 	@echo "\n*** Tests successfull ***"
 
-pep8:
-	@echo "\n*** Running JSON PEP8 check ***"
-	python3 -m pep8 --max-line-length=255 *.json
+.PHONY: lint
+lint:
+	@echo "\n*** Running JSON PYCODESTYLE (PEP8) check ***"
+	python3 -m pycodestyle --max-line-length=255 *.json

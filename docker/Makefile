@@ -26,34 +26,37 @@ ifndef DIST
 	DIST=ubuntu
 endif
 
-# PHONY targets
-.PHONY: project check-base pull build version gc clean
-
 default: build
 
+.PHONY: project
 project:
 	python3 -m cookiecutter ../cookiecutter/docker
 
+.PHONY: check-base
 check-base:
 	grep "^FROM" */Dockerfile* | sort
 
+.PHONY: pull
 pull:
 	for IMAGE in $(PULL_IMAGES); do \
 		make -C $$IMAGE pull || exit 1; \
 	done
 	docker images
 
+.PHONY: build
 build:
 	for IMAGE in $(BUILD_IMAGES); do \
 		make -C $$IMAGE build || exit 1:; \
 	done
 	docker images
 
+.PHONY: version
 version:
 	@for IMAGE in $(BUILD_IMAGES); do \
 		make --no-print-directory -C $$IMAGE version || exit 1; \
 	done
 
+.PHONY: gc
 gc:
 	docker ps -f status=exited -q | xargs -r docker rm -v
 	docker images -f dangling=true -q | xargs -r docker rmi
@@ -61,6 +64,7 @@ gc:
 	docker volume ls
 	docker ps
 
+.PHONY: clean
 clean:
 	make gc
 	for IMAGE in $(CLEAN_IMAGES); do \
@@ -68,11 +72,13 @@ clean:
 	done
 	make gc
 
+.PHONY: run-sandbox
 run-sandbox:
 	make -C $(DIST)/sandbox run
 
-run-sudo:
+.PHONY: run-sudo
 	make -C sudo run
 
+.PHONY: run-wine
 run-wine:
 	make -C ubuntu/wine run

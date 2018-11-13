@@ -1,12 +1,9 @@
-# PHONY targets
-.PHONY: test check lint
-
-PHONY := test check lint
-
 default: test
 
+.PHONY: test
 test: check lint
 
+.PHONY: check
 check:
 	@echo "\n*** Running Python 3 requirements check ***"
 	umask 022 && python3 -m pip install -q -r etc/python-requirements.txt
@@ -19,6 +16,7 @@ check:
 	PATH=`pwd`/bin:${PATH} find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} +
 	@echo "\n*** Check successfull ***"
 
+.PHONY: lint
 lint:
 	@echo "\n*** Running Python 3 PYFLAKES checks ***"
 	python3 -m pyflakes bin/*.py

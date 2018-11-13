@@ -12,12 +12,10 @@ FLAGS := --rm \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
 
-# PHONY targets
-.PHONY: build run clean
-
 default: build
 	docker images
 
+.PHONY: build
 build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/config
@@ -29,6 +27,7 @@ build:
 	docker build -t $(IMAGE) .
 	rm -rf tmpdir
 
+.PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
@@ -37,5 +36,6 @@ run:
 		--workdir /var/lib/devpi \
 		$(IMAGE) || exit 0
 
+.PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:

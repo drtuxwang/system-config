@@ -19,15 +19,14 @@ ifndef COMMAND
 	COMMAND=
 endif
 
-# PHONY targets
-.PHONY: pull build run clean
-
 default: build
 	docker images
 
+.PHONY: pull
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
+.PHONY: build
 build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/etc tmpdir/root
@@ -42,10 +41,12 @@ build:
 	docker build -f Dockerfile -t $(IMAGE) .
 	rm -rf tmpdir
 
+.PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) --hostname $(NAME)-i386 $(IMAGE) $(COMMAND) || exit 0
 
+.PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
 	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

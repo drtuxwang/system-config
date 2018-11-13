@@ -21,16 +21,15 @@ ifndef COMMAND
 	COMMAND=
 endif
 
-# PHONY targets
-.PHONY: build run version clean
-
 default: build
 	docker images
 
+.PHONY: build
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build --force-rm=true -t $(IMAGE) .
 
+.PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
@@ -38,8 +37,10 @@ run:
 		--hostname `uname -n`-$(NAME) \
 		$(IMAGE) $(COMMAND) ||:
 
+.PHONY: version
 version:
 	@echo "`pwd`: scratch"
 
+.PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
