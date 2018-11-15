@@ -172,6 +172,8 @@ bin/debdistget
 bin/debdistget.py
 bin/debdistinfo
 bin/debdistinfo.py
+bin/dep                dep wrapper (for golang)
+bin/dep.py
 bin/df                 df wrapper (allowing non systems port)
 bin/df.py              (KB default and fix format problems)
 bin/dhcptable          Shows local DHCP hosts
@@ -387,6 +389,8 @@ bin/graph.py           (uses gnuplot)
 bin/gz                 Compress a file in GZIP format (allowing non systems port)
 bin/gz.py
 bin/halt               Fast shutdown using "/proc/sysrq-trigger"
+bin/helm               helm wrapper (for Kubernetes)
+bin/helm.py
 bin/htmlformat         HTML file re-formatter
 bin/htmlformat.bat
 bin/htmlformat.py
