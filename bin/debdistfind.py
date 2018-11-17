@@ -133,7 +133,6 @@ class Main(object):
     def __init__(self):
         try:
             self.config()
-            self._packages = {}
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
@@ -152,13 +151,14 @@ class Main(object):
 
         return data
 
-    def _read_distribution_packages(self, packages_file):
-        distribution_data = self._read_data(packages_file)
+    @classmethod
+    def _read_distribution_packages(cls, packages_file):
+        distribution_data = cls._read_data(packages_file)
         lines = []
         for url in distribution_data['urls']:
             lines.extend(distribution_data['data'][url]['text'])
 
-        self._packages = {}
+        packages = {}
         name = ''
         package = Package('', -1, '')
         for line in lines:
@@ -180,17 +180,19 @@ class Main(object):
             elif line.startswith('Description: '):
                 package.set_description(
                     line.replace('Description: ', '', 1))
-                self._packages[name] = package
+                packages[name] = package
                 package = Package('', 0, '')
+        return packages
 
-    def _search_distribution_packages(self, patterns, check_all=False):
+    @staticmethod
+    def _search_distribution_packages(packages, patterns, check_all=False):
         for pattern in patterns:
             ispattern = re.compile(pattern, re.IGNORECASE)
-            for name, package in sorted(self._packages.items()):
+            for name, package in sorted(packages.items()):
                 if (
                         ispattern.search(name) or
                         check_all and ispattern.search(
-                            self._packages[name].get_description()
+                            packages[name].get_description()
                         )
                 ):
                     print("{0:25s} {1:15s} {2:5d}KB {3:s}".format(
@@ -223,8 +225,11 @@ class Main(object):
         """
         options = Options()
 
-        self._read_distribution_packages(options.get_packages_file())
+        packages = self._read_distribution_packages(
+            options.get_packages_file()
+        )
         self._search_distribution_packages(
+            packages,
             options.get_patterns(),
             options.get_check_all()
         )

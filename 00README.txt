@@ -170,6 +170,8 @@ bin/debdistfind
 bin/debdistfind.py
 bin/debdistget
 bin/debdistget.py
+bin/debdistgrep
+bin/debdistgrep.py
 bin/debdistinfo
 bin/debdistinfo.py
 bin/dep                dep wrapper (for golang)
