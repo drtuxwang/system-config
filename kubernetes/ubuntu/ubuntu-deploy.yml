@@ -23,7 +23,7 @@ spec:
         env:
         - name: NAME
           value: VALUE
-        image: ubuntu:18.04
+        image: drtuxwang/ubuntu:18.04
         imagePullPolicy: IfNotPresent
         name: ubuntu
         ports:
@@ -40,7 +40,7 @@ spec:
         - mountPath: /shared
           name: shared
       nodeSelector:
-        kubernetes.io/hostname: test01
+        kubernetes.io/hostname: hotdog.local
       terminationGracePeriodSeconds: 10
       volumes:
       - hostPath:
