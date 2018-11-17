@@ -25,7 +25,6 @@ spec:
       requests:
         cpu: 100m
         memory: 64M
-    terminationGracePeriodSeconds: 10
     volumeMounts:
     - mountPath: /shared
       name: shared
