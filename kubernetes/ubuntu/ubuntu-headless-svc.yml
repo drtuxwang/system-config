@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ubuntu
+  name: ubuntu-headless
+spec:
+  clusterIP: None
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: ubuntu
+  type: ClusterIP

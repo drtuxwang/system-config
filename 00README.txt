@@ -981,6 +981,7 @@ kubernetes/ubuntu/Makefile                        Kubernetes: Ubuntu example
 kubernetes/ubuntu/test-ns.yml
 kubernetes/ubuntu/ubuntu-ds.yml
 kubernetes/ubuntu/ubuntu-deploy.yml
+kubernetes/ubuntu/ubuntu-headless-svc.yml
 kubernetes/ubuntu/ubuntu-pod.yml
 kubernetes/ubuntu/ubuntu-rc.yml
 kubernetes/ubuntu/ubuntu-statefulset.yml
