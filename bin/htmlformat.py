@@ -55,6 +55,7 @@ class Main(object):
     """
     Main class
     """
+    indent = re.compile(r'^(\s*)', re.MULTILINE)
 
     def __init__(self):
         try:
@@ -82,51 +83,51 @@ class Main(object):
                     argv.append(arg)
             sys.argv = argv
 
-    @staticmethod
-    def run():
+    @classmethod
+    def _reformat(cls, file):
+        lines = []
+        try:
+            with open(file, errors='replace') as ifile:
+                for line in ifile:
+                    lines.append(line.strip())
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" file.')
+        soup = bs4.BeautifulSoup(
+            ''.join(lines).replace('&nbsp;', '&amp;nbsp;'),
+            'html.parser'
+        )
+        html_text = cls.indent.sub(r'\1\1', soup.prettify())
+
+        tmpfile = file + '-tmp' + str(os.getpid())
+        try:
+            with open(tmpfile, 'w', newline='\n') as ofile:
+                print(html_text.replace('&amp;nbsp;', '&nbsp;'), file=ofile)
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
+        try:
+            shutil.move(tmpfile, file)
+        except OSError:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot rename "' + tmpfile +
+                '" file to "' + file + '".'
+            )
+
+    @classmethod
+    def run(cls):
         """
         Start program
         """
         options = Options()
-        indent = re.compile(r'^(\s*)', re.MULTILINE)
 
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
-            print('Re-formatting "' + file + '" HTML file...')
-
-            lines = []
-            try:
-                with open(file, errors='replace') as ifile:
-                    for line in ifile:
-                        lines.append(line.strip())
-            except OSError:
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + file + '" file.')
-            soup = bs4.BeautifulSoup(
-                ''.join(lines).replace('&nbsp;', '&amp;nbsp;'),
-                'html.parser'
-            )
-            html_text = indent.sub(r'\1\1', soup.prettify())
-
-            tmpfile = file + '-tmp' + str(os.getpid())
-            try:
-                with open(tmpfile, 'w', newline='\n') as ofile:
-                    print(
-                        html_text.replace('&amp;nbsp;', '&nbsp;'),
-                        file=ofile
-                    )
-            except OSError:
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
-            try:
-                shutil.move(tmpfile, file)
-            except OSError:
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot rename "' + tmpfile +
-                    '" file to "' + file + '".'
-                )
+            if file.endswith(('htm', 'html', 'xhtml')):
+                print('Re-formatting "' + file + '" HTML file...')
+                cls._reformat(file)
 
 
 if __name__ == '__main__':
