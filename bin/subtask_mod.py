@@ -2,7 +2,7 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2017 By Dr Colin Kong
+Copyright GPL v2: 2006-2018 By Dr Colin Kong
 """
 
 import copy
@@ -15,8 +15,8 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-RELEASE = '2.1.4'
-VERSION = 20180122
+RELEASE = '2.1.5'
+VERSION = 20181121
 
 BUFFER_SIZE = 131072
 
@@ -59,7 +59,7 @@ class Task(object):
         """
         Return True if stdout used.
         """
-        return self._status['output']
+        return self._status['output'] != []
 
     def is_match_output(self, pattern):
         """
@@ -94,7 +94,7 @@ class Task(object):
         """
         Return True if stderr used.
         """
-        return self._status['error']
+        return self._status['error'] != []
 
     def is_match_error(self, pattern):
         """
