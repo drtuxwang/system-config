@@ -1,33 +1,33 @@
-SERVER := http://kubernetes.local:8080
-NAMESPACE := default
+NAMESPACE := test
 
 default: build
 
 .PHONY: build
 build:
-	@echo "\n*** Building replicationcontroller ***"
-	kubectl -s $(SERVER) create -f test-ns.yml
-	kubectl -s $(SERVER) create -f ubuntu-svc.yml
-	# kubectl -s $(SERVER) create -f ubuntu-pod.yml
-	# kubectl -s $(SERVER) create -f ubuntu-rc.yml
-	kubectl -s $(SERVER) create -f ubuntu-deploy.yml
-	# kubectl -s $(SERVER) create -f ubuntu-ds.yml
-	# kubectl -s $(SERVER) create -f ubuntu-statefulset.yml
+	@echo "\n*** Creating pods ***"
+	kubectl create -f test-ns.yaml
+	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-svc.yaml
+	kubectl --namespace=$(NAMESPACE) create -f ubuntu-headless-svc.yaml
+	kubectl --namespace=$(NAMESPACE) create -f ubuntu-statefulset.yaml
+	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-ds.yaml
+	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-deploy.yaml
+	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-rc.yaml
+	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-pod.yaml
 
 .PHONY: clean
 clean:
-	@echo "\n*** Building replicationcontroller ***"
-	kubectl -s $(SERVER) --namespace=$(NAMESPACE) delete deploy ubuntu-lxc ||:
-	kubectl -s $(SERVER) --namespace=$(NAMESPACE) delete service ubuntu-lxc ||:
-	kubectl -s $(SERVER) delete namespace $(NAMESPACE) ||:
+	@echo "\n*** Removing pods ***"
+	kubectl --namespace=$(NAMESPACE) delete -f ubuntu-statefulset.yaml ||:
+	kubectl --namespace=$(NAMESPACE) delete -f ubuntu-headless-svc.yaml ||:
+	kubectl delete namespace $(NAMESPACE) ||:
 
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	kubectl -s $(SERVER) get namespaces
-	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get services
-	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get rc
-	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get deploy
-	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get ds
-	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get statefulset
-	kubectl -s $(SERVER) --namespace=$(NAMESPACE) get pods
+	kubectl get namespaces
+	kubectl --namespace=$(NAMESPACE) get services
+	kubectl --namespace=$(NAMESPACE) get rc
+	kubectl --namespace=$(NAMESPACE) get deploy
+	kubectl --namespace=$(NAMESPACE) get ds
+	kubectl --namespace=$(NAMESPACE) get statefulset
+	kubectl --namespace=$(NAMESPACE) get pods

@@ -4,7 +4,7 @@ metadata:
   labels:
     app: ubuntu
   name: ubuntu
-  namespace: default
+  namespace: test
 spec:
   containers:
   - command:
@@ -12,7 +12,7 @@ spec:
     env:
     - name: NAME
       value: VALUE
-    image: drtuxwang/ubuntu:18.04
+    image: ubuntu:18.04
     imagePullPolicy: IfNotPresent
     name: ubuntu
     ports:
