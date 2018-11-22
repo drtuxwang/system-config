@@ -193,6 +193,7 @@ then
     fi
     alias ls="ls -C"
     alias quota="quota -v"
+    alias rehash='hash -r'
     alias resize='resize && eval `\\resize`'
     if [ -x /usr/bin/vim ]
     then
