@@ -3,6 +3,8 @@ FROM debian:8-slim
 # Install base packages
 RUN apt-get update && \
 	apt-get install --no-install-recommends -y \
+		dnsutils \
+		iputils-ping \
 		net-tools \
 		openssh-client \
 		pciutils \

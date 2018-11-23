@@ -2,7 +2,7 @@ FROM alpine:3.8
 
 # Install base packages
 RUN apk update && \
-	apk add bash openssh-client python3 vim && \
+	apk add bash bind-tools openssh-client python3 vim && \
 	python3 -m pip install --upgrade pip
 
 # Add scripts
