@@ -7,7 +7,8 @@ build:
 	@echo "\n*** Creating pods ***"
 	kubectl create -f test-ns.yaml
 	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-svc.yaml
-	kubectl --namespace=$(NAMESPACE) create -f ubuntu-headless-svc.yaml
+	kubectl --namespace=$(NAMESPACE) create -f ubuntu-svc-cluster.yaml
+	kubectl --namespace=$(NAMESPACE) create -f ubuntu-svc-headless.yaml
 	kubectl --namespace=$(NAMESPACE) create -f ubuntu-statefulset.yaml
 	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-ds.yaml
 	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-deploy.yaml
