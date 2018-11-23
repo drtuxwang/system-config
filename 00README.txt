@@ -978,14 +978,14 @@ docker/ubuntu-test/sandbox/Makefile               ubuntu:18.10 based sandbox app
 docker/ubuntu-test/sandbox/Dockerfile
 
 kubernetes/ubuntu/Makefile                        Kubernetes: Ubuntu example
-kubernetes/ubuntu/test-ns.yml
-kubernetes/ubuntu/ubuntu-ds.yml
-kubernetes/ubuntu/ubuntu-deploy.yml
-kubernetes/ubuntu/ubuntu-pod.yml
-kubernetes/ubuntu/ubuntu-rc.yml
-kubernetes/ubuntu/ubuntu-statefulset.yml
-kubernetes/ubuntu/ubuntu-svc.yml
-kubernetes/ubuntu/ubuntu-headless-svc.yml
+kubernetes/ubuntu/namespace-ubuntu.yaml
+kubernetes/ubuntu/daemonset-ubuntu.yaml
+kubernetes/ubuntu/deployment-ubuntu.yaml
+kubernetes/ubuntu/pod-ubuntu.yaml
+kubernetes/ubuntu/replicationcontroller-ubuntu.yaml
+kubernetes/ubuntu/statefulset-ubuntu.yaml
+kubernetes/ubuntu/service-ubuntu.yaml
+kubernetes/ubuntu/service-ubuntu-headless.yaml
 
 python/simple-cython/Makefile                     Simple Cython example
 python/simple-cython/cython_example.pyx

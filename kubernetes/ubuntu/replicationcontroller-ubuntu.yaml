@@ -1,16 +1,14 @@
-apiVersion: apps/v1beta1
-kind: StatefulSet
+apiVersion: v1
+kind: ReplicationController
 metadata:
   labels:
     app: ubuntu
   name: ubuntu
-  namespace: test
+  namespace: ubuntu
 spec:
   replicas: 2
   selector:
-    matchLabels:
-      app: ubuntu
-  serviceName: ubuntu-headless
+    app: ubuntu
   template:
     metadata:
       labels:
@@ -39,6 +37,8 @@ spec:
         volumeMounts:
         - mountPath: /shared
           name: shared
+      nodeSelector:
+        kubernetes.io/hostname: hotdog.local
       terminationGracePeriodSeconds: 10
       volumes:
       - hostPath:

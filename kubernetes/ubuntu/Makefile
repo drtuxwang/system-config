@@ -1,26 +1,26 @@
-NAMESPACE := test
+NAMESPACE := ubuntu
 
 default: build
 
 .PHONY: build
 build:
 	@echo "\n*** Creating pods ***"
-	kubectl create -f test-ns.yaml
-	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-svc.yaml
-	kubectl --namespace=$(NAMESPACE) create -f ubuntu-svc.yaml
-	kubectl --namespace=$(NAMESPACE) create -f ubuntu-headless-svc.yaml
-	kubectl --namespace=$(NAMESPACE) create -f ubuntu-statefulset.yaml
-	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-ds.yaml
-	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-deploy.yaml
-	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-rc.yaml
-	# kubectl --namespace=$(NAMESPACE) create -f ubuntu-pod.yaml
+	kubectl create -f namespace-ubuntu.yaml
+	kubectl --namespace=$(NAMESPACE) create -f service-ubuntu.yaml
+	kubectl --namespace=$(NAMESPACE) create -f service-ubuntu-headless.yaml
+	kubectl --namespace=$(NAMESPACE) create -f statefulset-ubuntu.yaml
+	# kubectl --namespace=$(NAMESPACE) create -f daemonset-ubuntu.yaml
+	# kubectl --namespace=$(NAMESPACE) create -f deployment-ubuntu.yaml
+	# kubectl --namespace=$(NAMESPACE) create -f replicationcontroller-ubuntu.yaml
+	# kubectl --namespace=$(NAMESPACE) create -f pod-ubuntu.yaml
 
 .PHONY: clean
 clean:
 	@echo "\n*** Removing pods ***"
-	kubectl --namespace=$(NAMESPACE) delete -f ubuntu-statefulset.yaml ||:
-	kubectl --namespace=$(NAMESPACE) delete -f ubuntu-headless-svc.yaml ||:
-	kubectl delete namespace $(NAMESPACE) ||:
+	kubectl --namespace=$(NAMESPACE) delete -f statefulset-ubuntu.yaml ||:
+	kubectl --namespace=$(NAMESPACE) delete -f service-ubuntu-headless.yaml ||:
+	kubectl --namespace=$(NAMESPACE) delete -f service-ubuntu.yaml ||:
+	kubectl delete -f namespace-ubuntu.yaml ||:
 
 .PHONY: status
 status:
