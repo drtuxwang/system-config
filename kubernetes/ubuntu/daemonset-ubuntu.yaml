@@ -21,7 +21,7 @@ spec:
         env:
         - name: NAME
           value: VALUE
-        image: ubuntu:18.04
+        image: drtuxwang/ubuntu:18.04
         imagePullPolicy: IfNotPresent
         name: ubuntu
         ports:

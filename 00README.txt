@@ -986,9 +986,9 @@ kubernetes/ubuntu/daemonset-ubuntu.yaml
 kubernetes/ubuntu/deployment-ubuntu.yaml
 kubernetes/ubuntu/pod-ubuntu.yaml
 kubernetes/ubuntu/replicationcontroller-ubuntu.yaml
-kubernetes/ubuntu/statefulset-ubuntu.yaml
 kubernetes/ubuntu/service-ubuntu.yaml
 kubernetes/ubuntu/service-ubuntu-headless.yaml
+kubernetes/ubuntu/statefulset-ubuntu.yaml
 
 python/simple-cython/Makefile                     Simple Cython example
 python/simple-cython/cython_example.pyx
