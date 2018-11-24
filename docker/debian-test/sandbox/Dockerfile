@@ -19,6 +19,7 @@ RUN apt-get install --no-install-recommends -y \
 		libbz2-dev \
 		libdb5.3-dev \
 		libevent-dev \
+		libffi-dev \
 		libgdbm-dev \
 		liblzma-dev \
 		libncurses5-dev \
@@ -27,7 +28,8 @@ RUN apt-get install --no-install-recommends -y \
 		libssl-dev \
 		python3-dev \
 		python3-setuptools \
-		tk8.6-dev && \
+		tk8.6-dev \
+		uuid-dev && \
 	apt-get clean
 
 # Add scripts

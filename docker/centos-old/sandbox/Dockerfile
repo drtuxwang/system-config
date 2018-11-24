@@ -13,11 +13,13 @@ RUN yum -y install \
 		gdbm-devel \
 		libdb-devel \
 		libevent-devel \
+		libffi-devel \
 		libsqlite3x-devel \
 		ncurses-devel \
 		openssl-devel \
 		readline-devel \
 		tk-devel \
+		uuid-devel \
 		xz-devel && \
 	yum clean all
 
