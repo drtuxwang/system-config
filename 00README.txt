@@ -34,6 +34,7 @@ bin/python3.4
 bin/python3.5
 bin/python3.6
 bin/python3.6.bat
+bin/python3.7
 bin/2to3               Python 3.x script wrappers (allowing non systems port)
 bin/2to3.bat
 bin/2to3-3.5
@@ -861,8 +862,11 @@ config/userapp-gqview.desktop   Copy to "$HOME/.local/share/applications" for Ge
 config/userapp-soffice.desktop  Copy to "$HOME/.local/share/applications" for LibreOffice
 config/userapp-vlc.desktop      Copy to "$HOME/.local/share/applications" for VLC
 config/xscreensaver             Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
-etc/python-install.sh           Python pip installer (installs minimum requirements)
+etc/install-python-requirements.sh Python pip installer (installs minimum requirements)
 etc/python-requirements.txt     Python pip requirements file
+etc/python-2.7-requirements.txt Python pip requirements file
+etc/python-3.4-requirements.txt Python pip requirements file
+etc/python-3.7-requirements.txt Python pip requirements file
 etc/setbin                      Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
 etc/setbin.bat                  Windows Command prompt initialization
 etc/setbin.ps1                  Windows Power shell initialization
