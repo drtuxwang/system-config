@@ -430,6 +430,9 @@ bin/jsonformat.bat
 bin/jsonformat.py
 bin/jython.py
 bin/keymap.tcl         TCL/TK widget for setting keymaps
+bin/kubectl            kubectl wrapper (allowing non systems port)
+bin/kubectl.bat
+bin/kubectl.py
 bin/markdown           Markdown wrapper (for markdown_py)
 bin/markdown.bat
 bin/md5                Calculate MD5 checksums of files
