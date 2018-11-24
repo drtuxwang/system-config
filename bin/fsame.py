@@ -182,6 +182,7 @@ class Main(object):
                 files.append(file)
         self._calc(options, files)
 
+        exitcode = 0
         for files in sorted(self._md5files.values()):
             if len(files) > 1:
                 sorted_files = sorted(files)
@@ -191,6 +192,9 @@ class Main(object):
                 )
                 if options.get_remove_flag():
                     self._remove(sorted_files[1:])
+                else:
+                    exitcode = 1
+        return exitcode
 
 
 if __name__ == '__main__':

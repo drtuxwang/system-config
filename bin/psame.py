@@ -166,6 +166,7 @@ class Main(object):
                 files.append(file)
         self._ahash_check(options, files)
 
+        exitcode = 0
         for files in sorted(self._ahashfiles.values()):
             if len(files) > 1:
                 sorted_files = self._phash_check(sorted(files))
@@ -174,6 +175,8 @@ class Main(object):
                         "Identical: %s",
                         command_mod.Command.args2cmd(sorted_files),
                     )
+                    exitcode = 1
+        return exitcode
 
 
 if __name__ == '__main__':
