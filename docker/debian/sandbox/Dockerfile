@@ -32,14 +32,14 @@ RUN apt-get install --no-install-recommends -y \
 		uuid-dev && \
 	apt-get clean
 
+# Configure start
+RUN wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
+	chmod 755 /tini
+COPY tmpdir/etc/docker-xinit /etc/
+ENTRYPOINT ["/tini", "/etc/docker-xinit"]
+
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
 
 # Root account
 COPY tmpdir/root/.??* /root/
-
-# Configure start
-RUN wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
-		chmod 755 /tini
-COPY tmpdir/etc/docker-xinit /etc/
-ENTRYPOINT ["/tini", "/etc/docker-xinit"]
