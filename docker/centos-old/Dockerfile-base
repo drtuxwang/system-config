@@ -6,5 +6,6 @@ RUN yum -y install epel-release && \
 	yum -y install net-tools openssh-clients pciutils python34 vim xz && \
 	curl https://bootstrap.pypa.io/get-pip.py | python3.4 && \
 	python3 -m pip install --upgrade pip && \
+	rm -rf /root/.cache /root/.bash_logout /root/.bash_profile && \
 	echo -e '#!/bin/sh\n/usr/bin/tty | sed -e "s/^\/24$/\/dev\/console/"' > /usr/local/bin/tty && \
 	chmod ugo+rx /usr/local/bin/tty

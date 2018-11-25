@@ -5,4 +5,5 @@ RUN yum -y install epel-release && \
 	yum -y update && \
 	yum -y install bind-utils net-tools openssh-clients pciutils python34 vim && \
 	curl https://bootstrap.pypa.io/get-pip.py | python3.4 && \
-	python3 -m pip install --upgrade pip
+	python3 -m pip install --upgrade pip && \
+	rm -rf /root/.cache /root/.bash_logout /root/.bash_profile
