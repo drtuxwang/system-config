@@ -4,6 +4,10 @@
 #
 
 xauth add $(uname -n)/${XAUTH#*/} 2> /dev/null
+if [ "$(id -u)" != 0 ]
+then
+    ln -s /root /home/$(id -un)
+fi
 
 if [ $# = 0 ]
 then
