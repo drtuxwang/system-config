@@ -26,7 +26,7 @@ RUN yum -y install \
 # Configure start
 RUN wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
 	chmod 755 /tini && \
-	rm -f /root/.bash_logout /root/.bash_profile
+	rm -rf /root/.pki
 COPY tmpdir/etc/docker-init /etc/
 ENTRYPOINT ["/tini", "/etc/docker-init"]
 
