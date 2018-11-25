@@ -33,7 +33,8 @@ RUN apt-get install --no-install-recommends -y \
 
 # Configure start
 RUN wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
-	chmod 755 /tini
+	chmod 755 /tini && \
+	rm -f /root/.wget-hsts
 COPY tmpdir/etc/docker-init /etc/
 ENTRYPOINT ["/tini", "/etc/docker-init"]
 
