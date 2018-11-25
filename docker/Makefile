@@ -77,6 +77,7 @@ run-sandbox:
 	make -C $(DIST)/sandbox run
 
 .PHONY: run-sudo
+run-sudo:
 	make -C sudo run
 
 .PHONY: run-wine
