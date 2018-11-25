@@ -72,10 +72,7 @@ do
 done
 
 # Share current working directory
-if [ "$PWD" != "$HOME" ]
-then
-    FLAGS="$FLAGS --volume=$PWD:$PWD --workdir=$PWD"
-fi
+FLAGS="$FLAGS --volume=$PWD:/vol/app --workdir=/vol/app"
 
 # Sandbox user
 if [ "$SANDBOX" = "99999:99999" ]

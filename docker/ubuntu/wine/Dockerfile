@@ -15,5 +15,5 @@ COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
 COPY tmpdir/bin/ /opt/software/bin/
 
 # Configure start
-COPY tmpdir/config/docker-xinit /etc/
-ENTRYPOINT ["/etc/docker-xinit"]
+COPY tmpdir/config/docker-init /etc/
+ENTRYPOINT ["/etc/docker-init"]

@@ -31,7 +31,7 @@ build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/etc tmpdir/root
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
-	cp -p $(TOPDIR)/config/docker-xinit tmpdir/etc
+	cp -p $(TOPDIR)/config/docker-init tmpdir/etc
 	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
 	cp -p $(TOPDIR)/config/profile tmpdir/root/.profile
 	cp -p $(TOPDIR)/config/tmux.conf tmpdir/root/.tmux.conf

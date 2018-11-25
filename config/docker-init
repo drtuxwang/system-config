@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Docker container init script
+#
+
+if [ ! -d "$HOME" ]
+then
+    mkdir -p "${HOME%/*}"
+    ln -sf /root "$HOME"
+fi
+
+if [ "$XAUTH" ]
+then
+    touch $HOME/.Xauthority
+    xauth add $(uname -n)/${XAUTH#*/}
+fi
+
+if [ $# = 0 ]
+then
+    exec bash -l
+fi
+exec "$@"

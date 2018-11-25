@@ -34,20 +34,14 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
 # Configure start
 RUN wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
 	chmod 755 /tini
-COPY tmpdir/etc/docker-xinit /etc/
-ENTRYPOINT ["/tini", "/etc/docker-xinit"]
+COPY tmpdir/etc/docker-init /etc/
+ENTRYPOINT ["/tini", "/etc/docker-init"]
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
 
 # Root account
 COPY tmpdir/root/.??* /root/
-
-# Sandbox account
-RUN echo "sandbox:x:99999:99999::/home/sandbox:/bin/bash" >> /etc/passwd && \
-	echo "sandbox:x:99999" >> /etc/group && \
-	chmod 777 /root /home && \
-	chmod 666 /root/.??*
 
 # Sandbox account
 RUN echo "sandbox:x:99999:99999::/home/sandbox:/bin/bash" >> /etc/passwd && \

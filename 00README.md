@@ -890,7 +890,7 @@ the years. Now most of the scripts are written in Python 3.
  * config/bashrc                         Copy to "/root/.bashrc" for "root" account settings
  * config/com.googlecode.iterm2.plist    Copy to "$HOME/Library/Preference" for iTerm2 on Mac
  * config/config                         Copy to "$HOME/.ssh/config"
- * config/docker-xinit                   Docker X-init script for access to X-windows server
+ * config/docker-init                    Docker init script for non root & X-windows server access
  * config/genmon-7.rc                    Copy to "$HOME/.config/xfce4/panel/genmon-7.rc" for XFCE Weather
  * config/gitconfig                      Copy to "$HOME/.gitconfig" and edit
  * config/login                          Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
