@@ -5,8 +5,8 @@
 
 if [ ! -d "$HOME" ]
 then
-    mkdir -p "${HOME%/*}"
-    ln -sf /root "$HOME"
+    mkdir -p "$HOME"
+    cp -p /root/.??* "$HOME"
 fi
 
 if [ "$XAUTH" ]
