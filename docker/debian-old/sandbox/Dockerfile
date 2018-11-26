@@ -46,5 +46,7 @@ COPY tmpdir/root/.??* /root/
 # Sandbox account
 RUN echo "sandbox:x:99999:99999::/home/sandbox:/bin/bash" >> /etc/passwd && \
 	echo "sandbox:x:99999" >> /etc/group && \
+	ln -s .profile /root/.bash_profile && \
+	touch /root/.bash_logout && \
 	chmod 777 /root /home && \
 	chmod 666 /root/.??*

@@ -4,7 +4,7 @@ IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../../..
 
 ifndef FLAGS
-	FLAGS=--network none
+	FLAGS=--network none --user=99999:99999
 endif
 FLAGS := --rm \
 	--interactive \
