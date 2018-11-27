@@ -44,9 +44,12 @@ build:
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME)-i386 $(IMAGE) $(COMMAND) || exit 0
+	docker run $(FLAGS) \
+		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
+		$(IMAGE) \
+		$(COMMAND) \
+		|| exit 0
 
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

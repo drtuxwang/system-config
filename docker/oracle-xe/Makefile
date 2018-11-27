@@ -35,7 +35,7 @@ run:
 	docker run $(FLAGS) \
 		--privileged=true \
 		--publish 1521:1521 \
-		--hostname $(NAME) \
+		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
 		--workdir /u01/app/oracle/product/11.2.0/xe \
 		$(IMAGE) ||:
 

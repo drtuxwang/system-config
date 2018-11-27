@@ -39,7 +39,7 @@ run:
 		--env ETCDCTL_API=2 \
 		--publish 2379:2379 \
 		--publish 2380:2380 \
-		--hostname $(NAME) \
+		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
 		--workdir /var/lib/etcd \
 		$(IMAGE) \
 			etcd \

@@ -23,7 +23,7 @@ CLEAN_IMAGES := $(BUILD_IMAGES)
 
 # Default Sandbox distro
 ifndef DIST
-	DIST=ubuntu
+	DIST=ubuntu/sandbox
 endif
 
 default: build
@@ -74,7 +74,7 @@ clean:
 
 .PHONY: run-sandbox
 run-sandbox:
-	make -C $(DIST)/sandbox run
+	make -C $(DIST) run
 
 .PHONY: run-sudo
 run-sudo:
@@ -82,4 +82,4 @@ run-sudo:
 
 .PHONY: run-wine
 run-wine:
-	make -C ubuntu/wine run
+	make -C $(DIST)/wine run

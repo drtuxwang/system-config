@@ -31,9 +31,10 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
 		--publish 8080:80 \
-		--hostname $(NAME) \
+		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
 		--workdir /var/lib/nginx \
-		$(IMAGE) || exit 0
+		$(IMAGE) \
+		|| exit 0
 
 .PHONY: clean
 clean:

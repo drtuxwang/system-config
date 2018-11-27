@@ -5,9 +5,10 @@
 
 if [ ! -d "$HOME" ]
 then
-    mkdir -p "$HOME"
-    cp -rp /root/.??* "$HOME"
+    tar xf /home/home.tar -C ${HOME%/*}
+    mv ${HOME%/*}/root "$HOME"
 fi
+rm -f /home/home.tar
 
 if [ "$XAUTH" ]
 then

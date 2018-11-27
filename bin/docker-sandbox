@@ -22,7 +22,7 @@ while [ $# -gt 0 ]
 do
     case $1 in
     -dist=*)
-        DIST=${1#*=}
+        DIST=`echo "${1#*=}/" | sed -e "s@/@/sandbox/@"`
         ;;
     -dri)
         FLAGS="$FLAGS --device=/dev/dri:/dev/dri"
@@ -53,15 +53,17 @@ do
         echo "usage: $0 [-dist=<name>] [-dri] [-net] [-root] [-snd] [-user] [-v=<path>[:ro]] [-x11] [command]"
         echo
         echo "optional arguments:"
-        ls -1d $DIR/docker/*/sandbox/Makefile 2> /dev/null | sed -e "s@.*/docker/@@;s@/.*@@" | awk '{printf("   -dist=%-11s Select sandbox environment.\n", $1)}'
-        echo "   -dri              Enable direct rendering device access."
-        echo "   -ipc              Enable shmem for internet process communications."
-        echo "   -net              Enable network device access."
-        echo "   -root             Run as root user (Default sandbox user)."
-        echo "   -snd              Enable sound device access."
-        echo "   -user             Run as host user & group (Default sandbox user)."
-        echo "   -v=<path>[:ro]    Bind mount a volume (ie \"-v=/path\" & \"-v=/path:ro\")"
-        echo "   -x11              Enable X11 display access."
+        ls -1d $DIR/docker/*/sandbox/Makefile $DIR/docker/*/sandbox/*/Makefile 2> /dev/null | \
+            sed -e "s@.*/docker/@@;s@/sandbox@@;s@/Makefile@@" | \
+            awk '{printf("   -dist=%-15s Select sandbox environment.\n", $1)}'
+        echo "   -dri                  Enable direct rendering device access."
+        echo "   -ipc                  Enable shmem for internet process communications."
+        echo "   -net                  Enable network device access."
+        echo "   -root                 Run as root user (Default sandbox user)."
+        echo "   -snd                  Enable sound device access."
+        echo "   -user                 Run as host user & group (Default sandbox user)."
+        echo "   -v=<path>[:ro]        Bind mount a volume (ie \"-v=/path\" & \"-v=/path:ro\")"
+        echo "   -x11                  Enable X11 display access."
         exit 1
         ;;
     *)
@@ -85,9 +87,9 @@ fi
 
 export COMMAND="$@"
 
-if [ "$DIST" -a ! -f "$DIR/docker/$DIST/sandbox/Makefile" ]
+if [ "$DIST" -a ! -f "$DIR/docker/${DIST}Makefile" ]
 then
-     echo "Error: Cannot locate \"$DIR/docker/$DIST/sandbox/Makefile\""
+     echo "Error: Cannot locate \"$DIR/docker/${DIST}Makefile\""
      exit 1
 fi
 

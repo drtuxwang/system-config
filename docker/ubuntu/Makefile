@@ -1,7 +1,7 @@
 NAME := ubuntu
 VERSION := 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-DEPENDENT_IMAGES := devpi docker nginx sandbox wine
+DEPENDENT_IMAGES := devpi docker nginx sandbox
 TOPDIR := ../..
 
 FLAGS := --rm \
@@ -39,7 +39,11 @@ build:
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) || exit 0
+	docker run $(FLAGS) \
+		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
+		$(IMAGE) \
+		$(COMMAND) \
+		|| exit 0
 
 .PHONY: version
 version:

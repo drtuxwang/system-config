@@ -1,6 +1,7 @@
 NAME := ubuntu-sandbox
 VERSION := 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
+DEPENDENT_IMAGES := wine
 TOPDIR := ../../..
 
 ifndef FLAGS
@@ -40,13 +41,22 @@ build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -f Dockerfile -t $(IMAGE) .
 	rm -rf tmpdir
+	for IMAGE in $(DEPENDENT_IMAGES); do \
+		make -C $$IMAGE build || exit 1; \
+	done
 
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) $(COMMAND) || exit 0
+	docker run $(FLAGS) \
+		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
+		$(IMAGE) \
+		$(COMMAND) \
+		|| exit 0
 
 .PHONY: clean
 clean:
+	for IMAGE in $(DEPENDENT_IMAGES); do \
+		make -C $$IMAGE clean; \
+	done
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

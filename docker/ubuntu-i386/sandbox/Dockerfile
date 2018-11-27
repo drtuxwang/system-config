@@ -30,7 +30,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
 	apt-get clean
 
 # Configure start
-RUN wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
+RUN wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-i386 -O /tini && \
 	chmod 755 /tini && \
 	rm -f /root/.wget-hsts
 COPY tmpdir/etc/docker-init /etc/
@@ -45,5 +45,5 @@ COPY tmpdir/root/.??* /root/
 # Sandbox account
 RUN echo "sandbox:x:99999:99999::/home/sandbox:/bin/bash" >> /etc/passwd && \
 	echo "sandbox:x:99999" >> /etc/group && \
-	chmod 777 /root /home && \
-	chmod 666 /root/.??*
+	tar cf /home/home.tar /root && \
+	chmod -R 777 /home

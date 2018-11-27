@@ -1,7 +1,7 @@
-NAME := ubuntu-wine
+NAME := ubuntu-wine-sandbox
 VERSION := 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-TOPDIR := ../../..
+TOPDIR := ../../../..
 
 ifndef FLAGS
 	FLAGS=--network none
@@ -28,13 +28,6 @@ pull:
 
 .PHONY: build
 build:
-	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/config tmpdir/etc
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
-	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
-	cp -p $(TOPDIR)/config/docker-init tmpdir/config/
-	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
-	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -f Dockerfile -t $(IMAGE) .
 	rm -rf tmpdir
@@ -42,9 +35,12 @@ build:
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) $(COMMAND) || exit 0
+	docker run $(FLAGS) \
+		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
+		$(IMAGE) \
+		$(COMMAND) \
+		|| exit 0
 
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:

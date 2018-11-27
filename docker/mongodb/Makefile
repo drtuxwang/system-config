@@ -35,7 +35,7 @@ run:
 	docker run $(FLAGS) \
 		--privileged=true \
 		--publish 27017:27017 \
-		--hostname $(NAME) \
+		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
 		--workdir /data/db \
 		$(IMAGE) ||:
 

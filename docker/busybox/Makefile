@@ -33,7 +33,11 @@ build:
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --hostname $(NAME) $(IMAGE) ||:
+	docker run $(FLAGS) \
+		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
+		$(IMAGE) \
+		$(COMMAND) \
+		|| exit 0
 
 .PHONY: version
 version:

@@ -36,7 +36,7 @@ run:
 	docker run $(FLAGS) \
 		--volume=/var/lib/registry:/var/lib/registry \
 		--publish 5000:5000 \
-		--hostname $(NAME) \
+		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
 		--workdir /var/lib/registry \
 		$(IMAGE) ||:
 

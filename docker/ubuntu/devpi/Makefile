@@ -34,7 +34,8 @@ run:
 		--publish 8080:8080 \
 		--hostname $(NAME) \
 		--workdir /var/lib/devpi \
-		$(IMAGE) || exit 0
+		$(IMAGE) \
+		|| exit 0
 
 .PHONY: clean
 clean:

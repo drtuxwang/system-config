@@ -34,7 +34,13 @@ build:
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) --privileged=true --hostname $(NAME) $(IMAGE) || exit 0
+	docker run $(FLAGS) \
+		--privileged=true \
+		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
+		$(IMAGE) \
+		$(COMMAND) \
+		|| exit 0
+
 
 .PHONY: clean
 clean:

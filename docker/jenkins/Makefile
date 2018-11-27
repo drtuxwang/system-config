@@ -36,7 +36,7 @@ run:
 		--privileged=true \
 		--volume=/var/lib/jenkins:/var/lib/jenkins \
 		--publish 8080:8080 \
-		--hostname $(NAME) \
+		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
 		--workdir /var/lib/jenkins \
 		$(IMAGE) ||:
 
