@@ -192,9 +192,10 @@ the years. Now most of the scripts are written in Python 3.
  * bin/dockerreg          Docker Registry tool
  * bin/dockerreg.bat
  * bin/dockerreg.py
+ * bin/docker-firefox     Starts Docker Firefox app
  * bin/docker-sandbox     Starts Docker sandbox app
  * bin/docker-sudo        Starts Docker sudo app
- * bin/docker-wine        Starts Docker wine app
+ * bin/docker-wine        Starts Docker WINE app
  * bin/eclipse            eclipse wrapper (allowing non systems port)
  * bin/eclipse.py
  * bin/espeak             espeak wrapper (allowing non systems port)
@@ -1025,6 +1026,12 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu/wine/Dockerfile
  * docker/ubuntu/sandbox/Makefile        ubuntu:18.04 based sandbox app
  * docker/ubuntu/sandbox/Dockerfile
+ * docker/ubuntu/sandbox/firefox/Makefile
+ * docker/ubuntu/sandbox/firefox/Dockerfile
+ * docker/ubuntu/sandbox/firefox/profiles.ini
+ * docker/ubuntu/sandbox/firefox/user.js
+ * docker/ubuntu/sandbox/wine/Makefile
+ * docker/ubuntu/sandbox/wine/Dockerfile
  * docker/ubuntu-i386/Makefile           i386/ubuntu:18.04 based linux
  * docker/ubuntu-i386/Dockerfile-base
  * docker/ubuntu-i386/Dockerfile

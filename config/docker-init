@@ -3,12 +3,12 @@
 # Docker container init script
 #
 
-if [ ! -d "$HOME" ]
-then
-    tar xf /home/home.tar -C ${HOME%/*}
-    mv ${HOME%/*}/root "$HOME"
-fi
-rm -f /home/home.tar
+mkdir -p "$HOME"
+for FILE in /home/home*.tar
+do
+    tar xf $FILE -C $HOME
+    rm -f $FILE
+done
 
 if [ "$XAUTH" ]
 then

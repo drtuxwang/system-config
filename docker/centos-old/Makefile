@@ -16,7 +16,7 @@ FLAGS := --rm \
 default: build
 	docker images
 
-.PHONY: pul
+.PHONY: pull
 pull:
 	docker pull `grep FROM Dockerfile-base | cut -f2 -d" "`
 

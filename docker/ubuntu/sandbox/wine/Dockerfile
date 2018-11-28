@@ -6,7 +6,7 @@ RUN dpkg --add-architecture i386 && \
 	apt-get update && \
 	apt-get install --no-install-recommends -y wine-stable wine32 wine64 x11-xserver-utils && \
 	apt-get clean && \
+	mkdir /root && \
 	winecfg && \
-	tar cf /home/home.tar /root && \
-	chmod -R 777 /home && \
-	rm -rf /root/.wine
+	tar cf /home/home-wine.tar -C /root .wine && \
+	rm -rf /root/

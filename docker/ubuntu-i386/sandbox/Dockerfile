@@ -39,11 +39,11 @@ ENTRYPOINT ["/tini", "/etc/docker-init"]
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
 
-# Root account
-COPY tmpdir/root/.??* /root/
+# Add home directory archive
+COPY tmpdir/home.tar /home/
 
 # Sandbox account
 RUN echo "sandbox:x:99999:99999::/home/sandbox:/bin/bash" >> /etc/passwd && \
 	echo "sandbox:x:99999" >> /etc/group && \
-	tar cf /home/home.tar /root && \
-	chmod -R 777 /home
+	chmod -R 777 /home && \
+	rm -rf /root

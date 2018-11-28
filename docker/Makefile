@@ -72,6 +72,10 @@ clean:
 	done
 	make gc
 
+.PHONY: run-firefox
+run-firefox:
+	make -C $(DIST)/firefox run
+
 .PHONY: run-sandbox
 run-sandbox:
 	make -C $(DIST) run

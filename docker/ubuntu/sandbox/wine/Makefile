@@ -30,7 +30,6 @@ pull:
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -f Dockerfile -t $(IMAGE) .
-	rm -rf tmpdir
 
 .PHONY: run
 run:

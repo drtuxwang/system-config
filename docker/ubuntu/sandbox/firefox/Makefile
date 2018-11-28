@@ -1,10 +1,13 @@
-NAME := debian-sandbox
-VERSION := 8
+NAME := ubuntu-firefox-sandbox
+VERSION := 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-TOPDIR := ../../..
+TOPDIR := ../../../..
+
+FIREFOX_PROFILE=$(HOME)/.mozilla/firefox/sandbox
+
 
 ifndef FLAGS
-	FLAGS=--network none --user=99999:99999
+	FLAGS=--network none
 endif
 FLAGS := --rm \
 	--interactive \
@@ -28,17 +31,13 @@ pull:
 
 .PHONY: build
 build:
-	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/etc tmpdir/home
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
-	cp -p $(TOPDIR)/config/docker-init tmpdir/etc
-	cp -p $(TOPDIR)/config/bashrc tmpdir/home/.bashrc
-	cp -p $(TOPDIR)/config/profile tmpdir/home/.profile
-	cp -p $(TOPDIR)/config/tmux.conf tmpdir/home/.tmux.conf
-	cp -p $(TOPDIR)/config/vimrc tmpdir/home/.vimrc
-	$(TOPDIR)/bin/fmod -R *
-	tar cf tmpdir/home.tar -C tmpdir/home --owner=0 --group=0 .bashrc .profile .tmux.conf .vimrc
-	chmod 644 tmpdir/home.tar
+	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
+	mkdir -p tmpdir/home/.mozilla/firefox
+	cp -p profiles.ini tmpdir/home/.mozilla/firefox
+	cp -rp $(FIREFOX_PROFILE) tmpdir/home/.mozilla/firefox/sandbox
+	cp -p user.js tmpdir/home/.mozilla/firefox/sandbox/
+	tar cf tmpdir/home-firefox.tar -C tmpdir/home --owner=0 --group=0 .mozilla
+	chmod 644 tmpdir/home-firefox.tar
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -f Dockerfile -t $(IMAGE) .
 	rm -rf tmpdir

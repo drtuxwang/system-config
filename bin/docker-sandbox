@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# 32bit/64bit build/run sandboxes (no dri, ipc, net, snd, root & x11 default)
+# Run Docker sandbox (no dri, ipc, net, snd, root & x11 defaults)
 #
 
 # Locate GIT
