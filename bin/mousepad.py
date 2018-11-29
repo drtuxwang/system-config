@@ -44,7 +44,8 @@ class Options(object):
         self._mousepad.set_args(args[1:])
         self._pattern = (
             '^$|recently-used.xbel|: Error retrieving accessibility bus|'
-            ': GLib-CRITICAL |: GtkSourceView-CRITICAL'
+            ': GLib-CRITICAL |: GtkSourceView-CRITICAL|: Gtk-WARNING |'
+            ': WARNING '
         )
 
 
