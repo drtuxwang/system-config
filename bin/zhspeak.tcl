@@ -14,10 +14,11 @@ pack .input -side top -fill x
 frame .toolbar -bg "#cccccc"
 
     pack .toolbar -side top -fill x
-    button .toolbar.new -width 4 -bg "#ff0000" -text "New" -command {set text {}; set msg {}}
+    button .toolbar.new -width 4 -bg "#ffcc00" -text "New" -command {set text {}; set msg {}}
     pack .toolbar.new -side left
+
     button .toolbar.copy -width 4 -bg "#ffcc00" -text "Copy" -command {
-        exec echo "echo $text | xclip -in" | /bin/sh &
+        exec echo "$command" | xclip -in &
     }
     pack .toolbar.copy -side left
     button .toolbar.paste -width 4 -bg "#ffcc00" -text "Paste" -command {
@@ -25,6 +26,8 @@ frame .toolbar -bg "#cccccc"
     }
     pack .toolbar.paste -side left
 
+    button .toolbar.close -width 4 -bg "#ff0000" -text Close -command exit
+    pack .toolbar.close -side right
     button .toolbar.pinyin -width 3 -bg "#00ff00" -text py -command {
         catch {exec zhspeak -pinyin -zh "$text"} msg
     }

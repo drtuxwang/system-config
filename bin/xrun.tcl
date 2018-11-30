@@ -15,8 +15,8 @@ frame .toolbar -bg "#cccccc"
 
     pack .toolbar -side top -fill x
 
-    button .toolbar.cut -width 4 -bg "#ff0000" -text "Cut" -command {set command {}}
-    pack .toolbar.cut -side left
+    button .toolbar.new -width 4 -bg "#ffcc00" -text "Cut" -command {set command {}}
+    pack .toolbar.new -side left
     button .toolbar.copy -width 4 -bg "#ffcc00" -text "Copy" -command {
         exec echo "$command" | xclip -in &
     }
@@ -30,7 +30,9 @@ frame .toolbar -bg "#cccccc"
     }
     pack .toolbar.run -side left
 
-    entry .toolbar.directory -width 70 -relief sunken -textvar directory
+    button .toolbar.close -width 4 -bg "#ff0000" -text Close -command exit
+    pack .toolbar.close -side right
+    entry .toolbar.directory -width 60 -relief sunken -textvar directory
     pack .toolbar.directory -side right
 pack .toolbar -side top -fill x
 
