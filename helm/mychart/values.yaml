@@ -1,0 +1,27 @@
+# Declare variables to be passed into your templates.
+
+app:
+  server:
+    replicas: 2
+
+image:
+  server: drtuxwang/ubuntu:18.04
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1024M
+  requests:
+    cpu: 100m
+    memory: 64M
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
