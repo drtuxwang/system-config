@@ -59,7 +59,7 @@ class Main(object):
             username = getpass.getuser()
             command.set_args([
                 '-p',
-                '[sudo] password for {0:s}@{1:s}: '.format(hostname, username)
+                '[sudo] password for {0:s}@{1:s}: '.format(username, hostname)
             ])
         command.extend_args(sys.argv[1:])
         task = subtask_mod.Task(command.get_cmdline())
