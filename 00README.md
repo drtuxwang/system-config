@@ -192,10 +192,10 @@ the years. Now most of the scripts are written in Python 3.
  * bin/dockerreg          Docker Registry tool
  * bin/dockerreg.bat
  * bin/dockerreg.py
- * bin/docker-firefox     Starts Docker Firefox app
- * bin/docker-sandbox     Starts Docker sandbox app
+ * bin/docker-firefox     Starts Docker sandbox for Firefox
+ * bin/docker-gcc         Starts Docker sandbox for GCC
  * bin/docker-sudo        Starts Docker sudo app
- * bin/docker-wine        Starts Docker WINE app
+ * bin/docker-wine        Starts Docker sandbox for WINE
  * bin/eclipse            eclipse wrapper (allowing non systems port)
  * bin/eclipse.py
  * bin/espeak             espeak wrapper (allowing non systems port)
@@ -962,32 +962,37 @@ the years. Now most of the scripts are written in Python 3.
  * docker/busybox/Makefile               busybox:1.28 based linux
  * docker/busybox/Dockerfile
  * docker/centos-old/Makefile            centos:6 based linux
- * docker/centos-old/Dockerfile-base
  * docker/centos-old/Dockerfile
- * docker/centos-old/sandbox/Dockerfile  centos:6 based sandbox app
- * docker/centos-old/sandbox/Makefile
+ * docker/centos-old/Dockerfile-base
+ * docker/centos-old/Dockerfile-sandbox
+ * docker/centos-old/sandbox-gcc/Makefile  centos:6 based GCC sandbox
+ * docker/centos-old/sandbox-gcc/Dockerfile
  * docker/centos/Makefile                centos:7 based linux
- * docker/centos/Dockerfile-base
  * docker/centos/Dockerfile
- * docker/centos/sandbox/Dockerfile      centos:7 based sandbox app
- * docker/centos/sandbox/Makefile
+ * docker/centos/Dockerfile-base
+ * docker/centos/Dockerfile-sandbox
+ * docker/centos/sandbox-gcc/Makefile    centos:7 based GCC sandbox
+ * docker/centos/sandbox-gcc/Dockerfile
  * docker/clearlinux/Makefile            clearlinux:latest based linux
  * docker/clearlinux/Dockerfile
  * docker/debian-old/Makefile            debian:8-slim based linux
  * docker/debian-old/Dockerfile
  * docker/debian-old/Dockerfile-base
- * docker/debian-old/sandbox/Makefile    debian:8-slim based sandbox app
- * docker/debian-old/sandbox/Dockerfile
+ * docker/debian-old/Dockerfile-sandbox
+ * docker/debian-old/sandbox-gcc/Makefile  debian:8-slim based GCC sandbox
+ * docker/debian-old/sandbox-gcc/Dockerfile
  * docker/debian/Makefile                debian:9-slim based linux
  * docker/debian/Dockerfile
  * docker/debian/Dockerfile-base
- * docker/debian/sandbox/Makefile        debian:9-slim based sandbox app
- * docker/debian/sandbox/Dockerfile
+ * docker/debian/Dockerfile-sandbox
+ * docker/debian/sandbox-gcc/Makefile    debian:9-slim based GCC sandbox
+ * docker/debian/sandbox-gcc/Dockerfile
  * docker/debian-test/Makefile           debian:testing-slim based linux
  * docker/debian-test/Dockerfile
  * docker/debian-test/Dockerfile-base
- * docker/debian-test/sandbox/Makefile   debian:testing-slim based sandbox app
- * docker/debian-test/sandbox/Dockerfile
+ * docker/debian-test/Dockerfile-sandbox
+ * docker/debian-test/sandbox-gcc/Makefile  debian:testing-slim based GCC sandbox
+ * docker/debian-test/sandbox-gcc/Dockerfile
  * docker/etcd/Makefile                  gcr.io/etcd-development/etcd:v3.2.20 based app
  * docker/etcd/Dockerfile
  * docker/etcd/cluster/Makefile          gcr.io/etcd-development/etcd:v3.2.20 based cluster
@@ -1010,38 +1015,40 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu-old/Makefile            ubuntu:16.04 based linux
  * docker/ubuntu-old/Dockerfile
  * docker/ubuntu-old/Dockerfile-base
- * docker/ubuntu-old/sandbox/Makefile    ubuntu:16.04 based sandbox app
- * docker/ubuntu-old/sandbox/Dockerfile
+ * docker/ubuntu-old/Dockerfile-sandbox
+ * docker/ubuntu-old/sandbox-gcc/Makefile  ubuntu:16.04 based GCC sandbox
+ * docker/ubuntu-old/sandbox-gcc/Dockerfile
  * docker/ubuntu/Makefile                ubuntu:18.04 based linux
- * docker/ubuntu/Dockerfile-base
  * docker/ubuntu/Dockerfile
- * docker/ubuntu/devpi/Makefile          ubuntu:18.04 based devpi server aoo
+ * docker/ubuntu/Dockerfile-base
+ * docker/ubuntu/Dockerfile-sandbox
+ * docker/ubuntu/devpi/Makefile          ubuntu:18.04 based devpi server app
  * docker/ubuntu/devpi/Dockerfile
  * docker/ubuntu/docker/Makefile         ubuntu:18.04 based docker client app
  * docker/ubuntu/docker/Dockerfile
  * docker/ubuntu/nginx/Makefile          ubuntu:18.04 based NGINX proxy app
  * docker/ubuntu/nginx/Dockerfile
  * docker/ubuntu/nginx/files/nginx-proxy.conf
- * docker/ubuntu/wine/Makefile           ubuntu:18.04 based wine app
- * docker/ubuntu/wine/Dockerfile
- * docker/ubuntu/sandbox/Makefile        ubuntu:18.04 based sandbox app
- * docker/ubuntu/sandbox/Dockerfile
- * docker/ubuntu/sandbox/firefox/Makefile
- * docker/ubuntu/sandbox/firefox/Dockerfile
- * docker/ubuntu/sandbox/firefox/profiles.ini
- * docker/ubuntu/sandbox/firefox/user.js
- * docker/ubuntu/sandbox/wine/Makefile
- * docker/ubuntu/sandbox/wine/Dockerfile
+ * docker/ubuntu/sandbox-firefox/Makefile  ubuntu:18.04 based Firefox sandbox
+ * docker/ubuntu/sandbox-firefox/Dockerfile
+ * docker/ubuntu/sandbox-firefox/profiles.ini
+ * docker/ubuntu/sandbox-firefox/user.js
+ * docker/ubuntu/sandbox-gcc/Makefile    ubuntu:18.04 based GCC sandbox
+ * docker/ubuntu/sandbox-gcc/Dockerfile
+ * docker/ubuntu/sandbox-wine/Makefile   ubuntu:18.04 based Wine sandbox
+ * docker/ubuntu/sandbox-wine/Dockerfile
  * docker/ubuntu-i386/Makefile           i386/ubuntu:18.04 based linux
- * docker/ubuntu-i386/Dockerfile-base
  * docker/ubuntu-i386/Dockerfile
- * docker/ubuntu-i386/sandbox/Makefile   i386/ubuntu:18.04 based sandbox app
- * docker/ubuntu-i386/sandbox/Dockerfile
+ * docker/ubuntu-i386/Dockerfile-base
+ * docker/ubuntu-i386/Dockerfile-sandbox
+ * docker/ubuntu-i386/sandbox-gcc/Makefile  i386/ubuntu:18.04 based GCC sandbox
+ * docker/ubuntu-i386/sandbox-gcc/Dockerfile
  * docker/ubuntu-test/Makefile           ubuntu:18.10 based linux
  * docker/ubuntu-test/Dockerfile
  * docker/ubuntu-test/Dockerfile-base
- * docker/ubuntu-test/sandbox/Makefile   ubuntu:18.10 based sandbox app
- * docker/ubuntu-test/sandbox/Dockerfile
+ * docker/ubuntu-test/Dockerfile-sandbox
+ * docker/ubuntu-test/sandbox-gcc/Makefile  ubuntu:18.10 based GCC sandbox
+ * docker/ubuntu-test/sandbox-gcc/Dockerfile
 </pre>
 <pre>
  * kubernetes/ubuntu/Makefile            Kubernetes: Ubuntu example

@@ -23,7 +23,7 @@ CLEAN_IMAGES := $(BUILD_IMAGES)
 
 # Default Sandbox distro
 ifndef DIST
-	DIST=ubuntu/sandbox
+	DIST=ubuntu
 endif
 
 default: build
@@ -74,11 +74,12 @@ clean:
 
 .PHONY: run-firefox
 run-firefox:
-	make -C $(DIST)/firefox run
+	make -C $(DIST)/sandbox-firefox run
 
-.PHONY: run-sandbox
-run-sandbox:
-	make -C $(DIST) run
+.PHONY: run-gcc
+run-gcc:
+	echo debugX $(DIST)/sandbox-gcc
+	make -C $(DIST)/sandbox-gcc run
 
 .PHONY: run-sudo
 run-sudo:
@@ -86,4 +87,4 @@ run-sudo:
 
 .PHONY: run-wine
 run-wine:
-	make -C $(DIST)/wine run
+	make -C $(DIST)/sandbox-wine run

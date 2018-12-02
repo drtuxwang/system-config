@@ -22,7 +22,7 @@ while [ $# -gt 0 ]
 do
     case $1 in
     -dist=*)
-        DIST=`echo "${1#*=}/" | sed -e "s@/@/sandbox/@"`
+        DIST=${1#*=}
         ;;
     -dri)
         FLAGS="$FLAGS --device=/dev/dri:/dev/dri"
@@ -53,8 +53,8 @@ do
         echo "usage: $0 [-dist=<name>] [-dri] [-net] [-root] [-snd] [-user] [-v=<path>[:ro]] [-x11] [command]"
         echo
         echo "optional arguments:"
-        ls -1d $DIR/docker/*/sandbox/wine/Makefile 2> /dev/null | \
-            sed -e "s@.*/docker/@@;s@/sandbox@@;s@/Makefile@@" | \
+        ls -1d $DIR/docker/*/sandbox-wine/Makefile 2> /dev/null | \
+            sed -e "s@.*/docker/@@;s@/.*@@" | \
             awk '{printf("   -dist=%-15s Select sandbox environment.\n", $1)}'
         echo "   -dri                  Enable direct rendering device access."
         echo "   -ipc                  Enable shmem for internet process communications."
@@ -87,9 +87,9 @@ fi
 
 export COMMAND="$@"
 
-if [ "$DIST" -a ! -f "$DIR/docker/${DIST}Makefile" ]
+if [ "$DIST" -a ! -f "$DIR/docker/${DIST}/sandbox-wine/Makefile" ]
 then
-     echo "Error: Cannot locate \"$DIR/docker/${DIST}Makefile\""
+     echo "Error: Cannot locate \"$DIR/docker/${DIST}/sandbox-wine/Makefile\""
      exit 1
 fi
 

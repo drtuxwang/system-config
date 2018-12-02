@@ -1,0 +1,19 @@
+FROM drtuxwang/debian-base:9
+
+# Install sandbox environment packages
+RUN apt-get install --no-install-recommends -y \
+		file \
+		libgl1-mesa-glx \
+		libsdl1.2debian \
+		procps \
+		tmux \
+		wget \
+		x11-xserver-utils \
+		xauth && \
+	apt-get clean && \
+	rm -rf /root/.??* && \
+	echo "sandbox:x:99999:99999::/home/sandbox:/bin/bash" >> /etc/passwd && \
+	echo "sandbox:x:99999" >> /etc/group && \
+	chmod -R 777 /home && \
+	wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
+	chmod 755 /tini

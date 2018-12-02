@@ -10,4 +10,3 @@ COPY tmpdir/root/.??* /root/
 ENV HOME=/root
 WORKDIR /root
 CMD bash
-
