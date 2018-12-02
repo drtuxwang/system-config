@@ -34,7 +34,7 @@ spec:
         - containerPort: {{ .Values.service.port }}
           protocol: TCP
         resources:
-{{ toYaml .Values.resources | indent 10 }}
+          {{-toYaml .Values.resources | indent 10 }}
         volumeMounts:
         - mountPath: /shared
           name: shared

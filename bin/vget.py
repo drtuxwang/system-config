@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Youtube video downloader.
+Video downloader for Youtube & compatible websites (uses youtube-dl).
 """
 
 import argparse
@@ -33,16 +33,14 @@ class Options(object):
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Youtube video downloader.')
+            description='Video downloader for Youtube & compatible websites.')
 
         parser.add_argument(
-            '-s',
+            '-f',
             nargs=1,
-            type=int,
-            dest='height',
-            metavar='height',
-            default=480,
-            help='Select video height (default 480).'
+            dest='code',
+            default=None,
+            help='Select video format code (default prefer 480 height).'
         )
         parser.add_argument(
             '-v',
@@ -51,13 +49,37 @@ class Options(object):
             help='Show video format codes.'
         )
         parser.add_argument(
-            'urls',
-            nargs='+',
-            metavar='url',
-            help='Youtube video URL.'
+            '-O',
+            nargs=1,
+            dest='output',
+            default=None,
+            help='Output file name.'
+        )
+        parser.add_argument(
+            'url',
+            nargs=1,
+            help='Youtube or compatible video URL.'
         )
 
         self._args = parser.parse_args(args)
+
+    def _detect_code(self, url):
+        task = subtask_mod.Batch(
+            self._youtubedl.get_cmdline() + ['--list-formats', url]
+        )
+        task.run(pattern=r'^[^ ]+ +mp4 +\d+x\d+ ')
+
+        codes = {}
+        for line in task.get_output():
+            code, _, size = line.split()[:3]
+            codes[int(size.split('x')[1])] = code
+        for height in sorted(codes, reverse=True):
+            if height <= 480:
+                return codes[height]
+        for height in sorted(codes):
+            return codes[height]
+
+        raise SystemExit(sys.argv[0] + ': No video stream: ' + url)
 
     def parse(self, args):
         """
@@ -65,23 +87,22 @@ class Options(object):
         """
         self._parse_args(args[1:])
 
+        url = self._args.url[0]
+        if '&index=' in url:  # Fix download one video for series
+            url = url.split('&')[0]
         self._youtubedl = command_mod.CommandFile(sys.executable)
-        self._youtubedl.set_args(['-m', 'youtube_dl'])
-
+        self._youtubedl.set_args(['-m', 'youtube_dl', '--playlist-end', '1'])
         if self._args.view_flag:
-            self._youtubedl.extend_args(['--list-formats'])
-        elif self._args.height:
-            self._youtubedl.extend_args([
-                '--format',
-                'bestvideo[ext=mp4][height={0:d}]+bestaudio[ext=m4a]/'
-                'best[height<=480]'.format(self._args.height)
-            ])
+            self._youtubedl.append_arg('--list-formats')
+        else:
+            code = self._args.code[0]
+            if not code:
+                code = self._detect_code(url)
+            self._youtubedl.extend_args(['--format', code])
+            if self._args.output:
+                self._youtubedl.extend_args(['--output', self._args.output[0]])
 
-        for url in self._args.urls:
-            if '&index=' in url:  # Fix download one video for series
-                self._youtubedl.append_arg(url.split('&')[0])
-            else:
-                self._youtubedl.append_arg(url)
+        self._youtubedl.append_arg(url)
 
 
 class Main(object):

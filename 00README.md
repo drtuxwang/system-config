@@ -730,6 +730,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/unzip.py
  * bin/vbox               VirtualBox virtual machine manager
  * bin/vbox.py            (uses VBoxManage)
+ * bin/vget               Video downloader for Youtube & compatible websites (uses youtube-dl).
+ * bin/vget.py
 </pre>
 <pre>
  * bin/vi                 vi wrapper (allowing non systems port)
@@ -816,8 +818,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/yaml               Convert BSON/JSON/YAML to YAML
  * bin/yaml.bat
  * bin/yaml_.py
- * bin/youtube            Youtube video downloader
- * bin/youtube.py         (uses youtube-dl)
  * bin/yping              Ping a host until a connection is made
  * bin/yping.bat
  * bin/yping.py
