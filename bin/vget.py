@@ -95,8 +95,9 @@ class Options(object):
         if self._args.view_flag:
             self._youtubedl.append_arg('--list-formats')
         else:
-            code = self._args.code[0]
-            if not code:
+            if self._args.code:
+                code = self._args.code[0]
+            else:
                 code = self._detect_code(url)
             self._youtubedl.extend_args(['--format', code])
             if self._args.output:

@@ -68,7 +68,7 @@ class Options(object):
             args[1:] = command_mod.Command.cmd2args(cmdline)
         if len(args) == 2:
             if args[1].startswith("https://www.youtube.com/watch?"):
-                args.insert(1, 'youtube')
+                args.insert(1, 'vget')
             elif args[1].startswith(('http://', 'https://', 'ftp://')):
                 args = args[:1] + [
                     'wget',
