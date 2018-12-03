@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     helm.sh/chart: {{ include "chart.name" . }}
-    app.kubernetes.io/name: {{ include "chart.name" . }}
+    app.kubernetes.io/name: {{ include "chart.name" . }}-server
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   name: {{ include "chart.appname" . }}-server-headless
@@ -15,6 +15,6 @@ spec:
     protocol: TCP
     targetPort: {{ .Values.service.port }}
   selector:
-    app.kubernetes.io/name: {{ include "chart.name" . }}
+    app.kubernetes.io/name: {{ include "chart.name" . }}-server
     app.kubernetes.io/instance: {{ .Release.Name }}
   type: {{ .Values.service.type }}

@@ -10,7 +10,6 @@ spec:
   selector:
     matchLabels:
       app: ubuntu
-  serviceName: ubuntu-headless
   template:
     metadata:
       labels:
