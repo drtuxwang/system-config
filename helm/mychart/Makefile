@@ -10,6 +10,12 @@ install:
 	sleep 2
 	kubectl --namespace ubuntu get all
 
+.PHONY: upgrade
+upgrade:
+	helm upgrade ubuntu-test .
+	sleep 2
+	kubectl --namespace ubuntu get all
+
 .PHONY: clean
 clean:
 	helm ls
