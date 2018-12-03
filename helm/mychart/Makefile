@@ -1,25 +1,39 @@
+NAMESPACE := ubuntu
+IMAGE := ubuntu:18.04
+NAME := server-test
+
 default: check
 
 .PHONY: check
 check:
-	helm install -n server-test --namespace server . --dry-run --debug
+	helm install --namespace=$(NAMESPACE) -n $(NAME) --set image.server=$(IMAGE) . --dry-run --debug
 
 .PHONY: install
 install:
-	helm install -n ubuntu-test --namespace ubuntu --set image.server=ubuntu:18.04 .
+	helm install --namespace=$(NAMESPACE) -n $(NAME) --set image.server=$(IMAGE) .
 	sleep 2
-	kubectl --namespace ubuntu get all
+	kubectl --namespace=$(NAMESPACE) get all
 
 .PHONY: upgrade
 upgrade:
-	helm upgrade ubuntu-test .
+	helm upgrade $(NAME) .
 	sleep 2
-	kubectl --namespace ubuntu get all
+	kubectl --namespace$(NAMESPACE) get all
+
+.PHONY: forward
+forward:
+	kubectl --namespace $(NAMESPACE) describe service/$(NAME)-mychart-server
+	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME)-mychart-server 8080:80
+
+.PHONY: status
+status:
+	@echo "\n*** Checking status ***"
+	kubectl --namespace=$(NAMESPACE) get all
 
 .PHONY: clean
 clean:
 	helm ls
-	helm del --purge ubuntu-test ||:
+	helm del --purge $(NAME) ||:
 
 .PHONY: install-tiller
 install-tiller:

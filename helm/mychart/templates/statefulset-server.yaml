@@ -13,6 +13,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ include "chart.name" . }}-server
       app.kubernetes.io/instance: {{ .Release.Name }}
+  serviceName: {{ include "chart.appname" . }}-server-headless
   template:
     metadata:
       labels:
