@@ -15,7 +15,7 @@ frame .toolbar -bg "#cccccc"
 
     pack .toolbar -side top -fill x
 
-    button .toolbar.new -width 4 -bg "#ffcc00" -text "Cut" -command {set command {}}
+    button .toolbar.new -width 4 -bg "#ffcc00" -text "New" -command {set command {}}
     pack .toolbar.new -side left
     button .toolbar.copy -width 4 -bg "#ffcc00" -text "Copy" -command {
         exec echo "$command" | xclip -in &
