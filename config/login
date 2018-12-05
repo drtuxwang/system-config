@@ -99,6 +99,7 @@ if ( $?TERM && -e "`\tty`" ) then
     alias h history 256
     alias ls "ls -C"
     alias quota "quota -v"
+    alias sudo "sudo -k"
     if ( -x /usr/bin/vim ) then
         alias vi "vim -N -n -i NONE -T xterm"
     endif
@@ -188,7 +189,7 @@ if ( $?TERM && -e "`\tty`" ) then
         setenv LS_COLORS ""
         breaksw
     endsw
-    setenv PATH "$HOME/software/bin:/opt/software/bin:$PATH"
+    setenv PATH "$HOME/software/scripts:$HOME/software/bin:/opt/software/bin:$PATH"
 
     # Applying local settings
     if ( -f $HOME/.login-local ) then

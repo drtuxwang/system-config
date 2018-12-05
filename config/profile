@@ -315,7 +315,7 @@ then
         unset command_not_found_handle
         ;;
     esac
-    export PATH="$HOME/software/bin:/opt/software/bin:$PATH"
+    export PATH="$HOME/software/scripts:$HOME/software/bin:/opt/software/bin:$PATH"
 
     # Applying local settings
     if [ -f $HOME/.profile-opt ]
