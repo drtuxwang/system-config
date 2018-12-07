@@ -71,8 +71,9 @@ class Options(object):
 
         codes = {}
         for line in task.get_output():
-            code, _, size = line.split()[:3]
-            codes[int(size.split('x')[1])] = code
+            if 'video only' not in line:
+                code, _, size = line.split()[:3]
+                codes[int(size.split('x')[1])] = code
         for height in sorted(codes, reverse=True):
             if height <= 480:
                 return codes[height]
