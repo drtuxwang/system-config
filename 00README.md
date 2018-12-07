@@ -1062,14 +1062,18 @@ the years. Now most of the scripts are written in Python 3.
  * kubernetes/ubuntu/statefulset-ubuntu.yaml
 </pre>
 <pre>
- * helm/mychart/Chart.yaml               Helm Chart: Ubuntu example
- * helm/mychart/Makefile
- * helm/mychart/requirements.yaml
- * helm/mychart/templates/_values.tpl
- * helm/mychart/templates/service-server-headless.yaml
- * helm/mychart/templates/service-server.yaml
- * helm/mychart/templates/statefulset-server.yaml
- * helm/mychart/values.yaml
+ * helm/Makefile
+ * docker/ubuntu-test/Makefile           Install tiller
+ * helm/concourse/Makefile               Helm Chart: Concourse-ci
+ * helm/concourse/values.yml
+ * helm/servers-test/Makefile            Helm Chart: Servers test
+ * helm/servers-test/Chart.yaml
+ * helm/servers-test/requirements.yaml
+ * helm/servers-test/templates/_values.tpl
+ * helm/servers-test/templates/service-server-headless.yaml
+ * helm/servers-test/templates/service-server.yaml
+ * helm/servers-test/templates/statefulset-server.yaml
+ * helm/servers-test/values.yaml
 </pre>
 <pre>
  * python/simple-cython/Makefile         Simple Cython example

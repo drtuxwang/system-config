@@ -1,5 +1,5 @@
 apiVersion: v1
 description: Helm chart for server
-name: mychart
+name: server-test
 version: 1.0.0
 appVersion: 1.0.0

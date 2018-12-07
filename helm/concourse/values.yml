@@ -1,0 +1,22 @@
+## Persistent Volume Storage configuration.
+## ref: https://kubernetes.io/docs/user-guide/persistent-volumes
+##
+persistence:
+  ## Enable persistence using Persistent Volume Claims.
+  ##
+  enabled: false
+
+  ## Worker Persistence configuration.
+  ##
+  worker:
+    ## Persistent Volume Storage Class.
+    ##
+    class: generic
+
+    ## Persistent Volume Access Mode.
+    ##
+    accessMode: ReadWriteOnce
+
+    ## Persistent Volume Storage Size.
+    ##
+    size: "20Gi"
