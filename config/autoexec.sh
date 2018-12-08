@@ -1,4 +1,4 @@
-#!/bin/bash -u
+#!/bin/bash
 
 # Optional input environment
 ARG=${1:-}

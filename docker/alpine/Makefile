@@ -19,8 +19,8 @@ default: build
 pull:
 	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
 
-build:
 .PHONY: build
+build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/config
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/

@@ -206,10 +206,6 @@ exec_python() {
     fi
 
     unset PYTHONSTARTUP PYTHONHOME
-    if [ ! "`echo \":$PATH:\" | grep \":\`dirname $0\`:\"`" ]
-    then
-        PATH=`dirname $0`:$PATH; export PATH
-    fi
     BIN_DIR=`dirname "$0"`
 
     if [ "$PYEXE" = "$PY_MAIN" ]
