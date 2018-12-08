@@ -19,7 +19,7 @@ import yaml
 if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.4, < 4.0).")
 
-RELEASE = '1.2.0'
+RELEASE = '1.2.1'
 VERSION = 20181208
 
 
@@ -49,7 +49,7 @@ class Data(object):
             lines.append(line)
         data_new = '\n'.join(lines)
 
-        data_new = re.sub('{{[^}]*}}', lambda m: 'X'*len(m.group()), data_new)
+        data_new = re.sub('{{[^}]*}}', lambda m: ' '*len(m.group()), data_new)
 
         return re.sub('{%[^}]*}', '', data_new)
 
