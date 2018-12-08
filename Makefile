@@ -13,7 +13,7 @@ check:
 	@echo "\n*** Running Python 3 UNITTEST check ***"
 	python3 -m unittest discover --buffer bin
 	@echo "\n*** Running BSON/JSON/YAML check ***"
-	PATH=`pwd`/bin:${PATH} find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} +
+	find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} +
 	@echo "\n*** Check successfull ***"
 
 .PHONY: lint
