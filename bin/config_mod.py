@@ -19,8 +19,8 @@ import yaml
 if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.4, < 4.0).")
 
-RELEASE = '1.1.1'
-VERSION = 20180712
+RELEASE = '1.2.0'
+VERSION = 20181208
 
 
 class Data(object):
@@ -37,7 +37,20 @@ class Data(object):
         """
         Replace Jinja directives.
         """
-        data_new = re.sub('{{[^}]*}}', lambda m: 'X'*len(m.group()), data)
+        lines = []
+        for line in data.replace('\r\n', '\n').split('\n'):
+            if line.startswith('{{') and line.endswith('}}'):
+                if ' toYaml ' in line and ' indent ' in line:
+                    indent = int(line.split(' indent ')[1].split()[0])
+                    lines.append("{0:s}- {1:s}".format(' '*(indent-2), line))
+                else:
+                    lines.append('')
+                continue
+            lines.append(line)
+        data_new = '\n'.join(lines)
+
+        data_new = re.sub('{{[^}]*}}', lambda m: 'X'*len(m.group()), data_new)
+
         return re.sub('{%[^}]*}', '', data_new)
 
     @staticmethod
