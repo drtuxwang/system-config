@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -u
 #
 # Run Docker sandbox for WINE (no dri, ipc, net, snd, root & x11 defaults)
 #

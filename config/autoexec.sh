@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/bin/bash -u
+
+# Optional input environment
+ARG=${1:-}
+
 
 set_vga() {
     MODELINE=$(gtf $2 $3 $4 | grep Modeline | awk '{
@@ -52,7 +56,7 @@ rm -rf .config/pulse
 rm -rf .local/share/gvfs-metadata
 rm -rf .local/share/recently-used.xbel*
 
-if [ "$1" != "-start" ]
+if [ "$ARG" != "-start" ]
 then
     exec $0 -start > ${0%%.sh}.log 2>&1
 fi

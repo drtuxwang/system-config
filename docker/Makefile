@@ -78,7 +78,6 @@ run-firefox:
 
 .PHONY: run-gcc
 run-gcc:
-	echo debugX $(DIST)/sandbox-gcc
 	make -C $(DIST)/sandbox-gcc run
 
 .PHONY: run-sudo

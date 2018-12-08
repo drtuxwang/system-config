@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -u
 #
 # Run Docker sandbox for Firefox (no dri, ipc, snd, & root default)
 #

@@ -1,9 +1,12 @@
-#!/bin/bash
+#!/bin/bash -u
 #
 # Check pip modules and install minimum version required
 #
 
-if [ ! -x "$1" ]
+# Optional input environment
+PYTHON=${1-}
+
+if [ ! -x "$PYTHON" ]
 then
     echo "Usage: $0 /path/bin/<python>"
     exit 1
@@ -40,20 +43,20 @@ install_packages() {
 }
 
 
-if [ "$($1 -m pip 2>&1 | grep "No module named pip")" ]
+if [ "$($PYTHON -m pip 2>&1 | grep "No module named pip")" ]
 then
-    curl https://bootstrap.pypa.io/get-pip.py | $1
+    curl https://bootstrap.pypa.io/get-pip.py | $ARG
 fi
 
-if [ -w "$($1 -help 2>&1 | grep usage: | awk '{print $2}')" ]
+if [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ]
 then
-    INSTALL="$1 -m pip install"
+    INSTALL="$PYTHON -m pip install"
 else
-    INSTALL="$1 -m pip install --user"
+    INSTALL="$PYTHON -m pip install --user"
 fi
 
 declare -A REQUIREMENTS
 read_requirements "${0%/*}/python-requirements.txt"
-VERSION=$($1 --version 2>&1 | grep "^Python [0-9][.][0-9][.]" | awk '{print $2}' | cut -f1-2 -d.)
+VERSION=$($PYTHON --version 2>&1 | grep "^Python [0-9][.][0-9][.]" | awk '{print $2}' | cut -f1-2 -d.)
 read_requirements "${0%/*}/python-$VERSION-requirements.txt"
 install_packages
