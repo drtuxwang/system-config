@@ -100,7 +100,7 @@ locate_python() {
 # Function to return location of program
 #
 which() {
-    PATH=`echo ":$PATH:" | sed -e "s@:\`dirname \"$0\"\`:@@"`
+    PATH=`echo ":$PATH:" | sed -e "s@:\`dirname \"$0\"\`:@:@"`
 
     for CDIR in `echo $PATH | sed -e "s/ /%20/g;s/:/ /g"`
     do
