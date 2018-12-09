@@ -50,12 +50,15 @@ run:
 		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
 		$(IMAGE) \
 		$(COMMAND) \
-		|| exit 0
+		||:
 
 .PHONY: version
 version:
 	@docker run $(FLAGS) $(IMAGE) cat /etc/debian_version 2> /dev/null | \
 		sed -e "s@^@`pwd`: Debian Linux @"
+	@for IMAGE in $(DEPENDENT_IMAGES); do \
+		make --no-print-directory -C $$IMAGE version ||:; \
+	done
 
 .PHONY: clean
 clean:

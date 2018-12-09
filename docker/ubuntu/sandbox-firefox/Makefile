@@ -61,7 +61,12 @@ run:
 		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
 		$(IMAGE) \
 		$(COMMAND) \
-		|| exit 0
+		||:
+
+.PHONY: version
+version:
+	@docker run --entrypoint firefox $(IMAGE) -v | grep Firefox | \
+		awk '{printf("'`pwd`': firefox %s\n", $$NF)}'
 
 .PHONY: clean
 clean:

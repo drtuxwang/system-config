@@ -51,7 +51,12 @@ run:
 		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
 		$(IMAGE) \
 		$(COMMAND) \
-		|| exit 0
+		||:
+
+.PHONY: version
+version:
+	@docker run --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
+		sed -e "s/([^)]*)//" | awk '{printf("'`pwd`': gcc %s\n", $$2)}'
 
 .PHONY: clean
 clean:

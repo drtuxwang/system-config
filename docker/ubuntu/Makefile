@@ -50,12 +50,15 @@ run:
 		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
 		$(IMAGE) \
 		$(COMMAND) \
-		|| exit 0
+		||:
 
 .PHONY: version
 version:
 	@docker run $(FLAGS) $(IMAGE) cat /etc/os-release 2> /dev/null | \
 		grep "^VERSION=" | sed -e "s@.*=\"@`pwd`: Ubuntu Linux @;s@ (.*@@"
+	@for IMAGE in $(DEPENDENT_IMAGES); do \
+		make --no-print-directory -C $$IMAGE version ||:; \
+	done
 
 .PHONY: clean
 clean:
