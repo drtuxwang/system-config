@@ -39,8 +39,12 @@ run:
 		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
 		$(IMAGE) \
 		$(COMMAND) \
-		|| exit 0
+		||:
 
+.PHONY: version
+version:
+	@docker run --entrypoint docker $(IMAGE) --version | grep ^Docker | \
+		sed -e "s/,/ /g" | awk '{printf("'`pwd`': docker %s\n", $$3)}'
 
 .PHONY: clean
 clean:

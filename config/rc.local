@@ -1,4 +1,4 @@
-#!/bin/bash -u
+#!/bin/bash
 
 export PATH="/opt/software/bin:$PATH"
 export PYTHONDONTWRITEBYTECODE=1

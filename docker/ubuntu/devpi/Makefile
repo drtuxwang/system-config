@@ -35,7 +35,12 @@ run:
 		--hostname $(NAME) \
 		--workdir /var/lib/devpi \
 		$(IMAGE) \
-		|| exit 0
+		||:
+
+.PHONY: version
+version:
+	@docker run --entrypoint devpi-server $(IMAGE) --version | \
+		   awk '{printf("'`pwd`': devpi-server %s\n", $$1)}'
 
 .PHONY: clean
 clean:

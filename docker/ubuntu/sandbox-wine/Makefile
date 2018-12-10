@@ -51,7 +51,12 @@ run:
 		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
 		$(IMAGE) \
 		$(COMMAND) \
-		|| exit 0
+		||:
+
+PHONY: version
+version:
+	@docker run --entrypoint wine $(IMAGE) --version | grep ^wine | \
+		sed -e "s/-/ /g" | awk '{printf("'`pwd`': wine %s\n", $$2)}'
 
 .PHONY: clean
 clean:

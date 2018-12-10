@@ -50,16 +50,19 @@ run:
 		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
 		$(IMAGE) \
 		$(COMMAND) \
-		|| exit 0
+		||:
 
 .PHONY: version
 version:
 	@docker run $(FLAGS) $(IMAGE) cat /etc/system-release 2> /dev/null | \
 		sed -e "s@.*release @`pwd`: @" | awk '{printf("%s CentOS Linux %s\n", $$1, $$2)}'
+	@for IMAGE in $(DEPENDENT_IMAGES); do \
+		make --no-print-directory -C $$IMAGE version ||:; \
+	done
 
 .PHONY: clean
 clean:
 	for IMAGE in $(DEPENDENT_IMAGES); do \
-		make -C $$IMAGE clean; \
+		make --no-print-directory -C $$IMAGE clean; \
 	done
 	docker rmi -f $(IMAGE) $(IMAGE_SANDBOX) $(IMAGE_BASE) `grep FROM Dockerfile* | cut -f2 -d" "` ||:

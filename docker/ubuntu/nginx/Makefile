@@ -34,7 +34,12 @@ run:
 		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
 		--workdir /var/lib/nginx \
 		$(IMAGE) \
-		|| exit 0
+		||:
+
+.PHONY: version
+version:
+	@docker run --entrypoint nginx $(IMAGE) -v 2>&1 | grep "^nginx version:" | \
+		sed -e "s@nginx/@@" | awk '{printf("'`pwd`': nginx %s\n", $$3)}'
 
 .PHONY: clean
 clean:

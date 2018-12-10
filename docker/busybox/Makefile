@@ -37,7 +37,7 @@ run:
 		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
 		$(IMAGE) \
 		$(COMMAND) \
-		|| exit 0
+		||:
 
 .PHONY: version
 version:
