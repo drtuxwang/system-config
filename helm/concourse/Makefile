@@ -30,7 +30,6 @@ upgrade:
 
 .PHONY: forward
 forward:
-	kubectl --namespace $(NAMESPACE) service/concourse-web
 	kubectl --namespace $(NAMESPACE) port-forward service/concourse-web 8080:8080
 
 .PHONY: status
