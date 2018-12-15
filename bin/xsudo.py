@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Run sudo command in new terminal session
+Run ssudo command in new terminal session
 """
 
 import getpass
@@ -71,21 +71,17 @@ class Main:
             '-ut',
             '+sb'
         ])
-        sudo = command_mod.Command('sudo', errors='stop')
-
-        hostname = socket.gethostname().split('.')[0].lower()
-        username = getpass.getuser()
-        prompt = '[sudo] password for {0:s}@{1:s}: '.format(hostname, username)
+        ssudo = command_mod.Command('ssudo', errors='stop')
 
         if len(sys.argv) > 1:
             xterm.extend_args(
-                ['-T', 'sudo ' + xterm.args2cmd(sys.argv[1:]), '-e'])
-            sudo.set_args(['-p', prompt] + sys.argv[1:])
+                ['-T', 'ssudo ' + xterm.args2cmd(sys.argv[1:]), '-e'])
+            ssudo.set_args(sys.argv[1:])
         else:
-            xterm.extend_args(['-T', 'sudo su', '-e'])
-            sudo.set_args(['-p', prompt, 'su'])
+            xterm.extend_args(['-T', 'ssudo su', '-e'])
+            ssudo.set_args(['su', '-'])
 
-        subtask_mod.Exec(xterm.get_cmdline() + sudo.get_cmdline()).run()
+        subtask_mod.Exec(xterm.get_cmdline() + ssudo.get_cmdline()).run()
 
 
 if __name__ == '__main__':

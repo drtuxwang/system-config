@@ -42,7 +42,7 @@ if ( $?TERM && -e "`\tty`" ) then
         set prompt="%{\033[01;32m%}[%P] %{\033[01;34m%}%~%{\n%}%{\033[01;32m%}%n@%m%{\033[00m%} % "
     else
         setenv MYSHELL "CSH"
-        set prompt="$MYUNAME@${MYHNAME}%{\n%}% "
+        set prompt="$MYUNAME@${MYHNAME}% "
     endif
     if ( $?SSH_CONNECTION ) then
         setenv MYSHELL "$MYSHELL remote"
@@ -80,6 +80,9 @@ if ( $?TERM && -e "`\tty`" ) then
     endif
 
     # General stuff
+    if ( "`which ssudo |& \grep '/ssudo'`" != "" ) then
+        alias sudo ssudo
+    endif
     umask 027
     setenv LC_COLLATE C
     setenv PYTHONDONTWRITEBYTECODE 1
@@ -113,9 +116,6 @@ if ( $?TERM && -e "`\tty`" ) then
         else
             alias scp "scp -F $HOME/.ssh/config"
         endif
-    endif
-    if ( "`sudo -k -V |& grep 'Sudo version'`" != "" ) then
-        alias sudo "sudo -k"
     endif
     unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
 
