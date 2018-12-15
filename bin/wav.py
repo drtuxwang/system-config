@@ -27,7 +27,7 @@ logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -170,7 +170,7 @@ class Options(object):
         self._audio_codec = 'pcm_s16le'
 
 
-class Encoder(object):
+class Encoder:
     """
     Encoder class
     """
@@ -293,7 +293,7 @@ class Encoder(object):
             self._multi()
 
 
-class Media(object):
+class Media:
     """
     Media class
     """
@@ -400,7 +400,7 @@ class Media(object):
                 logger.info("%s[%d] = %s", self._file, stream, information)
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

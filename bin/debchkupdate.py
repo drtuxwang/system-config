@@ -28,7 +28,7 @@ logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -65,7 +65,7 @@ class Options(object):
         self._parse_args(args[1:])
 
 
-class Package(object):
+class Package:
     """
     Package class
     """
@@ -118,7 +118,7 @@ class Package(object):
         self._version = version
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

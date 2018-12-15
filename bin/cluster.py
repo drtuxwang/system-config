@@ -21,7 +21,7 @@ if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.4, < 4.0).")
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -121,7 +121,7 @@ class Options(object):
         self._nodes = self._parse_input()
 
 
-class SecureShell(object):
+class SecureShell:
     """
     SecureShell class
     """
@@ -181,7 +181,7 @@ class SecureShell(object):
         self._client.close()
 
 
-class WorkQueue(object):
+class WorkQueue:
     """
     WorkQueue class
     """
@@ -253,7 +253,7 @@ class SecureShellError(Exception):
     """
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

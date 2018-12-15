@@ -19,7 +19,7 @@ RELEASE = '2.2.2'
 VERSION = 20180126
 
 
-class Dump(object):
+class Dump:
     """
     Dump debugging information to stdout or file.
     """

@@ -13,7 +13,7 @@ if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -47,7 +47,7 @@ class Options(object):
         self._parse_args(args[1:])
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

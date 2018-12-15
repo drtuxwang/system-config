@@ -17,7 +17,7 @@ if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
 
-class Options(object):
+class Options:
     """
     This class handles Python loader commandline options.
 
@@ -198,7 +198,7 @@ class ArgparseVerboseAction(argparse.Action):
 # pylint: enable = too-few-public-methods
 
 
-class PythonLoader(object):
+class PythonLoader:
     """
     This class handles Python loading
 
@@ -281,7 +281,7 @@ class PythonLoader(object):
         return self._sys_argv
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

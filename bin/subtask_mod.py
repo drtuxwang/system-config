@@ -21,7 +21,7 @@ VERSION = 20181121
 BUFFER_SIZE = 131072
 
 
-class Task(object):
+class Task:
     """
     This class handles running sub process interactively.
     """
@@ -614,7 +614,7 @@ class PipeNotSupportedError(SubTaskError):
     """
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

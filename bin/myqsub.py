@@ -20,7 +20,7 @@ if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
 RELEASE = '2.7.9'
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -96,7 +96,7 @@ class Options(object):
             )
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

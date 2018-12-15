@@ -29,7 +29,7 @@ logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -144,7 +144,7 @@ class Options(object):
             self._image = self._args.volume[0] + '.iso'
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

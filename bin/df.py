@@ -57,7 +57,7 @@ class CommandThread(threading.Thread):
             self._child = None
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

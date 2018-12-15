@@ -25,7 +25,7 @@ RELEASE = '3.0.1'
 SOCKET_TIMEOUT = 10
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -140,7 +140,7 @@ class Options(object):
         self._my_address = self._address()
 
 
-class Mailer(object):
+class Mailer:
     """
     E-mail using SMTP servers.
     """
@@ -189,7 +189,7 @@ class Mailer(object):
                 sys.argv[0] + ': Cannot send to STMP server: ' + self._host)
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

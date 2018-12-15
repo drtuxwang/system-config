@@ -12,7 +12,7 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -42,7 +42,7 @@ class Options(object):
         self._path = os.environ['PATH']
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

@@ -22,7 +22,7 @@ FG_COLOUR = '#009900'
 BG_COLOUR = '#000000'
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -96,7 +96,7 @@ class Options(object):
             self._hosts = args[1:]
 
 
-class Terminal(object):
+class Terminal:
     """
     Terminal class
     """
@@ -370,7 +370,7 @@ class XfceTerminal(GnomeTerminal):
         return ['--title=']  # Must use empty to allow bash/tcsh title changing
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

@@ -20,7 +20,7 @@ BG_COLOUR = '#ffffdd'
 SLEEP = '10'
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -97,7 +97,7 @@ class Options(object):
         ])
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

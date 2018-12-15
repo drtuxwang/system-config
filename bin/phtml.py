@@ -16,7 +16,7 @@ if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -73,7 +73,7 @@ class Options(object):
         self._parse_args(args[1:])
 
 
-class Gallery(object):
+class Gallery:
     """
     Gallery class
     """
@@ -178,7 +178,7 @@ class Gallery(object):
         return None
 
 
-class Xhtml(object):
+class Xhtml:
     """
     Xhtml class
     """
@@ -269,7 +269,7 @@ class Xhtml(object):
                 sys.argv[0] + ': Cannot create "index.xhtml" file.')
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

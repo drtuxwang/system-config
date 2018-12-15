@@ -28,7 +28,7 @@ logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -133,7 +133,7 @@ class Options(object):
             self._image = 'file.iso'
 
 
-class Cdrom(object):
+class Cdrom:
     """
     CDROM class
     """
@@ -167,7 +167,7 @@ class Cdrom(object):
             self._devices[device] = model
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

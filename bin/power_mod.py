@@ -19,7 +19,7 @@ RELEASE = '2.1.5'
 VERSION = 20180102
 
 
-class Battery(object):
+class Battery:
     """
     Battery base class
     """
@@ -346,7 +346,7 @@ class BatteryMac(Battery):
             pass
 
 
-class _System(object):
+class _System:
 
     @staticmethod
     def is_mac():

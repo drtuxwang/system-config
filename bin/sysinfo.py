@@ -36,7 +36,7 @@ VERSION = 20180610
 # pylint: disable = too-many-lines
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -107,7 +107,7 @@ class CommandThread(threading.Thread):
         return self._stdout
 
 
-class Detect(object):
+class Detect:
     """
     Detect class
     """
@@ -342,7 +342,7 @@ class Detect(object):
         self._xwindows()
 
 
-class OperatingSystem(object):
+class OperatingSystem:
     """
     Operating system class
     """
@@ -2199,7 +2199,7 @@ class WindowsSystem(OperatingSystem):
         return subkeys, values
 
 
-class Writer(object):
+class Writer:
     """
     Writer class
     """
@@ -2234,7 +2234,7 @@ class Writer(object):
         print(line)
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

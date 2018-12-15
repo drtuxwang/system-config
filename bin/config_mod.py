@@ -23,7 +23,7 @@ RELEASE = '1.2.1'
 VERSION = 20181208
 
 
-class Data(object):
+class Data:
     """
     This class contains de-serialized BSON/JSON/YAML data.
     """
@@ -169,7 +169,7 @@ class Data(object):
             )
 
 
-class Config(object):
+class Config:
     """
     This class deals with "config_mod.yml" configuration file.
     """

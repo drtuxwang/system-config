@@ -17,7 +17,7 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -58,7 +58,7 @@ class Options(object):
         self._directory = os.path.abspath(args[1])
 
 
-class Chroot(object):
+class Chroot:
     """
     Change root class
     """
@@ -129,7 +129,7 @@ class Chroot(object):
         print('Chroot "' + self._directory + '" finished!')
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

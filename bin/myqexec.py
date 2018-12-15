@@ -19,7 +19,7 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
 RELEASE = '2.7.6'
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -72,7 +72,7 @@ class Options(object):
         self._jobid = args[2]
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

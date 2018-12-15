@@ -20,7 +20,7 @@ FG_COLOUR = '#000000'
 BG_COLOUR = '#ffffdd'
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -85,7 +85,7 @@ class Options(object):
         self._pop.set_args(['-t', '10000'])  # 10 seconds display time
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

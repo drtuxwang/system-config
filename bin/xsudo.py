@@ -20,7 +20,7 @@ FG_COLOUR = '#000000'
 BG_COLOUR = '#ffffdd'
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

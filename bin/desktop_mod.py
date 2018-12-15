@@ -19,7 +19,7 @@ RELEASE = '2.3.1'
 VERSION = 20180826
 
 
-class _System(object):
+class _System:
 
     @staticmethod
     def is_windows():
@@ -74,7 +74,7 @@ class _System(object):
         return lines
 
 
-class Desktop(object):
+class Desktop:
     """
     Desktop class
     """

@@ -17,7 +17,7 @@ RELEASE = '2.2.1'
 VERSION = 20180117
 
 
-class FileStat(object):
+class FileStat:
     """
     This class contains file status information.
 
@@ -126,7 +126,7 @@ class FileStat(object):
         return self._stat[9]
 
 
-class FileUtil(object):
+class FileUtil:
     """
     This class contains file utilites.
     """

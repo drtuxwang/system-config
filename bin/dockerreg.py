@@ -40,7 +40,7 @@ MAXREPO = "9999"
 requests.packages.urllib3.disable_warnings()
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -103,7 +103,7 @@ class Options(object):
         self._parse_args(args[1:])
 
 
-class DockerRegistry(object):
+class DockerRegistry:
     """
     Docker Registry v1 class
     """
@@ -263,7 +263,7 @@ class DockerRegistry2(DockerRegistry):
         self._delete_url(url)
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

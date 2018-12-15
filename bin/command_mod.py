@@ -21,7 +21,7 @@ RELEASE = '2.2.1'
 VERSION = 20180517
 
 
-class Command(object):
+class Command:
     """
     This class stores a command (uses supplied executable)
     """
@@ -311,7 +311,7 @@ class CommandFile(Command):
         return program
 
 
-class Platform(object):
+class Platform:
     """
     This class provides some platform information
     """

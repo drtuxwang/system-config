@@ -26,7 +26,7 @@ logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

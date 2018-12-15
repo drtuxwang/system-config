@@ -18,7 +18,7 @@ if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
 RELEASE = '2.7.8'
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -75,7 +75,7 @@ class Options(object):
             self._jobids.append(jobid)
 
 
-class Main(object):
+class Main:
     """
     Main class
     """

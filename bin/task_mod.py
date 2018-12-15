@@ -20,7 +20,7 @@ if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
 
-class Tasks(object):
+class Tasks:
     """
     This class handles system processess.
 
@@ -353,7 +353,7 @@ class WindowsTasks(Tasks):
         self.killpids([pgid], signal=signal)
 
 
-class _System(object):
+class _System:
 
     @staticmethod
     def is_windows():

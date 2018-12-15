@@ -20,7 +20,7 @@ if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
 requests.packages.urllib3.disable_warnings()
 
 
-class Options(object):
+class Options:
     """
     Options class
     """
@@ -79,7 +79,7 @@ class Options(object):
         self._parse_args(args[1:])
 
 
-class Main(object):
+class Main:
     """
     Main class
     """
