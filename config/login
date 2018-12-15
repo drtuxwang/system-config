@@ -114,6 +114,9 @@ if ( $?TERM && -e "`\tty`" ) then
             alias scp "scp -F $HOME/.ssh/config"
         endif
     endif
+    if ( "`sudo -k -V |& grep 'Sudo version'`" != "" ) then
+        alias sudo "sudo -k"
+    endif
     unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)

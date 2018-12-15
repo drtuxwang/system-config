@@ -62,14 +62,8 @@ class Main:
                 '[sudo] password for {0:s}@{1:s}: '.format(username, hostname)
             ])
         command.extend_args(sys.argv[1:])
-        task = subtask_mod.Task(command.get_cmdline())
+        subtask_mod.Exec(command.get_cmdline()).run()
         task.run()
-
-        # Remove sudo credentials
-        command.set_args(['-k'])
-        subtask_mod.Batch(command.get_cmdline()).run()
-
-        return task.get_exitcode()
 
 
 if __name__ == '__main__':

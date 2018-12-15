@@ -215,6 +215,10 @@ then
             alias scp="scp -F $HOME/.ssh/config"
         fi
     fi
+    if [ "`sudo -k -V 2>&1 | grep 'Sudo version'`" ]
+    then
+        alias sudo="sudo -k"
+    fi
     unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
