@@ -4,6 +4,7 @@ metadata:
   labels:
     app: ubuntu
   name: ubuntu-headless
+  namespace: ubuntu
 spec:
   clusterIP: None
   ports:
