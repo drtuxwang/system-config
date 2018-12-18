@@ -2,15 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: linux
-  name: linux-headless
+    app: server
+  name: server
 spec:
-  clusterIP: None
   ports:
   - name: http
     port: 80
     protocol: TCP
     targetPort: 80
   selector:
-    app: linux
+    app: server
   type: ClusterIP

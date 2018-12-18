@@ -2,16 +2,16 @@ apiVersion: extensions/v1
 kind: DaemonSet
 metadata:
   labels:
-    app: linux
-  name: linux
+    app: server
+  name: server
 spec:
   selector:
     matchLabels:
-      app: linux
+      app: server
   template:
     metadata:
       labels:
-        app: linux
+        app: server
     spec:
       containers:
       - command:
@@ -22,7 +22,7 @@ spec:
           value: VALUE
         image: centos:7
         imagePullPolicy: IfNotPresent
-        name: linux
+        name: server
         ports:
         - containerPort: 80
           protocol: TCP

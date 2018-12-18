@@ -1,10 +1,10 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: linux
+  name: server
 spec:
   rules:
-  - host: linux.example.com
+  - host: server.example.com
     http:
       paths:
       - path: /

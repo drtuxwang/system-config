@@ -2,18 +2,18 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: linux
-  name: linux
+    app: server
+  name: server
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: linux
-  serviceName: linux-headless
+      app: server
+  serviceName: server-headless
   template:
     metadata:
       labels:
-        app: linux
+        app: server
     spec:
       containers:
       - command:
@@ -24,7 +24,7 @@ spec:
           value: VALUE
         image: centos:7
         imagePullPolicy: IfNotPresent
-        name: linux
+        name: server
         ports:
         - containerPort: 80
           protocol: TCP

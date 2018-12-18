@@ -1053,16 +1053,16 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu-test/sandbox-gcc/Dockerfile
 </pre>
 <pre>
- * kubernetes/servers/Makefile           Kubernetes: centos:7 example
- * kubernetes/servers/daemonset-linux.yaml
- * kubernetes/servers/deployment-linux.yaml
- * kubernetes/servers/ingress-linux.yaml
- * kubernetes/servers/pod-linux.yaml
- * kubernetes/servers/replicationcontroller-linux.yaml
- * kubernetes/servers/secret-linux.yaml
- * kubernetes/servers/service-linux-headless.yaml
- * kubernetes/servers/service-linux.yaml
- * kubernetes/servers/statefulset-linux.yaml
+ * kubernetes/servers-test/Makefile      Kubernetes: centos:7 example
+ * kubernetes/servers-test/server-pod.yaml
+ * kubernetes/servers-test/servers-daemonset.yaml
+ * kubernetes/servers-test/servers-deployment.yaml
+ * kubernetes/servers-test/servers-headless-service.yaml
+ * kubernetes/servers-test/servers-ingress.yaml
+ * kubernetes/servers-test/servers-replicationcontroller.yaml
+ * kubernetes/servers-test/servers-secret-tls.yaml
+ * kubernetes/servers-test/servers-service.yaml
+ * kubernetes/servers-test/servers-statefulset.yaml
 </pre>
 <pre>
  * helm/Makefile

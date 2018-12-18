@@ -2,9 +2,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    app: linux
-  name: linux
-  namespace: linux
+    app: server
+  name: server
+  namespace: server
 spec:
   containers:
   - command:
@@ -14,7 +14,7 @@ spec:
       value: VALUE
     image: centos:7
     imagePullPolicy: IfNotPresent
-    name: linux
+    name: server
     ports:
     - containerPort: 80
       protocol: TCP
