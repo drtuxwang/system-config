@@ -24,14 +24,12 @@ spec:
       - command:
         - sleep
         - '86400'
-        env:
-        - name: NAME
-          value: VALUE
         image: {{ include "chart.image.server" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ .Chart.Name }}-server
         ports:
-        - containerPort: {{ .Values.service.port }}
+        - name: {{ .Values.service.name }}
+          containerPort: {{ .Values.service.port }}
           protocol: TCP
         resources:
 {{ toYaml .Values.resources | indent 10 }}

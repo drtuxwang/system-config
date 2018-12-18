@@ -1,8 +1,8 @@
 CHART_NAME := servers-test
-NAMESPACE := default
-IMAGE := ubuntu:18.04
+NAMESPACE := servers-test
+IMAGE := centos:7
 
-default: check
+default: status
 
 .PHONY: check
 check:
@@ -19,8 +19,6 @@ install:
 		--namespace=$(NAMESPACE) \
 		--set image.server=$(IMAGE) \
 		.
-	sleep 2
-	kubectl --namespace=$(NAMESPACE) get all
 
 .PHONY: upgrade
 upgrade:
@@ -37,7 +35,12 @@ forward:
 status:
 	@echo "\n*** Checking status ***"
 	helm ls
-	kubectl --namespace=$(NAMESPACE) get all
+	@echo
+	kubectl --namespace=$(NAMESPACE) get all -o wide
+	@echo
+	kubectl --namespace=$(NAMESPACE) get secrets -o wide
+	@echo
+	kubectl --namespace=$(NAMESPACE) get ingress -o wide
 
 .PHONY: clean
 clean:

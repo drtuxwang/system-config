@@ -5,12 +5,17 @@ app:
     replicas: 2
 
 image:
-  server: drtuxwang/ubuntu:18.04
+  server: centos:7
   pullPolicy: IfNotPresent
 
+ingress:
+  servers:
+    domain: example.com
+
 service:
-  type: ClusterIP
+  name: http
   port: 80
+  type: ClusterIP
 
 resources:
   limits:
@@ -25,3 +30,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+secrets:
+

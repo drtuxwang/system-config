@@ -3,7 +3,7 @@ NAMESPACE := servers-test
 default: status
 
 .PHONY: build
-build:
+install:
 	@echo "\n*** Creating pods ***"
 	kubectl create namespace $(NAMESPACE) ||:
 	kubectl --namespace=$(NAMESPACE) create -f servers-secret-tls.yaml ||:
@@ -32,5 +32,5 @@ clean:
 	kubectl --namespace=$(NAMESPACE) delete -f servers-statefulset.yaml ||:
 	kubectl --namespace=$(NAMESPACE) delete -f servers-headless-service.yaml ||:
 	kubectl --namespace=$(NAMESPACE) delete -f servers-service.yaml ||:
-	kubectl --namespace=$(NAMESPACE) create -f servers-ingress.yaml ||:
-	kubectl --namespace=$(NAMESPACE) create -f servers-secret-tls.yaml ||:
+	kubectl --namespace=$(NAMESPACE) delete -f servers-ingress.yaml ||:
+	kubectl --namespace=$(NAMESPACE) delete -f servers-secret-tls.yaml ||:

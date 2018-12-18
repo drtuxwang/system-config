@@ -5,7 +5,7 @@ default: status
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	kubectl --all-namespaces=true get pod -l name=tiller
+	kubectl --all-namespaces=true get pod -l name=tiller -o wide
 	helm ls
 
 .PHONY: install-tiller

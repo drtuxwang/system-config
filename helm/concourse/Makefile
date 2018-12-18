@@ -1,7 +1,7 @@
 CHART_NAME := concourse
 NAMESPACE := default
 
-default: check
+default: status
 
 .PHONY: check
 check:
@@ -25,8 +25,6 @@ install:
 .PHONY: upgrade
 upgrade:
 	helm upgrade $(CHART_NAME) .
-	sleep 2
-	kubectl --namespace$(NAMESPACE) get all
 
 .PHONY: forward
 forward:
@@ -36,8 +34,8 @@ forward:
 status:
 	@echo "\n*** Checking status ***"
 	helm ls
-	kubectl --namespace=$(NAMESPACE) get all
-	kubectl --namespace=concourse-main get all
+	@echo
+	kubectl --namespace=$(NAMESPACE) get all -o wide
 
 .PHONY: clean
 clean:

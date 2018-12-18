@@ -6,10 +6,11 @@ metadata:
     app.kubernetes.io/name: {{ include "chart.name" . }}-server
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  name: {{ include "chart.appname" . }}-server
+  name: {{ include "chart.appname" . }}-server-headless
 spec:
+  clusterIP: None
   ports:
-  - name: web
+  - name: {{ .Values.service.name }}
     port: {{ .Values.service.port }}
     protocol: TCP
     targetPort: {{ .Values.service.port }}
