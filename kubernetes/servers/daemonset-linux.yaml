@@ -1,20 +1,17 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: extensions/v1
+kind: DaemonSet
 metadata:
   labels:
-    app: ubuntu
-    matchLabels: ubuntu
-  name: ubuntu
-  namespace: ubuntu
+    app: linux
+  name: linux
 spec:
-  replicas: 2
   selector:
     matchLabels:
-      app: ubuntu
+      app: linux
   template:
     metadata:
       labels:
-        app: ubuntu
+        app: linux
     spec:
       containers:
       - command:
@@ -23,9 +20,9 @@ spec:
         env:
         - name: NAME
           value: VALUE
-        image: drtuxwang/ubuntu:18.04
+        image: centos:7
         imagePullPolicy: IfNotPresent
-        name: ubuntu
+        name: linux
         ports:
         - containerPort: 80
           protocol: TCP
@@ -40,7 +37,7 @@ spec:
         - mountPath: /shared
           name: shared
       nodeSelector:
-        kubernetes.io/hostname: hotdog.local
+        beta.kubernetes.io/os: linux
       terminationGracePeriodSeconds: 10
       volumes:
       - hostPath:

@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: linux
+spec:
+  rules:
+  - host: linux.example.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: http
+          servicePort: 80
+  tls:
+  - secretName: example.com
