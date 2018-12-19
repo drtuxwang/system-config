@@ -20,7 +20,7 @@ spec:
         env:
         - name: NAME
           value: VALUE
-        image: centos:7
+        image: alpine:3.8
         imagePullPolicy: IfNotPresent
         name: server
         ports:

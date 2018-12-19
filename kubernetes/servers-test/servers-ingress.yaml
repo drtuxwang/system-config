@@ -9,7 +9,7 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: http
+          serviceName: server
           servicePort: 80
   tls:
   - secretName: example.com
