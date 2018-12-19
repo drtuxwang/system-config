@@ -92,7 +92,7 @@ class Main:
             ': failed to read path from javaldx|^Failed to load module:|'
             'unary operator expected|: unable to get gail version number|'
             'gtk printer|: GConf-WARNING|: Connection refused|GConf warning: '
-            '|GConf Error: '
+            '|GConf Error: |: invalid source position'
         )
         self._config()
         self._setenv()
