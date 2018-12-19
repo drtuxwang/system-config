@@ -9,13 +9,15 @@ image:
   pullPolicy: IfNotPresent
 
 ingress:
-  servers:
+  server:
     domain: example.com
+    servicePort: 80
 
 service:
-  name: http
-  port: 80
-  type: ClusterIP
+  server:
+    name: http
+    port: 80
+    type: ClusterIP
 
 resources:
   limits:

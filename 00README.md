@@ -1074,6 +1074,8 @@ the years. Now most of the scripts are written in Python 3.
  * helm/servers-test/requirements.yaml
  * helm/servers-test/templates/_values.tpl
  * helm/servers-test/templates/servers-headless-service.yaml
+ * helm/servers-test/templates/servers-ingress.yaml
+ * helm/servers-test/templates/servers-secret-tls.yaml
  * helm/servers-test/templates/servers-service.yaml
  * helm/servers-test/templates/servers-statefulset.yaml
  * helm/servers-test/values.yaml

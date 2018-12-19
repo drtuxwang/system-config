@@ -10,11 +10,11 @@ metadata:
 spec:
   clusterIP: None
   ports:
-  - name: {{ .Values.service.name }}
-    port: {{ .Values.service.port }}
+  - name: server
+    port: {{ .Values.service.server.port }}
     protocol: TCP
-    targetPort: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.server.port }}
   selector:
     app.kubernetes.io/name: {{ include "chart.name" . }}-server
     app.kubernetes.io/instance: {{ .Release.Name }}
-  type: {{ .Values.service.type }}
+  type: {{ .Values.service.server.type }}

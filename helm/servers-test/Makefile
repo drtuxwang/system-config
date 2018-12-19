@@ -1,23 +1,27 @@
 CHART_NAME := servers-test
+IMAGE := alpine:3.8
+
 NAMESPACE := servers-test
-IMAGE := centos:7
+DOMAIN := example.com
 
 default: status
 
 .PHONY: check
 check:
-	helm install -n $(CHART_NAME) \
+	helm install --name=$(CHART_NAME) \
 		--namespace=$(NAMESPACE) \
 		--set image.server=$(IMAGE) \
+		--set ingress.server.domain=$(DOMAIN) \
 		. \
 		--dry-run \
 		--debug
 
 .PHONY: install
 install:
-	helm install -n $(CHART_NAME) \
+	helm install --name=$(CHART_NAME) \
 		--namespace=$(NAMESPACE) \
 		--set image.server=$(IMAGE) \
+		--set ingress.server.domain=$(DOMAIN) \
 		.
 
 .PHONY: upgrade
@@ -28,8 +32,8 @@ upgrade:
 
 .PHONY: forward
 forward:
-	kubectl --namespace $(NAMESPACE) describe service/$(NAME)-server
-	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME)-server 8080:80
+	kubectl --namespace $(NAMESPACE) describe service/$(CHART_NAME)-server
+	kubectl --namespace $(NAMESPACE) port-forward service/$(CHART_NAME)-server 8080:80
 
 .PHONY: status
 status:

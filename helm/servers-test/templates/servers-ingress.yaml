@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "chart.appname" . }}-server
+spec:
+  rules:
+  - host: {{ include "chart.appname" . }}-server.{{ .Values.ingress.server.domain }}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: {{ include "chart.appname" . }}-server
+          servicePort: {{ .Values.ingress.server.servicePort }}
+  tls:
+  - secretName: {{ .Values.ingress.server.domain }}

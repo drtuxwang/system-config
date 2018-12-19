@@ -28,14 +28,16 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ .Chart.Name }}-server
         ports:
-        - name: {{ .Values.service.name }}
-          containerPort: {{ .Values.service.port }}
+        - name: server
+          containerPort: {{ .Values.service.server.port }}
           protocol: TCP
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         volumeMounts:
         - mountPath: /shared
           name: shared
+      nodeSelector:
+        beta.kubernetes.io/os: linux
       terminationGracePeriodSeconds: 10
       volumes:
       - hostPath:
