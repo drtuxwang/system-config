@@ -4,11 +4,11 @@ metadata:
   labels:
     app: server
   name: server
-  namespace: server
 spec:
   containers:
   - command:
-    - bash
+    - sleep
+    - '86400'
     env:
     - name: NAME
       value: VALUE
