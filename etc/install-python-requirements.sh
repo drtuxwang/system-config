@@ -17,7 +17,7 @@ read_requirements() {
     if [ -f "$1" ]
     then
         echo "Processing \"$1\"..."
-        for PACKAGE in $(cat $1 | sed -e "s/>=/==/g")
+        for PACKAGE in $(grep -v "^[ \t]*#" $1 | sed -e "s/>=/==/g")
         do
             NAME=${PACKAGE%==*}
             VERSION=${PACKAGE#*==}
