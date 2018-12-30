@@ -230,7 +230,7 @@ bindings:
     open: archive_unpacker
     view: archive_unpacker
 parameters:
-  homepage: http://www.drtuxwang.talktalk.net/bookmarks.xhtml
+  homepage: http://drtuxwang.fast-page.org/bookmarks.xhtml
   image_extensions:
   - .bmp
   - .gif
