@@ -324,9 +324,9 @@ class Main:
                         self._packages = self._read_distribution_packages(
                             distribution + '.json')
                         self._read_distribution_pin_packages(
-                            distribution + '.pinlist')
+                            distribution + '.debs-pinlist')
                         self._read_distribution_blacklist(
-                            distribution + '.blacklist')
+                            distribution + '.debs-blacklist')
                         self._check_distribution_updates(
                             distribution, list_file)
 
