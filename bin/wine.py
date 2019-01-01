@@ -22,6 +22,10 @@ class Options:
     """
     Options class
     """
+    _wine = command_mod.Command(
+        os.path.basename(sys.argv[0]),
+        errors='stop'
+    )
 
     def __init__(self):
         self._args = None
@@ -61,11 +65,6 @@ class Options:
         """
         Parse arguments
         """
-        self._wine = command_mod.Command(
-            os.path.basename(sys.argv[0]),
-            errors='stop'
-        )
-
         if len(args) > 1:
             if args[1].endswith('.bat'):
                 self._wine.set_args(['cmd', '/c'])

@@ -133,7 +133,11 @@ class Main:
                     xml.sax.parse(open(file, errors='replace'), handler)
                 except OSError:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot parse "' + file + '" XML file.')
+                        '{0:s}: Cannot parse "{1:s}" XML file.'.format(
+                            sys.argv[0],
+                            file
+                        )
+                    )
                 except Exception:
                     raise SystemExit(
                         sys.argv[0] + ': Invalid "' + file + '" XML file.')

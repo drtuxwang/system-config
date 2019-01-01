@@ -100,7 +100,7 @@ class Main:
     """
     Main class
     """
-    xmllint = command_mod.Command('xmllint', errors='stop')
+    _xmllint = command_mod.Command('xmllint', errors='stop')
 
     def __init__(self):
         try:
@@ -139,7 +139,7 @@ class Main:
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot open "' + file + '" XML file.')
-            task = subtask_mod.Batch(self.xmllint.get_cmdline() + [file])
+            task = subtask_mod.Batch(self._xmllint.get_cmdline() + [file])
             task.run()
             if task.has_error():
                 for line in task.get_error():
