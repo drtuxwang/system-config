@@ -3,11 +3,9 @@
 Run ssudo command in new terminal session
 """
 
-import getpass
 import glob
 import os
 import signal
-import socket
 import sys
 
 import command_mod
