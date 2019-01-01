@@ -10,6 +10,7 @@ import re
 import shutil
 import signal
 import sys
+import xml.sax
 
 import bs4
 
@@ -121,13 +122,23 @@ class Main:
         """
         options = Options()
 
+        handler = xml.sax.ContentHandler()
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
             if file.endswith(('htm', 'html', 'xhtml')):
                 print('Re-formatting "' + file + '" HTML file...')
-                cls._reformat(file)
+                try:
+                    xml.sax.parse(open(file, errors='replace'), handler)
+                except OSError:
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot parse "' + file + '" XML file.')
+                except Exception:
+                    raise SystemExit(
+                        sys.argv[0] + ': Invalid "' + file + '" XML file.')
+                else:
+                    cls._reformat(file)
 
 
 if __name__ == '__main__':
