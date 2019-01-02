@@ -5,6 +5,7 @@ Check XML file for errors.
 
 import argparse
 import glob
+import http.client
 import os
 import signal
 import sys
@@ -128,7 +129,27 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def run(self):
+    @staticmethod
+    def _fixhtml(file):
+        try:
+            with open(file, errors='replace') as ifile:
+                try:
+                    with open('xmlcheck.xml', 'w', newline='\n') as ofile:
+                        for line in ifile:
+                            if line.startswith('<!DOCTYPE html'):
+                                ofile.write("\n")
+                            else:
+                                ofile.write(line.replace('&', '.'))
+                except OSError:
+                    raise SystemExit(
+                        sys.argv[0] +
+                        ': Cannot create "xmlcheck.xml" temporary file.'
+                    )
+        except OSError:
+            print(sys.argv[0], ': Cannot parse "', file, '" XML file.', sep='')
+
+    @classmethod
+    def run(cls):
         """
         Start program
         """
@@ -139,7 +160,8 @@ class Main:
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot open "' + file + '" XML file.')
-            task = subtask_mod.Batch(self._xmllint.get_cmdline() + [file])
+
+            task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [file])
             task.run()
             if task.has_error():
                 for line in task.get_error():
@@ -147,13 +169,25 @@ class Main:
                 continue
 
             try:
-                xml.sax.parse(open(file, errors='replace'), handler)
+                if os.path.splitext(file)[1] in ('.htm', '.html', '.xhtml'):
+                    # Workaround for bug in xml.sax call to urllib
+                    # requiring 'http_proxy'
+                    cls._fixhtml(file)
+                    xml.sax.parse(
+                        open('xmlcheck.xml', errors='replace'),
+                        handler
+                    )
+                else:
+                    xml.sax.parse(open(file, errors='replace'), handler)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot parse "' + file + '" XML file.')
+            except http.client.HTTPException:
+                raise SystemExit(sys.argv[0] + ': HTTP request failed.')
             except Exception:
                 raise SystemExit(
                     sys.argv[0] + ': Invalid "' + file + '" XML file.')
+            os.remove('xmlcheck.xml')
 
 
 if __name__ == '__main__':

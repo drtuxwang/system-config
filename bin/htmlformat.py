@@ -10,9 +10,11 @@ import re
 import shutil
 import signal
 import sys
-import xml.sax
 
 import bs4
+
+import command_mod
+import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
@@ -56,7 +58,8 @@ class Main:
     """
     Main class
     """
-    indent = re.compile(r'^(\s*)', re.MULTILINE)
+    _indent = re.compile(r'^(\s*)', re.MULTILINE)
+    _xmllint = command_mod.Command('xmllint', errors='stop')
 
     def __init__(self):
         try:
@@ -98,7 +101,7 @@ class Main:
             ''.join(lines).replace('&nbsp;', '&amp;nbsp;'),
             'html.parser'
         )
-        html_text = cls.indent.sub(r'\1\1', soup.prettify())
+        html_text = cls._indent.sub(r'\1\1', soup.prettify())
 
         tmpfile = file + '-tmp' + str(os.getpid())
         try:
@@ -122,25 +125,19 @@ class Main:
         """
         options = Options()
 
-        handler = xml.sax.ContentHandler()
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
+
             if file.endswith(('htm', 'html', 'xhtml')):
                 print('Re-formatting "' + file + '" HTML file...')
-                try:
-                    xml.sax.parse(open(file, errors='replace'), handler)
-                except OSError:
-                    raise SystemExit(
-                        '{0:s}: Cannot parse "{1:s}" XML file.'.format(
-                            sys.argv[0],
-                            file
-                        )
-                    )
-                except Exception:
-                    raise SystemExit(
-                        sys.argv[0] + ': Invalid "' + file + '" XML file.')
+
+                task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [file])
+                task.run()
+                if task.has_error():
+                    for line in task.get_error():
+                        print(line, file=sys.stderr)
                 else:
                     cls._reformat(file)
 
