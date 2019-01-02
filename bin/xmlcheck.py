@@ -130,23 +130,23 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _fixhtml(file):
+    def _get_xml(file):
+        """
+        Return XML content of file.
+
+        Workaround for bug in xml.sax call to urllib requiring 'http_proxy'
+        """
+        lines = []
         try:
             with open(file, errors='replace') as ifile:
-                try:
-                    with open('xmlcheck.xml', 'w', newline='\n') as ofile:
-                        for line in ifile:
-                            if line.startswith('<!DOCTYPE html'):
-                                ofile.write("\n")
-                            else:
-                                ofile.write(line.replace('&', '.'))
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] +
-                        ': Cannot create "xmlcheck.xml" temporary file.'
-                    )
+                for line in ifile:
+                    if line.startswith('<!DOCTYPE html'):
+                        lines.append('\n')
+                    else:
+                        lines.append(line.replace('&', '.'))
         except OSError:
             print(sys.argv[0], ': Cannot parse "', file, '" XML file.', sep='')
+        return ''.join(lines)
 
     @classmethod
     def run(cls):
@@ -170,13 +170,7 @@ class Main:
 
             try:
                 if os.path.splitext(file)[1] in ('.htm', '.html', '.xhtml'):
-                    # Workaround for bug in xml.sax call to urllib
-                    # requiring 'http_proxy'
-                    cls._fixhtml(file)
-                    xml.sax.parse(
-                        open('xmlcheck.xml', errors='replace'),
-                        handler
-                    )
+                    xml.sax.parseString(cls._get_xml(file), handler)
                 else:
                     xml.sax.parse(open(file, errors='replace'), handler)
             except OSError:
@@ -187,7 +181,6 @@ class Main:
             except Exception:
                 raise SystemExit(
                     sys.argv[0] + ': Invalid "' + file + '" XML file.')
-            os.remove('xmlcheck.xml')
 
 
 if __name__ == '__main__':
