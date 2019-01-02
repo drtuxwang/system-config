@@ -387,10 +387,10 @@ the years. Now most of the scripts are written in Python 3.
  * bin/gitk               gitk wrapper (allowing non systems port)
  * bin/gitk.bat
  * bin/gitk.py
- * bin/gittime            Modify file time to original GIT author time
- * bin/gittime.py
  * bin/git-lfs            git large file storage plugin
  * bin/git-lfs.py
+ * bin/git-time           git original author time plugin
+ * bin/git-time.py
 </pre>
 <pre>
  * bin/gnomine            gnome-mines/gnomine wrapper (allowing non systems port)
