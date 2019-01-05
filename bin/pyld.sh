@@ -153,14 +153,15 @@ exec_python() {
         PYLD_FLAGS="-pyldname=$PY_MAIN"
         PY_MAIN="gxx_"
         ;;
+    git-*|systemd-analyze)
+        PYLD_FLAGS="-pyldname=$PY_MAIN"
+        PY_MAIN=`echo "$PY_MAIN" | sed -e "s/-/_/g"`
+        ;;
     ipdb|pip|pydoc)
         PYEXE=python
         ;;
     python*)
         PYEXE="$PY_MAIN"
-        ;;
-    systemd-analyze)
-        PY_MAIN=`echo "$PY_MAIN" | sed -e "s/-/_/g"`
         ;;
     vi|vim)
         PYLD_FLAGS="-pyldname=$PY_MAIN"
