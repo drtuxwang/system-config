@@ -70,14 +70,14 @@ class Options:
             nargs = args[:1]
             for arg in args[1:]:
                 if 'www.youtube.com/watch?' in arg:
-                   nargs.extend(['vget', arg])
+                    nargs.extend(['vget', arg])
                 else:
-                   nargs.extend([
-                       'wget',
-                       '--output-document',
-                       os.path.basename(arg).split('?', 1)[0],
-                       arg+';',
-                   ])
+                    nargs.extend([
+                        'wget',
+                        '--output-document',
+                        os.path.basename(arg).split('?', 1)[0],
+                        arg+';',
+                    ])
             args = nargs
         command = command_mod.Command.args2cmd(args[1:])
 
