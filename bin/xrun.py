@@ -64,17 +64,21 @@ class Options:
                 self._parse_args(args[1:])
             cmdline = args[2]
             if '"' not in cmdline:
-                cmdline = cmdline.replace("'", '"')
+                cmdline = cmdline.replace("'", '"').replace('\n', ' ')
             args[1:] = command_mod.Command.cmd2args(cmdline)
-        if len(args) == 2:
-            if args[1].startswith("https://www.youtube.com/watch?"):
-                args.insert(1, 'vget')
-            elif args[1].startswith(('http://', 'https://', 'ftp://')):
-                args = args[:1] + [
-                    'wget',
-                    '--output-document',
-                    os.path.basename(args[-1]).split('?', 1)[0],
-                ] + args[1:]
+        if args[1].startswith(('http://', 'https://', 'ftp://')):
+            nargs = args[:1]
+            for arg in args[1:]:
+                if 'www.youtube.com/watch?' in arg:
+                   nargs.extend(['vget', arg])
+                else:
+                   nargs.extend([
+                       'wget',
+                       '--output-document',
+                       os.path.basename(arg).split('?', 1)[0],
+                       arg+';',
+                   ])
+            args = nargs
         command = command_mod.Command.args2cmd(args[1:])
 
         self._xterm = command_mod.Command('xterm', errors='stop')
@@ -93,7 +97,7 @@ class Options:
             '-T',
             'xrun: ' + command,
             '-e',
-            command + '; sleep ' + SLEEP
+            command + 'sleep ' + SLEEP
         ])
 
 
