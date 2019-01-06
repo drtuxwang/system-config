@@ -1,19 +1,34 @@
 #!/usr/bin/env python3
 """
-Calculate checksum using MD5, file size and file modification time.
+Calculate checksum lines using imagehash, file size and file modification time.
 """
 
 import argparse
 import glob
-import hashlib
+import logging
 import os
 import signal
 import sys
 
+import PIL
+import imagehash
+
+import command_mod
 import file_mod
+import logging_mod
 
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+
+MAX_DISTANCE_IDENTICAL = 6
+
+# pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
+console_handler = logging.StreamHandler()
+# pylint: enable=invalid-name
+console_handler.setFormatter(logging_mod.ColoredFormatter())
+logger.addHandler(console_handler)
+logger.setLevel(logging.INFO)
 
 
 class Options:
@@ -30,12 +45,6 @@ class Options:
         Return check flag.
         """
         return self._args.check_flag
-
-    def get_create_flag(self):
-        """
-        Return create flag.
-        """
-        return self._args.create_flag
 
     def get_files(self):
         """
@@ -59,8 +68,8 @@ class Options:
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Calculate checksum using MD5, file size and '
-            'file modification time.'
+            description='Calculate checksum lines using imagehash, file size '
+            'and file modification time.'
         )
 
         parser.add_argument(
@@ -74,12 +83,6 @@ class Options:
             dest='check_flag',
             action='store_true',
             help='Check checksums against files.'
-        )
-        parser.add_argument(
-            '-f',
-            dest='create_flag',
-            action='store_true',
-            help='Create ".fsum" file for each file.'
         )
         parser.add_argument(
             '-update',
@@ -135,21 +138,6 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    @staticmethod
-    def _md5sum(file):
-        try:
-            with open(file, 'rb') as ifile:
-                md5 = hashlib.md5()
-                while True:
-                    chunk = ifile.read(131072)
-                    if not chunk:
-                        break
-                    md5.update(chunk)
-        except (OSError, TypeError):
-            raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.')
-        return md5.hexdigest()
-
     def _calc(self, options, files):
         for file in files:
             if os.path.isdir(file) and os.path.basename(file) != '...':
@@ -165,116 +153,65 @@ class Main:
             elif os.path.isfile(file) and os.path.basename(file) != 'fsum':
                 file_stat = file_mod.FileStat(file)
                 try:
-                    md5sum = self._cache[
+                    phash = self._cache[
                         (file, file_stat.get_size(), file_stat.get_time())]
                 except KeyError:
-                    md5sum = self._md5sum(file)
-                if not md5sum:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + file + '" file.')
+                    try:
+                        phash = str(imagehash.phash(PIL.Image.open(file)))
+                    except OSError:
+                        continue
                 print("{0:s}/{1:010d}/{2:d}  {3:s}".format(
-                    md5sum,
+                    phash,
                     file_stat.get_size(),
                     file_stat.get_time(),
                     file
                 ))
-                if options.get_create_flag():
-                    try:
-                        with open(file + '.fsum', 'w', newline='\n') as ofile:
-                            print("{0:s}/{1:010d}/{2:d}  {3:s}".format(
-                                md5sum,
-                                file_stat.get_size(),
-                                file_stat.get_time(),
-                                os.path.basename(file)
-                            ), file=ofile)
-                        file_stat = file_mod.FileStat(file)
-                        os.utime(
-                            file + '.fsum',
-                            (file_stat.get_time(), file_stat.get_time())
-                        )
-                    except OSError:
-                        raise SystemExit(
-                            sys.argv[0] + ': Cannot create "' + file +
-                            '.fsum" file.'
-                        )
 
-    def _check(self, files):
-        found = []
-        nfail = 0
-        nmiss = 0
+    @staticmethod
+    def _show_same(phashes):
+        found = False
 
-        for fsumfile in files:
-            found.append(fsumfile)
-            directory = os.path.dirname(fsumfile)
+        files = sorted(phashes)
+        for i, file1 in enumerate(files):
+            same_files = []
+            phash = phashes[file1]
+            for file2 in files[i+1:]:
+                distance = format(phashes[file2] ^ phash, "08b").count('1')
+                if distance < MAX_DISTANCE_IDENTICAL:
+                    same_files.append(file2)
+
+            if same_files:
+                sorted_files = sorted([file1] + same_files)
+                logger.warning(
+                    "Identical: %s",
+                    command_mod.Command.args2cmd(sorted_files),
+                )
+                found = True
+
+        return found
+
+    @classmethod
+    def _check(cls, files):
+        found = False
+
+        for psumfile in files:
+            phashes = {}
             try:
-                with open(fsumfile, errors='replace') as ifile:
+                with open(psumfile, errors='replace') as ifile:
                     for line in ifile:
                         line = line.rstrip('\r\n')
-                        md5sum, size, mtime, file = self._get_checksum(line)
-                        file = os.path.join(directory, file)
-                        found.append(file)
-                        file_stat = file_mod.FileStat(file)
-                        try:
-                            if not os.path.isfile(file):
-                                print(file, '# FAILED open or read')
-                                nmiss += 1
-                            elif size != file_stat.get_size():
-                                print(file, '# FAILED checksize')
-                                nfail += 1
-                            elif self._md5sum(file) != md5sum:
-                                print(file, '# FAILED checksum')
-                                nfail += 1
-                            elif mtime != file_stat.get_time():
-                                print(file, '# FAILED checkdate')
-                                nfail += 1
-                        except TypeError:
-                            raise SystemExit(
-                                sys.argv[0] + ': Corrupt "' + fsumfile +
-                                '" checksum file.'
-                            )
+                        phash, _, _, file = cls._get_checksum(line)
+                        phashes[file] = int(phash, 16)
             except OSError:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + fsumfile +
-                    '" checksum file.'
+                    sys.argv[0] + ': Cannot read "' + psumfile +
+                    '" checksums file.'
                 )
 
-        if os.path.join(directory, 'index.fsum') in files:
-            for file in self._extra(directory, found):
-                print(file, '# EXTRA file found')
-        if nmiss > 0:
-            print("fsum: Cannot find {0:d} of {1:d} listed files.".format(
-                nmiss,
-                len(found)
-            ))
-        if nfail > 0:
-            print(
-                "fsum: Mismatch in {0:d} of {1:d} computed checksums.".format(
-                    nfail,
-                    len(found) - nmiss
-                )
-            )
+            found |= cls._show_same(phashes)
 
-    def _extra(self, directory, found):
-        extra = []
-        try:
-            if directory:
-                files = [
-                    os.path.join(directory, x)
-                    for x in os.listdir(directory)
-                ]
-            else:
-                files = [os.path.join(directory, x) for x in os.listdir()]
-        except PermissionError:
-            pass
-        else:
-            for file in files:
-                if os.path.isdir(file):
-                    if not os.path.islink(file):
-                        extra.extend(self._extra(file, found))
-                elif file not in found:
-                    if not file.endswith('..fsum'):
-                        extra.append(file)
-        return extra
+        if found:
+            raise SystemExit(1)
 
     @staticmethod
     def _get_checksum(line):

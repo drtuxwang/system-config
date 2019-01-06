@@ -563,6 +563,9 @@ the years. Now most of the scripts are written in Python 3.
  * bin/psame              Show picture files with same finger print
  * bin/psame.bat
  * bin/psame.py
+ * bin/psum               Calculate checksum using imagehash, file size and file modification time
+ * bin/psum.bat
+ * bin/psum.py
 </pre>
 <pre>
  * bin/pyld.sh            Python loading module for sh/ksh/bash wrapper scripts

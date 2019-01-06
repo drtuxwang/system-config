@@ -109,6 +109,9 @@ class Main:
             sys.argv = argv
 
     def _ahash_check(self, options, files):
+        """
+        Faster average hashing algorithm (1st pass)
+        """
         for file in files:
             if os.path.isdir(file):
                 if not os.path.islink(file) and options.get_recursive_flag():
@@ -134,6 +137,9 @@ class Main:
 
     @staticmethod
     def _phash_check(files):
+        """
+        Slower perception hashing algorithm (2nd pass)
+        """
         phashes = {
             file: imagehash.phash(PIL.Image.open(file))
             for file in files
