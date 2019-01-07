@@ -9,8 +9,7 @@ import os
 import signal
 import sys
 
-import command_mod
-import subtask_mod
+import git
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
@@ -95,21 +94,24 @@ class Main:
             sys.argv = argv
 
     @classmethod
-    def _update(cls, cmdline, files, recursive):
+    def _update(cls, repo, files, recursive):
         for file in files:
             if os.path.isfile(file):
-                task = subtask_mod.Batch(cmdline + [file])
-                task.run()
+                commit = next(repo.iter_commits(
+                    paths=os.path.abspath(file),
+                    max_count=1,
+                ))
+                author_time = commit.committed_date
                 try:
-                    author_time = int(task.get_output()[0])
                     os.utime(file, (author_time, author_time))
                 except (IndexError, ValueError):
                     pass
             elif recursive and os.path.isdir(file):
                 cls._update(
-                    cmdline,
+                    repo,
                     glob.glob(os.path.join(file, '*')),
-                    recursive)
+                    recursive,
+                )
 
     def run(self):
         """
@@ -117,18 +119,11 @@ class Main:
         """
         options = Options()
 
-        git = command_mod.Command(
-            'git',
-            args=['log', '--pretty=format:%at'],
-            errors='stop'
-        )
-        cmdline = git.get_cmdline()
-
-        self._update(
-            cmdline,
-            options.get_files(),
-            options.get_recursive_flag()
-        )
+        try:
+            repo = git.Repo('./', search_parent_directories=True)
+        except git.exc.InvalidGitRepositoryError:
+            raise SystemExit(sys.argv[0] + ': Cannot find .git directory.')
+        self._update(repo, options.get_files(), options.get_recursive_flag())
 
 
 if __name__ == '__main__':
