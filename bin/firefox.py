@@ -295,7 +295,7 @@ class Options:
             '"extensions.blocklist.enabled", false',
             '"full-screen-api.approval-required", false',
             '"geo.enabled", false',
-            '"image.animation_mode", "none"',
+            '"image.animation_mode", "normal"',
             '"keyword.enabled", true',
             '"layout.frames.force_resizability", true',
             '"layout.spellcheckDefault", 2',
