@@ -11,6 +11,11 @@ FLAGS := --rm \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
 
+# Default local port
+ifndef LOCALPORT
+	LOCALPORT=8080
+endif
+
 default: build
 	docker images
 
@@ -30,7 +35,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
-		--publish 8080:80 \
+		--publish $(LOCALPORT):80 \
 		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
 		--workdir /var/lib/nginx \
 		$(IMAGE) \

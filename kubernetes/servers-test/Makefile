@@ -1,5 +1,10 @@
 NAMESPACE := servers-test
 
+# Default local port
+ifndef LOCALPORT
+	LOCALPORT=8080
+endif
+
 default: status
 
 .PHONY: build
@@ -15,7 +20,7 @@ install:
 .PHONY: forward
 forward:
 	kubectl --namespace=$(NAMESPACE) describe service/server
-	kubectl --namespace=$(NAMESPACE) port-forward service/server 8080:80
+	kubectl --namespace=$(NAMESPACE) port-forward service/server $(LOCALPORT):80
 
 .PHONY: status
 status:

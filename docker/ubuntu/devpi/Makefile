@@ -12,6 +12,11 @@ FLAGS := --rm \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
 
+# Default local port
+ifndef LOCALPORT
+	LOCALPORT=8080
+endif
+
 default: build
 	docker images
 
@@ -31,7 +36,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(FLAGS) \
-		--publish 8080:8080 \
+		--publish $(LOCALPORT):8080 \
 		--hostname $(NAME) \
 		--workdir /var/lib/devpi \
 		$(IMAGE) \

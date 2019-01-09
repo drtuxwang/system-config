@@ -4,6 +4,11 @@ IMAGE := alpine:3.8
 NAMESPACE := servers-test
 DOMAIN := example.com
 
+# Default local port
+ifndef LOCALPORT
+	LOCALPORT=8080
+endif
+
 default: status
 
 .PHONY: check
@@ -33,7 +38,7 @@ upgrade:
 .PHONY: forward
 forward:
 	kubectl --namespace $(NAMESPACE) describe service/$(CHART_NAME)-server
-	kubectl --namespace $(NAMESPACE) port-forward service/$(CHART_NAME)-server 8080:80
+	kubectl --namespace $(NAMESPACE) port-forward service/$(CHART_NAME)-server $(LOCALPORT):80
 
 .PHONY: status
 status:

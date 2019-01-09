@@ -12,6 +12,12 @@ FLAGS := --rm \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
 
+# Default local port
+ifndef LOCALPORT
+	LOCALPORT=8080
+endif
+
+
 default: build
 	docker images
 
@@ -35,7 +41,7 @@ run:
 	docker run $(FLAGS) \
 		--privileged=true \
 		--volume=/var/lib/jenkins:/var/lib/jenkins \
-		--publish 8080:8080 \
+		--publish $(LOCALPORT):8080 \
 		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
 		--workdir /var/lib/jenkins \
 		$(IMAGE) ||:

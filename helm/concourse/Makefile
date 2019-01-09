@@ -1,6 +1,11 @@
 CHART_NAME := concourse
 NAMESPACE := default
 
+# Default local port
+ifndef LOCALPORT
+	LOCALPORT=8080
+endif
+
 default: status
 
 .PHONY: check
@@ -28,7 +33,7 @@ upgrade:
 
 .PHONY: forward
 forward:
-	kubectl --namespace $(NAMESPACE) port-forward service/concourse-web 8080:8080
+	kubectl --namespace $(NAMESPACE) port-forward service/concourse-web $(LOCALPORT):8080
 
 .PHONY: status
 status:
