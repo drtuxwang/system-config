@@ -19,7 +19,7 @@ import logging_mod
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-MAX_DISTANCE_IDENTICAL = 21
+MAX_DISTANCE_IDENTICAL = 6
 
 # pylint: disable=invalid-name
 logger = logging.getLogger(__name__)
@@ -108,52 +108,40 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _ahash_check(self, options, files):
-        """
-        Faster average hashing algorithm (1st pass)
-        """
+    def _calc(self, options, files):
+        phashes = {}
+
         for file in files:
             if os.path.isdir(file):
-                if not os.path.islink(file) and options.get_recursive_flag():
+                if options.get_recursive_flag() and not os.path.islink(file):
                     try:
-                        self._ahash_check(options, sorted([
+                        phashes.update(self._calc(options, sorted([
                             os.path.join(file, x)
                             for x in os.listdir(file)
-                        ]))
+                        ])))
                     except PermissionError:
-                        raise SystemExit(
-                            sys.argv[0] + ': Cannot open "' +
-                            file + '" directory.'
-                        )
+                        pass
             elif os.path.isfile(file):
                 try:
-                    ahash = imagehash.average_hash(PIL.Image.open(file))
+                    phash = imagehash.phash(PIL.Image.open(file))
                 except OSError:
                     continue
-                if ahash in self._ahashfiles:
-                    self._ahashfiles[ahash].add(file)
-                else:
-                    self._ahashfiles[ahash] = set([file])
+                phashes[file] = phash
+
+        return phashes
 
     @staticmethod
-    def _phash_check(files):
-        """
-        Slower perception hashing algorithm (2nd pass)
-        """
-        phashes = {
-            file: imagehash.phash(PIL.Image.open(file))
-            for file in files
-        }
+    def _check(phashes):
+        files = sorted(phashes)
+        matches = []
 
         for i, file1 in enumerate(files):
-            same_files = []
             phash = phashes[file1]
             for file2 in files[i+1:]:
                 if phashes[file2] - phash <= MAX_DISTANCE_IDENTICAL:
-                    same_files.append(file2)
-            if same_files:
-                return [file1] + same_files
-        return []
+                    matches.append([file1, file2])
+
+        return matches
 
     def run(self):
         """
@@ -161,28 +149,15 @@ class Main:
         """
         options = Options()
 
-        self._ahashfiles = {}
-        files = []
-        for file in options.get_files():
-            if os.path.isdir(file):
-                files.extend(sorted(
-                    [os.path.join(file, x) for x in os.listdir(file)]
-                ))
-            else:
-                files.append(file)
-        self._ahash_check(options, files)
+        phashes = self._calc(options, options.get_files())
+        matches = self._check(phashes)
 
-        exitcode = 0
-        for files in sorted(self._ahashfiles.values()):
-            if len(files) > 1:
-                sorted_files = self._phash_check(sorted(files))
-                if sorted_files:
-                    logger.warning(
-                        "Identical: %s",
-                        command_mod.Command.args2cmd(sorted_files),
-                    )
-                    exitcode = 1
-        return exitcode
+        for match in matches:
+            logger.warning(
+                "Identical: %s",
+                command_mod.Command.args2cmd(match),
+            )
+        return matches != []
 
 
 if __name__ == '__main__':

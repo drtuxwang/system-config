@@ -140,17 +140,16 @@ class Main:
 
     def _calc(self, options, files):
         for file in files:
-            if os.path.isdir(file) and os.path.basename(file) != '...':
-                if not os.path.islink(file):
-                    if options.get_recursive_flag():
-                        try:
-                            self._calc(options, sorted([
-                                os.path.join(file, x)
-                                for x in os.listdir(file)
-                            ]))
-                        except PermissionError:
-                            pass
-            elif os.path.isfile(file) and os.path.basename(file) != 'fsum':
+            if os.path.isdir(file):
+                if options.get_recursive_flag() and not os.path.islink(file):
+                    try:
+                        self._calc(options, sorted([
+                            os.path.join(file, x)
+                            for x in os.listdir(file)
+                        ]))
+                    except PermissionError:
+                        pass
+            elif os.path.isfile(file):
                 file_stat = file_mod.FileStat(file)
                 try:
                     phash = self._cache[
