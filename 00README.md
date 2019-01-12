@@ -382,7 +382,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/gimp.py
  * bin/git                git wrapper (allowing non systems port)
  * bin/git.bat
- * bin/git.py
+ * bin/git_.py
  * bin/git-bash.bat       git bash shell for Windows
  * bin/gitk               gitk wrapper (allowing non systems port)
  * bin/gitk.bat
