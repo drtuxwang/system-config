@@ -5,13 +5,15 @@ Calculate checksum lines using imagehash, file size and file modification time.
 
 import argparse
 import glob
+import itertools
 import logging
 import os
 import signal
 import sys
 
-import PIL
 import imagehash
+import PIL
+import pybktree
 
 import command_mod
 import file_mod
@@ -167,47 +169,56 @@ class Main:
                 ))
 
     @staticmethod
-    def _show_same(phashes):
-        found = False
+    def _match(image_phash):
+        """
+        Using BKTree to speed up check:
+        if phash1 - phash2 <= MAX_DISTANCE_IDENTICAL:
+        """
+        phash_images = {}
+        for image, phash in image_phash.items():
+            if phash in phash_images:
+                phash_images[phash].append(image)
+            else:
+                phash_images[phash] = [image]
 
-        files = sorted(phashes)
-        for i, file1 in enumerate(files):
-            same_files = []
-            phash = phashes[file1]
-            for file2 in files[i+1:]:
-                distance = format(phashes[file2] ^ phash, "08b").count('1')
-                if distance < MAX_DISTANCE_IDENTICAL:
-                    same_files.append(file2)
+        matched_images = set()
+        tree = pybktree.BKTree(pybktree.hamming_distance, phash_images)
+        for phash in sorted(phash_images):
+            images = frozenset(itertools.chain.from_iterable([
+                phash_images[match]
+                for _, match in tree.find(phash, MAX_DISTANCE_IDENTICAL)
+            ]))
+            if len(images) > 1:
+                matched_images.add(images)
 
-            if same_files:
-                sorted_files = sorted([file1] + same_files)
-                logger.warning(
-                    "Identical: %s",
-                    command_mod.Command.args2cmd(sorted_files),
-                )
-                found = True
-
-        return found
+        return matched_images
 
     @classmethod
     def _check(cls, files):
         found = False
 
         for psumfile in files:
-            phashes = {}
+            image_phash = {}
             try:
                 with open(psumfile, errors='replace') as ifile:
                     for line in ifile:
                         line = line.rstrip('\r\n')
                         phash, _, _, file = cls._get_checksum(line)
-                        phashes[file] = int(phash, 16)
+                        image_phash[file] = int(phash, 16)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "' + psumfile +
                     '" checksums file.'
                 )
+            matched_images = cls._match(image_phash)
 
-            found |= cls._show_same(phashes)
+            if matched_images:
+                found = True
+                for images in sorted(matched_images):
+                    logger.warning(
+                        "Identical: %s",
+                        command_mod.Command.args2cmd(sorted(images)),
+                    )
 
         if found:
             raise SystemExit(1)

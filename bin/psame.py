@@ -5,13 +5,15 @@ Show picture files with same finger print.
 
 import argparse
 import glob
+import itertools
 import logging
 import os
 import signal
 import sys
 
-import PIL
 import imagehash
+import PIL
+import pybktree
 
 import command_mod
 import logging_mod
@@ -109,13 +111,13 @@ class Main:
             sys.argv = argv
 
     def _calc(self, options, files):
-        phashes = {}
+        image_phash = {}
 
         for file in files:
             if os.path.isdir(file):
                 if options.get_recursive_flag() and not os.path.islink(file):
                     try:
-                        phashes.update(self._calc(options, sorted([
+                        image_phash.update(self._calc(options, sorted([
                             os.path.join(file, x)
                             for x in os.listdir(file)
                         ])))
@@ -123,25 +125,37 @@ class Main:
                         pass
             elif os.path.isfile(file):
                 try:
-                    phash = imagehash.phash(PIL.Image.open(file))
+                    phash = int(str(imagehash.phash(PIL.Image.open(file))), 16)
                 except OSError:
                     continue
-                phashes[file] = phash
+                image_phash[file] = phash
 
-        return phashes
+        return image_phash
 
     @staticmethod
-    def _check(phashes):
-        files = sorted(phashes)
-        matches = []
+    def _match(image_phash):
+        """
+        Using BKTree to speed up check:
+        if phash1 - phash2 <= MAX_DISTANCE_IDENTICAL:
+        """
+        phash_images = {}
+        for image, phash in image_phash.items():
+            if phash in phash_images:
+                phash_images[phash].append(image)
+            else:
+                phash_images[phash] = [image]
 
-        for i, file1 in enumerate(files):
-            phash = phashes[file1]
-            for file2 in files[i+1:]:
-                if phashes[file2] - phash <= MAX_DISTANCE_IDENTICAL:
-                    matches.append([file1, file2])
+        matched_images = set()
+        tree = pybktree.BKTree(pybktree.hamming_distance, phash_images)
+        for phash in sorted(phash_images):
+            images = frozenset(itertools.chain.from_iterable([
+                phash_images[match]
+                for _, match in tree.find(phash, MAX_DISTANCE_IDENTICAL)
+            ]))
+            if len(images) > 1:
+                matched_images.add(images)
 
-        return matches
+        return matched_images
 
     def run(self):
         """
@@ -149,15 +163,15 @@ class Main:
         """
         options = Options()
 
-        phashes = self._calc(options, options.get_files())
-        matches = self._check(phashes)
+        image_phash = self._calc(options, options.get_files())
+        matched_images = self._match(image_phash)
 
-        for match in matches:
+        for images in sorted(matched_images):
             logger.warning(
                 "Identical: %s",
-                command_mod.Command.args2cmd(match),
+                command_mod.Command.args2cmd(sorted(images)),
             )
-        return matches != []
+        return matched_images != []
 
 
 if __name__ == '__main__':
