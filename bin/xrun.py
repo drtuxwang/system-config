@@ -97,7 +97,7 @@ class Options:
             '-T',
             'xrun: ' + command,
             '-e',
-            command + 'sleep ' + SLEEP
+            command + '; sleep ' + SLEEP
         ])
 
 
