@@ -70,13 +70,14 @@ class Options:
             nargs = args[:1]
             for arg in args[1:]:
                 if 'www.youtube.com/watch?' in arg:
-                    nargs.extend(['vget', arg])
+                    nargs.extend(['vget', arg, ';'])
                 else:
                     nargs.extend([
                         'wget',
                         '--output-document',
                         os.path.basename(arg).split('?', 1)[0],
-                        arg+';',
+                        arg,
+                        ';'
                     ])
             args = nargs
         command = command_mod.Command.args2cmd(args[1:])
@@ -97,7 +98,7 @@ class Options:
             '-T',
             'xrun: ' + command,
             '-e',
-            command + '; sleep ' + SLEEP
+            command + ' sleep ' + SLEEP
         ])
 
 
