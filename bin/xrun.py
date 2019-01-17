@@ -79,8 +79,10 @@ class Options:
                         arg,
                         ';'
                     ])
-            args = nargs
-        command = command_mod.Command.args2cmd(args[1:])
+            nargs.extend(['sleep', SLEEP])
+        else:
+            nargs = args + [';', 'sleep', SLEEP]
+        command = command_mod.Command.args2cmd(nargs[1:])
 
         self._xterm = command_mod.Command('xterm', errors='stop')
         self._xterm.set_args([
@@ -98,7 +100,7 @@ class Options:
             '-T',
             'xrun: ' + command,
             '-e',
-            command + ' sleep ' + SLEEP
+            command
         ])
 
 
