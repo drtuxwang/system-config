@@ -3,6 +3,11 @@
 . config -bg "#cccccc"
 
 frame .tool -bg "#cccccc"
+    button .tool.evince -width 10 -bg "#ffcc00" -text "Evince" -command {
+        exec evince &
+    }
+    pack .tool.evince -side top
+
     button .tool.libreoffice -width 10 -bg "#ffcc00" -text "LibreOffice" -command {
         exec soffice &
     }
