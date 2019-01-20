@@ -29,6 +29,10 @@ apps:
     command:
     - xournal
     daemon: true
+  pdf_viewer:
+    command:
+    - evince
+    daemon: true
   text_editor:
     command:
     - xedit
@@ -146,7 +150,7 @@ bindings:
     view: audio_player
   pdf:
     open: pdf_annotator
-    view: web_browser
+    view: pdf_viewer
   png:
     open: image_editor
     view: image_viewer
