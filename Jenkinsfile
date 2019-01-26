@@ -3,9 +3,6 @@
 // Environment variables
 // BRANCH_NAME: branch being built
 
-// Required for Pull Request
-// CHANGE_ID: ID - e.g. 4
-
 pipeline {
     agent any
     options {
@@ -15,7 +12,7 @@ pipeline {
         DOCKER_FLAGS = '--network=host'
     }
     stages {
-        stage ('Build') {
+        stage ('Build images') {
             parallel {
                 stage ('Alpine') {
                     steps {
@@ -119,7 +116,13 @@ pipeline {
                 }
             }
         }
-        stage ('Versions') {
+        stage ('Push images') {
+            when { branch 'master' }
+            steps {
+                sh 'sleep 2'
+            }
+        }
+        stage ('Base images versions') {
             steps {
                 sh "make -C docker version"
             }
