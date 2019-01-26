@@ -1,15 +1,10 @@
-FROM alpine:3.8
-
-# Install base packages
-RUN apk update && \
-	apk add bash bind-tools openssh-client python3 vim && \
-	python3 -m pip install --upgrade pip
+FROM drtuxwang/alpine-base:3.8
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
 
 # Root account
-COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
+COPY tmpdir/root/.??* /root/
 
 # Configure start
 ENV HOME=/root

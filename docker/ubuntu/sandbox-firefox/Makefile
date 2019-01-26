@@ -49,7 +49,6 @@ build:
 		.vimrc \
 		.mozilla
 	chmod 644 tmpdir/home.tar
-
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -f Dockerfile -t $(IMAGE) .
 	rm -rf tmpdir

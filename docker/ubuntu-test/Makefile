@@ -30,7 +30,6 @@ build:
 	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
 	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
 	$(TOPDIR)/bin/fmod -R *
-
 	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
 	docker build -f Dockerfile-base -t $(IMAGE_BASE) .
 	@echo "\n*** Building \"$(IMAGE_SANDBOX)\" Docker image ***"
@@ -38,7 +37,6 @@ build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -f Dockerfile -t $(IMAGE) .
 	rm -rf tmpdir
-
 	for IMAGE in $(DEPENDENT_IMAGES); do \
 		make -C $$IMAGE build || exit 1; \
 	done

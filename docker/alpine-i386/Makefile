@@ -1,5 +1,6 @@
 NAME := alpine
 VERSION := 3.8-i386
+IMAGE_BASE := drtuxwang/$(NAME)-base:$(VERSION)
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 TOPDIR := ../..
 
@@ -27,8 +28,10 @@ build:
 	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
 	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
 	$(TOPDIR)/bin/fmod -R *
+	@echo "\n*** Building \"$(IMAGE_BASE)\" Docker image ***"
+	docker build -f Dockerfile-base -t $(IMAGE_BASE) .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build -f Dockerfile -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run

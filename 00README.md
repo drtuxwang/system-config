@@ -964,8 +964,10 @@ the years. Now most of the scripts are written in Python 3.
  * docker/Makefile                       Makefile for building all images
  * docker/alpine/Makefile                alpine:3.8 based linux
  * docker/alpine/Dockerfile
+ * docker/alpine/Dockerfile-base
  * docker/alpine-i386/Makefile           i386/alpine:3.8 based linux
  * docker/alpine-i386/Dockerfile
+ * docker/alpine-i386/Dockerfile-base
  * docker/busybox/Makefile               busybox:1.28 based linux
  * docker/busybox/Dockerfile
  * docker/centos-old/Makefile            centos:6 based linux

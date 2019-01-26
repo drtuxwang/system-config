@@ -39,7 +39,6 @@ build:
 	$(TOPDIR)/bin/fmod -R *
 	tar cf tmpdir/home.tar -C tmpdir/home --owner=0 --group=0 .bashrc .profile .tmux.conf .vimrc
 	chmod 644 tmpdir/home.tar
-
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build -f Dockerfile -t $(IMAGE) .
 	rm -rf tmpdir
