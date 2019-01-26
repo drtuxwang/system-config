@@ -2,7 +2,8 @@ NAME := etcd
 VERSION := latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 
-FLAGS := --rm \
+# Docker run
+DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -10,6 +11,7 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
+
 
 default: build
 	docker images
@@ -28,7 +30,7 @@ volume:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container to access volumes ***"
 	docker volume create --name cluster_etcda
 	docker volume create --name cluster_etcdb
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--volume="cluster_etcda:/var/lib/etcd/cluster_etcda" \
 		--volume="cluster_etcdb:/var/lib/etcd/cluster_etcdb" \
 		--env ETCDCTL_API=2 \

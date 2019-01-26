@@ -1,15 +1,25 @@
 NAME := busybox
 VERSION := latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-TOPDIR := ../..
 
-FLAGS := --rm \
+# Docker build
+TOPDIR := ../..
+ifndef DOCKER_BUILD_FLAGS
+	DOCKER_BUILD_FLAGS=
+endif
+
+# Docker run
+DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
 	--memory=1000m \
 	--memory-reservation=50m
+ifndef DOCKER_RUN_COMMAND
+	DOCKER_RUN_COMMAND=
+endif
+
 
 default: build
 	docker images
@@ -27,21 +37,21 @@ build:
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
 		$(IMAGE) \
-		$(COMMAND) \
+		$(DOCKER_RUN_COMMAND) \
 		||:
 
 .PHONY: version
 version:
-	@docker run $(FLAGS) $(IMAGE) busybox 2> /dev/null | grep "^BusyBox v" | sed -e "s@^BusyBox v@`pwd`: BusyBox @;s@ (.*@@"
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) busybox 2> /dev/null | grep "^BusyBox v" | sed -e "s@^BusyBox v@`pwd`: BusyBox @;s@ (.*@@"
 
 .PHONY: clean
 clean:

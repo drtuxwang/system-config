@@ -1,9 +1,15 @@
 NAME := jenkins
 VERSION := lts
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-TOPDIR := ../..
 
-FLAGS := --rm \
+# Docker build
+TOPDIR := ../..
+ifndef DOCKER_BUILD_FLAGS
+	DOCKER_BUILD_FLAGS=
+endif
+
+# Docker run
+DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -11,8 +17,6 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
-
-# Default local port
 ifndef LOCALPORT
 	LOCALPORT=8080
 endif
@@ -32,13 +36,13 @@ build:
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--privileged=true \
 		--volume=/var/lib/jenkins:/var/lib/jenkins \
 		--publish $(LOCALPORT):8080 \
@@ -48,7 +52,7 @@ run:
 
 .PHONY: version
 version:
-	@docker run $(FLAGS) --entrypoint bash $(IMAGE) jenkins.sh --version 2> /dev/null | sed -e "s@^@`pwd`: Jenkins @"
+	@docker run $(DOCKER_RUN_FLAGS) --entrypoint bash $(IMAGE) jenkins.sh --version 2> /dev/null | sed -e "s@^@`pwd`: Jenkins @"
 
 .PHONY: clean
 clean:

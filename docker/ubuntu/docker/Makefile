@@ -2,7 +2,13 @@ NAME := ubuntu-docker
 VERSION := 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 
-FLAGS := --rm \
+# Docker build
+ifndef DOCKER_BUILD_FLAGS
+	DOCKER_BUILD_FLAGS=
+endif
+
+# Docker run
+DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -15,6 +21,10 @@ FLAGS := --rm \
 	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--env TERM=$(TERM) \
 	--env USER=$(USER)
+ifndef DOCKER_RUN_COMMAND
+	DOCKER_RUN_COMMAND=
+endif
+
 
 default: build
 	docker images
@@ -28,17 +38,17 @@ build:
 	cp -p ../../../config/vimrc tmpdir/config/.vimrc
 	../../../bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--privileged=true \
 		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
 		$(IMAGE) \
-		$(COMMAND) \
+		$(DOCKER_RUN_COMMAND) \
 		||:
 
 .PHONY: version

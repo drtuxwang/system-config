@@ -15,7 +15,7 @@ else
     exit 1
 fi
 
-export FLAGS="--network=none"
+export DOCKER_RUN_FLAGS="--network=none"
 export DIST=
 SANDBOX=99999:99999
 while [ $# -gt 0 ]
@@ -25,29 +25,29 @@ do
         DIST=${1#*=}
         ;;
     -dri)
-        FLAGS="$FLAGS --device=/dev/dri:/dev/dri"
+        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --device=/dev/dri:/dev/dri"
         ;;
     -ipc)
-        FLAGS="$FLAGS --ipc=host"
+        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --ipc=host"
         ;;
     -net)
-        FLAGS="$FLAGS --network=bridge"
+        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --network=bridge"
         ;;
     -root)
         SANDBOX="0:0"
         ;;
     -snd)
-        FLAGS="$FLAGS --device=/dev/snd:/dev/snd"
+        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --device=/dev/snd:/dev/snd"
         ;;
     -user)
         SANDBOX="$(id -u):$(id -g)"
         ;;
     -v=*)
         MOUNT=${1#*=}
-        FLAGS="$FLAGS --volume=${MOUNT%:ro}:$MOUNT"
+        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=${MOUNT%:ro}:$MOUNT"
         ;;
     -x11)
-        FLAGS="$FLAGS --volume=/tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY --env XAUTH=\"$(xauth list $DISPLAY)\""
+        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=/tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY --env XAUTH=\"$(xauth list $DISPLAY)\""
         ;;
     -*)
         echo "usage: $0 [-dist=<name>] [-dri] [-net] [-root] [-snd] [-user] [-v=<path>[:ro]] [-x11] [command]"
@@ -74,18 +74,18 @@ do
 done
 
 # Share current working directory
-FLAGS="$FLAGS --volume=$PWD:/vol/app --workdir=/vol/app"
+DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=$PWD:/vol/app --workdir=/vol/app"
 
 # Sandbox user
 if [ "$SANDBOX" = "99999:99999" ]
 then
-    FLAGS="$FLAGS --user=$SANDBOX"
+    DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --user=$SANDBOX"
 elif [ "$SANDBOX" != "0:0" ]
 then
-    FLAGS="$FLAGS --volume=/etc/passwd:/etc/passwd:ro --volume=/etc/group:/etc/group:ro --user=$SANDBOX"
+    DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=/etc/passwd:/etc/passwd:ro --volume=/etc/group:/etc/group:ro --user=$SANDBOX"
 fi
 
-export COMMAND="$@"
+export DOCKER_RUN_COMMAND="$@"
 
 if [ "$DIST" -a ! -f "$DIR/docker/${DIST}/sandbox-wine/Makefile" ]
 then

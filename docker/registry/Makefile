@@ -1,9 +1,15 @@
 NAME := registry
 VERSION := 2.6
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-TOPDIR := ../..
 
-FLAGS := --rm \
+# Docker build
+TOPDIR := ../..
+ifndef DOCKER_BUILD_FLAGS
+	DOCKER_BUILD_FLAGS=
+endif
+
+# Docker run
+DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -11,6 +17,7 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
+
 
 default: build
 	docker images
@@ -27,13 +34,13 @@ build:
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--volume=/var/lib/registry:/var/lib/registry \
 		--publish 5000:5000 \
 		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
@@ -42,7 +49,7 @@ run:
 
 .PHONY: version
 version:
-	@docker run $(FLAGS) $(IMAGE) registry --version 2> /dev/null | sed -e "s@.* v@`pwd`: Registry @"
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) registry --version 2> /dev/null | sed -e "s@.* v@`pwd`: Registry @"
 
 .PHONY: clean
 clean:

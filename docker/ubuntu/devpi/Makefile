@@ -1,9 +1,15 @@
 NAME := ubuntu-devpi
 VERSION := 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-TOPDIR := ../../..
 
-FLAGS := --rm \
+# Docker build
+TOPDIR := ../../..
+ifndef DOCKER_BUILD_FLAGS
+	DOCKER_BUILD_FLAGS=
+endif
+
+# Docker run
+DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -11,11 +17,10 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
-
-# Default local port
 ifndef LOCALPORT
 	LOCALPORT=8080
 endif
+
 
 default: build
 	docker images
@@ -29,13 +34,13 @@ build:
 	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--publish $(LOCALPORT):8080 \
 		--hostname $(NAME) \
 		--workdir /var/lib/devpi \

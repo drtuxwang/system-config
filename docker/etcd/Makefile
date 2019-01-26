@@ -1,9 +1,15 @@
 NAME := etcd
 VERSION := 3.2.20
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-TOPDIR := ../..
 
-FLAGS := --rm \
+# Docker build
+TOPDIR := ../..
+ifndef DOCKER_BUILD_FLAGS
+	DOCKER_BUILD_FLAGS=
+endif
+
+# Docker run
+DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -11,6 +17,7 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
+
 
 default: build
 	docker images
@@ -28,13 +35,13 @@ build:
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--volume="/var/lib/etcd:/var/lib/etcd" \
 		--env ETCDCTL_API=2 \
 		--publish 2379:2379 \
@@ -49,12 +56,12 @@ run:
 
 .PHONY: version
 version:
-	@docker run $(FLAGS) $(IMAGE) etcd --version 2> /dev/null | grep "^etcd " | sed -e "s@^.* @`pwd`: etcd @"
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) etcd --version 2> /dev/null | grep "^etcd " | sed -e "s@^.* @`pwd`: etcd @"
 
 .PHONY: migrate
 migrate:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container to migrate v2 key store ***"
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--volume="/var/lib/etcd:/var/lib/etcd" \
 		--env ETCDCTL_API=3 \
 		--hostname $(NAME) \
@@ -67,7 +74,7 @@ migrate:
 .PHONY: restore
 restore:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container to restore from snapshot ***"
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--volume="/var/lib/etcd:/var/lib/etcd" \
 		--env ETCDCTL_API=3 \
 		--hostname $(NAME) \

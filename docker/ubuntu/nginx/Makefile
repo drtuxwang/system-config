@@ -2,7 +2,13 @@ NAME := ubuntu-nginx
 VERSION := 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 
-FLAGS := --rm \
+# Docker build
+ifndef DOCKER_BUILD_FLAGS
+	DOCKER_BUILD_FLAGS=
+endif
+
+# Docker run
+DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -10,11 +16,10 @@ FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
-
-# Default local port
 ifndef LOCALPORT
 	LOCALPORT=8080
 endif
+
 
 default: build
 	docker images
@@ -28,13 +33,13 @@ build:
 	cp -p ../../../config/vimrc tmpdir/config/.vimrc
 	../../../bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--publish $(LOCALPORT):80 \
 		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
 		--workdir /var/lib/nginx \

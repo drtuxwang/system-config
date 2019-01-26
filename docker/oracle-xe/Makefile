@@ -1,9 +1,15 @@
 NAME := oracle-xe
 VERSION := latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
-TOPDIR := ../..
 
-FLAGS := --rm \
+# Docker build
+TOPDIR := ../..
+ifndef DOCKER_BUILD_FLAGS
+	DOCKER_BUILD_FLAGS=
+endif
+
+# Docker run
+DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -11,6 +17,7 @@ FLAGS := --rm \
 	--memory=2000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared
+
 
 default: build
 	docker images
@@ -26,13 +33,13 @@ build:
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
 	$(TOPDIR)/bin/fmod -R *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--privileged=true \
 		--publish 1521:1521 \
 		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
@@ -41,7 +48,7 @@ run:
 
 .PHONY: version
 version:
-	@docker run -it $(FLAGS) $(IMAGE) bash -i -c dbv 2> /dev/null | grep "^DBVERIFY: Release" | sed -e "s@^DBVERIFY: Release@`pwd`: Oracle XE@;s@ -.*@@"
+	@docker run -it $(DOCKER_RUN_FLAGS) $(IMAGE) bash -i -c dbv 2> /dev/null | grep "^DBVERIFY: Release" | sed -e "s@^DBVERIFY: Release@`pwd`: Oracle XE@;s@ -.*@@"
 
 .PHONY: clean
 clean:

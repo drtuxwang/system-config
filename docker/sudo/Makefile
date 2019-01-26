@@ -2,10 +2,16 @@ NAME := sudo
 VERSION := latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 
-ifndef FLAGS
-	FLAGS=
+# Docker build
+ifndef DOCKER_BUILD_FLAGS
+	DOCKER_BUILD_FLAGS=
 endif
-FLAGS := --rm \
+
+# Docker run
+ifndef DOCKER_RUN_FLAGS
+	DOCKER_RUN_FLAGS=
+endif
+DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -16,10 +22,11 @@ FLAGS := --rm \
 	--volume="/etc/hosts:/etc/hosts" \
 	--volume="/etc/passwd:/etc/passwd:ro" \
 	--volume="/etc/group:/etc/group:ro" \
-	$(FLAGS)
-ifndef COMMAND
-	COMMAND=
+	$(DOCKER_RUN_FLAGS)
+ifndef DOCKER_RUN_COMMAND
+	DOCKER_RUN_COMMAND=
 endif
+
 
 default: build
 	docker images
@@ -27,15 +34,15 @@ default: build
 .PHONY: build
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build --force-rm=true -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) --force-rm=true -t $(IMAGE) .
 
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--privileged=true \
 		--hostname `uname -n`-$(NAME) \
-		$(IMAGE) $(COMMAND) ||:
+		$(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:

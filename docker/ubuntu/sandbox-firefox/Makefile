@@ -1,15 +1,18 @@
 NAME := ubuntu-firefox
 VERSION := 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
+
+# Docker build
 TOPDIR := ../../..
-
-FIREFOX_PROFILE=$(HOME)/.mozilla/firefox/sandbox
-
-
-ifndef FLAGS
-	FLAGS=--network none
+ifndef DOCKER_BUILD_FLAGS
+	DOCKER_BUILD_FLAGS=
 endif
-FLAGS := --rm \
+
+# Docker run
+ifndef DOCKER_RUN_FLAGS
+	DOCKER_RUN_FLAGS=--network none
+endif
+DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -17,10 +20,12 @@ FLAGS := --rm \
 	--memory=2000m \
 	--memory-reservation=50m \
 	--volume=/shared:/shared \
-	$(FLAGS)
-ifndef COMMAND
-	COMMAND=
+	$(DOCKER_RUN_FLAGS)
+ifndef DOCKER_RUN_COMMAND
+	DOCKER_RUN_COMMAND=
 endif
+FIREFOX_PROFILE=$(HOME)/.mozilla/firefox/sandbox
+
 
 default: build
 	docker images
@@ -50,16 +55,16 @@ build:
 		.mozilla
 	chmod 644 tmpdir/home.tar
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -f Dockerfile -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
+	docker run $(DOCKER_RUN_FLAGS) \
 		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
 		$(IMAGE) \
-		$(COMMAND) \
+		$(DOCKER_RUN_COMMAND) \
 		||:
 
 .PHONY: version
