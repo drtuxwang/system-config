@@ -1,5 +1,10 @@
 default: test
 
+.PHONY: install
+install:
+	@echo "\n*** Installing Python 3 requirements ***"
+	etc/install-python-requirements.sh `which python3`
+
 .PHONY: test
 test: check lint
 

@@ -27,6 +27,7 @@ read_requirements() {
 }
 
 install_packages() {
+    INSTALLED=$($PYTHON -m pip list)
     PACKAGES=
     for NAME in ${!REQUIREMENTS[@]}
     do
@@ -38,8 +39,9 @@ install_packages() {
     done
 
     umask 022
-    $INSTALL --upgrade pip 2>&1 | grep -v "Requirement already satisfied:"
+    $INSTALL --upgrade pip 2>&1 | grep -v "Requirement already up-to-date:"
     $INSTALL $PACKAGES 2>&1 | grep -v "Requirement already satisfied:"
+    return ${PIPESTATUS[0]}
 }
 
 
@@ -60,3 +62,4 @@ read_requirements "${0%/*}/python-requirements.txt"
 VERSION=$($PYTHON --version 2>&1 | grep "^Python [0-9][.][0-9][.]" | awk '{print $2}' | cut -f1-2 -d.)
 read_requirements "${0%/*}/python-$VERSION-requirements.txt"
 install_packages
+exit $?
