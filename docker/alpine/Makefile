@@ -18,7 +18,7 @@ default: build
 
 .PHONY: pull
 pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	docker pull `grep FROM Dockerfile-base | cut -f2 -d" "`
 
 .PHONY: build
 build:
