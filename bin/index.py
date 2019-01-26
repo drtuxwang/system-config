@@ -91,11 +91,13 @@ class Main:
                 sys.argv[0] + ': Cannot create "index.fsum" file.')
         os.utime('index.fsum', (time_new, time_new))
 
-    def _checkfile(self, isbadfile, directory=os.curdir):
+    @staticmethod
+    def _checkfile(isbadfile, directory=os.curdir):
         """
-        Look bad files like core dumps (don't followlinks & onerror do northing)
+        Look for bad files like core dumps
+        (don't followlinks & onerror do northing)
         """
-        for root, _, files in os.walk(directory):
+        for _, _, files in os.walk(directory):
             for file in files:
                 if isbadfile.search(os.path.basename(file)):
                     raise SystemExit('{0:s}: Found "{1:s}" file.'.format(
