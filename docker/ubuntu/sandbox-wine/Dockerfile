@@ -8,6 +8,7 @@ RUN dpkg --add-architecture i386 && \
 	apt-get clean && \
 	winecfg && \
 	tar cf /home/home-wine.tar -C /root .wine && \
+	sleep 1 && \
 	rm -rf /root/
 
 # Add scripts
