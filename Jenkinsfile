@@ -9,7 +9,7 @@ pipeline {
         parallelsAlwaysFailFast()
     }
     environment {
-        DOCKER_FLAGS = '--network=host'
+        DOCKER_BUILD_FLAGS = '--network=host'
     }
     stages {
         stage ('Build images') {
