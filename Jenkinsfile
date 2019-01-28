@@ -12,51 +12,16 @@ pipeline {
         DOCKER_BUILD_FLAGS = '--network=host'
     }
     stages {
-        stage ('Build images') {
+        stage ('Build basic images') {
             parallel {
-                stage ('Alpine') {
-                    steps {
-                        sh "make -C docker/alpine build"
-                    }
-                }
-                stage ('Alpine (32bit)') {
-                    steps {
-                        sh "make -C docker/alpine-i386 build"
-                    }
-                }
                 stage ('Busybox') {
                     steps {
                         sh "make -C docker/busybox build"
                     }
                 }
-                stage ('Centos') {
-                    steps {
-                        sh "make -C docker/centos build"
-                    }
-                }
-                stage ('Centos (old)') {
-                    steps {
-                        sh "make -C docker/centos-old build"
-                    }
-                }
                 stage ('Clearlinux') {
                     steps {
                         sh "make -C docker/clearlinux build"
-                    }
-                }
-                stage ('Debian') {
-                    steps {
-                        sh "make -C docker/debian build"
-                    }
-                }
-                stage ('Debian (old)') {
-                    steps {
-                        sh "make -C docker/debian-old build"
-                    }
-                }
-                stage ('Debian (test)') {
-                    steps {
-                        sh "make -C docker/debian-test build"
                     }
                 }
                 stage ('Etcd') {
@@ -94,6 +59,49 @@ pipeline {
                         sh "make -C docker/sudo build"
                     }
                 }
+            }
+        }
+        stage ('Build Linux images') {
+            parallel {
+                stage ('Alpine') {
+                    steps {
+                        sh "make -C docker/alpine build"
+                    }
+                }
+                stage ('Alpine (32bit)') {
+                    steps {
+                        sh "make -C docker/alpine-i386 build"
+                    }
+                }
+                stage ('Centos') {
+                    steps {
+                        sh "make -C docker/centos build"
+                    }
+                }
+                stage ('Centos (old)') {
+                    steps {
+                        sh "make -C docker/centos-old build"
+                    }
+                }
+                stage ('Debian') {
+                    steps {
+                        sh "make -C docker/debian build"
+                    }
+                }
+                stage ('Debian (old)') {
+                    steps {
+                        sh "make -C docker/debian-old build"
+                    }
+                }
+                stage ('Debian (test)') {
+                    steps {
+                        sh "make -C docker/debian-test build"
+                    }
+                }
+            }
+        }
+        stage ('Build Ubuntu Linux images') {
+            parallel {
                 stage ('Ubuntu') {
                     steps {
                         sh "make -C docker/ubuntu build"
@@ -116,7 +124,7 @@ pipeline {
                 }
             }
         }
-        stage ('Push images') {
+        stage ('Push Docker images') {
             when { branch 'master' }
             steps {
                 sh 'sleep 2'
