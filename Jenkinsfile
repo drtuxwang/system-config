@@ -19,11 +19,6 @@ pipeline {
                         sh "make -C docker/busybox build"
                     }
                 }
-                stage ('Clearlinux') {
-                    steps {
-                        sh "make -C docker/clearlinux build"
-                    }
-                }
                 stage ('Etcd') {
                     steps {
                         sh "make -C docker/etcd build"
@@ -71,6 +66,11 @@ pipeline {
                 stage ('Alpine (32bit)') {
                     steps {
                         sh "make -C docker/alpine-i386 build"
+                    }
+                }
+                stage ('Clearlinux') {
+                    steps {
+                        sh "make -C docker/clearlinux build"
                     }
                 }
                 stage ('Centos') {
