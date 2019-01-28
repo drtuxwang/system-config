@@ -43,7 +43,7 @@ build:
 	cp -p $(TOPDIR)/config/profile tmpdir/home/.profile
 	cp -p $(TOPDIR)/config/tmux.conf tmpdir/home/.tmux.conf
 	cp -p $(TOPDIR)/config/vimrc tmpdir/home/.vimrc
-	$(TOPDIR)/bin/fmod -R *
+	$(TOPDIR)/etc/setmod *
 	tar cf tmpdir/home.tar -C tmpdir/home --owner=0 --group=0 .bashrc .profile .tmux.conf .vimrc
 	chmod 644 tmpdir/home.tar
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"

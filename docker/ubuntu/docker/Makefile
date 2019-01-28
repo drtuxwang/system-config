@@ -36,7 +36,7 @@ build:
 	cp -p ../../../bin/* tmpdir/bin/
 	cp -p ../../../config/bashrc tmpdir/config/.bashrc
 	cp -p ../../../config/vimrc tmpdir/config/.vimrc
-	../../../bin/fmod -R *
+	../../../etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir

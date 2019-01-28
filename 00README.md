@@ -927,6 +927,7 @@ the years. Now most of the scripts are written in Python 3.
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization
+ * etc/setmod                            Fix group and others file/directory read access recursively
 </pre>
 <pre>
  * ansible/Makefile                      Ansible local hosts playbook

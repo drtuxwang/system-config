@@ -32,7 +32,7 @@ build:
 	mkdir -p tmpdir/bin tmpdir/config
 	cp -p $(TOPDIR)/config/ash-2bash tmpdir/bin/bash
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
-	$(TOPDIR)/bin/fmod -R *
+	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir

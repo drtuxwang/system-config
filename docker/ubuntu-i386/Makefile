@@ -39,7 +39,7 @@ build:
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
 	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
 	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
-	$(TOPDIR)/bin/fmod -R *
+	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(BASE_IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile-base -t $(BASE_IMAGE) .
 	@echo "\n*** Building \"$(SANDBOX_IMAGE)\" Docker image ***"

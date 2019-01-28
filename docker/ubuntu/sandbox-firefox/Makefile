@@ -46,7 +46,7 @@ build:
 	cp -p profiles.ini tmpdir/home/.mozilla/firefox
 	cp -rp $(FIREFOX_PROFILE) tmpdir/home/.mozilla/firefox/sandbox
 	cp -p user.js tmpdir/home/.mozilla/firefox/sandbox/
-	$(TOPDIR)/bin/fmod -R *
+	$(TOPDIR)/etc/setmod *
 	tar cf tmpdir/home.tar -C tmpdir/home --owner=0 --group=0 \
 		.bashrc \
 		.profile \

@@ -31,7 +31,7 @@ build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/config
 	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
-	$(TOPDIR)/bin/fmod -R *
+	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir
