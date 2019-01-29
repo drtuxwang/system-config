@@ -1,3 +1,6 @@
+PYTHONDONTWRITEBYTECODE := 1
+
+
 default: test
 
 .PHONY: install
@@ -8,12 +11,14 @@ install:
 .PHONY: test
 test: check lint
 
+.PHONY: docker-test
+docker-test:
+	make -C docker test
+
 .PHONY: check
 check:
 	@echo "\n*** Running Python 3 requirements check ***"
 	umask 022 && python3 -m pip install -q -r etc/python-requirements.txt
-	@echo "\n*** Running Python 3 compilation check ***"
-	python3 -m py_compile bin/*.py
 	rm -rf */__pycache__
 	@echo "\n*** Running Python 3 UNITTEST check ***"
 	python3 -m unittest discover --buffer bin

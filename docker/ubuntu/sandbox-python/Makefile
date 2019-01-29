@@ -1,4 +1,4 @@
-NAME := ubuntu-gcc
+NAME := ubuntu-python
 VERSION := 18.04
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 
@@ -37,6 +37,8 @@ pull:
 build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/etc tmpdir/home
+	cp -p $(TOPDIR)/etc/install-python-requirements.sh tmpdir/etc
+	cp -p $(TOPDIR)/etc/python-requirements.txt tmpdir/etc
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
 	cp -p $(TOPDIR)/config/docker-init tmpdir/etc
 	cp -p $(TOPDIR)/config/bashrc tmpdir/home/.bashrc
@@ -49,6 +51,15 @@ build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile -t $(IMAGE) .
 	rm -rf tmpdir
+
+.PHONY: test
+test:
+	docker run \
+		--rm \
+		--volume=`realpath $(TOPDIR)`:/vol/app:ro \
+		--workdir=/vol/app \
+		$(IMAGE) \
+		make install test
 
 .PHONY: run
 run:

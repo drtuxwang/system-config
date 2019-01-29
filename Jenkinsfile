@@ -124,6 +124,11 @@ pipeline {
                 }
             }
         }
+        stage ('Run tests') {
+            steps {
+                sh 'make test'
+            }
+        }
         stage ('Push Docker images') {
             when { branch 'master' }
             steps {

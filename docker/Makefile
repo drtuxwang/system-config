@@ -1,4 +1,4 @@
-PULL_IMAGES := \
+BUILD_DIRS := \
 	alpine \
 	alpine-i386 \
 	busybox \
@@ -14,12 +14,13 @@ PULL_IMAGES := \
 	mongodb \
 	oracle-xe \
 	registry \
+	sudo \
 	ubuntu-old \
 	ubuntu \
 	ubuntu-i386 \
 	ubuntu-test
-BUILD_IMAGES := $(PULL_IMAGES) sudo
-CLEAN_IMAGES := $(BUILD_IMAGES)
+
+TEST_DIRS := ubuntu
 
 # Default Sandbox distro
 ifndef DIST
@@ -38,23 +39,49 @@ check-base:
 
 .PHONY: pull
 pull:
-	for IMAGE in $(PULL_IMAGES); do \
-		make -C $$IMAGE pull || exit 1; \
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR pull || exit 1; \
 	done
 	docker images
 
 .PHONY: build
 build:
-	for IMAGE in $(BUILD_IMAGES); do \
-		make -C $$IMAGE build || exit 1:; \
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR build || exit 1:; \
 	done
 	docker images
 
+.PHONY: test
+test:
+	for DIR in $(TEST_DIRS); do \
+		make -C $$DIR test; \
+	done
+
 .PHONY: version
 version:
-	@for IMAGE in $(BUILD_IMAGES); do \
-		make --no-print-directory -C $$IMAGE version || exit 1; \
+	@for DIR in $(BUILD_DIRS); do \
+		make --no-print-directory -C $$DIR version || exit 1; \
 	done
+
+.PHONY: run-firefox
+run-firefox:
+	make -C $(DIST)/sandbox-firefox run
+
+.PHONY: run-gcc
+run-gcc:
+	make -C $(DIST)/sandbox-gcc run
+
+.PHONY: run-python
+run-python:
+	make -C $(DIST)/sandbox-python run
+
+.PHONY: run-sudo
+run-sudo:
+	make -C sudo run
+
+.PHONY: run-wine
+run-wine:
+	make -C $(DIST)/sandbox-wine run
 
 .PHONY: gc
 gc:
@@ -67,23 +94,8 @@ gc:
 .PHONY: clean
 clean:
 	make gc
-	for IMAGE in $(CLEAN_IMAGES); do \
-		make -C $$IMAGE clean; \
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR clean; \
 	done
 	make gc
 
-.PHONY: run-firefox
-run-firefox:
-	make -C $(DIST)/sandbox-firefox run
-
-.PHONY: run-gcc
-run-gcc:
-	make -C $(DIST)/sandbox-gcc run
-
-.PHONY: run-sudo
-run-sudo:
-	make -C sudo run
-
-.PHONY: run-wine
-run-wine:
-	make -C $(DIST)/sandbox-wine run

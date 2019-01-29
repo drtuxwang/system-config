@@ -5,11 +5,12 @@ IMAGE := drtuxwang/$(NAME):$(VERSION)
 # Docker build
 BASE_IMAGE := drtuxwang/$(NAME)-base:$(VERSION)
 SANDBOX_IMAGE := drtuxwang/$(NAME)-sandbox:$(VERSION)
-DEPENDENT_IMAGES := devpi docker nginx sandbox-gcc sandbox-firefox sandbox-wine
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
+BUILD_DIRS := devpi docker nginx sandbox-gcc sandbox-python sandbox-firefox sandbox-wine
+TEST_DIRS := sandbox-python
 
 # Docker run
 DOCKER_RUN_FLAGS := --rm \
@@ -47,8 +48,8 @@ build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile -t $(IMAGE) .
 	rm -rf tmpdir
-	for IMAGE in $(DEPENDENT_IMAGES); do \
-		make -C $$IMAGE build || exit 1; \
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR build || exit 1; \
 	done
 
 .PHONY: run
@@ -60,17 +61,23 @@ run:
 		$(DOCKER_RUN_COMMAND) \
 		||:
 
+.PHONY: test
+test:
+	for DIR in $(TEST_DIRS); do \
+		make -C $$DIR test || exit 1; \
+	done
+
 .PHONY: version
 version:
 	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/os-release 2> /dev/null | \
 		grep "^VERSION=" | sed -e "s@.*=\"@`pwd`: Ubuntu Linux @;s@ (.*@@"
-	@for IMAGE in $(DEPENDENT_IMAGES); do \
-		make --no-print-directory -C $$IMAGE version ||:; \
+	@for DIR in $(BUILD_DIRS); do \
+		make --no-print-directory -C $$DIR version ||:; \
 	done
 
 .PHONY: clean
 clean:
-	for IMAGE in $(DEPENDENT_IMAGES); do \
-		make -C $$IMAGE clean; \
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR clean; \
 	done
 	docker rmi -f $(IMAGE) $(SANDBOX_IMAGE) $(BASE_IMAGE) `grep FROM Dockerfile* | cut -f2 -d" "` ||:
