@@ -14,70 +14,10 @@ pipeline {
     stages {
         stage ("Build") {
             parallel {
-                stage("Alpine images") {
+                stage("Ubuntu") {
                     agent any
                     stages {
-                        stage ("Alpine") {
-                            steps {
-                                sh "make -C docker/alpine build"
-                            }
-                        }
-                        stage ("Alpine (32bit)") {
-                            steps {
-                                sh "make -C docker/alpine-i386 build"
-                            }
-                        }
-                    }
-                }
-                stage("CentOS images") {
-                    agent any
-                    stages {
-                        stage ("Centos") {
-                            steps {
-                                sh "make -C docker/centos build"
-                            }
-                        }
-                        stage ("Centos (old)") {
-                            steps {
-                                sh "make -C docker/centos-old build"
-                            }
-                        }
-                    }
-                }
-                stage("Clearlinux images") {
-                    agent any
-                    stages {
-                        stage ("Clearlinux") {
-                            steps {
-                                sh "make -C docker/clearlinux build"
-                            }
-                        }
-                    }
-                }
-                stage("Debian images") {
-                    agent any
-                    stages {
-                        stage ("Debian") {
-                            steps {
-                                sh "make -C docker/debian build"
-                            }
-                        }
-                        stage ("Debian (old)") {
-                            steps {
-                                sh "make -C docker/debian-old build"
-                            }
-                        }
-                        stage ("Debian (test)") {
-                            steps {
-                                sh "make -C docker/debian-test build"
-                            }
-                        }
-                    }
-                }
-                stage("Ubuntu images") {
-                    agent any
-                    stages {
-                        stage ("Ubuntu") {
+                        stage ("Ubuntu (stable)") {
                             steps {
                                 sh "make -C docker/ubuntu build"
                             }
@@ -104,12 +44,62 @@ pipeline {
                         }
                     }
                 }
-                stage ("Other images") {
+                stage("Debian") {
                     agent any
                     stages {
+                        stage ("Debian (stable)") {
+                            steps {
+                                sh "make -C docker/debian build"
+                            }
+                        }
+                        stage ("Debian (old)") {
+                            steps {
+                                sh "make -C docker/debian-old build"
+                            }
+                        }
+                        stage ("Debian (test)") {
+                            steps {
+                                sh "make -C docker/debian-test build"
+                            }
+                        }
+                    }
+                }
+                stage("CentOS") {
+                    agent any
+                    stages {
+                        stage ("Centos (stable)") {
+                            steps {
+                                sh "make -C docker/centos build"
+                            }
+                        }
+                        stage ("Centos (old)") {
+                            steps {
+                                sh "make -C docker/centos-old build"
+                            }
+                        }
+                    }
+                }
+                stage ("Other") {
+                    agent any
+                    stages {
+                        stage ("Alpine") {
+                            steps {
+                                sh "make -C docker/alpine build"
+                            }
+                        }
+                        stage ("Alpine (32bit)") {
+                            steps {
+                                sh "make -C docker/alpine-i386 build"
+                            }
+                        }
                         stage ("Busybox") {
                             steps {
                                 sh "make -C docker/busybox build"
+                            }
+                        }
+                        stage ("Clearlinux") {
+                            steps {
+                                sh "make -C docker/clearlinux build"
                             }
                         }
                         stage ("Etcd") {
