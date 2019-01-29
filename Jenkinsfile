@@ -84,7 +84,6 @@ pipeline {
                         }
                         stage ("Run tests") {
                             steps {
-                                sh "pwd; ls"
                                 sh "make -C docker/ubuntu test"
                             }
                         }
