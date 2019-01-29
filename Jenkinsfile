@@ -11,22 +11,22 @@ pipeline {
         parallelsAlwaysFailFast()
     }
     environment {
-        DOCKER_BUILD_FLAGS = '--network=host'
+        DOCKER_BUILD_FLAGS = "--network=host"
     }
     stages {
-        stage ('Build') {
+        stage ("Build") {
             parallel {
                 stage("Alpine images") {
                     agent {
                         label "linux"
                     }
                     stages {
-                        stage ('Alpine') {
+                        stage ("Alpine") {
                             steps {
                                 sh "make -C docker/alpine build"
                             }
                         }
-                        stage ('Alpine (32bit)') {
+                        stage ("Alpine (32bit)") {
                             steps {
                                 sh "make -C docker/alpine-i386 build"
                             }
@@ -38,12 +38,12 @@ pipeline {
                         label "linux"
                     }
                     stages {
-                        stage ('Centos') {
+                        stage ("Centos") {
                             steps {
                                 sh "make -C docker/centos build"
                             }
                         }
-                        stage ('Centos (old)') {
+                        stage ("Centos (old)") {
                             steps {
                                 sh "make -C docker/centos-old build"
                             }
@@ -55,7 +55,7 @@ pipeline {
                         label "linux"
                     }
                     stages {
-                        stage ('Clearlinux') {
+                        stage ("Clearlinux") {
                             steps {
                                 sh "make -C docker/clearlinux build"
                             }
@@ -67,17 +67,17 @@ pipeline {
                         label "linux"
                     }
                     stages {
-                        stage ('Debian') {
+                        stage ("Debian") {
                             steps {
                                 sh "make -C docker/debian build"
                             }
                         }
-                        stage ('Debian (old)') {
+                        stage ("Debian (old)") {
                             steps {
                                 sh "make -C docker/debian-old build"
                             }
                         }
-                        stage ('Debian (test)') {
+                        stage ("Debian (test)") {
                             steps {
                                 sh "make -C docker/debian-test build"
                             }
@@ -89,74 +89,75 @@ pipeline {
                         label "linux"
                     }
                     stages {
-                        stage ('Ubuntu') {
-                        steps {
-                            sh "make -C docker/ubuntu build"
-                        }
-                        stage ('Run tests') {
+                        stage ("Ubuntu") {
                             steps {
-                                sh 'pwd'
-                                sh 'make -C docker/ubuntu test'
+                                sh "make -C docker/ubuntu build"
                             }
                         }
-                        stage ('Ubuntu (32bit)') {
+                        stage ("Run tests") {
+                            steps {
+                                sh "pwd"
+                                sh "make -C docker/ubuntu test"
+                            }
+                        }
+                        stage ("Ubuntu (32bit)") {
                             steps {
                                 sh "make -C docker/ubuntu-i386 build"
                             }
                         }
-                        stage ('Ubuntu (old)') {
+                        stage ("Ubuntu (old)") {
                             steps {
                                 sh "make -C docker/ubuntu-old build"
                             }
                         }
-                        stage ('Ubuntu (test)') {
+                        stage ("Ubuntu (test)") {
                             steps {
                                 sh "make -C docker/ubuntu-test build"
                             }
                         }
                     }
                 }
-                stage ('Other images') {
+                stage ("Other images") {
                     agent {
                         label "linux"
                     }
                     stages {
-                        stage ('Busybox') {
+                        stage ("Busybox") {
                             steps {
                                 sh "make -C docker/busybox build"
                             }
                         }
-                        stage ('Etcd') {
+                        stage ("Etcd") {
                             steps {
                                 sh "make -C docker/etcd build"
                             }
                         }
-                        stage ('Golang') {
+                        stage ("Golang") {
                             steps {
                                 sh "make -C docker/golang build"
                             }
                         }
-                        stage ('Jenkins') {
+                        stage ("Jenkins") {
                             steps {
                                 sh "make -C docker/jenkins build"
                             }
                         }
-                        stage ('Mongodb') {
+                        stage ("Mongodb") {
                             steps {
                                 sh "make -C docker/mongodb build"
                             }
                         }
-                        stage ('Oracle XE') {
+                        stage ("Oracle XE") {
                             steps {
                                 sh "make -C docker/oracle-xe build"
                             }
                         }
-                        stage ('Docker Registry') {
+                        stage ("Docker Registry") {
                             steps {
                                 sh "make -C docker/registry build"
                             }
                         }
-                        stage ('Sudo') {
+                        stage ("Sudo") {
                             steps {
                                 sh "make -C docker/sudo build"
                             }
@@ -165,13 +166,13 @@ pipeline {
                 }
             }
         }
-        stage ('Push Docker images') {
-            when { branch 'master' }
+        stage ("Push Docker images") {
+            when { branch "master" }
             steps {
-                sh 'sleep 2'
+                sh "sleep 2"
             }
         }
-        stage ('Base images versions') {
+        stage ("Base images versions") {
             steps {
                 sh "make -C docker version"
             }
