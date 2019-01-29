@@ -80,4 +80,5 @@ clean:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR clean; \
 	done
-	docker rmi -f $(IMAGE) $(SANDBOX_IMAGE) $(BASE_IMAGE) `grep FROM Dockerfile* | cut -f2 -d" "` ||:
+	docker rmi -f $(IMAGE) $(SANDBOX_IMAGE) $(BASE_IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile-base | cut -f2 -d" "` ||:

@@ -60,5 +60,5 @@ version:
 
 .PHONY: clean
 clean:
-	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
+	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:
+	docker rmi -f `grep FROM Dockerfile-base | cut -f2 -d" "` ||:

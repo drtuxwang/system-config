@@ -126,7 +126,7 @@ pipeline {
         }
         stage ('Run tests') {
             steps {
-                sh 'make test'
+                sh 'make docker-test'
             }
         }
         stage ('Push Docker images') {
