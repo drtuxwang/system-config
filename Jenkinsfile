@@ -4,9 +4,7 @@
 // BRANCH_NAME: branch being built
 
 pipeline {
-    agent {
-         label "linux"
-    }
+    agent any
     options {
         parallelsAlwaysFailFast()
     }
@@ -17,9 +15,7 @@ pipeline {
         stage ("Build") {
             parallel {
                 stage("Alpine images") {
-                    agent {
-                        label "linux"
-                    }
+                    agent any
                     stages {
                         stage ("Alpine") {
                             steps {
@@ -34,9 +30,7 @@ pipeline {
                     }
                 }
                 stage("CentOS images") {
-                    agent {
-                        label "linux"
-                    }
+                    agent any
                     stages {
                         stage ("Centos") {
                             steps {
@@ -51,9 +45,7 @@ pipeline {
                     }
                 }
                 stage("Clearlinux images") {
-                    agent {
-                        label "linux"
-                    }
+                    agent any
                     stages {
                         stage ("Clearlinux") {
                             steps {
@@ -63,9 +55,7 @@ pipeline {
                     }
                 }
                 stage("Debian images") {
-                    agent {
-                        label "linux"
-                    }
+                    agent any
                     stages {
                         stage ("Debian") {
                             steps {
@@ -85,9 +75,7 @@ pipeline {
                     }
                 }
                 stage("Ubuntu images") {
-                    agent {
-                        label "linux"
-                    }
+                    agent any
                     stages {
                         stage ("Ubuntu") {
                             steps {
@@ -118,9 +106,7 @@ pipeline {
                     }
                 }
                 stage ("Other images") {
-                    agent {
-                        label "linux"
-                    }
+                    agent any
                     stages {
                         stage ("Busybox") {
                             steps {
