@@ -125,8 +125,12 @@ pipeline {
             }
         }
         stage ('Run tests') {
-            steps {
-                sh 'make docker-test'
+            parallel {
+                stage ('Ubuntu') {
+                    steps {
+                        sh 'make -C docker/ubuntu test'
+                    }
+                }
             }
         }
         stage ('Push Docker images') {
