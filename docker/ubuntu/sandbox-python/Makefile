@@ -59,7 +59,7 @@ test:
 		--volume=`realpath $(TOPDIR)`:/vol/app:ro \
 		--workdir=/vol/app \
 		$(IMAGE) \
-		find .
+		find -type f ./
 
 	docker run \
 		--rm \
