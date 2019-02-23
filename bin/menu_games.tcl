@@ -3,11 +3,6 @@
 . config -bg "#cccccc"
 
 frame .small -bg "#cccccc"
-    button .small.chromium_bsu -width 10 -bg "#ffcc00" -text "Chromium BSU" -command {
-        exec chromium-bsu &
-    }
-    pack .small.chromium_bsu -side top
-
     button .small.chess -width 10 -bg "#ffcc00" -text "Dream Chess" -command {
         exec dreamchess &
     }
