@@ -1,5 +1,5 @@
 NAME := oracle-xe
-VERSION := latest
+VERSION := 11.2
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 
 # Docker build
@@ -41,14 +41,18 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
 		--privileged=true \
+		--publish 8080:8080 \
 		--publish 1521:1521 \
 		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
-		--workdir /u01/app/oracle/product/11.2.0/xe \
 		$(IMAGE) ||:
+
+.PHONY: run
+connect:
+	sqlplus64 system/oracle@localhost
 
 .PHONY: version
 version:
-	@docker run -it $(DOCKER_RUN_FLAGS) $(IMAGE) bash -i -c dbv 2> /dev/null | grep "^DBVERIFY: Release" | sed -e "s@^DBVERIFY: Release@`pwd`: Oracle XE@;s@ -.*@@"
+	@docker run -it $(DOCKER_RUN_FLAGS) $(IMAGE) dbv 2> /dev/null | grep "^DBVERIFY: Release" | sed -e "s@^DBVERIFY: Release@`pwd`: Oracle XE@;s@ -.*@@"
 
 .PHONY: clean
 clean:
