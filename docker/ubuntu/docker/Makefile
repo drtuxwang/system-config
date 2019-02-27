@@ -26,6 +26,7 @@ ifndef DOCKER_RUN_COMMAND
 endif
 
 
+.PHONY: default
 default: build
 	docker images
 
@@ -46,7 +47,7 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
 		--privileged=true \
-		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
+		--hostname $(shell echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g") \
 		$(IMAGE) \
 		$(DOCKER_RUN_COMMAND) \
 		||:
@@ -54,7 +55,7 @@ run:
 .PHONY: version
 version:
 	@docker run --entrypoint docker $(IMAGE) --version | grep ^Docker | \
-		sed -e "s/,/ /g" | awk '{printf("'`pwd`': docker %s\n", $$3)}'
+		sed -e "s/,/ /g" | awk '{printf("'$(shell pwd)': docker %s\n", $$3)}'
 
 .PHONY: clean
 clean:

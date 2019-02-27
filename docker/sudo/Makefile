@@ -18,7 +18,7 @@ DOCKER_RUN_FLAGS := --rm \
 	--cpu-shares=50000 \
 	--memory=1000m \
 	--memory-reservation=50m \
-	`ls -1d /* | grep -v "/proc$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}'` \
+	$(shell ls -1d /* | grep -v "/proc$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}') \
 	--volume="/etc/hosts:/etc/hosts" \
 	--volume="/etc/passwd:/etc/passwd:ro" \
 	--volume="/etc/group:/etc/group:ro" \
@@ -28,8 +28,12 @@ ifndef DOCKER_RUN_COMMAND
 endif
 
 
+.PHONY: default
 default: build
 	docker images
+
+.PHONY: pull
+pull:
 
 .PHONY: build
 build:
@@ -41,12 +45,12 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
 		--privileged=true \
-		--hostname `uname -n`-$(NAME) \
+		--hostname $(shell uname -n)-$(NAME) \
 		$(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:
-	@echo "`pwd`: scratch"
+	@echo "$(shell pwd): scratch"
 
 .PHONY: clean
 clean:

@@ -19,12 +19,13 @@ DOCKER_RUN_FLAGS := --rm \
 	--volume=/shared:/shared
 
 
+.PHONY: default
 default: build
 	docker images
 
 .PHONY: pull
 pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
 
 .PHONY: build
 build:
@@ -42,16 +43,16 @@ run:
 	docker run $(DOCKER_RUN_FLAGS) \
 		--privileged=true \
 		--publish 27017:27017 \
-		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
+		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
 		--workdir /data/db \
 		$(IMAGE) ||:
 
 .PHONY: version
 version:
 	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) mongod --version 2> /dev/null \
-		| grep "^db version v" | sed -e "s@^@`pwd`: Mongo @;s@version v@@"
+		| grep "^db version v" | sed -e "s@^@$(shell pwd): Mongo @;s@version v@@"
 
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
+	docker rmi -f $(shell grep FROM Dockerfile | cut -f2 -d" ") ||:

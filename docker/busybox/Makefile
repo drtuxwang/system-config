@@ -21,12 +21,13 @@ ifndef DOCKER_RUN_COMMAND
 endif
 
 
+.PHONY: default
 default: build
 	docker images
 
 .PHONY: pull
 pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
 
 .PHONY: build
 build:
@@ -44,16 +45,16 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
+		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
 		$(IMAGE) \
 		$(DOCKER_RUN_COMMAND) \
 		||:
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) busybox 2> /dev/null | grep "^BusyBox v" | sed -e "s@^BusyBox v@`pwd`: BusyBox @;s@ (.*@@"
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) busybox 2> /dev/null | grep "^BusyBox v" | sed -e "s@^BusyBox v@$(shell pwd): BusyBox @;s@ (.*@@"
 
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
+	docker rmi -f $(shell grep FROM Dockerfile | cut -f2 -d" ") ||:

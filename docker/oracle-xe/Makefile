@@ -19,12 +19,13 @@ DOCKER_RUN_FLAGS := --rm \
 	--volume=/shared:/shared
 
 
+.PHONY: default
 default: build
 	docker images
 
 .PHONY: pull
 pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
 
 .PHONY: build
 build:
@@ -43,7 +44,7 @@ run:
 		--privileged=true \
 		--publish 8080:8080 \
 		--publish 1521:1521 \
-		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
+		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
 		$(IMAGE) ||:
 
 .PHONY: run
@@ -52,9 +53,9 @@ connect:
 
 .PHONY: version
 version:
-	@docker run -it $(DOCKER_RUN_FLAGS) $(IMAGE) dbv 2> /dev/null | grep "^DBVERIFY: Release" | sed -e "s@^DBVERIFY: Release@`pwd`: Oracle XE@;s@ -.*@@"
+	@docker run -it $(DOCKER_RUN_FLAGS) $(IMAGE) dbv 2> /dev/null | grep "^DBVERIFY: Release" | sed -e "s@^DBVERIFY: Release@$(shell pwd): Oracle XE@;s@ -.*@@"
 
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
+	docker rmi -f $(shell grep FROM Dockerfile | cut -f2 -d" ") ||:

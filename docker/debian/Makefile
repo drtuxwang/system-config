@@ -25,12 +25,13 @@ ifndef DOCKER_RUN_COMMAND
 endif
 
 
+.PHONY: default
 default: build
 	docker images
 
 .PHONY: pull
 pull:
-	docker pull `grep FROM Dockerfile-base | cut -f2 -d" "`
+	docker pull $(shell grep FROM Dockerfile-base | cut -f2 -d" ")
 
 .PHONY: build
 build:
@@ -55,7 +56,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
+		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
 		$(IMAGE) \
 		$(DOCKER_RUN_COMMAND) \
 		||:
@@ -63,7 +64,7 @@ run:
 .PHONY: version
 version:
 	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/debian_version 2> /dev/null | \
-		sed -e "s@^@`pwd`: Debian Linux @"
+		sed -e "s@^@$(shell pwd): Debian Linux @"
 	@for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory -C $$DIR version ||:; \
 	done
@@ -74,5 +75,5 @@ clean:
 		make -C $$DIR clean; \
 	done
 	docker rmi -f $(IMAGE) $(SANDBOX_IMAGE) $(BASE_IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile-base | cut -f2 -d" "` ||:
+	docker rmi -f $(shell grep FROM Dockerfile-base | cut -f2 -d" ") ||:
 

@@ -27,12 +27,13 @@ endif
 FIREFOX_PROFILE=$(HOME)/.mozilla/firefox/sandbox
 
 
+.PHONY: default
 default: build
 	docker images
 
 .PHONY: pull
 pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
 
 .PHONY: build
 build:
@@ -65,7 +66,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
+		--hostname $(shell echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g") \
 		$(IMAGE) \
 		$(DOCKER_RUN_COMMAND) \
 		||:
@@ -73,7 +74,7 @@ run:
 .PHONY: version
 version:
 	@docker run --entrypoint firefox $(IMAGE) -v | grep Firefox | \
-		awk '{printf("'`pwd`': firefox %s\n", $$NF)}'
+		awk '{printf("'$(shell pwd)': firefox %s\n", $$NF)}'
 
 .PHONY: clean
 clean:

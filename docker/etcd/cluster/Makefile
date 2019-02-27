@@ -13,6 +13,7 @@ DOCKER_RUN_FLAGS := --rm \
 	--volume=/shared:/shared
 
 
+.PHONY: default
 default: build
 	docker images
 

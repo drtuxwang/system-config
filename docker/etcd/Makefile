@@ -19,12 +19,13 @@ DOCKER_RUN_FLAGS := --rm \
 	--volume=/shared:/shared
 
 
+.PHONY: default
 default: build
 	docker images
 
 .PHONY: pull
 pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
 
 .PHONY: build
 build:
@@ -46,7 +47,7 @@ run:
 		--env ETCDCTL_API=2 \
 		--publish 2379:2379 \
 		--publish 2380:2380 \
-		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
+		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
 		--workdir /var/lib/etcd \
 		$(IMAGE) \
 			etcd \
@@ -56,7 +57,7 @@ run:
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) etcd --version 2> /dev/null | grep "^etcd " | sed -e "s@^.* @`pwd`: etcd @"
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) etcd --version 2> /dev/null | grep "^etcd " | sed -e "s@^.* @$(shell pwd): etcd @"
 
 .PHONY: migrate
 migrate:
@@ -88,4 +89,4 @@ restore:
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
+	docker rmi -f $(shell grep FROM Dockerfile | cut -f2 -d" ") ||:

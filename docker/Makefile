@@ -27,6 +27,8 @@ ifndef DIST
 	DIST=ubuntu
 endif
 
+
+.PHONY: default
 default: build
 
 .PHONY: project

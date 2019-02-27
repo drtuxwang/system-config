@@ -19,12 +19,13 @@ DOCKER_RUN_FLAGS := --rm \
 	--volume=/shared:/shared
 
 
+.PHONY: default
 default: build
 	docker images
 
 .PHONY: pull
 pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
 
 .PHONY: build
 build:
@@ -43,15 +44,15 @@ run:
 	docker run $(DOCKER_RUN_FLAGS) \
 		--volume=/var/lib/registry:/var/lib/registry \
 		--publish 5000:5000 \
-		--hostname `echo $(NAME)-$(VERSION) | sed -e "s/[.]//g"` \
+		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
 		--workdir /var/lib/registry \
 		$(IMAGE) ||:
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) registry --version 2> /dev/null | sed -e "s@.* v@`pwd`: Registry @"
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) registry --version 2> /dev/null | sed -e "s@.* v@$(shell pwd): Registry @"
 
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
+	docker rmi -f $(shell grep FROM Dockerfile | cut -f2 -d" ") ||:

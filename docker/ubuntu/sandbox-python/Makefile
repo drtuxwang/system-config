@@ -26,12 +26,13 @@ ifndef DOCKER_RUN_COMMAND
 endif
 
 
+.PHONY: default
 default: build
 	docker images
 
 .PHONY: pull
 pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
 
 .PHONY: build
 build:
@@ -56,14 +57,14 @@ build:
 test:
 	docker run \
 		--rm \
-		--volume=`realpath $(TOPDIR)`:/vol/app:ro \
+		--volume=$(shell realpath $(TOPDIR)):/vol/app:ro \
 		--workdir=/vol/app \
 		$(IMAGE) \
 		find -type f ./
 
 	docker run \
 		--rm \
-		--volume=`realpath $(TOPDIR)`:/vol/app:ro \
+		--volume=$(shell realpath $(TOPDIR)):/vol/app:ro \
 		--workdir=/vol/app \
 		$(IMAGE) \
 		make install test
@@ -72,7 +73,7 @@ test:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
+		--hostname $(shell echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g") \
 		$(IMAGE) \
 		$(DOCKER_RUN_COMMAND) \
 		||:
@@ -80,7 +81,7 @@ run:
 .PHONY: version
 version:
 	@docker run --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
-		sed -e "s/([^)]*)//" | awk '{printf("'`pwd`': gcc %s\n", $$2)}'
+		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
 
 .PHONY: clean
 clean:

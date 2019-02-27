@@ -21,6 +21,7 @@ ifndef LOCALPORT
 endif
 
 
+.PHONY: default
 default: build
 	docker images
 
@@ -41,7 +42,7 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
 		--publish $(LOCALPORT):80 \
-		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
+		--hostname $(shell echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g") \
 		--workdir /var/lib/nginx \
 		$(IMAGE) \
 		||:
@@ -49,7 +50,7 @@ run:
 .PHONY: version
 version:
 	@docker run --entrypoint nginx $(IMAGE) -v 2>&1 | grep "^nginx version:" | \
-		sed -e "s@nginx/@@" | awk '{printf("'`pwd`': nginx %s\n", $$3)}'
+		sed -e "s@nginx/@@" | awk '{printf("'$(shell pwd)': nginx %s\n", $$3)}'
 
 .PHONY: clean
 clean:

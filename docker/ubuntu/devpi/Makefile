@@ -22,6 +22,7 @@ ifndef LOCALPORT
 endif
 
 
+.PHONY: default
 default: build
 	docker images
 
@@ -50,7 +51,7 @@ run:
 .PHONY: version
 version:
 	@docker run --entrypoint devpi-server $(IMAGE) --version | \
-		   awk '{printf("'`pwd`': devpi-server %s\n", $$1)}'
+		   awk '{printf("'$(shell pwd)': devpi-server %s\n", $$1)}'
 
 .PHONY: clean
 clean:

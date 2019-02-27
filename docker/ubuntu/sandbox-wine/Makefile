@@ -26,12 +26,13 @@ ifndef DOCKER_RUN_COMMAND
 endif
 
 
+.PHONY: default
 default: build
 	docker images
 
 .PHONY: pull
 pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
 
 .PHONY: build
 build:
@@ -54,7 +55,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname `echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g"` \
+		--hostname $(shell echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g") \
 		$(IMAGE) \
 		$(DOCKER_RUN_COMMAND) \
 		||:
@@ -62,7 +63,7 @@ run:
 PHONY: version
 version:
 	@docker run --entrypoint wine $(IMAGE) --version | grep ^wine | \
-		sed -e "s/-/ /g" | awk '{printf("'`pwd`': wine %s\n", $$2)}'
+		sed -e "s/-/ /g" | awk '{printf("'$(shell pwd)': wine %s\n", $$2)}'
 
 .PHONY: clean
 clean:
