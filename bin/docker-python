@@ -85,7 +85,7 @@ then
     FLAGS="$FLAGS --volume=/etc/passwd:/etc/passwd:ro --volume=/etc/group:/etc/group:ro --user=$SANDBOX"
 fi
 
-export COMMAND="$@"
+export DOCKER_RUN_COMMAND="$@"
 
 if [ "$DIST" -a ! -f "$DIR/docker/${DIST}/sandbox-python/Makefile" ]
 then
