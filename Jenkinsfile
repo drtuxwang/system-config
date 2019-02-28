@@ -23,6 +23,12 @@ pipeline {
                             }
                         }
                         stage ("Run tests") {
+                            agent {
+                                docker {
+                                    image 'drtuxwang/ubuntu-python:18.04'
+                                    args '--network=host'
+                                }
+                            }
                             steps {
                                 sh "make -C docker/ubuntu test"
                             }
