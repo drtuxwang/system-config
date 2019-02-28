@@ -34,6 +34,10 @@ frame .other -bg "#cccccc"
         exec xfreerdp.tcl &
     }
     pack .other.xfreerdp -side top
+    button .other.zoom -width 10 -bg "#ffff00" -text "Zoom" -command {
+        exec zoom &
+    }
+    pack .other.zoom -side top
 pack .other -side top -fill x
 
 frame .menu -bg "#cccccc"
