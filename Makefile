@@ -22,6 +22,7 @@ check:
 	rm -rf */__pycache__
 	@echo "\n*** Running Python 3 UNITTEST check ***"
 	python3 -m unittest discover --buffer bin
+	rm -rf */__pycache__
 	@echo "\n*** Running BSON/JSON/YAML check ***"
 	find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} +
 	@echo "\n*** Check successfull ***"
