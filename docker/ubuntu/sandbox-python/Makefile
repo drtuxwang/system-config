@@ -60,13 +60,6 @@ test:
 		--volume=$(shell realpath $(TOPDIR)):/vol/app:ro \
 		--workdir=/vol/app \
 		$(IMAGE) \
-		find -type f ./
-
-	docker run \
-		--rm \
-		--volume=$(shell realpath $(TOPDIR)):/vol/app:ro \
-		--workdir=/vol/app \
-		$(IMAGE) \
 		make install test
 
 .PHONY: run
