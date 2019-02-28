@@ -53,8 +53,8 @@ run:
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
-		sed -e "s@^@$(shell pwd): Alpine Linux @"
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) go version 2> /dev/null | \
+		sed -e "s@.*go@$(shell pwd): Golang @"
 
 .PHONY: clean
 clean:
