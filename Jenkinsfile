@@ -32,7 +32,7 @@ pipeline {
                                 }
                             }
                             steps {
-                                sh "make -C docker/ubuntu test"
+                                sh "make install test"
                             }
                         }
                         stage ("Ubuntu (32bit)") {
