@@ -27,6 +27,8 @@ pipeline {
                                 docker {
                                     image 'drtuxwang/ubuntu-python:18.04'
                                     args '--network=host'
+                                    reuseNode true
+                                    alwaysPull false
                                 }
                             }
                             steps {
