@@ -302,6 +302,7 @@ class Options:
                 '--disable-infobars',
                 '--disk-cache-dir=/dev/null',
                 '--disk-cache-size=1',
+                '--password-store=basic',
                 '--process-per-site',
                 '--site-per-process',
             ])
