@@ -35,8 +35,16 @@ pipeline {
                             }
                         }
                         stage ("Test") {
+                            agent {
+                                docker {
+                                    image 'drtuxwang/python:3.6'
+                                    args '--network=host'
+                                    reuseNode true
+                                    alwaysPull false
+                                }
+                            }
                             steps {
-                                sh "make -C docker/python test"
+                                sh "make install test"
                             }
                         }
                     }

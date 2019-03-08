@@ -49,8 +49,7 @@ test:
 		--volume=$(shell realpath $(TOPDIR)):/vol/app:ro \
 		--workdir=/vol/app \
 		$(IMAGE) \
-		ls
-##		make install test
+		make install test
 
 .PHONY: run
 run:
