@@ -20,7 +20,9 @@ BUILD_DIRS := \
 	ubuntu-i386 \
 	ubuntu-test
 
-TEST_DIRS := ubuntu
+TEST_DIRS := \
+	python \
+	ubuntu
 
 # Default Sandbox distro
 ifndef DIST
