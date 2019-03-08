@@ -1,0 +1,36 @@
+version: '1.0'
+
+stages:
+- default
+- build
+
+steps:
+
+  setup_config:
+    stage: default
+    title: Determine build configurations
+    image: codefresh/cli:latest
+    entry_point:
+      /bin/sh
+    commands:
+    - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
+
+  check_config:
+    stage: default
+    title: Show build configurations
+    image: codefresh/cli:latest
+    entry_point:
+      /bin/sh
+    commands:
+    - echo "CF_PULL_REQUEST_NUMBER=$CF_PULL_REQUEST_NUMBER"
+    - echo "CF_PULL_REQUEST_ACTION=$CF_PULL_REQUEST_ACTION"
+    - echo "CF_PULL_REQUEST_TARGET=$CF_PULL_REQUEST_TARGET"
+    - echo "RELEASE_VERSION=$RELEASE_VERSION"
+
+##  docker_build:
+
+
+##  docker_tests:
+
+
+##  docker_push:
