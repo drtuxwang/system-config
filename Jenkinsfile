@@ -33,6 +33,7 @@ pipeline {
                                 sh "make -C docker/python build"
                                 sh "make -C docker/python version"
                             }
+                        }
                         stage ("Test") {
                             steps {
                                 sh "make -C docker/python test"
