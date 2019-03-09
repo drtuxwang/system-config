@@ -4,6 +4,7 @@ stages:
 - default
 - build
 - package
+- push
 
 steps:
 
@@ -35,19 +36,17 @@ steps:
         stage: build
         title: Build Python dependencies
         image: codefresh/cli:latest
-        entry_point:
-          /bin/sh
+        entry_point: /bin/sh
+        environment:
+        - TOPDIR=../..
+        work_directory: docker/python
         commands:
-        - echo debugX1 `pwd`
-        - TOPDIR=`pwd`
-        - echo debugX2 $TOPDIR
-        - cd docker/python
         - rm -rf tmpdir
         - mkdir -p tmpdir/bin tmpdir/root
-        - cp -p $(TOPDIR)/bin/* tmpdir/bin/
-        - cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
-        - cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
-        - $(TOPDIR)/etc/setmod *
+        - cp -p ${TOPDIR}/bin/* tmpdir/bin/
+        - cp -p ${TOPDIR}/config/bashrc tmpdir/root/.bashrc
+        - cp -p ${TOPDIR}/config/vimrc tmpdir/root/.vimrc
+        - ${TOPDIR}/etc/setmod *
 
   docker_build:
     type: parallel
