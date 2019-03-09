@@ -13,6 +13,7 @@ BUILD_DIRS := \
 	jenkins \
 	mongodb \
 	oracle-xe \
+	python \
 	registry \
 	sudo \
 	ubuntu-old \

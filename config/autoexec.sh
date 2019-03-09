@@ -4,53 +4,6 @@
 ARG=${1:-}
 
 
-set_vga() {
-    MODELINE=$(gtf $2 $3 $4 | grep Modeline | awk '{
-        printf("%4.2f %d %d %d %d %d %d %d %d\n", $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-    }')
-    xrandr --newmode $2x${3}_$4 $MODELINE
-    xrandr --addmode $1 $2x${3}_$4
-    xrandr --dpi 96
-    sleep 1
-    xrandr -s $2x${3}_$4
-}
-
-start_app() {
-    NAME=
-    TIMEOUT=10
-    while [[ $1 = -* ]]
-    do
-        case $1 in
-        -pname=*)
-            NAME=`echo "$1" | cut -f2- -d"="`
-            ;;
-        -timeout=*)
-            TIMEOUT=`echo "$1" | cut -f2- -d"="`
-            ;;
-        esac
-        shift
-    done
-    if [ ! "$NAME" ]
-    then
-        NAME=$1
-    fi
-
-    echo "Starting \"$@\"..."
-    "$@" &
-    sleep 10
-    for DELAY in $(seq 11 $TIMEOUT)
-    do
-        if [ ! "$(ps -o "args" | sed -e "s/^/ /" -e "s/\$/ /" | grep "[ /]$NAME ")" ]
-        then
-            echo "Restarting \"$1\" after $DELAY seconds..."
-            "$@" &
-            return
-        fi
-        sleep 1
-    done
-    echo "Running \"$@\"..."
-}
-
 # Remove crap
 rm -rf .config/pulse
 rm -rf .local/share/gvfs-metadata
