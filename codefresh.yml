@@ -28,6 +28,7 @@ steps:
     - echo "RELEASE_VERSION=$RELEASE_VERSION"
 
   build_source:
+    stage: build
     type: parallel
     steps:
       build_alpine:
@@ -57,6 +58,7 @@ steps:
     type: parallel
     steps:
       alpine_builds:
+        stage: package
         type: parallel
         steps:
           alpine_base:
