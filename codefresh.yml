@@ -60,7 +60,7 @@ steps:
         stage: package
         title: Build python image
         type: build
-        image_name: drtuxwang/python:3.6
+        image_name: drtuxwang/python
         working_directory: docker/python
         dockerfile: Dockerfile
 
