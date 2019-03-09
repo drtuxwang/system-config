@@ -41,7 +41,6 @@ steps:
         - cp -p bin/* docker/alpine/tmpdir/bin/
         - cp -p config/bashrc docker/alpine/tmpdir/root/.bashrc
         - cp -p config/vimrc docker/alpine/tmpdir/root/.vimrc
-        - etc/setmod docker/alpine/*
       build_python:
         stage: build
         title: Build Python dependencies
@@ -53,7 +52,6 @@ steps:
         - cp -p bin/* docker/python/tmpdir/bin/
         - cp -p config/bashrc docker/python/tmpdir/root/.bashrc
         - cp -p config/vimrc docker/python/tmpdir/root/.vimrc
-        - etc/setmod docker/python/*
 
   docker_build:
     type: parallel
