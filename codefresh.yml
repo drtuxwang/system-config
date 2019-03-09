@@ -53,14 +53,34 @@ steps:
         - cp -p config/bashrc docker/python/tmpdir/root/.bashrc
         - cp -p config/vimrc docker/python/tmpdir/root/.vimrc
 
-  docker_build:
+  docker_builds:
     type: parallel
     steps:
+      alpine_builds:
+        type: parallel
+        steps:
+          alpine_base:
+            stage: package
+            title: Build Alpine base image
+            type: build
+            image_name: drtuxwang/alpine-base
+            tag: 3.8
+            working_directory: docker/alpine
+            dockerfile: Dockerfile-base
+          alpine:
+            stage: package
+            title: Build Alpine image
+            type: build
+            image_name: drtuxwang/alpine
+            tag: 3.8
+            working_directory: docker/alpine
+            dockerfile: Dockerfile
       python:
         stage: package
         title: Build python image
         type: build
         image_name: drtuxwang/python
+        tag: 3.6
         working_directory: docker/python
         dockerfile: Dockerfile
 
