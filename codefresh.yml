@@ -22,13 +22,22 @@ steps:
     entry_point:
       /bin/sh
     commands:
+    - echo "IMAGE_WORK_DIR=$IMAGE_WORK_DIR"
     - echo "CF_PULL_REQUEST_NUMBER=$CF_PULL_REQUEST_NUMBER"
     - echo "CF_PULL_REQUEST_ACTION=$CF_PULL_REQUEST_ACTION"
     - echo "CF_PULL_REQUEST_TARGET=$CF_PULL_REQUEST_TARGET"
     - echo "RELEASE_VERSION=$RELEASE_VERSION"
 
-##  docker_build:
-
+  docker_build:
+    type: parallel
+    steps:
+      app_bet_api:
+        stage: package
+        title: Build python image
+        type: build
+        image_name: drtuxwang/python:3.6
+        working_directory: docker/python
+        dockerfile: Dockerfile
 
 ##  docker_tests:
 
