@@ -36,28 +36,24 @@ steps:
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - cd docker/alpine
-        - TOPDIR=../..
-        - rm -rf tmpdir
-        - mkdir -p tmpdir/bin tmpdir/root
-        - cp -p ${TOPDIR}/bin/* tmpdir/bin/
-        - cp -p ${TOPDIR}/config/bashrc tmpdir/root/.bashrc
-        - cp -p ${TOPDIR}/config/vimrc tmpdir/root/.vimrc
-        - ${TOPDIR}/etc/setmod *
+        - rm -rf docker/alpine/tmpdir
+        - mkdir -p docker/alpine/tmpdir/bin docker/alpine/tmpdir/root
+        - cp -p bin/* docker/alpine/tmpdir/bin/
+        - cp -p config/bashrc docker/alpine/tmpdir/root/.bashrc
+        - cp -p config/vimrc docker/alpine/tmpdir/root/.vimrc
+        - etc/setmod docker/alpine/*
       build_python:
         stage: build
         title: Build Python dependencies
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - cd docker/python
-        - TOPDIR=../..
-        - rm -rf tmpdir
-        - mkdir -p tmpdir/bin tmpdir/root
-        - cp -p ${TOPDIR}/bin/* tmpdir/bin/
-        - cp -p ${TOPDIR}/config/bashrc tmpdir/root/.bashrc
-        - cp -p ${TOPDIR}/config/vimrc tmpdir/root/.vimrc
-        - ${TOPDIR}/etc/setmod *
+        - rm -rf docker/python/tmpdir
+        - mkdir -p docker/python/tmpdir/bin docker/python/tmpdir/root
+        - cp -p bin/* docker/python/tmpdir/bin/
+        - cp -p config/bashrc docker/python/tmpdir/root/.bashrc
+        - cp -p config/vimrc docker/python/tmpdir/root/.vimrc
+        - etc/setmod docker/python/*
 
   docker_build:
     type: parallel
