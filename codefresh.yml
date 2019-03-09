@@ -23,16 +23,36 @@ steps:
     entry_point:
       /bin/sh
     commands:
-    - echo "IMAGE_WORK_DIR=$IMAGE_WORK_DIR"
     - echo "CF_PULL_REQUEST_NUMBER=$CF_PULL_REQUEST_NUMBER"
     - echo "CF_PULL_REQUEST_ACTION=$CF_PULL_REQUEST_ACTION"
     - echo "CF_PULL_REQUEST_TARGET=$CF_PULL_REQUEST_TARGET"
     - echo "RELEASE_VERSION=$RELEASE_VERSION"
 
+  build_source:
+    type: parallel
+    steps:
+      build_python:
+        stage: build
+        title: Build Python dependencies
+        image: codefresh/cli:latest
+        entry_point:
+          /bin/sh
+        commands:
+        - echo debugX1 `pwd`
+        - TOPDIR=`pwd`
+        - echo debugX2 $TOPDIR
+        - cd docker/python
+        - rm -rf tmpdir
+        - mkdir -p tmpdir/bin tmpdir/root
+        - cp -p $(TOPDIR)/bin/* tmpdir/bin/
+        - cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
+        - cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
+        - $(TOPDIR)/etc/setmod *
+
   docker_build:
     type: parallel
     steps:
-      app_bet_api:
+      python:
         stage: package
         title: Build python image
         type: build
