@@ -3,6 +3,7 @@ version: '1.0'
 stages:
 - default
 - build
+- package
 
 steps:
 
