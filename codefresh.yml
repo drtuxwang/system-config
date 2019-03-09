@@ -64,7 +64,7 @@ steps:
             title: Build Alpine base image
             type: build
             image_name: drtuxwang/alpine-base
-            tag: 3.8
+            tag: '3.8'
             working_directory: docker/alpine
             dockerfile: Dockerfile-base
           alpine:
@@ -72,7 +72,7 @@ steps:
             title: Build Alpine image
             type: build
             image_name: drtuxwang/alpine
-            tag: 3.8
+            tag: '3.8'
             working_directory: docker/alpine
             dockerfile: Dockerfile
       python:
@@ -80,7 +80,7 @@ steps:
         title: Build python image
         type: build
         image_name: drtuxwang/python
-        tag: 3.6
+        tag: '3.6'
         working_directory: docker/python
         dockerfile: Dockerfile
 
