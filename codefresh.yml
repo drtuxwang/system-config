@@ -2,8 +2,10 @@ version: '1.0'
 
 stages:
 - default
-- build
-- push
+- prepare
+- build_base
+- build_images
+- push_images
 
 steps:
 
@@ -15,23 +17,20 @@ steps:
     commands:
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
 
-  check_config:
-    stage: default
-    title: Show build configurations
-    image: codefresh/cli:latest
-    entry_point: /bin/sh
-    commands:
-    - echo "CF_PULL_REQUEST_NUMBER=$CF_PULL_REQUEST_NUMBER"
-    - echo "CF_PULL_REQUEST_ACTION=$CF_PULL_REQUEST_ACTION"
-    - echo "CF_PULL_REQUEST_TARGET=$CF_PULL_REQUEST_TARGET"
-    - echo "RELEASE_VERSION=$RELEASE_VERSION"
-
-  build:
+  prepare:
+    stage: prepare
     type: parallel
     steps:
-
+      check_config:
+        title: Show build configurations
+        image: codefresh/cli:latest
+        entry_point: /bin/sh
+        commands:
+        - echo "CF_PULL_REQUEST_NUMBER=$CF_PULL_REQUEST_NUMBER"
+        - echo "CF_PULL_REQUEST_ACTION=$CF_PULL_REQUEST_ACTION"
+        - echo "CF_PULL_REQUEST_TARGET=$CF_PULL_REQUEST_TARGET"
+        - echo "RELEASE_VERSION=$RELEASE_VERSION"
       alpine_deps:
-        stage: build
         title: Build Alpine dependencies
         image: codefresh/cli:latest
         entry_point: /bin/sh
@@ -41,36 +40,7 @@ steps:
         - cp -p bin/* docker/alpine/tmpdir/bin/
         - cp -p config/bashrc docker/alpine/tmpdir/root/.bashrc
         - cp -p config/vimrc docker/alpine/tmpdir/root/.vimrc
-      alpine_base_image:
-        stage: build
-        title: Build Alpine base image
-        fail_fast: false
-        when:
-          steps:
-          - name: alpine_deps
-            on:
-            - success
-        type: build
-        image_name: drtuxwang/alpine-base
-        tag: '3.8'
-        working_directory: docker/alpine
-        dockerfile: Dockerfile-base
-      alpine_image:
-        stage: build
-        title: Build Alpine image
-        when:
-          steps:
-          - name: alpine_base_image
-            on:
-            - success
-        type: build
-        image_name: drtuxwang/alpine
-        tag: '3.8'
-        working_directory: docker/alpine
-        dockerfile: Dockerfile
-
       python_deps:
-        stage: build
         title: Build Python dependencies
         image: codefresh/cli:latest
         entry_point: /bin/sh
@@ -80,14 +50,32 @@ steps:
         - cp -p bin/* docker/python/tmpdir/bin/
         - cp -p config/bashrc docker/python/tmpdir/root/.bashrc
         - cp -p config/vimrc docker/python/tmpdir/root/.vimrc
+
+  build_base:
+    stage: prepare
+    type: parallel
+    steps:
+      alpine_base_image:
+        title: Build Alpine base image
+        type: build
+        image_name: drtuxwang/alpine-base
+        tag: '3.8'
+        working_directory: docker/alpine
+        dockerfile: Dockerfile-base
+
+  build_images:
+    stage: prepare
+    type: parallel
+    steps:
+      alpine_image:
+        title: Build Alpine image
+        type: build
+        image_name: drtuxwang/alpine
+        tag: '3.8'
+        working_directory: docker/alpine
+        dockerfile: Dockerfile
       python_image:
-        stage: build
         title: Build python image
-        when:
-          steps:
-          - name: python-deps
-            on:
-            - success
         type: build
         image_name: drtuxwang/python
         tag: '3.6'
