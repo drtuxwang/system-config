@@ -1,3 +1,2 @@
 pygame==None
-scipy==None
-uncompyle6==None
+uncompyle6>=3.1.2
