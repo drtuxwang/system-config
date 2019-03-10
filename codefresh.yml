@@ -44,6 +44,7 @@ steps:
       alpine_base_image:
         stage: build
         title: Build Alpine base image
+        fail_fast: false
         when:
           steps:
           - name: alpine_deps
