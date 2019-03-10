@@ -2,8 +2,10 @@ version: '1.0'
 
 stages:
 - default
-- build
-- push
+- prepare
+- build_base
+- build_images
+- push_images
 
 steps:
 
@@ -16,7 +18,7 @@ steps:
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
 
   prepare:
-    stage: build
+    stage: prepare
     type: parallel
     steps:
       check_config:
@@ -50,7 +52,7 @@ steps:
         - cp -p config/vimrc docker/python/tmpdir/root/.vimrc
 
   build_base:
-    stage: build
+    stage: prepare
     type: parallel
     steps:
       alpine_base_image:
@@ -62,13 +64,12 @@ steps:
         dockerfile: Dockerfile-base
 
   build_images:
-    stage: build
+    stage: prepare
     type: parallel
     steps:
       alpine_image:
         title: Build Alpine image
         type: build
-        base-image: drtuxwang/alpine-base:3.8
         image_name: drtuxwang/alpine
         tag: '3.8'
         working_directory: docker/alpine
