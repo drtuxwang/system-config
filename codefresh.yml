@@ -68,7 +68,7 @@ steps:
       push_alpine_base:
         title: Push Alpine base image
         type: push
-        candidate: '${{build_alpine_base}}'
+        candidate: ${{build_alpine_base}}
         tag: '3.8'
         registry: dockerhub
 
@@ -97,6 +97,6 @@ steps:
     steps:
       python_tests:
         title: Run tests
-        image: drtuxwang/python:3.6
+        image: ${{build_python}}
         commands:
         - make install test
