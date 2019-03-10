@@ -55,7 +55,7 @@ steps:
         working_directory: docker/alpine
         dockerfile: Dockerfile-base
       alpine_image:
-        stage: package
+        stage: build
         title: Build Alpine image
         when:
           steps:
@@ -80,7 +80,7 @@ steps:
         - cp -p config/bashrc docker/python/tmpdir/root/.bashrc
         - cp -p config/vimrc docker/python/tmpdir/root/.vimrc
       python_image:
-        stage: package
+        stage: build
         title: Build python image
         when:
           steps:
