@@ -3,7 +3,6 @@ version: '1.0'
 stages:
 - default
 - build
-- package
 - push
 
 steps:
@@ -27,11 +26,11 @@ steps:
     - echo "CF_PULL_REQUEST_TARGET=$CF_PULL_REQUEST_TARGET"
     - echo "RELEASE_VERSION=$RELEASE_VERSION"
 
-  build_source:
-    stage: build
+  build:
     type: parallel
     steps:
-      build_alpine:
+
+      alpine_deps:
         stage: build
         title: Build Alpine dependencies
         image: codefresh/cli:latest
@@ -42,7 +41,34 @@ steps:
         - cp -p bin/* docker/alpine/tmpdir/bin/
         - cp -p config/bashrc docker/alpine/tmpdir/root/.bashrc
         - cp -p config/vimrc docker/alpine/tmpdir/root/.vimrc
-      build_python:
+      alpine_base_image:
+        stage: build
+        title: Build Alpine base image
+        when:
+          steps:
+          - name: alpine_deps
+            on:
+            - success
+        type: build
+        image_name: drtuxwang/alpine-base
+        tag: '3.8'
+        working_directory: docker/alpine
+        dockerfile: Dockerfile-base
+      alpine_image:
+        stage: package
+        title: Build Alpine image
+        when:
+          steps:
+          - name: alpine_base_image
+            on:
+            - success
+        type: build
+        image_name: drtuxwang/alpine
+        tag: '3.8'
+        working_directory: docker/alpine
+        dockerfile: Dockerfile
+
+      python_deps:
         stage: build
         title: Build Python dependencies
         image: codefresh/cli:latest
@@ -53,33 +79,14 @@ steps:
         - cp -p bin/* docker/python/tmpdir/bin/
         - cp -p config/bashrc docker/python/tmpdir/root/.bashrc
         - cp -p config/vimrc docker/python/tmpdir/root/.vimrc
-
-  docker_builds:
-    type: parallel
-    steps:
-      alpine_builds:
-        stage: package
-        type: parallel
-        steps:
-          alpine_base:
-            stage: package
-            title: Build Alpine base image
-            type: build
-            image_name: drtuxwang/alpine-base
-            tag: '3.8'
-            working_directory: docker/alpine
-            dockerfile: Dockerfile-base
-          alpine:
-            stage: package
-            title: Build Alpine image
-            type: build
-            image_name: drtuxwang/alpine
-            tag: '3.8'
-            working_directory: docker/alpine
-            dockerfile: Dockerfile
-      python:
+      python_image:
         stage: package
         title: Build python image
+        when:
+          steps:
+          - name: python-deps
+            on:
+            - success
         type: build
         image_name: drtuxwang/python
         tag: '3.6'
@@ -87,6 +94,5 @@ steps:
         dockerfile: Dockerfile
 
 ##  docker_tests:
-
 
 ##  docker_push:
