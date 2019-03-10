@@ -3,6 +3,7 @@ version: '1.0'
 stages:
 - default
 - build
+- test
 
 steps:
 
@@ -90,6 +91,12 @@ steps:
         working_directory: docker/python
         dockerfile: Dockerfile
 
-##  docker_tests:
-
-##  docker_push:
+  run_tests:
+    stage: test
+    type: parallel
+    steps:
+      python_tests:
+        title: Run tests
+        image: drtuxwang/python:3.6
+        commands:
+        - make install test
