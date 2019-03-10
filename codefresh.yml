@@ -2,10 +2,7 @@ version: '1.0'
 
 stages:
 - default
-- prepare
-- build_base
-- build_images
-- push_images
+- build
 
 steps:
 
@@ -18,7 +15,7 @@ steps:
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
 
   prepare:
-    stage: prepare
+    stage: build
     type: parallel
     steps:
       check_config:
@@ -52,7 +49,7 @@ steps:
         - cp -p config/vimrc docker/python/tmpdir/root/.vimrc
 
   build_bases_images:
-    stage: prepare
+    stage: build
     type: parallel
     steps:
       build_alpine_base:
@@ -64,7 +61,7 @@ steps:
         dockerfile: Dockerfile-base
 
   push_bases_images:
-    stage: prepare
+    stage: build
     type: parallel
     steps:
       push_alpine_base:
@@ -72,9 +69,10 @@ steps:
         type: push
         candidate: '${{build_alpine_base}}'
         tag: '3.8'
+        registry: dockerhub
 
   build_images:
-    stage: prepare
+    stage: build
     type: parallel
     steps:
       build_alpine:
