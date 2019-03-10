@@ -27,46 +27,50 @@ steps:
     - echo "RELEASE_VERSION=$RELEASE_VERSION"
 
   build:
+    stage: build
     type: parallel
     steps:
 
-      alpine_deps:
+      alpine:
         stage: build
-        title: Build Alpine dependencies
-        image: codefresh/cli:latest
-        entry_point: /bin/sh
-        commands:
-        - rm -rf docker/alpine/tmpdir
-        - mkdir -p docker/alpine/tmpdir/bin docker/alpine/tmpdir/root
-        - cp -p bin/* docker/alpine/tmpdir/bin/
-        - cp -p config/bashrc docker/alpine/tmpdir/root/.bashrc
-        - cp -p config/vimrc docker/alpine/tmpdir/root/.vimrc
-      alpine_base_image:
-        stage: build
-        title: Build Alpine base image
-        when:
-          steps:
-          - name: alpine_deps
-            on:
-            - success
-        type: build
-        image_name: drtuxwang/alpine-base
-        tag: '3.8'
-        working_directory: docker/alpine
-        dockerfile: Dockerfile-base
-      alpine_image:
-        stage: build
-        title: Build Alpine image
-        when:
-          steps:
-          - name: alpine_base_image
-            on:
-            - success
-        type: build
-        image_name: drtuxwang/alpine
-        tag: '3.8'
-        working_directory: docker/alpine
-        dockerfile: Dockerfile
+        steps:
+          alpine_deps:
+            stage: build
+            title: Build Alpine dependencies
+            image: codefresh/cli:latest
+            entry_point: /bin/sh
+            commands:
+            - rm -rf docker/alpine/tmpdir
+            - mkdir -p docker/alpine/tmpdir/bin docker/alpine/tmpdir/root
+            - cp -p bin/* docker/alpine/tmpdir/bin/
+            - cp -p config/bashrc docker/alpine/tmpdir/root/.bashrc
+            - cp -p config/vimrc docker/alpine/tmpdir/root/.vimrc
+          alpine_base_image:
+            stage: build
+            title: Build Alpine base image
+            when:
+              steps:
+              - name: alpine_deps
+                on:
+                - success
+            type: build
+            image_name: drtuxwang/alpine-base
+            tag: '3.8'
+            working_directory: docker/alpine
+            dockerfile: Dockerfile-base
+          alpine_image:
+            stage: build
+            title: Build Alpine image
+            when:
+              steps:
+              - name: alpine_base_image
+                on:
+                - success
+            type: build
+            image_name: drtuxwang/alpine
+            tag: '3.8'
+            working_directory: docker/alpine
+            dockerfile: Dockerfile
 
       python_deps:
         stage: build
