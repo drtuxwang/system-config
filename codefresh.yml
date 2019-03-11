@@ -15,19 +15,21 @@ steps:
     commands:
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
 
+  check_config:
+    stage: default
+    title: Show build configurations
+    image: codefresh/cli:latest
+    entry_point: /bin/sh
+    commands:
+    - echo "CF_PULL_REQUEST_NUMBER=$CF_PULL_REQUEST_NUMBER"
+    - echo "CF_PULL_REQUEST_ACTION=$CF_PULL_REQUEST_ACTION"
+    - echo "CF_PULL_REQUEST_TARGET=$CF_PULL_REQUEST_TARGET"
+    - echo "RELEASE_VERSION=$RELEASE_VERSION"
+
   prepare:
     stage: build
     type: parallel
     steps:
-      check_config:
-        title: Show build configurations
-        image: codefresh/cli:latest
-        entry_point: /bin/sh
-        commands:
-        - echo "CF_PULL_REQUEST_NUMBER=$CF_PULL_REQUEST_NUMBER"
-        - echo "CF_PULL_REQUEST_ACTION=$CF_PULL_REQUEST_ACTION"
-        - echo "CF_PULL_REQUEST_TARGET=$CF_PULL_REQUEST_TARGET"
-        - echo "RELEASE_VERSION=$RELEASE_VERSION"
       create_alpine_deps:
         title: Build Alpine dependencies
         image: codefresh/cli:latest
