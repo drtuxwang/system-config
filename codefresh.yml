@@ -21,9 +21,7 @@ steps:
     image: codefresh/cli:latest
     entry_point: /bin/sh
     commands:
-    - echo "CF_PULL_REQUEST_NUMBER=$CF_PULL_REQUEST_NUMBER"
-    - echo "CF_PULL_REQUEST_ACTION=$CF_PULL_REQUEST_ACTION"
-    - echo "CF_PULL_REQUEST_TARGET=$CF_PULL_REQUEST_TARGET"
+    - env | grep ^CF_ | sort
     - echo "RELEASE_VERSION=$RELEASE_VERSION"
 
   prepare:
