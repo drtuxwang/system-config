@@ -7,27 +7,18 @@ stages:
 
 steps:
 
-  setup_config:
+  preparations:
     stage: default
-    title: Determine build configurations
-    image: codefresh/cli:latest
-    entry_point: /bin/sh
-    commands:
-    - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
-
-  check_config:
-    stage: default
-    title: Show build configurations
-    image: codefresh/cli:latest
-    entry_point: /bin/sh
-    commands:
-    - env | grep ^CF_ | sort
-    - echo "RELEASE_VERSION=$RELEASE_VERSION"
-
-  prepare:
-    stage: build
     type: parallel
     steps:
+      setup_config:
+        stage: default
+        title: Setup configurations
+        image: codefresh/cli:latest
+        entry_point: /bin/sh
+        commands:
+        - env | grep ^CF_ | sort
+        - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
       create_alpine_deps:
         title: Build Alpine dependencies
         image: codefresh/cli:latest
@@ -49,30 +40,23 @@ steps:
         - cp -p config/bashrc docker/python/tmpdir/root/.bashrc
         - cp -p config/vimrc docker/python/tmpdir/root/.vimrc
 
-  build_bases_images:
+  build_alpine_base:
     stage: build
-    type: parallel
-    steps:
-      build_alpine_base:
-        title: Build Alpine base image
-        type: build
-        image_name: drtuxwang/alpine-base
-        tag: '3.8'
-        working_directory: docker/alpine
-        dockerfile: Dockerfile-base
-
-  push_bases_images:
+    title: Build Alpine base image
+    type: build
+    image_name: drtuxwang/alpine-base
+    tag: '3.8'
+    working_directory: docker/alpine
+    dockerfile: Dockerfile-base
+  push_alpine_base:
     stage: build
-    type: parallel
-    steps:
-      push_alpine_base:
-        title: Push Alpine base image
-        type: push
-        candidate: ${{build_alpine_base}}
-        tag: '3.8'
-        registry: dockerhub
+    title: Push Alpine base image
+    type: push
+    candidate: ${{build_alpine_base}}
+    tag: '3.8'
+    registry: dockerhub
 
-  build_images:
+  docker_builds:
     stage: build
     type: parallel
     steps:
@@ -91,12 +75,9 @@ steps:
         working_directory: docker/python
         dockerfile: Dockerfile
 
-  run_tests:
+  python_tests:
     stage: test
-    type: parallel
-    steps:
-      python_tests:
-        title: Run tests
-        image: ${{build_python}}
-        commands:
-        - make install test
+    title: Run tests
+    image: ${{build_python}}
+    commands:
+    - make install test
