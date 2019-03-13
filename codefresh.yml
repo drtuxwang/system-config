@@ -8,7 +8,7 @@ stages:
 steps:
 
   preparations:
-    stage: default
+    stage: build
     type: parallel
     steps:
       setup_config:
@@ -41,7 +41,7 @@ steps:
         - cp -p config/vimrc docker/python/tmpdir/root/.vimrc
 
   build_alpine_base:
-    stage: build
+    stage: package
     title: Build Alpine base image
     type: build
     image_name: drtuxwang/alpine-base
@@ -49,7 +49,7 @@ steps:
     working_directory: docker/alpine
     dockerfile: Dockerfile-base
   push_alpine_base:
-    stage: build
+    stage: package
     title: Push Alpine base image
     type: push
     candidate: ${{build_alpine_base}}
@@ -57,7 +57,7 @@ steps:
     registry: dockerhub
 
   docker_builds:
-    stage: build
+    stage: package
     type: parallel
     steps:
       build_alpine:
