@@ -40,7 +40,7 @@ class Options:
             nargs=1,
             dest='code',
             default=None,
-            help='Select video format code (default prefer 480 height).'
+            help='Select video format code (default prefer 720 height).'
         )
         parser.add_argument(
             '-v',
@@ -75,7 +75,7 @@ class Options:
                 code, _, size = line.split()[:3]
                 codes[int(size.split('x')[1])] = code
         for height in sorted(codes, reverse=True):
-            if height <= 480:
+            if height <= 720:
                 return codes[height]
         for height in sorted(codes):
             return codes[height]
