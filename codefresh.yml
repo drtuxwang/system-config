@@ -1,7 +1,6 @@
 version: '1.0'
 
 stages:
-- default
 - build
 - package
 - test
@@ -13,7 +12,6 @@ steps:
     type: parallel
     steps:
       setup_config:
-        stage: default
         title: Setup configurations
         image: codefresh/cli:latest
         entry_point: /bin/sh
