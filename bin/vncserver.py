@@ -98,7 +98,6 @@ class Options:
             '1024x768',
             '-depth',
             '24',
-            '-alwaysshared'
         ] + args[1:])
         self._umask = os.umask(int('077', 8))
         os.umask(self._umask)
