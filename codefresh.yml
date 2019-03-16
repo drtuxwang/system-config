@@ -51,6 +51,7 @@ steps:
     stage: package
     title: Push Alpine base image
     type: push
+    registry: dockerhub
     candidate: ${{build_alpine_base}}
     tag: '3.8'
     registry: dockerhub
