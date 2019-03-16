@@ -54,7 +54,6 @@ steps:
     registry: dockerhub
     candidate: ${{build_alpine_base}}
     tag: '3.8'
-    registry: dockerhub
 
   docker_builds:
     stage: package
