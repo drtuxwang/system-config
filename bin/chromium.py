@@ -235,6 +235,9 @@ class Options:
                 for file in glob.glob(os.path.join(
                         directory, 'Local Storage', 'https*')):
                     self._remove(file)
+                for file in glob.glob(os.path.join(directory, '.???*')):
+                    print('Removing "{0:s}"...'.format(file))
+                    self._remove(file)
 
     def _restart(self):
         home = os.environ.get('HOME', '')
