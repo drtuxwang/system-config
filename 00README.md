@@ -569,6 +569,9 @@ the years. Now most of the scripts are written in Python 3.
  * bin/psum               Calculate checksum using imagehash, file size and file modification time
  * bin/psum.bat
  * bin/psum.py
+ * bin/pyc                Compile Python source file to PYC file
+ * bin/pyc.bat
+ * bin/pyc.py
 </pre>
 <pre>
  * bin/pyld.sh            Python loading module for sh/ksh/bash wrapper scripts
@@ -710,6 +713,9 @@ the years. Now most of the scripts are written in Python 3.
  * bin/unjar.py
  * bin/unpdf              Unpack PDF file into series of JPG files
  * bin/unpdf.py
+ * bin/unpyc              De-compile PYC file to Python source file
+ * bin/unpyc.bat
+ * bin/unpyc.py
  * bin/unrar              Unpack a compressed archive in RAR format
  * bin/unrar.py
  * bin/unrpm              Unpack a compressed archive in RPM format
