@@ -117,7 +117,7 @@ class Main:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" HTML file.')
             urls.extend(self._extract(file))
-        for url in set(urls):
+        for url in sorted(set(urls)):
             print(url)
 
 
