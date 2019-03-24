@@ -41,6 +41,7 @@ done
 xhost +si:localuser:$MYUNAME
 
 setxkbmap gb
+setxkbmap -option ctrl:nocaps
 setxkbmap -option terminate:ctrl_alt_bksp
 xset b off
 xset m 4,16
