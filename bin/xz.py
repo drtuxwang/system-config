@@ -9,10 +9,13 @@ import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+
+VERBOSE_SIZE = 134217728
 
 
 class Main:
@@ -64,6 +67,8 @@ class Main:
         command = command_mod.Command('xz', errors='stop')
         if len(sys.argv) > 1 and os.path.isfile(sys.argv[1]):
             command.set_args(['-9', '-e', '--lzma2=dict=128MiB'])
+            if file_mod.FileStat(sys.argv[1]).get_size() > VERBOSE_SIZE:
+                command.append_arg('--verbose')
         command.extend_args(sys.argv[1:])
         self._set_libraries(command)
 
