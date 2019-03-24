@@ -113,7 +113,7 @@ class Data:
                 elif file.endswith(('.yml', '.yaml')):
                     try:
                         blocks = [
-                            yaml.load(block)
+                            yaml.safe_load(block)
                             for block in self._split_yamls(data)
                         ]
                     except (
