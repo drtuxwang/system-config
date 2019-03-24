@@ -2,7 +2,7 @@
 """
 Python X-windows desktop module
 
-Copyright GPL v2: 2013-2018 By Dr Colin Kong
+Copyright GPL v2: 2013-2019 By Dr Colin Kong
 """
 
 import functools
@@ -15,8 +15,8 @@ import sys
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '2.3.1'
-VERSION = 20180826
+RELEASE = '2.3.2'
+VERSION = 20190324
 
 
 class _System:

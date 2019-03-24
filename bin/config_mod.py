@@ -4,7 +4,7 @@ Python configuration module (uses "config_mod.yaml")
 
 Supports multi-JSON, multi-YAML & BSON files.
 
-Copyright GPL v2: 2017-2018 By Dr Colin Kong
+Copyright GPL v2: 2017-2019 By Dr Colin Kong
 """
 
 import json
@@ -19,8 +19,8 @@ import yaml
 if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.4, < 4.0).")
 
-RELEASE = '1.2.1'
-VERSION = 20181208
+RELEASE = '1.2.2'
+VERSION = 20190324
 
 
 class Data:

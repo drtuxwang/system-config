@@ -2,7 +2,7 @@
 """
 Python task handling utility module
 
-Copyright GPL v2: 2006-2017 By Dr Colin Kong
+Copyright GPL v2: 2006-2019 By Dr Colin Kong
 """
 
 import functools
@@ -12,8 +12,8 @@ import re
 import subprocess
 import sys
 
-RELEASE = '2.1.0'
-VERSION = 20180317
+RELEASE = '2.1.1'
+VERSION = 20190324
 
 
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):

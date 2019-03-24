@@ -2,7 +2,7 @@
 """
 Python colored log formatter
 
-Copyright GPL v2: 2018 By Dr Colin Kong
+Copyright GPL v2: 2018-2019 By Dr Colin Kong
 """
 
 import logging
@@ -11,8 +11,8 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-RELEASE = '1.0.1'
-VERSION = 20180418
+RELEASE = '1.0.2'
+VERSION = 20190324
 
 LOG_FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
 
