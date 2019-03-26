@@ -84,12 +84,13 @@ class Main:
         )
         pattern = (
             '^$|: Gtk-WARNING | Gtk-CRITICAL | GLib-CRITICAL |'
-            ' Poppler-WARNING |: Failed to create dbus proxy|:'
-            ' invalid matrix |: Page transition|ToUnicode CMap|'
+            ' Poppler-WARNING |: Failed to create dbus proxy|'
+            ': invalid matrix |: Page transition|ToUnicode CMap|'
             ': Illegal character|^undefined|'
             ': Page additional action object.*is wrong type|'
-            ' Unimplemented annotation:|: No current point in closepath|:'
-            ' Invalid Font Weight|: invalid value|accessibility bus address:'
+            ' Unimplemented annotation:|: No current point in closepath|'
+            ': Invalid Font Weight|: invalid value|accessibility bus address:|'
+            'Error setting file metadata:|no system default destination'
         )
         self._config()
         self._setenv()
