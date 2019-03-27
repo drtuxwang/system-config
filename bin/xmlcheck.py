@@ -155,6 +155,7 @@ class Main:
         """
         options = Options()
 
+        errors = False
         handler = XmlDataHandler(options.get_view_flag())
         for file in options.get_files():
             if not os.path.isfile(file):
@@ -166,6 +167,7 @@ class Main:
             if task.has_error():
                 for line in task.get_error():
                     print(line, file=sys.stderr)
+                errors = True
                 continue
 
             try:
@@ -181,6 +183,8 @@ class Main:
             except Exception:
                 raise SystemExit(
                     sys.argv[0] + ': Invalid "' + file + '" XML file.')
+
+        return errors
 
 
 if __name__ == '__main__':

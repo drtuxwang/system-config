@@ -125,6 +125,7 @@ class Main:
         """
         options = Options()
 
+        errors = False
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
@@ -138,8 +139,11 @@ class Main:
                 if task.has_error():
                     for line in task.get_error():
                         print(line, file=sys.stderr)
+                    errors = True
                 else:
                     cls._reformat(file)
+
+        return errors
 
 
 if __name__ == '__main__':
