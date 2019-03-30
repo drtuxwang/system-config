@@ -454,6 +454,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/jsonformat.bat
  * bin/jsonformat.py
  * bin/jython.py
+ * bin/k3s                K3S light weight Kubernetes distribution
+ * bin/k3s.py
  * bin/keymap.tcl         TCL/TK widget for setting keymaps
  * bin/kubectl            kubectl wrapper (allowing non systems port)
  * bin/kubectl.bat
