@@ -1,4 +1,4 @@
-FROM busybox:1.28
+FROM busybox:1.29
 
 # Root account
 COPY tmpdir/config/.bashrc /root/

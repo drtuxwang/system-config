@@ -32,7 +32,7 @@ install_packages() {
     for NAME in ${!REQUIREMENTS[@]}
     do
         VERSION=${REQUIREMENTS["$NAME"]}
-        if [ "$VERSION" != None ]
+        if [[ $VERSION != *None* ]]
         then
             PACKAGES="$PACKAGES $NAME==$VERSION"
         fi
