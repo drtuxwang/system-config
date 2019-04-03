@@ -16,6 +16,7 @@ steps:
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
+        - ls -ld ${{CF_VOLUME_PATH}}/* ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/*
         - env | grep ^CF_ | sort
         - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
       create_alpine_deps:
