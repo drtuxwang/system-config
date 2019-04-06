@@ -21,26 +21,15 @@ read_requirements() {
         do
             NAME=${PACKAGE%==*}
             VERSION=${PACKAGE#*==}
-            REQUIREMENTS+=([$NAME]=$VERSION)
+            REQUIREMENTS=$(echo "$REQUIREMENTS" | grep -v "^$NAME=="; echo "$NAME==$VERSION" | grep -v ==None)
         done
     fi
 }
 
 install_packages() {
-    INSTALLED=$($PYTHON -m pip list)
-    PACKAGES=
-    for NAME in ${!REQUIREMENTS[@]}
-    do
-        VERSION=${REQUIREMENTS["$NAME"]}
-        if [[ $VERSION != *None* ]]
-        then
-            PACKAGES="$PACKAGES $NAME==$VERSION"
-        fi
-    done
-
     umask 022
     $INSTALL --upgrade pip 2>&1 | grep -v "Requirement already up-to-date:"
-    $INSTALL $PACKAGES 2>&1 | grep -v "Requirement already satisfied:"
+    $INSTALL $REQUIREMENTS 2>&1 | grep -v "Requirement already satisfied:"
     return ${PIPESTATUS[0]}
 }
 
@@ -57,7 +46,7 @@ else
     INSTALL="$PYTHON -m pip install --user"
 fi
 
-declare -A REQUIREMENTS
+REQUIREMENTS=
 read_requirements "${0%/*}/python-requirements.txt"
 VERSION=$($PYTHON --version 2>&1 | grep "^Python [0-9][.][0-9][.]" | awk '{print $2}' | cut -f1-2 -d.)
 read_requirements "${0%/*}/python-$VERSION-requirements.txt"
