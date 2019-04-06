@@ -1,7 +1,7 @@
 FROM ubuntu:18.10
 
 # Install base packages
-RUN apt-get update && \
+RUN apt-get update --fix-missing && \
 	apt-get install --no-install-recommends -y \
 		dh-python \
 		dnsutils \
