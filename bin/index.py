@@ -99,24 +99,24 @@ class Main:
         """
         for root, _, files in os.walk(directory):
             for file in files:
-                if isbadfile.search(os.path.basename(file)):
+                if isbadfile.search(file):
                     raise SystemExit('{0:s}: Found "{1:s}" file.'.format(
                         sys.argv[0],
-                        os.path.abspath(file),
+                        os.path.abspath(os.path.join(root, file)),
                     ))
                 try:
                     if os.path.getsize(os.path.join(root, file)) == 0:
                         raise SystemExit(
                             '{0:s}: Found zero size "{1:s}" file'.format(
                                 sys.argv[0],
-                                os.path.join(root, file),
+                                os.path.abspath(os.path.join(root, file)),
                             )
                         )
                 except OSError:
                     raise SystemExit(
                         '{0:s}: Found broken "{1:s}" link'.format(
                             sys.argv[0],
-                            os.path.join(root, file),
+                            os.path.abspath(os.path.join(root, file)),
                         )
                     )
 
