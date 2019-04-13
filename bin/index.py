@@ -97,13 +97,28 @@ class Main:
         Look for bad files like core dumps
         (don't followlinks & onerror do northing)
         """
-        for _, _, files in os.walk(directory):
+        for root, _, files in os.walk(directory):
             for file in files:
                 if isbadfile.search(os.path.basename(file)):
                     raise SystemExit('{0:s}: Found "{1:s}" file.'.format(
                         sys.argv[0],
                         os.path.abspath(file),
                     ))
+                try:
+                    if os.path.getsize(os.path.join(root, file)) == 0:
+                        raise SystemExit(
+                            '{0:s}: Found zero size "{1:s}" file'.format(
+                                sys.argv[0],
+                                os.path.join(root, file),
+                            )
+                        )
+                except OSError:
+                    raise SystemExit(
+                        '{0:s}: Found broken "{1:s}" link'.format(
+                            sys.argv[0],
+                            os.path.join(root, file),
+                        )
+                    )
 
     def _read_fsums(self, ofile, directory):
         fsum = os.path.join(directory, '...', 'fsum')
