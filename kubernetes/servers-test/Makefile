@@ -30,6 +30,14 @@ status:
 	kubectl --namespace=$(NAMESPACE) get secrets -o wide
 	@echo
 	kubectl --namespace=$(NAMESPACE) get ingress -o wide
+	@echo
+	kubectl --namespace=$(NAMESPACE) get serviceaccount
+	@echo
+	kubectl --namespace=$(NAMESPACE) get pvc
+	@echo
+	kubectl --namespace=$(NAMESPACE) get pv
+	@echo
+	kubectl --namespace=$(NAMESPACE) get sc
 
 .PHONY: clean
 clean:
