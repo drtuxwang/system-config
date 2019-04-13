@@ -24,6 +24,12 @@ class Options:
         self._args = None
         self.parse(sys.argv)
 
+    def get_compact_flag(self):
+        """
+        Return compact flag.
+        """
+        return self._args.compact_flag
+
     def get_files(self):
         """
         Return list of files.
@@ -34,6 +40,12 @@ class Options:
         parser = argparse.ArgumentParser(
             description='Convert BSON/JSON/YAML to JSON file.')
 
+        parser.add_argument(
+            '-c',
+            dest='compact_flag',
+            action='store_true',
+            help='Compact JSON data on one line.'
+        )
         parser.add_argument(
             'files',
             nargs='+',
@@ -89,6 +101,7 @@ class Main:
         options = Options()
         data = config_mod.Data()
 
+        compact = options.get_compact_flag()
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
@@ -108,7 +121,7 @@ class Main:
                     json_file
                 ))
                 try:
-                    data.write(json_file)
+                    data.write(json_file, compact)
                 except config_mod.WriteConfigError as exception:
                     raise SystemExit(
                         "{0:s}: {1:s}".format(file, str(exception))

@@ -19,8 +19,8 @@ import yaml
 if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.4, < 4.0).")
 
-RELEASE = '1.2.2'
-VERSION = 20190324
+RELEASE = '1.3.0'
+VERSION = 20190413
 
 
 class Data:
@@ -128,7 +128,7 @@ class Data:
         if not check:
             self._blocks = blocks
 
-    def write(self, file):
+    def write(self, file, compact=False):
         """
         Write configuration file
         """
@@ -138,10 +138,13 @@ class Data:
             if file.endswith('json'):
                 with open(tmpfile, 'w', newline='\n') as ofile:
                     for block in self._blocks:
-                        print(
-                            json.dumps(block, indent=4, sort_keys=True),
-                            file=ofile
-                        )
+                        if compact:
+                            print(json.dumps(block), file=ofile)
+                        else:
+                            print(
+                                json.dumps(block, indent=4, sort_keys=True),
+                                file=ofile
+                            )
             elif file.endswith(('.yml', '.yaml')):
                 yaml_data = [
                     yaml.dump(block, indent=2, default_flow_style=False)
