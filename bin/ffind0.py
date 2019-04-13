@@ -88,7 +88,7 @@ class Main:
                     ])
                 except PermissionError:
                     pass
-            elif os.path.getsize(file) == 0:
+            elif not os.path.islink(file) and os.path.getsize(file) == 0:
                 print(file)
 
     def run(self):
