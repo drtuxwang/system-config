@@ -319,7 +319,8 @@ class Options:
             ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
             'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|'
             ': cannot adjust line|^Using PPAPI|--ppapi-flash-path|'
-            '^Created new window|Unable to revert mtime:|internal-pdf-viewer:'
+            '^Created new window|Unable to revert mtime:|internal-pdf-viewer:|'
+            '^PPAPI flash has config'
         )
         self._config()
         self._set_libraries(self._chrome)
