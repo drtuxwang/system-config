@@ -3,6 +3,7 @@
 export PATH="/opt/software/bin:$PATH"
 export PYTHONDONTWRITEBYTECODE=1
 
+pump &
 ntpdate -u > /dev/null 2>&1 < /dev/null &
 xlight -reset &
 (rmdir /media/*/* /media/* && rm /media/*) &
