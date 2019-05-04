@@ -320,7 +320,7 @@ class Options:
             'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|'
             ': cannot adjust line|^Using PPAPI|--ppapi-flash-path|'
             '^Created new window|Unable to revert mtime:|internal-pdf-viewer:|'
-            '^PPAPI flash has config'
+            '^PPAPI flash has config|LIBDBUSMENU-GLIB-WARNING'
         )
         self._config()
         self._set_libraries(self._chrome)
