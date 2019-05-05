@@ -2,7 +2,7 @@
 """
 System configuration detection tool.
 
-1996-2018 By Dr Colin Kong
+1996-2019 By Dr Colin Kong
 """
 
 import functools
@@ -30,7 +30,7 @@ if os.name == 'nt':
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '4.19.2'
+RELEASE = '4.19.3'
 VERSION = 20180610
 
 # pylint: disable = too-many-lines
@@ -1144,7 +1144,7 @@ class LinuxSystem(PosixSystem):
             except OSError:
                 pass
 
-        if os.path.isdir('/sys/bus/scsi/devices'):  # New kernels
+        if glob.glob('/sys/bus/scsi/devices/*'):  # New kernels has devices
             for file in sorted(glob.glob('/sys/block/*d[a-z]*/device')):
                 cls._detect_disk_sys_scsi(info, file)
         else:
