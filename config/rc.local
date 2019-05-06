@@ -4,14 +4,11 @@ export PATH="/opt/software/bin:$PATH"
 export PYTHONDONTWRITEBYTECODE=1
 
 ntpdate -u > /dev/null 2>&1 < /dev/null &
-xlight -reset &
-(rmdir /media/*/* /media/* && rm /media/*) &
+xlight -reset > /dev/null 2>&1 &
+(rmdir /media/*/* /media/* && rm /media/*) > /dev/null 2>&1 &
 
 # Restore corrupt grub.cfg
-if [ "`diff /boot/grub/grub.cfg /boot/grub/grub.cfg-ok`" ]
-then
-    cp -p /boot/grub/grub.cfg-ok /boot/grub/grub.cfg
-fi
+cp -p /boot/grub/grub.cfg-ok /boot/grub/grub.cfg > /dev/null 2>&1
 
 # Fix VPN client incorrect termination
 if [ -f /run/resolvconf/resolv.conf ]
@@ -21,7 +18,7 @@ fi
 
 if [ -f /etc/rc.local-opt ]
 then
-    . /etc/rc.local-opt
+    . /etc/rc.local-opt > /dev/null 2>&1
 fi
 
 exit 0
