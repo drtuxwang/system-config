@@ -208,6 +208,10 @@ class Main:
         try:
             with open(file) as ifile:
                 data = json.load(ifile)
+        except json.decoder.JSONDecodeError:
+            raise SystemExit(
+                sys.argv[0] + ': Corrupt "' + file + '" json file.'
+            )
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + file + '" json file.'
