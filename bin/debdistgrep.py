@@ -102,11 +102,14 @@ class Main:
 
     @staticmethod
     def _search_distribution_packages(lines, patterns):
+        name = None
         for pattern in patterns:
             ispattern = re.compile(pattern, re.IGNORECASE)
             for line in lines:
+                if line.startswith('Package: '):
+                    name = line.replace('Package: ', '', 1)
                 if ispattern.search(line):
-                    print(line)
+                    print("{0:s}: {1:s}".format(name, line))
 
     @staticmethod
     def config():
