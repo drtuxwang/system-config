@@ -6,6 +6,7 @@
 
 ##mount -t ext4 -o noatime,data=ordered UUID=<uuid-from-blkid> /data2 &
 
-##dhclient eth1 eth2&
+##dhclient eth0 eth1 &
+##dhclient enp0s3 enp0s8 &
 
 exit 0
