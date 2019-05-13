@@ -36,6 +36,8 @@ then
             export MYSCREEN="???"
             alias tmux='echo "sessions should be nested with care, already running multiplexer" #'
         fi
+    else
+        unset MYSCREEN
     fi
 
     # Removing soft shell limit
