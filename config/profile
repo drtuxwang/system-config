@@ -26,6 +26,11 @@ then
                 MYTTY=
             fi
             alias logout='tmux detach'
+            export KUBECONFIG="$HOME/.kube/$(timeout --signal=KILL 1 tmux display-message -p '#S' 2> /dev/null)"
+            [ ! -f "$KUBECONFIG" -o ! "$TMUX" ] && unset KUBECONFIG
+            export PROJ_HOME="$HOME/git/$(timeout --signal=KILL 1 tmux display-message -p '#S' 2> /dev/null)"
+            [ ! -d "$PROJ_HOME" -o ! "$TMUX" ] && unset PROJ_HOME
+            cd "$PROJ_HOME" 2> /dev/null
         elif [ "$TERM" = "screen" ]
         then
             export MYSCREEN="???"
