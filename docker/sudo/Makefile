@@ -1,4 +1,4 @@
-NAME := sudo
+NAME := scratch
 VERSION := latest
 IMAGE := drtuxwang/$(NAME):$(VERSION)
 

@@ -3,6 +3,7 @@ version: '1.0'
 stages:
 - build
 - package
+- push
 - test
 
 steps:
@@ -49,7 +50,7 @@ steps:
     working_directory: docker/alpine
     dockerfile: Dockerfile-base
   push_alpine_base:
-    stage: package
+    stage: push
     title: Push Alpine base image
     type: push
     registry: dockerhub
@@ -68,12 +69,42 @@ steps:
         working_directory: docker/alpine
         dockerfile: Dockerfile
       build_python:
-        title: Build python image
+        title: Build Python image
         type: build
         image_name: drtuxwang/python
         tag: '3.6'
         working_directory: docker/python
         dockerfile: Dockerfile
+      build_sudo:
+        title: Build Sudo image
+        type: build
+        image_name: drtuxwang/scratch
+        tag: 'latest'
+        working_directory: docker/scratch
+        dockerfile: Dockerfile
+
+  docker_pushes:
+    stage: push
+    type: parallel
+    steps:
+      push_alpine:
+        title: Push Alpine image
+        type: push
+        registry: dockerhub
+        candidate: ${{build_alpine}}
+        tag: '3.8'
+      push_python:
+        title: Push Python image
+        type: push
+        registry: dockerhub
+        candidate: ${{build_python}}
+        tag: '3.6'
+      push_scratch:
+        title: Push Sudo image
+        type: push
+        registry: dockerhub
+        candidate: ${{build_sudo}}
+        tag: 'latest'
 
   python_tests:
     stage: test
