@@ -1,0 +1,117 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    app: node-host
+  name: node-host
+spec:
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+      - command:
+        - /bin/sleep
+        - '86400'
+        env:
+        - name: NAME
+          value: VALUE
+        image: busybox:latest
+        imagePullPolicy: IfNotPresent
+        name: node-host
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024M
+          requests:
+            cpu: 100m
+            memory: 64M
+        volumeMounts:
+        - mountPath: /vol/host/bin
+          name: bin
+        - mountPath: /vol/host/boot
+          name: boot
+        - mountPath: /vol/host/dev
+          name: dev
+        - mountPath: /vol/host/etc
+          name: etc
+        - mountPath: /vol/host/home
+          name: home
+        - mountPath: /vol/host/lib
+          name: lib
+        - mountPath: /vol/host/lib64
+          name: lib64
+        - mountPath: /vol/host/logs
+          name: logs
+        - mountPath: /vol/host/opt
+          name: opt
+        - mountPath: /vol/host/root
+          name: root
+        - mountPath: /vol/host/run
+          name: run
+        - mountPath: /vol/host/sbin
+          name: sbin
+        - mountPath: /vol/host/sys
+          name: sys
+        - mountPath: /vol/host/tmp
+          name: tmp
+        - mountPath: /vol/host/usr
+          name: usr
+        - mountPath: /vol/host/var
+          name: var
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - hostPath:
+          path: /bin
+        name: bin
+      - hostPath:
+          path: /boot
+        name: boot
+      - hostPath:
+          path: /dev
+        name: dev
+      - hostPath:
+          path: /etc
+        name: etc
+      - hostPath:
+          path: /home
+        name: home
+      - hostPath:
+          path: /lib
+        name: lib
+      - hostPath:
+          path: /lib64
+        name: lib64
+      - hostPath:
+          path: /logs
+        name: logs
+      - hostPath:
+          path: /opt
+        name: opt
+      - hostPath:
+          path: /root
+        name: root
+      - hostPath:
+          path: /run
+        name: run
+      - hostPath:
+          path: /sbin
+        name: sbin
+      - hostPath:
+          path: /sys
+        name: sys
+      - hostPath:
+          path: /tmp
+        name: tmp
+      - hostPath:
+          path: /usr
+        name: usr
+      - hostPath:
+          path: /var
+        name: var
