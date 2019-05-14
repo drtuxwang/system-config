@@ -80,7 +80,7 @@ steps:
         type: build
         image_name: drtuxwang/scratch
         tag: 'latest'
-        working_directory: docker/scratch
+        working_directory: docker/sudo
         dockerfile: Dockerfile
 
   docker_pushes:
@@ -99,7 +99,7 @@ steps:
         registry: dockerhub
         candidate: ${{build_python}}
         tag: '3.6'
-      push_scratch:
+      push_sudo:
         title: Push Sudo image
         type: push
         registry: dockerhub
