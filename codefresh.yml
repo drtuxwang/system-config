@@ -75,6 +75,13 @@ steps:
         tag: '3.6'
         working_directory: docker/python
         dockerfile: Dockerfile
+      build_sudo:
+        title: Build Sudo image
+        type: build
+        image_name: drtuxwang/scratch
+        tag: 'latest'
+        working_directory: docker/sudo
+        dockerfile: Dockerfile
 
   docker_pushes:
     stage: push
@@ -92,6 +99,12 @@ steps:
         registry: dockerhub
         candidate: ${{build_python}}
         tag: '3.6'
+      push_sudo:
+        title: Push Sudo image
+        type: push
+        registry: dockerhub
+        candidate: ${{build_sudo}}
+        tag: 'latest'
 
   python_tests:
     stage: test

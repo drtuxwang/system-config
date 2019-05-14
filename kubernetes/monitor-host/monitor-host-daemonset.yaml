@@ -2,8 +2,8 @@ apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
   labels:
-    app: node-host
-  name: node-host
+    app: monitor-host
+  name: monitor-host
 spec:
   selector:
     matchLabels:
@@ -22,7 +22,7 @@ spec:
           value: VALUE
         image: busybox:latest
         imagePullPolicy: IfNotPresent
-        name: node-host
+        name: monitor-host
         resources:
           limits:
             cpu: 1000m
@@ -33,36 +33,55 @@ spec:
         volumeMounts:
         - mountPath: /vol/host/bin
           name: bin
+          readOnly: true
         - mountPath: /vol/host/boot
           name: boot
+          readOnly: true
         - mountPath: /vol/host/dev
           name: dev
+          readOnly: true
         - mountPath: /vol/host/etc
           name: etc
+          readOnly: true
         - mountPath: /vol/host/home
           name: home
+          readOnly: true
         - mountPath: /vol/host/lib
           name: lib
+          readOnly: true
         - mountPath: /vol/host/lib64
           name: lib64
+          readOnly: true
         - mountPath: /vol/host/logs
           name: logs
+          readOnly: true
         - mountPath: /vol/host/opt
           name: opt
+          readOnly: true
+        - mountPath: /vol/host/proc
+          name: proc
+          readOnly: true
         - mountPath: /vol/host/root
           name: root
+          readOnly: true
         - mountPath: /vol/host/run
           name: run
+          readOnly: true
         - mountPath: /vol/host/sbin
           name: sbin
+          readOnly: true
         - mountPath: /vol/host/sys
           name: sys
+          readOnly: true
         - mountPath: /vol/host/tmp
           name: tmp
+          readOnly: true
         - mountPath: /vol/host/usr
           name: usr
+          readOnly: true
         - mountPath: /vol/host/var
           name: var
+          readOnly: true
       nodeSelector:
         beta.kubernetes.io/os: linux
       terminationGracePeriodSeconds: 10
@@ -94,6 +113,9 @@ spec:
       - hostPath:
           path: /opt
         name: opt
+      - hostPath:
+          path: /proc
+        name: proc
       - hostPath:
           path: /root
         name: root
