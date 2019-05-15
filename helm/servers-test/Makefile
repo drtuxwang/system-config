@@ -21,6 +21,17 @@ check:
 		--dry-run \
 		--debug
 
+.PHONY: template
+template:
+	helm template --name=$(CHART_NAME) \
+		--set image.server=$(IMAGE) \
+		--set ingress.server.domain=$(DOMAIN) \
+		.
+
+.PHONY: template
+
+
+
 .PHONY: install
 install:
 	helm install --name=$(CHART_NAME) \
