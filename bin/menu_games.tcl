@@ -13,6 +13,11 @@ frame .small -bg "#cccccc"
     }
     pack .small.frozenbubble -side top
 
+    button .small.hearts -width 10 -bg "#ffcc00" -text "Hearts" -command {
+        exec gnome-hearts &
+    }
+    pack .small.hearts -side top
+
     button .small.mines -width 10 -bg "#ffcc00" -text "Mines" -command {
        exec gnomine &
     }
