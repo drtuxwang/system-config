@@ -239,6 +239,7 @@ class Options:
                 'addonStartup.json.lz4',
                 'extensions',
                 'extensions.json',
+                'extension-preferences.json',
                 'extensions.sqlite',
                 'permissions.sqlite',
                 'prefs.js',
