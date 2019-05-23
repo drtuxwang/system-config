@@ -101,6 +101,8 @@ then
             fi
             ;;
         esac
+        PS1=${PS1//\\h/$MYHNAME}  # Fix uppercase hostnames
+
         case $TERM in
         screen|xterm)
             precmd() {

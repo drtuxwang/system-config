@@ -15,8 +15,8 @@ import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
-RELEASE = '2.1.6'
-VERSION = 20190324
+RELEASE = '2.1.7'
+VERSION = 20190522
 
 
 class Battery:
@@ -307,7 +307,7 @@ class BatteryMac(Battery):
             self._info['id'] = data['id']
             self._info['capacity_max'] = data['DesignCapacity']
             self._info['model_name'] = data['BatterySerialNumber']
-            self._info['oem_name'] = data['Manufacturer']
+            self._info['oem_name'] = data.get('Manufacturer', data['DeviceName'])
             self._info['type'] = data['type']
         except ValueError:
             pass

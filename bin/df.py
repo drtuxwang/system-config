@@ -147,7 +147,7 @@ class Main:
             'df', args=sys.argv[1:], pathextra=['/bin'], errors='stop')
 
         if command_mod.Platform.get_system() == 'macos':
-            subtask_mod.Exec(self._command.get_cmdline() + sys.argv[1:]).run()
+            subtask_mod.Exec(self._command.get_cmdline()).run()
 
         args = sys.argv
         while len(args) > 1:
