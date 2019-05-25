@@ -190,7 +190,7 @@ then
     export WINEDITOR=vi
     ENV=
 
-    if [ "`df --help 2>&1 | grep \" --portability\"`" ]
+    if [ "`(df --help) 2>&1 | grep \" --portability\"`" ]
     then
         alias df="df -k --portability"
     else
