@@ -240,7 +240,7 @@ class Options:
                 'extensions',
                 'extensions.json',
                 'extension-preferences.json',
-                'extensions.sqlite',
+                'handlers.json',
                 'permissions.sqlite',
                 'prefs.js',
                 'storage',
