@@ -305,6 +305,7 @@ then
         else
             alias ls="ls -C -G"
         fi
+        . /usr/local/etc/bash_completion 2> /dev/null
         ;;
 
     Linux|*NT*)
