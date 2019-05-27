@@ -243,10 +243,7 @@ class Main:
                         except ValueError:
                             raise SystemExit(
                                 sys.argv[0] + ': Format error in "' +
-                                os.path.join(
-                                    distribution,
-                                    'packages.ilist'
-                                    ) + '".')
+                                os.path.join(distribution, list_file) + '".')
                         versions[name] = version
         except OSError:
             raise SystemExit(
