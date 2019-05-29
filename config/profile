@@ -190,46 +190,6 @@ then
     export WINEDITOR=vi
     ENV=
 
-    if [ "`(df --help) 2>&1 | grep \" --portability\"`" ]
-    then
-        alias df="df -k --portability"
-    else
-        alias df="df -k"
-    fi
-    alias du="du -k"
-    alias ftp="ftp -i -v"
-    if [ "$BASH" ]
-    then
-        alias h="history 1024"
-    else
-        alias h='fc -l 1 2> /dev/null | tail -1024'
-    fi
-    alias ls="ls -C"
-    alias quota="quota -v"
-    alias rehash='hash -r'
-    alias resize='resize && eval `\\resize`'
-    if [ -x /usr/bin/vim ]
-    then
-        alias vi="vim -N -n -i NONE -T xterm"
-    fi
-    if [ -x /usr/sbin/ping ]
-    then
-        alias ping="/usr/sbin/ping"
-    elif [ -x /usr/etc/ping ]
-    then
-        alias ping="/usr/etc/ping"
-    fi
-    if [ -f $HOME/.ssh/config ]
-    then
-        if [ "`ssh -version 2>&1 | grep \"^OpenSSH_\"`" ]
-        then
-            alias scp="scp -F $HOME/.ssh/config -o ServerAliveInterval=1799"
-        else
-            alias scp="scp -F $HOME/.ssh/config"
-        fi
-    fi
-    unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
-
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if [ ! "$BASE_PATH" ]
     then
@@ -273,13 +233,41 @@ then
         esac
     fi
 
-    # Change to $HOME/Desktop
-    mkdir $HOME/Desktop 2> /dev/null
-    chmod go= $HOME/Desktop $HOME/.ssh $HOME/.??*/* 2> /dev/null
-    if [ "$PWD" = "$HOME" -o "$PWD" = "/" ]
+    # Fix command aliases
+    alias df="df -k"
+    alias du="du -k"
+    alias ftp="ftp -i -v"
+    if [ "$BASH" ]
     then
-        cd "$HOME/Desktop"
+        alias h="history 1024"
+    else
+        alias h='fc -l 1 2> /dev/null | tail -1024'
     fi
+    alias ls="ls -C"
+    alias quota="quota -v"
+    alias rehash='hash -r'
+    alias resize='resize && eval `\\resize`'
+    if [ -x /usr/bin/vim ]
+    then
+        alias vi="vim -N -n -i NONE -T xterm"
+    fi
+    if [ -x /usr/sbin/ping ]
+    then
+        alias ping="/usr/sbin/ping"
+    elif [ -x /usr/etc/ping ]
+    then
+        alias ping="/usr/etc/ping"
+    fi
+    if [ -f $HOME/.ssh/config ]
+    then
+        if [ "`ssh -version 2>&1 | grep \"^OpenSSH_\"`" ]
+        then
+            alias scp="scp -F $HOME/.ssh/config -o ServerAliveInterval=1799"
+        else
+            alias scp="scp -F $HOME/.ssh/config"
+        fi
+    fi
+    unalias cp cd.. d l ll la lsd mv p rm s which 2> /dev/null
 
     # mkinst, cdinst, mksrc, cdsrc, mktest, cdtest, scd
     for _dir in inst src test
@@ -296,9 +284,8 @@ then
     # Platform specific
     case `uname` in
     Darwin)
-        if [ -d /usr/local/opt/coreutils/libexec/gnubin ]
+        if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]
         then
-            export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
             alias ls="ls -C --time-style=long-iso --color=auto"
             alias grep="grep --color=auto"
             alias egrep="egrep --color=auto"
@@ -331,12 +318,21 @@ then
     esac
     export PATH="$HOME/software/scripts:$HOME/software/bin:/opt/software/bin:$PATH"
 
-    # Applying local settings
+    # Change to $HOME/Desktop
+    mkdir $HOME/Desktop 2> /dev/null
+    chmod go= $HOME/Desktop $HOME/.ssh $HOME/.??*/* 2> /dev/null
+    if [ "$PWD" = "$HOME" -o "$PWD" = "/" ]
+    then
+        cd "$HOME/Desktop"
+    fi
+
+    # Applying optional settings
     if [ -f $HOME/.profile-opt ]
     then
         . $HOME/.profile-opt
     fi
 
+    # Shell information
     echo
     MYINFO="$MYSHELL shell (tty=$MYTTY"
     if [ "$SSH_KEYS" != 0 ]

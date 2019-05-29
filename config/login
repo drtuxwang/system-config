@@ -39,7 +39,7 @@ if ( $?TERM && -e "`\tty`" ) then
     setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
     if ( $?tcsh ) then
         setenv MYSHELL "TCSH"
-        set prompt="%{\033[01;32m%}[%P] %{\033[01;34m%}%~%{\n%}%{\033[01;32m%}%n@%m%{\033[00m%} % "
+        set prompt="%{\033[01;32m%}[%P] %{\033[01;34m%}%~%{\n%}%{\033[01;32m%}%n@$MYHNAME%{\033[00m%} % "
     else
         setenv MYSHELL "CSH"
         set prompt="$MYUNAME@${MYHNAME}% "
@@ -92,32 +92,6 @@ if ( $?TERM && -e "`\tty`" ) then
     setenv WINEDITOR vi
 
     set history=1024
-    if ( "`df --help |& grep ' --portability'`" != "" ) then
-        alias df "df -k --portability"
-    else
-        alias df "df -k"
-    endif
-    alias du "du -k"
-    alias ftp "ftp -i -v"
-    alias h history 256
-    alias ls "ls -C"
-    alias quota "quota -v"
-    if ( -x /usr/bin/vim ) then
-        alias vi "vim -N -n -i NONE -T xterm"
-    endif
-    if ( -x /usr/sbin/ping ) then
-        alias ping "/usr/sbin/ping"
-    else if ( -x /usr/etc/ping ) then
-        alias ping "/usr/etc/ping"
-    endif
-    if ( -f "$HOME/.ssh/config" ) then
-        if ( "`\ssh -version |& \grep '^OpenSSH_'`" != "" ) then
-            alias scp "scp -F $HOME/.ssh/config -o ServerAliveInterval=1799"
-        else
-            alias scp "scp -F $HOME/.ssh/config"
-        endif
-    endif
-    unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if ( ! $?BASE_PATH ) then
@@ -143,12 +117,29 @@ if ( $?TERM && -e "`\tty`" ) then
         setenv MANPATH $BASE_MANPATH
     endif
 
-    # Change to $HOME/Desktop
-    mkdir $HOME/Desktop >& /dev/null
-    chmod go= $HOME/Desktop $HOME/.ssh $HOME/.??*/* >& /dev/null
-    if ( "$PWD" == "$HOME" ) then
-        cd "$HOME/Desktop"
+    # Fix command aliases
+    alias df "df -k"
+    alias du "du -k"
+    alias ftp "ftp -i -v"
+    alias h history 256
+    alias ls "ls -C"
+    alias quota "quota -v"
+    if ( -x /usr/bin/vim ) then
+        alias vi "vim -N -n -i NONE -T xterm"
     endif
+    if ( -x /usr/sbin/ping ) then
+        alias ping "/usr/sbin/ping"
+    else if ( -x /usr/etc/ping ) then
+        alias ping "/usr/etc/ping"
+    endif
+    if ( -f "$HOME/.ssh/config" ) then
+        if ( "`\ssh -version |& \grep '^OpenSSH_'`" != "" ) then
+            alias scp "scp -F $HOME/.ssh/config -o ServerAliveInterval=1799"
+        else
+            alias scp "scp -F $HOME/.ssh/config"
+        endif
+    endif
+    unalias cp cd.. d l ll la lsd mv p rm s which >& /dev/null
 
     # mkinst, cdinst, mksrc, cdsrc, mktest, cdtest, scd
     foreach _dir (inst src test)
@@ -163,8 +154,7 @@ if ( $?TERM && -e "`\tty`" ) then
     # Platform specific
     switch (`uname`)
     case Darwin:
-        if ( -d /usr/local/opt/coreutils/libexec/gnubin ) then
-            setenv PATH "/usr/local/opt/coreutils/libexec/gnubin:${PATH}"
+        if ( "`\ls --help |& \grep '^ *--time-style'`" != "" ) then
             alias ls "ls -C --time-style=long-iso --color=auto"
             alias grep "grep --color=auto"
             alias egrep "egrep --color=auto"
@@ -193,11 +183,19 @@ if ( $?TERM && -e "`\tty`" ) then
     endsw
     setenv PATH "$HOME/software/scripts:$HOME/software/bin:/opt/software/bin:$PATH"
 
-    # Applying local settings
-    if ( -f $HOME/.login-local ) then
-        source $HOME/.login-local
+    # Change to $HOME/Desktop
+    mkdir $HOME/Desktop >& /dev/null
+    chmod go= $HOME/Desktop $HOME/.ssh $HOME/.??*/* >& /dev/null
+    if ( "$PWD" == "$HOME" ) then
+        cd "$HOME/Desktop"
     endif
 
+    # Applying optional settings
+    if ( -f $HOME/.login-opt ) then
+        source $HOME/.login-opt
+    endif
+
+    # Shell information
     echo
     setenv MYINFO "$MYSHELL shell (tty=$MYTTY)"
     if ( "$SSH_KEYS" != 0 ) then
