@@ -108,11 +108,10 @@ class Main:
                     sys.argv[0] + ': Cannot copy to same "' +
                     target + '" file.'
                 )
-            else:
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot copy to "' +
-                    target + '" file.'
-                )
+            raise SystemExit(
+                sys.argv[0] + ': Cannot copy to "' +
+                target + '" file.'
+            )
         except OSError as exception:
             if exception.args != (95, 'Operation not supported'):
                 try:

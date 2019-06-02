@@ -17,8 +17,8 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-RELEASE = '2.2.2'
-VERSION = 20190324
+RELEASE = '2.2.3'
+VERSION = 20190602
 
 
 class Command:
@@ -90,7 +90,7 @@ class Command:
                 sys.argv[0] + ': Cannot find required "' +
                 program + '" software.'
             )
-        elif info['errors'] == 'ignore':
+        if info['errors'] == 'ignore':
             return ''
         raise CommandNotFoundError(
             'Cannot find required "' + program + '" software.')
@@ -435,13 +435,13 @@ class Platform:
         )
         try:
             with open(
-                os.path.join(registry_key, 'CurrentVersion'),
-                errors='replace'
+                    os.path.join(registry_key, 'CurrentVersion'),
+                    errors='replace'
             ) as ifile:
                 kernel = ifile.readline()
             with open(
-                os.path.join(registry_key, 'CurrentBuildNumber'),
-                errors='replace'
+                    os.path.join(registry_key, 'CurrentBuildNumber'),
+                    errors='replace'
             ) as ifile:
                 kernel += '.' + ifile.readline()
         except OSError:

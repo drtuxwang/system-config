@@ -57,9 +57,9 @@ class Main:
             with open(configfile, errors='replace') as ifile:
                 try:
                     with open(
-                        configfile + '-new',
-                        'w',
-                        newline='\n'
+                            configfile + '-new',
+                            'w',
+                            newline='\n'
                     ) as ofile:
                         # Disable logging of chats
                         islog = re.compile('log_.*type="bool"')

@@ -130,8 +130,8 @@ class BatteryAcpi(Battery):
         self._state = os.path.join(directory, 'state')
         self._isjunk = re.compile('^.*: *| .*$')
         with open(os.path.join(
-            directory,
-            'info'
+                directory,
+                'info'
         ), errors='replace') as ifile:
             for line in ifile:
                 line = line.rstrip()

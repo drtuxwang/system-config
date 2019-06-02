@@ -95,7 +95,7 @@ class Main:
             if not data:
                 break
             for byte in data:
-                if byte > 31 and byte < 127:
+                if 31 < byte < 127:
                     string += chr(byte)
                 else:
                     if len(string) >= 4:

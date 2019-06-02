@@ -110,8 +110,8 @@ class Backlight:
         """
         try:
             with open(
-                os.path.join(self._device, 'brightness'),
-                errors='replace'
+                    os.path.join(self._device, 'brightness'),
+                    errors='replace'
             ) as ifile:
                 brightness = int(ifile.readline())
         except (OSError, ValueError):

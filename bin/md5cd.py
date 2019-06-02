@@ -106,8 +106,8 @@ class Cdrom:
             for file in ('vendor', 'model'):
                 try:
                     with open(
-                        os.path.join(directory, file),
-                        errors='replace'
+                            os.path.join(directory, file),
+                            errors='replace'
                     ) as ifile:
                         model += ' ' + ifile.readline().strip()
                 except OSError:
@@ -179,7 +179,7 @@ class Main:
                 sys.argv[0] +
                 ': Cannot read from CD/DVD device. Please check permissions.'
             )
-        elif not os.path.isfile(tmpfile):
+        if not os.path.isfile(tmpfile):
             raise SystemExit(
                 sys.argv[0] +
                 ': Cannot find CD/DVD media. Please check drive.'
@@ -193,7 +193,7 @@ class Main:
                 sys.argv[0] +
                 ': Cannot find TOC on CD/DVD media. Disk not recognised.'
             )
-        elif task.get_exitcode():
+        if task.get_exitcode():
             raise SystemExit(
                 sys.argv[0] + ': Error code ' + str(task2.get_exitcode()) +
                 ' received from "' + task2.get_file() + '".'
@@ -216,7 +216,7 @@ class Main:
             md5.update(chunk)
             size += len(chunk)
         pad = int(blocks * 2048 - size)
-        if pad > 0 and pad < 16777216:
+        if 0 < pad < 16777216:
             md5.update(b'\0'*pad)  # Padding
         print(md5.hexdigest(), device, sep='  ')
         time.sleep(1)

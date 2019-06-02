@@ -20,7 +20,7 @@ import subtask_mod
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '3.0.1'
+RELEASE = '3.0.2'
 
 SOCKET_TIMEOUT = 10
 
@@ -286,7 +286,7 @@ class Main:
         for i in range(len(self._email)):
             if not self._email[i]:
                 return
-            elif isemail.match(self._email[i]):
+            if isemail.match(self._email[i]):
                 self._email[i] = self._email[i].split()[0] + ' ' + ', '.join(
                     self._mail_alias([isemail.sub('', self._email[i])]))
 

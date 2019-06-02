@@ -106,9 +106,9 @@ class Main:
                     config.extend(['', 'Host ' + rhost, 'User ' + ruser])
                     try:
                         with open(
-                            configfile + '-new',
-                            'w',
-                            newline='\n'
+                                configfile + '-new',
+                                'w',
+                                newline='\n'
                         ) as ofile:
                             for line in config:
                                 print(line, file=ofile)
@@ -217,8 +217,8 @@ class Main:
 
         try:
             with open(
-                os.path.join(self._sshdir, 'id_rsa.pub'),
-                errors='replace'
+                    os.path.join(self._sshdir, 'id_rsa.pub'),
+                    errors='replace'
             ) as ifile:
                 pubkey = ifile.readline().strip()
         except OSError:

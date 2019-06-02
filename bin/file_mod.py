@@ -13,8 +13,8 @@ import time
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
-RELEASE = '2.2.2'
-VERSION = 20190324
+RELEASE = '2.2.3'
+VERSION = 20190602
 
 
 class FileStat:
@@ -184,7 +184,7 @@ class FileUtil:
                     if not data:
                         break
                     for byte in data:
-                        if byte > 31 and byte < 127:
+                        if 31 < byte < 127:
                             string += chr(byte)
                         else:
                             if len(string) >= 4:

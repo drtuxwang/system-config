@@ -191,7 +191,7 @@ class Main:
 
         file, size, mtime = self._get_file_stat(url, conn)
         if self._check_file(file, size, mtime):
-            print("  => {0:s} [{1:d}/{2:d}]".format(file, size, size))
+            print("  => {0:s} [{1:d}/{1:d}]".format(file, size))
             return
 
         data = {'size': size, 'time': int(mtime)}
@@ -199,7 +199,7 @@ class Main:
 
         if check == 'skip':
             return
-        elif 'Accept-Ranges' in conn.info() and check == 'resume':
+        if 'Accept-Ranges' in conn.info() and check == 'resume':
             tmpsize = os.path.getsize(file + '.part')
             req = urllib.request.Request(url, headers={
                 'Range': 'bytes='+str(tmpsize)+'-',
@@ -244,12 +244,11 @@ class Main:
             reason = exception.reason
             if isinstance(reason, socket.gaierror):
                 raise SystemExit(sys.argv[0] + ': ' + reason.args[1] + '.')
-            elif 'Not Found' in reason:
+            if 'Not Found' in reason:
                 raise SystemExit(sys.argv[0] + ': 404 Not Found.')
-            elif 'Permission denied' in reason:
+            if 'Permission denied' in reason:
                 raise SystemExit(sys.argv[0] + ': 550 Permission denied.')
-            else:
-                raise SystemExit(sys.argv[0] + ': ' + exception.args[0])
+            raise SystemExit(sys.argv[0] + ': ' + exception.args[0])
         except ValueError as exception:
             raise SystemExit(sys.argv[0] + ': ' + exception.args[0])
 

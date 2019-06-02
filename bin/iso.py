@@ -371,21 +371,20 @@ class Main:
                 if not md5sum:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot read "' + image + '" file.')
-                else:
-                    print(md5sum, image, sep='  ')
-                    try:
-                        if image.endswith('.iso'):
-                            with open(
+                print(md5sum, image, sep='  ')
+                try:
+                    if image.endswith('.iso'):
+                        with open(
                                 image[:-4] + '.md5', 'w', newline='\n'
-                            ) as ofile:
-                                print(md5sum + '  ' + image, file=ofile)
-                        else:
-                            with open(
+                        ) as ofile:
+                            print(md5sum + '  ' + image, file=ofile)
+                    else:
+                        with open(
                                 image + '.md5', 'w', newline='\n'
-                            ) as ofile:
-                                print(md5sum + '  ' + image, file=ofile)
-                    except OSError:
-                        return
+                        ) as ofile:
+                            print(md5sum + '  ' + image, file=ofile)
+                except OSError:
+                    return
 
 
 if __name__ == '__main__':

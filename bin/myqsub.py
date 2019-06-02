@@ -17,7 +17,7 @@ import task_mod
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '2.7.9'
+RELEASE = '2.7.10'
 
 
 class Options:
@@ -89,7 +89,7 @@ class Options:
                 sys.argv[0] + ': You must specific a positive integer for '
                 'the number of cpus.'
             )
-        elif self._args.queue[0] not in ('normal', 'express'):
+        if self._args.queue[0] not in ('normal', 'express'):
             raise SystemExit(
                 sys.argv[0] + ': Cannot submit to non-existent queue "' +
                 self._args.queue[0] + '".'
@@ -193,8 +193,7 @@ class Main:
                 else:
                     if task_mod.Tasks.factory().haspid(pid):
                         return
-                    else:
-                        os.remove(lockfile)
+                    os.remove(lockfile)
         except OSError:
             pass
         print('MyQS batch job scheduler not running. Run "myqsd" command.')
