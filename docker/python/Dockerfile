@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.6.8
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

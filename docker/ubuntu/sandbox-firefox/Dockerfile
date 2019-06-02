@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-sandbox:18.04
+FROM drtuxwang/ubuntu-sandbox
 
 # Install WINE packages
 RUN apt-get install --no-install-recommends -y firefox fonts-noto-cjk fonts-noto-hinted && \

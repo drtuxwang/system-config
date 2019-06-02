@@ -1,6 +1,5 @@
 NAME := ubuntu-devpi
-VERSION := 18.04
-IMAGE := drtuxwang/$(NAME):$(VERSION)
+IMAGE := drtuxwang/$(NAME)
 
 # Docker build
 TOPDIR := ../../..

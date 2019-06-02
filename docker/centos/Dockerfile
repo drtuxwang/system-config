@@ -1,4 +1,4 @@
-FROM drtuxwang/centos-base:7
+FROM drtuxwang/centos-base
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

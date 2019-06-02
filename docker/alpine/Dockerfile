@@ -1,4 +1,4 @@
-FROM drtuxwang/alpine-base:3.8
+FROM drtuxwang/alpine-base
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

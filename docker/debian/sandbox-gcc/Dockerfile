@@ -1,4 +1,4 @@
-FROM drtuxwang/debian-sandbox:9
+FROM drtuxwang/debian-sandbox
 
 # Install compiler & dev packages
 RUN apt-get install --no-install-recommends -y \

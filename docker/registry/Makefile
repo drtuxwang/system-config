@@ -1,6 +1,5 @@
 NAME := registry
-VERSION := 2.6
-IMAGE := drtuxwang/$(NAME):$(VERSION)
+IMAGE := drtuxwang/$(NAME)
 
 # Docker build
 TOPDIR := ../..
@@ -44,7 +43,7 @@ run:
 	docker run $(DOCKER_RUN_FLAGS) \
 		--volume=/var/lib/registry:/var/lib/registry \
 		--publish 5000:5000 \
-		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
+		--hostname $(NAME) \
 		--workdir /var/lib/registry \
 		$(IMAGE) ||:
 

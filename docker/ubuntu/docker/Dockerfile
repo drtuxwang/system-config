@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-base:18.04
+FROM drtuxwang/ubuntu-base
 
 # Install Docker package (stable instead of latest)
 RUN apt-get install --no-install-recommends -y \

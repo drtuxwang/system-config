@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-base:18.04
+FROM drtuxwang/ubuntu-base
 
 RUN apt-get install --no-install-recommends -y nginx-light
 

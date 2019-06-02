@@ -1,6 +1,5 @@
 NAME := mongodb
-VERSION := 3.4.14
-IMAGE := drtuxwang/$(NAME):$(VERSION)
+IMAGE := drtuxwang/$(NAME)
 
 # Docker build
 TOPDIR := ../..
@@ -43,7 +42,7 @@ run:
 	docker run $(DOCKER_RUN_FLAGS) \
 		--privileged=true \
 		--publish 27017:27017 \
-		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
+		--hostname $(VERSION) \
 		--workdir /data/db \
 		$(IMAGE) ||:
 

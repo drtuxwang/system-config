@@ -1,6 +1,5 @@
 NAME := oracle-xe
-VERSION := 11.2
-IMAGE := drtuxwang/$(NAME):$(VERSION)
+IMAGE := drtuxwang/$(NAME)
 
 # Docker build
 TOPDIR := ../..
@@ -44,7 +43,7 @@ run:
 		--privileged=true \
 		--publish 8080:8080 \
 		--publish 1521:1521 \
-		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
+		--hostname $(NAME) \
 		$(IMAGE) ||:
 
 .PHONY: run

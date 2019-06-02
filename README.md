@@ -977,17 +977,11 @@ the years. Now most of the scripts are written in Python 3.
  * docker/alpine/Makefile                alpine:3.8 based linux
  * docker/alpine/Dockerfile
  * docker/alpine/Dockerfile-base
- * docker/alpine-i386/Makefile           i386/alpine:3.8 based linux
- * docker/alpine-i386/Dockerfile
- * docker/alpine-i386/Dockerfile-base
+ * docker/alpine32/Makefile              i386/alpine:3.8 based linux
+ * docker/alpine32/Dockerfile
+ * docker/alpine32/Dockerfile-base
  * docker/busybox/Makefile               busybox:1.28 based linux
  * docker/busybox/Dockerfile
- * docker/centos-old/Makefile            centos:6 based linux
- * docker/centos-old/Dockerfile
- * docker/centos-old/Dockerfile-base
- * docker/centos-old/Dockerfile-sandbox
- * docker/centos-old/sandbox-gcc/Makefile  centos:6 based GCC sandbox
- * docker/centos-old/sandbox-gcc/Dockerfile
  * docker/centos/Makefile                centos:7 based linux
  * docker/centos/Dockerfile
  * docker/centos/Dockerfile-base
@@ -996,31 +990,15 @@ the years. Now most of the scripts are written in Python 3.
  * docker/centos/sandbox-gcc/Dockerfile
  * docker/clearlinux/Makefile            clearlinux:latest based linux
  * docker/clearlinux/Dockerfile
- * docker/debian-old/Makefile            debian:8-slim based linux
- * docker/debian-old/Dockerfile
- * docker/debian-old/Dockerfile-base
- * docker/debian-old/Dockerfile-sandbox
- * docker/debian-old/sandbox-gcc/Makefile  debian:8-slim based GCC sandbox
- * docker/debian-old/sandbox-gcc/Dockerfile
  * docker/debian/Makefile                debian:9-slim based linux
  * docker/debian/Dockerfile
  * docker/debian/Dockerfile-base
  * docker/debian/Dockerfile-sandbox
  * docker/debian/sandbox-gcc/Makefile    debian:9-slim based GCC sandbox
  * docker/debian/sandbox-gcc/Dockerfile
- * docker/debian-test/Makefile           debian:testing-slim based linux
- * docker/debian-test/Dockerfile
- * docker/debian-test/Dockerfile-base
- * docker/debian-test/Dockerfile-sandbox
- * docker/debian-test/sandbox-gcc/Makefile  debian:testing-slim based GCC sandbox
- * docker/debian-test/sandbox-gcc/Dockerfile
  * docker/etcd/Makefile                  gcr.io/etcd-development/etcd:v3.2.20 based app
  * docker/etcd/Dockerfile
- * docker/etcd/cluster/Makefile          gcr.io/etcd-development/etcd:v3.2.20 based cluster
- * docker/etcd/cluster/docker-compose.yml
- * docker/etcd/cluster/docker-compose-migrate.yml
- * docker/etcd/cluster/docker-compose-restore.yml
- * docker/golang/Makefile                golang:1.10.4-alpine based compiler app
+ * docker/golang/Makefile                golang:1.11.10-alpine based compiler app
  * docker/golang/Dockerfile
  * docker/jenkins/Makefile               jenkins/jenkins:lts based server app
  * docker/jenkins/Dockerfile
@@ -1028,19 +1006,13 @@ the years. Now most of the scripts are written in Python 3.
  * docker/mongodb/Dockerfile
  * docker/oracle-xe/Makefile             datagrip/oracle:11.2 based database app
  * docker/oracle-xe/Dockerfile
- * docker/python/Makefile                python:3.6 based Python app
+ * docker/python/Makefile                python:3.6.8 based Python app
  * docker/python/Dockerfile
  * docker/registry/Makefile              registry:2.6 based Docker Registry server app
  * docker/registry/Dockerfile
  * docker/registry/files/config.yml
  * docker/sudo/Makefile                  sudo scratch image for jail breaking app
  * docker/sudo/Dockerfile
- * docker/ubuntu-old/Makefile            ubuntu:16.04 based linux
- * docker/ubuntu-old/Dockerfile
- * docker/ubuntu-old/Dockerfile-base
- * docker/ubuntu-old/Dockerfile-sandbox
- * docker/ubuntu-old/sandbox-gcc/Makefile  ubuntu:16.04 based GCC sandbox
- * docker/ubuntu-old/sandbox-gcc/Dockerfile
  * docker/ubuntu/Makefile                ubuntu:18.04 based linux
  * docker/ubuntu/Dockerfile
  * docker/ubuntu/Dockerfile-base
@@ -1062,18 +1034,12 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu/sandbox-python/Makefile
  * docker/ubuntu/sandbox-wine/Makefile   ubuntu:18.04 based Wine sandbox
  * docker/ubuntu/sandbox-wine/Dockerfile
- * docker/ubuntu-i386/Makefile           i386/ubuntu:18.04 based linux
- * docker/ubuntu-i386/Dockerfile
- * docker/ubuntu-i386/Dockerfile-base
- * docker/ubuntu-i386/Dockerfile-sandbox
- * docker/ubuntu-i386/sandbox-gcc/Makefile  i386/ubuntu:18.04 based GCC sandbox
- * docker/ubuntu-i386/sandbox-gcc/Dockerfile
- * docker/ubuntu-test/Makefile           ubuntu:18.10 based linux
- * docker/ubuntu-test/Dockerfile
- * docker/ubuntu-test/Dockerfile-base
- * docker/ubuntu-test/Dockerfile-sandbox
- * docker/ubuntu-test/sandbox-gcc/Makefile  ubuntu:18.10 based GCC sandbox
- * docker/ubuntu-test/sandbox-gcc/Dockerfile
+ * docker/ubuntu32/Makefile              i386/ubuntu:18.04 based linux
+ * docker/ubuntu32/Dockerfile
+ * docker/ubuntu32/Dockerfile-base
+ * docker/ubuntu32/Dockerfile-sandbox
+ * docker/ubuntu32/sandbox-gcc/Makefile  i386/ubuntu:18.04 based GCC sandbox
+ * docker/ubuntu32/sandbox-gcc/Dockerfile
 </pre>
 <pre>
  * kubernetes/servers-test/Makefile      Kubernetes: centos:7 example

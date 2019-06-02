@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-sandbox:18.04
+FROM drtuxwang/ubuntu-sandbox
 
 COPY tmpdir/etc/install-python-requirements.sh tmpdir/etc/python-requirements.txt /etc/
 

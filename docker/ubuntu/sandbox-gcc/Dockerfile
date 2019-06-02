@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-sandbox:18.04
+FROM drtuxwang/ubuntu-sandbox
 
 # Install compiler & dev packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \

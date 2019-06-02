@@ -1,6 +1,6 @@
 BUILD_DIRS := \
 	alpine \
-	alpine-i386 \
+	alpine32 \
 	busybox \
 	centos \
 	clearlinux \
@@ -14,7 +14,7 @@ BUILD_DIRS := \
 	registry \
 	sudo \
 	ubuntu \
-	ubuntu-i386
+	ubuntu32
 
 TEST_DIRS := \
 	python \

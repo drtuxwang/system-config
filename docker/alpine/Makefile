@@ -1,9 +1,8 @@
 NAME := alpine
-VERSION := 3.8
-IMAGE := drtuxwang/$(NAME):$(VERSION)
+IMAGE := drtuxwang/$(NAME)
 
 # Docker build
-BASE_IMAGE := drtuxwang/$(NAME)-base:$(VERSION)
+BASE_IMAGE := drtuxwang/$(NAME)-base
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
@@ -49,7 +48,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
+		--hostname $(NAME) \
 		$(IMAGE) \
 		$(DOCKER_RUN_COMMAND) \
 		||:

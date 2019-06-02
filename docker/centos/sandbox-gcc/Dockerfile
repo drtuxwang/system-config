@@ -1,4 +1,4 @@
-FROM drtuxwang/centos-sandbox:7
+FROM drtuxwang/centos-sandbox
 
 # Install compiler & dev packages
 RUN yum -y install \

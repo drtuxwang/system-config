@@ -1,10 +1,9 @@
-NAME := ubuntu
-VERSION := 18.04-i386
-IMAGE := drtuxwang/$(NAME):$(VERSION)
+NAME := ubuntu32
+IMAGE := drtuxwang/$(NAME)
 
 # Docker build
-BASE_IMAGE := drtuxwang/$(NAME)-base:$(VERSION)
-SANDBOX_IMAGE := drtuxwang/$(NAME)-sandbox:$(VERSION)
+BASE_IMAGE := drtuxwang/$(NAME)-base
+SANDBOX_IMAGE := drtuxwang/$(NAME)-sandbox
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
@@ -56,7 +55,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
+		--hostname $(NAME) \
 		$(IMAGE) \
 		$(DOCKER_RUN_COMMAND) \
 		||:

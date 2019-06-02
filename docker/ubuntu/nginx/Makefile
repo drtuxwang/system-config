@@ -1,6 +1,5 @@
 NAME := ubuntu-nginx
-VERSION := 18.04
-IMAGE := drtuxwang/$(NAME):$(VERSION)
+IMAGE := drtuxwang/$(NAME)
 
 # Docker build
 ifndef DOCKER_BUILD_FLAGS
@@ -42,7 +41,7 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
 		--publish $(LOCALPORT):80 \
-		--hostname $(shell echo $(NAME) | sed -e "s/-/-$(VERSION)-/;s/[.]//g") \
+		--hostname $(NAME) \
 		--workdir /var/lib/nginx \
 		$(IMAGE) \
 		||:

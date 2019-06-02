@@ -1,6 +1,5 @@
 NAME := etcd
-VERSION := 3.2.20
-IMAGE := drtuxwang/$(NAME):$(VERSION)
+IMAGE := drtuxwang/$(NAME)
 
 # Docker build
 TOPDIR := ../..
@@ -47,7 +46,7 @@ run:
 		--env ETCDCTL_API=2 \
 		--publish 2379:2379 \
 		--publish 2380:2380 \
-		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
+		--hostname $(NAME) \
 		--workdir /var/lib/etcd \
 		$(IMAGE) \
 			etcd \

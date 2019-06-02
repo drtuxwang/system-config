@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-base:18.04
+FROM drtuxwang/ubuntu-base
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

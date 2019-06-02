@@ -1,6 +1,5 @@
 NAME := scratch
-VERSION := latest
-IMAGE := drtuxwang/$(NAME):$(VERSION)
+IMAGE := drtuxwang/$(NAME)
 
 # Docker build
 ifndef DOCKER_BUILD_FLAGS
