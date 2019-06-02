@@ -15,8 +15,8 @@ import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
-RELEASE = '2.1.7'
-VERSION = 20190522
+RELEASE = '2.1.8'
+VERSION = 20190525
 
 
 class Battery:
@@ -336,7 +336,8 @@ class BatteryMac(Battery):
             elif data['IsCharging'] == 'Yes':
                 self._info['charge'] = '+'
                 self._info['rate'] = int(
-                    int(data['MaxCapacity'] - int(self._info['capacity'])) /
+                    int(data['MaxCapacity']) -
+                    int(self._info['capacity']) /
                     hours
                 )
             else:
