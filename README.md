@@ -996,7 +996,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/debian/Dockerfile-sandbox
  * docker/debian/sandbox-gcc/Makefile    debian:9-slim based GCC sandbox
  * docker/debian/sandbox-gcc/Dockerfile
- * docker/etcd/Makefile                  gcr.io/etcd-development/etcd:v3.2.20 based app
+ * docker/etcd/Makefile                  k8s.gcr.io/etcd:3.3.10 based app
  * docker/etcd/Dockerfile
  * docker/golang/Makefile                golang:1.11.10-alpine based compiler app
  * docker/golang/Dockerfile
