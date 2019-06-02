@@ -107,7 +107,7 @@ class Main:
                     sys.argv[0] + ': Unsafe to extract file with absolute '
                     'path outside of current directory.'
                 )
-            elif file.startswith(os.pardir):
+            if file.startswith(os.pardir):
                 raise SystemExit(
                     sys.argv[0] + ': Unsafe to extract file with relative '
                     'path outside of current directory.'
