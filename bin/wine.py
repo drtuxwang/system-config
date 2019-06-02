@@ -118,23 +118,23 @@ class Main:
         xrandr = command_mod.Command('xrandr', errors='stop')
         task = subtask_mod.Batch(xrandr.get_cmdline())
         task.run(pattern='^  ')
-        resolution = 0
+        orig_resolution = 0
         for line in task.get_output():
             if '*' in line:
                 break
-            resolution += 1
+            orig_resolution += 1
 
         subtask_mod.Task(wine.get_cmdline()).run()
 
         task = subtask_mod.Batch(xrandr.get_cmdline())
         task.run(pattern='^  ')
-        resolution = 0
+        new_resolution = 0
         for line in task.get_output():
             if '*' in line:
                 break
-            resolution += 1
-        if resolution:
-            xrandr.set_args(['-s', str(resolution)])
+            new_resolution += 1
+        if new_resolution != orig_resolution:
+            xrandr.set_args(['-s', str(orig_resolution)])
             subtask_mod.Batch(xrandr.get_cmdline()).run()
 
 
