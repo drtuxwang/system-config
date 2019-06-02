@@ -27,6 +27,7 @@ import signal
 import sys
 
 import requests
+import urllib3
 
 import config_mod
 
@@ -37,7 +38,7 @@ if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
 # Effects Go array size and huge number can crash Registry
 MAXREPO = "9999"
 
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class Options:
