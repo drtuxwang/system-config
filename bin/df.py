@@ -126,7 +126,7 @@ class Main:
                 device, blocks, used, avail, ratio, directory = (
                     thread.get_output().split()[-6:])
                 if int(blocks) != 0:
-                    if device in devices:  # Map UUID to device
+                    if devices.get(device):  # Map UUID to device
                         device = devices[device]
                     if len(device) > 15:
                         print(device)
