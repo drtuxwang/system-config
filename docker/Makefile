@@ -2,12 +2,9 @@ BUILD_DIRS := \
 	alpine \
 	alpine-i386 \
 	busybox \
-	centos-old \
 	centos \
 	clearlinux \
-	debian-old \
 	debian \
-	debian-test \
 	etcd \
 	golang \
 	jenkins \
@@ -16,10 +13,8 @@ BUILD_DIRS := \
 	python \
 	registry \
 	sudo \
-	ubuntu-old \
 	ubuntu \
-	ubuntu-i386 \
-	ubuntu-test
+	ubuntu-i386
 
 TEST_DIRS := \
 	python \
