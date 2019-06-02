@@ -28,7 +28,6 @@ read_requirements() {
 
 install_packages() {
     umask 022
-    $INSTALL --upgrade pip 2>&1 | grep -v "Requirement already up-to-date:"
     $INSTALL $REQUIREMENTS 2>&1 | grep -v "Requirement already satisfied:"
     return ${PIPESTATUS[0]}
 }

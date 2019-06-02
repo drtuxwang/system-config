@@ -1,2 +1,0 @@
-pygame==None
-Pillow>=5.2.0
