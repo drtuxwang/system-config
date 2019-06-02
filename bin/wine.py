@@ -133,7 +133,7 @@ class Main:
             if '*' in line:
                 break
             resolution += 1
-        if resolution != resolution:
+        if resolution:
             xrandr.set_args(['-s', str(resolution)])
             subtask_mod.Batch(xrandr.get_cmdline()).run()
 
