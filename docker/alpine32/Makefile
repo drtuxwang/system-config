@@ -48,7 +48,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname $(shell echo $(NAME) | sed -e "s/[.]//g") \
+		--hostname $(NAME) \
 		$(IMAGE) \
 		$(DOCKER_RUN_COMMAND) \
 		||:
