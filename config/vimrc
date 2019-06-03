@@ -67,3 +67,6 @@ autocmd Filetype python call SetPython()
 function SetPython()
     match OverLength /\%80v.\+/
 endfunction
+
+" Replace &nbsp; with proper space
+autocmd BufWritePre * %s/\%u00a0/\ /ge
