@@ -15,8 +15,8 @@ import sys
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
-RELEASE = '2.3.2'
-VERSION = 20190324
+RELEASE = '2.3.3'
+VERSION = 20190602
 
 
 class _System:
@@ -130,7 +130,7 @@ class Desktop:
         """
         command = ['ps', '-o', 'args', '-u', getpass.getuser()]
         lines = _System.run_program(command)
-        names = set([os.path.basename(line.split()[0]) for line in lines])
+        names = set(os.path.basename(line.split()[0]) for line in lines)
 
         if 'xfce4-session' in names:
             return 'xfce'

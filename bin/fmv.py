@@ -125,7 +125,7 @@ class Main:
                     sys.argv[0] + ': Cannot safely overwrite "' + target +
                     '" target directory.'
                 )
-            elif os.path.isfile(target):
+            if os.path.isfile(target):
                 if not self._options.get_overwrite_flag():
                     raise SystemExit(
                         sys.argv[0] + ': Cannot safely overwrite "' + target +
@@ -154,7 +154,7 @@ class Main:
                 sys.argv[0] + ': Cannot safely overwrite "' + target +
                 '" target directory.'
             )
-        elif os.path.isfile(target):
+        if os.path.isfile(target):
             if not self._options.get_overwrite_flag():
                 raise SystemExit(
                     sys.argv[0] + ': Cannot safely overwrite "' + target +
@@ -169,11 +169,10 @@ class Main:
                     sys.argv[0] + ': Cannot rename "' + source +
                     '" source directory.'
                 )
-            else:
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot rename "' + source +
-                    '" source file.'
-                )
+            raise SystemExit(
+                sys.argv[0] + ': Cannot rename "' + source +
+                '" source file.'
+            )
 
     def run(self):
         """

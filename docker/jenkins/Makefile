@@ -1,6 +1,5 @@
 NAME := jenkins
-VERSION := lts
-IMAGE := drtuxwang/$(NAME):$(VERSION)
+IMAGE := drtuxwang/$(NAME)
 
 # Docker build
 TOPDIR := ../..
@@ -47,7 +46,7 @@ run:
 		--privileged=true \
 		--volume=/var/lib/jenkins:/var/lib/jenkins \
 		--publish $(LOCALPORT):8080 \
-		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
+		--hostname $(NAME) \
 		--workdir /var/lib/jenkins \
 		$(IMAGE) ||:
 

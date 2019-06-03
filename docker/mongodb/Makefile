@@ -42,7 +42,7 @@ run:
 	docker run $(DOCKER_RUN_FLAGS) \
 		--privileged=true \
 		--publish 27017:27017 \
-		--hostname $(VERSION) \
+		--hostname $(NAME) \
 		--workdir /data/db \
 		$(IMAGE) ||:
 

@@ -110,7 +110,7 @@ class Main:
         if options.get_ascii_flag():
             line = ' '
             for byte in data:
-                if byte > 31 and byte < 127:
+                if 31 < byte < 127:
                     line += '   ' + chr(byte)
                 elif byte == 10:
                     line += r'  \n'

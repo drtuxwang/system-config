@@ -165,8 +165,8 @@ class Cdrom:
             for file in ('vendor', 'model'):
                 try:
                     with open(
-                        os.path.join(directory, file),
-                        errors='replace'
+                            os.path.join(directory, file),
+                            errors='replace'
                     ) as ifile:
                         model += ' ' + ifile.readline().strip()
                 except OSError:
@@ -309,7 +309,7 @@ class Main:
                     sys.argv[0] +
                     ': Cannot find Audio CD media. Please check drive.'
                 )
-            elif task.get_exitcode():
+            if task.get_exitcode():
                 raise SystemExit(
                     sys.argv[0] + ': Error code ' + str(task2.get_exitcode()) +
                     ' received from "' + task2.get_file() + '".'

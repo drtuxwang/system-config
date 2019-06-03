@@ -91,7 +91,7 @@ class Options:
                     sys.argv[0] +
                     ': Source or target cannot both be local device/file.'
                 )
-            elif not os.path.exists(source):
+            if not os.path.exists(source):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + source +
                     '" device or file.'

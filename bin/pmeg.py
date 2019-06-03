@@ -117,7 +117,7 @@ class Main:
         if not task.has_output():
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + file + '" picture file.')
-        elif task.get_exitcode():
+        if task.get_exitcode():
             raise SystemExit(
                 sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                 ' received from "' + task.get_file() + '".'

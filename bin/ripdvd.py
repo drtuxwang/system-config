@@ -129,8 +129,8 @@ class Cdrom:
             for file in ('vendor', 'model'):
                 try:
                     with open(
-                        os.path.join(directory, file),
-                        errors='replace'
+                            os.path.join(directory, file),
+                            errors='replace'
                     ) as ifile:
                         model += ' ' + ifile.readline().strip()
                 except OSError:

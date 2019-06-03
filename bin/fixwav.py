@@ -143,7 +143,7 @@ class Main:
                 sys.argv[0] + ': Cannot read corrupt "' + file +
                 '" wave file.'
             )
-        elif task.get_exitcode():
+        if task.get_exitcode():
             raise SystemExit(
                 sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                 ' received from "' + task.get_file() + '".'
@@ -164,7 +164,7 @@ class Main:
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
-            elif file[-4:] != '.wav':
+            if file[-4:] != '.wav':
                 raise SystemExit(
                     sys.argv[0] + ': Cannot handle "' + file +
                     '" non-wave file.'

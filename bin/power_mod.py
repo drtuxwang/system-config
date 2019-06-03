@@ -15,8 +15,8 @@ import sys
 if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
 
-RELEASE = '2.1.8'
-VERSION = 20190525
+RELEASE = '2.1.9'
+VERSION = 20190602
 
 
 class Battery:
@@ -130,8 +130,8 @@ class BatteryAcpi(Battery):
         self._state = os.path.join(directory, 'state')
         self._isjunk = re.compile('^.*: *| .*$')
         with open(os.path.join(
-            directory,
-            'info'
+                directory,
+                'info'
         ), errors='replace') as ifile:
             for line in ifile:
                 line = line.rstrip()
@@ -307,7 +307,10 @@ class BatteryMac(Battery):
             self._info['id'] = data['id']
             self._info['capacity_max'] = data['DesignCapacity']
             self._info['model_name'] = data['BatterySerialNumber']
-            self._info['oem_name'] = data.get('Manufacturer', data['DeviceName'])
+            self._info['oem_name'] = data.get(
+                'Manufacturer',
+                data['DeviceName'],
+            )
             self._info['type'] = data['type']
         except ValueError:
             pass

@@ -16,7 +16,7 @@ import subtask_mod
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-RELEASE = '2.7.6'
+RELEASE = '2.7.7'
 
 
 class Options:
@@ -125,8 +125,8 @@ class Main:
 
         try:
             with open(
-                os.path.join(self._myqsdir, self._jobid + '.r'),
-                errors='replace'
+                    os.path.join(self._myqsdir, self._jobid + '.r'),
+                    errors='replace'
             ) as ifile:
                 info = {}
                 for line in ifile:
@@ -165,8 +165,8 @@ class Main:
     def _start(self):
         try:
             with open(
-                os.path.join(self._myqsdir, self._jobid + '.r'),
-                errors='replace'
+                    os.path.join(self._myqsdir, self._jobid + '.r'),
+                    errors='replace'
             ) as ifile:
                 info = {}
                 for line in ifile:

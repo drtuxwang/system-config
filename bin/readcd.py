@@ -158,8 +158,8 @@ class Cdrom:
             for file in ('vendor', 'model'):
                 try:
                     with open(
-                        os.path.join(directory, file),
-                        errors='replace'
+                            os.path.join(directory, file),
+                            errors='replace'
                     ) as ifile:
                         model += ' ' + ifile.readline().strip()
                 except OSError:
@@ -267,12 +267,12 @@ class Main:
                 sys.argv[0] + ': Cannot read from CD/DVD device. '
                 'Please check permissions.'
             )
-        elif not os.path.isfile(file):
+        if not os.path.isfile(file):
             raise SystemExit(
                 sys.argv[0] +
                 ': Cannot find CD/DVD media. Please check drive.'
             )
-        elif task.get_exitcode():
+        if task.get_exitcode():
             raise SystemExit(
                 sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                 ' received from "' + task.get_file() + '".'
@@ -286,7 +286,7 @@ class Main:
                 sys.argv[0] + ': Cannot find TOC on CD/DVD media. '
                 'Disk not recognised.'
             )
-        elif task.get_exitcode():
+        if task.get_exitcode():
             raise SystemExit(
                 sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                 ' received from "' + task.get_file() + '".'
@@ -315,7 +315,7 @@ class Main:
                 'Please check drive.'
             )
         pad = int(blocks * 2048 - os.path.getsize(file))
-        if pad > 0 and pad < 16777216:
+        if 0 < pad < 16777216:
             print(pad, 'bytes flushing from CD/DVD prefetch bug...')
             with open(file, 'ab') as ofile:
                 ofile.write(b"\0" * pad)
@@ -407,8 +407,7 @@ class Main:
                 if not md5sum:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot read "' + file + '" file.')
-                else:
-                    print(md5sum, file, sep='  ')
+                print(md5sum, file, sep='  ')
             time.sleep(1)
             eject = command_mod.Command('eject', errors='ignore')
             if eject.is_found():

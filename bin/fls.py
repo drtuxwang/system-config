@@ -161,7 +161,6 @@ class Main:
                     glob.glob(file_stat.get_file() + '.*') +
                     glob.glob(file_stat.get_file() + '*')
                 ))
-        return
 
     @staticmethod
     def _sorted(options, file_stats):

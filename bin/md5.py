@@ -134,27 +134,26 @@ class Main:
                     sys.argv[0] + ': Cannot find "' + md5file +
                     '" md5sum file.'
                 )
-            else:
-                try:
-                    with open(md5file, errors='replace') as ifile:
-                        for line in ifile:
-                            md5sum = line[:32]
-                            file = line.rstrip()[34:]
-                            if len(md5sum) == 32 and file:
-                                found.append(file)
-                                nfiles += 1
-                                test = self._md5sum(file)
-                                if not test:
-                                    print(file, '# FAILED open or read')
-                                    nmiss += 1
-                                elif test != md5sum:
-                                    print(file, '# FAILED checksum')
-                                    nfail += 1
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + md5file +
-                        '" md5sum file.'
-                    )
+            try:
+                with open(md5file, errors='replace') as ifile:
+                    for line in ifile:
+                        md5sum = line[:32]
+                        file = line.rstrip()[34:]
+                        if len(md5sum) == 32 and file:
+                            found.append(file)
+                            nfiles += 1
+                            test = self._md5sum(file)
+                            if not test:
+                                print(file, '# FAILED open or read')
+                                nmiss += 1
+                            elif test != md5sum:
+                                print(file, '# FAILED checksum')
+                                nfail += 1
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot read "' + md5file +
+                    '" md5sum file.'
+                )
         if nmiss > 0:
             print("md5: Cannot find", nmiss, "of", nfiles, "listed files.")
         if nfail > 0:

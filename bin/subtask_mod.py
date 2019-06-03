@@ -15,8 +15,8 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-RELEASE = '2.1.6'
-VERSION = 20190324
+RELEASE = '2.1.7'
+VERSION = 20190602
 
 BUFFER_SIZE = 131072
 
@@ -371,10 +371,9 @@ class Batch(Task):
                 raise OutputWriteError(
                     'Cannot append to "' + file + '" output file.'
                 )
-            else:
-                raise OutputWriteError(
-                    'Cannot create "' + file + '" output file.'
-                )
+            raise OutputWriteError(
+                'Cannot create "' + file + '" output file.'
+            )
 
     def _batch_run(self, cmdline, info):
         child = self._start_child(cmdline, info)

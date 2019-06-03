@@ -108,7 +108,7 @@ class Main:
         if len(task.get_output()) != 2:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + file + '" DEB file.')
-        elif task.get_exitcode():
+        if task.get_exitcode():
             raise SystemExit(
                 sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                 ' received from "' + task.get_file() + '".'

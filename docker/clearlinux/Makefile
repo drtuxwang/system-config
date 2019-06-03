@@ -1,6 +1,6 @@
 NAME := clearlinux
 VERSION := latest
-IMAGE := drtuxwang/$(NAME):$(VERSION)
+IMAGE := drtuxwang/$(NAME)
 
 # Docker build
 TOPDIR := ../..
@@ -46,7 +46,7 @@ build:
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname $(shell echo $(NAME)-$(VERSION) | sed -e "s/[.]//g") \
+		--hostname $(NAME) \
 		$(IMAGE) \
 		$(DOCKER_RUN_COMMAND) \
 		||:

@@ -55,7 +55,7 @@ class Options:
                     sys.argv[0] + ': Source directory "' + directory +
                     '" does not exist.'
                 )
-            elif os.path.samefile(directory, os.getcwd()):
+            if os.path.samefile(directory, os.getcwd()):
                 raise SystemExit(
                     sys.argv[0] + ': Source directory "' + directory +
                     '" cannot be current directory.'
