@@ -1,25 +1,37 @@
+    title: Cloning main repository
+    type: git-clone
+    repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
+    revision: "${{CF_REVISION}"
 version: '1.0'
 
 stages:
+- default
 - build
 - package
 - push
 - test
 
 steps:
+  main_clone:
+    title: Cloning main repository
+    type: git-clone
+    repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
+    revision: "${{CF_REVISION}"
 
+  setup_config:
+    title: Setup configurations
+    stage: default
+    image: codefresh/cli:latest
+    entry_point: /bin/sh
+    commands:
+    - ls -ld ${{CF_VOLUME_PATH}}/* ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/*
+    - env | grep ^CF_ | sort
+    - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
+ 
   preparations:
     stage: build
     type: parallel
     steps:
-      setup_config:
-        title: Setup configurations
-        image: codefresh/cli:latest
-        entry_point: /bin/sh
-        commands:
-        - ls -ld ${{CF_VOLUME_PATH}}/* ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/*
-        - env | grep ^CF_ | sort
-        - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
       create_alpine_deps:
         title: Build Alpine dependencies
         image: codefresh/cli:latest
