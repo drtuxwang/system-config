@@ -1056,6 +1056,7 @@ the years. Now most of the scripts are written in Python 3.
 <pre>
  * helm/Makefile
  * docker/ubuntu-test/Makefile           Install tiller
+ * helm/chartmuseum/Makefile             Helm Chart: Chart Museum
  * helm/concourse/Makefile               Helm Chart: Concourse-ci
  * helm/concourse/values.yml
  * helm/servers-test/Makefile            Helm Chart: Servers test
