@@ -10,15 +10,17 @@ default: status
 
 .PHONY: check
 check:
+	helm repo add stable https://kubernetes-charts.storage.googleapis.com
 	helm install -n $(CHART_NAME) \
 		--namespace=$(NAMESPACE) \
-		--set persistence.enabled=false s\
-		table/concourse \
+		--set persistence.enabled=false \
+		stable/concourse \
 		--dry-run \
 		--debug
 
 .PHONY: install
 install:
+	helm repo add stable https://kubernetes-charts.storage.googleapis.com
 	helm install -n $(CHART_NAME) \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
