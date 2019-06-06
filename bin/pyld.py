@@ -186,7 +186,7 @@ class Options:
             self._library_path = []
 
 
-# pylint: disable = too-few-public-methods
+# pylint: disable = too-few-public-methods,no-value-for-parameter
 class ArgparseVerboseAction(argparse.Action):
     """
     Arg parser verbose action handler class
@@ -195,7 +195,7 @@ class ArgparseVerboseAction(argparse.Action):
     def __call__(self, parser, args, values, option_string=None):
         # option_string must be '-pyldv', '-pyldvv' or '-pldyvvv'
         setattr(args, self.dest, len(option_string[5:]))
-# pylint: enable = too-few-public-methods
+# pylint: enable = too-few-public-methods,no-value-for-parameter
 
 
 class PythonLoader:
@@ -237,9 +237,9 @@ class PythonLoader:
             return main
 
         # Old Python 3.3/3.4 method
-        # pylint: disable=deprecated-method
+        # pylint: disable = deprecated-method, no-value-for-parameter
         return loader.load_module()
-        # pylint: enable=deprecated-method
+        # pylint: enable = deprecated-method, no-value-for-parameter
 
     def run(self):
         """

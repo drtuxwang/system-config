@@ -24,10 +24,10 @@ if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
 
 MAX_DISTANCE_IDENTICAL = 6
 
-# pylint: disable=invalid-name
+# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable=invalid-name
+# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)

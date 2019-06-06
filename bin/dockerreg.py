@@ -37,9 +37,9 @@ if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
 # Effects Go array size and huge number can crash Registry
 MAXREPO = "9999"
 
-# pylint: disable=no-member
+# pylint: disable = no-member
 requests.packages.urllib3.disable_warnings()
-# pylint: enable=no-member
+# pylint: enable = no-member
 
 
 class Options:
