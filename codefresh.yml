@@ -27,6 +27,7 @@ steps:
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
 
   preparations:
+    title: Prepare for build
     stage: build
     type: parallel
     steps:
@@ -68,6 +69,7 @@ steps:
     tag: '3.8'
 
   docker_builds:
+    title: Package Docker images
     stage: package
     type: parallel
     steps:
@@ -94,6 +96,7 @@ steps:
         dockerfile: Dockerfile
 
   docker_pushes:
+    title: Push Docker images
     stage: push
     type: parallel
     steps:
@@ -117,6 +120,7 @@ steps:
         tag: 'latest'
 
   python_tests:
+    title: Run Python tests
     stage: test
     title: Run tests
     image: ${{build_python}}
