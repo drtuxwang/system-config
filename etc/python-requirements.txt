@@ -30,7 +30,7 @@ numpy>=1.15.4
 paramiko>=2.3.3
 pep8==1.7.0
 pycrypto>=2.6.1
-pyparsing>=2.3.1
+pyparsing==2.2.2
 pyflakes>=1.6.0
 Pillow>=5.4.1
 pip>=19.1.1
