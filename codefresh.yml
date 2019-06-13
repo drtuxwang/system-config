@@ -122,7 +122,6 @@ steps:
   python_tests:
     title: Run Python tests
     stage: test
-    title: Run tests
     image: ${{build_python}}
     commands:
     - make install test
