@@ -58,7 +58,7 @@ steps:
     title: Build Alpine base image
     type: build
     image_name: drtuxwang/alpine-base
-    tag: '3.8'
+    tag: 'latest'
     working_directory: docker/alpine
     dockerfile: Dockerfile-base
   push_alpine_base:
@@ -67,7 +67,7 @@ steps:
     type: push
     registry: dockerhub
     candidate: ${{build_alpine_base}}
-    tag: '3.8'
+    tag: 'latest'
 
   docker_builds:
     title: Package Docker images
@@ -78,14 +78,14 @@ steps:
         title: Build Alpine image
         type: build
         image_name: drtuxwang/alpine
-        tag: '3.8'
+        tag: 'latest'
         working_directory: docker/alpine
         dockerfile: Dockerfile
       build_python:
         title: Build Python image
         type: build
         image_name: drtuxwang/python
-        tag: '3.6'
+        tag: 'latest'
         working_directory: docker/python
         dockerfile: Dockerfile
       build_sudo:
@@ -106,13 +106,13 @@ steps:
         type: push
         registry: dockerhub
         candidate: ${{build_alpine}}
-        tag: '3.8'
+        tag: 'latest'
       push_python:
         title: Push Python image
         type: push
         registry: dockerhub
         candidate: ${{build_python}}
-        tag: '3.6'
+        tag: 'latest'
       push_sudo:
         title: Push Sudo image
         type: push
