@@ -14,7 +14,7 @@ steps:
     type: git-clone
     repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
     revision: "${{CF_REVISION}"
-    git: github-drtuxwang
+    git: drtuxwang
 
   setup_config:
     title: Setup configurations
@@ -25,6 +25,7 @@ steps:
     - ls -ld ${{CF_VOLUME_PATH}}/* ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/*
     - env | grep ^CF_ | sort
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
+    - codefresh get contexts
 
   preparations:
     title: Prepare for build
