@@ -14,7 +14,7 @@ steps:
     type: git-clone
     repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
     revision: "${{CF_REVISION}"
-    git: github
+    git: github-drtuxwang
 
   setup_config:
     title: Setup configurations
@@ -122,7 +122,6 @@ steps:
   python_tests:
     title: Run Python tests
     stage: test
-    title: Run tests
     image: ${{build_python}}
     commands:
     - make install test
