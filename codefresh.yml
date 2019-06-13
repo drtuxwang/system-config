@@ -13,7 +13,7 @@ steps:
     stage: default
     type: git-clone
     repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
-    revision: "${{CF_REVISION}"
+    revision: "${{CF_REVISION}}"
     git: drtuxwang
 
   setup_config:
