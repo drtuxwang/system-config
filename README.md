@@ -658,6 +658,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/thunderbird        thunderbird wrapper (allowing non systems port)
  * bin/thunderbird.bat
  * bin/thunderbird.py
+ * bin/tiller             Tiller wrapper (for Kubernetes)
+ * bin/tiller.py
  * bin/tinyproxy          tinyproxy wrapper (allowing non systems port)
  * bin/tinyproxy.py
 </pre>
