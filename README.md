@@ -187,8 +187,6 @@ the years. Now most of the scripts are written in Python 3.
 <pre>
  * bin/dep                dep wrapper (for golang)
  * bin/dep.py
- * bin/df                 df wrapper (allowing non systems port)
- * bin/df.py              (KB default and fix format problems)
  * bin/dockerreg          Docker Registry tool
  * bin/dockerreg.bat
  * bin/dockerreg.py
