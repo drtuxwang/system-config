@@ -5,7 +5,7 @@ were started Bourne shell scripts started during my University days and continuo
 the years. Now most of the scripts are written in Python 3.
 ---
 <pre>
- * Jenkinsfile            Jenkins pipeline configuration file
+ * Jnkinsfile            Jenkins pipeline configuration file
  * codefresh.yaml         Codefresh pipeline configuration file
  * Makefile               Makefile for testing
  * bin/command_mod.py     Python command line handling module
@@ -189,8 +189,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/dep.py
  * bin/df                 df wrapper (allowing non systems port)
  * bin/df.py              (KB default and fix format problems)
- * bin/dhcptable          Shows local DHCP hosts
- * bin/dhcptable.py
  * bin/dockerreg          Docker Registry tool
  * bin/dockerreg.bat
  * bin/dockerreg.py
