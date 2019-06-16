@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu32-base
+FROM drtuxwang/alpine
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

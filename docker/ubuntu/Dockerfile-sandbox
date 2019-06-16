@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-base
+FROM drtuxwang/ubuntu
 
 # Install sandbox environment packages
 RUN apt-get install --no-install-recommends -y \

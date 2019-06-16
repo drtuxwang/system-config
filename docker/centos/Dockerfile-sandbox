@@ -1,4 +1,4 @@
-FROM drtuxwang/centos-base
+FROM drtuxwang/centos
 
 # Install sandbox environment packages
 RUN yum -y install mesa-libGL SDL tmux wget xorg-x11-server-utils xorg-x11-xauth && \

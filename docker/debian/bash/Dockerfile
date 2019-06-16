@@ -1,4 +1,4 @@
-FROM drtuxwang/debian-base
+FROM drtuxwang/debian
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

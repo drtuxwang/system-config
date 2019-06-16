@@ -1,12 +1,11 @@
-NAME := clearlinux
+NAME := alpine-bash
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
-TOPDIR := ../..
+TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
-BUILD_DIRS := bash
 
 # Docker run
 DOCKER_RUN_FLAGS := --rm \
@@ -26,30 +25,28 @@ endif
 default: build
 	docker images
 
-.PHONY: pull
-pull:
-	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
-
 .PHONY: build
 build:
+	rm -rf tmpdir
+	mkdir -p tmpdir/bin tmpdir/root
+	cp -p $(TOPDIR)/bin/* tmpdir/bin/
+	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
+	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
+	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
-	for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR build || exit 1; \
-	done
+	rm -rf tmpdir
 
 .PHONY: run
 run:
-	DOCKER_BUILD_FLAGS="$(DOCKER_BUILD_FLAGS)" make -C bash run
+	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
+	docker run $(DOCKER_RUN_FLAGS) --hostname $(NAME) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /usr/share/clear/version 2> /dev/null | awk '{print $1}' | sed -e "s@^@$(shell pwd): Clear Linux @"
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
+		sed -e "s@^@$(shell pwd): Alpine Linux @"
 
 .PHONY: clean
 clean:
-	for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR clean; \
-	done
 	docker rmi -f $(IMAGE) ||:
-	docker rmi -f $(shell grep FROM Dockerfile | cut -f2 -d" ") ||:

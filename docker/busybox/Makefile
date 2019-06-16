@@ -2,23 +2,11 @@ NAME := busybox
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
-BASE_IMAGE := drtuxwang/$(NAME)-base
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
-
-# Docker run
-DOCKER_RUN_FLAGS := --rm \
-	--interactive \
-	--tty \
-	--cpu-quota=1000000 \
-	--cpu-shares=50000 \
-	--memory=1000m \
-	--memory-reservation=50m
-ifndef DOCKER_RUN_COMMAND
-	DOCKER_RUN_COMMAND=
-endif
+BUILD_DIRS := bash
 
 
 .PHONY: default
@@ -31,31 +19,27 @@ pull:
 
 .PHONY: build
 build:
-	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/root
-	cp -p $(TOPDIR)/bin/sysinfo.sh tmpdir/bin/
-	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
-	$(TOPDIR)/etc/setmod *
-	@echo "\n*** Building \"$(BASE_IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile -t $(BASE_IMAGE) .
+	$(TOPDIR)/etc/setmod files/*
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile-shell -t $(IMAGE) .
-	rm -rf tmpdir
+	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR build || exit 1; \
+	done
 
 .PHONY: run
 run:
-	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname $(NAME) \
-		$(IMAGE) \
-		$(DOCKER_RUN_COMMAND) \
-		||:
+	DOCKER_BUILD_FLAGS="$(DOCKER_BUILD_FLAGS)" make -C bash run
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) busybox 2> /dev/null | grep "^BusyBox v" | sed -e "s@^BusyBox v@$(shell pwd): BusyBox @;s@ (.*@@"
+	@for DIR in $(BUILD_DIRS); do \
+		make --no-print-directory -C $$DIR version || exit 1; \
+	done
 
 .PHONY: clean
 clean:
-	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR clean; \
+	done
+	docker rmi -f $(IMAGE) ||:
 	docker rmi -f $(shell grep FROM Dockerfile | cut -f2 -d" ") ||:

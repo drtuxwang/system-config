@@ -1,4 +1,4 @@
-FROM drtuxwang/busybox-base
+FROM drtuxwang/ubuntu
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

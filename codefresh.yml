@@ -53,20 +53,20 @@ steps:
         - cp -p config/bashrc docker/python/tmpdir/root/.bashrc
         - cp -p config/vimrc docker/python/tmpdir/root/.vimrc
 
-  build_alpine_base:
+  build_alpine:
     stage: package
     title: Build Alpine base image
     type: build
-    image_name: drtuxwang/alpine-base
+    image_name: drtuxwang/alpine
     tag: 'latest'
     working_directory: docker/alpine
-    dockerfile: Dockerfile-base
-  push_alpine_base:
+    dockerfile: Dockerfile
+  push_alpine:
     stage: push
     title: Push Alpine base image
     type: push
     registry: dockerhub
-    candidate: ${{build_alpine_base}}
+    candidate: ${{build_alpine}}
     tag: 'latest'
 
   docker_builds:
@@ -74,12 +74,12 @@ steps:
     stage: package
     type: parallel
     steps:
-      build_alpine:
+      build_alpine_bash:
         title: Build Alpine image
         type: build
-        image_name: drtuxwang/alpine
+        image_name: drtuxwang/alpine-basg
         tag: 'latest'
-        working_directory: docker/alpine
+        working_directory: docker/alpine/bash
         dockerfile: Dockerfile
       build_python:
         title: Build Python image
@@ -105,7 +105,7 @@ steps:
         title: Push Alpine image
         type: push
         registry: dockerhub
-        candidate: ${{build_alpine}}
+        candidate: ${{build_alpine_bash}}
         tag: 'latest'
       push_python:
         title: Push Python image

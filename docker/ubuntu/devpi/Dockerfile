@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-base
+FROM drtuxwang/ubuntu
 
 RUN apt-get install --no-install-recommends -y \
 		python3-setuptools && \

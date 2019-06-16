@@ -932,7 +932,6 @@ the years. Now most of the scripts are written in Python 3.
  * etc/python-requirements.txt           Python pip requirements file
  * etc/python-2.7-requirements.txt       Python pip requirements file
  * etc/python-3.4-requirements.txt       Python pip requirements file
- * etc/python-3.7-requirements.txt       Python pip requirements file
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization
@@ -975,27 +974,33 @@ the years. Now most of the scripts are written in Python 3.
  * docker/Makefile                       Makefile for building all images
  * docker/alpine/Makefile                alpine:3.8 based linux
  * docker/alpine/Dockerfile
- * docker/alpine/Dockerfile-shell
+ * docker/alpine/bash/Makefile           alpine:3.8 based BASH login
+ * docker/alpine/bash/Dockerfile
  * docker/alpine32/Makefile              i386/alpine:3.8 based linux
  * docker/alpine32/Dockerfile
- * docker/alpine32/Dockerfile-shell
+ * docker/alpine32/bash/Makefile         i386/alpine:3.8 based BASH login
+ * docker/alpine32/bash/Dockerfile
  * docker/busybox/Makefile               busybox:1.28 based linux
  * docker/busybox/Dockerfile
- * docker/busybox/Dockerfile-shell
+ * docker/busybox/Makefile               busybox:1.28 based BASH login
+ * docker/busybox/bash/Dockerfile
  * docker/busybox/files/ash2bash
  * docker/centos/Makefile                centos:7 based linux
  * docker/centos/Dockerfile
  * docker/centos/Dockerfile-sandbox
- * docker/centos/Dockerfile-shell
+ * docker/centos/bash/Makefile           centos:7 based BASH login
+ * docker/centos/bash/Dockerfile
  * docker/centos/sandbox-gcc/Makefile    centos:7 based GCC sandbox
  * docker/centos/sandbox-gcc/Dockerfile
  * docker/clearlinux/Makefile            clearlinux:latest based linux
  * docker/clearlinux/Dockerfile
- * docker/clearlinux/Dockerfile-shell
+ * docker/clearlinux/bash/Makefile       clearlinux:latest based BASH login
+ * docker/clearlinux/bash/Dockerfile
  * docker/debian/Makefile                debian:9-slim based linux
  * docker/debian/Dockerfile
  * docker/debian/Dockerfile-sandbox
- * docker/debian/Dockerfile-shell
+ * docker/debian/bash/Makefile           debian:9-slim based BASH login
+ * docker/debian/bash/Dockerfile
  * docker/debian/sandbox-gcc/Makefile    debian:9-slim based GCC sandbox
  * docker/debian/sandbox-gcc/Dockerfile
  * docker/etcd/Makefile                  k8s.gcr.io/etcd:3.3.10 based app
@@ -1019,7 +1024,8 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu/Makefile                ubuntu:18.04 based linux
  * docker/ubuntu/Dockerfile
  * docker/ubuntu/Dockerfile-sandbox
- * docker/ubuntu/Dockerfile-shell
+ * docker/ubuntu/bash/Makefile           ubuntu:18.04 based BASH login
+ * docker/ubuntu/bash/Dockerfile-shell
  * docker/ubuntu/devpi/Makefile          ubuntu:18.04 based devpi server app
  * docker/ubuntu/devpi/Dockerfile
  * docker/ubuntu/docker/Makefile         ubuntu:18.04 based docker client app
@@ -1040,7 +1046,8 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu32/Makefile              i386/ubuntu:18.04 based linux
  * docker/ubuntu32/Dockerfile
  * docker/ubuntu32/Dockerfile-sandbox
- * docker/ubuntu32/Dockerfile-shell
+ * docker/ubuntu32/bash/Makefile         i386/ubuntu:18.04 based BASH login
+ * docker/ubuntu32/bash/Dockerfile
  * docker/ubuntu32/sandbox-gcc/Makefile  i386/ubuntu:18.04 based GCC sandbox
  * docker/ubuntu32/sandbox-gcc/Dockerfile
 </pre>

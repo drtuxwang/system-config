@@ -29,10 +29,9 @@ pull:
 .PHONY: build
 build:
 	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/config
+	mkdir -p tmpdir/bin tmpdir/root
 	cp -p $(TOPDIR)/bin/sysinfo.sh tmpdir/bin/
-	cp -p $(TOPDIR)/config/ash-2bash tmpdir/bin/bash
-	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
+	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
 	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
