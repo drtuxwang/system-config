@@ -980,9 +980,9 @@ the years. Now most of the scripts are written in Python 3.
  * docker/alpine32/Dockerfile
  * docker/alpine32/Dockerfile-shell
  * docker/busybox/Makefile               busybox:1.28 based linux
- * docker/busybox/ash2bash               Wrapper to run ash as bash shell
  * docker/busybox/Dockerfile
  * docker/busybox/Dockerfile-shell
+ * docker/busybox/files/ash2bash
  * docker/centos/Makefile                centos:7 based linux
  * docker/centos/Dockerfile
  * docker/centos/Dockerfile-sandbox
@@ -1012,6 +1012,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/python/Dockerfile
  * docker/registry/Makefile              registry:2.6 based Docker Registry server app
  * docker/registry/Dockerfile
+ * docker/busybox/files/ash2bash
  * docker/registry/files/config.yml
  * docker/sudo/Makefile                  sudo scratch image for jail breaking app
  * docker/sudo/Dockerfile
