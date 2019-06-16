@@ -982,6 +982,8 @@ the years. Now most of the scripts are written in Python 3.
  * docker/alpine32/Dockerfile-shell
  * docker/busybox/Makefile               busybox:1.28 based linux
  * docker/busybox/Dockerfile
+ * docker/busybox/Dockerfile-shell
+ * docker/busybox/ash2bas
  * docker/centos/Makefile                centos:7 based linux
  * docker/centos/Dockerfile
  * docker/centos/Dockerfile-sandbox
@@ -990,6 +992,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/centos/sandbox-gcc/Dockerfile
  * docker/clearlinux/Makefile            clearlinux:latest based linux
  * docker/clearlinux/Dockerfile
+ * docker/clearlinux/Dockerfile-shell
  * docker/debian/Makefile                debian:9-slim based linux
  * docker/debian/Dockerfile
  * docker/debian/Dockerfile-sandbox

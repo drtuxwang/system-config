@@ -2,6 +2,7 @@ NAME := busybox
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
+BASE_IMAGE := drtuxwang/$(NAME)-base
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
@@ -31,13 +32,14 @@ pull:
 .PHONY: build
 build:
 	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/config
+	mkdir -p tmpdir/bin tmpdir/root
 	cp -p $(TOPDIR)/bin/sysinfo.sh tmpdir/bin/
-	cp -p $(TOPDIR)/config/ash-2bash tmpdir/bin/bash
-	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
+	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
 	$(TOPDIR)/etc/setmod *
+	@echo "\n*** Building \"$(BASE_IMAGE)\" Docker image ***"
+	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile -t $(BASE_IMAGE) .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile-shell -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
@@ -55,5 +57,5 @@ version:
 
 .PHONY: clean
 clean:
-	docker rmi -f $(IMAGE) ||:
+	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:
 	docker rmi -f $(shell grep FROM Dockerfile | cut -f2 -d" ") ||:
