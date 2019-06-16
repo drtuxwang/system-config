@@ -903,7 +903,6 @@ the years. Now most of the scripts are written in Python 3.
 <pre>
  * config/Xresources                     Copy to "$HOME/.Xresources" to set xterm resources
  * config/adblock.txt                    Adblock filter list
- * config/ash-2bash                      Wrapper to run ash as bash shell
  * config/autoexec.sh                    Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
  * config/autoexec-opt.sh                Copy to "$HOME/.config/autoexec-opt.sh" for optional settings
  * config/bashrc                         Copy to "/root/.bashrc" for "root" account settings
@@ -981,9 +980,9 @@ the years. Now most of the scripts are written in Python 3.
  * docker/alpine32/Dockerfile
  * docker/alpine32/Dockerfile-shell
  * docker/busybox/Makefile               busybox:1.28 based linux
+ * docker/busybox/ash2bash               Wrapper to run ash as bash shell
  * docker/busybox/Dockerfile
  * docker/busybox/Dockerfile-shell
- * docker/busybox/ash2bas
  * docker/centos/Makefile                centos:7 based linux
  * docker/centos/Dockerfile
  * docker/centos/Dockerfile-sandbox
