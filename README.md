@@ -996,12 +996,12 @@ the years. Now most of the scripts are written in Python 3.
  * docker/clearlinux/Dockerfile
  * docker/clearlinux/bash/Makefile       clearlinux:latest based BASH login
  * docker/clearlinux/bash/Dockerfile
- * docker/debian/Makefile                debian:9-slim based linux
+ * docker/debian/Makefile                debian:buster-slim based linux
  * docker/debian/Dockerfile
  * docker/debian/Dockerfile-sandbox
- * docker/debian/bash/Makefile           debian:9-slim based BASH login
+ * docker/debian/bash/Makefile           debian:buster-slim based BASH login
  * docker/debian/bash/Dockerfile
- * docker/debian/sandbox-gcc/Makefile    debian:9-slim based GCC sandbox
+ * docker/debian/sandbox-gcc/Makefile    debian:buster-slim based GCC sandbox
  * docker/debian/sandbox-gcc/Dockerfile
  * docker/etcd/Makefile                  k8s.gcr.io/etcd:3.3.10 based app
  * docker/etcd/Dockerfile

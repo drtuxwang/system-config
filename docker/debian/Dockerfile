@@ -1,4 +1,4 @@
-FROM debian:9-slim
+FROM debian:buster-slim
 
 # Install base packages
 RUN apt-get update --fix-missing && \
