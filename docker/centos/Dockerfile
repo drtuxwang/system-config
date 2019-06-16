@@ -1,12 +1,14 @@
-FROM drtuxwang/centos-base
+FROM centos:7
 
-# Add scripts
-COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/root/.??* /root/
-
-# Configure start
-ENV HOME=/root
-WORKDIR /root
-CMD bash
+# Install base packages
+RUN yum -y install epel-release && \
+	yum -y update && \
+	yum -y install bind-utils net-tools openssh-clients pciutils python34 vim && \
+	rm -rf \
+		/root/.bash_logout \
+		/root/.bash_profile \
+		/root/.cache \
+		/root/.cshrc \
+		/root/.pki \
+		/root/.tcshrc \
+		/root/anaconda-ks.cfg

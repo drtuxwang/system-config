@@ -31,7 +31,7 @@ default: build
 
 .PHONY: pull
 pull:
-	docker pull $(shell grep FROM Dockerfile-base | cut -f2 -d" ")
+	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
 
 .PHONY: build
 build:
@@ -42,11 +42,11 @@ build:
 	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
 	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(BASE_IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile-base -t $(BASE_IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile -t $(BASE_IMAGE) .
 	@echo "\n*** Building \"$(SANDBOX_IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile-sandbox -t $(SANDBOX_IMAGE) .
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile-shell -t $(IMAGE) .
 	rm -rf tmpdir
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR build || exit 1; \
@@ -81,4 +81,4 @@ clean:
 		make -C $$DIR clean; \
 	done
 	docker rmi -f $(IMAGE) $(SANDBOX_IMAGE) $(BASE_IMAGE) ||:
-	docker rmi -f $(shell grep FROM Dockerfile-base | cut -f2 -d" ") ||:
+	docker rmi -f $(shell grep FROM Dockerfile | cut -f2 -d" ") ||:

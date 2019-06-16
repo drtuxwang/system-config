@@ -976,24 +976,24 @@ the years. Now most of the scripts are written in Python 3.
  * docker/Makefile                       Makefile for building all images
  * docker/alpine/Makefile                alpine:3.8 based linux
  * docker/alpine/Dockerfile
- * docker/alpine/Dockerfile-base
+ * docker/alpine/Dockerfile-shell
  * docker/alpine32/Makefile              i386/alpine:3.8 based linux
  * docker/alpine32/Dockerfile
- * docker/alpine32/Dockerfile-base
+ * docker/alpine32/Dockerfile-shell
  * docker/busybox/Makefile               busybox:1.28 based linux
  * docker/busybox/Dockerfile
  * docker/centos/Makefile                centos:7 based linux
  * docker/centos/Dockerfile
- * docker/centos/Dockerfile-base
  * docker/centos/Dockerfile-sandbox
+ * docker/centos/Dockerfile-shell
  * docker/centos/sandbox-gcc/Makefile    centos:7 based GCC sandbox
  * docker/centos/sandbox-gcc/Dockerfile
  * docker/clearlinux/Makefile            clearlinux:latest based linux
  * docker/clearlinux/Dockerfile
  * docker/debian/Makefile                debian:9-slim based linux
  * docker/debian/Dockerfile
- * docker/debian/Dockerfile-base
  * docker/debian/Dockerfile-sandbox
+ * docker/debian/Dockerfile-shell
  * docker/debian/sandbox-gcc/Makefile    debian:9-slim based GCC sandbox
  * docker/debian/sandbox-gcc/Dockerfile
  * docker/etcd/Makefile                  k8s.gcr.io/etcd:3.3.10 based app
@@ -1015,8 +1015,8 @@ the years. Now most of the scripts are written in Python 3.
  * docker/sudo/Dockerfile
  * docker/ubuntu/Makefile                ubuntu:18.04 based linux
  * docker/ubuntu/Dockerfile
- * docker/ubuntu/Dockerfile-base
  * docker/ubuntu/Dockerfile-sandbox
+ * docker/ubuntu/Dockerfile-shell
  * docker/ubuntu/devpi/Makefile          ubuntu:18.04 based devpi server app
  * docker/ubuntu/devpi/Dockerfile
  * docker/ubuntu/docker/Makefile         ubuntu:18.04 based docker client app
@@ -1036,8 +1036,8 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu/sandbox-wine/Dockerfile
  * docker/ubuntu32/Makefile              i386/ubuntu:18.04 based linux
  * docker/ubuntu32/Dockerfile
- * docker/ubuntu32/Dockerfile-base
  * docker/ubuntu32/Dockerfile-sandbox
+ * docker/ubuntu32/Dockerfile-shell
  * docker/ubuntu32/sandbox-gcc/Makefile  i386/ubuntu:18.04 based GCC sandbox
  * docker/ubuntu32/sandbox-gcc/Dockerfile
 </pre>
