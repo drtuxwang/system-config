@@ -37,11 +37,11 @@ steps:
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - rm -rf docker/alpine/tmpdir
-        - mkdir -p docker/alpine/tmpdir/bin docker/alpine/tmpdir/root
-        - cp -p bin/* docker/alpine/tmpdir/bin/
-        - cp -p config/bashrc docker/alpine/tmpdir/root/.bashrc
-        - cp -p config/vimrc docker/alpine/tmpdir/root/.vimrc
+        - rm -rf docker/alpine/bash/tmpdir
+        - mkdir -p docker/alpine/bash/tmpdir/bin docker/alpine/bash/tmpdir/root
+        - cp -p bin/* docker/alpine/bash/tmpdir/bin/
+        - cp -p config/bashrc docker/alpine/bash/tmpdir/root/.bashrc
+        - cp -p config/vimrc docker/alpine/bash/tmpdir/root/.vimrc
       create_python_deps:
         title: Build Python dependencies
         image: codefresh/cli:latest
