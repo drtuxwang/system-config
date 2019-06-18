@@ -1,8 +1,7 @@
-NAME := ubuntu-devpi
+NAME := python-devpi
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
-TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
@@ -27,15 +26,8 @@ default: build
 
 .PHONY: build
 build:
-	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/config
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
-	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
-	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
-	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
-	rm -rf tmpdir
 
 .PHONY: run
 run:

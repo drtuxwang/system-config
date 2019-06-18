@@ -984,6 +984,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/busybox/Dockerfile
  * docker/busybox/Makefile               busybox:1.28 based BASH login
  * docker/busybox/bash/Dockerfile
+ * docker/busybox/bash/Makefile
  * docker/busybox/files/ash2bash
  * docker/centos/Makefile                centos:7 based linux
  * docker/centos/Dockerfile
@@ -1020,12 +1021,15 @@ the years. Now most of the scripts are written in Python 3.
  * docker/nginx/files/nginx-proxy.conf
  * docker/oracle-xe/Makefile             datagrip/oracle:11.2 based database app
  * docker/oracle-xe/Dockerfile
- * docker/python/Makefile                python:3.6-alpine based Python app
+ * docker/python/Makefile                python:3.6.8-stretch based Python app
  * docker/python/Dockerfile
- * docker/python/files/ash2bash
+ * docker/python/bash/Dockerfile         python:3.6.8-stretch based BASH login
+ * docker/python/bash/Makefile
+ * docker/python/devpi/Makefile          python:3.6.8-stretch based devpi server app
+ * docker/python/devpi/Dockerfile
  * docker/registry/Makefile              registry:2.6 based Docker Registry server app
  * docker/registry/Dockerfile
- * docker/busybox/files/ash2bash
+ * docker/registry/files/ash2bash
  * docker/registry/files/config.yml
  * docker/sudo/Makefile                  sudo scratch image for jail breaking app
  * docker/sudo/Dockerfile
@@ -1034,8 +1038,6 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu/Dockerfile-sandbox
  * docker/ubuntu/bash/Makefile           ubuntu:18.04 based BASH login
  * docker/ubuntu/bash/Dockerfile-shell
- * docker/ubuntu/devpi/Makefile          ubuntu:18.04 based devpi server app
- * docker/ubuntu/devpi/Dockerfile
  * docker/ubuntu/sandbox-firefox/Makefile  ubuntu:18.04 based Firefox sandbox
  * docker/ubuntu/sandbox-firefox/Dockerfile
  * docker/ubuntu/sandbox-firefox/profiles.ini

@@ -6,6 +6,7 @@ TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
+BUILD_DIRS := bash devpi
 
 # Docker run
 DOCKER_RUN_FLAGS := --rm \
@@ -31,37 +32,25 @@ pull:
 
 .PHONY: build
 build:
-	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/root
-	cp -p $(TOPDIR)/bin/sysinfo.sh tmpdir/bin/
-	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
-	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
-	rm -rf tmpdir
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR build || exit 1; \
+	done
 
 .PHONY: test
 test:
-	docker run \
-		--rm \
-		--volume=$(shell realpath $(TOPDIR)):/vol/app:ro \
-		--workdir=/vol/app \
-		$(IMAGE) \
-		make install test
+	make -C bash test
 
 .PHONY: run
 run:
-	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname $(NAME) \
-		$(IMAGE) \
-		$(DOCKER_RUN_COMMAND) \
-		||:
+	DOCKER_BUILD_FLAGS="$(DOCKER_RUN_FLAGS)" make -C bash run
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) python --version 2> /dev/null | \
-		sed -e "s@^@$(shell pwd): @"
+	@for DIR in $(BUILD_DIRS); do \
+		make --no-print-directory -C $$DIR version || exit 1; \
+	done
 
 .PHONY: clean
 clean:

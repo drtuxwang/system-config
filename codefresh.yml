@@ -77,7 +77,7 @@ steps:
       build_alpine_bash:
         title: Build Alpine image
         type: build
-        image_name: drtuxwang/alpine-basg
+        image_name: drtuxwang/alpine-base
         tag: 'latest'
         working_directory: docker/alpine/bash
         dockerfile: Dockerfile

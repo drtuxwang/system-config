@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu32-base
+FROM drtuxwang/ubuntu32
 
 # Install sandbox environment packages
 RUN apt-get install --no-install-recommends -y \

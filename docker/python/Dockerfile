@@ -1,15 +1,6 @@
-FROM python:3.6-alpine
+FROM python:3.6.8-stretch
 
-# Fix bash
-COPY files/ash2bash /bin/bash
-RUN ln -s .bashrc /root/.profile
-
-# Add scripts
-COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/root/.??* /root/
-
-# Configure start
-ENV HOME=/root
-WORKDIR /root
+RUN apt-get update --fix-missing && \
+	apt-get install --no-install-recommends -y \
+		make && \
+	apt-get clean
