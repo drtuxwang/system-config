@@ -1,7 +1,8 @@
-NAME := ubuntu-nginx
+NAME := nginx
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
+TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
@@ -27,11 +28,10 @@ default: build
 .PHONY: build
 build:
 	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/config
-	cp -p ../../../bin/* tmpdir/bin/
-	cp -p ../../../config/bashrc tmpdir/config/.bashrc
-	cp -p ../../../config/vimrc tmpdir/config/.vimrc
-	../../../etc/setmod *
+	mkdir -p tmpdir/bin tmpdir/root
+	cp -p $(TOPDIR)/bin/sysinfo.sh tmpdir/bin/
+	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
+	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir

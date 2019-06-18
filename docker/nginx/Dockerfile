@@ -1,12 +1,14 @@
-FROM drtuxwang/ubuntu
+FROM nginx:stable-alpine
 
-RUN apt-get install --no-install-recommends -y nginx-light
-
-# Root account
-COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
+# Fix bash
+COPY files/ash2bash /bin/bash
+RUN ln -s .bashrc /root/.profile
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
+
+# Root account
+COPY tmpdir/root/.??* /root/
 
 # NGINX full setup
 # For https use "/etc/ssl/private"

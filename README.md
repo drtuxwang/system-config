@@ -1014,6 +1014,10 @@ the years. Now most of the scripts are written in Python 3.
  * docker/jenkins/Dockerfile
  * docker/mongodb/Makefile               mongo:3.4.14 based database app
  * docker/mongodb/Dockerfile
+ * docker/nginx/Makefile                 nginx:stable-alpine based NGINX proxy app
+ * docker/nginx/Dockerfile
+ * docker/nginx/files/ash2bash
+ * docker/nginx/files/nginx-proxy.conf
  * docker/oracle-xe/Makefile             datagrip/oracle:11.2 based database app
  * docker/oracle-xe/Dockerfile
  * docker/python/Makefile                python:3.6-alpine based Python app
@@ -1032,9 +1036,6 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu/bash/Dockerfile-shell
  * docker/ubuntu/devpi/Makefile          ubuntu:18.04 based devpi server app
  * docker/ubuntu/devpi/Dockerfile
- * docker/ubuntu/nginx/Makefile          ubuntu:18.04 based NGINX proxy app
- * docker/ubuntu/nginx/Dockerfile
- * docker/ubuntu/nginx/files/nginx-proxy.conf
  * docker/ubuntu/sandbox-firefox/Makefile  ubuntu:18.04 based Firefox sandbox
  * docker/ubuntu/sandbox-firefox/Dockerfile
  * docker/ubuntu/sandbox-firefox/profiles.ini

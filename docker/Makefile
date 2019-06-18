@@ -10,6 +10,7 @@ BUILD_DIRS := \
 	golang \
 	jenkins \
 	mongodb \
+	nginx \
 	oracle-xe \
 	python \
 	registry \
