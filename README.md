@@ -1015,6 +1015,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/oracle-xe/Dockerfile
  * docker/python/Makefile                python:3.6-alpine based Python app
  * docker/python/Dockerfile
+ * docker/python/files/ash2bash
  * docker/registry/Makefile              registry:2.6 based Docker Registry server app
  * docker/registry/Dockerfile
  * docker/busybox/files/ash2bash
