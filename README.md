@@ -1013,7 +1013,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/mongodb/Dockerfile
  * docker/oracle-xe/Makefile             datagrip/oracle:11.2 based database app
  * docker/oracle-xe/Dockerfile
- * docker/python/Makefile                python:3.6.8 based Python app
+ * docker/python/Makefile                python:3.6-alpine based Python app
  * docker/python/Dockerfile
  * docker/registry/Makefile              registry:2.6 based Docker Registry server app
  * docker/registry/Dockerfile

@@ -1,4 +1,4 @@
-FROM python:3.6.8
+FROM python:3.6-alpine
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
