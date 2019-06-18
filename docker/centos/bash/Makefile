@@ -2,8 +2,6 @@ NAME := centos-bash
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
-BASE_IMAGE := drtuxwang/$(NAME)-base
-SANDBOX_IMAGE := drtuxwang/$(NAME)-sandbox
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
@@ -32,7 +30,7 @@ build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/root
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
-	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
+	cp -p $(TOPDIR)/config/profile tmpdir/root/.profile
 	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
 	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
@@ -51,4 +49,4 @@ version:
 
 .PHONY: clean
 clean:
-	docker rmi -f $(IMAGE) $(SANDBOX_IMAGE) $(BASE_IMAGE) ||:
+	docker rmi -f $(IMAGE) ||:

@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu-sandbox
+FROM drtuxwang/ubuntu
 
 # Install compiler & dev packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
@@ -16,16 +16,16 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
 		libssl-dev \
 		python3-dev \
 		python3-setuptools \
-		tk8.6-dev \
 		uuid-dev && \
 	apt-get clean
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
 
-# Add home directory archive
-COPY tmpdir/home.tar /home/
+# Root account
+COPY tmpdir/root/.??* /root/
 
 # Configure start
-COPY tmpdir/etc/docker-init /etc/
-ENTRYPOINT ["/tini", "/etc/docker-init"]
+ENV HOME=/root
+WORKDIR /root
+CMD bash -l

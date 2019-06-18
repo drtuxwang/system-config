@@ -9,4 +9,4 @@ COPY tmpdir/root/.??* /root/
 # Configure start
 ENV HOME=/root
 WORKDIR /root
-CMD bash
+CMD bash -l

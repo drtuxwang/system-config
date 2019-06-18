@@ -24,7 +24,7 @@ TEST_DIRS := \
 
 # Default Sandbox distro
 ifndef DIST
-	DIST=ubuntu
+	DIST=debian
 endif
 
 
@@ -69,21 +69,13 @@ version:
 run-firefox:
 	make -C $(DIST)/sandbox-firefox run
 
-.PHONY: run-gcc
-run-gcc:
-	make -C $(DIST)/sandbox-gcc run
-
-.PHONY: run-python
-run-python:
-	make -C $(DIST)/sandbox-python run
+.PHONY: run-sandbox
+run-sandbox:
+	make -C $(DIST)/sandbox run
 
 .PHONY: run-sudo
 run-sudo:
 	make -C sudo run
-
-.PHONY: run-wine
-run-wine:
-	make -C $(DIST)/sandbox-wine run
 
 .PHONY: gc
 gc:

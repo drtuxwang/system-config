@@ -29,7 +29,7 @@ default: build
 build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/root
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
+	cp -p $(TOPDIR)/bin/sysinfo.sh tmpdir/bin/sysinfo
 	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
 	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
 	$(TOPDIR)/etc/setmod *

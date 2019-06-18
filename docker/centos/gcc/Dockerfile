@@ -1,4 +1,4 @@
-FROM drtuxwang/centos-sandbox
+FROM drtuxwang/centos
 
 # Install compiler & dev packages
 RUN yum -y install \
@@ -14,18 +14,17 @@ RUN yum -y install \
 		ncurses-devel \
 		openssl-devel \
 		readline-devel \
-		tk-devel \
 		uuid-devel \
 		xz-devel && \
 	yum clean all
 
-# Configure start
-COPY tmpdir/etc/docker-init /etc/
-ENTRYPOINT ["/tini", "/etc/docker-init"]
-
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
 
-# Add home directory archive
+# Root account
+COPY tmpdir/root/.??* /root/
 
-COPY tmpdir/home.tar /home/
+# Configure start
+ENV HOME=/root
+WORKDIR /root
+CMD bash -l

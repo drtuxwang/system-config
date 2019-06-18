@@ -9,7 +9,7 @@ endif
 
 # Docker run
 ifndef DOCKER_RUN_FLAGS
-	DOCKER_RUN_FLAGS=--network none --user=99999:99999
+	DOCKER_RUN_FLAGS=
 endif
 DOCKER_RUN_FLAGS := --rm \
 	--interactive \
@@ -29,25 +29,16 @@ endif
 default: build
 	docker images
 
-.PHONY: pull
-pull:
-	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
-
 .PHONY: build
 build:
 	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/etc tmpdir/home
+	mkdir -p tmpdir/bin tmpdir/root
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
-	cp -p $(TOPDIR)/config/docker-init tmpdir/etc
-	cp -p $(TOPDIR)/config/bashrc tmpdir/home/.bashrc
-	cp -p $(TOPDIR)/config/profile tmpdir/home/.profile
-	cp -p $(TOPDIR)/config/tmux.conf tmpdir/home/.tmux.conf
-	cp -p $(TOPDIR)/config/vimrc tmpdir/home/.vimrc
+	cp -p $(TOPDIR)/config/profile tmpdir/root/.profile
+	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
 	$(TOPDIR)/etc/setmod *
-	tar cf tmpdir/home.tar -C tmpdir/home --owner=0 --group=0 .bashrc .profile .tmux.conf .vimrc
-	chmod 644 tmpdir/home.tar
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run

@@ -20,7 +20,7 @@ pull:
 .PHONY: build
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR build || exit 1; \
 	done

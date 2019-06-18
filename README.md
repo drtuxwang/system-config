@@ -190,10 +190,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/dockerreg          Docker Registry tool
  * bin/dockerreg.bat
  * bin/dockerreg.py
- * bin/docker-firefox     Starts Docker sandbox for Firefox
- * bin/docker-gcc         Starts Docker sandbox for GCC
+ * bin/docker-sandbox     Starts Docker sandbox environment
  * bin/docker-sudo        Starts Docker sudo app
- * bin/docker-wine        Starts Docker sandbox for WINE
  * bin/eclipse            eclipse wrapper (allowing non systems port)
  * bin/eclipse.py
  * bin/espeak             espeak wrapper (allowing non systems port)
@@ -987,22 +985,22 @@ the years. Now most of the scripts are written in Python 3.
  * docker/busybox/files/ash2bash
  * docker/centos/Makefile                centos:7 based linux
  * docker/centos/Dockerfile
- * docker/centos/Dockerfile-sandbox
  * docker/centos/bash/Makefile           centos:7 based BASH login
  * docker/centos/bash/Dockerfile
- * docker/centos/sandbox-gcc/Makefile    centos:7 based GCC sandbox
- * docker/centos/sandbox-gcc/Dockerfile
+ * docker/centos/gcc/Makefile            centos:7 based GCC compiler
+ * docker/centos/gcc/Dockerfile
  * docker/clearlinux/Makefile            clearlinux:latest based linux
  * docker/clearlinux/Dockerfile
  * docker/clearlinux/bash/Makefile       clearlinux:latest based BASH login
  * docker/clearlinux/bash/Dockerfile
  * docker/debian/Makefile                debian:buster-slim based linux
  * docker/debian/Dockerfile
- * docker/debian/Dockerfile-sandbox
  * docker/debian/bash/Makefile           debian:buster-slim based BASH login
  * docker/debian/bash/Dockerfile
- * docker/debian/sandbox-gcc/Makefile    debian:buster-slim based GCC sandbox
- * docker/debian/sandbox-gcc/Dockerfile
+ * docker/debian/gcc/Makefile            debian:buster-slim based GCC compiler
+ * docker/debian/gcc/Dockerfile
+ * docker/debian/sandbox/Makefile        debian:buster-slim based sandbox environment
+ * docker/debian/sandbox/Dockerfile
  * docker/docker/Makefile                dockerL18.09 (alpine) based docker shell
  * docker/docker/Dockerfile
  * docker/docker/files/ash2bash
@@ -1034,24 +1032,16 @@ the years. Now most of the scripts are written in Python 3.
  * docker/sudo/Dockerfile
  * docker/ubuntu/Makefile                ubuntu:18.04 based linux
  * docker/ubuntu/Dockerfile
- * docker/ubuntu/Dockerfile-sandbox
  * docker/ubuntu/bash/Makefile           ubuntu:18.04 based BASH login
  * docker/ubuntu/bash/Dockerfile-shell
- * docker/ubuntu/sandbox-firefox/Makefile  ubuntu:18.04 based Firefox sandbox
- * docker/ubuntu/sandbox-firefox/Dockerfile
- * docker/ubuntu/sandbox-firefox/profiles.ini
- * docker/ubuntu/sandbox-firefox/user.js
- * docker/ubuntu/sandbox-gcc/Makefile    ubuntu:18.04 based GCC sandbox
- * docker/ubuntu/sandbox-gcc/Dockerfile
- * docker/ubuntu/sandbox-wine/Makefile   ubuntu:18.04 based Wine sandbox
- * docker/ubuntu/sandbox-wine/Dockerfile
+ * docker/ubuntu/gcc/Makefile            ubuntu:18.04 based GCC compiler
+ * docker/ubuntu/gcc/Dockerfile
  * docker/ubuntu32/Makefile              i386/ubuntu:18.04 based linux
  * docker/ubuntu32/Dockerfile
- * docker/ubuntu32/Dockerfile-sandbox
  * docker/ubuntu32/bash/Makefile         i386/ubuntu:18.04 based BASH login
  * docker/ubuntu32/bash/Dockerfile
- * docker/ubuntu32/sandbox-gcc/Makefile  i386/ubuntu:18.04 based GCC sandbox
- * docker/ubuntu32/sandbox-gcc/Dockerfile
+ * docker/ubuntu32/gcc/Makefile          i386/ubuntu:18.04 based GCC compiler
+ * docker/ubuntu32/gcc/Dockerfile
 </pre>
 <pre>
  * kubernetes/servers-test/Makefile      Kubernetes: centos:7 example

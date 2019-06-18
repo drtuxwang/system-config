@@ -1,4 +1,4 @@
-NAME := ubuntu-firefox
+NAME := debian-sandbox
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
@@ -9,7 +9,7 @@ endif
 
 # Docker run
 ifndef DOCKER_RUN_FLAGS
-	DOCKER_RUN_FLAGS=--network none
+	DOCKER_RUN_FLAGS=--network none --user=99999:99999
 endif
 DOCKER_RUN_FLAGS := --rm \
 	--interactive \
@@ -23,42 +23,29 @@ DOCKER_RUN_FLAGS := --rm \
 ifndef DOCKER_RUN_COMMAND
 	DOCKER_RUN_COMMAND=
 endif
-FIREFOX_PROFILE=$(HOME)/.mozilla/firefox/sandbox
+##FIREFOX_PROFILE=$(HOME)/.mozilla/firefox/sandbox
 
 
 .PHONY: default
 default: build
 	docker images
 
-.PHONY: pull
-pull:
-	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
-
 .PHONY: build
 build:
-	mkdir -p tmpdir/bin tmpdir/etc tmpdir/home/.mozilla/firefox
+	mkdir -p tmpdir/bin tmpdir/etc tmpdir/home
+	cp -p $(TOPDIR)/etc/install-python-requirements.sh tmpdir/etc
+	cp -p $(TOPDIR)/etc/python-requirements.txt tmpdir/etc
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
 	cp -p $(TOPDIR)/config/docker-init tmpdir/etc
 	cp -p $(TOPDIR)/config/bashrc tmpdir/home/.bashrc
 	cp -p $(TOPDIR)/config/profile tmpdir/home/.profile
 	cp -p $(TOPDIR)/config/tmux.conf tmpdir/home/.tmux.conf
 	cp -p $(TOPDIR)/config/vimrc tmpdir/home/.vimrc
-	cp -p profiles.ini tmpdir/home/.mozilla/firefox
-	if [ -e "$(tty 2> /dev/null)" ]; \
-	then \
-		cp -rp $(FIREFOX_PROFILE) tmpdir/home/.mozilla/firefox/sandbox; \
-		cp -p user.js tmpdir/home/.mozilla/firefox/sandbox/; \
-	fi
 	$(TOPDIR)/etc/setmod *
-	tar cf tmpdir/home.tar -C tmpdir/home --owner=0 --group=0 \
-		.bashrc \
-		.profile \
-		.tmux.conf \
-		.vimrc \
-		.mozilla
+	tar cf tmpdir/home.tar -C tmpdir/home --owner=0 --group=0 .bashrc .profile .tmux.conf .vimrc
 	chmod 644 tmpdir/home.tar
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) -f Dockerfile -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
@@ -72,8 +59,12 @@ run:
 
 .PHONY: version
 version:
-	@docker run --entrypoint firefox $(IMAGE) -v | grep Firefox | \
-		awk '{printf("'$(shell pwd)': firefox %s\n", $$NF)}'
+	@docker run --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
+		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
+	@docker run --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
+		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
+	@docker run --entrypoint wine $(IMAGE) --version | grep ^wine | \
+		sed -e "s/-/ /g" | awk '{printf("'$(shell pwd)': wine %s\n", $$2)}'
 
 .PHONY: clean
 clean:
