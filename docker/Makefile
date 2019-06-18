@@ -5,6 +5,7 @@ BUILD_DIRS := \
 	centos \
 	clearlinux \
 	debian \
+	docker \
 	etcd \
 	golang \
 	jenkins \

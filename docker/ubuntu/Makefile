@@ -7,7 +7,7 @@ TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
-BUILD_DIRS := bash devpi docker nginx sandbox-gcc sandbox-python sandbox-firefox sandbox-wine
+BUILD_DIRS := bash devpi nginx sandbox-gcc sandbox-python sandbox-firefox sandbox-wine
 TEST_DIRS := sandbox-python
 
 

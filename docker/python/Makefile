@@ -33,7 +33,7 @@ pull:
 build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/root
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
+	cp -p $(TOPDIR)/bin/sysinfo.sh tmpdir/bin/
 	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
 	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"

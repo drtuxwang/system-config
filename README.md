@@ -1003,6 +1003,9 @@ the years. Now most of the scripts are written in Python 3.
  * docker/debian/bash/Dockerfile
  * docker/debian/sandbox-gcc/Makefile    debian:buster-slim based GCC sandbox
  * docker/debian/sandbox-gcc/Dockerfile
+ * docker/docker/Makefile                dockerL18.09 (alpine) based docker shell
+ * docker/docker/Dockerfile
+ * docker/docker/files/ash2bash
  * docker/etcd/Makefile                  k8s.gcr.io/etcd:3.3.10 based app
  * docker/etcd/Dockerfile
  * docker/golang/Makefile                golang:1.11.10-alpine based compiler app
@@ -1029,8 +1032,6 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu/bash/Dockerfile-shell
  * docker/ubuntu/devpi/Makefile          ubuntu:18.04 based devpi server app
  * docker/ubuntu/devpi/Dockerfile
- * docker/ubuntu/docker/Makefile         ubuntu:18.04 based docker client app
- * docker/ubuntu/docker/Dockerfile
  * docker/ubuntu/nginx/Makefile          ubuntu:18.04 based NGINX proxy app
  * docker/ubuntu/nginx/Dockerfile
  * docker/ubuntu/nginx/files/nginx-proxy.conf

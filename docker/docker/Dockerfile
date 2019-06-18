@@ -1,4 +1,4 @@
-FROM python:3.6-alpine
+FROM docker:18.09
 
 # Fix bash
 COPY files/ash2bash /bin/bash
@@ -13,3 +13,4 @@ COPY tmpdir/root/.??* /root/
 # Configure start
 ENV HOME=/root
 WORKDIR /root
+CMD bash
