@@ -1,4 +1,4 @@
-##1996-2019 By Dr Colin Kong
+## 1996-2019 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -19,8 +19,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/power_mod.py       Python power handling module
  * bin/subtask_mod.py     Python sub task handling module
  * bin/task_mod.py        Python task handling utility module
-</pre>
-<pre>
  * bin/python             Python startup (allowing non systems port)
  * bin/python.bat
  * bin/python2
@@ -38,8 +36,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/python3.6
  * bin/python3.6.bat
  * bin/python3.7
-</pre>
-<pre>
  * bin/2to3               Python 3.x script wrappers (allowing non systems port)
  * bin/2to3.bat
  * bin/2to3-3.5
@@ -107,8 +103,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/virtualenv.bat
  * bin/youtube-dl
  * bin/youtube-dl.bat
-</pre>
-<pre>
  * bin/7z                 Make a compressed archive in 7z format
  * bin/7z.bat             (uses p7zip)
  * bin/7za
@@ -165,8 +159,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/clam.py
  * bin/cluster            Run command on a subnet in parallel
  * bin/cluster.py
-</pre>
-<pre>
  * bin/deb                Debian package management tools
  * bin/deb.py             (support offline repository searching and update checks
  * bin/debchkdir
@@ -183,8 +175,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/debdistgrep.py
  * bin/debdistinfo
  * bin/debdistinfo.py
-</pre>
-<pre>
  * bin/dep                dep wrapper (for golang)
  * bin/dep.py
  * bin/dockerreg          Docker Registry tool
@@ -351,8 +341,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/fzero              Zero device or create zero file
  * bin/fzero.bat
  * bin/fzero.py
-</pre>
-<pre>
  * bin/gcc                GNU compiler wrappers (allowing non systems port)
  * bin/gcc.bat
  * bin/gcc.py
@@ -362,8 +350,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/gfortran
  * bin/gfortran.bat
  * bin/gfortran.py
-</pre>
-<pre>
  * bin/gedit              gedit wrapper (allowing non systems port)
  * bin/gedit.py
  * bin/gem                Wrapper to select "umask 022"
@@ -387,8 +373,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/git_lfs.py
  * bin/git-time           git original author time plugin
  * bin/git_time.py
-</pre>
-<pre>
  * bin/gnomine            gnome-mines/gnomine wrapper (allowing non systems port)
  * bin/gnomine.py         (can pick using old gnomines name)
  * bin/go                 Go wrapper (golang)
@@ -425,16 +409,12 @@ the years. Now most of the scripts are written in Python 3.
  * bin/iso.py
  * bin/iterm              iTerm2 (allowing non systems port)
  * bin/iterm.py
-</pre>
-<pre>
  * bin/jar                jar wrapper (allowing non systems port)
  * bin/jar.py             (Java jar archiver)
  * bin/java               java wrapper (allowing non systems port)
  * bin/java.py            (Java run time)
  * bin/javac              javac wrapper (allowing non systems port)
  * bin/javac.py           (Java compiler)
-</pre>
-<pre>
  * bin/jpeg2ps            jpeg2ps wrapper (allowing non systems port)
  * bin/jpeg2ps.py
  * bin/jsformat           Javascript file re-formatter
@@ -460,8 +440,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/md5.py
  * bin/md5cd              Calculate MD5 checksums for CD/DVD data disk
  * bin/md5cd.py
-</pre>
-<pre>
  * bin/menu               TCL/TK menu system
  * bin/menu.py            (this can be used independent of GNOME/KDE/XFCE menu system)
  * bin/menu_document.tcl
@@ -473,8 +451,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/menu_radiotuner.tcl
  * bin/menu_system.tcl
  * bin/menu_utility.tcl
-</pre>
-<pre>
  * bin/mirror             Copy all files/directory inside a directory into mirror directory
  * bin/mirror.bat
  * bin/mirror.py
@@ -494,8 +470,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/meld               Meld wrapper (allowing non systems port)
  * bin/meld.bat
  * bin/meld.py
-</pre>
-<pre>
  * bin/myqdel             MyQS personal batch system for each user
  * bin/myqdel.py
  * bin/myqexec
@@ -506,8 +480,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/myqstat.py
  * bin/myqsub
  * bin/myqsub.py
-</pre>
-<pre>
  * bin/nautilus           nautilus wrapper (allowing non systems port)
  * bin/nautilus.py
  * bin/netnice            Run a command with limited network bandwidth (uses trickle)
@@ -567,13 +539,9 @@ the years. Now most of the scripts are written in Python 3.
  * bin/pyc                Compile Python source file to PYC file
  * bin/pyc.bat
  * bin/pyc.py
-</pre>
-<pre>
  * bin/pyld.sh            Python loading module for sh/ksh/bash wrapper scripts
  * bin/pyld.py            Load Python main program as module (must have Main class)
  * bin/test_pyld.py       Unit testing suite for "pyld.py"
-</pre>
-<pre>
  * bin/pyld.sh            Python loading module for sh/ksh/bash wrapper scripts
  * bin/pyprof             Profile Python 3.x program
  * bin/pyprof.bat
@@ -624,14 +592,10 @@ the years. Now most of the scripts are written in Python 3.
  * bin/sumount.py
  * bin/svncviewer         Securely connect to VNC server using SSH protocol
  * bin/svncviewer.py
-</pre>
-<pre>
  * bin/sysinfo            System configuration detection tool
  * bin/sysinfo.bat
  * bin/sysinfo.py
  * bin/sysinfo.sh         Old Bourne shell version
-</pre>
-<pre>
  * bin/systemd-analyze    systemd-analyze wrapper (filter buggy firmware/loader timings)
  * bin/systemd_analyze.py
  * bin/t7z                Make a compressed archive in TAR.&Z format
@@ -655,16 +619,12 @@ the years. Now most of the scripts are written in Python 3.
  * bin/tiller.py
  * bin/tinyproxy          tinyproxy wrapper (allowing non systems port)
  * bin/tinyproxy.py
-</pre>
-<pre>
  * bin/tkill              Kill tasks by process ID or name
  * bin/tkill.bat
  * bin/tkill.py
  * bin/tls                Show full list of files
  * bin/tls.bat
  * bin/tls.py
-</pre>
-<pre>
  * bin/tlz                Make a compressed archive in TAR.LZMA format
  * bin/tlz.py
  * bin/tmux               tmux wrapper (allowing non systems port)
@@ -747,8 +707,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/vbox.py            (uses VBoxManage)
  * bin/vget               Video downloader for Youtube & compatible websites (uses youtube-dl).
  * bin/vget.py
-</pre>
-<pre>
  * bin/vi                 vi wrapper (allowing non systems port)
  * bin/vi.bat
  * bin/vim                vim wrapper (allowing non systems port)
@@ -756,8 +714,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/vi.py
  * bin/view               View files using hardwired application mapping
  * bin/view.py
-</pre>
-<pre>
  * bin/vlc                vlc wrapper (allowing non systems port)
  * bin/vlc.bat
  * bin/vlc.py
@@ -841,8 +797,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/zhspeak.tcl
  * bin/zip                zip wrapper (allowing non systems port)
  * bin/zip.py
-</pre>
-<pre>
  * bin/cda.bat            Windows command prompt batch file
  * bin/cdb.bat            for changing directory to %cda%..%cdz%
  * bin/cdc.bat
@@ -896,8 +850,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/mky.bat
  * bin/mkz.bat
  * bin/scd.bat            Show settings of %cda%..%cdz% environmental variables
-</pre>
-<pre>
  * config/Xresources                     Copy to "$HOME/.Xresources" to set xterm resources
  * config/adblock.txt                    Adblock filter list
  * config/autoexec.sh                    Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
@@ -923,8 +875,6 @@ the years. Now most of the scripts are written in Python 3.
  * config/userapp-soffice.desktop        Copy to "$HOME/.local/share/applications" for LibreOffice
  * config/userapp-vlc.desktop            Copy to "$HOME/.local/share/applications" for VLC
  * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
-</pre>
-<pre>
  * etc/install-python-requirements.sh    Python pip installer (installs minimum requirements)
  * etc/python-requirements.txt           Python pip requirements file
  * etc/python-2.7-requirements.txt       Python pip requirements file
@@ -933,8 +883,6 @@ the years. Now most of the scripts are written in Python 3.
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization
  * etc/setmod                            Fix group and others file/directory read access recursively
-</pre>
-<pre>
  * ansible/Makefile                      Ansible local hosts playbook
  * ansible/ansible.cfg
  * ansible/inventory/group_vars/all
@@ -949,8 +897,6 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/roles/user-config/tasks/user-home.yml
  * ansible/roles/user-config/vars/main.yml
  * ansible/setup-local.yml
-</pre>
-<pre>
  * cloudformation/1pxy/1pxy.json         CloudFormation: 1pxy example
  * cloudformation/1pxy/Makefile
  * cloudformation/1pxy/submit.sh
@@ -959,15 +905,11 @@ the years. Now most of the scripts are written in Python 3.
  * cloudformation/multi-stacks/pxy_stack.json
  * cloudformation/multi-stacks/sg_stack.json
  * cloudformation/multi-stacks/submit.sh
-</pre>
-<pre>
  * cookiecutter/docker                   Docker project template
  * cookiecutter/docker/{{cookiecutter.project_name}}
  * cookiecutter/docker/{{cookiecutter.project_name}}/Dockerfile
  * cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
  * cookiecutter/docker/cookiecutter.json
-</pre>
-<pre>
  * docker/Makefile                       Makefile for building all images
  * docker/alpine/Makefile                alpine:3.8 based linux
  * docker/alpine/Dockerfile
@@ -1042,8 +984,6 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu32/bash/Dockerfile
  * docker/ubuntu32/gcc/Makefile          i386/ubuntu:18.04 based GCC compiler
  * docker/ubuntu32/gcc/Dockerfile
-</pre>
-<pre>
  * kubernetes/servers-test/Makefile      Kubernetes: centos:7 example
  * kubernetes/servers-test/server-pod.yaml
  * kubernetes/servers-test/servers-daemonset.yaml
@@ -1054,8 +994,6 @@ the years. Now most of the scripts are written in Python 3.
  * kubernetes/servers-test/servers-secret-tls.yaml
  * kubernetes/servers-test/servers-service.yaml
  * kubernetes/servers-test/servers-statefulset.yaml
-</pre>
-<pre>
  * helm/Makefile
  * docker/ubuntu-test/Makefile           Install tiller
  * helm/chartmuseum/Makefile             Helm Chart: Chart Museum
@@ -1071,8 +1009,6 @@ the years. Now most of the scripts are written in Python 3.
  * helm/servers-test/templates/servers-service.yaml
  * helm/servers-test/templates/servers-statefulset.yaml
  * helm/servers-test/values.yaml
-</pre>
-<pre>
  * python/simple-cython/Makefile         Simple Cython example
  * python/simple-cython/cython_example.pyx
  * python/simple-cython/run.py
@@ -1087,8 +1023,6 @@ the years. Now most of the scripts are written in Python 3.
  * python/simple-tornado/Makefile        Tornado examples
  * python/simple-tornado/tornado_client.py
  * python/simple-tornado/tornado_server.py
-</pre>
-<pre>
  * terraform-aws/1pxy/aws_config.tf      Terraform AWS: 1pxy example
  * terraform-aws/1pxy/aws_resources.tf
  * terraform-aws/1pxy/pxy_resources.tf
