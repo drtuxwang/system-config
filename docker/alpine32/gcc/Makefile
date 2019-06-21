@@ -1,4 +1,4 @@
-NAME := alpine-gcc
+NAME := alpine32-gcc
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
