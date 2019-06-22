@@ -1,4 +1,4 @@
-NAME := clearlinux-gcc
+NAME := centos-dev
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
@@ -28,6 +28,10 @@ endif
 .PHONY: default
 default: build
 	docker images
+
+.PHONY: pull
+pull:
+	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
 
 .PHONY: build
 build:

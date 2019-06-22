@@ -915,14 +915,14 @@ the years. Now most of the scripts are written in Python 3.
  * docker/alpine/Dockerfile
  * docker/alpine/bash/Makefile           alpine:3.9 based BASH login
  * docker/alpine/bash/Dockerfile
- * docker/alpine/gcc/Makefile            alpine:3.9 based GCC compiler
- * docker/alpine/gcc/Dockerfile
+ * docker/alpine/dev/Makefile            alpine:3.9 based GCC dev shell
+ * docker/alpine/dev/Dockerfile
  * docker/alpine32/Makefile              i386/alpine:3.9 based linux
  * docker/alpine32/Dockerfile
  * docker/alpine32/bash/Makefile         i386/alpine:3.9 based BASH login
  * docker/alpine32/bash/Dockerfile
- * docker/alpine32/gcc/Makefile          i386/alpine:3.9 based GCC compiler
- * docker/alpine32/gcc/Dockerfile
+ * docker/alpine32/dev/Makefile          i386/alpine:3.9 based GCC dev shell
+ * docker/alpine32/dev/Dockerfile
  * docker/busybox/Makefile               busybox:1.28 based linux
  * docker/busybox/Dockerfile
  * docker/busybox/Makefile               busybox:1.28 based BASH login
@@ -933,20 +933,20 @@ the years. Now most of the scripts are written in Python 3.
  * docker/centos/Dockerfile
  * docker/centos/bash/Makefile           centos:7 based BASH login
  * docker/centos/bash/Dockerfile
- * docker/centos/gcc/Makefile            centos:7 based GCC compiler
- * docker/centos/gcc/Dockerfile
+ * docker/centos/dev/Makefile            centos:7 based GCC dev shell
+ * docker/centos/dev/Dockerfile
  * docker/clearlinux/Makefile            clearlinux:latest based linux
  * docker/clearlinux/Dockerfile
  * docker/clearlinux/bash/Makefile       clearlinux:latest based BASH login
  * docker/clearlinux/bash/Dockerfile
- * docker/clearlinux/gcc/Makefile        clearlinux:latest based GCC compiler
- * docker/clearlinux/gcc/Dockerfile
+ * docker/clearlinux/dev/Makefile        clearlinux:latest based CLANG dev shell
+ * docker/clearlinux/dev/Dockerfile
  * docker/debian/Makefile                debian:buster-slim based linux
  * docker/debian/Dockerfile
  * docker/debian/bash/Makefile           debian:buster-slim based BASH login
  * docker/debian/bash/Dockerfile
- * docker/debian/gcc/Makefile            debian:buster-slim based GCC compiler
- * docker/debian/gcc/Dockerfile
+ * docker/debian/dev/Makefile            debian:buster-slim based GCC dev shell
+ * docker/debian/dev/Dockerfile
  * docker/debian/sandbox/Makefile        debian:buster-slim based sandbox environment
  * docker/debian/sandbox/Dockerfile
  * docker/docker/Makefile                dockerL18.09 (alpine) based docker shell
@@ -982,14 +982,14 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu/Dockerfile
  * docker/ubuntu/bash/Makefile           ubuntu:18.04 based BASH login
  * docker/ubuntu/bash/Dockerfile-shell
- * docker/ubuntu/gcc/Makefile            ubuntu:18.04 based GCC compiler
- * docker/ubuntu/gcc/Dockerfile
+ * docker/ubuntu/dev/Makefile            ubuntu:18.04 based GCC dev shell
+ * docker/ubuntu/dev/Dockerfile
  * docker/ubuntu32/Makefile              i386/ubuntu:18.04 based linux
  * docker/ubuntu32/Dockerfile
  * docker/ubuntu32/bash/Makefile         i386/ubuntu:18.04 based BASH login
  * docker/ubuntu32/bash/Dockerfile
- * docker/ubuntu32/gcc/Makefile          i386/ubuntu:18.04 based GCC compiler
- * docker/ubuntu32/gcc/Dockerfile
+ * docker/ubuntu32/dev/Makefile          i386/ubuntu:18.04 based GCC dev shell
+ * docker/ubuntu32/dev/Dockerfile
  * kubernetes/servers-test/Makefile      Kubernetes: centos:7 example
  * kubernetes/servers-test/server-pod.yaml
  * kubernetes/servers-test/servers-daemonset.yaml

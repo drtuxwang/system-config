@@ -1,4 +1,4 @@
-NAME := alpine32-gcc
+NAME := ubuntu-dev
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
@@ -29,11 +29,15 @@ endif
 default: build
 	docker images
 
+.PHONY: pull
+pull:
+	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
+
 .PHONY: build
 build:
 	rm -rf tmpdir
 	mkdir -p tmpdir/bin tmpdir/root
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
+	cp -p $(TOPDIR)/bin/sysinfo.sh tmpdir/bin/
 	cp -p $(TOPDIR)/config/profile tmpdir/root/.profile
 	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
 	$(TOPDIR)/etc/setmod *

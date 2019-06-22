@@ -7,7 +7,7 @@ TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
-BUILD_DIRS := bash gcc
+BUILD_DIRS := bash dev
 
 
 .PHONY: default

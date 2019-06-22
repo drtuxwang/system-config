@@ -1,4 +1,4 @@
-NAME := alpine-gcc
+NAME := debian-dev
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
