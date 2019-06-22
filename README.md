@@ -939,6 +939,8 @@ the years. Now most of the scripts are written in Python 3.
  * docker/clearlinux/Dockerfile
  * docker/clearlinux/bash/Makefile       clearlinux:latest based BASH login
  * docker/clearlinux/bash/Dockerfile
+ * docker/clearlinux/gcc/Makefile        clearlinux:latest based GCC compiler
+ * docker/clearlinux/gcc/Dockerfile
  * docker/debian/Makefile                debian:buster-slim based linux
  * docker/debian/Dockerfile
  * docker/debian/bash/Makefile           debian:buster-slim based BASH login
