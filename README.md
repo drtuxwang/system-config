@@ -911,17 +911,17 @@ the years. Now most of the scripts are written in Python 3.
  * cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
  * cookiecutter/docker/cookiecutter.json
  * docker/Makefile                       Makefile for building all images
- * docker/alpine/Makefile                alpine:3.8 based linux
+ * docker/alpine/Makefile                alpine:3.9 based linux
  * docker/alpine/Dockerfile
- * docker/alpine/bash/Makefile           alpine:3.8 based BASH login
+ * docker/alpine/bash/Makefile           alpine:3.9 based BASH login
  * docker/alpine/bash/Dockerfile
- * docker/alpine/gcc/Makefile            alpine:3.8 based GCC compiler
+ * docker/alpine/gcc/Makefile            alpine:3.9 based GCC compiler
  * docker/alpine/gcc/Dockerfile
- * docker/alpine32/Makefile              i386/alpine:3.8 based linux
+ * docker/alpine32/Makefile              i386/alpine:3.9 based linux
  * docker/alpine32/Dockerfile
- * docker/alpine32/bash/Makefile         i386/alpine:3.8 based BASH login
+ * docker/alpine32/bash/Makefile         i386/alpine:3.9 based BASH login
  * docker/alpine32/bash/Dockerfile
- * docker/alpine32/gcc/Makefile          i386/alpine:3.8 based GCC compiler
+ * docker/alpine32/gcc/Makefile          i386/alpine:3.9 based GCC compiler
  * docker/alpine32/gcc/Dockerfile
  * docker/busybox/Makefile               busybox:1.28 based linux
  * docker/busybox/Dockerfile
