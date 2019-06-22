@@ -302,6 +302,7 @@ class Options:
             '"layout.frames.force_resizability", true',
             '"layout.spellcheckDefault", 2',
             '"loop.throttled", false',
+            '"media.autoplay.allow-muted", false',
             '"media.autoplay.enabled", false',
             '"media.fragmented-mp4.exposed", true',
             '"media.fragmented-mp4.ffmpeg.enabled", true',
