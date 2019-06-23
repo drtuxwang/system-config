@@ -1,12 +1,13 @@
-FROM drtuxwang/ubuntu32
+FROM drtuxwang/debian32
 
 # Install compiler & dev packages
-RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+RUN apt-get install --no-install-recommends -y \
 		g++ \
 		gfortran \
 		libbz2-dev \
 		libdb5.3-dev \
 		libevent-dev \
+		libffi-dev \
 		libgdbm-dev \
 		liblzma-dev \
 		libncurses5-dev \
@@ -14,7 +15,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
 		libsqlite3-dev \
 		libssl-dev \
 		python3-dev \
-		python3-setuptools && \
+		python3-setuptools \
+		uuid-dev && \
 	apt-get clean
 
 # Add scripts

@@ -1,4 +1,4 @@
-NAME := ubuntu32-dev
+NAME := debian32-bash
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
@@ -8,18 +8,14 @@ ifndef DOCKER_BUILD_FLAGS
 endif
 
 # Docker run
-ifndef DOCKER_RUN_FLAGS
-	DOCKER_RUN_FLAGS=
-endif
 DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
-	--memory=2000m \
+	--memory=1000m \
 	--memory-reservation=50m \
-	--volume=/shared:/shared \
-	$(DOCKER_RUN_FLAGS)
+	--volume=/shared:/shared
 ifndef DOCKER_RUN_COMMAND
 	DOCKER_RUN_COMMAND=
 endif
@@ -28,10 +24,6 @@ endif
 .PHONY: default
 default: build
 	docker images
-
-.PHONY: pull
-pull:
-	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
 
 .PHONY: build
 build:
@@ -48,16 +40,12 @@ build:
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname $(NAME) \
-		$(IMAGE) \
-		$(DOCKER_RUN_COMMAND) \
-		||:
+	docker run $(DOCKER_RUN_FLAGS) --hostname $(NAME) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:
-	@docker run --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
-		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/debian_version 2> /dev/null | \
+		sed -e "s@^@$(shell pwd): Debian Linux @"
 
 .PHONY: clean
 clean:

@@ -949,6 +949,12 @@ the years. Now most of the scripts are written in Python 3.
  * docker/debian/dev/Dockerfile
  * docker/debian/sandbox/Makefile        debian:buster-slim based sandbox environment
  * docker/debian/sandbox/Dockerfile
+ * docker/debian32/Makefile              i386/debian:buster-slim based linux
+ * docker/debian32/Dockerfile
+ * docker/debian32/bash/Makefile         i386/debian:buster-slim based BASH login
+ * docker/debian32/bash/Dockerfile
+ * docker/debian32/dev/Makefile          i386/debian:buster-slim based GCC dev shell
+ * docker/debian32/dev/Dockerfile
  * docker/docker/Makefile                dockerL18.09 (alpine) based docker shell
  * docker/docker/Dockerfile
  * docker/docker/files/ash2bash
@@ -984,12 +990,6 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu/bash/Dockerfile-shell
  * docker/ubuntu/dev/Makefile            ubuntu:18.04 based GCC dev shell
  * docker/ubuntu/dev/Dockerfile
- * docker/ubuntu32/Makefile              i386/ubuntu:18.04 based linux
- * docker/ubuntu32/Dockerfile
- * docker/ubuntu32/bash/Makefile         i386/ubuntu:18.04 based BASH login
- * docker/ubuntu32/bash/Dockerfile
- * docker/ubuntu32/dev/Makefile          i386/ubuntu:18.04 based GCC dev shell
- * docker/ubuntu32/dev/Dockerfile
  * kubernetes/servers-test/Makefile      Kubernetes: centos:7 example
  * kubernetes/servers-test/server-pod.yaml
  * kubernetes/servers-test/servers-daemonset.yaml

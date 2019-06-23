@@ -1,4 +1,4 @@
-FROM drtuxwang/ubuntu32
+FROM drtuxwang/debian32
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

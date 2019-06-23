@@ -1,8 +1,7 @@
-NAME := ubuntu32
+NAME := debian32
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build
-SANDBOX_IMAGE := drtuxwang/$(NAME)-sandbox
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
