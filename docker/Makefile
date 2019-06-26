@@ -5,6 +5,7 @@ BUILD_DIRS := \
 	centos \
 	clearlinux \
 	debian \
+	debian32 \
 	docker \
 	etcd \
 	golang \
@@ -15,8 +16,7 @@ BUILD_DIRS := \
 	python \
 	registry \
 	sudo \
-	ubuntu \
-	ubuntu32
+	ubuntu
 
 TEST_DIRS := \
 	python \
