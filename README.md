@@ -182,6 +182,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/dockerreg.py
  * bin/docker-sandbox     Starts Docker sandbox environment
  * bin/docker-sudo        Starts Docker sudo app
+ * bin/dpkg               dpkg wrapper (force system Python)
+ * bin/dpkg.py
  * bin/eclipse            eclipse wrapper (allowing non systems port)
  * bin/eclipse.py
  * bin/espeak             espeak wrapper (allowing non systems port)
