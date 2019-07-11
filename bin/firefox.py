@@ -293,7 +293,8 @@ class Options:
             '"content.notify.ontimer", true',
             '"dom.event.contextmenu.enabled", false',
             '"dom.max_script_run_time", 20',
-            '"dom.push.enable", false',
+            '"dom.push.enabled", false',
+            '"dom.serviceWorkers.enabled", false',
             '"extensions.blocklist.enabled", false',
             '"full-screen-api.approval-required", false',
             '"geo.enabled", false',
@@ -324,9 +325,12 @@ class Options:
             '"plugins.click_to_play", true',
             '"reader.parse-on-load.enabled", false',
             '"security.dialog_enable_delay", 0',
+            '"security.enterprise_roots.enabled", false',
+            '"security.certerrors.mitm.auto_enable_enterprise_roots", true',
             '"toolkit.telemetry.enabled", false',
             '"toolkit.storage.synchronous", 0',
-            '"ui.submenuDelay", 0'
+            '"ui.submenuDelay", 0',
+            '"xpinstall.signatures.required", false',
         )
 
         firefoxdir = os.path.join(os.environ['HOME'], cls._get_profiles_dir())
