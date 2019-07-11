@@ -1,4 +1,4 @@
-FROM i386/debian:buster-slim
+FROM i386/debian:10-slim
 
 # Install base packages
 RUN apt-get update --fix-missing && \

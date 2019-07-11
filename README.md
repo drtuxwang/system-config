@@ -944,19 +944,19 @@ the years. Now most of the scripts are written in Python 3.
  * docker/clearlinux/bash/Dockerfile
  * docker/clearlinux/dev/Makefile        clearlinux:latest based CLANG dev shell
  * docker/clearlinux/dev/Dockerfile
- * docker/debian/Makefile                debian:buster-slim based linux
+ * docker/debian/Makefile                debian:10-slim based linux
  * docker/debian/Dockerfile
- * docker/debian/bash/Makefile           debian:buster-slim based BASH login
+ * docker/debian/bash/Makefile           debian:10-slim based BASH login
  * docker/debian/bash/Dockerfile
- * docker/debian/dev/Makefile            debian:buster-slim based GCC dev shell
+ * docker/debian/dev/Makefile            debian:10-slim based GCC dev shell
  * docker/debian/dev/Dockerfile
- * docker/debian/sandbox/Makefile        debian:buster-slim based sandbox environment
+ * docker/debian/sandbox/Makefile        debian:10-slim based sandbox environment
  * docker/debian/sandbox/Dockerfile
- * docker/debian32/Makefile              i386/debian:buster-slim based linux
+ * docker/debian32/Makefile              i386/debian:10-slim based linux
  * docker/debian32/Dockerfile
- * docker/debian32/bash/Makefile         i386/debian:buster-slim based BASH login
+ * docker/debian32/bash/Makefile         i386/debian:10-slim based BASH login
  * docker/debian32/bash/Dockerfile
- * docker/debian32/dev/Makefile          i386/debian:buster-slim based GCC dev shell
+ * docker/debian32/dev/Makefile          i386/debian:10-slim based GCC dev shell
  * docker/debian32/dev/Dockerfile
  * docker/docker/Makefile                dockerL18.09 (alpine) based docker shell
  * docker/docker/Dockerfile
