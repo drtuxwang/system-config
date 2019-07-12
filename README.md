@@ -583,6 +583,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/soffice.py
  * bin/sqlplus            Sqlplus wrapper (for Oracle Instant Client)
  * bin/sqlplus.py
+ * bin/sqlplus64
+ * bin/sqlplus64.py
  * bin/ssh.bat            Windows ssh wrapper (uses PuTTY)
  * bin/ssync              Securely synchronize file system using SSH protocol
  * bin/ssync.py           (uses rsync)
