@@ -1,6 +1,6 @@
-Command=/opt/software/bin/weather http://www.accuweather.com/en/gb/london/ec4a-2/weather-forecast/328328
+Command=/opt/software/bin/weather -q http://www.accuweather.com/en/gb/catford/se6-2/weather-forecast/323204
 UseLabel=0
 Text=(genmon)
 UpdatePeriod=300000
-Font=(default)
+Font=Sans 16
 
