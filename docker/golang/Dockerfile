@@ -2,8 +2,7 @@ FROM golang:1.11.10-alpine
 
 # Install base packages
 RUN apk update && \
-	apk add bash openssh-client python3 vim && \
-	python3 -m pip install --upgrade pip
+	apk add bash openssh-client python3 vim
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

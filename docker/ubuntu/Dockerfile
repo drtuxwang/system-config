@@ -13,5 +13,4 @@ RUN apt-get update --fix-missing && \
 		python3-pip \
 		vim && \
 	apt-get clean && \
-	python3 -m pip install --upgrade pip && \
 	rm -rf /root/.cache
