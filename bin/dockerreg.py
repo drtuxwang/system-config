@@ -175,7 +175,8 @@ class DockerRegistry:
         try:
             response = requests.delete(
                 url,
-                headers={'User-Agent': self._user_agent}
+                headers={'User-Agent': self._user_agent},
+                verify=False,
             )
         except Exception as exception:
             raise SystemExit(str(exception))
@@ -205,8 +206,8 @@ class DockerRegistry2(DockerRegistry):
     def _get_url(self, url):
         return requests.get(url, headers={
             'User-Agent': self._user_agent,
-            'Accept': 'application/vnd.docker.distribution.manifest.v2+json'
-        })
+            'Accept': 'application/vnd.docker.distribution.manifest.v2+json',
+        }, verify=False)
 
     def _config(self):
         self._url = self._server + '/v2/_catalog?n=' + MAXREPO
