@@ -8,7 +8,8 @@ RUN swupd bundle-add c-basic \
 		devpkg-openssl \
 		devpkg-readline \
 		devpkg-sqlite-autoconf \
-		devpkg-xz
+		devpkg-xz && \
+	swupd clean
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
