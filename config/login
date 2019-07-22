@@ -47,6 +47,11 @@ if ( $?TERM && -e "`\tty`" ) then
     if ( $?SSH_CONNECTION ) then
         setenv MYSHELL "$MYSHELL remote"
     endif
+
+    # Setup SSH agent
+    if ( "`ps -u $MYUNAME |& grep ssh-agent`" != "" ) then
+        rm -rf /tmp/ssh-*/*
+    endif
     setenv SSH_AUTH_SOCK `/bin/sh -c "\ls -1t /tmp/ssh-*/* 2> /dev/null | head -1"`
     if ( "$SSH_AUTH_SOCK" == "" ) then
         eval `ssh-agent -c` >& /dev/null
@@ -57,6 +62,8 @@ if ( $?TERM && -e "`\tty`" ) then
             unsetenv MYTTY
         endif
     endif
+
+    # Setup terminal
     if ( $?MYTTY ) then
         alias logout 'echo Use \"exit\" to exit the shell.'
     else

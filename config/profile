@@ -134,12 +134,20 @@ then
     then
         MYSHELL="$MYSHELL remote"
     fi
+
+    # Setup SSH agent
+    if [ ! "`ps -u $MYUNAME | grep ssh-agent`" ]
+    then
+        rm -rf /tmp/ssh-*/*
+    fi
     export SSH_AUTH_SOCK=$(\ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
     if [ ! "$SSH_AUTH_SOCK" ]
     then
         eval $(ssh-agent 2> /dev/null) > /dev/null
     fi
     SSH_KEYS=`ssh-add -l 2> /dev/null | grep ".:." | wc -l | awk '{print $1}'`
+
+    # Setup erminal
     if [ "$MYTTY" = "`\tty 2> /dev/null`" ]
     then
         alias logout='echo Use \"exit\" to exit the shell.'
