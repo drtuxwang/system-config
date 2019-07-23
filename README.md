@@ -554,6 +554,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/qmail.py
  * bin/readcd             Copy CD/DVD data as a portable ISO/BIN image file
  * bin/readcd.py
+ * bin/robo3t             robo3t wrapper (allowing non systems port)
+ * bin/robo3t.py
  * bin/ripcd              Rip CD audio tracks as WAVE sound files
  * bin/ripcd.py
  * bin/ripdvd             Rip Video DVD title to file
