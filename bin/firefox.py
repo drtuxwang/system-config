@@ -339,6 +339,7 @@ class Options:
             '"network.http.spdy.enabled", true',
             '"network.http.speculative-parallel-limit", 0',
             '"network.prefetch-next", false',
+            '"network.proxy.socks_remote_dns", true',
             '"nglayout.initialpaint.delay", 0',
             '"print.print_edge_bottom", 20',
             '"print.print_edge_left", 20',
