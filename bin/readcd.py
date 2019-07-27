@@ -5,7 +5,6 @@ Copy CD/DVD data as a portable ISO/BIN image file.
 
 import argparse
 import glob
-import hashlib
 import logging
 import os
 import signal
@@ -49,12 +48,6 @@ class Options:
         """
         return self._args.device[0]
 
-    def get_md5_flag(self):
-        """
-        Return md5 flag.
-        """
-        return self._args.md5_flag
-
     def get_image(self):
         """
         Return ISO/BIN image location.
@@ -76,12 +69,6 @@ class Options:
             dest='dao_flag',
             action='store_true',
             help='Read data/audio/video CD in disk-at-once mode.'
-        )
-        parser.add_argument(
-            '-md5',
-            dest='md5_flag',
-            action='store_true',
-            help='Create MD5 check sum of CD/DVD.'
         )
         parser.add_argument(
             '-speed',
@@ -231,20 +218,6 @@ class Main:
                 sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                 ' received from "' + cdrdao.get_file() + '".'
             )
-
-    @staticmethod
-    def _md5sum(file):
-        try:
-            with open(file, 'rb') as ifile:
-                md5 = hashlib.md5()
-                while True:
-                    chunk = ifile.read(131072)
-                    if not chunk:
-                        break
-                    md5.update(chunk)
-        except (OSError, TypeError):
-            return ''
-        return md5.hexdigest()
 
     @staticmethod
     def _scan():
@@ -401,13 +374,6 @@ class Main:
                 self._dao(device, speed, file)
             else:
                 self._tao(device, file)
-            if options.get_md5_flag():
-                print("Creating MD5 check sum of ISO file.")
-                md5sum = self._md5sum(file)
-                if not md5sum:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + file + '" file.')
-                print(md5sum, file, sep='  ')
             time.sleep(1)
             eject = command_mod.Command('eject', errors='ignore')
             if eject.is_found():

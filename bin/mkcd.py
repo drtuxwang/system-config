@@ -44,12 +44,6 @@ class Options:
         """
         return self._args.image[0]
 
-    def get_md5_flag(self):
-        """
-        Return md5 flag.
-        """
-        return self._args.md5_flag
-
     def get_speed(self):
         """
         Return CD speed.
@@ -91,12 +85,6 @@ class Options:
             dest='erase_flag',
             action='store_true',
             help='Erase TOC on CD-RW media before writing in DAO mode.'
-        )
-        parser.add_argument(
-            '-md5',
-            dest='md5_flag',
-            action='store_true',
-            help='Verify MD5 check sum of data CD/DVD disk.'
         )
         parser.add_argument(
             '-speed',
@@ -348,41 +336,6 @@ class Main:
                 sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                 ' received from "' + task.get_file() + '".'
             )
-
-        if options.get_md5_flag():
-            print("Verifying MD5 check sum of data CD/DVD:")
-            command = command_mod.Command('dd', errors='stop')
-            command.set_args([
-                'if=' + self._device,
-                'bs=' + str(2048*360),
-                'count=1',
-                'of=/dev/null'
-            ])
-            for _ in range(10):
-                time.sleep(1)
-                task2 = subtask_mod.Batch(command.get_cmdline())
-                task2.run()
-                if task2.has_output():
-                    time.sleep(1)
-                    break
-            md5cd = command_mod.Command(
-                'md5cd',
-                args=[self._device],
-                errors='stop'
-            )
-            task = subtask_mod.Task(md5cd.get_cmdline())
-            task.run()
-            if task.get_exitcode():
-                raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
-                )
-            try:
-                with open(file[:-4] + '.md5', errors='replace') as ifile:
-                    for line in ifile:
-                        print(line.rstrip())
-            except OSError:
-                pass
 
     def run(self):
         """

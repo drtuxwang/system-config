@@ -5,7 +5,6 @@ Make a portable CD/DVD archive in ISO9660 format.
 
 import argparse
 import glob
-import hashlib
 import logging
 import re
 import os
@@ -62,12 +61,6 @@ class Options:
         """
         return self._isoinfo
 
-    def get_md5_flag(self):
-        """
-        Return md5sum flag.
-        """
-        return self._args.md5_flag
-
     def get_volume(self):
         """
         Return volume name.
@@ -83,12 +76,6 @@ class Options:
             dest='follow_flag',
             action='store_true',
             help='Follow symbolic links.'
-        )
-        parser.add_argument(
-            '-md5',
-            dest='md5_flag',
-            action='store_true',
-            help='Create MD5 check sum of ISO image file.'
         )
         parser.add_argument('volume', nargs=1, help='ISO file volume name.')
         parser.add_argument(
@@ -265,20 +252,6 @@ class Main:
                 )
                 logger.warning("==> Please use 700MB/80min CD media instead.")
 
-    @staticmethod
-    def _md5sum(file):
-        try:
-            with open(file, 'rb') as ifile:
-                md5 = hashlib.md5()
-                while True:
-                    chunk = ifile.read(131072)
-                    if not chunk:
-                        break
-                    md5.update(chunk)
-        except (OSError, TypeError):
-            return ''
-        return md5.hexdigest()
-
     def _windisk(self, options):
         if os.name == 'nt':
             self._genisoimage.extend_args(['-file-mode', '444'])
@@ -365,26 +338,6 @@ class Main:
                     ' received from "' + task.get_file() + '".'
                 )
             self._isosize(image, os.path.getsize(image))
-            if options.get_md5_flag():
-                print("Creating MD5 check sum of ISO file.")
-                md5sum = self._md5sum(image)
-                if not md5sum:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + image + '" file.')
-                print(md5sum, image, sep='  ')
-                try:
-                    if image.endswith('.iso'):
-                        with open(
-                                image[:-4] + '.md5', 'w', newline='\n'
-                        ) as ofile:
-                            print(md5sum + '  ' + image, file=ofile)
-                    else:
-                        with open(
-                                image + '.md5', 'w', newline='\n'
-                        ) as ofile:
-                            print(md5sum + '  ' + image, file=ofile)
-                except OSError:
-                    return
 
 
 if __name__ == '__main__':
