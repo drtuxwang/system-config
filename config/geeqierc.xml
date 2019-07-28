@@ -84,7 +84,7 @@
             image.use_clutter_renderer = "false" 
             thumbnails.max_width = "96" 
             thumbnails.max_height = "72" 
-            thumbnails.enable_caching = "true" 
+            thumbnails.enable_caching = "false" 
             thumbnails.cache_into_dirs = "false" 
             thumbnails.use_xvpics = "true" 
             thumbnails.spec_standard = "true" 
@@ -260,7 +260,7 @@
         show_thumbnails = "false" 
         show_directory_date = "false" 
         home_path = "" 
-        last_path = "/home/owner/.config/geeqie" 
+        last_path = "/home/owner" 
         startup_path = "0" 
         exit_on_close = "false" 
 
