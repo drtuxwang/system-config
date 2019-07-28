@@ -31,4 +31,7 @@ FontName=Monospace 11
 ColorForeground=#000099990000
 ColorBackground=#000000000000
 ColorPalette=rgb(51,51,51);rgb(255,85,85);rgb(85,255,85);rgb(255,255,85);rgb(85,85,255);rgb(255,85,255);rgb(85,255,255);rgb(255,255,255);rgb(51,51,51);rgb(255,85,85);rgb(85,255,85);rgb(255,255,85);rgb(85,85,255);rgb(255,85,255);rgb(85,255,255);rgb(255,255,255)
+ColorCursorUseDefault=FALSE
+ColorCursor=#ffff00000000
+ColorCursorForeground=#ffffffff0000
 
