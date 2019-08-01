@@ -61,10 +61,6 @@ run:
 version:
 	@docker run --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
 		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
-	@docker run --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
-		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
-	@docker run --entrypoint wine $(IMAGE) --version | grep ^wine | \
-		sed -e "s/-/ /g" | awk '{printf("'$(shell pwd)': wine %s\n", $$2)}'
 
 .PHONY: clean
 clean:

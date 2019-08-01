@@ -39,16 +39,6 @@ RUN apt-get install --no-install-recommends -y \
 		uuid-dev && \
 	apt-get clean
 
-# Install WINE packages
-RUN dpkg --add-architecture i386 && \
-	sed -i "s/^deb http/deb [arch=amd64,i386] http/" /etc/apt/sources.list && \
-	apt-get update && \
-	apt-get install --no-install-recommends -y wine wine64 wine32:i386 libc6-dev:i386 && \
-	apt-get clean && \
-	winecfg && \
-	tar cf /home/home-wine.tar -C /root .wine && \
-	rm -rf /root/.??*
-
 # Install Python packages
 COPY tmpdir/etc/install-python-requirements.sh tmpdir/etc/python-requirements.txt /etc/
 RUN /etc/install-python-requirements.sh /usr/bin/python3 && \
