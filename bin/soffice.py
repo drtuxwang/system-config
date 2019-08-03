@@ -5,6 +5,7 @@ LibreOffice launcher
 
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -46,8 +47,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    @staticmethod
-    def _config():
+    def _config(self):
         for file in glob.glob('.~lock.*#'):  # Remove stupid lock files
             try:
                 os.remove(file)
@@ -68,6 +68,16 @@ class Main:
                     os.mkdir(file)
                 except OSError:
                     pass
+
+        # Remove insecure macros scripting
+        try:
+            shutil.rmtree(os.path.join(
+                os.path.dirname(os.path.dirname(self._soffice.get_file())),
+                'share',
+                'Scripts',
+            ))
+        except OSError:
+            pass
 
     @staticmethod
     def _setenv():
