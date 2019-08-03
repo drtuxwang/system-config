@@ -323,6 +323,7 @@ class Options:
             '"media.autoplay.allow-muted", false',
             '"media.autoplay.default", 1',
             '"media.autoplay.enabled", false',
+            '"media.autoplay.enabled.user-gestures-needed", false',
             '"media.fragmented-mp4.exposed", true',
             '"media.fragmented-mp4.ffmpeg.enabled", true',
             '"media.fragmented-mp4.gmp.enabled", false',
