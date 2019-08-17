@@ -857,6 +857,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/mkz.bat
  * bin/scd.bat            Show settings of %cda%..%cdz% environmental variables
  * config/Xresources                     Copy to "$HOME/.Xresources" to set xterm resources
+ * config/accels                         Copy to "$HOME/.config/geeqie" for keyboard shortcuts
  * config/adblock.txt                    Adblock filter list
  * config/autoexec.sh                    Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
  * config/autoexec-opt.sh                Copy to "$HOME/.config/autoexec-opt.sh" for optional settings
