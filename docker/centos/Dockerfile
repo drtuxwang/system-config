@@ -12,4 +12,4 @@ RUN yum -y install epel-release && \
 		/root/.cshrc \
 		/root/.pki \
 		/root/.tcshrc \
-		/root/anaconda-ks.cfg &&
+		/root/anaconda-ks.cfg
