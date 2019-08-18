@@ -63,7 +63,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._espeak = command_mod.Command('espeak', errors='stop')
+        self._espeak = command_mod.Command('espeak-ng', errors='stop')
         self._espeak.set_args(['-a128', '-k30', '-ven+f2', '-s60', '-x'])
         if self._args.voice:
             self._espeak.append_arg('-v' + self._args.voice[0])

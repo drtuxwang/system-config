@@ -4,7 +4,7 @@ FROM centos:7
 RUN yum -y install epel-release && \
 	yum -y update && \
 	yum -y install bind-utils net-tools openssh-clients pciutils python34 vim && \
-	yum clean all \
+	yum clean all && \
 	rm -rf \
 		/root/.bash_logout \
 		/root/.bash_profile \
