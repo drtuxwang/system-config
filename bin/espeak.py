@@ -21,7 +21,7 @@ class Options:
     """
 
     def __init__(self, args):
-        self._espeak = command_mod.Command('espeak', errors='stop')
+        self._espeak = command_mod.Command('espeak-ng', errors='stop')
         self._espeak.set_args(args[1:])
         self._pattern = ': Connection refused'
 
