@@ -71,6 +71,8 @@ class Options:
             for arg in args[1:]:
                 if 'www.youtube.com/watch?' in arg:
                     nargs.extend(['vget', arg, ';'])
+                elif 'www.instagram.com/p/' in arg:
+                    nargs.extend(['pget', arg, ';'])
                 else:
                     nargs.extend([
                         'wget',
