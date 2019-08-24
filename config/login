@@ -28,7 +28,7 @@ if ( $?TERM && -e "`\tty`" ) then
     endif
 
     # Removing soft shell limit
-    foreach _limit ( `limit | \egrep -v "unlimited|-" | \awk '{print $1}'` )
+    foreach _limit ( `limit | \egrep -v "coredumpsize|unlimited|-" | \awk '{print $1}'` )
         if ( "`limit $_limit unlimited`" == "" ) then
             limit $_limit unlimited
         endif
