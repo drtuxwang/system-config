@@ -255,7 +255,7 @@ class Main:
                     columns = line.split()
                     if columns:
                         pattern = columns[0]
-                        if pattern[:1] != '#':
+                        if not pattern.startswith('#'):
                             file = os.path.join(os.path.dirname(
                                 pin_file), columns[1]) + '.json'
                             if file not in packages_cache:
@@ -278,7 +278,7 @@ class Main:
                 for line in ifile:
                     columns = line.split()
                     name = columns[0]
-                    if name[:1] != '#':
+                    if not name.startswith('#'):
                         if name in self._packages:
                             self._packages[name].set_installed_flag(True)
         except OSError:
@@ -323,7 +323,7 @@ class Main:
                     columns = line.split()
                     if columns:
                         name = columns[0]
-                        if name[:1] != '#':
+                        if not line.strip().startswith('#'):
                             if name in self._packages:
                                 if columns[1] == (
                                         '*',

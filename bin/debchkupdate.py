@@ -197,7 +197,7 @@ class Main:
                     columns = line.split()
                     if columns:
                         pattern = columns[0]
-                        if pattern[:1] != '#':
+                        if not pattern.startswith('#'):
                             file = os.path.join(
                                 os.path.dirname(pin_file),
                                 columns[1]
@@ -223,7 +223,7 @@ class Main:
                     columns = line.split()
                     if columns:
                         name = columns[0]
-                        if name[:1] != '#':
+                        if not line.strip().startswith('#'):
                             if name in self._packages:
                                 if (columns[1] == '*' or
                                         columns[1] ==
@@ -237,7 +237,7 @@ class Main:
             with open(list_file, errors='replace') as ifile:
                 versions = {}
                 for line in ifile:
-                    if line[:1] != '#':
+                    if not line.startswith('#'):
                         try:
                             name, version = line.split()[:2]
                         except ValueError:

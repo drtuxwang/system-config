@@ -170,7 +170,7 @@ class Main:
         try:
             with open(file, errors='replace') as ifile:
                 for line in ifile:
-                    if line[:1] != '#':
+                    if not line.strip().startswith('#'):
                         try:
                             name, version = line.split()
                             packages[name] = version
