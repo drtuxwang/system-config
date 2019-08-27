@@ -2,6 +2,7 @@ FROM drtuxwang/centos
 
 # Install compiler & dev packages
 RUN yum -y install \
+		gcc \
 		gcc-c++ \
 		gcc-gfortran \
 		make \
