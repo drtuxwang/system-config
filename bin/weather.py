@@ -9,6 +9,7 @@ import argparse
 import os
 import signal
 import sys
+import time
 
 import requests
 
@@ -104,30 +105,35 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def _search(options):
+    def _parse(text):
+        data = text.split('>Current Weather<')[-1].split('<!--')[0]
+        if '<span class="large-temp">' in data:
+            temp = data.split(
+                '<span class="large-temp">'
+            )[1].split('<')[0].replace('&deg;', '°C')
+            if '<span class="cond">' in data:
+                condition = data.split('<span class="cond">')[1].split('<')[0]
+                return '{0:s} ({1:s})'.format(temp, condition)
+        return None
+
+    @classmethod
+    def _search(cls, options):
         user_agent = config_mod.Config().get('user_agent')
 
-        try:
-            response = requests.get(
-                options.get_url(),
-                headers={'User-Agent': user_agent}
-            )
-        except requests.RequestException:
-            pass
-        else:
-            if response.status_code == 200:
-                data = response.text.split(
-                    '>Current Weather<'
-                )[-1].split('<!--')[0]
-                if '<span class="large-temp">' in data:
-                    temp = data.split(
-                        '<span class="large-temp">'
-                    )[1].split('<')[0].replace('&deg;', '°C')
-                    if '<span class="cond">' in data:
-                        condition = data.split(
-                            '<span class="cond">'
-                        )[1].split('<')[0]
-                        return '{0:s} ({1:s})'.format(temp, condition)
+        for _ in range(10):
+            try:
+                response = requests.get(
+                    options.get_url(),
+                    headers={'User-Agent': user_agent}
+                )
+            except requests.RequestException:
+                break
+            else:
+                if response.status_code == 200:
+                    weather = cls._parse(response.text)
+                    if weather:
+                        return weather
+            time.sleep(2)
 
         if options.get_quiet_flag():
             return ''
