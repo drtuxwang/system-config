@@ -59,15 +59,18 @@ class Main:
         if not os.path.isfile(sound):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + sound + '" file.')
-        bell = command_mod.Command('ogg123', errors='ignore')
+        bell = command_mod.Command(
+            'vlc',
+            args=['--intf', 'dummy', '--gain', '2', '--play-and-exit', '-q'],
+            errors='ignore'
+        )
         if not bell.is_found():
-            bell = command_mod.Command('cvlc', errors='ignore')
+            bell = command_mod.Command('ogg123', errors='ignore')
             if not bell.is_found():
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find required "ogg123" or '
-                    '"cvlc" software.'
+                    sys.argv[0] + ': Cannot find required "vlc" or '
+                    '"ogg123" software.'
                 )
-            bell.set_args(['--play-and-exit'])
         bell.append_arg(sound)
 
         subtask_mod.Background(bell.get_cmdline()).run()
