@@ -53,7 +53,9 @@ class Options:
             for line in task.get_output():
                 if '"og:image" content="' in line:
                     return line.split('"og:image" content="')[1].split('"')[0]
-            raise SystemExit(sys.argv[0] + ': cannot determine picture url: ' + url)
+            raise SystemExit(
+                sys.argv[0] + ': cannot determine picture url: ' + url
+            )
 
         raise SystemExit(sys.argv[0] + ': No video stream: ' + url)
 
