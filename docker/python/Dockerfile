@@ -1,4 +1,4 @@
-FROM python:3.6.8-stretch
+FROM python:3.6.9-stretch
 
 RUN apt-get update --fix-missing && \
 	apt-get install --no-install-recommends -y \
