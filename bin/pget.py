@@ -25,11 +25,11 @@ class Options:
         self._args = None
         self.parse(sys.argv)
 
-    def get_wget(self):
+    def get_urls(self):
         """
-        Return wget Command class object.
+        Return image urls.
         """
-        return self._wget
+        return self._urls
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
@@ -44,20 +44,24 @@ class Options:
         self._args = parser.parse_args(args)
 
     @staticmethod
-    def _get_image(url):
+    def _parse_instagram(output):
+        urls = ' '.join(output).split('display_url":"')[1:]
+        return {url.split('"')[0] for url in urls}
+
+    @classmethod
+    def _get_images(cls, url):
         curl = command_mod.Command('curl', args=[url], errors='stop')
         task = subtask_mod.Batch(curl.get_cmdline())
         task.run()
 
         if 'www.instagram.com/p/' in url:
-            for line in task.get_output():
-                if '"og:image" content="' in line:
-                    return line.split('"og:image" content="')[1].split('"')[0]
-            raise SystemExit(
-                sys.argv[0] + ': cannot determine picture url: ' + url
-            )
+            urls = cls._parse_instagram(task.get_output())
+        else:
+            raise SystemExit(sys.argv[0] + ': Cannot handle website: ' + url)
 
-        raise SystemExit(sys.argv[0] + ': No video stream: ' + url)
+        if not urls:
+            raise SystemExit(sys.argv[0] + ': Cannot parse images: ' + url)
+        return urls
 
     def parse(self, args):
         """
@@ -65,11 +69,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        url = self._get_image(self._args.url[0])
-        file = os.path.basename(url).split('?')[0]
-
-        self._wget = command_mod.Command('wget', errors='stop')
-        self._wget.set_args(['--output-document', file, url])
+        self._urls = self._get_images(self._args.url[0])
 
 
 class Main:
@@ -110,7 +110,11 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_wget().get_cmdline()).run()
+        wget = command_mod.Command('wget', errors='stop')
+        for url in options.get_urls():
+            file = os.path.basename(url).split('?')[0]
+            wget.set_args(['--output-document', file, url])
+            subtask_mod.Task(wget.get_cmdline()).run()
 
 
 if __name__ == '__main__':
