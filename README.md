@@ -511,7 +511,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/pcunix.bat         Start PCUNIX on Windows
  * bin/pdf                Create PDF file from text/images/postscript/PDF files
  * bin/pdf.py
- * bin/pget               Picture downloader for Instagram website (uses curl/wget)
+ * bin/pget               Picture downloader for Instagram website
  * bin/pget.py
  * bin/pidgin             Pidgin wrapper (allowing non systems port)
  * bin/pidgin.bat

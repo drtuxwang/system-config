@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Picture downloader for Instagram website (uses curl/wget).
+Picture downloader for Instagram website.
 """
 
 import argparse
@@ -33,7 +33,7 @@ class Options:
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Picture downloader for Instagram (uses curl/wget).')
+            description='Picture downloader for Instagram website.')
 
         parser.add_argument(
             'url',
@@ -46,16 +46,17 @@ class Options:
     @staticmethod
     def _parse_instagram(output):
         urls = ' '.join(output).split('display_url":"')[1:]
-        return {url.split('"')[0] for url in urls}
+        return {url.split('"')[0].split('\\')[0] for url in urls}
 
     @classmethod
     def _get_images(cls, url):
-        curl = command_mod.Command('curl', args=[url], errors='stop')
-        task = subtask_mod.Batch(curl.get_cmdline())
+        wget = command_mod.Command('wget', args=['-O', '-', url], errors='stop')
+        task = subtask_mod.Batch(wget.get_cmdline())
         task.run()
 
         if 'www.instagram.com/p/' in url:
             urls = cls._parse_instagram(task.get_output())
+            print("debugX1", urls)
         else:
             raise SystemExit(sys.argv[0] + ': Cannot handle website: ' + url)
 

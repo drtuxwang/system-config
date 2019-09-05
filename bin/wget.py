@@ -62,7 +62,7 @@ class Options:
         self._output = ''
         while len(args) > 1:
             if (len(args) > 2 and args[1] in ('--output-document', '-O') and
-                    not args[2].endswith('.part')):
+                    not args[2].endswith(('-', '.part'))):
                 self._output = args[2]
                 if (
                         os.path.isfile(args[2]) or
