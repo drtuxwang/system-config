@@ -316,7 +316,7 @@ class Main:
                             distribution, ofile, indent + '  ', i)
                     self._packages[i].set_checked_flag(True)
 
-    def _read_distribution_blacklist(self, file):
+    def _read_distribution_blocklist(self, file):
         try:
             with open(file, errors='replace') as ifile:
                 for line in ifile:
@@ -368,7 +368,7 @@ class Main:
 
         ispattern = re.compile('[.]debs-?.*$')
         distribution = ispattern.sub('', options.get_list_file())
-        self._read_distribution_blacklist(distribution + '.debs-blacklist')
+        self._read_distribution_blocklist(distribution + '.debs-blocklist')
 
         self._check_distribution_install(
             options.get_distribution(),
