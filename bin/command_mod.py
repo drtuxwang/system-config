@@ -17,8 +17,8 @@ import sys
 if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
 
-RELEASE = '2.2.3'
-VERSION = 20190602
+RELEASE = '2.3.0'
+VERSION = 20190908
 
 
 class Command:
@@ -308,7 +308,18 @@ class CommandFile(Command):
 
     @staticmethod
     def _locate(program, info):
-        return program
+        if os.path.isfile(program):
+            return program
+
+        if info['errors'] == 'stop':
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find required "' +
+                program + '" software.'
+            )
+        if info['errors'] == 'ignore':
+            return ''
+        raise CommandNotFoundError(
+            'Cannot find required "' + program + '" software.')
 
 
 class Platform:

@@ -50,7 +50,11 @@ class Options:
 
     @classmethod
     def _get_images(cls, url):
-        wget = command_mod.Command('wget', args=['-O', '-', url], errors='stop')
+        wget = command_mod.Command(
+            'wget',
+            args=['-O', '-', url],
+            errors='stop'
+        )
         task = subtask_mod.Batch(wget.get_cmdline())
         task.run()
 
