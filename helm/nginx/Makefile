@@ -8,6 +8,7 @@ check:
 	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm install -n $(NAME) \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version 4.3.3 \
 		bitnami/nginx \
@@ -19,6 +20,7 @@ install:
 	helm repo add stable https://kubernetes-charts.storage.googleapis.com
 	helm install -n $(NAME) \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version 4.3.3 \
 		bitnami/nginx \
