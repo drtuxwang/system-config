@@ -1,4 +1,4 @@
-CHART_NAME := concourse
+NAME := concourse
 NAMESPACE := default
 
 # Default local port
@@ -11,7 +11,7 @@ default: status
 .PHONY: check
 check:
 	helm repo add stable https://kubernetes-charts.storage.googleapis.com
-	helm install -n $(CHART_NAME) \
+	helm install -n $(NAME) \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		stable/concourse \

@@ -1,4 +1,4 @@
-CHART_NAME := chartmuseum
+NAME := chartmuseum
 NAMESPACE := default
 INGRESS_HOST := chartmusuem.local
 SECRET := chartmusuem-secret-tls
@@ -9,7 +9,7 @@ default: status
 .PHONY: check
 check:
 	helm repo add stable https://kubernetes-charts.storage.googleapis.com
-	helm install -n $(CHART_NAME) \
+	helm install -n $(NAME) \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--set env.open.DISABLE_API=false \

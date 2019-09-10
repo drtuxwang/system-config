@@ -1,4 +1,4 @@
-CHART_NAME := servers-test
+NAME := servers-test
 IMAGE := alpine:3.8
 
 NAMESPACE := servers-test
@@ -13,7 +13,7 @@ default: status
 
 .PHONY: check
 check:
-	helm install --name=$(CHART_NAME) \
+	helm install --name=$(NAME) \
 		--namespace=$(NAMESPACE) \
 		--set image.server=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
