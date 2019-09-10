@@ -23,7 +23,7 @@ install:
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version 4.3.3 \
-		bitnami/nginx \
+		bitnami/nginx
 	sleep 2
 	kubectl --namespace=$(NAMESPACE) get all
 
