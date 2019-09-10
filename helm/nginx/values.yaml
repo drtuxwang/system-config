@@ -1,0 +1,30 @@
+ingress:
+  enabled: true
+  hosts:
+  - name: server.ingress-domain.com
+    path: /
+  tls:
+    # Secrets must be manually created in the namespace.
+    - secretName: secret-ingress-domain-com
+      hosts:
+        - server.ingress-domain.com
+
+serverBlock: |-
+  server {
+    listen           0.0.0.0:8080;
+    gzip             on;
+    gzip_min_length  2000;
+    gzip_proxied     any;
+    gzip_types       text/html application/json;
+
+    location / {
+      proxy_pass http://server:8081;
+      proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-Host $host;
+      proxy_set_header X-Forwarded-Server $host;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      sub_filter_once off;
+      sub_filter_types text/html;
+      sub_filter "some-text" "new-text";
+    }
+  }

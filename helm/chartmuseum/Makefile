@@ -26,7 +26,7 @@ check:
 .PHONY: install
 install:
 	helm repo add stable https://kubernetes-charts.storage.googleapis.com
-	helm install -n $(CHART_NAME) \
+	helm install -n $(NAME) \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--set env.open.DISABLE_API=false \
@@ -42,7 +42,7 @@ install:
 
 .PHONY: upgrade
 upgrade:
-	helm upgrade $(CHART_NAME) .
+	helm upgrade $(NAME) .
 
 .PHONY: status
 status:
@@ -54,4 +54,4 @@ status:
 .PHONY: clean
 clean:
 	helm ls
-	helm del --purge $(CHART_NAME) ||:
+	helm del --purge $(NAME) ||:

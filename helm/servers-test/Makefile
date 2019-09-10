@@ -23,7 +23,7 @@ check:
 
 .PHONY: template
 template:
-	helm template --name=$(CHART_NAME) \
+	helm template --name=$(NAME) \
 		--set image.server=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
 		.
@@ -34,7 +34,7 @@ template:
 
 .PHONY: install
 install:
-	helm install --name=$(CHART_NAME) \
+	helm install --name=$(NAME) \
 		--namespace=$(NAMESPACE) \
 		--set image.server=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
@@ -48,8 +48,8 @@ upgrade:
 
 .PHONY: forward
 forward:
-	kubectl --namespace $(NAMESPACE) describe service/$(CHART_NAME)-server
-	kubectl --namespace $(NAMESPACE) port-forward service/$(CHART_NAME)-server $(LOCALPORT):80
+	kubectl --namespace $(NAMESPACE) describe service/$(NAME)-server
+	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME)-server $(LOCALPORT):80
 
 .PHONY: status
 status:
@@ -65,4 +65,4 @@ status:
 .PHONY: clean
 clean:
 	helm ls
-	helm del --purge $(CHART_NAME) ||:
+	helm del --purge $(NAME) ||:

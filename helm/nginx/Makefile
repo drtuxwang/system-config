@@ -1,20 +1,16 @@
-NAME := concourse
+NAME := nginx-proxy
 NAMESPACE := default
-
-# Default local port
-ifndef LOCALPORT
-	LOCALPORT=8080
-endif
 
 default: status
 
 .PHONY: check
 check:
-	helm repo add stable https://kubernetes-charts.storage.googleapis.com
+	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm install -n $(NAME) \
 		--namespace=$(NAMESPACE) \
-		--set persistence.enabled=false \
-		stable/concourse \
+		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
+		--version 4.3.3 \
+		bitnami/nginx \
 		--dry-run \
 		--debug
 
@@ -23,19 +19,15 @@ install:
 	helm repo add stable https://kubernetes-charts.storage.googleapis.com
 	helm install -n $(NAME) \
 		--namespace=$(NAMESPACE) \
-		--set persistence.enabled=false \
-		--set postgresql.persistence.enabled=false \
-		stable/concourse
+		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
+		--version 4.3.3 \
+		bitnami/nginx \
 	sleep 2
 	kubectl --namespace=$(NAMESPACE) get all
 
 .PHONY: upgrade
 upgrade:
 	helm upgrade $(NAME) .
-
-.PHONY: forward
-forward:
-	kubectl --namespace $(NAMESPACE) port-forward service/concourse-web $(LOCALPORT):8080
 
 .PHONY: status
 status:
@@ -48,5 +40,3 @@ status:
 clean:
 	helm ls
 	helm del --purge $(NAME) ||:
-	sleep 2
-	kubectl delete namespace concourse-main

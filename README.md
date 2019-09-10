@@ -1017,6 +1017,8 @@ the years. Now most of the scripts are written in Python 3.
  * helm/chartmuseum/Makefile             Helm Chart: Chart Museum
  * helm/concourse/Makefile               Helm Chart: Concourse-ci
  * helm/concourse/values.yml
+ * helm/nginx/Makefile                   Helm Chart: Nginx example
+ * helm/nginx/values.yaml
  * helm/servers-test/Makefile            Helm Chart: Servers test
  * helm/servers-test/Chart.yaml
  * helm/servers-test/requirements.yaml
