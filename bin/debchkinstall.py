@@ -363,12 +363,12 @@ class Main:
         self._packages = self._read_distribution_packages(
             options.get_distribution() + '.json')
         self._read_distribution_pin_packages(
-            options.get_distribution() + '.debs-pinlist')
+            options.get_distribution() + '.debs:pinlist')
         self._read_distribution_installed(options.get_list_file())
 
         ispattern = re.compile('[.]debs-?.*$')
         distribution = ispattern.sub('', options.get_list_file())
-        self._read_distribution_blocklist(distribution + '.debs-blocklist')
+        self._read_distribution_blocklist(distribution + '.debs:blocklist')
 
         self._check_distribution_install(
             options.get_distribution(),
