@@ -23,6 +23,7 @@ serverBlock: |-
       proxy_set_header X-Forwarded-Host $host;
       proxy_set_header X-Forwarded-Server $host;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Outside-URL https://$host;
       sub_filter_once off;
       sub_filter_types text/html;
       sub_filter "some-text" "new-text";
