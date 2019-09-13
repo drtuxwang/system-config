@@ -144,7 +144,7 @@ class Main:
             pass
 
         try:
-            file = distribution + '.debs-baselist'
+            file = distribution + '.debs:baselist'
             with open(file, errors='replace') as ifile:
                 for line in ifile:
                     try:
@@ -231,7 +231,7 @@ class Main:
             packages_files = self._check_files(distribution)
             if packages_files and os.path.isfile(distribution + '.debs'):
                 packages_white_list = self._read_distribution_allowlist(
-                    distribution + '.debs-allowlist')
+                    distribution + '.debs:allowlist')
                 packages_used = self._check_used(distribution)
                 self._compare(
                     packages_files,

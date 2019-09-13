@@ -6,21 +6,18 @@ London: http://www.accuweather.com/en/gb/london/ec4a-2/weather-forecast/328328
 """
 
 import argparse
+import json
 import os
 import signal
 import sys
 import time
 
-import requests
-
+import command_mod
 import config_mod
+import subtask_mod
 
 if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.4, < 4.0).")
-
-# pylint: disable = no-member
-requests.packages.urllib3.disable_warnings()
-# pylint: enable = no-member
 
 
 class Options:
@@ -106,33 +103,31 @@ class Main:
 
     @staticmethod
     def _parse(text):
-        data = text.split('>Current Weather<')[-1].split('<!--')[0]
-        if '<span class="large-temp">' in data:
-            temp = data.split(
-                '<span class="large-temp">'
-            )[1].split('<')[0].replace('&deg;', '°C')
-            if '<span class="cond">' in data:
-                condition = data.split('<span class="cond">')[1].split('<')[0]
-                return '{0:s} ({1:s})'.format(temp, condition)
+        try:
+            data = json.loads(text.split('var curCon = ')[-1].split(';')[0])
+        except json.decoder.JSONDecodeError:
+            pass
+        else:
+            temp = data.get('temp', '')
+            condition = data.get('phrase', '')
+            if temp and condition:
+                return '{0:s}C ({1:s})'.format(temp, condition)
         return None
 
     @classmethod
     def _search(cls, options):
         user_agent = config_mod.Config().get('user_agent')
+        curl = command_mod.Command('curl', errors='stop')
+        curl.set_args(['-A', user_agent, options.get_url()])
+        task = subtask_mod.Batch(curl.get_cmdline())
 
         for _ in range(10):
-            try:
-                response = requests.get(
-                    options.get_url(),
-                    headers={'User-Agent': user_agent}
-                )
-            except requests.RequestException:
+            task.run()
+            if task.get_exitcode():
                 break
-            else:
-                if response.status_code == 200:
-                    weather = cls._parse(response.text)
-                    if weather:
-                        return weather
+            weather = cls._parse('\n'.join(task.get_output()))
+            if weather:
+                return weather
             time.sleep(2)
 
         if options.get_quiet_flag():
