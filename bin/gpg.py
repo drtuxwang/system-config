@@ -235,7 +235,20 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_gpg().get_cmdline()).run()
+        task = subtask_mod.Task(options.get_gpg().get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
+
+        file = task.get_cmdline()[-1]
+        if os.path.isfile(file) and len(task.get_cmdline()) > 3:
+            new_file = task.get_cmdline()[-3].split('--output=')[-1]
+            if os.path.isfile(new_file):
+                file_time = os.path.getmtime(file)
+                os.utime(new_file, (file_time, file_time))
 
 
 if __name__ == '__main__':

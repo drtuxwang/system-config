@@ -138,6 +138,7 @@ class Main:
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
+
             gpg.set_args([file])
             task = subtask_mod.Task(gpg.get_cmdline())
             task.run()
@@ -146,6 +147,11 @@ class Main:
                     sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                     ' received from "' + task.get_file() + '".'
                 )
+
+            new_file = file.rsplit('.gpg', 1)[0]
+            if os.path.isfile(new_file):
+                file_time = os.path.getmtime(file)
+                os.utime(new_file, (file_time, file_time))
 
 
 if __name__ == '__main__':
