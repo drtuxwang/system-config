@@ -881,7 +881,7 @@ the years. Now most of the scripts are written in Python 3.
  * config/rc.local                       Copy to "/etc/rc.local" for system startup commands
  * config/rc.local-opt                   Copy to "/etc/rc.local-opt" for optional system startup commands
  * config/terminalrc                     Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
- * config/vboxmount.bat                  Mount VirtualBox "/shared" to "s:\" in Windows Guest OS
+ * config/vboxconfig.bat                 Configure Windows VirtualBox VMs
  * config/vimrc                          Copy to "$HOME/.vimrc" for VIM defaults
  * config/userapp-gqview.desktop         Copy to "$HOME/.local/share/applications" for Geeqie
  * config/userapp-soffice.desktop        Copy to "$HOME/.local/share/applications" for LibreOffice
