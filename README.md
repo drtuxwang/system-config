@@ -881,11 +881,12 @@ the years. Now most of the scripts are written in Python 3.
  * config/rc.local                       Copy to "/etc/rc.local" for system startup commands
  * config/rc.local-opt                   Copy to "/etc/rc.local-opt" for optional system startup commands
  * config/terminalrc                     Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
- * config/vboxconfig.bat                 Configure Windows VirtualBox VMs
  * config/vimrc                          Copy to "$HOME/.vimrc" for VIM defaults
  * config/userapp-gqview.desktop         Copy to "$HOME/.local/share/applications" for Geeqie
  * config/userapp-soffice.desktop        Copy to "$HOME/.local/share/applications" for LibreOffice
  * config/userapp-vlc.desktop            Copy to "$HOME/.local/share/applications" for VLC
+ * config/winsetup.bat                   Configure Windows VirtualBox VMs
+ * config/winsetupo.sh
  * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
  * etc/install-python-requirements.sh    Python pip installer (installs minimum requirements)
  * etc/python-requirements.txt           Python pip requirements file
