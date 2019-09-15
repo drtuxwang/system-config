@@ -30,8 +30,11 @@ then
     fi
 fi
 
-echo "Running \"net use s: \\\\vboxsvr\\shared\"..."
-net use s: \\vboxsvr\shared > nul 2> nul
+if [ -f "c:/Program Files/Oracle/VirtualBox Guest Additions/VBoxGuest.inf" ]
+then
+    echo "Running \"net use s: \\\\vboxsvr\\shared\"..."
+    net use s: \\vboxsvr\shared > nul 2> nul
+fi
 
 if [ "$PROCESSOR_ARCHITECTURE" = AMD64 -o "$PROCESSOR_ARCHITEW6432" = AMD64 ]
 then
