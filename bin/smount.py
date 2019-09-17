@@ -69,30 +69,10 @@ class Options:
 
         self._parse_args(args[1:])
 
-        command = command_mod.Command('id', errors='stop')
-        command.set_args(['-u'])
-        task = subtask_mod.Batch(command.get_cmdline())
-        task.run()
-        if task.get_exitcode():
-            raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
-            )
-        uid = task.get_output()[0]
-        command.set_args(['-g'])
-        task = subtask_mod.Batch(command.get_cmdline())
-        task.run()
-        if task.get_exitcode():
-            raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
-            )
-        gid = task.get_output()[0]
-
         self._sshfs = command_mod.Command('sshfs', errors='stop')
         self._sshfs.set_args([
             '-o',
-            'uid=' + uid + ',gid=' + gid + ',nonempty,reconnect'
+            ',nonempty,reconnect',
         ] + self._args.remote + self._args.local)
 
 
