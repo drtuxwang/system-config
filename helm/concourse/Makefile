@@ -40,9 +40,7 @@ forward:
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	helm ls
-	@echo
-	kubectl --namespace=$(NAMESPACE) get all -o wide
+	helm status $(NAME)
 
 .PHONY: clean
 clean:

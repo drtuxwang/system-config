@@ -28,10 +28,6 @@ template:
 		--set ingress.server.domain=$(DOMAIN) \
 		.
 
-.PHONY: template
-
-
-
 .PHONY: install
 install:
 	helm install --name=$(NAME) \
@@ -54,13 +50,7 @@ forward:
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	helm ls
-	@echo
-	kubectl --namespace=$(NAMESPACE) get all -o wide
-	@echo
-	kubectl --namespace=$(NAMESPACE) get secrets -o wide
-	@echo
-	kubectl --namespace=$(NAMESPACE) get ingress -o wide
+	helm status $(NAME)
 
 .PHONY: clean
 clean:
