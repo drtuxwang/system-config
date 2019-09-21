@@ -1,8 +1,6 @@
 FROM drtuxwang/python
 
-##RUN python3 -m pip install devpi-server devpi-web && \
-##	devpi-server --init --serverdir=/var/lib/devpi
-RUN python3 -m pip install devpi-server devpi-web && \
+RUN python3 -m pip install devpi-server==4.7.1 devpi-web==3.4.1 devpi-common==3.3.2 && \
 	devpi-server --init --serverdir=/var/lib/devpi
 
 # Configure start
