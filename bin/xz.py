@@ -66,7 +66,12 @@ class Main:
         """
         command = command_mod.Command('xz', errors='stop')
         if len(sys.argv) > 1 and os.path.isfile(sys.argv[1]):
-            command.set_args(['-9', '-e', '--lzma2=dict=128MiB'])
+            command.set_args([
+                '-9',
+                '-e',
+                '--lzma2=dict=128MiB',
+                '--threads=1'
+            ])
             if file_mod.FileStat(sys.argv[1]).get_size() > VERBOSE_SIZE:
                 command.append_arg('--verbose')
         command.extend_args(sys.argv[1:])
