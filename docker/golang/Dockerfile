@@ -1,4 +1,4 @@
-FROM golang:1.11.10-alpine
+FROM golang:1.12.9-alpine
 
 # Install base packages
 RUN apk update && \
