@@ -18,6 +18,7 @@ import subtask_mod
 if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
 
+TEXT_FONT = '*-fixed-bold-*-18-*-iso10646-*'
 FG_COLOUR = '#009900'
 BG_COLOUR = '#000000'
 
@@ -181,7 +182,7 @@ class Xterm(Terminal):
             '-cc',
             '33:48,35-38:48,40-58:48,63-255:48',
             '-fn',
-            '-misc-fixed-bold-r-normal--18-*-iso8859-1',
+            TEXT_FONT,
             '-fg',
             FG_COLOUR,
             '-bg',

@@ -2,6 +2,7 @@
 ! Re-load file: xrdb ~/.Xresources
 !
 ! xterm defaults
+xterm*font:        *-fixed-bold-*-18-*-iso10646-*
 xterm*foreground:  #009900
 xterm*background:  #000000
 xterm*cursorColor: #ff0000
