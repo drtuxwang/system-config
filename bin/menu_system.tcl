@@ -7,11 +7,6 @@
 . config -bg "#cccccc"
 
 frame .tools -bg "#cccccc"
-    button .tools.kill -width 10 -bg "#ffff00" -text "Kill Window" -command {
-        exec xkill &
-    }
-    pack .tools.kill -side top
-
     button .tools.hardinfo -width 10 -bg "#ffcc00" -text "Hardware Info" -command {
         exec hardinfo &
     }
@@ -26,6 +21,11 @@ frame .tools -bg "#cccccc"
         exec keymap.tcl &
     }
     pack .tools.keymap -side top
+
+    button .tools.vbox -width 10 -bg "#ffcc00" -text "VirtualBox" -command {
+       exec VirtualBox &
+    }
+    pack .tools.vbox -side top
 pack .tools -side top -fill x
 
 frame .session -bg "#cccccc"
