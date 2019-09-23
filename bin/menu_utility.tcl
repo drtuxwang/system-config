@@ -35,7 +35,7 @@ frame .system -bg "#cccccc"
     }
     pack .system.printer -side top
 
-    button .system.kill -width 10 -bg "#ffff00" -text "Kill Window" -command {
+    button .system.kill -width 10 -bg "#ffff00" -text "Xkill" -command {
         exec xkill &
     }
     pack .system.kill -side top
