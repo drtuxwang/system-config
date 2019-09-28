@@ -1,29 +1,32 @@
 NAME := nginx-proxy
+VERSION := 4.3.6
 NAMESPACE := default
 
 default: status
 
-.PHONY: check
-check:
+.PHONY: setup_helm
 	helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm repo update
+
+.PHONY: check
+check: setup_helm
 	helm install -n $(NAME) \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
-		--version 4.3.3 \
-		bitnami/nginx \
+		--version $(VERSION) \
+		stable/nginx \
 		--dry-run \
 		--debug
 
 .PHONY: install
-install:
-	helm repo add stable https://kubernetes-charts.storage.googleapis.com
+install: setup_helm
 	helm install -n $(NAME) \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
-		--version 4.3.3 \
-		bitnami/nginx
+		--version $(VERSION) \
+		stable/nginx
 	sleep 2
 	kubectl --namespace=$(NAMESPACE) get all
 
