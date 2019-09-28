@@ -1,4 +1,5 @@
-NAME := chartmuseum
+NAME := chartmuseum-server
+VERSION := 2.3.2
 NAMESPACE := default
 INGRESS_HOST := chartmusuem.local
 SECRET := chartmusuem-secret-tls
@@ -8,7 +9,6 @@ default: status
 
 .PHONY: check
 check:
-	helm repo add stable https://kubernetes-charts.storage.googleapis.com
 	helm install -n $(NAME) \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
@@ -19,13 +19,13 @@ check:
 		--set ingress.hosts[0].name=$(INGRESS_HOST) \
 		--set ingress.hosts[0].tls=true \
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
+		--version $(VERSION) \
 		stable/chartmuseum
 		--dry-run \
 		--debug
 
 .PHONY: install
 install:
-	helm repo add stable https://kubernetes-charts.storage.googleapis.com
 	helm install -n $(NAME) \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
@@ -36,6 +36,7 @@ install:
 		--set ingress.hosts[0].name=$(INGRESS_HOST) \
 		--set ingress.hosts[0].tls=true \
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
+		--version $(VERSION) \
 		stable/chartmuseum
 	sleep 2
 	kubectl --namespace=$(NAMESPACE) get all

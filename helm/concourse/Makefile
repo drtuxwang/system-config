@@ -1,4 +1,5 @@
-NAME := concourse
+NAME := concourse-server
+VERSION := 8.2.3
 NAMESPACE := default
 
 # Default local port
@@ -14,6 +15,7 @@ check:
 	helm install -n $(NAME) \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
+		--version $(VERSION) \
 		stable/concourse \
 		--dry-run \
 		--debug
@@ -25,6 +27,7 @@ install:
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--set postgresql.persistence.enabled=false \
+		--version $(VERSION) \
 		stable/concourse
 	sleep 2
 	kubectl --namespace=$(NAMESPACE) get all

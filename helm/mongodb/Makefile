@@ -1,5 +1,5 @@
-NAME := nginx-proxy
-VERSION := 4.3.6
+NAME := mongodb-server
+VERSION := 6.1.5
 NAMESPACE := default
 
 default: status
@@ -11,7 +11,7 @@ check:
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
-		stable/nginx \
+		stable/mongodb \
 		--dry-run \
 		--debug
 
@@ -22,7 +22,7 @@ install:
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
-		stable/nginx
+		stable/mongodb
 	sleep 2
 	kubectl --namespace=$(NAMESPACE) get all
 

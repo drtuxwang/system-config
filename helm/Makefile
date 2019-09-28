@@ -4,6 +4,8 @@ default: status
 
 .PHONY: status
 status:
+	@echo "\n*** initialize Helm ***"
+	helm init --client-only
 	@echo "\n*** Checking status ***"
 	kubectl --all-namespaces=true get pod -l name=tiller -o wide
 	helm ls
