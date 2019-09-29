@@ -280,6 +280,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/fpeek.py
  * bin/fprint             Sends text/images/postscript/PDF to printer
  * bin/fprint.py
+ * bin/freecol            freecol wrapper (allowing non systems port)
+ * bin/freecol.py
  * bin/freplace           Replace multi-lines patterns in files
  * bin/freplace.bat       (uses regular expression to match text)
  * bin/freplace.py
