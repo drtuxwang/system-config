@@ -1,4 +1,4 @@
-FROM k8s.gcr.io/etcd:3.3.10
+FROM k8s.gcr.io/etcd:3.3.15
 
 # Fix bash
 COPY files/ash2bash /bin/bash
