@@ -1,4 +1,4 @@
-FROM mongo:3.4.14
+FROM mongo:4.0.11
 
 # Root account
 COPY tmpdir/config/.bashrc /root/

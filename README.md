@@ -973,13 +973,13 @@ the years. Now most of the scripts are written in Python 3.
  * docker/docker/Makefile                dockerL18.09 (alpine) based docker shell
  * docker/docker/Dockerfile
  * docker/docker/files/ash2bash
- * docker/etcd/Makefile                  k8s.gcr.io/etcd:3.3.10 based app
+ * docker/etcd/Makefile                  k8s.gcr.io/etcd:3.3.15 based app
  * docker/etcd/Dockerfile
- * docker/golang/Makefile                golang:1.11.10-alpine based compiler app
+ * docker/golang/Makefile                golang:1.12.9-alpine based compiler app
  * docker/golang/Dockerfile
  * docker/jenkins/Makefile               jenkins/jenkins:lts based server app
  * docker/jenkins/Dockerfile
- * docker/mongodb/Makefile               mongo:3.4.14 based database app
+ * docker/mongodb/Makefile               mongo:4.0.11 based database app
  * docker/mongodb/Dockerfile
  * docker/nginx/Makefile                 nginx:stable-alpine based NGINX proxy app
  * docker/nginx/Dockerfile
@@ -987,11 +987,11 @@ the years. Now most of the scripts are written in Python 3.
  * docker/nginx/files/nginx-proxy.conf
  * docker/oracle-xe/Makefile             datagrip/oracle:11.2 based database app
  * docker/oracle-xe/Dockerfile
- * docker/python/Makefile                python:3.6.8-stretch based Python app
+ * docker/python/Makefile                python:3.6.9-buster based Python app
  * docker/python/Dockerfile
- * docker/python/bash/Dockerfile         python:3.6.8-stretch based BASH login
+ * docker/python/bash/Dockerfile         python:3.6.9-buster based BASH login
  * docker/python/bash/Makefile
- * docker/python/devpi/Makefile          python:3.6.8-stretch based devpi server app
+ * docker/python/devpi/Makefile          python:3.6.9-buster based devpi server app
  * docker/python/devpi/Dockerfile
  * docker/registry/Makefile              registry:2.6 based Docker Registry server app
  * docker/registry/Dockerfile
