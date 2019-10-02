@@ -323,7 +323,7 @@ class Main:
         try:
             source_files = [
                 os.path.join(source_dir, x) for x in os.listdir(source_dir)]
-        except PermissionError:
+        except (OSError, PermissionError):
             raise SystemExit(
                 sys.argv[0] + ': Cannot open "' + source_dir +
                 '" source directory.'
