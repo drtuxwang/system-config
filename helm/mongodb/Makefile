@@ -6,29 +6,27 @@ default: status
 
 .PHONY: check
 check:
-	helm install -n $(NAME) \
+	helm upgrade \
+		--install \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
-		stable/mongodb \
+		$(NAME) stable/mongodb \
 		--dry-run \
 		--debug
 
 .PHONY: install
 install:
-	helm install -n $(NAME) \
+	helm upgrade \
+		--install \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
-		stable/mongodb
+		$(NAME) stable/mongodb
 	sleep 2
 	kubectl --namespace=$(NAMESPACE) get all
-
-.PHONY: upgrade
-upgrade:
-	helm upgrade $(NAME) .
 
 .PHONY: status
 status:

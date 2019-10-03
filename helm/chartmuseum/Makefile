@@ -9,7 +9,8 @@ default: status
 
 .PHONY: check
 check:
-	helm install -n $(NAME) \
+	helm upgrade \
+		--install \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--set env.open.DISABLE_API=false \
@@ -20,13 +21,14 @@ check:
 		--set ingress.hosts[0].tls=true \
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--version $(VERSION) \
-		stable/chartmuseum
+		$(NAME) stable/chartmuseum \
 		--dry-run \
 		--debug
 
 .PHONY: install
 install:
-	helm install -n $(NAME) \
+	helm upgrade \
+		--install \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--set env.open.DISABLE_API=false \
@@ -37,13 +39,7 @@ install:
 		--set ingress.hosts[0].tls=true \
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--version $(VERSION) \
-		stable/chartmuseum
-	sleep 2
-	kubectl --namespace=$(NAMESPACE) get all
-
-.PHONY: upgrade
-upgrade:
-	helm upgrade $(NAME) .
+		$(NAME) stable/chartmuseum
 
 .PHONY: status
 status:

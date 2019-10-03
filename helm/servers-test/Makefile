@@ -13,11 +13,12 @@ default: status
 
 .PHONY: check
 check:
-	helm install --name=$(NAME) \
+	helm upgrade \
+		--install \
 		--namespace=$(NAMESPACE) \
 		--set image.server=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		. \
+		$(NAME) . \
 		--dry-run \
 		--debug
 
@@ -30,17 +31,12 @@ template:
 
 .PHONY: install
 install:
-	helm install --name=$(NAME) \
+	helm upgrade \
+		--install \
 		--namespace=$(NAMESPACE) \
 		--set image.server=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		.
-
-.PHONY: upgrade
-upgrade:
-	helm upgrade $(NAME) .
-	sleep 2
-	kubectl --namespace$(NAMESPACE) get all
+		$(NAME) .
 
 .PHONY: forward
 forward:
@@ -56,3 +52,5 @@ status:
 clean:
 	helm ls
 	helm del --purge $(NAME) ||:
+	sleep 2
+	kubectl delete servers-test

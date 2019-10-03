@@ -11,30 +11,24 @@ default: status
 
 .PHONY: check
 check:
-	helm repo add stable https://kubernetes-charts.storage.googleapis.com
-	helm install -n $(NAME) \
+	helm upgrade \
+		--install \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--version $(VERSION) \
-		stable/concourse \
+		$(NAME) stable/concourse \
 		--dry-run \
 		--debug
 
 .PHONY: install
 install:
-	helm repo add stable https://kubernetes-charts.storage.googleapis.com
-	helm install -n $(NAME) \
+	helm upgrade \
+		--install \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--set postgresql.persistence.enabled=false \
 		--version $(VERSION) \
-		stable/concourse
-	sleep 2
-	kubectl --namespace=$(NAMESPACE) get all
-
-.PHONY: upgrade
-upgrade:
-	helm upgrade $(NAME) .
+		$(NAME) stable/concourse
 
 .PHONY: forward
 forward:
