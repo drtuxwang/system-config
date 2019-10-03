@@ -21,7 +21,7 @@ check:
 		--set ingress.hosts[0].tls=true \
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--version $(VERSION) \
-		$(NAME) stable/chartmuseum \
+		$(NAME) --wait stable/chartmuseum \
 		--dry-run \
 		--debug
 
@@ -39,7 +39,7 @@ install:
 		--set ingress.hosts[0].tls=true \
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--version $(VERSION) \
-		$(NAME) stable/chartmuseum
+		$(NAME) --wait stable/chartmuseum
 
 .PHONY: status
 status:

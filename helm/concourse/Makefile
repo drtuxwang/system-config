@@ -16,7 +16,7 @@ check:
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--version $(VERSION) \
-		$(NAME) stable/concourse \
+		$(NAME) --wait stable/concourse \
 		--dry-run \
 		--debug
 
@@ -28,7 +28,7 @@ install:
 		--set persistence.enabled=false \
 		--set postgresql.persistence.enabled=false \
 		--version $(VERSION) \
-		$(NAME) stable/concourse
+		$(NAME) --wait stable/concourse
 
 .PHONY: forward
 forward:

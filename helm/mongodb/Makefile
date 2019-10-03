@@ -12,7 +12,7 @@ check:
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
-		$(NAME) stable/mongodb \
+		$(NAME) --wait stable/mongodb \
 		--dry-run \
 		--debug
 
@@ -24,7 +24,7 @@ install:
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
-		$(NAME) stable/mongodb
+		$(NAME) --wait stable/mongodb
 	sleep 2
 	kubectl --namespace=$(NAMESPACE) get all
 

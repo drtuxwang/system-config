@@ -1,5 +1,5 @@
 NAME := servers-test
-IMAGE := alpine:3.8
+IMAGE := alpine:3.9
 
 NAMESPACE := servers-test
 DOMAIN := example.com
@@ -18,7 +18,7 @@ check:
 		--namespace=$(NAMESPACE) \
 		--set image.server=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAME) . \
+		$(NAME) -wait . \
 		--dry-run \
 		--debug
 
@@ -36,7 +36,7 @@ install:
 		--namespace=$(NAMESPACE) \
 		--set image.server=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAME) .
+		$(NAME) --wait .
 
 .PHONY: forward
 forward:

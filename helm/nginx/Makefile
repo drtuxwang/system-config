@@ -12,7 +12,7 @@ check:
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
-		$(NMAE) stable/nginx \
+		$(NMAE) --wait stable/nginx \
 		--dry-run \
 		--debug
 
@@ -24,7 +24,7 @@ install:
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
-		$(NMAE) stable/nginx
+		$(NMAE) --wait stable/nginx
 
 .PHONY: status
 status:
