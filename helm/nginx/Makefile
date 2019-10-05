@@ -25,9 +25,13 @@ install:
 	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm upgrade \
 		--install \
+		--wait \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
+		--set ingress.enabled=true \
+		--set ingress.hosts\[0\].name=$(DOMAIN) \
+		--set service.type=ClusterIP \
 		--version $(VERSION) \
 		$(NAME) bitnami/nginx
 

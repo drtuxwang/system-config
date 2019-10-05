@@ -18,7 +18,7 @@ serverBlock: |-
     gzip_types       text/html application/json;
 
     location / {
-      proxy_pass http://server:8081;
+      proxy_pass https://www.google.co.uk;
       proxy_set_header Host $host;
       proxy_set_header X-Forwarded-Host $host;
       proxy_set_header X-Forwarded-Server $host;
