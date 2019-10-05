@@ -891,9 +891,10 @@ the years. Now most of the scripts are written in Python 3.
  * config/winsetupo.sh
  * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
  * etc/install-python-requirements.sh    Python pip installer (installs minimum requirements)
- * etc/python-requirements.txt           Python pip requirements file
- * etc/python-2.7-requirements.txt       Python pip requirements file
- * etc/python-3.4-requirements.txt       Python pip requirements file
+ * etc/python-requirements.txt           Python 3.6+ pip requirements file
+ * etc/python-2.7-requirements.txt       Python 2.7 pip requirements file
+ * etc/python-3.4-requirements.txt       Python 3.4 pip requirements file
+ * etc/python-3.5-requirements.txt       Python 3.5 pip requirements file
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization
@@ -1019,12 +1020,12 @@ the years. Now most of the scripts are written in Python 3.
  * kubernetes/servers-test/servers-statefulset.yaml
  * helm/Makefile
  * docker/ubuntu-test/Makefile           Install tiller
- * helm/chartmuseum/Makefile             Helm Chart: Chart Museum chart 2.3.2
- * helm/concourse/Makefile               Helm Chart: Concourse-ci chart 8.2.3
+ * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.3.2 (app 0.8.2)
+ * helm/concourse/Makefile               Helm Chart: stable/Concourse 8.2.3 (app 5.4.1)
  * helm/concourse/values.yml
- * helm/mongodb/Makefile                 Helm Chart: MongoDB chart 6.1.5
+ * helm/mongodb/Makefile                 Helm Chart: stable/mongodb 6.1.5 (app 4.0.10)
  * helm/mongodb/values.yml
- * helm/nginx/Makefile                   Helm Chart: NGINX 4.3.6 chart example
+ * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 4.3.6 example (app 1.16.1)
  * helm/nginx/values.yaml
  * helm/servers-test/Makefile            Helm Chart: Servers test chart (alpine:3.9 image)
  * helm/servers-test/Chart.yaml

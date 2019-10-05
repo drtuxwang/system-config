@@ -52,5 +52,5 @@ status:
 clean:
 	helm ls
 	helm del --purge $(NAME) ||:
-	sleep 2
+	sleep 4
 	kubectl delete servers-test
