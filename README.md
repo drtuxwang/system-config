@@ -1025,6 +1025,8 @@ the years. Now most of the scripts are written in Python 3.
  * helm/concourse/values.yml
  * helm/mongodb/Makefile                 Helm Chart: stable/mongodb 6.1.5 (app 4.0.10)
  * helm/mongodb/values.yml
+ * helm/nexus/Makefile                   Helm Chart: table/sonatype-nexus 1.18.5 (app 3.15.2-01)
+ * helm/nexus/values.yml
  * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 4.3.6 example (app 1.16.1)
  * helm/nginx/values.yaml
  * helm/servers-test/Makefile            Helm Chart: Servers test chart (alpine:3.9 image)
