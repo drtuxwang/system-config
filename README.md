@@ -5,7 +5,7 @@ were started Bourne shell scripts started during my University days and continuo
 the years. Now most of the scripts are written in Python 3.
 ---
 <pre>
- * Jnkinsfile            Jenkins pipeline configuration file
+ * Jenkinsfile            Jenkins pipeline configuration file
  * codefresh.yaml         Codefresh pipeline configuration file
  * Makefile               Makefile for testing
  * bin/command_mod.py     Python command line handling module
@@ -75,6 +75,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/mid3iconv.bat
  * bin/mid3v2
  * bin/mid3v2.bat
+ * bin/nexus3
+ * bin/nexus3.bat
  * bin/pep8
  * bin/pep8.bat
  * bin/pip
@@ -978,8 +980,6 @@ the years. Now most of the scripts are written in Python 3.
  * docker/etcd/Dockerfile
  * docker/golang/Makefile                golang:1.12.9-alpine based compiler app
  * docker/golang/Dockerfile
- * docker/jenkins/Makefile               jenkins/jenkins:lts based server app
- * docker/jenkins/Dockerfile
  * docker/nginx/Makefile                 nginx:1.16.1-alpine based NGINX proxy app
  * docker/nginx/Dockerfile
  * docker/nginx/files/ash2bash
@@ -1021,10 +1021,10 @@ the years. Now most of the scripts are written in Python 3.
  * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.3.2 (app 0.8.2)
  * helm/concourse/Makefile               Helm Chart: stable/Concourse 8.2.3 (app 5.4.1)
  * helm/concourse/values.yml
+ * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 3.4.2 (app 2.176.3)
  * helm/mongodb/Makefile                 Helm Chart: stable/mongodb 6.1.5 (app 4.0.10)
  * helm/mongodb/values.yml
  * helm/nexus/Makefile                   Helm Chart: table/sonatype-nexus 1.18.5 (app 3.15.2-01)
- * helm/nexus/values.yml
  * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 4.3.6 example (app 1.16.1)
  * helm/nginx/values.yaml
  * helm/servers-test/Makefile            Helm Chart: Servers test chart (alpine:3.9 image)
