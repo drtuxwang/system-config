@@ -20,7 +20,7 @@ check:
 		--set postgresql.persistence.enabled=false \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
-		$(NAME) --wait stable/concourse
+		$(NAME) stable/concourse
 
 .PHONY: install
 install:

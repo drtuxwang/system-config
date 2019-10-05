@@ -16,7 +16,7 @@ check:
 		--set persistence.enabled=false \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
-		$(NAME) --wait bitnami/jenkins
+		$(NAME) bitnami/jenkins
 
 .PHONY: install
 install:
