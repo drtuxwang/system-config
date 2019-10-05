@@ -20,9 +20,9 @@ check:
 		--version $(VERSION) \
 		$(NAME) --wait stable/concourse
 
+# Can't use --wait due to LoadBalancer not assigned external-IP
 .PHONY: install
 install:
-	# Can't use --wait due to external IP pending
 	helm upgrade \
 		--install \
 		--namespace=$(NAMESPACE) \

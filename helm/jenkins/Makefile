@@ -17,9 +17,9 @@ check:
 		--version $(VERSION) \
 		$(NAME) --wait bitnami/jenkins
 
+# Can't use --wait due to LoadBalancer not assigned external-IP
 .PHONY: install
 install:
-	# Can't use --wait due to external IP pending
 	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm upgrade \
 		--install \

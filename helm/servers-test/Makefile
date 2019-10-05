@@ -1,6 +1,5 @@
 NAME := servers-test
 IMAGE := alpine:3.9
-
 NAMESPACE := servers-test
 DOMAIN := example.com
 
