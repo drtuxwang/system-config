@@ -9,16 +9,17 @@ check:
 	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm upgrade \
 		--install \
+		--dry-run \
+		--debug \
 		--namespace=$(NAMESPACE) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set persistence.enabled=false \
 		--version $(VERSION) \
-		$(NAME) --wait bitnami/jenkins \
-		--dry-run \
-		--debug
+		$(NAME) --wait bitnami/jenkins
 
 .PHONY: install
 install:
+	# Can't use --wait due to external IP pending
 	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm upgrade \
 		--install \
@@ -26,7 +27,7 @@ install:
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set persistence.enabled=false \
 		--version $(VERSION) \
-		$(NAME) --wait bitnami/jenkins
+		$(NAME) bitnami/jenkins
 
 .PHONY: status
 status:

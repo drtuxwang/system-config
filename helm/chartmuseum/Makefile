@@ -11,6 +11,8 @@ default: status
 check:
 	helm upgrade \
 		--install \
+		--dry-run \
+		--debug \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--set env.open.DISABLE_API=false \
@@ -21,12 +23,11 @@ check:
 		--set ingress.hosts[0].tls=true \
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--version $(VERSION) \
-		$(NAME) --wait stable/chartmuseum \
-		--dry-run \
-		--debug
+		$(NAME) stable/chartmuseum
 
 .PHONY: install
 install:
+	# Can't use --wait due to external IP pending
 	helm upgrade \
 		--install \
 		--namespace=$(NAMESPACE) \
@@ -39,7 +40,7 @@ install:
 		--set ingress.hosts[0].tls=true \
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--version $(VERSION) \
-		$(NAME) --wait stable/chartmuseum
+		$(NAME) stable/chartmuseum
 
 .PHONY: status
 status:

@@ -9,24 +9,25 @@ check:
 	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm upgrade \
 		--install \
+		--dry-run \
+		--debug \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
-		$(NAME) --wait bitnami/nginx \
-		--dry-run \
-		--debug
+		$(NAME) bitnami/nginx
 
 .PHONY: install
 install:
 	helm repo add bitnami https://charts.bitnami.com/bitnami
+	# Can't use --wait due to external IP pending
 	helm upgrade \
 		--install \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
-		$(NAME) --wait bitnami/nginx
+		$(NAME) bitnami/nginx
 
 .PHONY: status
 status:

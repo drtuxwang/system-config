@@ -13,22 +13,23 @@ default: status
 check:
 	helm upgrade \
 		--install \
+		--dry-run \
+		--debug \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--version $(VERSION) \
-		$(NAME) --wait stable/concourse \
-		--dry-run \
-		--debug
+		$(NAME) --wait stable/concourse
 
 .PHONY: install
 install:
+	# Can't use --wait due to external IP pending
 	helm upgrade \
 		--install \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--set postgresql.persistence.enabled=false \
 		--version $(VERSION) \
-		$(NAME) --wait stable/concourse
+		$(NAME) stable/concourse
 
 .PHONY: forward
 forward:
@@ -43,5 +44,5 @@ status:
 clean:
 	helm ls
 	helm del --purge $(NAME) ||:
-	sleep 4
-	kubectl delete namespace concourse-main
+	sleep 2
+	kubectl delete namespace concourse-server-main

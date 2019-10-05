@@ -8,23 +8,24 @@ default: status
 check:
 	helm upgrade \
 		--install \
+		--dry-run \
+		--debug \
 		--namespace=$(NAMESPACE) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set persistence.enabled=false \
 		--version $(VERSION) \
-		$(NAME) --wait stable/sonatype-nexus \
-		--dry-run \
-		--debug
+		$(NAME) stable/sonatype-nexus
 
 .PHONY: install
 install:
 	helm upgrade \
 		--install \
+		--wait \
 		--namespace=$(NAMESPACE) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set persistence.enabled=false \
 		--version $(VERSION) \
-		$(NAME) --wait stable/sonatype-nexus
+		$(NAME) stable/sonatype-nexus
 
 .PHONY: status
 status:
