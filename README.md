@@ -1005,7 +1005,9 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu/bash/Dockerfile-shell
  * docker/ubuntu/dev/Makefile            ubuntu:18.04 based GCC dev shell
  * docker/ubuntu/dev/Dockerfile
- * kubernetes/servers-test/Makefile      Kubernetes: centos:7 example
+ * kubernetes/monitor-host/Makefile      Kubernetes: alpine:3.9 host monitoring
+ * kubernetes/monitor-host/monitor-host-daemonset.yaml
+ * kubernetes/servers-test/Makefile      Kubernetes: alpine:3.9 example
  * kubernetes/servers-test/server-pod.yaml
  * kubernetes/servers-test/servers-daemonset.yaml
  * kubernetes/servers-test/servers-deployment.yaml

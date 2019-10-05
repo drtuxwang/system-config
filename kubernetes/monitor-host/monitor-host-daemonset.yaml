@@ -20,7 +20,7 @@ spec:
         env:
         - name: NAME
           value: VALUE
-        image: busybox:latest
+        image: alpine:3.9
         imagePullPolicy: IfNotPresent
         name: monitor-host
         resources:
