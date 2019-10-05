@@ -10,6 +10,7 @@ check:
 		--install \
 		--namespace=$(NAMESPACE) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
+		--set persistence.enabled=false \
 		--version $(VERSION) \
 		$(NAME) --wait stable/sonatype-nexus \
 		--dry-run \
@@ -21,6 +22,7 @@ install:
 		--install \
 		--namespace=$(NAMESPACE) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
+		--set persistence.enabled=false \
 		--version $(VERSION) \
 		$(NAME) --wait stable/sonatype-nexus
 
