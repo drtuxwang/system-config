@@ -16,10 +16,10 @@ check:
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set ingress.enabled=true \
 		--set ingress.hosts\[0\].name=$(DOMAIN) \
+		--set service.type=ClusterIP \
 		--version $(VERSION) \
 		$(NAME) bitnami/nginx
 
-# Can't use --wait due to LoadBalancer not assigned external-IP
 .PHONY: install
 install:
 	helm repo add bitnami https://charts.bitnami.com/bitnami
