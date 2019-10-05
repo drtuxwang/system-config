@@ -1,4 +1,4 @@
-NAME := nginx
+NAME := nginx:1.16.1-alpine
 IMAGE := drtuxwang/$(NAME)
 
 # Docker build

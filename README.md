@@ -980,9 +980,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/golang/Dockerfile
  * docker/jenkins/Makefile               jenkins/jenkins:lts based server app
  * docker/jenkins/Dockerfile
- * docker/mongodb/Makefile               mongo:4.0.11 based database app
- * docker/mongodb/Dockerfile
- * docker/nginx/Makefile                 nginx:stable-alpine based NGINX proxy app
+ * docker/nginx/Makefile                 nginx:1.16.1-alpine based NGINX proxy app
  * docker/nginx/Dockerfile
  * docker/nginx/files/ash2bash
  * docker/nginx/files/nginx-proxy.conf
