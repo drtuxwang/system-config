@@ -17,28 +17,30 @@ check:
 		--set persistence.enabled=false \
 		--set env.open.DISABLE_API=false \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
-		--set persistence.enabled=true \
+		--set persistence.enabled=false \
 		--set ingress.enabled=true \
 		--set ingress.hosts[0].name=$(INGRESS_HOST) \
 		--set ingress.hosts[0].tls=true \
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
+		--set service.type=ClusterIP \
 		--version $(VERSION) \
 		$(NAME) stable/chartmuseum
 
-# Can't use --wait due to LoadBalancer not assigned external-IP
 .PHONY: install
 install:
 	helm upgrade \
 		--install \
+		--wait \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--set env.open.DISABLE_API=false \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
-		--set persistence.enabled=true \
+		--set persistence.enabled=false \
 		--set ingress.enabled=true \
 		--set ingress.hosts[0].name=$(INGRESS_HOST) \
 		--set ingress.hosts[0].tls=true \
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
+		--set service.type=ClusterIP \
 		--version $(VERSION) \
 		$(NAME) stable/chartmuseum
 

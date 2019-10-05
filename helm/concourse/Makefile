@@ -17,17 +17,20 @@ check:
 		--debug \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
+		--set postgresql.persistence.enabled=false \
+		--set service.type=ClusterIP \
 		--version $(VERSION) \
 		$(NAME) --wait stable/concourse
 
-# Can't use --wait due to LoadBalancer not assigned external-IP
 .PHONY: install
 install:
 	helm upgrade \
 		--install \
+		--wait \
 		--namespace=$(NAMESPACE) \
 		--set persistence.enabled=false \
 		--set postgresql.persistence.enabled=false \
+		--set service.type=ClusterIP \
 		--version $(VERSION) \
 		$(NAME) stable/concourse
 

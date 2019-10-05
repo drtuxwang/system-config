@@ -14,18 +14,20 @@ check:
 		--namespace=$(NAMESPACE) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set persistence.enabled=false \
+		--set service.type=ClusterIP \
 		--version $(VERSION) \
 		$(NAME) --wait bitnami/jenkins
 
-# Can't use --wait due to LoadBalancer not assigned external-IP
 .PHONY: install
 install:
 	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm upgrade \
 		--install \
+		--wait \
 		--namespace=$(NAMESPACE) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set persistence.enabled=false \
+		--set service.type=ClusterIP \
 		--version $(VERSION) \
 		$(NAME) bitnami/jenkins
 
