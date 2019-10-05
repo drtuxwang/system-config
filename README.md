@@ -1019,14 +1019,14 @@ the years. Now most of the scripts are written in Python 3.
  * kubernetes/servers-test/servers-statefulset.yaml
  * helm/Makefile
  * docker/ubuntu-test/Makefile           Install tiller
- * helm/chartmuseum/Makefile             Helm Chart: Chart Museum
- * helm/concourse/Makefile               Helm Chart: Concourse-ci
+ * helm/chartmuseum/Makefile             Helm Chart: Chart Museum chart 2.3.2
+ * helm/concourse/Makefile               Helm Chart: Concourse-ci chart 8.2.3
  * helm/concourse/values.yml
- * helm/mongodb/Makefile                 Helm Chart: MongoDB
+ * helm/mongodb/Makefile                 Helm Chart: MongoDB chart 6.1.5
  * helm/mongodb/values.yml
- * helm/nginx/Makefile                   Helm Chart: NGINX example
+ * helm/nginx/Makefile                   Helm Chart: NGINX 4.3.6 chart example
  * helm/nginx/values.yaml
- * helm/servers-test/Makefile            Helm Chart: Servers test
+ * helm/servers-test/Makefile            Helm Chart: Servers test chart (alpine:3.9 image)
  * helm/servers-test/Chart.yaml
  * helm/servers-test/requirements.yaml
  * helm/servers-test/templates/_values.tpl
