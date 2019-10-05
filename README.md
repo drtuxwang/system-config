@@ -65,7 +65,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/ipython
  * bin/ipython.bat
  * bin/ipython3
- * bin/ipython3.4.bat
+ * bin/ipython3.bat
  * bin/jenkins-jobs
  * bin/jenkins-jobs.bat
  * bin/markdown.py
@@ -76,7 +76,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/mid3v2
  * bin/mid3v2.bat
  * bin/nexus3
- * bin/nexus3.bat
  * bin/pep8
  * bin/pep8.bat
  * bin/pip
@@ -432,6 +431,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/jsonformat         JSON file re-formatter
  * bin/jsonformat.bat
  * bin/jsonformat.py
+ * bin/jython             Jython wrapper
  * bin/jython.py
  * bin/k3s                K3S light weight Kubernetes distribution
  * bin/k3s.py
@@ -552,7 +552,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/pyld.sh            Python loading module for sh/ksh/bash wrapper scripts
  * bin/pyld.py            Load Python main program as module (must have Main class)
  * bin/test_pyld.py       Unit testing suite for "pyld.py"
- * bin/pyld.sh            Python loading module for sh/ksh/bash wrapper scripts
  * bin/pyprof             Profile Python 3.x program
  * bin/pyprof.bat
  * bin/pyprof.py
@@ -713,7 +712,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/untxz.py
  * bin/unwine             Shuts down WINE and all Windows applications
  * bin/unwine.py
- * bin/ungz               Uncompress a file in XZ format (allowing non systems port)
+ * bin/unxz               Uncompress a file in XZ format (allowing non systems port)
  * bin/unxz.py
  * bin/unzip              unzip wrapper (allowing non systems port)
  * bin/unzip.py
@@ -732,6 +731,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/vlc.bat
  * bin/vlc.py
  * bin/vmware             VMware Player launcher
+ * bin/vmware.py
  * bin/vncpasswd          vncpasswd wrapper (allowing non systems port)
  * bin/vncpasswd.py
  * bin/vncserver          vncserver wrapper (allowing non systems port)
@@ -762,6 +762,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/xdiff              Graphical file comparison and merge tool
  * bin/xdiff.bat          (uses meld)
  * bin/xdiff.py
+ * bin/xfreerdp.tcl       XFreeRDP TCL/TK panel
  * bin/xedit              Start GNOME/KDE/XFCE graphical editor
  * bin/xedit.py
  * bin/xlight             Desktop screen backlight utility

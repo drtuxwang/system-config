@@ -174,10 +174,10 @@ class Data:
 
 class Config:
     """
-    This class deals with "config_mod.yml" configuration file.
+    This class deals with "config_mod.yaml" configuration file.
     """
     def __init__(self):
-        file = os.path.join(os.path.dirname(__file__), 'config_mod.yml')
+        file = os.path.join(os.path.dirname(__file__), 'config_mod.yaml')
         mappings = next(Data(file).get())
         self._apps = mappings.get('apps', {})
         self._bindings = mappings.get('bindings', {})
