@@ -15,12 +15,12 @@ default: status
 check:
 	helm upgrade \
 		--install \
+		--dry-run \
+		--debug \
 		--namespace=$(NAMESPACE) \
 		--set image.server=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAME) -wait . \
-		--dry-run \
-		--debug
+		$(NAME) .
 
 .PHONY: template
 template:
@@ -33,10 +33,11 @@ template:
 install:
 	helm upgrade \
 		--install \
+		--wait \
 		--namespace=$(NAMESPACE) \
 		--set image.server=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAME) --wait .
+		$(NAME) .
 
 .PHONY: forward
 forward:
