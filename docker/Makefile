@@ -9,10 +9,6 @@ BUILD_DIRS := \
 	docker \
 	etcd \
 	golang \
-	jenkins \
-	mongodb \
-	nginx \
-	oracle-xe \
 	python \
 	registry \
 	sudo \

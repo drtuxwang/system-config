@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    helm.sh/chart: {{ include "chart.name" . }}
+    app.kubernetes.io/name: {{ include "chart.name" . }}-oracle
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  name: {{ include "chart.appname" . }}-oracle-headless
+spec:
+  clusterIP: None
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: http
+  - name: oracle
+    port: 1521
+    protocol: TCP
+    targetPort: oracle
+  selector:
+    app.kubernetes.io/name: {{ include "chart.name" . }}-oracle
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  type: {{ .Values.service.oracle.type }}

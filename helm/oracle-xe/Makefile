@@ -1,12 +1,6 @@
-NAME := servers-test
-IMAGE := alpine:3.9
+NAME := oracle-server
+IMAGE := datagrip/oracle:11.2
 NAMESPACE := default
-DOMAIN := example.com
-
-# Default local port
-ifndef LOCALPORT
-	LOCALPORT=8080
-endif
 
 default: status
 
@@ -18,14 +12,12 @@ check:
 		--debug \
 		--namespace=$(NAMESPACE) \
 		--set image.name=$(IMAGE) \
-		--set ingress.server.domain=$(DOMAIN) \
 		$(NAME) .
 
 .PHONY: template
 template:
 	helm template --name=$(NAME) \
 		--set image.name=$(IMAGE) \
-		--set ingress.server.domain=$(DOMAIN) \
 		.
 
 .PHONY: install
@@ -35,18 +27,18 @@ install:
 		--wait \
 		--namespace=$(NAMESPACE) \
 		--set image.name=$(IMAGE) \
-		--set ingress.server.domain=$(DOMAIN) \
 		$(NAME) .
-
-.PHONY: forward
-forward:
-	kubectl --namespace $(NAMESPACE) describe service/$(NAME)-server
-	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME)-server $(LOCALPORT):80
 
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAME)
+
+.PHONY: connect
+connect:
+	@echo "\n*** Connecting to database ***"
+	@echo sqlplus system/oracle@`kubectl get service oracle-server-oracle | awk 'NR==2 {print $$3}'`
+	@sqlplus system/oracle@`kubectl get service oracle-server-oracle | awk 'NR==2 {print $$3}'`
 
 .PHONY: clean
 clean:

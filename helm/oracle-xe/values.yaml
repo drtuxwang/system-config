@@ -1,0 +1,30 @@
+# Declare variables to be passed into your templates.
+
+app:
+  oracle:
+    replicas: 1
+
+image:
+  pullPolicy: IfNotPresent
+
+service:
+  http:
+    type: ClusterIP
+  oracle:
+    type: ClusterIP
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2048M
+  requests:
+    cpu: 100m
+    memory: 64M
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+secrets:

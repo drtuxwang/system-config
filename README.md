@@ -985,8 +985,6 @@ the years. Now most of the scripts are written in Python 3.
  * docker/nginx/Dockerfile
  * docker/nginx/files/ash2bash
  * docker/nginx/files/nginx-proxy.conf
- * docker/oracle-xe/Makefile             datagrip/oracle:11.2 based database app
- * docker/oracle-xe/Dockerfile
  * docker/python/Makefile                python:3.6.9-buster based Python app
  * docker/python/Dockerfile
  * docker/python/bash/Dockerfile         python:3.6.9-buster based BASH login
@@ -1028,7 +1026,14 @@ the years. Now most of the scripts are written in Python 3.
  * helm/nexus/Makefile                   Helm Chart: table/sonatype-nexus 1.18.5 (app 3.15.2-01)
  * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 4.3.6 example (app 1.16.1)
  * helm/nginx/values.yaml
- * helm/servers-test/Makefile            Helm Chart: Servers test chart (alpine:3.9 image)
+ * helm/oracle-xe/Chart.yaml             Helm Chart: Oracle XE test (datagrip/oracle:11.2 image)
+ * helm/oracle-xe/Makefile
+ * helm/oracle-xe/templates/oracle-headless-service.yaml
+ * helm/oracle-xe/templates/oracle-service.yaml
+ * helm/oracle-xe/templates/oracle-statefulset.yaml
+ * helm/oracle-xe/templates/_values.tpl
+ * helm/oracle-xe/values.yaml
+ * helm/servers-test/Makefile            Helm Chart: Servers test (alpine:3.9 image)
  * helm/servers-test/Chart.yaml
  * helm/servers-test/requirements.yaml
  * helm/servers-test/templates/_values.tpl

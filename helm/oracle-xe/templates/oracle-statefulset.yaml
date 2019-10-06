@@ -1,0 +1,40 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  labels:
+    helm.sh/chart: {{ include "chart.name" . }}
+    app.kubernetes.io/name: {{ include "chart.name" . }}-erver
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  name: {{ include "chart.appname" . }}-oracle
+spec:
+  replicas: {{ .Values.app.oracle.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "chart.name" . }}-oracle
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  serviceName: {{ include "chart.appname" . }}-oracle-headless
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "chart.name" . }}-oracle
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+      - image: {{ include "chart.image.name" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: {{ .Chart.Name }}-oracle
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: oracle
+          containerPort: 1521
+          protocol: TCP
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+      terminationGracePeriodSeconds: 10
+  updateStrategy:
+    type: RollingUpdate
