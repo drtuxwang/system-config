@@ -53,4 +53,4 @@ clean:
 	helm ls
 	helm del --purge $(NAME) ||:
 	sleep 4
-	kubectl delete servers-test
+	kubectl delete namespace servers-test

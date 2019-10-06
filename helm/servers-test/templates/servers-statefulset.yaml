@@ -24,7 +24,7 @@ spec:
       - command:
         - sleep
         - '86400'
-        image: {{ include "chart.image.server" . }}
+        image: {{ include "chart.image.name" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ .Chart.Name }}-server
         ports:

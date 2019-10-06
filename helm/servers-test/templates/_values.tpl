@@ -6,6 +6,6 @@
 {{- .Release.Name | trunc 53 | trimSuffix "-" -}}
 {{- end -}}
 
-{{- define "chart.image.server" -}}
-{{-   .Values.image.server -}}
+{{- define "chart.image.name" -}}
+{{-   .Values.image.name -}}
 {{- end -}}
