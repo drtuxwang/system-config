@@ -168,7 +168,7 @@ if ( $?TERM && -e "`\tty`" ) then
         else
             alias ls "ls -C -G"
         endif
-        alias top "top -o cpu"
+        alias top "top -s 3 -o cpu"
         breaksw
 
     case HP-UX:

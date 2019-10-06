@@ -300,7 +300,7 @@ then
         else
             alias ls="ls -C -G"
         fi
-        alias top="top -o cpu"
+        alias top="top -s 3 -o cpu"
         . /usr/local/etc/bash_completion 2> /dev/null
         ;;
 
