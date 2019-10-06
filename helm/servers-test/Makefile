@@ -17,14 +17,14 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
-		--set image.server=$(IMAGE) \
+		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
 		$(NAME) .
 
 .PHONY: template
 template:
 	helm template --name=$(NAME) \
-		--set image.server=$(IMAGE) \
+		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
 		.
 
@@ -34,7 +34,7 @@ install:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
-		--set image.server=$(IMAGE) \
+		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
 		$(NAME) .
 
