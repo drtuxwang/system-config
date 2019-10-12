@@ -90,6 +90,9 @@ if ( $?TERM && -e "`\tty`" ) then
     if ( "`which ssudo |& \grep '/ssudo'`" != "" ) then
         alias sudo ssudo
     endif
+    if ( "`which htop |& \grep '/htop'`" != "" ) then
+        alias top htop
+    endif
     umask 027
     setenv LC_COLLATE C
     setenv PYTHONDONTWRITEBYTECODE 1
@@ -168,7 +171,6 @@ if ( $?TERM && -e "`\tty`" ) then
         else
             alias ls "ls -C -G"
         endif
-        alias top "top -s 3 -o cpu"
         breaksw
 
     case HP-UX:
