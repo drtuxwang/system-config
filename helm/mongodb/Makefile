@@ -32,6 +32,12 @@ status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAME)
 
+.PHONY: connect
+connect:
+	@echo "\n*** Connecting to Mongodb database ***"
+	@echo "Addresss = `kubectl get service mongodb-server | awk 'NR==2 {print $$3}'`"
+	@robo3t
+
 .PHONY: clean
 clean:
 	helm ls

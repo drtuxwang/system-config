@@ -36,7 +36,7 @@ status:
 
 .PHONY: connect
 connect:
-	@echo "\n*** Connecting to database ***"
+	@echo "\n*** Connecting to Oracle XE database ***"
 	@echo sqlplus system/oracle@`kubectl get service oracle-server-oracle | awk 'NR==2 {print $$3}'`
 	@sqlplus system/oracle@`kubectl get service oracle-server-oracle | awk 'NR==2 {print $$3}'`
 
