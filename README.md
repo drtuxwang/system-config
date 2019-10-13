@@ -982,10 +982,6 @@ the years. Now most of the scripts are written in Python 3.
  * docker/etcd/Dockerfile
  * docker/golang/Makefile                golang:1.12.9-alpine based compiler app
  * docker/golang/Dockerfile
- * docker/nginx/Makefile                 nginx:1.16.1-alpine based NGINX proxy app
- * docker/nginx/Dockerfile
- * docker/nginx/files/ash2bash
- * docker/nginx/files/nginx-proxy.conf
  * docker/python/Makefile                python:3.6.9-buster based Python app
  * docker/python/Dockerfile
  * docker/python/bash/Dockerfile         python:3.6.9-buster based BASH login
