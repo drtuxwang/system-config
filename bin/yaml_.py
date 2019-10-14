@@ -101,8 +101,11 @@ class Main:
                         "{0:s}: {1:s}".format(file, str(exception))
                     )
 
-                name, _ = os.path.splitext(file)
-                yaml_file = name + '.yml'
+                if file.endswith(('yaml', 'yml')):
+                    yaml_file = file
+                else:
+                    name, _ = os.path.splitext(file)
+                    yaml_file = name + '.yml'
                 print('Converting "{0:s}" to "{1:s}"...'.format(
                     file,
                     yaml_file
