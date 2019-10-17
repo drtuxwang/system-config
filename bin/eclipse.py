@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "eclipse" command (Ecilpse IDE for Java EE Developers)
+Wrapper for 'eclipse' command (Ecilpse IDE for Java EE Developers)
 """
 
 import glob
@@ -11,11 +11,11 @@ import sys
 import command_mod
 import subtask_mod
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
 
-class Main:
+class Main(object):
     """
     Main class
     """
@@ -53,24 +53,17 @@ class Main:
         """
         eclipse = command_mod.Command('eclipse', errors='stop')
         if len(sys.argv) == 1:
-            java = command_mod.Command(
-                os.path.join('bin', 'java'),
-                errors='stop'
-            )
-            args = [
-                '-vm',
-                java.get_file(),
-                '-vmargs',
-                '-Xms2048m',
-                '-Xmx2048m',
-                '-XX:PermSize=8192m',
-                '-XX:MaxPermSize=8192m',
-                '-XX:-UseCompressedOops'
-            ]
+            java = command_mod.Command(os.path.join('bin', 'java'), errors='stop')
+            args = ['-vm', java.get_file(), '-vmargs', '-Xms2048m',
+                    '-Xmx2048m', '-XX:PermSize=8192m', '-XX:MaxPermSize=8192m',
+                    '-XX:-UseCompressedOops']
         else:
             args = sys.argv[1:]
 
-        subtask_mod.Background(eclipse.get_cmdline() + args).run()
+        pattern = "^$|: dbind-WARNING|: Ignoring option"
+        subtask_mod.Background(eclipse.get_cmdline() + args).run(
+            pattern=pattern
+        )
 
 
 if __name__ == '__main__':
