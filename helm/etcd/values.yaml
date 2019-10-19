@@ -1,0 +1,17 @@
+persistence:
+  enabled: false
+usePassword: false
+securityContext:
+  enabled: true
+  fsGroup: 1001
+  runAsUser: 1001
+collections:
+  example1: example1
+  example2: example22
+metrics:
+  enabled: true
+##  serviceMonitor:
+##    enabled: true
+##    namespace: monitoring
+##    additionalLabels:
+##      prometheus: active

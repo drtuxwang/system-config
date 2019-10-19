@@ -7,7 +7,6 @@ BUILD_DIRS := \
 	debian \
 	debian32 \
 	docker \
-	etcd \
 	golang \
 	python \
 	registry \

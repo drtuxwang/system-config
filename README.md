@@ -978,8 +978,6 @@ the years. Now most of the scripts are written in Python 3.
  * docker/docker/Makefile                dockerL18.09 (alpine) based docker shell
  * docker/docker/Dockerfile
  * docker/docker/files/ash2bash
- * docker/etcd/Makefile                  k8s.gcr.io/etcd:3.3.17 based app
- * docker/etcd/Dockerfile
  * docker/golang/Makefile                golang:1.12.9-alpine based compiler app
  * docker/golang/Dockerfile
  * docker/python/Makefile                python:3.6.9-buster based Python app
@@ -1017,6 +1015,8 @@ the years. Now most of the scripts are written in Python 3.
  * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.3.2 (app 0.8.2)
  * helm/concourse/Makefile               Helm Chart: stable/Concourse 8.2.3 (app 5.4.1)
  * helm/concourse/values.yml
+ * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 4.3.4 (app 3.3.15)
+ * helm/etcd/Dockerfile
  * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 3.4.2 (app 2.176.3)
  * helm/mongodb/Makefile                 Helm Chart: stable/mongodb 6.1.5 (app 4.0.10)
  * helm/mongodb/values.yml
