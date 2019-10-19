@@ -1,1 +1,1 @@
-nexus3-cli=None
+nexus3-cli==None
