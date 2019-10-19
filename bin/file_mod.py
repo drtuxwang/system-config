@@ -7,14 +7,10 @@ Copyright GPL v2: 2006-2019 By Dr Colin Kong
 
 import os
 import re
-import sys
 import time
 
-if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
-
-RELEASE = '2.2.3'
-VERSION = 20190602
+RELEASE = '2.2.4'
+VERSION = 20191019
 
 
 class FileStat:

@@ -13,9 +13,6 @@ import requests
 
 import config_mod
 
-if sys.version_info < (3, 4) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.4, < 4.0).")
-
 # pylint: disable = no-member
 requests.packages.urllib3.disable_warnings()
 # pylint: enable = no-member

@@ -12,11 +12,8 @@ import signal
 import subprocess
 import sys
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-
-RELEASE = '2.1.7'
-VERSION = 20190602
+RELEASE = '2.1.8'
+VERSION = 20191019
 
 BUFFER_SIZE = 131072
 

@@ -27,11 +27,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/python2.7.bat
  * bin/python3
  * bin/python3.bat
- * bin/python3.0
- * bin/python3.1
- * bin/python3.2
- * bin/python3.3
- * bin/python3.4
  * bin/python3.5
  * bin/python3.6
  * bin/python3.6.bat
@@ -897,7 +892,6 @@ the years. Now most of the scripts are written in Python 3.
  * etc/install-python-requirements.sh    Python pip installer (installs minimum requirements)
  * etc/python-requirements.txt           Python 3.6+ pip requirements file
  * etc/python-2.7-requirements.txt       Python 2.7 pip requirements file
- * etc/python-3.4-requirements.txt       Python 3.4 pip requirements file
  * etc/python-3.5-requirements.txt       Python 3.5 pip requirements file
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization

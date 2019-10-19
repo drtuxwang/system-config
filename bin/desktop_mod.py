@@ -9,14 +9,9 @@ import functools
 import getpass
 import os
 import subprocess
-import sys
 
-
-if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
-
-RELEASE = '2.3.3'
-VERSION = 20190602
+RELEASE = '2.3.4'
+VERSION = 20191019
 
 
 class _System:

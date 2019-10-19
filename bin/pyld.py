@@ -11,8 +11,8 @@ import os
 import signal
 import sys
 
-if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
+if sys.version_info < (3, 5) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.5, < 4.0).")
 if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 
@@ -229,17 +229,11 @@ class PythonLoader:
     @staticmethod
     def _load_module(file):
         loader = importlib.machinery.SourceFileLoader('module.name', file)
-        if sys.version_info >= (3, 5):
-            main = importlib.util.module_from_spec(
-                importlib.util.spec_from_loader(loader.name, loader)
-            )
-            loader.exec_module(main)
-            return main
-
-        # Old Python 3.3/3.4 method
-        # pylint: disable = deprecated-method, no-value-for-parameter
-        return loader.load_module()
-        # pylint: enable = deprecated-method, no-value-for-parameter
+        main = importlib.util.module_from_spec(
+            importlib.util.spec_from_loader(loader.name, loader)
+        )
+        loader.exec_module(main)
+        return main
 
     def run(self):
         """

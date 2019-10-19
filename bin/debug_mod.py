@@ -12,11 +12,8 @@ import traceback
 
 import jsonpickle
 
-if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.0, < 4.0).")
-
-RELEASE = '2.2.3'
-VERSION = 20190324
+RELEASE = '2.2.4'
+VERSION = 20191019
 
 
 class Dump:

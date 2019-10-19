@@ -10,17 +10,13 @@ Copyright GPL v2: 2017-2019 By Dr Colin Kong
 import json
 import os
 import re
-import sys
 import shutil
 
 import bson
 import yaml
 
-if sys.version_info < (3, 5) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.5, < 4.0).")
-
-RELEASE = '1.3.1'
-VERSION = 20190511
+RELEASE = '1.3.2'
+VERSION = 20191019
 
 
 class Data:

@@ -11,11 +11,8 @@ import sys
 import command_mod
 import subtask_mod
 
-if sys.version_info < (3, 0) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ': Requires Python version (>= 3.0, < 4.0).')
 
-
-class Main(object):
+class Main:
     """
     Main class
     """
@@ -53,7 +50,10 @@ class Main(object):
         """
         eclipse = command_mod.Command('eclipse', errors='stop')
         if len(sys.argv) == 1:
-            java = command_mod.Command(os.path.join('bin', 'java'), errors='stop')
+            java = command_mod.Command(
+                os.path.join('bin', 'java'),
+                errors='stop'
+            )
             args = ['-vm', java.get_file(), '-vmargs', '-Xms2048m',
                     '-Xmx2048m', '-XX:PermSize=8192m', '-XX:MaxPermSize=8192m',
                     '-XX:-UseCompressedOops']

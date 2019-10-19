@@ -18,10 +18,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '4.2.0'
-
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+RELEASE = '4.2.1'
 
 
 class Options:

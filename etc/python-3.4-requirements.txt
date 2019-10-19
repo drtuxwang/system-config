@@ -1,5 +1,0 @@
-ansible==None
-arrow==0.13.2
-Django==2.0.13
-ipython==6.5.0
-nexus3-cli=None

@@ -10,14 +10,9 @@ import getpass
 import os
 import re
 import subprocess
-import sys
 
-RELEASE = '2.1.1'
-VERSION = 20190324
-
-
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+RELEASE = '2.1.2'
+VERSION = 20191019
 
 
 class Tasks:

@@ -27,11 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
-
-RELEASE = '4.19.4'
-VERSION = 20190602
+RELEASE = '4.19.5'
+VERSION = 20191019
 
 # pylint: disable = too-many-lines
 

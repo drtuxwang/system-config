@@ -19,9 +19,6 @@ import command_mod
 import file_mod
 import logging_mod
 
-if sys.version_info < (3, 3) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.3, < 4.0).")
-
 MAX_DISTANCE_IDENTICAL = 6
 
 # pylint: disable = invalid-name

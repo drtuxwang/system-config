@@ -14,11 +14,8 @@ import re
 import subprocess
 import sys
 
-if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
-
-RELEASE = '2.3.0'
-VERSION = 20190908
+RELEASE = '2.3.1'
+VERSION = 20191019
 
 
 class Command:
