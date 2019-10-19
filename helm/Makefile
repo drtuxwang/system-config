@@ -10,6 +10,10 @@ status:
 	kubectl --all-namespaces=true get pod -l name=tiller -o wide
 	helm ls
 
+.PHONY: pull
+pull:
+	helm repo update
+
 .PHONY: install-tiller
 install-tiller:
 	kubectl -n kube-system create serviceaccount tiller
