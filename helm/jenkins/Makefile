@@ -36,6 +36,15 @@ status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAME)
 
+.PHONY: connect
+connect:
+	@echo "\n*** Connecting to Jenkins server ***"
+	@echo "Username: user"
+	@kubectl get secret --namespace $(NAMESPACE) $(NAME) -o jsonpath="{.data.jenkins-password}" | \
+		base64 -d | awk '{printf("Password: %s\n", $$1)}'
+	@echo "firefox http://`kubectl get service jenkins-server | awk 'NR==2 {print $$3}'`"
+	@firefox http://`kubectl get service jenkins-server | awk 'NR==2 {print $$3}'`
+
 .PHONY: clean
 clean:
 	helm ls

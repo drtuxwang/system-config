@@ -1024,6 +1024,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/oracle-xe/templates/oracle-statefulset.yaml
  * helm/oracle-xe/templates/_values.tpl
  * helm/oracle-xe/values.yaml
+ * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.7.4 (app 3.7.18)
  * helm/servers-test/Makefile            Helm Chart: Servers test (alpine:3.9 image)
  * helm/servers-test/Chart.yaml
  * helm/servers-test/requirements.yaml
