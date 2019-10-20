@@ -43,33 +43,14 @@ class Options:
             try:
                 with open(xstartup, 'w', newline='\n') as ofile:
                     print("#!/bin/sh", file=ofile)
+                    print("unset DBUS_SESSION_BUS_ADDRESS", file=ofile)
+                    print("unset SESSION_MANAGER", file=ofile)
                     if answer[0].lower() == 'g':
-                        print("unset DBUS_SESSION_BUS_ADDRESS", file=ofile)
-                        print("unset SESSION_MANAGER", file=ofile)
-                        print(
-                            "if [ -x /usr/bin/gnome-session-fallback ]",
-                            file=ofile
-                        )
-                        print("then", file=ofile)
-                        print(
-                            "    /usr/bin/gnome-session-fallback &",
-                            file=ofile
-                        )
-                        print("elif [ -x /usr/bin/gnome-session ]", file=ofile)
-                        print("then", file=ofile)
-                        print("    /usr/bin/gnome-session &", file=ofile)
-                        print("else", file=ofile)
-                        print("    gnome &", file=ofile)
-                        print("fi", file=ofile)
+                        print("dbus-launch gnome-session &", file=ofile)
                     elif answer[0].lower() == 'k':
-                        print("SESSION_MANAGER=", file=ofile)
-                        print("startkde &", file=ofile)
+                        print("dbus-launch startkde &", file=ofile)
                     elif answer[0].lower() == 'x':
-                        print(
-                            "unset SESSION_MANAGER DBUS_SESSION_BUS_ADDRESS",
-                            file=ofile
-                        )
-                        print("startxfce4 &", file=ofile)
+                        print("dbus-launch startxfce4 &", file=ofile)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create ".vnc/xstartup" file.')
