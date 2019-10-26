@@ -1,0 +1,3 @@
+ImageHash==None
+scipy==None
+Pillow==None

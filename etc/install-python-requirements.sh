@@ -28,6 +28,7 @@ read_requirements() {
 
 install_packages() {
     umask 022
+    echo $INSTALL $REQUIREMENTS
     $INSTALL $REQUIREMENTS 2>&1 | grep -v "Requirement already satisfied:"
     return ${PIPESTATUS[0]}
 }
@@ -40,9 +41,9 @@ fi
 
 if [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ]
 then
-    INSTALL="$PYTHON -m pip install"
+    INSTALL="$PYTHON -m pip install --no-warn-script-location"
 else
-    INSTALL="$PYTHON -m pip install --user"
+    INSTALL="$PYTHON -m pip install --no-warn-script-location --user"
 fi
 
 REQUIREMENTS=
