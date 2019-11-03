@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Video downloader for Youtube & compatible websites (uses youtube-dl).
+Streaming video downloader (Youtube, m3u8 and compatible websites).
 """
 
 import argparse
@@ -30,8 +30,9 @@ class Options:
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Video downloader for Youtube & compatible websites.')
-
+            description='Streaming video downloader '
+            '(Youtube, m3u8 and compatible websites).'
+        )
         parser.add_argument(
             '-f',
             nargs=1,
@@ -95,6 +96,8 @@ class Options:
         else:
             if self._args.code:
                 code = self._args.code[0]
+            elif url.endswith('.m3u8'):  # Multi part streaming
+                code = '0'
             else:
                 code = self._detect_code(url)
             self._youtubedl.extend_args(['--format', code])

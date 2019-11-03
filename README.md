@@ -714,7 +714,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/unzip.py
  * bin/vbox               VirtualBox virtual machine manager
  * bin/vbox.py            (uses VBoxManage)
- * bin/vget               Video downloader for Youtube & compatible websites (uses youtube-dl).
+ * bin/vget               Streaming video downloader (Youtube, m3u8 and compatible websites)
  * bin/vget.py
  * bin/vi                 vi wrapper (allowing non systems port)
  * bin/vi.bat
