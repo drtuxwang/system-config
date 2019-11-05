@@ -67,7 +67,7 @@ class Options:
         if args[1].startswith(('http://', 'https://', 'ftp://')):
             nargs = args[:1]
             for arg in args[1:]:
-                if 'www.youtube.com/watch?' in arg:
+                if 'www.youtube.com/watch?' in arg or '.m3u8' in arg:
                     nargs.extend(['vget', arg, ';'])
                 elif 'www.instagram.com/p/' in arg:
                     nargs.extend(['pget', arg, ';'])
