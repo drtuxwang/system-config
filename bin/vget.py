@@ -8,8 +8,11 @@ import glob
 import os
 import signal
 import sys
+import time
+import urllib.request
 
 import command_mod
+import config_mod
 import subtask_mod
 
 
@@ -20,13 +23,27 @@ class Options:
 
     def __init__(self):
         self._args = None
+        self._mtime = None
+        self._output = ''
         self.parse(sys.argv)
 
-    def get_youtubedl(self):
+    def get_mtime(self):
         """
-        Return youtubedl Command class object.
+        Return output file modification time.
         """
-        return self._youtubedl
+        return self._mtime
+
+    def get_output(self):
+        """
+        Return output file.
+        """
+        return self._output
+
+    def get_vget(self):
+        """
+        Return vget Command class object.
+        """
+        return self._vget
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
@@ -63,7 +80,7 @@ class Options:
 
     def _detect_code(self, url):
         task = subtask_mod.Batch(
-            self._youtubedl.get_cmdline() + ['--list-formats', url]
+            self._vget.get_cmdline() + ['--list-formats', url]
         )
         task.run(pattern=r'^[^ ]+ +mp4 +\d+x\d+ ')
 
@@ -80,6 +97,26 @@ class Options:
 
         raise SystemExit(sys.argv[0] + ': No video stream: ' + url)
 
+    def _detect_mtime(self, url):
+        task = subtask_mod.Batch(self._vget.get_cmdline() + ['--get-url', url])
+        task.run(pattern=r'^http')
+        if task.has_output():
+            try:
+                req = urllib.request.Request(task.get_output()[0], headers={
+                    'User-Agent': config_mod.Config().get('user_agent'),
+                })
+            except (urllib.error.HTTPError, urllib.error.URLError):
+                pass
+            else:
+                conn = urllib.request.urlopen(req)
+                info = conn.info()
+                return time.mktime(time.strptime(
+                    info.get('Last-Modified'),
+                    '%a, %d %b %Y %H:%M:%S %Z'
+                ))
+
+        return None
+
     def parse(self, args):
         """
         Parse arguments
@@ -89,22 +126,34 @@ class Options:
         url = self._args.url[0]
         if '&index=' in url:  # Fix download one video for series
             url = url.split('&')[0]
-        self._youtubedl = command_mod.CommandFile(sys.executable)
-        self._youtubedl.set_args(['-m', 'youtube_dl', '--playlist-end', '1'])
-        if self._args.view_flag:
-            self._youtubedl.append_arg('--list-formats')
-        else:
-            if self._args.code:
-                code = self._args.code[0]
-            elif url.endswith('.m3u8'):  # Multi part streaming
-                code = '0'
-            else:
-                code = self._detect_code(url)
-            self._youtubedl.extend_args(['--format', code])
-            if self._args.output:
-                self._youtubedl.extend_args(['--output', self._args.output[0]])
+        self._vget = command_mod.CommandFile(sys.executable)
+        self._vget.set_args(['-m', 'youtube_dl', '--playlist-end', '1'])
 
-        self._youtubedl.append_arg(url)
+        if self._args.view_flag:
+            self._vget.extend_args(['--list-formats', url])
+            return
+
+        if self._args.code:
+            code = self._args.code[0]
+        elif url.endswith('.m3u8'):  # Multi part streaming
+            code = '0'
+        else:
+            code = self._detect_code(url)
+        self._vget.extend_args(['--format', code])
+
+        self._mtime = self._detect_mtime(url)
+
+        if self._args.output:
+            self._output = self._args.output[0]
+            if (
+                    os.path.isfile(self._output) or
+                    os.path.isfile(self._output + '.part')
+            ):
+                self._output = ('-'+str(os.getpid())+'.').join(
+                    self._output.rsplit('.', 1))
+            self._vget.extend_args(['--output', self._output])
+
+        self._vget.append_arg(url)
 
 
 class Main:
@@ -144,8 +193,17 @@ class Main:
         Start program
         """
         options = Options()
+        mtime = options.get_mtime()
+        output = options.get_output()
+        vget = options.get_vget()
 
-        subtask_mod.Exec(options.get_youtubedl().get_cmdline()).run()
+        task = subtask_mod.Task(vget.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(task.get_exitcode())
+
+        if mtime and output:
+            os.utime(output, (mtime, mtime))
 
 
 if __name__ == '__main__':
