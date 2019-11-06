@@ -296,7 +296,7 @@ then
     # Platform specific
     case `uname` in
     Darwin)
-        if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]
+        if [ "`\ls --help 2>&1 | \grep ' --time-style'`" ]
         then
             alias ls="ls -C --time-style=long-iso --color=auto"
             alias grep="grep --color=auto"
@@ -305,16 +305,17 @@ then
             alias ls="ls -C -G"
         fi
         . /usr/local/etc/bash_completion 2> /dev/null
+        export BASH_SILENCE_DEPRECATION_WARNING=1  # Disable zsh warning
         ;;
 
     Linux|*NT*)
-        if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]
+        if [ "`\ls --help 2>&1 | \grep ' --time-style'`" ]
         then
             alias ls="ls -C --time-style=long-iso --color=auto"
         else
             alias ls="ls -C --color=auto"
         fi
-        if [ "`\grep --help 2>&1 | \grep \" --color\"`" ]
+        if [ "`\grep --help 2>&1 | \grep \\" --color\\"`" ]
         then
             alias grep="grep --color=auto"
             alias egrep="egrep --color=auto"
