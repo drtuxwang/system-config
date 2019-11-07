@@ -18,7 +18,7 @@ spec:
       containers:
       - command:
         - sleep
-        - '86400'
+        - infinity
         env:
         - name: NAME
           value: VALUE

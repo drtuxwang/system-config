@@ -23,7 +23,7 @@ spec:
       containers:
       - command:
         - sleep
-        - '86400'
+        - infinity
         image: {{ include "chart.image.name" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ .Chart.Name }}-server
