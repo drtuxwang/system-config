@@ -2,6 +2,9 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ .Values.release.name }}-server
+  # annotations:
+  #   nginx.ingress.kubernetes.io/configuration-snippet: |
+  #       rewrite "(?i)/{{ .Values.release.name }}/(.*)$" /$1 break;
 spec:
   rules:
   - host: {{ .Values.release.name }}-server.{{ .Values.ingress.server.domain }}
