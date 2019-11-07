@@ -22,7 +22,7 @@ spec:
         env:
         - name: NAME
           value: VALUE
-        image: alpine:3.9
+        image: drtuxwang/debian-bash
         imagePullPolicy: IfNotPresent
         name: server
         ports:

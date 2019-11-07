@@ -1,7 +1,11 @@
 NAME := servers-test
-IMAGE := alpine:3.9
-NAMESPACE := default
+IMAGE := drtuxwang/debian-bash
 DOMAIN := example.com
+
+# Default namespace
+ifndef NAMESPACE
+	NAMESPACE=default
+endif
 
 # Default local port
 ifndef LOCALPORT
