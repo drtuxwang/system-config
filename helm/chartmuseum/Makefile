@@ -18,6 +18,7 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--set fullnameOverride=$(NAME) \
 		--set persistence.enabled=false \
 		--set env.open.DISABLE_API=false \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
@@ -36,6 +37,7 @@ install:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--set fullnameOverride=$(NAME) \
 		--set persistence.enabled=false \
 		--set env.open.DISABLE_API=false \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
