@@ -16,6 +16,7 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--set fullnameOverride=$(NAME) \
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
@@ -27,6 +28,7 @@ install:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--set fullnameOverride=$(NAME) \
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
