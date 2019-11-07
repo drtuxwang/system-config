@@ -1019,6 +1019,11 @@ the years. Now most of the scripts are written in Python 3.
  * helm/nexus/Makefile                   Helm Chart: table/sonatype-nexus 1.18.5 (app 3.15.2-01)
  * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 4.3.6 example (app 1.16.1)
  * helm/nginx/values.yaml
+ * helm/ops-box/Chart.yaml               Helm Chart: Operations Box (drtuxwang/debian image)
+ * helm/ops-box/Makefile
+ * helm/ops-box/templates/_values.tpl
+ * helm/ops-box/templates/box-statefulset.yaml
+ * helm/ops-box/values.yaml
  * helm/oracle-xe/Chart.yaml             Helm Chart: Oracle XE test (datagrip/oracle:11.2 image)
  * helm/oracle-xe/Makefile
  * helm/oracle-xe/templates/oracle-headless-service.yaml
@@ -1027,7 +1032,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/oracle-xe/templates/_values.tpl
  * helm/oracle-xe/values.yaml
  * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.7.4 (app 3.7.18)
- * helm/servers-test/Makefile            Helm Chart: Servers test (alpine:3.9 image)
+ * helm/servers-test/Makefile            Helm Chart: Servers test (drtuxwang/debian image)
  * helm/servers-test/Chart.yaml
  * helm/servers-test/requirements.yaml
  * helm/servers-test/templates/_values.tpl

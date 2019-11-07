@@ -1,0 +1,28 @@
+# Declare variables to be passed into your templates.
+
+release:
+  name: ops
+
+app:
+  box:
+    replicas: 1
+
+image:
+  name: centos:7
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1024M
+  requests:
+    cpu: 100m
+    memory: 64M
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+secrets:

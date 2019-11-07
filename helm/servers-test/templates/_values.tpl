@@ -3,7 +3,7 @@
 {{- end -}}
 
 {{- define "chart.appname" -}}
-{{- .Release.Name | trunc 53 | trimSuffix "-" -}}
+{{-   .Release.Name | trunc 53 | trimSuffix "-" -}}
 {{- end -}}
 
 {{- define "chart.image.name" -}}
