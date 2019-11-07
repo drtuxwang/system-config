@@ -18,6 +18,7 @@ check:
 		--debug \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
+		--set fullnameOverride=$(NAME) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set ingress.enabled=true \
 		--set ingress.hosts\[0\].name=$(DOMAIN) \
@@ -33,6 +34,7 @@ install:
 		--wait \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
+		--set fullnameOverride=$(NAME) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set ingress.enabled=true \
 		--set ingress.hosts\[0\].name=$(DOMAIN) \
