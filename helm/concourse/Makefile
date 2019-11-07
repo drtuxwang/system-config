@@ -21,6 +21,7 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--set fullnameOverride=$(NAME) \
 		--set persistence.enabled=false \
 		--set postgresql.persistence.enabled=false \
 		--set service.type=ClusterIP \
@@ -33,6 +34,7 @@ install:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--set fullnameOverride=$(NAME) \
 		--set persistence.enabled=false \
 		--set postgresql.persistence.enabled=false \
 		--set service.type=ClusterIP \
@@ -53,4 +55,5 @@ clean:
 	helm ls
 	helm del --purge $(NAMESPACE)-$(NAME) ||:
 	sleep 2
-	kubectl delete namespace concourse-server-main
+	kubectl delete namespace $(NAME)-main ||:
+

@@ -17,6 +17,7 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--set fullnameOverride=$(NAME) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set persistence.enabled=false \
 		--set service.type=ClusterIP \
@@ -30,6 +31,7 @@ install:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--set fullnameOverride=$(NAME) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set persistence.enabled=false \
 		--set service.type=ClusterIP \
