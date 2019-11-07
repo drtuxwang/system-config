@@ -1,8 +1,12 @@
 NAME := chartmuseum-server
 VERSION := 2.3.2
-NAMESPACE := default
 INGRESS_HOST := chartmusuem.local
 SECRET := chartmusuem-secret-tls
+
+# Default namespace
+ifndef NAMESPACE
+	NAMESPACE=default
+endif
 
 
 default: status
@@ -24,7 +28,7 @@ check:
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
-		$(NAME) stable/chartmuseum
+		$(NAMESPACE)-$(NAME) stable/chartmuseum
 
 .PHONY: install
 install:
@@ -42,14 +46,14 @@ install:
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
-		$(NAME) stable/chartmuseum
+		$(NAMESPACE)-$(NAME) stable/chartmuseum
 
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	helm status $(NAME)
+	helm status $(NAMESPACE)-$(NAME)
 
 .PHONY: clean
 clean:
 	helm ls
-	helm del --purge $(NAME) ||:
+	helm del --purge $(NAMESPACE)-$(NAME) ||:

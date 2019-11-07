@@ -1,11 +1,16 @@
 NAME := concourse-server
 VERSION := 8.2.3
-NAMESPACE := default
+
+# Default namespace
+ifndef NAMESPACE
+	NAMESPACE=default
+endif
 
 # Default local port
 ifndef LOCALPORT
 	LOCALPORT=8080
 endif
+
 
 default: status
 
@@ -20,7 +25,7 @@ check:
 		--set postgresql.persistence.enabled=false \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
-		$(NAME) stable/concourse
+		$(NAMESPACE)-$(NAME) stable/concourse
 
 .PHONY: install
 install:
@@ -32,7 +37,7 @@ install:
 		--set postgresql.persistence.enabled=false \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
-		$(NAME) stable/concourse
+		$(NAMESPACE)-$(NAME) stable/concourse
 
 .PHONY: forward
 forward:
@@ -41,11 +46,11 @@ forward:
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	helm status $(NAME)
+	helm status $(NAMESPACE)-$(NAME)
 
 .PHONY: clean
 clean:
 	helm ls
-	helm del --purge $(NAME) ||:
+	helm del --purge $(NAMESPACE)-$(NAME) ||:
 	sleep 2
 	kubectl delete namespace concourse-server-main

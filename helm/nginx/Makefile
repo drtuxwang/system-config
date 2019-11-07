@@ -1,6 +1,11 @@
 NAME := nginx-proxy
 VERSION := 4.3.6
-NAMESPACE := default
+
+# Default namespace
+ifndef NAMESPACE
+	NAMESPACE=default
+endif
+
 
 default: status
 
@@ -18,7 +23,7 @@ check:
 		--set ingress.hosts\[0\].name=$(DOMAIN) \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
-		$(NAME) bitnami/nginx
+		$(NAMESPACE)-$(NAME) bitnami/nginx
 
 .PHONY: install
 install:
@@ -33,14 +38,14 @@ install:
 		--set ingress.hosts\[0\].name=$(DOMAIN) \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
-		$(NAME) bitnami/nginx
+		$(NAMESPACE)-$(NAME) bitnami/nginx
 
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	helm status $(NAME)
+	helm status $(NAMESPACE)-$(NAME)
 
 .PHONY: clean
 clean:
 	helm ls
-	helm del --purge $(NAME) ||:
+	helm del --purge $(NAMESPACE)-$(NAME) ||:

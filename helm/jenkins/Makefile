@@ -1,6 +1,11 @@
 NAME := jenkins-server
 VERSION := 3.4.2
-NAMESPACE := default
+
+# Default namespace
+ifndef NAMESPACE
+	NAMESPACE=default
+endif
+
 
 default: status
 
@@ -16,7 +21,7 @@ check:
 		--set persistence.enabled=false \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
-		$(NAME) bitnami/jenkins
+		$(NAMESPACE)-$(NAME) bitnami/jenkins
 
 .PHONY: install
 install:
@@ -29,12 +34,12 @@ install:
 		--set persistence.enabled=false \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
-		$(NAME) bitnami/jenkins
+		$(NAMESPACE)-$(NAME) bitnami/jenkins
 
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	helm status $(NAME)
+	helm status $(NAMESPACE)-$(NAME)
 
 .PHONY: connect
 connect:
@@ -48,4 +53,4 @@ connect:
 .PHONY: clean
 clean:
 	helm ls
-	helm del --purge $(NAME) ||:
+	helm del --purge $(NAMESPACE)-$(NAME) ||:

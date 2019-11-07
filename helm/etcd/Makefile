@@ -1,6 +1,11 @@
 NAME := etcd-server
 VERSION := 4.3.4
-NAMESPACE := default
+
+# Default namespace
+ifndef NAMESPACE
+	NAMESPACE=default
+endif
+
 
 default: status
 
@@ -14,7 +19,7 @@ check:
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
-		$(NAME) bitnami/etcd
+		$(NAMESPACE)-$(NAME) bitnami/etcd
 
 .PHONY: install
 install:
@@ -25,12 +30,12 @@ install:
 		--values values.yaml \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
-		$(NAME) bitnami/etcd
+		$(NAMESPACE)-$(NAME) bitnami/etcd
 
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	helm status $(NAME)
+	helm status $(NAMESPACE)-$(NAME)
 
 .PHONY: connect
 connect:
@@ -40,4 +45,4 @@ connect:
 .PHONY: clean
 clean:
 	helm ls
-	helm del --purge $(NAME) ||:
+	helm del --purge $(NAMESPACE)-$(NAME) ||:
