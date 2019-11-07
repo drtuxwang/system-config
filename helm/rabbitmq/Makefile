@@ -1,6 +1,11 @@
 NAME := rabbitmq-server
 VERSION := 6.7.4
-NAMESPACE := default
+
+# Default namespace
+ifndef NAMESPACE
+	NAMESPACE=default
+endif
+
 
 default: status
 
@@ -11,10 +16,13 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--set fullnameOverride=$(NAME) \
 		--set persistence.enabled=false \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
+		--set rabbitmq.username=guest \
+		--set rabbitmq.password=guest \
 		--version $(VERSION) \
-		$(NAME) stable/rabbitmq
+		$(NAMESPACE)-$(NAME) stable/rabbitmq
 
 .PHONY: install
 install:
@@ -22,17 +30,18 @@ install:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--set fullnameOverride=$(NAME) \
 		--set persistence.enabled=false \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set rabbitmq.username=guest \
 		--set rabbitmq.password=guest \
 		--version $(VERSION) \
-		$(NAME) stable/rabbitmq
+		$(NAMESPACE)-$(NAME) stable/rabbitmq
 
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	helm status $(NAME)
+	helm status $(NAMESPACE)-$(NAME)
 
 .PHONY: connect
 connect:
@@ -43,4 +52,4 @@ connect:
 .PHONY: clean
 clean:
 	helm ls
-	helm del --purge $(NAME) ||:
+	helm del --purge $(NAMESPACE)-$(NAME) ||:
