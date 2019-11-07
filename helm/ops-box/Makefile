@@ -6,6 +6,7 @@ ifndef NAMESPACE
 	NAMESPACE=default
 endif
 
+
 default: status
 
 .PHONY: check

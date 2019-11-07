@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: {{ include "chart.name" . }}-oracle
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  name: {{ include "chart.appname" . }}-oracle
+  name: {{ .Values.release.name }}-oracle
 spec:
   ports:
   - name: http

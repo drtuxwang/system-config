@@ -1,6 +1,11 @@
-NAME := oracle-server
+NAME := oracle-xe
 IMAGE := datagrip/oracle:11.2
-NAMESPACE := default
+
+# Default namespace
+ifndef NAMESPACE
+	NAMESPACE=default
+endif
+
 
 default: status
 
@@ -11,8 +16,9 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--set release.name=$(NAME) \
 		--set image.name=$(IMAGE) \
-		$(NAME) .
+		$(NAMESPACE)-$(NAME) .
 
 .PHONY: template
 template:
@@ -26,13 +32,14 @@ install:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--set release.name=$(NAME) \
 		--set image.name=$(IMAGE) \
-		$(NAME) .
+		$(NAMESPACE)-$(NAME) .
 
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	helm status $(NAME)
+	helm status $(NAMESPACE)-$(NAME)
 
 .PHONY: connect
 connect:
@@ -43,4 +50,4 @@ connect:
 .PHONY: clean
 clean:
 	helm ls
-	helm del --purge $(NAME) ||:
+	helm del --purge $(NAMESPACE)-$(NAME) ||:

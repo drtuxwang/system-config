@@ -1,5 +1,8 @@
 # Declare variables to be passed into your templates.
 
+release:
+  name: oracle-server
+
 app:
   oracle:
     replicas: 1

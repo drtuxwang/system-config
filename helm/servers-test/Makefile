@@ -23,7 +23,7 @@ check:
 		--namespace=$(NAMESPACE) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAME) .
+		$(NAMESPACE)-$(NAME) .
 
 .PHONY: template
 template:
@@ -40,7 +40,7 @@ install:
 		--namespace=$(NAMESPACE) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAME) .
+		$(NAMESPACE)-$(NAME) .
 
 .PHONY: forward
 forward:
@@ -50,9 +50,9 @@ forward:
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	helm status $(NAME)
+	helm status $(NAMESPACE)-$(NAME)
 
 .PHONY: clean
 clean:
 	helm ls
-	helm del --purge $(NAME) ||:
+	helm del --purge $(NAMESPACE)-$(NAME) ||:

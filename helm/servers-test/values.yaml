@@ -1,5 +1,8 @@
 # Declare variables to be passed into your templates.
 
+release:
+  name: servers-test
+
 app:
   server:
     replicas: 2
