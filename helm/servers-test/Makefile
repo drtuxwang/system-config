@@ -21,6 +21,7 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--set release.name=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
 		$(NAMESPACE)-$(NAME) .
@@ -38,6 +39,7 @@ install:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--set release.name=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
 		$(NAMESPACE)-$(NAME) .

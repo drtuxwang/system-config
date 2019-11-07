@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: {{ include "chart.name" . }}-server
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  name: {{ include "chart.appname" . }}-server
+  name: {{ .Values.release.name }}-server
 spec:
   ports:
   - name: server
