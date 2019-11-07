@@ -3,6 +3,7 @@ FROM i386/debian:10-slim
 # Install base packages
 RUN apt-get update --fix-missing && \
 	apt-get install --no-install-recommends -y \
+		curl \
 		dnsutils \
 		iputils-ping \
 		net-tools \
@@ -10,6 +11,7 @@ RUN apt-get update --fix-missing && \
 		pciutils \
 		python3 \
 		python3-pip \
-		vim && \
+		vim \
+		wget && \
 	apt-get clean && \
 	rm -rf /root/.cache
