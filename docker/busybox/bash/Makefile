@@ -46,6 +46,11 @@ version:
 	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) busybox 2> /dev/null | grep "^BusyBox v" | \
 		sed -e "s@^BusyBox v@$(shell pwd): BusyBox @;s@ (.*@@"
 
+.PHONY: push
+push:
+	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
+	@docker push $(IMAGE)
+
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:

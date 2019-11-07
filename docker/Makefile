@@ -60,10 +60,6 @@ version:
 		make --no-print-directory -C $$DIR version || exit 1; \
 	done
 
-.PHONY: run-firefox
-run-firefox:
-	make -C $(DIST)/sandbox-firefox run
-
 .PHONY: run-sandbox
 run-sandbox:
 	make -C $(DIST)/sandbox run
