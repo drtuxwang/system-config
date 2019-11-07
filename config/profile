@@ -136,7 +136,7 @@ then
     fi
 
     # Setup SSH agent
-    if [ ! "`ps -u $MYUNAME | grep ssh-agent`" ]
+    if [ ! "`ps -u $MYUNAME 2> /dev/null | grep ssh-agent`" ]
     then
         rm -rf /tmp/ssh-*/*
     fi
@@ -315,7 +315,7 @@ then
         else
             alias ls="ls -C --color=auto"
         fi
-        if [ "`\grep --help 2>&1 | \grep \\" --color\\"`" ]
+        if [ "`\grep --help 2>&1 | \grep \\" --color\\" 2> /dev/null`" ]
         then
             alias grep="grep --color=auto"
             alias egrep="egrep --color=auto"
