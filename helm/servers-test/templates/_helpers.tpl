@@ -4,7 +4,7 @@
 
 {{- define "app.fullname" -}}
 {{-   if .Values.fullnameOverride -}}
-{{-     .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{-     .Values.fullnameOverride | trunc 53 | trimSuffix "-" -}}
 {{-   else -}}
 {{-     .Release.Name | trunc 53 | trimSuffix "-" -}}
 {{-   end -}}
