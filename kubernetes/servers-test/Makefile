@@ -7,8 +7,8 @@ endif
 
 default: status
 
-.PHONY: build
-install:
+.PHONY: deploy
+deploy:
 	@echo "\n*** Creating pods ***"
 	kubectl create namespace $(NAMESPACE) ||:
 	kubectl --namespace=$(NAMESPACE) create -f servers-secret-tls.yaml ||:

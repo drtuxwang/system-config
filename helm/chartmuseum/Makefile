@@ -31,8 +31,8 @@ check:
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) stable/chartmuseum
 
-.PHONY: install
-install:
+.PHONY: deploy
+deploy:
 	helm upgrade \
 		--install \
 		--wait \

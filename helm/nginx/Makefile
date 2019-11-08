@@ -26,8 +26,8 @@ check:
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) bitnami/nginx
 
-.PHONY: install
-install:
+.PHONY: deploy
+deploy:
 	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm upgrade \
 		--install \

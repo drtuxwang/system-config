@@ -28,8 +28,8 @@ template:
 		--set image.name=$(IMAGE) \
 		.
 
-.PHONY: install
-install:
+.PHONY: deploy
+deploy:
 	helm upgrade \
 		--install \
 		--wait \

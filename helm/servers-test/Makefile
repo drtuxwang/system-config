@@ -35,8 +35,8 @@ template:
 		--set ingress.server.domain=$(DOMAIN) \
 		.
 
-.PHONY: install
-install:
+.PHONY: deploy
+deploy:
 	helm upgrade \
 		--install \
 		--wait \

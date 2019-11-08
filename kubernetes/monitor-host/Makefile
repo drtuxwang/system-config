@@ -5,8 +5,8 @@ endif
 
 default: status
 
-.PHONY: build
-install:
+.PHONY: deploy
+deploy:
 	@echo "\n*** Creating pods ***"
 	kubectl --namespace=$(NAMESPACE) create -f monitor-host-daemonset.yaml ||:
 

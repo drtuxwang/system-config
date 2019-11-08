@@ -21,8 +21,8 @@ check:
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) stable/sonatype-nexus
 
-.PHONY: install
-install:
+.PHONY: deploy
+deploy:
 	helm upgrade \
 		--install \
 		--wait \

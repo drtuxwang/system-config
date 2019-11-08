@@ -22,8 +22,8 @@ check:
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) stable/mongodb
 
-.PHONY: install
-install:
+.PHONY: deploy
+deploy:
 	helm upgrade \
 		--install \
 		--wait \
