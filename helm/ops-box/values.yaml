@@ -1,15 +1,12 @@
 # Declare variables to be passed into your templates.
 
-release:
-  name: ops
-
 app:
-  box:
+  servers:
     replicas: 1
 
 image:
   name: centos:7
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 resources:
   limits:

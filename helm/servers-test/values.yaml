@@ -1,10 +1,7 @@
 # Declare variables to be passed into your templates.
 
-release:
-  name: servers-test
-
 app:
-  server:
+  servers:
     replicas: 2
 
 image:
@@ -12,12 +9,12 @@ image:
   pullPolicy: IfNotPresent
 
 ingress:
-  server:
+  servers:
     domain: example.com
     servicePort: 80
 
 service:
-  server:
+  servers:
     name: http
     port: 80
     type: ClusterIP
@@ -37,4 +34,3 @@ tolerations: []
 affinity: {}
 
 secrets:
-

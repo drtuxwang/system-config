@@ -1,18 +1,18 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ .Values.release.name }}-server
+  name: {{ include "app.fullname" . }}-servers
   # annotations:
   #   nginx.ingress.kubernetes.io/configuration-snippet: |
-  #       rewrite "(?i)/{{ .Values.release.name }}/(.*)$" /$1 break;
+  #       rewrite "(?i)/{{ include "app.fullname" . }}/(.*)$" /$1 break;
 spec:
   rules:
-  - host: {{ .Values.release.name }}-server.{{ .Values.ingress.server.domain }}
+  - host: {{ include "app.fullname" . }}-servers.{{ .Values.ingress.servers.domain }}
     http:
       paths:
       - path: /
         backend:
-          serviceName: {{ include "chart.appname" . }}-server
-          servicePort: {{ .Values.ingress.server.servicePort }}
+          serviceName: {{ include "app.fullname" . }}-servers
+          servicePort: {{ .Values.ingress.servers.servicePort }}
   tls:
-  - secretName: {{ .Values.ingress.server.domain }}
+  - secretName: {{ .Values.ingress.servers.domain }}

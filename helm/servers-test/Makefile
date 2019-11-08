@@ -21,7 +21,7 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
-		--set release.name=$(NAME) \
+		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
 		$(NAMESPACE)-$(NAME) .
@@ -29,6 +29,8 @@ check:
 .PHONY: template
 template:
 	helm template --name=$(NAME) \
+		--namespace=$(NAMESPACE) \
+		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
 		.
@@ -39,7 +41,7 @@ install:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
-		--set release.name=$(NAME) \
+		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
 		$(NAMESPACE)-$(NAME) .

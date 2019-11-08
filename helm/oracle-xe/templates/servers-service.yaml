@@ -3,10 +3,10 @@ kind: Service
 metadata:
   labels:
     helm.sh/chart: {{ include "chart.name" . }}
-    app.kubernetes.io/name: {{ include "chart.name" . }}-oracle
+    app.kubernetes.io/name: {{ include "chart.name" . }}-servers
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  name: {{ .Values.release.name }}-oracle
+  name: {{ include "app.fullname" . }}-servers
 spec:
   ports:
   - name: http
@@ -18,6 +18,6 @@ spec:
     protocol: TCP
     targetPort: oracle
   selector:
-    app.kubernetes.io/name: {{ include "chart.name" . }}-oracle
+    app.kubernetes.io/name: {{ include "chart.name" . }}-servers
     app.kubernetes.io/instance: {{ .Release.Name }}
   type: {{ .Values.service.oracle.type }}

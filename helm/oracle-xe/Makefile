@@ -16,13 +16,15 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
-		--set release.name=$(NAME) \
+		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		$(NAMESPACE)-$(NAME) .
 
 .PHONY: template
 template:
 	helm template --name=$(NAME) \
+		--namespace=$(NAMESPACE) \
+		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		.
 
@@ -32,7 +34,7 @@ install:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
-		--set release.name=$(NAME) \
+		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		$(NAMESPACE)-$(NAME) .
 
