@@ -16,6 +16,7 @@ TEXT_FONT = '*-fixed-bold-*-18-*-iso10646-*'
 FG_COLOUR = '#000000'
 BG_COLOUR = '#ffffdd'
 SLEEP = '10'
+URI = ('http://', 'https://', 'ftp://')
 
 
 class Options:
@@ -51,22 +52,16 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
-        """
-        Parse arguments
-        """
-        if len(args) == 1:
-            self._parse_args(args[1:])
-        if args[1] == "-split":
-            if len(args) != 3:
-                self._parse_args(args[1:])
-            cmdline = args[2]
-            if '"' not in cmdline:
-                cmdline = cmdline.replace("'", '"').replace('\n', ' ')
-            args[1:] = command_mod.Command.cmd2args(cmdline)
-        if args[1].startswith(('http://', 'https://', 'ftp://')):
-            nargs = args[:1]
-            for arg in args[1:]:
+    @staticmethod
+    def _generate_cmd(args):
+        if len(args) == 2 and args[0].endswith('.mp4'):
+            if 'www.youtube.com/watch?' in args[1] or '.m3u8' in args[1]:
+                nargs = ['vget', '-O'] + args + [';']
+            else:
+                nargs = ['wget', '-O'] + args + [';']
+        elif args[0].startswith(URI):
+            nargs = []
+            for arg in args:
                 if 'www.youtube.com/watch?' in arg or '.m3u8' in arg:
                     nargs.extend(['vget', arg, ';'])
                 elif 'www.instagram.com/p/' in arg:
@@ -82,8 +77,24 @@ class Options:
             nargs.extend(['sleep', SLEEP])
         else:
             nargs = args + [';', 'sleep', SLEEP]
-        command = command_mod.Command.args2cmd(nargs[1:])
 
+        return nargs
+
+    def parse(self, args):
+        """
+        Parse arguments
+        """
+        if len(args) == 1:
+            self._parse_args(args[1:])
+        if args[1] == "-split":
+            if len(args) != 3:
+                self._parse_args(args[1:])
+            cmdline = args[2]
+            if '"' not in cmdline:
+                cmdline = cmdline.replace("'", '"').replace('\n', ' ')
+            args[1:] = command_mod.Command.cmd2args(cmdline)
+
+        command = command_mod.Command.args2cmd(self._generate_cmd(args[1:]))
         self._xterm = command_mod.Command('xterm', errors='stop')
         self._xterm.set_args([
             '-fn',
