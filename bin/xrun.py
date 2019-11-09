@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Run sudo command in new terminal session
+Run command in new terminal session
 """
 
 import argparse
