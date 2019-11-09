@@ -55,5 +55,5 @@ clean:
 	helm ls
 	helm del --purge $(NAMESPACE)-$(NAME) ||:
 	sleep 2
-	kubectl delete namespace $(NAME)-main ||:
+	kubectl delete namespace $(NAMESPACE)-$(NAME)-main ||:
 
