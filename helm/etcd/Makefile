@@ -11,25 +11,27 @@ default: status
 
 .PHONY: check
 check:
+	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm upgrade \
 		--install \
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
-		--set fullnameOverride=$(NAME) \
 		--values values.yaml \
+		--set fullnameOverride=$(NAME) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) bitnami/etcd
 
 .PHONY: deploy
 deploy:
+	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm upgrade \
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
-		--set fullnameOverride=$(NAME) \
 		--values values.yaml \
+		--set fullnameOverride=$(NAME) \
 		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) bitnami/etcd
