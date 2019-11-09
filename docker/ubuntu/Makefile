@@ -36,6 +36,14 @@ version:
 		make --no-print-directory -C $$DIR version ||:; \
 	done
 
+.PHONY: push
+push:
+	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
+	@docker push $(IMAGE)
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR push || exit 1; \
+	done
+
 .PHONY: clean
 clean:
 	for DIR in $(BUILD_DIRS); do \

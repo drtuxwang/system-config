@@ -60,6 +60,14 @@ version:
 	@docker run --entrypoint docker $(IMAGE) --version | grep ^Docker | \
 		sed -e "s/,/ /g" | awk '{printf("'$(shell pwd)': docker %s\n", $$3)}'
 
+.PHONY: push
+push:
+	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
+	@docker push $(IMAGE)
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR push || exit 1; \
+	done
+
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:

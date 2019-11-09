@@ -68,6 +68,12 @@ run-sandbox:
 run-sudo:
 	make -C sudo run
 
+.PHONY: push
+push:
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR push || exit 1; \
+	done
+
 .PHONY: gc
 gc:
 	docker ps -f status=exited -q | xargs -r docker rm -v

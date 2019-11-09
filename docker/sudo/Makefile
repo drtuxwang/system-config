@@ -51,6 +51,11 @@ run:
 version:
 	@echo "$(shell pwd): scratch"
 
+.PHONY: push
+push:
+	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
+	@docker push $(IMAGE)
+
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:

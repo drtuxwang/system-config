@@ -55,6 +55,11 @@ version:
 	@docker run --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
 		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
 
+.PHONY: push
+push:
+	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
+	@docker push $(IMAGE)
+
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:

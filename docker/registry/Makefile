@@ -50,6 +50,11 @@ run:
 version:
 	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) registry --version 2> /dev/null | sed -e "s@.* v@$(shell pwd): Registry @"
 
+.PHONY: push
+push:
+	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
+	@docker push $(IMAGE)
+
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:

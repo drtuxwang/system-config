@@ -44,6 +44,11 @@ version:
 	@docker run --entrypoint devpi-server $(IMAGE) --version | \
 		   awk '{printf("'$(shell pwd)': devpi-server %s\n", $$1)}'
 
+.PHONY: push
+push:
+	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
+	@docker push $(IMAGE)
+
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
