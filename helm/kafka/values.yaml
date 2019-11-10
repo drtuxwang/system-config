@@ -7,3 +7,5 @@ env:
 
 persistence:
   enabled: false
+
+replicas: 1
