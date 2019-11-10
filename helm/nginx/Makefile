@@ -19,7 +19,6 @@ check:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set ingress.enabled=true \
 		--set ingress.hosts\[0\].name=$(DOMAIN) \
 		--set service.type=ClusterIP \
@@ -35,7 +34,6 @@ deploy:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set ingress.enabled=true \
 		--set ingress.hosts\[0\].name=$(DOMAIN) \
 		--set service.type=ClusterIP \

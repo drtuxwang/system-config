@@ -16,6 +16,7 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		$(NAMESPACE)-$(NAME) .
@@ -24,6 +25,7 @@ check:
 template:
 	helm template --name=$(NAME) \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		.
@@ -34,6 +36,7 @@ deploy:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		$(NAMESPACE)-$(NAME) .

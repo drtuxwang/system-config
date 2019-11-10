@@ -1,3 +1,6 @@
+nodeSelector:
+  beta.kubernetes.io/os: linux
+
 persistence:
   enabled: false
 usePassword: false

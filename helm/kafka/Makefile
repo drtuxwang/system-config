@@ -17,10 +17,9 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
-		--set persistence.enabled=false \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) incubator/kafka
 
@@ -31,10 +30,9 @@ deploy:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
-		--set persistence.enabled=false \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) incubator/kafka
 

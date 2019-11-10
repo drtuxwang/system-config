@@ -1,4 +1,5 @@
-# Declare variables to be passed into your templates.
+nodeSelector:
+  beta.kubernetes.io/os: linux
 
 app:
   servers:

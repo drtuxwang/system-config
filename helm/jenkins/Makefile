@@ -17,9 +17,8 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
-		--set persistence.enabled=false \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) bitnami/jenkins
@@ -31,9 +30,8 @@ deploy:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
-		--set persistence.enabled=false \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) bitnami/jenkins

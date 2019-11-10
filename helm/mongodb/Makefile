@@ -18,7 +18,6 @@ check:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) stable/mongodb
 
@@ -30,7 +29,6 @@ deploy:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) stable/mongodb
 

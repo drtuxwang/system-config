@@ -1,0 +1,13 @@
+nodeSelector:
+  beta.kubernetes.io/os: linux
+
+persistence:
+  enabled: false
+  worker:
+    class: generic
+    accessMode: ReadWriteOnce
+    size: "20Gi"
+
+postgresql:
+  persistence:
+    enabled: false

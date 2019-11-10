@@ -21,9 +21,8 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set persistence.enabled=false \
-		--set postgresql.persistence.enabled=false \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) stable/concourse
@@ -34,9 +33,8 @@ deploy:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set persistence.enabled=false \
-		--set postgresql.persistence.enabled=false \
 		--set service.type=ClusterIP \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) stable/concourse

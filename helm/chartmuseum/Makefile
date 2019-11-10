@@ -18,11 +18,8 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set persistence.enabled=false \
-		--set env.open.DISABLE_API=false \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
-		--set persistence.enabled=false \
 		--set ingress.enabled=true \
 		--set ingress.hosts[0].name=$(INGRESS_HOST) \
 		--set ingress.hosts[0].tls=true \
@@ -37,11 +34,8 @@ deploy:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set persistence.enabled=false \
-		--set env.open.DISABLE_API=false \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
-		--set persistence.enabled=false \
 		--set ingress.enabled=true \
 		--set ingress.hosts[0].name=$(INGRESS_HOST) \
 		--set ingress.hosts[0].tls=true \

@@ -1,3 +1,6 @@
+nodeSelector:
+  beta.kubernetes.io/os: linux
+
 ingress:
   enabled: true
   hosts:

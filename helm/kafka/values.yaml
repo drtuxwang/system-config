@@ -1,0 +1,9 @@
+nodeSelector:
+  beta.kubernetes.io/os: linux
+
+env:
+  open:
+    DISABLE_API: false
+
+persistence:
+  enabled: false

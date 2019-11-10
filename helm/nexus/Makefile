@@ -15,9 +15,8 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
-		--set persistence.enabled=false \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) stable/sonatype-nexus
 
@@ -27,9 +26,8 @@ deploy:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
-		--set persistence.enabled=false \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) stable/sonatype-nexus
 

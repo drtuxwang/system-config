@@ -16,9 +16,8 @@ check:
 		--dry-run \
 		--debug \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set persistence.enabled=false \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set rabbitmq.username=guest \
 		--set rabbitmq.password=guest \
 		--version $(VERSION) \
@@ -30,9 +29,8 @@ deploy:
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
+		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set persistence.enabled=false \
-		--set nodeSelector."beta\.kubernetes\.io/os"=linux \
 		--set rabbitmq.username=guest \
 		--set rabbitmq.password=guest \
 		--version $(VERSION) \
