@@ -1,4 +1,4 @@
-NAME := kafka-server
+NAME := kafka
 VERSION := 0.18.2
 
 # Default namespace
@@ -18,7 +18,7 @@ check:
 		--debug \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
+		--set fullnameOverride=$(NAME)-server \
 		--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) incubator/kafka
@@ -31,7 +31,7 @@ deploy:
 		--wait \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
+		--set fullnameOverride=$(NAME)-server \
 		--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
 		--version $(VERSION) \
 		$(NAMESPACE)-$(NAME) incubator/kafka
