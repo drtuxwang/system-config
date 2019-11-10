@@ -15,8 +15,9 @@ else
     exit 1
 fi
 
-export DOCKER_RUN_FLAGS="--network=none"
+export DOCKER_RUN_FLAGS=
 export DIST=
+NETWORK=none
 SANDBOX=99999:99999
 while [ $# -gt 0 ]
 do
@@ -31,7 +32,10 @@ do
         DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --ipc=host"
         ;;
     -net)
-        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --network=bridge"
+        if [ "$NETWORK" != "host" ]
+        then
+            NETWORK="bridge"
+        fi
         ;;
     -root)
         SANDBOX="0:0"
@@ -41,6 +45,9 @@ do
         ;;
     -user)
         SANDBOX="$(id -u):$(id -g)"
+        ;;
+    -vnc)
+        NETWORK="host"
         ;;
     -v=*)
         MOUNT=${1#*=}
@@ -76,6 +83,9 @@ done
 # Share current working directory
 DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=$PWD:/vol/app --workdir=/vol/app"
 
+# Network
+DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --network=$NETWORK"
+
 # Sandbox user
 if [ "$SANDBOX" = "99999:99999" ]
 then
@@ -87,9 +97,9 @@ fi
 
 export DOCKER_RUN_COMMAND="$@"
 
-if [ "$DIST" -a ! -f "$DIR/docker/${DIST}/sandbox-gcc/Makefile" ]
+if [ "$DIST" -a ! -f "$DIR/docker/${DIST}/sandbox/Makefile" ]
 then
-     echo "Error: Cannot locate \"$DIR/docker/${DIST}/sandbox-gcc/Makefile\""
+     echo "Error: Cannot locate \"$DIR/docker/${DIST}/sandbox/Makefile\""
      exit 1
 fi
 

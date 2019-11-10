@@ -8,17 +8,17 @@ the years. Now most of the scripts are written in Python 3.
  * Jenkinsfile            Jenkins pipeline configuration file
  * codefresh.yaml         Codefresh pipeline configuration file
  * Makefile               Makefile for testing
- * bin/command\_mod.py     Python command line handling module
- * bin/config\_mod.py      Python config module for handling "config_mod.yaml)
- * bin/config\_mod.yaml    Configuration file apps, bindings & parameters
- * bin/debug\_mod.py       Python debugging tools module
- * bin/desktop\_mod.py     Python X-windows desktop module
- * bin/file\_mod.py        Python file handling utility module
- * bin/logging\_mod.py     Python logging handling module
- * bin/network\_mod.py     Python network handling utility module
- * bin/power\_mod.py       Python power handling module
- * bin/subtask\_mod.py     Python sub task handling module
- * bin/task\_mod.py        Python task handling utility module
+ * bin/command_mod.py     Python command line handling module
+ * bin/config_mod.py      Python config module for handling "config_mod.yaml)
+ * bin/config_mod.yaml    Configuration file apps, bindings & parameters
+ * bin/debug_mod.py       Python debugging tools module
+ * bin/desktop_mod.py     Python X-windows desktop module
+ * bin/file_mod.py        Python file handling utility module
+ * bin/logging_mod.py     Python logging handling module
+ * bin/network_mod.py     Python network handling utility module
+ * bin/power_mod.py       Python power handling module
+ * bin/subtask_mod.py     Python sub task handling module
+ * bin/task_mod.py        Python task handling utility module
  * bin/python             Python startup (allowing non systems port)
  * bin/python.bat
  * bin/python2
@@ -122,14 +122,14 @@ the years. Now most of the scripts are written in Python 3.
  * bin/bell.py
  * bin/bson               Convert BSON/JSON/YAML to BSON
  * bin/bson.bat
- * bin/bson\_.py
+ * bin/bson_.py
  * bin/breaktimer         Break reminder timer
  * bin/breaktimer.py      (10 min default)
  * bin/bz2                Compress a file in BZIP2 format (allowing non systems port)
- * bin/bz2\_.py
+ * bin/bz2_.py
  * bin/calendar           Displays month or year calendar
  * bin/calendar.bat
- * bin/calendar\_.py
+ * bin/calendar_.py
  * bin/cdspeed            Set CD/DVD drive speed
  * bin/cdspeed.py         ("$HOME/.config/cdspeed.json")
  * bin/chkconfig          Check BSON/JSON/YAML configuration files for errors
@@ -347,7 +347,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/gcc.py
  * bin/g++
  * bin/g++.bat
- * bin/gxx\_.py
+ * bin/gxx_.py
  * bin/gfortran
  * bin/gfortran.bat
  * bin/gfortran.py
@@ -365,15 +365,15 @@ the years. Now most of the scripts are written in Python 3.
  * bin/gimp.py
  * bin/git                git wrapper (allowing non systems port)
  * bin/git.bat
- * bin/git\_.py
+ * bin/git_.py
  * bin/git-bash.bat       git bash shell for Windows
  * bin/gitk               gitk wrapper (allowing non systems port)
  * bin/gitk.bat
  * bin/gitk.py
  * bin/git-lfs            git large file storage plugin
- * bin/git\_lfs.py
+ * bin/git_lfs.py
  * bin/git-time           git original author time plugin
- * bin/git\_time.py
+ * bin/git_time.py
  * bin/gnomine            gnome-mines/gnomine wrapper (allowing non systems port)
  * bin/gnomine.py         (can pick using old gnomines name)
  * bin/go                 Go wrapper (golang)
@@ -423,7 +423,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/jsformat.py
  * bin/json               Convert BSON/JSON/YAML to JSON
  * bin/json.bat
- * bin/json\_.py
+ * bin/json_.py
  * bin/jsonformat         JSON file re-formatter
  * bin/jsonformat.bat
  * bin/jsonformat.py
@@ -446,15 +446,15 @@ the years. Now most of the scripts are written in Python 3.
  * bin/md5cd.py
  * bin/menu               TCL/TK menu system
  * bin/menu.py            (this can be used independent of GNOME/KDE/XFCE menu system)
- * bin/menu\_document.tcl
- * bin/menu\_games.tcl
- * bin/menu\_graphics.tcl
- * bin/menu\_main.tcl
- * bin/menu\_multimedia.tcl
- * bin/menu\_network.tcl
- * bin/menu\_radiotuner.tcl
- * bin/menu\_system.tcl
- * bin/menu\_utility.tcl
+ * bin/menu_document.tcl
+ * bin/menu_games.tcl
+ * bin/menu_graphics.tcl
+ * bin/menu_main.tcl
+ * bin/menu_multimedia.tcl
+ * bin/menu_network.tcl
+ * bin/menu_radiotuner.tcl
+ * bin/menu_system.tcl
+ * bin/menu_utility.tcl
  * bin/mirror             Copy all files/directory inside a directory into mirror directory
  * bin/mirror.bat
  * bin/mirror.py
@@ -612,7 +612,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/tar                Make a compressed archive in TAR format
  * bin/tar.bat
  * bin/tar.py
- * bin/tar\_.py
+ * bin/tar_.py
  * bin/terraform          terraform wrapper (allowing non systems port)
  * bin/terraform.py
  * bin/tbz                Make a compressed archive in TAR.BZ2
@@ -695,7 +695,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/untar              Unpack a compressed archive in
  * bin/untar.bat          TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.
  * bin/untar.py
- * bin/untar\_.py
+ * bin/untar_.py
  * bin/untbz              Unpack a compressed archive in TAR.BZ2 format
  * bin/untbz.bat
  * bin/untbz.py
@@ -799,7 +799,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/xz.py
  * bin/yaml               Convert BSON/JSON/YAML to YAML
  * bin/yaml.bat
- * bin/yaml\_.py
+ * bin/yaml_.py
  * bin/yping              Ping a host until a connection is made
  * bin/yping.bat
  * bin/yping.py
@@ -965,6 +965,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/debian/dev/Dockerfile
  * docker/debian/sandbox/Makefile        debian:10-slim based sandbox environment
  * docker/debian/sandbox/Dockerfile
+ * docker/debian/sandbox/files/xstartup
  * docker/debian32/Makefile              i386/debian:10-slim based linux
  * docker/debian32/Dockerfile
  * docker/debian32/bash/Makefile         i386/debian:10-slim based BASH login
@@ -1049,10 +1050,10 @@ the years. Now most of the scripts are written in Python 3.
  * helm/servers-test/templates/servers-statefulset.yaml
  * helm/servers-test/values.yaml
  * python/simple-cython/Makefile         Simple Cython example
- * python/simple-cython/cython\_example.pyx
+ * python/simple-cython/cython_example.pyx
  * python/simple-cython/run.py
  * python/simple-flask/Makefile          Simple Flask demo
- * python/simple-flask/simple\_flask.py
+ * python/simple-flask/simple_flask.py
  * python/simple-flask/templates/hello.html
  * python/simple-package/Makefile        Simple Egg & WHL package
  * python/simple-package/run.py
@@ -1060,14 +1061,14 @@ the years. Now most of the scripts are written in Python 3.
  * python/simple-package/hello/__init__.py
  * python/simple-package/hello/message.py
  * python/simple-tornado/Makefile        Tornado examples
- * python/simple-tornado/tornado\_client.py
- * python/simple-tornado/tornado\_server.py
- * terraform-aws/1pxy/aws\_config.tf      Terraform AWS: 1pxy example
- * terraform-aws/1pxy/aws\_resources.tf
- * terraform-aws/1pxy/pxy\_resources.tf
- * terraform-aws/1pxy/pxy\_variables.tf
- * terraform-aws/pxy-as/aws\_config.tf    Terraform AWS: pxy-as example
- * terraform-aws/pxy-as/aws\_resources.tf
- * terraform-aws/pxy-as/pxy\_resources.tf
- * terraform-aws/pxy-as/pxy\_variables.tf
+ * python/simple-tornado/tornado_client.py
+ * python/simple-tornado/tornado_server.py
+ * terraform-aws/1pxy/aws_config.tf      Terraform AWS: 1pxy example
+ * terraform-aws/1pxy/aws_resources.tf
+ * terraform-aws/1pxy/pxy_resources.tf
+ * terraform-aws/1pxy/pxy_variables.tf
+ * terraform-aws/pxy-as/aws_config.tf    Terraform AWS: pxy-as example
+ * terraform-aws/pxy-as/aws_resources.tf
+ * terraform-aws/pxy-as/pxy_resources.tf
+ * terraform-aws/pxy-as/pxy_variables.tf
 </pre>

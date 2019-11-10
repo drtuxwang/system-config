@@ -9,7 +9,7 @@ endif
 
 # Docker run
 ifndef DOCKER_RUN_FLAGS
-	DOCKER_RUN_FLAGS=--network none --user=99999:99999
+	DOCKER_RUN_FLAGS=--network=none --user=99999:99999
 endif
 DOCKER_RUN_FLAGS := --rm \
 	--interactive \
@@ -20,10 +20,12 @@ DOCKER_RUN_FLAGS := --rm \
 	--memory-reservation=50m \
 	--volume=/shared:/shared \
 	$(DOCKER_RUN_FLAGS)
+ifndef LOCALPORT
+	LOCALPORT=5901
+endif
 ifndef DOCKER_RUN_COMMAND
 	DOCKER_RUN_COMMAND=
 endif
-##FIREFOX_PROFILE=$(HOME)/.mozilla/firefox/sandbox
 
 
 .PHONY: default
@@ -32,17 +34,25 @@ default: build
 
 .PHONY: build
 build:
-	mkdir -p tmpdir/bin tmpdir/etc tmpdir/home
+	mkdir -p tmpdir/bin tmpdir/etc tmpdir/home/.config/xfce4/terminal tmpdir/home/.vnc
 	cp -p $(TOPDIR)/etc/install-python-requirements.sh tmpdir/etc
 	cp -p $(TOPDIR)/etc/python-requirements.txt tmpdir/etc
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
 	cp -p $(TOPDIR)/config/docker-init tmpdir/etc
 	cp -p $(TOPDIR)/config/bashrc tmpdir/home/.bashrc
 	cp -p $(TOPDIR)/config/profile tmpdir/home/.profile
+	cp -p $(TOPDIR)/config/terminalrc tmpdir/home/.config/xfce4/terminal
 	cp -p $(TOPDIR)/config/tmux.conf tmpdir/home/.tmux.conf
 	cp -p $(TOPDIR)/config/vimrc tmpdir/home/.vimrc
+	cp -p files/xstartup tmpdir/home/.vnc/
 	$(TOPDIR)/etc/setmod *
-	tar cf tmpdir/home.tar -C tmpdir/home --owner=0 --group=0 .bashrc .profile .tmux.conf .vimrc
+	tar cf tmpdir/home.tar -C tmpdir/home --owner=0 --group=0 \
+		.bashrc \
+		.config \
+		.profile \
+		.tmux.conf \
+		.vimrc \
+		.vnc
 	chmod 644 tmpdir/home.tar
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
@@ -53,9 +63,12 @@ run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) \
 		--hostname $(NAME) \
+		--publish $(LOCALPORT):5901 \
 		$(IMAGE) \
 		$(DOCKER_RUN_COMMAND) \
 		||:
+
+.PHONY: version
 
 .PHONY: version
 version:

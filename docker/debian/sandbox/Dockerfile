@@ -39,6 +39,15 @@ RUN apt-get install --no-install-recommends -y \
 		uuid-dev && \
 	apt-get clean
 
+# Install XFCE & VNC
+RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+		xorg \
+		dbus-x11 \
+		xfce4 \
+		xfce4-goodies \
+		tigervnc-standalone-server \
+		tigervnc-common
+
 # Install Python packages
 COPY tmpdir/etc/install-python-requirements.sh tmpdir/etc/python-requirements.txt /etc/
 RUN /etc/install-python-requirements.sh /usr/bin/python3 && \
@@ -52,4 +61,5 @@ COPY tmpdir/home.tar /home/
 
 # Configure start
 COPY tmpdir/etc/docker-init /etc/
+EXPOSE 5901
 ENTRYPOINT ["/tini", "/etc/docker-init"]

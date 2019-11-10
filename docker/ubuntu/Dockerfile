@@ -6,6 +6,7 @@ RUN apt-get update --fix-missing && \
 		curl \
 		dh-python \
 		dnsutils \
+		iproute2 \
 		iputils-ping \
 		net-tools \
 		openssh-client \

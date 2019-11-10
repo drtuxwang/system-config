@@ -5,6 +5,7 @@ RUN apt-get update --fix-missing && \
 	apt-get install --no-install-recommends -y \
 		curl \
 		dnsutils \
+		iproute2 \
 		iputils-ping \
 		net-tools \
 		openssh-client \
