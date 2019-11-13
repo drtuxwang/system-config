@@ -12,6 +12,9 @@ import sys
 import command_mod
 import subtask_mod
 
+if sys.version_info < (3, 2) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.2, < 4.0).")
+
 
 class Options:
     """
@@ -48,32 +51,13 @@ class Options:
             except OSError:
                 pass
 
-        file = os.path.join(home, '.config', 'vlc', 'vlc-qt-interface.conf')
+        # Corrupt QT config file nags startup
         try:
-            with open(file, errors='replace') as ifile:
-                with open(file + '-new', 'w', newline='\n') as ofile:
-                    for line in ifile:
-                        if line.startswith('geometry='):
-                            print(
-                                'geometry=@ByteArray(\\x1\\xd9\\xd0\\xcb'
-                                '\\0\\x1\\0\\0\\0\\0\\0z\\0\\0\\0\\x32\\0'
-                                '\\0\\x2\\x62\\0\\0\\0~\\0\\0\\0z\\0\\0\\0'
-                                '\\x32\\0\\0\\x2\\x62\\0\\0\\0~\\0\\0\\0'
-                                '\\0\\0\\0)',
-                                file=ofile
-                            )
-                        else:
-                            print(line, file=ofile)
+            os.remove(
+                os.path.join(home, '.config', 'vlc', 'vlc-qt-interface.conf')
+            )
         except OSError:
-            try:
-                os.remove(file + '-new')
-            except OSError:
-                pass
-        else:
-            try:
-                shutil.move(file + '-new', file)
-            except OSError:
-                pass
+            pass
 
     def parse(self, args):
         """
