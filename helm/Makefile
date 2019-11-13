@@ -6,8 +6,8 @@ default: status
 status:
 	@echo "\n*** Helm client initialize ***"
 	helm init --client-only
-	@echo "\n*** Helm server status ***"
-	kubectl --all-namespaces=true get pod -l name=tiller -o wide
+	@echo "\n*** Helm client-server status ***"
+	helm version
 	@echo "\n*** Helm repositories ***"
 	helm repo list
 	@echo "\n*** Helm releases ***"
