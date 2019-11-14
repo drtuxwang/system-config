@@ -362,7 +362,7 @@ class Options:
             '"toolkit.telemetry.unified", false',
             '"toolkit.telemetry.updatePing.enabled", false',
             '"ui.submenuDelay", 0',
-            '"webgl.disabled", true',
+            '"webgl.disabled", false',
             '"xpinstall.signatures.required", false',
         )
 
