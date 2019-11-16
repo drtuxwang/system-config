@@ -1,25 +1,5 @@
 FROM drtuxwang/debian
 
-# Install sandbox environment packages
-RUN apt-get install --no-install-recommends -y \
-		file \
-		fonts-noto-cjk \
-		fonts-noto-hinted \
-		libgl1-mesa-glx \
-		libsdl1.2debian \
-		procps \
-		tmux \
-		wget \
-		x11-xserver-utils \
-		xauth && \
-	apt-get clean && \
-	rm -rf /root/.??* && \
-	echo "sandbox:x:99999:99999::/home/sandbox:/bin/bash" >> /etc/passwd && \
-	echo "sandbox:x:99999" >> /etc/group && \
-	chmod -R 777 /home && \
-	wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
-	chmod 755 /tini
-
 # Install compiler & dev packages
 RUN apt-get install --no-install-recommends -y \
 		g++ \
@@ -38,6 +18,25 @@ RUN apt-get install --no-install-recommends -y \
 		python3-setuptools \
 		uuid-dev && \
 	apt-get clean
+
+# Install sandbox environment packages
+RUN apt-get install --no-install-recommends -y \
+		file \
+		fonts-noto-cjk \
+		fonts-noto-hinted \
+		libgl1-mesa-glx \
+		libsdl1.2debian \
+		procps \
+		tmux \
+		x11-xserver-utils \
+		xauth && \
+	apt-get clean && \
+	rm -rf /root/.??* && \
+	echo "sandbox:x:99999:99999::/home/sandbox:/bin/bash" >> /etc/passwd && \
+	echo "sandbox:x:99999" >> /etc/group && \
+	chmod -R 777 /home && \
+	wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
+	chmod 755 /tini
 
 # Install XFCE & VNC
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
@@ -61,5 +60,6 @@ COPY tmpdir/home.tar /home/
 
 # Configure start
 COPY tmpdir/etc/docker-init /etc/
+ENV DESKTOP_SESSION=xfce
 EXPOSE 5901
 ENTRYPOINT ["/tini", "/etc/docker-init"]
