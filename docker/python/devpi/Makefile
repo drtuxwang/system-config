@@ -1,12 +1,16 @@
 NAME := python-devpi
 IMAGE := drtuxwang/$(NAME)
 
-# Docker build
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
 
-# Docker run
+ifndef LOCALPORT
+	LOCALPORT=8080
+endif
+ifndef DOCKER_RUN_FLAGS
+	DOCKER_RUN_FLAGS=
+endif
 DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -14,9 +18,13 @@ DOCKER_RUN_FLAGS := --rm \
 	--cpu-shares=50000 \
 	--memory=1000m \
 	--memory-reservation=50m \
-	--volume=/shared:/shared
-ifndef LOCALPORT
-	LOCALPORT=8080
+	--workdir /var/lib/devpi \
+	--publish $(LOCALPORT):8080 \
+	--name $(NAME) \
+	--hostname $(NAME) \
+	$(DOCKER_RUN_FLAGS)
+ifndef DOCKER_RUN_COMMAND
+	DOCKER_RUN_COMMAND=
 endif
 
 
@@ -32,12 +40,7 @@ build:
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(DOCKER_RUN_FLAGS) \
-		--publish $(LOCALPORT):8080 \
-		--hostname $(NAME) \
-		--workdir /var/lib/devpi \
-		$(IMAGE) \
-		||:
+	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:

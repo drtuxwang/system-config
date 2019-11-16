@@ -1,7 +1,6 @@
 NAME := ubuntu
 IMAGE := drtuxwang/$(NAME)
 
-# Docker build
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
@@ -28,7 +27,7 @@ build:
 
 .PHONY: run
 run:
-	DOCKER_BUILD_FLAGS="$(DOCKER_BUILD_FLAGS)" make -C bash run
+	make -C bash run
 
 .PHONY: version
 version:

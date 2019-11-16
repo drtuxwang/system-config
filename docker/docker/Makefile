@@ -1,13 +1,14 @@
 NAME := docker
 IMAGE := drtuxwang/$(NAME)
 
-# Docker build
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
 
-# Docker run
+ifndef DOCKER_RUN_FLAGS
+	DOCKER_RUN_FLAGS=
+endif
 DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -20,7 +21,11 @@ DOCKER_RUN_FLAGS := --rm \
 	--volume=/shared:/shared \
 	--volume /var/run/docker.sock:/var/run/docker.sock \
 	--env TERM=$(TERM) \
-	--env USER=$(USER)
+	--env USER=$(USER) \
+	--privileged=true \
+	--name $(NAME) \
+	--hostname $(NAME) \
+	$(DOCKER_RUN_FLAGS)
 ifndef DOCKER_RUN_COMMAND
 	DOCKER_RUN_COMMAND=
 endif
@@ -48,12 +53,7 @@ build:
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(DOCKER_RUN_FLAGS) \
-		--privileged=true \
-		--hostname $(NAME) \
-		$(IMAGE) \
-		$(DOCKER_RUN_COMMAND) \
-		||:
+	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:

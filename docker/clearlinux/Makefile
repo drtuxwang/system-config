@@ -1,14 +1,15 @@
 NAME := clearlinux
 IMAGE := drtuxwang/$(NAME)
 
-# Docker build
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
 BUILD_DIRS := bash dev
 
-# Docker run
+ifndef DOCKER_RUN_FLAGS
+	DOCKER_RUN_FLAGS=
+endif
 DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -16,7 +17,9 @@ DOCKER_RUN_FLAGS := --rm \
 	--cpu-shares=50000 \
 	--memory=1000m \
 	--memory-reservation=50m \
-	--volume=/shared:/shared
+	--name $(NAME) \
+	--hostname $(NAME) \
+	$(DOCKER_RUN_FLAGS)
 ifndef DOCKER_RUN_COMMAND
 	DOCKER_RUN_COMMAND=
 endif
@@ -40,11 +43,13 @@ build:
 
 .PHONY: run
 run:
-	DOCKER_BUILD_FLAGS="$(DOCKER_BUILD_FLAGS)" make -C bash run
+	make -C bash run
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /usr/share/clear/version 2> /dev/null | awk '{print $1}' | sed -e "s@^@$(shell pwd): Clear Linux @"
+	@for DIR in $(BUILD_DIRS); do \
+		make --no-print-directory -C $$DIR version || exit 1; \
+	done
 
 .PHONY: push
 push:

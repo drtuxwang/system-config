@@ -1,13 +1,14 @@
 NAME := python-bash
 IMAGE := drtuxwang/$(NAME)
 
-# Docker build
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
 
-# Docker run
+ifndef DOCKER_RUN_FLAGS
+	DOCKER_RUN_FLAGS=
+endif
 DOCKER_RUN_FLAGS := --rm \
 	--interactive \
 	--tty \
@@ -15,7 +16,9 @@ DOCKER_RUN_FLAGS := --rm \
 	--cpu-shares=50000 \
 	--memory=1000m \
 	--memory-reservation=50m \
-	--volume=/shared:/shared
+	--name $(NAME) \
+	--hostname $(NAME) \
+	$(DOCKER_RUN_FLAGS)
 ifndef DOCKER_RUN_COMMAND
 	DOCKER_RUN_COMMAND=python3
 endif
@@ -49,11 +52,7 @@ test:
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(DOCKER_RUN_FLAGS) \
-		--hostname $(NAME) \
-		$(IMAGE) \
-		$(DOCKER_RUN_COMMAND) \
-		||:
+	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
 version:
