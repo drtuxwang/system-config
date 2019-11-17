@@ -76,6 +76,16 @@ class Main:
         except OSError:
             pass
 
+        # Disable update nagging
+        for file in glob.glob(os.path.join(
+                os.path.dirname(self._soffice.get_file()),
+                'libupd*.so',
+        )):
+            try:
+                os.remove(file)
+            except OSError:
+                pass
+
     @staticmethod
     def _setenv():
         if 'GTK_MODULES' in os.environ:
