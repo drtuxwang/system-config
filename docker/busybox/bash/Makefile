@@ -16,7 +16,7 @@ DOCKER_RUN_FLAGS := --rm \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
 	--memory=1000m \
-	--memory-reservation=50m
+	--memory-reservation=50m \
 	--name $(NAME) \
 	--hostname $(NAME) \
 	$(DOCKER_RUN_FLAGS)
@@ -49,11 +49,6 @@ run:
 version:
 	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) busybox 2> /dev/null | grep "^BusyBox v" | \
 		sed -e "s@^BusyBox v@$(shell pwd): BusyBox @;s@ (.*@@"
-
-.PHONY: push
-push:
-	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
-	@docker push $(IMAGE)
 
 .PHONY: push
 push:

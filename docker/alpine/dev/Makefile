@@ -21,7 +21,6 @@ DOCKER_RUN_FLAGS := --rm \
 	--name $(NAME) \
 	--hostname $(NAME) \
 	$(DOCKER_RUN_FLAGS)
-	$(DOCKER_RUN_FLAGS)
 ifndef DOCKER_RUN_COMMAND
 	DOCKER_RUN_COMMAND=
 endif
