@@ -1,5 +1,5 @@
-NAME := mongodb-server
-VERSION := 6.1.5
+NAME := pushgateway
+VERSION := 1.2.2
 
 # Default namespace
 ifndef NAMESPACE
@@ -19,7 +19,7 @@ check:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) stable/mongodb
+		$(NAMESPACE)-$(NAME) stable/prometheus-pushgateway
 
 .PHONY: deploy
 deploy:
@@ -30,18 +30,12 @@ deploy:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) stable/mongodb
+		$(NAMESPACE)-$(NAME) stable/prometheus-pushgateway
 
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
-
-.PHONY: connect
-connect:
-	@echo "\n*** Connecting to Mongodb database ***"
-	@echo "Addresss = `kubectl --namespace=$(NAMESPACE) get service mongodb-server | awk 'NR==2 {print $$3}'`"
-	@robo3t
 
 .PHONY: clean
 clean:

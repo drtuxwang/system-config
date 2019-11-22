@@ -1037,6 +1037,8 @@ the years. Now most of the scripts are written in Python 3.
  * helm/oracle-xe/templates/servers-service.yaml
  * helm/oracle-xe/templates/servers-statefulset.yaml
  * helm/oracle-xe/values.yaml
+ * helm/pushgateway/Makefile             Helm Chart: stable/prometheus-pushgateway 1.2.2 (app 1.0.0)
+ * helm/pushgateway/values.yaml
  * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.7.4 (app 3.7.18)
  * helm/rabbitmq/values.yaml
  * helm/servers-test/Makefile            Helm Chart: Servers test (drtuxwang/debian image)
