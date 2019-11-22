@@ -43,7 +43,7 @@ class Options:
     @staticmethod
     def _parse_instagram(output):
         urls = ' '.join(output).split('display_url":"')[1:]
-        return {url.split('"')[0].split('\\')[0] for url in urls}
+        return {url.split('"')[0].replace('\\u0026', '&') for url in urls}
 
     @classmethod
     def _get_images(cls, url):
@@ -57,7 +57,6 @@ class Options:
 
         if 'www.instagram.com/p/' in url:
             urls = cls._parse_instagram(task.get_output())
-            print("debugX1", urls)
         else:
             raise SystemExit(sys.argv[0] + ': Cannot handle website: ' + url)
 
