@@ -1,4 +1,18 @@
-NAMESPACE := ubuntu
+BUILD_DIRS := \
+	chartmuseum \
+	concourse \
+	etcd \
+	jenkins \
+	kafka \
+	mongodb \
+	nexus \
+	nginx \
+	ops-box \
+	oracle-xe \
+	pushgateway \
+	rabbitmq \
+	servers-test
+
 
 default: status
 
@@ -16,6 +30,12 @@ status:
 .PHONY: pull
 pull:
 	helm repo update
+
+.PHONY: version
+version:
+	@for DIR in $(BUILD_DIRS); do \
+		make --no-print-directory -C $$DIR version || exit 1; \
+	done
 
 .PHONY: install-tiller
 install:

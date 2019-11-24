@@ -49,6 +49,10 @@ status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
 
+.PHONY: version
+version:
+	@helm search -l stable/chartmuseum | grep "stable/chartmuseum[	 ]*$(VERSION) "
+
 .PHONY: clean
 clean:
 	helm ls

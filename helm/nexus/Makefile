@@ -36,6 +36,10 @@ status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
 
+.PHONY: version
+version:
+	@helm search -l stable/sonatype-nexus | grep "stable/sonatype-nexus[	 ]$(VERSION) "
+
 .PHONY: clean
 clean:
 	helm ls

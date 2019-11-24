@@ -47,6 +47,10 @@ connect:
 	@echo "firefox http://`kubectl get service rabbitmq-server | awk 'NR==2 {print $$3}'`:15672"
 	@firefox http://`kubectl get service rabbitmq-server | awk 'NR==2 {print $$3}'`:15672
 
+.PHONY: version
+version:
+	@helm search -l stable/rabbitmq | grep "stable/rabbitmq[	 ]*$(VERSION) "
+
 .PHONY: clean
 clean:
 	helm ls

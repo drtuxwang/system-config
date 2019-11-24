@@ -37,6 +37,11 @@ status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
 
+.PHONY: version
+version:
+	@helm search -l stable/prometheus-pushgateway | \
+		grep "stable/prometheus-pushgateway[	 ]*$(VERSION) "
+
 .PHONY: clean
 clean:
 	helm ls

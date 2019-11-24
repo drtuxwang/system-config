@@ -44,6 +44,10 @@ connect:
 	@echo "\n*** Connecting to Etcd database ***"
 	kubectl exec -it etcd-server-0 sh
 
+.PHONY: version
+version:
+	@helm search -l bitnami/etcd | grep "bitnami/etcd[	]*$(VERSION) "
+
 .PHONY: clean
 clean:
 	helm ls

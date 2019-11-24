@@ -43,6 +43,10 @@ connect:
 	@echo "Addresss = `kubectl --namespace=$(NAMESPACE) get service mongodb-server | awk 'NR==2 {print $$3}'`"
 	@robo3t
 
+.PHONY: version
+version:
+	@helm search -l stable/mongodb | grep "stable/mongodb[	 ]*$(VERSION)"
+
 .PHONY: clean
 clean:
 	helm ls

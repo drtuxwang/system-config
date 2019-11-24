@@ -1,5 +1,5 @@
 NAME := ops-box
-IMAGE := drtuxwang/debian-bash
+IMAGE := drtuxwang/debian-bash:latest
 
 # Default namespace
 ifndef NAMESPACE
@@ -45,6 +45,10 @@ deploy:
 status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
+
+.PHONY: version
+version:
+	@echo "`egrep "name|version:" Chart.yaml | awk '{printf("%s 	 ", $$2)}'` 	 $(IMAGE)"
 
 .PHONY: clean
 clean:

@@ -50,6 +50,10 @@ connect:
 	@echo "firefox http://`kubectl get service jenkins-server | awk 'NR==2 {print $$3}'`"
 	@firefox http://`kubectl get service jenkins-server | awk 'NR==2 {print $$3}'`
 
+.PHONY: version
+version:
+	@helm search -l bitnami/jenkins | grep "bitnami/jenkins	*$(VERSION) "
+
 .PHONY: clean
 clean:
 	helm ls

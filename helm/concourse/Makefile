@@ -48,6 +48,10 @@ status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
 
+.PHONY: version
+version:
+	@helm search -l stable/concourse | grep "stable/concourse[	]*$(VERSION) "
+
 .PHONY: clean
 clean:
 	helm ls

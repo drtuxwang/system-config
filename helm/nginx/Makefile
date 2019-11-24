@@ -45,6 +45,10 @@ status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
 
+.PHONY: version
+version:
+	@helm search -l bitnami/nginx | grep "bitnami/nginx[	 ]*$(VERSION) "
+
 .PHONY: clean
 clean:
 	helm ls

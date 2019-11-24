@@ -41,6 +41,10 @@ status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
 
+.PHONY: version
+version:
+	@helm search -l incubator/kafka | grep "incubator/kafka[	 ]*$(VERSION) "
+
 .PHONY: clean
 clean:
 	helm ls

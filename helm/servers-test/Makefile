@@ -1,5 +1,5 @@
 NAME := servers-test
-IMAGE := drtuxwang/debian-bash
+IMAGE := drtuxwang/debian-bash:latest
 DOMAIN := example.com
 
 # Default namespace
@@ -58,6 +58,10 @@ forward:
 status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
+
+.PHONY: version
+version:
+	@echo "`egrep "name|version:" Chart.yaml | awk '{printf("%s 	 ", $$2)}'` 	 $(IMAGE)"
 
 .PHONY: clean
 clean:
