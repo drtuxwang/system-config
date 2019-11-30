@@ -9,3 +9,9 @@ persistence:
   enabled: false
 
 replicas: 1
+
+updateStrategy:
+  type: RollingUpdate
+zookeeper:
+  updateStrategy:
+    type: RollingUpdate
