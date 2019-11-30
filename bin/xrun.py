@@ -54,12 +54,7 @@ class Options:
 
     @staticmethod
     def _generate_cmd(args):
-        if len(args) == 2 and args[0].endswith('.mp4'):
-            if 'www.youtube.com/watch?' in args[1] or '.m3u8' in args[1]:
-                nargs = ['vget', '-O'] + args + [';']
-            else:
-                nargs = ['wget', '-O'] + args + [';']
-        elif args[0].startswith(URI):
+        if args[0].startswith(URI):
             nargs = []
             for arg in args:
                 if 'www.youtube.com/watch?' in arg or '.m3u8' in arg:
@@ -75,6 +70,12 @@ class Options:
                         ';'
                     ])
             nargs.extend(['sleep', SLEEP])
+        elif len(args) == 2 and args[1].startswith(URI):
+            if 'www.youtube.com/watch?' in args[1] or '.m3u8' in args[1]:
+                nargs = ['vget', '-O'] + args + [';', 'sleep', SLEEP]
+
+            else:
+                nargs = ['wget', '-O'] + args + [';', 'sleep', SLEEP]
         else:
             nargs = args + [';', 'sleep', SLEEP]
 
