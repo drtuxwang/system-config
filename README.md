@@ -939,6 +939,12 @@ the years. Now most of the scripts are written in Python 3.
  * docker/alpine32/bash/Dockerfile
  * docker/alpine32/dev/Makefile          i386/alpine:3.9 based GCC dev shell
  * docker/alpine32/dev/Dockerfile
+ * docker/amazonlinux/Dockerfile         amazonlinux:2 based linux
+ * docker/amazonlinux/Makefile
+ * docker/amazonlinux/bash/Dockerfile
+ * docker/amazonlinux/bash/Makefile
+ * docker/amazonlinux/dev/Dockerfile
+ * docker/amazonlinux/dev/Makefile
  * docker/busybox/Makefile               busybox:1.28 based linux
  * docker/busybox/Dockerfile
  * docker/busybox/Makefile               busybox:1.28 based BASH login

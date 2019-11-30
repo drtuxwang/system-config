@@ -1,4 +1,5 @@
 BUILD_DIRS := \
+	amazonlinux \
 	alpine \
 	alpine32 \
 	busybox \
