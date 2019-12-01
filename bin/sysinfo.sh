@@ -2,10 +2,10 @@
 #
 # System configuration detection tool
 #
-# 1996-2018 By Dr Colin Kong
+# 1996-2019 By Dr Colin Kong
 #
-VERSION=20180610
-RELEASE="2.6.43-1"
+VERSION=20191201
+RELEASE="2.6.43-2"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -1121,7 +1121,10 @@ EOF
     case `uname` in
     Linux)
         GLIBC=`ldd /bin/sh | grep libc | sed -e "s/.*=>//" | awk '{print $1}'`
-        show_software name="GNU C library" location="$GLIBC" value="`strings $GLIBC 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}'`"
+        if [ "$GLIBC" ]
+        then
+            show_software name="GNU C library" location="$GLIBC" value="`strings $GLIBC 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}'`"
+        fi
         for LINKER in $(ls -1 /lib*/ld-*so* 2> /dev/null)
         do
             show_software name="Dynamic linker" location="$LINKER"
