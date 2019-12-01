@@ -263,6 +263,9 @@ the years. Now most of the scripts are written in Python 3.
  * bin/fls                Show full list of files
  * bin/fls.bat
  * bin/fls.py
+ * bin/fmkdir             Create a single lower case directory
+ * bin/fmkdir.bat
+ * bin/fmkdir.py
  * bin/fmod               Set file access mode
  * bin/fmod.bat
  * bin/fmod.py
