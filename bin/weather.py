@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 """
-Current weather search (using accuweather)
+Current weather search (using Accuweather website)
 
-London: http://www.accuweather.com/en/gb/london/ec4a-2/weather-forecast/328328
+London: https://www.accuweather.com/en/gb/london/ec4a-2/weather-forecast/328328
 """
 
 import argparse
-import json
-import os
 import signal
 import sys
 import time
@@ -24,7 +22,6 @@ class Options:
 
     def __init__(self):
         self._args = None
-        self._config()
         self.parse(sys.argv)
 
     def get_quiet_flag(self):
@@ -38,19 +35,6 @@ class Options:
         Return url.
         """
         return self._args.url[0]
-
-    @staticmethod
-    def _config():
-        if 'REQUESTS_CA_BUNDLE' not in os.environ:
-            for file in (
-                    # Debian/Ubuntu
-                    '/etc/ssl/certs/ca-certificates.crt',
-                    # RHEL/CentOS
-                    '/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt'
-            ):
-                if os.path.isfile(file):
-                    os.environ['REQUESTS_CA_BUNDLE'] = file
-                    break
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(description='Current weather search.')
@@ -101,14 +85,17 @@ class Main:
     @staticmethod
     def _parse(text):
         try:
-            data = json.loads(text.split('var curCon = ')[-1].split(';')[0])
-        except json.decoder.JSONDecodeError:
+            data = text.split('Current Weather')[1]
+        except IndexError:
             pass
         else:
-            temp = data.get('temp', '')
-            condition = data.get('phrase', '')
+            temp = data.split('<span class="high">')[1].split('<')[0]
+            condition = data.split('<div class="cond">')[1].split('<')[0]
             if temp and condition:
-                return '{0:s}C ({1:s})'.format(temp, condition)
+                return '{0:s}C ({1:s})'.format(
+                    temp.replace('&#xB0;', '°').strip(),
+                    condition.strip(),
+                )
         return None
 
     @classmethod
@@ -117,7 +104,10 @@ class Main:
         curl = command_mod.Command('curl', errors='stop')
         curl.set_args(['-A', user_agent, options.get_url()])
         task = subtask_mod.Batch(curl.get_cmdline())
+        quiet = options.get_quiet_flag()
 
+        if not quiet:
+            print("Connecting...")
         for _ in range(10):
             task.run()
             if task.get_exitcode():
@@ -126,8 +116,10 @@ class Main:
             if weather:
                 return weather
             time.sleep(2)
+            if not quiet:
+                print("Retrying...")
 
-        if options.get_quiet_flag():
+        if quiet:
             return ''
         return '???C (???)'
 
