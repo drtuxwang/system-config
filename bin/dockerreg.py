@@ -38,7 +38,7 @@ MAXREPO = "9999"
 requests.packages.urllib3.disable_warnings()
 # pylint: enable = no-member
 
-SSL_VERIFY=True
+SSL_VERIFY = True
 
 
 class Options:
