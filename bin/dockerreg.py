@@ -38,6 +38,8 @@ MAXREPO = "9999"
 requests.packages.urllib3.disable_warnings()
 # pylint: enable = no-member
 
+SSL_VERIFY=True
+
 
 class Options:
     """
@@ -173,7 +175,7 @@ class DockerRegistry:
             response = requests.delete(
                 url,
                 headers={'User-Agent': self._user_agent},
-                verify=False,
+                verify=SSL_VERIFY,
             )
         except Exception as exception:
             raise SystemExit(str(exception))
