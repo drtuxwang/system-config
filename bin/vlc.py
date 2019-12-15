@@ -65,6 +65,10 @@ class Options:
         """
         self._vlc = command_mod.Command('vlc', errors='stop')
         self._vlc.set_args(args[1:])
+
+        if len(args) >= 2 and args[1].startswith('-'):
+            subtask_mod.Exec(self._vlc.get_cmdline()).run()
+
         self._pattern = ': Paint device returned engine'
         self._config()
 

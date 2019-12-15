@@ -18,7 +18,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '4.3.0'
+RELEASE = '4.4.0'
 
 
 class Options:
@@ -249,13 +249,11 @@ class Chinese(Language):
             options.get_dialect() + '_ogg'
         )
         self._dictionary = ChineseDictionary(self._options)
-        for player in (Ogg123, Avplay, Ffplay):
-            self._ogg_player = player(self._ogg_dir)
-            if self._ogg_player.has_player():
-                break
-        else:
+
+        self._ogg_player = AudioPlayer.factory(self._ogg_dir)
+        if not self._ogg_player:
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "ogg123" (vorbis-tools),'
+                sys.argv[0] + ': Cannot find "vlc", "ogg123" (vorbis-tools),'
                 ' "ffplay" (libav-tools) or "avplay" (ffmpeg).'
             )
 
@@ -432,17 +430,28 @@ class Espeak(Language):
             self._speak_sounds(cmdline, text)
 
 
-class Ogg123:
+class AudioPlayer:
     """
-    Uses 'ogg123' from 'vorbis-tools'.
+    Audio player base class
     """
 
     def __init__(self, oggdir):
         self._oggdir = oggdir
         self._config()
 
+    @staticmethod
+    def factory(ogg_dir):
+        """
+        Return AudioPlayer sub class object
+        """
+        for audio_player in (Vlc, Ogg123, Avplay, Ffplay):
+            player = audio_player(ogg_dir)
+            if player.has_player():
+                return player
+        return None
+
     def _config(self):
-        self._player = command_mod.Command('ogg123', errors='ignore')
+        self._player = None
 
     def has_player(self):
         """
@@ -464,6 +473,25 @@ class Ogg123:
         task = subtask_mod.Batch(cmdline)
         task.run(directory=self._oggdir)
         return task.get_exitcode()
+
+
+class Vlc(AudioPlayer):
+    """
+    Uses vlc in command-line mode.
+    """
+
+    def _config(self):
+        self._player = command_mod.Command('vlc', errors='ignore')
+        self._player.set_args(['-I', 'dummy', '--quiet', '--play-and-exit'])
+
+
+class Ogg123(AudioPlayer):
+    """
+    Uses 'ogg123' from 'vorbis-tools'.
+    """
+
+    def _config(self):
+        self._player = command_mod.Command('ogg123', errors='ignore')
 
 
 class Ffplay(Ogg123):
