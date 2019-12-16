@@ -58,7 +58,7 @@ class Main:
                 sys.argv[0] + ': Cannot find "' + sound + '" file.')
         bell = command_mod.Command(
             'vlc',
-            args=['--intf', 'dummy', '--gain', '2', '--play-and-exit', '-q'],
+            args=['-I, 'dummy', '--quiet', '--gain', '2', '--play-and-exit'],
             errors='ignore'
         )
         if not bell.is_found():
