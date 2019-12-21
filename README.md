@@ -1024,7 +1024,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/concourse/values.yaml
  * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 4.3.4 (app 3.3.15)
  * helm/etcd/values.yaml
- * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 3.4.2 (app 2.176.3)
+ * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 4.0.4 (app 2.190.3)
  * helm/jenkins/values.yaml
  * helm/kafka/Makefile                   Helm Chart: incubator/kafka 0.18.2 (app 5.0.1)
  * helm/kafka/values.yml

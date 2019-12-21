@@ -1,5 +1,5 @@
 NAME := jenkins-server
-VERSION := 3.4.2
+VERSION := 4.0.4
 
 # Default namespace
 ifndef NAMESPACE
