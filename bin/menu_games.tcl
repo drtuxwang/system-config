@@ -60,10 +60,10 @@ frame .large -bg "#cccccc"
     }
     pack .large.freecol -side top
 
-    button .large.et_goc -width 10 -bg "#ffff00" -text "ET:GOC" -command {
-        exec et +connect 5.39.188.178:27960 &
+    button .large.et_etc -width 10 -bg "#ffff00" -text "ET:Etc" -command {
+        exec et +connect 185.248.141.23:27960 &
     }
-    pack .large.et_goc -side top
+    pack .large.et_etc -side top
 
     button .large.et_bba -width 10 -bg "#ffff00" -text "ET:BBA" -command {
         exec et +connect 173.230.141.36:27960 &
