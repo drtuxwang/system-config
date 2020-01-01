@@ -136,7 +136,6 @@ class Options:
         if self._args.code:
             code = self._args.code[0]
         elif url.endswith('.m3u8'):  # Multi part streaming
-            self._vget.append_arg('--no-check-certificate')
             code = '0'
         else:
             code = self._detect_code(url)
