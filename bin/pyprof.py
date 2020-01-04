@@ -67,7 +67,7 @@ class Options:
             my_args.append(args[0])
             if not args[0].startswith('-'):
                 break
-            elif args[0] == '-n' and len(args) >= 2:
+            if args[0] == '-n' and len(args) >= 2:
                 args = args[1:]
                 my_args.append(args[0])
             args = args[1:]

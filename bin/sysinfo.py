@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '4.19.5'
-VERSION = 20191019
+RELEASE = '5.0.0'
+VERSION = 20200101
 
 # pylint: disable = too-many-lines
 
@@ -961,13 +961,12 @@ class LinuxSystem(PosixSystem):
                             comment=comment + ', ' + model
                         )
                     continue
-                else:
-                    Writer.output(
-                        name='Disk device',
-                        device='/dev/' + sdx,
-                        value=size + ' KB',
-                        comment=model
-                    )
+                Writer.output(
+                    name='Disk device',
+                    device='/dev/' + sdx,
+                    value=size + ' KB',
+                    comment=model
+                )
             elif sdx in partition:
                 size, sdxn = partition.split()[2:4]
                 device = '/dev/' + sdxn
@@ -1788,7 +1787,7 @@ class LinuxSystem(PosixSystem):
                     if '/docker/' in line:
                         name = 'Docker ' + line.rsplit('/', 1)[1][:12]
                         break
-                    elif '/lxc/' in line:
+                    if '/lxc/' in line:
                         name = 'LXC'
                         break
         except OSError:

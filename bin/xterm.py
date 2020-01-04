@@ -63,7 +63,7 @@ class Options:
         while len(args) > 1:
             if not args[1].startswith('-'):
                 break
-            elif args[1] == '-i':
+            if args[1] == '-i':
                 invis_flag = True
             else:
                 xterm = command_mod.Command(

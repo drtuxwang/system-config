@@ -303,10 +303,9 @@ class Main:
             if answer.lower() == 'y':
                 self._send(options)
                 break
-            else:
-                answer = input("Do you want to delete E-mail (y/n)? ")
-                if answer.lower() == 'y':
-                    break
+            answer = input("Do you want to delete E-mail (y/n)? ")
+            if answer.lower() == 'y':
+                break
 
 
 if __name__ == '__main__':

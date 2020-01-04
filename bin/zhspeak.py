@@ -18,7 +18,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '4.4.0'
+RELEASE = '4.4.1'
 
 
 class Options:
@@ -354,7 +354,7 @@ class ChineseDictionary:
                     line = line.decode('utf-8', 'replace')
                     if line.startswith(('//', '$')):
                         continue
-                    elif '\t' in line:
+                    if '\t' in line:
                         text, sounds = self._isjunk.sub(
                             '', line).split('\t')[:2]
                         self._mappings[text] = []

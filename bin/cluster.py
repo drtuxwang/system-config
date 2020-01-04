@@ -99,7 +99,7 @@ class Options:
             my_args.append(args[0])
             if not args[0].startswith('-'):
                 break
-            elif args[0] == '-threads' and len(args) >= 2:
+            if args[0] == '-threads' and len(args) >= 2:
                 args = args[1:]
                 my_args.append(args[0])
             elif args[0] == '-timeout' and len(args) >= 2:
@@ -208,7 +208,7 @@ class WorkQueue:
             host = self._queue.get()
             if host is None:
                 break
-            elif '@' not in host:
+            if '@' not in host:
                 host = 'root@' + host
             ssh = SecureShell()
 

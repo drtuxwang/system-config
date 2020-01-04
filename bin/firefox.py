@@ -401,7 +401,7 @@ class Options:
         while len(args) > 1:
             if not args[1].startswith('-'):
                 break
-            elif args[1] in ('-copy', '-no-remote'):
+            if args[1] in ('-copy', '-no-remote'):
                 if args[1] == '-copy':
                     updates = False
                     self._copy()
