@@ -1,4 +1,4 @@
-## 1996-2019 By Dr Colin Kong
+## 1996-2020 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -986,11 +986,11 @@ the years. Now most of the scripts are written in Python 3.
  * docker/docker/files/ash2bash
  * docker/golang/Makefile                golang:1.12.12-alpine based compiler app
  * docker/golang/Dockerfile
- * docker/python/Makefile                python:3.6.9-buster based Python app
+ * docker/python/Makefile                python:3.6.10-buster based Python app
  * docker/python/Dockerfile
- * docker/python/bash/Dockerfile         python:3.6.9-buster based BASH login
+ * docker/python/bash/Dockerfile         python:3.6.10-buster based BASH login
  * docker/python/bash/Makefile
- * docker/python/devpi/Makefile          python:3.6.9-buster based devpi server app
+ * docker/python/devpi/Makefile          python:3.6.10-buster based devpi server app
  * docker/python/devpi/Dockerfile
  * docker/registry/Makefile              registry:2.6 based Docker Registry server app
  * docker/registry/Dockerfile
