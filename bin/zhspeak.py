@@ -2,7 +2,7 @@
 """
 Zhong Hua Speak Chinese TTS software.
 
-2009-2019 By Dr Colin Kong
+2009-2020 By Dr Colin Kong
 """
 
 import argparse
