@@ -70,7 +70,7 @@ class Main:
                 )
         bell.append_arg(sound)
 
-        subtask_mod.Background(bell.get_cmdline()).run()
+        subtask_mod.Batch(bell.get_cmdline()).run()
 
 
 if __name__ == '__main__':
