@@ -13,8 +13,8 @@ import command_mod
 import subtask_mod
 
 TEXT_FONT = '*-fixed-bold-*-18-*-iso10646-*'
-FG_COLOUR = '#000000'
-BG_COLOUR = '#ffffdd'
+FG_COLOUR = '#009900'
+BG_COLOUR = '#000000'
 SLEEP = '10'
 URI = ('http://', 'https://', 'ftp://')
 
