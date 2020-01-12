@@ -57,10 +57,12 @@ class Options:
         if args[0].startswith(URI):
             nargs = []
             for arg in args:
-                if 'www.youtube.com/watch?' in arg or '.m3u8' in arg:
-                    nargs.extend(['vget', arg, ';'])
+                if '.m3u8' in arg:
+                    nargs.extend(['mget', arg, ';'])
                 elif 'www.instagram.com/p/' in arg:
                     nargs.extend(['pget', arg, ';'])
+                elif 'www.youtube.com/watch?' in arg:
+                    nargs.extend(['vget', arg, ';'])
                 else:
                     nargs.extend([
                         'wget',
@@ -71,9 +73,10 @@ class Options:
                     ])
             nargs.extend(['sleep', SLEEP])
         elif len(args) == 2 and args[1].startswith(URI):
-            if 'www.youtube.com/watch?' in args[1] or '.m3u8' in args[1]:
+            if '.m3u8' in args[1]:
+                nargs = ['mget', '-O'] + args + [';', 'sleep', SLEEP]
+            elif 'www.youtube.com/watch?' in args[1]:
                 nargs = ['vget', '-O'] + args + [';', 'sleep', SLEEP]
-
             else:
                 nargs = ['wget', '-O'] + args + [';', 'sleep', SLEEP]
         else:

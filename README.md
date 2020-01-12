@@ -447,6 +447,9 @@ the years. Now most of the scripts are written in Python 3.
  * bin/md5.py
  * bin/md5cd              Calculate MD5 checksums for CD/DVD data disk
  * bin/md5cd.py
+ * bin/meld               Meld wrapper (allowing non systems port)
+ * bin/meld.bat
+ * bin/meld.py
  * bin/menu               TCL/TK menu system
  * bin/menu.py            (this can be used independent of GNOME/KDE/XFCE menu system)
  * bin/menu_document.tcl
@@ -458,6 +461,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/menu_radiotuner.tcl
  * bin/menu_system.tcl
  * bin/menu_utility.tcl
+ * bin/mget               M3U8 streaming video downloader
+ * bin/mget.py
  * bin/mirror             Copy all files/directory inside a directory into mirror directory
  * bin/mirror.bat
  * bin/mirror.py
@@ -474,9 +479,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/mp3.py
  * bin/mp4                Encode MP4 video using avconv (libx264/aac)
  * bin/mp4.py
- * bin/meld               Meld wrapper (allowing non systems port)
- * bin/meld.bat
- * bin/meld.py
  * bin/myqdel             MyQS personal batch system for each user
  * bin/myqdel.py
  * bin/myqexec
