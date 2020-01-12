@@ -96,16 +96,33 @@ class VideoDownloader:
             os.path.basename(self._url),
         )
 
+    def _write_resume(self):
+        """
+        Write download resume script.
+        """
+        script = (
+            "#!/bin/bash",
+            'cd $(realpath "$0" | sed -e "s/\\/[^/]*$/\\/../")',
+            'xrun "{0:s}" {1:s}'.format(self._output, self._url),
+        )
+        with open(self._m3u8_file + '-resume.sh', 'w', newline='\n') as ofile:
+            for line in script:
+                print(line, file=ofile)
+        os.chmod(self._m3u8_file + '-resume.sh', int('755', 8))
+
     def get_m3u8(self):
         """
         Download M3U8 file.
         """
         if os.path.isfile(self._m3u8_file):
             return
+
         if not os.path.isdir(self._directory):
             os.makedirs(self._directory)
         elif os.path.isfile(self._m3u8_file + '.part'):
             os.remove(self._m3u8_file + '.part')
+
+        self._write_resume()
 
         self._wget.set_args(['-O', self._m3u8_file, self._url])
         task = subtask_mod.Task(self._wget.get_cmdline())
