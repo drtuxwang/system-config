@@ -174,11 +174,22 @@ class VideoDownloader:
         Download video parts.
         """
         chunks = self._get_urls()
+        nchunks = len(chunks)
+        nfiles = glob.glob(self._m3u8_file + '-c*.ts')
+        status_file = self._m3u8_file + '-status.txt'
 
-        while len(glob.glob(self._m3u8_file + '-c*.ts')) != len(chunks):
+        while nfiles != nchunks:
             for part, urls in sorted(chunks.items()):
                 file = "{0:s}-c{1:05d}.ts".format(self._m3u8_file, part)
                 if os.path.isfile(file):
+                    nfiles += 1
+                    with open(status_file, 'wb') as ofile:
+                        print("{0:s}: {1:d}/{2:d}".format(
+                            self._output,
+                            nfiles,
+                            nchunks,
+                            fike=ofile,
+                        ))
                     continue
                 self._get_chunk(file, urls)
             time.sleep(10)
