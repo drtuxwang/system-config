@@ -102,7 +102,7 @@ class VideoDownloader:
         """
         script = (
             "#!/bin/bash",
-            'cd $(realpath "$0" | sed -e "s/\\/[^/]*$/\\/../")',
+            "cd ${0%/*}/..",
             'xrun "{0:s}" {1:s}'.format(self._output, self._url),
         )
         with open(self._m3u8_file + '-resume.sh', 'w', newline='\n') as ofile:
@@ -182,16 +182,18 @@ class VideoDownloader:
             for part, urls in sorted(chunks.items()):
                 file = "{0:s}-c{1:05d}.ts".format(self._m3u8_file, part)
                 if os.path.isfile(file):
+                    continue
+
+                self._get_chunk(file, urls)
+                if os.path.isfile(file):
                     nfiles += 1
-                    with open(status_file, 'wb') as ofile:
+                    with open(status_file, 'w') as ofile:
                         print("{0:s}: {1:d}/{2:d}".format(
                             self._output,
                             nfiles,
                             nchunks,
-                            fike=ofile,
-                        ))
-                    continue
-                self._get_chunk(file, urls)
+                        ), file=ofile)
+
             time.sleep(10)
 
     @staticmethod
@@ -237,8 +239,8 @@ class VideoDownloader:
             raise SystemExit(1)
 
         source_time = os.path.getmtime(self._m3u8_file)
-        os.utime(mp4_file, (source_time, source_time))
-        shutil.move(mp4_file, self._output)
+##        os.utime(mp4_file, (source_time, source_time))
+##        shutil.move(mp4_file, self._output)
         shutil.rmtree(self._directory)
         print("{0:s}: generated from {1:d} chunks!".format(
             self._output,
