@@ -175,7 +175,7 @@ class VideoDownloader:
         """
         chunks = self._get_urls()
         nchunks = len(chunks)
-        nfiles = glob.glob(self._m3u8_file + '-c*.ts')
+        nfiles = len(glob.glob(self._m3u8_file + '-c*.ts'))
         status_file = self._m3u8_file + '-status.txt'
 
         while nfiles != nchunks:
