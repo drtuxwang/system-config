@@ -90,7 +90,7 @@ class VideoDownloader:
         self._url = options.get_url()
 
         self._wget = command_mod.Command('wget', errors='stop')
-        self._directory = self._output + '.part'
+        self._directory = self._output + '.parts'
         self._m3u8_file = os.path.join(
             self._directory,
             os.path.basename(self._url),
@@ -116,12 +116,8 @@ class VideoDownloader:
         """
         if os.path.isfile(self._m3u8_file):
             return
-
         if not os.path.isdir(self._directory):
             os.makedirs(self._directory)
-        elif os.path.isfile(self._m3u8_file + '.part'):
-            os.remove(self._m3u8_file + '.part')
-
         self._write_resume()
 
         self._wget.set_args(['-O', self._m3u8_file, self._url])
@@ -239,9 +235,9 @@ class VideoDownloader:
             raise SystemExit(1)
 
         source_time = os.path.getmtime(self._m3u8_file)
-##        os.utime(mp4_file, (source_time, source_time))
-##        shutil.move(mp4_file, self._output)
-        shutil.rmtree(self._directory)
+        os.utime(mp4_file, (source_time, source_time))
+        shutil.move(mp4_file, self._output)
+        shutil.move(self._directory, self._output+'.full')
         print("{0:s}: generated from {1:d} chunks!".format(
             self._output,
             len(chunk_files),
