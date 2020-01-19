@@ -69,7 +69,10 @@ class Options:
         if len(args) >= 2 and args[1].startswith('-'):
             subtask_mod.Exec(self._vlc.get_cmdline()).run()
 
-        self._pattern = ': Paint device returned engine'
+        self._pattern = (
+            ': Paint device returned engine|: playlist is empty|'
+            ': Timers cannot|: Running vlc with the default'
+        )
         self._config()
 
 
