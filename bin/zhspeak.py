@@ -18,7 +18,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '4.4.1'
+RELEASE = '4.4.2'
 
 
 class Options:
@@ -482,7 +482,14 @@ class Vlc(AudioPlayer):
 
     def _config(self):
         self._player = command_mod.Command('vlc', errors='ignore')
-        self._player.set_args(['-I', 'dummy', '--quiet', '--play-and-exit'])
+        self._player.set_args([
+            '--intf',
+            'dummy',
+            '--quiet',
+            '--no-repeat',
+            '--no-loop',
+            '--play-and-exit'
+        ])
 
 
 class Ogg123(AudioPlayer):

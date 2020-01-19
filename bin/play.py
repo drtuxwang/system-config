@@ -217,7 +217,11 @@ class Main:
 
     @staticmethod
     def _play(files):
-        vlc = command_mod.Command('vlc', args=files, errors='stop')
+        vlc = command_mod.Command(
+            'vlc',
+            args=['--no-repeat', '--no-loop'] + files,
+            errors='stop',
+        )
         task = subtask_mod.Batch(vlc.get_cmdline())
         task.run(
             pattern="^$|Use 'cvlc'|may be inaccurate|"

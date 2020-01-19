@@ -181,9 +181,14 @@ class Main:
 
     def _rip(self):
         file = 'title-' + str(self._title).zfill(2) + '.mpg'
-        self._vlc.set_args(
-            ['dvdsimple:/' + self._device + ':#' + str(self._title), '--sout',
-             '#standard{access=file,mux=ts,dst=' + file + '}', 'vlc://quit'])
+        self._vlc.set_args([
+            'dvdsimple:/' + self._device + ':#' + str(self._title),
+            '--sout',
+            '#standard{access=file,mux=ts,dst=' + file + '}',
+            '--no-repeat',
+            '--no-loop',
+            '--play-and-exit',
+        ])
         subtask_mod.Task(self._vlc.get_cmdline()).run()
 
     @staticmethod
