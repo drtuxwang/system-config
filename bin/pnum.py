@@ -147,7 +147,9 @@ class Main:
         startdir = os.getcwd()
         reset_flag = options.get_reset_flag()
         number = options.get_start()
-        images_extensions = config_mod.Config().get('image_extensions')
+        images_extensions = (
+            config_mod.Config().get('image_extensions') + ['.webm']
+        )
 
         for directory in options.get_directories():
             if reset_flag:

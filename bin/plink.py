@@ -96,13 +96,17 @@ class Main:
         Start program
         """
         options = Options()
-        images_extensions = config_mod.Config().get('image_extensions')
+        images_extensions = (
+            config_mod.Config().get('image_extensions') + ['.webm']
+        )
 
         for directory in options.get_directories():
             for file in sorted(glob.glob(os.path.join(directory, '*'))):
                 if os.path.splitext(file)[1].lower() in images_extensions:
                     link = os.path.basename(
                         directory + '_' + os.path.basename(file))
+                    if link.endswith('.webm'):
+                        link = link.rsplit('.webm', 1)[0] + '.gif'
                     if not os.path.islink(link):
                         try:
                             os.symlink(file, link)
