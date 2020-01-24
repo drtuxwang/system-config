@@ -106,7 +106,7 @@ class Main:
                     link = os.path.basename(
                         directory + '_' + os.path.basename(file))
                     if link.endswith('.webm'):
-                        link = link.rsplit('.webm', 1)[0] + '.gif'
+                        link += '.gif'
                     if not os.path.islink(link):
                         try:
                             os.symlink(file, link)
