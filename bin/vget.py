@@ -110,10 +110,13 @@ class Options:
             else:
                 conn = urllib.request.urlopen(req)
                 info = conn.info()
-                return time.mktime(time.strptime(
-                    info.get('Last-Modified'),
-                    '%a, %d %b %Y %H:%M:%S %Z'
-                ))
+                try:
+                    return time.mktime(time.strptime(
+                        info.get('Last-Modified'),
+                        '%a, %d %b %Y %H:%M:%S %Z',
+                    ))
+                except TypeError:
+                    pass
 
         return None
 

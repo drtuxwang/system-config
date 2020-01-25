@@ -331,7 +331,7 @@ class Main:
                     os.path.join(target_dir, x)
                     for x in os.listdir(target_dir)
                 ]
-            except PermissionError:
+            except (OSError, PermissionError):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot open "' + target_dir +
                     '" target directory.'

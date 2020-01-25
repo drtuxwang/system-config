@@ -137,11 +137,13 @@ class VideoDownloader:
             with open(self._m3u8_file) as ifile:
                 for line in ifile:
                     line = line.strip()
-                    if not line.startswith('#') and '-chunk-' in line:
-                        part = int(line.split('-chunk-')[1].split('.')[0])
-                        chunks[part] = (
-                            chunks.get(part, []) + ['/'.join([base_url, line])]
-                        )
+                    if not line.startswith('#'):
+                        url = '/'.join([base_url, line])
+                        if '-chunk-' in line:
+                            part = int(line.split('-chunk-')[1].split('.')[0])
+                            chunks[part] = chunks.get(part, []) + [url]
+                        else:
+                            chunks[len(chunks)] = [url]
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ": Cannot open file: " + self._m3u8_file)

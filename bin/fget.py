@@ -121,7 +121,9 @@ class Main:
 
         try:
             mtime = time.mktime(time.strptime(
-                info.get('Last-Modified'), '%a, %d %b %Y %H:%M:%S %Z'))
+                info.get('Last-Modified'),
+                '%a, %d %b %Y %H:%M:%S %Z',
+            ))
         except TypeError:
             # For directories
             file = 'index.html'
