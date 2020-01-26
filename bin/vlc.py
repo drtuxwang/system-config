@@ -59,6 +59,10 @@ class Options:
         except OSError:
             pass
 
+        # Fix QT 5 button size scaling bug
+        os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '0'
+        os.environ['QT_SCREEN_SCALE_FACTORS'] = '1'
+
     def parse(self, args):
         """
         Parse arguments
@@ -113,9 +117,6 @@ class Main:
         Start program
         """
         options = Options()
-
-        # Fix QT 5 button size scaling bug
-        os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '0'
 
         subtask_mod.Background(options.get_vlc().get_cmdline()).run(
             pattern=options.get_pattern()

@@ -83,6 +83,10 @@ class Options:
         """
         self._parse_args(args[1:])
 
+        # Fix QT 5 button size scaling bug
+        os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '0'
+        os.environ['QT_SCREEN_SCALE_FACTORS'] = '1'
+
 
 class Media:
     """
