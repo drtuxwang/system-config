@@ -30,11 +30,11 @@ then
     fi
 fi
 
-if [ "$PROCESSOR_ARCHITECTURE" = AMD64 -o "$PROCESSOR_ARCHITEW6432" = AMD64 ]
-then
-    INSTALLER=$(ls -1t "$DIR"/virtualbox-additions_*_win6451x86.exe | head -1)
-else
-    INSTALLER=$(ls -1t "$DIR"/virtualbox-additions_*_win51x86.exe | head -1)
-fi
-echo "Running \"$INSTALLER\" installer..." | sed -e "s/\//\\\\/g"
-cmd /r "$INSTALLER"
+##if [ "$PROCESSOR_ARCHITECTURE" = AMD64 -o "$PROCESSOR_ARCHITEW6432" = AMD64 ]
+##then
+##    INSTALLER=$(ls -1t "$DIR"/virtualbox-additions_*_win6451x86.exe | head -1)
+##else
+##    INSTALLER=$(ls -1t "$DIR"/virtualbox-additions_*_win51x86.exe | head -1)
+##fi
+##echo "Running \"$INSTALLER\" installer..." | sed -e "s/\//\\\\/g"
+##cmd /r "$INSTALLER"
