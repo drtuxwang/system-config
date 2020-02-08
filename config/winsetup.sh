@@ -24,7 +24,7 @@ then
         echo "Running \"netplwiz\" to remove \"Users must enter user and password\"..."
         if [ -f "c:/Program Files/Oracle/VirtualBox Guest Additions/VBoxGuest.inf" ]
         then
-            echo "  (VM password is \Passw0rd!\""
+            echo "  (VM password is \"Passw0rd!\")"
         fi
         cmd /r netplwiz
     fi
