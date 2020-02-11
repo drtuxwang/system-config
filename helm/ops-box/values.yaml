@@ -17,9 +17,16 @@ resources:
     cpu: 100m
     memory: 64M
 
-nodeSelector: {}
+nodeSelector:
+  beta.kubernetes.io/os: linux
+  node-role.kubernetes.io/worker: "true"
+  node-role.pbs.sw/worker: general
 
-tolerations: []
+tolerations:
+- effect: NoSchedule
+  key: cattle.io/os
+  operator: Equal
+  value: linux
 
 affinity: {}
 

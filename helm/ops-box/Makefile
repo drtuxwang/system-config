@@ -3,7 +3,7 @@ IMAGE := drtuxwang/debian-bash:latest
 
 # Default namespace
 ifndef NAMESPACE
-	NAMESPACE=default
+	NAMESPACE=bts-cashout
 endif
 
 

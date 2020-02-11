@@ -1,6 +1,12 @@
 nodeSelector:
   beta.kubernetes.io/os: linux
-
+metrics:
+  enabled: true
+##  serviceMonitor:
+##    enabled: true
+##    namespace: monitoring
+##    additionalLabels:
+##      prometheus: active
 persistence:
   enabled: false
 usePassword: false
@@ -11,10 +17,3 @@ securityContext:
 collections:
   example1: example1
   example2: example22
-metrics:
-  enabled: true
-##  serviceMonitor:
-##    enabled: true
-##    namespace: monitoring
-##    additionalLabels:
-##      prometheus: active

@@ -1,17 +1,21 @@
 nodeSelector:
   beta.kubernetes.io/os: linux
-
+prometheus:
+  jmx:
+    enabled: true
+replicas: 1
 env:
   open:
     DISABLE_API: false
-
 persistence:
   enabled: false
 
-replicas: 1
-
 updateStrategy:
   type: RollingUpdate
+
 zookeeper:
+  exporters:
+    jmx:
+      enabled: true
   updateStrategy:
     type: RollingUpdate
