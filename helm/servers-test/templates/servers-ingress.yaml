@@ -5,6 +5,9 @@ metadata:
   # annotations:
   #   nginx.ingress.kubernetes.io/configuration-snippet: |
   #       rewrite "(?i)/{{ include "app.fullname" . }}/(.*)$" /$1 break;
+  #       sub_filter_once off;
+  #       sub_filter_types text/html;
+  #       sub_filter '="/' '="/{{ include "app.fullname" . }}/' break;
 spec:
   rules:
   - host: {{ include "app.fullname" . }}-servers.{{ .Values.ingress.servers.domain }}
