@@ -6,7 +6,6 @@
 
 ##mount -t ext4 -o noatime,data=ordered UUID=<uuid-from-blkid> /data2 &
 
-##dhclient eth0 eth1 &
-##dhclient enp0s3 enp0s8 &
+##dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
 
 exit 0
