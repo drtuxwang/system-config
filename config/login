@@ -50,11 +50,16 @@ if ( $?TERM && -e "`\tty`" ) then
 
     # Setup SSH agent
     if ( "`ps -u $MYUNAME |& grep ssh-agent`" != "" ) then
-        rm -rf /tmp/ssh-*/*
+        rm -rf /tmp/ssh-*/* >& /dev/null
     endif
     setenv SSH_AUTH_SOCK `/bin/sh -c "\ls -1t /tmp/ssh-*/* 2> /dev/null | head -1"`
     if ( "$SSH_AUTH_SOCK" == "" ) then
-        eval `ssh-agent -c` >& /dev/null
+        setenv SSH_AUTH_SOCK `/bin/sh -c "\ls -1t /var/folders/*/*/*/ssh-*/* 2> /dev/null | head -1"`  # Mac
+        if ( "$SSH_AUTH_SOCK" != "" ) then
+            ln -s `dirname $SSH_AUTH_SOCK` /tmp >& /dev/null
+        else
+            eval `ssh-agent -c` >& /dev/null
+        endif
     endif
     setenv SSH_KEYS `ssh-add -l |& grep ".:." | wc -l | awk '{print $1}'`
     if ( $?MYTTY ) then
