@@ -123,7 +123,11 @@ class Main:
         if output:
             task = subtask_mod.Task(cmdline)
             task.run()
-            if task.get_exitcode():
+            if (
+                    task.get_exitcode() or
+                    not os.path.isfile(output + '.part') or
+                    os.path.getsize(output + '.part') == 0
+            ):
                 raise SystemExit(task.get_exitcode())
             try:
                 shutil.move(output + '.part', output)
