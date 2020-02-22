@@ -3,3 +3,4 @@ Django==None
 ipython==5.8.0
 nexus3-cli==None
 pylint==1.9.4
+scipy==1.2.3
