@@ -28,6 +28,11 @@ read_requirements() {
 
 install_packages() {
     umask 022
+    if [ "$(uname)" = Darwin ]
+    then
+        export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
+    fi
+
     echo $INSTALL $REQUIREMENTS
     $INSTALL $REQUIREMENTS 2>&1 | grep -v "Requirement already satisfied:"
     return ${PIPESTATUS[0]}

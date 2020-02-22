@@ -1,6 +1,8 @@
 astroid==1.6.6
 Django==None
+ImageHash==None
 ipython==5.8.0
 nexus3-cli==None
+numpy==None
 pylint==1.9.4
-scipy==1.2.3
+scipy==None
