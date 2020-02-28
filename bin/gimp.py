@@ -68,7 +68,7 @@ class Options:
         Parse arguments
         """
         self._gimp = command_mod.Command('gimp', errors='stop')
-        self._gimp.set_args(args[1:])
+        self._gimp.set_args(['--no-splash'] + args[1:])
         self._pattern = (
             '^$| GLib-WARNING | GLib-GObject-WARNING | Gtk-WARNING |: Gimp-|'
             ' g_bookmark_file_get_size:|recently-used.xbel|^ sRGB |^lcms: |'

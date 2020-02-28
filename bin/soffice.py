@@ -100,7 +100,7 @@ class Main:
             os.path.join('program', 'soffice'),
             errors='stop'
         )
-        self._soffice.set_args(sys.argv[1:])
+        self._soffice.set_args(['--nologo'] + sys.argv[1:])
         if sys.argv[1:] == ['--version']:
             subtask_mod.Exec(self._soffice.get_cmdline()).run()
         self._pattern = (

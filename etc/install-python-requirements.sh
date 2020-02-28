@@ -38,12 +38,6 @@ install_packages() {
     return ${PIPESTATUS[0]}
 }
 
-
-if [ "$($PYTHON -m pip 2>&1 | grep "No module named pip")" ]
-then
-    curl https://bootstrap.pypa.io/get-pip.py | $ARG
-fi
-
 if [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ]
 then
     INSTALL="$PYTHON -m pip install --no-warn-script-location"
