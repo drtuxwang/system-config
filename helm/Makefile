@@ -1,3 +1,7 @@
+#
+# helm search -l <chart-name>
+# helm fetch --version <version> <chart-name>
+#
 BUILD_DIRS := \
 	chartmuseum \
 	concourse \
