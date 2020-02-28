@@ -1,6 +1,7 @@
 #
 # helm search -l <chart-name>
 # helm fetch --version <version> <chart-name>
+# helm dep update
 #
 BUILD_DIRS := \
 	chartmuseum \
