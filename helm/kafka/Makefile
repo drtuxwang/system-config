@@ -1,5 +1,6 @@
 NAME := kafka
-VERSION := 0.18.2
+CHART_NAME := incubator/kafka
+CHART_VERSION := 0.20.8
 
 # Default namespace
 ifndef NAMESPACE
@@ -20,8 +21,8 @@ check:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME)-server \
 		--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) incubator/kafka
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: deploy
 deploy:
@@ -33,8 +34,8 @@ deploy:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME)-server \
 		--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) incubator/kafka
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: status
 status:
@@ -43,7 +44,7 @@ status:
 
 .PHONY: version
 version:
-	@helm search -l incubator/kafka | grep "incubator/kafka[	 ]*$(VERSION) "
+	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) "
 
 .PHONY: clean
 clean:

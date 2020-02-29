@@ -1,5 +1,6 @@
 NAME := nginx-proxy
-VERSION := 4.3.6
+CHART_NAME := bitnami/nginx
+CHART_VERSION := 5.1.7
 
 # Default namespace
 ifndef NAMESPACE
@@ -22,8 +23,8 @@ check:
 		--set ingress.enabled=true \
 		--set ingress.hosts\[0\].name=$(DOMAIN) \
 		--set service.type=ClusterIP \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) bitnami/nginx
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: deploy
 deploy:
@@ -37,8 +38,8 @@ deploy:
 		--set ingress.enabled=true \
 		--set ingress.hosts\[0\].name=$(DOMAIN) \
 		--set service.type=ClusterIP \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) bitnami/nginx
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: status
 status:
@@ -47,7 +48,7 @@ status:
 
 .PHONY: version
 version:
-	@helm search -l bitnami/nginx | grep "bitnami/nginx[	 ]*$(VERSION) "
+	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) "
 
 .PHONY: clean
 clean:

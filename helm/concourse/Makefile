@@ -1,5 +1,6 @@
 NAME := concourse-server
-VERSION := 8.2.3
+CHART_NAME := concourse/concourse
+CHART_VERSION := 8.4.1
 
 # Default namespace
 ifndef NAMESPACE
@@ -16,6 +17,7 @@ default: status
 
 .PHONY: check
 check:
+	helm repo add concourse https://concourse-charts.storage.googleapis.com
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -24,11 +26,12 @@ check:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set service.type=ClusterIP \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) stable/concourse
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: deploy
 deploy:
+	helm repo add concourse https://concourse-charts.storage.googleapis.com
 	helm upgrade \
 		--install \
 		--wait \
@@ -36,8 +39,8 @@ deploy:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set service.type=ClusterIP \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) stable/concourse
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: forward
 forward:
@@ -50,7 +53,7 @@ status:
 
 .PHONY: version
 version:
-	@helm search -l stable/concourse | grep "stable/concourse[	]*$(VERSION) "
+	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) "
 
 .PHONY: clean
 clean:

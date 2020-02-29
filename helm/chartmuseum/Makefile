@@ -1,5 +1,6 @@
 NAME := chartmuseum-server
-VERSION := 2.3.2
+CHART_NAME := stable/chartmuseum
+CHART_VERSION := 2.4.1
 INGRESS_HOST := chartmusuem.local
 SECRET := chartmusuem-secret-tls
 
@@ -25,8 +26,8 @@ check:
 		--set ingress.hosts[0].tls=true \
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--set service.type=ClusterIP \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) stable/chartmuseum
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: deploy
 deploy:
@@ -41,8 +42,8 @@ deploy:
 		--set ingress.hosts[0].tls=true \
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--set service.type=ClusterIP \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) stable/chartmuseum
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: status
 status:
@@ -51,7 +52,7 @@ status:
 
 .PHONY: version
 version:
-	@helm search -l stable/chartmuseum | grep "stable/chartmuseum[	 ]*$(VERSION) "
+	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) "
 
 .PHONY: clean
 clean:

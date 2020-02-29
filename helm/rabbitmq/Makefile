@@ -1,5 +1,6 @@
 NAME := rabbitmq-server
-VERSION := 6.7.4
+CHART_NAME := stable/rabbitmq
+CHART_VERSION := 6.8.3
 
 # Default namespace
 ifndef NAMESPACE
@@ -20,8 +21,8 @@ check:
 		--set fullnameOverride=$(NAME) \
 		--set rabbitmq.username=guest \
 		--set rabbitmq.password=guest \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) stable/rabbitmq
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: deploy
 deploy:
@@ -33,8 +34,8 @@ deploy:
 		--set fullnameOverride=$(NAME) \
 		--set rabbitmq.username=guest \
 		--set rabbitmq.password=guest \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) stable/rabbitmq
+   	--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: status
 status:
@@ -49,7 +50,7 @@ connect:
 
 .PHONY: version
 version:
-	@helm search -l stable/rabbitmq | grep "stable/rabbitmq[	 ]*$(VERSION) "
+	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) "
 
 .PHONY: clean
 clean:

@@ -1,5 +1,6 @@
 NAME := pushgateway
-VERSION := 1.2.2
+CHART_NAME := stable/prometheus-pushgateway
+CHART_VERSION := 1.2.14
 
 # Default namespace
 ifndef NAMESPACE
@@ -18,8 +19,8 @@ check:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) stable/prometheus-pushgateway
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: deploy
 deploy:
@@ -29,8 +30,8 @@ deploy:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) stable/prometheus-pushgateway
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: status
 status:
@@ -39,8 +40,7 @@ status:
 
 .PHONY: version
 version:
-	@helm search -l stable/prometheus-pushgateway | \
-		grep "stable/prometheus-pushgateway[	 ]*$(VERSION) "
+	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) "
 
 .PHONY: clean
 clean:

@@ -1020,21 +1020,21 @@ the years. Now most of the scripts are written in Python 3.
  * kubernetes/servers-test/servers-statefulset.yaml
  * helm/Makefile
  * docker/ubuntu-test/Makefile           Install tiller
- * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.3.2 (app 0.8.2)
+ * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.4.1 (app 0.8.2)
  * helm/chartmuseum/values.yaml
- * helm/concourse/Makefile               Helm Chart: stable/Concourse 8.2.3 (app 5.4.1)
+ * helm/concourse/Makefile               Helm Chart: concourse/concourse 8.4.1 (app 5.7.2)
  * helm/concourse/values.yaml
- * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 4.3.4 (app 3.3.15)
+ * helm/etcd/Makefile                    Helm Chart: bitnami/etcd  4.4.14 (app 3.4.3)
  * helm/etcd/values.yaml
- * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 4.0.4 (app 2.190.3)
+ * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 4.1.0 (app 2.190.3)
  * helm/jenkins/values.yaml
- * helm/kafka/Makefile                   Helm Chart: incubator/kafka 0.18.2 (app 5.0.1)
+ * helm/kafka/Makefile                   Helm Chart: incubator/kafka 0.20.8 (app 5.0.1)
  * helm/kafka/values.yml
- * helm/mongodb/Makefile                 Helm Chart: stable/mongodb 6.1.5 (app 4.0.10)
+ * helm/mongodb/Makefile                 Helm Chart: stable/mongodb 7.8.6 (app 4.2.3)
  * helm/mongodb/values.yml
  * helm/nexus/Makefile                   Helm Chart: table/sonatype-nexus 1.18.5 (app 3.15.2-01)
  * helm/nexus/values.yaml
- * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 4.3.6 example (app 1.16.1)
+ * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 5.1.7 (app 1.16.1)
  * helm/nginx/values.yaml
  * helm/ops-box/Chart.yaml               Helm Chart: Operations Box (drtuxwang/debian image)
  * helm/ops-box/Makefile
@@ -1048,9 +1048,9 @@ the years. Now most of the scripts are written in Python 3.
  * helm/oracle-xe/templates/servers-service.yaml
  * helm/oracle-xe/templates/servers-statefulset.yaml
  * helm/oracle-xe/values.yaml
- * helm/pushgateway/Makefile             Helm Chart: stable/prometheus-pushgateway 1.2.2 (app 1.0.0)
+ * helm/pushgateway/Makefile             Helm Chart: stable/prometheus-pushgateway 1.2.14 (app 1.0.1)
  * helm/pushgateway/values.yaml
- * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.7.4 (app 3.7.18)
+ * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.8.3 (app 3.7.19)
  * helm/rabbitmq/values.yaml
  * helm/servers-test/Makefile            Helm Chart: Servers test (drtuxwang/debian image)
  * helm/servers-test/Chart.yaml

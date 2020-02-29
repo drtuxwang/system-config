@@ -1,5 +1,6 @@
 NAME := jenkins-server
-VERSION := 4.0.4
+CHART_NAME := bitnami/jenkins
+CHART_VERSION := 4.1.0
 
 # Default namespace
 ifndef NAMESPACE
@@ -20,8 +21,8 @@ check:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set service.type=ClusterIP \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) bitnami/jenkins
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: deploy
 deploy:
@@ -33,8 +34,8 @@ deploy:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set service.type=ClusterIP \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) bitnami/jenkins
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: status
 status:
@@ -52,7 +53,7 @@ connect:
 
 .PHONY: version
 version:
-	@helm search -l bitnami/jenkins | grep "bitnami/jenkins	*$(VERSION) "
+	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) "
 
 .PHONY: clean
 clean:

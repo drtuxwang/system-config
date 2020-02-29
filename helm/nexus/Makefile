@@ -1,5 +1,6 @@
 NAME := nexus-server
-VERSION := 1.18.5
+CHART_NAME := stable/sonatype-nexus
+CHART_VERSION := 1.18.5
 
 # Default namespace
 ifndef NAMESPACE
@@ -17,8 +18,8 @@ check:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) stable/sonatype-nexus
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: deploy
 deploy:
@@ -28,8 +29,8 @@ deploy:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--version $(VERSION) \
-		$(NAMESPACE)-$(NAME) stable/sonatype-nexus
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: status
 status:
@@ -38,7 +39,7 @@ status:
 
 .PHONY: version
 version:
-	@helm search -l stable/sonatype-nexus | grep "stable/sonatype-nexus[	 ]$(VERSION) "
+	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) "
 
 .PHONY: clean
 clean:
