@@ -83,6 +83,18 @@ gc:
 	docker volume ls
 	docker ps
 
+.PHONY: load
+load:
+	for FILE in *.tar; do \
+		 docker load -i $$FILE; \
+	done
+
+.PHONY: save
+save:
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR save; \
+	done
+
 .PHONY: clean
 clean:
 	make gc
@@ -90,4 +102,3 @@ clean:
 		make -C $$DIR clean; \
 	done
 	make gc
-

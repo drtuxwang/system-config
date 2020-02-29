@@ -59,6 +59,11 @@ push:
 	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
 	@docker push $(IMAGE)
 
+.PHONY: save
+save:
+	docker save $(shell grep FROM Dockerfile | cut -f2 -d" ") -o \
+		../$(shell grep FROM Dockerfile | cut -f2 -d" " | sed -e "s#/#-#g").tar
+
 .PHONY: clean
 clean:
 	docker rmi -f $(IMAGE) ||:
