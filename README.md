@@ -813,59 +813,13 @@ the years. Now most of the scripts are written in Python 3.
  * bin/zhspeak.tcl
  * bin/zip                zip wrapper (allowing non systems port)
  * bin/zip.py
- * bin/cda.bat            Windows command prompt batch file
- * bin/cdb.bat            for changing directory to %cda%..%cdz%
- * bin/cdc.bat
- * bin/cdd.bat
- * bin/cde.bat
- * bin/cdf.bat
- * bin/cdg.bat
- * bin/cdh.bat
- * bin/cdi.bat
- * bin/cdj.bat
- * bin/cdk.bat
- * bin/cdl.bat
- * bin/cdm.bat
- * bin/cdn.bat
- * bin/cdo.bat
- * bin/cdp.bat
- * bin/cdq.bat
- * bin/cdr.bat
- * bin/cds.bat
- * bin/cdt.bat
- * bin/cdu.bat
- * bin/cdv.bat
- * bin/cdw.bat
- * bin/cdx.bat
- * bin/cdy.bat
- * bin/cdz.bat
- * bin/mka.bat            Windows command prompt batch file
- * bin/mkb.bat            for setting %cda%..%cdz% to current working driectory
- * bin/mkc.bat
- * bin/mkd.bat
- * bin/mke.bat
- * bin/mkf.bat
- * bin/mkg.bat
- * bin/mkh.bat
- * bin/mki.bat
- * bin/mkj.bat
- * bin/mkk.bat
- * bin/mkl.bat
- * bin/mkm.bat
- * bin/mkn.bat
- * bin/mko.bat
- * bin/mkp.bat
- * bin/mkq.bat
- * bin/mkr.bat
- * bin/mks.bat
- * bin/mkt.bat
- * bin/mku.bat
- * bin/mkv.bat
- * bin/mkw.bat
- * bin/mkx.bat
- * bin/mky.bat
- * bin/mkz.bat
- * bin/scd.bat            Show settings of %cda%..%cdz% environmental variables
+ * bin/cdinst.bat         Windows command prompt batch file or changing directory
+ * bin/cdsrc.bat
+ * bin/cdtest.bat
+ * bin/mkinst.bat
+ * bin/mksrc.bat
+ * bin/mktest.bat
+ * bin/scd.bat
  * config/Xresources                     Copy to "$HOME/.Xresources" to set xterm resources
  * config/accels                         Copy to "$HOME/.config/geeqie" for keyboard shortcuts
  * config/adblock.txt                    Adblock filter list
