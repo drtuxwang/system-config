@@ -1,6 +1,12 @@
 nodeSelector:
   beta.kubernetes.io/os: linux
 
+tolerations:
+- effect: NoSchedule
+  key: cattle.io/os
+  operator: Equal
+  value: linux
+
 app:
   servers:
     replicas: 1
@@ -16,17 +22,6 @@ resources:
   requests:
     cpu: 100m
     memory: 64M
-
-nodeSelector:
-  beta.kubernetes.io/os: linux
-  node-role.kubernetes.io/worker: "true"
-  node-role.pbs.sw/worker: general
-
-tolerations:
-- effect: NoSchedule
-  key: cattle.io/os
-  operator: Equal
-  value: linux
 
 affinity: {}
 

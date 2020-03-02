@@ -27,12 +27,17 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ .Chart.Name }}-box
         resources:
-{{ toYaml .Values.resources | indent 10 }}
         volumeMounts:
         - mountPath: /shared
           name: shared
+    {{- with .Values.nodeSelector }}
       nodeSelector:
-        beta.kubernetes.io/os: linux
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
       terminationGracePeriodSeconds: 10
       volumes:
       - hostPath:

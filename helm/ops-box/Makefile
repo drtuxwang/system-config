@@ -3,7 +3,7 @@ IMAGE := drtuxwang/debian-bash:latest
 
 # Default namespace
 ifndef NAMESPACE
-	NAMESPACE=bts-cashout
+	NAMESPACE=default
 endif
 
 
@@ -52,5 +52,5 @@ version:
 
 .PHONY: clean
 clean:
-	helm ls
+	helm ls $(NAMESPACE)-$(NAME)
 	helm del --purge $(NAMESPACE)-$(NAME) ||:

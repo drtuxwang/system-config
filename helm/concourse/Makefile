@@ -57,7 +57,7 @@ version:
 
 .PHONY: clean
 clean:
-	helm ls
+	helm ls $(NAMESPACE)-$(NAME)
 	helm del --purge $(NAMESPACE)-$(NAME) ||:
 	sleep 2
 	kubectl delete namespace $(NAMESPACE)-$(NAME)-main ||:
