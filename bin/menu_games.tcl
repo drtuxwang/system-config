@@ -60,15 +60,20 @@ frame .large -bg "#cccccc"
     }
     pack .large.freecol -side top
 
+    button .large.et_bba -width 10 -bg "#ffff00" -text "ET:BBA" -command {
+        exec et +connect 173.230.141.36:27960 &
+    }
+    pack .large.et_bba -side top
+
     button .large.et_etc -width 10 -bg "#ffff00" -text "ET:Etc" -command {
         exec et +connect 185.248.141.23:27960 &
     }
     pack .large.et_etc -side top
 
-    button .large.et_bba -width 10 -bg "#ffff00" -text "ET:BBA" -command {
-        exec et +connect 173.230.141.36:27960 &
+    button .large.et_ets -width 10 -bg "#ffff00" -text "ET:Ets" -command {
+        exec et +connect 104.243.41.34:27960 &
     }
-    pack .large.et_bba -side top
+    pack .large.et_ets -side top
 
     button .large.tuxracer -width 10 -bg "#ffff00" -text "Tux Racer" -command {
         exec etr &
