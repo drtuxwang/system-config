@@ -13,7 +13,8 @@ app:
 
 image:
   name: centos:7
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
+##  pullPolicy: Always
 
 resources:
   limits:
