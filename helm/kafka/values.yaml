@@ -10,12 +10,10 @@ env:
 persistence:
   enabled: false
 
-updateStrategy:
-  type: RollingUpdate
-
 zookeeper:
   exporters:
     jmx:
       enabled: true
-  updateStrategy:
-    type: RollingUpdate
+  podAnnotations:
+    prometheus.io/port: "9141"
+    prometheus.io/scrape: "true"

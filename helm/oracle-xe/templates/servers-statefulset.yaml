@@ -36,5 +36,3 @@ spec:
       nodeSelector:
         beta.kubernetes.io/os: linux
       terminationGracePeriodSeconds: 10
-  updateStrategy:
-    type: RollingUpdate

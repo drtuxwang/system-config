@@ -43,5 +43,3 @@ spec:
       - hostPath:
           path: /shared
         name: shared
-  updateStrategy:
-    type: RollingUpdate
