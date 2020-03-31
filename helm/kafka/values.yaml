@@ -15,5 +15,5 @@ zookeeper:
     jmx:
       enabled: true
   podAnnotations:
-    prometheus.io/port: "9141"
+    prometheus.io/port: "9404"
     prometheus.io/scrape: "true"
