@@ -1,4 +1,4 @@
-FROM docker:18.09
+FROM docker:19.03
 
 # Fix bash
 COPY files/ash2bash /bin/bash
