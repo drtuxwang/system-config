@@ -185,9 +185,9 @@ the years. Now most of the scripts are written in Python 3.
  * bin/eclipse.py
  * bin/espeak             espeak wrapper (allowing non systems port)
  * bin/espeak.py
- * bin/et                 ET wrapper (allowing non systems port)
+ * bin/et                 ET Wolf wrapper (allowing non systems port)
  * bin/et.py
- * bin/etl                ET legacy wrapper (allowing non systems port)
+ * bin/etl                ET Legacy wrapper (allowing non systems port)
  * bin/etl.py
  * bin/evince             evince wrapper (allowing non systems port)
  * bin/evince.bat
@@ -280,8 +280,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/fpeek.py
  * bin/fprint             Sends text/images/postscript/PDF to printer
  * bin/fprint.py
- * bin/freecol            freecol wrapper (allowing non systems port)
- * bin/freecol.py
  * bin/freplace           Replace multi-lines patterns in files
  * bin/freplace.bat       (uses regular expression to match text)
  * bin/freplace.py
