@@ -23,6 +23,11 @@ frame .small -bg "#cccccc"
     }
     pack .small.mines -side top
 
+    button .small.neverputt -width 10 -bg "#ffcc00" -text "Neverputt" -command {
+       exec neverputt &
+    }
+    pack .small.neverputt -side top
+
     button .small.reversi -width 10 -bg "#ffcc00" -text "Iagno" -command {
         exec iagno &
     }
