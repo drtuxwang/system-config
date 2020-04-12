@@ -23,6 +23,11 @@ frame .small -bg "#cccccc"
     }
     pack .small.hearts -side top
 
+    button .small.hexxagon -width 10 -bg "#ffcc00" -text "Hexxagon" -command {
+       exec hexxagon &
+    }
+    pack .small.hexxagon -side top
+
     button .small.mines -width 10 -bg "#ffcc00" -text "Mines" -command {
        exec gnomine &
     }
