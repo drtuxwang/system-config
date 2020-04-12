@@ -3,6 +3,11 @@
 . config -bg "#cccccc"
 
 frame .small -bg "#cccccc"
+    button .small.billard -width 10 -bg "#ffcc00" -text "Billard" -command {
+        exec foobillardplus &
+    }
+    pack .small.billard -side top
+
     button .small.chess -width 10 -bg "#ffcc00" -text "Dream Chess" -command {
         exec dreamchess &
     }
