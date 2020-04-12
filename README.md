@@ -811,6 +811,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/zhspeak.tcl
  * bin/zip                zip wrapper (allowing non systems port)
  * bin/zip.py
+ * bin/zoom               zoom wrapper (allowing non systems port)
+ * bin/zoom.py
  * bin/cdinst.bat         Windows command prompt batch file or changing directory
  * bin/cdsrc.bat
  * bin/cdtest.bat
