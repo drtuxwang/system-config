@@ -9,7 +9,7 @@ stages:
 
 steps:
   main_clone:
-    title: Cloning main repository
+    title: Cloning main repository
     stage: default
     type: git-clone
     repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
@@ -25,6 +25,9 @@ steps:
     - ls -ld ${{CF_VOLUME_PATH}}/* ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/*
     - env | grep ^CF_ | sort
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
+    - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine/Makefile | sed -e "s/.* //")
+    - cf_export PYTHON_BASE=$(grep "^BASE_IMAGE" docker/python/Makefile | sed -e "s/.* //")
+    - cf_export SUDO_BASE=$(grep "^BASE_IMAGE" docker/sudo/Makefile | sed -e "s/.* //")
     - codefresh get contexts
 
   preparations:
@@ -61,6 +64,8 @@ steps:
     tag: 'latest'
     working_directory: docker/alpine
     dockerfile: Dockerfile
+    build_arguments:
+    - BASE_IMAGE=${{ALPINE_BASE}}
   push_alpine:
     stage: push
     title: Push Alpine base image
@@ -88,6 +93,8 @@ steps:
         tag: 'latest'
         working_directory: docker/python
         dockerfile: Dockerfile
+        build_arguments:
+        - BASE_IMAGE=${{PYTHON_BASE}}
       build_sudo:
         title: Build Sudo image
         type: build
@@ -95,6 +102,8 @@ steps:
         tag: 'latest'
         working_directory: docker/sudo
         dockerfile: Dockerfile
+        build_arguments:
+        - BASE_IMAGE=${{SUDO_BASE}}
 
   docker_pushes:
     title: Push Docker images
