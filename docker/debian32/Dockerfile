@@ -1,4 +1,6 @@
-FROM i386/debian:10-slim
+ARG BASE_IMAGE=i386/debian:latest
+
+FROM ${BASE_IMAGE}
 
 # Install base packages
 RUN apt-get update --fix-missing && \

@@ -1,3 +1,4 @@
+BASE_IMAGE := scratch
 NAME := scratch
 IMAGE := drtuxwang/$(NAME)
 
@@ -38,7 +39,7 @@ pull:
 .PHONY: build
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) --force-rm=true -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) --force-rm=true -t $(IMAGE) .
 
 .PHONY: run
 run:

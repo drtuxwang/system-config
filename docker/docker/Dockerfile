@@ -1,4 +1,6 @@
-FROM docker:19.03
+ARG BASE_IMAGE=docker:latest
+
+FROM ${BASE_IMAGE}
 
 # Fix bash
 COPY files/ash2bash /bin/bash

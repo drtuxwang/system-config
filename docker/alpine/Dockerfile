@@ -1,4 +1,6 @@
-FROM alpine:3.10
+ARG BASE_IMAGE=alpine:latest
+
+FROM ${BASE_IMAGE}
 
 # Install base packages
 RUN apk update && \

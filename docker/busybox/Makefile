@@ -1,3 +1,4 @@
+BASE_IMAGE := busybox:1.30
 NAME := busybox
 IMAGE := drtuxwang/$(NAME)
 
@@ -14,13 +15,13 @@ default: build
 
 .PHONY: pull
 pull:
-	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
+	docker pull $(BASE_IMAGE)
 
 .PHONY: build
 build:
 	$(TOPDIR)/etc/setmod files/*
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR build || exit 1; \
 	done
@@ -45,13 +46,11 @@ push:
 
 .PHONY: save
 save:
-	docker save $(shell grep FROM Dockerfile | cut -f2 -d" ") -o \
-		../$(shell grep FROM Dockerfile | cut -f2 -d" " | sed -e "s#/#-#g").tar
+	docker save $(BASE_IMAGE) -o ../$(shell echo "$(BASE_IMAGE)" | sed -e "s#/#-#g").tar
 
 .PHONY: clean
 clean:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR clean; \
 	done
-	docker rmi -f $(IMAGE) ||:
-	docker rmi -f $(shell grep FROM Dockerfile | cut -f2 -d" ") ||:
+	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:

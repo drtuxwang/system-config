@@ -1,3 +1,4 @@
+BASE_IMAGE := docker:19.03
 NAME := docker
 IMAGE := drtuxwang/$(NAME)
 
@@ -37,7 +38,7 @@ default: build
 
 .PHONY: pull
 pull:
-	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
+	docker pull $(BASE_IMAGE)
 
 .PHONY: build
 build:
@@ -47,7 +48,7 @@ build:
 	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
 	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
@@ -70,9 +71,8 @@ push:
 
 .PHONY: save
 save:
-	docker save $(shell grep FROM Dockerfile | cut -f2 -d" ") -o \
-		../$(shell grep FROM Dockerfile | cut -f2 -d" " | sed -e "s#/#-#g").tar
+	docker save $(BASE_IMAGE) -o ../$(shell echo "$(BASE_IMAGE)" | sed -e "s#/#-#g").tar
 
 .PHONY: clean
 clean:
-	docker rmi -f $(IMAGE) ||:
+	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:

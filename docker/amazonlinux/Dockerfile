@@ -1,4 +1,6 @@
-FROM amazonlinux:2
+ARG BASE_IMAGE=amazonlinux:latest
+
+FROM ${BASE_IMAGE}
 
 # Install base packages
 RUN yum -y update && \

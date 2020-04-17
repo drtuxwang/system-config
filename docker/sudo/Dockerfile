@@ -1,4 +1,6 @@
-FROM scratch
+ARG BASE_IMAGE=scratch
+
+FROM ${BASE_IMAGE}
 
 # Configure start
 ENV HOME=/root

@@ -1,4 +1,6 @@
-FROM centos:7
+ARG BASE_IMAGE=centos:latest
+
+FROM ${BASE_IMAGE}
 
 # Install base packages
 RUN yum -y install epel-release && \

@@ -1,4 +1,6 @@
-FROM golang:1.12.17-alpine
+ARG BASE_IMAGE=golang:latest
+
+FROM ${BASE_IMAGE}
 
 # Install base packages
 RUN apk update && \
