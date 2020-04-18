@@ -27,7 +27,7 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.6.0'
+RELEASE = '5.7.0'
 VERSION = 20200418
 
 # pylint: disable = too-many-lines
@@ -323,8 +323,9 @@ class Detect:
         software = Software()
         software.detect()
         info = software.get()
-        for file in sorted(info):
-            Writer.output(name='Software', value=file + ' ' + info[file])
+        for name in sorted(info):
+            file, version = info[name]
+            Writer.output('Software', value=name+' '+version, comment=file)
 
     def show_banner(self):
         """
@@ -2272,12 +2273,10 @@ class Software:
                 task = subtask_mod.Batch(command.get_cmdline())
                 task.run(pattern=required, error2output=True)
                 if task.has_output():
-                    self._info[command.get_file()] = re.sub(
-                        junk,
-                        '',
-                        task.get_output()[0],
+                    self._info[name] = (
+                        command.get_file(),
+                        re.sub(junk, '', task.get_output()[0]),
                     )
-
     def get(self):
         """
         Return software version dictionary
