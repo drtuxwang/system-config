@@ -27,7 +27,7 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.4.0'
+RELEASE = '5.5.0'
 VERSION = 20200418
 
 # pylint: disable = too-many-lines
@@ -2257,6 +2257,8 @@ class Software:
         tools = (
             ('docker', ['version'], 'Version:', '.* '),
             ('gcc', ['--version'], '^gcc ', '.* '),
+            ('g++', ['--version'], '^g\+\+ ', '.* '),
+            ('gfortran', ['--version'], '^GNU Fortran ', '.* '),
             ('kubectl', ['version'], 'Client', '.*GitVersion:"v|".*'),
             ('helm', ['version'], 'Client', '.*SemVer:"v|".*'),
             ('tmux', ['-V'], '^tmux ', '.* '),
