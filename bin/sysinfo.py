@@ -27,7 +27,7 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.2.0'
+RELEASE = '5.3.0'
 VERSION = 20200418
 
 # pylint: disable = too-many-lines
@@ -2255,6 +2255,7 @@ class Software:
         Detect software
         """
         tools = (
+            ('docker', ['version'], 'Version:', '.* '),
             ('gcc', ['--version'], '^gcc ', '.* '),
             ('tmux', ['-V'], '^tmux ', '.* '),
             ('X', ['-version'], 'Server ', '.* '),
