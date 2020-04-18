@@ -2,7 +2,7 @@
 """
 System configuration detection tool.
 
-1996-2019 By Dr Colin Kong
+1996-2020 By Dr Colin Kong
 """
 
 import functools
@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.0.0'
-VERSION = 20200101
+RELEASE = '5.1.0'
+VERSION = 20200418
 
 # pylint: disable = too-many-lines
 
@@ -110,8 +110,10 @@ class Detect:
     """
 
     def __init__(self, options):
-        self._author = ('Sysinfo ' + options.get_release_version() +
-                        ' (' + options.get_release_date() + ')')
+        self._author = (
+            'Sysinfo ' + options.get_release_version() +
+            ' (' + options.get_release_date() + ')'
+        )
 
         self._system = options.get_system()
 
@@ -316,6 +318,14 @@ class Detect:
             cls._xset()
             cls._xdisplay(display)
 
+    @staticmethod
+    def _software():
+        software = Software()
+        software.detect()
+        info = software.get()
+        for file in sorted(info):
+            Writer.output(name='Software', value=file + ' ' + info[file])
+
     def show_banner(self):
         """
         Show banner.
@@ -337,6 +347,7 @@ class Detect:
         if self._system.has_loader():
             self._system.detect_loader()
         self._xwindows()
+        self._software()
 
 
 class OperatingSystem:
@@ -2229,6 +2240,41 @@ class Writer:
         if 'comment' in kwargs and kwargs['comment']:
             line += ' (' + kwargs['comment'] + ')'
         print(line)
+
+
+class Software:
+    """
+    Software class
+    """
+
+    def __init__(self):
+        self._info = dict()
+
+    def detect(self):
+        """
+        Detect software
+        """
+        tools = (
+            ('tmux', ['-V'], '^tmux ', '.* '),
+            ('X', ['-version'], 'Server ', '.* '),
+        )
+        for name, args, required, junk in tools:
+            command = command_mod.Command(name, args=args, errors='ignore')
+            if command.is_found():
+                task = subtask_mod.Batch(command.get_cmdline())
+                task.run(pattern=required, error2output=True)
+                if task.has_output():
+                    self._info[command.get_file()] = re.sub(
+                        junk,
+                        '',
+                        task.get_output()[0],
+                    )
+
+    def get(self):
+        """
+        Return software version dictionary
+        """
+        return self._info
 
 
 class Main:
