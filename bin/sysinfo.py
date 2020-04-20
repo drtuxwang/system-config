@@ -27,7 +27,7 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.7.0'
+RELEASE = '5.8.0'
 VERSION = 20200418
 
 # pylint: disable = too-many-lines
@@ -321,11 +321,8 @@ class Detect:
     @staticmethod
     def _software():
         software = Software()
-        software.detect()
-        info = software.get()
-        for name in sorted(info):
-            file, version = info[name]
-            Writer.output('Software', value=name+' '+version, comment=file)
+        for file, version in software.detect():
+            Writer.output('Software', value=file+' '+version)
 
     def show_banner(self):
         """
@@ -2249,39 +2246,44 @@ class Software:
     """
 
     def __init__(self):
-        self._info = dict()
+        self._tools = {
+            'X': (['-version'], 'Server ', '.* '),
+            'docker': (['version'], 'Version:', '.* '),
+            'curl': (['--version'], '^curl ', 'curl | .*'),
+            'gcc': (['--version'], '^gcc ', '.* '),
+            'g++': (['--version'], '^g\\+\\+ ', '.* '),
+            'gfortran': (['--version'], '^GNU Fortran ', '.* '),
+            'kubectl': (['version'], 'Client', '.*GitVersion:"v|".*'),
+            'helm': (['version'], 'Client', '.*SemVer:"v|".*'),
+            'tmux': (['-V'], '^tmux ', '.* '),
+            'wget': (['--version'], 'Wget ', '.*Wget | .*'),
+        }
 
-    def detect(self):
+    def get(self, name):
         """
         Detect software
         """
-        tools = (
-            ('docker', ['version'], 'Version:', '.* '),
-            ('curl', ['--version'], '^curl ', 'curl | .*'),
-            ('gcc', ['--version'], '^gcc ', '.* '),
-            ('g++', ['--version'], '^g\+\+ ', '.* '),
-            ('gfortran', ['--version'], '^GNU Fortran ', '.* '),
-            ('kubectl', ['version'], 'Client', '.*GitVersion:"v|".*'),
-            ('helm', ['version'], 'Client', '.*SemVer:"v|".*'),
-            ('tmux', ['-V'], '^tmux ', '.* '),
-            ('wget', ['--version'], 'Wget ', '.*Wget | .*'),
-            ('X', ['-version'], 'Server ', '.* '),
-        )
-        for name, args, required, junk in tools:
-            command = command_mod.Command(name, args=args, errors='ignore')
-            if command.is_found():
-                task = subtask_mod.Batch(command.get_cmdline())
-                task.run(pattern=required, error2output=True)
-                if task.has_output():
-                    self._info[name] = (
-                        command.get_file(),
-                        re.sub(junk, '', task.get_output()[0]),
-                    )
-    def get(self):
+        args, required, junk = self._tools[name]
+
+        command = command_mod.Command(name, args=args, errors='ignore')
+        if command.is_found():
+            task = subtask_mod.Batch(command.get_cmdline())
+            task.run(pattern=required, error2output=True)
+            if task.has_output():
+                return (
+                    command.get_file(),
+                    re.sub(junk, '', task.get_output()[0]),
+                )
+        return None
+
+    def detect(self):
         """
-        Return software version dictionary
+        Yield all software versions
         """
-        return self._info
+        for name in sorted(self._tools):
+            info = self.get(name)
+            if info:
+                yield info
 
 
 class Main:
