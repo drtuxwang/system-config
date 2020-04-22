@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.8.0'
-VERSION = 20200418
+RELEASE = '5.9.0'
+VERSION = 20200422
 
 # pylint: disable = too-many-lines
 
@@ -2246,6 +2246,9 @@ class Software:
     """
 
     def __init__(self):
+        os.environ['HOME'] = ''
+        os.environ['KUBECONFIG'] = ''
+
         self._tools = {
             'X': (['-version'], 'Server ', '.* '),
             'docker': (['version'], 'Version:', '.* '),
@@ -2259,6 +2262,11 @@ class Software:
             'wget': (['--version'], 'Wget ', '.*Wget | .*'),
         }
 
+        self._wrapper = []
+        command = command_mod.Command('timeout', errors='ignore')
+        if command.is_found():
+            self._wrapper = command.get_cmdline() + ['--signal=KILL', '1']
+
     def get(self, name):
         """
         Detect software
@@ -2267,7 +2275,7 @@ class Software:
 
         command = command_mod.Command(name, args=args, errors='ignore')
         if command.is_found():
-            task = subtask_mod.Batch(command.get_cmdline())
+            task = subtask_mod.Batch(self._wrapper + command.get_cmdline())
             task.run(pattern=required, error2output=True)
             if task.has_output():
                 return (
