@@ -438,6 +438,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/kubectl            kubectl wrapper (allowing non systems port)
  * bin/kubectl.bat
  * bin/kubectl.py
+ * bin/kubeseal           kubeseal wrapper (allowing non systems port)
+ * bin/kubeseal.py
  * bin/markdown           Markdown wrapper (for markdown_py)
  * bin/markdown.bat
  * bin/md5                Calculate MD5 checksums of files
