@@ -53,6 +53,10 @@ then
         PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h\[\033[00m\] $ '
         if [ "`timeout --signal=KILL 1 git --version 2> /dev/null | grep \"^git version\"`" ]
         then
+            __git_ps1()
+            {
+               git rev-parse --abbrev-ref HEAD 2> /dev/null | awk '{printf(" (%s)\n", $1)}'
+            }
             PS1=$(echo "$PS1" | sed -e 's/\\n/\\[\\033[01;31m\\]$(__git_ps1)\\n/')
         fi
         # VM/VContainer detection
