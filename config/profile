@@ -55,7 +55,11 @@ then
         then
             __git_ps1()
             {
-               git rev-parse --abbrev-ref HEAD 2> /dev/null | awk '{printf(" (%s)\n", $1)}'
+               local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+               if [ "$branch" ]
+               then
+                   echo " ($branch)"
+               fi
             }
             PS1=$(echo "$PS1" | sed -e 's/\\n/\\[\\033[01;31m\\]$(__git_ps1)\\n/')
         fi
