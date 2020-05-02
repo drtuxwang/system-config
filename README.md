@@ -428,8 +428,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/jsonformat         JSON file re-formatter
  * bin/jsonformat.bat
  * bin/jsonformat.py
- * bin/jtool              jtool wrapper (allowing non systems port)
- * bin/jtool.py
  * bin/jython             Jython wrapper
  * bin/jython.py
  * bin/k3s                K3S light weight Kubernetes distribution
@@ -507,6 +505,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/ogg.py
  * bin/open               Open files using hardwired application mapping
  * bin/open.py
+ * bin/otool              otool wrapper (allowing non systems port)
+ * bin/otool.py
  * bin/par2               par2 wrapper (allowing non systems port)
  * bin/par2.bat
  * bin/par2.py
