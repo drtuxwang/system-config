@@ -104,6 +104,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/7z.bat             (uses p7zip)
  * bin/7za
  * bin/p7zip.py
+ * bin/a2ps               a2ps wrapper (allowing non systems port)
+ * bin/a2ps.py
  * bin/aftp               Automatic connection to FTP server anonymously
  * bin/aftp.py
  * bin/aplay              Play MP3/OGG/WAV audio files in directory
@@ -156,6 +158,10 @@ the years. Now most of the scripts are written in Python 3.
  * bin/clam.py
  * bin/cluster            Run command on a subnet in parallel
  * bin/cluster.py
+ * bin/convert            convert wrapper (allowing non systems port)
+ * bin/convert.py
+ * bin/ddrescue           ddrescue wrapper (allowing non systems port)
+ * bin/ddrescue.py
  * bin/deb                Debian package management tools
  * bin/deb.py             (support offline repository searching and update checks
  * bin/debchkdir
@@ -396,6 +402,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/htmlformat         HTML file re-formatter
  * bin/htmlformat.bat
  * bin/htmlformat.py
+ * bin/htop               htop wrapper (allowing non systems port)
+ * bin/htop.py
  * bin/httpd              Start a simple Python HTTP server
  * bin/httpd.bat
  * bin/httpd.py
@@ -419,6 +427,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/javac.py           (Java compiler)
  * bin/jpeg2ps            jpeg2ps wrapper (allowing non systems port)
  * bin/jpeg2ps.py
+ * bin/jq                 jq wrapper (allowing non systems port)
+ * bin/jq.py
  * bin/jsformat           Javascript file re-formatter
  * bin/jsformat.bat
  * bin/jsformat.py
@@ -503,6 +513,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/offline.py
  * bin/ogg                Encode OGG audio using avconv (libvorbis)
  * bin/ogg.py
+ * bin/ogg123             ogg123 wrapper (allowing non systems port)
+ * bin/ogg123.py
  * bin/open               Open files using hardwired application mapping
  * bin/open.py
  * bin/otool              otool wrapper (allowing non systems port)
