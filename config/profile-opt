@@ -5,7 +5,7 @@
 ##unset PYTHONDONTWRITEBYTECODE
 
 # All traffic to VPN
-##export PULSE_VPN_ALL_TRAFFIC=1
+##export VPN_ALL_TRAFFIC=1
 
 # Kubernetes context
 ##export KUBECONFIG="$HOME/.kube/$(timeout --signal=KILL 1 tmux display-message -p '#S' 2> /dev/null).yaml"
