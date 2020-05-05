@@ -25,6 +25,10 @@ frame .other -bg "#cccccc"
     }
     pack .other.radiotuner -side top
 
+    button .other.teams -width 10 -bg "#ffff00" -text "Teams" -command {
+        exec teams &
+    }
+    pack .other.teams -side top
     button .other.vncviewer -width 10 -bg "#ffff00" -text "VNC Viewer" -command {
         exec vncviewer &
     }
