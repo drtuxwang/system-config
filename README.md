@@ -620,6 +620,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/tar.bat
  * bin/tar.py
  * bin/tar_.py
+ * bin/teams              teams wrapper (allowing non systems port)
+ * bin/teams.py
  * bin/terraform          terraform wrapper (allowing non systems port)
  * bin/terraform.py
  * bin/tbz                Make a compressed archive in TAR.BZ2
