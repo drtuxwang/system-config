@@ -59,14 +59,14 @@ class Options:
 
         self._rsync = command_mod.Command('rsync', errors='stop')
         self._rsync.set_args([
-            '-l',
-            '-p',
-            '-r',
-            '-t',
-            '-v',
-            '-z',
-            '-e',
-            ssh.get_file(),
+            '--recursive',
+            '--links',
+            '--perms',
+            '--times',
+            '--verbose',
+            '--compress',
+            '--append-verify',
+            '--rsh='+ssh.get_file(),
             '--delete',
             self._args.source[0],
             self._args.target[0]
