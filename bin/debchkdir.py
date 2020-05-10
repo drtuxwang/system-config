@@ -162,7 +162,7 @@ class Main:
         return packages
 
     @staticmethod
-    def _read_distribution_allowlist(file):
+    def _read_distribution_whitelist(file):
         packages = {}
         try:
             with open(file, errors='replace') as ifile:
@@ -227,8 +227,8 @@ class Main:
         for distribution in options.get_distributions():
             packages_files = self._check_files(distribution)
             if packages_files and os.path.isfile(distribution + '.debs'):
-                packages_white_list = self._read_distribution_allowlist(
-                    distribution + '.debs:allowlist')
+                packages_white_list = self._read_distribution_whitelist(
+                    distribution + '.debs:whitelist')
                 packages_used = self._check_used(distribution)
                 self._compare(
                     packages_files,

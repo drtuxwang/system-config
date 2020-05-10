@@ -230,7 +230,7 @@ class Main:
         except OSError:
             pass
 
-    def _read_distribution_blocklist(self, file):
+    def _read_distribution_blacklist(self, file):
         try:
             with open(file, errors='replace') as ifile:
                 for line in ifile:
@@ -336,8 +336,8 @@ class Main:
                             distribution + '.json')
                         self._read_distribution_pin_packages(
                             distribution + '.debs:pinlist')
-                        self._read_distribution_blocklist(
-                            distribution + '.debs:blocklist')
+                        self._read_distribution_blacklist(
+                            distribution + '.debs:blacklist')
                         self._check_distribution_updates(
                             distribution, list_file)
 
