@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.9.0'
-VERSION = 20200422
+RELEASE = '5.10.0'
+VERSION = 20200510
 
 # pylint: disable = too-many-lines
 
@@ -596,7 +596,7 @@ class PosixSystem(OperatingSystem):
         """
         info = super().get_os_info()
         info['OS Kernel'] = command_mod.Platform.get_kernel()
-        info['OS Kernel X'] = os.uname()[0]
+        info['OS Kernel X'] = os.uname()[3].replace('(', '').replace(')', '')
         return info
 
     def get_cpu_info(self):
@@ -1504,7 +1504,6 @@ class LinuxSystem(PosixSystem):
             info.update(scan_method())
             if info['OS Name'] != 'Unknown':
                 break
-
         return info
 
     @staticmethod
