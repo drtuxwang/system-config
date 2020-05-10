@@ -4,6 +4,7 @@ Search for packages that match regular expression in Debian package file.
 """
 
 import argparse
+import distutils.version
 import glob
 import json
 import os
@@ -121,6 +122,20 @@ class Package:
         """
         self._version = version
 
+    def is_newer(self, package):
+        """
+        Return True if version newer than package.
+        """
+        try:
+            if (
+                    distutils.version.LooseVersion(self._version) >
+                    distutils.version.LooseVersion(package.get_version())
+            ):
+                return True
+        except TypeError:  # 5.0.0~buster 5.0~rc1~buster
+            pass
+        return False
+
 
 class Main:
     """
@@ -175,6 +190,8 @@ class Main:
                         '" in "/var/lib/dpkg/info" has non integer size.'
                     )
             elif line.startswith('Description: '):
+                if name in packages and not package.is_newer(packages[name]):
+                    continue
                 package.set_description(
                     line.replace('Description: ', '', 1))
                 packages[name] = package

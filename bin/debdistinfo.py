@@ -4,6 +4,7 @@ Show information about packages in Debian packages '.debs' list file.
 """
 
 import argparse
+import distutils.version
 import glob
 import json
 import os
@@ -60,6 +61,56 @@ class Options:
         self._parse_args(args[1:])
 
 
+class Package:
+    """
+    Package class
+    """
+
+    def __init__(self, version='0', info=()):
+        self._version = version
+        self._info = info
+
+    def get_version(self):
+        """
+        Return version.
+        """
+        return self._version
+
+    def set_version(self, version):
+        """
+        Set package version.
+
+        version = package version.
+        """
+        self._version = version
+
+    def get_info(self):
+        """
+        Return information.
+        """
+        return self._info
+
+    def set_info(self, info):
+        """
+        Set package information.
+        """
+        self._info = info
+
+    def is_newer(self, package):
+        """
+        Return True if version newer than package.
+        """
+        try:
+            if (
+                    distutils.version.LooseVersion(self._version) >
+                    distutils.version.LooseVersion(package.get_version())
+            ):
+                return True
+        except TypeError:  # 5.0.0~buster 5.0~rc1~buster
+            pass
+        return False
+
+
 class Main:
     """
     Main class
@@ -112,22 +163,30 @@ class Main:
 
         packages = {}
         name = ''
+        package = Package()
+        info = []
         for line in lines:
             line = line.rstrip('\r\n')
+            info.append(line)
             if line.startswith('Package: '):
                 name = line.replace('Package: ', '')
-                lines = [line]
-            elif line:
-                lines.append(line)
-            else:
-                packages[name] = lines
+            elif line.startswith('Version: '):
+                package.set_version(
+                    line.replace('Version: ', '').split(':')[-1])
+            elif not line:
+                if name in packages and not package.is_newer(packages[name]):
+                    continue
+                package.set_info(info)
+                packages[name] = package
+                info = []
+                package = Package()
         return packages
 
     @staticmethod
     def _show_distribution_packages(packages, package_names):
         for name in package_names:
             if name in packages:
-                for line in packages[name]:
+                for line in packages[name].get_info():
                     print(line)
                 print()
 

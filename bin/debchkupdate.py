@@ -5,6 +5,7 @@ Check whether installed debian packages in '.debs' list have updated versions.
 
 import argparse
 import copy
+import distutils.version
 import glob
 import json
 import logging
@@ -114,6 +115,20 @@ class Package:
         """
         self._version = version
 
+    def is_newer(self, package):
+        """
+        Return True if version newer than package.
+        """
+        try:
+            if (
+                    distutils.version.LooseVersion(self._version) >
+                    distutils.version.LooseVersion(package.get_version())
+            ):
+                return True
+        except TypeError:  # 5.0.0~buster 5.0~rc1~buster
+            pass
+        return False
+
 
 class Main:
     """
@@ -181,6 +196,8 @@ class Main:
                     depends.append(i.split()[0])
                 package.set_depends(depends)
             elif line.startswith('Filename: '):
+                if name in packages and not package.is_newer(packages[name]):
+                    continue
                 package.set_url(line[10:])
                 packages[name] = package
                 package = Package()
