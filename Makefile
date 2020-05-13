@@ -30,7 +30,7 @@ check:
 .PHONY: lint
 lint:
 	@echo "\n*** Running Python 3 PYFLAKES checks ***"
-	python3 -m pyflakes bin/*.py
+	python3 -m flake8 bin/*.py
 	@echo "\n*** Running Python 3 PYCODESTYLE (PEP8) checks ***"
 	python3 -m pycodestyle --max-line-length=79 bin/*.py
 	@echo "\n*** Running Python 3 PYLINT checks ***"
