@@ -1,1 +1,2 @@
 nexus3-cli==None
+ipython==7.9.0
