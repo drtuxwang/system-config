@@ -75,7 +75,8 @@ class Options:
             'pixmap_path: |in <module>| import |wrong ELF class:|'
             ': LibGimpBase-WARNING |^Traceback |: undefined symbol:|'
             ' XMP metadata:|: No XMP packet found|: GEGL-gegl-operation.c|'
-            ': using babl for'
+            ': using babl for|gimp_pickable_contiguous_region_by_seed:|'
+            'librsvg-WARNING'
         )
         self._config()
 
