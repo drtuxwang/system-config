@@ -4,7 +4,7 @@
 ##modprobe vboxsf
 ##mount -t vboxsf -o uid=owner,gid=users shared /shared &
 
-##mount -t ext4 -o noatime,data=ordered UUID=<uuid-from-blkid> /data2 &
+##mount -t ext4 -o noatime,errors=remount-ro,data=ordered UUID=<uuid-from-blkid> /data2 &
 
 ##dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
 
