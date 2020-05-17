@@ -6,6 +6,7 @@ export PYTHONDONTWRITEBYTECODE=1
 ntpdate -u > /dev/null 2>&1 < /dev/null &
 xlight -reset > /dev/null 2>&1 &
 (rmdir /media/*/* /media/* && rm /media/*) > /dev/null 2>&1 &
+(sleep 300 && rm /sys/fs/pstore/*) > /dev/null 2>&1 &
 
 # Restore corrupt grub.cfg
 cp -p /boot/grub/grub.cfg-ok /boot/grub/grub.cfg > /dev/null 2>&1
