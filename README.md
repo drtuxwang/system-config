@@ -988,7 +988,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/etcd/values.yaml
  * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 4.1.0 (app 2.190.3)
  * helm/jenkins/values.yaml
- * helm/kafka/Makefile                   Helm Chart: incubator/kafka 0.20.8 (app 5.0.1)
+ * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 10.3.3 (app 2.5.0)
  * helm/kafka/values.yml
  * helm/mongodb/Makefile                 Helm Chart: stable/mongodb 7.8.6 (app 4.2.3)
  * helm/mongodb/values.yml

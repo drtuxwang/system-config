@@ -1,19 +1,19 @@
 nodeSelector:
   beta.kubernetes.io/os: linux
-prometheus:
+metrics:
   jmx:
     enabled: true
-replicas: 1
-env:
-  open:
-    DISABLE_API: false
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "5556"
+replicaCount: 1
 persistence:
   enabled: false
 
 zookeeper:
-  exporters:
-    jmx:
-      enabled: true
+  metrics:
+    enabled: true
   podAnnotations:
-    prometheus.io/port: "9404"
     prometheus.io/scrape: "true"
+    prometheus.io/port: 9141
+  replicaCount: 1

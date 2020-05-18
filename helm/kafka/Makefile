@@ -1,6 +1,6 @@
 NAME := kafka
-CHART_NAME := incubator/kafka
-CHART_VERSION := 0.20.8
+CHART_NAME := bitnami/kafka
+CHART_VERSION := 10.3.3
 
 # Default namespace
 ifndef NAMESPACE
@@ -12,7 +12,7 @@ default: status
 
 .PHONY: check
 check:
-	helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com
+	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -26,7 +26,7 @@ check:
 
 .PHONY: deploy
 deploy:
-	helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com
+	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm upgrade \
 		--install \
 		--wait \
