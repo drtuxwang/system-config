@@ -49,20 +49,36 @@ then
     export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
     if [ "$BASH" -o "`echo $0 | \grep \"ash$\"`" ]
     then
+        __git_ps1()
+        {
+           local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+           if [ "$branch" ]
+           then
+               echo " ($branch)"
+           fi
+        }
+        __kube_ps1()
+        {
+           if [ -f "$KUBECONFIG" ]
+           then
+               echo " ⛭${KUBECONFIG##*/}"
+           fi
+        }
+        __kubeconfig() {
+            ls -1 $HOME/.kube/*.yaml 2> /dev/null | sed -e "s@.*/@  Kubeconfig: @"
+            echo -e "\nPlease select profile:"
+            local selection
+            read selection
+            if [ "$(KUBECONFIG="$HOME/.kube/$selection" kubectl version 2> /dev/null | grep Server)" ]
+            then
+                export KUBECONFIG="$HOME/.kube/$selection"
+                echo "KUBECONFIG=$KUBECONFIG"
+            fi
+        }
+        alias kubeconfig=__kubeconfig
         MYSHELL="${0/-/}"
-        PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h\[\033[00m\] $ '
-        if [ "`timeout --signal=KILL 1 git --version 2> /dev/null | grep \"^git version\"`" ]
-        then
-            __git_ps1()
-            {
-               local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-               if [ "$branch" ]
-               then
-                   echo " ($branch)"
-               fi
-            }
-            PS1=$(echo "$PS1" | sed -e 's/\\n/\\[\\033[01;31m\\]$(__git_ps1)\\n/')
-        fi
+        PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\[\033[01;31m\]$(__git_ps1)$(__kube_ps1)\n\[\033[01;32m\]\u@\h\[\033[00m\] $ '
+
         # VM/VContainer detection
         case `uname` in
         *NT*)
