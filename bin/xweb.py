@@ -64,7 +64,7 @@ class Main:
             command.set_args(sys.argv[1:])
         else:
             command.set_args([cls._get_default()])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        subtask_mod.Task(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':
