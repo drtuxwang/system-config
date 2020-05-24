@@ -1,4 +1,4 @@
-BASE_IMAGE := golang:1.12.17-alpine
+BASE_IMAGE := golang:1.13.11-alpine
 NAME := golang
 IMAGE := drtuxwang/$(NAME)
 
