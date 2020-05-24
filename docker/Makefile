@@ -1,7 +1,7 @@
 BUILD_DIRS := \
-	amazonlinux \
 	alpine \
 	alpine32 \
+	amazonlinux \
 	busybox \
 	centos \
 	clearlinux \
