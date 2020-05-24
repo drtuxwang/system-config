@@ -16,7 +16,8 @@ RUN apt-get install --no-install-recommends -y \
 		libssl-dev \
 		python3-dev \
 		python3-setuptools \
-		uuid-dev && \
+		uuid-dev \
+		libcurl4-openssl-dev && \
 	apt-get clean
 
 # Install sandbox environment packages
