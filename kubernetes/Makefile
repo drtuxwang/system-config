@@ -2,7 +2,7 @@ default: status
 
 .PHONY: status
 status:
-	docker images | grep k8s.gcr.io
+	docker images | egrep "k8s.gcr.io|quay.io/coreos/flannel"
 	@echo
 	kubectl get nodes -o wide
 	@echo
@@ -10,8 +10,8 @@ status:
 
 .PHONY: save
 save:
-	docker save $(shell docker images | grep k8s.gcr.io | awk '{printf("%s:%s\n", $$1, $$2)}') \
-		-o kubernetes.tar
+	docker save $(shell docker images | egrep "k8s.gcr.io|quay.io/coreos/flannel" | \
+		awk '{printf("%s:%s\n", $$1, $$2)}') -o kubernetes.tar
 
 .PHONY: load
 load:
