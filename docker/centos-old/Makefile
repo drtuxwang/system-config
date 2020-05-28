@@ -1,5 +1,5 @@
-BASE_IMAGE := centos:8
-NAME := centos
+BASE_IMAGE := centos:7
+NAME := centos-old
 IMAGE := drtuxwang/$(NAME)
 
 TOPDIR := ../..

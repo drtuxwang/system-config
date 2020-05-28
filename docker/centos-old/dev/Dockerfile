@@ -1,4 +1,4 @@
-FROM drtuxwang/centos
+FROM drtuxwang/centos-old
 
 # Install compiler & dev packages
 RUN yum -y install \
@@ -11,10 +11,10 @@ RUN yum -y install \
 		libevent-devel \
 		libffi-devel \
 		libsqlite3x-devel \
-		libuuid-devel \
 		ncurses-devel \
 		openssl-devel \
 		readline-devel \
+		uuid-devel \
 		xz-devel && \
 	yum clean all
 

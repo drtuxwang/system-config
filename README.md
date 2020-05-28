@@ -916,12 +916,18 @@ the years. Now most of the scripts are written in Python 3.
  * docker/busybox/bash/Dockerfile
  * docker/busybox/bash/Makefile
  * docker/busybox/files/ash2bash
- * docker/centos/Makefile                centos:7 based linux
+ * docker/centos/Makefile                centos:8 based linux
  * docker/centos/Dockerfile
- * docker/centos/bash/Makefile           centos:7 based BASH login
+ * docker/centos/bash/Makefile           centos:8 based BASH login
  * docker/centos/bash/Dockerfile
- * docker/centos/dev/Makefile            centos:7 based GCC dev shell
+ * docker/centos/dev/Makefile            centos:8 based GCC dev shell
  * docker/centos/dev/Dockerfile
+ * docker/centos-old/Dockerfile          centos:7 based linux
+ * docker/centos-old/Makefile
+ * docker/centos-old/bash/Dockerfile     centos:7 based BASH login
+ * docker/centos-old/bash/Makefile
+ * docker/centos-old/dev/Dockerfile      centos:7 based GCC dev shell
+ * docker/centos-old/dev/Makefile
  * docker/clearlinux/Makefile            clearlinux:latest based linux
  * docker/clearlinux/Dockerfile
  * docker/clearlinux/bash/Makefile       clearlinux:latest based BASH login
@@ -960,18 +966,18 @@ the years. Now most of the scripts are written in Python 3.
  * docker/registry/files/config.yml
  * docker/sudo/Makefile                  sudo scratch image for jail breaking app
  * docker/sudo/Dockerfile
- * docker/ubuntu-old/Dockerfile          ubuntu:18.04 based linux
- * docker/ubuntu-old/Makefile
- * docker/ubuntu-old/bash/Dockerfile     ubuntu:18.04 based BASH login
- * docker/ubuntu-old/bash/Makefile
- * docker/ubuntu-old/dev/Dockerfile      ubuntu:18.04 based GCC dev shell
- * docker/ubuntu-old/dev/Makefile
  * docker/ubuntu/Makefile                ubuntu:20.04 based linux
  * docker/ubuntu/Dockerfile
  * docker/ubuntu/bash/Makefile           ubuntu:20.04 based BASH login
  * docker/ubuntu/bash/Dockerfile-shell
  * docker/ubuntu/dev/Makefile            ubuntu:20.04 based GCC dev shell
  * docker/ubuntu/dev/Dockerfile
+ * docker/ubuntu-old/Dockerfile          ubuntu:18.04 based linux
+ * docker/ubuntu-old/Makefile
+ * docker/ubuntu-old/bash/Dockerfile     ubuntu:18.04 based BASH login
+ * docker/ubuntu-old/bash/Makefile
+ * docker/ubuntu-old/dev/Dockerfile      ubuntu:18.04 based GCC dev shell
+ * docker/ubuntu-old/dev/Makefile
  * kubernetes/Makefile
  * kubernetes/monitor-host/Makefile      Kubernetes: drtuxwang/debian-bash host monitoring
  * kubernetes/monitor-host/monitor-host-daemonset.yaml
