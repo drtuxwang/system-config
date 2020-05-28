@@ -1,4 +1,7 @@
-FROM debian:10-slim
+ARG BASE_IMAGE=debian:latest
+
+FROM ${BASE_IMAGE}
+
 
 # Install base packages
 RUN apt-get update --fix-missing && \

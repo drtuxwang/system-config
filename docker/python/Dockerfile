@@ -1,4 +1,7 @@
-FROM python:3.6.10-buster
+ARG BASE_IMAGE=python:latest
+
+FROM ${BASE_IMAGE}
+
 
 RUN apt-get update --fix-missing && \
 	apt-get install --no-install-recommends -y \

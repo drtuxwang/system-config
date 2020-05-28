@@ -1,4 +1,7 @@
-FROM ubuntu:18.04
+ARG BASE_IMAGE=ubuntu:latest
+
+FROM ${BASE_IMAGE}
+
 
 # Install base packages
 RUN apt-get update --fix-missing && \

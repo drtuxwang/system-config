@@ -1,4 +1,6 @@
-FROM registry:2.6
+ARG BASE_IMAGE=registry:latest
+
+FROM ${BASE_IMAGE}
 
 COPY ./files/config.yml /etc/docker/registry/
 
