@@ -1,5 +1,5 @@
-BASE_IMAGE := ubuntu:20.04
-NAME := ubuntu
+BASE_IMAGE := ubuntu:18.04
+NAME := ubuntu-old
 IMAGE := drtuxwang/$(NAME)
 
 TOPDIR := ../..

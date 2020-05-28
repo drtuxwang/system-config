@@ -960,11 +960,17 @@ the years. Now most of the scripts are written in Python 3.
  * docker/registry/files/config.yml
  * docker/sudo/Makefile                  sudo scratch image for jail breaking app
  * docker/sudo/Dockerfile
- * docker/ubuntu/Makefile                ubuntu:18.04 based linux
+ * docker/ubuntu-old/Dockerfile          ubuntu:18.04 based linux
+ * docker/ubuntu-old/Makefile
+ * docker/ubuntu-old/bash/Dockerfile     ubuntu:18.04 based BASH login
+ * docker/ubuntu-old/bash/Makefile
+ * docker/ubuntu-old/dev/Dockerfile      ubuntu:18.04 based GCC dev shell
+ * docker/ubuntu-old/dev/Makefile
+ * docker/ubuntu/Makefile                ubuntu:20.04 based linux
  * docker/ubuntu/Dockerfile
- * docker/ubuntu/bash/Makefile           ubuntu:18.04 based BASH login
+ * docker/ubuntu/bash/Makefile           ubuntu:20.04 based BASH login
  * docker/ubuntu/bash/Dockerfile-shell
- * docker/ubuntu/dev/Makefile            ubuntu:18.04 based GCC dev shell
+ * docker/ubuntu/dev/Makefile            ubuntu:20.04 based GCC dev shell
  * docker/ubuntu/dev/Dockerfile
  * kubernetes/Makefile
  * kubernetes/monitor-host/Makefile      Kubernetes: alpine:3.9 host monitoring
