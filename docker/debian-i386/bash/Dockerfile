@@ -1,4 +1,4 @@
-FROM drtuxwang/alpine32
+FROM drtuxwang/debian-i386
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

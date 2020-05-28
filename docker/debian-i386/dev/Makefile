@@ -1,4 +1,4 @@
-NAME := debian32-dev
+NAME := debian-i386-dev
 IMAGE := drtuxwang/$(NAME)
 
 TOPDIR := ../../..

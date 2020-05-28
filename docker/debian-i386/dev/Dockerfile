@@ -1,4 +1,4 @@
-FROM drtuxwang/debian32
+FROM drtuxwang/debian-i386
 
 # Install compiler & dev packages
 RUN apt-get install --no-install-recommends -y \

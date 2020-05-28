@@ -898,12 +898,12 @@ the years. Now most of the scripts are written in Python 3.
  * docker/alpine/bash/Dockerfile
  * docker/alpine/dev/Makefile            alpine:3.10 based GCC dev shell
  * docker/alpine/dev/Dockerfile
- * docker/alpine32/Makefile              i386/alpine:3.10 based linux
- * docker/alpine32/Dockerfile
- * docker/alpine32/bash/Makefile         i386/alpine:3.10 based BASH login
- * docker/alpine32/bash/Dockerfile
- * docker/alpine32/dev/Makefile          i386/alpine:3.10 based GCC dev shell
- * docker/alpine32/dev/Dockerfile
+ * docker/alpinei-i386/Makefile          i386/alpine:3.10 based linux
+ * docker/alpine-i386/Dockerfile
+ * docker/alpine-i386/bash/Makefile      i386/alpine:3.10 based BASH login
+ * docker/alpine-i386/bash/Dockerfile
+ * docker/alpine-i386/dev/Makefile       i386/alpine:3.10 based GCC dev shell
+ * docker/alpine-i386/dev/Dockerfile
  * docker/amazonlinux/Dockerfile         amazonlinux:2 based linux
  * docker/amazonlinux/Makefile
  * docker/amazonlinux/bash/Dockerfile
@@ -937,12 +937,12 @@ the years. Now most of the scripts are written in Python 3.
  * docker/debian/sandbox/Makefile        debian:10-slim based sandbox environment
  * docker/debian/sandbox/Dockerfile
  * docker/debian/sandbox/files/xstartup
- * docker/debian32/Makefile              i386/debian:10-slim based linux
- * docker/debian32/Dockerfile
- * docker/debian32/bash/Makefile         i386/debian:10-slim based BASH login
- * docker/debian32/bash/Dockerfile
- * docker/debian32/dev/Makefile          i386/debian:10-slim based GCC dev shell
- * docker/debian32/dev/Dockerfile
+ * docker/debian-i386/Makefile           i386/debian:10-slim based linux
+ * docker/debian-i386/Dockerfile
+ * docker/debian-i386/bash/Makefile      i386/debian:10-slim based BASH login
+ * docker/debian-i386/bash/Dockerfile
+ * docker/debian-i386/dev/Makefile       i386/debian:10-slim based GCC dev shell
+ * docker/debian-i386/dev/Dockerfile
  * docker/docker/Makefile                docker:19.03 (alpine) based docker shell
  * docker/docker/Dockerfile
  * docker/docker/files/ash2bash

@@ -1,4 +1,4 @@
-NAME := debian32-bash
+NAME := alpine-i386-bash
 IMAGE := drtuxwang/$(NAME)
 
 TOPDIR := ../../..
@@ -47,8 +47,8 @@ run:
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/debian_version 2> /dev/null | \
-		sed -e "s@^@$(shell pwd): Debian Linux @"
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
+		sed -e "s@^@$(shell pwd): Alpine Linux @"
 
 .PHONY: push
 push:

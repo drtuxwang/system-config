@@ -1,4 +1,4 @@
-FROM drtuxwang/alpine32
+FROM drtuxwang/alpine-i386
 
 # Install compiler & dev packages
 RUN apk add gcc \

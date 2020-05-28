@@ -1,5 +1,5 @@
-BASE_IMAGE := i386/alpine:3.10
-NAME := alpine32
+BASE_IMAGE := i386/debian:10-slim
+NAME := debian-i386
 IMAGE := drtuxwang/$(NAME)
 
 TOPDIR := ../..
@@ -32,7 +32,7 @@ run:
 .PHONY: version
 version:
 	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR version || exit 1; \
+		make --no-print-directory -C $$DIR version ||:; \
 	done
 
 .PHONY: push

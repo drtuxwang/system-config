@@ -1,4 +1,4 @@
-NAME := alpine32-dev
+NAME := debian-i386-bash
 IMAGE := drtuxwang/$(NAME)
 
 TOPDIR := ../../..
@@ -14,7 +14,7 @@ DOCKER_RUN_FLAGS := --rm \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
-	--memory=2000m \
+	--memory=1000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
 	--hostname $(NAME) \
@@ -47,8 +47,8 @@ run:
 
 .PHONY: version
 version:
-	@docker run --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
-		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/debian_version 2> /dev/null | \
+		sed -e "s@^@$(shell pwd): Debian Linux @"
 
 .PHONY: push
 push:
