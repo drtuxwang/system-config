@@ -3,6 +3,7 @@ BUILD_DIRS := \
 	alpine32 \
 	amazonlinux \
 	busybox \
+	centos-old \
 	centos \
 	clearlinux \
 	debian \
@@ -12,6 +13,7 @@ BUILD_DIRS := \
 	python \
 	registry \
 	sudo \
+	ubuntu-old \
 	ubuntu
 
 TEST_DIRS := \

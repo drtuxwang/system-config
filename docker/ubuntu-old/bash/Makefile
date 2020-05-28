@@ -1,4 +1,4 @@
-NAME := ubuntu-old
+NAME := ubuntu-old-bash
 IMAGE := drtuxwang/$(NAME)
 
 TOPDIR := ../../..
