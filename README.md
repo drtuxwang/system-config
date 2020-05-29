@@ -892,92 +892,92 @@ the years. Now most of the scripts are written in Python 3.
  * cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
  * cookiecutter/docker/cookiecutter.json
  * docker/Makefile                       Makefile for building all images
- * docker/alpine/Makefile                alpine:3.10 based linux
- * docker/alpine/Dockerfile
- * docker/alpine/bash/Makefile           alpine:3.10 based BASH login
- * docker/alpine/bash/Dockerfile
- * docker/alpine/dev/Makefile            alpine:3.10 based GCC dev shell
- * docker/alpine/dev/Dockerfile
- * docker/alpinei-i386/Makefile          i386/alpine:3.10 based linux
- * docker/alpine-i386/Dockerfile
- * docker/alpine-i386/bash/Makefile      i386/alpine:3.10 based BASH login
- * docker/alpine-i386/bash/Dockerfile
- * docker/alpine-i386/dev/Makefile       i386/alpine:3.10 based GCC dev shell
- * docker/alpine-i386/dev/Dockerfile
- * docker/amazonlinux/Dockerfile         amazonlinux:2 based linux
- * docker/amazonlinux/Makefile
- * docker/amazonlinux/bash/Dockerfile
- * docker/amazonlinux/bash/Makefile
- * docker/amazonlinux/dev/Dockerfile
- * docker/amazonlinux/dev/Makefile
- * docker/busybox/Makefile               busybox:1.30 based linux
- * docker/busybox/Dockerfile
- * docker/busybox/Makefile               busybox:1.30 based BASH login
- * docker/busybox/bash/Dockerfile
- * docker/busybox/bash/Makefile
- * docker/busybox/files/ash2bash
- * docker/centos/Makefile                centos:8 based linux
- * docker/centos/Dockerfile
- * docker/centos/bash/Makefile           centos:8 based BASH login
- * docker/centos/bash/Dockerfile
- * docker/centos/dev/Makefile            centos:8 based GCC dev shell
- * docker/centos/dev/Dockerfile
- * docker/centos-old/Dockerfile          centos:7 based linux
- * docker/centos-old/Makefile
- * docker/centos-old/bash/Dockerfile     centos:7 based BASH login
- * docker/centos-old/bash/Makefile
- * docker/centos-old/dev/Dockerfile      centos:7 based GCC dev shell
- * docker/centos-old/dev/Makefile
+ * docker/alpine-3.10/Makefile           alpine:3.10 based linux
+ * docker/alpine-3.10/Dockerfile
+ * docker/alpine-3.10/bash/Makefile      alpine:3.10 based BASH login
+ * docker/alpine-3.10/bash/Dockerfile
+ * docker/alpine-3.10/dev/Makefile       alpine:3.10 based GCC dev shell
+ * docker/alpine-3.10/dev/Dockerfile
+ * docker/alpine-i386-3.10/Makefile      i386/alpine:3.10 based linux
+ * docker/alpine-i386-3.10/Dockerfile
+ * docker/alpine-i386-3.10/bash/Makefile i386/alpine:3.10 based BASH login
+ * docker/alpine-i386-3.10/bash/Dockerfile
+ * docker/alpine-i386-3.10/dev/Makefile  i386/alpine:3.10 based GCC dev shell
+ * docker/alpine-i386-3.10/dev/Dockerfile
+ * docker/amazonlinux-2/Dockerfile       amazonlinux:2 based linux
+ * docker/amazonlinux-2/Makefile
+ * docker/amazonlinux-2/bash/Dockerfile
+ * docker/amazonlinux-2/bash/Makefile
+ * docker/amazonlinux-2/dev/Dockerfile
+ * docker/amazonlinux-2/dev/Makefile
+ * docker/busybox-1.30/Makefile          busybox:1.30 based linux
+ * docker/busybox-1.30/Dockerfile
+ * docker/busybox-1.30/Makefile          busybox:1.30 based BASH login
+ * docker/busybox-1.30/bash/Dockerfile
+ * docker/busybox-1.30/bash/Makefile
+ * docker/busybox-1.30/files/ash2bash
+ * docker/centos-7/Dockerfile            centos:7 based linux
+ * docker/centos-7/Makefile
+ * docker/centos-7/bash/Dockerfile       centos:7 based BASH login
+ * docker/centos-7/bash/Makefile
+ * docker/centos-7/dev/Dockerfile        centos:7 based GCC dev shell
+ * docker/centos-7/dev/Makefile
+ * docker/centos/8/Makefile              centos:8 based linux
+ * docker/centos/8/Dockerfile
+ * docker/centos/8/bash/Makefile         centos:8 based BASH login
+ * docker/centos/8/bash/Dockerfile
+ * docker/centos/8/dev/Makefile          centos:8 based GCC dev shell
+ * docker/centos/8/dev/Dockerfile
  * docker/clearlinux/Makefile            clearlinux:latest based linux
  * docker/clearlinux/Dockerfile
  * docker/clearlinux/bash/Makefile       clearlinux:latest based BASH login
  * docker/clearlinux/bash/Dockerfile
  * docker/clearlinux/dev/Makefile        clearlinux:latest based CLANG dev shell
  * docker/clearlinux/dev/Dockerfile
- * docker/debian/Makefile                debian:10-slim based linux
- * docker/debian/Dockerfile
- * docker/debian/bash/Makefile           debian:10-slim based BASH login
- * docker/debian/bash/Dockerfile
- * docker/debian/dev/Makefile            debian:10-slim based GCC dev shell
- * docker/debian/dev/Dockerfile
- * docker/debian/sandbox/Makefile        debian:10-slim based sandbox environment
- * docker/debian/sandbox/Dockerfile
- * docker/debian/sandbox/files/xstartup
- * docker/debian-i386/Makefile           i386/debian:10-slim based linux
- * docker/debian-i386/Dockerfile
- * docker/debian-i386/bash/Makefile      i386/debian:10-slim based BASH login
- * docker/debian-i386/bash/Dockerfile
- * docker/debian-i386/dev/Makefile       i386/debian:10-slim based GCC dev shell
- * docker/debian-i386/dev/Dockerfile
- * docker/docker/Makefile                docker:19.03 (alpine) based docker shell
- * docker/docker/Dockerfile
- * docker/docker/files/ash2bash
- * docker/golang/Makefile                golang:1.13.11-alpine based compiler app
- * docker/golang/Dockerfile
- * docker/python/Makefile                python:3.6.10-buster based Python app
- * docker/python/Dockerfile
- * docker/python/bash/Dockerfile         python:3.6.10-buster based BASH login
- * docker/python/bash/Makefile
- * docker/python/devpi/Makefile          python:3.6.10-buster based devpi server app
- * docker/python/devpi/Dockerfile
- * docker/registry/Makefile              registry:2.6 based Docker Registry server app
- * docker/registry/Dockerfile
- * docker/registry/files/ash2bash
- * docker/registry/files/config.yml
+ * docker/debian-10/Makefile             debian:10-slim based linux
+ * docker/debian-10/Dockerfile
+ * docker/debian-10/bash/Makefile        debian:10-slim based BASH login
+ * docker/debian-10/bash/Dockerfile
+ * docker/debian-10/dev/Makefile         debian:10-slim based GCC dev shell
+ * docker/debian-10/dev/Dockerfile
+ * docker/debian-10/sandbox/Makefile     debian:10-slim based sandbox environment
+ * docker/debian-10/sandbox/Dockerfile
+ * docker/debian-10/sandbox/files/xstartup
+ * docker/debian-i386-10/Makefile        i386/debian:10-slim based linux
+ * docker/debian-i386-10/Dockerfile
+ * docker/debian-i386-10/bash/Makefile   i386/debian:10-slim based BASH login
+ * docker/debian-i386-10/bash/Dockerfile
+ * docker/debian-i386-10/dev/Makefile    i386/debian:10-slim based GCC dev shell
+ * docker/debian-i386-10/dev/Dockerfile
+ * docker/docker-19.03/Makefile          docker:19.03 (alpine) based docker shell
+ * docker/docker-19.03/Dockerfile
+ * docker/docker-19.03/files/ash2bash
+ * docker/golang-1.13/Makefile           golang:1.13.11-alpine based compiler app
+ * docker/golang-1.13/Dockerfile
+ * docker/python-3.6/Makefile            python:3.6.10-buster based Python app
+ * docker/python-3.6/Dockerfile
+ * docker/python-3.6/bash/Dockerfile     python:3.6.10-buster based BASH login
+ * docker/python-3.6/bash/Makefile
+ * docker/python-3.6/devpi/Makefile      python:3.6.10-buster based devpi server app
+ * docker/python-3.6/devpi/Dockerfile
+ * docker/registry-2/Makefile            registry:2.6 based Docker Registry server app
+ * docker/registry-2/Dockerfile
+ * docker/registry-2/files/ash2bash
+ * docker/registry-2/files/config.yml
  * docker/sudo/Makefile                  sudo scratch image for jail breaking app
  * docker/sudo/Dockerfile
- * docker/ubuntu/Makefile                ubuntu:20.04 based linux
- * docker/ubuntu/Dockerfile
- * docker/ubuntu/bash/Makefile           ubuntu:20.04 based BASH login
- * docker/ubuntu/bash/Dockerfile-shell
- * docker/ubuntu/dev/Makefile            ubuntu:20.04 based GCC dev shell
- * docker/ubuntu/dev/Dockerfile
- * docker/ubuntu-old/Dockerfile          ubuntu:18.04 based linux
- * docker/ubuntu-old/Makefile
- * docker/ubuntu-old/bash/Dockerfile     ubuntu:18.04 based BASH login
- * docker/ubuntu-old/bash/Makefile
- * docker/ubuntu-old/dev/Dockerfile      ubuntu:18.04 based GCC dev shell
- * docker/ubuntu-old/dev/Makefile
+ * docker/ubuntu-18.04/Dockerfile        ubuntu:18.04 based linux
+ * docker/ubuntu-18.04/Makefile
+ * docker/ubuntu-18.04/bash/Dockerfile   ubuntu:18.04 based BASH login
+ * docker/ubuntu-18.04/bash/Makefile
+ * docker/ubuntu-18.04/dev/Dockerfile    ubuntu:18.04 based GCC dev shell
+ * docker/ubuntu-18.04/dev/Makefile
+ * docker/ubuntu/20.04/Makefile          ubuntu:20.04 based linux
+ * docker/ubuntu/20.04/Dockerfile
+ * docker/ubuntu/20.04/bash/Makefile     ubuntu:20.04 based BASH login
+ * docker/ubuntu/20.04/bash/Dockerfile-shell
+ * docker/ubuntu/20.04/dev/Makefile      ubuntu:20.04 based GCC dev shell
+ * docker/ubuntu/20.04/dev/Dockerfile
  * kubernetes/Makefile
  * kubernetes/monitor-host/Makefile      Kubernetes: drtuxwang/debian-bash host monitoring
  * kubernetes/monitor-host/monitor-host-daemonset.yaml

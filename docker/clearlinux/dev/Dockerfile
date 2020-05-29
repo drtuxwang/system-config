@@ -1,4 +1,6 @@
-FROM drtuxwang/clearlinux
+ARG BASE_IMAGE=drtuxwang/clearlinux:latest
+
+FROM ${BASE_IMAGE}
 
 # Install compiler & dev packages
 # Python missing: _bz2 _dbm _gdbm

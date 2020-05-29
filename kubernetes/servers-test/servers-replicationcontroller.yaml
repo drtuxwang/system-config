@@ -20,7 +20,7 @@ spec:
         env:
         - name: NAME
           value: VALUE
-        image: drtuxwang/debian-bash
+        image: drtuxwang/debian-bash:10
         imagePullPolicy: IfNotPresent
         name: server
         ports:

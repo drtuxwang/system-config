@@ -1,5 +1,5 @@
 NAME := servers-test
-IMAGE := drtuxwang/debian-bash:latest
+IMAGE := drtuxwang/debian-bash:10
 DOMAIN := example.com
 
 # Default namespace

@@ -1,5 +1,7 @@
+BASE_IMAGE := drtuxwang/clearlinux:latest
+IMAGE := drtuxwang/clearlinux-dev:latest
 NAME := clearlinux-dev
-IMAGE := drtuxwang/$(NAME)
+HOSTNAME := clearlinux
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS
@@ -17,7 +19,7 @@ DOCKER_RUN_FLAGS := --rm \
 	--memory=2000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
-	--hostname $(NAME) \
+	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
 ifndef DOCKER_RUN_COMMAND
 	DOCKER_RUN_COMMAND=
@@ -37,7 +39,7 @@ build:
 	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
 	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run

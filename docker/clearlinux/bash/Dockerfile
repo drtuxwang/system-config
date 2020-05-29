@@ -1,4 +1,6 @@
-FROM drtuxwang/clearlinux
+ARG BASE_IMAGE=drtuxwang/clearlinux:latest
+
+FROM ${BASE_IMAGE}
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

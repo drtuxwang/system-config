@@ -1,24 +1,23 @@
 BUILD_DIRS := \
-	alpine \
-	alpine32 \
-	amazonlinux \
-	busybox \
-	centos-old \
-	centos \
+	alpine-3.10 \
+	alpine-i386-3.10 \
+	amazonlinux-2 \
+	busybox-1.30 \
+	centos-7 \
+	centos-8 \
 	clearlinux \
-	debian \
-	debian32 \
-	docker \
-	golang \
-	python \
-	registry \
+	debian-10 \
+	debian-i386-10 \
+	docker-19.03 \
+	golang-1.13 \
+	python-3.6 \
+	registry-2 \
 	sudo \
-	ubuntu-old \
-	ubuntu
+	ubuntu-18.04 \
+	ubuntu-20.04
 
 TEST_DIRS := \
-	python \
-	ubuntu
+	python-3.6
 
 # Default Sandbox distro
 ifndef DIST

@@ -1,29 +1,11 @@
 BASE_IMAGE := clearlinux:latest
-NAME := clearlinux
-IMAGE := drtuxwang/$(NAME)
+IMAGE := drtuxwang/clearlinux:latest
 
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
 BUILD_DIRS := bash dev
-
-ifndef DOCKER_RUN_FLAGS
-	DOCKER_RUN_FLAGS=
-endif
-DOCKER_RUN_FLAGS := --rm \
-	--interactive \
-	--tty \
-	--cpu-quota=1000000 \
-	--cpu-shares=50000 \
-	--memory=1000m \
-	--memory-reservation=50m \
-	--name $(NAME) \
-	--hostname $(NAME) \
-	$(DOCKER_RUN_FLAGS)
-ifndef DOCKER_RUN_COMMAND
-	DOCKER_RUN_COMMAND=
-endif
 
 
 .PHONY: default
