@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/python:3.6
 IMAGE := drtuxwang/python-dev:3.6
 NAME := python-dev-36
-HOSTNAME := python-36
+HOSTNAME := python36
 
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=

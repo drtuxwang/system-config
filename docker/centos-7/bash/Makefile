@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/centos:7
 IMAGE := drtuxwang/centos-bash:7
 NAME := centos-bash-7
-HOSTNAME := centos-7
+HOSTNAME := centos7
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS

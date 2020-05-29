@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/alpine:3.10
 IMAGE := drtuxwang/alpine-dev:3.10
 NAME := alpine-dev-310
-HOSTNAME := alpine310
+HOSTNAME := alpine3
 
 # Docker build
 TOPDIR := ../../..

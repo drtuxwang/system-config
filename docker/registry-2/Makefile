@@ -1,6 +1,7 @@
 BASE_IMAGE := registry:2.6
 IMAGE := drtuxwang/registry:2
 NAME := registry-2
+HOSTNAME := registry2
 
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS

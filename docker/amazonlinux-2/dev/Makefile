@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/amazonlinux:2
 IMAGE := drtuxwang/amazonlinux-dev:2
 NAME := amazonlinux-dev-2
-HOSTNAME := amazonlinux-2
+HOSTNAME := amazonlinux2
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS

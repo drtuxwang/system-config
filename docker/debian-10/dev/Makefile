@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/debian:10
 IMAGE := drtuxwang/debian-dev:10
 NAME := debian-dev-10
-HOSTNAME := debian-10
+HOSTNAME := debian10
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS

@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/alpine-i386:3.10
 IMAGE := drtuxwang/alpine-i386-dev:3.10
 NAME := alpine-i386-dev-310
-HOSTNAME := alpine-i386-310
+HOSTNAME := alpine3-32
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS

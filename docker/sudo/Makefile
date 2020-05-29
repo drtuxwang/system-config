@@ -1,6 +1,7 @@
 BASE_IMAGE := scratch
-NAME := scratch
-IMAGE := drtuxwang/$(NAME)
+IMAGE := drtuxwang/sudo
+NAME := sudo
+HOSTNAME := sudo
 
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
@@ -22,7 +23,7 @@ DOCKER_RUN_FLAGS := --rm \
 	--volume="/etc/passwd:/etc/passwd:ro" \
 	--volume="/etc/group:/etc/group:ro" \
 	--name $(NAME) \
-	--hostname $(shell uname -n)-$(NAME) \
+	--hostname $(shell uname -n)-$(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
 ifndef DOCKER_RUN_COMMAND
 	DOCKER_RUN_COMMAND=

@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/alpine:3.10
 IMAGE := drtuxwang/alpine-bash:3.10
 NAME := alpine-bash-310
-HOSTNAME := alpine310
+HOSTNAME := alpine3
 
 
 TOPDIR := ../../..

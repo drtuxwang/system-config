@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/ubuntu:16.04
 IMAGE := drtuxwang/ubuntu-bash:16.04
 NAME := ubuntu-bash-16.04
-HOSTNAME := ubuntu-16.04
+HOSTNAME := ubuntu16
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS
