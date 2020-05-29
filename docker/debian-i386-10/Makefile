@@ -1,4 +1,4 @@
-BASE_IMAGE := i386/debian:10
+BASE_IMAGE := i386/debian:10-slim
 IMAGE := drtuxwang/debian-i386:10
 
 TOPDIR := ../..
