@@ -934,6 +934,12 @@ the years. Now most of the scripts are written in Python 3.
  * docker/clearlinux/bash/Dockerfile
  * docker/clearlinux/dev/Makefile        clearlinux:latest based CLANG dev shell
  * docker/clearlinux/dev/Dockerfile
+ * docker/debian-9/Makefile              debian:9-slim based linux
+ * docker/debian-9/Dockerfile
+ * docker/debian-9/bash/Makefile         debian:9-slim based BASH login
+ * docker/debian-9/bash/Dockerfile
+ * docker/debian-9/dev/Makefile          debian:9-slim based GCC dev shell
+ * docker/debian-9/dev/Dockerfile
  * docker/debian-10/Makefile             debian:10-slim based linux
  * docker/debian-10/Dockerfile
  * docker/debian-10/bash/Makefile        debian:10-slim based BASH login
@@ -966,6 +972,12 @@ the years. Now most of the scripts are written in Python 3.
  * docker/registry-2/files/config.yml
  * docker/sudo/Makefile                  sudo scratch image for jail breaking app
  * docker/sudo/Dockerfile
+ * docker/ubuntu-16.04/Dockerfile        ubuntu:16.04 based linux
+ * docker/ubuntu-16.04/Makefile
+ * docker/ubuntu-16.04/bash/Dockerfile   ubuntu:16.04 based BASH login
+ * docker/ubuntu-16.04/bash/Makefile
+ * docker/ubuntu-16.04/dev/Dockerfile    ubuntu:16.04 based GCC dev shell
+ * docker/ubuntu-16.04/dev/Makefile
  * docker/ubuntu-18.04/Dockerfile        ubuntu:18.04 based linux
  * docker/ubuntu-18.04/Makefile
  * docker/ubuntu-18.04/bash/Dockerfile   ubuntu:18.04 based BASH login
@@ -975,7 +987,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu/20.04/Makefile          ubuntu:20.04 based linux
  * docker/ubuntu/20.04/Dockerfile
  * docker/ubuntu/20.04/bash/Makefile     ubuntu:20.04 based BASH login
- * docker/ubuntu/20.04/bash/Dockerfile-shell
+ * docker/ubuntu/20.04/bash/Dockerfile
  * docker/ubuntu/20.04/dev/Makefile      ubuntu:20.04 based GCC dev shell
  * docker/ubuntu/20.04/dev/Dockerfile
  * kubernetes/Makefile
