@@ -1,6 +1,6 @@
 BASE_IMAGE := drtuxwang/alpine-i386:3.10
 IMAGE := drtuxwang/alpine-i386-bash:3.10
-NAME := alpine-i386-bash-310
+NAME := alpine3-32
 HOSTNAME := alpine3-32
 
 TOPDIR := ../../..

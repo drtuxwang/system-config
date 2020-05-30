@@ -1,6 +1,6 @@
 BASE_IMAGE := drtuxwang/ubuntu:20.04
 IMAGE := drtuxwang/ubuntu-dev:20.04
-NAME := ubuntu-dev-20.04
+NAME := ubuntu20
 HOSTNAME := ubuntu20
 
 TOPDIR := ../../..

@@ -1,6 +1,6 @@
 BASE_IMAGE := golang:1.13.11-alpine
 IMAGE := drtuxwang/golang:1.13
-NAME := golang-113
+NAME := golang
 HOSTNAME := golang
 
 TOPDIR := ../..

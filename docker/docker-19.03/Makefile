@@ -1,6 +1,6 @@
 BASE_IMAGE := docker:19.03
 IMAGE := drtuxwang/docker:19.03
-NAME := docker-1903
+NAME := docker
 HOSTNAME := docker
 
 TOPDIR := ../..

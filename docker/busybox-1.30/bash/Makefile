@@ -1,6 +1,6 @@
 BASE_IMAGE := drtuxwang/busybox:1.30
 IMAGE := drtuxwang/busybox-bash:1.30
-NAME := busybox-bash-130
+NAME := busybox
 HOSTNAME := busybox
 
 TOPDIR := ../../..

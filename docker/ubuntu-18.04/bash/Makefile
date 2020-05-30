@@ -1,6 +1,6 @@
 BASE_IMAGE := drtuxwang/ubuntu:18.04
 IMAGE := drtuxwang/ubuntu-bash:18.04
-NAME := ubuntu-bash-18.04
+NAME := ubuntu18
 HOSTNAME := ubuntu18
 
 TOPDIR := ../../..

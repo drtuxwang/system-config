@@ -1,6 +1,6 @@
 BASE_IMAGE := drtuxwang/debian:9
 IMAGE := drtuxwang/debian-dev:9
-NAME := debian-dev-9
+NAME := debian9
 HOSTNAME := debian9
 
 TOPDIR := ../../..

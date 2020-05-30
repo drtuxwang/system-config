@@ -1,6 +1,6 @@
 BASE_IMAGE := drtuxwang/centos:8
 IMAGE := drtuxwang/centos-dev:8
-NAME := centos-dev-8
+NAME := centos8
 HOSTNAME := centos8
 
 TOPDIR := ../../..

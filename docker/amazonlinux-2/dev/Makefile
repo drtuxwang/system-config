@@ -1,6 +1,6 @@
 BASE_IMAGE := drtuxwang/amazonlinux:2
 IMAGE := drtuxwang/amazonlinux-dev:2
-NAME := amazonlinux-dev-2
+NAME := amazonlinux2
 HOSTNAME := amazonlinux2
 
 TOPDIR := ../../..

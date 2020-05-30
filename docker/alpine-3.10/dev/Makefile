@@ -1,15 +1,13 @@
 BASE_IMAGE := drtuxwang/alpine:3.10
 IMAGE := drtuxwang/alpine-dev:3.10
-NAME := alpine-dev-310
+NAME := alpine3
 HOSTNAME := alpine3
 
-# Docker build
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
 
-# Docker run
 ifndef DOCKER_RUN_FLAGS
 	DOCKER_RUN_FLAGS=
 endif

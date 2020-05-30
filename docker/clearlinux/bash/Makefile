@@ -1,6 +1,6 @@
 BASE_IMAGE := drtuxwang/clearlinux:latest
 IMAGE := drtuxwang/clearlinux-bash:latest
-NAME := clearlinux-bash
+NAME := clearlinux
 HOSTNAME := clearlinux
 
 TOPDIR := ../../..

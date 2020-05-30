@@ -1,6 +1,6 @@
 BASE_IMAGE := drtuxwang/ubuntu:16.04
 IMAGE := drtuxwang/ubuntu-dev:16.04
-NAME := ubuntu-dev-16.04
+NAME := ubuntu16
 HOSTNAME := ubuntu16
 
 TOPDIR := ../../..

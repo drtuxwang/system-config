@@ -1,6 +1,6 @@
 BASE_IMAGE := drtuxwang/python:3.6
 IMAGE := drtuxwang/python-bash:3.6
-NAME := python-bash-36
+NAME := python36
 HOSTNAME := python36
 
 TOPDIR := ../../..

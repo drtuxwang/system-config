@@ -1,6 +1,6 @@
 BASE_IMAGE := drtuxwang/debian-i386:10
 IMAGE := drtuxwang/debian-i386-bash:10
-NAME := debian-i386-bash-10
+NAME := debian10-32
 HOSTNAME := debian10-32
 
 TOPDIR := ../../..

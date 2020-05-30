@@ -1,6 +1,6 @@
 BASE_IMAGE := registry:2.6
 IMAGE := drtuxwang/registry:2
-NAME := registry-2
+NAME := registry2
 HOSTNAME := registry2
 
 TOPDIR := ../..
