@@ -40,21 +40,21 @@ steps:
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - rm -rf docker/alpine/bash/tmpdir
-        - mkdir -p docker/alpine/bash/tmpdir/bin docker/alpine/bash/tmpdir/root
-        - cp -p bin/* docker/alpine/bash/tmpdir/bin/
-        - cp -p config/bashrc docker/alpine/bash/tmpdir/root/.bashrc
-        - cp -p config/vimrc docker/alpine/bash/tmpdir/root/.vimrc
+        - rm -rf docker/alpine-3.6/bash/tmpdir
+        - mkdir -p docker/alpine-3.6/bash/tmpdir/bin docker/alpine/bash/tmpdir/root
+        - cp -p bin/* docker/alpine-3.6/bash/tmpdir/bin/
+        - cp -p config/bashrc docker/alpine-3.6/bash/tmpdir/root/.bashrc
+        - cp -p config/vimrc docker/alpine-3.6/bash/tmpdir/root/.vimrc
       create_python_deps:
         title: Build Python dependencies
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - rm -rf docker/python/tmpdir
-        - mkdir -p docker/python/tmpdir/bin docker/python/tmpdir/root
-        - cp -p bin/* docker/python/tmpdir/bin/
-        - cp -p config/bashrc docker/python/tmpdir/root/.bashrc
-        - cp -p config/vimrc docker/python/tmpdir/root/.vimrc
+        - rm -rf docker/python-3.6/tmpdir
+        - mkdir -p docker/python-3.6/tmpdir/bin docker/python/tmpdir/root
+        - cp -p bin/* docker/python-3.6/tmpdir/bin/
+        - cp -p config/bashrc docker/python-3.6/tmpdir/root/.bashrc
+        - cp -p config/vimrc docker/python-3.6/tmpdir/root/.vimrc
 
   build_alpine:
     stage: package
