@@ -90,7 +90,7 @@ class Data:
             if file.endswith('bson'):
                 try:
                     with open(file, 'rb') as ifile:
-                        blocks = [bson.loads(ifile.read())]
+                        blocks = [bson.BSON.decode(ifile.read())]
                 except IndexError as exception:
                     raise ReadConfigError(exception)
             else:
@@ -154,7 +154,7 @@ class Data:
                         'Cannot handle multi-writes to "' + tmpfile + '" file.'
                     )
                 with open(tmpfile, 'wb') as ofile:
-                    ofile.write(bson.dumps(self._blocks[0]))
+                    ofile.write(bson.BSON.encode(self._blocks[0]))
             else:
                 raise WriteConfigError('Cannot handle "' + tmpfile + '" file.')
         except OSError:
