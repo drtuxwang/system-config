@@ -288,6 +288,7 @@ class Options:
             '"browser.tabs.insertRelatedAfterCurrent", false',
             '"browser.urlbar.autoFill", false',
             '"browser.urlbar.speculativeConnect.enabled", false',
+            '"browser.urlbar.trimURLs", false',
             '"browser.sessionhistory.max_total_viewers", 0',
             '"browser.sessionhistory.max_viewers", 0',
             '"browser.sessionhistory.sessionhistory.max_entries", 5',
