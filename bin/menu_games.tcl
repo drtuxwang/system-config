@@ -75,6 +75,11 @@ frame .large -bg "#cccccc"
     }
     pack .large.et_bba -side top
 
+    button .large.et_fa -width 10 -bg "#ffff00" -text "ET:F|A(Jay)" -command {
+        exec et +connect 108.61.18.110:27960 &
+    }
+    pack .large.et_fa -side top
+
     button .large.et_etc1 -width 10 -bg "#ffff00" -text "ET:Etc(Jay)" -command {
         exec et +connect 185.248.141.23:27965 &
     }
@@ -83,11 +88,6 @@ frame .large -bg "#cccccc"
         exec et +connect 185.248.141.23:27960 &
     }
     pack .large.et_etc2 -side top
-
-    button .large.et_ets -width 10 -bg "#ffff00" -text "ET:Ets(Nit)" -command {
-        exec et +connect 108.61.18.108:27960 &
-    }
-    pack .large.et_ets -side top
 
     button .large.tuxracer -width 10 -bg "#ffff00" -text "Tux Racer" -command {
         exec etr &
