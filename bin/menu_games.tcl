@@ -75,7 +75,7 @@ frame .large -bg "#cccccc"
     }
     pack .large.et_bba -side top
 
-    button .large.et_fa -width 10 -bg "#ffff00" -text "ET:F|A(Jay)" -command {
+    button .large.et_fa -width 10 -bg "#ffff00" -text "ET:FA(Jay)" -command {
         exec et +connect 108.61.18.110:27960 &
     }
     pack .large.et_fa -side top

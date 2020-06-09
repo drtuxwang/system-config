@@ -1,5 +1,5 @@
 BASE_IMAGE := drtuxwang/python:3.6
-IMAGE := drtuxwang/python-dev:3.6
+IMAGE := drtuxwang/python-devpi:3.6
 NAME := python36
 HOSTNAME := python36
 

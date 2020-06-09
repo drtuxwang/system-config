@@ -22,7 +22,7 @@ DOCKER_RUN_FLAGS := --rm \
 	--hostname $(NAME) \
 	$(DOCKER_RUN_FLAGS)
 ifndef DOCKER_RUN_COMMAND
-	DOCKER_RUN_COMMAND=python3
+	DOCKER_RUN_COMMAND=
 endif
 
 

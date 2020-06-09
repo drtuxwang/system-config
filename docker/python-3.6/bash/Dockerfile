@@ -11,3 +11,4 @@ COPY tmpdir/root/.??* /root/
 # Configure start
 ENV HOME=/root
 WORKDIR /root
+ENTRYPOINT ["bash", "-l"]
