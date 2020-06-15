@@ -113,6 +113,7 @@ class DropboxClient:
         except (
                 dropbox.exceptions.AuthError,
                 dropbox.exceptions.BadInputError,
+                requests.exceptions.ConnectionError,
         ):
             logger.error("Unable to connect and login to Dropbox server.")
         else:
