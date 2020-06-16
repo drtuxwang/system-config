@@ -1,4 +1,4 @@
-BASE_IMAGE := python:3.6.10-buster
+BASE_IMAGE := python:3.6.10-slim-buster
 IMAGE := drtuxwang/python:3.6
 
 TOPDIR := ../..
