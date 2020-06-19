@@ -44,6 +44,8 @@ deploy:
 
 .PHONY: forward
 forward:
+##	kubectl --namespace $(NAMESPACE) describe service/$(NAME)-web
+##	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME)-web $(LOCALPORT):8080
 	kubectl --namespace $(NAMESPACE) describe service/$(NAMESPACE)-$(NAME)-web
 	kubectl --namespace $(NAMESPACE) port-forward service/$(NAMESPACE)-$(NAME)-web $(LOCALPORT):8080
 
