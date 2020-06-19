@@ -1,4 +1,4 @@
-NAME := concourse-server
+NAME := concourse
 CHART_NAME := concourse/concourse
 CHART_VERSION := 11.2.0
 
@@ -44,7 +44,8 @@ deploy:
 
 .PHONY: forward
 forward:
-	kubectl --namespace $(NAMESPACE) port-forward service/concourse-web $(LOCALPORT):8080
+	kubectl --namespace $(NAMESPACE) describe service/$(NAMESPACE)-$(NAME)-web
+	kubectl --namespace $(NAMESPACE) port-forward service/$(NAMESPACE)-$(NAME)-web $(LOCALPORT):8080
 
 .PHONY: status
 status:
