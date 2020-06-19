@@ -37,6 +37,7 @@ paramiko>=2.4.3
 pep8==1.7.0  # Replaced by pycodestyle
 Pillow>=5.4.1
 pip>=19.2.3
+pipenv>=11.10.4
 pycrypto>=2.6.1
 pycurl>=7.43.0.5
 pybktree>=1.1
