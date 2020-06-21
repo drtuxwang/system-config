@@ -217,13 +217,12 @@ class Main:
         """
         options = Options()
 
-        #   127 ELF,      202 254 186 190   207 250 237 254   206 250 237 254
-        #  linux/sunos   macos-x86/x86_64    macos-x86_64        macos-x86
         self._exe_magics = (
-            b'\177ELF',
-            b'\312\376\272\276',
-            b'\317\372\355\376',
-            b'\316\372\355\376'
+            b'\177ELF',             # 127  E   L   F  (linux/sunos)
+            b'\312\376\272\276',    # 202 254 186 190 (macos-x86/x86_64)
+            b'\317\372\355\376',    # 207 250 237 254 (macos-x86_64)
+            b'\316\372\355\376',    # 206 250 237 254 (macos-x86)
+            b'MZ\220\000',          #  M   Z  144  0  (windows)
         )
         self._is_exe_ext = re.compile(
             '[.](bat|cmd|com|dll|exe|ms[ip]|psd|sfx|s[olh]|s[ol][.].*|tcl)$',
