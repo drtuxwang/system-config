@@ -1,4 +1,4 @@
-BASE_IMAGE := golang:1.13.11-alpine
+BASE_IMAGE := golang:1.13.12-alpine
 IMAGE := drtuxwang/golang:1.13
 NAME := golang
 HOSTNAME := golang

@@ -958,7 +958,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/docker-19.03/Makefile          docker:19.03 (alpine) based docker shell
  * docker/docker-19.03/Dockerfile
  * docker/docker-19.03/files/ash2bash
- * docker/golang-1.13/Makefile           golang:1.13.11-alpine based compiler app
+ * docker/golang-1.13/Makefile           golang:1.13.12-alpine based compiler app
  * docker/golang-1.13/Dockerfile
  * docker/python-3.6/Makefile            python:3.6.10-slim-buster based Python app
  * docker/python-3.6/Dockerfile
