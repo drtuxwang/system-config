@@ -1,6 +1,6 @@
 NAME := nginx-proxy
 CHART_NAME := bitnami/nginx
-CHART_VERSION := 5.1.7
+CHART_VERSION := 5.1.12
 
 # Default namespace
 ifndef NAMESPACE

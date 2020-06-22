@@ -1,6 +1,6 @@
 NAME := pushgateway
 CHART_NAME := stable/prometheus-pushgateway
-CHART_VERSION := 1.2.14
+CHART_VERSION := 1.2.15
 
 # Default namespace
 ifndef NAMESPACE

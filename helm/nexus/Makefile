@@ -1,6 +1,6 @@
 NAME := nexus-server
 CHART_NAME := stable/sonatype-nexus
-CHART_VERSION := 1.18.5
+CHART_VERSION := 1.23.1
 
 # Default namespace
 ifndef NAMESPACE

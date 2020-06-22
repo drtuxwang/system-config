@@ -1011,15 +1011,15 @@ the years. Now most of the scripts are written in Python 3.
  * helm/concourse/values.yaml
  * helm/etcd/Makefile                    Helm Chart: bitnami/etcd  4.8.4 (app 3.4.9)
  * helm/etcd/values.yaml
- * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 4.1.0 (app 2.190.3)
+ * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 5.0.14 (app 2.222.4)
  * helm/jenkins/values.yaml
  * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 10.3.3 (app 2.5.0)
  * helm/kafka/values.yml
- * helm/mongodb/Makefile                 Helm Chart: stable/mongodb 7.8.6 (app 4.2.3)
+ * helm/mongodb/Makefile                 Helm Chart: stable/mongodb 7.8.7 (app 4.2.3)
  * helm/mongodb/values.yml
- * helm/nexus/Makefile                   Helm Chart: table/sonatype-nexus 1.18.5 (app 3.15.2-01)
+ * helm/nexus/Makefile                   Helm Chart: table/sonatype-nexus 1.23.1 (app 3.20.1-01)
  * helm/nexus/values.yaml
- * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 5.1.7 (app 1.16.1)
+ * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 5.1.12 (app 1.16.1)
  * helm/nginx/values.yaml
  * helm/ops-box/Chart.yaml               Helm Chart: Operations Box (drtuxwang/debian image)
  * helm/ops-box/Makefile
@@ -1033,7 +1033,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/oracle-xe/templates/servers-service.yaml
  * helm/oracle-xe/templates/servers-statefulset.yaml
  * helm/oracle-xe/values.yaml
- * helm/pushgateway/Makefile             Helm Chart: stable/prometheus-pushgateway 1.2.14 (app 1.0.1)
+ * helm/pushgateway/Makefile             Helm Chart: stable/prometheus-pushgateway 1.2.15 (app 1.0.1)
  * helm/pushgateway/values.yaml
  * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.8.3 (app 3.7.19)
  * helm/rabbitmq/values.yaml

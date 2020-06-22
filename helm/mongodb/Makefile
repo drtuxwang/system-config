@@ -1,6 +1,6 @@
 NAME := mongodb-server
 CHART_NAME := stable/mongodb
-CHART_VERSION := 7.8.6
+CHART_VERSION := 7.8.7
 
 # Default namespace
 ifndef NAMESPACE

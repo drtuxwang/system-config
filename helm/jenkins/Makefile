@@ -1,6 +1,6 @@
 NAME := jenkins-server
 CHART_NAME := bitnami/jenkins
-CHART_VERSION := 4.1.0
+CHART_VERSION := 5.0.14
 
 # Default namespace
 ifndef NAMESPACE
