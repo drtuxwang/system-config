@@ -57,3 +57,9 @@ uninstall:
 	kubectl -n kube-system delete serviceaccounts tiller ||:
 	kubectl -n kube-system delete clusterrolebinding tiller ||:
 	kubectl -n kube-system delete deploy tiller-deploy ||:
+
+.PHONY: clean
+clean:
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR clean; \
+	done

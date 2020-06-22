@@ -58,5 +58,6 @@ version:
 
 .PHONY: clean
 clean:
+	rm -rf $(NAME)-$(CHART_VERSION).tgz $(NAME)
 	helm ls $(NAMESPACE)-$(NAME)
 	helm del --purge $(NAMESPACE)-$(NAME) ||:
