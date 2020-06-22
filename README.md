@@ -1021,31 +1021,31 @@ the years. Now most of the scripts are written in Python 3.
  * helm/nexus/values.yaml
  * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 5.1.12 (app 1.16.1)
  * helm/nginx/values.yaml
- * helm/ops-box/Chart.yaml               Helm Chart: Operations Box (drtuxwang/debian image)
- * helm/ops-box/Makefile
- * helm/ops-box/templates/\_helpers.tpl
- * helm/ops-box/templates/servers-statefulset.yaml
+ * helm/ops-box/Makefile                 Helm Chart: Operations Box (drtuxwang/debian image)
+ * helm/ops-box/helm/opt-box/Chart.yaml
+ * helm/ops-box/helm/opt-box/templates/\_helpers.tpl
+ * helm/ops-box/helm/opt-box/templates/servers-statefulset.yaml
  * helm/ops-box/values.yaml
- * helm/oracle-xe/Chart.yaml             Helm Chart: Oracle XE test (datagrip/oracle:11.2 image)
- * helm/oracle-xe/Makefile
- * helm/oracle-xe/templates/\_helpers.tpl
- * helm/oracle-xe/templates/servers-headless-service.yaml
- * helm/oracle-xe/templates/servers-service.yaml
- * helm/oracle-xe/templates/servers-statefulset.yaml
+ * helm/oracle-xe/Makefile               Helm Chart: Oracle XE test (datagrip/oracle:11.2 image)
+ * helm/oracle-xe/helm/oracle-xe/Chart.yaml
+ * helm/oracle-xe/helm/oracle-xe/templates/\_helpers.tpl
+ * helm/oracle-xe/helm/oracle-xe/templates/servers-headless-service.yaml
+ * helm/oracle-xe/helm/oracle-xe/templates/servers-service.yaml
+ * helm/oracle-xe/helm/oracle-xe/templates/servers-statefulset.yaml
  * helm/oracle-xe/values.yaml
  * helm/pushgateway/Makefile             Helm Chart: stable/prometheus-pushgateway 1.2.15 (app 1.0.1)
  * helm/pushgateway/values.yaml
  * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.8.3 (app 3.7.19)
  * helm/rabbitmq/values.yaml
  * helm/servers-test/Makefile            Helm Chart: Servers test (drtuxwang/debian image)
- * helm/servers-test/Chart.yaml
- * helm/servers-test/requirements.yaml
- * helm/servers-test/templates/\_helpers.tpl
- * helm/servers-test/templates/servers-headless-service.yaml
- * helm/servers-test/templates/servers-ingress.yaml
- * helm/servers-test/templates/servers-secret-tls.yaml
- * helm/servers-test/templates/servers-service.yaml
- * helm/servers-test/templates/servers-statefulset.yaml
+ * helm/servers-test/helm/servers-test/Chart.yaml
+ * helm/servers-test/helm/servers-test/requirements.yaml
+ * helm/servers-test/helm/servers-test/templates/\_helpers.tpl
+ * helm/servers-test/helm/servers-test/templates/servers-headless-service.yaml
+ * helm/servers-test/helm/servers-test/templates/servers-ingress.yaml
+ * helm/servers-test/helm/servers-test/templates/servers-secret-tls.yaml
+ * helm/servers-test/helm/servers-test/templates/servers-service.yaml
+ * helm/servers-test/helm/servers-test/templates/servers-statefulset.yaml
  * helm/servers-test/values.yaml
  * python/simple-cython/Makefile         Simple Cython example
  * python/simple-cython/cython_example.pyx

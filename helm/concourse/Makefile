@@ -37,7 +37,7 @@ deploy:
 		--wait \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
+		--set fullnameOverride=xxx-$(NAME)-yyy \
 		--set service.type=ClusterIP \
 		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_NAME)

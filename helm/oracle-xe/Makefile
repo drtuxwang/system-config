@@ -19,7 +19,7 @@ check:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
-		$(NAMESPACE)-$(NAME) .
+		$(NAMESPACE)-$(NAME) ./helm/oracle-xe
 
 .PHONY: template
 template:
@@ -28,7 +28,7 @@ template:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
-		.
+		./helm/oracle-xe
 
 .PHONY: deploy
 deploy:
@@ -39,7 +39,7 @@ deploy:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
-		$(NAMESPACE)-$(NAME) .
+		$(NAMESPACE)-$(NAME) ./helm/oracle-xe
 
 .PHONY: status
 status:

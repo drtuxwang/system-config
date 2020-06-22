@@ -25,7 +25,7 @@ check:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAMESPACE)-$(NAME) .
+		$(NAMESPACE)-$(NAME) ./helm/servers-test
 
 .PHONY: template
 template:
@@ -35,7 +35,7 @@ template:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		.
+		./helm/servers-test
 
 .PHONY: deploy
 deploy:
@@ -47,7 +47,7 @@ deploy:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAMESPACE)-$(NAME) .
+		$(NAMESPACE)-$(NAME) ./helm/servers-test
 
 .PHONY: forward
 forward:
