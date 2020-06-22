@@ -15,8 +15,15 @@ endif
 
 default: status
 
+.PHONY: fetch
+fetch:
+	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
+	rm -rf $(NAME)
+	tar xf $(NAME)-$(CHART_VERSION).tgz
+	cp -p _helpers.tpl concourse/templates/
+
 .PHONY: check
-check:
+check: fetch
 	helm repo add concourse https://concourse-charts.storage.googleapis.com
 	helm upgrade \
 		--install \
@@ -25,22 +32,26 @@ check:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
+		--set postgresql.fullnameOverride=$(NAME)-postgresql \
 		--set service.type=ClusterIP \
-		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) ./$(NAME)
+##		--version $(CHART_VERSION) \
+##		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: deploy
-deploy:
+deploy: fetch
 	helm repo add concourse https://concourse-charts.storage.googleapis.com
 	helm upgrade \
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
-		--set fullnameOverride=xxx-$(NAME)-yyy \
+		--set fullnameOverride=$(NAME) \
+		--set postgresql.fullnameOverride=$(NAME)-postgresql \
 		--set service.type=ClusterIP \
-		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) ./$(NAME)
+##		--version $(CHART_VERSION) \
+##		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: forward
 forward:
