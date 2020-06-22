@@ -1,6 +1,6 @@
 NAME := etcd-server
 CHART_NAME := bitnami/etcd
-CHART_VERSION := 4.4.14
+CHART_VERSION := 4.8.4
 
 # Default namespace
 ifndef NAMESPACE

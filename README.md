@@ -1005,11 +1005,11 @@ the years. Now most of the scripts are written in Python 3.
  * kubernetes/servers-test/servers-statefulset.yaml
  * helm/Makefile
  * docker/ubuntu-test/Makefile           Install tiller
- * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.4.1 (app 0.8.2)
+ * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.12.2 (app 0.12.0)
  * helm/chartmuseum/values.yaml
- * helm/concourse/Makefile               Helm Chart: concourse/concourse 11.2.0 (app 6.3.0)
+ * helm/concourse/Makefile               Helm Chart: concourse/concourse 11.2.1 (app 6.3.0)
  * helm/concourse/values.yaml
- * helm/etcd/Makefile                    Helm Chart: bitnami/etcd  4.4.14 (app 3.4.3)
+ * helm/etcd/Makefile                    Helm Chart: bitnami/etcd  4.8.4 (app 3.4.9)
  * helm/etcd/values.yaml
  * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 4.1.0 (app 2.190.3)
  * helm/jenkins/values.yaml

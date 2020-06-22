@@ -1,6 +1,6 @@
 NAME := chartmuseum-server
 CHART_NAME := stable/chartmuseum
-CHART_VERSION := 2.4.1
+CHART_VERSION := 2.12.2
 INGRESS_HOST := chartmusuem.local
 SECRET := chartmusuem-secret-tls
 

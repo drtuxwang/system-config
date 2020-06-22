@@ -1,6 +1,6 @@
 NAME := concourse
 CHART_NAME := concourse/concourse
-CHART_VERSION := 11.2.0
+CHART_VERSION := 11.2.1
 
 # Default namespace
 ifndef NAMESPACE
