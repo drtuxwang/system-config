@@ -1,4 +1,4 @@
-NAME := pushgateway
+NAME := prometheus-pushgateway
 CHART_NAME := stable/prometheus-pushgateway
 CHART_VERSION := 1.2.15
 
@@ -15,7 +15,6 @@ fetch:
 	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
 	rm -rf $(NAME)
 	tar xf $(NAME)-$(CHART_VERSION).tgz
-	cp -p _helpers.tpl $(NAME)/templates/
 
 .PHONY: check
 check:

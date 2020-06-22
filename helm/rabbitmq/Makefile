@@ -1,4 +1,4 @@
-NAME := rabbitmq-server
+NAME := rabbitmq
 CHART_NAME := stable/rabbitmq
 CHART_VERSION := 6.8.3
 
@@ -15,7 +15,6 @@ fetch:
 	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
 	rm -rf $(NAME)
 	tar xf $(NAME)-$(CHART_VERSION).tgz
-	cp -p _helpers.tpl $(NAME)/templates/
 
 .PHONY: check
 check:

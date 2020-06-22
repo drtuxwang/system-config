@@ -1,4 +1,4 @@
-NAME := jenkins-server
+NAME := jenkins
 CHART_NAME := bitnami/jenkins
 CHART_VERSION := 5.0.14
 
@@ -15,7 +15,6 @@ fetch:
 	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
 	rm -rf $(NAME)
 	tar xf $(NAME)-$(CHART_VERSION).tgz
-	cp -p _helpers.tpl $(NAME)/templates/
 
 .PHONY: check
 check:

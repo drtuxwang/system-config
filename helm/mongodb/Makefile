@@ -1,4 +1,4 @@
-NAME := mongodb-server
+NAME := mongodb
 CHART_NAME := stable/mongodb
 CHART_VERSION := 7.8.7
 
@@ -15,7 +15,6 @@ fetch:
 	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
 	rm -rf $(NAME)
 	tar xf $(NAME)-$(CHART_VERSION).tgz
-	cp -p _helpers.tpl $(NAME)/templates/
 
 .PHONY: check
 check:

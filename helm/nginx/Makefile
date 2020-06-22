@@ -1,4 +1,4 @@
-NAME := nginx-proxy
+NAME := nginx
 CHART_NAME := bitnami/nginx
 CHART_VERSION := 5.1.12
 
@@ -15,7 +15,6 @@ fetch:
 	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
 	rm -rf $(NAME)
 	tar xf $(NAME)-$(CHART_VERSION).tgz
-	cp -p _helpers.tpl $(NAME)/templates/
 
 .PHONY: check
 check:

@@ -1,4 +1,4 @@
-NAME := chartmuseum-server
+NAME := chartmuseum
 CHART_NAME := stable/chartmuseum
 CHART_VERSION := 2.12.2
 INGRESS_HOST := chartmusuem.local
@@ -17,7 +17,6 @@ fetch:
 	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
 	rm -rf $(NAME)
 	tar xf $(NAME)-$(CHART_VERSION).tgz
-	cp -p _helpers.tpl $(NAME)/templates/
 
 .PHONY: check
 check:
