@@ -10,6 +10,13 @@ endif
 
 default: status
 
+.PHONY: fetch
+fetch:
+	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
+	rm -rf $(NAME)
+	tar xf $(NAME)-$(CHART_VERSION).tgz
+	cp -p _helpers.tpl $(NAME)/templates/
+
 .PHONY: check
 check:
 	helm repo add bitnami https://charts.bitnami.com/bitnami
