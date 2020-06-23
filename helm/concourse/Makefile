@@ -38,8 +38,8 @@ check: fetch
 ##		--version $(CHART_VERSION) \
 ##		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
-.PHONY: deploy
-deploy: fetch
+.PHONY: install
+install:
 	helm repo add concourse https://concourse-charts.storage.googleapis.com
 	helm upgrade \
 		--install \
@@ -55,10 +55,8 @@ deploy: fetch
 
 .PHONY: forward
 forward:
-##	kubectl --namespace $(NAMESPACE) describe service/$(NAME)-web
-##	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME)-web $(LOCALPORT):8080
-	kubectl --namespace $(NAMESPACE) describe service/$(NAMESPACE)-$(NAME)-web
-	kubectl --namespace $(NAMESPACE) port-forward service/$(NAMESPACE)-$(NAME)-web $(LOCALPORT):8080
+	kubectl --namespace $(NAMESPACE) describe service/$(NAME)-web
+	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME)-web $(LOCALPORT):8080
 
 .PHONY: status
 status:
@@ -69,11 +67,13 @@ status:
 version:
 	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) "
 
-.PHONY: clean
-clean:
-	rm -rf $(NAME)-$(CHART_VERSION).tgz $(NAME)
+.PHONY: delete
+delete:
 	helm ls $(NAMESPACE)-$(NAME)
 	helm del --purge $(NAMESPACE)-$(NAME) ||:
 	sleep 2
 	kubectl delete namespace $(NAMESPACE)-$(NAME)-main ||:
 
+.PHONY: clean
+clean:
+	rm -rf $(NAME)-$(CHART_VERSION).tgz $(NAME)

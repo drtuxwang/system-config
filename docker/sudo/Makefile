@@ -59,6 +59,6 @@ push:
 .PHONY: save
 save:
 
-.PHONY: clean
-clean:
+.PHONY: rmi
+rmi:
 	docker rmi -f $(IMAGE) ||:

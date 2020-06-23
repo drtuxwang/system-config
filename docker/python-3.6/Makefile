@@ -50,6 +50,6 @@ push:
 save:
 	docker save $(BASE_IMAGE) -o ../$(shell echo "$(BASE_IMAGE)" | sed -e "s#/#-#g").tar
 
-.PHONY: clean
-clean:
+.PHONY: rmi
+rmi:
 	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:

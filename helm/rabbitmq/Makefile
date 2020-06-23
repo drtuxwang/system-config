@@ -30,8 +30,8 @@ check:
 		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
-.PHONY: deploy
-deploy:
+.PHONY: install
+install:
 	helm upgrade \
 		--install \
 		--wait \
@@ -58,8 +58,11 @@ connect:
 version:
 	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) "
 
+.PHONY: delete
+delete:
+	helm ls $(NAMESPACE)-$(NAME)
+	helm del --purge $(NAMESPACE)-$(NAME) ||:
+
 .PHONY: clean
 clean:
 	rm -rf $(NAME)-$(CHART_VERSION).tgz $(NAME)
-	helm ls $(NAMESPACE)-$(NAME)
-	helm del --purge $(NAMESPACE)-$(NAME) ||:

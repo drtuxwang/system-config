@@ -43,7 +43,7 @@ version:
 	done
 
 .PHONY: install-tiller
-install:
+install-tiller:
 	kubectl -n kube-system create serviceaccount tiller
 	kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
 	helm init --service-account tiller
@@ -53,7 +53,7 @@ replace:
 	helm init --upgrade
 
 .PHONY: uninstall-tiller
-uninstall:
+uninstall-tiller:
 	kubectl -n kube-system delete serviceaccounts tiller ||:
 	kubectl -n kube-system delete clusterrolebinding tiller ||:
 	kubectl -n kube-system delete deploy tiller-deploy ||:

@@ -30,8 +30,8 @@ template:
 		--set image.name=$(IMAGE) \
 		./oracle-xe
 
-.PHONY: deploy
-deploy:
+.PHONY: install
+install:
 	helm upgrade \
 		--install \
 		--wait \
@@ -56,8 +56,10 @@ connect:
 version:
 	@echo "`egrep "name|version:" Chart.yaml | awk '{printf("%s 	 ", $$2)}'` 	 $(IMAGE)"
 
+.PHONY: delete
+delete:
+	helm ls $(NAMESPACE)-$(NAME)
+	helm del --purge $(NAMESPACE)-$(NAME) ||:
 
 .PHONY: clean
 clean:
-	helm ls $(NAMESPACE)-$(NAME)
-	helm del --purge $(NAMESPACE)-$(NAME) ||:

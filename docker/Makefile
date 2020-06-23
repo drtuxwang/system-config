@@ -96,10 +96,10 @@ save:
 		make -C $$DIR save; \
 	done
 
-.PHONY: clean
-clean:
+.PHONY: rmi
+rmi:
 	make gc
 	for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR clean; \
+		make -C $$DIR rmi; \
 	done
 	make gc

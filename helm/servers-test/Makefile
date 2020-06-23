@@ -37,8 +37,8 @@ template:
 		--set ingress.server.domain=$(DOMAIN) \
 		./servers-test
 
-.PHONY: deploy
-deploy:
+.PHONY: install
+install:
 	helm upgrade \
 		--install \
 		--wait \
@@ -49,11 +49,6 @@ deploy:
 		--set ingress.server.domain=$(DOMAIN) \
 		$(NAMESPACE)-$(NAME) ./servers-test
 
-.PHONY: forward
-forward:
-	kubectl --namespace $(NAMESPACE) describe service/$(NAME)-server
-	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME)-server $(LOCALPORT):80
-
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
@@ -63,7 +58,15 @@ status:
 version:
 	@echo "`egrep "name|version:" Chart.yaml | awk '{printf("%s 	 ", $$2)}'` 	 $(IMAGE)"
 
-.PHONY: clean
-clean:
+.PHONY: forward
+forward:
+	kubectl --namespace $(NAMESPACE) describe service/$(NAME)-server
+	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME)-server $(LOCALPORT):80
+
+.PHONY: delete
+delete:
 	helm ls $(NAMESPACE)-$(NAME)
 	helm del --purge $(NAMESPACE)-$(NAME) ||:
+
+.PHONY: clean
+clean:

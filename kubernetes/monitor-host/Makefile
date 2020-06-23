@@ -5,8 +5,8 @@ endif
 
 default: status
 
-.PHONY: deploy
-deploy:
+.PHONY: create
+create:
 	@echo "\n*** Creating pods ***"
 	kubectl --namespace=$(NAMESPACE) create -f monitor-host-daemonset.yaml ||:
 
@@ -15,7 +15,7 @@ status:
 	@echo "\n*** Checking status ***"
 	kubectl --namespace=$(NAMESPACE) get pod -o wide | grep ^monitor-host- ||:
 
-.PHONY: clean
-clean:
+.PHONY: delete
+delete:
 	@echo "\n*** Removing pods ***"
 	kubectl --namespace=$(NAMESPACE) delete -f monitor-host-daemonset.yaml ||:

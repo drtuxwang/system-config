@@ -30,8 +30,8 @@ template:
 		--set image.name=$(IMAGE) \
 		./ops-box
 
-.PHONY: deploy
-deploy:
+.PHONY: install
+install:
 	helm upgrade \
 		--install \
 		--wait \
@@ -50,7 +50,11 @@ status:
 version:
 	@echo "`egrep "name|version:" Chart.yaml | awk '{printf("%s 	 ", $$2)}'` 	 $(IMAGE)"
 
-.PHONY: clean
-clean:
+.PHONY: delete
+delete:
 	helm ls $(NAMESPACE)-$(NAME)
 	helm del --purge $(NAMESPACE)-$(NAME) ||:
+
+.PHONY: clean
+clean:
+

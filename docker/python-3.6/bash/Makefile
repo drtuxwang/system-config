@@ -66,6 +66,6 @@ push:
 	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
 	@docker push $(IMAGE)
 
-.PHONY: clean
-clean:
+.PHONY: rmi
+rmi:
 	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:
