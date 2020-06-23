@@ -55,6 +55,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/docker-compose.bat
  * bin/flask
  * bin/flask.bat
+ * bin/fly
+ * bin/fly.py
  * bin/glances
  * bin/ipdb3
  * bin/ipdb3.bat
