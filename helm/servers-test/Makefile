@@ -65,7 +65,7 @@ forward:
 
 .PHONY: connect
 connect:
-	sleep 2 && firefox http://localhost:$(LOCALPORT) &
+	sleep 2 && firefox http://127.0.0.1:$(LOCALPORT) &
 	make forward
 
 .PHONY: delete

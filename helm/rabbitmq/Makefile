@@ -7,6 +7,11 @@ ifndef NAMESPACE
 	NAMESPACE=default
 endif
 
+# Default local port
+ifndef LOCALPORT
+	LOCALPORT=15672
+endif
+
 
 default: status
 
@@ -48,11 +53,16 @@ status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
 
+.PHONY: forward
+forward:
+	get --namespace $(NAMESPACE) secret rabbitmq -o jsonpath="{.data.rabbitmq-password}" | \
+		base64 -d |  awk '{printf("Username: guest\nPassword: %s\n", $$1)}'
+	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):15672
+
 .PHONY: connect
 connect:
-	@echo "\n*** Connecting to RabbitMQ server ***"
-	@echo "firefox http://`kubectl get service rabbitmq-server | awk 'NR==2 {print $$3}'`:15672"
-	@firefox http://`kubectl get service rabbitmq-server | awk 'NR==2 {print $$3}'`:15672
+	sleep 2 && firefox http://127.0.0.1:$(LOCALPORT) &
+	make forward
 
 .PHONY: version
 version:
