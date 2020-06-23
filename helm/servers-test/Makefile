@@ -14,6 +14,7 @@ endif
 
 default: status
 
+
 .PHONY: check
 check:
 	helm upgrade \
@@ -60,8 +61,12 @@ version:
 
 .PHONY: forward
 forward:
-	kubectl --namespace $(NAMESPACE) describe service/$(NAME)-server
 	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME)-server $(LOCALPORT):80
+
+.PHONY: connect
+connect:
+	sleep 2 && firefox http://localhost:$(LOCALPORT) &
+	make forward
 
 .PHONY: delete
 delete:

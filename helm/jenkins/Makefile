@@ -7,6 +7,11 @@ ifndef NAMESPACE
 	NAMESPACE=default
 endif
 
+# Default local port
+ifndef LOCALPORT
+	LOCALPORT=8080
+endif
+
 
 default: status
 
@@ -48,14 +53,16 @@ status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
 
+.PHONY: forward
+forward:
+	@kubectl --namespace $(NAMESPACE) get secret $(NAME) -o jsonpath="{.data.jenkins-password}" | \
+		base64 -d | awk '{printf("Username: user\nPassword: %s\n", $$1)}'
+	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):80
+
 .PHONY: connect
 connect:
-	@echo "\n*** Connecting to Jenkins server ***"
-	@echo "Username: user"
-	@kubectl get secret --namespace $(NAMESPACE) $(NAME) -o jsonpath="{.data.jenkins-password}" | \
-		base64 -d | awk '{printf("Password: %s\n", $$1)}'
-	@echo "firefox http://`kubectl get service jenkins-server | awk 'NR==2 {print $$3}'`"
-	@firefox http://`kubectl get service jenkins-server | awk 'NR==2 {print $$3}'`
+	sleep 2 && firefox http://localhost:$(LOCALPORT) &
+	make forward
 
 .PHONY: version
 version:

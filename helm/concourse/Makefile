@@ -23,7 +23,7 @@ fetch:
 	cp -p _helpers.tpl $(NAME)/templates/
 
 .PHONY: check
-check: fetch
+check:
 	helm repo add concourse https://concourse-charts.storage.googleapis.com
 	helm upgrade \
 		--install \
@@ -34,12 +34,11 @@ check: fetch
 		--set fullnameOverride=$(NAME) \
 		--set postgresql.fullnameOverride=$(NAME)-postgresql \
 		--set service.type=ClusterIP \
-		$(NAMESPACE)-$(NAME) ./$(NAME)
-##		--version $(CHART_VERSION) \
-##		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: install
-install:
+install: fetch
 	helm repo add concourse https://concourse-charts.storage.googleapis.com
 	helm upgrade \
 		--install \
@@ -49,14 +48,20 @@ install:
 		--set fullnameOverride=$(NAME) \
 		--set postgresql.fullnameOverride=$(NAME)-postgresql \
 		--set service.type=ClusterIP \
+		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) ./$(NAME)
-##		--version $(CHART_VERSION) \
 ##		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: forward
 forward:
-	kubectl --namespace $(NAMESPACE) describe service/$(NAME)-web
+	@echo "Username: test"
+	@echo "Password: test"
 	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME)-web $(LOCALPORT):8080
+
+.PHONY: connect
+connect:
+	sleep 2 && firefox http://localhost:$(LOCALPORT) &
+	make forward
 
 .PHONY: status
 status:
