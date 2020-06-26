@@ -186,6 +186,7 @@ then
             export MYTTY="/dev/???"
         else
             export MYTTY=`\tty 2> /dev/null`
+            export GPG_TTY="$MYTTY"
             (mesg y) > /dev/null 2>&1
             export TMOUT=0
             stty erase "^?" 2> /dev/null  # ^H alternative
