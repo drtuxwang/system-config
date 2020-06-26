@@ -1,6 +1,7 @@
 [user]
 	name = ???
 	email = ???
+	signingkey = ???
 [alias]
 	checkout-all = "!f() { git checkout \"$1\" ||: ; git submodule foreach \"git checkout '$1' ||:\"; }; f"
 	find-base = "!f() { git merge-base master $1; }; f"
