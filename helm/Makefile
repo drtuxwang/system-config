@@ -49,7 +49,7 @@ install-tiller:
 	helm init --service-account tiller
 
 .PHONY: upgrade-tiller
-replace:
+upgrade-tiller:
 	helm init --upgrade
 
 .PHONY: uninstall-tiller
