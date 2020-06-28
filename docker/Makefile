@@ -21,7 +21,7 @@ TEST_DIRS := \
 
 # Default Sandbox distro
 ifndef DIST
-	DIST=debian
+	DIST=debian-10
 endif
 
 
