@@ -32,7 +32,7 @@ endif
 
 .PHONY: default
 default: build
-	docker images
+	docker images | grep "^`echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /'` "
 
 .PHONY: build
 build:

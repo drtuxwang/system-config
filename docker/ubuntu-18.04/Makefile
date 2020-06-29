@@ -10,7 +10,7 @@ BUILD_DIRS := bash dev
 
 .PHONY: default
 default: build
-	docker images
+	docker images | grep "^`echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /'` "
 
 .PHONY: pull
 pull:

@@ -41,14 +41,13 @@ pull:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR pull || exit 1; \
 	done
-	docker images
 
 .PHONY: build
 build:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR build || exit 1:; \
 	done
-	docker images
+	docker images | grep "^`echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /'` "
 
 .PHONY: test
 test:
