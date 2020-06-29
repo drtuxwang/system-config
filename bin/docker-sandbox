@@ -18,7 +18,7 @@ fi
 export DOCKER_RUN_FLAGS=
 export DIST=
 NETWORK=none
-SANDBOX=99999:99999
+SANDBOX=sandbox:users
 while [ $# -gt 0 ]
 do
     case $1 in
@@ -87,7 +87,7 @@ DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=$PWD:/vol/app --workdir=/vol/app"
 DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --network=$NETWORK"
 
 # Sandbox user
-if [ "$SANDBOX" = "99999:99999" ]
+if [ "$SANDBOX" = "sandbox:users" ]
 then
     DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --user=$SANDBOX"
 elif [ "$SANDBOX" != "0:0" ]

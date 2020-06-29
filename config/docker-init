@@ -16,6 +16,8 @@ then
     xauth add $(uname -n)/${XAUTH#*/}
 fi
 
+echo "$SSH_KEY" > $HOME/.ssh/authorized_keys
+
 if [ $# = 0 ]
 then
     exec bash -l

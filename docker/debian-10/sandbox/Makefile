@@ -9,10 +9,10 @@ ifndef DOCKER_BUILD_FLAGS
 endif
 
 ifndef LOCALPORT
-	LOCALPORT=5901
+	LOCALPORT=2222
 endif
 ifndef DOCKER_RUN_FLAGS
-	DOCKER_RUN_FLAGS=--network=none --user=99999:99999
+	DOCKER_RUN_FLAGS=--network=none --user=sandbox:users
 endif
 DOCKER_RUN_FLAGS := --rm \
 	--interactive \
@@ -21,7 +21,8 @@ DOCKER_RUN_FLAGS := --rm \
 	--cpu-shares=50000 \
 	--memory=2000m \
 	--memory-reservation=50m \
-	--publish $(LOCALPORT):5901 \
+	--env SSH_KEY="`cat ~/.ssh/id_rsa.pub`" \
+	--publish $(LOCALPORT):22 \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
@@ -36,7 +37,11 @@ default: build
 
 .PHONY: build
 build:
-	mkdir -p tmpdir/bin tmpdir/etc tmpdir/home/.config/xfce4/terminal tmpdir/home/.vnc
+	mkdir -p tmpdir/bin \
+		tmpdir/etc \
+		tmpdir/home/.config/xfce4/terminal \
+		tmpdir/home/.ssh \
+		tmpdir/home/.vnc
 	cp -p $(TOPDIR)/etc/install-python-requirements.sh tmpdir/etc
 	cp -p $(TOPDIR)/etc/python-requirements.txt tmpdir/etc
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
@@ -48,13 +53,7 @@ build:
 	cp -p $(TOPDIR)/config/vimrc tmpdir/home/.vimrc
 	cp -p files/xstartup tmpdir/home/.vnc/
 	$(TOPDIR)/etc/setmod *
-	tar cf tmpdir/home.tar -C tmpdir/home --owner=0 --group=0 \
-		.bashrc \
-		.config \
-		.profile \
-		.tmux.conf \
-		.vimrc \
-		.vnc
+	cd tmpdir/home && tar cf ../home.tar --owner=0 --group=0 .???*
 	chmod 644 tmpdir/home.tar
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .

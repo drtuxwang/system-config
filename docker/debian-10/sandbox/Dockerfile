@@ -29,14 +29,18 @@ RUN apt-get install --no-install-recommends -y \
 		fonts-noto-hinted \
 		libgl1-mesa-glx \
 		libsdl1.2debian \
+		openssh-server \
 		procps \
+		sudo \
 		tmux \
 		x11-xserver-utils \
 		xauth && \
 	apt-get clean && \
 	rm -rf /root/.??* && \
-	echo "sandbox:x:99999:99999::/home/sandbox:/bin/bash" >> /etc/passwd && \
-	echo "sandbox:x:99999" >> /etc/group && \
+	mkdir -p /var/run/sshd && \
+	echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+	useradd --shell /bin/bash --gid users sandbox && \
+	addgroup sandbox sudo && \
 	chmod -R 777 /home && \
 	wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
 	chmod 755 /tini
@@ -61,8 +65,11 @@ COPY tmpdir/bin/ /opt/software/bin/
 # Add home directory archive
 COPY tmpdir/home.tar /home/
 
+# Root account
+RUN cd /root && tar xf /home/home.tar
+
 # Configure start
 COPY tmpdir/etc/docker-init /etc/
 ENV DESKTOP_SESSION=xfce
-EXPOSE 5901
+EXPOSE 22 5901
 ENTRYPOINT ["/tini", "/etc/docker-init"]
