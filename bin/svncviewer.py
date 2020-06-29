@@ -28,8 +28,7 @@ class Options:
         """
         return self._vncviewer
 
-    @staticmethod
-    def _getport(remote_host, remote_port):
+    def _getport(self, remote_host, remote_port):
         lsof = command_mod.Command(
             'lsof',
             args=['-i', 'tcp:5901-5999'],
@@ -40,7 +39,9 @@ class Options:
         for local_port in range(5901, 6000):
             if not task.is_match_output(':' + str(local_port) + '[ -]'):
                 ssh = command_mod.Command('ssh', errors='stop')
-                ssh.set_args([
+                if self._args.ssh_port:
+                    ssh.extend_args(['-p', self._args.ssh_port[0]])
+                ssh.extend_args([
                     '-f',
                     '-L',
                     str(local_port) + ':localhost:' + remote_port,
@@ -65,9 +66,18 @@ class Options:
             description='Securely connect to VNC server using SSH protocol.')
 
         parser.add_argument(
+            '-p',
+            nargs=1,
+            dest='ssh_port',
+            default=None,
+            metavar='ssh_port',
+            help='Select non-default ssh port.'
+        )
+
+        parser.add_argument(
             'server',
             nargs=1,
-            metavar='[[user]@host]:port',
+            metavar='[[user]@host]:vnc_port',
             help='VNC server location.'
         )
 
