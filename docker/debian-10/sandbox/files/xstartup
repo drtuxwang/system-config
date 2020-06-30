@@ -1,4 +1,4 @@
 #!/bin/sh
-unset SESSION_MANAGER DBUS_SESSION_BUS_ADDRESS
-
+unset DBUS_SESSION_BUS_ADDRESS
+unset SESSION_MANAGER
 dbus-launch startxfce4 &

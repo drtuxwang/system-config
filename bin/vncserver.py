@@ -79,7 +79,8 @@ class Options:
         ] + args[1:])
         self._umask = os.umask(int('077', 8))
         os.umask(self._umask)
-        self._config()
+        if len(args) == 1:
+            self._config()
 
 
 class Main:
