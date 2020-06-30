@@ -16,7 +16,20 @@ then
     xauth add $(uname -n)/${XAUTH#*/}
 fi
 
-echo "$SSH_KEY" > $HOME/.ssh/authorized_keys
+if [ "$SSH_PUBKEY" ]
+then
+    echo "Starting SSHD server..."
+    echo "$SSH_PUBKEY" > $HOME/.ssh/authorized_keys
+    sudo /usr/sbin/sshd -D &
+    sleep 1
+    ps -ef | grep "[0-9] /usr/sbin/sshd -D"
+fi
+if [ "$SVNCSERVER" ]
+then
+    echo "Starting VNC server..."
+    vncserver -SecurityTypes None > /dev/null 2>&1
+    vncserver -list | grep ^:
+fi
 
 if [ $# = 0 ]
 then

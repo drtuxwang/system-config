@@ -43,11 +43,17 @@ do
     -snd)
         DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --device=/dev/snd:/dev/snd"
         ;;
+    -ssh)
+        NETWORK="bridge"
+        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --env SSH_PUBKEY=\"$(cat ~/.ssh/id_rsa.pub)\" "
+        ;;
     -user)
         SANDBOX="$(id -u):$(id -g)"
         ;;
     -vnc)
-        NETWORK="host"
+        NETWORK="bridge"
+        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --env SSH_PUBKEY=\"$(cat ~/.ssh/id_rsa.pub)\" "
+        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --env SVNCSERVER=1 "
         ;;
     -v=*)
         MOUNT=${1#*=}

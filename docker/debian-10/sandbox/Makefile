@@ -21,7 +21,6 @@ DOCKER_RUN_FLAGS := --rm \
 	--cpu-shares=50000 \
 	--memory=2000m \
 	--memory-reservation=50m \
-	--env SSH_KEY="`cat ~/.ssh/id_rsa.pub`" \
 	--publish $(LOCALPORT):22 \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
