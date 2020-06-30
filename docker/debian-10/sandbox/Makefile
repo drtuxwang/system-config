@@ -45,7 +45,6 @@ build:
 	cp -p $(TOPDIR)/etc/install-python-requirements.sh tmpdir/etc
 	cp -p $(TOPDIR)/etc/python-requirements.txt tmpdir/etc
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
-	cp -p $(TOPDIR)/config/docker-init tmpdir/etc
 	cp -p $(TOPDIR)/config/bashrc tmpdir/home/.bashrc
 	cp -p $(TOPDIR)/config/profile tmpdir/home/.profile
 	cp -p $(TOPDIR)/config/terminalrc tmpdir/home/.config/xfce4/terminal

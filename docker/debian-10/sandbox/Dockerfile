@@ -69,7 +69,7 @@ COPY tmpdir/home.tar /home/
 RUN cd /root && tar xf /home/home.tar
 
 # Configure start
-COPY tmpdir/etc/docker-init /etc/
+COPY files/docker-init /etc/
 ENV DESKTOP_SESSION=xfce
 EXPOSE 22 5901
 ENTRYPOINT ["/tini", "/etc/docker-init"]
