@@ -5,7 +5,7 @@ TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
-BUILD_DIRS := bash dev sandbox
+BUILD_DIRS := bash dev xfce
 
 
 .PHONY: default

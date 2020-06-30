@@ -22,7 +22,7 @@ RUN apt-get install --no-install-recommends -y \
 		libcurl4-openssl-dev && \
 	apt-get clean
 
-# Install sandbox environment packages
+# Install user environment packages
 RUN apt-get install --no-install-recommends -y \
 		file \
 		fonts-noto-cjk \
@@ -39,8 +39,8 @@ RUN apt-get install --no-install-recommends -y \
 	rm -rf /root/.??* && \
 	mkdir -p /var/run/sshd && \
 	echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-	useradd --shell /bin/bash --gid users sandbox && \
-	addgroup sandbox sudo && \
+	useradd --shell /bin/bash --gid users owner && \
+	addgroup owner sudo && \
 	chmod -R 777 /home && \
 	wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
 	chmod 755 /tini

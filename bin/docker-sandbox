@@ -3,28 +3,16 @@
 # Run Docker Debian sandbox (no dri, ipc, net, snd, root & x11 defaults)
 #
 
-# Locate GIT
-if [ -f "$(readlink -m "$0"/../..)/docker/Makefile" ]
-then
-    DIR="$(readlink -m "$0"/../..)"
-elif [ -f "$HOME/git/system-config/docker/Makefile" ]
-then
-    DIR="$HOME/git/system-config"
-else
-    echo "Error: Cannot locate \"git/system-config/docker/Makefile\""
-    exit 1
-fi
+IMAGE="drtuxwang/debian-xfce:10"
+NAME="debian10"
+LOCALPORT="2222"
 
-export DOCKER_RUN_FLAGS=
-export DIST=
+DOCKER_RUN_FLAGS=" --rm -it --publish $LOCALPORT:22 --name $NAME --hostname $NAME "
 NETWORK=none
-SANDBOX=sandbox:users
+SANDBOX=owner:users
 while [ $# -gt 0 ]
 do
     case $1 in
-    -dist=*)
-        DIST=${1#*=}
-        ;;
     -dri)
         DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --device=/dev/dri:/dev/dri"
         ;;
@@ -45,14 +33,12 @@ do
         ;;
     -ssh)
         NETWORK="bridge"
-        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --env SSH_PUBKEY=\"$(cat ~/.ssh/id_rsa.pub)\" "
         ;;
     -user)
         SANDBOX="$(id -u):$(id -g)"
         ;;
     -vnc)
         NETWORK="bridge"
-        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --env SSH_PUBKEY=\"$(cat ~/.ssh/id_rsa.pub)\" "
         DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --env SVNCSERVER=1 "
         ;;
     -v=*)
@@ -63,12 +49,9 @@ do
         DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=/tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY --env XAUTH=\"$(xauth list $DISPLAY)\""
         ;;
     -*)
-        echo "usage: $0 [-dist=<name>] [-dri] [-net] [-root] [-snd] [-user] [-v=<path>[:ro]] [-x11] [command]"
+        echo "usage: $0 [-dri] [-net] [-root] [-snd] [-user] [-vnc] [-v=<path>[:ro]] [-x11] [command]"
         echo
         echo "optional arguments:"
-        ls -1d $DIR/docker/*/sandbox-gcc/Makefile 2> /dev/null | \
-            sed -e "s@.*/docker/@@;s@/.*@@" | \
-            awk '{printf("   -dist=%-15s Select sandbox environment.\n", $1)}'
         echo "   -dri                  Enable direct rendering device access."
         echo "   -ipc                  Enable shmem for internet process communications."
         echo "   -net                  Enable network device access."
@@ -101,12 +84,4 @@ then
     DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=/etc/passwd:/etc/passwd:ro --volume=/etc/group:/etc/group:ro --user=$SANDBOX"
 fi
 
-export DOCKER_RUN_COMMAND="$@"
-
-if [ "$DIST" -a ! -f "$DIR/docker/${DIST}/sandbox/Makefile" ]
-then
-     echo "Error: Cannot locate \"$DIR/docker/${DIST}/sandbox/Makefile\""
-     exit 1
-fi
-
-exec make --quiet -C $DIR/docker run-sandbox
+docker run $DOCKER_RUN_FLAGS --env SSH_PUBKEY="$(cat ~/.ssh/id_rsa.pub)" $IMAGE "$@"

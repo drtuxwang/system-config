@@ -19,11 +19,6 @@ BUILD_DIRS := \
 TEST_DIRS := \
 	python-3.6
 
-# Default Sandbox distro
-ifndef DIST
-	DIST=debian-10
-endif
-
 
 .PHONY: default
 default: build
@@ -60,10 +55,6 @@ version:
 	@for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory -C $$DIR version || exit 1; \
 	done
-
-.PHONY: run-sandbox
-run-sandbox:
-	make -C $(DIST)/sandbox run
 
 .PHONY: run-sudo
 run-sudo:

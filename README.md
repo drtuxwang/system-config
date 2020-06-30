@@ -947,10 +947,10 @@ the years. Now most of the scripts are written in Python 3.
  * docker/debian-10/bash/Dockerfile
  * docker/debian-10/dev/Makefile         debian:10-slim based GCC dev shell
  * docker/debian-10/dev/Dockerfile
- * docker/debian-10/sandbox/Makefile     debian:10-slim based sandbox environment
- * docker/debian-10/sandbox/Dockerfile
- * docker/debian-10/sandbox/files/docker-init
- * docker/debian-10/sandbox/files/xstartup
+ * docker/debian-10/xfce/Makefile        debian:10-slim based XFCE environment
+ * docker/debian-10/xfce/Dockerfile
+ * docker/debian-10/xfce/files/docker-init
+ * docker/debian-10/xfce/files/xstartup
  * docker/debian-i386-10/Makefile        i386/debian:10-slim based linux
  * docker/debian-i386-10/Dockerfile
  * docker/debian-i386-10/bash/Makefile   i386/debian:10-slim based BASH login

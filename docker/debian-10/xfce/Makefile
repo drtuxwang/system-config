@@ -1,5 +1,5 @@
 BASE_IMAGE := drtuxwang/debian:10
-IMAGE := drtuxwang/debian-sandbox:10
+IMAGE := drtuxwang/debian-xfce:10
 NAME := debian10
 HOSTNAME := debian10
 
@@ -12,7 +12,7 @@ ifndef LOCALPORT
 	LOCALPORT=2222
 endif
 ifndef DOCKER_RUN_FLAGS
-	DOCKER_RUN_FLAGS=--network=none --user=sandbox:users
+	DOCKER_RUN_FLAGS=--network=none --user=owner:users
 endif
 DOCKER_RUN_FLAGS := --rm \
 	--interactive \
