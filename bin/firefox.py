@@ -361,7 +361,7 @@ class Options:
             '"toolkit.telemetry.updatePing.enabled", false',
             '"ui.submenuDelay", 0',
             '"webgl.disabled", false',
-            '"xpinstall.signatures.required", false',
+            '"xpinstall.signatures.required", true',
         )
 
         firefoxdir = os.path.join(os.environ['HOME'], cls._get_profiles_dir())
