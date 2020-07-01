@@ -7,6 +7,8 @@ Use '-i' for invisible terminal
 
 import glob
 import os
+import re
+import shutil
 import signal
 import socket
 import sys
@@ -346,6 +348,20 @@ class XfceTerminal(GnomeTerminal):
         )
 
     def _config(self):
+        file = os.path.join(
+            os.environ.get('HOME', ''),
+            '.config/xfce4/terminal/accels.scm',
+        )
+        try:
+            with open(file, errors='replace') as ifile:
+                data = ifile.read()
+                if '"<Alt>' in data:
+                    with open(file+'-new', 'w', newline='\n') as ofile:
+                        print(re.sub(r'"<Alt>\d+"', '""', data), file=ofile)
+                    shutil.move(file+'-new', file)
+        except OSError:
+            return
+
         self._command = command_mod.Command(
             'xfce4-terminal',
             errors='ignore'
