@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/ubuntu:20.04
 IMAGE := drtuxwang/ubuntu-dev:20.04
-NAME := ubuntu20
-HOSTNAME := ubuntu20
+NAME := ubuntu20-dev
+HOSTNAME := ubuntu20-dev
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS

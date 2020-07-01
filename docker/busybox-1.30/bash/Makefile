@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/busybox:1.30
 IMAGE := drtuxwang/busybox-bash:1.30
-NAME := busybox
-HOSTNAME := busybox
+NAME := busybox-bash
+HOSTNAME := busybox-bash
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS

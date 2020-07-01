@@ -1,7 +1,7 @@
 BASE_IMAGE := scratch
 IMAGE := drtuxwang/sudo
-NAME := sudo
-HOSTNAME := sudo
+NAME := sudo-bash
+HOSTNAME := sudo-bash
 
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=

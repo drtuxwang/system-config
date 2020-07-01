@@ -1,7 +1,7 @@
 BASE_IMAGE := golang:1.13.12-alpine
 IMAGE := drtuxwang/golang:1.13
-NAME := golang
-HOSTNAME := golang
+NAME := golang-bash
+HOSTNAME := golang-bash
 
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS

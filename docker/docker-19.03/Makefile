@@ -1,7 +1,7 @@
 BASE_IMAGE := docker:19.03
 IMAGE := drtuxwang/docker:19.03
-NAME := docker
-HOSTNAME := docker
+NAME := docker-bash
+HOSTNAME := docker-bash
 
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS

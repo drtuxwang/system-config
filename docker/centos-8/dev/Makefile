@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/centos:8
 IMAGE := drtuxwang/centos-dev:8
-NAME := centos8
-HOSTNAME := centos8
+NAME := centos8-dev
+HOSTNAME := centos8-dev
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS

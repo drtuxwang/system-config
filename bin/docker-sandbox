@@ -4,10 +4,11 @@
 #
 
 IMAGE="drtuxwang/debian-xfce:10"
-NAME="debian10"
+NAME="debian10-sandbox"
+HOSTNAME="debian10-sandbox"
 LOCALPORT="2222"
 
-DOCKER_RUN_FLAGS=" --rm -it --publish $LOCALPORT:22 --name $NAME --hostname $NAME "
+DOCKER_RUN_FLAGS=" --rm -it --publish $LOCALPORT:22 --name $NAME --hostname $HOSTNAME "
 NETWORK=none
 SANDBOX=owner:users
 while [ $# -gt 0 ]

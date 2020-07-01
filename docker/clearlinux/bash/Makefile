@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/clearlinux:latest
 IMAGE := drtuxwang/clearlinux-bash:latest
-NAME := clearlinux
-HOSTNAME := clearlinux
+NAME := clearlinux-bash
+HOSTNAME := clearlinux-bash
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS

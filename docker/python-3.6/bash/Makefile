@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/python:3.6
 IMAGE := drtuxwang/python-bash:3.6
-NAME := python36
-HOSTNAME := python36
+NAME := python36-bash
+HOSTNAME := python36-bash
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS

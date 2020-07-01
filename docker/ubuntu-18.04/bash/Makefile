@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/ubuntu:18.04
 IMAGE := drtuxwang/ubuntu-bash:18.04
-NAME := ubuntu18
-HOSTNAME := ubuntu18
+NAME := ubuntu18-bash
+HOSTNAME := ubuntu18-bash
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS
