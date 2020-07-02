@@ -1042,6 +1042,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/rabbitmq/values.yaml
  * helm/test-servers/Makefile            Helm Chart: test chart for testing server
  * helm/test-servers/test-servers/Chart.yaml
+ * helm/test-servers/test-servers/requirements.lock
  * helm/test-servers/test-servers/requirements.yaml
  * helm/test-servers/test-servers/templates/\_helpers.tpl
  * helm/test-servers/test-servers/templates/servers-headless-service.yaml
@@ -1050,6 +1051,15 @@ the years. Now most of the scripts are written in Python 3.
  * helm/test-servers/test-servers/templates/servers-service.yaml
  * helm/test-servers/test-servers/templates/servers-statefulset.yaml
  * helm/test-servers/values.yaml
+ * helm/xfce-servers/Makefile            Helm Chart: xfce server chart
+ * helm/xfce-servers/values.yaml
+ * helm/xfce-servers/xfce-servers/Chart.yaml
+ * helm/xfce-servers/xfce-servers/requirements.lock
+ * helm/xfce-servers/xfce-servers/requirements.yaml
+ * helm/xfce-servers/xfce-servers/templates/_helpers.tpl
+ * helm/xfce-servers/xfce-servers/templates/servers-headless-service.yaml
+ * helm/xfce-servers/xfce-servers/templates/servers-service.yaml
+ * helm/xfce-servers/xfce-servers/templates/servers-statefulset.yaml
  * python/simple-cython/Makefile         Simple Cython example
  * python/simple-cython/cython_example.pyx
  * python/simple-cython/run.py

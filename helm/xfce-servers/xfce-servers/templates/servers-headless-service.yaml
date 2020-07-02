@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    helm.sh/chart: {{ include "chart.name" . }}
+    app.kubernetes.io/name: {{ include "chart.name" . }}-servers
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  name: {{ include "app.fullname" . }}-servers-headless
+spec:
+  clusterIP: None
+  ports:
+  - name: ssh
+    port: {{ .Values.service.servers.port }}
+    protocol: TCP
+    targetPort: {{ .Values.service.servers.port }}
+  selector:
+    app.kubernetes.io/name: {{ include "chart.name" . }}-servers
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  type: {{ .Values.service.servers.type }}
