@@ -995,16 +995,16 @@ the years. Now most of the scripts are written in Python 3.
  * kubernetes/Makefile
  * kubernetes/monitor-host/Makefile      Kubernetes: drtuxwang/debian-bash host monitoring
  * kubernetes/monitor-host/monitor-host-daemonset.yaml
- * kubernetes/servers-test/Makefile      Kubernetes: drtuxwang/debian-bash example
- * kubernetes/servers-test/server-pod.yaml
- * kubernetes/servers-test/servers-daemonset.yaml
- * kubernetes/servers-test/servers-deployment.yaml
- * kubernetes/servers-test/servers-headless-service.yaml
- * kubernetes/servers-test/servers-ingress.yaml
- * kubernetes/servers-test/servers-replicationcontroller.yaml
- * kubernetes/servers-test/servers-secret-tls.yaml
- * kubernetes/servers-test/servers-service.yaml
- * kubernetes/servers-test/servers-statefulset.yaml
+ * kubernetes/test-servers/Makefile      Kubernetes: drtuxwang/debian-bash example
+ * kubernetes/test-servers/server-pod.yaml
+ * kubernetes/test-servers/servers-daemonset.yaml
+ * kubernetes/test-servers/servers-deployment.yaml
+ * kubernetes/test-servers/servers-headless-service.yaml
+ * kubernetes/test-servers/servers-ingress.yaml
+ * kubernetes/test-servers/servers-replicationcontroller.yaml
+ * kubernetes/test-servers/servers-secret-tls.yaml
+ * kubernetes/test-servers/servers-service.yaml
+ * kubernetes/test-servers/servers-statefulset.yaml
  * helm/Makefile
  * docker/ubuntu-test/Makefile           Install tiller
  * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.12.2 (app 0.12.0)
@@ -1040,16 +1040,16 @@ the years. Now most of the scripts are written in Python 3.
  * helm/pushgateway/values.yaml
  * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.8.3 (app 3.7.19)
  * helm/rabbitmq/values.yaml
- * helm/servers-test/Makefile            Helm Chart: Servers test (drtuxwang/debian image)
- * helm/servers-test/servers-test/Chart.yaml
- * helm/servers-test/servers-test/requirements.yaml
- * helm/servers-test/servers-test/templates/\_helpers.tpl
- * helm/servers-test/servers-test/templates/servers-headless-service.yaml
- * helm/servers-test/servers-test/templates/servers-ingress.yaml
- * helm/servers-test/servers-test/templates/servers-secret-tls.yaml
- * helm/servers-test/servers-test/templates/servers-service.yaml
- * helm/servers-test/servers-test/templates/servers-statefulset.yaml
- * helm/servers-test/values.yaml
+ * helm/test-servers/Makefile            Helm Chart: test chart for testing server
+ * helm/test-servers/test-chart/Chart.yaml
+ * helm/test-servers/test-chart/requirements.yaml
+ * helm/test-servers/test-chart/templates/\_helpers.tpl
+ * helm/test-servers/test-chart/templates/servers-headless-service.yaml
+ * helm/test-servers/test-chart/templates/servers-ingress.yaml
+ * helm/test-servers/test-chart/templates/servers-secret-tls.yaml
+ * helm/test-servers/test-chart/templates/servers-service.yaml
+ * helm/test-servers/test-chart/templates/servers-statefulset.yaml
+ * helm/test-servers/values.yaml
  * python/simple-cython/Makefile         Simple Cython example
  * python/simple-cython/cython_example.pyx
  * python/simple-cython/run.py

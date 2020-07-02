@@ -1,4 +1,4 @@
-NAMESPACE := servers-test
+NAMESPACE := default
 
 # Default local port
 ifndef LOCALPORT
