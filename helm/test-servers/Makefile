@@ -26,7 +26,7 @@ check:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAMESPACE)-$(NAME) ./test-chart
+		$(NAMESPACE)-$(NAME) ./test-servers
 
 .PHONY: template
 template:
@@ -36,7 +36,7 @@ template:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		./test-chart
+		./test-servers
 
 .PHONY: install
 install:
@@ -48,7 +48,7 @@ install:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAMESPACE)-$(NAME) ./test-chart
+		$(NAMESPACE)-$(NAME) ./test-servers
 
 .PHONY: status
 status:

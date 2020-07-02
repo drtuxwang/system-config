@@ -1041,14 +1041,14 @@ the years. Now most of the scripts are written in Python 3.
  * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.8.3 (app 3.7.19)
  * helm/rabbitmq/values.yaml
  * helm/test-servers/Makefile            Helm Chart: test chart for testing server
- * helm/test-servers/test-chart/Chart.yaml
- * helm/test-servers/test-chart/requirements.yaml
- * helm/test-servers/test-chart/templates/\_helpers.tpl
- * helm/test-servers/test-chart/templates/servers-headless-service.yaml
- * helm/test-servers/test-chart/templates/servers-ingress.yaml
- * helm/test-servers/test-chart/templates/servers-secret-tls.yaml
- * helm/test-servers/test-chart/templates/servers-service.yaml
- * helm/test-servers/test-chart/templates/servers-statefulset.yaml
+ * helm/test-servers/test-servers/Chart.yaml
+ * helm/test-servers/test-servers/requirements.yaml
+ * helm/test-servers/test-servers/templates/\_helpers.tpl
+ * helm/test-servers/test-servers/templates/servers-headless-service.yaml
+ * helm/test-servers/test-servers/templates/servers-ingress.yaml
+ * helm/test-servers/test-servers/templates/servers-secret-tls.yaml
+ * helm/test-servers/test-servers/templates/servers-service.yaml
+ * helm/test-servers/test-servers/templates/servers-statefulset.yaml
  * helm/test-servers/values.yaml
  * python/simple-cython/Makefile         Simple Cython example
  * python/simple-cython/cython_example.pyx
