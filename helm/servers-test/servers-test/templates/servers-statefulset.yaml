@@ -28,7 +28,7 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ .Chart.Name }}-servers
         ports:
-        - name: servers
+        - name: http
           containerPort: {{ .Values.service.servers.port }}
           protocol: TCP
         resources:

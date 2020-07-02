@@ -9,7 +9,7 @@ metadata:
   name: {{ include "app.fullname" . }}-servers
 spec:
   ports:
-  - name: servers
+  - name: http
     port: {{ .Values.service.servers.port }}
     protocol: TCP
     targetPort: {{ .Values.service.servers.port }}

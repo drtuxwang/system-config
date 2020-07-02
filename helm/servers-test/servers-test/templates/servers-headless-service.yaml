@@ -10,7 +10,7 @@ metadata:
 spec:
   clusterIP: None
   ports:
-  - name: servers
+  - name: http
     port: {{ .Values.service.servers.port }}
     protocol: TCP
     targetPort: {{ .Values.service.servers.port }}
