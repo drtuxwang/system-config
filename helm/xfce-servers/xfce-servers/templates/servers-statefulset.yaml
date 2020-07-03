@@ -23,7 +23,7 @@ spec:
       containers:
       - command:
         - /etc/docker-init
-        - -vnc
+        - -svnc
         image: {{ include "chart.image.name" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:

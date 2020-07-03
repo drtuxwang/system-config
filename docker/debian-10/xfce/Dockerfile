@@ -36,12 +36,7 @@ RUN apt-get install --no-install-recommends -y \
 		x11-xserver-utils \
 		xauth && \
 	apt-get clean && \
-	rm -rf /root/.??* && \
 	mkdir -p /var/run/sshd && \
-	echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-	useradd --shell /bin/bash --gid users owner && \
-	addgroup owner sudo && \
-	chmod -R 777 /home && \
 	wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
 	chmod 755 /tini
 
@@ -52,7 +47,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
 		xfce4 \
 		xfce4-goodies \
 		tigervnc-standalone-server \
-		tigervnc-common
+		tigervnc-common && \
+	apt-get clean
 
 # Install Python packages
 COPY tmpdir/etc/install-python-requirements.sh tmpdir/etc/python-requirements.txt /etc/
@@ -65,11 +61,19 @@ COPY tmpdir/bin/ /opt/software/bin/
 # Add home directory archive
 COPY tmpdir/home.tar /home/
 
-# Root account
-RUN cd /root && tar xf /home/home.tar
+# Setup accounts
+RUN rm -rf /root/.??* && \
+	tar xf /home/home.tar -C /root && \
+	useradd --shell /bin/bash --gid users owner && \
+	addgroup owner sudo && \
+	mkdir /home/owner && \
+	tar xf /home/home.tar -C /home/owner && \
+	chown -R owner:users /home/owner && \
+	rm /home/home.tar && \
+	echo "owner ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # Configure start
 COPY files/docker-init /etc/
 ENV DESKTOP_SESSION=xfce
-EXPOSE 22 5901
+EXPOSE 22
 ENTRYPOINT ["/tini", "/etc/docker-init"]

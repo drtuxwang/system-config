@@ -14,14 +14,6 @@ run_vnc() {
     vncserver -list | grep ^:
 }
 
-
-mkdir -p "$HOME"
-for FILE in /home/home*.tar
-do
-    tar xf $FILE -C $HOME
-    rm -f $FILE
-done
-
 if [ "$XAUTH" ]
 then
     touch $HOME/.Xauthority
@@ -34,11 +26,10 @@ echo "$SSH_PUBKEY" > /home/owner/.ssh/authorized_keys
 if [ $# = 0 ]
 then
     exec bash -l
-elif [ "$1" = "-vnc" ]
+elif [ "$1" = "-svnc" ]
 then
     run_vnc
     sleep infinity
 else
     exec "$@"
 fi
-
