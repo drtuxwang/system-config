@@ -14,6 +14,20 @@ securityContext:
   enabled: true
   fsGroup: 1001
   runAsUser: 1001
+replicaSet:
+  enabled: true
+  useHostnames: true
+  name: rs0
+  replicas:
+    secondary: 1
+    arbiter: 1
+  pdb:
+    minAvailable:
+      primary: 1
+      secondary: 1
+      arbiter: 1
 collections:
   example1: example1
   example2: example22
+
+

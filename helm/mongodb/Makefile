@@ -1,6 +1,6 @@
 NAME := mongodb
-CHART_NAME := stable/mongodb
-CHART_VERSION := 7.8.7
+CHART_NAME := bitnami/mongodb
+CHART_VERSION := 7.14.8
 
 # Default namespace
 ifndef NAMESPACE
