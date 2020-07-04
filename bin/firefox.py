@@ -234,6 +234,7 @@ class Options:
         if os.path.isdir(firefoxdir):
             keep_list = (
                 'addonStartup.json.lz4',
+                'content-prefs.sqlite',
                 'extensions',
                 'extensions.json',
                 'extension-preferences.json',
