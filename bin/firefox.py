@@ -343,6 +343,7 @@ class Options:
             '"print.print_edge_right", 20',
             '"print.print_edge_top", 20',
             '"plugins.click_to_play", true',
+            '"privacy.popups.showBrowserMessage", false',
             '"reader.parse-on-load.enabled", false',
             '"security.dialog_enable_delay", 0',
             '"security.enterprise_roots.enabled", false',
