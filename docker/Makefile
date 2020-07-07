@@ -68,11 +68,15 @@ push:
 
 .PHONY: gc
 gc:
-	docker ps -f status=exited -q | xargs -r docker rm -v
-	docker images -f dangling=true -q | xargs -r docker rmi
+	docker system prune
+	@echo
 	docker images
+	@echo
 	docker volume ls
+	@echo
 	docker ps
+	@echo
+	docker system df
 
 .PHONY: load
 load:

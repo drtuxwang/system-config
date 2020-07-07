@@ -3,7 +3,7 @@ IMAGE := drtuxwang/debian-bash:10
 
 # Default namespace
 ifndef NAMESPACE
-	NAMESPACE=default
+	NAMESPACE=bts-cashout-branch
 endif
 
 
