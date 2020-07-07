@@ -3,7 +3,7 @@ IMAGE := drtuxwang/debian-bash:10
 
 # Default namespace
 ifndef NAMESPACE
-	NAMESPACE=bts-cashout-branch
+	NAMESPACE=default
 endif
 
 
@@ -19,6 +19,7 @@ check:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
+		--set image.pullPolicy=Always \
 		$(NAMESPACE)-$(NAME) ./ops-box
 
 .PHONY: template
@@ -28,6 +29,7 @@ template:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
+		--set image.pullPolicy=Always \
 		./ops-box
 
 .PHONY: install
@@ -39,6 +41,7 @@ install:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
+		--set image.pullPolicy=Always \
 		$(NAMESPACE)-$(NAME) ./ops-box
 
 .PHONY: status
