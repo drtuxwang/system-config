@@ -72,7 +72,7 @@ class Main:
         hwclock = command_mod.Command('hwclock', errors='stop')
         while True:
             task.run()
-            if not task.has_error():
+            if task.get_exitcode() == 0:
                 subtask_mod.Task(hwclock.get_cmdline() + ['-w']).run()
                 subtask_mod.Task(hwclock.get_cmdline()).run()
                 logger.info(
@@ -80,7 +80,12 @@ class Main:
                     time.strftime('%Y-%m-%d-%H:%M:%S'),
                 )
                 time.sleep(86340)
-            time.sleep(60)
+            else:
+                logger.info(
+                    'Failed: retrying in 60 seconds: %s',
+                    time.strftime('%Y-%m-%d-%H:%M:%S'),
+                )
+                time.sleep(60)
 
 
 if __name__ == '__main__':
