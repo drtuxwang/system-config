@@ -1,6 +1,6 @@
 NAME := concourse
 CHART_NAME := concourse/concourse
-CHART_VERSION := 11.2.1
+CHART_VERSION := 11.2.3
 
 # Default namespace
 ifndef NAMESPACE
@@ -20,7 +20,6 @@ fetch:
 	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
 	rm -rf $(NAME)
 	tar xf $(NAME)-$(CHART_VERSION).tgz
-	cp -p _helpers.tpl $(NAME)/templates/
 
 .PHONY: check
 check:
@@ -38,7 +37,7 @@ check:
 		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: install
-install: fetch
+install:
 	helm repo add concourse https://concourse-charts.storage.googleapis.com
 	helm upgrade \
 		--install \
@@ -49,8 +48,7 @@ install: fetch
 		--set postgresql.fullnameOverride=$(NAME)-postgresql \
 		--set service.type=ClusterIP \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) ./$(NAME)
-##		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: forward
 forward:
