@@ -75,16 +75,10 @@ class Main:
             if task.get_exitcode() == 0:
                 subtask_mod.Task(hwclock.get_cmdline() + ['-w']).run()
                 subtask_mod.Task(hwclock.get_cmdline()).run()
-                logger.info(
-                    'System & HWClock time updated: %s',
-                    time.strftime('%Y-%m-%d-%H:%M:%S'),
-                )
-                time.sleep(86340)
+                logger.info('System & HWClock time updated')
+                time.sleep(3600)
             else:
-                logger.info(
-                    'Failed: retrying in 60 seconds: %s',
-                    time.strftime('%Y-%m-%d-%H:%M:%S'),
-                )
+                logger.info('Failed - retrying in 60 seconds')
                 time.sleep(60)
 
 
