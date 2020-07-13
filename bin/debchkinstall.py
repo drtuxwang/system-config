@@ -330,7 +330,7 @@ class Main:
                             distribution, ofile, indent + '  ', i)
                     self._packages[i].set_checked_flag(True)
 
-    def _read_distribution_blacklist(self, file):
+    def _read_distribution_deny_list(self, file):
         try:
             with open(file, errors='replace') as ifile:
                 for line in ifile:
@@ -377,12 +377,12 @@ class Main:
         self._packages = self._read_distribution_packages(
             options.get_distribution() + '.json')
         self._read_distribution_pin_packages(
-            options.get_distribution() + '.debs:pinlist')
+            options.get_distribution() + '.debs:select')
         self._read_distribution_installed(options.get_list_file())
 
         ispattern = re.compile('[.]debs-?.*$')
         distribution = ispattern.sub('', options.get_list_file())
-        self._read_distribution_blacklist(distribution + '.debs:blacklist')
+        self._read_distribution_deny_list(distribution + '.debs:deny')
 
         self._check_distribution_install(
             options.get_distribution(),

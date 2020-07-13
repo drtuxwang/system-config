@@ -141,7 +141,7 @@ class Main:
             pass
 
         try:
-            file = distribution + '.debs:baselist'
+            file = distribution + '.debs:base'
             with open(file, errors='replace') as ifile:
                 for line in ifile:
                     try:
@@ -162,7 +162,7 @@ class Main:
         return packages
 
     @staticmethod
-    def _read_distribution_whitelist(file):
+    def _read_distribution_allow_list(file):
         packages = {}
         try:
             with open(file, errors='replace') as ifile:
@@ -178,15 +178,15 @@ class Main:
         return packages
 
     @staticmethod
-    def _compare(packages_files, packages_white_list, packages_used):
+    def _compare(packages_files, packages_allow_list, packages_used):
         names_files = sorted(packages_files)
-        names_white_list = sorted(packages_white_list)
+        names_allow_list = sorted(packages_allow_list)
         names_used = packages_used.keys()
 
         for name in names_files:
             if name not in names_used:
-                if (name in names_white_list and
-                        packages_white_list[name] in
+                if (name in names_allow_list and
+                        packages_allow_list[name] in
                         ('*', packages_files[name])):
                     continue
                 print("rm", packages_files[name].get_file(), "# Unused")
@@ -227,12 +227,12 @@ class Main:
         for distribution in options.get_distributions():
             packages_files = self._check_files(distribution)
             if packages_files and os.path.isfile(distribution + '.debs'):
-                packages_white_list = self._read_distribution_whitelist(
-                    distribution + '.debs:whitelist')
+                packages_allow_list = self._read_distribution_allow_list(
+                    distribution + '.debs:allow')
                 packages_used = self._check_used(distribution)
                 self._compare(
                     packages_files,
-                    packages_white_list,
+                    packages_allow_list,
                     packages_used
                 )
 
