@@ -36,11 +36,8 @@ default: build
 
 .PHONY: build
 build:
-	mkdir -p tmpdir/bin \
-		tmpdir/etc \
-		tmpdir/home/.config/xfce4/terminal \
-		tmpdir/home/.ssh \
-		tmpdir/home/.vnc
+	mkdir -p tmpdir/bin tmpdir/etc
+	mkdir -p tmpdir/home/.config/xfce4/terminal tmpdir/home/.ssh tmpdir/home/.vnc
 	cp -p $(TOPDIR)/etc/install-python-requirements.sh tmpdir/etc
 	cp -p $(TOPDIR)/etc/python-requirements.txt tmpdir/etc
 	cp -p $(TOPDIR)/bin/* tmpdir/bin/
