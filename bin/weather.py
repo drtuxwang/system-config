@@ -87,15 +87,17 @@ class Main:
         try:
             data = text.split('Current Weather')[1]
         except IndexError:
-            pass
-        else:
-            temp = data.split('<span class="high">')[1].split('<')[0]
-            condition = data.split('<div class="cond">')[1].split('<')[0]
+            return
+        try:
+            temp = data.split('<div class="temp">')[1].split('<')[0]
+            condition = data.split('<span class="phrase">')[1].split('<')[0]
             if temp and condition:
                 return '{0:s}C ({1:s})'.format(
                     temp.replace('&#xB0;', '°').strip(),
                     condition.strip(),
                 )
+        except IndexError:
+            return '???'
         return None
 
     @classmethod
