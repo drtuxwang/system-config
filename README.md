@@ -995,6 +995,8 @@ the years. Now most of the scripts are written in Python 3.
  * kubernetes/Makefile
  * kubernetes/monitor-host/Makefile      Kubernetes: drtuxwang/debian-bash host monitoring
  * kubernetes/monitor-host/monitor-host-daemonset.yaml
+ * kubernetes/test-crontab/Makefile      Kubernetes: crontab example
+ * kubernetes/test-crontab/batch-crontab.yaml
  * kubernetes/test-servers/Makefile      Kubernetes: drtuxwang/debian-bash example
  * kubernetes/test-servers/server-pod.yaml
  * kubernetes/test-servers/servers-daemonset.yaml

@@ -1,0 +1,31 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  labels:
+    app: batch
+  name: batch
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 120
+      template:
+        spec:
+          containers:
+          - name: batch
+            image: busybox
+            imagePullPolicy: IfNotPresent
+            resources:
+              limits:
+                cpu: 1000m
+                memory: 1024M
+              requests:
+                cpu: 100m
+                memory: 64M
+            args:
+            - /bin/sh
+            - -c
+            - date; echo Batch job on Kubernetes cluster
+          nodeSelector:
+            beta.kubernetes.io/os: linux
+          restartPolicy: OnFailure
