@@ -283,6 +283,7 @@ class Options:
             '"browser.ping-centre.telemetry", false',
             '"browser.search.geoip.url", ""',
             '"browser.startup.homepage_override.mstone", ignore',
+            '"browser.tabs.allowTabDetach", false',
             '"browser.tabs.animate", false',
             '"browser.tabs.insertRelatedAfterCurrent", false',
             '"browser.urlbar.autoFill", false',
