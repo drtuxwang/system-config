@@ -1,5 +1,5 @@
-BASE_IMAGE := drtuxwang/busybox:1.30
-IMAGE := drtuxwang/busybox-bash:1.30
+BASE_IMAGE := drtuxwang/busybox:1.31
+IMAGE := drtuxwang/busybox-bash:1.31
 NAME := busybox-bash
 HOSTNAME := busybox-bash
 

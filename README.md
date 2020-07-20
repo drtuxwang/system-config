@@ -911,12 +911,12 @@ the years. Now most of the scripts are written in Python 3.
  * docker/amazonlinux-2/bash/Makefile
  * docker/amazonlinux-2/dev/Dockerfile
  * docker/amazonlinux-2/dev/Makefile
- * docker/busybox-1.30/Makefile          busybox:1.30 based linux
- * docker/busybox-1.30/Dockerfile
- * docker/busybox-1.30/Makefile          busybox:1.30 based BASH login
- * docker/busybox-1.30/bash/Dockerfile
- * docker/busybox-1.30/bash/Makefile
- * docker/busybox-1.30/files/ash2bash
+ * docker/busybox-1.31/Makefile          busybox:1.31 based linux
+ * docker/busybox-1.31/Dockerfile
+ * docker/busybox-1.31/Makefile          busybox:1.31 based BASH login
+ * docker/busybox-1.31/bash/Dockerfile
+ * docker/busybox-1.31/bash/Makefile
+ * docker/busybox-1.31/files/ash2bash
  * docker/centos-7/Dockerfile            centos:7 based linux
  * docker/centos-7/Makefile
  * docker/centos-7/bash/Dockerfile       centos:7 based BASH login

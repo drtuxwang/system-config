@@ -1,5 +1,5 @@
-BASE_IMAGE := busybox:1.30
-IMAGE := drtuxwang/busybox:1.30
+BASE_IMAGE := busybox:1.31
+IMAGE := drtuxwang/busybox:1.31
 
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
