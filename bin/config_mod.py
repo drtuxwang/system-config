@@ -15,8 +15,8 @@ import shutil
 import bson
 import yaml
 
-RELEASE = '1.3.2'
-VERSION = 20191019
+RELEASE = '1.4.0'
+VERSION = 20200721
 
 
 class Data:
@@ -135,12 +135,17 @@ class Data:
                 with open(tmpfile, 'w', newline='\n') as ofile:
                     for block in self._blocks:
                         if compact:
-                            print(json.dumps(block), file=ofile)
-                        else:
                             print(
-                                json.dumps(block, indent=4, sort_keys=True),
-                                file=ofile
+                                json.dumps(block, ensure_ascii=False),
+                                file=ofile,
                             )
+                        else:
+                            print(json.dumps(
+                                block,
+                                ensure_ascii=False,
+                                indent=4,
+                                sort_keys=True,
+                            ), file=ofile)
             elif file.endswith(('.yml', '.yaml')):
                 yaml_data = [
                     yaml.dump(block, indent=2, default_flow_style=False)

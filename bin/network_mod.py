@@ -10,8 +10,8 @@ import os
 
 import command_mod
 
-RELEASE = '2.0.5'
-VERSION = 20191019
+RELEASE = '2.1.0'
+VERSION = 20200721
 
 
 class Shaper(command_mod.Command):
@@ -69,7 +69,12 @@ class Shaper(command_mod.Command):
         }
         try:
             with open(file, 'w', newline='\n') as ofile:
-                print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
+                print(json.dumps(
+                    data,
+                    ensure_ascii=False,
+                    indent=4,
+                    sort_keys=True,
+                ), file=ofile)
         except OSError:
             pass
 

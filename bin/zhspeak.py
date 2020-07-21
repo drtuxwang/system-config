@@ -18,7 +18,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '4.4.2'
+RELEASE = '4.5.0'
 
 
 class Options:
@@ -304,7 +304,7 @@ class ChineseDictionary:
             self.create_cache()
 
         try:
-            with open(file) as ifile:
+            with open(file, errors='replace') as ifile:
                 self._mappings = json.load(ifile)
         except OSError:
             raise SystemExit(
@@ -326,7 +326,10 @@ class ChineseDictionary:
         self.readmap(os.path.join(directory, 'zh_listck'))
         try:
             with open(file, 'w', newline='\n') as ofile:
-                print(json.dumps(self._mappings), file=ofile)
+                print(
+                    json.dumps(self._mappings, ensure_ascii=False),
+                    file=ofile,
+                )
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + file + '" file.')
@@ -339,7 +342,10 @@ class ChineseDictionary:
         self.readmap(os.path.join(directory, 'zhy_listck'))
         try:
             with open(file, 'w', newline='\n') as ofile:
-                print(json.dumps(self._mappings), file=ofile)
+                print(
+                    json.dumps(self._mappings, ensure_ascii=False),
+                    file=ofile,
+                )
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + file + '" file.')
@@ -349,9 +355,8 @@ class ChineseDictionary:
         Read map
         """
         try:
-            with open(file, 'rb') as ifile:
+            with open(file, errors='replace') as ifile:
                 for line in ifile.readlines():
-                    line = line.decode('utf-8', 'replace')
                     if line.startswith(('//', '$')):
                         continue
                     if '\t' in line:

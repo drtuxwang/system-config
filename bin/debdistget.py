@@ -221,7 +221,7 @@ class Main:
         logger.info('Creating "%s" packages file.', file)
         try:
             with open(file + '-new', 'w', newline='\n') as ofile:
-                print(json.dumps(data), file=ofile)
+                print(json.dumps(data, ensure_ascii=False), file=ofile)
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + file + '-new" file.')

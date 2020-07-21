@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.10.0'
-VERSION = 20200510
+RELEASE = '5.11.0'
+VERSION = 20200721
 
 # pylint: disable = too-many-lines
 
@@ -2215,7 +2215,7 @@ class Writer:
         Dump information.
         """
         info = {name: kwargs}
-        print(json.dumps(info, indent=4, sort_keys=True))
+        print(json.dumps(info, ensure_ascii=False, indent=4, sort_keys=True))
 
     @staticmethod
     def output(name, **kwargs):

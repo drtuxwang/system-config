@@ -141,7 +141,11 @@ class Configuration:
         try:
             with open(file, 'w', newline='\n') as ofile:
                 print(json.dumps(
-                    self._data, indent=4, sort_keys=True), file=ofile)
+                    self._data,
+                    ensure_ascii=False,
+                    indent=4,
+                    sort_keys=True,
+                ), file=ofile)
         except OSError:
             pass
 

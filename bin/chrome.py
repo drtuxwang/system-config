@@ -97,7 +97,12 @@ class Options:
             data['profile']['exit_type'] = 'Normal'
             data['partition']['per_host_zoom_levels'] = {}
             with open(file + '-new', 'w', newline='\n') as ofile:
-                print(json.dumps(data, indent=4, sort_keys=True), file=ofile)
+                print(json.dumps(
+                    data,
+                    ensure_ascii=False,
+                    indent=4,
+                    sort_keys=True,
+                ), file=ofile)
         except (KeyError, OSError, ValueError):
             try:
                 os.remove(file + '-new')

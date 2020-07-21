@@ -175,10 +175,12 @@ class Main:
 
         try:
             with open(file+'.part.json', 'w', newline='\n') as ofile:
-                print(
-                    json.dumps(json_data, indent=4, sort_keys=True),
-                    file=ofile
-                )
+                print(json.dumps(
+                    json_data,
+                    ensure_ascii=False,
+                    indent=4,
+                    sort_keys=True,
+                ), file=ofile)
         except OSError:
             pass
 
