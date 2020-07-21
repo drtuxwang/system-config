@@ -87,7 +87,7 @@ class Main:
         try:
             data = text.split('Current Weather')[1]
         except IndexError:
-            return
+            return None
         try:
             temp = data.split('<div class="temp">')[1].split('<')[0]
             condition = data.split('<span class="phrase">')[1].split('<')[0]

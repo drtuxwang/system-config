@@ -102,7 +102,7 @@ class Main:
                     yaml_file = file
                 else:
                     name, _ = os.path.splitext(file)
-                    yaml_file = name + '.yml'
+                    yaml_file = name + '.yaml'
                 print('Converting "{0:s}" to "{1:s}"...'.format(
                     file,
                     yaml_file
