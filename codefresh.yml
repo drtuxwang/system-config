@@ -27,7 +27,6 @@ steps:
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
     - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine-3.10/Makefile | sed -e "s/.* //")
     - cf_export PYTHON_BASE=$(grep "^BASE_IMAGE" docker/python-3.10/Makefile | sed -e "s/.* //")
-    - cf_export SUDO_BASE=$(grep "^BASE_IMAGE" docker/sudo/Makefile | sed -e "s/.* //")
     - codefresh get contexts
 
   preparations:
@@ -95,15 +94,6 @@ steps:
         dockerfile: Dockerfile
         build_arguments:
         - BASE_IMAGE=${{PYTHON_BASE}}
-      build_sudo:
-        title: Build Sudo image
-        type: build
-        image_name: drtuxwang/scratch
-        tag: 'latest'
-        working_directory: docker/sudo
-        dockerfile: Dockerfile
-        build_arguments:
-        - BASE_IMAGE=${{SUDO_BASE}}
 
   docker_pushes:
     title: Push Docker images
@@ -121,12 +111,6 @@ steps:
         type: push
         registry: dockerhub
         candidate: ${{build_python}}
-        tag: 'latest'
-      push_sudo:
-        title: Push Sudo image
-        type: push
-        registry: dockerhub
-        candidate: ${{build_sudo}}
         tag: 'latest'
 
   python_tests:
