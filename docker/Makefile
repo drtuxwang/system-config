@@ -1,3 +1,5 @@
+IMAGES="drtuxwang/.*"
+
 BUILD_DIRS := \
 	alpine-3.10 \
 	alpine-i386-3.10 \
@@ -19,9 +21,9 @@ BUILD_DIRS := \
 TEST_DIRS := \
 	python-3.6
 
-
 .PHONY: default
 default: build
+	docker images | grep "^$(IMAGES) "
 
 .PHONY: project
 project:
@@ -42,7 +44,6 @@ build:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR build || exit 1:; \
 	done
-	docker images | grep "^`echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /'` "
 
 .PHONY: test
 test:
