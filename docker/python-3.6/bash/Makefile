@@ -58,7 +58,7 @@ run:
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) python --version 2> /dev/null | \
+	@docker run $(DOCKER_RUN_FLAGS) --entrypoint=python3 $(IMAGE) --version 2> /dev/null | \
 		sed -e "s@^@$(shell pwd): @"
 
 .PHONY: push
