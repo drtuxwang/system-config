@@ -145,7 +145,7 @@ exec_python() {
         PYLD_FLAGS="-pyldname=$PY_MAIN"
         PY_MAIN="p7zip"
         ;;
-    bson|bz2|calendar|git|json|yaml)
+    bson|bz2|calendar|git|json|random|yaml)
         PYLD_FLAGS="-pyldname=$PY_MAIN"
         PY_MAIN="${PY_MAIN}_"
         ;;

@@ -564,6 +564,9 @@ the years. Now most of the scripts are written in Python 3.
  * bin/pyz.py
  * bin/qmail              Qwikmail, commandline E-mailer
  * bin/qmail.py
+ * bin/random             Generate random integer from range.
+ * bin/random.bat
+ * bin/random_.py
  * bin/readcd             Copy CD/DVD data as a portable ISO/BIN image file
  * bin/readcd.py
  * bin/robo3t             robo3t wrapper (allowing non systems port)
