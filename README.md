@@ -599,6 +599,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/soffice.bat        (LibreOffice)
  * bin/soffice.py
  * bin/sqlplus            Sqlplus wrapper (for Oracle Instant Client)
+ * bin/sqlplus.bat
  * bin/sqlplus.py
  * bin/sqlplus64
  * bin/sqlplus64.py
