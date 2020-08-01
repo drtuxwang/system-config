@@ -8,6 +8,11 @@ persistence:
     accessMode: ReadWriteOnce
     size: "20Gi"
 
+web:
+  env:
+  - name: CONCOURSE_KUBERNETES_IN_CLUSTER
+    value: "true"
+
 postgresql:
   persistence:
     enabled: false
