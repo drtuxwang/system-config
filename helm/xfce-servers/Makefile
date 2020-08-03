@@ -1,5 +1,5 @@
 NAME := xfce
-IMAGE := drtuxwang/debian-xfce:10
+IMAGE := drtuxwang/debian-xfce:stable
 
 # Default namespace
 ifndef NAMESPACE

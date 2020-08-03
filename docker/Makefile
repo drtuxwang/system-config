@@ -1,22 +1,24 @@
 IMAGES="drtuxwang/.*"
 
 BUILD_DIRS := \
-	alpine-3.10 \
-	alpine-i386-3.10 \
-	amazonlinux-2 \
-	busybox-1.31 \
+	alpine-stable \
+	alpine-stable-i386 \
+	amazonlinux-stable \
+	busybox-stable \
 	centos-7 \
-	centos-8 \
-	clearlinux \
-	debian-10 \
-	debian-i386-10 \
-	docker-19.03 \
-	golang-1.13 \
-	python-3.6 \
-	registry-2 \
+	centos-stable \
+	clearlinux-latest \
+	debian-9 \
+	debian-stable \
+	debian-stable-i386 \
+	docker-stable \
+	golang-stable \
+	python-stable \
+	registry-stable \
 	sudo \
+	ubuntu-16.04 \
 	ubuntu-18.04 \
-	ubuntu-20.04
+	ubuntu-stable
 
 TEST_DIRS := \
 	python-3.6
@@ -93,8 +95,6 @@ save:
 
 .PHONY: rmi
 rmi:
-	make gc
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR rmi; \
 	done
-	make gc

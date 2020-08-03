@@ -1,5 +1,5 @@
-BASE_IMAGE := ubuntu:16.04
-IMAGE := drtuxwang/ubuntu:16.04
+BASE_IMAGE := ubuntu:20.04
+IMAGE := drtuxwang/ubuntu:stable
 
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS

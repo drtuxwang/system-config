@@ -19,8 +19,8 @@ pipeline {
                     stages {
                         stage ("Build") {
                             steps {
-                                sh "make -C docker/alpine-3.10 build"
-                                sh "make -C docker/alpine-3.10 version"
+                                sh "make -C docker/alpine-stable build"
+                                sh "make -C docker/alpine-stable version"
                             }
                         }
                     }
@@ -30,8 +30,8 @@ pipeline {
                     stages {
                         stage ("Build") {
                             steps {
-                                sh "make -C docker/python-3.6 build"
-                                sh "make -C docker/python-3.6 version"
+                                sh "make -C docker/python-stable build"
+                                sh "make -C docker/python-stable version"
                             }
                         }
                         stage ("Test") {

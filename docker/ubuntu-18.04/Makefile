@@ -52,4 +52,4 @@ rmi:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR rmi; \
 	done
-	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:
+	docker rmi -f $(IMAGE) ||:

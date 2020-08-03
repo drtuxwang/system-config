@@ -1,5 +1,5 @@
 NAME := ops-box
-IMAGE := drtuxwang/debian-bash:10
+IMAGE := drtuxwang/debian-bash:stable
 
 # Default namespace
 ifndef NAMESPACE
