@@ -1,4 +1,4 @@
-BASE_IMAGE := i386/alpine:3.10
+BASE_IMAGE := i386/alpine:3.11
 IMAGE := drtuxwang/alpine-i386:stable
 
 TOPDIR := ../..

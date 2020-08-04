@@ -1,6 +1,7 @@
 IMAGES="drtuxwang/.*"
 
 BUILD_DIRS := \
+	alpine-3.10 \
 	alpine-stable \
 	alpine-stable-i386 \
 	amazonlinux-stable \

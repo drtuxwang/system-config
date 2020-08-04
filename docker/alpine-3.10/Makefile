@@ -1,5 +1,5 @@
-BASE_IMAGE := alpine:3.11
-IMAGE := drtuxwang/alpine:stable
+BASE_IMAGE := alpine:3.10
+IMAGE := drtuxwang/alpine:3.10
 
 TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
