@@ -69,12 +69,16 @@ then
             echo -e "\nPlease select profile:"
             local selection
             read selection
-            if [ "$(KUBECONFIG="$HOME/.kube/$selection" kubectl version 2> /dev/null | grep Server)" ]
+            if [ -f "$HOME/.kube/$selection" ]
             then
                 export KUBECONFIG="$HOME/.kube/$selection"
                 echo "KUBECONFIG=$KUBECONFIG"
             fi
         }
+        if [ ! "$KUBECONFIG" ]
+        then
+            KUBECONFIG=$(realpath $HOME/.kube/config 2> /dev/null)
+        fi
         alias kubeconfig=__kubeconfig
         MYSHELL="${0/-/}"
         PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\[\033[01;31m\]`__git_ps1``__kube_ps1`\n\[\033[01;32m\]\u@\h\[\033[00m\] $ '
