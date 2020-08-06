@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.11.0'
-VERSION = 20200721
+RELEASE = '5.12.0'
+VERSION = 20200806
 
 # pylint: disable = too-many-lines
 
@@ -121,7 +121,7 @@ class Detect:
         info = self._system.get_net_info()
         Writer.output(
             name='Hostname',
-            value=socket.gethostname().split('.')[0].lower()
+            value=socket.gethostname().split('.')[0].lower(),
         )
         Writer.output(name='Net FQDN', value=info['Net FQDN'])
 
@@ -144,12 +144,12 @@ class Detect:
         Writer.output(
             name='OS Kernel',
             value=info['OS Kernel'],
-            comment=info['OS Kernel X']
+            comment=info['OS Kernel X'],
         )
         Writer.output(
             name='OS Patch',
             value=info['OS Patch'],
-            comment=info['OS Patch X']
+            comment=info['OS Patch X'],
         )
 
     def _processors(self):
@@ -158,29 +158,32 @@ class Detect:
         Writer.output(
             name='CPU Addressability',
             value=info['CPU Addressability'],
-            comment=info['CPU Addressability X']
+            comment=info['CPU Addressability X'],
         )
         Writer.output(name='CPU Model', value=info['CPU Model'])
         Writer.output(name='CPU Sockets', value=info['CPU Sockets'])
         Writer.output(
             name='CPU Cores',
             value=info['CPU Cores'],
-            comment=info['CPU Cores X']
+            comment=info['CPU Cores X'],
         )
         Writer.output(
             name='CPU Threads',
             value=info['CPU Threads'],
-            comment=info['CPU Threads X']
+            comment=info['CPU Threads X'],
         )
         Writer.output(name='CPU Clock', value=info['CPU Clock'], comment='MHz')
         Writer.output(
             name='CPU Clocks',
             value=info['CPU Clocks'],
-            comment='MHz'
+            comment='MHz',
         )
         for key, value in sorted(info['CPU Cache'].items()):
             Writer.output(
-                name='CPU L' + key + ' Cache', value=value, comment='KB')
+                name='CPU L' + key + ' Cache',
+                value=value,
+                comment='KB',
+            )
 
     def _system_status(self):
         info = self._system.get_sys_info()
@@ -189,16 +192,19 @@ class Detect:
         Writer.output(
             name='System Memory',
             value=info['System Memory'],
-            comment='MB'
+            comment='MB',
         )
         Writer.output(
             name='System Swap Space',
             value=info['System Swap Space'],
-            comment='MB'
+            comment='MB',
         )
         Writer.output(name='System Uptime', value=info['System Uptime'])
-        Writer.output(name='System Load', value=info['System Load'],
-                      comment='average over last 1min, 5min & 15min')
+        Writer.output(
+            name='System Load',
+            value=info['System Load'],
+            comment='average over last 1min, 5min & 15min',
+        )
 
     @staticmethod
     def _xset():
@@ -221,20 +227,24 @@ class Detect:
                         Writer.output(
                             name='X-Display Power',
                             value=standby + ' ' + suspend + ' ' + off,
-                            comment='DPMS Standby Suspend Off'
+                            comment='DPMS Standby Suspend Off',
                         )
                         break
                 for line in task.get_output():
                     if 'auto repeat delay:' in line and 'repeat rate:' in line:
                         Writer.output(
-                            name='X-Keyboard Repeat', value=line.split()[3],
-                            comment=line.split()[6] + ' characters per second')
+                            name='X-Keyboard Repeat',
+                            value=line.split()[3],
+                            comment=line.split()[6] + ' characters per second',
+                        )
                         break
                 for line in task.get_output():
                     if 'acceleration:' in line and 'threshold:' in line:
                         Writer.output(
-                            name='X-Mouse Speed', value=line.split()[1],
-                            comment='acceleration factor')
+                            name='X-Mouse Speed',
+                            value=line.split()[1],
+                            comment='acceleration factor',
+                        )
                         break
                 for line in task.get_output():
                     if 'timeout:' in line and 'cycle:' in line:
@@ -244,7 +254,7 @@ class Detect:
                                 name='X-Screensaver',
                                 value=str(timeout),
                                 comment='no power saving for LCD but can '
-                                'keep CPU busy'
+                                'keep CPU busy',
                             )
                         break
             except (IndexError, ValueError):
@@ -264,7 +274,7 @@ class Detect:
                         Writer.output(
                             name='X-Windows Display',
                             value=display,
-                            comment=comment
+                            comment=comment,
                         )
                     elif ' connected ' in line:
                         columns = line.replace(
@@ -274,7 +284,7 @@ class Detect:
                             Writer.output(
                                 name="X-Windows Screen",
                                 value=screen,
-                                comment=resolution
+                                comment=resolution,
                             )
                         else:
                             size = math.sqrt(
@@ -286,7 +296,7 @@ class Detect:
                             Writer.output(
                                 name='X-Windows Screen',
                                 value=screen,
-                                comment=comment
+                                comment=comment,
                             )
                 except (IndexError, ValueError):
                     pass
@@ -308,7 +318,7 @@ class Detect:
                         Writer.output(
                             name='X-Windows Display',
                             value=display,
-                            comment=width + 'x' + line.split()[-1]
+                            comment=width + 'x' + line.split()[-1],
                         )
 
     @classmethod
@@ -376,7 +386,7 @@ class OperatingSystem:
                     Writer.output(
                         name='GNU C library',
                         location=glibc,
-                        value=version
+                        value=version,
                     )
         for linker in sorted(glob.glob('/lib*/ld-*so*')):
             Writer.output(name='Dynamic linker', location=linker)
@@ -736,7 +746,7 @@ class LinuxSystem(PosixSystem):
                     name='Audio device',
                     device=device,
                     value=name,
-                    comment=comment
+                    comment=comment,
                 )
 
     @staticmethod
@@ -758,7 +768,7 @@ class LinuxSystem(PosixSystem):
                                     name='CD device',
                                     device='/dev/' +
                                     os.path.basename(directory),
-                                    value=model
+                                    value=model,
                                 )
                                 break
             except OSError:
@@ -808,7 +818,7 @@ class LinuxSystem(PosixSystem):
                         Writer.output(
                             name='CD device',
                             device=device,
-                            value=model
+                            value=model,
                         )
                         model = '???'
                         unit += 1
@@ -881,7 +891,7 @@ class LinuxSystem(PosixSystem):
                 name='Disk device',
                 device='/dev/' + hdx,
                 value=size + ' KB',
-                comment=model
+                comment=model,
             )
         elif hdx in partition:
             size, hdxn = partition.split()[2:4]
@@ -897,7 +907,7 @@ class LinuxSystem(PosixSystem):
                         name='Disk device',
                         device=device,
                         value=size + ' KB',
-                        comment=comment
+                        comment=comment,
                     )
                 return
             else:
@@ -906,7 +916,7 @@ class LinuxSystem(PosixSystem):
                 name='Disk device',
                 device=device,
                 value=size + ' KB',
-                comment=comment
+                comment=comment,
             )
 
     @classmethod
@@ -967,14 +977,14 @@ class LinuxSystem(PosixSystem):
                             name='Disk device',
                             device=device,
                             value=size + ' KB',
-                            comment=comment + ', ' + model
+                            comment=comment + ', ' + model,
                         )
                     continue
                 Writer.output(
                     name='Disk device',
                     device='/dev/' + sdx,
                     value=size + ' KB',
-                    comment=model
+                    comment=model,
                 )
             elif sdx in partition:
                 size, sdxn = partition.split()[2:4]
@@ -988,7 +998,7 @@ class LinuxSystem(PosixSystem):
                             name='Disk device',
                             device=device,
                             value=size + ' KB',
-                            comment=comment
+                            comment=comment,
                         )
                     continue
                 elif glob.glob('/sys/class/block/dm-*/slaves/' + sdxn):
@@ -999,7 +1009,7 @@ class LinuxSystem(PosixSystem):
                     name='Disk device',
                     device=device,
                     value=size + ' KB',
-                    comment=comment
+                    comment=comment,
                 )
 
     @staticmethod
@@ -1016,7 +1026,7 @@ class LinuxSystem(PosixSystem):
                         name='Disk device',
                         device='/dev/' + sdx,
                         value=size + ' KB',
-                        comment=model
+                        comment=model,
                     )
                 elif sdx in partition:
                     size, sdxn = partition.split()[2:4]
@@ -1030,7 +1040,7 @@ class LinuxSystem(PosixSystem):
                                 name='Disk device',
                                 device=device,
                                 value=size + ' KB',
-                                comment=comment
+                                comment=comment,
                             )
                         continue
                     else:
@@ -1039,7 +1049,7 @@ class LinuxSystem(PosixSystem):
                         name='Disk device',
                         device=device,
                         value=size + ' KB',
-                        comment=comment
+                        comment=comment,
                     )
 
     @classmethod
@@ -1093,7 +1103,7 @@ class LinuxSystem(PosixSystem):
                     name='Disk device',
                     device=device,
                     value=size,
-                    comment='swap, ' + slaves
+                    comment='swap, ' + slaves,
                 )
             else:
                 for mount_point, mount_type in mount_info:
@@ -1104,7 +1114,7 @@ class LinuxSystem(PosixSystem):
                         comment='{0:s} on {1:s}, {2:s}'.format(
                             mount_type,
                             mount_point,
-                            slaves
+                            slaves,
                         )
                     )
 
@@ -1136,7 +1146,7 @@ class LinuxSystem(PosixSystem):
                     name='Disk device',
                     device=device,
                     value=size,
-                    comment=mount_type + ' on ' + mount_point
+                    comment=mount_type + ' on ' + mount_point,
                 )
 
     @classmethod
@@ -1176,7 +1186,7 @@ class LinuxSystem(PosixSystem):
                         name='Graphics device',
                         device=device,
                         value=model,
-                        comment=comment
+                        comment=comment,
                     )
         else:
             xrandr = command_mod.Command('xrandr', errors='ignore')
@@ -1192,7 +1202,7 @@ class LinuxSystem(PosixSystem):
                                 name='Graphics device',
                                 device='/dev/???',
                                 value=model,
-                                comment=comment
+                                comment=comment,
                             )
 
     @staticmethod
@@ -1219,7 +1229,7 @@ class LinuxSystem(PosixSystem):
                 Writer.output(
                     name='Input device',
                     device=device,
-                    value=info[device]
+                    value=info[device],
                 )
 
     def _detect_network(self):
@@ -1241,7 +1251,7 @@ class LinuxSystem(PosixSystem):
                 name='Network device',
                 device=device,
                 value=model,
-                comment=comment
+                comment=comment,
             )
 
     @staticmethod
@@ -1256,14 +1266,14 @@ class LinuxSystem(PosixSystem):
                     Writer.output(
                         name='Video device',
                         device='/dev/' + device,
-                        value=ifile.readline().rstrip('\r\n')
+                        value=ifile.readline().rstrip('\r\n'),
                     )
                     continue
             except OSError:
                 pass
             Writer.output(
                 name='Video device',
-                device='/dev/' + device, value='???'
+                device='/dev/' + device, value='???',
             )
 
     def _match_pci(self, pci_id):
@@ -1909,7 +1919,7 @@ class MacSystem(PosixSystem):
                 Writer.output(
                     name='Disk device',
                     device=device,
-                    value=size + ' KB', comment=type_ + ' on ' + directory
+                    value=size + ' KB', comment=type_ + ' on ' + directory,
                 )
 
     @classmethod
@@ -2225,7 +2235,10 @@ class Writer:
         line = ' {0:19s}'.format(name + ':')
         if 'device' in kwargs and kwargs['device']:
             device = kwargs['device']
-            if device != '/dev/???' and not os.path.exists(device):
+            if (
+                    not device.startswith(('/dev/', 'net')) and
+                    not os.path.exists(device)
+            ):
                 return
             line += ' {0:12s}'.format(device) + ' ' + kwargs['value']
         elif 'location' in kwargs and kwargs['location']:
