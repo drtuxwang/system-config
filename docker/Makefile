@@ -25,8 +25,11 @@ TEST_DIRS := \
 	python-3.6
 
 .PHONY: default
-default: build
-	docker images | grep "^$(IMAGES) "
+default: build status
+
+.PHONY: status
+status:
+	docker images | grep "^$(IMAGES) " | sort
 
 .PHONY: project
 project:

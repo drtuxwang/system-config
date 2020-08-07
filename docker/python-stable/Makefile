@@ -9,7 +9,10 @@ BUILD_DIRS := bash devpi
 
 
 .PHONY: default
-default: build
+default: build status
+
+.PHONY: status
+status:
 	docker images | grep "^`echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /'` "
 
 .PHONY: pull
