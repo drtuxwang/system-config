@@ -861,10 +861,10 @@ the years. Now most of the scripts are written in Python 3.
  * config/winsetupo.sh
  * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
  * etc/install-python-requirements.sh    Python pip installer (installs minimum requirements)
- * etc/python-requirements.txt           Python 3.6+ pip requirements file
- * etc/python-2.7-requirements.txt       Python 2.7 pip requirements file
- * etc/python-3.5-requirements.txt       Python 3.5 pip requirements file
- * etc/python-3.8-requirements.txt       Python 3.8 pip requirements file
+ * etc/python-requirements.txt           Python default pip requirements file
+ * etc/python-requirements_2.7.txt       Python 2.7 pip requirements file
+ * etc/python-requirements_3.5.txt       Python 3.5 pip requirements file
+ * etc/python-requirements_3.8.txt       Python 3.8 pip requirements file
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization

@@ -48,6 +48,6 @@ fi
 REQUIREMENTS=
 read_requirements "${0%/*}/python-requirements.txt"
 VERSION=$($PYTHON --version 2>&1 | grep "^Python [0-9][.][0-9][.]" | awk '{print $2}' | cut -f1-2 -d.)
-read_requirements "${0%/*}/python-$VERSION-requirements.txt"
+read_requirements "${0%/*}/python-requirements_$VERSION.txt"
 install_packages
 exit $?
