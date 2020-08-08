@@ -78,14 +78,14 @@ class Options:
         except OSError:
             pass
 
-        file = os.path.join(os.environ['HOME'], '.cache', 'google-chrome')
-        if not os.path.isfile(file):
-            try:
-                if os.path.isdir(file):
-                    shutil.rmtree(file)
-                with open(file, 'wb'):
-                    pass
-            except OSError:
+        cache_dir = os.path.join(os.environ['HOME'], '.cache', 'chromium')
+        if not os.path.isfile(cache_dir):
+            if os.path.isdir(cache_dir):
+                try:
+                    shutil.rmtree(cache_dir)
+                except OSError:
+                    return
+            with open(cache_dir, 'wb'):
                 pass
 
     @staticmethod

@@ -3,18 +3,23 @@
 # Optional input environment
 ARG=${1:-}
 
-
-# Remove crap
-rm -rf .config/pulse
-rm -rf .local/share/gvfs-metadata
-rm -rf .local/share/recently-used.xbel*
-
 if [ "$ARG" != "-start" ]
 then
     exec $0 -start > ${0%%.sh}.log 2>&1
 fi
 
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+
+# Remove crap
+rm -rf .config/pulse
+rm -rf .local/share/gvfs-metadata
+rm -rf .local/share/recently-used.xbel*
+
+# Use /tmp (tmpfs) for cache
+mkdir /tmp/$MYUNAME 2> /dev/null
+chmod 700 /tmp/$MYUNAME
+rm -rf $HOME/.cache
+ln -s /tmp/$MYUNAME $HOME/.cache
 
 if [ ! "$BASE_PATH" ]
 then

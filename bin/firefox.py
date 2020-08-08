@@ -282,6 +282,7 @@ class Options:
             '"browser.ping-centre.staging.endpoint", ""',
             '"browser.ping-centre.telemetry", false',
             '"browser.search.geoip.url", ""',
+            '"browser.sessionstore.interval", 86400000',
             '"browser.startup.homepage_override.mstone", ignore',
             '"browser.tabs.allowTabDetach", false',
             '"browser.tabs.animate", false',
