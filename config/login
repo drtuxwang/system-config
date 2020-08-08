@@ -102,7 +102,9 @@ if ( $?TERM && -e "`\tty`" ) then
     umask 027
     setenv LC_COLLATE C
     setenv PYTHONDONTWRITEBYTECODE 1
-    setenv TMP /tmp
+    mkdir /tmp/$MYUNAME >& /dev/null
+    chmod 700 /tmp/$MYUNAME
+    setenv TMP /tmp/$MYUNAME
     setenv TMPDIR $TMP
     rm -rf $HOME/tmp >& /dev/null
     setenv WINEDITOR vi

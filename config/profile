@@ -209,14 +209,6 @@ then
     fi
 
     # General stuff
-    rm() {
-        if [ "`echo \" $@ \" | grep \" $HOME/* \"`" ]
-        then
-            echo "rm: Removing \"$HOME\" home directory is dangerous."
-        else
-            /bin/rm "$@"
-        fi
-    }
     if [ "`which ssudo 2> /dev/null`" ]
     then
         alias sudo="ssudo"
@@ -229,10 +221,11 @@ then
     export LC_COLLATE=C
     export HISTFILE=
     export PYTHONDONTWRITEBYTECODE=1
-    export TMP=/tmp
-    export TMPDIR=$TMP
-    rm -rf $HOME/tmp 2> /dev/null
     export WINEDITOR=vi
+    mkdir /tmp/$MYUNAME 2> /dev/null
+    chmod 700 /tmp/$MYUNAME
+    export TMP=/tmp/$MYUNAME
+    export TMPDIR=$TMP
     ENV=
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)

@@ -18,6 +18,8 @@ rm -rf .local/share/recently-used.xbel*
 # Use /tmp (tmpfs) for cache
 mkdir /tmp/$MYUNAME 2> /dev/null
 chmod 700 /tmp/$MYUNAME
+export TMP=/tmp/$MYUNAME
+export TMPDIR=$TMP
 rm -rf $HOME/.cache
 ln -s /tmp/$MYUNAME $HOME/.cache
 
