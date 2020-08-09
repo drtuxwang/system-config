@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 VERSION=$(uname -r | cut -f1-2 -d. | awk '{printf("%s\n", $1*10)}')
 DIR=${0%/config/*}/software
 
@@ -16,6 +15,60 @@ install "$DIR/vim_*_win51x86.exe"
 
 if [ $VERSION -ge 60 ]
 then
+    echo "@echo off" > "$TMP/winsetup.bat"
+    case $VERSION in
+    60)
+        cat << EOF >> "$TMP/winsetup.bat"
+schtasks.exe /delete /tn "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Defrag\ScheduledDefrag" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector" /f
+schtasks.exe /delete /tn "\Microsoft\Windows Defender\MP Scheduled Scan" /f
+EOF
+        ;;
+    61)
+        cat << EOF >> "$TMP/winsetup.bat"
+schtasks.exe /delete /tn "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Defrag\ScheduledDefrag" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Diagnosis\Scheduled" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Power Efficiency Diagnostics\AnalyzeSystem" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\RAC\RacTask" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Registry\RegIdleBackup" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Time Synchronization\SynchronizeTime" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\WindowsBackup\ConfigNotification" /f
+schtasks.exe /delete /tn "\Microsoft\Windows Defender\MP Scheduled Scan" /f
+EOF
+        ;;
+    63)
+        cat << EOF >> "$TMP/winsetup.bat"
+schtasks.exe /delete /tn "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Defrag\ScheduledDefrag" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\PerfTrack\BackgroundConfigSurveyor" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\RAC\RacTask" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\TaskScheduler\Regular Maintenance" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\WS\WSRefreshBannedAppsListTask" /f
+EOF
+        ;;
+    100)
+        cat << EOF >> "$TMP/winsetup.bat"
+schtasks.exe /delete /tn "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Data Integrity Scan\Data Integrity Scan" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Defrag\ScheduledDefrag" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Device Information\Device" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Flighting\OneSettings\RefreshCache" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\InstallService\ScanForUpdates" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\UNP\RunUpdateNotificationMgr" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\Windows Error Reporting\QueueReporting" /f
+schtasks.exe /delete /tn "\Microsoft\Windows\WindowsUpdate\Scheduled Start" /f
+EOF
+        ;;
+    esac
+    echo "pause" >> "$TMP/winsetup.bat"
+    powershell.exe -command start-process "$TMP/winsetup.bat" -verb runas
+
     install "$DIR/python-minimal_3.*_win60x86.exe"
     if [ $VERSION -lt 100 ]
     then
