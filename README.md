@@ -607,6 +607,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/ssync              Securely synchronize file system using SSH protocol
  * bin/ssync.py           (uses rsync)
  * bin/sudo               Wrapper for "sudo" command
+ * bin/sudo.bat
  * bin/sudo.py
  * bin/ssudo
  * bin/ssudo.py
