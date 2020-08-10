@@ -222,7 +222,7 @@ then
     export HISTFILE=
     export PYTHONDONTWRITEBYTECODE=1
     export WINEDITOR=vi
-    mkdir /tmp/$MYUNAME 2> /dev/null
+    mkdir -p /tmp/$MYUNAME/.cache 2> /dev/null
     chmod 700 /tmp/$MYUNAME
     export TMP=/tmp/$MYUNAME
     export TMPDIR=$TMP
