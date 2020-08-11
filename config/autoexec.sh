@@ -20,7 +20,7 @@ mkdir -p /tmp/$MYUNAME/.cache 2> /dev/null
 chmod 700 /tmp/$MYUNAME
 export TMP=/tmp/$MYUNAME
 export TMPDIR=$TMP
-[[ ! -h $HOME/tmp || ! -h $HOME/.cache ]] && \
+[[ ! -h $HOME/tmp || ! -h $HOME/.cache ]] && grep -q "/tmp type tmpfs" && \
     rm -rf $HOME/tmp $HOME/.cache && \
     ln -s /tmp/$MYUNAME $HOME/tmp && \
     ln -s /tmp/$MYUNAME/.cache $HOME/.cache
