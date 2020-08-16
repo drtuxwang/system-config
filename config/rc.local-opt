@@ -1,11 +1,22 @@
 #!/bin/sh
 
+# VBox
 ##ln -sf /opt/VBoxGuestAdditions-*/lib/VBoxGuestAdditions /usr/lib
 ##modprobe vboxsf
 ##mount -t vboxsf -o uid=owner,gid=users shared /shared &
 
-##mount -t ext4 -o noatime,errors=remount-ro,data=ordered UUID=<uuid-from-blkid> /data2 &
-
+# No Network Manager
 ##dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
+
+# Setup ZRAM swap (zramctl)
+##modprobe zram num_devices=1
+##RAM=$(awk '/MemTotal/{print $2}' /proc/meminfo)
+##echo ${RAM}K > /sys/block/zram0/disksize
+##echo $(($RAM/2))K > /sys/block/zram0/mem_limit
+##mkswap /dev/zram0
+##swapon -p 100 /dev/zram0
+
+# Mount removable disks
+##mount -t ext4 -o noatime,errors=remount-ro,data=ordered UUID=<uuid-from-blkid> /data2 &
 
 exit 0
