@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.12.0'
-VERSION = 20200806
+RELEASE = '5.13.0'
+VERSION = 20200816
 
 # pylint: disable = too-many-lines
 
@@ -151,6 +151,7 @@ class Detect:
             value=info['OS Patch'],
             comment=info['OS Patch X'],
         )
+        Writer.output(name='OS Boot Time', value=info['OS Boot'])
 
     def _processors(self):
         info = self._system.get_cpu_info()
@@ -440,6 +441,7 @@ class OperatingSystem:
         info['OS Kernel X'] = ''
         info['OS Patch'] = 'Unknown'
         info['OS Patch X'] = ''
+        info['OS Boot'] = 'Unknown'
         return info
 
     @staticmethod
@@ -1497,6 +1499,24 @@ class LinuxSystem(PosixSystem):
 
         return info
 
+    @staticmethod
+    def _scan_systemd():
+        info = {}
+
+        systemd_analyze = command_mod.Command(
+            'systemd-analyze',
+            errors='ignore'
+        )
+        if systemd_analyze.is_found():
+            task = subtask_mod.Batch(systemd_analyze.get_cmdline())
+            task.run(pattern='^Startup finished in ')
+            info['OS Boot'] = task.get_output()[0].replace(
+                'Startup finished in ',
+                '',
+            )
+
+        return info
+
     def get_os_info(self):
         """
         Return operating system information dictionary.
@@ -1514,6 +1534,7 @@ class LinuxSystem(PosixSystem):
             info.update(scan_method())
             if info['OS Name'] != 'Unknown':
                 break
+        info.update(self._scan_systemd())
         return info
 
     @staticmethod
