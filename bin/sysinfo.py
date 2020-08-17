@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.13.0'
-VERSION = 20200816
+RELEASE = '5.14.0'
+VERSION = 20200817
 
 # pylint: disable = too-many-lines
 
@@ -1278,6 +1278,30 @@ class LinuxSystem(PosixSystem):
                 device='/dev/' + device, value='???',
             )
 
+    @staticmethod
+    def _detect_zram():
+        zramctl = command_mod.Command(
+            'zramctl',
+            pathextra=['/sbin'],
+            args=['--noheadings', '--bytes'],
+            errors='ignore',
+        )
+        if zramctl.is_found():
+            task = subtask_mod.Batch(zramctl.get_cmdline())
+            task.run()
+            for line in task.get_output():
+                device, algorithm, size, data, compress, *_ = line.split()
+                Writer.output(
+                    name='ZRAM device',
+                    device=device,
+                    value='{0:d} KB'.format(int(int(size) / 1024 + 0.5)),
+                    comment='{0:d} KB data, {1:d} KB {2:s}'.format(
+                        int(int(data) / 1024 + 0.5),
+                        int(int(compress) / 1024 + 0.5),
+                        algorithm,
+                    )
+                )
+
     def _match_pci(self, pci_id):
         model = '???'
         comment = ''
@@ -1300,6 +1324,7 @@ class LinuxSystem(PosixSystem):
         self._detect_input()
         self._detect_network()
         self._detect_video()
+        self._detect_zram()
 
     def has_loader(self):
         """
