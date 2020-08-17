@@ -17,6 +17,6 @@
 ##swapon -p 100 /dev/zram0
 
 # Mount removable disks
-##mount -t ext4 -o noatime,errors=remount-ro,data=ordered UUID=<uuid-from-blkid> /data2 &
+##mount -t ext4 -o noatime,errors=remount-ro,data=ordered,commit=60 UUID=<uuid-from-blkid> /data2 &
 
 exit 0
