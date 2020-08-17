@@ -8,6 +8,8 @@
 # No Network Manager
 ##dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
 
+sleep 25
+
 # Setup ZRAM swap (zramctl)
 ##modprobe zram num_devices=1
 ##RAM=$(awk '/MemTotal/{print $2}' /proc/meminfo)

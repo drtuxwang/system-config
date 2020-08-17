@@ -19,7 +19,7 @@ fi
 
 if [ -f /etc/rc.local-opt ]
 then
-    . /etc/rc.local-opt > /dev/null 2>&1
+    . /etc/rc.local-opt > /dev/null 2>&1 &
 fi
 
 exit 0
