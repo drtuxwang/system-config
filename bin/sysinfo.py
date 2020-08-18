@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.14.0'
-VERSION = 20200817
+RELEASE = '5.14.1'
+VERSION = 20200818
 
 # pylint: disable = too-many-lines
 
@@ -1295,10 +1295,11 @@ class LinuxSystem(PosixSystem):
                     name='ZRAM device',
                     device=device,
                     value='{0:d} KB'.format(int(int(size) / 1024 + 0.5)),
-                    comment='{0:d} KB data, {1:d} KB {2:s}'.format(
+                    comment='{0:d} KB data, {1:d} KB {2:s}, {3:3.1f}X'.format(
                         int(int(data) / 1024 + 0.5),
                         int(int(compress) / 1024 + 0.5),
                         algorithm,
+                        int(data) /int(compress),
                     )
                 )
 
