@@ -1,0 +1,13 @@
+## stable/prometheus                       11.5.0          2.18.1
+
+nodeSelector:
+  beta.kubernetes.io/os: linux
+
+alertmanager:
+  persistentVolume:
+    enabled: false
+
+server:
+  persistentVolume:
+    enabled: false
+
