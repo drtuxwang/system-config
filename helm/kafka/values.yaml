@@ -17,3 +17,6 @@ zookeeper:
     prometheus.io/scrape: "true"
     prometheus.io/port: 9141
   replicaCount: 1
+  persistence:
+    enabled: false
+
