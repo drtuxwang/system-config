@@ -5,6 +5,7 @@ Wrapper for "gqview" command
 
 import glob
 import os
+import random
 import signal
 import shutil
 import sys
@@ -102,7 +103,13 @@ class Options:
         if len(args) == 1:
             self._gqview.set_args([os.curdir])
         else:
-            self._gqview.set_args(args[1:])
+            for arg in args[1:]:
+                if not os.path.isdir(arg):
+                    self._gqview.set_args(args[1:])
+                    return
+            directories = args[1:]
+            random.shuffle(directories)
+            self._gqview.set_args(directories[:1])
 
 
 class Main:
