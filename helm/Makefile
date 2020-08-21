@@ -14,10 +14,11 @@ BUILD_DIRS := \
 	nginx \
 	ops-box \
 	oracle-xe \
+	prometheus \
 	pushgateway \
 	rabbitmq \
-	servers-test
-
+	test-servers \
+	xfce-servers
 
 default: status
 

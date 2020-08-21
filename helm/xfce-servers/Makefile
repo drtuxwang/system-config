@@ -1,4 +1,5 @@
 NAME := xfce
+CHART_NAME := ./xfce-servers
 IMAGE := drtuxwang/debian-xfce:stable
 
 # Default namespace
@@ -25,7 +26,7 @@ check:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set servers.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
-		$(NAMESPACE)-$(NAME) ./xfce-servers
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: template
 template:
@@ -35,7 +36,7 @@ template:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set servers.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
-		./xfce-servers
+		$(CHART_NAME)
 
 .PHONY: install
 install:
@@ -47,7 +48,7 @@ install:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set servers.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
-		$(NAMESPACE)-$(NAME) ./xfce-servers
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: status
 status:
@@ -65,7 +66,10 @@ connect:
 
 .PHONY: version
 version:
-	@echo "`egrep "name|version:" Chart.yaml | awk '{printf("%s 	 ", $$2)}'` 	 $(IMAGE)"
+	@grep "name:" $(CHART_NAME)/Chart.yaml | awk '{printf("'$(CHART_NAME)'/%s   ", $$2)}'
+	@grep "version:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
+	@grep "appVersion:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
+	@grep "description:" $(CHART_NAME)/Chart.yaml | cut -f2- -d" "
 
 .PHONY: delete
 delete:

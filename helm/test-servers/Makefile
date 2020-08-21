@@ -1,4 +1,5 @@
-NAME := test
+NAME := test-servers
+CHART_NAME=./test-servers
 IMAGE := drtuxwang/debian-bash:10
 DOMAIN := example.com
 
@@ -26,7 +27,7 @@ check:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAMESPACE)-$(NAME) ./test-servers
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: template
 template:
@@ -36,7 +37,7 @@ template:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		./test-servers
+		$(CHART_NAME)
 
 .PHONY: install
 install:
@@ -48,7 +49,7 @@ install:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAMESPACE)-$(NAME) ./test-servers
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: status
 status:
@@ -57,7 +58,10 @@ status:
 
 .PHONY: version
 version:
-	@echo "`egrep "name|version:" Chart.yaml | awk '{printf("%s 	 ", $$2)}'` 	 $(IMAGE)"
+	@grep "name:" $(CHART_NAME)/Chart.yaml | awk '{printf("'$(CHART_NAME)'/%s   ", $$2)}'
+	@grep "version:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
+	@grep "appVersion:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
+	@grep "description:" $(CHART_NAME)/Chart.yaml | cut -f2- -d" "
 
 .PHONY: forward
 forward:

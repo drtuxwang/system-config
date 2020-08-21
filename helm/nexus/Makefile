@@ -45,7 +45,7 @@ status:
 
 .PHONY: version
 version:
-	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) "
+	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) " | sed -e "s/	/   /g" -e "s/   */   /g"
 
 .PHONY: delete
 delete:

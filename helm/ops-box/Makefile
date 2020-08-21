@@ -1,4 +1,5 @@
 NAME := ops-box
+CHART_NAME := ./ops-box
 IMAGE := drtuxwang/debian-bash:stable
 
 # Default namespace
@@ -20,7 +21,7 @@ check:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set image.pullPolicy=Always \
-		$(NAMESPACE)-$(NAME) ./ops-box
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: template
 template:
@@ -42,7 +43,7 @@ install:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set image.pullPolicy=Always \
-		$(NAMESPACE)-$(NAME) ./ops-box
+		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: status
 status:
@@ -51,7 +52,10 @@ status:
 
 .PHONY: version
 version:
-	@echo "`egrep "name|version:" Chart.yaml | awk '{printf("%s 	 ", $$2)}'` 	 $(IMAGE)"
+	@grep "name:" $(CHART_NAME)/Chart.yaml | awk '{printf("'$(CHART_NAME)'/%s   ", $$2)}'
+	@grep "version:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
+	@grep "appVersion:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
+	@grep "description:" $(CHART_NAME)/Chart.yaml | cut -f2- -d" "
 
 .PHONY: delete
 delete:
