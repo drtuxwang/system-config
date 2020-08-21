@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.14.1'
-VERSION = 20200818
+RELEASE = '5.14.2'
+VERSION = 20200821
 
 # pylint: disable = too-many-lines
 
@@ -1299,7 +1299,7 @@ class LinuxSystem(PosixSystem):
                         int(int(data) / 1024 + 0.5),
                         int(int(compress) / 1024 + 0.5),
                         algorithm,
-                        int(data) /int(compress),
+                        int(data) / int(compress),
                     )
                 )
 
