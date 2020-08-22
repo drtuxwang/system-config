@@ -1022,11 +1022,13 @@ the years. Now most of the scripts are written in Python 3.
  * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.12.2 (app 0.12.0)
  * helm/chartmuseum/values.yaml
  * helm/concourse/Makefile               Helm Chart: concourse/concourse 11.2.3 (app 6.3.0)
- * helm/concourse/\_helpers.tpl
+ * helm/concourse/concourse-secrets.yaml
+ * helm/concourse/connect.sh
  * helm/concourse/values.yaml
  * helm/etcd/Makefile                    Helm Chart: bitnami/etcd  4.8.4 (app 3.4.9)
  * helm/etcd/values.yaml
  * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 5.0.14 (app 2.222.4)
+ * helm/jenkins/connect.sh
  * helm/jenkins/values.yaml
  * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 10.3.3 (app 2.5.0)
  * helm/kafka/values.yml
@@ -1049,12 +1051,15 @@ the years. Now most of the scripts are written in Python 3.
  * helm/oracle-xe/oracle-xe/templates/servers-statefulset.yaml
  * helm/oracle-xe/values.yaml
  * helm/prometheus/Makefile              Helm Chart: stable/prometheus 11.5.0 (app 2.18.1)
+ * helm/prometheus/connect.sh
  * helm/prometheus/values.yaml
  * helm/pushgateway/Makefile             Helm Chart: stable/prometheus-pushgateway 1.2.15 (app 1.0.1)
  * helm/pushgateway/values.yaml
  * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.8.3 (app 3.7.19)
+ * helm/rabbitmq/connect.sh
  * helm/rabbitmq/values.yaml
  * helm/test-servers/Makefile            Helm Chart: test chart for testing server
+ * helm/test-servers/connect.sh
  * helm/test-servers/test-servers/Chart.yaml
  * helm/test-servers/test-servers/requirements.lock
  * helm/test-servers/test-servers/requirements.yaml
@@ -1066,6 +1071,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/test-servers/test-servers/templates/servers-statefulset.yaml
  * helm/test-servers/values.yaml
  * helm/xfce-servers/Makefile            Helm Chart: xfce server chart (drtuxwang/debian-xfce:stable)
+ * helm/xfce-servers/connect.sh
  * helm/xfce-servers/values.yaml
  * helm/xfce-servers/xfce-servers/Chart.yaml
  * helm/xfce-servers/xfce-servers/requirements.lock

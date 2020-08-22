@@ -9,7 +9,7 @@ endif
 
 # Default local port
 ifndef LOCALPORT
-	LOCALPORT=2222
+	LOCALPORT=
 endif
 
 default: status
@@ -61,8 +61,7 @@ forward:
 
 .PHONY: connect
 connect:
-	sleep 2 && svncviewer -p $(LOCALPORT) owner@localhost:5901 &
-	make forward
+	./connect.sh
 
 .PHONY: version
 version:

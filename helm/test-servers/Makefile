@@ -10,7 +10,7 @@ endif
 
 # Default local port
 ifndef LOCALPORT
-	LOCALPORT=8080
+	LOCALPORT=
 endif
 
 default: status
@@ -69,8 +69,7 @@ forward:
 
 .PHONY: connect
 connect:
-	sleep 2 && firefox http://127.0.0.1:$(LOCALPORT) &
-	make forward
+	./connect.sh
 
 .PHONY: delete
 delete:
