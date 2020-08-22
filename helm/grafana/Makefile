@@ -1,6 +1,6 @@
-NAME := concourse
-CHART_NAME := concourse/concourse
-CHART_VERSION := 11.2.3
+NAME := grafana
+CHART_NAME := bitnami/grafana
+CHART_VERSION := 3.3.5
 
 # Default namespace
 ifndef NAMESPACE
@@ -23,7 +23,6 @@ fetch:
 
 .PHONY: check
 check:
-	helm repo add concourse https://concourse-charts.storage.googleapis.com
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -31,30 +30,24 @@ check:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set postgresql.fullnameOverride=$(NAME)-postgresql \
-		--set service.type=ClusterIP \
 		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: install
 install:
-	helm repo add concourse https://concourse-charts.storage.googleapis.com
 	helm upgrade \
 		--install \
 		--wait \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set postgresql.fullnameOverride=$(NAME)-postgresql \
-		--set service.type=ClusterIP \
-		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_NAME)
 
 .PHONY: forward
 forward:
-	@echo "Username: test"
-	@echo "Password: test"
-	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME)-web $(LOCALPORT):8080
+	kubectl --namespace=$(NAMESPACE) get secret grafana-admin -o jsonpath="{.data.GF_SECURITY_ADMIN_PASSWORD}" | \
+		base64 -d |  awk '{printf("Username: admin\nPassword: %s\n", $$1)}'
+	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):3000
 
 .PHONY: connect
 connect:
@@ -73,8 +66,6 @@ version:
 delete:
 	helm ls $(NAMESPACE)-$(NAME)
 	helm del --purge $(NAMESPACE)-$(NAME) ||:
-	sleep 2
-	kubectl delete namespace $(NAMESPACE)-$(NAME)-main ||:
 
 .PHONY: clean
 clean:

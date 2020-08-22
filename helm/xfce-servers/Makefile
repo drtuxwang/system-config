@@ -57,7 +57,7 @@ status:
 
 .PHONY: forward
 forward:
-	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME)-servers $(LOCALPORT):22
+	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME)-servers $(LOCALPORT):22
 
 .PHONY: connect
 connect:

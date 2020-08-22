@@ -55,9 +55,9 @@ status:
 
 .PHONY: forward
 forward:
-	get --namespace $(NAMESPACE) secret rabbitmq -o jsonpath="{.data.rabbitmq-password}" | \
+	kubectl --namespace=$(NAMESPACE) get secret rabbitmq -o jsonpath="{.data.rabbitmq-password}" | \
 		base64 -d |  awk '{printf("Username: guest\nPassword: %s\n", $$1)}'
-	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):15672
+	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):15672
 
 .PHONY: connect
 connect:

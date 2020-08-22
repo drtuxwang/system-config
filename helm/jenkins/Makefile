@@ -55,9 +55,9 @@ status:
 
 .PHONY: forward
 forward:
-	@kubectl --namespace $(NAMESPACE) get secret $(NAME) -o jsonpath="{.data.jenkins-password}" | \
+	@kubectl --namespace=$(NAMESPACE) get secret $(NAME) -o jsonpath="{.data.jenkins-password}" | \
 		base64 -d | awk '{printf("Username: user\nPassword: %s\n", $$1)}'
-	kubectl --namespace $(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):80
+	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):80
 
 .PHONY: connect
 connect:

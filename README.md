@@ -1025,8 +1025,11 @@ the years. Now most of the scripts are written in Python 3.
  * helm/concourse/concourse-secrets.yaml
  * helm/concourse/connect.sh
  * helm/concourse/values.yaml
- * helm/etcd/Makefile                    Helm Chart: bitnami/etcd  4.8.4 (app 3.4.9)
+ * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 4.8.4 (app 3.4.9)
  * helm/etcd/values.yaml
+ * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 3.3.5 (app 7.1.3)
+ * helm/grafana/connect.sh
+ * helm/grafana/values.yaml
  * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 5.0.14 (app 2.222.4)
  * helm/jenkins/connect.sh
  * helm/jenkins/values.yaml
