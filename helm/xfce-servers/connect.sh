@@ -1,10 +1,19 @@
 #!/bin/bash
 
 connect() {
-    PID=$(ps -o "pid args" -u $(id -u) | grep "kubectl.*port-forward service/$NAME" | grep -v grep | head -1 | awk '{print $1}')
-    LOCALPORT=$(ss -lpnt | grep pid=$PID, | head -1 | awk '{print $4}' | sed -e "s/.*://")
-    echo "svncviewer -p $LOCALPORT owner@localhost:5901"
-    svncviewer -p $LOCALPORT owner@localhost:5901
+    for _ in seq 10
+    do
+        PID=$(ps -o "pid args" -u $(id -u) | grep "kubectl.*port-forward service/$NAME" | grep -v grep | head -1 | awk '{print $1}')
+        LOCALPORT=$(ss -lpnt | grep pid=$PID, | head -1 | awk '{print $4}' | sed -e "s/.*://")
+        if [ "$ADDRESS" ]
+        then
+        echo "svncviewer -p $LOCALPORT owner@localhost:5901"
+        svncviewer -p $LOCALPORT owner@localhost:5901
+            return
+        fi
+        sleep 1
+    done
+    echo "Failed!"
 }
 
 cd ${0%/*}
@@ -14,6 +23,6 @@ if [ "$(ps -o "pid args" -u $(id -u) | grep "kubectl.*port-forward service/$NAME
 then
     connect
 else
-    sleep 2 && connect &
+    connect &
     make forward
 fi

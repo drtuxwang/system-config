@@ -1,10 +1,19 @@
 #!/bin/bash
 
 connect() {
-    PID=$(ps -o "pid args" -u $(id -u) | grep "kubectl.*port-forward service/$NAME" | grep -v grep | head -1 | awk '{print $1}')
-    ADDRESS=http://$(ss -lpnt | grep pid=$PID, | head -1 | awk '{print $4}')
-    echo "firefox $ADDRESS"
-    firefox $ADDRESS
+    for _ in seq 10
+    do
+        PID=$(ps -o "pid args" -u $(id -u) | grep "kubectl.*port-forward service/$NAME" | grep -v grep | head -1 | awk '{print $1}')
+        ADDRESS=$(ss -lpnt | grep pid=$PID, | head -1 | awk '{print $4}')
+        if [ "$ADDRESS" ]
+        then
+            echo "firefox http://$ADDRESS"
+            firefox http://$ADDRESS
+            return
+        fi
+        sleep 1
+    done
+    echo "Failed!"
 }
 
 cd ${0%/*}
@@ -14,6 +23,6 @@ if [ "$(ps -o "pid args" -u $(id -u) | grep "kubectl.*port-forward service/$NAME
 then
     connect
 else
-    sleep 2 && connect &
+    connect &
     make forward
 fi
