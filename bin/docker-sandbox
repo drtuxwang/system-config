@@ -3,7 +3,7 @@
 # Run Docker Debian sandbox (no dri, ipc, net, snd, root & x11 defaults)
 #
 
-IMAGE="drtuxwang/debian-xfce:10"
+IMAGE="drtuxwang/debian-xfce:stable"
 NAME="debian10-sandbox"
 HOSTNAME="debian10-sandbox"
 LOCALPORT="2222"
