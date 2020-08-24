@@ -7,4 +7,3 @@ persistence:
 nexusBackup:
   persistence:
     enabled: false
-

@@ -53,7 +53,7 @@ status:
 
 .PHONY: version
 version:
-	@grep "name:" $(CHART_NAME)/Chart.yaml | awk '{printf("'$(CHART_NAME)'/%s   ", $$2)}'
+	@grep "name:" $(CHART_NAME)/Chart.yaml | awk '{printf("./'$(CHART_NAME)'/%s   ", $$2)}'
 	@grep "version:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "appVersion:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "description:" $(CHART_NAME)/Chart.yaml | cut -f2- -d" "
