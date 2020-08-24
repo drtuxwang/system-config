@@ -1,5 +1,6 @@
 NAME := test-servers
-CHART_NAME=./test-servers
+CHART_REPO := .
+CHART_NAME := test-servers
 IMAGE := drtuxwang/debian-bash:10
 DOMAIN := example.com
 
@@ -27,7 +28,7 @@ check:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: template
 template:
@@ -37,7 +38,7 @@ template:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(CHART_NAME)
+		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install:
@@ -49,7 +50,7 @@ install:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
 status:

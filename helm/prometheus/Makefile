@@ -1,5 +1,6 @@
 NAME := prometheus
-CHART_NAME := stable/prometheus
+CHART_REPO := stable
+CHART_NAME := prometheus
 CHART_VERSION := 11.5.0
 
 # Default namespace
@@ -17,9 +18,9 @@ default: status
 
 .PHONY: fetch
 fetch:
-	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
-	rm -rf $(NAME)
-	tar xf $(NAME)-$(CHART_VERSION).tgz
+	helm fetch --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
+	rm -rf $(CHART_NAME)
+	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
 
 .PHONY: check
 check:
@@ -36,7 +37,7 @@ check:
 		--set pushgateway.fullnameOverride=$(NAME)-pushgateway \
 		--set server.fullnameOverride=$(NAME)-server \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install:
@@ -52,7 +53,7 @@ install:
 		--set pushgateway.fullnameOverride=$(NAME)-pushgateway \
 		--set server.fullnameOverride=$(NAME)-server \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward
 forward:

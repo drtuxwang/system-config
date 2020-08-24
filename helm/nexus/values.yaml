@@ -3,3 +3,8 @@ nodeSelector:
 
 persistence:
   enabled: false
+
+nexusBackup:
+  persistence:
+    enabled: false
+

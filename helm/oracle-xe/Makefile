@@ -1,5 +1,6 @@
 NAME := oracle-xe
-CHART_NAME := ./oracle-xe
+CHART_REPO := .
+CHART_NAME := oracle-xe
 IMAGE := datagrip/oracle:11.2
 
 # Default namespace
@@ -20,7 +21,7 @@ check:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: template
 template:
@@ -29,7 +30,7 @@ template:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
-		$(CHART_NAME)
+		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install:
@@ -40,7 +41,7 @@ install:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
 status:

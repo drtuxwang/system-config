@@ -1,5 +1,6 @@
 NAME := grafana
-CHART_NAME := bitnami/grafana
+CHART_REPO := bitnami
+CHART_NAME := grafana
 CHART_VERSION := 3.3.5
 
 # Default namespace
@@ -17,9 +18,9 @@ default: status
 
 .PHONY: fetch
 fetch:
-	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
-	rm -rf $(NAME)
-	tar xf $(NAME)-$(CHART_VERSION).tgz
+	helm fetch --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
+	rm -rf $(CHART_NAME)
+	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
 
 .PHONY: check
 check:
@@ -31,7 +32,7 @@ check:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install:
@@ -41,7 +42,7 @@ install:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward
 forward:

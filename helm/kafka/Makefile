@@ -1,5 +1,6 @@
 NAME := kafka
-CHART_NAME := bitnami/kafka
+CHART_REPO := bitnami
+CHART_NAME := kafka
 CHART_VERSION := 10.3.3
 
 # Default namespace
@@ -10,15 +11,18 @@ endif
 
 default: status
 
+.PHONY: repo-add
+repo-add:
+	helm repo add bitnami https://charts.bitnami.com/bitnami
+
 .PHONY: fetch
-fetch:
-	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
-	rm -rf $(NAME)
-	tar xf $(NAME)-$(CHART_VERSION).tgz
+fetch: repo-add
+	helm fetch --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
+	rm -rf $(CHART_NAME)
+	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
 
 .PHONY: check
-check:
-	helm repo add bitnami https://charts.bitnami.com/bitnami
+check: repo-add
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -28,11 +32,10 @@ check:
 		--set fullnameOverride=$(NAME)-server \
 		--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
-install:
-	helm repo add bitnami https://charts.bitnami.com/bitnami
+install: repo-add
 	helm upgrade \
 		--install \
 		--wait \
@@ -41,7 +44,7 @@ install:
 		--set fullnameOverride=$(NAME)-server \
 		--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
 status:

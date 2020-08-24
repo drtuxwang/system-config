@@ -1,5 +1,6 @@
 NAME := chartmuseum
-CHART_NAME := stable/chartmuseum
+CHART_REPO := stable
+CHART_NAME := chartmuseum
 CHART_VERSION := 2.12.2
 INGRESS_HOST := chartmusuem.local
 SECRET := chartmusuem-secret-tls
@@ -14,9 +15,9 @@ default: status
 
 .PHONY: fetch
 fetch:
-	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
-	rm -rf $(NAME)
-	tar xf $(NAME)-$(CHART_VERSION).tgz
+	helm fetch --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
+	rm -rf $(CHART_NAME)
+	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
 
 .PHONY: check
 check:
@@ -33,7 +34,7 @@ check:
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--set service.type=ClusterIP \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install:
@@ -49,7 +50,7 @@ install:
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--set service.type=ClusterIP \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
 status:

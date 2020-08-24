@@ -1,5 +1,6 @@
 NAME := xfce
-CHART_NAME := ./xfce-servers
+CHART_REPO := .
+CHART_NAME := xfce-servers
 IMAGE := drtuxwang/debian-xfce:stable
 
 # Default namespace
@@ -26,7 +27,7 @@ check:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set servers.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: template
 template:
@@ -36,7 +37,7 @@ template:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set servers.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
-		$(CHART_NAME)
+		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install:
@@ -48,7 +49,7 @@ install:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set servers.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
 status:

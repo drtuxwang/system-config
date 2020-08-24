@@ -1,6 +1,7 @@
 NAME := nexus
-CHART_NAME := stable/sonatype-nexus
-CHART_VERSION := 1.23.1
+CHART_REPO := oteemo
+CHART_NAME := sonatype-nexus
+CHART_VERSION := 2.6.1
 
 # Default namespace
 ifndef NAMESPACE
@@ -9,14 +10,18 @@ endif
 
 default: status
 
+.PHONY: repo-add
+repo-add:
+	helm repo add oteemo https://oteemo.github.io/charts
+
 .PHONY: fetch
-fetch:
-	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
-	rm -rf $(NAME)
-	tar xf $(NAME)-$(CHART_VERSION).tgz
+fetch: repo-add
+	helm fetch --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
+	rm -rf $(CHART_NAME)
+	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
 
 .PHONY: check
-check:
+check: repo-add
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -25,10 +30,10 @@ check:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
-install:
+install: repo-add
 	helm upgrade \
 		--install \
 		--wait \
@@ -36,7 +41,7 @@ install:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
 status:

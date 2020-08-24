@@ -1,5 +1,6 @@
 NAME := concourse
-CHART_NAME := concourse/concourse
+CHART_REPO := concourse
+CHART_NAME := concourse
 CHART_VERSION := 11.2.3
 
 # Default namespace
@@ -15,15 +16,18 @@ endif
 
 default: status
 
+.PHONY: repo-add
+repo-add:
+	helm repo add concourse https://concourse-charts.storage.googleapis.com
+
 .PHONY: fetch
-fetch:
-	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
-	rm -rf $(NAME)
-	tar xf $(NAME)-$(CHART_VERSION).tgz
+fetch: repo-add
+	helm fetch --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
+	rm -rf $(CHART_NAME)
+	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
 
 .PHONY: check
-check:
-	helm repo add concourse https://concourse-charts.storage.googleapis.com
+check: repo-add
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -34,11 +38,10 @@ check:
 		--set postgresql.fullnameOverride=$(NAME)-postgresql \
 		--set service.type=ClusterIP \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
-install:
-	helm repo add concourse https://concourse-charts.storage.googleapis.com
+install: repo-add
 	helm upgrade \
 		--install \
 		--wait \
@@ -48,7 +51,7 @@ install:
 		--set postgresql.fullnameOverride=$(NAME)-postgresql \
 		--set service.type=ClusterIP \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward
 forward:

@@ -1,5 +1,6 @@
 NAME := ops-box
-CHART_NAME := ./ops-box
+CHART_REPO := .
+CHART_NAME := ops-box
 IMAGE := drtuxwang/debian-bash:stable
 
 # Default namespace
@@ -21,7 +22,7 @@ check:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set image.pullPolicy=Always \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: template
 template:
@@ -31,7 +32,7 @@ template:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set image.pullPolicy=Always \
-		./ops-box
+		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install:
@@ -43,7 +44,7 @@ install:
 		--set fullnameOverride=$(NAME) \
 		--set image.name=$(IMAGE) \
 		--set image.pullPolicy=Always \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
 status:

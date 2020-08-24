@@ -1,5 +1,6 @@
 NAME := rabbitmq
-CHART_NAME := stable/rabbitmq
+CHART_REPO := stable
+CHART_NAME := rabbitmq
 CHART_VERSION := 6.8.3
 
 # Default namespace
@@ -17,9 +18,9 @@ default: status
 
 .PHONY: fetch
 fetch:
-	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
-	rm -rf $(NAME)
-	tar xf $(NAME)-$(CHART_VERSION).tgz
+	helm fetch --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
+	rm -rf $(CHART_NAME)
+	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
 
 .PHONY: check
 check:
@@ -33,7 +34,7 @@ check:
 		--set rabbitmq.username=guest \
 		--set rabbitmq.password=guest \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install:
@@ -45,8 +46,8 @@ install:
 		--set fullnameOverride=$(NAME) \
 		--set rabbitmq.username=guest \
 		--set rabbitmq.password=guest \
-   	--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		--version $(CHART_VERSION) \
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
 status:

@@ -1,5 +1,6 @@
 NAME := mongodb
-CHART_NAME := bitnami/mongodb
+CHART_REPO := bitnami
+CHART_NAME := mongodb
 CHART_VERSION := 7.14.8
 
 # Default namespace
@@ -12,9 +13,9 @@ default: status
 
 .PHONY: fetch
 fetch:
-	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
-	rm -rf $(NAME)
-	tar xf $(NAME)-$(CHART_VERSION).tgz
+	helm fetch --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
+	rm -rf $(CHART_NAME)
+	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
 
 .PHONY: check
 check:
@@ -26,7 +27,7 @@ check:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install:
@@ -37,7 +38,7 @@ install:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
 status:

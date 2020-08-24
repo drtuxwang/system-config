@@ -1,5 +1,6 @@
 NAME := nginx
-CHART_NAME := bitnami/nginx
+CHART_REPO := bitnami
+CHART_NAME := nginx
 CHART_VERSION := 5.1.12
 
 # Default namespace
@@ -10,15 +11,18 @@ endif
 
 default: status
 
+.PHONY: repo-add
+repo-add:
+	helm repo add bitnami https://charts.bitnami.com/bitnami
+
 .PHONY: fetch
-fetch:
-	helm fetch --version=$(CHART_VERSION) $(CHART_NAME)
-	rm -rf $(NAME)
-	tar xf $(NAME)-$(CHART_VERSION).tgz
+fetch: repo-add
+	helm fetch --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
+	rm -rf $(CHART_NAME)
+	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
 
 .PHONY: check
-check:
-	helm repo add bitnami https://charts.bitnami.com/bitnami
+check: repo-add
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -30,11 +34,10 @@ check:
 		--set ingress.hosts\[0\].name=$(DOMAIN) \
 		--set service.type=ClusterIP \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
-install:
-	helm repo add bitnami https://charts.bitnami.com/bitnami
+install: repo-add
 	helm upgrade \
 		--install \
 		--wait \
@@ -45,7 +48,7 @@ install:
 		--set ingress.hosts\[0\].name=$(DOMAIN) \
 		--set service.type=ClusterIP \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_NAME)
+		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
 status:
