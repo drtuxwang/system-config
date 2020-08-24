@@ -77,4 +77,4 @@ delete:
 
 .PHONY: clean
 clean:
-	rm -rf $(NAME)-$(CHART_VERSION).tgz $(NAME)
+	rm -rf $(CHART_NAME)-$(CHART_VERSION).tgz $(CHART_NAME)
