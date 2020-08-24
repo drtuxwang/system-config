@@ -21,6 +21,12 @@ class Options:
         self._args = None
         self.parse(sys.argv)
 
+    def get_depth(self):
+        """
+        Return directory depth
+        """
+        return self._args.depth[0]
+
     def get_directories(self):
         """
         Return list of directories.
@@ -31,6 +37,13 @@ class Options:
         parser = argparse.ArgumentParser(
             description='Create links to JPEG files.')
 
+        parser.add_argument(
+            '-depth',
+            nargs=1,
+            type=int,
+            default=[1],
+            help='Number of directories to ad to link name.'
+        )
         parser.add_argument(
             'directories',
             nargs='+',
@@ -96,15 +109,16 @@ class Main:
         Start program
         """
         options = Options()
+        depth = options.get_depth()
         images_extensions = (
             config_mod.Config().get('image_extensions') + ['.webm']
         )
 
         for directory in options.get_directories():
+            linkdir = '_'.join(directory.split(os.sep)[-depth:])
             for file in sorted(glob.glob(os.path.join(directory, '*'))):
                 if os.path.splitext(file)[1].lower() in images_extensions:
-                    link = os.path.basename(
-                        directory + '_' + os.path.basename(file))
+                    link = linkdir + '_' + os.path.basename(file)
                     if link.endswith('.webm'):
                         link += '.gif'
                     if not os.path.islink(link):
