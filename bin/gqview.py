@@ -9,6 +9,7 @@ import random
 import signal
 import shutil
 import sys
+import time
 
 import command_mod
 import subtask_mod
@@ -109,6 +110,8 @@ class Options:
                     return
             directories = args[1:]
             random.shuffle(directories)
+            print(directories[0])
+            time.sleep(1)
             self._gqview.set_args(directories[:1])
 
 
