@@ -1,15 +1,19 @@
 PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h\[\033[00m\] # '
 export PATH="/opt/software/bin:$PATH"
+if [ "`which htop 2> /dev/null`" ]
+then
+    alias top="htop"
+fi
 alias df="df -k"
 alias du="du -k"
 alias ftp="ftp -i"
-if [ "`\ls --help 2>&1 | \grep \" --time-style\"`" ]
+if [ "`\ls --help 2>&1 | \grep ' --time-style'`" ]
 then
     alias ls="ls -C --time-style=long-iso --color=auto"
 else
     alias ls="ls -C --color=auto"
 fi
-if [ "`\grep --help 2>&1 | \grep \" --color\"`" ]
+if [ "`\grep --help 2>&1 | \grep ' --color'`" ]
 then
     alias grep="grep --color=auto"
     alias grep="egrep --color=auto"

@@ -209,14 +209,6 @@ then
     fi
 
     # General stuff
-    if [ "`which ssudo 2> /dev/null`" ]
-    then
-        alias sudo="ssudo"
-    fi
-    if [ "`which htop 2> /dev/null`" ]
-    then
-        alias top="htop"
-    fi
     umask 027
     export LC_COLLATE=C
     export HISTFILE=
@@ -268,6 +260,14 @@ then
     fi
 
     # Fix command aliases
+    if [ "`which ssudo 2> /dev/null`" ]
+    then
+        alias sudo="ssudo"
+    fi
+    if [ "`which htop 2> /dev/null`" ]
+    then
+        alias top="htop"
+    fi
     alias df="df -k"
     alias du="du -k"
     alias ftp="ftp -i -v"

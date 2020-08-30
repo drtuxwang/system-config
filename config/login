@@ -93,12 +93,6 @@ if ( $?TERM && -e "`\tty`" ) then
     endif
 
     # General stuff
-    if ( "`which ssudo |& \grep '/ssudo'`" != "" ) then
-        alias sudo ssudo
-    endif
-    if ( "`which htop |& \grep '/htop'`" != "" ) then
-        alias top htop
-    endif
     umask 027
     setenv LC_COLLATE C
     setenv PYTHONDONTWRITEBYTECODE 1
@@ -136,6 +130,12 @@ if ( $?TERM && -e "`\tty`" ) then
     endif
 
     # Fix command aliases
+    if ( "`which ssudo |& \grep '/ssudo'`" != "" ) then
+        alias sudo ssudo
+    endif
+    if ( "`which htop |& \grep '/htop'`" != "" ) then
+        alias top htop
+    endif
     alias df "df -k"
     alias du "du -k"
     alias ftp "ftp -i -v"
