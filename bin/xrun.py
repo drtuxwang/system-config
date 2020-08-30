@@ -53,7 +53,16 @@ class Options:
         self._args = parser.parse_args(args)
 
     @staticmethod
-    def _generate_cmd(args):
+    def _get_wget(url):
+        output = os.path.basename(url).split('?', 1)[0]
+        if 'pbs.twimg.com/media/' in url:
+            if '?format=jpg' in url:
+                output += '.jpg'
+                url = url.replace('=medium', '=large')
+        return ['wget', '-O', output, url]
+
+    @classmethod
+    def _generate_cmd(cls, args):
         if args[0].startswith(URI):
             nargs = []
             for arg in args:
@@ -64,13 +73,7 @@ class Options:
                 elif 'www.youtube.com/watch?' in arg:
                     nargs.extend(['vget', arg, ';'])
                 else:
-                    nargs.extend([
-                        'wget',
-                        '--output-document',
-                        os.path.basename(arg).split('?', 1)[0],
-                        arg,
-                        ';'
-                    ])
+                    nargs.extend(cls._get_wget(arg) + [';'])
             nargs.extend(['sleep', SLEEP])
         elif len(args) == 2 and args[1].startswith(URI):
             if '.m3u8' in args[1]:
