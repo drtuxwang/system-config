@@ -13,6 +13,8 @@ ifndef LOCALPORT
 	LOCALPORT=
 endif
 
+# Ingress controller detection
+INGRESS_ENABLED=$(shell kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
 
 default: status
 
@@ -36,11 +38,13 @@ check:
 		--set nodeExporter.fullnameOverride=$(NAME)-nodeexporter \
 		--set pushgateway.fullnameOverride=$(NAME)-pushgateway \
 		--set server.fullnameOverride=$(NAME)-server \
+		--set server.ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install:
+	echo debugX $(INGRESS_ENABLED)
 	helm upgrade \
 		--install \
 		--wait \
@@ -52,6 +56,7 @@ install:
 		--set nodeExporter.fullnameOverride=$(NAME)-nodeexporter \
 		--set pushgateway.fullnameOverride=$(NAME)-pushgateway \
 		--set server.fullnameOverride=$(NAME)-server \
+		--set server.ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
