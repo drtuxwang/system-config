@@ -13,6 +13,9 @@ ifndef LOCALPORT
 	LOCALPORT=
 endif
 
+# Ingress controller detection
+INGRESS_ENABLED=$(shell kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
+
 
 default: status
 
@@ -31,6 +34,7 @@ check:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
+		--set ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
@@ -42,6 +46,7 @@ install:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
+		--set ingress.enabled=$(INGRESS_ENABLED) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward

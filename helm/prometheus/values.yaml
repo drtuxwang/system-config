@@ -9,11 +9,6 @@ server:
   persistentVolume:
     enabled: false
   ingress:
-    enabled: false
-    annotations:
-      nginx.ingress.kubernetes.io/configuration-snippet: |
-         rewrite "(?i)/prometheus/(.*)$" /$1 break;
-      nginx.ingress.kubernetes.io/enable-cors: "true"
     hosts:
     - prometheus.kube.local
 

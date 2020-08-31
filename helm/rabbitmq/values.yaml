@@ -3,3 +3,6 @@ nodeSelector:
 
 persistence:
   enabled: false
+
+ingress:
+  hostName: rabbitmq.kube.local

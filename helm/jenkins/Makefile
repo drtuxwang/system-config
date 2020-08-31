@@ -13,6 +13,9 @@ ifndef LOCALPORT
 	LOCALPORT=
 endif
 
+# Ingress controller detection
+INGRESS_ENABLED=$(shell kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
+
 
 default: status
 
@@ -36,6 +39,7 @@ check: repo-add
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set service.type=ClusterIP \
+		--set ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
@@ -48,6 +52,7 @@ install: repo-add
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set service.type=ClusterIP \
+		--set ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 

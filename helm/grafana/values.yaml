@@ -3,3 +3,9 @@ nodeSelector:
 
 persistence:
   enabled: false
+
+ingress:
+  hosts:
+  - name: grafana.kube.local
+    path:
+    - /

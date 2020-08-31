@@ -4,3 +4,5 @@ nodeSelector:
 persistence:
   enabled: false
 
+ingress:
+  hostname: jenkins.kube.local
