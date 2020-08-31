@@ -45,7 +45,8 @@ check: repo-add
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
-install: repo-add
+install: repo-add fetch
+	cp -p  web-ingress.yaml  concourse/templates/
 	helm upgrade \
 		--install \
 		--wait \
@@ -56,7 +57,8 @@ install: repo-add
 		--set service.type=ClusterIP \
 		--set web.ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
+		$(NAMESPACE)-$(NAME) ./$(CHART_NAME)
+##		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward
 forward:
