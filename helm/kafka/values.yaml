@@ -6,7 +6,7 @@ metrics:
 podAnnotations:
   prometheus.io/scrape: "true"
   prometheus.io/port: "5556"
-replicaCount: 1
+replicaCount: 2
 persistence:
   enabled: false
 
@@ -20,3 +20,10 @@ zookeeper:
   persistence:
     enabled: false
 
+externalAccess:
+  enabled: true
+  service:
+    type: NodePort
+    nodePorts:
+    - 30901
+    - 30902
