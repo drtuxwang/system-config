@@ -1,3 +1,6 @@
+#
+# Requires "$EXTERNAL_IP  host.kube.local" entries in DNS or /etc/hosts
+#
 NAME := ingress
 CHART_REPO := ingress-nginx
 CHART_NAME := ingress-nginx
