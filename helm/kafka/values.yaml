@@ -25,5 +25,5 @@ externalAccess:
   service:
     type: NodePort
     nodePorts:
-    - 30901
-    - 30902
+    - 30991
+    - 30992
