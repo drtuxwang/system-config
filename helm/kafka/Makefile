@@ -8,6 +8,11 @@ ifndef NAMESPACE
 	NAMESPACE=default
 endif
 
+# Define external IP
+ifndef EXTERNAL_IP
+	EXTERNAL_IP=$(shell ping -c 1 kafka.kube.local | grep "^PING" | sed -e "s/.* (//;s/).*//")
+endif
+
 
 default: status
 
@@ -31,6 +36,7 @@ check: repo-add
 		--values values.yaml \
 		--set fullnameOverride=$(NAME)-server \
 		--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
+		--set externalAccess.service.domain=$(EXTERNAL_IP) \
 		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
@@ -43,8 +49,13 @@ install: repo-add
 		--values values.yaml \
 		--set fullnameOverride=$(NAME)-server \
 		--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
+		--set externalAccess.service.domain=$(EXTERNAL_IP) \
 		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
+
+.PHONY: test
+test:
+	./test.sh $(NAME)-server-0 $(EXTERNAL_IP):30991
 
 .PHONY: status
 status:

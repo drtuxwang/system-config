@@ -1028,6 +1028,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/concourse/concourse-secrets.yaml
  * helm/concourse/connect.sh
  * helm/concourse/values.yaml
+ * helm/concourse/web-ingress.yaml
  * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 4.8.4 (app 3.4.9)
  * helm/etcd/values.yaml
  * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 3.3.5 (app 7.1.3)
@@ -1037,6 +1038,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/jenkins/connect.sh
  * helm/jenkins/values.yaml
  * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 10.3.3 (app 2.5.0)
+ * helm/kafka/test.sh
  * helm/kafka/values.yml
  * helm/ingress/Makefile                 Helm Chart: ingress-nginx/ingress-nginx 2.12.1 (app 0.34.1)
  * helm/ingress/values.yaml
