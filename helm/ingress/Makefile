@@ -16,14 +16,6 @@ ifndef EXTERNAL_IP
     EXTERNAL_IP=$(shell kubectl get nodes -o wide | awk 'NR==2{print $$6}')
 endif
 
-# Default local port
-ifndef LOCALPORT
-	LOCALPORT=8080
-endif
-ifndef LOCALPORT_HTTPS
-	LOCALPORT_HTTPS=8443
-endif
-
 
 default: status
 
@@ -66,10 +58,6 @@ install: repo-add
 status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
-
-.PHONY: forward
-forward:
-	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME)-controller $(LOCALPORT):80 $(LOCALPORT_HTTPS):443
 
 .PHONY: version
 version:
