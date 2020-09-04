@@ -1,6 +1,3 @@
-#
-# Requires "$EXTERNAL_IP  host.kube.local" entries in DNS or /etc/hosts
-#
 NAME := ingress
 CHART_REPO := ingress-nginx
 CHART_NAME := ingress-nginx
@@ -58,10 +55,13 @@ install: repo-add
 status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
+	@echo "Example settings for \"/etc/hosts\":"
+	@grep kube.local  ../*/values.yaml | awk '{printf("'$(EXTERNAL_IP)'  %s\n", $$NF)}'
 
 .PHONY: version
 version:
 	@helm search -l $(CHART_NAME) | grep "$(CHART_NAME)[	 ]*$(CHART_VERSION) " | sed -e "s/	/   /g" -e "s/   */   /g"
+
 
 .PHONY: delete
 delete:

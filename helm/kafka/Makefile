@@ -8,11 +8,6 @@ ifndef NAMESPACE
 	NAMESPACE=default
 endif
 
-# External IP
-ifndef EXTERNAL_IP
-    EXTERNAL_IP=$(shell kubectl get nodes -o wide | awk 'NR==2{print $$6}')
-endif
-
 
 default: status
 
@@ -36,7 +31,6 @@ check: repo-add
 		--values values.yaml \
 		--set fullnameOverride=$(NAME)-server \
 		--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
-		--set externalAccess.service.domain=$(EXTERNAL_IP) \
 		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
@@ -49,7 +43,6 @@ install: repo-add
 		--values values.yaml \
 		--set fullnameOverride=$(NAME)-server \
 		--set zookeeper.fullnameOverride=$(NAME)-zookeeper \
-		--set externalAccess.service.domain=$(EXTERNAL_IP) \
 		--version $(CHART_VERSION) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
