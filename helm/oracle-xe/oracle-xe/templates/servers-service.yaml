@@ -17,6 +17,9 @@ spec:
     port: 1521
     protocol: TCP
     targetPort: oracle
+{{- if .Values.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.service.externalIPs | nindent 4 }}
+{{- end }}
   selector:
     app.kubernetes.io/name: {{ include "chart.name" . }}-servers
     app.kubernetes.io/instance: {{ .Release.Name }}

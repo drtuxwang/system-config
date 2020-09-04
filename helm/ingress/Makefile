@@ -56,7 +56,7 @@ status:
 	@echo "\n*** Checking status ***"
 	helm status $(NAMESPACE)-$(NAME)
 	@echo "Example settings for \"/etc/hosts\":"
-	@grep kube.local  ../*/values.yaml | awk '{printf("'$(EXTERNAL_IP)'  %s\n", $$NF)}'
+	@grep -R "[.]kube[.]local" ../* | sed -e "s/local.*/local/" | awk '{printf("'$(EXTERNAL_IP)'  %s\n", $$NF)}'
 
 .PHONY: version
 version:

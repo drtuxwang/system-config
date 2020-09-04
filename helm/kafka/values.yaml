@@ -24,7 +24,6 @@ externalAccess:
   enabled: true
   service:
     type: NodePort
-    ##domain: kafka.kube.local
     nodePorts:
     - 30991
     - 30992

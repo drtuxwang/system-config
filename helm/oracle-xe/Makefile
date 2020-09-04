@@ -8,6 +8,14 @@ ifndef NAMESPACE
 	NAMESPACE=default
 endif
 
+# External IP
+ifndef EXTERNAL_IP
+	EXTERNAL_IP=$(shell ping -c 1 oracle.kube.local | grep "^PING" | sed -e "s/.* (//;s/).*//")
+endif
+ifndef EXTERNAL_IP
+    EXTERNAL_IP=$(shell kubectl get nodes -o wide | awk 'NR==2{print $$6}')
+endif
+
 
 default: status
 
@@ -20,6 +28,7 @@ check:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
+		--set service.externalIPs='{$(EXTERNAL_IP)}' \
 		--set image.name=$(IMAGE) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
@@ -29,6 +38,7 @@ template:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
+		--set service.externalIPs='{$(EXTERNAL_IP)}' \
 		--set image.name=$(IMAGE) \
 		$(CHART_REPO)/$(CHART_NAME)
 
@@ -40,6 +50,7 @@ install:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
+		--set service.externalIPs='{$(EXTERNAL_IP)}' \
 		--set image.name=$(IMAGE) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
@@ -51,8 +62,8 @@ status:
 .PHONY: connect
 connect:
 	@echo "\n*** Connecting to Oracle XE database ***"
-	@echo sqlplus system/oracle@`kubectl get service oracle-server-oracle | awk 'NR==2 {print $$3}'`
-	@sqlplus system/oracle@`kubectl get service oracle-server-oracle | awk 'NR==2 {print $$3}'`
+	@echo sqlplus system/oracle@oracle.kube.local
+	@sqlplus system/oracle@$(EXTERNAL_IP)
 
 .PHONY: version
 version:

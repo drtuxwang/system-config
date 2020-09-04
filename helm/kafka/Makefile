@@ -8,9 +8,12 @@ ifndef NAMESPACE
 	NAMESPACE=default
 endif
 
-# Define external IP
+# External IP
 ifndef EXTERNAL_IP
 	EXTERNAL_IP=$(shell ping -c 1 kafka.kube.local | grep "^PING" | sed -e "s/.* (//;s/).*//")
+endif
+ifndef EXTERNAL_IP
+    EXTERNAL_IP=$(shell kubectl get nodes -o wide | awk 'NR==2{print $$6}')
 endif
 
 
