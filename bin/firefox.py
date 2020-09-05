@@ -235,6 +235,7 @@ class Options:
             keep_list = (
                 'addonStartup.json.lz4',
                 'content-prefs.sqlite',
+                'cookies.sqlite',
                 'extensions',
                 'extensions.json',
                 'extension-preferences.json',
