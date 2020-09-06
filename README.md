@@ -974,13 +974,13 @@ the years. Now most of the scripts are written in Python 3.
  * docker/docker-stable/Makefile         docker:19.03 (alpine) based docker shell
  * docker/docker-stable/files/ash2bash
  * docker/golang-stable/Dockerfile
- * docker/golang-stable/Makefile         golang:1.13.12-alpine based compiler app
+ * docker/golang-stable/Makefile         golang:1.14-alpine based compiler app
  * docker/python-stable/Dockerfile
- * docker/python-stable/Makefile         python:3.7.8-slim-buster based Python app
+ * docker/python-stable/Makefile         python:3.7-slim-buster based Python app
  * docker/python-stable/bash/Makefile
- * docker/python-stable/bash/Dockerfile  python:3.7.8-slim-buster based BASH login
+ * docker/python-stable/bash/Dockerfile  python:3.7-slim-buster based BASH login
  * docker/python-stable/devpi/Dockerfile
- * docker/python-stable/devpi/Makefile   python:3.7.8-slim-buster based devpi server app
+ * docker/python-stable/devpi/Makefile   python:3.7-slim-buster based devpi server app
  * docker/registry-stable/Dockerfile
  * docker/registry-stable/Makefile       registry:2.6 based Docker Registry server app
  * docker/registry-stable/files/ash2bash

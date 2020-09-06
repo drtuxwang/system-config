@@ -1,4 +1,4 @@
-BASE_IMAGE := python:3.7.8-slim-buster
+BASE_IMAGE := python:3.7-slim-buster
 IMAGE := drtuxwang/python:stable
 
 TOPDIR := ../..

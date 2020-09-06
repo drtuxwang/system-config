@@ -1,4 +1,4 @@
-BASE_IMAGE := golang:1.13.12-alpine
+BASE_IMAGE := golang:1.14-alpine
 IMAGE := drtuxwang/golang:stable
 NAME := golang-bash
 HOSTNAME := golang-bash
