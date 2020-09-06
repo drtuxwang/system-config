@@ -30,6 +30,7 @@ default: build status
 .PHONY: status
 status:
 	docker images | grep "^$(IMAGES) " | sort
+	docker system df
 
 .PHONY: project
 project:
