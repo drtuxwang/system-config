@@ -1,9 +1,7 @@
 #!/bin/sh
 
 # VirtualBox
-##ln -sf /opt/VBoxGuestAdditions-*/lib/VBoxGuestAdditions /usr/lib
-##modprobe vboxsf
-##mount -t vboxsf -o uid=owner,gid=users shared /home/owner/shared &
+##mount -t vboxsf -o uid=owner,gid=users shared /shared &
 
 # No Network Manager
 ##dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &

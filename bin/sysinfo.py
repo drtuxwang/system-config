@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.14.2'
-VERSION = 20200821
+RELEASE = '5.14.3'
+VERSION = 20200905
 
 # pylint: disable = too-many-lines
 
@@ -1536,10 +1536,11 @@ class LinuxSystem(PosixSystem):
         if systemd_analyze.is_found():
             task = subtask_mod.Batch(systemd_analyze.get_cmdline())
             task.run(pattern='^Startup finished in ')
-            info['OS Boot'] = task.get_output()[0].replace(
-                'Startup finished in ',
-                '',
-            )
+            if task.has_output():
+                info['OS Boot'] = task.get_output()[0].replace(
+                    'Startup finished in ',
+                    '',
+                )
 
         return info
 
