@@ -6,6 +6,13 @@
 # No Network Manager
 ##dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
 
+# Mount binds
+##mount -o bind /data1/home /home
+##mount -o bind /data1/shared /shared
+##mount -o bind /data1/software /opt/software
+
+sleep 20
+
 # Mount removable disks
 ##mount -t ext4 -o noatime,errors=remount-ro,data=ordered,commit=60 UUID=<uuid-from-blkid> /data2 &
 
