@@ -6,7 +6,8 @@
 # No Network Manager
 ##dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
 
-sleep 25
+# Mount removable disks
+##mount -t ext4 -o noatime,errors=remount-ro,data=ordered,commit=60 UUID=<uuid-from-blkid> /data2 &
 
 # Setup ZRAM swap (zramctl)
 ##modprobe zram num_devices=1
@@ -15,8 +16,5 @@ sleep 25
 ##echo $(($RAM/2))K > /sys/block/zram0/mem_limit
 ##mkswap /dev/zram0
 ##swapon -p 100 /dev/zram0
-
-# Mount removable disks
-##mount -t ext4 -o noatime,errors=remount-ro,data=ordered,commit=60 UUID=<uuid-from-blkid> /data2 &
 
 exit 0
