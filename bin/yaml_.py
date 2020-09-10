@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Convert BSON/JSON/YAML to YAML file.
+Convert BSON/JSON/XML/YAML to YAML file.
 """
 
 import argparse
@@ -29,7 +29,7 @@ class Options:
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Convert BSON/JSON/YAML to YAML file.')
+            description='Convert BSON/JSON/XML/YAML to YAML file.')
 
         parser.add_argument(
             'files',
@@ -90,7 +90,7 @@ class Main:
             if not os.path.isfile(file):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
-            if file.endswith(('.json', 'yaml', 'yml', '.bson')):
+            if file.endswith(('.bson', '.json', '.xml', '.yaml', '.yml')):
                 try:
                     data.read(file)
                 except config_mod.ReadConfigError as exception:

@@ -2,21 +2,23 @@
 """
 Python configuration module (uses "config_mod.yaml")
 
-Supports multi-JSON, multi-YAML & BSON files.
+Supports BSON, multi-JSON, XML, multi-YAML files.
 
-Copyright GPL v2: 2017-2019 By Dr Colin Kong
+Copyright GPL v2: 2017-2020 By Dr Colin Kong
 """
 
 import json
 import os
 import re
 import shutil
+import xml
 
 import bson
+import xmltodict
 import yaml
 
-RELEASE = '1.4.0'
-VERSION = 20200721
+RELEASE = '1.5.0'
+VERSION = 20200910
 
 
 class Data:
@@ -82,6 +84,27 @@ class Data:
         """
         self._blocks.append(block)
 
+    @classmethod
+    def _decode_json(cls, data):
+        try:
+            blocks = [json.loads(block) for block in cls._split_jsons(data)]
+        except json.decoder.JSONDecodeError as exception:
+            raise ReadConfigError(exception)
+        return blocks
+
+    @classmethod
+    def _decode_yaml(cls, data):
+        try:
+            blocks = [
+                yaml.safe_load(block) for block in cls._split_yamls(data)
+            ]
+        except (
+                yaml.parser.ParserError,
+                yaml.scanner.ScannerError,
+        ) as exception:
+            raise ReadConfigError(exception)
+        return blocks
+
     def read(self, file, check=False):
         """
         Read or check configuration file.
@@ -93,30 +116,24 @@ class Data:
                         blocks = [bson.BSON.decode(ifile.read())]
                 except IndexError as exception:
                     raise ReadConfigError(exception)
+            elif file.endswith('xml'):
+                try:
+                    with open(file, 'rb') as ifile:
+                        blocks = [xmltodict.parse(
+                            ifile.read(),
+                            dict_constructor=dict,
+                        )]
+                except xml.parsers.expat.ExpatError as exception:
+                    raise ReadConfigError(exception)
             else:
                 with open(file) as ifile:
                     data = ifile.read()
                 if check:
                     data = self._unjinja(data)
                 if file.endswith(('.json')):
-                    try:
-                        blocks = [
-                            json.loads(block)
-                            for block in self._split_jsons(data)
-                        ]
-                    except json.decoder.JSONDecodeError as exception:
-                        raise ReadConfigError(exception)
+                    blocks = self._decode_json(data)
                 elif file.endswith(('.yml', '.yaml')):
-                    try:
-                        blocks = [
-                            yaml.safe_load(block)
-                            for block in self._split_yamls(data)
-                        ]
-                    except (
-                            yaml.parser.ParserError,
-                            yaml.scanner.ScannerError,
-                    ) as exception:
-                        raise ReadConfigError(exception)
+                    blocks = self._decode_yaml(data)
                 else:
                     raise ReadConfigError("Cannot handle configuration file.")
         except OSError:
