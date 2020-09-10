@@ -59,4 +59,5 @@ ujson>=2.0.3
 uncompyle6>=3.6.7
 virtualenv>=16.7.10
 wheel>=0.33.6
+xmltodict>=0.10.2
 youtube-dl>=2020.7.28
