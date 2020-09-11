@@ -1,3 +1,10 @@
+#
+# GIT repository can over-ride:
+# .git/config:
+# [user]
+#   email = <address>
+#
+
 [user]
 	name = ???
 	email = ???
