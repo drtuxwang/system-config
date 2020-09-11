@@ -52,7 +52,8 @@ status:
 .PHONY: connect
 connect:
 	@echo "\n*** Connecting to Etcd database ***"
-	kubectl exec -it etcd-server-0 -- sh
+	kubectl -n $(NAMESPACE) exec etcd-0 -- etcdctl -w table member list
+	kubectl -n $(NAMESPACE) exec -it etcd-0 -- sh
 
 .PHONY: version
 version:
