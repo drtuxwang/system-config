@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.14.3'
-VERSION = 20200905
+RELEASE = '5.14.4'
+VERSION = 20200912
 
 # pylint: disable = too-many-lines
 
@@ -411,7 +411,10 @@ class OperatingSystem:
         """
         Return fully qualified domain name (ie 'hostname.domain.com.').
         """
-        fqdn = (socket.getfqdn()).lower()
+        try:
+            fqdn = (socket.getfqdn()).lower()
+        except LookupError:
+            return 'Unknown'
         if fqdn.count('.') < 2:
             return 'Unknown'
         if fqdn.endswith('.'):
