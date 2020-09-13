@@ -69,7 +69,7 @@ class Options:
         self._sshfs = command_mod.Command('sshfs', errors='stop')
         self._sshfs.set_args([
             '-o',
-            'allow_root,nonempty',
+            'noatime,allow_root,nonempty',
         ] + self._args.remote + self._args.local)
 
 
