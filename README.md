@@ -1029,7 +1029,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/concourse/connect.sh
  * helm/concourse/values.yaml
  * helm/concourse/web-ingress.yaml
- * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 4.8.4 (app 3.4.9)
+ * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 4.10.1 (app 3.4.13)
  * helm/etcd/values.yaml
  * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 3.3.5 (app 7.1.3)
  * helm/grafana/connect.sh

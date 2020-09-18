@@ -1,7 +1,7 @@
 NAME := etcd
 CHART_REPO := bitnami
 CHART_NAME := etcd
-CHART_VERSION := 4.8.4
+CHART_VERSION := 4.10.1
 
 # Default namespace
 ifndef NAMESPACE
