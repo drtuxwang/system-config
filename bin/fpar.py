@@ -147,7 +147,6 @@ class Main:
                     os.path.getsize(file)
             ):
                 fpar_directory = os.path.join(directory, '...')
-                cls._create_3dot_directory(fpar_directory)
 
                 if name.endswith(IGNORE_EXTENSIONS):
                     continue
@@ -163,6 +162,7 @@ class Main:
                     task = subtask_mod.Task(
                         cmdline + ['-s'+str(size), tmpfile, file]
                     )
+                    cls._create_3dot_directory(fpar_directory)
                     task.run(pattern='^$', replace=(
                         'Opening: ',
                         'Opening: {0:s}{1:s}'.format(directory, os.sep)
