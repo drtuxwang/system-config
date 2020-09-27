@@ -73,13 +73,6 @@ class Options:
         now = datetime.datetime.now()
         self._year = now.year
         self._month = now.month
-        if self._args.year:
-            self._year = self._args.year
-            if self._year < 2 or self._year > 9999:
-                raise SystemExit(
-                    sys.argv[0] + ': Invalid "' + str(self._year) +
-                    '" year. Use 2-9999.'
-                )
         if self._args.month:
             self._month = self._args.month
             if self._month < 0 or self._month > 12:
@@ -87,7 +80,14 @@ class Options:
                     sys.argv[0] + ': Invalid "' + str(self._month) +
                     '" month. Use 1-12.'
                 )
-            if self._month < now.month:
+            if self._args.year:
+                self._year = self._args.year
+                if self._year < 2 or self._year > 9999:
+                    raise SystemExit(
+                        sys.argv[0] + ': Invalid "' + str(self._year) +
+                        '" year. Use 2-9999.'
+                    )
+            elif self._month < now.month:
                 self._year += 1  # Next year
 
 
