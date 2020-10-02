@@ -3,6 +3,7 @@
 WOLFENSTEIN ENEMY TERRITORY game launcher
 """
 
+import getpass
 import glob
 import os
 import shutil
@@ -113,7 +114,7 @@ class Main:
         self._punkbuster()
         self._et.set_args(sys.argv[1:])
 
-        logfile = os.path.join(os.environ['HOME'], '.etwolf', 'etwolf.log')
+        logfile = os.path.join('/tmp', getpass.getuser(), 'et.log')
         subtask_mod.Daemon(self._et.get_cmdline()).run(file=logfile)
 
 
