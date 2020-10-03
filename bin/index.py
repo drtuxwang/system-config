@@ -168,8 +168,6 @@ class Main:
                             int(line.split(' ', 1)[0].rsplit('/', 1)[-1])
                         )
                         print(line, file=ofile)
-                os.utime(file, (time_new, time_new))
-                os.utime(directory, (time_new, time_new))
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + file + '" file.')
