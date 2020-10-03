@@ -55,7 +55,6 @@ class Main:
             sys.argv = argv
 
     def _checksum(self):
-        logger.info('Generating "index.fsum"')
 
         fsum = command_mod.Command('fsum', errors='stop')
         files = glob.glob('*')
@@ -77,6 +76,7 @@ class Main:
                         lines.append(line.rstrip('\r\n'))
                 if lines == task.get_output():
                     return
+            logger.info("Writing checksums: index.fsum")
             with open('index.fsum', 'w', newline='\n') as ofile:
                 for line in task.get_output():
                     time_new = max(
@@ -155,6 +155,7 @@ class Main:
                                 lines.append(line.rstrip('\r\n'))
                         if lines == fsums[directory]:
                             continue
+                    logger.info("Writing checksums: %s", file)
                     with open(file, 'w', newline='\n') as ofile:
                         for line in fsums[directory]:
                             time_new = max(
