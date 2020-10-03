@@ -7,6 +7,7 @@ import glob
 import logging
 import os
 import re
+import shutil
 import signal
 import sys
 
@@ -64,9 +65,11 @@ class Main:
         else:
             fsum.set_args(['-R'] + files)
         task = subtask_mod.Batch(fsum.get_cmdline())
-        task.run()
 
+        task.run()
         self._write_fsums(task.get_output())
+
+        task.run()
         time_new = 0
         try:
             lines = []
@@ -76,15 +79,17 @@ class Main:
                         lines.append(line.rstrip('\r\n'))
                 if lines == task.get_output():
                     return
+
             logger.info("Writing checksums: index.fsum")
-            with open('index.fsum', 'w', newline='\n') as ofile:
+            with open('index.fsum.part', 'w', newline='\n') as ofile:
                 for line in task.get_output():
                     time_new = max(
                         time_new,
                         int(line.split(' ', 1)[0].rsplit('/', 1)[-1])
                     )
                     print(line, file=ofile)
-            os.utime('index.fsum', (time_new, time_new))
+            os.utime('index.fsum.part', (time_new, time_new))
+            shutil.move('index.fsum.part', 'index.fsum')
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "index.fsum" file.')
@@ -129,46 +134,45 @@ class Main:
         for line in lines:
             checksum, file = line.split('  ', 1)
             directory = os.path.dirname(file)
+            if os.path.basename(directory) == '...':
+                directory = os.path.dirname(directory)
+                filename = os.path.basename(file)
+                if filename == 'fsum':
+                    continue
+            else:
+                filename = '../' + os.path.basename(file)
             if directory not in fsums:
                 fsums[directory] = []
-            fsums[os.path.dirname(file)].append(
-                checksum + '  ' + os.path.basename(file))
+            fsums[directory].append(checksum + '  ' + filename)
 
-        directories = {}
         for directory in sorted(fsums):
-            depth = directory.count(os.sep)
-            if depth not in directories:
-                directories[depth] = []
-            directories[depth].append(directory)
+            directory_3dot = os.path.join(directory, '...')
+            cls._create_directory(directory_3dot)
+            file = os.path.join(directory_3dot, 'fsum')
 
-        for depth in sorted(directories, reverse=True):
-            for directory in directories[depth]:
-                directory_3dot = os.path.join(directory, '...')
-                cls._create_directory(directory_3dot)
-                file = os.path.join(directory_3dot, 'fsum')
-                time_new = 0
-                try:
-                    lines = []
-                    if os.path.isfile(file):
-                        with open(file, errors='replace') as ifile:
-                            for line in ifile:
-                                lines.append(line.rstrip('\r\n'))
-                        if lines == fsums[directory]:
-                            continue
-                    logger.info("Writing checksums: %s", file)
-                    with open(file, 'w', newline='\n') as ofile:
-                        for line in fsums[directory]:
-                            time_new = max(
-                                time_new,
-                                int(line.split(' ', 1)[0].rsplit('/', 1)[-1])
-                            )
-                            print(line, file=ofile)
-                except OSError:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + file + '" file.')
+            time_new = 0
+            try:
+                lines = []
+                if os.path.isfile(file):
+                    with open(file, errors='replace') as ifile:
+                        for line in ifile:
+                            lines.append(line.rstrip('\r\n'))
+                    if lines == fsums[directory]:
+                        continue
+
+                logger.info("Writing checksums: %s", file)
+                with open(file, 'w', newline='\n') as ofile:
+                    for line in fsums[directory]:
+                        time_new = max(
+                            time_new,
+                            int(line.split(' ', 1)[0].rsplit('/', 1)[-1])
+                        )
+                        print(line, file=ofile)
                 os.utime(file, (time_new, time_new))
-                if directory:
-                    os.utime(directory, (time_new, time_new))
+                os.utime(directory, (time_new, time_new))
+            except OSError:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create "' + file + '" file.')
 
     def run(self):
         """

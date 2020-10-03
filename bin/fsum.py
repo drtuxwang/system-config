@@ -149,7 +149,7 @@ class Main:
 
     def _calc(self, options, files):
         for file in files:
-            if os.path.isdir(file) and os.path.basename(file) != '...':
+            if os.path.isdir(file):
                 if not os.path.islink(file):
                     if options.get_recursive_flag():
                         try:
@@ -159,7 +159,7 @@ class Main:
                             ]))
                         except PermissionError:
                             pass
-            elif os.path.isfile(file) and os.path.basename(file) != 'fsum':
+            elif os.path.isfile(file):
                 file_stat = file_mod.FileStat(file)
                 try:
                     md5sum = self._cache[
