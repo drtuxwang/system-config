@@ -104,18 +104,18 @@ class Options:
                 os.path.join(firefoxdir, '*', 'adblockplus', 'patterns.ini')):
             try:
                 with open(file, errors='replace') as ifile:
-                    with open(file + '-new', 'w', newline='\n') as ofile:
+                    with open(file + '.part', 'w', newline='\n') as ofile:
                         for line in ifile:
                             if not ispattern.search(line):
                                 print(line, end='', file=ofile)
             except OSError:
                 try:
-                    os.remove(file + '-new')
+                    os.remove(file + '.part')
                 except OSError:
                     continue
             else:
                 try:
-                    shutil.move(file + '-new', file)
+                    shutil.move(file + '.part', file)
                 except OSError:
                     continue
 
@@ -125,18 +125,18 @@ class Options:
             file = os.path.join(directory, 'xulstore.json')
             try:
                 with open(file) as ifile:
-                    with open(file + '-new', 'w', newline='\n') as ofile:
+                    with open(file + '.part', 'w', newline='\n') as ofile:
                         for line in ifile:
                             print(line.replace('"fullscreen"', '"maximized"'),
                                   end='', file=ofile)
             except OSError:
                 try:
-                    os.remove(file + '-new')
+                    os.remove(file + '.part')
                 except OSError:
                     pass
             else:
                 try:
-                    shutil.move(file + '-new', file)
+                    shutil.move(file + '.part', file)
                 except OSError:
                     pass
 

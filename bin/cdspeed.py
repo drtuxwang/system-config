@@ -62,11 +62,11 @@ class Options:
         else:
             config = Configuration()
         config.set_speed(self._device, speed)
-        config.write(configfile + '-new')
+        config.write(configfile + '.part')
         try:
-            shutil.move(configfile + '-new', configfile)
+            shutil.move(configfile + '.part', configfile)
         except OSError:
-            os.remove(configfile + '-new')
+            os.remove(configfile + '.part')
 
         return speed
 

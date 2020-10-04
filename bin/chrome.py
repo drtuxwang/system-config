@@ -96,7 +96,7 @@ class Options:
                 data = json.load(ifile)
             data['profile']['exit_type'] = 'Normal'
             data['partition']['per_host_zoom_levels'] = {}
-            with open(file + '-new', 'w', newline='\n') as ofile:
+            with open(file + '.part', 'w', newline='\n') as ofile:
                 print(json.dumps(
                     data,
                     ensure_ascii=False,
@@ -105,12 +105,12 @@ class Options:
                 ), file=ofile)
         except (KeyError, OSError, ValueError):
             try:
-                os.remove(file + '-new')
+                os.remove(file + '.part')
             except OSError:
                 pass
         else:
             try:
-                shutil.move(file + '-new', file)
+                shutil.move(file + '.part', file)
             except OSError:
                 pass
 
@@ -129,18 +129,18 @@ class Options:
                 os.path.join(configdir, 'File System', '*', 'p', '00', '*')):
             try:
                 with open(file, errors='replace') as ifile:
-                    with open(file + '-new', 'w', newline='\n') as ofile:
+                    with open(file + '.part', 'w', newline='\n') as ofile:
                         for line in ifile:
                             if not ispattern.search(line):
                                 print(line, end='', file=ofile)
             except OSError:
                 try:
-                    os.remove(file + '-new')
+                    os.remove(file + '.part')
                 except OSError:
                     continue
             else:
                 try:
-                    shutil.move(file + '-new', file)
+                    shutil.move(file + '.part', file)
                 except OSError:
                     continue
 

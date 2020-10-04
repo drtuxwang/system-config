@@ -195,7 +195,7 @@ class Main:
             pass
         if scaling:
             with open(file, errors='replace') as ifile:
-                with open(file + '-new', 'w', newline='\n') as ofile:
+                with open(file + '.part', 'w', newline='\n') as ofile:
                     for line in ifile:
                         line = line.rstrip('\r\n')
                         if line.endswith(' setpagesize'):
@@ -207,7 +207,7 @@ class Main:
                             line = '{0:6.4f} {1:6.4f} scale'.format(
                                 float(xsize)*scaling, float(ysize)*scaling)
                         print(line, file=ofile)
-            shutil.move(file + '-new', file)
+            shutil.move(file + '.part', file)
 
     def _text(self, options, file):
         if 'LANG' in os.environ:

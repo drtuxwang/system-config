@@ -111,7 +111,7 @@ class Main:
                 pass
 
     def _replace(self, file):
-        newfile = file + '-new'
+        newfile = file + '.part'
         nchange = 0
 
         try:

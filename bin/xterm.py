@@ -356,9 +356,9 @@ class XfceTerminal(GnomeTerminal):
             with open(file, errors='replace') as ifile:
                 data = ifile.read()
                 if '"<Alt>' in data:
-                    with open(file+'-new', 'w', newline='\n') as ofile:
+                    with open(file+'.part', 'w', newline='\n') as ofile:
                         print(re.sub(r'"<Alt>\d+"', '""', data), file=ofile)
-                    shutil.move(file+'-new', file)
+                    shutil.move(file+'.part', file)
         except OSError:
             return
 

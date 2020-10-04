@@ -54,7 +54,7 @@ class Main:
             with open(configfile, errors='replace') as ifile:
                 try:
                     with open(
-                            configfile + '-new',
+                            configfile + '.part',
                             'w',
                             newline='\n'
                     ) as ofile:
@@ -69,7 +69,7 @@ class Main:
         except OSError:
             return
         try:
-            shutil.move(configfile + '-new', configfile)
+            shutil.move(configfile + '.part', configfile)
         except OSError:
             pass
 

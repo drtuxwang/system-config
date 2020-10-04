@@ -103,7 +103,7 @@ class Main:
                     config.extend(['', 'Host ' + rhost, 'User ' + ruser])
                     try:
                         with open(
-                                configfile + '-new',
+                                configfile + '.part',
                                 'w',
                                 newline='\n'
                         ) as ofile:
@@ -112,10 +112,10 @@ class Main:
                     except OSError:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' +
-                            configfile + '-new' + '" temporary file.'
+                            configfile + '.part' + '" temporary file.'
                         )
                     try:
-                        shutil.move(configfile + '-new', configfile)
+                        shutil.move(configfile + '.part', configfile)
                     except OSError:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot update "' +
@@ -158,17 +158,17 @@ class Main:
                 )
         if pubkey not in pubkeys:
             try:
-                with open(file + '-new', 'w', newline='\n') as ofile:
+                with open(file + '.part', 'w', newline='\n') as ofile:
                     for line in pubkeys:
                         print(line, file=ofile)
                     print(pubkey, file=ofile)
             except OSError:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + file + '-new' +
+                    sys.argv[0] + ': Cannot create "' + file + '.part' +
                     '" temporary file.'
                 )
             try:
-                shutil.move(file + '-new', file)
+                shutil.move(file + '.part', file)
             except OSError:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot update "' + file +

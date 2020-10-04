@@ -220,13 +220,13 @@ class Main:
     def _write_data(file, data):
         logger.info('Creating "%s" packages file.', file)
         try:
-            with open(file + '-new', 'w', newline='\n') as ofile:
+            with open(file + '.part', 'w', newline='\n') as ofile:
                 print(json.dumps(data, ensure_ascii=False), file=ofile)
         except OSError:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '-new" file.')
+                sys.argv[0] + ': Cannot create "' + file + '.part" file.')
         try:
-            shutil.move(file + '-new', file)
+            shutil.move(file + '.part', file)
         except OSError:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + file + '" file.')

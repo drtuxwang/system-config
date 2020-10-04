@@ -104,7 +104,7 @@ class Main:
 
     def _adjust(self, file, volume):
         change = -16 - float(volume)
-        file_new = file + '-new'
+        file_new = file + '.part'
 
         self._ffmpeg.set_args([
             '-i',
