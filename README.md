@@ -69,6 +69,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/ipython3.bat
  * bin/jenkins-jobs
  * bin/jenkins-jobs.bat
+ * bin/markdown
  * bin/markdown.py
  * bin/markdown_py
  * bin/markdown_py.bat
@@ -285,9 +286,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/fpeek.py
  * bin/fprint             Sends text/images/postscript/PDF to printer
  * bin/fprint.py
- * bin/freplace           Replace multi-lines patterns in files
- * bin/freplace.bat       (uses regular expression to match text)
- * bin/freplace.py
  * bin/frm                Remove files or directories
  * bin/frm.bat
  * bin/frm.py
