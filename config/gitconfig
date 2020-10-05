@@ -5,10 +5,6 @@
 #   email = <address>
 #
 
-[user]
-	name = ???
-	email = ???
-	signingkey = ???
 [alias]
 	checkout-all = "!f() { git checkout \"$1\" ||: ; git submodule foreach \"git checkout '$1' ||:\"; }; f"
 	find-base = "!f() { git merge-base master $1; }; f"
@@ -29,5 +25,11 @@
 	ignoreSubmodules = all
 [log]
 	decorate = full
+[pull]
+	rebase = false
 [push]
 	default = simple
+[user]
+	name = ???
+	email = ???
+	signingkey = ???
