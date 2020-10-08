@@ -355,7 +355,7 @@ then
 
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop 2> /dev/null
-    chmod go= $HOME/Desktop $HOME/.ssh $HOME/.??*/* 2> /dev/null
+    chmod go= $HOME/Desktop $HOME/Desktop/Downloads $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* 2> /dev/null
     if [ "$PWD" = "$HOME" -o "$PWD" = "/" ]
     then
         cd "$HOME/Desktop"
