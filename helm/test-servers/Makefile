@@ -1,7 +1,7 @@
 NAME := test-servers
 CHART_REPO := .
 CHART_NAME := test-servers
-IMAGE := drtuxwang/debian-bash:10
+IMAGE := drtuxwang/debian-bash:stable
 DOMAIN := example.com
 
 # Default namespace
