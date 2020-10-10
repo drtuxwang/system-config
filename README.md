@@ -34,7 +34,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/python3.7
  * bin/python3.7.bat
  * bin/python3.8
- * bin/python3.8.bat
+ * bin/python3.9
  * bin/2to3               Python 3.x script wrappers (allowing non systems port)
  * bin/2to3.bat
  * bin/2to3-3.5
@@ -866,7 +866,7 @@ the years. Now most of the scripts are written in Python 3.
  * etc/python-requirements.txt           Python default pip requirements file
  * etc/python-requirements_2.7.txt       Python 2.7 pip requirements file
  * etc/python-requirements_3.5.txt       Python 3.5 pip requirements file
- * etc/python-requirements_3.8.txt       Python 3.8 pip requirements file
+ * etc/python-requirements_3.9.txt       Python 3.9 pip requirements file
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization
