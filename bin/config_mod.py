@@ -17,8 +17,8 @@ import bson
 import xmltodict
 import yaml
 
-RELEASE = '1.5.0'
-VERSION = 20200910
+RELEASE = '1.5.1'
+VERSION = 20201011
 
 
 class Data:
@@ -47,9 +47,11 @@ class Data:
             lines.append(line)
         data_new = '\n'.join(lines)
 
+        data_new = re.sub('{{[^}]*}}: *{{[^}]*}}', '_: _', data_new)
         data_new = re.sub('{{[^}]*}}', lambda m: ' '*len(m.group()), data_new)
+        data_new = re.sub('{%[^}]*}', '', data_new)
 
-        return re.sub('{%[^}]*}', '', data_new)
+        return data_new
 
     @staticmethod
     def _split_jsons(text):
