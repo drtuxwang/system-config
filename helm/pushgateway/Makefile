@@ -5,7 +5,7 @@ CHART_VERSION := 1.2.15
 
 # Default namespace
 ifndef NAMESPACE
-	NAMESPACE=default
+	NAMESPACE=infra
 endif
 
 

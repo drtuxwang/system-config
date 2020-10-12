@@ -5,12 +5,13 @@ CHART_VERSION :=  2.12.1
 
 # Default namespace
 ifndef NAMESPACE
-	NAMESPACE=default
+	NAMESPACE=infra
 endif
 
 # External IP
 ifndef EXTERNAL_IP
-    EXTERNAL_IP=$(shell kubectl get nodes -o wide | awk 'NR==2{print $$6}')
+    ##EXTERNAL_IP=$(shell kubectl get nodes -o wide | awk 'NR==2{print $$6}')
+    EXTERNAL_IP=10.44.39.26
 endif
 
 

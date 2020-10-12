@@ -7,7 +7,7 @@ SECRET := chartmusuem-secret-tls
 
 # Default namespace
 ifndef NAMESPACE
-	NAMESPACE=default
+	NAMESPACE=infra
 endif
 
 

@@ -5,7 +5,7 @@ CHART_VERSION := 5.0.14
 
 # Default namespace
 ifndef NAMESPACE
-	NAMESPACE=default
+	NAMESPACE=infra
 endif
 
 # Default local port
