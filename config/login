@@ -103,6 +103,8 @@ if ( $?TERM && -e "`\tty`" ) then
     rm -rf $HOME/tmp >& /dev/null
     setenv WINEDITOR vi
     set history=1024
+
+    # Secure temp files
     if ( ! -d $HOME/.wget-hsts ) then
         rm -f $HOME/.wget-hsts
         mkdir $HOME/.wget-hsts

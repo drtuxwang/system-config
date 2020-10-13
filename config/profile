@@ -219,6 +219,8 @@ then
     export TMP=/tmp/$MYUNAME
     export TMPDIR=$TMP
     ENV=
+
+    # Secure temp files
     if [ ! -d $HOME/.wget-hsts ]
     then
         rm -f $HOME/.wget-hsts

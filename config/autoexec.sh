@@ -3,11 +3,6 @@
 # Optional input environment
 ARG=${1:-}
 
-if [ "$ARG" != "-start" ]
-then
-    exec $0 -start > ${0%%.sh}.log 2>&1
-fi
-
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 
 # Use /tmp (tmpfs) for cache
@@ -15,10 +10,17 @@ mkdir -p /tmp/$MYUNAME/.cache 2> /dev/null
 chmod 700 /tmp/$MYUNAME
 export TMP=/tmp/$MYUNAME
 export TMPDIR=$TMP
+
+# Enable logging
+if [ "$ARG" != "-start" ]
+then
+    exec $0 -start > $TMP/.cache/autoexec.log 2>&1
+fi
+
+# Secure temp files
 [[ ! -h $HOME/tmp ]] && rm -rf $HOME/tmp &&  ln -s $TMP $HOME/tmp
 [[ ! -h $HOME/.cache ]] && rm -rf $HOME/.cache && ln -s $TMP/.cache $HOME/.cache
 [[ ! -h $HOME/.local/share/gvfs-metadata ]] && rm -rf $HOME/.local/share/gvfs-metadata && ln -s $TMP/.cache $HOME/.local/share/gvfs-metadata
-
 for FILE in .recently-used.xbel .local/share/recently-used.xbel
 do
     [[ -f "$HOME/$FILE" ]] && rm -f $HOME/$FILE 2> /dev/null && mkdir -p $HOME/$FILE 2> /dev/null
