@@ -10,20 +10,18 @@ fi
 
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 
-# Remove crap
-rm -rf .config/pulse
-rm -rf .local/share/gvfs-metadata
-rm -rf .local/share/recently-used.xbel*
-
 # Use /tmp (tmpfs) for cache
 mkdir -p /tmp/$MYUNAME/.cache 2> /dev/null
 chmod 700 /tmp/$MYUNAME
 export TMP=/tmp/$MYUNAME
 export TMPDIR=$TMP
-[[ ! -h $HOME/tmp || ! -h $HOME/.cache ]] && mount | grep -q "/tmp type tmpfs" && \
-    rm -rf $HOME/tmp $HOME/.cache && \
-    ln -s /tmp/$MYUNAME $HOME/tmp && \
-    ln -s /tmp/$MYUNAME/.cache $HOME/.cache
+[[ ! -h $HOME/tmp ]] && rm -rf $HOME/tmp &&  ln -s $TMP $HOME/tmp
+[[ ! -h $HOME/.cache ]] && rm -rf $HOME/.cache && ln -s $TMP/.cache $HOME/.cache
+
+for FILE in .local/share/gvfs-metadata .recently-used.xbel .local/share/recently-used.xbel
+do
+    [[ -f "$HOME/$FILE" ]] && rm -f $HOME/$FILE 2> /dev/null && mkdir -p $HOME/$FILE 2> /dev/null
+done
 
 if [ ! "$BASE_PATH" ]
 then
@@ -62,16 +60,7 @@ rm -rf $HOME/.thumbnails $HOME/.gnome2/evince/ev-metadata.xml
 if [ "$GNOME_DESKTOP_SESSION_ID" -o "`echo \"$DESKTOP_SESSION\" | grep gnome`" ]
 then
     gnome-sound-applet &
-elif [ -d $HOME/.cache/sessions ]
-then
-    rm -rf $HOME/.cache/sessions
-    touch $HOME/.cache/sessions
 fi
-for FILE in .recently-used.xbel .local/share/recently-used.xbel
-do
-    rm -f $FILE 2> /dev/null
-    mkdir -p $FILE 2> /dev/null
-done
 
 export SSH_AUTH_SOCK=$(ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
 if [ ! "$SSH_AUTH_SOCK" ]
