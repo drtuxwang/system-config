@@ -17,8 +17,9 @@ export TMP=/tmp/$MYUNAME
 export TMPDIR=$TMP
 [[ ! -h $HOME/tmp ]] && rm -rf $HOME/tmp &&  ln -s $TMP $HOME/tmp
 [[ ! -h $HOME/.cache ]] && rm -rf $HOME/.cache && ln -s $TMP/.cache $HOME/.cache
+[[ ! -h $HOME/.local/share/gvfs-metadata ]] && rm -rf $HOME/.local/share/gvfs-metadata && ln -s $TMP/.cache $HOME/.local/share/gvfs-metadata
 
-for FILE in .local/share/gvfs-metadata .recently-used.xbel .local/share/recently-used.xbel
+for FILE in .recently-used.xbel .local/share/recently-used.xbel
 do
     [[ -f "$HOME/$FILE" ]] && rm -f $HOME/$FILE 2> /dev/null && mkdir -p $HOME/$FILE 2> /dev/null
 done
