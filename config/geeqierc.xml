@@ -54,10 +54,10 @@
             file_ops.confirm_delete = "true" 
             file_ops.confirm_move_to_trash = "true" 
             file_ops.enable_delete_key = "true" 
-            file_ops.use_system_trash = "true" 
+            file_ops.use_system_trash = "false" 
             file_ops.safe_delete_enable = "true" 
             file_ops.safe_delete_path = "/home/owner/.cache/geeqie/trash" 
-            file_ops.safe_delete_folder_maxsize = "128" 
+            file_ops.safe_delete_folder_maxsize = "1" 
             properties.tabs_order = "" 
             image.zoom_mode = "2" 
 
@@ -276,8 +276,8 @@
 
         float_window.x = "0" 
         float_window.y = "0" 
-        float_window.w = "260" 
-        float_window.h = "450" 
+        float_window.w = "300" 
+        float_window.h = "300" 
         float_window.vdivider_pos = "-1" 
 
         properties_window.w = "0" 
