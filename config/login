@@ -104,6 +104,7 @@ if ( $?TERM && -e "`\tty`" ) then
     setenv WINEDITOR vi
     set history=1024
     if ( ! -d $HOME/.wget-hsts ) then
+        rm -f $HOME/.wget-hsts
         mkdir $HOME/.wget-hsts
     endif
     if ( ! -l $HOME/.pylint.d ) then

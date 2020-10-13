@@ -221,6 +221,7 @@ then
     ENV=
     if [ ! -d $HOME/.wget-hsts ]
     then
+        rm -f $HOME/.wget-hsts
         mkdir $HOME/.wget-hsts
     fi
     if [ ! -h $HOME/.pylint.d ]
