@@ -219,6 +219,20 @@ then
     export TMP=/tmp/$MYUNAME
     export TMPDIR=$TMP
     ENV=
+    if [ ! -d $HOME/.wget-hsts ]
+    then
+        mkdir $HOME/.wget-hsts
+    fi
+    if [ ! -h $HOME/.pylint.d ]
+    then
+        rm -rf $HOME/.pylint.d
+        ln -s $TMP/.cache $HOME/.pylint.d
+    fi
+    if [ ! -h $HOME/.python_history ]
+    then
+        rm -f $HOME/.python_history
+        ln -s $TMP/.cache/python_history $HOME/.python_history
+    fi
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if [ ! "$BASE_PATH" ]

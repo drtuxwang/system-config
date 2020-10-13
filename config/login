@@ -102,8 +102,18 @@ if ( $?TERM && -e "`\tty`" ) then
     setenv TMPDIR $TMP
     rm -rf $HOME/tmp >& /dev/null
     setenv WINEDITOR vi
-
     set history=1024
+    if ( ! -d $HOME/.wget-hsts ) then
+        mkdir $HOME/.wget-hsts
+    endif
+    if ( ! -l $HOME/.pylint.d ) then
+        rm -rf $HOME/.pylint.d
+        ln -s $TMP/.cache $HOME/.pylint.d
+    endif
+    if ( ! -l $HOME/.python_history ) then
+        rm -f $HOME/.python_history
+        ln -s $TMP/.cache/python_history $HOME/.python_history
+    endif
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if ( ! $?BASE_PATH ) then
