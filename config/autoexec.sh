@@ -53,11 +53,12 @@ xhost +si:localuser:$MYUNAME
 setxkbmap gb
 setxkbmap -option ctrl:nocaps
 setxkbmap -option terminate:ctrl_alt_bksp
-(sleep 2; numlockx on && xmodmap -e "keycode 77 = NoSymbol") &
 xset b off
 xset m 4,16
 xset r rate 500 25
 xset s blank s 0 # Use 300 for CRT
+(sleep 2; numlockx on && xmodmap -e "keycode 77 = NoSymbol") &
+xmodmap -e "add mod3 = Scroll_Lock"
 (sleep 4 && xset dpms 0 0 0) &
 
 rm -rf $HOME/.thumbnails $HOME/.gnome2/evince/ev-metadata.xml
