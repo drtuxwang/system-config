@@ -53,6 +53,8 @@ xhost +si:localuser:$MYUNAME
 setxkbmap gb
 setxkbmap -option ctrl:nocaps
 setxkbmap -option terminate:ctrl_alt_bksp
+numlockx on
+xmodmap -e "keycode 77 = NoSymbol"
 xset b off
 xset m 4,16
 xset r rate 500 25
