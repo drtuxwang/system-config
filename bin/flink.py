@@ -100,11 +100,11 @@ class Main:
             print('Creating "' + target_dir + '" directory...')
             try:
                 os.mkdir(target_dir)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + target_dir +
                     '" directory.'
-                )
+                ) from exception
 
         for source_file in sorted(source_files):
             target_file = os.path.join(
@@ -122,11 +122,11 @@ class Main:
                     print('Updating "' + target_file + '" link...')
                     try:
                         os.remove(target_file)
-                    except OSError:
+                    except OSError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot remove "' + target_file +
                             '" link.'
-                        )
+                        ) from exception
                 else:
                     print('Creating "' + target_file + '" link...')
                 try:
@@ -137,11 +137,11 @@ class Main:
                             os.path.join(subdir, source_file),
                             target_file
                         )
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' +
                         target_file + '" link.'
-                    )
+                    ) from exception
 
     def run(self):
         """

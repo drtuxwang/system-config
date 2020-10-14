@@ -111,9 +111,10 @@ class Main:
                                     '"')[0].split('&')[0])
                                 name = block.split('>')[1].split('<')[0]
                                 self._profiles[uid] = Profile(name, url)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" HTML file.')
+                sys.argv[0] + ': Cannot read "' + file + '" HTML file.'
+            ) from exception
 
     def run(self):
         """
@@ -144,9 +145,10 @@ class Main:
                     else:
                         print(",{0:s},{1:s}".format(
                             profile.get_name(), profile.get_url()), file=ofile)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '" CSV file.')
+                sys.argv[0] + ': Cannot create "' + file + '" CSV file.'
+            ) from exception
 
 
 if __name__ == '__main__':

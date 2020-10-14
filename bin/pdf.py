@@ -172,16 +172,17 @@ class Main:
                     with open(self._tmpfile, 'wb') as ofile:
                         for line in ifile:
                             ofile.write(line.rstrip(b"\r\n\004") + b"\n")
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' + self._tmpfile +
                         '" temporary file.'
-                    )
+                    ) from exception
                 self._postscript_fix(self._tmpfile)
                 return 'Postscript file "' + file + '"'
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" postscript file.')
+                sys.argv[0] + ': Cannot read "' + file + '" postscript file.'
+            ) from exception
 
     def _postscript_fix(self, file):
         scaling = None
@@ -249,9 +250,10 @@ class Main:
                         stdin.append('')
                     else:
                         stdin.extend(lines)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" text file.')
+                sys.argv[0] + ': Cannot read "' + file + '" text file.'
+            ) from exception
         task = subtask_mod.Batch(a2ps.get_cmdline())
         task.run(stdin=stdin, file=self._tmpfile)
         if task.get_exitcode():

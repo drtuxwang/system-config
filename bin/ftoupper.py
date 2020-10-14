@@ -105,11 +105,11 @@ class Main:
                     )
                 try:
                     shutil.move(file, newfile)
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot rename "' + file +
                         '" file to "' + newfile + '".'
-                    )
+                    ) from exception
 
 
 if __name__ == '__main__':

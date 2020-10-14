@@ -35,9 +35,10 @@ class Options:
         try:
             # From 0 - 15
             return int(int(task.get_output()[0].split()[2], 16) / 0x1000)
-        except (IndexError, ValueError):
+        except (IndexError, ValueError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot detect current Pulseaudio volume.')
+                sys.argv[0] + ': Cannot detect current Pulseaudio volume.'
+            ) from exception
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(

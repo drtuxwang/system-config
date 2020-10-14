@@ -89,8 +89,10 @@ class Main:
             print('Creating "{0:s}"...'.format(directory))
             try:
                 os.makedirs(directory)
-            except OSError:
-                raise SystemExit(sys.argv[0] + ': Cannot create directory.')
+            except OSError as exception:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot create directory.'
+                ) from exception
 
 
 if '--pydoc' in sys.argv:

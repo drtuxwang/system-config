@@ -202,11 +202,11 @@ class Main:
                         line = line.rstrip('\r\n')
                         phash, _, _, file = cls._get_checksum(line)
                         image_phash[file] = int(phash, 16)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "' + psumfile +
                     '" checksums file.'
-                )
+                ) from exception
             matched_images = cls._match(image_phash)
 
             if matched_images:
@@ -248,11 +248,11 @@ class Main:
                             self._cache[(file, size, mtime)] = checksum
                     except IndexError:
                         pass
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + update_file +
                 '" checksum file.'
-            )
+            ) from exception
 
     def run(self):
         """

@@ -109,11 +109,11 @@ class Main:
             if os.path.getmtime(source) > os.path.getmtime(target):
                 try:
                     os.remove(target)
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot remove "' + target +
                         '" Java class file.'
-                    )
+                    ) from exception
         if not os.path.isfile(target):
             javac = command_mod.Command('javac', args=[source], errors='stop')
             print('Building "' + target + '" Java class file.')
@@ -145,11 +145,11 @@ class Main:
             try:
                 with open(self._manifest, 'w', newline='\n') as ofile:
                     print("Main-Class:", main, file=ofile)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + self._manifest +
                     '" Java manifest file.'
-                )
+                ) from exception
 
     def run(self):
         """

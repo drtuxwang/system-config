@@ -95,11 +95,11 @@ class Main:
                         os.path.join(file, x)
                         for x in os.listdir(file)
                     ])
-                except PermissionError:
+                except PermissionError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot open "' + file +
                         '" directory.'
-                    )
+                    ) from exception
 
             elif self._ispattern.search(file):
                 print(file)
@@ -112,9 +112,11 @@ class Main:
 
         try:
             self._ispattern = re.compile(options.get_pattern())
-        except re.error:
-            raise SystemExit(sys.argv[0] + ': Invalid regular expression "' +
-                             options.get_pattern() + '".')
+        except re.error as exception:
+            raise SystemExit(
+                sys.argv[0] + ': Invalid regular expression "' +
+                options.get_pattern() + '".'
+            ) from exception
 
         self._find(options.get_directories())
 

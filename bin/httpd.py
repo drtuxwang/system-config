@@ -67,9 +67,10 @@ class Options:
 
         try:
             self._port = int(args[2])
-        except ValueError:
+        except ValueError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Invalid port number "' + args[2] + '".')
+                sys.argv[0] + ': Invalid port number "' + args[2] + '".'
+            ) from exception
 
 
 class MyTCPServer(socketserver.TCPServer):
@@ -122,11 +123,11 @@ class Main:
 
         try:
             os.chdir(options.get_directory())
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot change to "' +
                 options.get_directory() + '" directory.'
-            )
+            ) from exception
 
         port = options.get_port()
         http.server.SimpleHTTPRequestHandler.extensions_map['.log'] = (
@@ -137,11 +138,11 @@ class Main:
                 ('', port),
                 http.server.SimpleHTTPRequestHandler
             )
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot bind to address "localhost:' +
                 str(port) + '".'
-            )
+            ) from exception
 
         print(
             'Serving "' + os.getcwd() + '" at "http://localhost:' +

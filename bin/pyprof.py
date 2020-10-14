@@ -121,11 +121,11 @@ class Main:
 
         try:
             return command_mod.Command(module_file, args=module_args)
-        except command_mod.CommandNotFoundError:
+        except command_mod.CommandNotFoundError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + module_file +
                 '" module file'
-            )
+            ) from exception
 
     @classmethod
     def _profile(cls, module_file, module_args):
@@ -134,11 +134,11 @@ class Main:
         if os.path.isfile(stats_file):
             try:
                 os.remove(stats_file)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot remove old "' +
                     stats_file + '" file.'
-                )
+                ) from exception
 
         python3 = command_mod.CommandFile(sys.executable)
         python3.set_args(['-B', '-m', 'cProfile', '-o', stats_file])
@@ -155,9 +155,10 @@ class Main:
     def _show(stats_file, lines):
         try:
             stats = pstats.Stats(stats_file)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + stats_file + '" file.')
+                sys.argv[0] + ': Cannot read "' + stats_file + '" file.'
+            ) from exception
 
         stats.strip_dirs().sort_stats('tottime', 'cumtime').print_stats(lines)
 

@@ -114,7 +114,7 @@ class Main:
                 verify=True
             )
         except Exception as exception:
-            raise SystemExit(str(exception))
+            raise SystemExit(str(exception)) from exception
         if response.status_code != 200:
             raise SystemExit(
                 'Requests response code: ' + str(response.status_code))

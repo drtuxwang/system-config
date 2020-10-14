@@ -63,9 +63,10 @@ class Main:
         try:
             with open(file, 'rb') as ifile:
                 self._pipe(ifile)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.')
+                sys.argv[0] + ': Cannot read "' + file + '" file.'
+            ) from exception
 
     @staticmethod
     def _pipe(pipe):

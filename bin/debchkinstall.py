@@ -223,10 +223,10 @@ class Main:
         try:
             with open(file) as ifile:
                 data = json.load(ifile)
-        except (OSError, json.decoder.JSONDecodeError):
+        except (OSError, json.decoder.JSONDecodeError) as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + file + '" json file.'
-            )
+            ) from exception
 
         return data
 
@@ -355,9 +355,10 @@ class Main:
                 indent = ''
                 for i in names:
                     self._check_package_install(distribution, ofile, indent, i)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + urlfile + '" file.')
+                sys.argv[0] + ': Cannot create "' + urlfile + '" file.'
+            ) from exception
         if os.path.getsize(urlfile) == 0:
             os.remove(urlfile)
 

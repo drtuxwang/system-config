@@ -2,15 +2,15 @@
 """
 Python file handling utility module
 
-Copyright GPL v2: 2006-2019 By Dr Colin Kong
+Copyright GPL v2: 2006-2020 By Dr Colin Kong
 """
 
 import os
 import re
 import time
 
-RELEASE = '2.2.4'
-VERSION = 20191019
+RELEASE = '2.2.5'
+VERSION = 20201013
 
 
 class FileStat:
@@ -31,10 +31,11 @@ class FileStat:
             self._file = file
             try:
                 self._stat = list(os.stat(file))
-            except (OSError, TypeError):
+            except (OSError, TypeError) as exception:
                 if not os.path.islink:
                     raise FileStatNotFoundError(
-                        'Cannot find "' + file + '" file status.')
+                        'Cannot find "' + file + '" file status.'
+                    ) from exception
                 self._stat = [0] * 10
             else:
                 if size is not None:

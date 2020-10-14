@@ -67,9 +67,10 @@ class Options:
             for setting in self._args.settings:
                 try:
                     device, mode = setting.split('=')
-                except ValueError:
+                except ValueError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Invalid "' + setting + '" settings.')
+                        sys.argv[0] + ': Invalid "' + setting + '" settings.'
+                    ) from exception
                 self._config.set(device, mode)
             self._config.write(configfile)
 

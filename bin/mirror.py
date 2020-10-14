@@ -174,11 +174,11 @@ class Main:
                 if os.path.islink(target_file):
                     try:
                         os.remove(target_file)
-                    except OSError:
+                    except OSError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot remove "' +
                             target_file + '" link.'
-                        )
+                        ) from exception
                 elif os.path.isdir(target_file):
                     if self._recursive:
                         logger.warning(
@@ -188,11 +188,11 @@ class Main:
                         )
                         try:
                             shutil.rmtree(target_file)
-                        except OSError:
+                        except OSError as exception:
                             raise SystemExit(
                                 sys.argv[0] + ': Cannot remove "' +
                                 target_file + '" directory.'
-                            )
+                            ) from exception
                 else:
                     logger.warning(
                         '[%s] Removing "%s" file.',
@@ -201,11 +201,11 @@ class Main:
                     )
                     try:
                         os.remove(target_file)
-                    except OSError:
+                    except OSError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot remove "' +
                             target_file + '" file.'
-                        )
+                        ) from exception
 
     def _mirror_link(self, source_file, target_file):
         source_link = os.readlink(source_file)
@@ -226,11 +226,11 @@ class Main:
                     shutil.rmtree(target_file)
                 else:
                     os.remove(target_file)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot remove "' +
                     target_file + '" link.'
-                )
+                ) from exception
         else:
             logger.info(
                 '[%s] Creating "%s" link.',
@@ -239,19 +239,20 @@ class Main:
             )
         try:
             os.symlink(source_link, target_file)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + target_file + '" link.')
+                sys.argv[0] + ': Cannot create "' + target_file + '" link.'
+            ) from exception
 
     def _mirror_file(self, source_file, target_file):
         if os.path.islink(target_file):
             try:
                 os.remove(target_file)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot remove "' +
                     target_file + '" link.'
-                )
+                ) from exception
         elif os.path.isfile(target_file):
             source_stat = file_mod.FileStat(source_file)
             target_stat = file_mod.FileStat(target_file)
@@ -269,11 +270,11 @@ class Main:
                         )
                         try:
                             os.chmod(target_file, source_stat.get_mode())
-                        except OSError:
+                        except OSError as exception:
                             raise SystemExit(
                                 sys.argv[0] + ': Cannot update "' +
                                 target_file + '" permissions.'
-                            )
+                            ) from exception
                     return
             logger.info(
                 '[%s] Updating "%s" file.',
@@ -296,12 +297,12 @@ class Main:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' +
                             target_file + '" file.'
-                        )
-                except OSError:
+                        ) from exception
+                except OSError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' +
                         target_file + '" file.'
-                    )
+                    ) from exception
 
     @staticmethod
     def _mirror_directory_time(source_dir, target_dir):
@@ -310,32 +311,33 @@ class Main:
         if source_time != target_time:
             try:
                 os.utime(target_dir, (source_time, source_time))
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot update "' +
                     target_dir + '" directory modification time.'
-                )
+                ) from exception
 
     def _mirror(self, source_dir, target_dir):
         try:
             source_files = [
-                os.path.join(source_dir, x) for x in os.listdir(source_dir)]
-        except (OSError, PermissionError):
+                os.path.join(source_dir, x) for x in os.listdir(source_dir)
+            ]
+        except (OSError, PermissionError) as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot open "' + source_dir +
                 '" source directory.'
-            )
+            ) from exception
         if os.path.isdir(target_dir):
             try:
                 target_files = [
                     os.path.join(target_dir, x)
                     for x in os.listdir(target_dir)
                 ]
-            except (OSError, PermissionError):
+            except (OSError, PermissionError) as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot open "' + target_dir +
                     '" target directory.'
-                )
+                ) from exception
         else:
             target_files = []
             logger.info(
@@ -351,11 +353,11 @@ class Main:
                     target_dir,
                     file_mod.FileStat(source_dir).get_mode()
                 )
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + target_dir +
                     '" directory.'
-                )
+                ) from exception
 
         for source_file in sorted(source_files):
             target_file = os.path.join(

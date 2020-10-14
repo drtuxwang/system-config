@@ -91,20 +91,20 @@ class Options:
 
         try:
             remote_host, remote_port = self._args.server[0].split(':')
-        except ValueError:
+        except ValueError as exception:
             raise SystemExit(
                 sys.argv[0] +
                 ': You must specific a single ":" in VNC server location.'
-            )
+            ) from exception
 
         try:
             if int(remote_port) < 101:
                 remote_port = str(int(remote_port) + 5900)
-        except ValueError:
+        except ValueError as exception:
             raise SystemExit(
                 sys.argv[0] + ': You must specific a positive integer '
                 'for port number.'
-            )
+            ) from exception
 
         self._vncviewer = command_mod.Command('vncviewer', errors='stop')
         if remote_host:

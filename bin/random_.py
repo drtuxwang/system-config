@@ -90,8 +90,10 @@ class Main:
         for value in values:
             try:
                 print(random.randint(1, int(value)))
-            except ValueError:
-                raise SystemExit(sys.argv[0] + ': Not an integer: ' + value)
+            except ValueError as exception:
+                raise SystemExit(
+                    sys.argv[0] + ': Not an integer: ' + value
+                ) from exception
 
 
 if __name__ == '__main__':

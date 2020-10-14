@@ -124,10 +124,11 @@ class Main:
                     if not os.path.islink(link):
                         try:
                             os.symlink(file, link)
-                        except OSError:
+                        except OSError as exception:
                             raise SystemExit(
                                 sys.argv[0] + ': Cannot create "' +
-                                link + '" link.')
+                                link + '" link.'
+                            ) from exception
 
 
 if __name__ == '__main__':

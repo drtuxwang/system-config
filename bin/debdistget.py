@@ -110,11 +110,11 @@ class Main:
                             raise SystemExit(
                                 sys.argv[0] + ': Invalid "' + url + '" URL.')
                         urls.append(url)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + distribution_file +
                 '" distribution file.'
-            )
+            ) from exception
         return urls
 
     @staticmethod
@@ -162,8 +162,10 @@ class Main:
     def _get_packages(cls, data, wget, url):
         try:
             conn = urllib.request.urlopen(url)
-        except Exception:
-            raise SystemExit("Error: Cannot fetch URL: " + url)
+        except Exception as exception:
+            raise SystemExit(
+                "Error: Cannot fetch URL: " + url
+            ) from exception
 
         url_time = time.mktime(time.strptime(
             conn.info().get('Last-Modified'), '%a, %d %b %Y %H:%M:%S %Z'))
@@ -192,9 +194,10 @@ class Main:
                                 'Filename: ', 'Filename: ' + site, 1))
                         else:
                             lines.append(line.rstrip('\r\n'))
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "Packages" packages file.')
+                    sys.argv[0] + ': Cannot read "Packages" packages file.'
+                ) from exception
             cls._remove()
             data = {'time': url_time, 'text': lines}
 
@@ -205,14 +208,14 @@ class Main:
         try:
             with open(file) as ifile:
                 data = json.load(ifile)
-        except json.decoder.JSONDecodeError:
+        except json.decoder.JSONDecodeError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Corrupt "' + file + '" json file.'
-            )
-        except OSError:
+            ) from exception
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + file + '" json file.'
-            )
+            ) from exception
 
         return data
 
@@ -222,14 +225,16 @@ class Main:
         try:
             with open(file + '.part', 'w', newline='\n') as ofile:
                 print(json.dumps(data, ensure_ascii=False), file=ofile)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '.part" file.')
+                sys.argv[0] + ': Cannot create "' + file + '.part" file.'
+            ) from exception
         try:
             shutil.move(file + '.part', file)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '" file.')
+                sys.argv[0] + ': Cannot create "' + file + '" file.'
+            ) from exception
 
     @classmethod
     def run(cls):

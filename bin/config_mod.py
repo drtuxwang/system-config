@@ -17,8 +17,8 @@ import bson
 import xmltodict
 import yaml
 
-RELEASE = '1.5.1'
-VERSION = 20201011
+RELEASE = '1.5.2'
+VERSION = 20201013
 
 
 class Data:
@@ -91,7 +91,7 @@ class Data:
         try:
             blocks = [json.loads(block) for block in cls._split_jsons(data)]
         except json.decoder.JSONDecodeError as exception:
-            raise ReadConfigError(exception)
+            raise ReadConfigError(exception) from exception
         return blocks
 
     @classmethod
@@ -104,7 +104,7 @@ class Data:
                 yaml.parser.ParserError,
                 yaml.scanner.ScannerError,
         ) as exception:
-            raise ReadConfigError(exception)
+            raise ReadConfigError(exception) from exception
         return blocks
 
     def read(self, file, check=False):
@@ -117,7 +117,7 @@ class Data:
                     with open(file, 'rb') as ifile:
                         blocks = [bson.BSON.decode(ifile.read())]
                 except IndexError as exception:
-                    raise ReadConfigError(exception)
+                    raise ReadConfigError(exception) from exception
             elif file.endswith('xml'):
                 try:
                     with open(file, 'rb') as ifile:
@@ -126,7 +126,7 @@ class Data:
                             dict_constructor=dict,
                         )]
                 except xml.parsers.expat.ExpatError as exception:
-                    raise ReadConfigError(exception)
+                    raise ReadConfigError(exception) from exception
             else:
                 with open(file) as ifile:
                     data = ifile.read()
@@ -138,8 +138,10 @@ class Data:
                     blocks = self._decode_yaml(data)
                 else:
                     raise ReadConfigError("Cannot handle configuration file.")
-        except OSError:
-            raise ReadConfigError("Cannot read configuration file.")
+        except OSError as exception:
+            raise ReadConfigError(
+                "Cannot read configuration file."
+            ) from exception
         if not check:
             self._blocks = blocks
 
@@ -181,15 +183,17 @@ class Data:
                     ofile.write(bson.BSON.encode(self._blocks[0]))
             else:
                 raise WriteConfigError('Cannot handle "' + tmpfile + '" file.')
-        except OSError:
-            raise WriteConfigError('Cannot create "' + tmpfile + '" file.')
+        except OSError as exception:
+            raise WriteConfigError(
+                'Cannot create "' + tmpfile + '" file.'
+            ) from exception
 
         try:
             shutil.move(tmpfile, file)
-        except OSError:
+        except OSError as exception:
             raise WriteConfigError(
                 'Cannot rename "' + tmpfile + '" file to "' + file + '".'
-            )
+            ) from exception
 
 
 class Config:

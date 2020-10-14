@@ -125,11 +125,11 @@ class Main:
             if not os.path.isdir(directory):
                 try:
                     os.mkdir(directory)
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' + directory +
                         '" directory.'
-                    )
+                    ) from exception
             for file in files_local:
                 print("file://" + file)
                 try:
@@ -137,9 +137,10 @@ class Main:
                         file,
                         os.path.join(directory, os.path.basename(file))
                     )
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot find "' + file + '" file.')
+                        sys.argv[0] + ': Cannot find "' + file + '" file.'
+                    ) from exception
 
     @staticmethod
     def _get_remote(aria2c, files_remote):
@@ -189,9 +190,10 @@ class Main:
                                             line.replace('file://', '', 1))
                                 elif line not in files_remote:
                                     files_remote.append(line)
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + url + '" URL file.')
+                        sys.argv[0] + ': Cannot read "' + url + '" URL file.'
+                    ) from exception
                 self._get_local(directory, files_local)
                 self._get_remote(aria2c, files_remote)
             elif os.path.isdir(url):

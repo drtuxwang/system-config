@@ -16,7 +16,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '2.7.10'
+RELEASE = '2.7.11'
 
 
 class Options:
@@ -118,16 +118,18 @@ class Lock:
         try:
             with open(self._file, 'w', newline='\n') as ofile:
                 print(os.getpid(), file=ofile)
-        except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' +
-                             self._file + '" MyQS scheduler lock file.')
+        except OSError as exception:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' + self._file +
+                '" MyQS scheduler lock file.'
+            ) from exception
         time.sleep(1)
         try:
             with open(self._file, errors='replace') as ifile:
                 try:
                     int(ifile.readline().strip())
-                except (OSError, ValueError):
-                    raise SystemExit(0)
+                except (OSError, ValueError) as exception:
+                    raise SystemExit(0) from exception
                 else:
                     if not task_mod.Tasks.factory().haspid(os.getpid()):
                         raise SystemExit(
@@ -144,11 +146,11 @@ class Lock:
         task_mod.Tasks.factory().killpids([self._pid])
         try:
             os.remove(self._file)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot remove "' + self._file +
                 '" lock file.'
-            )
+            ) from exception
 
 
 class Main:
@@ -288,11 +290,11 @@ class Main:
         if not os.path.isdir(self._myqsdir):
             try:
                 os.makedirs(self._myqsdir)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot created "' +
                     self._myqsdir + '" directory.'
-                )
+                ) from exception
         lock = Lock(os.path.join(self._myqsdir, 'myqsd.pid'))
         if lock.check():
             print("Stopping MyQS batch job scheduler...")

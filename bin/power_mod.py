@@ -2,7 +2,7 @@
 """
 Python power handling module
 
-Copyright GPL v2: 2011-2019 By Dr Colin Kong
+Copyright GPL v2: 2011-2020 By Dr Colin Kong
 """
 
 import functools
@@ -11,8 +11,8 @@ import os
 import re
 import subprocess
 
-RELEASE = '2.1.10'
-VERSION = 20191019
+RELEASE = '2.1.11'
+VERSION = 20201013
 
 
 class Battery:
@@ -383,10 +383,10 @@ class _System:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT
             )
-        except OSError:
+        except OSError as exception:
             raise ExecutableCallError(
                 'Error in calling "' + program + '" program.'
-            )
+            ) from exception
         lines = []
         while True:
             try:

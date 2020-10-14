@@ -314,9 +314,10 @@ class Media:
                     number += 1
                 elif line.strip().startswith('Input #'):
                     self._type = line.replace(', from', '').split()[2]
-        except IndexError:
+        except IndexError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Invalid "' + file + '" media file.')
+                sys.argv[0] + ': Invalid "' + file + '" media file.'
+            ) from exception
 
     def get_stream(self):
         """

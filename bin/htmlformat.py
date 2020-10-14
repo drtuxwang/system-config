@@ -91,9 +91,10 @@ class Main:
             with open(file, errors='replace') as ifile:
                 for line in ifile:
                     lines.append(line.strip())
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.')
+                sys.argv[0] + ': Cannot read "' + file + '" file.'
+            ) from exception
         soup = bs4.BeautifulSoup(
             ''.join(lines).replace('&', '&amp;'),
             'html.parser'
@@ -104,16 +105,17 @@ class Main:
         try:
             with open(tmpfile, 'w', newline='\n') as ofile:
                 print(html_text.replace('&amp;', '&'), file=ofile)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + tmpfile + '" file.')
+                sys.argv[0] + ': Cannot create "' + tmpfile + '" file.'
+            ) from exception
         try:
             shutil.move(tmpfile, file)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot rename "' + tmpfile +
                 '" file to "' + file + '".'
-            )
+            ) from exception
 
     @classmethod
     def run(cls):

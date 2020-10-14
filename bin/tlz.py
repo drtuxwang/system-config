@@ -127,13 +127,13 @@ class Main:
             if task.get_exitcode():
                 raise OSError
             shutil.move(archive+'.part', archive)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 '{0:s}: Cannot create "{1:s}" archive file.'.format(
                     sys.argv[0],
                     archive
                 )
-            )
+            ) from exception
 
 
 if __name__ == '__main__':

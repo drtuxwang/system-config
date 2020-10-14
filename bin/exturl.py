@@ -93,9 +93,10 @@ class Main:
                                 if quote in url:
                                     url = url.split(quote)[1]
                             urls.append(url)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read ' + file + ' HTML file.')
+                sys.argv[0] + ': Cannot read ' + file + ' HTML file.'
+            ) from exception
         return urls
 
     def run(self):

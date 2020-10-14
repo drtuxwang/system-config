@@ -134,11 +134,11 @@ class Main:
                 ofile.write(b"#!/usr/bin/env python3\n")
                 with open(archive + '-zip', 'rb') as ifile:
                     self._copy(ifile, ofile)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + archive +
                 '" Python3 ZIP Application.'
-            )
+            ) from exception
         try:
             os.remove(archive + '-zip')
         except OSError:

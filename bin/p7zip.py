@@ -167,18 +167,21 @@ class Main:
             try:
                 with open(sfx, 'rb') as ifile:
                     cls._copy(ifile, ofile)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + sfx + '" SFX file.')
+                    sys.argv[0] + ': Cannot read "' + sfx + '" SFX file.'
+                ) from exception
             with open(archive, 'rb') as ifile:
                 cls._copy(ifile, ofile)
 
         try:
             os.chmod(archive + '-sfx', int('755', 8))
             shutil.move(archive + '-sfx', archive)
-        except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot rename "' + archive +
-                             '-sfx" file to "' + archive + '".')
+        except OSError as exception:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot rename "' + archive +
+                '-sfx" file to "' + archive + '".'
+            ) from exception
 
     @staticmethod
     def config():
@@ -219,13 +222,13 @@ class Main:
 
         try:
             shutil.move(archive+'.part', archive)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 '{0:s}: Cannot create "{1:s}" archive file.'.format(
                     sys.argv[0],
                     archive
                 )
-            )
+            ) from exception
 
 
 if __name__ == '__main__':

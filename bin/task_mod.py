@@ -11,8 +11,8 @@ import os
 import re
 import subprocess
 
-RELEASE = '2.1.2'
-VERSION = 20191019
+RELEASE = '2.1.3'
+VERSION = 20201013
 
 
 class Tasks:
@@ -227,7 +227,7 @@ class PosixTasks(Tasks):
         try:
             lines = _System.run_program(command)
         except (CommandNotFoundError, ExecutableCallError) as exception:
-            raise SystemExit(exception)
+            raise SystemExit(exception) from exception
 
         for line in lines[1:]:
             process = {}
@@ -265,7 +265,7 @@ class PosixTasks(Tasks):
         try:
             _System.run_program(command)
         except (CommandNotFoundError, ExecutableCallError) as exception:
-            raise SystemExit(exception)
+            raise SystemExit(exception) from exception
 
     def killpgid(self, pgid, signal='KILL'):
         """
@@ -288,7 +288,7 @@ class WindowsTasks(Tasks):
         try:
             lines = _System.run_program(['tasklist', '/v'])
         except (CommandNotFoundError, ExecutableCallError) as exception:
-            raise SystemExit(exception)
+            raise SystemExit(exception) from exception
 
         indice = [0]
         position = 0
@@ -336,7 +336,7 @@ class WindowsTasks(Tasks):
         try:
             _System.run_program(command)
         except (CommandNotFoundError, ExecutableCallError) as exception:
-            raise SystemExit(exception)
+            raise SystemExit(exception) from exception
 
     def killpgid(self, pgid, signal='KILL'):
         """
@@ -395,10 +395,10 @@ class _System:
                 shell=False,
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT
             )
-        except OSError:
+        except OSError as exception:
             raise ExecutableCallError(
                 'Error in calling "' + program + '" program.'
-            )
+            ) from exception
         lines = []
         while True:
             try:

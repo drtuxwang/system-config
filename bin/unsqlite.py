@@ -85,7 +85,9 @@ class Main:
                 for line in conn.iterdump():
                     print("   ", line)
             except sqlite3.DatabaseError as exception:
-                raise SystemExit(sys.argv[0] + ': ' + str(exception))
+                raise SystemExit(
+                    sys.argv[0] + ': ' + str(exception)
+                ) from exception
 
     @classmethod
     def run(cls):

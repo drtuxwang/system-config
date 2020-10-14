@@ -104,11 +104,11 @@ class Main:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot copy to same "' +
                     target + '" file.'
-                )
+                ) from exception
             raise SystemExit(
                 sys.argv[0] + ': Cannot copy to "' +
                 target + '" file.'
-            )
+            ) from exception
         except OSError as exception:
             if exception.args != (95, 'Operation not supported'):
                 try:
@@ -116,10 +116,11 @@ class Main:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' +
                             target + '" file.'
-                        )
-                except OSError:
+                        ) from exception
+                except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + target + '" file.')
+                        sys.argv[0] + ': Cannot create "' + target + '" file.'
+                    ) from exception
 
     def run(self):
         """

@@ -14,7 +14,7 @@ import time
 
 import task_mod
 
-RELEASE = '2.7.11'
+RELEASE = '2.7.12'
 
 
 class Options:
@@ -133,11 +133,11 @@ class Main:
                         jobid = int(ifile.readline().strip()) + 1
                     except (OSError, ValueError):
                         jobid = 1
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "' + lastjob +
                     '" MyQS lastjob file.'
-                )
+                ) from exception
             if jobid > 32767:
                 jobid = 1
         else:
@@ -145,11 +145,11 @@ class Main:
         try:
             with open(lastjob, 'w', newline='\n') as ofile:
                 print(jobid, file=ofile)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot update "' + lastjob +
                 '" MyQS lastjob file.'
-            )
+            ) from exception
         return jobid
 
     def _lock(self):
@@ -165,16 +165,20 @@ class Main:
                         else:
                             if not task_mod.Tasks.factory().haspid(pid):
                                 os.remove(lockfile)
-                except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot read "' +
-                                     lockfile + '" MyQS lock file.')
+                except OSError as exception:
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot read "' +
+                        lockfile + '" MyQS lock file.'
+                    ) from exception
             if not os.path.isfile(lockfile):
                 try:
                     with open(lockfile, 'w', newline='\n') as ofile:
                         print(os.getpid(), file=ofile)
-                except OSError:
-                    raise SystemExit(sys.argv[0] + ': Cannot create "' +
-                                     lockfile + '" MyQS lock file.')
+                except OSError as exception:
+                    raise SystemExit(
+                        sys.argv[0] + ': Cannot create "' +
+                        lockfile + '" MyQS lock file.'
+                    ) from exception
                 break
             time.sleep(1)
         return lockfile
@@ -212,11 +216,11 @@ class Main:
                     print("PATH=" + os.environ['PATH'], file=ofile)
                     print("QUEUE=" + queue, file=ofile)
                     print("NCPUS=" + str(ncpus), file=ofile)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + tmpfile +
                     '" temporary file.'
-                )
+                ) from exception
             shutil.move(
                 tmpfile,
                 os.path.join(self._myqsdir, str(jobid) + '.q')
@@ -244,11 +248,11 @@ class Main:
             try:
                 os.makedirs(self._myqsdir)
                 os.chmod(self._myqsdir, int('700', 8))
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + self._myqsdir +
                     '" MyQS directory.'
-                )
+                ) from exception
         lockfile = self._lock()
         self._submit(options)
         os.remove(lockfile)

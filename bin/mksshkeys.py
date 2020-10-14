@@ -109,18 +109,18 @@ class Main:
                         ) as ofile:
                             for line in config:
                                 print(line, file=ofile)
-                    except OSError:
+                    except OSError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' +
                             configfile + '.part' + '" temporary file.'
-                        )
+                        ) from exception
                     try:
                         shutil.move(configfile + '.part', configfile)
-                    except OSError:
+                    except OSError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot update "' +
                             configfile + '" configuration file.'
-                        )
+                        ) from exception
             print('Checking ssh configuration on "' + login + '"...')
             stdin = (
                 'umask 077; chmod -R go= $HOME/.ssh 2> /dev/null',
@@ -151,29 +151,29 @@ class Main:
                     pubkeys = []
                     for line in ifile:
                         pubkeys.append(line.strip())
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "' + file +
                     '" authorised key file.'
-                )
+                ) from exception
         if pubkey not in pubkeys:
             try:
                 with open(file + '.part', 'w', newline='\n') as ofile:
                     for line in pubkeys:
                         print(line, file=ofile)
                     print(pubkey, file=ofile)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + file + '.part' +
                     '" temporary file.'
-                )
+                ) from exception
             try:
                 shutil.move(file + '.part', file)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot update "' + file +
                     '" authorised key file.'
-                )
+                ) from exception
 
     def _config(self):
         os.umask(int('077', 8))
@@ -188,11 +188,11 @@ class Main:
         else:
             try:
                 os.mkdir(self._sshdir)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + self._sshdir +
                     '" configuration directory.'
-                )
+                ) from exception
 
         private_key = os.path.join(self._sshdir, 'id_rsa')
         if not os.path.isfile(private_key):
@@ -218,11 +218,11 @@ class Main:
                     errors='replace'
             ) as ifile:
                 pubkey = ifile.readline().strip()
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' +
                 os.path.join(self._sshdir, 'id_rsa.pub') + '" public key file.'
-            )
+            ) from exception
 
         if pubkey:
             self._add_authorized_key(pubkey)

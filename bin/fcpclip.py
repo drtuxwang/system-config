@@ -90,9 +90,10 @@ class Main:
                 if not os.path.isdir(directory):
                     os.makedirs(directory)
                 shutil.copy2(source, target)
-            except (OSError, shutil.Error):
+            except (OSError, shutil.Error) as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot copy to "' + target + '" file.')
+                    sys.argv[0] + ': Cannot copy to "' + target + '" file.'
+                ) from exception
 
 
 if __name__ == '__main__':

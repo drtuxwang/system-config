@@ -94,20 +94,21 @@ class Main:
         print('Removing "' + file + '" file...')
         try:
             os.remove(file)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot remove "' + file + '" file.')
+                sys.argv[0] + ': Cannot remove "' + file + '" file.'
+            ) from exception
 
     def _rmdir(self, directory):
         if self._options.get_recursive_flag():
             print('Removing "' + directory + '" directory recursively...')
             try:
                 shutil.rmtree(directory)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot remove "' +
                     directory + '" directory.'
-                )
+                ) from exception
         else:
             print(sys.argv[0] + ': Ignoring "' + directory + '" directory.')
 

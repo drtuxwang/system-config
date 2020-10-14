@@ -91,9 +91,14 @@ class Main:
         try:
             files = sorted(
                 [os.path.join(directory, x) for x in os.listdir(directory)])
-        except (FileNotFoundError, NotADirectoryError, PermissionError):
+        except (
+            FileNotFoundError,
+            NotADirectoryError,
+            PermissionError,
+        ) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot open "' + directory + '" directory.')
+                sys.argv[0] + ': Cannot open "' + directory + '" directory.'
+            ) from exception
         return files
 
     def _diffdir(self, directory1, directory2):

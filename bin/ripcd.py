@@ -195,16 +195,18 @@ class Main:
                     )
                     print(line)
                     print(line, file=ofile)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + logfile + '" file.')
+                    sys.argv[0] + ': Cannot create "' + logfile + '" file.'
+                ) from exception
             warnfile = track.zfill(2) + '.warning'
             try:
                 with open(warnfile, 'wb'):
                     pass
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + warnfile + '" file.')
+                    sys.argv[0] + ': Cannot create "' + warnfile + '" file.'
+                ) from exception
             wavfile = track.zfill(2) + '.wav'
             tee.set_args(['-a', logfile])
             task = subtask_mod.Task(self._icedax.get_cmdline() + [
@@ -238,14 +240,16 @@ class Main:
             with open('00.log', 'w', newline='\n') as ofile:
                 for line in self._toc:
                     print(line, file=ofile)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "00.log" TOC file.')
+                sys.argv[0] + ': Cannot create "00.log" TOC file.'
+            ) from exception
         try:
             ntracks = int(self._toc[-1].split('.(')[-2].split()[-1])
-        except (IndexError, ValueError):
+        except (IndexError, ValueError) as exception:
             raise SystemExit(
-                sys.argv[0] + ": Unable to detect the number of audio tracks.")
+                sys.argv[0] + ": Unable to detect the number of audio tracks."
+            ) from exception
         if not self._tracks:
             self._tracks = [str(i) for i in range(1, int(ntracks) + 1)]
 

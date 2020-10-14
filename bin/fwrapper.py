@@ -100,9 +100,10 @@ class Main:
             os.chmod(link, int('755', 8))
             file_time = os.path.getmtime(file)
             os.utime(link, (file_time, file_time))
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + link + '" wrapper file.')
+                sys.argv[0] + ': Cannot create "' + link + '" wrapper file.'
+            ) from exception
 
     def run(self):
         """

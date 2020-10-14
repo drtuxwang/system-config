@@ -18,7 +18,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '4.5.1'
+RELEASE = '4.5.2'
 
 
 class Options:
@@ -306,9 +306,10 @@ class ChineseDictionary:
         try:
             with open(file, errors='replace') as ifile:
                 self._mappings = json.load(ifile)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot open "' + file + '" dialect file.')
+                sys.argv[0] + ': Cannot open "' + file + '" dialect file.'
+            ) from exception
         self._max_block = max([len(key) for key in self._mappings])
 
     def create_cache(self):
@@ -330,9 +331,10 @@ class ChineseDictionary:
                     json.dumps(self._mappings, ensure_ascii=False),
                     file=ofile,
                 )
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '" file.')
+                sys.argv[0] + ': Cannot create "' + file + '" file.'
+            ) from exception
 
         file = os.path.join(directory, 'zhy.json')
         print('Creating "{0:s}"...'.format(file))
@@ -346,9 +348,10 @@ class ChineseDictionary:
                     json.dumps(self._mappings, ensure_ascii=False),
                     file=ofile,
                 )
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '" file.')
+                sys.argv[0] + ': Cannot create "' + file + '" file.'
+            ) from exception
 
     def readmap(self, file):
         """
@@ -365,9 +368,10 @@ class ChineseDictionary:
                         self._mappings[text] = []
                         for match in self._issound.finditer(sounds):
                             self._mappings[text].append(match.group())
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot open "' + file + '" dialect file.')
+                sys.argv[0] + ': Cannot open "' + file + '" dialect file.'
+            ) from exception
 
     def map_speech(self, text):
         """
@@ -577,7 +581,7 @@ class Main:
         try:
             options.get_language().text2speech(options.get_phrases())
         except subtask_mod.ExecutableCallError as exception:
-            raise SystemExit(exception)
+            raise SystemExit(exception) from exception
 
 
 if __name__ == '__main__':

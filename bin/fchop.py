@@ -61,9 +61,10 @@ class Options:
                 self._max_size = int(size[:-2]) * 1024**2
             else:
                 self._max_size = int(size)
-        except ValueError:
+        except ValueError as exception:
             raise SystemExit(
-                sys.argv[0] + ': You must specific an integer for chunksize.')
+                sys.argv[0] + ': You must specific an integer for chunksize.'
+            ) from exception
         if self._max_size < 1:
             raise SystemExit(
                 sys.argv[0] + ': You must specific a positive integer '
@@ -130,14 +131,16 @@ class Main:
                         with open(file, 'wb') as ofile:
                             print(file + '...')
                             self._copy(ifile, ofile)
-                    except OSError:
-                        raise SystemExit(sys.argv[0] + ': Cannot create "' +
-                                         str(part + 1).zfill(3) + '" file.')
-        except OSError:
+                    except OSError as exception:
+                        raise SystemExit(
+                            sys.argv[0] + ': Cannot create "' +
+                            str(part + 1).zfill(3) + '" file.'
+                        ) from exception
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + options.get_file() +
                 '" file.'
-            )
+            ) from exception
 
 
 if __name__ == '__main__':

@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.14.4'
-VERSION = 20200912
+RELEASE = '5.14.5'
+VERSION = 20201013
 
 # pylint: disable = too-many-lines
 
@@ -2392,7 +2392,7 @@ class Main:
         try:
             Detect(options).show_info()
         except subtask_mod.ExecutableCallError as exception:
-            raise SystemExit(exception)
+            raise SystemExit(exception) from exception
         print()
 
 

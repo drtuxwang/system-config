@@ -221,9 +221,10 @@ class BacklightIntelSetpci(Backlight):
         task.run()
         try:
             return int(int(task.get_output()[0], 16) / 16)  # From 0 - 15
-        except (IndexError, ValueError):
+        except (IndexError, ValueError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot detect current brightness setting.')
+                sys.argv[0] + ': Cannot detect current brightness setting.'
+            ) from exception
 
     def get_brightness_default(self):
         """

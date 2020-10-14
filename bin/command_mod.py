@@ -14,8 +14,8 @@ import re
 import subprocess
 import sys
 
-RELEASE = '2.3.1'
-VERSION = 20191019
+RELEASE = '2.3.2'
+VERSION = 20201011
 
 
 class Command:
@@ -405,9 +405,10 @@ class Platform:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT
             )
-        except OSError:
+        except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + program + '" program.')
+                'Error in calling "' + program + '" program.'
+            ) from exception
         lines = []
         while True:
             try:
@@ -431,8 +432,10 @@ class Platform:
             lines = cls._run_program(['ldd', '--version'])
             try:
                 return lines[0].split()[-1]
-            except IndexError:
-                raise GlibcVersionError('Cannot determine "glibc" version.')
+            except IndexError as exception:
+                raise GlibcVersionError(
+                    'Cannot determine "glibc" version.'
+                ) from exception
         return '0.0'
 
     @staticmethod

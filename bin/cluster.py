@@ -145,7 +145,7 @@ class SecureShell:
                 )
         except Exception as exception:
             self.close()
-            raise SecureShellError(exception)
+            raise SecureShellError(exception) from exception
 
     def execute(self, command, timeout):
         """
@@ -169,7 +169,7 @@ class SecureShell:
                     print(line.rstrip('\r\n'), file=ofile)
         except Exception as exception:
             self.close()
-            raise SecureShellError(exception)
+            raise SecureShellError(exception) from exception
 
     def close(self):
         """
@@ -301,16 +301,16 @@ class Main:
         if not os.path.isdir(directory):
             try:
                 os.mkdir(directory)
-            except OSError:
+            except OSError as exception:
                 message = 'Cannot create "' + directory + '" directory.'
                 logging.error('\033[31m%s\033[0m', message)
-                raise SystemExit(sys.argv[0] + ': ' + message)
+                raise SystemExit(sys.argv[0] + ': ' + message) from exception
         try:
             os.chdir(directory)
-        except OSError:
+        except OSError as exception:
             message = 'Cannot change to "' + directory + '" directory.'
             logging.error('\033[31m%s\033[0m', message)
-            raise SystemExit(sys.argv[0] + ': ' + message)
+            raise SystemExit(sys.argv[0] + ': ' + message) from exception
 
     def run(self):
         """

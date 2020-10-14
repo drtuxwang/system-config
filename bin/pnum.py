@@ -173,20 +173,20 @@ class Main:
                             file_stat.get_file(),
                             str(mypid) + '-' + newfile
                         )
-                    except OSError:
+                    except OSError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot rename "' +
                             file_stat.get_file() + '" image file.'
-                        )
+                        ) from exception
                     number += 1
                 for file in newfiles:
                     try:
                         shutil.move(str(mypid) + '-' + file, file)
-                    except OSError:
+                    except OSError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot rename to "' + file +
                             '" image file.'
-                        )
+                        ) from exception
                 os.chdir(startdir)
 
 

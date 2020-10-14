@@ -128,9 +128,10 @@ class Main:
         try:
             with open(file, errors='replace') as ifile:
                 self._pipe(options, ifile, prefix)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.')
+                sys.argv[0] + ': Cannot read "' + file + '" file.'
+            ) from exception
 
     def _pipe(self, options, pipe, prefix=''):
         number = 0
@@ -143,8 +144,8 @@ class Main:
                         line = str(number) + ':' + line
                     try:
                         print(prefix + line)
-                    except OSError:
-                        raise SystemExit(0)
+                    except OSError as exception:
+                        raise SystemExit(0) from exception
         else:
             for line in pipe:
                 line = line.rstrip('\r\n')
@@ -154,8 +155,8 @@ class Main:
                         line = str(number) + ':' + line
                     try:
                         print(prefix + line)
-                    except OSError:
-                        raise SystemExit(0)
+                    except OSError as exception:
+                        raise SystemExit(0) from exception
 
     def run(self):
         """
@@ -169,11 +170,11 @@ class Main:
                     options.get_pattern(), re.IGNORECASE)
             else:
                 self._is_match = re.compile(options.get_pattern())
-        except re.error:
+        except re.error as exception:
             raise SystemExit(
                 sys.argv[0] + ': Invalid regular expression "' +
                 options.get_pattern() + '".'
-            )
+            ) from exception
         if len(options.get_files()) > 1:
             for file in options.get_files():
                 self._file(options, file, prefix=file + ':')

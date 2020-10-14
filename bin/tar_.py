@@ -111,22 +111,22 @@ class Main:
             print(file)
             try:
                 ofile.add(file, recursive=False)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot add "' + file +
                     '" file to archive.'
-                )
+                ) from exception
             if os.path.isdir(file) and not os.path.islink(file):
                 try:
                     cls._addfile(
                         ofile,
                         [os.path.join(file, x) for x in os.listdir(file)]
                     )
-                except PermissionError:
+                except PermissionError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot open "' + file +
                         '" directory.'
-                    )
+                    ) from exception
 
     def run(self):
         """
@@ -139,11 +139,11 @@ class Main:
         try:
             with tarfile.open(archive+'.part', 'w:') as ofile:
                 self._addfile(ofile, options.get_files())
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' +
                 archive + '.part" archive file.'
-            )
+            ) from exception
         try:
             shutil.move(archive+'.part', archive)
         except OSError:

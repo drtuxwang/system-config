@@ -35,5 +35,5 @@ lint:
 	python3 -m pycodestyle --max-line-length=79 bin/*.py
 	@echo "\n*** Running Python 3 PYLINT checks ***"
 	python3 -m pylint --disable=locally-disabled,locally-enabled --max-line-length=79 \
-		--rcfile=/dev/null --output-format=parseable --reports=n -j 2 bin/*.py
+		--rcfile=/dev/null --output-format=parseable --reports=n -j 4 bin/*.py
 	@echo "*** Lint successfull ***"

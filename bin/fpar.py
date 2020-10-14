@@ -106,10 +106,12 @@ class Main:
         if not os.path.isdir(directory):
             try:
                 os.mkdir(directory)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "{0:s}" directory.'.format(
-                        directory))
+                        directory,
+                    )
+                ) from exception
 
     @staticmethod
     def _delete_file(file):

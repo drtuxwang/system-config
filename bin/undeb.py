@@ -142,9 +142,10 @@ class Main:
             if not os.path.isdir('DEBIAN'):
                 try:
                     os.mkdir('DEBIAN')
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "DEBIAN" directory.')
+                        sys.argv[0] + ': Cannot create "DEBIAN" directory.'
+                    ) from exception
             task2 = subtask_mod.Task(self._tar.get_cmdline() + [
                 os.path.join(os.pardir, control_file)
             ])

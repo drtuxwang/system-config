@@ -108,9 +108,11 @@ class Main:
 
         try:
             self._is_match = re.compile(options.get_pattern())
-        except re.error:
-            raise SystemExit(sys.argv[0] + ': Invalid regular expression "' +
-                             options.get_pattern() + '".')
+        except re.error as exception:
+            raise SystemExit(
+                sys.argv[0] + ': Invalid regular expression "' +
+                options.get_pattern() + '".'
+            ) from exception
 
         self._replacement = options.get_replacement()
         self._files = options.get_files()
@@ -135,11 +137,11 @@ class Main:
                     )
                 try:
                     shutil.move(file, newfile)
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot rename to "' +
                         newfile + '" file.'
-                    )
+                    ) from exception
 
 
 if __name__ == '__main__':

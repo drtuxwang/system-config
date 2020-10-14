@@ -90,9 +90,10 @@ class Main:
                     print(line, file=ofile)
             os.utime('index.fsum.part', (time_new, time_new))
             shutil.move('index.fsum.part', 'index.fsum')
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "index.fsum" file.')
+                sys.argv[0] + ': Cannot create "index.fsum" file.'
+            ) from exception
 
     @staticmethod
     def _checkfile(isbadfile, directory=os.curdir):
@@ -122,11 +123,11 @@ class Main:
         if not os.path.isdir(directory):
             try:
                 os.mkdir(directory)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' +
                     directory + '" directory.'
-                )
+                ) from exception
 
     @classmethod
     def _write_fsums(cls, lines):
@@ -168,9 +169,10 @@ class Main:
                             int(line.split(' ', 1)[0].rsplit('/', 1)[-1])
                         )
                         print(line, file=ofile)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + file + '" file.')
+                    sys.argv[0] + ': Cannot create "' + file + '" file.'
+                ) from exception
 
     def run(self):
         """

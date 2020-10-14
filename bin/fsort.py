@@ -91,9 +91,10 @@ class Main:
                         for line in ifile:
                             line = line.rstrip('\r\n')
                             lines.append(line)
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + file + '" file.')
+                        sys.argv[0] + ': Cannot read "' + file + '" file.'
+                    ) from exception
         else:
             for line in sys.stdin:
                 lines.append(line.rstrip('\r\n'))

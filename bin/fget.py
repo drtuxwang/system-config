@@ -188,7 +188,7 @@ class Main:
         try:
             conn = urllib.request.urlopen(url)
         except Exception as exception:
-            raise SystemExit(str(exception))
+            raise SystemExit(str(exception)) from exception
 
         file, size, mtime = self._get_file_stat(url, conn)
         if self._check_file(file, size, mtime):
@@ -224,9 +224,10 @@ class Main:
                     ofile.write(chunk)
                     print("\r  => {0:s} [{1:d}/{2:d}]".format(
                         file, tmpsize, size), end='')
-        except PermissionError:
+        except PermissionError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '" file.')
+                sys.argv[0] + ': Cannot create "' + file + '" file.'
+            ) from exception
         print()
 
         os.utime(file+'.part', (mtime, mtime))
@@ -244,14 +245,24 @@ class Main:
         except urllib.error.URLError as exception:
             reason = exception.reason
             if isinstance(reason, socket.gaierror):
-                raise SystemExit(sys.argv[0] + ': ' + reason.args[1] + '.')
+                raise SystemExit(
+                    sys.argv[0] + ': ' + reason.args[1] + '.'
+                ) from exception
             if 'Not Found' in reason:
-                raise SystemExit(sys.argv[0] + ': 404 Not Found.')
+                raise SystemExit(
+                    sys.argv[0] + ': 404 Not Found.'
+                ) from exception
             if 'Permission denied' in reason:
-                raise SystemExit(sys.argv[0] + ': 550 Permission denied.')
-            raise SystemExit(sys.argv[0] + ': ' + exception.args[0])
+                raise SystemExit(
+                    sys.argv[0] + ': 550 Permission denied.'
+                ) from exception
+            raise SystemExit(
+               sys.argv[0] + ': ' + exception.args[0]
+            ) from exception
         except ValueError as exception:
-            raise SystemExit(sys.argv[0] + ': ' + exception.args[0])
+            raise SystemExit(
+                sys.argv[0] + ': ' + exception.args[0]
+            ) from exception
 
     def run(self):
         """

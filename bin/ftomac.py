@@ -98,26 +98,28 @@ class Main:
                         with open(tmpfile, 'w', newline='\r') as ofile:
                             for line in ifile:
                                 print(line.rstrip('\r\n'), file=ofile)
-                    except OSError:
+                    except OSError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' +
                             tmpfile + '" file.'
-                        )
-                    except UnicodeDecodeError:
+                        ) from exception
+                    except UnicodeDecodeError as exception:
                         os.remove(tmpfile)
                         raise SystemExit(
                             sys.argv[0] + ': Cannot convert "' + file +
                             '" binary file.'
-                        )
-            except OSError:
+                        ) from exception
+            except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + file + '" file.')
+                    sys.argv[0] + ': Cannot read "' + file + '" file.'
+                ) from exception
             try:
                 shutil.move(tmpfile, file)
-            except OSError:
+            except OSError as exception:
                 os.remove(tmpfile)
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot update "' + file + '" file.')
+                    sys.argv[0] + ': Cannot update "' + file + '" file.'
+                ) from exception
 
 
 if __name__ == '__main__':

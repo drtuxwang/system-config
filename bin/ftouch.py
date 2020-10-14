@@ -92,11 +92,11 @@ class Main:
                 for file in files:
                     if os.path.isdir(file) and not os.path.islink(file):
                         self._toucher(file)
-            except PermissionError:
+            except PermissionError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot open "' + directory +
                     '" directory.'
-                )
+                ) from exception
 
     def run(self):
         """

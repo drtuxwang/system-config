@@ -111,11 +111,11 @@ class Main:
                 )
             try:
                 self._archive.extract(self._archive.getmember(file))
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Unable to create "' + file +
                     '" extracted.'
-                )
+                ) from exception
             if not os.path.isfile(file):
                 if not os.path.isdir(file):
                     if not os.path.islink(file):
@@ -138,11 +138,11 @@ class Main:
             print(archive + ':')
             try:
                 self._archive = tarfile.open(archive, 'r:gz')
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot open "' + archive +
                     '" archive file.'
-                )
+                ) from exception
             if options.get_view_flag():
                 self._view()
             else:

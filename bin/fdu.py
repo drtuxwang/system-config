@@ -92,9 +92,10 @@ class Main:
         size = 0
         try:
             files = [os.path.join(directory, x) for x in os.listdir(directory)]
-        except PermissionError:
+        except PermissionError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot open "' + directory + '" directory.')
+                sys.argv[0] + ': Cannot open "' + directory + '" directory.'
+            ) from exception
         for file in sorted(files):
             if not os.path.islink(file):
                 if os.path.isdir(file):

@@ -156,10 +156,10 @@ class Main:
         try:
             with open(file) as ifile:
                 data = json.load(ifile)
-        except (OSError, json.decoder.JSONDecodeError):
+        except (OSError, json.decoder.JSONDecodeError) as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + file + '" json file.'
-            )
+            ) from exception
 
         return data
 
@@ -184,11 +184,11 @@ class Main:
                 try:
                     package.set_size(
                         int(line.replace('Installed-Size: ', '', 1)))
-                except ValueError:
+                except ValueError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Package "' + name +
                         '" in "/var/lib/dpkg/info" has non integer size.'
-                    )
+                    ) from exception
             elif line.startswith('Description: '):
                 if name in packages and not package.is_newer(packages[name]):
                     continue

@@ -131,11 +131,11 @@ class Main:
                 raise SystemExit(task.get_exitcode())
             try:
                 shutil.move(output + '.part', output)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + output +
                     '" output file.'
-                )
+                ) from exception
         else:
             subtask_mod.Exec(cmdline).run()
 

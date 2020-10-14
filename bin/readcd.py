@@ -362,11 +362,11 @@ class Main:
             if os.path.isfile(file):
                 try:
                     os.remove(file)
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot over write "' + file +
                         '" CD/DVD image file.'
-                    )
+                    ) from exception
             if options.get_disk_at_once_flag():
                 self._dao(device, speed, file)
             else:

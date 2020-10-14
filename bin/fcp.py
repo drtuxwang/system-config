@@ -108,32 +108,35 @@ class Main:
         if os.path.isfile(target):
             try:
                 os.remove(target)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot remove "' + target + '" link.')
+                    sys.argv[0] + ': Cannot remove "' + target + '" link.'
+                ) from exception
         try:
             os.symlink(source_link, target)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + target + '" link.')
+                sys.argv[0] + ': Cannot create "' + target + '" link.'
+            ) from exception
 
     def _copy_directory(self, source, target):
         print('Copying "' + source + '" directory...')
         try:
             files = sorted(
                 [os.path.join(source, x) for x in os.listdir(source)])
-        except PermissionError:
+        except PermissionError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot open "' + source + '" directory.')
+                sys.argv[0] + ': Cannot open "' + source + '" directory.'
+            ) from exception
         if not os.path.isdir(target):
             try:
                 os.makedirs(target)
                 os.chmod(target, file_mod.FileStat(source).get_mode())
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + target +
                     '" directory.'
-                )
+                ) from exception
         for file in files:
             self._copy(file, os.path.join(target, os.path.basename(file)))
 
@@ -147,9 +150,10 @@ class Main:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot copy to same "' +
                     target + '" file.'
-                )
+                ) from exception
             raise SystemExit(
-                sys.argv[0] + ': Cannot copy to "' + target + '" file.')
+                sys.argv[0] + ': Cannot copy to "' + target + '" file.'
+            ) from exception
         except OSError as exception:
             if exception.args != (95, 'Operation not supported'):
                 try:
@@ -157,10 +161,11 @@ class Main:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' +
                             target + '" file.'
-                        )
-                except OSError:
+                        ) from exception
+                except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + target + '" file.')
+                        sys.argv[0] + ': Cannot create "' + target + '" file.'
+                    ) from exception
 
     def _copy(self, source, target):
         if os.path.islink(source):
@@ -202,22 +207,22 @@ class Main:
                                 targetdir,
                                 file_mod.FileStat(source).get_mode()
                             )
-                        except OSError:
+                        except OSError as exception:
                             raise SystemExit(
                                 sys.argv[0] + ': Cannot create "' +
                                 targetdir + '" directory.'
-                            )
+                            ) from exception
                     self._copy(source, os.path.join(target, source))
             else:
                 directory = os.path.join(target, os.path.dirname(source))
                 if not os.path.isdir(directory):
                     try:
                         os.makedirs(directory)
-                    except OSError:
+                    except OSError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' + directory +
                             '" directory.'
-                        )
+                        ) from exception
                 self._copy(source, os.path.join(target, source))
 
 

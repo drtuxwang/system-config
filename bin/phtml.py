@@ -86,9 +86,10 @@ class Gallery:
                 for x in sorted(os.listdir(directory))
                 if os.path.splitext(x)[1].lower() in images_extensions
             ]
-        except PermissionError:
+        except PermissionError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot open "' + directory + '" directory.')
+                sys.argv[0] + ': Cannot open "' + directory + '" directory.'
+            ) from exception
         self._nfiles = len(self._files)
 
     def generate(self, number, file, next_file):
@@ -158,11 +159,11 @@ class Gallery:
                     with open(xhtml_file, 'w', newline='\n') as ofile:
                         for line in self.generate(i, file, next_file):
                             print(line, file=ofile)
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' + xhtml_file +
                         '" file.'
-                    )
+                    ) from exception
 
                 file_time = file_mod.FileStat(
                     os.path.join(self._directory, file)).get_time()
@@ -240,11 +241,11 @@ class Xhtml:
         """
         try:
             os.chdir(self._directory)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot change to "' + self._directory() +
                 '" directory.'
-            )
+            ) from exception
 
         file_stats = []
         for directory in self._find():
@@ -261,9 +262,10 @@ class Xhtml:
             with open('index.xhtml', 'w', newline='\n') as ofile:
                 for line in self.generate(file_stats):
                     print(line, file=ofile)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "index.xhtml" file.')
+                sys.argv[0] + ': Cannot create "index.xhtml" file.'
+            ) from exception
 
 
 class Main:

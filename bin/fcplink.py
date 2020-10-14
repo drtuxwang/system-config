@@ -81,16 +81,18 @@ class Main:
     def _copy(file, target):
         try:
             os.remove(file)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot remove "' + file + '" link.')
+                sys.argv[0] + ': Cannot remove "' + file + '" link.'
+            ) from exception
 
         try:
             shutil.copy2(target, file)
         except OSError as exception:
             if exception.args != (95, 'Operation not supported'):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot copy "' + target + '" file.')
+                    sys.argv[0] + ': Cannot copy "' + target + '" file.'
+                ) from exception
 
     def run(self):
         """

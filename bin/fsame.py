@@ -122,11 +122,11 @@ class Main:
                             os.path.join(file, x)
                             for x in os.listdir(file)
                         ]))
-                    except PermissionError:
+                    except PermissionError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot open "' +
                             file + '" directory.'
-                        )
+                        ) from exception
             elif os.path.isfile(file):
                 md5sum = self._md5sum(file)
                 if not md5sum:
@@ -147,9 +147,10 @@ class Main:
                     if not chunk:
                         break
                     md5.update(chunk)
-        except (OSError, TypeError):
+        except (OSError, TypeError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.')
+                sys.argv[0] + ': Cannot read "' + file + '" file.'
+            ) from exception
         return md5.hexdigest()
 
     @staticmethod
@@ -158,9 +159,10 @@ class Main:
             print('  Removing "{0:s}" duplicated file'.format(file))
             try:
                 os.remove(file)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot remove "' + file + '" file.')
+                    sys.argv[0] + ': Cannot remove "' + file + '" file.'
+                ) from exception
 
     def run(self):
         """

@@ -2,7 +2,7 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2019 By Dr Colin Kong
+Copyright GPL v2: 2006-2020 By Dr Colin Kong
 """
 
 import copy
@@ -12,8 +12,8 @@ import signal
 import subprocess
 import sys
 
-RELEASE = '2.1.8'
-VERSION = 20191019
+RELEASE = '2.1.9'
+VERSION = 20201013
 
 BUFFER_SIZE = 131072
 
@@ -239,16 +239,17 @@ class Task:
             info['replace'] = ('', '')
         try:
             self._recv_stdout(child, ismatch, info['replace'])
-        except OSError:
+        except OSError as exception:
             raise OutputWriteError(
                 'Error writing stderr of "' + self._file + '" program.'
-            )
+            ) from exception
         if not info['error2output']:
             try:
                 self._recv_stderr(child, ismatch, info['replace'])
-            except OSError:
+            except OSError as exception:
                 raise OutputWriteError(
-                    'Error  writing output of "' + self._file + '" program.')
+                    'Error  writing output of "' + self._file + '" program.'
+                ) from exception
         return child.wait()
 
     def run(self, **kwargs):
@@ -281,9 +282,10 @@ class Task:
             else:
                 self._status['exitcode'] = self._interactive_run(
                     self._cmdline, info)
-        except OSError:
+        except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + self._file + '" program.')
+                'Error in calling "' + self._file + '" program.'
+            ) from exception
         if info['directory']:
             os.chdir(pwd)
         return self._status['exitcode']
@@ -336,9 +338,10 @@ class Background(Task):
             os.chdir(info['directory'])
         try:
             self._start_background_run(self._cmdline, info)
-        except OSError:
+        except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + self._file + '" program.')
+                'Error in calling "' + self._file + '" program.'
+            ) from exception
         if info['directory']:
             os.chdir(pwd)
 
@@ -363,14 +366,14 @@ class Batch(Task):
                     ofile.write(chunk)
         except KeyboardInterrupt:
             pass
-        except OSError:
+        except OSError as exception:
             if append:
                 raise OutputWriteError(
                     'Cannot append to "' + file + '" output file.'
-                )
+                ) from exception
             raise OutputWriteError(
                 'Cannot create "' + file + '" output file.'
-            )
+            ) from exception
 
     def _batch_run(self, cmdline, info):
         child = self._start_child(cmdline, info)
@@ -431,10 +434,10 @@ class Batch(Task):
         try:
             self._status['exitcode'] = self._batch_run(
                 self._cmdline, info)
-        except OSError:
+        except OSError as exception:
             raise ExecutableCallError(
                 'Error in calling "' + self._file + '" program.'
-            )
+            ) from exception
         if info['directory']:
             os.chdir(pwd)
 
@@ -461,10 +464,10 @@ class Child(Task):
             os.chdir(info['directory'])
         try:
             return self._start_child(self._cmdline, info)
-        except OSError:
+        except OSError as exception:
             raise ExecutableCallError(
                 'Error in calling "' + self._file + '" program.'
-            )
+            ) from exception
         if info['directory']:
             os.chdir(pwd)
 
@@ -504,10 +507,10 @@ class Daemon(Task):
             os.chdir(info['directory'])
         try:
             self._start_daemon(self._cmdline, info)
-        except OSError:
+        except OSError as exception:
             raise ExecutableCallError(
                 'Error in calling "' + self._file + '" program.'
-            )
+            ) from exception
         if info['directory']:
             os.chdir(pwd)
 
@@ -569,9 +572,10 @@ class Exec(Task):
             os.chdir(info['directory'])
         try:
             self._exec_run(self._cmdline, info)
-        except OSError:
+        except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + self._file + '" program.')
+                'Error in calling "' + self._file + '" program.'
+            ) from exception
 
 
 class SubTaskError(Exception):

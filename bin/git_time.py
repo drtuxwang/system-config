@@ -119,8 +119,10 @@ class Main:
         # pylint: disable = no-member
         try:
             repo = git.Repo('./', search_parent_directories=True)
-        except git.exc.InvalidGitRepositoryError:
-            raise SystemExit(sys.argv[0] + ': Cannot find .git directory.')
+        except git.exc.InvalidGitRepositoryError as exception:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find .git directory.'
+            ) from exception
         # pylint: enable = no-member
         self._update(repo, options.get_files(), options.get_recursive_flag())
 

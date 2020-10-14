@@ -144,9 +144,10 @@ class VideoDownloader:
                             chunks[part] = chunks.get(part, []) + [url]
                         else:
                             chunks[len(chunks)] = [url]
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ": Cannot open file: " + self._m3u8_file)
+                sys.argv[0] + ": Cannot open file: " + self._m3u8_file
+            ) from exception
 
         if len(chunks) == 0:
             raise SystemExit(
@@ -214,9 +215,10 @@ class VideoDownloader:
                 try:
                     with open(file, 'rb') as ifile:
                         self._copy(ifile, ofile)
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ": Cannot read file: " + file)
+                        sys.argv[0] + ": Cannot read file: " + file
+                    ) from exception
 
         mp4_file = self._m3u8_file + '-full.mp4'
         if os.path.isfile(mp4_file):

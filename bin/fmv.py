@@ -130,11 +130,11 @@ class Main:
                     )
             try:
                 shutil.move(source, target)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot move "' + source +
                     '" source file.'
-                )
+                ) from exception
 
     def _rename(self, source, target):
         if os.path.isdir(source):
@@ -160,16 +160,16 @@ class Main:
 
         try:
             shutil.move(source, target)
-        except OSError:
+        except OSError as exception:
             if os.path.isdir(source):
                 raise SystemExit(
                     sys.argv[0] + ': Cannot rename "' + source +
                     '" source directory.'
-                )
+                ) from exception
             raise SystemExit(
                 sys.argv[0] + ': Cannot rename "' + source +
                 '" source file.'
-            )
+            ) from exception
 
     def run(self):
         """

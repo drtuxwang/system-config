@@ -108,11 +108,11 @@ class Main:
                     try:
                         self._calc(options, sorted(
                             [os.path.join(file, x) for x in os.listdir(file)]))
-                    except PermissionError:
+                    except PermissionError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot open "' +
                             file + '" directory.'
-                        )
+                        ) from exception
             elif os.path.isfile(file):
                 md5sum = self._md5sum(file)
                 if not md5sum:
@@ -146,11 +146,11 @@ class Main:
                             elif test != md5sum:
                                 print(file, '# FAILED checksum')
                                 nfail += 1
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "' + md5file +
                     '" md5sum file.'
-                )
+                ) from exception
         if nmiss > 0:
             print("md5: Cannot find", nmiss, "of", nfiles, "listed files.")
         if nfail > 0:
@@ -169,9 +169,10 @@ class Main:
                     if not chunk:
                         break
                     md5.update(chunk)
-        except (OSError, TypeError):
+        except (OSError, TypeError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.')
+                sys.argv[0] + ': Cannot read "' + file + '" file.'
+            ) from exception
         return md5.hexdigest()
 
     def run(self):

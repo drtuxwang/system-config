@@ -172,14 +172,18 @@ class Main:
                     xml.sax.parseString(cls._get_xml(file), handler)
                 else:
                     xml.sax.parse(open(file, errors='replace'), handler)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot parse "' + file + '" XML file.')
-            except http.client.HTTPException:
-                raise SystemExit(sys.argv[0] + ': HTTP request failed.')
-            except Exception:
+                    sys.argv[0] + ': Cannot parse "' + file + '" XML file.'
+                ) from exception
+            except http.client.HTTPException as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Invalid "' + file + '" XML file.')
+                    sys.argv[0] + ': HTTP request failed.'
+                ) from exception
+            except Exception as exception:
+                raise SystemExit(
+                    sys.argv[0] + ': Invalid "' + file + '" XML file.'
+                ) from exception
 
         return errors
 

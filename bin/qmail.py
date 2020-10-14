@@ -17,7 +17,7 @@ import sys
 import command_mod
 import subtask_mod
 
-RELEASE = '3.0.3'
+RELEASE = '3.0.4'
 
 SOCKET_TIMEOUT = 10
 
@@ -75,22 +75,22 @@ class Options:
             try:
                 with open(file, errors='replace') as ifile:
                     my_address = ifile.readline().strip()
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "' + file +
                     '" configuration file.'
-                )
+                ) from exception
         else:
             my_address = getpass.getuser() + '@localhost'
             print('Creating "' + file + '"...')
             try:
                 with open(file, 'w', newline='\n') as ofile:
                     print(my_address, file=ofile)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + file +
                     '" configuration file.'
-                )
+                ) from exception
         return my_address
 
     def _parse_args(self, args):
@@ -151,9 +151,10 @@ class Mailer:
 
         try:
             self._smtp = smtplib.SMTP(host, timeout=SOCKET_TIMEOUT)
-        except Exception:
+        except Exception as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot connect to STMP server: ' + host)
+                sys.argv[0] + ': Cannot connect to STMP server: ' + host
+            ) from exception
 
     def get_host(self):
         """
@@ -181,9 +182,10 @@ class Mailer:
 
         try:
             self._smtp.sendmail(sender, addresses, text)
-        except Exception:
+        except Exception as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot send to STMP server: ' + self._host)
+                sys.argv[0] + ': Cannot send to STMP server: ' + self._host
+            ) from exception
 
 
 class Main:
@@ -235,9 +237,11 @@ class Main:
             with open(options.get_tmpfile(), 'w', newline='\n') as ofile:
                 for line in self._email:
                     print(line, file=ofile)
-        except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot create "' +
-                             options.get_tmpfile() + '" temporary file.')
+        except OSError as exception:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot create "' +
+                options.get_tmpfile() + '" temporary file.'
+            ) from exception
 
         subtask_mod.Task(options.get_editor().get_cmdline()).run()
 
@@ -246,9 +250,11 @@ class Main:
                 email = []
                 for line in ifile:
                     email.append(line.rstrip('\r\n'))
-        except OSError:
-            raise SystemExit(sys.argv[0] + ': Cannot read "' +
-                             options.get_tmpfile() + '" temporary file.')
+        except OSError as exception:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' +
+                options.get_tmpfile() + '" temporary file.'
+            ) from exception
         return email
 
     def _header(self):

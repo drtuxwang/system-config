@@ -94,11 +94,11 @@ class Options:
             try:
                 with open(self._args.log_file, 'wb'):
                     pass
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' +
                     self._args.log_file + '" logfile file.'
-                )
+                ) from exception
 
 
 class Main:

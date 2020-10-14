@@ -135,7 +135,7 @@ class DockerRegistry:
         try:
             response = self._get_url(self._url)
         except Exception as exception:
-            raise SystemExit(str(exception))
+            raise SystemExit(str(exception)) from exception
         if response.status_code == 200:
             try:
                 results = response.json()['results']
@@ -157,7 +157,7 @@ class DockerRegistry:
         try:
             response = self._get_url(url)
         except Exception as exception:
-            raise SystemExit(str(exception))
+            raise SystemExit(str(exception)) from exception
         if response.status_code != 200:
             if response.status_code == 404:
                 return {}
@@ -178,7 +178,7 @@ class DockerRegistry:
                 verify=SSL_VERIFY,
             )
         except Exception as exception:
-            raise SystemExit(str(exception))
+            raise SystemExit(str(exception)) from exception
         # v2 returns 202, shared tags can 404
         if response.status_code not in (200, 202, 404):
             raise SystemExit('Requests "{0:s}" response code: {1:d}'.format(
@@ -213,7 +213,7 @@ class DockerRegistry2(DockerRegistry):
         try:
             response = self._get_url(self._url)
         except Exception as exception:
-            raise SystemExit(str(exception))
+            raise SystemExit(str(exception)) from exception
         if response.status_code == 200:
             try:
                 self._repositories = response.json()['repositories']
@@ -230,7 +230,7 @@ class DockerRegistry2(DockerRegistry):
         try:
             response = self._get_url(url)
         except Exception as exception:
-            raise SystemExit(str(exception))
+            raise SystemExit(str(exception)) from exception
         digests = {}
         if response.status_code != 200:
             if response.status_code == 404:
@@ -246,7 +246,7 @@ class DockerRegistry2(DockerRegistry):
                 try:
                     response = self._get_url(url)
                 except Exception as exception:
-                    raise SystemExit(str(exception))
+                    raise SystemExit(str(exception)) from exception
                 if response.status_code != 200:
                     raise SystemExit(
                         'Requests "{0:s}" response code: {1:d}'.format(

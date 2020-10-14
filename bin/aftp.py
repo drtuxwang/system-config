@@ -41,11 +41,11 @@ class Options:
                     "someone@somehost.somecompany.com",
                     file=ofile
                 )
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + netrc +
                 '" configuration file.'
-            )
+            ) from exception
         os.umask(umask)
 
     def _parse_args(self, args):

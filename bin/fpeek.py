@@ -155,9 +155,10 @@ class Main:
                                 position,
                                 self._format(options, ifile.read(16))
                             ))
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + file + '" file.')
+                    sys.argv[0] + ': Cannot read "' + file + '" file.'
+                ) from exception
 
 
 if __name__ == '__main__':

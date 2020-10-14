@@ -51,9 +51,10 @@ class Options:
                         print("dbus-launch startkde &", file=ofile)
                     elif answer[0].lower() == 'x':
                         print("dbus-launch startxfce4 &", file=ofile)
-            except OSError:
+            except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create ".vnc/xstartup" file.')
+                    sys.argv[0] + ': Cannot create ".vnc/xstartup" file.'
+                ) from exception
             os.chmod(xstartup, int('755', 8) & ~self._umask)
         directory = os.path.dirname(self._vncserver.get_file())
         if (

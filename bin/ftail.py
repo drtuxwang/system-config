@@ -101,9 +101,10 @@ class Main:
         try:
             with open(file, errors='replace') as ifile:
                 self._pipe(options, ifile)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.')
+                sys.argv[0] + ': Cannot read "' + file + '" file.'
+            ) from exception
 
     @staticmethod
     def _pipe(options, pipe):
@@ -115,8 +116,8 @@ class Main:
             for line in buffer:
                 try:
                     print(line)
-                except OSError:
-                    raise SystemExit(0)
+                except OSError as exception:
+                    raise SystemExit(0) from exception
         else:
             for _ in range(-options.get_lines() - 1):
                 line = pipe.readline()
@@ -125,8 +126,8 @@ class Main:
             for line in pipe:
                 try:
                     print(line.rstrip('\r\n'))
-                except OSError:
-                    raise SystemExit(0)
+                except OSError as exception:
+                    raise SystemExit(0) from exception
 
     def run(self):
         """

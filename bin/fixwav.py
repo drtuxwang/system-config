@@ -125,10 +125,11 @@ class Main:
             )
         try:
             shutil.move(file_new, file)
-        except OSError:
+        except OSError as exception:
             os.remove(file_new)
             raise SystemExit(
-                sys.argv[0] + ': Cannot update "' + file + '" file.')
+                sys.argv[0] + ': Cannot update "' + file + '" file.'
+            ) from exception
 
     def _view(self, file):
         self._ffmpeg.set_args(

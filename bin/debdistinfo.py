@@ -147,10 +147,10 @@ class Main:
         try:
             with open(file) as ifile:
                 data = json.load(ifile)
-        except (OSError, json.decoder.JSONDecodeError):
+        except (OSError, json.decoder.JSONDecodeError) as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + file + '" json file.'
-            )
+            ) from exception
 
         return data
 

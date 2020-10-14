@@ -128,11 +128,11 @@ class Main:
                 for line in ifile:
                     try:
                         name, version = line.split()[:2]
-                    except ValueError:
+                    except ValueError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot read corrupt "' + file +
                             '" package ".debs" list file.'
-                        )
+                        ) from exception
                     packages[name] = Package(os.path.join(
                         distribution,
                         name + '_' + version + '_*.deb'
@@ -146,11 +146,11 @@ class Main:
                 for line in ifile:
                     try:
                         name, version = line.split()[:2]
-                    except ValueError:
+                    except ValueError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot read corrupt "' + file +
                             '" package ".debs" list file.'
-                        )
+                        ) from exception
                     if name in packages:
                         if packages[name].get_file() == os.path.join(
                                 distribution,

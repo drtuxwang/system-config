@@ -315,12 +315,12 @@ class Main:
                         try:
                             package.set_size(
                                 int(line.replace('Installed-Size: ', '', 1)))
-                        except ValueError:
+                        except ValueError as exception:
                             raise SystemExit(
                                 sys.argv[0] + ': Package "' + name +
                                 '" in "/var/lib/dpkg/info" has non '
                                 'integer size.'
-                            )
+                            ) from exception
                     elif line.startswith('Depends: '):
                         for i in line.replace('Depends: ', '', 1).split(', '):
                             package.append_depends(i.split()[0])
@@ -329,9 +329,10 @@ class Main:
                             line.replace('Description: ', '', 1))
                         packages[name] = package
                         package = Package('', -1, [], '')
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "/var/lib/dpkg/status" file.')
+                sys.argv[0] + ': Cannot read "/var/lib/dpkg/status" file.'
+            ) from exception
 
         self._calc_dependencies(packages, names_all)
 

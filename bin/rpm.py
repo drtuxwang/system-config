@@ -147,11 +147,11 @@ class Main:
             elif line.startswith('Size '):
                 try:
                     package.set_size(int((int(line.split()[2]) + 1023) / 1024))
-                except ValueError:
+                except ValueError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Package "' + name +
                         '" has non integer size.'
-                    )
+                    ) from exception
             elif line.startswith('Summary '):
                 package.set_description(line.split(': ')[1])
                 packages[name] = package

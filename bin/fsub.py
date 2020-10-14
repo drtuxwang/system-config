@@ -124,13 +124,14 @@ class Main:
                             print(line_new, end='', file=ofile)
                             if line_new != line:
                                 nchange += 1
-                except OSError:
+                except OSError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' + newfile + '" file.'
-                    )
-        except OSError:
+                    ) from exception
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.')
+                sys.argv[0] + ': Cannot read "' + file + '" file.'
+            ) from exception
 
         if nchange:
             if nchange > 1:
@@ -141,10 +142,11 @@ class Main:
             try:
                 os.chmod(newfile, file_mod.FileStat(file).get_mode())
                 shutil.move(newfile, file)
-            except OSError:
+            except OSError as exception:
                 self._remove(newfile)
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot update "' + file + '" file.')
+                    sys.argv[0] + ': Cannot update "' + file + '" file.'
+                ) from exception
         else:
             self._remove(newfile)
 
@@ -156,11 +158,11 @@ class Main:
 
         try:
             self._is_match = re.compile(options.get_pattern())
-        except re.error:
+        except re.error as exception:
             raise SystemExit(
                 sys.argv[0] + ': Invalid regular expression "' +
                 options.get_pattern() + '".'
-            )
+            ) from exception
 
         self._replacement = options.get_replacement()
         self._files = options.get_files()

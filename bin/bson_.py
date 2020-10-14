@@ -96,7 +96,7 @@ class Main:
                 except config_mod.ReadConfigError as exception:
                     raise SystemExit(
                         "{0:s}: {1:s}".format(file, str(exception))
-                    )
+                    ) from exception
 
                 name, _ = os.path.splitext(file)
                 bson_file = name + '.bson'
@@ -109,7 +109,7 @@ class Main:
                 except config_mod.WriteConfigError as exception:
                     raise SystemExit(
                         "{0:s}: {1:s}".format(file, str(exception))
-                    )
+                    ) from exception
 
 
 if __name__ == '__main__':

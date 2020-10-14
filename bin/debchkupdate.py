@@ -166,10 +166,10 @@ class Main:
         try:
             with open(file) as ifile:
                 data = json.load(ifile)
-        except (OSError, json.decoder.JSONDecodeError):
+        except (OSError, json.decoder.JSONDecodeError) as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + file + '" json file.'
-            )
+            ) from exception
 
         return data
 
@@ -254,14 +254,16 @@ class Main:
                     if not line.startswith('#'):
                         try:
                             name, version = line.split()[:2]
-                        except ValueError:
+                        except ValueError as exception:
                             raise SystemExit(
                                 sys.argv[0] + ': Format error in "' +
-                                os.path.join(distribution, list_file) + '".')
+                                os.path.join(distribution, list_file) + '".'
+                            ) from exception
                         versions[name] = version
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + list_file + '" file.')
+                sys.argv[0] + ': Cannot read "' + list_file + '" file.'
+            ) from exception
 
         urlfile = os.path.basename(
             distribution) + list_file.split('.debs')[-1]+'.url'
@@ -290,9 +292,10 @@ class Main:
                                         file,
                                     )
                                     print("  " + file, file=ofile)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + urlfile + '" file.')
+                sys.argv[0] + ': Cannot create "' + urlfile + '" file.'
+            ) from exception
         if os.path.getsize(urlfile) == 0:
             os.remove(urlfile)
 

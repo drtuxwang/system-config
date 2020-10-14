@@ -149,9 +149,10 @@ class Main:
                     labels = []
                     for i in range(1, len(line.split()) + 1):
                         labels.append(str(i))
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" data file.')
+                sys.argv[0] + ': Cannot read "' + file + '" data file.'
+            ) from exception
         if len(labels) < 2:
             raise SystemExit(
                 sys.argv[0] + ': Cannot find enough columns in "' +

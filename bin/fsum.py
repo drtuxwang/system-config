@@ -142,9 +142,10 @@ class Main:
                     if not chunk:
                         break
                     md5.update(chunk)
-        except (OSError, TypeError):
+        except (OSError, TypeError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.')
+                sys.argv[0] + ': Cannot read "' + file + '" file.'
+            ) from exception
         return md5.hexdigest()
 
     def _calc(self, options, files):
@@ -189,11 +190,11 @@ class Main:
                             file + '.fsum',
                             (file_stat.get_time(), file_stat.get_time())
                         )
-                    except OSError:
+                    except OSError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' + file +
                             '.fsum" file.'
-                        )
+                        ) from exception
 
     def _check(self, files):
         found = []
@@ -224,16 +225,16 @@ class Main:
                             elif mtime != file_stat.get_time():
                                 print(file, '# FAILED checkdate')
                                 nfail += 1
-                        except TypeError:
+                        except TypeError as exception:
                             raise SystemExit(
                                 sys.argv[0] + ': Corrupt "' + fsumfile +
                                 '" checksum file.'
-                            )
-            except OSError:
+                            ) from exception
+            except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "' + fsumfile +
                     '" checksum file.'
-                )
+                ) from exception
 
         if os.path.join(directory, 'index.fsum') in files:
             for file in self._extra(directory, found):
@@ -301,11 +302,11 @@ class Main:
                             self._cache[(file, size, mtime)] = checksum
                     except IndexError:
                         pass
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + update_file +
                 '" checksum file.'
-            )
+            ) from exception
 
     def run(self):
         """

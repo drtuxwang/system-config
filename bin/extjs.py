@@ -86,9 +86,10 @@ class Main:
                 for line in ifile:
                     lines.append(line.strip().replace('&gt;', '>').replace(
                         '&lt;', '<').replace('SCRIPT>', 'script>'))
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read ' + file + ' HTML file.')
+                sys.argv[0] + ': Cannot read ' + file + ' HTML file.'
+            ) from exception
 
         for match in ' '.join(lines).split('<script>')[1:]:
             yield match.split('</script>')[0]
@@ -101,10 +102,11 @@ class Main:
             with open(file, 'w') as ofile:
                 for line in lines:
                     print(line, file=ofile)
-        except OSError:
+        except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot write "' + file +
-                '" configuration file.')
+                '" configuration file.'
+            ) from exception
 
     @classmethod
     def run(cls):
