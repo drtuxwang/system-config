@@ -11,11 +11,13 @@ chmod 700 /tmp/$MYUNAME
 export TMP=/tmp/$MYUNAME
 export TMPDIR=$TMP
 
-# Enable logging
+# Fix logging
 if [ "$ARG" != "-start" ]
 then
     exec $0 -start > $TMP/.cache/autoexec.log 2>&1
 fi
+[[ ! -h $HOME/.xsession-errors ]] && rm -f $HOME/.xsession-errors && ln -s $TMP/.xsession-errors $HOME
+[[ ! -d $HOME/.xsession-errors.old ]] && rm -f $HOME/.xsession-errors.old && mkdir $HOME/.xsession-errors.old
 
 # Secure temp files
 [[ ! -h $HOME/tmp ]] && rm -rf $HOME/tmp &&  ln -s $TMP $HOME/tmp
