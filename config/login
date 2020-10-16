@@ -104,12 +104,6 @@ if ( $?TERM && -e "`\tty`" ) then
     setenv WINEDITOR vi
     set history=1024
 
-    # Secure temp files
-    if ( ! -d $HOME/.wget-hsts ) then
-        rm -f $HOME/.wget-hsts
-        mkdir $HOME/.wget-hsts
-    endif
-
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if ( ! $?BASE_PATH ) then
         if ( ! $?MANPATH ) then

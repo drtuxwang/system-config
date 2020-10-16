@@ -1,5 +1,5 @@
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-mkdir -p /tmp/$MYUNAME
+mkdir -p /tmp/$MYUNAME/.cache
 chmod 700 /tmp/$MYUNAME
 export TMP=/tmp/$MYUNAME
 export TMPDIR=$TMP
