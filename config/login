@@ -96,27 +96,13 @@ if ( $?TERM && -e "`\tty`" ) then
     umask 027
     setenv LC_COLLATE C
     setenv PYTHONDONTWRITEBYTECODE 1
-    mkdir -p /tmp/$MYUNAME/.cache >& /dev/null
+    mkdir -p /tmp/$MYUNAME/.cache
     chmod 700 /tmp/$MYUNAME
     setenv TMP /tmp/$MYUNAME
     setenv TMPDIR $TMP
     rm -rf $HOME/tmp >& /dev/null
     setenv WINEDITOR vi
     set history=1024
-
-    # Secure temp files
-    if ( ! -d $HOME/.wget-hsts ) then
-        rm -f $HOME/.wget-hsts
-        mkdir $HOME/.wget-hsts
-    endif
-    if ( ! -l $HOME/.pylint.d ) then
-        rm -rf $HOME/.pylint.d
-        ln -s $TMP/.cache $HOME/.pylint.d
-    endif
-    if ( ! -l $HOME/.python_history ) then
-        rm -f $HOME/.python_history
-        ln -s $TMP/.cache/python_history $HOME/.python_history
-    endif
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if ( ! $?BASE_PATH ) then

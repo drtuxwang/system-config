@@ -6,7 +6,7 @@ ARG=${1:-}
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 
 # Use /tmp (tmpfs) for cache
-mkdir -p /tmp/$MYUNAME/.cache 2> /dev/null
+mkdir -p /tmp/$MYUNAME/.cache
 chmod 700 /tmp/$MYUNAME
 export TMP=/tmp/$MYUNAME
 export TMPDIR=$TMP
@@ -16,13 +16,16 @@ if [ "$ARG" != "-start" ]
 then
     exec $0 -start > $TMP/.cache/autoexec.log 2>&1
 fi
-[[ ! -h $HOME/.xsession-errors ]] && rm -f $HOME/.xsession-errors && ln -s $TMP/.xsession-errors $HOME
 [[ ! -d $HOME/.xsession-errors.old ]] && rm -f $HOME/.xsession-errors.old && mkdir $HOME/.xsession-errors.old
+[[ ! -h $HOME/.xsession-errors ]] && rm -f $HOME/.xsession-errors && ln -s /dev/null $HOME/.xsession-errors
+[[ ! -d $HOME/.xfce4-session.verbose-log.last ]] && rm -f $HOME/.xfce4-session.verbose-log.last && mkdir $HOME/.xfce4-session.verbose-log.last
+[[ ! -h $HOME/.xfce4-session.verbose-log ]] && rm -f $HOME/.xfce4-session.verbose-log && ln -s /dev/null $HOME/.xfce4-session.verbose-log
 
 # Secure temp files
 [[ ! -h $HOME/tmp ]] && rm -rf $HOME/tmp &&  ln -s $TMP $HOME/tmp
 [[ ! -h $HOME/.cache ]] && rm -rf $HOME/.cache && ln -s $TMP/.cache $HOME/.cache
 [[ ! -h $HOME/.local/share/gvfs-metadata ]] && rm -rf $HOME/.local/share/gvfs-metadata && ln -s $TMP/.cache $HOME/.local/share/gvfs-metadata
+[[ ! -h $HOME/.fontconfig ]] && rm -rf $HOME/.fontconfig &&  ln -s .cache .fontconfig
 for FILE in .recently-used.xbel .local/share/recently-used.xbel
 do
     [[ -f "$HOME/$FILE" ]] && rm -f $HOME/$FILE 2> /dev/null && mkdir -p $HOME/$FILE 2> /dev/null

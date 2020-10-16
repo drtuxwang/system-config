@@ -50,7 +50,7 @@ class Options:
         self._inotifywait = command_mod.Command('inotifywait', errors='stop')
         self._inotifywait.set_args([
             '-e',
-            'create,modify,move,delete',
+            'attrib,create,modify,move,delete',
             '-mr'
         ] + self._args.directories)
 
