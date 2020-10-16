@@ -1004,6 +1004,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu-stable/dev/Dockerfile
  * docker/ubuntu-stable/dev/Makefile     ubuntu:20.04 based GCC dev shell
  * kubernetes/Makefile
+ * kubernetes/kube-save.sh               Save Kubernetes docker images
  * kubernetes/monitor-host/Makefile      Kubernetes: host monitoring (drtuxwang/debian-bash:stable)
  * kubernetes/monitor-host/monitor-host-daemonset.yaml
  * kubernetes/test-crontab/Makefile      Kubernetes: crontab example (drtuxwang/busybox:stable)

@@ -17,8 +17,7 @@ status:
 
 .PHONY: save
 save:
-	docker save $(shell docker images | egrep "k8s.gcr.io|quay.io/coreos/flannel" | \
-		awk '{printf("%s:%s\n", $$1, $$2)}') -o kubernetes.tar
+	./kube-save.sh
 
 .PHONY: load
 load:
