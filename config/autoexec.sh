@@ -16,8 +16,10 @@ if [ "$ARG" != "-start" ]
 then
     exec $0 -start > $TMP/.cache/autoexec.log 2>&1
 fi
-[[ ! -h $HOME/.xsession-errors ]] && rm -f $HOME/.xsession-errors && ln -s $TMP/.xsession-errors $HOME
 [[ ! -d $HOME/.xsession-errors.old ]] && rm -f $HOME/.xsession-errors.old && mkdir $HOME/.xsession-errors.old
+[[ ! -h $HOME/.xsession-errors ]] && rm -f $HOME/.xsession-errors && ln -s /dev/null $HOME/.xsession-errors
+[[ ! -d $HOME/.xfce4-session.verbose-log.last ]] && rm -f $HOME/.xfce4-session.verbose-log.last && mkdir $HOME/.xfce4-session.verbose-log.last
+[[ ! -h $HOME/.xfce4-session.verbose-log ]] && rm -f $HOME/.xfce4-session.verbose-log && ln -s /dev/null $HOME/.xfce4-session.verbose-log
 
 # Secure temp files
 [[ ! -h $HOME/tmp ]] && rm -rf $HOME/tmp &&  ln -s $TMP $HOME/tmp
