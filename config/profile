@@ -214,7 +214,7 @@ then
     export HISTFILE=
     export PYTHONDONTWRITEBYTECODE=1
     export WINEDITOR=vi
-    mkdir -p /tmp/$MYUNAME/.cache 2> /dev/null
+    mkdir -p /tmp/$MYUNAME/.cache
     chmod 700 /tmp/$MYUNAME
     export TMP=/tmp/$MYUNAME
     export TMPDIR=$TMP
@@ -225,16 +225,6 @@ then
     then
         rm -f $HOME/.wget-hsts
         mkdir $HOME/.wget-hsts
-    fi
-    if [ ! -h $HOME/.pylint.d ]
-    then
-        rm -rf $HOME/.pylint.d
-        ln -s $TMP/.cache $HOME/.pylint.d
-    fi
-    if [ ! -h $HOME/.python_history ]
-    then
-        rm -f $HOME/.python_history
-        ln -s $TMP/.cache/python_history $HOME/.python_history
     fi
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)

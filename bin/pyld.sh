@@ -5,6 +5,24 @@
 
 
 #
+# Function to redirect Python dot files/directories to cache
+#
+cache_dotfiles() {
+    mkdir -p $HOME/.cache
+    if [ ! -h $HOME/.pylint.d ]
+    then
+        rm -rf $HOME/.pylint.d
+        ln -s $TMP/.cache $HOME/.pylint.d
+    fi
+    if [ ! -h $HOME/.python_history ]
+    then
+        rm -f $HOME/.python_history
+        ln -s $TMP/.cache/python_history $HOME/.python_history
+    fi
+}
+
+
+#
 # Function to locate Python command
 #
 locate_python() {
@@ -244,4 +262,5 @@ exec_python() {
     exec `which "$PY_MAIN"` "$@"
 }
 
+cache_dotfiles
 exec_python "$@"
