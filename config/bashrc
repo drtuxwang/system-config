@@ -1,9 +1,16 @@
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+
+export LC_COLLATE=C
+export HISTFILE=
+export LESSHISTFILE=/dev/null
+export PYTHONDONTWRITEBYTECODE=1
+export WINEDITOR=vi
 mkdir -p /tmp/$MYUNAME/.cache
 chmod 700 /tmp/$MYUNAME
 export TMP=/tmp/$MYUNAME
 export TMPDIR=$TMP
 [[ ! -h $HOME/.cache ]] && rm -rf $HOME/.cache && ln -s $TMP/.cache $HOME/.cache
+ENV=
 
 PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h\[\033[00m\] # '
 export PATH="/opt/software/bin:$PATH"

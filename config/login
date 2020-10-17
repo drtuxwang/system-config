@@ -95,6 +95,7 @@ if ( $?TERM && -e "`\tty`" ) then
     # General stuff
     umask 027
     setenv LC_COLLATE C
+    setenv LESSHISTFILE /dev/null
     setenv PYTHONDONTWRITEBYTECODE 1
     mkdir -p /tmp/$MYUNAME/.cache
     chmod 700 /tmp/$MYUNAME
