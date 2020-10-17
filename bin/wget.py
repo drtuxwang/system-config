@@ -35,26 +35,13 @@ class Options:
         """
         return self._wget
 
-    @staticmethod
-    def _config():
-        file = os.path.join(os.environ['HOME'], '.wget-hsts')
-        if not os.path.isdir(file):
-            try:
-                os.remove(file)
-            except OSError:
-                pass
-            try:
-                os.mkdir(file)
-            except OSError:
-                pass
-
     def parse(self, args):
         """
         Parse arguments
         """
-        self._config()
-
         self._wget = command_mod.Command('wget', errors='stop')
+        if '--hsts-file=/dev/null' not in args:
+            self._wget.append_arg('--hsts-file=/dev/null')
         if '--no-check-certificate' not in args:
             self._wget.append_arg('--no-check-certificate')
         if '--timestamping' not in args:
