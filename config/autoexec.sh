@@ -6,10 +6,10 @@ ARG=${1:-}
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 
 # Use /tmp (tmpfs) for cache
-mkdir -p /tmp/$MYUNAME/.cache
-chmod 700 /tmp/$MYUNAME
-export TMP=/tmp/$MYUNAME
+export TMP=${TMP:-/tmp/$MYUNAME}
 export TMPDIR=$TMP
+mkdir -p $TMP/.cache
+chmod 700 $TMP
 
 # Fix logging
 if [ "$ARG" != "-start" ]
