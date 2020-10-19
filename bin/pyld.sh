@@ -8,13 +8,24 @@
 # Function to redirect Python dot files/directories to temp cache
 #
 temp_dotfiles() {
+    MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+    TMP=${TMP:-/tmp/$MYUNAME}
+    mkdir -p $TMP/.cache
+    chmod 700 $TMP
     if [ ! -h $HOME/.python_history ]
     then
-        MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-        mkdir -p /tmp/$MYUNAME/.cache
-        rm -rf $HOME/.python_history $HOME/.pylint.d
-        ln -s /tmp/$MYUNAME/.cache/python_history $HOME/.python_history
-        ln -s /tmp/$MYUNAME/.cache $HOME/.pylint.d
+         rm -f $HOME/.python_history
+         ln -s $TMP/.cache/python_history $HOME/.python_history
+    fi
+    if [ ! -h $HOME/.ansible ]
+    then
+        rm -rf $HOME/.ansible
+        ln -s $TMP/.cache $HOME/.ansible
+    fi
+    if [[ ! -h $HOME/.pylint.d ]]
+    then
+        rm -rf $HOME/.pylint.d
+        ln -s $TMP/.cache $HOME/.pylint.d
     fi
 }
 
