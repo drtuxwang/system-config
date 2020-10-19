@@ -22,7 +22,7 @@ temp_dotfiles() {
         rm -rf $HOME/.ansible
         ln -s $TMP/.cache $HOME/.ansible
     fi
-    if [[ ! -h $HOME/.pylint.d ]]
+    if [ ! -h $HOME/.pylint.d ]
     then
         rm -rf $HOME/.pylint.d
         ln -s $TMP/.cache $HOME/.pylint.d
