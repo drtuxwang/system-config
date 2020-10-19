@@ -101,9 +101,11 @@ if ( $?TERM && -e "`\tty`" ) then
     setenv LESSHISTFILE /dev/null
     setenv PYTHONDONTWRITEBYTECODE 1
     if ( ! $?TMP ) then
-        setenv TMP /tmp/$MYUNAME
+        setenv TMP "/tmp/$MYUNAME"
     endif
-    setenv TMPDIR $TMP
+    if ( ! $?TMPDIR ) then
+        setenv TMPDIR "$TMP"
+    endif
     mkdir -p $TMP/.cache
     chmod 700 $TMP
     set history=1024

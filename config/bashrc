@@ -6,7 +6,7 @@ export HISTFILE=
 export LESSHISTFILE=/dev/null
 export PYTHONDONTWRITEBYTECODE=1
 export TMP=${TMP:-/tmp/$MYUNAME}
-export TMPDIR=$TMP
+export TMPDIR=${TMPDIR:-/tmp/$MYUNAME}
 mkdir -p $TMP/.cache
 chmod 700 $TMP
 ENV=

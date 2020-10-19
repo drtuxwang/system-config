@@ -7,7 +7,7 @@ MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 
 # Use /tmp (tmpfs) for cache
 export TMP=${TMP:-/tmp/$MYUNAME}
-export TMPDIR=$TMP
+export TMPDIR=${TMPDIR:-$TMP}
 mkdir -p $TMP/.cache
 chmod 700 $TMP
 

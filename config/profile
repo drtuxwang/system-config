@@ -215,8 +215,14 @@ then
     export HISTFILE=
     export LESSHISTFILE=/dev/null
     export PYTHONDONTWRITEBYTECODE=1
-    export TMP=${TMP:-/tmp/$MYUNAME}
-    export TMPDIR=$TMP
+    if [ ! "$TMP" ]
+    then
+        export TMP="/tmp/$MYUNAME"
+    fi
+    if [ ! "$TMPDIR" ]
+    then
+        export TMPDIR="$TMP"
+    fi
     mkdir -p $TMP/.cache
     chmod 700 $TMP
     ENV=

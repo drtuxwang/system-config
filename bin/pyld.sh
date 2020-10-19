@@ -9,7 +9,10 @@
 #
 temp_dotfiles() {
     MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-    TMP=${TMP:-/tmp/$MYUNAME}
+    if [ ! "$TMP" ]
+    then
+        export TMP="/tmp/$MYUNAME"
+    fi
     mkdir -p $TMP/.cache
     chmod 700 $TMP
     if [ ! -h $HOME/.python_history ]
