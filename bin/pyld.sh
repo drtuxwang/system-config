@@ -5,19 +5,16 @@
 
 
 #
-# Function to redirect Python dot files/directories to cache
+# Function to redirect Python dot files/directories to temp cache
 #
-cache_dotfiles() {
-    mkdir -p $HOME/.cache
-    if [ ! -h $HOME/.pylint.d ]
-    then
-        rm -rf $HOME/.pylint.d
-        ln -s $TMP/.cache $HOME/.pylint.d
-    fi
+temp_dotfiles() {
     if [ ! -h $HOME/.python_history ]
     then
-        rm -f $HOME/.python_history
-        ln -s $TMP/.cache/python_history $HOME/.python_history
+        MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+        mkdir -p /tmp/$MYUNAME/.cache
+        rm -rf $HOME/.python_history $HOME/.pylint.d
+        ln -s /tmp/$MYUNAME/.cache/python_history $HOME/.python_history
+        ln -s /tmp/$MYUNAME/.cache $HOME/.pylint.d
     fi
 }
 
@@ -262,5 +259,5 @@ exec_python() {
     exec `which "$PY_MAIN"` "$@"
 }
 
-cache_dotfiles
+temp_dotfiles
 exec_python "$@"
