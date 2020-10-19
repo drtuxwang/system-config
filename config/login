@@ -11,6 +11,8 @@ if ( $?TERM && -e "`\tty`" ) then
     if ( -f $HOME/.login-2bash && -f /bin/bash ) then
         setenv ENV $HOME/.profile
         exec /bin/bash -l
+    else if ( "$TERM" == "xterm-256color" ) then
+        setenv TERM xterm
     endif
 
     # Terminal Multiplexer
@@ -98,10 +100,10 @@ if ( $?TERM && -e "`\tty`" ) then
     setenv EDITOR vi
     setenv LESSHISTFILE /dev/null
     setenv PYTHONDONTWRITEBYTECODE 1
+    mkdir -p /tmp/$MYUNAME/.cache
+    chmod 700 /tmp/$MYUNAME
     setenv TMP /tmp/$MYUNAME
     setenv TMPDIR $TMP
-    mkdir -p $TMP/.cache
-    chmod 700 $TMP
     if ( ! -l $HOME/.cache ) then
         rm -rf $HOME/.cache
         ln -s $TMP/.cache $HOME/.cache
