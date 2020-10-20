@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """
-Wrapper for generic command
+Wrapper for "helm" command
+
 """
 
+import getpass
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -44,15 +47,44 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def _cache():
+        helm_directory = os.path.join(os.environ['HOME'], '.helm')
+        if not os.path.isdir(os.path.join(helm_directory, 'repository')):
+            try:
+                os.mkdir(os.path.join(helm_directory, 'repository'))
+            except OSError:
+                return
+
+        os.chmod(os.path.join('/tmp', getpass.getuser()), int('700', 8))
+        for cache in ('cache', 'repository/cache'):
+
+            link = os.path.join(helm_directory, cache)
+            if not os.path.islink(link):
+                cache_directory = os.path.join(
+                    '/tmp',
+                    getpass.getuser(),
+                    '.cache/helm',
+                    cache,
+                )
+                try:
+                    if not os.path.isdir(cache_directory):
+                        os.makedirs(cache_directory)
+                    if os.path.exists(link):
+                        shutil.rmtree(link)
+                    os.symlink(cache_directory, link)
+                except OSError:
+                    pass
+
+    @classmethod
+    def run(cls):
         """
         Start program
         """
-        name = os.path.basename(sys.argv[0]).replace('.py', '')
+        cls._cache()
 
-        command = command_mod.Command(name, errors='stop')
-        command.set_args(sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        helm = command_mod.Command('helm', errors='stop')
+        helm.set_args(sys.argv[1:])
+        subtask_mod.Exec(helm.get_cmdline()).run()
 
 
 if __name__ == '__main__':

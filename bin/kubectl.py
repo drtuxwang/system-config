@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """
-Wrapper for generic command
+Wrapper for "kubectl" command
+
 """
 
+import getpass
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -44,15 +47,43 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def _cache():
+        kube_directory = os.path.join(os.environ['HOME'], '.kube')
+        if not os.path.isdir(kube_directory):
+            try:
+                os.mkdir(kube_directory)
+            except OSError:
+                return
+
+        os.chmod(os.path.join('/tmp', getpass.getuser()), int('700', 8))
+        for cache in ('cache', 'http-cache'):
+            link = os.path.join(kube_directory, cache)
+            if not os.path.islink(link):
+                cache_directory = os.path.join(
+                    '/tmp',
+                    getpass.getuser(),
+                    '.cache/kube',
+                    cache,
+                )
+                try:
+                    if not os.path.isdir(cache_directory):
+                        os.makedirs(cache_directory)
+                    if os.path.exists(link):
+                        shutil.rmtree(link)
+                    os.symlink(cache_directory, link)
+                except OSError:
+                    pass
+
+    @classmethod
+    def run(cls):
         """
         Start program
         """
-        name = os.path.basename(sys.argv[0]).replace('.py', '')
+        cls._cache()
 
-        command = command_mod.Command(name, errors='stop')
-        command.set_args(sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        kubectl = command_mod.Command('kubectl', errors='stop')
+        kubectl.set_args(sys.argv[1:])
+        subtask_mod.Exec(kubectl.get_cmdline()).run()
 
 
 if __name__ == '__main__':
