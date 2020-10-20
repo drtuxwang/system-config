@@ -75,6 +75,14 @@ class Main:
                 except OSError:
                     pass
 
+        repo_directory = os.path.join(helm_directory, 'repository')
+        repo_list = os.path.join(repo_directory, 'repositories.yaml')
+        if os.path.isfile(repo_list):
+            if not glob.glob(os.path.join(repo_directory, 'cache', '*.yaml')):
+                helm = command_mod.Command('helm', errors='stop')
+                helm.set_args(['repo', 'update'])
+                subtask_mod.Task(helm.get_cmdline()).run()
+
     @classmethod
     def run(cls):
         """
