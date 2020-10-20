@@ -13,7 +13,7 @@ temp_dotfiles() {
     then
         export TMP="/tmp/$MYUNAME"
     fi
-    mkdir -p $TMP/.cache
+    mkdir -p $TMP/.cache/pylint.d
     chmod 700 $TMP
     if [ ! -h $HOME/.python_history ]
     then
@@ -28,7 +28,7 @@ temp_dotfiles() {
     if [ ! -h $HOME/.pylint.d ]
     then
         rm -rf $HOME/.pylint.d
-        ln -s $TMP/.cache $HOME/.pylint.d
+        ln -s $TMP/.cache/pylint.d $HOME/.pylint.d
     fi
 }
 
