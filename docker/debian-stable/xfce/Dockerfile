@@ -37,7 +37,7 @@ RUN apt-get install --no-install-recommends -y \
 		xauth && \
 	apt-get clean && \
 	mkdir -p /var/run/sshd && \
-	wget https://github.com/krallin/tini/releases/download/v0.18.0/tini-amd64 -O /tini && \
+	wget https://github.com/krallin/tini/releases/download/v0.19.0/tini-amd64 -O /tini && \
 	chmod 755 /tini
 
 # Install XFCE & VNC
