@@ -215,14 +215,8 @@ then
     export HISTFILE=
     export LESSHISTFILE=/dev/null
     export PYTHONDONTWRITEBYTECODE=1
-    if [ ! "$TMP" ]
-    then
-        export TMP="/tmp/$MYUNAME"
-    fi
-    if [ ! "$TMPDIR" ]
-    then
-        export TMPDIR="$TMP"
-    fi
+    export TMPDIR="/tmp/$MYUNAME"
+    export TMP="/tmp/$MYUNAME"
     mkdir -p $TMP/.cache
     ls -ld $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* 2> /dev/null | \
         grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null

@@ -5,8 +5,8 @@ export EDITOR=vi
 export HISTFILE=
 export LESSHISTFILE=/dev/null
 export PYTHONDONTWRITEBYTECODE=1
-export TMP=${TMP:-/tmp/$MYUNAME}
-export TMPDIR=${TMPDIR:-/tmp/$MYUNAME}
+export TMPDIR=/tmp/$MYUNAME
+export TMP=/tmp/$MYUNAME
 mkdir -p $TMP/.cache
 chmod 700 $TMP
 ENV=

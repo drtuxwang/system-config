@@ -100,12 +100,8 @@ if ( $?TERM && -e "`\tty`" ) then
     setenv EDITOR vi
     setenv LESSHISTFILE /dev/null
     setenv PYTHONDONTWRITEBYTECODE 1
-    if ( ! $?TMP ) then
-        setenv TMP "/tmp/$MYUNAME"
-    endif
-    if ( ! $?TMPDIR ) then
-        setenv TMPDIR "$TMP"
-    endif
+    setenv TMPDIR "/tmp/$MYUNAME"
+    setenv TMP "/tmp/$MYUNAME"
     mkdir -p $TMP/.cache
     ls -ld $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* |& \
         grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= >& /dev/null

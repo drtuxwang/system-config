@@ -6,8 +6,8 @@ ARG=${1:-}
 MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 
 # Use /tmp (tmpfs) for cache
-export TMP=${TMP:-/tmp/$MYUNAME}
-export TMPDIR=${TMPDIR:-$TMP}
+export TMPDIR=/tmp/$MYUNAME
+export TMP=/tmp/$MYUNAME
 mkdir -p $TMP/.cache
 ls -ld $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* 2> /dev/null | \
     grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
