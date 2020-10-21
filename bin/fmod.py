@@ -10,6 +10,8 @@ import re
 import signal
 import sys
 
+import file_mod
+
 
 class Options:
     """
@@ -164,9 +166,14 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
+    @staticmethod
+    def _chmod(file, mod):
+        if oct(mod)[-3:] != oct(file_mod.FileStat(file).get_mode())[-3:]:
+            os.chmod(file, mod)
+
     def _setmod_directory(self, directory):
         try:
-            os.chmod(directory, self._xmod)
+            self._chmod(directory, self._xmod)
         except OSError:
             print("Permission denied:", directory + os.sep)
         if self._recursive_flag:
@@ -184,19 +191,19 @@ class Main:
                 with open(file, 'rb') as ifile:
                     magic = ifile.read(4)
             except OSError:
-                os.chmod(file, self._fmod)
+                self._chmod(file, self._fmod)
                 with open(file, 'rb') as ifile:
                     magic = ifile.read(4)
 
             if (magic.startswith(b'#!') or magic in self._exe_magics or
                     self._is_exe_ext.search(file)):
-                os.chmod(file, self._xmod)
+                self._chmod(file, self._xmod)
             elif self._is_not_exe_ext.search(file):
-                os.chmod(file, self._fmod)
+                self._chmod(file, self._fmod)
             elif os.access(file, os.X_OK):
-                os.chmod(file, self._xmod)
+                self._chmod(file, self._xmod)
             else:
-                os.chmod(file, self._fmod)
+                self._chmod(file, self._fmod)
         except OSError:
             print("Permission denied:", file)
 
