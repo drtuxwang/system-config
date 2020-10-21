@@ -107,7 +107,7 @@ if ( $?TERM && -e "`\tty`" ) then
         setenv TMPDIR "$TMP"
     endif
     mkdir -p $TMP/.cache
-    ls -ld $HOME/Desktop $HOME/.ssh $HOME/.??*/* |& \
+    ls -ld $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* |& \
         grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= >& /dev/null
     set history=1024
 

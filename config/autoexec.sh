@@ -9,7 +9,7 @@ MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 export TMP=${TMP:-/tmp/$MYUNAME}
 export TMPDIR=${TMPDIR:-$TMP}
 mkdir -p $TMP/.cache
-ls -ld $HOME/Desktop $HOME/.ssh $HOME/.??*/* /mnt/*/$MYUNAME/private 2> /dev/null | \
+ls -ld $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* 2> /dev/null | \
     grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
 
 # Fix logging

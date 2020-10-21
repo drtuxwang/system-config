@@ -224,7 +224,7 @@ then
         export TMPDIR="$TMP"
     fi
     mkdir -p $TMP/.cache
-    ls -ld $HOME/Desktop $HOME/.ssh $HOME/.??*/* 2> /dev/null | \
+    ls -ld $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* 2> /dev/null | \
         grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
     ENV=
 
