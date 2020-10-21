@@ -13,7 +13,7 @@ temp_dotfiles() {
     then
         export TMP="/tmp/$MYUNAME"
     fi
-    mkdir -p $TMP/.cache/pylint.d
+    mkdir -p $TMP/.cache/ansible $TMP/.cache/pylint.d
     chmod 700 $TMP
     if [ ! -h $HOME/.python_history ]
     then
@@ -23,7 +23,7 @@ temp_dotfiles() {
     if [ ! -h $HOME/.ansible ]
     then
         rm -rf $HOME/.ansible
-        ln -s $TMP/.cache $HOME/.ansible
+        ln -s $TMP/.cache/ansible $HOME/.ansible
     fi
     if [ ! -h $HOME/.pylint.d ]
     then

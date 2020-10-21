@@ -224,7 +224,8 @@ then
         export TMPDIR="$TMP"
     fi
     mkdir -p $TMP/.cache
-    chmod 700 $TMP
+    ls -ld $HOME/Desktop $HOME/.ssh $HOME/.??*/* 2> /dev/null | \
+        grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
     ENV=
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
@@ -362,7 +363,6 @@ then
 
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop 2> /dev/null
-    chmod go= $HOME/Desktop $HOME/.ssh $HOME/.??*/* 2> /dev/null
     if [ "$PWD" = "$HOME" -o "$PWD" = "/" ]
     then
         cd "$HOME/Desktop"

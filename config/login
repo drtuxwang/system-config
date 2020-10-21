@@ -107,7 +107,8 @@ if ( $?TERM && -e "`\tty`" ) then
         setenv TMPDIR "$TMP"
     endif
     mkdir -p $TMP/.cache
-    chmod 700 $TMP
+    ls -ld $HOME/Desktop $HOME/.ssh $HOME/.??*/* |& \
+        grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= >& /dev/null
     set history=1024
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
@@ -208,7 +209,6 @@ if ( $?TERM && -e "`\tty`" ) then
 
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop >& /dev/null
-    chmod go= $HOME/Desktop $HOME/.ssh $HOME/.??*/* >& /dev/null
     if ( "$PWD" == "$HOME" ) then
         cd "$HOME/Desktop"
     endif
