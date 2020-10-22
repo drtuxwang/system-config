@@ -56,32 +56,21 @@ class Main:
                 return
 
         os.chmod(os.path.join('/tmp', getpass.getuser()), int('700', 8))
-        for cache in ('cache', 'repository/cache'):
-
-            link = os.path.join(helm_directory, cache)
-            if not os.path.islink(link):
-                cache_directory = os.path.join(
-                    '/tmp',
-                    getpass.getuser(),
-                    '.cache/helm',
-                    cache,
-                )
-                try:
-                    if not os.path.isdir(cache_directory):
-                        os.makedirs(cache_directory)
-                    if os.path.exists(link):
-                        shutil.rmtree(link)
-                    os.symlink(cache_directory, link)
-                except OSError:
-                    pass
-
-        repo_directory = os.path.join(helm_directory, 'repository')
-        repo_list = os.path.join(repo_directory, 'repositories.yaml')
-        if os.path.isfile(repo_list):
-            if not glob.glob(os.path.join(repo_directory, 'cache', '*.yaml')):
-                helm = command_mod.Command('helm', errors='stop')
-                helm.set_args(['repo', 'update'])
-                subtask_mod.Task(helm.get_cmdline()).run()
+        link = os.path.join(helm_directory, 'cache')
+        if not os.path.islink(link):
+            cache_directory = os.path.join(
+                '/tmp',
+                getpass.getuser(),
+                '.cache/helm/cache',
+            )
+            try:
+                if not os.path.isdir(cache_directory):
+                    os.makedirs(cache_directory)
+                if os.path.exists(link):
+                    shutil.rmtree(link)
+                os.symlink(cache_directory, link)
+            except OSError:
+                pass
 
     @classmethod
     def run(cls):
