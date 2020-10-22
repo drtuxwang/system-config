@@ -482,6 +482,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/mp3.py
  * bin/mp4                Encode MP4 video using avconv (libx264/aac)
  * bin/mp4.py
+ * bin/mvn                mvn wrapper (allowing non systems port)
+ * bin/mvn.py
  * bin/myqdel             MyQS personal batch system for each user
  * bin/myqdel.py
  * bin/myqexec
