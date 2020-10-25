@@ -10,6 +10,7 @@ import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -97,8 +98,9 @@ class Main:
 
         cmdline = options.get_command().get_cmdline()
         for file in options.get_archives():
-            if file.endswith('.gz'):
+            if file.endswith('.gz') and os.path.isfile(file):
                 print("{0:s}:".format(file))
+
                 output = os.path.basename(file)[:-3]
                 task = subtask_mod.Batch(cmdline + [file])
                 task.run(file=output)
@@ -106,6 +108,11 @@ class Main:
                     for line in task.get_error():
                         print(line, file=sys.stderr)
                     raise SystemExit(1)
+
+                file_stat = file_mod.FileStat(file)
+                os.chmod(output, file_stat.get_mode())
+                file_time = file_stat.get_time()
+                os.utime(output, (file_time, file_time))
 
 
 if __name__ == '__main__':
