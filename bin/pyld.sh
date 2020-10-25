@@ -9,27 +9,33 @@
 #
 temp_dotfiles() {
     MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-    if [ ! "$TMP" ]
-    then
-        export TMP="/tmp/$MYUNAME"
-    fi
-    mkdir -p $TMP/.cache/ansible $TMP/.cache/pylint.d
-    chmod 700 $TMP
+    mkdir -p /tmp/$MYUNAME/.cache
+    chmod 700 /tmp/$MYUNAME
     if [ ! -h $HOME/.python_history ]
     then
          rm -f $HOME/.python_history
-         ln -s $TMP/.cache/python_history $HOME/.python_history
+         ln -s /tmp/$MYUNAME/.cache/python_history $HOME/.python_history
     fi
-    if [ ! -h $HOME/.ansible ]
-    then
-        rm -rf $HOME/.ansible
-        ln -s $TMP/.cache/ansible $HOME/.ansible
-    fi
-    if [ ! -h $HOME/.pylint.d ]
-    then
-        rm -rf $HOME/.pylint.d
-        ln -s $TMP/.cache/pylint.d $HOME/.pylint.d
-    fi
+
+    case "`basename \"$0\"` $@ " in
+    ansible|ansible\ *)
+        mkdir -p /tmp/$MYUNAME/.cache/ansible
+        if [ ! -h $HOME/.ansible ]
+        then
+            mkdir -p /tmp/$MYUNAME/.cache/ansible
+            rm -rf $HOME/.ansible
+            ln -s /tmp/$MYUNAME/.cache/ansible $HOME/.ansible
+        fi
+        ;;
+    pylint|pylint\ *|*\ -m\ pylint\ *)
+        if [ ! -h $HOME/.pylint.d ]
+        then
+            mkdir -p /tmp/$MYUNAME/.cache/pylint.d
+            rm -rf $HOME/.pylint.d
+            ln -s /tmp/$MYUNAME/.cache/pylint.d $HOME/.pylint.d
+        fi
+        ;;
+    esac
 }
 
 
@@ -273,5 +279,5 @@ exec_python() {
     exec `which "$PY_MAIN"` "$@"
 }
 
-temp_dotfiles
+temp_dotfiles "$@"
 exec_python "$@"
