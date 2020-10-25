@@ -6,6 +6,7 @@ Download Debian packages list files.
 import argparse
 import datetime
 import functools
+import getpass
 import glob
 import json
 import logging
@@ -78,8 +79,7 @@ class Main:
         except SystemExit as exception:
             sys.exit(exception)
 
-    @staticmethod
-    def config():
+    def config(self):
         """
         Configure program
         """
@@ -94,6 +94,13 @@ class Main:
                 else:
                     argv.append(arg)
             sys.argv = argv
+
+        self.tmpdir = os.path.join('/tmp', getpass.getuser())
+        try:
+            os.makedirs(self.tmpdir)
+        except FileExistsError:
+            pass
+        os.chmod(self.tmpdir, int('700', 8))
 
     @staticmethod
     def _get_urls(distribution_file):
@@ -117,9 +124,8 @@ class Main:
             ) from exception
         return urls
 
-    @staticmethod
-    def _remove():
-        for file in glob.glob('Packages*'):
+    def _remove(self):
+        for file in glob.glob(os.path.join(self.tmpdir, 'Packages*')):
             try:
                 os.remove(file)
             except OSError:
@@ -134,15 +140,17 @@ class Main:
 
     @classmethod
     def _unpack(cls, file):
+        directory = os.path.dirname(file)
         if file.endswith('.xz'):
-            subtask_mod.Task(cls._get_cmdline('unxz') + [file]).run()
+            cmdline = cls._get_cmdline('unxz') + [file]
         elif file.endswith('.bz2'):
-            subtask_mod.Task(cls._get_cmdline('bzip2') + ['-d', file]).run()
+            cmdline = cls._get_cmdline('bzip2') + ['-d', file]
         elif file.endswith('.gz'):
-            subtask_mod.Task(cls._get_cmdline('gzip') + ['-d', file]).run()
+            cmdline = cls._get_cmdline('gzip') + ['-d', file]
         else:
             raise SystemExit(
                 sys.argv[0] + ': Cannot unpack "' + file + '" package file.')
+        subtask_mod.Task(cmdline).run(directory=directory)
 
     @staticmethod
     def _show_times(old_utime, new_utime):
@@ -158,8 +166,7 @@ class Main:
             new_utc.strftime('%Y-%m-%d-%H:%M:%S'),
         )
 
-    @classmethod
-    def _get_packages(cls, data, wget, url):
+    def _get_packages(self, data, wget, url):
         try:
             conn = urllib.request.urlopen(url)
         except Exception as exception:
@@ -170,24 +177,25 @@ class Main:
         url_time = time.mktime(time.strptime(
             conn.info().get('Last-Modified'), '%a, %d %b %Y %H:%M:%S %Z'))
         if url_time > data['time']:
-            cls._show_times(data['time'], url_time)
-            archive = os.path.basename(url)
-            cls._remove()
-            task = subtask_mod.Task(wget.get_cmdline() + [url])
+            self._show_times(data['time'], url_time)
+            archive = os.path.join(self.tmpdir, os.path.basename(url))
+            self._remove()
+            task = subtask_mod.Task(wget.get_cmdline() + ['-O', archive, url])
             task.run()
             if task.get_exitcode() != 0:
                 print("  [ERROR (", task.get_exitcode, ")]", url)
-                cls._remove()
+                self._remove()
                 raise SystemExit(
                     sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                     ' received from "' + task.get_file() + '".'
                 )
-            cls._unpack(archive)
+            self._unpack(archive)
             site = url[:url.find('/dists/') + 1]
 
             lines = []
+            file = archive.rsplit('.', 1)[0]
             try:
-                with open('Packages', errors='replace') as ifile:
+                with open(file, errors='replace') as ifile:
                     for line in ifile:
                         if line.startswith('Filename: '):
                             lines.append(line.rstrip('\r\n').replace(
@@ -198,7 +206,7 @@ class Main:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "Packages" packages file.'
                 ) from exception
-            cls._remove()
+            self._remove()
             data = {'time': url_time, 'text': lines}
 
         return data
@@ -236,8 +244,7 @@ class Main:
                 sys.argv[0] + ': Cannot create "' + file + '" file.'
             ) from exception
 
-    @classmethod
-    def run(cls):
+    def run(self):
         """
         Start program
         """
@@ -260,7 +267,7 @@ class Main:
 
                 json_file = distribution_file[:-4] + 'json'
                 if os.path.isfile(json_file):
-                    distribution_data = cls._read_data(json_file)
+                    distribution_data = self._read_data(json_file)
                 else:
                     distribution_data = {
                         'data': {},
@@ -271,9 +278,9 @@ class Main:
                     for data in distribution_data['data'].values()
                 ])
 
-                urls = cls._get_urls(distribution_file)
+                urls = self._get_urls(distribution_file)
                 for url in urls:
-                    distribution_data['data'][url] = cls._get_packages(
+                    distribution_data['data'][url] = self._get_packages(
                         distribution_data['data'].get(url, {'time': 0}),
                         wget,
                         url
@@ -285,7 +292,7 @@ class Main:
                 ])
                 if new_time > old_time or distribution_data['urls'] != urls:
                     distribution_data['urls'] = urls
-                    cls._write_data(json_file, distribution_data)
+                    self._write_data(json_file, distribution_data)
 
 
 if __name__ == '__main__':
