@@ -3,8 +3,10 @@
 MAVEN launcher
 """
 
+import getpass
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -42,6 +44,23 @@ class Main:
                 else:
                     argv.append(arg)
             sys.argv = argv
+
+        tmpdir = os.path.join('/tmp', getpass.getuser(), '.cache', 'm2')
+        try:
+            os.makedirs(tmpdir)
+        except FileExistsError:
+            pass
+        os.chmod(tmpdir, int('700', 8))
+        directory = os.path.join(os.environ.get('HOME'), '.m2')
+        if not os.path.islink(directory):
+            try:
+                shutil.rmtree(directory)
+            except OSError:
+                return
+            try:
+                os.symlink(tmpdir, directory)
+            except OSError:
+                pass
 
     @staticmethod
     def run():

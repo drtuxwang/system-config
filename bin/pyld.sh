@@ -22,15 +22,14 @@ temp_dotfiles() {
         mkdir -p /tmp/$MYUNAME/.cache/ansible
         if [ ! -h $HOME/.ansible ]
         then
-            mkdir -p /tmp/$MYUNAME/.cache/ansible
             rm -rf $HOME/.ansible
             ln -s /tmp/$MYUNAME/.cache/ansible $HOME/.ansible
         fi
         ;;
     pylint|pylint\ *|*\ -m\ pylint\ *)
+        mkdir -p /tmp/$MYUNAME/.cache/pylint.d
         if [ ! -h $HOME/.pylint.d ]
         then
-            mkdir -p /tmp/$MYUNAME/.cache/pylint.d
             rm -rf $HOME/.pylint.d
             ln -s /tmp/$MYUNAME/.cache/pylint.d $HOME/.pylint.d
         fi
