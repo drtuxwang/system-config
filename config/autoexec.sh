@@ -17,20 +17,19 @@ if [ "$ARG" != "-start" ]
 then
     exec $0 -start > $TMP/.cache/autoexec.log 2>&1
 fi
+
+# Secure cache/logs
+[[ ! -h $HOME/.cache ]] && rm -rf $HOME/.cache && ln -s $TMP/.cache $HOME/.cache
+[[ ! -h $HOME/.local/share/gvfs-metadata ]] && rm -rf $HOME/.local/share/gvfs-metadata && ln -s $TMP/.cache $HOME/.local/share/gvfs-metadata
+[[ ! -h $HOME/.fontconfig ]] && rm -rf $HOME/.fontconfig &&  ln -s $TMP/.cache $HOME/.fontconfig
+[[ ! -d "$HOME/.local/share/recently-used.xbel" ]] && rm -f $HOME/.local/share/recently-used.xbel && mkdir -p $HOME/.local/share/recently-used.xbel
+[[ ! -h $HOME/.pki ]] && rm -rf $HOME/.pki &&  ln -s $TMP/.cache $HOME/.pki
+[[ ! -d "$HOME/.recently-used.xbel" ]] && rm -f $HOME/.recently-used.xbel && mkdir -p $HOME/.recently-used.xbel
+[[ ! -h $HOME/tmp ]] && rm -rf $HOME/tmp &&  ln -s $TMP $HOME/tmp
 [[ ! -d $HOME/.xsession-errors.old ]] && rm -f $HOME/.xsession-errors.old && mkdir $HOME/.xsession-errors.old
 [[ ! -h $HOME/.xsession-errors ]] && rm -f $HOME/.xsession-errors && ln -s /dev/null $HOME/.xsession-errors
 [[ ! -d $HOME/.xfce4-session.verbose-log.last ]] && rm -f $HOME/.xfce4-session.verbose-log.last && mkdir $HOME/.xfce4-session.verbose-log.last
 [[ ! -h $HOME/.xfce4-session.verbose-log ]] && rm -f $HOME/.xfce4-session.verbose-log && ln -s /dev/null $HOME/.xfce4-session.verbose-log
-
-# Secure temp files
-[[ ! -h $HOME/tmp ]] && rm -rf $HOME/tmp &&  ln -s $TMP $HOME/tmp
-[[ ! -h $HOME/.cache ]] && rm -rf $HOME/.cache && ln -s $TMP/.cache $HOME/.cache
-[[ ! -h $HOME/.local/share/gvfs-metadata ]] && rm -rf $HOME/.local/share/gvfs-metadata && ln -s $TMP/.cache $HOME/.local/share/gvfs-metadata
-[[ ! -h $HOME/.fontconfig ]] && rm -rf $HOME/.fontconfig &&  ln -s .cache $HOME/.fontconfig
-for FILE in .recently-used.xbel .local/share/recently-used.xbel
-do
-    [[ -f "$HOME/$FILE" ]] && rm -f $HOME/$FILE 2> /dev/null && mkdir -p $HOME/$FILE 2> /dev/null
-done
 
 if [ ! "$BASE_PATH" ]
 then
