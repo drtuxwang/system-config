@@ -150,7 +150,9 @@ class Main:
 
     def _calc(self, options, files):
         for file in files:
-            if os.path.isdir(file):
+            if file.endswith('.../fsum'):
+                self._get_cache(file)
+            elif os.path.isdir(file):
                 if not os.path.islink(file):
                     if options.get_recursive_flag():
                         try:
@@ -292,13 +294,16 @@ class Main:
                 sys.argv[0] + ': Cannot find "' + update_file +
                 '" checksum file.'
             )
+        directory = os.path.dirname(update_file)
         try:
             with open(update_file, errors='replace') as ifile:
                 for line in ifile:
                     try:
                         line = line.rstrip('\r\n')
                         checksum, size, mtime, file = self._get_checksum(line)
-                        if file:
+                        file = os.path.join(directory, file)
+                        file = file.replace('/.../../', '/')
+                        if (file, size, mtime) not in self._cache:
                             self._cache[(file, size, mtime)] = checksum
                     except IndexError:
                         pass
