@@ -4,7 +4,7 @@ These are production scripts and configuration files that I use and share. Origi
 were started Bourne shell scripts started during my University days and continuously enhanced over
 the years. Now most of the scripts are written in Python 3.
 ---
-<pre>
+```
  * Jenkinsfile            Jenkins pipeline configuration file
  * codefresh.yaml         Codefresh pipeline configuration file
  * Makefile               Makefile for testing
@@ -1051,12 +1051,12 @@ the years. Now most of the scripts are written in Python 3.
  * helm/nginx/values.yaml
  * helm/ops-box/Makefile                 Helm Chart: Operations Box (drtuxwang/debian:stable)
  * helm/ops-box/opt-box/Chart.yaml
- * helm/ops-box/opt-box/templates/\_helpers.tpl
+ * helm/ops-box/opt-box/templates/_helpers.tpl
  * helm/ops-box/opt-box/templates/servers-statefulset.yaml
  * helm/ops-box/values.yaml
  * helm/oracle-xe/Makefile               Helm Chart: Oracle XE test (datagrip/oracle:11.2)
  * helm/oracle-xe/oracle-xe/Chart.yaml
- * helm/oracle-xe/oracle-xe/templates/\_helpers.tpl
+ * helm/oracle-xe/oracle-xe/templates/_helpers.tpl
  * helm/oracle-xe/oracle-xe/templates/servers-headless-service.yaml
  * helm/oracle-xe/oracle-xe/templates/servers-service.yaml
  * helm/oracle-xe/oracle-xe/templates/servers-statefulset.yaml
@@ -1074,7 +1074,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/test-servers/test-servers/Chart.yaml
  * helm/test-servers/test-servers/requirements.lock
  * helm/test-servers/test-servers/requirements.yaml
- * helm/test-servers/test-servers/templates/\_helpers.tpl
+ * helm/test-servers/test-servers/templates/_helpers.tpl
  * helm/test-servers/test-servers/templates/servers-headless-service.yaml
  * helm/test-servers/test-servers/templates/servers-ingress.yaml
  * helm/test-servers/test-servers/templates/servers-secret-tls.yaml
@@ -1113,4 +1113,4 @@ the years. Now most of the scripts are written in Python 3.
  * terraform-aws/pxy-as/aws_resources.tf
  * terraform-aws/pxy-as/pxy_resources.tf
  * terraform-aws/pxy-as/pxy_variables.tf
-</pre>
+```
