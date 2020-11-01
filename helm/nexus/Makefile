@@ -12,7 +12,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo add oteemo https://oteemo.github.io/charts
+	helm repo list | grep -q oteemo || helm repo add oteemo https://oteemo.github.io/charts
 
 .PHONY: fetch
 fetch: repo-add

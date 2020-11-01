@@ -21,7 +21,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo add concourse https://concourse-charts.storage.googleapis.com
+	helm repo list | grep -q concourse || helm repo add concourse https://concourse-charts.storage.googleapis.com
 
 .PHONY: fetch
 fetch: repo-add

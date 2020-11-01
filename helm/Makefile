@@ -35,6 +35,11 @@ status:
 
 .PHONY: pull
 pull:
+	helm repo list | grep -q stable || helm repo add stable https://kubernetes-charts.storage.googleapis.com
+	helm repo list | grep -q bitnami || helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm repo list | grep -q concourse || helm repo add concourse https://concourse-charts.storage.googleapis.com
+	helm repo list | grep -q ingress-nginx || helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+	helm repo list | grep -q oteemo || helm repo add oteemo https://oteemo.github.io/charts
 	helm repo update
 
 .PHONY: version
