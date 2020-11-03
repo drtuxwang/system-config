@@ -1,7 +1,7 @@
 NAME := etcd
 CHART_REPO := bitnami
 CHART_NAME := etcd
-CHART_VERSION := 4.10.1
+CHART_VERSION := 4.11.1
 
 # Default namespace
 ifndef NAMESPACE
@@ -13,7 +13,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo list | grep -q bitnami || helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm repo list | grep -q bitnami || helm repo add $(CHART_REPO) https://charts.bitnami.com/bitnami
 
 .PHONY: fetch
 fetch: repo-add

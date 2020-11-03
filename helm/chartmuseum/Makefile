@@ -1,7 +1,7 @@
 NAME := chartmuseum
 CHART_REPO := stable
 CHART_NAME := chartmuseum
-CHART_VERSION := 2.12.2
+CHART_VERSION := 2.13.3
 INGRESS_HOST := chartmusuem.local
 SECRET := chartmusuem-secret-tls
 

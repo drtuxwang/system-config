@@ -13,7 +13,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo list | grep -q bitnami || helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm repo list | grep -q bitnami || helm repo add $(CHART_REPO) https://charts.bitnami.com/bitnami
 
 .PHONY: fetch
 fetch: repo-add

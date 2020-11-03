@@ -1,7 +1,7 @@
 NAME := jenkins
 CHART_REPO := bitnami
 CHART_NAME := jenkins
-CHART_VERSION := 5.0.14
+CHART_VERSION := 5.0.27
 
 # Default namespace
 ifndef NAMESPACE
@@ -21,7 +21,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo list | grep -q bitnami || helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm repo list | grep -q bitnami || helm repo add $(CHART_REPO) https://charts.bitnami.com/bitnami
 
 .PHONY: fetch
 fetch: repo-add

@@ -18,7 +18,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo list | grep -q ingress-nginx || helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+	helm repo list | grep -q ingress-nginx || helm repo add $(CHART_REPO) https://kubernetes.github.io/ingress-nginx
 
 .PHONY: fetch
 fetch: repo-add
