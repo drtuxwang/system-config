@@ -56,16 +56,21 @@ class Main:
                 return
 
         os.chmod(os.path.join('/tmp', getpass.getuser()), int('700', 8))
+
+        cache_directory = os.path.join(
+            '/tmp',
+            getpass.getuser(),
+            '.cache/helm/cache',
+        )
+        if not os.path.isdir(cache_directory):
+            try:
+                os.makedirs(cache_directory)
+            except OSError:
+                pass
+
         link = os.path.join(helm_directory, 'cache')
         if not os.path.islink(link):
-            cache_directory = os.path.join(
-                '/tmp',
-                getpass.getuser(),
-                '.cache/helm/cache',
-            )
             try:
-                if not os.path.isdir(cache_directory):
-                    os.makedirs(cache_directory)
                 if os.path.exists(link):
                     shutil.rmtree(link)
                 os.symlink(cache_directory, link)
