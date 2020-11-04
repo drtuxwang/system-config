@@ -1,7 +1,7 @@
 NAME := mongodb
 CHART_REPO := bitnami
 CHART_NAME := mongodb
-CHART_VERSION := 7.14.8
+CHART_VERSION := 8.3.2
 
 # Default namespace
 ifndef NAMESPACE

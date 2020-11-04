@@ -1,7 +1,7 @@
 NAME := kafka
 CHART_REPO := bitnami
 CHART_NAME := kafka
-CHART_VERSION := 10.3.3
+CHART_VERSION := 11.7.2
 
 # Default namespace
 ifndef NAMESPACE

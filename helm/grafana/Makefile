@@ -1,7 +1,7 @@
 NAME := grafana
 CHART_REPO := bitnami
 CHART_NAME := grafana
-CHART_VERSION := 3.3.5
+CHART_VERSION := 3.4.5
 
 # Default namespace
 ifndef NAMESPACE
