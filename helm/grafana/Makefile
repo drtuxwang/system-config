@@ -66,9 +66,9 @@ status:
 
 .PHONY: version
 version:
-	@VERSION=`helm search -l $(CHART_REPO)/$(CHART_NAME) | grep "/$(CHART_NAME)[	 ]"`; \
-		echo "$$VERSION" | awk 'NR==1 {printf("%s   %s   %s\n", $$1, $$2, $$3)}'; \
-		echo "$$VERSION" | grep "[▸  ]*$(CHART_VERSION) " | sed -e "s/▸/   /g" -e "s/   */   /g"
+	@helm search -l $(CHART_REPO)/$(CHART_NAME) | tail -n +2 | \
+		grep -B 1000 "^$(CHART_REPO)/$(CHART_NAME)[	 ]*$(CHART_VERSION) " | \
+		sed -e "s/	/   /g" -e "s/   */   /g"
 
 .PHONY: delete
 delete:
