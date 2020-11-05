@@ -61,7 +61,7 @@ test:
 .PHONY: version
 version:
 	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR version || exit 1; \
+		make -C $$DIR version || exit 1; \
 	done
 
 .PHONY: run-sudo
