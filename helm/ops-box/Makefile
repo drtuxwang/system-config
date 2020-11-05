@@ -49,7 +49,13 @@ install:
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	helm status $(NAMESPACE)-$(NAME)
+	@if [ "`helm version | grep v2`" ]; then \
+		helm ls $(NAMESPACE)-$(NAME); \
+		helm status $(NAMESPACE)-$(NAME); \
+	else \
+		helm -n $(NAMESPACE) ls; \
+		helm -n $(NAMESPACE) status $(NAMESPACE)-$(NAME); \
+	fi
 
 .PHONY: version
 version:
@@ -58,10 +64,15 @@ version:
 	@grep "appVersion:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "description:" $(CHART_NAME)/Chart.yaml | cut -f2- -d" "
 
-.PHONY: delete
-delete:
-	helm ls $(NAMESPACE)-$(NAME)
-	helm del --purge $(NAMESPACE)-$(NAME) ||:
+.PHONY: uninstall
+uninstall:
+	@if [ "`helm version | grep v2`" ]; then \
+		helm ls $(NAMESPACE)-$(NAME); \
+		helm del --purge $(NAMESPACE)-$(NAME) ||:; \
+	else \
+		helm -n $(NAMESPACE) ls -a; \
+		helm -n $(NAMESPACE) uninstall $(NAMESPACE)-$(NAME) ||:; \
+	fi
 
 .PHONY: clean
 clean:

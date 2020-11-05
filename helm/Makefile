@@ -24,8 +24,10 @@ default: status
 
 .PHONY: status
 status:
-	@echo "\n*** Helm client initialize ***"
-	helm init --client-only
+	@if [ "`helm version | grep v2`" ]; then \
+		echo "\n*** Helm client initialize ***"; \
+		helm init --client-only; \
+	fi
 	@echo "\n*** Helm client-server status ***"
 	helm version
 	@echo "\n*** Helm repositories ***"
@@ -35,7 +37,7 @@ status:
 
 .PHONY: pull
 pull:
-	helm repo list | grep -q stable || helm repo add stable https://kubernetes-charts.storage.googleapis.com
+	helm repo list | grep -q stable || helm repo add stable https://charts.helm.sh/stable
 	helm repo list | grep -q bitnami || helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm repo list | grep -q concourse || helm repo add concourse https://concourse-charts.storage.googleapis.com
 	helm repo list | grep -q ingress-nginx || helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx

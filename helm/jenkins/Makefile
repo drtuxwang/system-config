@@ -59,7 +59,13 @@ install: repo-add
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	helm status $(NAMESPACE)-$(NAME)
+	@if [ "`helm version | grep v2`" ]; then \
+		helm ls $(NAMESPACE)-$(NAME); \
+		helm status $(NAMESPACE)-$(NAME); \
+	else \
+		helm -n $(NAMESPACE) ls; \
+		helm -n $(NAMESPACE) status $(NAMESPACE)-$(NAME); \
+	fi
 
 .PHONY: forward
 forward:
@@ -77,10 +83,15 @@ version:
 		grep -B 1000 "^$(CHART_REPO)/$(CHART_NAME)[	 ]*$(CHART_VERSION) " | \
 		sed -e "s/	/   /g" -e "s/   */   /g"
 
-.PHONY: delete
-delete:
-	helm ls $(NAMESPACE)-$(NAME)
-	helm del --purge $(NAMESPACE)-$(NAME) ||:
+.PHONY: uninstall
+uninstall:
+	@if [ "`helm version | grep v2`" ]; then \
+		helm ls $(NAMESPACE)-$(NAME); \
+		helm del --purge $(NAMESPACE)-$(NAME) ||:; \
+	else \
+		helm -n $(NAMESPACE) ls -a; \
+		helm -n $(NAMESPACE) uninstall $(NAMESPACE)-$(NAME) ||:; \
+	fi
 
 .PHONY: clean
 clean:
