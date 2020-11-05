@@ -82,4 +82,4 @@ delete:
 
 .PHONY: clean
 clean:
-	rm -rf $(CHART_NAME)-$(CHART_VERSION).tgz $(CHART_NAME)
+	rm -rf $(CHART_NAME)-*.tgz $(CHART_NAME)

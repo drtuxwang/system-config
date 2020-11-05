@@ -1,7 +1,7 @@
 NAME := concourse
 CHART_REPO := concourse
 CHART_NAME := concourse
-CHART_VERSION := 11.2.3
+CHART_VERSION := 13.0.0
 
 # Default namespace
 ifndef NAMESPACE
@@ -90,4 +90,4 @@ delete:
 
 .PHONY: clean
 clean:
-	rm -rf $(CHART_NAME)-$(CHART_VERSION).tgz $(CHART_NAME)
+	rm -rf $(CHART_NAME)-*.tgz $(CHART_NAME)
