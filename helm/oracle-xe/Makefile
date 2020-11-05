@@ -5,7 +5,7 @@ IMAGE := datagrip/oracle:11.2
 
 # Default namespace
 ifndef NAMESPACE
-	NAMESPACE=default
+	NAMESPACE=infra
 endif
 
 # External IP
@@ -58,11 +58,11 @@ install:
 status:
 	@echo "\n*** Checking status ***"
 	@if [ "`helm version | grep v2`" ]; then \
-		helm ls $(NAMESPACE)-$(NAME); \
 		helm status $(NAMESPACE)-$(NAME); \
+		helm ls $(NAMESPACE)-$(NAME); \
 	else \
-		helm -n $(NAMESPACE) ls; \
-		helm -n $(NAMESPACE) status $(NAMESPACE)-$(NAME); \
+		helm status -n $(NAMESPACE) $(NAMESPACE)-$(NAME); \
+		helm list -n $(NAMESPACE) --all; \
 	fi
 
 .PHONY: connect
@@ -84,8 +84,8 @@ uninstall:
 		helm ls $(NAMESPACE)-$(NAME); \
 		helm del --purge $(NAMESPACE)-$(NAME) ||:; \
 	else \
-		helm -n $(NAMESPACE) ls -a; \
-		helm -n $(NAMESPACE) uninstall $(NAMESPACE)-$(NAME) ||:; \
+		helm list -n $(NAMESPACE) --all; \
+		helm uninstall -n $(NAMESPACE) $(NAMESPACE)-$(NAME) ||:; \
 	fi
 
 .PHONY: clean

@@ -33,7 +33,11 @@ status:
 	@echo "\n*** Helm repositories ***"
 	helm repo list
 	@echo "\n*** Helm releases ***"
-	helm list
+	@if [ "`helm version | grep v2`" ]; then \
+		helm list; \
+	else \
+		helm list --all-namespaces --all; \
+	fi
 
 .PHONY: pull
 pull:
