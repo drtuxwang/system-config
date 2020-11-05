@@ -1,7 +1,7 @@
 NAME := pushgateway
-CHART_REPO := stable
+CHART_REPO := prometheus-community
 CHART_NAME := prometheus-pushgateway
-CHART_VERSION := 1.2.15
+CHART_VERSION := 1.4.2
 
 # Default namespace
 ifndef NAMESPACE

@@ -40,6 +40,7 @@ pull:
 	helm repo list | grep -q concourse || helm repo add concourse https://concourse-charts.storage.googleapis.com
 	helm repo list | grep -q ingress-nginx || helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 	helm repo list | grep -q oteemo || helm repo add oteemo https://oteemo.github.io/charts
+	helm repo list | grep -q prometheus-community || helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 	helm repo update
 
 .PHONY: version

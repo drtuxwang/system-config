@@ -1,7 +1,7 @@
 NAME := prometheus
-CHART_REPO := stable
+CHART_REPO := prometheus-community
 CHART_NAME := prometheus
-CHART_VERSION := 11.5.0
+CHART_VERSION := 11.14.1
 
 # Default namespace
 ifndef NAMESPACE
