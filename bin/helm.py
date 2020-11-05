@@ -51,7 +51,7 @@ class Main:
         helm_directory = os.path.join(os.environ['HOME'], '.helm')
         if not os.path.isdir(os.path.join(helm_directory, 'repository')):
             try:
-                os.mkdir(os.path.join(helm_directory, 'repository'))
+                os.makedirs(os.path.join(helm_directory, 'repository'))
             except OSError:
                 return
 
