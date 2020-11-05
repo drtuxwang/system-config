@@ -1,7 +1,7 @@
 NAME := nexus
 CHART_REPO := oteemo
 CHART_NAME := sonatype-nexus
-CHART_VERSION := 2.6.1
+CHART_VERSION := 3.4.0
 
 # Default namespace
 ifndef NAMESPACE
