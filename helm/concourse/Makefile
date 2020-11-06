@@ -59,6 +59,7 @@ check: repo-add
 .PHONY: install
 install: repo-add fetch
 	cp -p  web-ingress.yaml  concourse/templates/
+	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
 	helm upgrade \
 		--install \
 		--wait \

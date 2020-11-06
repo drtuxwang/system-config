@@ -57,7 +57,7 @@ check:
 
 .PHONY: install
 install:
-	echo debugX $(INGRESS_ENABLED)
+	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
 	helm upgrade \
 		--install \
 		--wait \

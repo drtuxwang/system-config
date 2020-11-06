@@ -46,6 +46,7 @@ template:
 
 .PHONY: install
 install:
+	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
 	helm upgrade \
 		--install \
 		--wait \

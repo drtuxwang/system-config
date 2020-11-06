@@ -50,6 +50,7 @@ check: repo-add
 
 .PHONY: install
 install: repo-add
+	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
 	helm upgrade \
 		--install \
 		--wait \
