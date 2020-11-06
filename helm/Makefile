@@ -22,10 +22,10 @@ BUILD_DIRS := \
 
 ifeq ($(shell helm version | grep -c v2), 1)
 	HELM_INIT=
-	HELM_LIST=helm list --all-namespaces --all
+	HELM_LIST=helm --all-namespaces list --all
 else
 	HELM_INIT=helm init --client-only
-	HELM_LIST=helm list
+	HELM_LIST=helm list --all
 endif
 
 

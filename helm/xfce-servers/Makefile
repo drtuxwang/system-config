@@ -14,12 +14,12 @@ ifndef LOCALPORT
 endif
 
 ifeq ($(shell helm version | grep -c v2), 1)
-	HELM_DELETE=helm delete -n $(NAMESPACE) $(NAMESPACE)-$(NAME)
-	HELM_LIST=helm list -n $(NAMESPACE) --all
-	HELM_STATUS=helm status -n $(NAMESPACE) $(NAMESPACE)-$(NAME)
+	HELM_DELETE=helm -n $(NAMESPACE) delete $(NAMESPACE)-$(NAME)
+	HELM_LIST=helm -n $(NAMESPACE) list --all
+	HELM_STATUS=helm -n $(NAMESPACE) status $(NAMESPACE)-$(NAME)
 else
 	HELM_DELETE=helm delete --purge $(NAMESPACE)-$(NAME)
-	HELM_LIST=helm list $(NAMESPACE)-$(NAME)
+	HELM_LIST=helm list --all $(NAMESPACE)-$(NAME)
 	HELM_STATUS=helm status $(NAMESPACE)-$(NAME)
 endif
 
