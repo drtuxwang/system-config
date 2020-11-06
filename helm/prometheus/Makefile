@@ -16,7 +16,18 @@ endif
 # Ingress controller detection
 INGRESS_ENABLED=$(shell kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
 
+ifeq ($(shell helm version | grep -c v2), 1)
+	HELM_DELETE=helm delete -n $(NAMESPACE) $(NAMESPACE)-$(NAME)
+	HELM_LIST=helm list -n $(NAMESPACE) --all
+	HELM_STATUS=helm status -n $(NAMESPACE) $(NAMESPACE)-$(NAME)
+else
+	HELM_DELETE=helm delete --purge $(NAMESPACE)-$(NAME)
+	HELM_LIST=helm list $(NAMESPACE)-$(NAME)
+	HELM_STATUS=helm status $(NAMESPACE)-$(NAME)
+endif
+
 default: status
+
 
 .PHONY: fetch
 fetch:
@@ -91,15 +102,10 @@ version:
 			sed -e "s/	/   /g" -e "s/   */   /g"; \
 	fi
 
-.PHONY: uninstall
-uninstall:
-	@if [ "`helm version | grep v2`" ]; then \
-		helm ls $(NAMESPACE)-$(NAME); \
-		helm del --purge $(NAMESPACE)-$(NAME) ||:; \
-	else \
-		helm list -n $(NAMESPACE) --all; \
-		helm uninstall -n $(NAMESPACE) $(NAMESPACE)-$(NAME) ||:; \
-	fi
+.PHONY: delete
+delete:
+	$(HELM_LIST)
+	$(HELM_DELETE) ||:
 
 .PHONY: clean
 clean:

@@ -20,24 +20,26 @@ BUILD_DIRS := \
 	test-servers \
 	xfce-servers
 
+ifeq ($(shell helm version | grep -c v2), 1)
+	HELM_INIT=
+	HELM_LIST=helm list --all-namespaces --all
+else
+	HELM_INIT=helm init --client-only
+	HELM_LIST=helm list
+endif
+
+
 default: status
 
 .PHONY: status
 status:
-	@if [ "`helm version | grep v2`" ]; then \
-		echo "\n*** Helm client initialize ***"; \
-		helm init --client-only; \
-	fi
+	$(HELM_INIT)
 	@echo "\n*** Helm client-server status ***"
 	helm version
 	@echo "\n*** Helm repositories ***"
 	helm repo list
 	@echo "\n*** Helm releases ***"
-	@if [ "`helm version | grep v2`" ]; then \
-		helm list; \
-	else \
-		helm list --all-namespaces --all; \
-	fi
+	$(HELM_LIST)
 
 .PHONY: pull
 pull:
