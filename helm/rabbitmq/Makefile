@@ -16,14 +16,16 @@ endif
 # Ingress controller detection
 INGRESS_ENABLED=$(shell kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
 
-ifeq ($(shell helm version | grep -c v2), 1)
+ifeq ($(shell helm version | grep -c v3), 1)
 	HELM_DELETE=helm -n $(NAMESPACE) delete $(NAMESPACE)-$(NAME)
 	HELM_LIST=helm -n $(NAMESPACE) list --all
 	HELM_STATUS=helm -n $(NAMESPACE) status $(NAMESPACE)-$(NAME)
+	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 else
 	HELM_DELETE=helm delete --purge $(NAMESPACE)-$(NAME)
 	HELM_LIST=helm list --all $(NAMESPACE)-$(NAME)
 	HELM_STATUS=helm status $(NAMESPACE)-$(NAME)
+	HELM_VERSION=helm search -l $(CHART_REPO)/$(CHART_NAME) 
 endif
 
 default: status
@@ -67,13 +69,8 @@ install:
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	@if [ "`helm version | grep v2`" ]; then \
-		helm status $(NAMESPACE)-$(NAME); \
-		helm ls $(NAMESPACE)-$(NAME); \
-	else \
-		helm status -n $(NAMESPACE) $(NAMESPACE)-$(NAME); \
-		helm list -n $(NAMESPACE) --all; \
-	fi
+	$(HELM_STATUS)
+	$(HELM_LIST)
 
 .PHONY: forward
 forward:
@@ -87,15 +84,9 @@ connect:
 
 .PHONY: version
 version:
-	@if [ "`helm version | grep v2`" ]; then \
-		helm search -l $(CHART_REPO)/$(CHART_NAME) | tail -n +2 | \
-			grep -B 1000 "^$(CHART_REPO)/$(CHART_NAME)[	 ]*$(CHART_VERSION) " | \
-			sed -e "s/	/   /g" -e "s/   */   /g"; \
-	else \
-		helm search repo -l $(CHART_REPO)/$(CHART_NAME) | tail -n +2 | \
-			grep -B 1000 "^$(CHART_REPO)/$(CHART_NAME)[	 ]*$(CHART_VERSION) " | \
-			sed -e "s/	/   /g" -e "s/   */   /g"; \
-	fi
+	@$(HELM_VERSION) | tail -n +2 | \
+		grep -B 1000 "^$(CHART_REPO)/$(CHART_NAME)[	 ]*$(CHART_VERSION) " | \
+		sed -e "s/	/   /g" -e "s/   */   /g"
 
 .PHONY: delete
 delete:

@@ -20,7 +20,7 @@ BUILD_DIRS := \
 	test-servers \
 	xfce-servers
 
-ifeq ($(shell helm version | grep -c v2), 1)
+ifeq ($(shell helm version | grep -c v3), 1)
 	HELM_INIT=
 	HELM_LIST=helm --all-namespaces list --all
 else

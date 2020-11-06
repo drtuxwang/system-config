@@ -13,7 +13,7 @@ ifndef LOCALPORT
 	LOCALPORT=
 endif
 
-ifeq ($(shell helm version | grep -c v2), 1)
+ifeq ($(shell helm version | grep -c v3), 1)
 	HELM_DELETE=helm -n $(NAMESPACE) delete $(NAMESPACE)-$(NAME)
 	HELM_LIST=helm -n $(NAMESPACE) list --all
 	HELM_STATUS=helm -n $(NAMESPACE) status $(NAMESPACE)-$(NAME)
@@ -64,13 +64,8 @@ install:
 .PHONY: status
 status:
 	@echo "\n*** Checking status ***"
-	@if [ "`helm version | grep v2`" ]; then \
-		helm status $(NAMESPACE)-$(NAME); \
-		helm ls $(NAMESPACE)-$(NAME); \
-	else \
-		helm status -n $(NAMESPACE) $(NAMESPACE)-$(NAME); \
-		helm list -n $(NAMESPACE) --all; \
-	fi
+	$(HELM_STATUS)
+	$(HELM_LIST)
 
 .PHONY: forward
 forward:
