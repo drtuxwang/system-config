@@ -394,6 +394,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/gz                 Compress a file in GZIP format (allowing non systems port)
  * bin/gz.py
  * bin/halt               Fast shutdown using "/proc/sysrq-trigger"
+ * bin/hardinfo           hardinfo wrapper (allowing non systems port)
+ * bin/hardinfo.py
  * bin/helm               helm wrapper (for Kubernetes)
  * bin/helm.py
  * bin/htmlformat         HTML file re-formatter
