@@ -41,8 +41,27 @@ fetch: repo-add
 	rm -rf $(CHART_NAME)
 	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
 
+.PHONY: images
+images:
+	@make template | grep image:
+
+.PHONY: template
+template: repo-add fetch
+	cp -p  web-ingress.yaml  concourse/templates/
+	helm template \
+		--namespace=$(NAMESPACE) \
+		--values values.yaml \
+		--set fullnameOverride=$(NAME) \
+		--set postgresql.fullnameOverride=$(NAME)-postgresql \
+		--set service.type=ClusterIP \
+		--set web.ingress.enabled=$(INGRESS_ENABLED) \
+		--version $(CHART_VERSION) \
+		./$(CHART_NAME)
+##		$(CHART_REPO)/$(CHART_NAME)
+
 .PHONY: check
-check: repo-add
+check: repo-add fetch
+	cp -p  web-ingress.yaml  concourse/templates/
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -54,7 +73,8 @@ check: repo-add
 		--set service.type=ClusterIP \
 		--set web.ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
+		$(NAMESPACE)-$(NAME) ./$(CHART_NAME)
+##		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install: repo-add fetch

@@ -33,6 +33,19 @@ fetch: repo-add
 	rm -rf $(CHART_NAME)
 	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
 
+.PHONY: images
+images:
+	@make template | grep image:
+
+.PHONY: template
+template: repo-add
+	helm template \
+		--namespace=$(NAMESPACE) \
+		--values values.yaml \
+		--set fullnameOverride=$(NAME) \
+		--version $(CHART_VERSION) \
+		$(CHART_REPO)/$(CHART_NAME)
+
 .PHONY: check
 check: repo-add
 	helm upgrade \

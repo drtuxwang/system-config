@@ -23,14 +23,31 @@ endif
 default: status
 
 
+.PHONY: repo-add
+repo-add:
+	helm repo list | grep -q prometheus-community || helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
 .PHONY: fetch
-fetch:
+fetch: repo-add
 	helm fetch --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
 	rm -rf $(CHART_NAME)
 	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
 
+.PHONY: images
+images:
+	@make template | grep image:
+
+.PHONY: template
+template: repo-add
+	helm template \
+		--namespace=$(NAMESPACE) \
+		--values values.yaml \
+		--set fullnameOverride=$(NAME) \
+		--version $(CHART_VERSION) \
+		$(CHART_REPO)/$(CHART_NAME)
+
 .PHONY: check
-check:
+check: repo-add
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -42,7 +59,7 @@ check:
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
-install:
+install: repo-add
 	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
 	helm upgrade \
 		--install \

@@ -29,6 +29,20 @@ endif
 default: status
 
 
+.PHONY: images
+images:
+	@make template | grep image:
+
+.PHONY: template
+template:
+	helm template \
+		--namespace=$(NAMESPACE) \
+		--values values.yaml \
+		--set fullnameOverride=$(NAME) \
+		--set service.externalIPs='{$(EXTERNAL_IP)}' \
+		--set image.name=$(IMAGE) \
+		$(CHART_REPO)/$(CHART_NAME)
+
 .PHONY: check
 check:
 	helm upgrade \
@@ -41,16 +55,6 @@ check:
 		--set service.externalIPs='{$(EXTERNAL_IP)}' \
 		--set image.name=$(IMAGE) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
-
-.PHONY: template
-template:
-	helm template --name=$(NAME) \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set service.externalIPs='{$(EXTERNAL_IP)}' \
-		--set image.name=$(IMAGE) \
-		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install:
