@@ -41,6 +41,12 @@ status:
 	@echo "\n*** Helm releases ***"
 	$(HELM_LIST)
 
+.PHONY: images
+images:
+	@for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR images || exit 1; \
+	done
+
 .PHONY: pull
 pull:
 	helm repo list | grep -q stable || helm repo add stable https://charts.helm.sh/stable
