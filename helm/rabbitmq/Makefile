@@ -14,7 +14,9 @@ ifndef LOCALPORT
 endif
 
 # Ingress controller detection
-INGRESS_ENABLED=$(shell kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
+ifndef INGRESS_ENABLED
+	INGRESS_ENABLED=$(shell kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
+endif
 
 ifeq ($(shell helm version | grep -c v3), 1)
 	HELM_DELETE=helm -n $(NAMESPACE) delete $(NAMESPACE)-$(NAME)
@@ -43,7 +45,17 @@ fetch: repo-add
 
 .PHONY: images
 images:
-	@make template | grep image:
+	@INGRESS_ENABLED=false make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
+
+.PHONY: pull
+pull:
+	@for IMAGE in `make --no-print-directory images`; do \
+		docker pull $$IMAGE; \
+	done
+
+.PHONY: save
+save:
+	docker save `make --no-print-directory images` -o ../$(CHART_NAME)-$(CHART_VERSION).tar
 
 .PHONY: template
 template: repo-add

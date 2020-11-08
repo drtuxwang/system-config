@@ -37,7 +37,17 @@ fetch: repo-add
 
 .PHONY: images
 images:
-	@make template | grep image:
+	@make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
+
+.PHONY: pull
+pull:
+	@for IMAGE in `make --no-print-directory images`; do \
+		docker pull $$IMAGE; \
+	done
+
+.PHONY: save
+save:
+	docker save `make --no-print-directory images` -o ../$(CHART_NAME)-$(CHART_VERSION).tar
 
 .PHONY: template
 template: repo-add
