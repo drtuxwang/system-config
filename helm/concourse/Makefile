@@ -30,9 +30,10 @@ else
 	HELM_VERSION=helm search -l $(CHART_REPO)/$(CHART_NAME) 
 endif
 
-IMAGES_FILE=../helm-images_$(CHART_NAME)-$(CHART_VERSION).tar
+IMAGES_FILE=../helm-docker-images_$(CHART_NAME)-$(CHART_VERSION).tar
 
 default: status
+
 
 .PHONY: repo-add
 repo-add:
