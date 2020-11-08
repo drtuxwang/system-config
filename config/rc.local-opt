@@ -20,4 +20,7 @@ sleep 20
 ##mkswap /dev/zram0
 ##swapon -p 100 /dev/zram0
 
+# Setup tmpfs for Docker tmp files
+##mount -t tmpfs -o noatime,nosuid,nodev /var/lib/docker/tmp
+
 exit 0
