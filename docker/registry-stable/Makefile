@@ -47,6 +47,10 @@ pull:
 	docker pull $(BASE_IMAGE)
 	docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/:/.* /') "
 
+.PHONY: save
+save:
+	docker save $(BASE_IMAGE) -o $(IMAGE_FILE) && touch -d $(IMAGE_TIME) $(IMAGE_FILE)
+
 .PHONY: build
 build:
 	rm -rf tmpdir
@@ -71,10 +75,6 @@ version:
 push:
 	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
 	@docker push $(IMAGE)
-
-.PHONY: save
-save:
-	docker save $(BASE_IMAGE) -o $(IMAGE_FILE) && touch -d $(IMAGE_TIME) $(IMAGE_FILE)
 
 .PHONY: rmi
 rmi:

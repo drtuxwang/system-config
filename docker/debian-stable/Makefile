@@ -23,6 +23,10 @@ pull:
 	docker pull $(BASE_IMAGE)
 	docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/:/.* /') "
 
+.PHONY: save
+save:
+	docker save $(BASE_IMAGE) -o $(IMAGE_FILE) && touch -d $(IMAGE_TIME) $(IMAGE_FILE)
+
 .PHONY: build
 build:
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
@@ -48,10 +52,6 @@ push:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR push || exit 1; \
 	done
-
-.PHONY: save
-save:
-	docker save $(BASE_IMAGE) -o $(IMAGE_FILE) && touch -d $(IMAGE_TIME) $(IMAGE_FILE)
 
 .PHONY: rmi
 rmi:

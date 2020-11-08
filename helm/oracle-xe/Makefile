@@ -43,7 +43,7 @@ pull:
 
 .PHONY: save
 save:
-	docker save $(shell make --no-print-directory images) -o $(IMAGES_FILE)
+	docker save $(IMAGE) -o $(IMAGE_FILE) && touch -d $(IMAGE_TIME) $(IMAGE_FILE)
 
 .PHONY: template
 template:

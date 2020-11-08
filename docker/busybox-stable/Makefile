@@ -14,14 +14,14 @@ IMAGE_TIME=$(shell docker inspect $(BASE_IMAGE) | grep '"Created":' | cut -f4 -d
 .PHONY: default
 default: build status
 
-.PHONY: status
-status:
-	docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " | sort
-
 .PHONY: pull
 pull:
 	docker pull $(BASE_IMAGE)
 	docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/:/.* /') "
+
+.PHONY: save
+save:
+	docker save $(BASE_IMAGE) -o $(IMAGE_FILE) && touch -d $(IMAGE_TIME) $(IMAGE_FILE)
 
 .PHONY: build
 build:
@@ -31,6 +31,10 @@ build:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR build || exit 1; \
 	done
+
+.PHONY: status
+status:
+	docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " | sort
 
 .PHONY: run
 run:
@@ -49,10 +53,6 @@ push:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR push || exit 1; \
 	done
-
-.PHONY: save
-save:
-	docker save $(BASE_IMAGE) -o $(IMAGE_FILE) && touch -d $(IMAGE_TIME) $(IMAGE_FILE)
 
 .PHONY: rmi
 rmi:

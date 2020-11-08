@@ -36,13 +36,9 @@ images:
 
 .PHONY: pull
 pull:
-	@for IMAGE in `make --no-print-directory images`; do \
-		docker pull $$IMAGE; \
-	done
 
 .PHONY: save
 save:
-	docker save $(shell make --no-print-directory images) -o $(IMAGES_FILE)
 
 .PHONY: template
 template:
