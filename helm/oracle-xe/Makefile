@@ -26,7 +26,8 @@ else
 	HELM_STATUS=helm status $(NAMESPACE)-$(NAME)
 endif
 
-IMAGES_FILE=../helm-docker-images_$(CHART_NAME)-$(CHART_VERSION).tar
+IMAGE_FILE=../docker-image_$(shell echo  $(IMAGE) | sed -e "s/\//-/g;s/:/_/").tar
+IMAGE_TIME=$(shell docker inspect $(IMAGE) | grep '"Created":' | cut -f4 -d'"')
 
 default: status
 
