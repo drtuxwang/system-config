@@ -13,7 +13,7 @@ default: build status
 
 .PHONY: status
 status:
-	docker images | grep "^`echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /'` " | sort
+	docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " | sort
 
 .PHONY: pull
 pull:
@@ -49,6 +49,8 @@ push:
 .PHONY: save
 save:
 	docker save $(BASE_IMAGE) -o ../$(shell echo "$(BASE_IMAGE)" | sed -e "s#/#-#g").tar
+	@touch -d $(shell docker inspect alpine:3.10 | grep '"Created":' | cut -f4 -d'"') \
+		../$(shell echo "$(BASE_IMAGE)" | sed -e "s#/#-#g").tar
 
 .PHONY: rmi
 rmi:

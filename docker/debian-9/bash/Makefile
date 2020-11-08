@@ -31,6 +31,7 @@ default: build status
 
 .PHONY: status
 status:
+	docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " | sort
 	docker images | grep "^`echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /'` " | sort
 
 .PHONY: build

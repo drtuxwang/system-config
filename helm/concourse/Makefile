@@ -30,8 +30,9 @@ else
 	HELM_VERSION=helm search -l $(CHART_REPO)/$(CHART_NAME) 
 endif
 
-default: status
+IMAGES_FILE=../helm-images_$(CHART_NAME)-$(CHART_VERSION).tar
 
+default: status
 
 .PHONY: repo-add
 repo-add:
@@ -55,7 +56,7 @@ pull:
 
 .PHONY: save
 save:
-	docker save `make --no-print-directory images` -o ../$(CHART_NAME)-$(CHART_VERSION).tar
+	docker save $(shell make --no-print-directory images) -o $(IMAGES_FILE)
 
 .PHONY: template
 template: repo-add fetch

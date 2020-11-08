@@ -24,6 +24,8 @@ else
 	HELM_STATUS=helm status $(NAMESPACE)-$(NAME)
 endif
 
+IMAGES_FILE=../helm-images_$(CHART_NAME)-$(CHART_VERSION).tar
+
 default: status
 
 
@@ -39,7 +41,7 @@ pull:
 
 .PHONY: save
 save:
-	docker save `make --no-print-directory images` -o ../$(CHART_NAME)-$(CHART_VERSION).tar
+	docker save $(shell make --no-print-directory images) -o $(IMAGES_FILE)
 
 .PHONY: template
 template:
