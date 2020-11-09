@@ -88,9 +88,7 @@ gc:
 
 .PHONY: load
 load:
-	for FILE in *.tar*; do \
-		 docker load -i $$FILE; \
-	done
+	./docker-load.sh *.tar
 
 .PHONY: save
 save:

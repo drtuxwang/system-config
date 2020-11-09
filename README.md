@@ -905,6 +905,7 @@ the years. Now most of the scripts are written in Python 3.
  * cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
  * cookiecutter/docker/cookiecutter.json
  * docker/Makefile                       Makefile for building all images
+ * docker/docker-load.sh                 Load docker images
  * docker/alpine-3.10/Dockerfile
  * docker/alpine-3.10/Makefile           alpine:3.10 based linux
  * docker/alpine-3.10/bash/Dockerfile
@@ -1010,7 +1011,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu-stable/dev/Dockerfile
  * docker/ubuntu-stable/dev/Makefile     ubuntu:20.04 based GCC dev shell
  * kubernetes/Makefile
- * kubernetes/kube-save.sh               Save Kubernetes docker images
+ * kubernetes/kubernetes-save.sh         Save Kubernetes docker images
  * kubernetes/monitor-host/Makefile      Kubernetes: host monitoring (drtuxwang/debian-bash:stable)
  * kubernetes/monitor-host/monitor-host-daemonset.yaml
  * kubernetes/test-crontab/Makefile      Kubernetes: crontab example (drtuxwang/busybox:stable)
@@ -1026,7 +1027,7 @@ the years. Now most of the scripts are written in Python 3.
  * kubernetes/test-servers/servers-service.yaml
  * kubernetes/test-servers/servers-statefulset.yaml
  * helm/Makefile
- * helm/helm-save.sh                     Saves Helm chart docker image
+ * helm/helm-save.sh                     Save Helm chart docker images
  * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.13.3 (app 0.12.0)
  * helm/chartmuseum/values.yaml
  * helm/concourse/Makefile               Helm Chart: concourse/concourse 13.0.0 (app 6.5.1)

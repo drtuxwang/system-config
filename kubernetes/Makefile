@@ -17,7 +17,7 @@ status:
 
 .PHONY: save
 save:
-	./kube-save.sh
+	./kubernetes-save.sh
 
 .PHONY: load
 load:
