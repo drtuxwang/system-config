@@ -1,6 +1,7 @@
 NAME := oracle-xe
 CHART_REPO := .
 CHART_NAME := oracle-xe
+CHART_VERSION=$(shell awk '/version:/{print $$2}' oracle-xe/Chart.yaml)
 IMAGE := datagrip/oracle:11.2
 
 # Default namespace
@@ -26,8 +27,7 @@ else
 	HELM_STATUS=helm status $(NAMESPACE)-$(NAME)
 endif
 
-IMAGE_FILE=../docker-image_$(shell echo  $(IMAGE) | sed -e "s/\//-/g;s/:/_/").tar
-IMAGE_TIME=$(shell docker inspect $(IMAGE) | grep '"Created":' | cut -f4 -d'"')
+IMAGES_FILE=../helm-images_$(CHART_NAME)-$(CHART_VERSION).tar
 
 default: status
 
@@ -44,7 +44,7 @@ pull:
 
 .PHONY: save
 save:
-	docker save $(IMAGE) -o $(IMAGE_FILE) && touch -d $(IMAGE_TIME) $(IMAGE_FILE)
+	../helm-save.sh $(IMAGES_FILE) $(shell make --no-print-directory images)
 
 .PHONY: template
 template:

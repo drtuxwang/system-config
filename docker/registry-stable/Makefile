@@ -31,7 +31,7 @@ ifndef DOCKER_RUN_COMMAND
 	DOCKER_RUN_COMMAND=
 endif
 
-IMAGE_FILE=../docker-image_$(shell echo  $(BASE_IMAGE) | sed -e "s/\//-/g;s/:/_/").tar
+IMAGE_FILE=../base-image_$(shell echo  $(BASE_IMAGE) | sed -e "s/\//-/g;s/:/_/").tar
 IMAGE_TIME=$(shell docker inspect $(BASE_IMAGE) | grep '"Created":' | cut -f4 -d'"')
 
 
