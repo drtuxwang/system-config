@@ -1,0 +1,19 @@
+app:
+  servers:
+    replicas: 1
+
+image:
+  name: drtuxwang/debian-xfce:stable
+  pullPolicy: IfNotPresent
+
+servers:
+  ssh:
+    pubkey: ""
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

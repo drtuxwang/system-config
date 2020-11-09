@@ -1,0 +1,22 @@
+app:
+  servers:
+    replicas: 1
+
+image:
+  name: drtuxwang/debian-bash:stable
+  pullPolicy: IfNotPresent
+
+ingress:
+  servers:
+    domain: example.com
+    servicePort: 80
+
+service:
+  servers:
+    name: http
+    port: 80
+    type: ClusterIP
+
+resources: {}
+
+nodeSelector: {}

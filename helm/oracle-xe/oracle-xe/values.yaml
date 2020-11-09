@@ -1,0 +1,23 @@
+app:
+  servers:
+    replicas: 1
+
+image:
+  pullPolicy: IfNotPresent
+  name: datagrip/oracle:11.2
+
+service:
+  http:
+    type: ClusterIP
+  oracle:
+    type: ClusterIP
+
+resources:
+  limits: {}
+  requests: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

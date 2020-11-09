@@ -5,20 +5,10 @@ app:
   servers:
     replicas: 2
 
-image:
-  name: centos:7
-  pullPolicy: IfNotPresent
-
 ingress:
   servers:
     domain: example.com
     servicePort: 80
-
-service:
-  servers:
-    name: http
-    port: 80
-    type: ClusterIP
 
 resources:
   limits:
@@ -27,11 +17,3 @@ resources:
   requests:
     cpu: 100m
     memory: 64M
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-secrets:

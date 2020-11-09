@@ -1,7 +1,6 @@
 NAME := xfce
 CHART_REPO := .
 CHART_NAME := xfce-servers
-IMAGE := drtuxwang/debian-xfce:stable
 
 # Default namespace
 ifndef NAMESPACE
@@ -42,7 +41,6 @@ template:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set image.name=$(IMAGE) \
 		--set servers.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
 		$(CHART_REPO)/$(CHART_NAME)
 
@@ -55,7 +53,6 @@ check:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set image.name=$(IMAGE) \
 		--set servers.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
@@ -68,7 +65,6 @@ install:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set image.name=$(IMAGE) \
 		--set servers.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 

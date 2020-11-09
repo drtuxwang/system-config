@@ -7,13 +7,7 @@ tolerations:
   operator: Equal
   value: linux
 
-app:
-  servers:
-    replicas: 1
-
-image:
-  name: centos:7
-  pullPolicy: IfNotPresent
+##image:
 ##  pullPolicy: Always
 
 resources:
@@ -23,7 +17,3 @@ resources:
   requests:
     cpu: 100m
     memory: 64M
-
-affinity: {}
-
-secrets:

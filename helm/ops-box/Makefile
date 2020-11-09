@@ -1,7 +1,6 @@
 NAME := ops-box
 CHART_REPO := .
 CHART_NAME := ops-box
-IMAGE := drtuxwang/debian-bash:stable
 
 # Default namespace
 ifndef NAMESPACE
@@ -37,7 +36,6 @@ template:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set image.name=$(IMAGE) \
 		--set image.pullPolicy=Always \
 		$(CHART_REPO)/$(CHART_NAME)
 
@@ -50,7 +48,6 @@ check:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set image.name=$(IMAGE) \
 		--set image.pullPolicy=Always \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
@@ -63,7 +60,6 @@ install:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set image.name=$(IMAGE) \
 		--set image.pullPolicy=Always \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 

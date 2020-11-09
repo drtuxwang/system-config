@@ -2,7 +2,6 @@ NAME := oracle-xe
 CHART_REPO := .
 CHART_NAME := oracle-xe
 CHART_VERSION=$(shell awk '/version:/{print $$2}' oracle-xe/Chart.yaml)
-IMAGE := datagrip/oracle:11.2
 
 # Default namespace
 ifndef NAMESPACE
@@ -53,7 +52,6 @@ template:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set service.externalIPs='{$(EXTERNAL_IP)}' \
-		--set image.name=$(IMAGE) \
 		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
@@ -66,7 +64,6 @@ check:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set service.externalIPs='{$(EXTERNAL_IP)}' \
-		--set image.name=$(IMAGE) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
@@ -79,7 +76,6 @@ install:
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
 		--set service.externalIPs='{$(EXTERNAL_IP)}' \
-		--set image.name=$(IMAGE) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status

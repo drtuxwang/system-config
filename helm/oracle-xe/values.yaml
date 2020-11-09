@@ -1,19 +1,6 @@
 nodeSelector:
   beta.kubernetes.io/os: linux
 
-app:
-  servers:
-    replicas: 1
-
-image:
-  pullPolicy: IfNotPresent
-
-service:
-  http:
-    type: ClusterIP
-  oracle:
-    type: ClusterIP
-
 resources:
   limits:
     cpu: 1000m
@@ -21,11 +8,3 @@ resources:
   requests:
     cpu: 100m
     memory: 64M
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-secrets:

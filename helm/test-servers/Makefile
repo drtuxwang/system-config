@@ -1,7 +1,6 @@
 NAME := test-servers
 CHART_REPO := .
 CHART_NAME := test-servers
-IMAGE := drtuxwang/debian-bash:stable
 DOMAIN := example.com
 
 # Default namespace
@@ -44,7 +43,6 @@ template:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
 		$(CHART_REPO)/$(CHART_NAME)
 
@@ -57,7 +55,6 @@ check:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
@@ -70,7 +67,6 @@ install:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set image.name=$(IMAGE) \
 		--set ingress.server.domain=$(DOMAIN) \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 

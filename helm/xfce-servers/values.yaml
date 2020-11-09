@@ -1,14 +1,6 @@
 nodeSelector:
   beta.kubernetes.io/os: linux
 
-app:
-  servers:
-    replicas: 1
-
-image:
-  name: None
-  pullPolicy: IfNotPresent
-
 service:
   servers:
     name: ssh
@@ -22,13 +14,3 @@ resources:
   requests:
     cpu: 100m
     memory: 64M
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-servers:
-  ssh:
-    pubkey: ""
