@@ -49,7 +49,7 @@ pull:
 
 .PHONY: save
 save:
-	docker save $(shell make --no-print-directory images) -o $(IMAGES_FILE)
+	../helm-save.sh $(IMAGES_FILE) $(shell make --no-print-directory images)
 
 .PHONY: template
 template: repo-add

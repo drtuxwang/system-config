@@ -24,8 +24,6 @@ else
 	HELM_STATUS=helm status $(NAMESPACE)-$(NAME)
 endif
 
-IMAGES_FILE=../helm-docker-images_$(CHART_NAME)-$(CHART_VERSION).tar
-
 
 default: status
 
