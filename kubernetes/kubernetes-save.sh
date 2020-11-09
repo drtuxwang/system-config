@@ -16,7 +16,7 @@ k8s.gcr.io/etcd:$ETCD_VERSION
 k8s.gcr.io/pause:$PAUSE_VERSION
 "
 CREATED=$(docker inspect $FILES | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
-echo docker save $FILES -o kube-docker-images_control-plane-$KUBE_VERSION
+echo "docker save $FILES -o kube-docker-images_control-plane-$KUBE_VERSION.tar"
 docker save $FILES -o kubernetes-images_control-plane-$KUBE_VERSION.tar
 touch -d "$CREATED" kubernetes-images_control-plane-$KUBE_VERSION.tar
 
@@ -27,6 +27,6 @@ calico/node:$CALICO_VERSION
 calico/pod2daemon-flexvol:$CALICO_VERSION
 "
 CREATED=$(docker inspect $FILES | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
-echo docker save $FILES -i kube-docker-images_calico-$CALICO_VERSION.tar
+echo "docker save $FILES -i kube-docker-images_calico-$CALICO_VERSION.tar"
 docker save $FILES -o kubernetes-images_calico-cni-$CALICO_VERSION.tar
 touch -d "$CREATED" kubernetes-images_calico-cni-$CALICO_VERSION.tar
