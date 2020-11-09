@@ -48,6 +48,15 @@ class Main:
 
     @staticmethod
     def _cache():
+        tmpdir = os.path.join('/tmp', getpass.getuser())
+        for cache in ('cache', 'repository/cache'):
+            directory = os.path.join(tmpdir, '.cache', 'helm', cache)
+            try:
+                os.makedirs(directory)
+            except FileExistsError:
+                pass
+        os.chmod(tmpdir, int('700', 8))
+
         helm_directory = os.path.join(os.environ['HOME'], '.helm')
         if not os.path.isdir(os.path.join(helm_directory, 'repository')):
             try:
@@ -55,17 +64,10 @@ class Main:
             except OSError:
                 return
 
-        os.chmod(os.path.join('/tmp', getpass.getuser()), int('700', 8))
-
         for cache in ('cache', 'repository/cache'):
             link = os.path.join(helm_directory, cache)
             if not os.path.islink(link):
-                cache_directory = os.path.join(
-                    '/tmp',
-                    getpass.getuser(),
-                    '.cache/helm',
-                    cache,
-                )
+                cache_directory = os.path.join(tmpdir, '.cache', 'helm', cache)
                 try:
                     if not os.path.isdir(cache_directory):
                         os.makedirs(cache_directory)

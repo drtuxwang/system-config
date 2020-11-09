@@ -45,22 +45,25 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-        tmpdir = os.path.join('/tmp', getpass.getuser(), '.cache', 'hardinfo')
+        tmpdir = os.path.join('/tmp', getpass.getuser())
+        directory = os.path.join(tmpdir, '.cache', 'hardinfo')
         try:
-            os.makedirs(tmpdir)
+            os.makedirs(directory)
         except FileExistsError:
             pass
         os.chmod(tmpdir, int('700', 8))
+
         directory = os.path.join(os.environ.get('HOME'), '.hardinfo')
         if not os.path.islink(directory):
-            print("debugX1")
             try:
                 shutil.rmtree(directory)
             except OSError:
                 return
-            print("debugX1")
             try:
-                os.symlink(tmpdir, directory)
+                os.symlink(
+                    os.path.join(tmpdir, '.cache', 'hardinfo'),
+                    directory,
+                )
             except OSError:
                 pass
 
