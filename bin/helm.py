@@ -48,6 +48,7 @@ class Main:
 
     @staticmethod
     def _cache():
+        tmpdir = os.path.join('/tmp', getpass.getuser())
         helm2_directory = os.path.join(os.environ['HOME'], '.helm')
         if os.path.isdir(helm2_directory):
             if not os.path.isdir(os.path.join(helm2_directory, 'repository')):
@@ -56,7 +57,6 @@ class Main:
                 except OSError:
                     return
 
-            tmpdir = os.path.join('/tmp', getpass.getuser())
             for cache in ('cache', 'repository/cache'):
                 link = os.path.join(helm2_directory, cache)
                 directory = os.path.join(
@@ -79,6 +79,13 @@ class Main:
                     except OSError:
                         pass
             os.chmod(tmpdir, int('700', 8))
+
+        if not glob.glob(os.path.join(tmpdir, '*-index.yaml')):
+            helm = command_mod.Command('helm', errors='stop')
+            task = subtask_mod.Batch(helm.get_cmdline() + ['repo', 'list'])
+            task.run(pattern='http')
+            if task.has_output():
+                subtask_mod.Task(helm.get_cmdline() + ['repo', 'update']).run()
 
     @classmethod
     def run(cls):
