@@ -48,15 +48,6 @@ class Main:
 
     @staticmethod
     def _cache():
-        tmpdir = os.path.join('/tmp', getpass.getuser())
-        for cache in ('cache', 'http-cache'):
-            directory = os.path.join(tmpdir, '.cache', 'kube', cache)
-            try:
-                os.makedirs(directory)
-            except FileExistsError:
-                pass
-        os.chmod(tmpdir, int('700', 8))
-
         kube_directory = os.path.join(os.environ['HOME'], '.kube')
         if not os.path.isdir(kube_directory):
             try:
@@ -64,18 +55,26 @@ class Main:
             except OSError:
                 return
 
+        tmpdir = os.path.join('/tmp', getpass.getuser())
+
         for cache in ('cache', 'http-cache'):
             link = os.path.join(kube_directory, cache)
+            directory = os.path.join(tmpdir, '.cache', 'kube', cache)
+            try:
+                os.makedirs(directory)
+            except FileExistsError:
+                pass
             if not os.path.islink(link):
-                cache_directory = os.path.join(tmpdir, '.cache', 'kube', cache)
                 try:
-                    if not os.path.isdir(cache_directory):
-                        os.makedirs(cache_directory)
+                    if not os.path.isdir(directory):
+                        os.makedirs(directory)
                     if os.path.exists(link):
                         shutil.rmtree(link)
-                    os.symlink(cache_directory, link)
+                    os.symlink(directory, link)
                 except OSError:
                     pass
+
+        os.chmod(tmpdir, int('700', 8))
 
     @classmethod
     def run(cls):

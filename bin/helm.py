@@ -48,34 +48,37 @@ class Main:
 
     @staticmethod
     def _cache():
-        tmpdir = os.path.join('/tmp', getpass.getuser())
-        for cache in ('cache', 'repository/cache'):
-            directory = os.path.join(tmpdir, '.cache', 'helm', cache)
-            try:
-                os.makedirs(directory)
-            except FileExistsError:
-                pass
-        os.chmod(tmpdir, int('700', 8))
-
-        helm_directory = os.path.join(os.environ['HOME'], '.helm')
-        if not os.path.isdir(os.path.join(helm_directory, 'repository')):
-            try:
-                os.makedirs(os.path.join(helm_directory, 'repository'))
-            except OSError:
-                return
-
-        for cache in ('cache', 'repository/cache'):
-            link = os.path.join(helm_directory, cache)
-            if not os.path.islink(link):
-                cache_directory = os.path.join(tmpdir, '.cache', 'helm', cache)
+        helm2_directory = os.path.join(os.environ['HOME'], '.helm')
+        if os.path.isdir(helm2_directory):
+            if not os.path.isdir(os.path.join(helm2_directory, 'repository')):
                 try:
-                    if not os.path.isdir(cache_directory):
-                        os.makedirs(cache_directory)
-                    if os.path.exists(link):
-                        shutil.rmtree(link)
-                    os.symlink(cache_directory, link)
+                    os.makedirs(os.path.join(helm2_directory, 'repository'))
                 except OSError:
+                    return
+
+            tmpdir = os.path.join('/tmp', getpass.getuser())
+            for cache in ('cache', 'repository/cache'):
+                link = os.path.join(helm2_directory, cache)
+                directory = os.path.join(
+                    tmpdir,
+                    '.cache',
+                    'helm',
+                    cache.split(os.sep)[0],
+                )
+                try:
+                    os.makedirs(directory)
+                except FileExistsError:
                     pass
+                if not os.path.islink(link):
+                    try:
+                        if not os.path.isdir(directory):
+                            os.makedirs(directory)
+                        if os.path.exists(link):
+                            shutil.rmtree(link)
+                        os.symlink(directory, link)
+                    except OSError:
+                        pass
+            os.chmod(tmpdir, int('700', 8))
 
     @classmethod
     def run(cls):
