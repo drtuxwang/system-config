@@ -14,8 +14,11 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: {{ include "app.fullname" . }}-servers
-          servicePort: {{ .Values.ingress.servers.servicePort }}
+          service:
+            name: {{ include "app.fullname" . }}-servers
+            port:
+              number: {{ .Values.ingress.servers.servicePort }}
   tls:
   - secretName: {{ .Values.ingress.servers.domain }}
