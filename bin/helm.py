@@ -80,7 +80,8 @@ class Main:
                         pass
             os.chmod(tmpdir, int('700', 8))
 
-        if not glob.glob(os.path.join(tmpdir, '*-index.yaml')):
+        directory = os.path.join(tmpdir, '.cache', 'helm', 'repository')
+        if not glob.glob(os.path.join(directory, '*-index.yaml')):
             helm = command_mod.Command('helm', errors='stop')
             task = subtask_mod.Batch(helm.get_cmdline() + ['repo', 'list'])
             task.run(pattern='http')
