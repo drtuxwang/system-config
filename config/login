@@ -103,8 +103,12 @@ if ( $?TERM && -e "`\tty`" ) then
     setenv TMPDIR "/tmp/$MYUNAME"
     setenv TMP "/tmp/$MYUNAME"
     mkdir -p $TMP/.cache
-    ls -ld $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* |& \
+    ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* |& \
         grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= >& /dev/null
+    if ( ! -l $HOME/.cache ) then
+        rm -rf $HOME/.cache
+        ln -s $TMP/.cache $HOME/.cache
+    endif
     set history=1024
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
