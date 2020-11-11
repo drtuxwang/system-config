@@ -1,5 +1,5 @@
 app:
-  servers:
+  box:
     replicas: 1
 
 image:

@@ -3,12 +3,11 @@ kind: Service
 metadata:
   labels:
     helm.sh/chart: {{ include "chart.name" . }}
-    app.kubernetes.io/name: {{ include "chart.name" . }}-servers
+    app.kubernetes.io/name: {{ include "chart.name" . }}-box
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  name: {{ include "app.fullname" . }}-servers-headless
+  name: {{ include "app.fullname" . }}-box
 spec:
-  clusterIP: None
   ports:
   - name: http
     port: 8080
@@ -18,7 +17,10 @@ spec:
     port: 1521
     protocol: TCP
     targetPort: oracle
+{{- if .Values.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.service.externalIPs | nindent 4 }}
+{{- end }}
   selector:
-    app.kubernetes.io/name: {{ include "chart.name" . }}-servers
+    app.kubernetes.io/name: {{ include "chart.name" . }}-box
     app.kubernetes.io/instance: {{ .Release.Name }}
   type: {{ .Values.service.oracle.type }}
