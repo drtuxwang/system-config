@@ -3,20 +3,20 @@ kind: Deployment
 metadata:
   labels:
     helm.sh/chart: {{ include "chart.name" . }}
-    app.kubernetes.io/name: {{ include "chart.name" . }}-servers
+    app.kubernetes.io/name: {{ include "chart.name" . }}-box
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  name: {{ include "app.fullname" . }}-server
+  name: {{ include "app.fullname" . }}-box
 spec:
-  replicas: {{ .Values.app.servers.replicas }}
+  replicas: {{ .Values.app.box.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "chart.name" . }}-servers
+      app.kubernetes.io/name: {{ include "chart.name" . }}-box
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "chart.name" . }}-servers
+        app.kubernetes.io/name: {{ include "chart.name" . }}-box
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:

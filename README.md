@@ -1054,17 +1054,17 @@ the years. Now most of the scripts are written in Python 3.
  * helm/nexus/values.yaml
  * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 5.1.12 (app 1.16.1)
  * helm/nginx/values.yaml
- * helm/ops-box/Makefile                 Helm Chart: Operations Box (drtuxwang/debian:stable)
- * helm/ops-box/opt-box/Chart.yaml
- * helm/ops-box/opt-box/templates/_helpers.tpl
- * helm/ops-box/opt-box/templates/servers-statefulset.yaml
- * helm/ops-box/values.yaml
+ * helm/ops-server/Makefile              Helm Chart: Operations Box (drtuxwang/debian:stable)
+ * helm/ops-server/ops-server/Chart.yaml
+ * helm/ops-server/ops-server/templates/_helpers.tpl
+ * helm/ops-server/ops-server/templates/box-deployment.yaml
+ * helm/ops-server/values.yaml
  * helm/oracle-xe/Makefile               Helm Chart: Oracle XE test (datagrip/oracle:11.2)
  * helm/oracle-xe/oracle-xe/Chart.yaml
  * helm/oracle-xe/oracle-xe/templates/_helpers.tpl
- * helm/oracle-xe/oracle-xe/templates/servers-headless-service.yaml
- * helm/oracle-xe/oracle-xe/templates/servers-service.yaml
- * helm/oracle-xe/oracle-xe/templates/servers-statefulset.yaml
+ * helm/oracle-xe/oracle-xe/templates/box-headless-service.yaml
+ * helm/oracle-xe/oracle-xe/templates/box-service.yaml
+ * helm/oracle-xe/oracle-xe/templates/box-statefulset.yaml
  * helm/oracle-xe/values.yaml
  * helm/prometheus/Makefile              Helm Chart: prometheus-community/prometheus 11.14.1 (app 2.20.1)
  * helm/prometheus/connect.sh

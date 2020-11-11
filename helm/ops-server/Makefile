@@ -1,6 +1,6 @@
-NAME := ops-box
+NAME := ops-server
 CHART_REPO := .
-CHART_NAME := ops-box
+CHART_NAME := ops-server
 
 # Default namespace
 ifndef NAMESPACE
