@@ -13,16 +13,17 @@ ifndef LOCALPORT
 	LOCALPORT=
 endif
 
-ifeq ($(shell helm version | grep -c v3), 1)
-	HELM_DELETE=helm -n $(NAMESPACE) delete $(NAMESPACE)-$(NAME)
-	HELM_LIST=helm -n $(NAMESPACE) list --all
-	HELM_STATUS=helm -n $(NAMESPACE) status $(NAMESPACE)-$(NAME)
-else
-	HELM_DELETE=helm delete --purge $(NAMESPACE)-$(NAME)
+ifeq ($(shell helm version | grep -c v2), 1)
 	HELM_LIST=helm list --all $(NAMESPACE)-$(NAME)
 	HELM_STATUS=helm status $(NAMESPACE)-$(NAME)
+	HELM_UNINSTALL=helm delete --purge $(NAMESPACE)-$(NAME)
+	HELM_VERSION=helm search -l $(CHART_REPO)/$(CHART_NAME)
+else
+	HELM_LIST=helm -n $(NAMESPACE) list --all
+	HELM_STATUS=helm -n $(NAMESPACE) status $(NAMESPACE)-$(NAME)
+	HELM_UNINSTALL=helm -n $(NAMESPACE) uninstall $(NAMESPACE)-$(NAME)
+	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
-
 
 default: status
 
@@ -91,10 +92,10 @@ forward:
 connect:
 	./connect.sh
 
-.PHONY: delete
-delete:
+.PHONY: uninstall
+uninstall:
 	$(HELM_LIST)
-	$(HELM_DELETE) ||:
+	$(HELM_UNINSTALL) ||:
 
 .PHONY: clean
 clean:
