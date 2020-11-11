@@ -1074,18 +1074,18 @@ the years. Now most of the scripts are written in Python 3.
  * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.8.3 (app 3.7.19)
  * helm/rabbitmq/connect.sh
  * helm/rabbitmq/values.yaml
- * helm/test-servers/Makefile            Helm Chart: test chart for testing server
- * helm/test-servers/connect.sh
- * helm/test-servers/test-servers/Chart.yaml
- * helm/test-servers/test-servers/requirements.lock
- * helm/test-servers/test-servers/requirements.yaml
- * helm/test-servers/test-servers/templates/_helpers.tpl
- * helm/test-servers/test-servers/templates/servers-headless-service.yaml
- * helm/test-servers/test-servers/templates/servers-ingress.yaml
- * helm/test-servers/test-servers/templates/servers-secret-tls.yaml
- * helm/test-servers/test-servers/templates/servers-service.yaml
- * helm/test-servers/test-servers/templates/servers-statefulset.yaml
- * helm/test-servers/values.yaml
+ * helm/test-server/Makefile             Helm Chart: test chart for testing server
+ * helm/test-server/connect.sh
+ * helm/test-server/test-server/Chart.yaml
+ * helm/test-server/test-server/requirements.lock
+ * helm/test-server/test-server/requirements.yaml
+ * helm/test-server/test-server/templates/_helpers.tpl
+ * helm/test-server/test-server/templates/box-headless-service.yaml
+ * helm/test-server/test-server/templates/box-ingress.yaml
+ * helm/test-server/test-server/templates/box-secret-tls.yaml
+ * helm/test-server/test-server/templates/box-service.yaml
+ * helm/test-server/test-server/templates/box-statefulset.yaml
+ * helm/test-server/values.yaml
  * helm/xfce-servers/Makefile            Helm Chart: xfce server chart (drtuxwang/debian-xfce:stable)
  * helm/xfce-servers/connect.sh
  * helm/xfce-servers/values.yaml

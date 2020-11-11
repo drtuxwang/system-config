@@ -1,6 +1,6 @@
-NAME := test-servers
+NAME := test-server
 CHART_REPO := .
-CHART_NAME := test-servers
+CHART_NAME := test-server
 DOMAIN := example.com
 
 # Default namespace

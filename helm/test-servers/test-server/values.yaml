@@ -1,5 +1,5 @@
 app:
-  servers:
+  box:
     replicas: 1
 
 image:
@@ -7,12 +7,12 @@ image:
   pullPolicy: IfNotPresent
 
 ingress:
-  servers:
+  box:
     domain: example.com
     servicePort: 80
 
 service:
-  servers:
+  box:
     name: http
     port: 80
     type: ClusterIP

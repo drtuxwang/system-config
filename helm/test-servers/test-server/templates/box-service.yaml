@@ -3,17 +3,17 @@ kind: Service
 metadata:
   labels:
     helm.sh/chart: {{ include "chart.name" . }}
-    app.kubernetes.io/name: {{ include "chart.name" . }}-servers
+    app.kubernetes.io/name: {{ include "chart.name" . }}-box
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  name: {{ include "app.fullname" . }}-servers
+  name: {{ include "app.fullname" . }}-box
 spec:
   ports:
   - name: http
-    port: {{ .Values.service.servers.port }}
+    port: {{ .Values.service.box.port }}
     protocol: TCP
-    targetPort: {{ .Values.service.servers.port }}
+    targetPort: {{ .Values.service.box.port }}
   selector:
-    app.kubernetes.io/name: {{ include "chart.name" . }}-servers
+    app.kubernetes.io/name: {{ include "chart.name" . }}-box
     app.kubernetes.io/instance: {{ .Release.Name }}
-  type: {{ .Values.service.servers.type }}
+  type: {{ .Values.service.box.type }}

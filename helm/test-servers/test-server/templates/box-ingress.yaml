@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "app.fullname" . }}-servers
+  name: {{ include "app.fullname" . }}-box
   # annotations:
   #   nginx.ingress.kubernetes.io/configuration-snippet: |
   #       rewrite "(?i)/{{ include "app.fullname" . }}/(.*)$" /$1 break;
@@ -10,15 +10,15 @@ metadata:
   #       sub_filter '="/' '="/{{ include "app.fullname" . }}/';
 spec:
   rules:
-  - host: {{ include "app.fullname" . }}-servers.{{ .Values.ingress.servers.domain }}
+  - host: {{ include "app.fullname" . }}-box.{{ .Values.ingress.box.domain }}
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: {{ include "app.fullname" . }}-servers
+            name: {{ include "app.fullname" . }}-box
             port:
-              number: {{ .Values.ingress.servers.servicePort }}
+              number: {{ .Values.ingress.box.servicePort }}
   tls:
-  - secretName: {{ .Values.ingress.servers.domain }}
+  - secretName: {{ .Values.ingress.box.domain }}
