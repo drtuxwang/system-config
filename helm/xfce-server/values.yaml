@@ -2,7 +2,7 @@ nodeSelector:
   beta.kubernetes.io/os: linux
 
 service:
-  servers:
+  box:
     name: ssh
     port: 22
     type: ClusterIP

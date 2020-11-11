@@ -1086,16 +1086,16 @@ the years. Now most of the scripts are written in Python 3.
  * helm/test-server/test-server/templates/box-service.yaml
  * helm/test-server/test-server/templates/box-statefulset.yaml
  * helm/test-server/values.yaml
- * helm/xfce-servers/Makefile            Helm Chart: xfce server chart (drtuxwang/debian-xfce:stable)
- * helm/xfce-servers/connect.sh
- * helm/xfce-servers/values.yaml
- * helm/xfce-servers/xfce-servers/Chart.yaml
- * helm/xfce-servers/xfce-servers/requirements.lock
- * helm/xfce-servers/xfce-servers/requirements.yaml
- * helm/xfce-servers/xfce-servers/templates/_helpers.tpl
- * helm/xfce-servers/xfce-servers/templates/servers-headless-service.yaml
- * helm/xfce-servers/xfce-servers/templates/servers-service.yaml
- * helm/xfce-servers/xfce-servers/templates/servers-statefulset.yaml
+ * helm/xfce-server/Makefile            Helm Chart: xfce server chart (drtuxwang/debian-xfce:stable)
+ * helm/xfce-server/connect.sh
+ * helm/xfce-server/values.yaml
+ * helm/xfce-server/xfce-server/Chart.yaml
+ * helm/xfce-server/xfce-server/requirements.lock
+ * helm/xfce-server/xfce-server/requirements.yaml
+ * helm/xfce-server/xfce-server/templates/_helpers.tpl
+ * helm/xfce-server/xfce-server/templates/box-headless-service.yaml
+ * helm/xfce-server/xfce-server/templates/box-service.yaml
+ * helm/xfce-server/xfce-server/templates/box-statefulset.yaml
  * python/simple-cython/Makefile         Simple Cython example
  * python/simple-cython/cython_example.pyx
  * python/simple-cython/run.py

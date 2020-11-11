@@ -1,6 +1,6 @@
-NAME := xfce
+NAME := xfce-server
 CHART_REPO := .
-CHART_NAME := xfce-servers
+CHART_NAME := xfce-server
 
 # Default namespace
 ifndef NAMESPACE
@@ -43,7 +43,7 @@ template:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set servers.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
+		--set box.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
 		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
@@ -55,7 +55,7 @@ check:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set servers.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
+		--set box.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
@@ -67,7 +67,7 @@ install:
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
 		--set fullnameOverride=$(NAME) \
-		--set servers.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
+		--set box.ssh.pubkey="`cat ~/.ssh/id_rsa.pub`" \
 		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
@@ -78,7 +78,7 @@ status:
 
 .PHONY: forward
 forward:
-	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME)-servers $(LOCALPORT):22
+	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME)-box $(LOCALPORT):22
 
 .PHONY: connect
 connect:
