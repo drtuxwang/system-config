@@ -1028,31 +1028,31 @@ the years. Now most of the scripts are written in Python 3.
  * kubernetes/test-servers/servers-statefulset.yaml
  * helm/Makefile
  * helm/helm-save.sh                     Save Helm chart docker images
- * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.13.3 (app 0.12.0)
+ * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.13.3 (app-0.12.0)
  * helm/chartmuseum/values.yaml
- * helm/concourse/Makefile               Helm Chart: concourse/concourse 13.0.0 (app 6.5.1)
+ * helm/concourse/Makefile               Helm Chart: concourse/concourse 13.0.0 (app-6.5.1)
  * helm/concourse/concourse-secrets.yaml
  * helm/concourse/connect.sh
  * helm/concourse/values.yaml
  * helm/concourse/web-ingress.yaml
- * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 4.11.1 (app 3.4.13)
+ * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 4.11.1 (app-3.4.13)
  * helm/etcd/values.yaml
- * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 3.4.5 (app 7.2.2)
+ * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 3.4.5 (app-7.2.2)
  * helm/grafana/connect.sh
  * helm/grafana/values.yaml
- * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 5.0.27 (app 2.249.2)
+ * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 5.0.27 (app-2.249.2)
  * helm/jenkins/connect.sh
  * helm/jenkins/values.yaml
- * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 11.7.2 (app 2.5.0)
+ * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 11.7.2 (app-2.5.0)
  * helm/kafka/test.sh
  * helm/kafka/values.yml
- * helm/ingress/Makefile                 Helm Chart: ingress-nginx/ingress-nginx 2.12.1 (app 0.34.1)
+ * helm/ingress/Makefile                 Helm Chart: ingress-nginx/ingress-nginx 2.12.1 (app-0.34.1)
  * helm/ingress/values.yaml
- * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 8.3.2 (app 4.2.9)
+ * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 8.3.2 (app-4.2.9)
  * helm/mongodb/values.yml
- * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 3.4.0 (app 3.25.1)
+ * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 3.4.0 (app-3.25.1)
  * helm/nexus/values.yaml
- * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 5.1.12 (app 1.16.1)
+ * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 5.1.12 (app-1.16.1)
  * helm/nginx/values.yaml
  * helm/ops-server/Makefile              Helm Chart: Operations Box (drtuxwang/debian:stable)
  * helm/ops-server/ops-server/Chart.yaml
@@ -1066,12 +1066,12 @@ the years. Now most of the scripts are written in Python 3.
  * helm/oracle-xe/oracle-xe/templates/box-service.yaml
  * helm/oracle-xe/oracle-xe/templates/box-statefulset.yaml
  * helm/oracle-xe/values.yaml
- * helm/prometheus/Makefile              Helm Chart: prometheus-community/prometheus 11.14.1 (app 2.20.1)
+ * helm/prometheus/Makefile              Helm Chart: prometheus-community/prometheus 11.14.1 (app-2.20.1)
  * helm/prometheus/connect.sh
  * helm/prometheus/values.yaml
- * helm/pushgateway/Makefile             Helm Chart: prometheus-community/prometheus-pushgateway 1.4.2 (app 1.2.0)
+ * helm/pushgateway/Makefile             Helm Chart: prometheus-community/prometheus-pushgateway 1.4.2 (app-1.2.0)
  * helm/pushgateway/values.yaml
- * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.8.3 (app 3.7.19)
+ * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.8.3 (app-3.7.19)
  * helm/rabbitmq/connect.sh
  * helm/rabbitmq/values.yaml
  * helm/test-server/Makefile             Helm Chart: test chart for testing server
