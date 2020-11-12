@@ -11,14 +11,16 @@ ifndef NAMESPACE
 endif
 
 ifeq ($(shell helm version | grep -c v2), 1)
-	HELM_LIST=helm list --all $(NAMESPACE)-$(NAME)
-	HELM_STATUS=helm status $(NAMESPACE)-$(NAME)
-	HELM_UNINSTALL=helm delete --purge $(NAMESPACE)-$(NAME)
+	HELM_RELEASE=$(NAMESPACE)-$(NAME)
+	HELM_LIST=helm list --all $(HELM_RELEASE)
+	HELM_STATUS=helm status $(HELM_RELEASE)
+	HELM_UNINSTALL=helm delete --purge $(HELM_RELEASE)
 	HELM_VERSION=helm search -l $(CHART_REPO)/$(CHART_NAME)
 else
-	HELM_LIST=helm list -n $(NAMESPACE) --all | grep $(NAMESPACE)-$(NAME)
-	HELM_STATUS=helm status -n $(NAMESPACE) $(NAMESPACE)-$(NAME)
-	HELM_UNINSTALL=helm uninstall -n $(NAMESPACE) $(NAMESPACE)-$(NAME)
+	HELM_RELEASE=$(NAME)
+	HELM_LIST=helm list -n $(NAMESPACE) --all | grep $(HELM_RELEASE)
+	HELM_STATUS=helm status -n $(NAMESPACE) $(HELM_RELEASE)
+	HELM_UNINSTALL=helm uninstall -n $(NAMESPACE) $(HELM_RELEASE)
 	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
@@ -80,7 +82,7 @@ check: repo-add
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--set service.type=ClusterIP \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
+		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install: repo-add
@@ -97,7 +99,7 @@ install: repo-add
 		--set ingress.hosts[0].tlsSecret=$(SECRET) \
 		--set service.type=ClusterIP \
 		--version $(CHART_VERSION) \
-		$(NAMESPACE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
+		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
 status:
