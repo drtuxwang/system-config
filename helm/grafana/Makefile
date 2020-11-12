@@ -28,7 +28,7 @@ else
 	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
-IMAGES_FILE=../helm-images_$(CHART_NAME)-$(CHART_VERSION).tar
+IMAGES_FILE=../helm-images_$(CHART_NAME)-$(CHART_VERSION)_app-$(shell make version | awk 'END {print $$3}').tar
 
 default: status
 

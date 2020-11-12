@@ -28,7 +28,7 @@ else
 	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
-IMAGES_FILE=../helm-images_$(CHART_NAME)-$(CHART_VERSION).tar
+IMAGES_FILE=../helm-images_$(CHART_NAME)-$(CHART_VERSION)_app-$(shell awk '/appVersion:/{print $$2}' oracle-xe/Chart.yaml).tar
 
 default: status
 

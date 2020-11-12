@@ -12,13 +12,13 @@ BUILD_DIRS := \
 	mongodb \
 	nexus \
 	nginx \
-	ops-box \
+	ops-server \
 	oracle-xe \
 	prometheus \
 	pushgateway \
 	rabbitmq \
-	test-servers \
-	xfce-servers
+	test-server \
+	xfce-server
 
 ifeq ($(shell helm version | grep -c v3), 1)
 	HELM_INIT=
