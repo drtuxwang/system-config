@@ -6,7 +6,6 @@ HARDINFO launcher
 import getpass
 import glob
 import os
-import shutil
 import signal
 import sys
 
@@ -45,27 +44,15 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
+        # Send ".hardinfo" to tmpfs
         tmpdir = os.path.join('/tmp', getpass.getuser())
-        directory = os.path.join(tmpdir, '.cache', 'hardinfo')
+        directory = os.path.join(tmpdir, '.cache')
         try:
             os.makedirs(directory)
         except FileExistsError:
             pass
         os.chmod(tmpdir, int('700', 8))
-
-        directory = os.path.join(os.environ.get('HOME'), '.hardinfo')
-        if not os.path.islink(directory):
-            try:
-                shutil.rmtree(directory)
-            except OSError:
-                return
-            try:
-                os.symlink(
-                    os.path.join(tmpdir, '.cache', 'hardinfo'),
-                    directory,
-                )
-            except OSError:
-                pass
+        os.environ['HOME'] = tmpdir
 
     @staticmethod
     def run():
