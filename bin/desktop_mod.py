@@ -2,7 +2,7 @@
 """
 Python X-windows desktop module
 
-Copyright GPL v2: 2013-2019 By Dr Colin Kong
+Copyright GPL v2: 2013-2020 By Dr Colin Kong
 """
 
 import functools
@@ -10,8 +10,8 @@ import getpass
 import os
 import subprocess
 
-RELEASE = '2.3.4'
-VERSION = 20191019
+RELEASE = '2.3.5'
+VERSION = 20201114
 
 
 class _System:
@@ -123,19 +123,26 @@ class Desktop:
         """
         Guess desktop based on session user is running. Return name or Unknown.
         """
-        command = ['ps', '-o', 'args', '-u', getpass.getuser()]
-        lines = _System.run_program(command)
-        names = set(os.path.basename(line.split()[0]) for line in lines)
-
-        if 'xfce4-session' in names:
-            return 'xfce'
-        if (
-                set(['gnome-panel', 'gnome-session', 'gnome-session-binary']) &
-                names
+        for command in (
+                ['ps', '-o', 'args', '-u', getpass.getuser()],
+                ['ps', '-o', 'args', '-e'],
         ):
-            return 'gnome'
-        if 'startkde' in names:
-            return 'kde'
+            lines = _System.run_program(command)
+            names = set(os.path.basename(line.split()[0]) for line in lines)
+            print("debugX", names)
+
+            if 'xfce4-session' in names:
+                return 'xfce'
+            if (
+                    set([
+                        'gnome-panel',
+                        'gnome-session',
+                        'gnome-session-binary',
+                    ]) & names
+            ):
+                return 'gnome'
+            if 'startkde' in names:
+                return 'kde'
 
         return 'Unknown'
 
