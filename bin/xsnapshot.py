@@ -12,6 +12,15 @@ import command_mod
 import desktop_mod
 import subtask_mod
 
+PROGRAMS = {
+    'cinnamon': ['gnome-screenshot', '--interactive'],
+    'gnome': ['gnome-screenshot', '--interactive'],
+    'kde': ['ksnapshot'],
+    'mate': ['mate-screenshot'],
+    'xfce': ['xfce4-screenshooter'],
+}
+GENERIC = ['true']
+
 
 class Main:
     """
@@ -50,21 +59,15 @@ class Main:
         Start program
         """
         desktop = desktop_mod.Desktop.detect()
-        if desktop == 'gnome':
-            xsnap = command_mod.Command(
-                'gnome-screenshot',
-                flags=['--interactive'],
-                errors='stop'
-            )
-        elif desktop == 'kde':
-            xsnap = command_mod.Command('ksnapshot', errors='stop')
-        elif desktop == 'xfce':
-            xsnap = command_mod.Command('xfce4-screenshooter', errors='stop')
-        else:
-            xsnap = command_mod.Command('true', errors='stop')
-        xsnap.set_args(sys.argv[1:])
+        cmdline = PROGRAMS.get(desktop, GENERIC)
+        command = command_mod.Command(cmdline[0], errors='ignore')
 
-        subtask_mod.Exec(xsnap.get_cmdline()).run()
+        if not command.is_found():
+            cmdline = GENERIC
+            command = command_mod.Command(cmdline[0], errors='stop')
+
+        command.set_args(cmdline[1:] + sys.argv[1:])
+        subtask_mod.Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

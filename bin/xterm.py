@@ -76,19 +76,18 @@ class Options:
                 subtask_mod.Exec(xterm.get_cmdline()).run()
             args = args[1:]
 
+        terminals = {
+            'cinnamon': GnomeTerminal,
+            'gnome': GnomeTerminal,
+            'kde': Konsole,
+            'mate': MateTerminal,
+            'xfce': XfceTerminal,
+        }
         if invis_flag:
             desktop = 'invisible'
         else:
             desktop = desktop_mod.Desktop.detect()
-        mapping = {
-            'invisible': XtermInvisible,
-            'gnome': GnomeTerminal,
-            'kde': Konsole,
-            'macos': Iterm,
-            'xfce': XfceTerminal,
-            'Unknown': Xterm
-        }
-        self._terminal = mapping[desktop](self)
+        self._terminal = terminals.get(desktop, Xterm)(self)
 
         if len(args) == 1:
             self._hosts = [socket.gethostname().split('.')[0].lower()]
@@ -326,13 +325,26 @@ class Konsole(GnomeTerminal):
     def _config(self):
         self._command = command_mod.Command('konsole', errors='stop')
         self._command.set_args(
-            ['--geometry=' + self._options.get_columns() + 'x24'])
+            ['--geometry=' + self._options.get_columns() + 'x24']
+        )
 
     def get_run_flag(self):
         """
         Return flag to prefix command
         """
         return '-e'
+
+
+class MateTerminal(Konsole):
+    """
+    MateTerminal class
+    """
+
+    def _config(self):
+        self._command = command_mod.Command('mate-terminal', errors='stop')
+        self._command.set_args(
+            ['--geometry=' + self._options.get_columns() + 'x24']
+        )
 
 
 class XfceTerminal(GnomeTerminal):

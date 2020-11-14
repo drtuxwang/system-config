@@ -12,6 +12,16 @@ import command_mod
 import desktop_mod
 import subtask_mod
 
+DEFAULT = ['pavucontrol']
+PROGRAMS = {
+    'cinnamon': ['cinnamon-settings', 'sound'],
+    'gnome': ['gnome-control-center', 'sound'],
+    'kde': ['kmix'],
+    'mate': ['mate-volume-control'],
+    'xfce': ['xfce4-mixer'],
+}
+GENERIC = ['alsamixer']
+
 
 class Main:
     """
@@ -49,23 +59,21 @@ class Main:
         """
         Start program
         """
-        xmixer = command_mod.Command('pavucontrol', errors='ignore')
-        if not xmixer.is_found():
-            desktop = desktop_mod.Desktop.detect()
-            if desktop == 'gnome':
-                xmixer = command_mod.Command(
-                    'gnome-volume-control',
-                    errors='ignore'
-                )
-            elif desktop == 'kde':
-                xmixer = command_mod.Command('kmix', errors='ignore')
-            elif desktop == 'xfce':
-                xmixer = command_mod.Command('xfce4-mixer', errors='ignore')
-            if not xmixer.is_found():
-                xmixer = command_mod.Command('alsamixer', errors='stop')
-        xmixer.set_args(sys.argv[1:])
+        cmdline = DEFAULT
+        command = command_mod.Command(cmdline[0], errors='ignore')
 
-        subtask_mod.Exec(xmixer.get_cmdline()).run()
+        if not command.is_found():
+            desktop = desktop_mod.Desktop.detect()
+            cmdline = PROGRAMS.get(desktop, GENERIC)
+            command = command_mod.Command(cmdline[0], errors='ignore')
+
+            if not command.is_found():
+                cmdline = GENERIC
+                command = command_mod.Command(cmdline[0], errors='stop')
+                command.set_args(cmdline[1:] + sys.argv[1:])
+
+        command.set_args(cmdline[1:] + sys.argv[1:])
+        subtask_mod.Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

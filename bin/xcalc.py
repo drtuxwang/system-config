@@ -10,6 +10,14 @@ import command_mod
 import desktop_mod
 import subtask_mod
 
+PROGRAMS = {
+    'cinnamon': ['gnome-calculator'],
+    'gnome': ['gnome-calculator'],
+    'kde': ['kcalc'],
+    'mate': ['mate-calc'],
+}
+GENERIC = ['xcalc']
+
 
 class Main:
     """
@@ -39,18 +47,15 @@ class Main:
         Start program
         """
         desktop = desktop_mod.Desktop.detect()
-        if desktop == 'gnome':
-            xcalc = command_mod.Command('gcalctool', errors='ignore')
-            if not xcalc.is_found():
-                xcalc = command_mod.Command('xcalc', errors='stop')
-        elif desktop == 'kde':
-            xcalc = command_mod.Command('kcalc', errors='ignore')
-            if not xcalc.is_found():
-                xcalc = command_mod.Command('xcalc', errors='stop')
-        else:
-            xcalc = command_mod.Command('xcalc', errors='stop')
+        cmdline = PROGRAMS.get(desktop, GENERIC)
+        command = command_mod.Command(cmdline[0], errors='ignore')
 
-        subtask_mod.Exec(xcalc.get_cmdline()).run()
+        if not command.is_found():
+            cmdline = GENERIC
+            command = command_mod.Command(cmdline[0], errors='stop')
+
+        command.set_args(cmdline[1:] + sys.argv[1:])
+        subtask_mod.Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

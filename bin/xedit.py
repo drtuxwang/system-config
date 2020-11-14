@@ -12,6 +12,15 @@ import command_mod
 import desktop_mod
 import subtask_mod
 
+PROGRAMS = {
+    'cinnamon': ['gedit'],
+    'gnome': ['gedit'],
+    'kde': ['kate'],
+    'mate': ['pluma'],
+    'xfce': ['mousepad'],
+}
+GENERIC = ['vi']
+
 
 class Main:
     """
@@ -50,17 +59,15 @@ class Main:
         Start program
         """
         desktop = desktop_mod.Desktop.detect()
-        if desktop == 'gnome':
-            xedit = command_mod.Command('gedit', errors='stop')
-        elif desktop == 'kde':
-            xedit = command_mod.Command('kate', errors='stop')
-        elif desktop == 'xfce':
-            xedit = command_mod.Command('mousepad', errors='stop')
-        else:
-            xedit = command_mod.Command('vi', errors='stop')
-        xedit.set_args(sys.argv[1:])
+        cmdline = PROGRAMS.get(desktop, GENERIC)
+        command = command_mod.Command(cmdline[0], errors='ignore')
 
-        subtask_mod.Exec(xedit.get_cmdline()).run()
+        if not command.is_found():
+            cmdline = GENERIC
+            command = command_mod.Command(cmdline[0], errors='stop')
+
+        command.set_args(cmdline[1:] + sys.argv[1:])
+        subtask_mod.Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

@@ -12,6 +12,15 @@ import command_mod
 import desktop_mod
 import subtask_mod
 
+PROGRAMS = {
+    'cinnamon': ['nemo'],
+    'gnome': ['nautilus'],
+    'kde': ['dolphin'],
+    'mate': ['caja'],
+    'xfce': ['thunar'],
+}
+GENERIC = ['xterm']
+
 
 class Main:
     """
@@ -50,17 +59,15 @@ class Main:
         Start program
         """
         desktop = desktop_mod.Desktop.detect()
-        if desktop == 'gnome':
-            xdesktop = command_mod.Command('nautilus', errors='stop')
-        elif desktop == 'kde':
-            xdesktop = command_mod.Command('dolphin', errors='stop')
-        elif desktop == 'xfce':
-            xdesktop = command_mod.Command('thunar', errors='stop')
-        else:
-            xdesktop = command_mod.Command('xterm', errors='stop')
-        xdesktop.set_args(sys.argv[1:])
+        cmdline = PROGRAMS.get(desktop, GENERIC)
+        command = command_mod.Command(cmdline[0], errors='ignore')
 
-        subtask_mod.Exec(xdesktop.get_cmdline()).run()
+        if not command.is_found():
+            cmdline = GENERIC
+            command = command_mod.Command(cmdline[0], errors='stop')
+
+        command.set_args(cmdline[1:] + sys.argv[1:])
+        subtask_mod.Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':
