@@ -14,6 +14,6 @@ cp -p /boot/grub/grub.cfg-ok /boot/grub/grub.cfg > /dev/null 2>&1
 # Fix VPN client incorrect termination
 [[ -f /run/resolvconf/resolv.conf ]] && ln -sf /run/resolvconf/resolv.conf /etc/resolv.conf
 
-[[ -f /etc/rc.local-opt ] && . /etc/rc.local-opt > /dev/null 2>&1 &
+[[ -f /etc/rc.local-opt ]] && . /etc/rc.local-opt > /dev/null 2>&1 &
 
 exit 0
