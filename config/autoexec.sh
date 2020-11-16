@@ -13,10 +13,7 @@ ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* 2> /dev/
     grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
 
 # Fix logging
-if [ "$ARG" != "-start" ]
-then
-    exec $0 -start > $TMP/.cache/autoexec.log 2>&1
-fi
+[[ "$ARG" != "-start" ]] && exec $0 -start > $TMP/.cache/autoexec.log 2>&1
 
 # Secure cache/logs
 [[ ! -h $HOME/.cache ]] && rm -rf $HOME/.cache && ln -s $TMP/.cache $HOME/.cache
@@ -72,19 +69,9 @@ sleep 2 && xmodmap -e "add mod3 = Scroll_Lock" &
 sleep 4 && xset dpms 0 0 0 &
 
 rm -rf $HOME/.thumbnails $HOME/.gnome2/evince/ev-metadata.xml
-if [ "$GNOME_DESKTOP_SESSION_ID" -o "`echo \"$DESKTOP_SESSION\" | grep gnome`" ]
-then
-    gnome-sound-applet &
-fi
 
 export SSH_AUTH_SOCK=$(ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
-if [ ! "$SSH_AUTH_SOCK" ]
-then
-    eval $(ssh-agent)
-fi
+[[ ! "$SSH_AUTH_SOCK" ]] && eval $(ssh-agent)
 menu
 
-if [ -f $HOME/.config/autoexec-opt.sh ]
-then
-    . $HOME/.config/autoexec-opt.sh
-fi
+[[ -f $HOME/.config/autoexec-opt.sh ]] && . $HOME/.config/autoexec-opt.sh
