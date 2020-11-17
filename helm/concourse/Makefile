@@ -26,9 +26,9 @@ ifeq ($(shell helm version | grep -c v2), 1)
 	HELM_VERSION=helm search -l $(CHART_REPO)/$(CHART_NAME)
 else
 	HELM_RELEASE=$(NAME)
-	HELM_LIST=helm list -n $(NAMESPACE) --all | grep $(HELM_RELEASE)
-	HELM_STATUS=helm status -n $(NAMESPACE) $(HELM_RELEASE)
-	HELM_UNINSTALL=helm uninstall -n $(NAMESPACE) $(HELM_RELEASE)
+	HELM_LIST=helm --namespace=$(NAMESPACE) list --all | grep $(HELM_RELEASE)
+	HELM_STATUS=helm --namespace=$(NAMESPACE) status $(HELM_RELEASE)
+	HELM_UNINSTALL=helm --namespace=$(NAMESPACE) uninstall $(HELM_RELEASE)
 	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 

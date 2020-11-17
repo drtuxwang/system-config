@@ -16,9 +16,9 @@ ifeq ($(shell helm version | grep -c v2), 1)
 	HELM_VERSION=helm search -l $(CHART_REPO)/$(CHART_NAME)
 else
 	HELM_RELEASE=$(NAME)
-	HELM_LIST=helm list -n $(NAMESPACE) --all | grep $(HELM_RELEASE)
-	HELM_STATUS=helm status -n $(NAMESPACE) $(HELM_RELEASE)
-	HELM_UNINSTALL=helm uninstall -n $(NAMESPACE) $(HELM_RELEASE)
+	HELM_LIST=helm --namespace=$(NAMESPACE) list --all | grep $(HELM_RELEASE)
+	HELM_STATUS=helm --namespace=$(NAMESPACE) status $(HELM_RELEASE)
+	HELM_UNINSTALL=helm --namespace=$(NAMESPACE) uninstall $(HELM_RELEASE)
 	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
@@ -93,8 +93,8 @@ status:
 .PHONY: connect
 connect:
 	@echo "\n*** Connecting to Etcd database ***"
-	kubectl exec -n $(NAMESPACE) etcd-0 -- etcdctl -w table member list
-	kubectl exec -n $(NAMESPACE) -it etcd-0 -- sh
+	kubectl --namespace=$(NAMESPACE) exec etcd-0 -- etcdctl -w table member list
+	kubectl --namespace=$(NAMESPACE) exec -it etcd-0 -- sh
 
 .PHONY: version
 version:

@@ -22,7 +22,7 @@ BUILD_DIRS := \
 
 ifeq ($(shell helm version | grep -c v3), 1)
 	HELM_INIT=
-	HELM_LIST=helm list --all-namespaces --all
+	HELM_LIST=helm --all-namespaces=true list --all
 else
 	HELM_INIT=helm init --client-only
 	HELM_LIST=helm list --all
@@ -77,7 +77,7 @@ version:
 
 .PHONY: install-tiller
 install-tiller:
-	kubectl create -n kube-system serviceaccount tiller
+	kubectl --namespace=kube-system create serviceaccount tiller
 	kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
 	helm init --service-account tiller
 
@@ -87,9 +87,9 @@ upgrade-tiller:
 
 .PHONY: uninstall-tiller
 uninstall-tiller:
-	kubectl delete -n kube-system serviceaccounts tiller ||:
-	kubectl delete -n kube-system clusterrolebinding tiller ||:
-	kubectl delete -n kube-system deploy tiller-deploy ||:
+	kubectl --namespace=kube-system delete serviceaccounts tiller ||:
+	kubectl --namespace=kube-system delete clusterrolebinding tiller ||:
+	kubectl --namespace=kube-system delete deploy tiller-deploy ||:
 
 .PHONY: clean
 clean:
