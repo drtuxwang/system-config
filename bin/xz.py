@@ -69,8 +69,10 @@ class Main:
                 '--lzma2=dict=128MiB',
                 '--threads=1'
             ])
-            if file_mod.FileStat(sys.argv[1]).get_size() > VERBOSE_SIZE:
-                command.append_arg('--verbose')
+            for file in sys.argv[1:]:
+                if file_mod.FileStat(file).get_size() > VERBOSE_SIZE:
+                    command.append_arg('--verbose')
+                    break
         command.extend_args(sys.argv[1:])
         self._set_libraries(command)
 
