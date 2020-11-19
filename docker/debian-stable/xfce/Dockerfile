@@ -50,6 +50,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
 		tigervnc-common && \
 	apt-get clean
 
+# Install WINE packages
+RUN dpkg --add-architecture i386 && \
+	apt-get update && \
+	sed -i "s/^deb http/deb [arch=amd64,i386] http/" /etc/apt/sources.list && \
+	apt-get install --no-install-recommends -y wine wine64 wine32:i386 libc6-dev:i386 && \
+	apt-get clean
+
 # Install Python packages
 COPY tmpdir/etc/install-python-requirements.sh tmpdir/etc/python-requirements.txt /etc/
 RUN /etc/install-python-requirements.sh /usr/bin/python3 && \
