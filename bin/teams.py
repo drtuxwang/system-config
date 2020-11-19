@@ -43,6 +43,20 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
+        file = os.path.join(
+            os.environ['HOME'],
+            '.config',
+            'autostart',
+            'teams.desktop',
+        )
+        if not os.path.isdir(file):
+            try:
+                if os.path.isfile(file):
+                    os.remove(file)
+                os.makedirs(file)
+            except OSError:
+                pass
+
     @staticmethod
     def run():
         """
