@@ -161,16 +161,16 @@ class Main:
 
     def _bootimg(self, options):
         files = (
-            glob.glob(os.path.join(options.get_directory(), '*.img')) +
-            glob.glob(os.path.join(options.get_directory(), '*.bin')) +
             glob.glob(os.path.join(
                 options.get_directory(),
                 'isolinux',
                 '*.bin'
-            ))
+            )) +
+            glob.glob(os.path.join(options.get_directory(), '*.bin')) +
+            glob.glob(os.path.join(options.get_directory(), '*.img'))
         )
         if files:
-            bootimg = file_mod.FileUtil.newest(files)
+            bootimg = files[0]
             print('Adding Eltorito boot image "' + bootimg + '"...')
             if 'isolinux' in bootimg:
                 self._genisoimage.extend_args([
