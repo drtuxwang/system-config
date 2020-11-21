@@ -1,10 +1,10 @@
 #!/bin/bash
 
 connect() {
-    for _ in seq 10
+    for _ in {1..10}
     do
-        PID=$(ps -o "pid args" -u $(id -u) | grep "kubectl.*port-forward service/$NAME" | grep -v grep | head -1 | awk '{print $1}')
-        ADDRESS=$(ss -lpnt | grep pid=$PID, | head -1 | awk '{print $4}')
+        PID=$(ps -o "pid args" -u $(id -u) | grep "kubectl.*port-forward service/$NAME" | grep -v grep | awk 'NR==1 {print $1}')
+        ADDRESS=$(ss -lpnt | grep pid=$PID, | awk 'NR==1 {print $4}')
         if [ "$ADDRESS" ]
         then
             echo "firefox http://$ADDRESS"

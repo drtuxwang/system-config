@@ -1,14 +1,14 @@
 #!/bin/bash
 
 connect() {
-    for _ in seq 10
+    for _ in {1..10}
     do
-        PID=$(ps -o "pid args" -u $(id -u) | grep "kubectl.*port-forward service/$NAME" | grep -v grep | head -1 | awk '{print $1}')
-        LOCALPORT=$(ss -lpnt | grep pid=$PID, | head -1 | awk '{print $4}' | sed -e "s/.*://")
-        if [ "$ADDRESS" ]
+        PID=$(ps -o "pid args" -u $(id -u) | grep "kubectl.*port-forward service/$NAME" | grep -v grep | awk 'NR==1 {print $1}')
+        LOCALPORT=$(ss -lpnt | grep pid=$PID, | awk 'NR==1 {print $4}' | sed -e "s/.*://")
+        if [ "$LOCALPORT" ]
         then
-        echo "svncviewer -p $LOCALPORT owner@localhost:5901"
-        svncviewer -p $LOCALPORT owner@localhost:5901
+            echo "svncviewer -p $LOCALPORT owner@localhost:5901"
+            svncviewer -p $LOCALPORT owner@localhost:5901
             return
         fi
         sleep 1
