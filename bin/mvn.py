@@ -45,6 +45,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
+        # Send ".m2" to tmpfs
         tmpdir = os.path.join('/tmp', getpass.getuser(), '.cache', 'm2')
         try:
             os.makedirs(tmpdir)
@@ -56,7 +57,7 @@ class Main:
             try:
                 shutil.rmtree(directory)
             except OSError:
-                return
+                pass
             try:
                 os.symlink(tmpdir, directory)
             except OSError:
