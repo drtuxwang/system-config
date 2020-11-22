@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+import time
 
 import command_mod
 import subtask_mod
@@ -41,8 +42,17 @@ class Options:
         self._args = parser.parse_args(args)
 
     @staticmethod
-    def _parse_instagram(output):
-        urls = ' '.join(output).split('display_url":"')[1:]
+    def _parse_instagram(task):
+
+        while True:
+            task.run()
+            text = ' '.join(task.get_output())
+            if "Login • Instagram" not in text:
+                break
+            print(sys.argv[0] + ': Login issue retry in 60s')
+            time.sleep(60)
+
+        urls = text.split('display_url":"')[1:]
         return {url.split('"')[0].replace('\\u0026', '&') for url in urls}
 
     @classmethod
@@ -53,10 +63,9 @@ class Options:
             errors='stop'
         )
         task = subtask_mod.Batch(wget.get_cmdline())
-        task.run()
 
         if 'www.instagram.com/p/' in url:
-            urls = cls._parse_instagram(task.get_output())
+            urls = cls._parse_instagram(task)
         else:
             raise SystemExit(sys.argv[0] + ': Cannot handle website: ' + url)
 
