@@ -1,7 +1,7 @@
 NAME := jenkins
 CHART_REPO := bitnami
 CHART_NAME := jenkins
-CHART_VERSION := 5.0.27
+CHART_VERSION := 5.0.28
 
 # Default namespace
 ifndef NAMESPACE

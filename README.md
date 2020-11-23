@@ -1040,7 +1040,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 3.4.5 (app-7.2.2)
  * helm/grafana/connect.sh
  * helm/grafana/values.yaml
- * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 5.0.27 (app-2.249.2)
+ * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 5.0.28 (app-2.249.3)
  * helm/jenkins/connect.sh
  * helm/jenkins/values.yaml
  * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 11.7.2 (app-2.5.0)
