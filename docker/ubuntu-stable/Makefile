@@ -7,6 +7,9 @@ ifndef DOCKER_BUILD_FLAGS
 endif
 BUILD_DIRS := bash dev
 
+IMAGE_FILE=../base-image_$(shell echo  $(BASE_IMAGE) | sed -e "s/\//-/g;s/:/_/").tar
+IMAGE_TIME=$(shell docker inspect $(BASE_IMAGE) | grep '"Created":' | cut -f4 -d'"')
+
 
 .PHONY: default
 default: build status
@@ -48,9 +51,7 @@ push:
 
 .PHONY: save
 save:
-	docker save $(BASE_IMAGE) -o ../$(shell echo "$(BASE_IMAGE)" | sed -e "s#/#-#g").tar
-	@touch -d $(shell docker inspect alpine:3.10 | grep '"Created":' | cut -f4 -d'"') \
-		../$(shell echo "$(BASE_IMAGE)" | sed -e "s#/#-#g").tar
+	docker save $(BASE_IMAGE) -o $(IMAGE_FILE) && touch -d $(IMAGE_TIME) $(IMAGE_FILE)
 
 .PHONY: rmi
 rmi:
