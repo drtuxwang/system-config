@@ -1,5 +1,6 @@
 NAME := nexus
 CHART_REPO := oteemo
+CHART_URL := https://oteemo.github.io/charts
 CHART_NAME := sonatype-nexus
 CHART_VERSION := 3.4.0
 
@@ -29,7 +30,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo list | grep -q oteemo || helm repo add $(CHART_REPO) https://oteemo.github.io/charts
+	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
 .PHONY: fetch
 fetch: repo-add

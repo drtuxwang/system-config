@@ -1,5 +1,6 @@
 NAME := chartmuseum
 CHART_REPO := stable
+CHART_URL := https://charts.helm.sh/stable
 CHART_NAME := chartmuseum
 CHART_VERSION := 2.13.3
 INGRESS_HOST := chartmusuem.local
@@ -31,7 +32,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo list | grep -q stable || helm repo add stable https://charts.helm.sh/stable
+	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
 .PHONY: fetch
 fetch: repo-add

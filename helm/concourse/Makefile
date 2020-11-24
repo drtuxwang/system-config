@@ -1,5 +1,6 @@
 NAME := concourse
 CHART_REPO := concourse
+CHART_URL := https://concourse-charts.storage.googleapis.com
 CHART_NAME := concourse
 CHART_VERSION := 13.0.0
 
@@ -39,7 +40,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo list | grep -q concourse || helm repo add $(CHART_REPO) https://concourse-charts.storage.googleapis.com
+	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
 .PHONY: fetch
 fetch: repo-add

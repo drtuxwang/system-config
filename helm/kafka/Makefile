@@ -1,5 +1,6 @@
 NAME := kafka
 CHART_REPO := bitnami
+CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := kafka
 CHART_VERSION := 11.7.2
 
@@ -37,7 +38,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo list | grep -q bitnami || helm repo add $(CHART_REPO) https://charts.bitnami.com/bitnami
+	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
 .PHONY: fetch
 fetch: repo-add

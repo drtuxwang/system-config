@@ -1,5 +1,6 @@
 NAME := ingress
 CHART_REPO := ingress-nginx
+CHART_URL := https://kubernetes.github.io/ingress-nginx
 CHART_NAME := ingress-nginx
 CHART_VERSION :=  2.12.1
 
@@ -34,7 +35,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo list | grep -q ingress-nginx || helm repo add $(CHART_REPO) https://kubernetes.github.io/ingress-nginx
+	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
 .PHONY: fetch
 fetch: repo-add

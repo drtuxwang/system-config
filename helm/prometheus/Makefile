@@ -1,5 +1,6 @@
 NAME := prometheus
 CHART_REPO := prometheus-community
+CHART_URL := https://prometheus-community.github.io/helm-charts
 CHART_NAME := prometheus
 CHART_VERSION := 11.14.1
 
@@ -39,7 +40,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo list | grep -q prometheus-community || helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
 .PHONY: fetch
 fetch: repo-add

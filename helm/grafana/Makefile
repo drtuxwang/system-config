@@ -1,5 +1,6 @@
 NAME := grafana
 CHART_REPO := bitnami
+CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := grafana
 CHART_VERSION := 3.4.5
 
@@ -37,7 +38,7 @@ default: status
 
 .PHONY: repo-add
 repo-add:
-	helm repo list | grep -q bitnami || helm repo add $(CHART_REPO) https://charts.bitnami.com/bitnami
+	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
 .PHONY: fetch
 fetch: repo-add
