@@ -1,5 +1,5 @@
 NAME := xfce-server
-CHART_REPO := drtuxwang
+CHART_REPO := ./drtuxwang
 CHART_NAME := xfce-server
 
 # Default namespace

@@ -1,5 +1,5 @@
 NAME := test-server
-CHART_REPO := drtuxwang
+CHART_REPO := ./drtuxwang
 CHART_NAME := test-server
 DOMAIN := example.com
 

@@ -1,5 +1,5 @@
 NAME := oracle-xe
-CHART_REPO := .
+CHART_REPO := ./drtuxwang
 CHART_NAME := oracle-xe
 CHART_VERSION=$(shell awk '/version:/{print $$2}' oracle-xe/Chart.yaml)
 
