@@ -30,7 +30,8 @@ else
 	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
-IMAGES_FILE=../helm-images_$(CHART_NAME)-$(CHART_VERSION)_app-$(shell awk '/appVersion:/{print $$2}' oracle-xe/Chart.yaml).tar
+VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
+IMAGES_FILE=$(CHART_REPO)-$(CHART_NAME)-$(CHART_VERSION)_app-$(VERSION)_chart-images.tar
 
 default: status
 
@@ -47,7 +48,7 @@ pull:
 
 .PHONY: save
 save:
-	../helm-save.sh $(IMAGES_FILE) $(shell make --no-print-directory images)
+	../helm-save.sh ../$(IMAGES_FILE) $(shell make --no-print-directory images)
 
 .PHONY: template
 template:

@@ -1,5 +1,5 @@
 NAME := ops-server
-CHART_REPO := .
+CHART_REPO := drtuxwang
 CHART_NAME := ops-server
 
 # Default namespace

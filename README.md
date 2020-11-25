@@ -1054,9 +1054,9 @@ the years. Now most of the scripts are written in Python 3.
  * helm/nexus/values.yaml
  * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 5.1.12 (app-1.16.1)
  * helm/nginx/values.yaml
- * helm/ops-server/Makefile              Helm Chart: Operations Box (drtuxwang/debian:stable)
- * helm/ops-server/ops-server/Chart.yaml
- * helm/ops-server/ops-server/templates/_helpers.tpl
+ * helm/ops-server/Makefile              Helm Chart: drtuxwang/ops-server (drtuxwang/debian:stable)
+ * helm/ops-server/drtuxwang/ops-server/Chart.yaml
+ * helm/ops-server/drtuxwang/ops-server/templates/_helpers.tpl
  * helm/ops-server/ops-server/templates/box-deployment.yaml
  * helm/ops-server/values.yaml
  * helm/oracle-xe/Makefile               Helm Chart: Oracle XE test (datagrip/oracle:11.2)
@@ -1074,25 +1074,25 @@ the years. Now most of the scripts are written in Python 3.
  * helm/rabbitmq/Makefile                Helm Chart: bitnami/rabbitmq 6.8.3 (app-3.7.19)
  * helm/rabbitmq/connect.sh
  * helm/rabbitmq/values.yaml
- * helm/test-server/Makefile             Helm Chart: test chart for testing server
+ * helm/test-server/Makefile             Helm Chart: drtuxwang/test-server (drtuxwang/debian-bash:stable)
  * helm/test-server/connect.sh
- * helm/test-server/test-server/Chart.yaml
- * helm/test-server/test-server/requirements.lock
- * helm/test-server/test-server/requirements.yaml
- * helm/test-server/test-server/templates/_helpers.tpl
- * helm/test-server/test-server/templates/box-headless-service.yaml
- * helm/test-server/test-server/templates/box-ingress.yaml
- * helm/test-server/test-server/templates/box-secret-tls.yaml
- * helm/test-server/test-server/templates/box-service.yaml
- * helm/test-server/test-server/templates/box-statefulset.yaml
+ * helm/test-server/drtuxwang/test-server/Chart.yaml
+ * helm/test-server/drtuxwang/test-server/requirements.lock
+ * helm/test-server/drtuxwang/test-server/requirements.yaml
+ * helm/test-server/drtuxwang/test-server/templates/_helpers.tpl
+ * helm/test-server/drtuxwang/test-server/templates/box-headless-service.yaml
+ * helm/test-server/drtuxwang/test-server/templates/box-ingress.yaml
+ * helm/test-server/drtuxwang/test-server/templates/box-secret-tls.yaml
+ * helm/test-server/drtuxwang/test-server/templates/box-service.yaml
+ * helm/test-server/drtuxwang/test-server/templates/box-statefulset.yaml
  * helm/test-server/values.yaml
- * helm/xfce-server/Makefile            Helm Chart: xfce server chart (drtuxwang/debian-xfce:stable)
+ * helm/xfce-server/Makefile            Helm Chart: drtuxwang/xfce-server (drtuxwang/debian-xfce:stable)
  * helm/xfce-server/connect.sh
  * helm/xfce-server/values.yaml
- * helm/xfce-server/xfce-server/Chart.yaml
- * helm/xfce-server/xfce-server/requirements.lock
- * helm/xfce-server/xfce-server/requirements.yaml
- * helm/xfce-server/xfce-server/templates/_helpers.tpl
+ * helm/xfce-server/drtuxwang/xfce-server/Chart.yaml
+ * helm/xfce-server/drtuxwang/xfce-server/requirements.lock
+ * helm/xfce-server/drtuxwang/xfce-server/requirements.yaml
+ * helm/xfce-server/drtuxwang/xfce-server/templates/_helpers.tpl
  * helm/xfce-server/xfce-server/templates/box-headless-service.yaml
  * helm/xfce-server/xfce-server/templates/box-service.yaml
  * helm/xfce-server/xfce-server/templates/box-statefulset.yaml
