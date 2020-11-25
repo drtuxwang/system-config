@@ -3,6 +3,7 @@ CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := rabbitmq
 CHART_VERSION := 6.8.3
+APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace
 ifndef NAMESPACE
@@ -33,8 +34,7 @@ else
 	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
-VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
-IMAGES_FILE=$(CHART_REPO)-$(CHART_NAME)-$(CHART_VERSION)_app-$(VERSION)_chart-images.tar
+IMAGES_FILE=../$(CHART_REPO)-$(CHART_NAME)-$(CHART_VERSION)_app-$(APP_VERSION)_images.tar
 
 default: status
 
@@ -61,7 +61,7 @@ pull:
 
 .PHONY: save
 save:
-	../helm-save.sh ../$(IMAGES_FILE) $(shell make --no-print-directory images)
+	../helm-save.sh $(IMAGES_FILE) $(shell make --no-print-directory images)
 
 .PHONY: template
 template: repo-add

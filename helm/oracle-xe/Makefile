@@ -1,7 +1,8 @@
 NAME := oracle-xe
 CHART_REPO := ./drtuxwang
 CHART_NAME := oracle-xe
-CHART_VERSION=$(shell awk '/version:/{print $$2}' oracle-xe/Chart.yaml)
+CHART_VERSION=$(shell awk '/version:/{print $$2}' drtuxwang/oracle-xe/Chart.yaml)
+APP_VERSION=$(shell awk '/appVersion:/{print $$2}' drtuxwang/oracle-xe/Chart.yaml)
 
 # Default namespace
 ifndef NAMESPACE
@@ -30,8 +31,7 @@ else
 	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
-VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
-IMAGES_FILE=$(CHART_REPO)-$(CHART_NAME)-$(CHART_VERSION)_app-$(VERSION)_chart-images.tar
+IMAGES_FILE=../$(CHART_REPO)-$(CHART_NAME)-$(CHART_VERSION)_app-$(APP_VERSION)_images.tar
 
 default: status
 
@@ -48,7 +48,7 @@ pull:
 
 .PHONY: save
 save:
-	../helm-save.sh ../$(IMAGES_FILE) $(shell make --no-print-directory images)
+	../helm-save.sh $(IMAGES_FILE) $(shell make --no-print-directory images)
 
 .PHONY: template
 template:
