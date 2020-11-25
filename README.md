@@ -1071,7 +1071,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/prometheus/values.yaml
  * helm/pushgateway/Makefile             Helm Chart: prometheus-community/prometheus-pushgateway 1.4.2 (app-1.2.0)
  * helm/pushgateway/values.yaml
- * helm/rabbitmq/Makefile                Helm Chart: stable/rabbitmq 6.8.3 (app-3.7.19)
+ * helm/rabbitmq/Makefile                Helm Chart: bitnami/rabbitmq 6.8.3 (app-3.7.19)
  * helm/rabbitmq/connect.sh
  * helm/rabbitmq/values.yaml
  * helm/test-server/Makefile             Helm Chart: test chart for testing server

@@ -1,6 +1,6 @@
 NAME := rabbitmq
-CHART_REPO := stable
-CHART_URL := https://charts.helm.sh/stable
+CHART_REPO := bitnami
+CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := rabbitmq
 CHART_VERSION := 6.8.3
 
