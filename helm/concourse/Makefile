@@ -44,10 +44,10 @@ repo-add:
 	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
 .PHONY: fetch
-fetch: repo-add
-	helm fetch --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
-	rm -rf $(CHART_NAME)
-	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
+fetch: repo-add clean
+	mkdir $(CHART_REPO) && \
+		cd $(CHART_REPO) && \
+		helm fetch --untar --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: images
 images:
@@ -65,7 +65,7 @@ save:
 
 .PHONY: template
 template: repo-add fetch
-	cp -p  web-ingress.yaml  concourse/templates/
+	cp -p web-ingress.yaml $(CHART_REPO)/$(CHART_NAME)/templates/
 	helm template \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
@@ -74,12 +74,12 @@ template: repo-add fetch
 		--set service.type=ClusterIP \
 		--set web.ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
-		./$(CHART_NAME)
+		./$(CHART_REPO)/$(CHART_NAME)
 ##		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
 check: repo-add fetch
-	cp -p  web-ingress.yaml  concourse/templates/
+	cp -p web-ingress.yaml $(CHART_REPO)/$(CHART_NAME)/templates/
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -91,12 +91,12 @@ check: repo-add fetch
 		--set service.type=ClusterIP \
 		--set web.ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
-		$(HELM_RELEASE) ./$(CHART_NAME)
+		$(HELM_RELEASE) ./$(CHART_REPO)/$(CHART_NAME)
 ##		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
 install: repo-add fetch
-	cp -p  web-ingress.yaml  concourse/templates/
+	cp -p web-ingress.yaml $(CHART_REPO)/$(CHART_NAME)/templates/
 	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
 	helm upgrade \
 		--install \
@@ -108,7 +108,7 @@ install: repo-add fetch
 		--set service.type=ClusterIP \
 		--set web.ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
-		$(HELM_RELEASE) ./$(CHART_NAME)
+		$(HELM_RELEASE) ./$(CHART_REPO)/$(CHART_NAME)
 ##		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward
@@ -138,8 +138,8 @@ uninstall:
 	$(HELM_LIST)
 	$(HELM_UNINSTALL) ||:
 	sleep 2
-	kubectl delete namespace $(HELM_RELEASE)-$(NAME)-main ||:
+	kubectl delete namespace $(NAME)-main ||:
 
 .PHONY: clean
 clean:
-	rm -rf $(CHART_NAME)-*.tgz $(CHART_NAME)
+	rm -rf $(CHART_REPO)

@@ -37,10 +37,10 @@ repo-add:
 	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
 .PHONY: fetch
-fetch: repo-add
-	helm fetch --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
-	rm -rf $(CHART_NAME)
-	tar xf $(CHART_NAME)-$(CHART_VERSION).tgz
+fetch: repo-add clean
+	mkdir $(CHART_REPO) && \
+		cd $(CHART_REPO) && \
+		helm fetch --untar --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: images
 images:
@@ -123,4 +123,4 @@ uninstall:
 
 .PHONY: clean
 clean:
-	rm -rf $(CHART_NAME)-*.tgz $(CHART_NAME)
+	rm -rf $(CHART_REPO)
