@@ -2,7 +2,7 @@ NAME := concourse
 CHART_REPO := concourse
 CHART_URL := https://concourse-charts.storage.googleapis.com
 CHART_NAME := concourse
-CHART_VERSION := 13.0.0
+CHART_VERSION := 14.3.1
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace
@@ -64,8 +64,7 @@ save:
 	../helm-save.sh $(IMAGES_FILE) $(shell make --no-print-directory images)
 
 .PHONY: template
-template: repo-add fetch
-	cp -p web-ingress.yaml $(CHART_REPO)/$(CHART_NAME)/templates/
+template: repo-add
 	helm template \
 		--namespace=$(NAMESPACE) \
 		--values values.yaml \
@@ -74,12 +73,10 @@ template: repo-add fetch
 		--set service.type=ClusterIP \
 		--set web.ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
-		./$(CHART_REPO)/$(CHART_NAME)
-##		$(CHART_REPO)/$(CHART_NAME)
+		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
-check: repo-add fetch
-	cp -p web-ingress.yaml $(CHART_REPO)/$(CHART_NAME)/templates/
+check: repo-add
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -91,12 +88,10 @@ check: repo-add fetch
 		--set service.type=ClusterIP \
 		--set web.ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
-		$(HELM_RELEASE) ./$(CHART_REPO)/$(CHART_NAME)
-##		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
+		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
-install: repo-add fetch
-	cp -p web-ingress.yaml $(CHART_REPO)/$(CHART_NAME)/templates/
+install: repo-add
 	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
 	helm upgrade \
 		--install \
@@ -108,8 +103,7 @@ install: repo-add fetch
 		--set service.type=ClusterIP \
 		--set web.ingress.enabled=$(INGRESS_ENABLED) \
 		--version $(CHART_VERSION) \
-		$(HELM_RELEASE) ./$(CHART_REPO)/$(CHART_NAME)
-##		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
+		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward
 forward:
