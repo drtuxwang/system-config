@@ -514,6 +514,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/open.py
  * bin/otool              otool wrapper (allowing non systems port)
  * bin/otool.py
+ * bin/padman             World Of Padman (allowing non systems port)
+ * bin/padman.py
  * bin/par2               par2 wrapper (allowing non systems port)
  * bin/par2.bat
  * bin/par2.py
@@ -735,6 +737,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/unxz.py
  * bin/unzip              unzip wrapper (allowing non systems port)
  * bin/unzip.py
+ * bin/ut                 Urban Terror (allowing non systems port))
+ * bin/ut.py
  * bin/vbox               VirtualBox virtual machine manager
  * bin/vbox.py            (uses VBoxManage)
  * bin/vget               Streaming video downloader (Youtube, m3u8 and compatible websites)
