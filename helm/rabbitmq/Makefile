@@ -34,7 +34,7 @@ else
 	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
-IMAGES_FILE=../$(CHART_REPO)-$(CHART_NAME)-$(CHART_VERSION)_app-$(APP_VERSION)_images.tar
+IMAGES_FILE=../$(CHART_REPO)-$(CHART_NAME)-$(CHART_VERSION)_app-$(APP_VERSION).tar
 
 default: status
 
