@@ -7,9 +7,6 @@ ifndef DOCKER_BUILD_FLAGS
 endif
 BUILD_DIRS := bash dev
 
-IMAGE_FILE=../$(shell echo  $(BASE_IMAGE) | sed -e "s/\//-/g;s/:/_/")_image.tar
-IMAGE_TIME=$(shell docker inspect $(BASE_IMAGE) | grep '"Created":' | cut -f4 -d'"')
-
 
 .PHONY: default
 default: build status
@@ -21,6 +18,10 @@ status:
 .PHONY: pull
 pull:
 	docker pull $(BASE_IMAGE)
+
+.PHONY: save
+save:
+	../docker-save.sh $(BASE_IMAGE)
 
 .PHONY: build
 build:
@@ -48,10 +49,6 @@ push:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR push || exit 1; \
 	done
-
-.PHONY: save
-save:
-	docker save $(BASE_IMAGE) -o $(IMAGE_FILE) && touch -d $(IMAGE_TIME) $(IMAGE_FILE)
 
 .PHONY: rmi
 rmi:

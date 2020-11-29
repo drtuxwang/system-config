@@ -31,9 +31,6 @@ ifndef DOCKER_RUN_COMMAND
 	DOCKER_RUN_COMMAND=
 endif
 
-IMAGE_FILE=../$(shell echo  $(BASE_IMAGE) | sed -e "s/\//-/g;s/:/_/")_image.tar
-IMAGE_TIME=$(shell docker inspect $(BASE_IMAGE) | grep '"Created":' | cut -f4 -d'"')
-
 
 .PHONY: default
 default: build status
@@ -49,7 +46,7 @@ pull:
 
 .PHONY: save
 save:
-	docker save $(BASE_IMAGE) -o $(IMAGE_FILE) && touch -d $(IMAGE_TIME) $(IMAGE_FILE)
+	../docker-save.sh $(BASE_IMAGE)
 
 .PHONY: build
 build:
