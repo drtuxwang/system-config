@@ -234,6 +234,16 @@ class Xterm(Terminal):
         except OSError:
             return
 
+    @staticmethod
+    def _check_server(host):
+        try:
+            socket.gethostbyname(host)
+        except socket.gaierror as exception:
+            raise SystemExit("{0:s}: Could not resolve: {1:s}".format(
+                sys.argv[0],
+                host,
+            )) from exception
+
     def run(self):
         """
         Start terminal
@@ -242,6 +252,7 @@ class Xterm(Terminal):
         for host in self._options.get_hosts():
             cmdline = self._command.get_cmdline() + self.get_label_flags(host)
             if host != self._myhost:
+                self._check_server(host)
                 cmdline.append(self.get_run_flag())
                 if not ssh:
                     ssh = command_mod.Command('ssh', errors='stop')
