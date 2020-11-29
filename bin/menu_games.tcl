@@ -89,10 +89,20 @@ frame .large -bg "#cccccc"
     }
     pack .large.et_etc2 -side top
 
+    button .large.padman -width 10 -bg "#ffff00" -text "Padman" -command {
+        exec padman &
+    }
+    pack .large.padman -side top
+
     button .large.tuxracer -width 10 -bg "#ffff00" -text "Tux Racer" -command {
         exec etr &
     }
     pack .large.tuxracer -side top
+
+    button .large.urban_terror -width 10 -bg "#ffff00" -text "Urban Terror" -command {
+        exec ut &
+    }
+    pack .large.urban_terror -side top
 
     button .large.wesnoth -width 10 -bg "#ffff00" -text "Wesnoth" -command {
         exec wesnoth &
