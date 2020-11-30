@@ -21,6 +21,6 @@ sleep 20
 ##swapon -p 100 /dev/zram0
 
 # Setup tmpfs for Docker tmp files
-##mount -t tmpfs -o noatime,nosuid,nodev,size=1G tmpfs /var/lib/docker/tmp
+##mount -t tmpfs -o noatime,nosuid,nodev tmpfs /var/lib/docker/tmp
 
 exit 0
