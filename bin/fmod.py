@@ -168,7 +168,9 @@ class Main:
 
     @staticmethod
     def _chmod(file, mod):
-        if oct(mod)[-3:] != oct(file_mod.FileStat(file).get_mode())[-3:]:
+        fmod = file_mod.FileStat(file).get_mode() % 512
+        if fmod != mod:
+            print("{0:o}>{1:o}: {2:s}".format(fmod, mod, file))
             os.chmod(file, mod)
 
     def _setmod_directory(self, directory):
