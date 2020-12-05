@@ -43,7 +43,7 @@ menu_main:
     name: system
     color: "#00ff00"
     label: System
-    run: menu system &
+    run: exec menu system &
 - button:
     name: utility
     color: "#00ff00"
@@ -405,7 +405,7 @@ menu_system:
     name: settimezone
     color: "#ffcc00"
     label: Set Time Zone
-    run: xsudo sh -c "dpkg-reconfigure tzdata; ntpdate pool.ntp.org" &
+    run: exec xsudo sh -c "dpkg-reconfigure tzdata; ntpdate pool.ntp.org" &
 - button:
     name: keymap
     color: "#ffcc00"
