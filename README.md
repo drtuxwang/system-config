@@ -457,15 +457,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/meld.py
  * bin/menu               TCL/TK menu system
  * bin/menu.py            (this can be used independent of GNOME/KDE/XFCE menu system)
- * bin/menu_document.tcl
- * bin/menu_games.tcl
- * bin/menu_graphics.tcl
- * bin/menu_main.tcl
- * bin/menu_multimedia.tcl
- * bin/menu_network.tcl
- * bin/menu_radiotuner.tcl
- * bin/menu_system.tcl
- * bin/menu_utility.tcl
+ * bin/menu.tcl.jinja2
+ * bin/menu.yaml
  * bin/mget               M3U8 streaming video downloader
  * bin/mget.py
  * bin/mirror             Copy all files/directory inside a directory into mirror directory

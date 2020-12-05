@@ -1,0 +1,12 @@
+#!/usr/bin/env wish
+
+. config -bg "#cccccc"
+
+frame .menu -bg "#cccccc"
+{% for button in buttons %}
+    button .menu.{{ button.name }} -width 10 -bg "{{ button.color }}" -text "{{ button.label }}" -command {
+        {{ button.run }}
+    }
+    pack .menu.{{ button.name }} -side top
+{% endfor %}
+pack .menu -side top -fill x

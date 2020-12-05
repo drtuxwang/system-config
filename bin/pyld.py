@@ -226,6 +226,11 @@ class PythonLoader:
             os.path.join(options.get_module_dir(), name)
         ] + options.get_module_args()
 
+        directory = os.path.dirname(os.path.abspath(sys.argv[0]))
+        path = os.environ.get('PATH', '').split(os.pathsep)
+        if directory not in path:
+            os.environ['PATH'] = os.pathsep.join([directory] + path)
+
     @staticmethod
     def _load_module(file):
         loader = importlib.machinery.SourceFileLoader('module.name', file)
