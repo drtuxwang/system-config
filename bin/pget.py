@@ -49,7 +49,8 @@ class Options:
             text = ' '.join(task.get_output())
             if "Login • Instagram" not in text:
                 break
-            print(sys.argv[0] + ': Login issue retry in 60s')
+            url = task.get_cmdline()[1]
+            print(url + ": Login issue retry in 60s", file=sys.stderr)
             time.sleep(60)
 
         urls = text.split('display_url":"')[1:]
