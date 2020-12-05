@@ -4,7 +4,6 @@ Calculate MD5 checksums for CD/DVD data disk.
 """
 
 import argparse
-import getpass
 import glob
 import hashlib
 import os
@@ -13,6 +12,7 @@ import sys
 import time
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -160,8 +160,8 @@ class Main:
     def _md5tao(device):
         isoinfo = command_mod.Command('isoinfo', errors='stop')
 
-        tmpfile = os.sep + os.path.join(
-            'tmp', 'md5cd-' + getpass.getuser() + '.' + str(os.getpid()))
+        tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache'))
+        tmpfile = os.path.join(tmpdir, 'md5cd.' + str(os.getpid()))
         command = command_mod.Command('dd', errors='stop')
         command.set_args([
             'if=' + device,

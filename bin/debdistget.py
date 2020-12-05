@@ -6,7 +6,6 @@ Download Debian packages list files.
 import argparse
 import datetime
 import functools
-import getpass
 import glob
 import json
 import logging
@@ -18,6 +17,7 @@ import time
 import urllib.request
 
 import command_mod
+import file_mod
 import logging_mod
 import subtask_mod
 
@@ -95,12 +95,9 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-        self.tmpdir = os.path.join('/tmp', getpass.getuser())
-        try:
-            os.makedirs(self.tmpdir)
-        except FileExistsError:
-            pass
-        os.chmod(self.tmpdir, int('700', 8))
+        self.tmpdir = file_mod.FileUtil.tmpdir(
+            os.path.join('.cache', 'debdistget')
+        )
 
     @staticmethod
     def _get_urls(distribution_file):

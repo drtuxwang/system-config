@@ -3,13 +3,13 @@
 HARDINFO launcher
 """
 
-import getpass
 import glob
 import os
 import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -45,14 +45,8 @@ class Main:
             sys.argv = argv
 
         # Send ".hardinfo" to tmpfs
-        tmpdir = os.path.join('/tmp', getpass.getuser())
-        directory = os.path.join(tmpdir, '.cache')
-        try:
-            os.makedirs(directory)
-        except FileExistsError:
-            pass
-        os.chmod(tmpdir, int('700', 8))
-        os.environ['HOME'] = tmpdir
+        newhome = file_mod.FileUtil.tmpdir(os.path.join('.cache', 'hardinfo'))
+        os.environ['HOME'] = newhome
 
     @staticmethod
     def run():

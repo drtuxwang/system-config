@@ -4,7 +4,6 @@ Create PDF from text/images/postscript/PDF files.
 """
 
 import argparse
-import getpass
 import glob
 import os
 import re
@@ -16,6 +15,7 @@ import time
 
 import command_mod
 import config_mod
+import file_mod
 import subtask_mod
 
 
@@ -270,10 +270,8 @@ class Main:
         options = Options()
         self._cache = {}
 
-        tmpfile = os.sep + os.path.join(
-            'tmp',
-            'pdf-' + getpass.getuser() + '.' + str(os.getpid()),
-        ) + '-'
+        tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache'))
+        tmpfile = os.path.join(tmpdir, 'pdf.' + str(os.getpid()))
         command = command_mod.Command('gs', errors='stop')
         command.set_args([
             '-q',

@@ -325,7 +325,7 @@ class Background(Task):
         pattern = Regular expression for removing output
         """
         info = self._parse_keys(
-            ('directory', 'env', 'error2output', 'pattern'),
+            ('directory', 'env', 'error2output', 'pattern', 'stdin'),
             **kwargs
         )
 

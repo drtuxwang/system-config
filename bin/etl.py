@@ -3,13 +3,13 @@
 WOLFENSTEIN ENEMY TERRITORY LEGACY game launcher
 """
 
-import getpass
 import glob
 import os
 import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -53,7 +53,7 @@ class Main:
         etl.set_args(sys.argv[1:])
         os.chdir(os.path.dirname(etl.get_file()))
 
-        logfile = os.path.join('/tmp', getpass.getuser(), 'etl.log')
+        logfile = os.path.join(file_mod.FileUtil.tmpdir(), 'etl.log')
         subtask_mod.Daemon(etl.get_cmdline()).run(file=logfile)
 
 

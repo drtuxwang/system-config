@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 """
 Wrapper for "helm" command
-
 """
 
-import getpass
 import glob
 import os
 import shutil
@@ -12,6 +10,7 @@ import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -48,7 +47,6 @@ class Main:
 
     @staticmethod
     def _cache():
-        tmpdir = os.path.join('/tmp', getpass.getuser())
         helm2_directory = os.path.join(os.environ['HOME'], '.helm')
         if os.path.isdir(helm2_directory):
             if not os.path.isdir(os.path.join(helm2_directory, 'repository')):
@@ -59,28 +57,23 @@ class Main:
 
             for cache in ('cache', 'repository/cache'):
                 link = os.path.join(helm2_directory, cache)
-                directory = os.path.join(
-                    tmpdir,
+
+                directory = file_mod.FileUtil.tmpdir(os.path.join(
                     '.cache',
                     'helm',
                     cache.split(os.sep)[0],
-                )
-                try:
-                    os.makedirs(directory)
-                except FileExistsError:
-                    pass
+                ))
                 if not os.path.islink(link):
                     try:
-                        if not os.path.isdir(directory):
-                            os.makedirs(directory)
                         if os.path.exists(link):
                             shutil.rmtree(link)
                         os.symlink(directory, link)
                     except OSError:
                         pass
-            os.chmod(tmpdir, int('700', 8))
 
-        directory = os.path.join(tmpdir, '.cache', 'helm', 'repository')
+        directory = file_mod.FileUtil.tmpdir(
+            os.path.join('.cache', 'helm', 'repository')
+        )
         if not glob.glob(os.path.join(directory, '*-index.yaml')):
             helm = command_mod.Command('helm', errors='stop')
             task = subtask_mod.Batch(helm.get_cmdline() + ['repo', 'list'])

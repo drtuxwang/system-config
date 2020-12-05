@@ -2,12 +2,10 @@
 """
 Wrapper for "firefox" command
 
-Use '-copy' to copy profile to '/tmp' and use '-no-remote about:'
-Use '-no-remote' to avoid using current instance
+Use '-copy' to copy profile to '/tmp' and use '--new-instance'.
 Use '-reset' to clean junk from profile
 """
 
-import getpass
 import glob
 import os
 import re
@@ -16,6 +14,7 @@ import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 import task_mod
 
@@ -168,10 +167,8 @@ class Options:
     @classmethod
     def _copy(cls):
         task = task_mod.Tasks.factory()
-        for directory in glob.glob(os.path.join(
-                '/tmp',
-                'firefox-' + getpass.getuser() + '.*'
-        )):
+        tmpdir = file_mod.FileUtil.tmpdir('.cache')
+        for directory in glob.glob(os.path.join(tmpdir, 'firefox.*')):
             try:
                 if not task.pgid2pids(int(directory.split('.')[-1])):
                     print(
@@ -185,18 +182,13 @@ class Options:
             except ValueError:
                 pass
 
-        os.umask(int('077', 8))
         firefoxdir = os.path.join(
             os.environ['HOME'],
             cls._get_profiles_dir()
         )
         mypid = os.getpid()
         os.setpgid(mypid, mypid)  # New PGID
-        newhome = os.path.join(
-            '/tmp',
-            'firefox-' + getpass.getuser() + '.' + str(mypid)
-        )
-        os.environ['TMPDIR'] = newhome
+        newhome = os.path.join(tmpdir, 'firefox.' + str(mypid))
         print('Creating copy of Firefox profile in "' + newhome + '"...')
 
         if not os.path.isdir(newhome):
@@ -217,6 +209,7 @@ class Options:
             except OSError:
                 pass
         os.environ['HOME'] = newhome
+        os.environ['TMPDIR'] = newhome
 
     @staticmethod
     def _remove(file):
@@ -404,13 +397,10 @@ class Options:
         while len(args) > 1:
             if not args[1].startswith('-'):
                 break
-            if args[1] in ('-copy', '-no-remote'):
-                if args[1] == '-copy':
-                    updates = False
-                    self._copy()
-                self._firefox.set_args(['-no-remote'])
-                if 'about:' not in args:
-                    self._firefox.append_arg('about:')
+            if args[1] == '-copy':
+                self._copy()
+                self._firefox.set_args(['--new-instance'])
+                updates = False
             elif args[1] == '-reset':
                 self._reset()
                 raise SystemExit(0)

@@ -7,7 +7,6 @@ Use '-reset' to clean junk from profile
 Use '-restart' to restart chromium
 """
 
-import getpass
 import glob
 import json
 import os
@@ -17,6 +16,7 @@ import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 import task_mod
 
@@ -83,10 +83,10 @@ class Options:
             if os.path.isdir(cache_dir):
                 try:
                     shutil.rmtree(cache_dir)
+                    with open(cache_dir, 'wb'):
+                        pass
                 except OSError:
                     return
-            with open(cache_dir, 'wb'):
-                pass
 
     @staticmethod
     def _clean_preferences(configdir):
@@ -155,10 +155,8 @@ class Options:
 
     def _copy(self):
         task = task_mod.Tasks.factory()
-        for directory in glob.glob(os.path.join(
-                '/tmp',
-                'chrome-' + getpass.getuser() + '.*'
-        )):
+        tmpdir = file_mod.FileUtil.tmpdir('.cache')
+        for directory in glob.glob(os.path.join(tmpdir + 'chromium.*')):
             try:
                 if not task.pgid2pids(int(directory.split('.')[-1])):
                     print(
@@ -171,18 +169,18 @@ class Options:
                         pass
             except ValueError:
                 pass
-        os.umask(int('077', 8))
+
         configdir = os.path.join(
             os.environ['HOME'],
             self._get_profiles_dir()
         )
         mypid = os.getpid()
         os.setpgid(mypid, mypid)  # New PGID
-        newhome = os.path.join(
-            '/tmp',
-            'chrome-' + getpass.getuser() + '.' + str(mypid)
+
+        newhome = file_mod.FileUtil.tmpdir(
+            os.path.join(tmpdir, 'chromium.' + str(mypid))
         )
-        print('Creating copy of Chrome profile in "' + newhome + '"...')
+        print('Creating copy of Chromium profile in "' + newhome + '"...')
         if not os.path.isdir(newhome):
             try:
                 shutil.copytree(

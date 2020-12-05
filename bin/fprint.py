@@ -4,7 +4,6 @@ Send text/images/postscript/PDF files to browser for printing.
 """
 
 import argparse
-import getpass
 import glob
 import os
 import shutil
@@ -13,6 +12,7 @@ import sys
 import time
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -86,10 +86,7 @@ class Main:
 
     @staticmethod
     def _print(files):
-        os.umask(int('077', 8))
-        tmpdir = "/tmp/{0:s}/fprint".format(getpass.getuser())
-        if not os.path.isdir(tmpdir):
-            os.makedirs(tmpdir)
+        tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache', 'fprint'))
         pdf = command_mod.Command('pdf', errors='stop')
         xweb = command_mod.Command('xweb', errors='stop')
 

@@ -5,12 +5,13 @@ Python file handling utility module
 Copyright GPL v2: 2006-2020 By Dr Colin Kong
 """
 
+import getpass
 import os
 import re
 import time
 
-RELEASE = '2.2.5'
-VERSION = 20201013
+RELEASE = '2.3.0'
+VERSION = 20201205
 
 
 class FileStat:
@@ -34,7 +35,7 @@ class FileStat:
             except (OSError, TypeError) as exception:
                 if not os.path.islink:
                     raise FileStatNotFoundError(
-                        'Cannot find "' + file + '" file status.'
+                        "Cannot find status: " + file
                     ) from exception
                 self._stat = [0] * 10
             else:
@@ -195,6 +196,34 @@ class FileUtil:
             pass
         return ''
 
+    @staticmethod
+    def tmpdir(name=None):
+        """
+        Return temporary directory with prefix and set permissions.
+        """
+        tmpdir = os.path.join('/tmp', getpass.getuser())
+        if name:
+            directory = os.path.join(tmpdir, name)
+        else:
+            directory = tmpdir
+
+        if not os.path.isdir(directory):
+            try:
+                os.makedirs(directory)
+            except OSError as exception:
+                raise FileTmpdirCreationError(
+                    'Cannot create directory: ' + tmpdir
+                ) from exception
+
+        try:
+            os.chmod(tmpdir, int('700', 8))
+        except OSError as exception:
+            raise FileTmpdirPermissionError(
+                'Permission error: ' + tmpdir
+            ) from exception
+
+        return directory
+
 
 class FileError(Exception):
     """
@@ -205,6 +234,18 @@ class FileError(Exception):
 class FileStatNotFoundError(FileError):
     """
     File stat not found error class.
+    """
+
+
+class FileTmpdirCreationError(FileError):
+    """
+    File tmpdir creation error class.
+    """
+
+
+class FileTmpdirPermissionError(FileError):
+    """
+    File tmpdir permission error class.
     """
 
 

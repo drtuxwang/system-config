@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 """
 Wrapper for "kubectl" command
-
 """
 
-import getpass
 import glob
 import os
 import shutil
@@ -12,6 +10,7 @@ import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -55,26 +54,18 @@ class Main:
             except OSError:
                 return
 
-        tmpdir = os.path.join('/tmp', getpass.getuser())
-
         for cache in ('cache', 'http-cache'):
             link = os.path.join(kube_directory, cache)
-            directory = os.path.join(tmpdir, '.cache', 'kube', cache)
-            try:
-                os.makedirs(directory)
-            except FileExistsError:
-                pass
+            directory = file_mod.FileUtil.tmpdir(
+                os.path.join('.cache', 'kube', cache)
+            )
             if not os.path.islink(link):
                 try:
-                    if not os.path.isdir(directory):
-                        os.makedirs(directory)
                     if os.path.exists(link):
                         shutil.rmtree(link)
                     os.symlink(directory, link)
                 except OSError:
                     pass
-
-        os.chmod(tmpdir, int('700', 8))
 
     @classmethod
     def run(cls):

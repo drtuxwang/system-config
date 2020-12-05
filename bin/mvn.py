@@ -3,7 +3,6 @@
 MAVEN launcher
 """
 
-import getpass
 import glob
 import os
 import shutil
@@ -11,6 +10,7 @@ import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -46,12 +46,7 @@ class Main:
             sys.argv = argv
 
         # Send ".m2" to tmpfs
-        tmpdir = os.path.join('/tmp', getpass.getuser(), '.cache', 'm2')
-        try:
-            os.makedirs(tmpdir)
-        except FileExistsError:
-            pass
-        os.chmod(tmpdir, int('700', 8))
+        tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache', 'm2'))
         directory = os.path.join(os.environ.get('HOME'), '.m2')
         if not os.path.islink(directory):
             try:

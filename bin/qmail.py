@@ -15,9 +15,10 @@ import smtplib
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 
-RELEASE = '3.0.4'
+RELEASE = '3.0.5'
 
 SOCKET_TIMEOUT = 10
 
@@ -114,8 +115,6 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        os.umask(int('077', 8))
-
         self._sendmail = command_mod.Command(
             'sendmail',
             pathextra=['/usr/lib'],
@@ -126,8 +125,8 @@ class Options:
         if 'HOME' not in os.environ:
             raise SystemExit(
                 sys.argv[0] + ': Cannot determine home directory.')
-        self._tmpfile = os.sep + os.path.join(
-            'tmp', 'qmail-' + getpass.getuser() + '.' + str(os.getpid()))
+        tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache'))
+        self._tmpfile = os.path.join(tmpdir, 'qmail.' + str(os.getpid()))
 
         self._editor = command_mod.Command('fedit', errors='ignore')
         if not self._editor.is_found():
