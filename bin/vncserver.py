@@ -74,9 +74,12 @@ class Options:
         )
         self._vncserver.set_args([
             '-geometry',
-            '1024x768',
+            '1280x960',
             '-depth',
             '24',
+            '-localhost',
+            '-SecurityTypes',
+            'X509Vnc,TLSVnc',
         ] + args[1:])
         self._umask = os.umask(int('077', 8))
         os.umask(self._umask)
