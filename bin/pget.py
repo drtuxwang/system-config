@@ -49,7 +49,7 @@ class Options:
             text = ' '.join(task.get_output())
             if "Login • Instagram" not in text:
                 break
-            url = task.get_cmdline()[1]
+            url = task.get_cmdline()[3]
             print(url + ": Login issue retry in 60s", file=sys.stderr)
             time.sleep(60)
 
