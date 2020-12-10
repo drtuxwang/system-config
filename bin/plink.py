@@ -119,7 +119,7 @@ class Main:
             for file in sorted(glob.glob(os.path.join(directory, '*'))):
                 if os.path.splitext(file)[1].lower() in images_extensions:
                     link = linkdir + '_' + os.path.basename(file)
-                    if link.endswith('.webm'):
+                    if link.endswith(('.mp4', '.webm')):
                         link += '.gif'
                     if not os.path.islink(link):
                         try:

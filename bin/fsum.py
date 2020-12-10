@@ -162,7 +162,7 @@ class Main:
                             ]))
                         except PermissionError:
                             pass
-            elif os.path.isfile(file):
+            elif os.path.isfile(file) and not os.path.islink(file):
                 file_stat = file_mod.FileStat(file)
                 try:
                     md5sum = self._cache[
