@@ -327,7 +327,7 @@ class Main:
                 sys.argv[0] + ': Cannot open "' + source_dir +
                 '" source directory.'
             ) from exception
-        if os.path.isdir(target_dir):
+        if os.path.isdir(target_dir) and not os.path.islink(target_dir):
             try:
                 target_files = [
                     os.path.join(target_dir, x)
