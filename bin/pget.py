@@ -31,12 +31,12 @@ class Options:
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Picture downloader for Instagram website.')
+            description='Picture downloader for websites.')
 
         parser.add_argument(
             'url',
             nargs=1,
-            help='Youtube or compatible video URL.'
+            help='Website URL.'
         )
 
         self._args = parser.parse_args(args)
