@@ -6,6 +6,7 @@ Run command in new terminal session
 import argparse
 import glob
 import os
+import re
 import signal
 import sys
 
@@ -61,11 +62,22 @@ class Options:
                 url = url.replace('=medium', '=large')
         return ['wget', '-O', output, url]
 
+    @staticmethod
+    def _select_urls(args):
+        if [x for x in args if 'instagram' in x]:
+            ispick = re.compile('/e.*_n[.]jpg?')
+            isbad = re.compile('/[cs]')
+            return [
+                x for x in args
+                if ispick.search(x) and not isbad.search(x)
+            ]
+        return args
+
     @classmethod
     def _generate_cmd(cls, args):
         if args[0].startswith(URI):
             nargs = []
-            for arg in args:
+            for arg in cls._select_urls(args):
                 if '.m3u8' in arg:
                     nargs.extend(['mget', arg, ';'])
                 elif 'www.instagram.com/p/' in arg:
