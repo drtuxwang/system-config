@@ -8,6 +8,7 @@ import glob
 import itertools
 import logging
 import os
+import shutil
 import signal
 import sys
 
@@ -38,12 +39,6 @@ class Options:
     def __init__(self):
         self._args = None
         self.parse(sys.argv)
-
-    def get_check_flag(self):
-        """
-        Return check flag.
-        """
-        return self._args.check_flag
 
     def get_files(self):
         """
@@ -76,12 +71,6 @@ class Options:
             dest='recursive_flag',
             action='store_true',
             help='Recursive into sub-directories.'
-        )
-        parser.add_argument(
-            '-c',
-            dest='check_flag',
-            action='store_true',
-            help='Check checksums against files.'
         )
         parser.add_argument(
             '-update',
@@ -137,89 +126,6 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _calc(self, options, files):
-        for file in files:
-            if os.path.isdir(file):
-                if options.get_recursive_flag() and not os.path.islink(file):
-                    try:
-                        self._calc(options, sorted([
-                            os.path.join(file, x)
-                            for x in os.listdir(file)
-                        ]))
-                    except PermissionError:
-                        pass
-            elif os.path.isfile(file):
-                file_stat = file_mod.FileStat(file)
-                try:
-                    phash = self._cache[
-                        (file, file_stat.get_size(), file_stat.get_time())]
-                except KeyError:
-                    try:
-                        phash = str(imagehash.phash(PIL.Image.open(file)))
-                    except OSError:
-                        continue
-                print("{0:s}/{1:010d}/{2:d}  {3:s}".format(
-                    phash,
-                    file_stat.get_size(),
-                    file_stat.get_time(),
-                    file
-                ))
-
-    @staticmethod
-    def _match(image_phash):
-        """
-        Using BKTree to speed up check:
-        if phash1 - phash2 <= MAX_DISTANCE_IDENTICAL:
-        """
-        phash_images = {}
-        for image, phash in image_phash.items():
-            if phash in phash_images:
-                phash_images[phash].append(image)
-            else:
-                phash_images[phash] = [image]
-
-        matched_images = set()
-        tree = pybktree.BKTree(pybktree.hamming_distance, phash_images)
-        for phash in sorted(phash_images):
-            images = frozenset(itertools.chain.from_iterable([
-                phash_images[match]
-                for _, match in tree.find(phash, MAX_DISTANCE_IDENTICAL)
-            ]))
-            if len(images) > 1:
-                matched_images.add(images)
-
-        return matched_images
-
-    @classmethod
-    def _check(cls, files):
-        found = False
-
-        for psumfile in files:
-            image_phash = {}
-            try:
-                with open(psumfile, errors='replace') as ifile:
-                    for line in ifile:
-                        line = line.rstrip('\r\n')
-                        phash, _, _, file = cls._get_checksum(line)
-                        image_phash[file] = int(phash, 16)
-            except OSError as exception:
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + psumfile +
-                    '" checksums file.'
-                ) from exception
-            matched_images = cls._match(image_phash)
-
-            if matched_images:
-                found = True
-                for images in sorted(matched_images):
-                    logger.warning(
-                        "Identical: %s",
-                        command_mod.Command.args2cmd(sorted(images)),
-                    )
-
-        if found:
-            raise SystemExit(1)
-
     @staticmethod
     def _get_checksum(line):
         i = line.find('  ')
@@ -232,26 +138,133 @@ class Main:
         except ValueError:
             return '', -1, -1, ''
 
-    def _get_cache(self, update_file):
-        if not os.path.isfile(update_file):
+    @classmethod
+    def _read(cls, phashes_file):
+        logger.info("Reading checksum file: %s", phashes_file)
+        if not os.path.isfile(phashes_file):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + update_file +
-                '" checksum file.'
+                "{0:s}: Cannot find checksum file: %{1:s}".format(
+                    sys.argv[0],
+                    phashes_file,
+                )
             )
+
+        images_phashes = {}
         try:
-            with open(update_file, errors='replace') as ifile:
+            with open(phashes_file, errors='replace') as ifile:
                 for line in ifile:
                     try:
                         line = line.rstrip('\r\n')
-                        checksum, size, mtime, file = self._get_checksum(line)
+                        checksum, size, mtime, file = cls._get_checksum(line)
                         if file:
-                            self._cache[(file, size, mtime)] = checksum
+                            images_phashes[(file, size, mtime)] = checksum
                     except IndexError:
                         pass
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + update_file +
-                '" checksum file.'
+                "{0:s}: Cannot read checksum file: %{1:s}".format(
+                    sys.argv[0],
+                    phashes_file,
+                )
+            ) from exception
+        return images_phashes
+
+    @classmethod
+    def _update(cls, phashes, recursive, files):
+        logger.info("Updating checksums...")
+        new_phashes = {}
+        for file in files:
+            if os.path.isdir(file):
+                if recursive and not os.path.islink(file):
+                    try:
+                        new_phashes.update(cls._update(
+                            phashes,
+                            recursive,
+                            sorted([
+                                os.path.join(file, x)
+                                for x in os.listdir(file)
+                            ])
+                        ))
+                    except PermissionError:
+                        pass
+            elif os.path.isfile(file):
+                file_stat = file_mod.FileStat(file)
+                key = (file, file_stat.get_size(), file_stat.get_time())
+                if key in phashes:
+                    phash = phashes[key]
+                else:
+                    try:
+                        phash = str(imagehash.phash(PIL.Image.open(file)))
+                    except OSError:
+                        continue
+                new_phashes[key] = phash
+
+        return new_phashes
+
+    @classmethod
+    def _check(cls, image_phashes, new_phashes):
+        """
+        Using BKTree to speed up check:
+        if phash1 - phash2 <= MAX_DISTANCE_IDENTICAL:
+        """
+        logger.info("Checking checksums...")
+
+        phash_images = {}
+        for key, value in image_phashes.items():
+            phash = int(value, 16)
+            file, _, _ = key
+            if phash in phash_images:
+                phash_images[phash].append(file)
+            else:
+                phash_images[phash] = [file]
+
+        matched_images = set()
+        tree = pybktree.BKTree(pybktree.hamming_distance, phash_images)
+        for phash in sorted([int(x, 16) for x in new_phashes]):
+            images = frozenset(itertools.chain.from_iterable([
+                phash_images[match]
+                for _, match in tree.find(phash, MAX_DISTANCE_IDENTICAL)
+            ]))
+            if len(images) > 1:
+                matched_images.add(images)
+
+        if matched_images:
+            for images in sorted(matched_images):
+                logger.warning(
+                    "Identical: %s",
+                    command_mod.Command.args2cmd(sorted(images)),
+                )
+            raise SystemExit(1)
+
+    @staticmethod
+    def _write(phashes_file, image_phashes):
+        logger.info("Writing checksum file: %s", phashes_file)
+
+        try:
+            with open(phashes_file + '.part', 'w', newline='\n') as ofile:
+                for key, phash in image_phashes.items():
+                    file, file_size, file_time = key
+                    print("{0:s}/{1:010d}/{2:d}  {3:s}".format(
+                        phash,
+                        file_size,
+                        file_time,
+                        file,
+                    ), file=ofile)
+        except OSError as exception:
+            raise SystemExit(
+                "{0:s}: Cannot create checksum file: {1:s}".format(
+                    sys.argv[0],
+                    phashes_file + '.part',
+                )
+            ) from exception
+        try:
+            shutil.move(phashes_file + '.part', phashes_file)
+        except OSError as exception:
+            raise SystemExit(
+                "{0:s}: Cannot create checksum file: {1:s}".format(
+                    sys.argv[0],
+                    phashes_file,
+                )
             ) from exception
 
     def run(self):
@@ -260,15 +273,24 @@ class Main:
         """
         options = Options()
 
-        if options.get_check_flag():
-            self._check(options.get_files())
-        else:
-            self._cache = {}
-            update_file = options.get_update_file()
-            if update_file:
-                self._get_cache(update_file)
+        image_phashes = {}
 
-            self._calc(options, options.get_files())
+        update_file = options.get_update_file()
+        if update_file:
+            image_phashes = self._read(update_file)
+        old_keys = set(image_phashes)
+
+        image_phashes = self._update(
+             image_phashes,
+             options.get_recursive_flag(),
+             options.get_files(),
+        )
+
+        new_keys = set(image_phashes) - old_keys
+        new_phashes = {image_phashes[x] for x in new_keys}
+        self._check(image_phashes, new_phashes)
+        if new_keys:
+            self._write(update_file, image_phashes)
 
 
 if __name__ == '__main__':
