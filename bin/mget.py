@@ -5,6 +5,7 @@ M3U8 streaming video downloader.
 
 import argparse
 import glob
+import hashlib
 import os
 import shutil
 import signal
@@ -67,8 +68,11 @@ class Options:
                 )
             self._output = self._args.output
         else:
+            md5 = hashlib.md5()
+            md5.update(self._args.url[0].encode())
             self._output = (
-                os.path.basename(self._args.url[0]).rsplit('.', 1)[0] + '.mp4'
+                os.path.basename(self._args.url[0]).rsplit('.', 1)[0] +
+                '-' + md5.hexdigest()[:9] + '.mp4'
             )
         if os.path.isfile(self._output):
             print("{0:s}: already exists".format(self._output))
