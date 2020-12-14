@@ -282,6 +282,7 @@ class Options:
             '"browser.tabs.animate", false',
             '"browser.tabs.insertRelatedAfterCurrent", false',
             '"browser.urlbar.autoFill", false',
+            '"browser.urlbar.decodeURLsOnCopy", true',
             '"browser.urlbar.speculativeConnect.enabled", false',
             '"browser.urlbar.trimURLs", false',
             '"browser.sessionhistory.max_total_viewers", 0',
