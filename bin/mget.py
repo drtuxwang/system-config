@@ -250,6 +250,7 @@ class VideoDownloader:
             self._output,
             len(chunk_files),
         ))
+        shutil.rmtree(self._output+'.full')
 
 
 class Main:
