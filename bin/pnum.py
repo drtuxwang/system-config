@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Renumber picture files into a numerical series.
+Renumber picture/video files into a numerical series.
 """
 
 import argparse
@@ -76,7 +76,7 @@ class Options:
             'directories',
             nargs='+',
             metavar='directory',
-            help='Directory containing picture files.'
+            help='Directory containing picture/video files.'
         )
 
         self._args = parser.parse_args(args)
@@ -147,8 +147,9 @@ class Main:
         startdir = os.getcwd()
         reset_flag = options.get_reset_flag()
         number = options.get_start()
+        config = config_mod.Config()
         images_extensions = (
-            config_mod.Config().get('image_extensions') + ['.webm']
+            config.get('image_extensions') + config.get('video_extensions')
         )
 
         for directory in options.get_directories():

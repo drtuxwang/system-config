@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Create links to JPEG files.
+Create links to picture/video files.
 """
 
 import argparse
@@ -35,7 +35,7 @@ class Options:
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Create links to JPEG files.')
+            description='Create links to picture/video files.')
 
         parser.add_argument(
             '-depth',
@@ -110,8 +110,9 @@ class Main:
         """
         options = Options()
         depth = options.get_depth()
+        config = config_mod.Config()
         images_extensions = (
-            config_mod.Config().get('image_extensions') + ['.webm']
+            config.get('image_extensions') + config.get('video_extensions')
         )
 
         for directory in options.get_directories():
