@@ -61,4 +61,4 @@ uncompyle6>=3.6.7
 virtualenv>=16.7.10
 wheel>=0.34.2
 xmltodict>=0.10.2
-youtube-dl>=2020.9.14
+youtube-dl>=2020.12.14
