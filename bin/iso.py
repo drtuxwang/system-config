@@ -12,7 +12,6 @@ import signal
 import sys
 
 import command_mod
-import file_mod
 import logging_mod
 import subtask_mod
 
