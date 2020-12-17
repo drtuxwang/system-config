@@ -105,12 +105,18 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
+    @staticmethod
+    def _reset(tarinfo):
+        tarinfo.uid = tarinfo.gid = 0
+        tarinfo.uname = tarinfo.gname = 'root'
+        return tarinfo
+
     @classmethod
     def _addfile(cls, ofile, files):
         for file in sorted(files):
             print(file)
             try:
-                ofile.add(file, recursive=False)
+                ofile.add(file, recursive=False, filter=cls._reset)
             except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot add "' + file +
