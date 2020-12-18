@@ -108,7 +108,7 @@ class Main:
     @staticmethod
     def _reset(tarinfo):
         tarinfo.uid = tarinfo.gid = 0
-        tarinfo.uname = tarinfo.gname = 'root'
+        tarinfo.uname = tarinfo.gname = '0'
         return tarinfo
 
     @classmethod
