@@ -14,6 +14,7 @@ BUILD_DIRS := \
 	debian-stable-i386 \
 	docker-stable \
 	golang-stable \
+	oraclelinux-7 \
 	python-stable \
 	registry-stable \
 	sudo \

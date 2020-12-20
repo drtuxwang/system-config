@@ -978,6 +978,12 @@ the years. Now most of the scripts are written in Python 3.
  * docker/docker-stable/files/ash2bash
  * docker/golang-stable/Dockerfile
  * docker/golang-stable/Makefile         golang:1.14-alpine based compiler app
+ * docker/oraclelinux-7/Dockerfile
+ * docker/oraclelinux-7/Makefile         oraclelinux:7-slim based linux
+ * docker/oraclelinux-7/bash/Dockerfile
+ * docker/oraclelinux-7/bash/Makefile    oraclelinux:7-slim based GCC dev shell
+ * docker/oraclelinux-7/dev/Dockerfile
+ * docker/oraclelinux-7/dev/Makefile     oraclelinux:7-slim based GCC dev shell
  * docker/python-stable/Dockerfile
  * docker/python-stable/Makefile         python:3.7-slim-buster based Python app
  * docker/python-stable/bash/Makefile
