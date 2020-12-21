@@ -15,6 +15,7 @@ BUILD_DIRS := \
 	docker-stable \
 	golang-stable \
 	oraclelinux-7 \
+	oraclelinux-stable \
 	python-stable \
 	registry-stable \
 	sudo \

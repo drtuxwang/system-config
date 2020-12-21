@@ -981,9 +981,15 @@ the years. Now most of the scripts are written in Python 3.
  * docker/oraclelinux-7/Dockerfile
  * docker/oraclelinux-7/Makefile         oraclelinux:7-slim based linux
  * docker/oraclelinux-7/bash/Dockerfile
- * docker/oraclelinux-7/bash/Makefile    oraclelinux:7-slim based GCC dev shell
+ * docker/oraclelinux-7/bash/Makefile    oraclelinux:7-slim based BASH login
  * docker/oraclelinux-7/dev/Dockerfile
  * docker/oraclelinux-7/dev/Makefile     oraclelinux:7-slim based GCC dev shell
+ * docker/oraclelinux-stable/Dockerfile
+ * docker/oraclelinux-stable/Makefile    oraclelinux:8-slim based linux
+ * docker/oraclelinux-stable/bash/Dockerfile
+ * docker/oraclelinux-stable/bash/Makefile oraclelinux:8-slim based BASH login
+ * docker/oraclelinux-stable/dev/Dockerfile
+ * docker/oraclelinux-stable/dev/Makefile oraclelinux:8-slim based GCC dev shel
  * docker/python-stable/Dockerfile
  * docker/python-stable/Makefile         python:3.7-slim-buster based Python app
  * docker/python-stable/bash/Makefile
