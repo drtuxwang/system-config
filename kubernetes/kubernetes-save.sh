@@ -15,7 +15,7 @@ k8s.gcr.io/coredns:$COREDNS_VERSION
 k8s.gcr.io/etcd:$ETCD_VERSION
 k8s.gcr.io/pause:$PAUSE_VERSION
 "
-FILE="kubernetes_${KUBE_VERSION}_control-pane.tar"
+FILE="kubernetes_${KUBE_VERSION}_control-plane.tar"
 CREATED=$(docker inspect $IMAGES | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 
 echo "docker save $IMAGES -o $FILE"
