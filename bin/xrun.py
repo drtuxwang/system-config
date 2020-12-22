@@ -65,12 +65,8 @@ class Options:
     @staticmethod
     def _select_urls(args):
         if [x for x in args if 'instagram' in x]:
-            ispick = re.compile('/e.*_n[.]jpg?')
-            isbad = re.compile('/[cs]')
-            return [
-                x for x in args
-                if ispick.search(x) and not isbad.search(x)
-            ]
+            ispick = re.compile('/e.*/?1080x1080/.*_n[.]jpg?')
+            return [x for x in args if ispick.search(x)]
         return args
 
     @classmethod
