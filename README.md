@@ -1059,7 +1059,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/ingress/values.yaml
  * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 8.3.2 (app-4.2.9)
  * helm/mongodb/values.yml
- * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 3.4.0 (app-3.25.1)
+ * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 4.1.2 (app-3.27.0)
  * helm/nexus/values.yaml
  * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 5.1.12 (app-1.16.1)
  * helm/nginx/values.yaml
