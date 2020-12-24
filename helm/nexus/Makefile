@@ -2,7 +2,7 @@ NAME := nexus
 CHART_REPO := oteemo
 CHART_URL := https://oteemo.github.io/charts
 CHART_NAME := sonatype-nexus
-CHART_VERSION := 3.4.0
+CHART_VERSION := 4.1.2
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace
