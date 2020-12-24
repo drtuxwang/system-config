@@ -869,6 +869,7 @@ the years. Now most of the scripts are written in Python 3.
  * etc/python-requirements.txt           Python default pip requirements file
  * etc/python-requirements_2.7.txt       Python 2.7 pip requirements file
  * etc/python-requirements_3.5.txt       Python 3.5 pip requirements file
+ * etc/python-requirements_3.6.txt       Python 3.6 pip requirements file
  * etc/python-requirements_3.9.txt       Python 3.9 pip requirements file
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization

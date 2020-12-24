@@ -1,3 +1,1 @@
-ImageHash==None
 Pillow==None
-scipy==None

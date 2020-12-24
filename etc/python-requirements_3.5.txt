@@ -1,2 +1,6 @@
-nexus3-cli==None
+bcrypt==3.1.7
+check-manifest==0.44
 ipython==7.9.0
+nexus3-cli==None
+numpy==1.18.5
+scipy==1.4.1
