@@ -15,6 +15,7 @@
 	grep-commit = "!f() { git --no-pager grep -n \"$1\" $(git rev-list --all); }; f"
 	merge = merge --no-ff
 	pull-all = "!f() { git pull ||:; git submodule foreach \"git pull ||:\"; }; f"
+	pull-lfs = "!f() { git lfs fetch $(echo \" $*\" | sed -e \"s/ / -I /g\") && git lfs checkout; }; f"
 	xdiff = difftool --tool=meld --dir-diff
 	xmerge = mergetool --tool=meld
 [color]
@@ -23,6 +24,11 @@
 	editor = vim
 [diff]
 	ignoreSubmodules = all
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge --skip -- %f
+	process = git-lfs filter-process --skip
+	required = true
 [log]
 	decorate = full
 [pull]
