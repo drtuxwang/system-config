@@ -63,12 +63,8 @@ class Options:
             if (len(args) > 2 and args[1] in ('--output-document', '-O') and
                     not args[2].endswith(('-', '.part'))):
                 self._output = args[2]
-                if (
-                        os.path.isfile(args[2]) or
-                        os.path.isfile(args[2] + '.part')
-                ):
-                    self._output = ('-'+str(os.getpid())+'.').join(
-                        self._output.rsplit('.', 1))
+                if os.path.isfile(args[2]):
+                    raise SystemExit("Output file already exists: " + args[2])
                 self._wget.extend_args([args[1], self._output + '.part'])
                 args = args[2:]
                 continue

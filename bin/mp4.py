@@ -321,7 +321,7 @@ class Encoder:
 
     def _config_images(self, files):
         convert = command_mod.Command('convert', errors='stop')
-        extension = '-tmpfile' + str(os.getpid()) + '.png'
+        extension = '.tmp' + str(os.getpid()) + '.png'
         frame = 0
         for file in files:
             frame += 1
@@ -425,7 +425,7 @@ class Encoder:
             if len(self._options.get_files()) == 1:
                 self._config(self._options.get_files()[0])
             else:
-                extension = '-tmpfile' + str(os.getpid()) + '.ts'
+                extension = '.tmp' + str(os.getpid()) + '.ts'
                 for file in self._options.get_files():
                     media = self._config(file)
                     if media.has_video():

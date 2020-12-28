@@ -4,7 +4,6 @@ Convert image file to text using OCR.
 """
 
 import argparse
-import getpass
 import glob
 import os
 import signal
@@ -12,6 +11,7 @@ import sys
 
 import command_mod
 import config_mod
+import file_mod
 import subtask_mod
 
 
@@ -114,8 +114,9 @@ class Main:
         self._tesseract = options.get_tesseract()
         convert = options.get_convert()
 
-        tmpfile = os.sep + os.path.join(
-            'tmp', 'ocr-' + getpass.getuser() + str(os.getpid()) + '.tif')
+        tmpdir = file_mod.FileUtil.tmpdir('.cache')
+        tmpfile = os.path.join(tmpdir, 'ocr.tmp' + str(os.getpid()))
+
         images_extensions = config_mod.Config().get('image_extensions')
 
         for file in options.get_files():

@@ -115,7 +115,7 @@ class Main:
                     print(line, file=sys.stderr)
                 raise SystemExit(task.get_exitcode())
 
-            tmpfile = file + '-tmp' + str(os.getpid())
+            tmpfile = file + '.part'
             try:
                 with open(tmpfile, 'w', newline='\n') as ofile:
                     for line in task.get_output():

@@ -148,12 +148,8 @@ class Options:
 
         if self._args.output:
             self._output = self._args.output[0]
-            if (
-                    os.path.isfile(self._output) or
-                    os.path.isfile(self._output + '.part')
-            ):
-                self._output = ('-'+str(os.getpid())+'.').join(
-                    self._output.rsplit('.', 1))
+            if os.path.isfile(self._output):
+                raise SystemExit("Output file already exists: " + self._output)
             self._vget.extend_args(['--output', self._output])
 
         self._vget.append_arg(url)

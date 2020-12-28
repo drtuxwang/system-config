@@ -18,7 +18,7 @@ import command_mod
 import file_mod
 import subtask_mod
 
-RELEASE = '3.0.5'
+RELEASE = '3.0.6'
 
 SOCKET_TIMEOUT = 10
 
@@ -125,8 +125,8 @@ class Options:
         if 'HOME' not in os.environ:
             raise SystemExit(
                 sys.argv[0] + ': Cannot determine home directory.')
-        tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache'))
-        self._tmpfile = os.path.join(tmpdir, 'qmail.' + str(os.getpid()))
+        tmpdir = file_mod.FileUtil.tmpdir('.cache')
+        self._tmpfile = os.path.join(tmpdir, 'qmail.tmp' + str(os.getpid()))
 
         self._editor = command_mod.Command('fedit', errors='ignore')
         if not self._editor.is_found():

@@ -102,7 +102,7 @@ class Main:
                     sys.argv[0] + ': Cannot read "' + file + '" file.'
                 ) from exception
 
-            tmpfile = file + '-tmp' + str(os.getpid())
+            tmpfile = file + '.part'
             try:
                 with open(tmpfile, 'w', newline='\n') as ofile:
                     print(jsbeautifier.beautify(''.join(lines)), file=ofile)

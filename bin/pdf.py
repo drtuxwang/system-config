@@ -270,8 +270,8 @@ class Main:
         options = Options()
         self._cache = {}
 
-        tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache'))
-        tmpfile = os.path.join(tmpdir, 'pdf.' + str(os.getpid()))
+        tmpdir = file_mod.FileUtil.tmpdir('.cache')
+        tmpfile = os.path.join(tmpdir, 'pdf.tmp' + str(os.getpid()))
         command = command_mod.Command('gs', errors='stop')
         command.set_args([
             '-q',

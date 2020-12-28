@@ -93,7 +93,7 @@ class Main:
             )
             try:
                 with open(file, errors='replace') as ifile:
-                    tmpfile = file + '-tmp' + str(os.getpid())
+                    tmpfile = file + '.part'
                     try:
                         with open(tmpfile, 'w', newline='\r\n') as ofile:
                             for line in ifile:

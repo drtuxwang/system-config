@@ -160,8 +160,8 @@ class Main:
     def _md5tao(device):
         isoinfo = command_mod.Command('isoinfo', errors='stop')
 
-        tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache'))
-        tmpfile = os.path.join(tmpdir, 'md5cd.' + str(os.getpid()))
+        tmpdir = file_mod.FileUtil.tmpdir('.cache')
+        tmpfile = os.path.join(tmpdir, 'md5cd.tmp' + str(os.getpid()))
         command = command_mod.Command('dd', errors='stop')
         command.set_args([
             'if=' + device,

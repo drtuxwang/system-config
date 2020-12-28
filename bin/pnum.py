@@ -162,7 +162,6 @@ class Main:
                     if os.path.splitext(file)[1].lower() in images_extensions:
                         file_stats.append(file_mod.FileStat(file))
                 newfiles = []
-                mypid = os.getpid()
                 for file_stat in self._sorted(options, file_stats):
                     newfile = 'pic{0:05d}{1:s}'.format(
                         number,
@@ -172,7 +171,7 @@ class Main:
                     try:
                         shutil.move(
                             file_stat.get_file(),
-                            str(mypid) + '-' + newfile
+                            'pnum.tmp-' + newfile
                         )
                     except OSError as exception:
                         raise SystemExit(
@@ -182,7 +181,7 @@ class Main:
                     number += 1
                 for file in newfiles:
                     try:
-                        shutil.move(str(mypid) + '-' + file, file)
+                        shutil.move('pnum.tmp-' + file, file)
                     except OSError as exception:
                         raise SystemExit(
                             sys.argv[0] + ': Cannot rename to "' + file +

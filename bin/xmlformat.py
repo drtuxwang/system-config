@@ -102,7 +102,7 @@ class Main:
             xml_doc = xml.dom.minidom.parseString(''.join(lines))
             xml_text = xml_doc.toprettyxml(indent='    ', newl='\n')
 
-            tmpfile = file + '-tmp' + str(os.getpid())
+            tmpfile = file + '.part'
             try:
                 with open(tmpfile, 'w', newline='\n') as ofile:
                     print(xml_text, end='', file=ofile)

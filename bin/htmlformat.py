@@ -101,7 +101,7 @@ class Main:
         )
         html_text = cls._indent.sub(r'\1\1', soup.prettify())
 
-        tmpfile = file + '-tmp' + str(os.getpid())
+        tmpfile = file + '.part'
         try:
             with open(tmpfile, 'w', newline='\n') as ofile:
                 print(html_text.replace('&amp;', '&'), file=ofile)
