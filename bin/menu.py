@@ -114,6 +114,7 @@ class Menu:
             ))
 
         config = {'buttons': []}
+        config['title'] = name
         for item in items:
             if self.check_software(item.get('check')):
                 config['buttons'].append(item['button'])

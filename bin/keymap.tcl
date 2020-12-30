@@ -1,6 +1,11 @@
 #!/usr/bin/env wish
 
+wm resizable . 0 0
+wm title . "keymap"
+wm geometry . +120+20
+
 . config -bg "#cccccc"
+
 
 frame .toolbar -bg "#cccccc"
     button .toolbar.gb -width 2 -bg "#ffcc00" -text gb -command {
@@ -29,5 +34,6 @@ frame .toolbar -bg "#cccccc"
     }
     pack .toolbar.set -side right
 pack .toolbar -side top -fill x
+
 
 set map {}

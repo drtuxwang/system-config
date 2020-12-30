@@ -1,5 +1,9 @@
 #!/usr/bin/env wish
 
+wm resizable . 0 0
+wm title . "xfreerdp"
+wm geometry . +120+20
+
 . config -bg "#cccccc"
 
 
@@ -8,12 +12,14 @@ frame .location -bg "#cccccc"
     pack .location.hostname -side top
 pack .location -fill x
 
+
 frame .login -bg "#cccccc"
     entry .login.username -width 13 -relief sunken -textvar username
     pack .login.username -side left
     entry .login.password -width 13 -relief sunken -textvar password -show "*"
     pack .login.password -side left
 pack .login -fill x
+
 
 frame .connect -bg "#cccccc"
     entry .connect.size -width 13 -relief sunken -textvar size
@@ -23,6 +29,7 @@ frame .connect -bg "#cccccc"
     }
     pack .connect.run -side left
 pack .connect -fill x
+
 
 set hostname {hostname.local}
 set username {domain\user}

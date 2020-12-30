@@ -1,6 +1,11 @@
 #!/usr/bin/env wish
 
+wm resizable . 0 0
+wm title . "{{ title }}"
+wm geometry . +0+0
+
 . config -bg "#cccccc"
+
 
 frame .menu -bg "#cccccc"
 {% for button in buttons %}

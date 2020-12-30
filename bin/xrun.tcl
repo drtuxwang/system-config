@@ -1,5 +1,9 @@
 #!/usr/bin/env wish
 
+wm resizable . 0 0
+wm title . "xrun"
+wm geometry . +120+20
+
 . config -bg "#cccccc"
 
 
@@ -35,6 +39,7 @@ frame .toolbar -bg "#cccccc"
     entry .toolbar.directory -width 60 -relief sunken -textvar directory
     pack .toolbar.directory -side right
 pack .toolbar -side top -fill x
+
 
 set command {Please type or copy text here}
 set directory $::env(HOME)
