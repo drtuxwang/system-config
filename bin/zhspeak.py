@@ -18,7 +18,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '4.5.3'
+RELEASE = '4.5.4'
 
 
 class Options:

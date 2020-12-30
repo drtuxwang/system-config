@@ -1,7 +1,7 @@
 #!/usr/bin/env wish
 
 wm resizable . 0 0
-wm title . "zhspeak"
+wm title . "zhspeak 4.5.4"
 wm geometry . +120+20
 
 . config -bg "#cccccc"
