@@ -6,6 +6,7 @@ Run command in new terminal session
 import argparse
 import glob
 import os
+import random
 import re
 import signal
 import sys
@@ -122,7 +123,10 @@ class Options:
             '#ff0000',
             '-ut',
             '-geometry',
-            '100x10',
+            '100x10+{0:d}+{0:d}'.format(
+                random.randint(20, int(40)),
+                random.randint(20, int(40)),
+            ),
             '-T',
             'xrun: ' + command,
             '-e',
