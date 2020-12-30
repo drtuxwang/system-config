@@ -81,7 +81,7 @@ class Options:
                 '-cr',
                 '#880000',
                 '-geometry',
-                '15x4',
+                '15x4+120+20',
                 '-ut',
                 '+sb',
                 '-e',
