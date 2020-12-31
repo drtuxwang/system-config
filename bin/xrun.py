@@ -66,7 +66,8 @@ class Options:
     @staticmethod
     def _select_urls(args):
         if [x for x in args if 'instagram' in x]:
-            ispick = re.compile('/e.*/?1080x1080/.*_n[.]jpg?')
+            # "/e35/p1080x1080" & "/35/\d{4}"
+            ispick = re.compile(r'/e\d\d/.?\d\d\d\d.*_n[.]jpg?')
             return [x for x in args if ispick.search(x)]
         return args
 
@@ -123,7 +124,7 @@ class Options:
             '#ff0000',
             '-ut',
             '-geometry',
-            '100x10+{0:d}+{0:d}'.format(
+            '100x10+{0:d}+{1:d}'.format(
                 random.randint(20, int(40)),
                 random.randint(20, int(40)),
             ),
