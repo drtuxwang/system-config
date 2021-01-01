@@ -2,7 +2,7 @@
 """
 Zhong Hua Speak Chinese TTS software.
 
-2009-2020 By Dr Colin Kong
+2009-2021 By Dr Colin Kong
 """
 
 import argparse
@@ -18,7 +18,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '4.5.4'
+RELEASE = '4.6.0'
 
 
 class Options:

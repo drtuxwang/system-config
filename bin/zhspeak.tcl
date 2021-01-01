@@ -1,7 +1,7 @@
 #!/usr/bin/env wish
 
 wm resizable . 0 0
-wm title . "zhspeak 4.5.4"
+wm title . "zhspeak 4.6.0"
 wm geometry . +120+20
 
 . config -bg "#cccccc"
@@ -32,15 +32,19 @@ frame .toolbar -bg "#cccccc"
 
     button .toolbar.close -width 4 -bg "#ff0000" -text Close -command exit
     pack .toolbar.close -side right
-    button .toolbar.pinyin -width 3 -bg "#00ff00" -text py -command {
-        catch {exec zhspeak -pinyin -zh "$text"} msg
+    button .toolbar.jyutping -width 3 -bg "#00ff00" -text 粵拼 -command {
+        catch {exec zhspeak -pinyin -zhy "$text"} msg
     }
-    pack .toolbar.pinyin -side right
-    button .toolbar.zhy -width 3 -bg "#00ff00" -text zhy -command {
+    pack .toolbar.jyutping -side right
+    button .toolbar.zhy -width 3 -bg "#00ff00" -text 粵語 -command {
         catch {exec zhspeak -zhy "$text"} msg
     }
     pack .toolbar.zhy -side right
-    button .toolbar.zh -width 3 -bg "#00ff00" -text zh -command {
+    button .toolbar.pinyin -width 3 -bg "#00ff00" -text 拼音 -command {
+        catch {exec zhspeak -pinyin -zh "$text"} msg
+    }
+    pack .toolbar.pinyin -side right
+    button .toolbar.zh -width 3 -bg "#00ff00" -text 普通話 -command {
         catch {exec zhspeak -zh "$text"} msg
     }
     pack .toolbar.zh -side right
