@@ -10,9 +10,9 @@ import signal
 import sys
 
 import jinja2
-import yaml
 
 import command_mod
+import config_mod
 import file_mod
 import subtask_mod
 
@@ -32,11 +32,11 @@ class Options:
         """
         return self._args.view_flag
 
-    def get_names(self):
+    def get_menus(self):
         """
         Return menu names.
         """
-        return self._args.names
+        return self._args.menus
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
@@ -49,9 +49,9 @@ class Options:
             help='Show TCL file.'
         )
         parser.add_argument(
-            'names',
+            'menus',
             nargs='*',
-            metavar='name',
+            metavar='menu',
             default=['main'],
             help='Menu name.'
         )
@@ -72,14 +72,29 @@ class Menu:
 
     def __init__(self, options):
         self._view_flag = options.get_view_flag()
-        self._names = options.get_names()
+        self._menus = options.get_menus()
 
         template = sys.argv[0].rsplit('.py', 1)[0] + '.tcl.jinja2'
         with open(template) as ifile:
             self._template = jinja2.Template(ifile.read())
-        config = sys.argv[0].rsplit('.py', 1)[0] + '.yaml'
-        with open(config) as ifile:
-            self._config = yaml.safe_load(ifile.read())
+
+        config_file = sys.argv[0].rsplit('.py', 1)[0] + '.yaml'
+        status_file = os.path.join(
+            os.environ['HOME'],
+            '.config',
+            os.path.basename(sys.argv[0]).rsplit('.py', 1)[0] + '.json',
+        )
+        if os.path.isfile(status_file):
+            file = status_file
+        else:
+            file = config_file
+
+        data = config_mod.Data()
+        data.read(file)
+        self._config = next(data.get())
+
+        if self._menus == ['main']:
+            self.update(config_file, status_file)
 
     @staticmethod
     def check_software(check):
@@ -102,19 +117,19 @@ class Menu:
                 return True
         return False
 
-    def generate(self, name):
+    def generate(self, menu):
         """
         Render template and return lines.
         """
-        items = self._config.get('menu_' + name)
+        items = self._config.get('menu_' + menu)
         if not items:
             raise SystemExit("{0:s}: Cannot find in menu.yaml: {1:s}".format(
                 sys.argv[0],
-                name,
+                menu,
             ))
 
         config = {'buttons': []}
-        config['title'] = name
+        config['title'] = menu
         for item in items:
             if self.check_software(item.get('check')):
                 config['buttons'].append(item['button'])
@@ -130,11 +145,11 @@ class Menu:
         wish = command_mod.Command('wish', errors='stop')
         tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache', 'menu'))
 
-        for name in self._names:
-            file = os.path.join(tmpdir, name + '.tcl')
+        for menu in self._menus:
+            file = os.path.join(tmpdir, menu + '.tcl')
             try:
                 with open(file, 'w', newline='\n') as ofile:
-                    for line in self.generate(name):
+                    for line in self.generate(menu):
                         if self._view_flag:
                             print(line)
                         print(line, file=ofile)
@@ -144,6 +159,38 @@ class Menu:
                 ) from exception
 
             subtask_mod.Background(wish.get_cmdline() + [file]).run()
+
+    @classmethod
+    def update(cls, config_file, status_file):
+        """
+        Update status file
+        """
+        data = config_mod.Data()
+        data.read(config_file)
+        config = next(data.get())
+
+        for menu in [x for x in config if x.startswith('menu')]:
+            found = []
+            for item in config[menu]:
+                check = item.get('check')
+                if check:
+                    if not cls.check_software(check):
+                        continue
+                    del item['check']
+                found.append(item)
+            config[menu] = found
+
+        if os.path.isfile(status_file):
+            data.read(status_file)
+            status = next(data.get())
+            if config == status:
+                return
+            print("Updating status file:", status_file)
+        else:
+            print("Writing status file:", status_file)
+
+        data.set([config])
+        data.write(status_file, compact=True)
 
 
 class Main:

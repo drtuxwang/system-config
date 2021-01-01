@@ -4,7 +4,7 @@ Python configuration module (uses "config_mod.yaml")
 
 Supports BSON, multi-JSON, XML, multi-YAML files.
 
-Copyright GPL v2: 2017-2020 By Dr Colin Kong
+Copyright GPL v2: 2017-2021 By Dr Colin Kong
 """
 
 import json
@@ -17,8 +17,8 @@ import bson
 import xmltodict
 import yaml
 
-RELEASE = '1.5.2'
-VERSION = 20201013
+RELEASE = '1.5.3'
+VERSION = 20210101
 
 
 class Data:
@@ -149,7 +149,7 @@ class Data:
         """
         Write configuration file
         """
-        tmpfile = file + '-tmp' + str(os.getpid())
+        tmpfile = file + '.part' + str(os.getpid())
 
         try:
             if file.endswith('json'):
