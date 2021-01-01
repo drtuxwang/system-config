@@ -193,6 +193,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/espeak.py
  * bin/et                 ET Wolf wrapper (allowing non systems port)
  * bin/et.py
+ * bin/et.tcl
  * bin/etl                ET Legacy wrapper (allowing non systems port)
  * bin/etl.py
  * bin/evince             evince wrapper (allowing non systems port)

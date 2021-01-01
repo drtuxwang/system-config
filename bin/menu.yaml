@@ -147,6 +147,12 @@ menu_games:
     run: exec swell-foop &
   check: swell-foop
 - button:
+    name: etwolf
+    color: "#00ff00"
+    label: ET
+    run: exec et.tcl &
+  check: et.x86
+- button:
     name: 0ad
     color: "#ffff00"
     label: 0AD
@@ -158,12 +164,6 @@ menu_games:
     label: AssaultCube
     run: exec assaultcube &
   check: assaultcube
-- button:
-    name: etwolf
-    color: "#ffff00"
-    label: ET
-    run: exec et &
-  check: et.x86
 - button:
     name: etwolf_bba
     button:
