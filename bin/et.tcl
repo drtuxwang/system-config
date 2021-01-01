@@ -18,11 +18,6 @@ frame .menu -bg "#cccccc"
         exec et +connect 173.230.141.36:27960 &
     }
     pack .menu.bba_jay -side top
-    button .menu.eg_begin -width 10 -bg "#ffff00" -text "EG(Begin)" -command {
-        exec et +connect et.eg-team.de:27960 &
-    }
-    pack .menu.eg_begin -side top
-
     button .menu.fa_b1 -width 10 -bg "#ffff00" -text "FA(B1)" -command {
         exec et +connect b1.clan-fa.com:27960 &
     }

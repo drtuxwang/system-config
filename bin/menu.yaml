@@ -165,31 +165,6 @@ menu_games:
     run: exec assaultcube &
   check: assaultcube
 - button:
-    name: etwolf_bba
-    button:
-    color: "#ffff00"
-    label: ET:BBA(Jay)
-    run: exec et +connect 173.230.141.36:27960 &
-  check: et.x86
-- button:
-    name: etwolf_fa
-    color: "#ffff00"
-    label: ET:FA(Jay)
-    run: exec et +connect 108.61.18.110:27960 &
-  check: et.x86
-- button:
-    name: etwolf_etc1
-    color: "#ffff00"
-    label: ET:Etc(Jay)
-    run: exec et +connect 185.248.141.23:27965 &
-  check: et.x86
-- button:
-    name: etwolf_etc2
-    color: "#ffff00"
-    label: ET:Etc(Nit)
-    run: exec et +connect 185.248.141.23:27960 &
-  check: et.x86
-- button:
     name: padman
     button:
     color: "#ffff00"
