@@ -2,7 +2,7 @@
 """
 System configuration detection tool.
 
-1996-2020 By Dr Colin Kong
+1996-2021 By Dr Colin Kong
 """
 
 import functools
@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.14.5'
-VERSION = 20201013
+RELEASE = '5.14.6'
+VERSION = 20210101
 
 # pylint: disable = too-many-lines
 
@@ -2309,7 +2309,6 @@ class Software:
     """
 
     def __init__(self):
-        os.environ['HOME'] = ''
         os.environ['KUBECONFIG'] = ''
 
         self._tools = {
