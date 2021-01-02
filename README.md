@@ -61,6 +61,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/fly
  * bin/fly.py
  * bin/glances
+ * bin/gtts-cli
  * bin/ipdb3
  * bin/ipdb3.bat
  * bin/ipython
