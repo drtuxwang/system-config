@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
 Wrapper for "espeak espeak
+
+Example:
+  espeak -a128 -k30 -ven+f2 -s60 -x "Hello World"
 """
 
 import glob

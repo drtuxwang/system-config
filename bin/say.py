@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Speak words using Espeak TTS engine.
+Speak words using Festival TTS engine.
 """
 
 import argparse
@@ -22,11 +22,11 @@ class Options:
         self._args = None
         self.parse(sys.argv)
 
-    def get_espeak(self):
+    def get_festival(self):
         """
-        Return espeak Command class object.
+        Return festival Command class object.
         """
-        return self._espeak
+        return self._festival
 
     def get_pattern(self):
         """
@@ -60,14 +60,15 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._espeak = command_mod.Command('espeak-ng', errors='stop')
-        self._espeak.set_args(['-a128', '-k30', '-ven+f2', '-s60', '-x'])
+        self._festival = command_mod.Command('festival', errors='stop')
         if self._args.voice:
-            self._espeak.append_arg('-v' + self._args.voice[0])
-        self._espeak.extend_args([' '.join(self._args.words)])
+            self._festival.append_arg('-v' + self._args.voice[0])
+        self._festival.extend_args([
+            '-b',
+            '(SayText "{0:s}")'.format(' '.join(self._args.words)),
+        ])
 
-        self._pattern = (
-            '^ALSA lib|: Connection refused|^Cannot connect|^jack server')
+        self._pattern = ('^Playing raw data')
 
 
 class Main:
@@ -108,8 +109,9 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Task(options.get_espeak().get_cmdline()).run(
-            pattern=options.get_pattern())
+        subtask_mod.Task(options.get_festival().get_cmdline()).run(
+            pattern=options.get_pattern()
+        )
 
 
 if __name__ == '__main__':
