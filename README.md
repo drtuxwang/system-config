@@ -391,8 +391,10 @@ the years. Now most of the scripts are written in Python 3.
  * bin/gqview             gqview wrapper (allowing non systems port)
  * bin/gqview.bat         (uses gqview)
  * bin/gqview.py          (uses geeqie)
- * bin/graph              Generate multiple graph files with X/Y plots
- * bin/graph.py           (uses gnuplot)
+ * bin/graph              Generate multiple graph files with X/Y plots (uses gnuplot)
+ * bin/graph.py
+ * bin/gtts               Google TTS wrapper
+ * bin/gtts_.py
  * bin/gz                 Compress a file in GZIP format (allowing non systems port)
  * bin/gz.py
  * bin/halt               Fast shutdown using "/proc/sysrq-trigger"
