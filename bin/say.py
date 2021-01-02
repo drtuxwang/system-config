@@ -63,10 +63,9 @@ class Options:
         self._festival = command_mod.Command('festival', errors='stop')
         if self._args.voice:
             self._festival.append_arg('-v' + self._args.voice[0])
-        self._festival.extend_args([
-            '-b',
-            '(SayText "{0:s}")'.format(' '.join(self._args.words)),
-        ])
+        self._festival.extend_args(['-b', '(SayText "{0:s}")'.format(
+            ' '.join(self._args.words).replace('"', ' '),
+        )])
 
         self._pattern = ('^Playing raw data')
 
