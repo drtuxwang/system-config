@@ -64,6 +64,10 @@ class Options:
             help='Audio directory.'
         )
 
+        if {'-c', '-f', '-q', '-t'} & set(args):
+            aplay = command_mod.Command('aplay', errors='stop')
+            subtask_mod.Exec(aplay.get_cmdline() + args[1:]).run()
+
         self._args = parser.parse_args(args)
 
     def parse(self, args):
