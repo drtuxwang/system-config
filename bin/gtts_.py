@@ -140,7 +140,10 @@ class Main:
                 tts = gtts.gTTS(phrase)
                 tts.save(tmpfile)
                 subtask_mod.Batch(ffplay.get_cmdline()).run()
-        os.remove(tmpfile)
+        try:
+            os.remove(tmpfile)
+        except FileNotFoundError:
+            pass
 
     @classmethod
     def run(cls):
