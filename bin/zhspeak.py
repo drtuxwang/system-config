@@ -19,7 +19,7 @@ import file_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '5.1.0'
+RELEASE = '5.1.1'
 
 
 class Options:
@@ -98,7 +98,7 @@ class Options:
             const='de-DE',
             dest='dialect',
             default='zh',
-            help='Select Deutsch (German) language.'
+            help='Select Deutsch (德語, German) language.'
         )
         parser.add_argument(
             '-en',
@@ -106,7 +106,7 @@ class Options:
             const='en-GB',
             dest='dialect',
             default='zh',
-            help='Select English (British) language.'
+            help='Select English (英語) language.'
         )
         parser.add_argument(
             '-es',
@@ -114,7 +114,7 @@ class Options:
             const='es-ES',
             dest='dialect',
             default='zh',
-            help='Select Espanol (Spanish) language.'
+            help='Select Espanol (西班牙語, Spanish) language.'
         )
         parser.add_argument(
             '-fr',
@@ -122,7 +122,7 @@ class Options:
             const='fr-FR',
             dest='dialect',
             default='zh',
-            help='Select French language.'
+            help='Select Francese (法語, French) language.'
         )
         parser.add_argument(
             '-it',
@@ -130,7 +130,7 @@ class Options:
             const='it-IT',
             dest='dialect',
             default='zh',
-            help='Select Italian language.'
+            help='Select Italiana (意大利語, Italian) language.'
         )
         parser.add_argument(
             '-zh',

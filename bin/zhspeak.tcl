@@ -1,7 +1,7 @@
 #!/usr/bin/env wish
 
 wm resizable . 0 0
-wm title . "Zhong Hua Speak v5.1.0"
+wm title . "Zhong Hua Speak v5.1.1"
 wm geometry . +120+20
 
 . config -bg "#cccccc"
@@ -51,7 +51,7 @@ frame .toolbar -bg "#cccccc"
     }
     pack .toolbar.it -side left
 
-    button .toolbar.zh -width 4 -bg "#00ff00" -text 普通話 -command {
+    button .toolbar.zh -width 4 -bg "#00ff00" -text zh -command {
         catch {exec zhspeak -zh "$text"} msg
     }
     pack .toolbar.zh -side left
@@ -59,7 +59,7 @@ frame .toolbar -bg "#cccccc"
         catch {exec zhspeak -pinyin -zh "$text"} msg
     }
     pack .toolbar.pinyin -side left
-    button .toolbar.zhy -width 4 -bg "#00ff00" -text 粵語 -command {
+    button .toolbar.zhy -width 4 -bg "#00ff00" -text zhy -command {
         catch {exec zhspeak -zhy "$text"} msg
     }
     pack .toolbar.zhy -side left
