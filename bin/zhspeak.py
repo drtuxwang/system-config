@@ -15,10 +15,11 @@ import sys
 import time
 
 import command_mod
+import file_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '4.6.0'
+RELEASE = '5.1.0'
 
 
 class Options:
@@ -49,11 +50,11 @@ class Options:
         """
         return self._phrases
 
-    def get_sound_flag(self):
+    def get_pinyin_flag(self):
         """
-        Return sound flag.
+        Return Pinyin flag.
         """
-        return self._args.sound_flag
+        return self._args.pinyin
 
     def get_speak_dir(self):
         """
@@ -61,10 +62,16 @@ class Options:
         """
         return self._speak_dir
 
+    def get_tmpfile(self):
+        """
+        Return tmpfile.
+        """
+        return self._tmpfile
+
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
             description='Zhong Hua Speak v' + self._release +
-            ' Chinese TTS software.'
+            ' - Chinese TTS software.'
         )
 
         parser.add_argument(
@@ -75,20 +82,20 @@ class Options:
         )
         parser.add_argument(
             '-pinyin',
-            action='store_false',
-            dest='sound_flag',
-            help='Print pinyin tones only.'
+            action='store_true',
+            dest='pinyin',
+            help='Print 拼音(Pinyin) or 粵拼(Jyutping) tones only.'
         )
         parser.add_argument(
             '-g',
             action='store_true',
             dest='gui_flag',
-            help='Start GUI.'
+            help='Start GUI (zhspeak.tcl).'
         )
         parser.add_argument(
             '-de',
             action='store_const',
-            const='de',
+            const='de-DE',
             dest='dialect',
             default='zh',
             help='Select Deutsch (German) language.'
@@ -96,15 +103,15 @@ class Options:
         parser.add_argument(
             '-en',
             action='store_const',
-            const='en',
+            const='en-GB',
             dest='dialect',
             default='zh',
-            help='Select English language.'
+            help='Select English (British) language.'
         )
         parser.add_argument(
             '-es',
             action='store_const',
-            const='es',
+            const='es-ES',
             dest='dialect',
             default='zh',
             help='Select Espanol (Spanish) language.'
@@ -112,7 +119,7 @@ class Options:
         parser.add_argument(
             '-fr',
             action='store_const',
-            const='fr',
+            const='fr-FR',
             dest='dialect',
             default='zh',
             help='Select French language.'
@@ -120,26 +127,10 @@ class Options:
         parser.add_argument(
             '-it',
             action='store_const',
-            const='it',
+            const='it-IT',
             dest='dialect',
             default='zh',
             help='Select Italian language.'
-        )
-        parser.add_argument(
-            '-ru',
-            action='store_const',
-            const='ru',
-            dest='dialect',
-            default='zh',
-            help='Select Russian language.'
-        )
-        parser.add_argument(
-            '-sr',
-            action='store_const',
-            const='sr',
-            dest='dialect',
-            default='zh',
-            help='Select Serbian language.'
         )
         parser.add_argument(
             '-zh',
@@ -147,7 +138,7 @@ class Options:
             const='zh',
             dest='dialect',
             default='zh',
-            help='Select Zhonghua (Mandarin) dialect (default).'
+            help='Select Zhonghua (普通話, Putonghua) dialect (default).'
         )
         parser.add_argument(
             '-zhy',
@@ -155,7 +146,7 @@ class Options:
             const='zhy',
             dest='dialect',
             default='zh',
-            help='Select Zhonghua Yue (Cantonese) dialect.'
+            help='Select Zhonghua Yue (粵語, Cantonese) dialect.'
         )
         parser.add_argument(
             'phrases',
@@ -209,7 +200,11 @@ class Options:
             zhspeaktcl = command_mod.Command('zhspeak.tcl', errors='stop')
             subtask_mod.Exec(zhspeaktcl.get_cmdline()).run()
 
+        tmpdir = file_mod.FileUtil.tmpdir('.cache/zhspeak')
+        self._tmpfile = os.path.join(tmpdir, "{0:d}.wav".format(os.getpid()))
+
         if self._args.xclip_flag:
+            self._tmpfile = os.path.join(tmpdir, 'xclip.wav')
             self._phrases = self._xclip()
         else:
             self._phrases = self._args.phrases
@@ -222,6 +217,9 @@ class Language:
     Language base class
     """
 
+    def __init__(self, _):
+        self._is_found = False
+
     @staticmethod
     def factory(options):
         """
@@ -229,7 +227,20 @@ class Language:
         """
         if options.get_dialect() in ('zh', 'zhy'):
             return Chinese(options)
-        return Espeak(options)
+        for software in (LibttsPico, Espeak):
+            tts = software(options)
+            if tts.is_found():
+                return tts
+
+        raise SystemExit(
+            sys.argv[0] + ': Cannot find "pico2wave" or "espeak" TTS software.'
+        )
+
+    def is_found(self):
+        """
+        Return True if TTS software found.
+        """
+        return self._is_found
 
     def text2speech(self, _):
         """
@@ -243,6 +254,8 @@ class Chinese(Language):
     """
 
     def __init__(self, options):
+        super().__init__(options)
+
         self._options = options
         self._ogg_dir = os.path.join(
             options.get_speak_dir(),
@@ -256,6 +269,7 @@ class Chinese(Language):
                 sys.argv[0] + ': Cannot find "vlc", "ogg123" (vorbis-tools),'
                 ' "ffplay" (libav-tools) or "avplay" (ffmpeg).'
             )
+        self._is_found = True
 
     def _speak(self, sounds):
         files = []
@@ -281,9 +295,9 @@ class Chinese(Language):
         """
         for phrase in phrases:
             for sounds in self._dictionary.map_speech(phrase):
-                print(" ".join(sounds))
-                if self._options.get_sound_flag():
+                if not self._options.get_pinyin_flag():
                     self._speak(sounds)
+                print(" ".join(sounds))
 
 
 class ChineseDictionary:
@@ -394,16 +408,71 @@ class ChineseDictionary:
         yield sounds
 
 
+class LibttsPico(Language):
+    """
+    LibttsPico class
+    """
+
+    def __init__(self, options):
+        super().__init__(options)
+
+        self._tmpfile = options.get_tmpfile()
+        self._command = command_mod.Command('pico2wave', errors='ignore')
+        self._command.set_args([
+            '--lang=' + options.get_dialect(),
+            '--wave=' + self._tmpfile]
+        )
+        self._is_found = self._command.is_found()
+
+    @staticmethod
+    def _speak_sounds(cmdline, text, tmpfile):
+        mp3_player = AudioPlayer.factory(None)
+        if not mp3_player:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "vlc", "ogg123" (vorbis-tools),'
+                ' "ffplay" (libav-tools) or "avplay" (ffmpeg).'
+            )
+
+        # Break at '.' and ','
+        for phrase in re.sub(r'[^\s\w-]', '.', '.'.join(text)).split('.'):
+            if phrase.strip():
+                task = subtask_mod.Batch(cmdline + [phrase])
+                task.run()
+                if task.get_exitcode():
+                    raise SystemExit(
+                        sys.argv[0] + ': Error code ' +
+                        str(task.get_exitcode()) +
+                        ' received from "' + task.get_file() + '".'
+                    )
+                mp3_player.run([tmpfile])
+
+        os.remove(tmpfile)
+
+    def text2speech(self, text):
+        """
+        Text to speech conversion
+        """
+        cmdline = self._command.get_cmdline()
+        self._speak_sounds(cmdline, text, self._tmpfile)
+
+
 class Espeak(Language):
     """
     Espeak class
     """
 
     def __init__(self, options):
+        super().__init__(options)
+
         self._options = options
-        self._espeak = command_mod.Command('espeak-ng', errors='stop')
-        self._espeak.set_args(
-            ['-a256', '-k30', '-v' + options.get_dialect() + '+f2', '-s120'])
+        self._command = command_mod.Command('espeak-ng', errors='ignore')
+        self._command.set_args([
+            '-a256',
+            '-k30',
+            '-v' + options.get_dialect().split('-')[0] + '+f2',
+            '-s120'
+        ])
+        self._is_found = self._command.is_found()
 
     @staticmethod
     def _show_sounds(cmdline, text):
@@ -433,10 +502,9 @@ class Espeak(Language):
         """
         Text to speech conversion
         """
-        cmdline = self._espeak.get_cmdline()
+        cmdline = self._command.get_cmdline()
         self._show_sounds(cmdline, text)
-        if self._options.get_sound_flag():
-            self._speak_sounds(cmdline, text)
+        self._speak_sounds(cmdline, text)
 
 
 class AudioPlayer:
@@ -453,7 +521,12 @@ class AudioPlayer:
         """
         Return AudioPlayer sub class object
         """
-        for audio_player in (Vlc, Ogg123, Avplay, Ffplay):
+        if ogg_dir:
+            audio_players = (Vlc, Ogg123, Avplay, Ffplay)
+        else:
+            audio_players = (Vlc, Avplay, Ffplay)
+
+        for audio_player in audio_players:
             player = audio_player(ogg_dir)
             if player.has_player():
                 return player

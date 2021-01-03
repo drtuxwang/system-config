@@ -1,7 +1,7 @@
 #!/usr/bin/env wish
 
 wm resizable . 0 0
-wm title . "zhspeak 4.6.0"
+wm title . "Zhong Hua Speak v5.1.0"
 wm geometry . +120+20
 
 . config -bg "#cccccc"
@@ -30,54 +30,46 @@ frame .toolbar -bg "#cccccc"
     }
     pack .toolbar.paste -side left
 
-    button .toolbar.close -width 4 -bg "#ff0000" -text Close -command exit
-    pack .toolbar.close -side right
-    button .toolbar.jyutping -width 3 -bg "#00ff00" -text 粵拼 -command {
-        catch {exec zhspeak -pinyin -zhy "$text"} msg
-    }
-    pack .toolbar.jyutping -side right
-    button .toolbar.zhy -width 3 -bg "#00ff00" -text 粵語 -command {
-        catch {exec zhspeak -zhy "$text"} msg
-    }
-    pack .toolbar.zhy -side right
-    button .toolbar.pinyin -width 3 -bg "#00ff00" -text 拼音 -command {
-        catch {exec zhspeak -pinyin -zh "$text"} msg
-    }
-    pack .toolbar.pinyin -side right
-    button .toolbar.zh -width 3 -bg "#00ff00" -text 普通話 -command {
-        catch {exec zhspeak -zh "$text"} msg
-    }
-    pack .toolbar.zh -side right
-    button .toolbar.en -width 3 -bg "#00ff00" -text en -command {
+    button .toolbar.en -width 4 -bg "#00ff00" -text en -command {
         catch {exec zhspeak -en "$text"} msg
     }
-    pack .toolbar.en -side right
-
-    button .toolbar.sr -width 3 -bg "#ffff00" -text sr -command {
-       catch {exec zhspeak -sr "$text"} msg
-    }
-    pack .toolbar.sr -side right
-    button .toolbar.ru -width 3 -bg "#ffff00" -text ru -command {
-        catch {exec zhspeak -ru "$text"} msg
-    }
-    pack .toolbar.ru -side right
-    button .toolbar.it -width 3 -bg "#ffff00" -text it -command {
-       catch {exec zhspeak -it "$text"} msg
-    }
-    pack .toolbar.it -side right
-    button .toolbar.fr -width 3 -bg "#ffff00" -text fr -command {
-        catch {exec zhspeak -fr "$text"} msg
-    }
-    pack .toolbar.fr -side right
-    button .toolbar.es -width 3 -bg "#ffff00" -text es -command {
-        catch {exec zhspeak -es "$text"} msg
-    }
-    pack .toolbar.es -side right
-    button .toolbar.de -width 3 -bg "#ffff00" -text de -command {
+    pack .toolbar.en -side left
+    button .toolbar.de -width 4 -bg "#ffff00" -text de -command {
         catch {exec zhspeak -de "$text"} msg
     }
-    pack .toolbar.de -side right
+    pack .toolbar.de -side left
+    button .toolbar.es -width 4 -bg "#ffff00" -text es -command {
+        catch {exec zhspeak -es "$text"} msg
+    }
+    pack .toolbar.es -side left
+    button .toolbar.fr -width 4 -bg "#ffff00" -text fr -command {
+        catch {exec zhspeak -fr "$text"} msg
+    }
+    pack .toolbar.fr -side left
+    button .toolbar.it -width 4 -bg "#ffff00" -text it -command {
+       catch {exec zhspeak -it "$text"} msg
+    }
+    pack .toolbar.it -side left
 
+    button .toolbar.zh -width 4 -bg "#00ff00" -text 普通話 -command {
+        catch {exec zhspeak -zh "$text"} msg
+    }
+    pack .toolbar.zh -side left
+    button .toolbar.pinyin -width 4 -bg "#00ff00" -text 拼音 -command {
+        catch {exec zhspeak -pinyin -zh "$text"} msg
+    }
+    pack .toolbar.pinyin -side left
+    button .toolbar.zhy -width 4 -bg "#00ff00" -text 粵語 -command {
+        catch {exec zhspeak -zhy "$text"} msg
+    }
+    pack .toolbar.zhy -side left
+    button .toolbar.jyutping -width 4 -bg "#00ff00" -text 粵拼 -command {
+        catch {exec zhspeak -pinyin -zhy "$text"} msg
+    }
+    pack .toolbar.jyutping -side left
+
+    button .toolbar.close -width 4 -bg "#ff0000" -text Close -command exit
+    pack .toolbar.close -side right
 pack .toolbar -side top -fill x
 
 
