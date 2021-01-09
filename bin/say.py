@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Speak words using Festival TTS engine.
+Speak English words using ZHSpeak TTS engine.
 """
 
 import argparse
@@ -22,29 +22,17 @@ class Options:
         self._args = None
         self.parse(sys.argv)
 
-    def get_festival(self):
+    def get_zhspeak(self):
         """
-        Return festival Command class object.
+        Return zhspeak Command class object.
         """
-        return self._festival
-
-    def get_pattern(self):
-        """
-        Return filter pattern.
-        """
-        return self._pattern
+        return self._zhspeak
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
-            description='Speak words using Espeak TTS engine.')
-
-        parser.add_argument(
-            '-voice',
-            nargs=1,
-            metavar='xx+yy',
-            help='Select language voice '
-            '(ie en+f2, fr+m3, de+f2, zhy+f2).'
+            description='Speak words using ZHSpeak TTS engine.'
         )
+
         parser.add_argument(
             'words',
             nargs='+',
@@ -60,14 +48,11 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._festival = command_mod.Command('festival', errors='stop')
-        if self._args.voice:
-            self._festival.append_arg('-v' + self._args.voice[0])
-        self._festival.extend_args(['-b', '(SayText "{0:s}")'.format(
-            ' '.join(self._args.words).replace('"', ' '),
-        )])
-
-        self._pattern = ('^Playing raw data')
+        self._zhspeak = command_mod.Command(
+            'zhspeak',
+            args=['-en'] + self._args.words,
+            errors='stop',
+        )
 
 
 class Main:
@@ -108,9 +93,7 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Task(options.get_festival().get_cmdline()).run(
-            pattern=options.get_pattern()
-        )
+        subtask_mod.Task(options.get_zhspeak().get_cmdline()).run()
 
 
 if __name__ == '__main__':
