@@ -60,12 +60,12 @@ class Options:
 
     @staticmethod
     def _xclip():
-        isxclip = re.compile(os.sep + 'python.*[/ ]gtts_(.py)? .*-xclip')
+        isxclip = re.compile(os.sep + 'python.*[/ ]say(.py)? .*-xclip')
         tasks = task_mod.Tasks.factory()
         for pid in tasks.get_pids():
             if pid != os.getpid():
                 if isxclip.search(tasks.get_process(pid)['COMMAND']):
-                    # Kill old gtts instances
+                    # Kill old say.py instances
                     tasks.killpids([pid] + tasks.get_descendant_pids(pid))
         xclip = command_mod.Command('xclip', errors='stop')
         xclip.set_args(['-out', '-selection', '-c', 'test'])
@@ -84,7 +84,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        tmpdir = file_mod.FileUtil.tmpdir('.cache/gtts')
+        tmpdir = file_mod.FileUtil.tmpdir('.cache/say')
         self._tmpfile = os.path.join(tmpdir, "{0:d}.mp3".format(os.getpid()))
 
         if self._args.xclip_flag:
