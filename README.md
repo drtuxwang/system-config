@@ -393,8 +393,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/gqview.py          (uses geeqie)
  * bin/graph              Generate multiple graph files with X/Y plots (uses gnuplot)
  * bin/graph.py
- * bin/gtts               Google TTS wrapper
- * bin/gtts_.py
  * bin/gz                 Compress a file in GZIP format (allowing non systems port)
  * bin/gz.py
  * bin/halt               Fast shutdown using "/proc/sysrq-trigger"
@@ -583,7 +581,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/rpm.py
  * bin/run                Run a command immune to terminal hangups
  * bin/run.py
- * bin/say                Speak words using Espeak TTS engine
+ * bin/say                Speak words using Google TTS engine
  * bin/say.py             (uses espeak)
  * bin/scp.bat            Windows scp wrapper (uses PuTTY)
  * bin/sdd                Securely backup/restore partitions using SSH protocol
