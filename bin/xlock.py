@@ -15,6 +15,186 @@ import subtask_mod
 import task_mod
 
 
+class ScreenLocker:
+    """
+    Screen Locker base class.
+    """
+
+    def __init__(self):
+        self._daemon = None
+        self._command = None
+        self._setup()
+
+    def _setup(self):
+        pass
+
+    def detect(self):
+        """
+        Return True if installed.
+        """
+        return self._command.is_found()
+
+    @staticmethod
+    def factory(desktop):
+        """
+        Return ScreenLocker sub class object.
+        """
+        screenlockers = {
+           'cinnamon': [CinnamonLocker, GnomeLocker, LightLocker, Xlock],
+           'gnome': [GnomeLocker, LightLocker, Xlock],
+           'kde': [KdeLocker, LightLocker, Xlock],
+           'macos': [MacLocker],
+           'mate': [MateLocker, LightLocker, Xlock],
+           'xfce': [GnomeLocker, LightLocker, XfceLocker, Xlock],
+        }
+        default = [LightLocker, Xlock]
+
+        for screenlocker in screenlockers.get(desktop, default):
+            locker = screenlocker()
+            if locker.detect():
+                return locker
+
+        raise SystemExit(sys.argv[0] + ': Cannot find suitable screen locker.')
+
+    def run(self):
+        """
+        Run screen locker.
+        """
+        if self._daemon:
+            tasks = task_mod.Tasks.factory()
+            cmdline = self._daemon.get_cmdline()
+            if not tasks.haspname(os.path.basename(cmdline[0])):
+                subtask_mod.Background(cmdline).run()
+                time.sleep(1)
+
+        subtask_mod.Background(self._command.get_cmdline()).run()
+
+
+class CinnamonLocker(ScreenLocker):
+    """
+    Cinnamon screen locker class.
+    """
+
+    def _setup(self):
+        self._daemon = command_mod.Command(
+            'cinnamon-screensaver',
+            errors='ignore',
+        )
+        self._command = command_mod.Command(
+            'cinnamon-screensaver-command',
+            args=['--lock'],
+            errors='ignore',
+        )
+
+
+class GnomeLocker(ScreenLocker):
+    """
+    Gnome screen locker class.
+    """
+
+    def _setup(self):
+        self._daemon = command_mod.Command(
+            'gnome-screensaver',
+            errors='ignore',
+        )
+        self._command = command_mod.Command(
+            'gnome-screensaver-command',
+            args=['--lock'],
+            errors='ignore',
+        )
+
+
+class KdeLocker(ScreenLocker):
+    """
+    KDE screen locker class.
+    """
+
+    def _setup(self):
+        self._command = command_mod.Command(
+            'qdbus',
+            args=['org.freedesktop.ScreenSaver', '/ScreenSaver', 'Lock'],
+            errors='ignore',
+        )
+
+
+class LightLocker(ScreenLocker):
+    """
+    Light DM screen locker class.
+    """
+
+    def _setup(self):
+        self._command = command_mod.Command(
+            'light-locker-command',
+            args=['--lock'],
+            errors='ignore',
+        )
+
+
+class MacLocker(ScreenLocker):
+    """
+    Mac screen locker class.
+    """
+
+    def _setup(self):
+        self._command = command_mod.Command(
+            '/System/Library/CoreServices/Menu Extras/User.menu/'
+            'Contents/Resources/CGSession',
+            args=['-suspend'],
+            errors='ignore',
+        )
+
+
+class MateLocker(ScreenLocker):
+    """
+    Mate screen locker class.
+    """
+
+    def _setup(self):
+        self._daemon = command_mod.Command(
+            'mate-screensaver',
+            errors='ignore',
+        )
+        self._command = command_mod.Command(
+            'mate-screensaver-command',
+            args=['--lock'],
+            errors='ignore',
+        )
+
+
+class XfceLocker(ScreenLocker):
+    """
+    XFCE screen locker class.
+    """
+
+    def _setup(self):
+        self._command = command_mod.Command('xflock4', errors='ignore')
+
+
+class Xlock(ScreenLocker):
+    """
+    "xlock" screen locker class.
+    """
+
+    def _setup(self):
+        self._command = command_mod.Command('xlock', errors='ignore')
+        args = sys.argv[1:]
+        if args:
+            self._command.set_args(args)
+        else:
+            self._command.set_args([
+                '-allowroot',
+                '+nolock',
+                '-mode',
+                'blank',
+                '-fg',
+                'red',
+                '-bg',
+                'black',
+                '-timeout',
+                '10',
+            ])
+
+
 class Main:
     """
     Main class
@@ -51,73 +231,12 @@ class Main:
         """
         Start program
         """
-        desktop = desktop_mod.Desktop.detect()
-        tasks = task_mod.Tasks.factory()
-
-        xlock = command_mod.Command(
-            'loginctl',
-            args=['lock-session'],
-            errors='ignore'
-        )
-        if not xlock.is_found() or desktop == 'xfce':
-            xlock = command_mod.Command(
-                'light-locker-command',
-                args=['--lock'],
-                errors='ignore'
-            )
-            if xlock.is_found():
-                tasks.killpname('gnome-screensaver')
-                if not task_mod.Tasks.factory().haspname('light-locker'):
-                    command = command_mod.Command(
-                        'light-locker',
-                        errors='stop'
-                    )
-                    subtask_mod.Daemon(command.get_cmdline()).run()
-                    time.sleep(1)
-            elif desktop == 'gnome':
-                xlock = command_mod.Command(
-                    'gnome-screensaver-command',
-                    args=['--lock'],
-                    errors='stop'
-                )
-                if not tasks.haspname('gnome-screensaver'):
-                    command = command_mod.Command(
-                        'gnome-screensaver',
-                        errors='stop'
-                    )
-                    subtask_mod.Task(command.get_cmdline()).run()
-            elif desktop == 'kde':
-                xlock = command_mod.Command('qdbus', args=[
-                    'org.freedesktop.ScreenSaver',
-                    '/ScreenSaver',
-                    'Lock'
-                ], errors='stop')
-            elif desktop == 'xfce':
-                xlock = command_mod.Command('xflock4', errors='stop')
-            elif desktop == 'macos':
-                xlock = command_mod.Command(
-                    '/System/Library/CoreServices/Menu Extras/User.menu/'
-                    'Contents/Resources/CGSession',
-                    args=['-suspend'],
-                    errors='stop'
-                )
-            else:
-                xlock = command_mod.Command('xlock', args=[
-                    '-allowroot',
-                    '+nolock',
-                    '-mode',
-                    'blank',
-                    '-fg',
-                    'red',
-                    '-bg',
-                    'black',
-                    '-timeout',
-                    '10'
-                    ], errors='stop')
-
         if 'VNCDESKTOP' in os.environ:
             os.environ['DISPLAY'] = ':0'
-        subtask_mod.Background(xlock.get_cmdline() + sys.argv[1:]).run()
+
+        desktop = desktop_mod.Desktop.detect()
+        locker = ScreenLocker.factory(desktop)
+        locker.run()
 
 
 if __name__ == '__main__':
