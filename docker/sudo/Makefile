@@ -3,6 +3,7 @@ IMAGE := drtuxwang/sudo
 NAME := sudo-bash
 HOSTNAME := sudo-bash
 
+TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
@@ -18,7 +19,7 @@ DOCKER_RUN_FLAGS := --rm \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--privileged=true \
-	$(shell ls -1d /* | grep -v "/proc$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}') \
+	$(shell ls -1d /* | egrep -v "/(proc|root)$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}') \
 	--volume="/etc/hosts:/etc/hosts" \
 	--volume="/etc/passwd:/etc/passwd:ro" \
 	--volume="/etc/group:/etc/group:ro" \
@@ -42,8 +43,15 @@ pull:
 
 .PHONY: build
 build:
+	rm -rf tmpdir
+	mkdir -p tmpdir/root
+	cp -p $(TOPDIR)/config/profile tmpdir/root/.profile
+	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
+	cp -p $(TOPDIR)/config/tmux.conf tmpdir/root/.tmux.conf
+	$(TOPDIR)/etc/setmod *
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) --force-rm=true -t $(IMAGE) .
+	rm -rf tmpdir
 
 .PHONY: run
 run:

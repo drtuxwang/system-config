@@ -12,14 +12,12 @@ else
     exit 1
 fi
 
-# Use current working directory
-export DOCKER_RUN_FLAGS="--workdir=$PWD"
-
-# Root user
-for FILE in profile vimrc tmux.conf
-do
-    DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=$DIR/config/$FILE:/root/.$FILE:ro"
-done
-
 export DOCKER_RUN_COMMAND="$@"
+if [ "$DOCKER_RUN_COMMAND" ]
+then
+    DOCKER_RUN_FLAGS="--workdir=$PWD"
+else
+    DOCKER_RUN_FLAGS=
+fi
+
 exec make --quiet -C $DIR/docker run-sudo
