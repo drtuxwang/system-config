@@ -184,6 +184,12 @@ menu_games:
     run: exec ut &
   check: Quake3-UrT.x86_64
 - button:
+    name: warsow
+    color: "#ffff00"
+    label: Warsow
+    run: exec warsow &
+  check: warsow.x86_64
+- button:
     name: wesnoth
     color: "#ffff00"
     label: Wesnoth

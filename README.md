@@ -1,4 +1,4 @@
-## 1996-2020 By Dr Colin Kong
+## 1996-2021 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -759,6 +759,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/vncviewer.py
  * bin/vplay              Play AVI/FLV/MP4 video files in directory.
  * bin/vplay.py           (uses vlc)
+ * bin/warsow             Warsow (allowing non systems port)
+ * bin/warsow.py
  * bin/wav                Encode WAV audio using avconv (pcm_s16le).
  * bin/wav.py
  * bin/wget               wget wrapper (allowing non systems port)
