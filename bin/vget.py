@@ -55,7 +55,7 @@ class Options:
             nargs=1,
             dest='code',
             default=None,
-            help='Select video format code (default prefer 720 height).'
+            help='Select video format code (default "136+140/mp4" for 720p).'
         )
         parser.add_argument(
             '-v',
@@ -86,14 +86,14 @@ class Options:
 
         codes = {}
         for line in task.get_output():
-            if 'video only' not in line:
+            if 'mp4' in line and 'video only' in line:
                 code, _, size = line.split()[:3]
                 codes[int(size.split('x')[1])] = code
         for height in sorted(codes, reverse=True):
             if height <= 720:
-                return codes[height]
+                return codes[height] + '+bestaudio[ext=m4a]/mp4'
         for height in sorted(codes):
-            return codes[height]
+            return codes[height] + '+bestaudio[ext=m4a]/mp4'
 
         raise SystemExit(sys.argv[0] + ': No video stream: ' + url)
 
