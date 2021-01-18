@@ -36,6 +36,7 @@ gitdb2>=3.0.3
 GitPython>=3.1.10
 Glances>=3.1.5
 gTTS>=2.2.1
+humpty>=0.2.1  # Convert whl to egg
 idna>=2.10
 ImageHash>=4.2.0
 importlib-metadata>=1.7.0
