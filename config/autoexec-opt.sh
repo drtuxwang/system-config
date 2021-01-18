@@ -51,12 +51,11 @@ start_app() {
 ##set_vga VGA1 1440 900 60 &
 ##xreset DVI-I=1360x768
 
-# Fix audio settings:
+# Fix audio settings (pactl list short sinks):
 ##pactl set-card-profile 0 output:hdmi-stereo+input:analog-stereo  # HDMI-1
 ##pactl set-card-profile 0 output:hdmi-stereo-extra1+input:analog-stereo  # HDMI-2
 ##pactl set-card-profile 0 off
-##pactl set-sink-volume 0 100%  # pactl list short sinks
-##pactl set-sink-volume 0 200%  # Workaround speakers hiss
+##pactl set-sink-volume 0 300%  # Workaround speaker hiss
 
 # Fix mouse speed:
 ##xset m 2,16
