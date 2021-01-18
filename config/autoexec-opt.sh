@@ -56,6 +56,7 @@ start_app() {
 ##pactl set-card-profile 0 output:hdmi-stereo-extra1+input:analog-stereo  # HDMI-2
 ##pactl set-card-profile 0 off
 ##pactl set-sink-volume 0 100%  # pactl list short sinks
+##pactl set-sink-volume 0 200%  # Workaround speakers hiss
 
 # Fix mouse speed:
 ##xset m 2,16
