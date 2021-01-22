@@ -59,4 +59,7 @@ rmi:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR rmi; \
 	done
+
+.PHONY: rmi-all
+rmi-all: rmi
 	docker rmi -f $(IMAGE) ||:

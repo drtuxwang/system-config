@@ -72,4 +72,7 @@ save:
 
 .PHONY: rmi
 rmi:
+
+.PHONY: rmi-all
+rmi-all: rmi
 	docker rmi -f $(IMAGE) ||:
