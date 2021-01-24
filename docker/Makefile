@@ -104,8 +104,8 @@ rmi:
 		make -C $$DIR rmi; \
 	done
 
-.PHONY: rmi-all
-rmi-all:
+.PHONY: rmi-base
+rmi-base:
 	for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR rmi-all; \
+		make -C $$DIR rmi-base; \
 	done

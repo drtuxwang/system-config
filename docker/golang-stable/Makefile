@@ -72,6 +72,6 @@ push:
 .PHONY: rmi
 rmi:
 
-.PHONY: rmi-all
-rmi-all: rmi
+.PHONY: rmi-base
+rmi-base: rmi
 	docker rmi -f $(IMAGE) ||:

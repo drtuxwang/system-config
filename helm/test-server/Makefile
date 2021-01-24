@@ -101,3 +101,6 @@ uninstall:
 
 .PHONY: clean
 clean:
+
+.PHONY: rmi
+rmi:

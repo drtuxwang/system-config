@@ -85,6 +85,6 @@ rmi:
 		make -C $$DIR rmi; \
 	done
 
-.PHONY: rmi-all
-rmi-all: rmi
+.PHONY: rmi-base
+rmi-base: rmi
 	docker rmi -f $(IMAGE) ||:

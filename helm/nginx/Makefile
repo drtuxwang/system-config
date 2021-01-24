@@ -115,3 +115,9 @@ uninstall:
 .PHONY: clean
 clean:
 	rm -rf $(CHART_REPO)
+
+.PHONY: rmi
+rmi:
+	@for IMAGE in `make --no-print-directory images`; do \
+		docker rmi -f $$IMAGE ||:; \
+	done

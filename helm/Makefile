@@ -96,3 +96,9 @@ clean:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR clean; \
 	done
+
+.PHONY: rmi
+rmi:
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR rmi; \
+	done
