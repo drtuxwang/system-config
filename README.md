@@ -732,6 +732,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/unxz.py
  * bin/unzip              unzip wrapper (allowing non systems port)
  * bin/unzip.py
+ * bin/urldecode          Decode URL query strings.
+ * bin/urldecode.py
  * bin/ut                 Urban Terror (allowing non systems port))
  * bin/ut.py
  * bin/vbox               VirtualBox virtual machine manager
