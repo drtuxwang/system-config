@@ -33,6 +33,12 @@ class Options:
         """
         return self._phrases
 
+    def get_run_flag(self):
+        """
+        Return run flag.
+        """
+        return self._args.run
+
     def get_tmpfile(self):
         """
         Return tmpfile.
@@ -43,6 +49,12 @@ class Options:
         parser = argparse.ArgumentParser(
             description='Speak words using Google TTS engine.')
 
+        parser.add_argument(
+            '-run',
+            action='store_true',
+            dest='run',
+            help='Run command and announce on completion.'
+        )
         parser.add_argument(
             '-xclip',
             action='store_true',
@@ -56,6 +68,8 @@ class Options:
             help='A word.'
         )
 
+        if args[0:1] == ['-run']:
+            args = [args[0], '--'] + args[1:]
         self._args = parser.parse_args(args)
 
     @staticmethod
@@ -131,11 +145,23 @@ class Main:
         """
         Speak phrases.
         """
+        args = options.get_phrases()
+
+        if options.get_run_flag():
+            command = command_mod.Command(args[0], errors='stop')
+            command.set_args(args[1:])
+            task = subtask_mod.Task(command.get_cmdline())
+            task.run()
+            if task.get_exitcode():
+                args.append('has failed')
+            else:
+                args.append('has completed')
+
         tmpfile = options.get_tmpfile()
         ffplay = command_mod.Command('ffplay', errors='stop')
         ffplay.extend_args(['-nodisp', '-autoexit', tmpfile])
 
-        for phrase in options.get_phrases():
+        for phrase in args:
             if phrase.strip():
                 tts = gtts.gTTS(phrase)
                 tts.save(tmpfile)
