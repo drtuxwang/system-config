@@ -9,6 +9,7 @@ import os
 import re
 import signal
 import sys
+import time
 
 import gtts
 
@@ -103,10 +104,9 @@ class Options:
 
         if self._args.xclip_flag:
             self._tmpfile = os.path.join(tmpdir, 'xclip.mp3')
-            text = self._xclip()
+            self._words = self._xclip()
         else:
-            text = self._args.words
-        self._words = re.sub(r'[^\s\w-]', '.', '.'.join(text)).split('.')
+            self._words = self._args.words
 
 
 class Main:
@@ -149,6 +149,7 @@ class Main:
         exitcode = 0
 
         if options.get_run_flag():
+            start_time = time.time()
             command = command_mod.Command(args[0], errors='ignore')
             if command.is_found():
                 command.set_args(args[1:])
@@ -162,12 +163,14 @@ class Main:
             else:
                 args = args[:1] + ['not found']
                 exitcode = 1
+            elapsed_time = time.time() - start_time
+            print("Elapsed time (s): {0:5.3f} ".format(elapsed_time))
 
         tmpfile = options.get_tmpfile()
         ffplay = command_mod.Command('ffplay', errors='stop')
         ffplay.extend_args(['-nodisp', '-autoexit', tmpfile])
 
-        for phrase in args:
+        for phrase in re.sub(r'[^\s\w-]', '.', '.'.join(args)).split('.'):
             if phrase.strip():
                 tts = gtts.gTTS(phrase)
                 tts.save(tmpfile)

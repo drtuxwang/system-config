@@ -123,12 +123,14 @@ class Main:
         exitcode = 0
 
         if options.get_run_flag():
+            start_time = time.time()
             command = command_mod.Command(args[0], errors='ignore')
             if command.is_found():
                 command.set_args(args[1:])
                 task = subtask_mod.Task(command.get_cmdline())
                 task.run()
                 exitcode = task.get_exitcode()
+
                 args = [' '.join(args)]
                 if exitcode:
                     args.append('has failed')
@@ -137,6 +139,8 @@ class Main:
             else:
                 args = args[:1] + ['not found']
                 exitcode = 1
+            elapsed_time = time.time() - start_time
+            print("Elapsed time (s): {0:5.3f} ".format(elapsed_time))
         else:
             args = [' '.join(args)]
 
@@ -148,7 +152,7 @@ class Main:
             subtask_mod.Background(bell.get_cmdline()).run()
 
         pop = command_mod.Command('notify-send', errors='stop')
-        pop.set_args(['--expire-time=0', '--'] + args)
+        pop.set_args(['--expire-time=30', '--'] + args)
         task = subtask_mod.Task(pop.get_cmdline())
         task.run()
         if task.get_exitcode():
