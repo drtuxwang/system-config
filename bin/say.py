@@ -27,12 +27,6 @@ class Options:
         self._args = None
         self.parse(sys.argv)
 
-    def get_phrases(self):
-        """
-        Return list of phrases.
-        """
-        return self._phrases
-
     def get_run_flag(self):
         """
         Return run flag.
@@ -44,6 +38,12 @@ class Options:
         Return tmpfile.
         """
         return self._tmpfile
+
+    def get_words(self):
+        """
+        Return list of words.
+        """
+        return self._words
 
     def _parse_args(self, args):
         parser = argparse.ArgumentParser(
@@ -106,7 +106,7 @@ class Options:
             text = self._xclip()
         else:
             text = self._args.words
-        self._phrases = re.sub(r'[^\s\w-]', '.', '.'.join(text)).split('.')
+        self._words = re.sub(r'[^\s\w-]', '.', '.'.join(text)).split('.')
 
 
 class Main:
@@ -143,19 +143,25 @@ class Main:
     @staticmethod
     def speak(options):
         """
-        Speak phrases.
+        Speak message.
         """
-        args = options.get_phrases()
+        args = options.get_words()
+        exitcode = 0
 
         if options.get_run_flag():
-            command = command_mod.Command(args[0], errors='stop')
-            command.set_args(args[1:])
-            task = subtask_mod.Task(command.get_cmdline())
-            task.run()
-            if task.get_exitcode():
-                args.append('has failed')
+            command = command_mod.Command(args[0], errors='ignore')
+            if command.is_found():
+                command.set_args(args[1:])
+                task = subtask_mod.Task(command.get_cmdline())
+                task.run()
+                exitcode = task.get_exitcode()
+                if exitcode:
+                    args.append('has failed')
+                else:
+                    args.append('has completed')
             else:
-                args.append('has completed')
+                args = args[:1] + ['not found']
+                exitcode = 1
 
         tmpfile = options.get_tmpfile()
         ffplay = command_mod.Command('ffplay', errors='stop')
@@ -170,6 +176,8 @@ class Main:
             os.remove(tmpfile)
         except FileNotFoundError:
             pass
+
+        raise SystemExit(exitcode)
 
     @classmethod
     def run(cls):
