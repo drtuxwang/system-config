@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.14.6'
-VERSION = 20210101
+RELEASE = '5.14.7'
+VERSION = 20210129
 
 # pylint: disable = too-many-lines
 
@@ -1853,7 +1853,7 @@ class LinuxSystem(PosixSystem):
         try:
             with open('/proc/1/cgroup', errors='replace') as ifile:
                 for line in ifile:
-                    if '/docker/' in line:
+                    if '/docker/' in line or '/docker-' in line:
                         name = 'Docker ' + line.rsplit('/', 1)[1][:12]
                         break
                     if '/lxc/' in line:
