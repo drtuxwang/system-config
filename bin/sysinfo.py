@@ -27,7 +27,7 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.14.7'
+RELEASE = '5.15.0'
 VERSION = 20210129
 
 # pylint: disable = too-many-lines
@@ -2318,9 +2318,15 @@ class Software:
             'gcc': (['--version'], '^gcc ', '.* '),
             'g++': (['--version'], '^g\\+\\+ ', '.* '),
             'gfortran': (['--version'], '^GNU Fortran ', '.* '),
+            'git': (['--version'], 'version ', '.*version '),
+            'git-lfs': (['--version'], 'git-lfs/', 'git-lfs/| .*'),
             'kubectl': (['version'], 'Client', '.*GitVersion:"v|".*'),
             'helm': (['version'], 'Client', '.*SemVer:"v|".*'),
+            'make': (['--version'], 'Make', '.*Make '),
+            'rsync': (['--version'], '^rsync +version', 'rsync +version | .*'),
+            'ssh': (['-V'], 'SSH', '.*SSH[ _]| .*'),
             'tmux': (['-V'], '^tmux ', '.* '),
+            'vim': (['-version'], 'Vi IMproved ', '.*Vi IMproved | .*'),
             'wget': (['--version'], 'Wget ', '.*Wget | .*'),
         }
 
