@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.15.0'
-VERSION = 20210129
+RELEASE = '5.15.1'
+VERSION = 20210130
 
 # pylint: disable = too-many-lines
 
@@ -332,8 +332,8 @@ class Detect:
     @staticmethod
     def _software():
         software = Software()
-        for file, version in software.detect():
-            Writer.output('Software', value=file+' '+version)
+        for file, version, comment in software.detect():
+            Writer.output('Software', value=file+' '+version, comment=comment)
 
     def show_banner(self):
         """
@@ -2308,40 +2308,52 @@ class Software:
     Software class
     """
 
+    SOFTWARE_TOOLS = [
+        (['bash', '--version'], ' version ', '.*version |[( ].*', ''),
+        (['clamscan', '--version'], 'ClamAV ', '.*ClamAV |/.*', 'ClamAV'),
+        (['convert', '--version'],
+            ' ImageMagick ', '.*ImageMagick | .*', 'ImageMagick',),
+        (['curl', '--version'], '^curl ', 'curl | .*', ''),
+        (['docker', 'version'], 'Version:', '.* ', ''),
+        (['ffmpeg', '-version'],
+            '^ffmpeg version ', '.*version | .*', 'FFmpeg'),
+        (['gcc', '--version'], '^gcc ', '.* ', 'GCC'),
+        (['g++', '--version'], '^g\\+\\+ ', '.* ', 'GCC'),
+        (['gfortran', '--version'], '^GNU Fortran ', '.* ', 'GCC'),
+        (['git', '--version'], 'version ', '.*version ', ''),
+        (['git-lfs', '--version'], 'git-lfs/', 'git-lfs/| .*', ''),
+        (['gpg', '--version'], 'GnuPG\) ', '.*\)', 'GnuPG'),
+        (['java', '--version'], '^openjdk ', 'openjdk | .*', 'OpenJDK'),
+        (['javac', '--version'], '^javac ', 'javac | .*', ''),
+        (['kubectl', 'version'], 'Client', '.*GitVersion:"v|".*', ''),
+        (['helm', 'version'], 'Client', '.*SemVer:"v|".*', ''),
+        (['htop', '-v'], '^htop ', 'htop | .*', ''),
+        (['make', '--version'], 'GNU Make', '.*Make ', 'GNU Make'),
+        (['python', '--version'], 'Python ', '.*Python ', ''),
+        (['python3', '--version'], 'Python ', '.*Python ', ''),
+        (['rsync', '--version'], '^rsync +version', 'rsync +version | .*', ''),
+        (['sqlplus', '-V'], '^Version ', 'Version ', 'Instant Client'),
+        (['ssh', '-V'], 'OpenSSH', '.*SSH[ _]| .*', 'OpenSSH'),
+        (['systemctl', '--version'], '^systemd', 'systemd | .*', 'systemd'),
+        (['tmux', '-V'], '^tmux ', '.* ', ''),
+        (['wget', '--version'], 'Wget ', '.*Wget | .*', ''),
+    ]
+
     def __init__(self):
         os.environ['KUBECONFIG'] = ''
-
-        self._tools = {
-            'X': (['-version'], 'Server ', '.* '),
-            'docker': (['version'], 'Version:', '.* '),
-            'curl': (['--version'], '^curl ', 'curl | .*'),
-            'gcc': (['--version'], '^gcc ', '.* '),
-            'g++': (['--version'], '^g\\+\\+ ', '.* '),
-            'gfortran': (['--version'], '^GNU Fortran ', '.* '),
-            'git': (['--version'], 'version ', '.*version '),
-            'git-lfs': (['--version'], 'git-lfs/', 'git-lfs/| .*'),
-            'kubectl': (['version'], 'Client', '.*GitVersion:"v|".*'),
-            'helm': (['version'], 'Client', '.*SemVer:"v|".*'),
-            'make': (['--version'], 'Make', '.*Make '),
-            'rsync': (['--version'], '^rsync +version', 'rsync +version | .*'),
-            'ssh': (['-V'], 'SSH', '.*SSH[ _]| .*'),
-            'tmux': (['-V'], '^tmux ', '.* '),
-            'vim': (['-version'], 'Vi IMproved ', '.*Vi IMproved | .*'),
-            'wget': (['--version'], 'Wget ', '.*Wget | .*'),
-        }
 
         self._wrapper = []
         command = command_mod.Command('timeout', errors='ignore')
         if command.is_found():
             self._wrapper = command.get_cmdline() + ['--signal=KILL', '1']
 
-    def get(self, name):
+    def get(self, software):
         """
         Detect software
         """
-        args, required, junk = self._tools[name]
+        args, required, junk, comment = software
 
-        command = command_mod.Command(name, args=args, errors='ignore')
+        command = command_mod.Command(args[0], args=args[1:], errors='ignore')
         if command.is_found():
             task = subtask_mod.Batch(self._wrapper + command.get_cmdline())
             task.run(pattern=required, error2output=True)
@@ -2349,6 +2361,7 @@ class Software:
                 return (
                     command.get_file(),
                     re.sub(junk, '', task.get_output()[0]),
+                    comment,
                 )
         return None
 
@@ -2356,8 +2369,8 @@ class Software:
         """
         Yield all software versions
         """
-        for name in sorted(self._tools):
-            info = self.get(name)
+        for software in self.SOFTWARE_TOOLS:
+            info = self.get(software)
             if info:
                 yield info
 
