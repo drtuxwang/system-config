@@ -50,6 +50,7 @@ start_app() {
 ##set_vga VGA-0 1024 768 60 &
 ##set_vga VGA1 1440 900 60 &
 ##xreset DVI-I=1360x768
+##xrandr --output HDMI-2 --dpi 96
 
 # Fix audio settings (pactl list short sinks):
 ##pactl set-card-profile 0 output:hdmi-stereo+input:analog-stereo  # HDMI-1
