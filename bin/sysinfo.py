@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.15.1'
-VERSION = 20210130
+RELEASE = '5.15.2'
+VERSION = 20210206
 
 # pylint: disable = too-many-lines
 
@@ -2322,6 +2322,7 @@ class Software:
         (['gfortran', '--version'], '^GNU Fortran ', '.* ', 'GCC'),
         (['git', '--version'], 'version ', '.*version ', ''),
         (['git-lfs', '--version'], 'git-lfs/', 'git-lfs/| .*', ''),
+        (['go', 'version'], 'version go\d', '.*version go| .*', 'Golang'),
         (['gpg', '--version'], 'GnuPG\) ', '.*\)', 'GnuPG'),
         (['java', '--version'], '^openjdk ', 'openjdk | .*', 'OpenJDK'),
         (['javac', '--version'], '^javac ', 'javac | .*', ''),
