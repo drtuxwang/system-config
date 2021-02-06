@@ -4,6 +4,7 @@ set_vga() {
     }')
     xrandr --newmode $2x${3}_$4 $MODELINE
     xrandr --addmode $1 $2x${3}_$4
+    xrandr --dpi 96
     sleep 1
     xrandr -s $2x${3}_$4
 }
@@ -45,23 +46,23 @@ start_app() {
 }
 
 
-# Fix display resolution:
+# Fix display:
 ##set_vga VGA-0 1024 768 60 &
 ##set_vga VGA1 1440 900 60 &
 ##xreset DVI-I=1360x768
-xrandr --dpi 96
+##xrandr --dpi 96
 
-# Fix audio settings (pactl list short sinks):
+# Fix audio (pactl list short sinks):
 ##pactl set-card-profile 0 output:hdmi-stereo+input:analog-stereo  # HDMI-1
 ##pactl set-card-profile 0 output:hdmi-stereo-extra1+input:analog-stereo  # HDMI-2
 ##pactl set-card-profile 0 off
-pactl set-sink-volume 0 153%  # Default volume
+##pactl set-sink-volume 0 153%  # Default volume
 
-# Fix mouse speed:
-##xset m 2,16
+# Fix keyboard:
+##setxkbmap us
 
-# Fix keyboard language:
-setxkbmap gb  # "gb", "de", "us"
+# Fix mouse:
+##xset m 4,16
 
 # Start applications:
 ##start_app -pname=chromium-browser -timeout=60 chromium &

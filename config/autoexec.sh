@@ -38,27 +38,36 @@ then
     export PATH="$HOME/software/bin:/opt/software/bin:$HOME/.local/bin:$PATH"
 fi
 
+export SSH_AUTH_SOCK=$(ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
+[[ ! "$SSH_AUTH_SOCK" ]] && eval $(ssh-agent)
+
+chmod go= $HOME/Desktop data/private .??*/* 2> /dev/null
+
+# Setup display:
+for HOST in "" `xhost | grep "^INET:"`
+do
+    xhost -$HOST
+done
+xhost +si:localuser:$MYUNAME
+xrandr --dpi 96
+xset s blank s 0 # Use 300 for CRT
+sleep 4 && xset dpms 0 0 0 &
+
+# Setup audio:
+pactl set-sink-volume 0 153%
+
+# Setup keyboard:
+setxkbmap gb
+setxkbmap -option ctrl:nocaps
+setxkbmap -option terminate:ctrl_alt_bksp
+xset b off
+xset r rate 500 25
 if [ -x /usr/bin/ibus-daemon ]
 then
     export GTK_IM_MODULE=ibus
     export QT_IM_MODULE=ibus
     export XMODIFIERS=@im=ibus
 fi
-
-chmod go= $HOME/Desktop data/private .??*/* 2> /dev/null
-for HOST in "" `xhost | grep "^INET:"`
-do
-    xhost -$HOST
-done
-xhost +si:localuser:$MYUNAME
-
-setxkbmap gb
-setxkbmap -option ctrl:nocaps
-setxkbmap -option terminate:ctrl_alt_bksp
-xset b off
-xset m 4,16
-xset r rate 500 25
-xset s blank s 0 # Use 300 for CRT
 if [ "$(ls /dev/input/by-path/*usb*kbd 2> /dev/null)" ]
 then
     sleep 2 && numlockx on && xmodmap -e "keycode 77 = NoSymbol" &
@@ -66,12 +75,9 @@ else
     sleep 2 && numlockx off &
 fi
 sleep 2 && xmodmap -e "add mod3 = Scroll_Lock" &
-sleep 4 && xset dpms 0 0 0 &
 
-rm -rf $HOME/.thumbnails $HOME/.gnome2/evince/ev-metadata.xml
+# Setup mouse:
+xset m 4,16
 
-export SSH_AUTH_SOCK=$(ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
-[[ ! "$SSH_AUTH_SOCK" ]] && eval $(ssh-agent)
 menu
-
 [[ -f $HOME/.config/autoexec-opt.sh ]] && . $HOME/.config/autoexec-opt.sh
