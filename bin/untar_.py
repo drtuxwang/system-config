@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unpack an archive in TAR format.
+Unpack an archive in TAR format (Python version).
 """
 
 import argparse

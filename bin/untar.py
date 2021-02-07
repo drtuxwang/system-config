@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/
-TAR.7Z/TGZ/TBZ/TLZ/TXZ format.
+TAR.7Z/TGZ/TBZ/TLZ/TXZ format (GNU Tar version).
 """
 
 import argparse
@@ -109,10 +109,12 @@ class Main:
             p7zip = command_mod.Command('7z', errors='stop')
             p7zip.set_args(['x', '-y', '-so', archive])
             self._tar.set_args(['xfv', '-'])
+            self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
             subtask_mod.Task(
                 p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
         else:
             self._tar.set_args(['xfv', archive])
+            self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
             subtask_mod.Task(self._tar.get_cmdline()).run()
 
     def _view(self, archive):

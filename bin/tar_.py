@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Make a compressed archive in TAR format.
+Make a compressed archive in TAR format (Python version).
 """
 
 import argparse
@@ -105,12 +105,18 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
+    @staticmethod
+    def _reset(tarinfo):
+        tarinfo.uid = tarinfo.gid = 0
+        tarinfo.uname = tarinfo.gname = '0'
+        return tarinfo
+
     @classmethod
     def _addfile(cls, ofile, files):
         for file in sorted(files):
             print(file)
             try:
-                ofile.add(file, recursive=False)
+                ofile.add(file, recursive=False, filter=cls._reset)
             except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot add "' + file +
@@ -137,7 +143,7 @@ class Main:
         os.umask(int('022', 8))
         archive = options.get_archive()
         try:
-            with tarfile.open(archive+'.part', 'w:') as ofile:
+            with tarfile.open(archive+'.part', 'w') as ofile:
                 self._addfile(ofile, options.get_files())
         except OSError as exception:
             raise SystemExit(
@@ -146,8 +152,13 @@ class Main:
             ) from exception
         try:
             shutil.move(archive+'.part', archive)
-        except OSError:
-            pass
+        except OSError as exception:
+            raise SystemExit(
+                '{0:s}: Cannot create "{1:s}" archive file.'.format(
+                    sys.argv[0],
+                    archive
+                )
+            ) from exception
 
 
 if __name__ == '__main__':

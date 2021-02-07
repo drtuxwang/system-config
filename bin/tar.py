@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Make a compressed archive in TAR format.
+Make a compressed archive in TAR format (GNU Tar version).
 """
 
 import argparse
@@ -9,7 +9,9 @@ import os
 import shutil
 import signal
 import sys
-import tarfile
+
+import command_mod
+import subtask_mod
 
 
 class Options:
@@ -106,35 +108,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _reset(tarinfo):
-        tarinfo.uid = tarinfo.gid = 0
-        tarinfo.uname = tarinfo.gname = '0'
-        return tarinfo
-
-    @classmethod
-    def _addfile(cls, ofile, files):
-        for file in sorted(files):
-            print(file)
-            try:
-                ofile.add(file, recursive=False, filter=cls._reset)
-            except OSError as exception:
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot add "' + file +
-                    '" file to archive.'
-                ) from exception
-            if os.path.isdir(file) and not os.path.islink(file):
-                try:
-                    cls._addfile(
-                        ofile,
-                        [os.path.join(file, x) for x in os.listdir(file)]
-                    )
-                except PermissionError as exception:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot open "' + file +
-                        '" directory.'
-                    ) from exception
-
-    def run(self):
+    def run():
         """
         Start program
         """
@@ -142,14 +116,17 @@ class Main:
 
         os.umask(int('022', 8))
         archive = options.get_archive()
-        try:
-            with tarfile.open(archive+'.part', 'w') as ofile:
-                self._addfile(ofile, options.get_files())
-        except OSError as exception:
-            raise SystemExit(
-                sys.argv[0] + ': Cannot create "' +
-                archive + '.part" archive file.'
-            ) from exception
+        if os.name == 'nt':
+            tar = command_mod.Command('tar.exe', errors='stop')
+        else:
+            tar = command_mod.Command('tar', errors='stop')
+        tar.set_args(['cfv', archive+'.part'])
+        tar.extend_args(options.get_files())
+        tar.extend_args(['--xattrs', '--xattrs-include=*'])
+        task = subtask_mod.Task(tar.get_cmdline())
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(task.get_exitcode())
         try:
             shutil.move(archive+'.part', archive)
         except OSError as exception:
