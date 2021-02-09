@@ -24,3 +24,7 @@ load:
 	for FILE in *.tar; do \
 		 docker load -i $$FILE; \
 	done
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

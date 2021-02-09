@@ -1,5 +1,6 @@
 NAMESPACE := default
 
+
 default: status
 
 .PHONY: create
@@ -18,3 +19,7 @@ status:
 delete:
 	@echo "\n*** Removing cronjob ***"
 	kubectl --namespace=$(NAMESPACE) delete -f batch-crontab.yaml ||:
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

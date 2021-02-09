@@ -9,6 +9,7 @@ FLAGS := --rm \
 	--memory-reservation=50m \
 	--memory=1000m
 
+
 default: build
 	docker images
 
@@ -35,3 +36,7 @@ run:
 		--name $(NAME) \
 		--hostname $(NAME) \
 		$(IMAGE) bash || exit 0
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

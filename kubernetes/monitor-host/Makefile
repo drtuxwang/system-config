@@ -19,3 +19,7 @@ status:
 delete:
 	@echo "\n*** Removing pods ***"
 	kubectl --namespace=$(NAMESPACE) delete -f monitor-host-daemonset.yaml ||:
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

@@ -5,6 +5,7 @@ ifndef LOCALPORT
 	LOCALPORT=8080
 endif
 
+
 default: status
 
 .PHONY: create
@@ -47,3 +48,7 @@ delete:
 	kubectl --namespace=$(NAMESPACE) delete -f servers-service.yaml ||:
 	kubectl --namespace=$(NAMESPACE) delete -f servers-ingress.yaml ||:
 	kubectl --namespace=$(NAMESPACE) delete -f servers-secret-tls.yaml ||:
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

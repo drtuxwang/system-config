@@ -75,3 +75,7 @@ rmi:
 .PHONY: rmi-base
 rmi-base: rmi
 	docker rmi -f $(IMAGE) ||:
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

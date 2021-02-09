@@ -4,6 +4,7 @@
 FLASK_APP = "simple_flask"
 FLAGS =
 
+
 default: test
 
 .PHONY: test
@@ -32,3 +33,7 @@ lint:
 run:
 	@echo "\n*** Running Flask app ***"
 	FLASK_APP=$(FLASK_APP) python3 -m flask run $(FLAGS)
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

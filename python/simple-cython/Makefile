@@ -36,3 +36,6 @@ run:
 clean:
 	rm -rf build *.c *.so
 
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

@@ -33,8 +33,8 @@ endif
 
 IMAGES_FILE=../$(CHART_REPO)-$(CHART_NAME)_$(CHART_VERSION)_app-$(APP_VERSION).tar
 
-default: status
 
+default: status
 
 .PHONY: images
 images:
@@ -115,3 +115,7 @@ rmi:
 	@for IMAGE in `make --no-print-directory images`; do \
 		docker rmi -f $$IMAGE ||:; \
 	done
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

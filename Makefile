@@ -37,3 +37,7 @@ lint:
 	python3 -m pylint --disable=locally-disabled,locally-enabled --max-line-length=79 \
 		--rcfile=/dev/null --output-format=parseable --reports=n -j 4 bin/*.py
 	@echo "*** Lint successfull ***"
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

@@ -102,3 +102,7 @@ rmi:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR rmi; \
 	done
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

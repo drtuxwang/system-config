@@ -72,3 +72,7 @@ push:
 .PHONY: rmi
 rmi:
 	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

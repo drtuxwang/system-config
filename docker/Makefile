@@ -26,6 +26,7 @@ BUILD_DIRS := \
 TEST_DIRS := \
 	python-3.6
 
+
 .PHONY: default
 default: build status
 
@@ -109,3 +110,7 @@ rmi-base:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR rmi-base; \
 	done
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

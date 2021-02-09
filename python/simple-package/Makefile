@@ -38,3 +38,7 @@ run:
 .PHONY: clean
 clean:
 	rm -rf build dist simple.egg-info
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

@@ -27,8 +27,8 @@ else
 	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
-default: status
 
+default: status
 
 .PHONY: images
 images:
@@ -104,3 +104,7 @@ clean:
 
 .PHONY: rmi
 rmi:
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

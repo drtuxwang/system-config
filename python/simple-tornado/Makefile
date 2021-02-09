@@ -26,3 +26,7 @@ lint:
 run:
 	@echo "\n*** Running Tornado web server ***"
 	./tornado_server.py
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))
