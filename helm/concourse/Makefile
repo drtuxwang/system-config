@@ -2,7 +2,7 @@ NAME := concourse
 CHART_REPO := concourse
 CHART_URL := https://concourse-charts.storage.googleapis.com
 CHART_NAME := concourse
-CHART_VERSION := 14.3.1
+CHART_VERSION := 14.5.5
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace

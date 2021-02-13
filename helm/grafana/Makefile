@@ -2,7 +2,7 @@ NAME := grafana
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := grafana
-CHART_VERSION := 3.4.5
+CHART_VERSION := 5.2.2
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace

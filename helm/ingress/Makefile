@@ -2,7 +2,7 @@ NAME := ingress
 CHART_REPO := ingress-nginx
 CHART_URL := https://kubernetes.github.io/ingress-nginx
 CHART_NAME := ingress-nginx
-CHART_VERSION :=  2.12.1
+CHART_VERSION :=  3.22.0
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace

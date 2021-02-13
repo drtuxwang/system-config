@@ -2,7 +2,7 @@ NAME := etcd
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := etcd
-CHART_VERSION := 4.11.1
+CHART_VERSION := 5.6.1
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace

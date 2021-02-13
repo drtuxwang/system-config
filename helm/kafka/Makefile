@@ -2,7 +2,7 @@ NAME := kafka
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := kafka
-CHART_VERSION := 11.7.2
+CHART_VERSION := 12.3.2
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace

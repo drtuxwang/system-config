@@ -2,7 +2,7 @@ NAME := jenkins
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := jenkins
-CHART_VERSION := 5.0.28
+CHART_VERSION := 7.3.5
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace

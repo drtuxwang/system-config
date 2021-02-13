@@ -2,7 +2,7 @@ NAME := chartmuseum
 CHART_REPO := stable
 CHART_URL := https://charts.helm.sh/stable
 CHART_NAME := chartmuseum
-CHART_VERSION := 2.13.3
+CHART_VERSION := 2.14.2
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 INGRESS_HOST := chartmusuem.local

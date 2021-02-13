@@ -2,7 +2,7 @@ NAME := pushgateway
 CHART_REPO := prometheus-community
 CHART_URL := https://prometheus-community.github.io/helm-charts
 CHART_NAME := prometheus-pushgateway
-CHART_VERSION := 1.4.2
+CHART_VERSION := 1.6.0
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace

@@ -2,7 +2,7 @@ NAME := mongodb
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := mongodb
-CHART_VERSION := 8.3.2
+CHART_VERSION := 10.6.4
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace

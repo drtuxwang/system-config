@@ -2,7 +2,7 @@ NAME := rabbitmq
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := rabbitmq
-CHART_VERSION := 6.8.3
+CHART_VERSION := 8.7.2
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace

@@ -2,7 +2,7 @@ NAME := prometheus
 CHART_REPO := prometheus-community
 CHART_URL := https://prometheus-community.github.io/helm-charts
 CHART_NAME := prometheus
-CHART_VERSION := 11.14.1
+CHART_VERSION := 13.0.3
 APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 
 # Default namespace
