@@ -15,7 +15,7 @@ k8s.gcr.io/coredns:$COREDNS_VERSION
 k8s.gcr.io/etcd:$ETCD_VERSION
 k8s.gcr.io/pause:$PAUSE_VERSION
 "
-FILE="kubernetes_${KUBE_VERSION}_control-plane.tar"
+FILE="kubernetes-images_control-plane_${KUBE_VERSION}.tar"
 CREATED=$(docker inspect $IMAGES | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 
 echo "docker save $IMAGES -o $FILE"
@@ -28,7 +28,7 @@ calico/kube-controllers:$CALICO_VERSION
 calico/node:$CALICO_VERSION
 calico/pod2daemon-flexvol:$CALICO_VERSION
 "
-FILE="calico_${CALICO_VERSION}_cni.tar"
+FILE="kubernetes-images_calico-cni_${CALICO_VERSION}.tar"
 CREATED=$(docker inspect $IMAGES | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 
 echo "docker save $IMAGES -o $FILE"

@@ -1,13 +1,13 @@
 #!/bin/bash -eu
 
-if [ $# -lt 2 ]
+if [ $# -lt 4 ]
 then
-    echo "Usage: $0 <tar-file> <docker-image>"
+    echo "Usage: $0 <chart> <chart-version> <app> <docker-image>"
     exit 1
 fi
 
-FILE="$1"
-shift
+FILE="../helm-images_${1#*/}_${2}_app-${3}.tar"
+shift 3
 
 CREATED=$(docker inspect "$@" | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 

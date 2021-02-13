@@ -29,8 +29,6 @@ else
 	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
-IMAGES_FILE=../$(CHART_REPO)-$(CHART_NAME)_$(CHART_VERSION)_app-$(APP_VERSION).tar
-
 
 default: status
 
@@ -56,7 +54,11 @@ pull:
 
 .PHONY: save
 save:
-	../helm-save.sh $(IMAGES_FILE) $(shell make --no-print-directory images)
+	../helm-save.sh \
+		$(CHART_REPO)-$(CHART_NAME) \
+		$(CHART_VERSION) \
+		$(APP_VERSION) \
+		$(shell make --no-print-directory images)
 
 .PHONY: template
 template: repo-add
