@@ -7,6 +7,7 @@ BUILD_DIRS := \
 	chartmuseum \
 	concourse \
 	etcd \
+	grafana \
 	jenkins \
 	kafka \
 	mongodb \
