@@ -911,24 +911,24 @@ the years. Now most of the scripts are written in Python 3.
  * docker/Makefile                       Makefile for building all images
  * docker/docker-load.sh                 Load docker images
  * docker/docker-save.sh                 Save docker images
- * docker/alpine-3.10/Dockerfile
- * docker/alpine-3.10/Makefile           alpine:3.10 based linux
- * docker/alpine-3.10/bash/Dockerfile
- * docker/alpine-3.10/bash/Makefile      alpine:3.10 based BASH login
- * docker/alpine-3.10/dev/Dockerfile
- * docker/alpine-3.10/dev/Makefile       alpine:3.10 based linux
+ * docker/alpine-3.11/Dockerfile
+ * docker/alpine-3.11/Makefile           alpine:3.11 based linux
+ * docker/alpine-3.11/bash/Dockerfile
+ * docker/alpine-3.11/bash/Makefile      alpine:3.11 based BASH login
+ * docker/alpine-3.11/dev/Dockerfile
+ * docker/alpine-3.11/dev/Makefile       alpine:3.11 based linux
  * docker/alpine-stable/Makefile
- * docker/alpine-stable/Dockerfile       alpine:3.11 based linux
+ * docker/alpine-stable/Dockerfile       alpine:3.12 based linux
  * docker/alpine-stable/bash/Makefile
- * docker/alpine-stable/bash/Dockerfile  alpine:3.11 based BASH login
+ * docker/alpine-stable/bash/Dockerfile  alpine:3.12 based BASH login
  * docker/alpine-stable/dev/Makefile
- * docker/alpine-stable/dev/Dockerfile   alpine:3.11 based GCC dev shell
+ * docker/alpine-stable/dev/Dockerfile   alpine:3.12 based GCC dev shell
  * docker/alpine-stable-i386/Makefile
- * docker/alpine-stable-i386/Dockerfile  i386/alpine:3.10 based linux
+ * docker/alpine-stable-i386/Dockerfile  i386/alpine:3.12 based linux
  * docker/alpine-stable-i386/bash/Makefile
- * docker/alpine-stable-i386/bash/Dockerfile  i386/alpine:3.10 based BASH login
+ * docker/alpine-stable-i386/bash/Dockerfile  i386/alpine:3.12 based BASH login
  * docker/alpine-stable-i386/dev/Makefile
- * docker/alpine-stable-i386/dev/Dockerfile  i386/alpine:3.10 based GCC dev shell
+ * docker/alpine-stable-i386/dev/Dockerfile  i386/alpine:3.12 based GCC dev shell
  * docker/amazonlinux-stable/Dockerfile
  * docker/amazonlinux-stable/Makefile  amazonlinux:2 based linux
  * docker/amazonlinux-stable/bash/Dockerfile amazonlinux:2 based BASH login

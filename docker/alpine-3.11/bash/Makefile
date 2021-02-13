@@ -1,5 +1,5 @@
-BASE_IMAGE := drtuxwang/alpine:3.10
-IMAGE := drtuxwang/alpine-bash:3.10
+BASE_IMAGE := drtuxwang/alpine:3.11
+IMAGE := drtuxwang/alpine-bash:3.11
 NAME := alpine3-bash
 HOSTNAME := alpine3-bash
 

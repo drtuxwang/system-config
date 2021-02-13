@@ -1,4 +1,4 @@
-BASE_IMAGE := alpine:3.11
+BASE_IMAGE := alpine:3.12
 IMAGE := drtuxwang/alpine:stable
 
 TOPDIR := ../..

@@ -27,8 +27,8 @@ if os.name == 'nt':
     import winreg
     # pylint: enable = import-error
 
-RELEASE = '5.15.2'
-VERSION = 20210206
+RELEASE = '5.15.3'
+VERSION = 20210213
 
 # pylint: disable = too-many-lines
 
@@ -2346,7 +2346,7 @@ class Software:
         self._wrapper = []
         command = command_mod.Command('timeout', errors='ignore')
         if command.is_found():
-            self._wrapper = command.get_cmdline() + ['--signal=KILL', '1']
+            self._wrapper = command.get_cmdline() + ['-s', 'KILL', '1']
 
     def get(self, software):
         """
