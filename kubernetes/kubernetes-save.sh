@@ -19,8 +19,9 @@ FILE="kubernetes-images_control-plane_${KUBE_VERSION}.tar"
 CREATED=$(docker inspect $IMAGES | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 
 echo "docker save $IMAGES -o $FILE"
-docker save $IMAGES -o $FILE
-touch -d "$CREATED" $FILE
+docker save $IMAGES -o "$FILE.part"
+touch -d $CREATED "$FILE.part"
+mv "$FILE.part" "$FILE"
 
 IMAGES="
 calico/cni:$CALICO_VERSION
@@ -32,5 +33,6 @@ FILE="kubernetes-images_calico-cni_${CALICO_VERSION}.tar"
 CREATED=$(docker inspect $IMAGES | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 
 echo "docker save $IMAGES -o $FILE"
-docker save $IMAGES -o $FILE
-touch -d "$CREATED" $FILE
+docker save $IMAGES -o "$FILE.part"
+touch -d $CREATED "$FILE.part"
+mv "$FILE.part" "$FILE"

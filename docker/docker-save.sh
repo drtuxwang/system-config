@@ -15,8 +15,7 @@ do
     CREATED=$(docker inspect "$IMAGE" | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 
     echo "docker save $@ -o $FILE"
-    docker save "$@" -o "$FILE"
-
-    echo "touch -d $CREATED $FILE"
-    touch -d $CREATED $FILE
+    docker save "$@" -o "$FILE.part"
+    touch -d $CREATED "$FILE.part"
+    mv "$FILE.part" "$FILE"
 done
