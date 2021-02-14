@@ -16,12 +16,15 @@ k8s.gcr.io/etcd:$ETCD_VERSION
 k8s.gcr.io/pause:$PAUSE_VERSION
 "
 FILE="kubernetes-images_control-plane_${KUBE_VERSION}.tar"
+LIST="${FILE%.tar}.list"
 CREATED=$(docker inspect $IMAGES | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 
 echo "docker save $IMAGES -o $FILE"
 docker save $IMAGES -o "$FILE.part"
-touch -d $CREATED "$FILE.part"
+tar xf "$FILE.part" repositories -O | sed -e "s/,/\\n/g;s/\"/:/g" | cut -f2,5 -d: > "$LIST.part"
+touch -d $CREATED "$FILE.part" "$LIST.part"
 mv "$FILE.part" "$FILE"
+mv "$LIST.part" "$LIST"
 
 IMAGES="
 calico/cni:$CALICO_VERSION
@@ -30,9 +33,12 @@ calico/node:$CALICO_VERSION
 calico/pod2daemon-flexvol:$CALICO_VERSION
 "
 FILE="kubernetes-images_calico-cni_${CALICO_VERSION}.tar"
+LIST="${FILE%.tar}.list"
 CREATED=$(docker inspect $IMAGES | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 
 echo "docker save $IMAGES -o $FILE"
 docker save $IMAGES -o "$FILE.part"
-touch -d $CREATED "$FILE.part"
+tar xf "$FILE.part" repositories -O | sed -e "s/,/\\n/g;s/\"/:/g" | cut -f2,5 -d: > "$LIST.part"
+touch -d $CREATED "$FILE.part" "$LIST.part"
 mv "$FILE.part" "$FILE"
+mv "$LIST.part" "$LIST"
