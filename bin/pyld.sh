@@ -11,7 +11,7 @@ temp_dotfiles() {
     MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
     mkdir -p /tmp/$MYUNAME/.cache
     chmod 700 /tmp/$MYUNAME
-    if [ ! -h $HOME/.python_history ]
+    if [ "$HOME" -a ! -h $HOME/.python_history ]
     then
          rm -f $HOME/.python_history
          ln -s /tmp/$MYUNAME/.cache/python_history $HOME/.python_history
