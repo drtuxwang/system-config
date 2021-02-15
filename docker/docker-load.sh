@@ -8,6 +8,10 @@ fi
 
 for FILE in $*
 do
-    echo "docker load -i $FILE"
-    docker load -i $FILE
+    case $FILE in
+    *.tar|*.tar.*|*.t[bgx]z)
+        echo "docker load -i $FILE"
+        docker load -i $FILE
+        ;;
+    esac
 done
