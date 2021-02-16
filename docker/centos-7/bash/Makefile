@@ -55,11 +55,6 @@ version:
 	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/system-release 2> /dev/null | \
 		sed -e "s@.*release @$(shell pwd): @" | awk '{printf("%s CentOS Linux %s\n", $$1, $$2)}'
 
-.PHONY: push
-push:
-	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
-	@docker push $(IMAGE)
-
 .PHONY: rmi
 rmi:
 	docker rmi -f $(IMAGE) ||:

@@ -2,26 +2,26 @@ IMAGES="drtuxwang/.*"
 
 BUILD_DIRS := \
 	alpine-3.11 \
-	alpine-stable \
-	alpine-stable-i386 \
-	amazonlinux-stable \
-	busybox-stable \
+	alpine-3.12 \
+	i386-alpine-3.12 \
+	amazonlinux-2 \
+	busybox-1.31 \
 	centos-7 \
-	centos-stable \
+	centos-8 \
 	clearlinux-latest \
-	debian-9 \
-	debian-stable \
-	debian-stable-i386 \
-	docker-stable \
-	golang-stable \
-	oraclelinux-7 \
-	oraclelinux-stable \
-	python-stable \
-	registry-stable \
+	debian-9-slim \
+	debian-10-slim\
+	i386-debian-10-slim \
+	docker-19.03 \
+	golang-1.14-alpine \
+	oraclelinux-7-slim \
+	oraclelinux-8-slim \
+	python-3.7-slim-buster \
+	registry-2.6 \
 	sudo \
 	ubuntu-16.04 \
 	ubuntu-18.04 \
-	ubuntu-stable
+	ubuntu-20.04
 
 TEST_DIRS := \
 	python-3.6
@@ -70,12 +70,6 @@ version:
 .PHONY: run-sudo
 run-sudo:
 	make -C sudo run
-
-.PHONY: push
-push:
-	for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR push || exit 1; \
-	done
 
 .PHONY: gc
 gc:

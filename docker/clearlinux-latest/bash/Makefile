@@ -55,11 +55,6 @@ version:
 	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /usr/share/clear/version 2> /dev/null | \
 		awk '{print $1}' | sed -e "s@^@$(shell pwd): Clear Linux @"
 
-.PHONY: push
-push:
-	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
-	@docker push $(IMAGE)
-
 .PHONY: rmi
 rmi:
 	docker rmi -f $(IMAGE) ||:

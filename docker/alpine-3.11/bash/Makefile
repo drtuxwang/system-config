@@ -55,11 +55,6 @@ version:
 	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
 		sed -e "s@^@$(shell pwd): Alpine Linux @"
 
-.PHONY: push
-push:
-	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
-	@docker push $(IMAGE)
-
 .PHONY: rmi
 rmi:
 	docker rmi -f $(IMAGE) ||:

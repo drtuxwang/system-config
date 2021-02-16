@@ -55,11 +55,6 @@ version:
 	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/os-release 2> /dev/null | \
 		grep "^VERSION=" | sed -e "s@.*=\"@$(shell pwd): Ubuntu Linux @;s@ (.*@@"
 
-.PHONY: push
-push:
-	@echo "\n*** Pushing \"$(IMAGE)\" Docker image ***"
-	@docker push $(IMAGE)
-
 .PHONY: rmi
 rmi:
 	docker rmi -f $(IMAGE) ||:

@@ -25,8 +25,8 @@ steps:
     - ls -ld ${{CF_VOLUME_PATH}}/* ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/*
     - env | grep ^CF_ | sort
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
-    - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine-stable/Makefile | sed -e "s/.* //")
-    - cf_export PYTHON_BASE=$(grep "^BASE_IMAGE" docker/python-stable/Makefile | sed -e "s/.* //")
+    - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine-3.12/Makefile | sed -e "s/.* //")
+    - cf_export PYTHON_BASE=$(grep "^BASE_IMAGE" docker/python-3.7-slim-buster/Makefile | sed -e "s/.* //")
     - codefresh get contexts
 
   preparations:
@@ -39,21 +39,21 @@ steps:
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - rm -rf docker/alpine-stable/bash/tmpdir
-        - mkdir -p docker/alpine-stable/bash/tmpdir/bin docker/alpine-stable/bash/tmpdir/root
-        - cp -p bin/* docker/alpine-stable/bash/tmpdir/bin/
-        - cp -p config/bashrc docker/alpine-stable/bash/tmpdir/root/.bashrc
-        - cp -p config/vimrc docker/alpine-stable/bash/tmpdir/root/.vimrc
+        - rm -rf docker/alpine-3.12/bash/tmpdir
+        - mkdir -p docker/alpine-3.12/bash/tmpdir/bin docker/alpine-3.12/bash/tmpdir/root
+        - cp -p bin/* docker/alpine-3.12/bash/tmpdir/bin/
+        - cp -p config/bashrc docker/alpine-3.12/bash/tmpdir/root/.bashrc
+        - cp -p config/vimrc docker/alpine-3.12/bash/tmpdir/root/.vimrc
       create_python_deps:
         title: Build Python dependencies
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - rm -rf docker/python-stable/tmpdir
-        - mkdir -p docker/python-stable/tmpdir/bin docker/python-stable/tmpdir/root
-        - cp -p bin/* docker/python-stable/tmpdir/bin/
-        - cp -p config/bashrc docker/python-stable/tmpdir/root/.bashrc
-        - cp -p config/vimrc docker/python-stable/tmpdir/root/.vimrc
+        - rm -rf docker/python-3.7-slim-buster/tmpdir
+        - mkdir -p docker/python-3.7-slim-buster/tmpdir/bin docker/python-3.7-slim-buster/tmpdir/root
+        - cp -p bin/* docker/python-3.7-slim-buster/tmpdir/bin/
+        - cp -p config/bashrc docker/python-3.7-slim-buster/tmpdir/root/.bashrc
+        - cp -p config/vimrc docker/python-3.7-slim-buster/tmpdir/root/.vimrc
 
   build_alpine:
     stage: package
@@ -61,7 +61,7 @@ steps:
     type: build
     image_name: drtuxwang/alpine
     tag: 'latest'
-    working_directory: docker/alpine-stable
+    working_directory: docker/alpine-3.12
     dockerfile: Dockerfile
     build_arguments:
     - BASE_IMAGE=${{ALPINE_BASE}}
@@ -83,14 +83,14 @@ steps:
         type: build
         image_name: drtuxwang/alpine-base
         tag: 'latest'
-        working_directory: docker/alpine-stable/bash
+        working_directory: docker/alpine-3.12/bash
         dockerfile: Dockerfile
       build_python:
         title: Build Python image
         type: build
         image_name: drtuxwang/python
         tag: 'latest'
-        working_directory: docker/python-stable
+        working_directory: docker/python-3.7-slim-buster
         dockerfile: Dockerfile
         build_arguments:
         - BASE_IMAGE=${{PYTHON_BASE}}

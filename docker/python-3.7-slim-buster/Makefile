@@ -1,0 +1,61 @@
+BASE_IMAGE := python:3.7-slim-buster
+IMAGE := drtuxwang/python:3.7-slim-buster
+
+TOPDIR := ../..
+ifndef DOCKER_BUILD_FLAGS
+	DOCKER_BUILD_FLAGS=
+endif
+BUILD_DIRS := bash devpi
+
+
+.PHONY: default
+default: build status
+
+.PHONY: status
+status:
+	docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " | sort
+
+.PHONY: pull
+pull:
+	docker pull $(BASE_IMAGE)
+	docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/:/.* /') "
+
+.PHONY: save
+save:
+	../docker-save.sh $(BASE_IMAGE)
+
+.PHONY: build
+build:
+	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
+	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR build || exit 1; \
+	done
+
+.PHONY: test
+test:
+	make -C bash test
+
+.PHONY: run
+run:
+	make -C bash run
+
+.PHONY: version
+version:
+	@for DIR in $(BUILD_DIRS); do \
+		make --no-print-directory -C $$DIR version || exit 1; \
+	done
+
+.PHONY: rmi
+rmi:
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR rmi; \
+	done
+
+.PHONY: rmi-base
+rmi-base: rmi
+	docker rmi -f $(IMAGE) ||:
+
+.PHONY: help
+help:
+	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

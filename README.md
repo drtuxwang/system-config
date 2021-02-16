@@ -917,96 +917,96 @@ the years. Now most of the scripts are written in Python 3.
  * docker/alpine-3.11/bash/Makefile      alpine:3.11 based BASH login
  * docker/alpine-3.11/dev/Dockerfile
  * docker/alpine-3.11/dev/Makefile       alpine:3.11 based linux
- * docker/alpine-stable/Makefile
- * docker/alpine-stable/Dockerfile       alpine:3.12 based linux
- * docker/alpine-stable/bash/Makefile
- * docker/alpine-stable/bash/Dockerfile  alpine:3.12 based BASH login
- * docker/alpine-stable/dev/Makefile
- * docker/alpine-stable/dev/Dockerfile   alpine:3.12 based GCC dev shell
- * docker/alpine-stable-i386/Makefile
- * docker/alpine-stable-i386/Dockerfile  i386/alpine:3.12 based linux
- * docker/alpine-stable-i386/bash/Makefile
- * docker/alpine-stable-i386/bash/Dockerfile  i386/alpine:3.12 based BASH login
- * docker/alpine-stable-i386/dev/Makefile
- * docker/alpine-stable-i386/dev/Dockerfile  i386/alpine:3.12 based GCC dev shell
- * docker/amazonlinux-stable/Dockerfile
- * docker/amazonlinux-stable/Makefile  amazonlinux:2 based linux
- * docker/amazonlinux-stable/bash/Dockerfile amazonlinux:2 based BASH login
- * docker/amazonlinux-stable/bash/Makefile
- * docker/amazonlinux-stable/dev/Dockerfile amazonlinux:2 based GCC dev shell
- * docker/amazonlinux-stable/dev/Makefile
- * docker/busybox-stable/Dockerfile
- * docker/busybox-stable/Makefile        busybox:1.31 based linux
- * docker/busybox-stable/bash/Dockerfile
- * docker/busybox-stable/bash/Makefile   busybox:1.31 based BASH login
- * docker/busybox-stable/files/ash2bash
+ * docker/alpine-3.12/Makefile
+ * docker/alpine-3.12/Dockerfile         alpine:3.12 based linux
+ * docker/alpine-3.12/bash/Makefile
+ * docker/alpine-3.12/bash/Dockerfile    alpine:3.12 based BASH login
+ * docker/alpine-3.12/dev/Makefile
+ * docker/alpine-3.12/dev/Dockerfile     alpine:3.12 based GCC dev shell
+ * docker/i386-alpine-3.12/Makefile
+ * docker/i386-alpine-3.12/Dockerfile    i386/alpine:3.12 based linux
+ * docker/i386-alpine-3.12/bash/Makefile
+ * docker/i386-alpine-3.12/bash/Dockerfile  i386/alpine:3.12 based BASH login
+ * docker/i386-alpine-3.12/dev/Makefile
+ * docker/i386-alpine-3.12/dev/Dockerfile  i386/alpine:3.12 based GCC dev shell
+ * docker/amazonlinux-2/Dockerfile
+ * docker/amazonlinux-2/Makefile         amazonlinux:2 based linux
+ * docker/amazonlinux-2/bash/Dockerfile
+ * docker/amazonlinux-2/bash/Makefile    amazonlinux:2 based BASH login
+ * docker/amazonlinux-2/dev/Dockerfile
+ * docker/amazonlinux-2/dev/Makefile     amazonlinux:2 based GCC dev shell
+ * docker/busybox-1.31/Dockerfile
+ * docker/busybox-1.31/Makefile          busybox:1.31 based linux
+ * docker/busybox-1.31/bash/Dockerfile
+ * docker/busybox-1.31/bash/Makefile     busybox:1.31 based BASH login
+ * docker/busybox-1.31/files/ash2bash
  * docker/centos-7/Dockerfile
  * docker/centos-7/Makefile              centos:7 based linux
  * docker/centos-7/bash/Dockerfile
  * docker/centos-7/bash/Makefile         centos:7 based BASH login
  * docker/centos-7/dev/Dockerfile
  * docker/centos-7/dev/Makefile          centos:7 based GCC dev shell
- * docker/centos-stable/Dockerfile
- * docker/centos-stable/Makefile         centos:8 based linux
- * docker/centos-stable/bash/Dockerfile
- * docker/centos-stable/bash/Makefile    centos:8 based BASH login
- * docker/centos-stable/dev/Dockerfile
- * docker/centos-stable/dev/Makefile     centos:8 based GCC dev shell
+ * docker/centos-8/Dockerfile
+ * docker/centos-8/Makefile              centos:8 based linux
+ * docker/centos-8/bash/Dockerfile
+ * docker/centos-8/bash/Makefile         centos:8 based BASH login
+ * docker/centos-8/dev/Dockerfile
+ * docker/centos-8/dev/Makefile          centos:8 based GCC dev shell
  * docker/clearlinux-latest/Dockerfile
  * docker/clearlinux-latest/Makefile     clearlinux:latest based linux
  * docker/clearlinux-latest/bash/Makefile  clearlinux:latest based BASH login
  * docker/clearlinux-latest/bash/Dockerfile
  * docker/clearlinux-latest/dev/Makefile  clearlinux:latest based CLANG dev shell
  * docker/clearlinux-latest/dev/Dockerfile
- * docker/debian-9/Dockerfile
- * docker/debian-9/Makefile              debian:9-slim based linux
- * docker/debian-9/bash/Dockerfile
- * docker/debian-9/bash/Makefile         debian:9-slim based BASH login
- * docker/debian-9/dev/Dockerfile
- * docker/debian-9/dev/Makefile          debian:9-slim based GCC dev shell
- * docker/debian-stable/Dockerfile
- * docker/debian-stable/Makefile         debian:10-slim based linux
- * docker/debian-stable/bash/Dockerfile
- * docker/debian-stable/bash/Makefile    debian:10-slim based BASH login
- * docker/debian-stable/dev/Dockerfile
- * docker/debian-stable/dev/Makefile     debian:10-slim based GCC dev shell
- * docker/debian-stable/xfce/Dockerfile
- * docker/debian-stable/xfce/Makefile    debian:10-slim based XFCE environment
- * docker/debian-stable/fce/files/docker-init
- * docker/debian-stable/fce/files/xstartup
- * docker/debian-stable-i386/Dockerfile
- * docker/debian-stable-i386/Makefile    i386/debian:10-slim based linux
- * docker/debian-stable-i386/bash/Dockerfile
- * docker/debian-stable-i386/bash/Makefile  i386/debian:10-slim based BASH login
- * docker/debian-stable-i386/dev/Dockerfile
- * docker/debian-stable-i386/dev/Makefile  i386/debian:10-slim based GCC dev shell
- * docker/docker-stable/Dockerfile
- * docker/docker-stable/Makefile         docker:19.03 (alpine) based docker shell
- * docker/docker-stable/files/ash2bash
- * docker/golang-stable/Dockerfile
- * docker/golang-stable/Makefile         golang:1.14-alpine based compiler app
- * docker/oraclelinux-7/Dockerfile
- * docker/oraclelinux-7/Makefile         oraclelinux:7-slim based linux
- * docker/oraclelinux-7/bash/Dockerfile
- * docker/oraclelinux-7/bash/Makefile    oraclelinux:7-slim based BASH login
- * docker/oraclelinux-7/dev/Dockerfile
- * docker/oraclelinux-7/dev/Makefile     oraclelinux:7-slim based GCC dev shell
- * docker/oraclelinux-stable/Dockerfile
- * docker/oraclelinux-stable/Makefile    oraclelinux:8-slim based linux
- * docker/oraclelinux-stable/bash/Dockerfile
- * docker/oraclelinux-stable/bash/Makefile oraclelinux:8-slim based BASH login
- * docker/oraclelinux-stable/dev/Dockerfile
- * docker/oraclelinux-stable/dev/Makefile oraclelinux:8-slim based GCC dev shel
- * docker/python-stable/Dockerfile
- * docker/python-stable/Makefile         python:3.7-slim-buster based Python app
- * docker/python-stable/bash/Makefile
- * docker/python-stable/bash/Dockerfile  python:3.7-slim-buster based BASH login
- * docker/python-stable/devpi/Dockerfile
- * docker/python-stable/devpi/Makefile   python:3.7-slim-buster based devpi server app
- * docker/registry-stable/Dockerfile
- * docker/registry-stable/Makefile       registry:2.6 based Docker Registry server app
- * docker/registry-stable/files/ash2bash
- * docker/registry-stable/files/config.yml
+ * docker/debian-9-slim/Dockerfile
+ * docker/debian-9-slim/Makefile         debian:9-slim based linux
+ * docker/debian-9-slim/bash/Dockerfile
+ * docker/debian-9-slim/bash/Makefile    debian:9-slim based BASH login
+ * docker/debian-9-slim/dev/Dockerfile
+ * docker/debian-9-slim/dev/Makefile     debian:9-slim based GCC dev shell
+ * docker/debian-10-slim/Dockerfile
+ * docker/debian-10-slim/Makefile        debian:10-slim based linux
+ * docker/debian-10-slim/bash/Dockerfile
+ * docker/debian-10-slim/bash/Makefile   debian:10-slim based BASH login
+ * docker/debian-10-slim/dev/Dockerfile
+ * docker/debian-10-slim/dev/Makefile    debian:10-slim based GCC dev shell
+ * docker/debian-10-slim/xfce/Dockerfile
+ * docker/debian-10-slim/xfce/Makefile    debian:10-slim based XFCE environment
+ * docker/debian-10-slim/xfce/files/docker-init
+ * docker/debian-10-slim/xfce/files/xstartup
+ * docker/i386-debian-10-slim/Dockerfile
+ * docker/i386-debian-10-slim/Makefile    i386/debian:10-slim based linux
+ * docker/i386-debian-10-slim/bash/Dockerfile
+ * docker/i386-debian-10-slim/bash/Makefile  i386/debian:10-slim based BASH login
+ * docker/i386-debian-10-slim/dev/Dockerfile
+ * docker/i386-debian-10-slim/dev/Makefile  i386/debian:10-slim based GCC dev shell
+ * docker/docker-19.03/Dockerfile
+ * docker/docker-19.03/Makefile          docker:19.03 (alpine) based docker shell
+ * docker/docker-19.03/files/ash2bash
+ * docker/golang-1.14-alpine/Dockerfile
+ * docker/golang-1.14-alpine/Makefile    golang:1.14-alpine based compiler app
+ * docker/oraclelinux-7-slim/Dockerfile
+ * docker/oraclelinux-7-slim/Makefile    oraclelinux:7-slim based linux
+ * docker/oraclelinux-7-slim/bash/Dockerfile
+ * docker/oraclelinux-7-slim/bash/Makefile  oraclelinux:7-slim based BASH login
+ * docker/oraclelinux-7-slim/dev/Dockerfile
+ * docker/oraclelinux-7-slim/dev/Makefile  oraclelinux:7-slim based GCC dev shell
+ * docker/oraclelinux-8-slim/Dockerfile
+ * docker/oraclelinux-8-slim/Makefile    oraclelinux:8-slim based linux
+ * docker/oraclelinux-8-slim/bash/Dockerfile
+ * docker/oraclelinux-8-slim/bash/Makefile  oraclelinux:8-slim based BASH login
+ * docker/oraclelinux-8-slim/dev/Dockerfile
+ * docker/oraclelinux-8-slim/dev/Makefile  oraclelinux:8-slim based GCC dev shel
+ * docker/python-3.7-slim-buster/Dockerfile
+ * docker/python-3.7-slim-buster/Makefile  python:3.7-slim-buster based Python app
+ * docker/python-3.7-slim-buster/bash/Makefile
+ * docker/python-3.7-slim-buster/bash/Dockerfile  python:3.7-slim-buster based BASH login
+ * docker/python-3.7-slim-buster/devpi/Dockerfile
+ * docker/python-3.7-slim-buster/devpi/Makefile  python:3.7-slim-buster based devpi server app
+ * docker/registry-2.6/Dockerfile
+ * docker/registry-2.6/Makefile          registry:2.6 based Docker Registry server app
+ * docker/registry-2.6/files/ash2bash
+ * docker/registry-2.6/files/config.yml
  * docker/sudo/Dockerfile
  * docker/sudo/Makefile                  sudo scratch image for jail breaking app
  * docker/ubuntu-16.04/Makefile
@@ -1021,17 +1021,17 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu-18.04/bash/Dockerfile   ubuntu:18.04 based BASH login
  * docker/ubuntu-18.04/dev/Makefile
  * docker/ubuntu-18.04/dev/Dockerfile    ubuntu:18.04 based GCC dev shell
- * docker/ubuntu-stable/Dockerfile
- * docker/ubuntu-stable/Makefile         ubuntu:20.04 based linux
- * docker/ubuntu-stable/bash/Dockerfile
- * docker/ubuntu-stable/bash/Makefile    ubuntu:20.04 based BASH login
- * docker/ubuntu-stable/dev/Dockerfile
- * docker/ubuntu-stable/dev/Makefile     ubuntu:20.04 based GCC dev shell
+ * docker/ubuntu-20.04/Dockerfile
+ * docker/ubuntu-20.04/Makefile          ubuntu:20.04 based linux
+ * docker/ubuntu-20.04/bash/Dockerfile
+ * docker/ubuntu-20.04/bash/Makefile     ubuntu:20.04 based BASH login
+ * docker/ubuntu-20.04/dev/Dockerfile
+ * docker/ubuntu-20.04/dev/Makefile      ubuntu:20.04 based GCC dev shell
  * kubernetes/Makefile
  * kubernetes/kubernetes-save.sh         Save Kubernetes docker images
  * kubernetes/monitor-host/Makefile      Kubernetes: host monitoring (drtuxwang/debian-bash:stable)
  * kubernetes/monitor-host/monitor-host-daemonset.yaml
- * kubernetes/test-crontab/Makefile      Kubernetes: crontab example (drtuxwang/busybox:stable)
+ * kubernetes/test-crontab/Makefile      Kubernetes: crontab example (drtuxwang/busybox-bash:stable)
  * kubernetes/test-crontab/batch-crontab.yaml
  * kubernetes/test-servers/Makefile      Kubernetes: examples (drtuxwang/debian-bash:stable)
  * kubernetes/test-servers/server-pod.yaml
@@ -1070,7 +1070,7 @@ the years. Now most of the scripts are written in Python 3.
  * helm/nexus/values.yaml
  * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 5.1.12 (app-1.16.1)
  * helm/nginx/values.yaml
- * helm/ops-server/Makefile              Helm Chart: drtuxwang/ops-server (drtuxwang/debian:stable)
+ * helm/ops-server/Makefile              Helm Chart: drtuxwang/ops-server (drtuxwang/debian-bash:stable)
  * helm/ops-server/drtuxwang/ops-server/Chart.yaml
  * helm/ops-server/drtuxwang/ops-server/templates/_helpers.tpl
  * helm/ops-server/ops-server/templates/box-deployment.yaml
