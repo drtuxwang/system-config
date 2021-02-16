@@ -15,7 +15,7 @@ spec:
         spec:
           containers:
           - name: batch
-            image: drtuxwang/busybox-bash:stable
+            image: drtuxwang/debian-bash:stable
             imagePullPolicy: IfNotPresent
             resources:
               limits:

@@ -24,7 +24,6 @@ BUILD_DIRS := \
 	ubuntu-20.04
 
 PUSH_IMAGES := \
-	drtuxwang/busybox-bash:1.31 \
 	drtuxwang/debian-bash:10-slim \
 	drtuxwang/debian-xfce:10-slim
 
