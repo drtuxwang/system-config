@@ -70,6 +70,8 @@ test:
 push:
 	for IMAGE in $(PUSH_IMAGES); do \
 		docker tag $$IMAGE $${IMAGE%:*}:stable ; \
+	done
+	for IMAGE in $(PUSH_IMAGES); do \
 		docker push $$IMAGE ; \
 		docker push $${IMAGE%:*}:stable ; \
 	done
