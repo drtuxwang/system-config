@@ -1,5 +1,5 @@
-BASE_IMAGE := drtuxwang/alpine-i386:3.12
-IMAGE := drtuxwang/alpine-i386-dev:3.12
+BASE_IMAGE := drtuxwang/i386-alpine:3.12
+IMAGE := drtuxwang/i386-alpine-dev:3.12
 NAME := alpine3-32-dev
 HOSTNAME := alpine3-32-dev
 
