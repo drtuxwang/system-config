@@ -5,8 +5,8 @@ ForwardX11 no
 GSSAPIAuthentication no
 IdentityFile=~/.ssh/id_rsa
 PubkeyAuthentication yes
-ServerAliveInterval 60
-ServerAliveCountMax 10
+ServerAliveInterval 5
+ServerAliveCountMax 100
 UseRoaming no
 
 #Host hostname
