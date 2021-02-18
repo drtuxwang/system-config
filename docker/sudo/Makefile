@@ -1,5 +1,5 @@
 BASE_IMAGE := scratch
-IMAGE := drtuxwang/sudo
+IMAGE := drtuxwang/sudo:stable
 NAME := sudo-bash
 HOSTNAME := sudo-bash
 
