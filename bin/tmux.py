@@ -6,6 +6,7 @@ Wrapper for TMUX terminal multiplexer
 import glob
 import os
 import signal
+import socket
 import sys
 
 import command_mod
@@ -27,16 +28,30 @@ class Options:
         """
         return self._tmux
 
+    def _get_next(self):
+        self._tmux.set_args(['new-session', '-d', '-P'])
+        task = subtask_mod.Batch(self._tmux.get_cmdline())
+        task.run(pattern=':')
+        next_session = task.get_output()[0].split(':')[0]
+
+        self._tmux.set_args(['kill-session', '-t', next_session])
+        subtask_mod.Batch(self._tmux.get_cmdline()).run()
+
+        return "{0:s}-{1}".format(
+            socket.gethostname().split('.')[0].lower(),
+            next_session,
+        )
+
     def _select(self):
         self._tmux.set_args(['list-sessions'])
         task = subtask_mod.Batch(self._tmux.get_cmdline())
         task.run(pattern=r'\(created')
         sessions = []
-        print("\nTMUX terminal multiplexer")
+        print("\nTMUX terminal multiplexer (sessions):")
         for line in task.get_output():
             session = line.split(':')[0]
             info = line.split('windows ', 1)[1]
-            print("  Session [{0:s}] {1:s}".format(session, info))
+            print("  {0:10s}  {1:s}".format(session, info))
             sessions.append(session)
 
         selection = input("\nPlease select session name or blank for new: ")
@@ -45,7 +60,7 @@ class Options:
         elif selection:
             self._tmux.set_args(['new-session', '-s', selection])
         else:
-            self._tmux.set_args(['new-session'])
+            self._tmux.set_args(['new-session', '-s', self._get_next()])
 
     def parse(self, args):
         """
