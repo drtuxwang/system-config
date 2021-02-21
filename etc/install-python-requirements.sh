@@ -17,11 +17,11 @@ read_requirements() {
     if [ -f "$1" ]
     then
         echo "Processing \"$1\"..."
-        for PACKAGE in $(sed -e "s/#.*//;s/>=/==/g" $1)
+        for PACKAGE in $(sed -e "s/#.*//" $1 | grep -v ==None)
         do
-            NAME=${PACKAGE%==*}
-            VERSION=${PACKAGE#*==}
-            REQUIREMENTS=$(echo "$REQUIREMENTS" | grep -v "^$NAME=="; echo "$NAME==$VERSION" | grep -v ==None)
+            NAME=${PACKAGE%[>=]=*}
+            VERSION=${PACKAGE#*[>=]=}
+            REQUIREMENTS=$(echo "$REQUIREMENTS" | grep -v "^$NAME=="; echo "$NAME==$VERSION")
         done
     fi
 }
