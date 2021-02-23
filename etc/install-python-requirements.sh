@@ -33,7 +33,7 @@ install_packages() {
         export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
     fi
 
-    echo $INSTALL $REQUIREMENTS
+    $INSTALL $(echo "$REQUIREMENTS" | egrep "^(pip|wheel)==")
     $INSTALL $REQUIREMENTS 2>&1 | grep -v "Requirement already satisfied:"
     return ${PIPESTATUS[0]}
 }

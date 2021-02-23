@@ -28,7 +28,7 @@ Django>=2.2.19
 docker>=4.4.3
 docker-pycreds>=0.4.0
 docker-compose>=1.27.4
-dropbox>=10.10.0  # 10.11.0 broken
+dropbox==10.10.0  # 10.11.0 broken
 filemagic>=1.6
 flake8>=3.8.4
 Flask>=1.1.2
@@ -54,7 +54,7 @@ numpy>=1.19.5
 paramiko>=2.7.2
 pep8==1.7.0  # Replaced by pycodestyle
 Pillow>=7.2.0
-pip>=21.0.1
+pip>=20.3.4
 pipenv>=2020.11.15
 pycrypto>=2.6.1
 pycurl>=7.43.0.6  # Requires curl-config
