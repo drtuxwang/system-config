@@ -22,6 +22,8 @@
 	ui = auto
 [core]
 	editor = vim
+[credential]
+	helper = store  # Uses ".git-credentials"
 [diff]
 	ignoreSubmodules = all
 [filter "lfs"]
