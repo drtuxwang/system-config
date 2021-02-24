@@ -36,6 +36,7 @@ install_packages() {
 
     $INSTALL $(echo "$REQUIREMENTS" | egrep "^(pip|wheel)==") 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
     $INSTALL $REQUIREMENTS 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
+    [[ ${PIPESTATUS[0]} = 0 ]] && echo "Installed!"
     return ${PIPESTATUS[0]}
 }
 
