@@ -17,14 +17,15 @@ read_requirements() {
     if [ -f "$1" ]
     then
         echo "Processing \"$1\"..."
-        for PACKAGE in $(sed -e "s/#.*//" $1 | grep -v ==None)
+        for PACKAGE in $(sed -e "s/#.*//;s/>=/==/g" $1)
         do
-            NAME=${PACKAGE%[>=]=*}
-            VERSION=${PACKAGE#*[>=]=}
-            REQUIREMENTS=$(echo "$REQUIREMENTS" | grep -v "^$NAME=="; echo "$NAME==$VERSION")
+            NAME=${PACKAGE%==*}
+            VERSION=${PACKAGE#*==}
+            REQUIREMENTS=$(echo "$REQUIREMENTS" | grep -v "^$NAME=="; echo "$NAME==$VERSION" | grep -v ==None)
         done
     fi
 }
+
 
 install_packages() {
     umask 022
@@ -33,10 +34,11 @@ install_packages() {
         export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
     fi
 
-    $INSTALL $(echo "$REQUIREMENTS" | egrep "^(pip|wheel)==")
-    $INSTALL $REQUIREMENTS 2>&1 | grep -v "Requirement already satisfied:"
+    $INSTALL $(echo "$REQUIREMENTS" | egrep "^(pip|wheel)==") 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
+    $INSTALL $REQUIREMENTS 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
     return ${PIPESTATUS[0]}
 }
+
 
 if [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ]
 then
