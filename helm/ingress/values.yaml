@@ -2,6 +2,8 @@ nodeSelector:
   beta.kubernetes.io/os: linux
 
 controller:
+  image:
+    digest:
   service:
     type: ClusterIP
 
@@ -11,3 +13,4 @@ controller:
     ##ports:
     ##  http: 80
     ##  https: 443
+
