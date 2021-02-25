@@ -7,6 +7,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
 		g++ \
 		gfortran \
 		libbz2-dev \
+		libcurl4-openssl-dev \
 		libdb5.3-dev \
 		libevent-dev \
 		libffi-dev \

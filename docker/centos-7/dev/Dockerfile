@@ -10,6 +10,7 @@ RUN yum -y install \
 		bzip2-devel \
 		gdbm-devel \
 		libdb-devel \
+		libcurl-devel \
 		libevent-devel \
 		libffi-devel \
 		libsqlite3x-devel \

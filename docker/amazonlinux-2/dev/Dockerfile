@@ -9,6 +9,7 @@ RUN yum -y install \
 		make \
 		bzip2-devel \
 		gdbm-devel \
+		libcurl-devel \
 		libdb-devel \
 		libevent-devel \
 		libffi-devel \
