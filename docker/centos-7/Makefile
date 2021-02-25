@@ -47,10 +47,11 @@ rmi:
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory -C $$DIR rmi; \
 	done
+	docker rmi -f $(IMAGE) ||:
 
 .PHONY: rmi-base
 rmi-base: rmi
-	docker rmi -f $(IMAGE) ||:
+	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help
 help:

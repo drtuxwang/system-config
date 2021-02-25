@@ -67,10 +67,11 @@ save:
 
 .PHONY: rmi
 rmi:
+	docker rmi -f $(IMAGE) ||:
 
 .PHONY: rmi-base
 rmi-base: rmi
-	docker rmi -f $(IMAGE) ||:
+	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help
 help:

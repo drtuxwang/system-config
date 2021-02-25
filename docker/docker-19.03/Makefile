@@ -7,7 +7,7 @@ TOPDIR := ../..
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
 endif
-BUILD_DIRS := bash dev
+BUILD_DIRS :=
 
 ifndef DOCKER_RUN_FLAGS
 	DOCKER_RUN_FLAGS=
@@ -76,10 +76,11 @@ rmi:
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR rmi; \
 	done
+	docker rmi -f $(IMAGE) ||:
 
 .PHONY: rmi-base
 rmi-base: rmi
-	docker rmi -f $(IMAGE) ||:
+	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help
 help:

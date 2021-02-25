@@ -109,6 +109,9 @@ save:
 
 .PHONY: rmi
 rmi:
+	for IMAGE in $(PUSH_IMAGES); do \
+		docker rmi -f $${IMAGE%:*}:stable ||:; \
+	done
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR rmi; \
 	done
