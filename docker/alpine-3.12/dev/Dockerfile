@@ -8,6 +8,7 @@ RUN apk add gcc \
 		gfortran \
 		make \
 		bzip2-dev \
+		curl-dev \
 		db-dev \
 		gdbm-dev \
 		libevent-dev \
