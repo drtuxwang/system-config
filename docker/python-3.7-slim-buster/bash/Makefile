@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/python:3.7-slim-buster
 IMAGE := drtuxwang/python-bash:3.7-slim-buster
-NAME := python36-bash
-HOSTNAME := python36-bash
+NAME := python37-bash
+HOSTNAME := python37-bash
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS

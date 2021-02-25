@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/python:3.7-slim-buster
 IMAGE := drtuxwang/python-devpi:3.7-slim-buster
-NAME := python36-devpi
-HOSTNAME := python36-devpi
+NAME := python37-devpi
+HOSTNAME := python37-devpi
 
 ifndef DOCKER_BUILD_FLAGS
 	DOCKER_BUILD_FLAGS=
