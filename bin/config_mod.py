@@ -17,8 +17,8 @@ import bson
 import xmltodict
 import yaml
 
-RELEASE = '1.5.3'
-VERSION = 20210101
+RELEASE = '1.6.0'
+VERSION = 20210227
 
 
 class Data:
