@@ -29,24 +29,16 @@ read_requirements() {
 
 install_packages() {
     umask 022
-    if [ "$(uname)" = Darwin ]
-    then
-        export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
-    fi
+    INSTALL="$PYTHON -m pip install"
+    [[ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ]] && INSTALL="$INSTALL --user"
+    [[ "$(uname)" = Darwin ]] && export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
 
     $INSTALL $(echo "$REQUIREMENTS" | egrep "^(pip|wheel)==") 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
-    $INSTALL $REQUIREMENTS 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
+    $INSTALL --no-warn-script-location $REQUIREMENTS 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
     [[ ${PIPESTATUS[0]} = 0 ]] && echo "Installed!"
     return ${PIPESTATUS[0]}
 }
 
-
-if [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ]
-then
-    INSTALL="$PYTHON -m pip install"
-else
-    INSTALL="$PYTHON -m pip install --no-warn-script-location --user"
-fi
 
 export CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
