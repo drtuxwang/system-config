@@ -11,6 +11,6 @@ RUN apk update && \
 		iproute2 \
 		openssh-client \
 		python3 \
-		py3-pip \
 		vim \
-		wget
+		wget && \
+	curl https://bootstrap.pypa.io/get-pip.py | python3
