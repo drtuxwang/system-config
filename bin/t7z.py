@@ -118,7 +118,7 @@ class Main:
         tar = command_mod.Command('tar', errors='stop')
         archive = options.get_archive()
         tar.set_args(['cf', '-'] + options.get_files())
-        tar.extend_args(['--owner=0:0', '--group=0:0'])
+        tar.extend_args(['--owner=0:0', '--group=0:0', '--sort=name'])
         p7zip = command_mod.Command('7z', errors='stop')
         p7zip.set_args([
             'a',
