@@ -43,7 +43,7 @@ install_packages() {
 
 if [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ]
 then
-    INSTALL="$PYTHON -m pip install --no-warn-script-location"
+    INSTALL="$PYTHON -m pip install"
 else
     INSTALL="$PYTHON -m pip install --no-warn-script-location --user"
 fi

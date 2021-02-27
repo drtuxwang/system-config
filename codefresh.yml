@@ -55,11 +55,11 @@ steps:
         - cp -p config/bashrc docker/python-3.7-slim-buster/tmpdir/root/.bashrc
         - cp -p config/vimrc docker/python-3.7-slim-buster/tmpdir/root/.vimrc
 
-  build_alpine:
+  build_alpine_base:
     stage: package
     title: Build Alpine base image
     type: build
-    image_name: drtuxwang/alpine
+    image_name: drtuxwang/alpine-base
     tag: 'latest'
     working_directory: docker/alpine-3.12
     dockerfile: Dockerfile
@@ -71,7 +71,7 @@ steps:
     type: push
     registry: dockerhub
     candidate: ${{build_alpine}}
-    tag: 'latest'
+    tag: 3.12
 
   docker_builds:
     title: Package Docker images
@@ -82,14 +82,14 @@ steps:
         title: Build Alpine image
         type: build
         image_name: drtuxwang/alpine-base
-        tag: 'latest'
+        tag: 3.12
         working_directory: docker/alpine-3.12/bash
         dockerfile: Dockerfile
       build_python:
         title: Build Python image
         type: build
-        image_name: drtuxwang/python
-        tag: 'latest'
+        image_name: drtuxwang/python-base
+        tag: 3.12
         working_directory: docker/python-3.7-slim-buster
         dockerfile: Dockerfile
         build_arguments:
@@ -105,13 +105,13 @@ steps:
         type: push
         registry: dockerhub
         candidate: ${{build_alpine_bash}}
-        tag: 'latest'
+        tag: 3.12
       push_python:
         title: Push Python image
         type: push
         registry: dockerhub
         candidate: ${{build_python}}
-        tag: 'latest'
+        tag: 3.12
 
   python_tests:
     title: Run Python tests

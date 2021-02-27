@@ -2,7 +2,10 @@ ARG BASE_IMAGE=drtuxwang/python:latest
 
 FROM ${BASE_IMAGE}
 
-RUN python3 -m pip install devpi-server==4.7.1 devpi-web==3.4.1 devpi-common==3.3.2 && \
+RUN python3 -m pip install \
+		devpi-server==4.7.1 \
+		devpi-web==3.4.1 \
+		devpi-common==3.3.2 && \
 	rm -rf $HOME/.cache && \
 	devpi-server --init --serverdir=/var/lib/devpi
 

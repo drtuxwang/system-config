@@ -3,7 +3,9 @@ ARG BASE_IMAGE=drtuxwang/debian:latest
 FROM ${BASE_IMAGE}
 
 # Install compiler & dev packages
-RUN apt-get install --no-install-recommends -y \
+RUN \
+	# For Python build
+	apt-get install --no-install-recommends -y \
 		g++ \
 		gfortran \
 		libbz2-dev \
@@ -18,12 +20,16 @@ RUN apt-get install --no-install-recommends -y \
 		libssl-dev \
 		python3-dev \
 		python3-setuptools \
-		uuid-dev \
+		uuid-dev && \
+	# For Python packages
+	apt-get install --no-install-recommends -y \
 		libcurl4-openssl-dev && \
 	apt-get clean
 
 # Install user environment packages
-RUN apt-get install --no-install-recommends -y \
+RUN \
+	# User environment
+	apt-get install --no-install-recommends -y \
 		file \
 		fonts-noto-cjk \
 		fonts-noto-hinted \
@@ -35,32 +41,35 @@ RUN apt-get install --no-install-recommends -y \
 		tmux \
 		x11-xserver-utils \
 		xauth && \
-	apt-get clean && \
 	mkdir -p /var/run/sshd && \
-	wget https://github.com/krallin/tini/releases/download/v0.19.0/tini-amd64 -O /tini && \
-	chmod 755 /tini
-
-# Install XFCE & VNC
-RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+	# XFCE desktop
+	apt-get install --no-install-recommends -y \
 		xorg \
 		dbus-x11 \
 		xfce4 \
-		xfce4-goodies \
+		xfce4-goodies && \
+	# VNC server
+	apt-get install --no-install-recommends -y \
 		tigervnc-standalone-server \
 		tigervnc-common && \
-	apt-get clean
-
-# Install WINE packages
-RUN dpkg --add-architecture i386 && \
+	# WINE 32bit server
+	dpkg --add-architecture i386 && \
 	apt-get update && \
 	sed -i "s/^deb http/deb [arch=amd64,i386] http/" /etc/apt/sources.list && \
-	apt-get install --no-install-recommends -y wine wine64 wine32:i386 libc6-dev:i386 && \
-	apt-get clean
+	apt-get install --no-install-recommends -y \
+		wine \
+		wine64 \
+		wine32:i386 \
+		libc6-dev:i386 && \
+	apt-get clean && \
+	# Init for container
+	wget https://github.com/krallin/tini/releases/download/v0.19.0/tini-amd64 -O /tini && \
+	chmod 755 /tini
 
 # Install Python packages
-COPY tmpdir/etc/install-python-requirements.sh tmpdir/etc/python-requirements.txt /etc/
+COPY tmpdir/etc/install-python-requirements.sh tmpdir/etc/python-requirements*.txt /etc/
 RUN /etc/install-python-requirements.sh /usr/bin/python3 && \
-	rm -f /etc/install-python-requirements.sh /etc/python-requirements.txt
+	rm -f /etc/install-python-requirements.sh /etc/python-requirements*.txt
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

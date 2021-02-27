@@ -3,11 +3,12 @@ ARG BASE_IMAGE=drtuxwang/ubuntu:latest
 FROM ${BASE_IMAGE}
 
 # Install compiler & dev packages
-RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+RUN \
+	# For Python build
+	apt-get install --no-install-recommends -y \
 		g++ \
 		gfortran \
 		libbz2-dev \
-		libcurl4-openssl-dev \
 		libdb5.3-dev \
 		libevent-dev \
 		libffi-dev \
@@ -20,7 +21,15 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
 		python3-dev \
 		python3-setuptools \
 		uuid-dev && \
+	# For Python packages
+	apt-get install --no-install-recommends -y \
+		libcurl4-openssl-dev && \
 	apt-get clean
+
+# Install Python packages
+COPY tmpdir/etc/install-python-requirements.sh tmpdir/etc/python-requirements*.txt /etc/
+##RUN /etc/install-python-requirements.sh /usr/bin/python3 && \
+##	rm -f /etc/install-python-requirements.sh /etc/python-requirements*.txt
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

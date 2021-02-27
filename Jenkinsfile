@@ -37,7 +37,7 @@ pipeline {
                         stage ("Test") {
                             agent {
                                 docker {
-                                    image 'drtuxwang/python:latest'
+                                    image 'drtuxwang/python:3.7-slim-buster'
                                     args '--network=host'
                                     reuseNode true
                                     alwaysPull false
