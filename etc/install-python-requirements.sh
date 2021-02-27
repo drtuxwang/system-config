@@ -48,6 +48,8 @@ else
     INSTALL="$PYTHON -m pip install --no-warn-script-location --user"
 fi
 
+export CRYPTOGRAPHY_DONT_BUILD_RUST=1
+
 REQUIREMENTS=
 read_requirements "${0%/*}/python-requirements.txt"
 VERSION=$($PYTHON --version 2>&1 | grep "^Python [0-9][.][0-9][.]" | awk '{print $2}' | cut -f1-2 -d.)

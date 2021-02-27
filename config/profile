@@ -46,8 +46,7 @@ then
 
     # Session control
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
-    export MYUNAME=`whoami 2> /dev/null`
-    [[ ! "$MYUNAME" ]] && export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+    export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
     if [ "$BASH" -o "`echo $0 | \grep \"ash$\"`" ]
     then
         __git_ps1()
@@ -210,7 +209,7 @@ then
     fi
 
     # General stuff
-    umask 027
+    umask 022
     export LC_COLLATE=C
     export EDITOR=vi
     export HISTFILE=
@@ -219,6 +218,7 @@ then
     export TMPDIR="/tmp/$MYUNAME"
     export TMP="/tmp/$MYUNAME"
     mkdir -p $TMP/.cache
+    chmod 711 $HOME
     ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* 2> /dev/null | \
         grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
     if [ ! -h $HOME/.cache ]

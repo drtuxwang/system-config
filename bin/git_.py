@@ -66,6 +66,7 @@ class Options:
                     git_home, 'libexec', 'git-core')
                 self._env['GIT_TEMPLATE_DIR'] = os.path.join(
                     git_home, 'share', 'git-core', 'templates')
+        os.umask(int('022', 8))
 
         self._config()
 

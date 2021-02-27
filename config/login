@@ -38,10 +38,7 @@ if ( $?TERM && -e "`\tty`" ) then
 
     # Session control
     setenv MYHNAME `uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
-    setenv MYUNAME `whoami |& grep -v "not found"`
-    if ( "$MYUNAME" == "" ) then
-        setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
-    endif
+    setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
     if ( $?tcsh ) then
         setenv MYSHELL "TCSH"
         set prompt="%{\033[01;32m%}[%P] %{\033[01;34m%}%~%{\n%}%{\033[01;32m%}%n@$MYHNAME%{\033[00m%} % "
@@ -98,7 +95,7 @@ if ( $?TERM && -e "`\tty`" ) then
     endif
 
     # General stuff
-    umask 027
+    umask 022
     setenv LC_COLLATE C
     setenv EDITOR vi
     setenv LESSHISTFILE /dev/null
@@ -106,6 +103,7 @@ if ( $?TERM && -e "`\tty`" ) then
     setenv TMPDIR "/tmp/$MYUNAME"
     setenv TMP "/tmp/$MYUNAME"
     mkdir -p $TMP/.cache
+    chmod 711 $HOME
     ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* |& \
         grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= >& /dev/null
     if ( ! -l $HOME/.cache ) then
