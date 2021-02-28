@@ -14,6 +14,7 @@ RUN yum -y install oracle-epel-release-el7 && \
 		python36 \
 		vim \
 		wget && \
+	rpm -e --nodeps python3-pip python3-setuptools && \
 	yum clean all && \
 	rm -rf \
 		/root/.bash_logout \

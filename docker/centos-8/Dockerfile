@@ -13,6 +13,14 @@ RUN yum -y install epel-release && \
 		python38 \
 		vim \
 		wget && \
+	rpm -e --nodeps \
+		platform-python-setuptools \
+		python3-pip-wheel \
+		python3-setuptools-wheel \
+		python38-pip \
+		python38-pip-wheel \
+		python38-setuptools \
+		python38-setuptools-wheel && \
 	yum clean all && \
 	rm -rf \
 		/root/.bash_logout \

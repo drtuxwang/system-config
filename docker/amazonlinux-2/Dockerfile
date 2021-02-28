@@ -13,4 +13,5 @@ RUN yum -y update && \
 		python3 \
 		vim \
 		wget && \
+	rpm -e --nodeps python3-pip python3-setuptools && \
 	yum clean all

@@ -12,5 +12,4 @@ RUN apk update && \
 		openssh-client \
 		python3 \
 		vim \
-		wget && \
-	curl https://bootstrap.pypa.io/get-pip.py | python3
+		wget

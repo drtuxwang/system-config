@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/alpine:3.11
 IMAGE := drtuxwang/alpine-bash:3.11
-NAME := alpine3-bash
-HOSTNAME := alpine3-bash
+NAME := alpine311-bash
+HOSTNAME := alpine311-bash
 
 TOPDIR := ../../..
 ifndef DOCKER_BUILD_FLAGS

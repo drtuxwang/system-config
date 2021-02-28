@@ -5,6 +5,7 @@ FROM ${BASE_IMAGE}
 # Install base packages
 RUN apt-get update --fix-missing && \
 	apt-get install --no-install-recommends -y \
+		ca-certificates \
 		curl \
 		dnsutils \
 		iproute2 \
@@ -13,7 +14,6 @@ RUN apt-get update --fix-missing && \
 		openssh-client \
 		pciutils \
 		python3 \
-		python3-pip \
 		vim \
 		wget && \
 	apt-get clean && \

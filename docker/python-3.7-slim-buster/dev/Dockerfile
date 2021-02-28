@@ -5,16 +5,12 @@ FROM ${BASE_IMAGE}
 # Install compiler & dev packages
 RUN \
 	# For Python packages
-	apt-get install --no-install-recommends -y \
-		g++ \
-		libcurl4-openssl-dev \
-		libssl-dev && \
+	apt-get install --no-install-recommends -y g++ libcurl4-openssl-dev libssl-dev make && \
 	apt-get clean
 
 # Install Python packages
 COPY tmpdir/etc/install-python-requirements.sh tmpdir/etc/python-requirements*.txt /etc/
-##RUN /etc/install-python-requirements.sh /usr/local/bin/python3 && \
-##	rm -f /etc/install-python-requirements.sh /etc/python-requirements*.txt
+RUN /etc/install-python-requirements.sh /usr/local/bin/python3 piponly
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/

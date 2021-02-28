@@ -12,9 +12,14 @@ RUN ln -s microdnf /usr/bin/yum && \
 		openssh-clients \
 		pciutils \
 		python38 \
-		python38-pip \
 		vim \
 		wget && \
+	rpm -e --nodeps \
+		platform-python-setuptools \
+		python3-pip-wheel \
+		python3-setuptools-wheel \
+		python38-pip-wheel \
+		python38-setuptools-wheel && \
 	yum clean all && \
 	rm -rf \
 		/root/.bash_logout \

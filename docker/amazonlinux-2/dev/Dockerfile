@@ -22,14 +22,13 @@ RUN \
 		uuid-devel \
 		xz-devel && \
 	# For Python packages
-	yum -y install \
-		python3-devel && \
+	yum -y install python3-devel && \
+	rpm -e --nodeps python3-rpm-macros python3-setuptools && \
 	yum clean all
 
 # Install Python packages
 COPY tmpdir/etc/install-python-requirements.sh tmpdir/etc/python-requirements*.txt /etc/
-##RUN /etc/install-python-requirements.sh /usr/bin/python3 && \
-##	rm -f /etc/install-python-requirements.sh /etc/python-requirements*.txt
+RUN /etc/install-python-requirements.sh /usr/bin/python3 piponly
 
 # Add scripts
 COPY tmpdir/bin/ /opt/software/bin/
