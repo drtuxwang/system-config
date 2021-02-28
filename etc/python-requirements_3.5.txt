@@ -1,6 +1,6 @@
 bcrypt==3.1.7
 check-manifest==0.44
-cryptography==3.2.1
+cryptography==3.1.1
 importlib-metadata==2.1.1
 ipython==7.9.0
 Markdown==3.2.2
