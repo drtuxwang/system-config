@@ -5,22 +5,22 @@ cffi>=1.14.1
 check-manifest==0.41
 cryptography==3.3.2
 docker-compose==1.26.2
-Django==None
+# Django==None
 gitdb2==2.0.6
 GitPython==2.1.15
-ImageHash==None
+# ImageHash==None
 importlib-metadata==2.1.1
 ipython==5.8.0
 Markdown==3.1.1
-nexus3-cli==None
+# nexus3-cli==None
 motor==2.1.0
 mutagen==1.43.1
-numpy==None
+# numpy==None
 pip==20.3.3
 pycurl==7.43.0.5
 pylint==1.9.4
 pytest==4.6.11
-Pillow==None
-scipy==None
+# Pillow==None
+# scipy==None
 setuptools==44.1.1
 ujson==2.0.3

@@ -85,8 +85,8 @@ version:
 run-sudo:
 	make -C sudo run
 
-.PHONY: gc
-gc:
+.PHONY: prune
+prune:
 	docker system prune
 	@echo
 	docker images
