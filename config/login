@@ -38,7 +38,10 @@ if ( $?TERM && -e "`\tty`" ) then
 
     # Session control
     setenv MYHNAME `uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
-    setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+    setenv MYUNAME `whoami |& grep -v "not found"`
+    if ( "$MYUNAME" == "" ) then
+        setenv MYUNAME `id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+    endif
     if ( $?tcsh ) then
         setenv MYSHELL "TCSH"
         set prompt="%{\033[01;32m%}[%P] %{\033[01;34m%}%~%{\n%}%{\033[01;32m%}%n@$MYHNAME%{\033[00m%} % "

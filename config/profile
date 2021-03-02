@@ -46,7 +46,8 @@ then
 
     # Session control
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
-    export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+    export MYUNAME=`whoami 2> /dev/null`
+    [[ ! "$MYUNAME" ]] && export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
     if [ "$BASH" -o "`echo $0 | \grep \"ash$\"`" ]
     then
         __git_ps1()
