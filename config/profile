@@ -315,7 +315,7 @@ then
     # mkinst, cdinst, mksrc, cdsrc, mktest, cdtest, scd
     for _dir in inst src test
     do
-        alias mk$_dir='export cd'$_dir'="$PWD" && echo "cd'$_dir'=$cd'$_dir'"'
+        alias mk$_dir='cd "`realpath .`" && export cd'$_dir'="$PWD" && echo "cd'$_dir'=$PWD"'
         alias cd$_dir='echo "cd \"$cd'$_dir'\"" && cd "$cd'$_dir'"'
         if [ ! "$cdtest" ]
         then
