@@ -34,6 +34,7 @@ class Options:
         hostname = socket.gethostname().split('.')[0].lower()
         ishost = re.compile(r'{0:s}-\d+$'.format(hostname))
         numbers = [int(x.split('-')[-1]) for x in sessions if ishost.match(x)]
+        numbers.append(-1)
 
         return "{0:s}-{1}".format(hostname, max(numbers)+1)
 
