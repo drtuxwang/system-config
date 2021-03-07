@@ -61,8 +61,7 @@ class Options:
         self._parse_args(args[1:])
 
         if os.path.isdir(self._args.archive[0]):
-            self._archive = os.path.abspath(
-                self._args.archive[0]) + '.tar.lzma'
+            self._archive = os.path.abspath(self._args.archive[0]) + '.tar.lzma'
         else:
             self._archive = self._args.archive[0]
         if not self._archive.endswith(('.tar.lzma', '.tlz')):
@@ -77,10 +76,14 @@ class Options:
             self._files = os.listdir()
 
         self._tar = command_mod.Command('tar', errors='stop')
-        self._tar.set_args(['cfva', self._archive+'.part'] + self._files)
-        self._tar.extend_args(['--owner=0:0', '--group=0:0', '--sort=name'])
-
-        os.environ['XZ_OPT'] = '-9 -e --format=lzma --threads=1'
+        self._tar.set_args(['cfv', self._archive+'.part'] + self._files)
+        self._tar.extend_args([
+            '--use-compress-program',
+            'xz -9 -e --format=lzma --threads=1 --verbose',
+            '--owner=0:0',
+            '--group=0:0',
+            '--sort=name',
+        ])
 
 
 class Main:
@@ -121,6 +124,8 @@ class Main:
         """
         options = Options()
         archive = options.get_archive()
+
+        os.umask(int('022', 8))
 
         task = subtask_mod.Task(options.get_tar().get_cmdline())
         task.run()

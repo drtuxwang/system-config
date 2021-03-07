@@ -76,12 +76,14 @@ class Options:
             self._files = os.listdir()
 
         self._tar = command_mod.Command('tar', errors='stop')
-        self._tar.set_args(['cfvJ', self._archive+'.part'] + self._files)
-        self._tar.extend_args(['--owner=0:0', '--group=0:0', '--sort=name'])
-
-        os.environ['XZ_OPT'] = (
-            '-9 -e --lzma2=dict=128MiB --threads=1 --verbose'
-        )
+        self._tar.set_args(['cfv', self._archive+'.part'] + self._files)
+        self._tar.extend_args([
+            '--use-compress-program',
+            'xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose',
+            '--owner=0:0',
+            '--group=0:0',
+            '--sort=name',
+        ])
 
 
 class Main:

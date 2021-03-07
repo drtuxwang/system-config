@@ -120,9 +120,15 @@ class Main:
             tar = command_mod.Command('tar.exe', errors='stop')
         else:
             tar = command_mod.Command('tar', errors='stop')
+        task = subtask_mod.Batch(tar.get_cmdline() + ['--help'])
+        task.run(pattern='--xattrs')
+        has_xattrs = task.has_output()
+
         tar.set_args(['cfv', archive+'.part'])
         tar.extend_args(options.get_files())
-        tar.extend_args(['--xattrs', '--xattrs-include=*'])
+        if has_xattrs:
+            tar.extend_args(['--xattrs', '--xattrs-include=*'])
+            print("debugX", tar.get_cmdline())
         task = subtask_mod.Task(tar.get_cmdline())
         task.run()
         if task.get_exitcode():

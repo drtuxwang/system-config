@@ -105,16 +105,22 @@ class Main:
             sys.argv = argv
 
     def _unpack(self, archive):
+        task = subtask_mod.Batch(self._tar.get_cmdline() + ['--help'])
+        task.run(pattern='--xattrs')
+        has_xattrs = task.has_output()
+
         if archive.endswith('.tar.7z'):
             p7zip = command_mod.Command('7z', errors='stop')
             p7zip.set_args(['x', '-y', '-so', archive])
             self._tar.set_args(['xfv', '-'])
-            self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
+            if has_xattrs:
+                self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
             subtask_mod.Task(
                 p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
         else:
             self._tar.set_args(['xfv', archive])
-            self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
+            if has_xattrs:
+                self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
             subtask_mod.Task(self._tar.get_cmdline()).run()
 
     def _view(self, archive):
