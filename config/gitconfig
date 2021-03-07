@@ -11,6 +11,7 @@
 	find-commit = "!f() { git fetch --all; git branch -a --contains $1; }; f"
 	find-commits = "!f() { git log --no-merges --oneline $1~..HEAD; }; f"
 	find-merge = "!f() { git log --graph $1^..${2:-HEAD}; }; f"
+	find-nomerge = "!f() { git branch -r --no-merged | grep -v /HEAD | sed -e "s@.*origin/@@"; }; f"
 	find-nomerge = "!f() { git branch -r --no-merged $1 | sed -e "s@.*origin/@@"; }; f"
 	grep-all = "!f() { git --no-pager grep -in \"$1\"; git submodule foreach \"git --no-pager grep -in '$1'||:\"; }; f"
 	grep-commit = "!f() { git --no-pager grep -n \"$1\" $(git rev-list --all); }; f"
