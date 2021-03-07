@@ -14,6 +14,7 @@ BUILD_DIRS := \
 	i386-debian-10-slim \
 	docker-19.03 \
 	golang-1.14-alpine \
+	nginx-1.16-alpine \
 	oraclelinux-7-slim \
 	oraclelinux-8-slim \
 	python-3.7-slim-buster \

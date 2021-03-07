@@ -985,6 +985,10 @@ the years. Now most of the scripts are written in Python 3.
  * docker/docker-19.03/files/ash2bash
  * docker/golang-1.14-alpine/Dockerfile
  * docker/golang-1.14-alpine/Makefile    golang:1.14-alpine based compiler app
+ * docker/nginx-1.16-alpine/Dockerfile
+ * docker/nginx-1.16-alpine/Makefile     nginx:1.16-alpine based revere proxy server
+ * docker/nginx-1.16-alpine/files/ash2bash
+ * docker/nginx-1.16-alpine/files/nginx-proxy.conf  Proxy pass examples
  * docker/oraclelinux-7-slim/Dockerfile
  * docker/oraclelinux-7-slim/Makefile    oraclelinux:7-slim based linux
  * docker/oraclelinux-7-slim/bash/Dockerfile

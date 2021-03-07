@@ -10,6 +10,16 @@ ifndef NAMESPACE
 	NAMESPACE=default
 endif
 
+# Default local port
+ifndef LOCALPORT
+	LOCALPORT=8080
+endif
+
+# Ingress controller detection
+ifndef INGRESS_ENABLED
+	INGRESS_ENABLED=$(shell kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
+endif
+
 ifeq ($(shell helm version | grep -c v2), 1)
 	HELM_RELEASE=$(NAMESPACE)-$(NAME)
 	HELM_LIST=helm list --all $(HELM_RELEASE)
@@ -108,6 +118,10 @@ version:
 	@$(HELM_VERSION) | tail -n +2 | \
 		grep -B 1000 "^$(CHART_REPO)/$(CHART_NAME)[	 ]*$(CHART_VERSION) " | \
 		sed -e "s/	/   /g" -e "s/   */   /g"
+
+.PHONY: forward
+forward:
+	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):80
 
 .PHONY: uninstall
 uninstall:

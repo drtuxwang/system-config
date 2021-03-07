@@ -9,7 +9,7 @@ endif
 
 # Default local port
 ifndef LOCALPORT
-	LOCALPORT=
+	LOCALPORT=8080
 endif
 
 ifeq ($(shell helm version | grep -c v2), 1)

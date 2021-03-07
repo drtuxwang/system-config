@@ -2,33 +2,41 @@ nodeSelector:
   beta.kubernetes.io/os: linux
 
 ingress:
-  enabled: true
+  enabled: false
   hosts:
-  - name: server.ingress-domain.com
+  - name: nginx.kube.local
     path: /
   tls:
     # Secrets must be manually created in the namespace.
-    - secretName: secret-ingress-domain-com
+    - secretName: secret-kube-local
       hosts:
-        - server.ingress-domain.com
+        - nginx.kube.local
 
 serverBlock: |-
   server {
     listen           0.0.0.0:8080;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Server $host;
+    proxy_set_header X-Forwarded-Host $host;
     gzip             on;
     gzip_min_length  2000;
     gzip_proxied     any;
-    gzip_types       text/html application/json;
 
     location / {
       proxy_pass https://www.google.co.uk;
-      proxy_set_header Host $host;
-      proxy_set_header X-Forwarded-Host $host;
-      proxy_set_header X-Forwarded-Server $host;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header X-Outside-URL https://$host;
-      sub_filter_once off;
-      sub_filter_types text/html;
-      sub_filter "some-text" "new-text";
+    }
+    # /drtuxwang => https://drtuxwang.github.io/
+    location /drtuxwang {
+        proxy_pass https://drtuxwang.github.io/;
+    }
+
+    # /new => https://www.bbc.co.uk/news
+    location /news {
+        proxy_pass https://www.bbc.co.uk;
+    }
+
+    # /path => https://news.sky.com/path
+    location ~ ^/(uk|world|politics|business) {
+        proxy_pass https://news.sky.com;
     }
   }
