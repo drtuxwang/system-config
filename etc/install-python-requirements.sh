@@ -37,10 +37,10 @@ read_requirements() {
 install_pip() {
     case $PYTHON_VERSION in
     2.[67]|3.[345])
-        GETPIP="https://bootstrap.pypa.io/$PYTHON_VERSION/get-pip.py"
+        GETPIP="https://bootstrap.pypa.io/pip/$PYTHON_VERSION/get-pip.py"
         ;;
     *)
-        GETPIP="https://bootstrap.pypa.io/get-pip.py"
+        GETPIP="https://bootstrap.pypa.io/pip/get-pip.py"
         ;;
     esac
 
