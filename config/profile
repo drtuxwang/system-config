@@ -180,7 +180,7 @@ then
     fi
     SSH_KEYS=`ssh-add -l 2> /dev/null | grep ".:." | wc -l | awk '{print $1}'`
 
-    # Setup erminal
+    # Setup terminal
     if [ "$MYTTY" = "`\tty 2> /dev/null`" ]
     then
         alias logout='echo Use \"exit\" to exit the shell.'
