@@ -81,27 +81,23 @@ class Options:
 
         self._parse_args(args[1:])
 
+        threads = str(self._args.threads[0])
+        if threads == '1':
+            self._archiver.set_args(['a', '-m0=lzma', '-mmt=1'])
+        else:
+            self._archiver.set_args(['a', '-m0=lzma2', '-mmt=' + threads])
+        self._archiver.extend_args([
+            '-mx=9',
+            '-myx=9',
+            '-md=128m',
+            '-mfb=256',
+            '-ms=on',
+            '-snh',
+            '-snl',
+            '-y',
+        ])
         if self._args.split:
             self._archiver.extend_args(['-v' + str(self._args.split[0]) + 'b'])
-
-        if self._args.threads[0] == '1':
-            self._archiver.set_args([
-                'a',
-                '-m0=lzma',
-                '-mmt=' + str(self._args.threads[0]),
-                '-mx=9',
-                '-ms=on',
-                '-y'
-            ])
-        else:
-            self._archiver.set_args([
-                'a',
-                '-m0=lzma2',
-                '-mmt=' + str(self._args.threads[0]),
-                '-mx=9',
-                '-ms=on',
-                '-y'
-            ])
 
         if os.path.isdir(self._args.archive[0]):
             self._archive = os.path.abspath(self._args.archive[0]) + '.7z'
@@ -111,8 +107,6 @@ class Options:
 
         if self._args.files:
             self._archiver.extend_args(self._args.files)
-        else:
-            self._archiver.extend_args(os.listdir())
 
         self._setenv()
 
