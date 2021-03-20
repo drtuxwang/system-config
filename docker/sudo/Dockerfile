@@ -2,8 +2,7 @@ ARG BASE_IMAGE=scratch
 
 FROM ${BASE_IMAGE}
 
-# Root account
-COPY tmpdir/root/.??* /root/
+ADD tmpdir/root.tar /
 
 # Configure start
 ENV HOME=/root

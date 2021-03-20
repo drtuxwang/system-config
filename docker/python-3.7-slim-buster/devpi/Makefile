@@ -2,18 +2,13 @@ BASE_IMAGE := drtuxwang/python:3.7-slim-buster
 IMAGE := drtuxwang/python-devpi:3.7-slim-buster
 NAME := python37-devpi
 HOSTNAME := python37-devpi
+LOCALPORT ?= 8080
+DOCKER_BUILD_FLAGS ?=
+DOCKER_RUN_FLAGS ?=
+DOCKER_RUN_COMMAND ?=
 
-ifndef DOCKER_BUILD_FLAGS
-	DOCKER_BUILD_FLAGS=
-endif
-
-ifndef LOCALPORT
-	LOCALPORT=8080
-endif
-ifndef DOCKER_RUN_FLAGS
-	DOCKER_RUN_FLAGS=
-endif
-DOCKER_RUN_FLAGS := --rm \
+DOCKER_RUN_FLAGS := \
+	--rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -25,9 +20,6 @@ DOCKER_RUN_FLAGS := --rm \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
-ifndef DOCKER_RUN_COMMAND
-	DOCKER_RUN_COMMAND=
-endif
 
 
 .PHONY: default

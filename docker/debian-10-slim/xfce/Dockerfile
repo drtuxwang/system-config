@@ -55,26 +55,22 @@ RUN \
 	chmod 755 /tini
 
 # Install Python packages
-COPY tmpdir/etc/install-python-requirements.sh tmpdir/etc/python-requirements*.txt /etc/
+COPY tmpdir/install-python-requirements.sh tmpdir/python-requirements*.txt* /etc/
 RUN /etc/install-python-requirements.sh /usr/bin/python3 piponly && \
 	apt-get clean
 
-# Add scripts
-COPY tmpdir/bin/ /opt/software/bin/
-
-# Add home directory archive
-COPY tmpdir/home.tar /home/
+ADD tmpdir/root.tar /
 
 # Setup accounts
-RUN rm -rf /root/.??* && \
-	tar xf /home/home.tar -C /root && \
-	useradd --shell /bin/bash --gid users owner && \
+RUN useradd --shell /bin/bash --gid users owner && \
 	addgroup owner sudo && \
-	mkdir /home/owner && \
-	tar xf /home/home.tar -C /home/owner && \
+	echo "owner ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+	cp -rp /root /home && \
+	mv /home/root /home/owner && \
+	mkdir /home/owner/.ssh && \
 	chown -R owner:users /home/owner && \
-	rm /home/home.tar && \
-	echo "owner ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+	chmod 711 /home/owner && \
+	chmod 700 /home/owner/.ssh
 
 # Configure start
 COPY files/docker-init /etc/

@@ -2,19 +2,12 @@ BASE_IMAGE := nginx:1.16.1-alpine
 IMAGE := drtuxwang/nginx:1.16.1-alpine
 NAME := nginx-proxy
 HOSTNAME := nginx-proxy
+LOCALPORT ?= 8080
+DOCKER_BUILD_FLAGS ?=
+DOCKER_RUN_FLAGS ?=
 
-TOPDIR := ../..
-ifndef DOCKER_BUILD_FLAGS
-	DOCKER_BUILD_FLAGS=
-endif
-
-ifndef LOCALPORT
-	LOCALPORT=8080
-endif
-ifndef DOCKER_RUN_FLAGS
-	DOCKER_RUN_FLAGS=
-endif
-DOCKER_RUN_FLAGS := --rm \
+DOCKER_RUN_FLAGS := \
+	--rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -26,9 +19,6 @@ DOCKER_RUN_FLAGS := --rm \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
-ifndef LOCALPORT
-	LOCALPORT=8080
-endif
 
 
 .PHONY: default
@@ -45,15 +35,11 @@ pull:
 
 .PHONY: save
 save:
-	../docker-save.sh $(BASE_IMAGE)
+	../bin/docker-save $(BASE_IMAGE)
 
 .PHONY: build
 build:
-	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/root
-	cp -p $(TOPDIR)/bin/sysinfo.sh tmpdir/bin/
-	cp -p $(TOPDIR)/config/bashrc tmpdir/root/.bashrc
-	$(TOPDIR)/etc/setmod *
+	../bin/create-root-tar bash bash2ash bin-sysinfo
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir

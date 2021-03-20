@@ -2,11 +2,7 @@ ARG BASE_IMAGE=drtuxwang/oraclelinux:latest
 
 FROM ${BASE_IMAGE}
 
-# Add scripts
-COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/root/.??* /root/
+ADD tmpdir/root.tar /
 
 # Configure start
 ENV HOME=/root

@@ -1,0 +1,90 @@
+#!/bin/bash -eu
+
+if [ $# = 0 ]
+then
+    echo "Usage: $0 select1 [select2 [...]]"
+    exit 1
+fi
+
+TOPDIR=$(realpath "$0" | sed -e "s|/[^/]*/[^/]*/[^/]*$||")
+umask 022
+rm -rf tmpdir/root
+
+while [ "$#" != 0 ]
+do
+    case "$1" in
+    bash)
+        mkdir -p tmpdir/root/root
+        echo "Creating \"tmpdir/root/root/.profile\"..."
+        cp -p "$TOPDIR"/config/profile tmpdir/root/root/.profile
+        echo "Creating \"tmpdir/root/root/.bashrc\"..."
+        ln -sf .profile tmpdir/root/root/.bashrc
+        ;;
+    bash2ash)
+        mkdir -p tmpdir/root/bin
+        echo "Creating \"tmpdir/root/bin/bash\"..."
+        cp -p "$TOPDIR"/docker/bin/bash2ash tmpdir/root/bin/bash
+        ;;
+    bin)
+        mkdir -p tmpdir/root/opt/software/bin
+        echo "Creating \"tmpdir/root/opt/software/bin/*\"..."
+        cp -p "$TOPDIR"/bin/* tmpdir/root/opt/software/bin
+        ;;
+    bin-sysinfo)
+        mkdir -p tmpdir/root/opt/software/bin
+        echo "Creating \"tmpdir/root/opt/software/bin/sysinfo\"..."
+        cp -p "$TOPDIR"/bin/sysinfo tmpdir/root/opt/software/bin
+        echo "Creating \"tmpdir/root/opt/software/bin/sysinfo.sh\"..."
+        cp -p "$TOPDIR"/bin/sysinfo.sh tmpdir/root/opt/software/bin
+        ;;
+    init)
+        mkdir -p tmpdir/root/etc
+        echo "Creating \"tmpdir/root/etc/docker-init\"..."
+        cp -p files/docker-init tmpdir/root/etc
+        ;;
+    tmux)
+        echo "Creating \"tmpdir/root/root/.tmux.conf\"..."
+        mkdir -p tmpdir/root/root
+        cp -p "$TOPDIR"/config/vimrc tmpdir/root/root/.tmux.conf
+        ;;
+    vim)
+        echo "Creating \"tmpdir/root/root/.vimrc\"..."
+        mkdir -p tmpdir/root/root
+        cp -p "$TOPDIR"/config/vimrc tmpdir/root/root/.vimrc
+        ;;
+    xfce)
+        mkdir -p tmpdir/root/.config/xfce4/terminal tmpdir/root/.vnc
+        echo "Creating \"tmpdir/root/.config/xfce4/terminal/terminalrc\"..."
+        cp -p "$TOPDIR"/config/terminalrc tmpdir/root/.config/xfce4/terminal
+        if [ -f "files/xstartup" ]
+        then
+            echo "Creating \"tmpdir/root/.vnc/xstartup\"..."
+            cp -p files/xstartup tmpdir/root/.vnc
+        fi
+        ;;
+    *)
+        echo "$0: Unable to add \"$1\"."
+        exit 1
+    esac
+    shift
+done
+
+# Fix group and others file/directory read access recursively
+for FILE in $(find tmpdir -type f)
+do
+    if [ -x "$FILE" ]
+    then
+        chmod 755 $FILE
+    else
+        chmod 644 $FILE
+    fi
+done
+[[ -d tmpdir/root/.ssh ]] && chmod 700 tmpdir/root/.ssh
+
+if [ -d tmpdir/root ]
+then
+    pushd tmpdir/root > /dev/null
+    echo "Creating \"tmpdir/root.tar\"..."
+    tar cf ../root.tar * --owner=0:0 --group=0:0
+    popd > /dev/null
+fi

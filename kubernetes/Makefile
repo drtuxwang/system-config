@@ -4,20 +4,21 @@ default: status
 status:
 	kubectl --namespace=kube-system get pod
 	@echo
-	kubectl --namespace=kube-system pod -o yaml | grep " image:" | sort | uniq
+	kubectl --namespace=kube-system get pod -o yaml | egrep " image: " | grep -v "image: docker.io/" | sort | uniq
 	@echo
 	kubectl --namespace=kube-system exec -it `kubectl --namespace=kube-system get pod | grep "^etcd.*Running" | awk 'NR==1{print $1}'` -- etcdctl \
 		--cert /etc/kubernetes/pki/etcd/peer.crt \
 		--key /etc/kubernetes/pki/etcd/peer.key \
 		--cacert /etc/kubernetes/pki/etcd/ca.crt \
 		--endpoints 127.0.0.1:2379 \
-		-w table endpoint status
+		-w table endpoint status | \
+		grep -v "+---"
 	@echo
 	kubectl get nodes -o wide
 
 .PHONY: save
 save:
-	./kubernetes-save.sh
+	./bin/kube-save
 
 .PHONY: load
 load:

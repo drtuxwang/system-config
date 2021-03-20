@@ -1,4 +1,7 @@
 #!/bin/bash -eu
+#
+# Save Docker images to tar archives
+#
 
 if [ $# = 0 ]
 then
@@ -11,7 +14,7 @@ cd $(dirname $0)
 for IMAGE in $*;
 do
     HASH=$(docker images | sed -e "s/  */:/" | grep "^$IMAGE " | awk '{print $2}')
-    FILE=docker-image_$(echo $IMAGE | sed -e "s/\//-/g;s/:/_/")_$HASH.tar
+    FILE=../docker-image_$(echo $IMAGE | sed -e "s/\//-/g;s/:/_/")_$HASH.tar
     LIST="${FILE%.tar}.list"
     CREATED=$(docker inspect "$IMAGE" | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 

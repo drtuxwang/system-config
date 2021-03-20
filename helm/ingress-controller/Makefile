@@ -2,31 +2,36 @@ NAME := ingress
 CHART_REPO := ingress-nginx
 CHART_URL := https://kubernetes.github.io/ingress-nginx
 CHART_NAME := ingress-nginx
-CHART_VERSION :=  3.22.0
-APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
+CHART_VERSION := 3.22.0
+NAMESPACE ?= infra
 
-# Default namespace
-ifndef NAMESPACE
-	NAMESPACE=infra
+ifndef APP_VERSION
+	APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 endif
-
-# External IP
 ifndef EXTERNAL_IP
     EXTERNAL_IP=$(shell kubectl get nodes -o wide | awk 'NR==2{print $$6}')
 endif
-
+HELM_FLAGS := \
+	--namespace=$(NAMESPACE) \
+	--values values.yaml \
+	--set fullnameOverride=$(NAME) \
+	--set controller.service.externalIPs='{$(EXTERNAL_IP)}' \
+	--version $(CHART_VERSION)
+ifdef IMAGE_TAG
+	HELM_FLAGS += --set controller.image.tag=$(IMAGE_TAG)
+endif
 ifeq ($(shell helm version | grep -c v2), 1)
-	HELM_RELEASE=$(NAMESPACE)-$(NAME)
-	HELM_LIST=helm list --all $(HELM_RELEASE)
-	HELM_STATUS=helm status $(HELM_RELEASE)
-	HELM_UNINSTALL=helm delete --purge $(HELM_RELEASE)
-	HELM_VERSION=helm search -l $(CHART_REPO)/$(CHART_NAME)
+	HELM_RELEASE := $(NAMESPACE)-$(NAME)
+	HELM_LIST := helm list --all $(HELM_RELEASE)
+	HELM_STATUS := helm status $(HELM_RELEASE)
+	HELM_UNINSTALL := helm delete --purge $(HELM_RELEASE)
+	HELM_VERSION := helm search -l $(CHART_REPO)/$(CHART_NAME)
 else
-	HELM_RELEASE=$(NAME)
-	HELM_LIST=helm --namespace=$(NAMESPACE) list --all | grep $(HELM_RELEASE)
-	HELM_STATUS=helm --namespace=$(NAMESPACE) status $(HELM_RELEASE)
-	HELM_UNINSTALL=helm --namespace=$(NAMESPACE) uninstall $(HELM_RELEASE)
-	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
+	HELM_RELEASE :=$(NAME)
+	HELM_LIST := helm --namespace=$(NAMESPACE) list --all | grep $(HELM_RELEASE)
+	HELM_STATUS := helm --namespace=$(NAMESPACE) status $(HELM_RELEASE)
+	HELM_UNINSTALL := helm --namespace=$(NAMESPACE) uninstall $(HELM_RELEASE)
+	HELM_VERSION := helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
 
@@ -54,7 +59,7 @@ pull:
 
 .PHONY: save
 save:
-	../helm-save.sh \
+	../bin/helm-save \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
 		$(APP_VERSION) \
@@ -63,11 +68,7 @@ save:
 .PHONY: template
 template: repo-add
 	helm template \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set controller.service.externalIPs='{$(EXTERNAL_IP)}' \
-		--version $(CHART_VERSION) \
+		$(HELM_FLAGS) \
 		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
@@ -76,11 +77,7 @@ check: repo-add
 		--install \
 		--dry-run \
 		--debug \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set controller.service.externalIPs='{$(EXTERNAL_IP)}' \
-		--version $(CHART_VERSION) \
+		$(HELM_FLAGS) \
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
@@ -89,11 +86,7 @@ install: repo-add
 	helm upgrade \
 		--install \
 		--wait \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set controller.service.externalIPs='{$(EXTERNAL_IP)}' \
-		--version $(CHART_VERSION) \
+		$(HELM_FLAGS) \
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status

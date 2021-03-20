@@ -3,35 +3,43 @@ CHART_REPO := concourse
 CHART_URL := https://concourse-charts.storage.googleapis.com
 CHART_NAME := concourse
 CHART_VERSION := 14.5.5
-APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
+NAMESPACE ?= infra
+HOSTNAME ?= concourse.kube.local
+TLS_SECRET ?= kube-local-tls
+LOCALPORT ?=
 
-# Default namespace
-ifndef NAMESPACE
-	NAMESPACE=infra
+ifndef APP_VERSION
+	APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 endif
-
-# Default local port
-ifndef LOCALPORT
-	LOCALPORT=8080
-endif
-
-# Ingress controller detection
 ifndef INGRESS_ENABLED
 	INGRESS_ENABLED=$(shell kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
 endif
-
+EXTERNAL_IP=$(shell ping -c 1 $(HOSTNAME) 2> /dev/null | grep "^PING" | sed -e "s/.* (//;s/).*//")
+HELM_FLAGS := \
+	--namespace=$(NAMESPACE) \
+	--values values.yaml \
+	--set fullnameOverride=$(NAME) \
+	--set postgresql.fullnameOverride=$(NAME)-postgresql \
+	--set service.type=ClusterIP \
+	--set web.ingress.enabled=$(INGRESS_ENABLED) \
+	--set web.ingress.hosts[0]=$(HOSTNAME) \
+	--set web.ingress.secretName=$(TLS_SECRET) \
+	--version $(CHART_VERSION)
+ifdef IMAGE_TAG
+	HELM_FLAGS += --set imageTag=$(IMAGE_TAG)
+endif
 ifeq ($(shell helm version | grep -c v2), 1)
-	HELM_RELEASE=$(NAMESPACE)-$(NAME)
-	HELM_LIST=helm list --all $(HELM_RELEASE)
-	HELM_STATUS=helm status $(HELM_RELEASE)
-	HELM_UNINSTALL=helm delete --purge $(HELM_RELEASE)
-	HELM_VERSION=helm search -l $(CHART_REPO)/$(CHART_NAME)
+	HELM_RELEASE := $(NAMESPACE)-$(NAME)
+	HELM_LIST := helm list --all $(HELM_RELEASE)
+	HELM_STATUS := helm status $(HELM_RELEASE)
+	HELM_UNINSTALL := helm delete --purge $(HELM_RELEASE)
+	HELM_VERSION := helm search -l $(CHART_REPO)/$(CHART_NAME)
 else
-	HELM_RELEASE=$(NAME)
-	HELM_LIST=helm --namespace=$(NAMESPACE) list --all | grep $(HELM_RELEASE)
-	HELM_STATUS=helm --namespace=$(NAMESPACE) status $(HELM_RELEASE)
-	HELM_UNINSTALL=helm --namespace=$(NAMESPACE) uninstall $(HELM_RELEASE)
-	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
+	HELM_RELEASE :=$(NAME)
+	HELM_LIST := helm --namespace=$(NAMESPACE) list --all | grep $(HELM_RELEASE)
+	HELM_STATUS := helm --namespace=$(NAMESPACE) status $(HELM_RELEASE)
+	HELM_UNINSTALL := helm --namespace=$(NAMESPACE) uninstall $(HELM_RELEASE)
+	HELM_VERSION := helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
 
@@ -59,7 +67,7 @@ pull:
 
 .PHONY: save
 save:
-	../helm-save.sh \
+	../bin/helm-save \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
 		$(APP_VERSION) \
@@ -68,13 +76,7 @@ save:
 .PHONY: template
 template: repo-add
 	helm template \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set postgresql.fullnameOverride=$(NAME)-postgresql \
-		--set service.type=ClusterIP \
-		--set web.ingress.enabled=$(INGRESS_ENABLED) \
-		--version $(CHART_VERSION) \
+		$(HELM_FLAGS) \
 		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
@@ -83,13 +85,7 @@ check: repo-add
 		--install \
 		--dry-run \
 		--debug \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set postgresql.fullnameOverride=$(NAME)-postgresql \
-		--set service.type=ClusterIP \
-		--set web.ingress.enabled=$(INGRESS_ENABLED) \
-		--version $(CHART_VERSION) \
+		$(HELM_FLAGS) \
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
@@ -98,24 +94,22 @@ install: repo-add
 	helm upgrade \
 		--install \
 		--wait \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set postgresql.fullnameOverride=$(NAME)-postgresql \
-		--set service.type=ClusterIP \
-		--set web.ingress.enabled=$(INGRESS_ENABLED) \
-		--version $(CHART_VERSION) \
+		$(HELM_FLAGS) \
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward
 forward:
-	@echo "Username: test"
-	@echo "Password: test"
 	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME)-web $(LOCALPORT):8080
 
 .PHONY: connect
 connect:
-	./connect.sh
+	@echo "Username: test"
+	@echo "Password: test"
+	@if [ "$(EXTERNAL_IP)" ]; then \
+		../../kubernetes/bin/kube-connect http://${HOSTNAME}; \
+	else \
+		../../kubernetes/bin/kube-connect http://$(NAMESPACE)/service/${NAME}-web:8080; \
+	fi
 
 .PHONY: status
 status:

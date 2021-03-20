@@ -11,5 +11,8 @@
 {{- end -}}
 
 {{- define "chart.image.name" -}}
-{{-   .Values.image.name -}}
+{{-   $registry_name := .Values.image.registry -}}
+{{-   $repository_ame := .Values.image.repository -}}
+{{-   $tag := .Values.image.tag | toString -}}
+{{-   printf "%s/%s:%s" $registry_name $repository_ame $tag -}}
 {{- end -}}

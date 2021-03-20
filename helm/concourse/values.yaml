@@ -12,9 +12,6 @@ web:
   env:
   - name: CONCOURSE_KUBERNETES_IN_CLUSTER
     value: "true"
-  ingress:
-    hosts:
-    - concourse.kube.local
 
 postgresql:
   persistence:

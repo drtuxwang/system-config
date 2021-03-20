@@ -6,7 +6,8 @@ then
 fi
 
 echo
-echo "Sending message..."
+echo "Sending message (JMX_PORT=$2)..."
+echo "kubectl exec -i $1 -- bash"
 kubectl exec -i $1 -- bash << EOF
 JMX_PORT= kafka-console-producer.sh --broker-list $2 --topic test
 `date`: testing
@@ -16,7 +17,8 @@ harry
 EOF
 
 echo
-echo "Receiving message..."
+echo "Receiving message (JMX_PORT=$2)..."
+echo "kubectl exec -i $1 -- bash"
 kubectl exec -i $1 -- bash << EOF
 JMX_PORT= kafka-console-consumer.sh --bootstrap-server $2 --topic test --from-beginning
 EOF

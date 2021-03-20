@@ -1,10 +1,7 @@
 BASE_IMAGE := python:3.7-slim-buster
 IMAGE := drtuxwang/python:3.7-slim-buster
+DOCKER_BUILD_FLAGS ?=
 
-TOPDIR := ../..
-ifndef DOCKER_BUILD_FLAGS
-	DOCKER_BUILD_FLAGS=
-endif
 BUILD_DIRS := bash dev devpi
 
 
@@ -22,7 +19,7 @@ pull:
 
 .PHONY: save
 save:
-	../docker-save.sh $(BASE_IMAGE)
+	../bin/docker-save $(BASE_IMAGE)
 
 .PHONY: build
 build:
@@ -34,7 +31,7 @@ build:
 
 .PHONY: test
 test:
-	make -C bash test
+	make -C bash dev
 
 .PHONY: run
 run:

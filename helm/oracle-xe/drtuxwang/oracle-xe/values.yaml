@@ -4,7 +4,9 @@ app:
 
 image:
   pullPolicy: IfNotPresent
-  name: datagrip/oracle:11.2
+  registry: docker.io
+  repository: datagrip/oracle
+  tag: 11.2
 
 service:
   http:

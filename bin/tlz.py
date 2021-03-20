@@ -61,7 +61,9 @@ class Options:
         self._parse_args(args[1:])
 
         if os.path.isdir(self._args.archive[0]):
-            self._archive = os.path.abspath(self._args.archive[0]) + '.tar.lzma'
+            self._archive = (
+                os.path.abspath(self._args.archive[0]) + '.tar.lzma'
+            )
         else:
             self._archive = self._args.archive[0]
         if not self._archive.endswith(('.tar.lzma', '.tlz')):

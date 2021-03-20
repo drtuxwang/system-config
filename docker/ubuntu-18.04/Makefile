@@ -1,10 +1,7 @@
 BASE_IMAGE := ubuntu:18.04
 IMAGE := drtuxwang/ubuntu:18.04
+DOCKER_BUILD_FLAGS ?=
 
-TOPDIR := ../..
-ifndef DOCKER_BUILD_FLAGS
-	DOCKER_BUILD_FLAGS=
-endif
 BUILD_DIRS := bash dev
 
 
@@ -21,7 +18,7 @@ pull:
 
 .PHONY: save
 save:
-	../docker-save.sh $(BASE_IMAGE)
+	../bin/docker-save $(BASE_IMAGE)
 
 .PHONY: build
 build:

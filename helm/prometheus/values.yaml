@@ -8,9 +8,6 @@ alertmanager:
 server:
   persistentVolume:
     enabled: false
-  ingress:
-    hosts:
-    - prometheus.kube.local
 
 serverFiles:
   prometheus.yml:

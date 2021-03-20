@@ -1,17 +1,6 @@
 nodeSelector:
   beta.kubernetes.io/os: linux
 
-ingress:
-  enabled: false
-  hosts:
-  - name: nginx.kube.local
-    path: /
-  tls:
-    # Secrets must be manually created in the namespace.
-    - secretName: secret-kube-local
-      hosts:
-        - nginx.kube.local
-
 serverBlock: |-
   server {
     listen           0.0.0.0:8080;
@@ -22,21 +11,23 @@ serverBlock: |-
     gzip_min_length  2000;
     gzip_proxied     any;
 
-    location / {
-      proxy_pass https://www.google.co.uk;
-    }
-    # /drtuxwang => https://drtuxwang.github.io/
+    # /drtuxwang/adblock.txt => https://drtuxwang.github.io/adblock.txt
     location /drtuxwang {
-        proxy_pass https://drtuxwang.github.io/;
+      proxy_pass https://drtuxwang.github.io/;
     }
 
-    # /new => https://www.bbc.co.uk/news
-    location /news {
-        proxy_pass https://www.bbc.co.uk;
+    # /news => https://www.bbc.co.uk/news
+    location /new {
+      proxy_pass https://www.bbc.co.uk;
     }
 
-    # /path => https://news.sky.com/path
-    location ~ ^/(uk|world|politics|business) {
-        proxy_pass https://news.sky.com;
+    # /bbc/path => https://www.bbc.co.uk/news/path
+    location /bbc/ {
+      proxy_pass https://www.bbc.co.uk/news/;
+    }
+
+    # /path => https://www.bbc.co.uk/path
+    location ~ ^/(sport|weather) {
+      proxy_pass https://www.bbc.co.uk;
     }
   }

@@ -4,12 +4,7 @@ FROM ${BASE_IMAGE}
 
 COPY ./files/config.yml /etc/docker/registry/
 
-# Fix bash
-COPY files/ash2bash /bin/bash
-RUN ln -s .bashrc /root/.profile
-
-# Root account
-COPY tmpdir/root/.??* /root/
+ADD tmpdir/root.tar /
 
 # Configure start
 ENV REGISTRY_STORAGE_DELETE_ENABLED=true

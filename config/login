@@ -7,7 +7,10 @@
 
 ##set verbose
 
-if ( $?TERM && -e "`\tty`" ) then
+if ( ! $?TERM ) then
+    setenv TERM ""
+endif
+if ( -e "`\tty`" && "$TERM" != ""&& "$TERM" != dumb ) then
     if ( -f $HOME/.login-2bash && -f /bin/bash ) then
         setenv ENV $HOME/.profile
         exec /bin/bash -l
@@ -20,9 +23,8 @@ if ( $?TERM && -e "`\tty`" ) then
         if ( $?TMUX ) then
             if ( ! $?MYSCREEN ) then
                 setenv MYSCREEN "tmux:`timeout --signal=KILL 1 tmux display-message -p '#S'`"
-                unsetenv MYTTY
+                setenv MYTTY ""
             endif
-            alias logout 'tmux detach'
         else if ( "$TERM" == "screen" ) then
             setenv MYSCREEN "???"
             alias tmux='echo "sessions should be nested with care, already running multiplexer" #'
@@ -49,17 +51,19 @@ if ( $?TERM && -e "`\tty`" ) then
         setenv MYSHELL "CSH"
         set prompt="$MYUNAME@${MYHNAME}% "
     endif
-    if ( $?SSH_CONNECTION ) then
-        setenv MYSHELL "$MYSHELL remote"
-    endif
 
     # Setup SSH agent
-    if ( "`ps -u $MYUNAME |& grep ssh-agent`" != "" ) then
-        rm -rf /tmp/ssh-*/* >& /dev/null
+    if ( $?SSH_AUTH_SOCK ) then
+        if ( ! -e "$SSH_AUTH_SOCK" ) then
+            unsetenv SSH_AUTH_SOCK
+        endif
     endif
-    setenv SSH_AUTH_SOCK `/bin/sh -c "\ls -1t /tmp/ssh-*/* 2> /dev/null | head -1"`
-    if ( "$SSH_AUTH_SOCK" == "" ) then
-        setenv SSH_AUTH_SOCK `/bin/sh -c "\ls -1t /var/folders/*/*/*/ssh-*/* 2> /dev/null | head -1"`  # Mac
+    if ( ! $?SSH_AUTH_SOCK ) then
+        if ( "`ps -u $MYUNAME |& grep ssh-agent`" != "" ) then
+            find /tmp/ssh-*/* /tmp/ssh-*/* /var/folders/*/*/*/ssh-*/* -user $MYUNAME -exec rm -f {} + >& /dev/null
+            rmdir /tmp/ssh-* /var/folders/*/*/*/ssh-* >& /dev/null
+        endif
+        setenv SSH_AUTH_SOCK `/bin/sh -c "\ls -1t /tmp/ssh-*/* /var/folders/*/*/*/ssh-*/* 2> /dev/null | head -1"`
         if ( "$SSH_AUTH_SOCK" != "" ) then
             ln -s `dirname $SSH_AUTH_SOCK` /tmp >& /dev/null
         else
@@ -67,34 +71,30 @@ if ( $?TERM && -e "`\tty`" ) then
         endif
     endif
     setenv SSH_KEYS `ssh-add -l |& grep ".:." | wc -l | awk '{print $1}'`
-    if ( $?MYTTY ) then
-        if  ( "$MYTTY" != "`\tty`" ) then
-            unsetenv MYTTY
-        endif
-    endif
 
     # Setup terminal
-    if ( $?MYTTY ) then
-        alias logout 'echo Use \"exit\" to exit the shell.'
-    else
-        setenv MYSHELL "$MYSHELL login"
-        if ( "$TERM" == "dumb" ) then
-            setenv MYTTY "/dev/???"
-        else
-            setenv MYTTY `\tty`
-            setenv GPG_TTY "$MYTTY"
-            (mesg y) >& /dev/null
-            set autologout=0
-            stty erase "^?"  #  alternative
-            stty intr 
-            stty susp 
+    if ( ! $?MYTTY ) then
+        setenv MYTTY ""
+    endif
+    if ( "$MYTTY" != "`\tty`" ) then
+        setenv MYTTY `\tty`
+        setenv GPG_TTY "$MYTTY"
+        (mesg n) >& /dev/null
+        set autologout=0
+        stty erase "^?"  #  alternative
+        stty intr 
+        stty susp 
         endif
         if ( $?SSH_CONNECTION ) then
-            alias exit 'echo Use \"logout\" to leave the remote login shell.'
+            setenv MYSHELL "$MYSHELL remote"
+            alias exit 'echo Use \"logout\" to disconnect login shell.'
+        else if ( $?SUDO_COMMAND ) then
+            setenv MYSHELL "$MYSHELL sudo"
         else
-            alias exit 'echo Use \"logout\" to leave the login shell.'
+            setenv MYSHELL "$MYSHELL login"
+            alias exit 'echo Use \"logout\" to close login shell.'
         endif
-        alias exec ''
+        alias exec ""
     endif
 
     # General stuff

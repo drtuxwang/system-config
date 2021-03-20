@@ -7,7 +7,7 @@
 
 ##set -x
 
-if [ "$TERM" -a -e "`\tty`" ]
+if [ -e "`\tty`" -a "$TERM" -a "$TERM" != dumb ]
 then
     if [ ! "$BASH" -a -f $HOME/.profile-2bash -a -f /bin/bash ]
     then
@@ -25,10 +25,7 @@ then
                 export MYSCREEN="tmux:$(timeout --signal=KILL 1 tmux display-message -p '#S' 2> /dev/null)"
                 MYTTY=
             fi
-            alias logout='tmux detach'
             export PROJ_HOME="$HOME/git/$(timeout --signal=KILL 1 tmux display-message -p '#S' 2> /dev/null)"
-            [ ! -d "$PROJ_HOME" -o ! "$TMUX" ] && unset PROJ_HOME
-            cd "$PROJ_HOME" 2> /dev/null
         elif [ "$TERM" = "screen" ]
         then
             export MYSCREEN="???"
@@ -53,17 +50,11 @@ then
         __git_ps1()
         {
            local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-           if [ "$branch" ]
-           then
-               echo " ($branch)"
-           fi
+           [[ "$branch" ]] && echo " ($branch)"
         }
         __kube_ps1()
         {
-           if [ -f "$KUBECONFIG" ]
-           then
-               echo " ⛭${KUBECONFIG##*/}"
-           fi
+           [[ -f "$KUBECONFIG" ]] && echo " ⛭${KUBECONFIG##*/}"
         }
         __kubeconfig() {
             ls -1 $HOME/.kube/*.yaml 2> /dev/null | sed -e "s@.*/@  Kubeconfig: @"
@@ -84,7 +75,7 @@ then
         MYSHELL="${0/-/}"
         PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\[\033[01;31m\]`__git_ps1``__kube_ps1`\n\[\033[01;32m\]\u@\h\[\033[00m\] $ '
 
-        # VM/VContainer detection
+        # VM/Container detection
         case `uname` in
         *NT*)
             HARDWARES=`PATH="$WINDIR/system32:$WINDIR/system32/wbem:$PATH" $WINDIR/system32/systeminfo 2> /dev/null`
@@ -143,6 +134,7 @@ then
             ;;
         esac
 
+        complete -f -o default 7z 2> /dev/null
         complete -f -o default tar 2> /dev/null
         complete -f -o default wine 2> /dev/null
     elif [ "`echo $0 | \grep \"ksh$\"`" ]
@@ -157,20 +149,16 @@ then
     else
         MYSHELL="BOURNE"
     fi
-    if [ "$SSH_CONNECTION" ]
-    then
-        MYSHELL="$MYSHELL remote"
-    fi
 
     # Setup SSH agent
-    if [ ! "`ps -u $MYUNAME 2> /dev/null | grep ssh-agent`" ]
+    if [ ! -e "$SSH_AUTH_SOCK" ]
     then
-        rm -rf /tmp/ssh-*/*
-    fi
-    export SSH_AUTH_SOCK=$(\ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
-    if [ ! "$SSH_AUTH_SOCK" ]
-    then
-        export SSH_AUTH_SOCK=$(\ls -1t /var/folders/*/*/*/ssh-*/* 2> /dev/null | head -1)  # Mac
+        if [ ! "`ps -u $MYUNAME 2> /dev/null | grep ssh-agent`" ]
+        then
+            find /tmp/ssh-*/* /var/folders/*/*/*/ssh-*/* -user $MYUNAME -exec rm -f {} + 2> /dev/null
+            rmdir /tmp/ssh-* /var/folders/*/*/*/ssh-* 2> /dev/null
+        fi
+        export SSH_AUTH_SOCK=$(\ls -1t /tmp/ssh-*/* /var/folders/*/*/*/ssh-*/* 2> /dev/null | head -1)
         if [ "$SSH_AUTH_SOCK" ]
         then
             ln -s ${SSH_AUTH_SOCK%/*} /tmp 2> /dev/null
@@ -181,33 +169,40 @@ then
     SSH_KEYS=`ssh-add -l 2> /dev/null | grep ".:." | wc -l | awk '{print $1}'`
 
     # Setup terminal
-    if [ "$MYTTY" = "`\tty 2> /dev/null`" ]
+    if [ "$MYTTY" != "`\tty 2> /dev/null`" ]
     then
-        alias logout='echo Use \"exit\" to exit the shell.'
-    else
-        MYSHELL="$MYSHELL login"
-        if [ "$TERM" = "dumb" ]
+        export MYTTY=`\tty 2> /dev/null`
+        export GPG_TTY="$MYTTY"
+        (mesg n) > /dev/null 2>&1
+        export TMOUT=0
+        stty erase "^?" 2> /dev/null  # ^H alternative
+        stty intr ^C 2> /dev/null
+        stty susp ^Z 2> /dev/null
+        set -o ignoreeof ""
+        if [ "$(grep ":name=.*/docker[/-]" /proc/1/cgroup 2> /dev/null)" ]
         then
-            export MYTTY="/dev/???"
-        else
-            export MYTTY=`\tty 2> /dev/null`
-            export GPG_TTY="$MYTTY"
-            (mesg y) > /dev/null 2>&1
-            export TMOUT=0
-            stty erase "^?" 2> /dev/null  # ^H alternative
-            stty intr ^C 2> /dev/null
-            stty susp ^Z 2> /dev/null
-        fi
-        set -o ignoreeof ''
-        if [ "$SSH_CONNECTION" ]
+            MYSHELL="$MYSHELL container"
+            if [ $$ = 1 -o "$(grep "PPid:[^0-9]*1$" /proc/$$/status 2> /dev/null)" ]
+            then
+                MYSHELL="$MYSHELL run"
+                alias exit='echo Use \"logout\" to terminate container.'
+            else
+                MYSHELL="$MYSHELL exec"
+            fi
+        elif [ "$SSH_CONNECTION" ]
         then
-            alias exit='echo Use \"logout\" to leave the remote login shell.'
+            MYSHELL="$MYSHELL remote"
+            alias exit='echo Use \"logout\" to disconnect remote shell.'
+        elif [ "$SUDO_COMMAND" ]
+        then
+            MYSHELL="$MYSHELL sudo"
         else
-            alias exit='echo Use \"logout\" to leave the login shell.'
+            MYSHELL="$MYSHELL login"
+            alias exit='echo Use \"logout\" to close login shell.'
         fi
-        alias exec=''
-        alias logout=\\exit  # required by ash
+        alias exec=""
     fi
+    alias logout=\\exit  # required by ash
 
     # General stuff
     umask 022
@@ -389,15 +384,9 @@ then
     MYINFO="$MYINFO)"
     echo "$MYINFO"
     echo
-
-# Container detection
-elif [ "`grep  ":name=.*/docker[/-]" /proc/1/cgroup 2> /dev/null`" ]
-then
-    PS1=`echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](Docker '\`grep ":name=.*/docker[/-]" /proc/1/cgroup | sed -e "s@.*/docker[/-]\(.\{12\}\).*@\1@"\`')/'`
-elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
-then
-    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](LXC)\[\033[00m\] $ '
-elif [ "`awk '$5=="/" {print $1}' /proc/1/mountinfo 2> /dev/null`" != "`awk '$5=="/" {print $1}' /proc/$$/mountinfo 2> /dev/null`" ]
-then
-    PS1='\[\033[01;32m\][\t] \[\033[01;34m\]\w\n\[\033[01;32m\]\u@\h \[\033[01;31m\](chroot)\[\033[00m\] $ '
+else
+    # General stuff (for .bashrc)
+    export HISTFILE=
+    export LESSHISTFILE=/dev/null
+    export PYTHONDONTWRITEBYTECODE=1
 fi

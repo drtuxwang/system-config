@@ -2,7 +2,7 @@ NAMESPACE := default
 
 # Default local port
 ifndef LOCALPORT
-	LOCALPORT=8080
+	LOCALPORT := 8080
 endif
 
 

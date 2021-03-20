@@ -1,10 +1,7 @@
 BASE_IMAGE := busybox:1.31
 IMAGE := drtuxwang/busybox:1.31
+DOCKER_BUILD_FLAGS ?=
 
-TOPDIR := ../..
-ifndef DOCKER_BUILD_FLAGS
-	DOCKER_BUILD_FLAGS=
-endif
 BUILD_DIRS := bash
 
 
@@ -18,11 +15,10 @@ pull:
 
 .PHONY: save
 save:
-	../docker-save.sh $(BASE_IMAGE)
+	../bin/docker-save $(BASE_IMAGE)
 
 .PHONY: build
 build:
-	$(TOPDIR)/etc/setmod files/*
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	for DIR in $(BUILD_DIRS); do \

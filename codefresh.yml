@@ -42,7 +42,7 @@ steps:
         - rm -rf docker/alpine-3.12/bash/tmpdir
         - mkdir -p docker/alpine-3.12/bash/tmpdir/bin docker/alpine-3.12/bash/tmpdir/root
         - cp -p bin/* docker/alpine-3.12/bash/tmpdir/bin/
-        - cp -p config/bashrc docker/alpine-3.12/bash/tmpdir/root/.bashrc
+        - cp -p config/profile docker/alpine-3.12/bash/tmpdir/root/.profile
         - cp -p config/vimrc docker/alpine-3.12/bash/tmpdir/root/.vimrc
       create_python_deps:
         title: Build Python dependencies
@@ -52,7 +52,7 @@ steps:
         - rm -rf docker/python-3.7-slim-buster/tmpdir
         - mkdir -p docker/python-3.7-slim-buster/tmpdir/bin docker/python-3.7-slim-buster/tmpdir/root
         - cp -p bin/* docker/python-3.7-slim-buster/tmpdir/bin/
-        - cp -p config/bashrc docker/python-3.7-slim-buster/tmpdir/root/.bashrc
+        - cp -p config/profile docker/python-3.7-slim-buster/tmpdir/root/.profile
         - cp -p config/vimrc docker/python-3.7-slim-buster/tmpdir/root/.vimrc
 
   build_alpine_base:
@@ -89,7 +89,7 @@ steps:
         title: Build Python image
         type: build
         image_name: drtuxwang/python-base
-        tag: 3.12
+        tag: 3.7-slim-buster
         working_directory: docker/python-3.7-slim-buster
         dockerfile: Dockerfile
         build_arguments:
@@ -111,7 +111,7 @@ steps:
         type: push
         registry: dockerhub
         candidate: ${{build_python}}
-        tag: 3.12
+        tag: 3.7-slim-buster
 
   python_tests:
     title: Run Python tests

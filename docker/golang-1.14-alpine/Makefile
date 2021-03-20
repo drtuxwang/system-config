@@ -2,16 +2,12 @@ BASE_IMAGE := golang:1.14-alpine
 IMAGE := drtuxwang/golang:1.14-alpine
 NAME := golang-bash
 HOSTNAME := golang-bash
+DOCKER_BUILD_FLAGS ?=
+DOCKER_RUN_FLAGS ?=
+DOCKER_RUN_COMMAND ?=
 
-TOPDIR := ../..
-ifndef DOCKER_BUILD_FLAGS
-	DOCKER_BUILD_FLAGS=
-endif
-
-ifndef DOCKER_RUN_FLAGS
-	DOCKER_RUN_FLAGS=
-endif
-DOCKER_RUN_FLAGS := --rm \
+DOCKER_RUN_FLAGS := \
+	--rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -21,9 +17,6 @@ DOCKER_RUN_FLAGS := --rm \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
-ifndef DOCKER_RUN_COMMAND
-	DOCKER_RUN_COMMAND=
-endif
 
 
 .PHONY: default
@@ -40,16 +33,11 @@ pull:
 
 .PHONY: save
 save:
-	../docker-save.sh $(BASE_IMAGE)
+	../bin/docker-save $(BASE_IMAGE)
 
 .PHONY: build
 build:
-	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/config
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
-	cp -p $(TOPDIR)/config/bashrc tmpdir/config/.bashrc
-	cp -p $(TOPDIR)/config/vimrc tmpdir/config/.vimrc
-	$(TOPDIR)/etc/setmod *
+	../bin/create-root-tar bash bin vim
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir

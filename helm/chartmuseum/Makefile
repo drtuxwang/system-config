@@ -3,28 +3,43 @@ CHART_REPO := stable
 CHART_URL := https://charts.helm.sh/stable
 CHART_NAME := chartmuseum
 CHART_VERSION := 2.14.2
-APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
+NAMESPACE ?= infra
+HOSTNAME ?= chart.kube.local
+TLS_SECRET ?= kube-local-tls
+LOCALPORT ?=
 
-INGRESS_HOST := chartmusuem.local
-SECRET := chartmusuem-secret-tls
-
-# Default namespace
-ifndef NAMESPACE
-	NAMESPACE=infra
+ifndef APP_VERSION
+	APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 endif
-
+ifndef INGRESS_ENABLED
+	INGRESS_ENABLED=$(shell kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
+endif
+EXTERNAL_IP=$(shell ping -c 1 $(HOSTNAME) 2> /dev/null | grep "^PING" | sed -e "s/.* (//;s/).*//")
+HELM_FLAGS := \
+	--namespace=$(NAMESPACE) \
+	--values values.yaml \
+	--set fullnameOverride=$(NAME) \
+	--set ingress.enabled=$(INGRESS_ENABLED) \
+	--set ingress.hosts[0].name=$(HOSTNAME) \
+	--set ingress.hosts[0].tls=true \
+	--set ingress.hosts[0].tlsSecret=$(TLS_SECRET) \
+	--set service.type=ClusterIP \
+	--version $(CHART_VERSION)
+ifdef IMAGE_TAG
+	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
+endif
 ifeq ($(shell helm version | grep -c v2), 1)
-	HELM_RELEASE=$(NAMESPACE)-$(NAME)
-	HELM_LIST=helm list --all $(HELM_RELEASE)
-	HELM_STATUS=helm status $(HELM_RELEASE)
-	HELM_UNINSTALL=helm delete --purge $(HELM_RELEASE)
-	HELM_VERSION=helm search -l $(CHART_REPO)/$(CHART_NAME)
+	HELM_RELEASE := $(NAMESPACE)-$(NAME)
+	HELM_LIST := helm list --all $(HELM_RELEASE)
+	HELM_STATUS := helm status $(HELM_RELEASE)
+	HELM_UNINSTALL := helm delete --purge $(HELM_RELEASE)
+	HELM_VERSION := helm search -l $(CHART_REPO)/$(CHART_NAME)
 else
-	HELM_RELEASE=$(NAME)
-	HELM_LIST=helm --namespace=$(NAMESPACE) list --all | grep $(HELM_RELEASE)
-	HELM_STATUS=helm --namespace=$(NAMESPACE) status $(HELM_RELEASE)
-	HELM_UNINSTALL=helm --namespace=$(NAMESPACE) uninstall $(HELM_RELEASE)
-	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
+	HELM_RELEASE :=$(NAME)
+	HELM_LIST := helm --namespace=$(NAMESPACE) list --all | grep $(HELM_RELEASE)
+	HELM_STATUS := helm --namespace=$(NAMESPACE) status $(HELM_RELEASE)
+	HELM_UNINSTALL := helm --namespace=$(NAMESPACE) uninstall $(HELM_RELEASE)
+	HELM_VERSION := helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
 
@@ -52,7 +67,7 @@ pull:
 
 .PHONY: save
 save:
-	../helm-save.sh \
+	../bin/helm-save \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
 		$(APP_VERSION) \
@@ -61,15 +76,7 @@ save:
 .PHONY: template
 template: repo-add
 	helm template \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set ingress.enabled=true \
-		--set ingress.hosts[0].name=$(INGRESS_HOST) \
-		--set ingress.hosts[0].tls=true \
-		--set ingress.hosts[0].tlsSecret=$(SECRET) \
-		--set service.type=ClusterIP \
-		--version $(CHART_VERSION) \
+		$(HELM_FLAGS) \
 		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
@@ -78,15 +85,7 @@ check: repo-add
 		--install \
 		--dry-run \
 		--debug \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set ingress.enabled=true \
-		--set ingress.hosts[0].name=$(INGRESS_HOST) \
-		--set ingress.hosts[0].tls=true \
-		--set ingress.hosts[0].tlsSecret=$(SECRET) \
-		--set service.type=ClusterIP \
-		--version $(CHART_VERSION) \
+		$(HELM_FLAGS) \
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
@@ -95,15 +94,7 @@ install: repo-add
 	helm upgrade \
 		--install \
 		--wait \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set ingress.enabled=true \
-		--set ingress.hosts[0].name=$(INGRESS_HOST) \
-		--set ingress.hosts[0].tls=true \
-		--set ingress.hosts[0].tlsSecret=$(SECRET) \
-		--set service.type=ClusterIP \
-		--version $(CHART_VERSION) \
+		$(HELM_FLAGS) \
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
@@ -111,6 +102,18 @@ status:
 	@echo "\n*** Checking status ***"
 	$(HELM_STATUS)
 	$(HELM_LIST)
+
+.PHONY: forward
+forward:
+	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):8080
+
+.PHONY: connect
+connect:
+	@if [ "$(EXTERNAL_IP)" ]; then \
+		../../kubernetes/bin/kube-connect http://${HOSTNAME}; \
+	else \
+		../../kubernetes/bin/kube-connect http://$(NAMESPACE)/service/${NAME}:8080; \
+	fi
 
 .PHONY: version
 version:

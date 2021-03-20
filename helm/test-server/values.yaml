@@ -5,11 +5,6 @@ app:
   box:
     replicas: 2
 
-ingress:
-  servers:
-    domain: example.com
-    servicePort: 80
-
 resources:
   limits:
     cpu: 1000m

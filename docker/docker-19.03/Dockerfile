@@ -2,17 +2,9 @@ ARG BASE_IMAGE=docker:latest
 
 FROM ${BASE_IMAGE}
 
-# Fix bash
-COPY files/ash2bash /bin/bash
-RUN ln -s .bashrc /root/.profile
-
-# Add scripts
-COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/root/.??* /root/
+ADD tmpdir/root.tar /
 
 # Configure start
 ENV HOME=/root
 WORKDIR /root
-CMD bash
+CMD bash -l

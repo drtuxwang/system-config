@@ -3,8 +3,10 @@ app:
     replicas: 1
 
 image:
-  name: drtuxwang/debian-xfce:stable
   pullPolicy: IfNotPresent
+  registry: docker.io
+  repository: drtuxwang/debian-xfce
+  tag: stable
 
 box:
   ssh:

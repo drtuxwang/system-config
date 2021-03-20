@@ -1,15 +1,10 @@
-FROM  {{ cookiecutter.upstream_image }}
+ARG BASE_IMAGE={{ cookiecutter.base_image_repository }}:latest
 
-# Install base packages
+FROM ${BASE_IMAGE}
 
-# Add scripts
-COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/config/bashrc /root/.bashrc
-COPY tmpdir/config/vimrc /root/.vimrc
+ADD tmpdir/root.tar /
 
 # Configure start
 ENV HOME=/root
 WORKDIR /root
-CMD bash
+CMD bash -l

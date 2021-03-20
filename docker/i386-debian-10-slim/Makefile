@@ -1,10 +1,7 @@
 BASE_IMAGE := i386/debian:10-slim
 IMAGE := drtuxwang/i386-debian:10-slim
+DOCKER_BUILD_FLAGS ?=
 
-TOPDIR := ../..
-ifndef DOCKER_BUILD_FLAGS
-	DOCKER_BUILD_FLAGS=
-endif
 BUILD_DIRS := bash dev
 
 
@@ -18,7 +15,7 @@ pull:
 
 .PHONY: save
 save:
-	../docker-save.sh $(BASE_IMAGE)
+	../bin/docker-save $(BASE_IMAGE)
 
 .PHONY: build
 build:

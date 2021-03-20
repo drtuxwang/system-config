@@ -1,30 +1,37 @@
 NAME := test-server
 CHART_REPO := ./drtuxwang
 CHART_NAME := test-server
-DOMAIN := example.com
+HOSTNAME ?= test.kube.local
+NAMESPACE ?= default
+LOCALPORT ?=
 
-# Default namespace
-ifndef NAMESPACE
-	NAMESPACE=default
+ifndef APP_VERSION
+	APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 endif
-
-# Default local port
-ifndef LOCALPORT
-	LOCALPORT=8080
+ifndef INGRESS_ENABLED
+	INGRESS_ENABLED=$(shell kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
 endif
-
+HELM_FLAGS := \
+	--namespace=$(NAMESPACE) \
+	--values values.yaml \
+	--set fullnameOverride=$(NAME) \
+	--set image.name=$(APP_IMAGE) \
+	--set ingress.server.domain=$(HOSTNAME)
+ifdef IMAGE_TAG
+	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
+endif
 ifeq ($(shell helm version | grep -c v2), 1)
-	HELM_RELEASE=$(NAMESPACE)-$(NAME)
-	HELM_LIST=helm list --all $(HELM_RELEASE)
-	HELM_STATUS=helm status $(HELM_RELEASE)
-	HELM_UNINSTALL=helm delete --purge $(HELM_RELEASE)
-	HELM_VERSION=helm search -l $(CHART_REPO)/$(CHART_NAME)
+	HELM_RELEASE := $(NAMESPACE)-$(NAME)
+	HELM_LIST := helm list --all $(HELM_RELEASE)
+	HELM_STATUS := helm status $(HELM_RELEASE)
+	HELM_UNINSTALL := helm delete --purge $(HELM_RELEASE)
+	HELM_VERSION := helm search -l $(CHART_REPO)/$(CHART_NAME)
 else
-	HELM_RELEASE=$(NAME)
-	HELM_LIST=helm --namespace=$(NAMESPACE) list --all | grep $(HELM_RELEASE)
-	HELM_STATUS=helm --namespace=$(NAMESPACE) status $(HELM_RELEASE)
-	HELM_UNINSTALL=helm --namespace=$(NAMESPACE) uninstall $(HELM_RELEASE)
-	HELM_VERSION=helm search repo -l $(CHART_REPO)/$(CHART_NAME)
+	HELM_RELEASE :=$(NAME)
+	HELM_LIST := helm --namespace=$(NAMESPACE) list --all | grep $(HELM_RELEASE)
+	HELM_STATUS := helm --namespace=$(NAMESPACE) status $(HELM_RELEASE)
+	HELM_UNINSTALL := helm --namespace=$(NAMESPACE) uninstall $(HELM_RELEASE)
+	HELM_VERSION := helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
 
@@ -43,10 +50,7 @@ save:
 .PHONY: template
 template:
 	helm template \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set ingress.server.domain=$(DOMAIN) \
+		$(HELM_FLAGS) \
 		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
@@ -55,10 +59,7 @@ check:
 		--install \
 		--dry-run \
 		--debug \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set ingress.server.domain=$(DOMAIN) \
+		$(HELM_FLAGS) \
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
@@ -67,10 +68,7 @@ install:
 	helm upgrade \
 		--install \
 		--wait \
-		--namespace=$(NAMESPACE) \
-		--values values.yaml \
-		--set fullnameOverride=$(NAME) \
-		--set ingress.server.domain=$(DOMAIN) \
+		$(HELM_FLAGS) \
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
@@ -79,20 +77,19 @@ status:
 	$(HELM_STATUS)
 	$(HELM_LIST)
 
+.PHONY: connect
+connect:
+	@echo "\n*** Connecting to Test Server box ***"
+	@kubectl --namespace=$(NAMESPACE) exec -it \
+		`kubectl --namespace=$(NAMESPACE) get pod | grep $(NAME)-box | awk 'NR==1 {print $$1}'` \
+		-- bash -l
+
 .PHONY: version
 version:
 	@grep "name:" $(CHART_NAME)/Chart.yaml | awk '{printf("./'$(CHART_NAME)'/%s   ", $$2)}'
 	@grep "version:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "appVersion:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "description:" $(CHART_NAME)/Chart.yaml | cut -f2- -d" "
-
-.PHONY: forward
-forward:
-	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME)-server $(LOCALPORT):80
-
-.PHONY: connect
-connect:
-	./connect.sh
 
 .PHONY: uninstall
 uninstall:

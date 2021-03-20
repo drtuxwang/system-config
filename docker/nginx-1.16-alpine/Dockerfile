@@ -2,15 +2,7 @@ ARG BASE_IMAGE=nginx:latest
 
 FROM ${BASE_IMAGE}
 
-# Fix bash
-COPY files/ash2bash /bin/bash
-RUN ln -s .bashrc /root/.profile
-
-# Add scripts
-COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/root/.??* /root/
+ADD tmpdir/root.tar /
 
 # Nginx setup
 COPY files/nginx-proxy.conf /etc/nginx/conf.d/

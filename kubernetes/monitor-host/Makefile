@@ -1,5 +1,5 @@
 ifndef NAMESPACE
-	NAMESPACE=default
+	NAMESPACE := default
 endif
 
 

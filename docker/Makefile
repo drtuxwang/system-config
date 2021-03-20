@@ -1,4 +1,4 @@
-IMAGES="drtuxwang/.*"
+IMAGES := "drtuxwang/.*"
 
 BUILD_DIRS := \
 	alpine-3.11 \
@@ -23,13 +23,11 @@ BUILD_DIRS := \
 	ubuntu-16.04 \
 	ubuntu-18.04 \
 	ubuntu-20.04
-
 PUSH_IMAGES := \
 	drtuxwang/debian-bash:10-slim \
 	drtuxwang/debian-xfce:10-slim
-
 TEST_DIRS := \
-	python-3.6
+	python-3.7-slim-buster
 
 
 .PHONY: default
@@ -88,6 +86,7 @@ run-sudo:
 
 .PHONY: prune
 prune:
+	docker system df
 	docker system prune
 	@echo
 	docker images

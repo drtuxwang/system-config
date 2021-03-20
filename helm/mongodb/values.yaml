@@ -1,5 +1,7 @@
 nodeSelector:
   beta.kubernetes.io/os: linux
+auth:
+  enabled: false
 metrics:
   enabled: true
 ##  serviceMonitor:

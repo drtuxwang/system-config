@@ -2,19 +2,13 @@ BASE_IMAGE := drtuxwang/debian:10-slim
 IMAGE := drtuxwang/debian-xfce:10-slim
 NAME := debian10-xfce
 HOSTNAME := debian10-xfce
+LOCALPORT ?= 2222
+DOCKER_BUILD_FLAGS ?=
+DOCKER_RUN_FLAGS ?=
+DOCKER_RUN_COMMAND ?=
 
-TOPDIR := ../../..
-ifndef DOCKER_BUILD_FLAGS
-	DOCKER_BUILD_FLAGS=
-endif
-
-ifndef LOCALPORT
-	LOCALPORT=2222
-endif
-ifndef DOCKER_RUN_FLAGS
-	DOCKER_RUN_FLAGS=--network=none --user=owner:users
-endif
-DOCKER_RUN_FLAGS := --rm \
+DOCKER_RUN_FLAGS := \
+	--rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -25,9 +19,6 @@ DOCKER_RUN_FLAGS := --rm \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
-ifndef DOCKER_RUN_COMMAND
-	DOCKER_RUN_COMMAND=
-endif
 
 
 .PHONY: default
@@ -39,20 +30,8 @@ status:
 
 .PHONY: build
 build:
-	mkdir -p tmpdir/bin tmpdir/etc
-	mkdir -p tmpdir/home/.config/xfce4/terminal tmpdir/home/.ssh tmpdir/home/.vnc
-	cp -p $(TOPDIR)/etc/install-python-requirements.sh tmpdir/etc
-	cp -p $(TOPDIR)/etc/python-requirements.txt tmpdir/etc
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
-	cp -p $(TOPDIR)/config/bashrc tmpdir/home/.bashrc
-	cp -p $(TOPDIR)/config/profile tmpdir/home/.profile
-	cp -p $(TOPDIR)/config/terminalrc tmpdir/home/.config/xfce4/terminal
-	cp -p $(TOPDIR)/config/tmux.conf tmpdir/home/.tmux.conf
-	cp -p $(TOPDIR)/config/vimrc tmpdir/home/.vimrc
-	cp -p files/xstartup tmpdir/home/.vnc/
-	$(TOPDIR)/etc/setmod *
-	cd tmpdir/home && tar cf ../home.tar --owner=0 --group=0 .???*
-	chmod 644 tmpdir/home.tar
+	../../bin/create-root-tar bash bin init tmux vim xfce
+	../../bin/create-python-requirements
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir

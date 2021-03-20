@@ -6,13 +6,9 @@ FROM ${BASE_IMAGE}
 RUN apk update && \
 	apk add bash openssh-client python3 vim
 
-# Add scripts
-COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/config/.bashrc tmpdir/config/.vimrc /root/
+ADD tmpdir/root.tar /
 
 # Configure start
 ENV HOME=/root
 WORKDIR /root
-CMD bash
+CMD bash -l

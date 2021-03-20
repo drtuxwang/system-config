@@ -1,0 +1,8 @@
+nodeSelector:
+  beta.kubernetes.io/os: linux
+
+controller:
+  image:
+    digest:
+  service:
+    type: ClusterIP

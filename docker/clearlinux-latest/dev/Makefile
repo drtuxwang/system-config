@@ -2,16 +2,12 @@ BASE_IMAGE := drtuxwang/clearlinux:latest
 IMAGE := drtuxwang/clearlinux-dev:latest
 NAME := clearlinux-dev
 HOSTNAME := clearlinux-dev
+DOCKER_BUILD_FLAGS ?=
+DOCKER_RUN_FLAGS ?=
+DOCKER_RUN_COMMAND ?=
 
-TOPDIR := ../../..
-ifndef DOCKER_BUILD_FLAGS
-	DOCKER_BUILD_FLAGS=
-endif
-
-ifndef DOCKER_RUN_FLAGS
-	DOCKER_RUN_FLAGS=
-endif
-DOCKER_RUN_FLAGS := --rm \
+DOCKER_RUN_FLAGS := \
+	--rm \
 	--interactive \
 	--tty \
 	--cpu-quota=1000000 \
@@ -21,9 +17,6 @@ DOCKER_RUN_FLAGS := --rm \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
-ifndef DOCKER_RUN_COMMAND
-	DOCKER_RUN_COMMAND=
-endif
 
 
 .PHONY: default
@@ -35,14 +28,8 @@ status:
 
 .PHONY: build
 build:
-	rm -rf tmpdir
-	mkdir -p tmpdir/bin tmpdir/etc tmpdir/root
-	cp -p $(TOPDIR)/etc/install-python-requirements.sh tmpdir/etc
-	cp -p $(TOPDIR)/etc/python-requirements.txt $(TOPDIR)/etc/python-requirements_3.9.txt tmpdir/etc
-	cp -p $(TOPDIR)/bin/* tmpdir/bin/
-	cp -p $(TOPDIR)/config/profile tmpdir/root/.profile
-	cp -p $(TOPDIR)/config/vimrc tmpdir/root/.vimrc
-	$(TOPDIR)/etc/setmod *
+	../../bin/create-root-tar bash bin vim
+	../../bin/create-python-requirements 3.9
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir

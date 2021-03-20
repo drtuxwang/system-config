@@ -1,5 +1,5 @@
 ifndef HOST
-	HOST=`hostname`.local
+	HOST := `hostname`.local
 endif
 
 

@@ -1,13 +1,9 @@
-#
-# helm search -l <chart-name>
-# helm fetch --version <version> <chart-name>
-# helm dep update
-#
 BUILD_DIRS := \
 	chartmuseum \
 	concourse \
 	etcd \
 	grafana \
+	ingress-controller \
 	jenkins \
 	kafka \
 	mongodb \
@@ -22,11 +18,11 @@ BUILD_DIRS := \
 	xfce-server
 
 ifeq ($(shell helm version | grep -c v3), 1)
-	HELM_INIT=
-	HELM_LIST=helm --all-namespaces=true list --all
+	HELM_INIT :=
+	HELM_LIST := helm --all-namespaces=true list --all
 else
-	HELM_INIT=helm init --client-only
-	HELM_LIST=helm list --all
+	HELM_INIT := helm init --client-only
+	HELM_LIST := helm list --all
 endif
 
 

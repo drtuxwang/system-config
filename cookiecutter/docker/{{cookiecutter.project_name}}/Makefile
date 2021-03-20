@@ -1,41 +1,51 @@
-NAME := {{ cookiecutter.image_name }}
-VERSION = {{ cookiecutter.image_version }}
-IMAGE := drtuxwang/$(NAME):$(VERSION)
-FLAGS := --rm \
+BASE_IMAGE := {{ cookiecutter.base_image_repository }}:{{ cookiecutter.base_image_tag }}
+IMAGE := {{ cookiecutter.image_name }}
+NAME := {{ cookiecutter.name }}
+HOSTNAME := {{ cookiecutter.hostname }}
+DOCKER_BUILD_FLAGS ?=
+DOCKER_RUN_FLAGS ?=
+DOCKER_RUN_COMMAND ?=
+
+DOCKER_RUN_FLAGS := \
+	--rm \
 	--interactive \
 	--tty \
-	--cpu-shares=50mi \
-	--cpu-quota=1000mi \
+	--cpu-quota=1000000 \
+	--cpu-shares=50000 \
+	--memory=1000m \
 	--memory-reservation=50m \
-	--memory=1000m
+	--name $(NAME) \
+	--hostname $(HOSTNAME) \
+	$(DOCKER_RUN_FLAGS)
 
 
-default: build
-	docker images
+.PHONY: default
+default: build status
 
-.PHONY: clean
-clean:
-	docker rmi -f $(IMAGE) ||:
-	docker rmi -f `grep FROM Dockerfile | cut -f2 -d" "` ||:
-
-.PHONY: pull
-pull:
-	docker pull `grep FROM Dockerfile | cut -f2 -d" "`
+.PHONY: status
+status:
+	docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " | sort
 
 .PHONY: build
 build:
-	mkdir tmpdir ||: && cp -rp ../../bin ../../config tmpdir && $(TOPDIR)/etc/setmod *
+	../../bin/create-root-tar bin profile vimrc
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build -t $(IMAGE) .
+	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
 run:
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
-	docker run $(FLAGS) \
-		--name $(NAME) \
-		--hostname $(NAME) \
-		$(IMAGE) bash || exit 0
+	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
+
+.PHONY: version
+version:
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
+		sed -e "s@^@$(shell pwd): Alpine Linux @"
+
+.PHONY: rmi
+rmi:
+	docker rmi -f $(IMAGE) ||:
 
 .PHONY: help
 help:

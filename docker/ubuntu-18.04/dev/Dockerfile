@@ -25,14 +25,10 @@ RUN \
 	apt-get clean
 
 # Install Python packages
-COPY tmpdir/etc/install-python-requirements.sh tmpdir/etc/python-requirements*.txt /etc/
+COPY tmpdir/install-python-requirements.sh tmpdir/python-requirements*.txt* /etc/
 RUN /etc/install-python-requirements.sh /usr/bin/python3 piponly
 
-# Add scripts
-COPY tmpdir/bin/ /opt/software/bin/
-
-# Root account
-COPY tmpdir/root/.??* /root/
+ADD tmpdir/root.tar /
 
 # Configure start
 ENV HOME=/root
