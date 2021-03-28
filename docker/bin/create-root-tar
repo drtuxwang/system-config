@@ -42,6 +42,11 @@ do
         echo "Creating \"tmpdir/root/etc/docker-init\"..."
         cp -p files/docker-init tmpdir/root/etc
         ;;
+    sudo)
+        echo "Creating \"tmpdir/root/etc/sudoers.d/sudoers\"..."
+        mkdir -p tmpdir/root/etc/sudoers.d
+        cp -p files/sudoers tmpdir/root/etc/sudoers.d
+        ;;
     tmux)
         echo "Creating \"tmpdir/root/root/.tmux.conf\"..."
         mkdir -p tmpdir/root/root

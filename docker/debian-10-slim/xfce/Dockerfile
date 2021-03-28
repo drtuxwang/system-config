@@ -63,8 +63,6 @@ ADD tmpdir/root.tar /
 
 # Setup accounts
 RUN useradd --shell /bin/bash --gid users owner && \
-	addgroup owner sudo && \
-	echo "owner ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
 	cp -rp /root /home && \
 	mv /home/root /home/owner && \
 	mkdir /home/owner/.ssh && \

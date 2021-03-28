@@ -24,7 +24,7 @@ default: build status
 
 .PHONY: status
 status:
-	docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " | sort
+	@make --no-print-directory -C .. status
 
 .PHONY: build
 build:

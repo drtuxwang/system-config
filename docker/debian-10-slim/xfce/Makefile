@@ -26,11 +26,11 @@ default: build status
 
 .PHONY: status
 status:
-	docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " | sort
+	@make --no-print-directory -C .. status
 
 .PHONY: build
 build:
-	../../bin/create-root-tar bash bin init tmux vim xfce
+	../../bin/create-root-tar bash bin init sudo tmux vim xfce
 	../../bin/create-python-requirements
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .

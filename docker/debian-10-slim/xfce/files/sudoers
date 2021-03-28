@@ -1,0 +1,2 @@
+# Copy to /etc/sudoers.d
+owner ALL=(ALL) NOPASSWD: ALL

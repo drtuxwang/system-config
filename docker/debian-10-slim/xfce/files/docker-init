@@ -22,8 +22,11 @@ then
     xauth add $(uname -n)/${XAUTH#*/}
 fi
 
-echo "$SSH_PUBKEY" > $HOME/.ssh/authorized_keys
-echo "$SSH_PUBKEY" > /home/owner/.ssh/authorized_keys
+if [ "$SSH_PUBKEY" ]
+then
+    echo "$SSH_PUBKEY" > $HOME/.ssh/authorized_keys
+    echo "$SSH_PUBKEY" > /home/owner/.ssh/authorized_keys
+fi
 
 if [ $# = 0 ]
 then
