@@ -4,6 +4,7 @@ Securely synchronize file system using SSH protocol.
 """
 
 import argparse
+import getpass
 import glob
 import os
 import signal
@@ -35,6 +36,16 @@ class Options:
         )
 
         parser.add_argument(
+            '-root',
+            action='store_true',
+            help='Select Sudo to run remote rsync.'
+        )
+        parser.add_argument(
+            '-user',
+            nargs=1,
+            help='Select Sudo user to run remote rsync.'
+        )
+        parser.add_argument(
             'source',
             nargs=1,
             metavar='[[user1@]host1:]source',
@@ -56,21 +67,48 @@ class Options:
         self._parse_args(args[1:])
 
         ssh = command_mod.Command('ssh', errors='stop')
-
         self._rsync = command_mod.Command('rsync', errors='stop')
-        self._rsync.set_args([
-            '--recursive',
-            '--links',
-            '--perms',
-            '--times',
+
+        sudo_user = None
+        if self._args.user:
+            sudo_user = self._args.user[0]
+        elif self._args.root:
+            sudo_user = 'root'
+
+        # -axHAXDv --append-verify --progress --delete-after
+        args = ['--archive']  # -rlptgoD
+        if sudo_user:
+            if getpass.getuser() != 'root':
+                # No ownership for non-root to root
+                args = [
+                    '--recursive',
+                    '--links',
+                    '--perms',
+                    '--times',
+                    '--devices',
+                    '--specials',
+                ]
+            args.append(
+                '--rsync-path=SUDO_ASKPASS=/bin/ssh-askpass sudo -k -A -u ' +
+                sudo_user + ' -p "[sudo] password for `whoami`@'
+                '`uname -n | tr \'[A-Z]\' \'[a-z]\' | cut -f1 -d.`:" rsync',
+            )
+            args.append('--rsh=' + ssh.get_file() + ' -X')
+        else:
+            args.append('--rsh=' + ssh.get_file())
+        args.extend([
+            '--one-file-system',
+            '--hard-links',
+            '--acls',
+            '--xattrs',
             '--verbose',
-            '--compress',
             '--append-verify',
-            '--rsh='+ssh.get_file(),
-            '--delete',
+            '--progress',
+            '--delete-after',
             self._args.source[0],
-            self._args.target[0]
+            self._args.target[0],
         ])
+        self._rsync.set_args(args)
 
 
 class Main:

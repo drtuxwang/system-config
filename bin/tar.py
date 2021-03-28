@@ -128,7 +128,6 @@ class Main:
         tar.extend_args(options.get_files())
         if has_xattrs:
             tar.extend_args(['--xattrs', '--xattrs-include=*'])
-            print("debugX", tar.get_cmdline())
         task = subtask_mod.Task(tar.get_cmdline())
         task.run()
         if task.get_exitcode():

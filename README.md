@@ -608,6 +608,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/sonobuoy           sonobuoy (allowing non systems port)
  * bin/sonobuoy.py
  * bin/ssh.bat            Windows ssh wrapper (uses PuTTY)
+ * bin/ssh-askpass        Wrapper for "ssh-askpass" command
+ * bin/ssh_askpass.py
  * bin/ssync              Securely synchronize file system using SSH protocol
  * bin/ssync.py           (uses rsync)
  * bin/sudo               Wrapper for "sudo" command

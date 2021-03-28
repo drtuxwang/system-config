@@ -187,7 +187,7 @@ exec_python() {
         PYLD_FLAGS="-pyldname=$PY_MAIN"
         PY_MAIN="gxx_"
         ;;
-    git-*|systemd-analyze)
+    git-*|ssh-*|systemd-*)
         PYLD_FLAGS="-pyldname=$PY_MAIN"
         PY_MAIN=`echo "$PY_MAIN" | sed -e "s/-/_/g"`
         ;;
