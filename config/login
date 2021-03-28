@@ -84,7 +84,6 @@ if ( -e "`\tty`" && "$TERM" != ""&& "$TERM" != dumb ) then
         stty erase "^?"  #  alternative
         stty intr 
         stty susp 
-        endif
         if ( $?SSH_CONNECTION ) then
             setenv MYSHELL "$MYSHELL remote"
             alias exit 'echo Use \"logout\" to disconnect login shell.'
@@ -210,6 +209,10 @@ if ( -e "`\tty`" && "$TERM" != ""&& "$TERM" != dumb ) then
         breaksw
     endsw
     setenv PATH "$HOME/software/scripts:$HOME/software/bin:/opt/software/bin:$PATH"
+    if ( ! "`echo :${PATH}: | grep :/sbin:`" ) then
+    then
+        setenv PATH /sbin:$PATH
+    endif
 
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop >& /dev/null

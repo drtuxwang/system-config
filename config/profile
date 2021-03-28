@@ -178,7 +178,6 @@ then
         stty erase "^?" 2> /dev/null  # ^H alternative
         stty intr ^C 2> /dev/null
         stty susp ^Z 2> /dev/null
-        set -o ignoreeof ""
         if [ "$(grep ":name=.*/docker[/-]" /proc/1/cgroup 2> /dev/null)" ]
         then
             MYSHELL="$MYSHELL container"
@@ -186,6 +185,7 @@ then
             then
                 MYSHELL="$MYSHELL run"
                 alias exit='echo Use \"logout\" to terminate container.'
+                set -o ignoreeof
             else
                 MYSHELL="$MYSHELL exec"
             fi
@@ -193,12 +193,14 @@ then
         then
             MYSHELL="$MYSHELL remote"
             alias exit='echo Use \"logout\" to disconnect remote shell.'
+            set -o ignoreeof
         elif [ "$SUDO_COMMAND" ]
         then
             MYSHELL="$MYSHELL sudo"
         else
             MYSHELL="$MYSHELL login"
             alias exit='echo Use \"logout\" to close login shell.'
+            set -o ignoreeof
         fi
         alias exec=""
     fi
@@ -356,6 +358,10 @@ then
         ;;
     esac
     export PATH="$HOME/software/scripts:$HOME/software/bin:/opt/software/bin:$PATH"
+    if [ ! "$(echo :$PATH: | grep :/sbin:)" ]
+    then
+        export PATH=:$PATH:/sbin
+    fi
 
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop 2> /dev/null

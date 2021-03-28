@@ -33,7 +33,9 @@ set hlsearch
 set list listchars=tab:▸\ ,
 set showmatch
 set tabstop=4
-set lcs+=nbsp:…
+if version >= 800
+    set lcs+=nbsp:…
+endif
 highlight OverLength ctermbg=0 guibg=lightgrey
 match OverLength /\%101v.\+/
 highlight TrailingSpace ctermbg=0 guibg=lightgrey

@@ -102,7 +102,7 @@ class Main:
 
     @staticmethod
     def _copy_link(source, target):
-        print('Copying "' + source + '" link...')
+        print('Creating "' + target + '" link...')
         source_link = os.readlink(source)
 
         if os.path.isfile(target):
@@ -120,7 +120,7 @@ class Main:
             ) from exception
 
     def _copy_directory(self, source, target):
-        print('Copying "' + source + '" directory...')
+        print('Creating "' + target + '" directory...')
         try:
             files = sorted(
                 [os.path.join(source, x) for x in os.listdir(source)])
@@ -142,7 +142,7 @@ class Main:
 
     @staticmethod
     def _copy_file(source, target):
-        print('Copying "' + source + '" file...')
+        print('Creating "' + target + '" file...')
         try:
             shutil.copy2(source, target)
         except shutil.Error as exception:
@@ -180,16 +180,22 @@ class Main:
         Start program
         """
         self._options = Options()
-        target = self._options.get_target()
 
+        sources = self._options.get_sources()
+        target = self._options.get_target()
         self._automount(target, 8)
-        if len(self._options.get_sources()) > 1:
+
+        if len(sources) == 1:
             if not os.path.isdir(target):
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + target +
-                    '" target directory.'
-                )
-        for source in self._options.get_sources():
+                self._copy_file(sources[0], target)
+                return
+        elif not os.path.isdir(target):
+            raise SystemExit(
+                sys.argv[0] + ': Cannot find "' + target +
+                '" target directory.'
+            )
+
+        for source in sources:
             if os.path.isdir(source):
                 if (os.path.isabs(source) or
                         source.split(os.sep)[0] in (os.curdir, os.pardir)):
