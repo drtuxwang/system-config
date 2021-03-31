@@ -4,14 +4,15 @@ VERSION=$(uname -r | cut -f1-2 -d. | awk '{printf("%s\n", $1*10)}')
 DIR=${0%/config/*}/software
 
 install() {
-    INSTALLER=$(ls -1t ""$1"" | head -1)
-    echo "Running \"$INSTALLER\" installer..." | sed -e "s/\//\\\\/g"
-    $2 "$INSTALLER" -oc:/software -y
+    ARCHIVE=$(ls -1t ""$1"" | head -1)
+    echo "Installing \"$ARCHIVE\" archive..." | sed -e "s/\//\\\\/g"
+    c:/software/bin/7z.bat x -oc:/software -y "$ARCHIVE"
 }
 
-
-install "$DIR/system-config_*_generic.exe"
-install "$DIR/vim_*_win51x86.exe"
+echo
+install "$DIR/system-config_*_generic.7z"
+echo
+install "$DIR/vim_*_win*x86.7z"
 
 if [ $VERSION -ge 60 ]
 then
@@ -66,14 +67,20 @@ schtasks.exe /delete /tn "\Microsoft\Windows\WindowsUpdate\Scheduled Start" /f
 EOF
         ;;
     esac
+    echo
+    echo "Running \"$TMP/winsetup.bat\"..."
     echo "pause" >> "$TMP/winsetup.bat"
     powershell.exe -command start-process "$TMP/winsetup.bat" -verb runas
 
-    install "$DIR/python-minimal_3.*_win60x86.exe"
+    echo
+    install "$DIR/python-minimal_3.*_win*x86.7z"
     if [ $VERSION -lt 100 ]
     then
-        install "$DIR/vc-redist_14.*_win51x86.exe"
+        echo
+        echo "Running \"$DIR/vc-redist_14.0.23026_win51x86.exe\"..."
+        "$DIR/vc-redist_14.0.23026_win51x86.exe"
     else
+        echo
         echo "Running \"netplwiz\" to remove \"Users must enter user and password\"..."
         if [ -f "c:/Program Files/Oracle/VirtualBox Guest Additions/VBoxGuest.inf" ]
         then
@@ -85,9 +92,9 @@ fi
 
 ##if [ "$PROCESSOR_ARCHITECTURE" = AMD64 -o "$PROCESSOR_ARCHITEW6432" = AMD64 ]
 ##then
-##    INSTALLER=$(ls -1t "$DIR"/virtualbox-additions_*_win6451x86.exe | head -1)
+##    INSTALLER=$(ls -1t "$DIR"/virtualbox-additions_*_win6451x86.7z | head -1)
 ##else
-##    INSTALLER=$(ls -1t "$DIR"/virtualbox-additions_*_win51x86.exe | head -1)
+##    INSTALLER=$(ls -1t "$DIR"/virtualbox-additions_*_win51x86.7z | head -1)
 ##fi
 ##echo "Running \"$INSTALLER\" installer..." | sed -e "s/\//\\\\/g"
 ##cmd /r "$INSTALLER"

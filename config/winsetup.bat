@@ -1,11 +1,16 @@
 @echo off
 
 ver
-for /f %%a in ('dir /b /s ..\software\busybox_*_win51x86.exe') do (
+for /f %%a in ('dir /b /s ..\software\7zip_*_win*x86.exe') do (
     echo Running "%%a" installer...
     "%%a" -oc:\software -y
 )
+for /f %%a in ('dir /b /s ..\software\busybox_*_win*x86.7z') do (
+    echo Installing "%%a" archive...
+    call c:\software\bin\7z.bat x -oc:\software -y "%%a"
+)
 
+echo.
 echo Running "net use s: \\vboxsvr\shared"...
 net use s: \\vboxsvr\shared 2> nul
 
