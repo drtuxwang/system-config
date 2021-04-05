@@ -104,12 +104,11 @@ class Options:
                 ' received from "' + task.get_file() + '".'
             )
         self._genisoimage.set_args([
-            '-iso-level',
-            '3',
+            '-iso-level', '3',
             '-joliet-long',
             '-rational-rock',
-            '-appid',
-            'GENISOIMAGE-' + task.get_output()[0].split()[1]
+            '-input-charset', 'utf-8',
+            '-appid', 'GENISOIMAGE-' + task.get_output()[0].split()[1]
         ])
         if self._args.follow_flag:
             self._genisoimage.append_arg('-follow-links')

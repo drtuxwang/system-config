@@ -101,10 +101,10 @@ class Options:
             '--hard-links',
             '--acls',
             '--xattrs',
-            '--verbose',
             '--append-verify',
-            '--progress',
             '--delete-after',
+            '--info=progress2',
+            '--verbose',
             self._args.source[0],
             self._args.target[0],
         ])

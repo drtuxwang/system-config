@@ -27,10 +27,12 @@ the years. Now most of the scripts are written in Python 3.
  * bin/python2.7.bat
  * bin/python3
  * bin/python3.bat
+ * bin/python3.1
+ * bin/python3.2
+ * bin/python3.3
+ * bin/python3.4
  * bin/python3.5
- * bin/python3.5.bat
  * bin/python3.6
- * bin/python3.6.bat
  * bin/python3.7
  * bin/python3.7.bat
  * bin/python3.8

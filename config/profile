@@ -7,7 +7,7 @@
 
 ##set -x
 
-if [ -e "`\tty`" -a "$TERM" -a "$TERM" != dumb ]
+if [ "$TERM" -a "$TERM" != dumb ]
 then
     if [ ! "$BASH" -a -f $HOME/.profile-2bash -a -f /bin/bash ]
     then
@@ -264,6 +264,10 @@ then
             ;;
         esac
     fi
+    if [ "$MYUNAME" = root -a ! "$(echo :$PATH: | grep :/sbin:)" ]
+    then
+        export PATH=/sbin:$PATH
+    fi
 
     # Fix command aliases
     if [ "`which ssudo 2> /dev/null`" ]
@@ -358,10 +362,6 @@ then
         ;;
     esac
     export PATH="$HOME/software/scripts:$HOME/software/bin:/opt/software/bin:$PATH"
-    if [ ! "$(echo :$PATH: | grep :/sbin:)" ]
-    then
-        export PATH=:$PATH:/sbin
-    fi
 
     # Change to $HOME/Desktop
     mkdir $HOME/Desktop 2> /dev/null
