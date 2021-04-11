@@ -1,5 +1,5 @@
-BASE_IMAGE := golang:1.14-alpine
-IMAGE := drtuxwang/golang:1.14-alpine
+BASE_IMAGE := golang:1.15-alpine
+IMAGE := drtuxwang/golang:1.15-alpine
 NAME := golang-bash
 HOSTNAME := golang-bash
 DOCKER_BUILD_FLAGS ?=

@@ -60,8 +60,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     endif
     if ( ! $?SSH_AUTH_SOCK ) then
         if ( "`ps -u $MYUNAME |& grep ssh-agent`" != "" ) then
-            find /tmp/ssh-*/* /tmp/ssh-*/* /var/folders/*/*/*/ssh-*/* -user $MYUNAME -exec rm -f {} + >& /dev/null
-            rmdir /tmp/ssh-* /var/folders/*/*/*/ssh-* >& /dev/null
+            find /tmp/ssh-* /var/folders/*/*/*/ssh-* -type d -user $MYUNAME -exec rm -rf {} + >& /dev/null
         endif
         setenv SSH_AUTH_SOCK `/bin/sh -c "\ls -1t /tmp/ssh-*/* /var/folders/*/*/*/ssh-*/* 2> /dev/null | head -1"`
         if ( "$SSH_AUTH_SOCK" != "" ) then
@@ -96,22 +95,28 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
         alias exec ""
     endif
 
+    # Use /tmp (tmpfs) for cache
+    setenv TMPDIR "/tmp/$MYUNAME"
+    setenv TMP "/tmp/$MYUNAME"
+    mkdir -p $TMP/.cache
+    rm -f `find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld | \
+        grep " -> /tmp" | grep -v " -> /tmp/$MYUNAME/" | sed -e "s/ ->.*//;s/.* //"`
+    if ( ! -l $HOME/.cache ) then
+        rm -rf $HOME/.cache
+        ln -s $TMP/.cache $HOME/.cache
+    endif
+
+    # Protect files
+    chmod 711 $HOME
+    ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* |& \
+        grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= >& /dev/null
+
     # General stuff
     umask 022
     setenv LC_COLLATE C
     setenv EDITOR vi
     setenv LESSHISTFILE /dev/null
     setenv PYTHONDONTWRITEBYTECODE 1
-    setenv TMPDIR "/tmp/$MYUNAME"
-    setenv TMP "/tmp/$MYUNAME"
-    mkdir -p $TMP/.cache
-    chmod 711 $HOME
-    ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* |& \
-        grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= >& /dev/null
-    if ( ! -l $HOME/.cache ) then
-        rm -rf $HOME/.cache
-        ln -s $TMP/.cache $HOME/.cache
-    endif
     set history=1024
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)

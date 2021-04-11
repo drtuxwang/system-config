@@ -986,8 +986,8 @@ the years. Now most of the scripts are written in Python 3.
  * docker/i386-debian-10-slim/dev/Makefile  i386/debian:10-slim based GCC dev shell
  * docker/docker-19.03/Dockerfile
  * docker/docker-19.03/Makefile          docker:19.03 (alpine) based docker shell
- * docker/golang-1.14-alpine/Dockerfile
- * docker/golang-1.14-alpine/Makefile    golang:1.14-alpine based compiler app
+ * docker/golang-1.15-alpine/Dockerfile
+ * docker/golang-1.15-alpine/Makefile    golang:1.15-alpine based compiler app
  * docker/nginx-1.16-alpine/Dockerfile
  * docker/nginx-1.16-alpine/Makefile     nginx:1.16-alpine based revere proxy server
  * docker/nginx-1.16-alpine/files/nginx-proxy.conf  Proxy pass examples

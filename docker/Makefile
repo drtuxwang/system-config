@@ -13,7 +13,7 @@ BUILD_DIRS := \
 	debian-10-slim\
 	i386-debian-10-slim \
 	docker-19.03 \
-	golang-1.14-alpine \
+	golang-1.15-alpine \
 	nginx-1.16-alpine \
 	oraclelinux-7-slim \
 	oraclelinux-8-slim \
@@ -77,7 +77,7 @@ push:
 .PHONY: version
 version:
 	@for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR version || exit 1; \
+		make --no-print-directory -C $$DIR version || exit 1; \
 	done
 
 .PHONY: run-sudo
@@ -87,6 +87,7 @@ run-sudo:
 .PHONY: prune
 prune:
 	docker system df
+	df /var/lib/docker
 	docker system prune
 	@echo
 	docker images
@@ -96,6 +97,7 @@ prune:
 	docker ps
 	@echo
 	docker system df
+	df /var/lib/docker
 
 .PHONY: load
 load:
