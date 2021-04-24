@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Some projects require ancient insecure versions of Ansible
+#
+
+PYTHON="python2"
+NAME="ansible"
+VERSION="2.7.18"
+
+PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | $PYTHON)
+VENV="$PYTHON_DIR-venv/$NAME"
+[[ -d "$VENV" ]] || VENV="$TMP/$PYTHON-venv/$NAME"
+
+[[ -d "$VENV" ]] || $PYTHON -m virtualenv $VENV || exit 1
+[[ "$($VENV/bin/$PYTHON -m pip freeze 2>&1 | grep $NAME==$VERSION)" ]] || $VENV/bin/$PYTHON -m pip install $NAME==$VERSION
+
+exec $VENV/bin/$PYTHON $VENV/bin/ansible-playbook "$@"

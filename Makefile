@@ -19,10 +19,8 @@ docker-test:
 check:
 	@echo "\n*** Running Python 3 requirements check ***"
 	umask 022 && python3 -m pip install -q -r etc/python-requirements.txt
-	rm -rf */__pycache__
 	@echo "\n*** Running Python 3 UNITTEST check ***"
 	python3 -m unittest discover --buffer bin
-	rm -rf */__pycache__
 	@echo "\n*** Running BSON/JSON/YAML check ***"
 	find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} +
 	@echo "\n*** Check successfull ***"
@@ -36,7 +34,9 @@ lint:
 	@echo "\n*** Running Python 3 PYLINT checks ***"
 	python3 -m pylint --disable=locally-disabled,locally-enabled --max-line-length=79 \
 		--rcfile=/dev/null --output-format=parseable --reports=n -j 4 bin/*.py
-	@echo "*** Lint successfull ***"
+	@echo "*** Running Python 3 MYPY type checks ***"
+	mypy --ignore-missing-imports --follow-imports=skip --cache-dir=/dev/null bin/*.py
+	@echo "\n*** Lint successfull ***"
 
 .PHONY: help
 help:

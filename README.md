@@ -43,9 +43,10 @@ the years. Now most of the scripts are written in Python 3.
  * bin/2to3-3.5.bat
  * bin/ansible
  * bin/ansible-playbook
- * bin/ansible-playbook2
+ * bin/ansible-playbook-venv
  * bin/ansible-vault
  * bin/aws
+ * bin/aws-venv
  * bin/aws.bat
  * bin/cookiecutter
  * bin/cookiecutter.bat
@@ -81,6 +82,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/mid3iconv.bat
  * bin/mid3v2
  * bin/mid3v2.bat
+ * bin/mypy
+ * bin/mypy.bat
  * bin/nexus3
  * bin/pep8
  * bin/pep8.bat

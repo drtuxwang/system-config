@@ -179,10 +179,6 @@ exec_python() {
         PYLD_FLAGS="-pyldname=$PY_MAIN"
         PY_MAIN="p7zip"
         ;;
-    ansible-playbook2)
-        PYEXE=python2
-        PY_MAIN="ansible-playbook"
-        ;;
     bson|bz2|calendar|git|gtts|json|random|yaml)
         PYLD_FLAGS="-pyldname=$PY_MAIN"
         PY_MAIN="${PY_MAIN}_"
@@ -197,6 +193,10 @@ exec_python() {
         ;;
     ipdb|pip|pydoc)
         PYEXE=python
+        ;;
+    mypy)
+        MYPY_CACHE_DIR=/dev/null
+        export MYPY_CACHE_DIR
         ;;
     python*)
         PYEXE="$PY_MAIN"

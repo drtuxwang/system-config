@@ -62,7 +62,8 @@ class Options:
         self._parse_args(args[1:])
 
 
-class XmlDataHandler(xml.sax.ContentHandler):
+class XmlDataHandler(xml.sax.ContentHandler):  # type: ignore
+
     """
     XML data handler class
     """

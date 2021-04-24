@@ -12,6 +12,7 @@ GitPython==2.1.15
 importlib-metadata==2.1.1
 ipython==5.8.0
 Markdown==3.1.1
+# mypy==None
 # nexus3-cli==None
 motor==2.1.0
 mutagen==1.43.1
