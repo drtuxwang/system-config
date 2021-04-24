@@ -992,8 +992,14 @@ the years. Now most of the scripts are written in Python 3.
  * docker/docker-19.03/Makefile          docker:19.03 (alpine) based docker shell
  * docker/golang-1.15-alpine/Dockerfile
  * docker/golang-1.15-alpine/Makefile    golang:1.15-alpine based compiler app
+ * docker/httpd-2.4-alpine/Dockerfile
+ * docker/httpd-2.4-alpine/Makefile      httpd:2.4-alpine (Apache) based web server
+ * docker/httpd-2.4-alpine/files/httpd.conf
+ * docker/httpd-2.4-alpine/public-html/index.html
+ * docker/httpd-2.4-alpine/public-html/testlcd.js
+ * docker/httpd-2.4-alpine/public-html/testlcd.xhtml
  * docker/nginx-1.16-alpine/Dockerfile
- * docker/nginx-1.16-alpine/Makefile     nginx:1.16-alpine based revere proxy server
+ * docker/nginx-1.16-alpine/Makefile     nginx:1.16.1-alpine based reverse proxy server
  * docker/nginx-1.16-alpine/files/nginx-proxy.conf  Proxy pass examples
  * docker/oraclelinux-7-slim/Dockerfile
  * docker/oraclelinux-7-slim/Makefile    oraclelinux:7-slim based linux

@@ -41,7 +41,7 @@ run:
 
 .PHONY: version
 version:
-	@docker run --entrypoint devpi-server $(IMAGE) --version | \
+	@docker run $(DOCKER_RUN_FLAGS) --entrypoint devpi-server $(IMAGE) --version | \
 		   awk '{printf("'$(shell pwd)': devpi-server %s\n", $$1)}'
 
 .PHONY: rmi

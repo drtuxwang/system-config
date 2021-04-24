@@ -1,10 +1,10 @@
-BASE_IMAGE := drtuxwang/amazonlinux:2
-IMAGE := drtuxwang/amazonlinux-dev:2
-NAME := amazonlinux2-dev
-HOSTNAME := amazonlinux2-dev
+BASE_IMAGE := httpd:2.4-alpine
+IMAGE := drtuxwang/httpd:2.4-alpine
+NAME := httpd-proxy
+HOSTNAME := httpd-proxy
+LOCALPORT ?= 8080
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
-DOCKER_RUN_COMMAND ?=
 
 DOCKER_RUN_FLAGS := \
 	--rm \
@@ -12,8 +12,9 @@ DOCKER_RUN_FLAGS := \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
-	--memory=2000m \
+	--memory=1000m \
 	--memory-reservation=50m \
+	--publish $(LOCALPORT):80 \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
@@ -24,16 +25,21 @@ default: build status
 
 .PHONY: status
 status:
-	@make --no-print-directory -C .. status
+	@docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " ||:
+	@docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/-.*:/:/;s/:/  */') " ||:
 
 .PHONY: pull
 pull:
-	docker pull $(shell grep FROM Dockerfile | cut -f2 -d" ")
+	docker pull $(BASE_IMAGE)
+	docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/:/.* /') "
+
+.PHONY: save
+save:
+	../bin/docker-save $(BASE_IMAGE)
 
 .PHONY: build
 build:
-	../../bin/create-root-tar bash bin vim
-	../../bin/create-python-requirements
+	../bin/create-root-tar bash bash2ash bin-sysinfo
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir
@@ -45,8 +51,8 @@ run:
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
-		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
+	@docker run $(DOCKER_RUN_FLAGS) --entrypoint /usr/local/apache2/bin/httpd $(IMAGE) -version 2>&1 | \
+		grep "^Server version: Apache/" | sed -e "s@.*/@$(shell pwd): Apache @;s/ (.*//"
 
 .PHONY: rmi
 rmi:

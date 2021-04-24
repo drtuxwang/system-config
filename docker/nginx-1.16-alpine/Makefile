@@ -1,5 +1,5 @@
-BASE_IMAGE := nginx:1.16.1-alpine
-IMAGE := drtuxwang/nginx:1.16.1-alpine
+BASE_IMAGE := nginx:1.16-alpine
+IMAGE := drtuxwang/nginx:1.16-alpine
 NAME := nginx-proxy
 HOSTNAME := nginx-proxy
 LOCALPORT ?= 8080
@@ -14,7 +14,6 @@ DOCKER_RUN_FLAGS := \
 	--cpu-shares=50000 \
 	--memory=1000m \
 	--memory-reservation=50m \
-	--workdir /var/lib/nginx \
 	--publish $(LOCALPORT):80 \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
@@ -53,7 +52,7 @@ run:
 .PHONY: version
 version:
 	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) -v 2>&1 | grep "^nginx version:" | \
-	sed -e "s@.*/@$(shell pwd): Nginx @"
+		sed -e "s@.*/@$(shell pwd): Nginx @"
 
 .PHONY: rmi
 rmi:

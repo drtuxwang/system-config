@@ -50,7 +50,7 @@ test:
 
 .PHONY: version
 version:
-	@docker run --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
+	@docker run $(DOCKER_RUN_FLAGS) --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
 		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
 
 .PHONY: rmi

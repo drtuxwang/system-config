@@ -209,7 +209,7 @@ then
     export TMPDIR="/tmp/$MYUNAME"
     export TMP="/tmp/$MYUNAME"
     mkdir -p $TMP/.cache
-    rm -f `find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld | \
+    rm -f `find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld 2> /dev/null | \
         grep " -> /tmp" | grep -v " -> /tmp/$MYUNAME/" | sed -e "s/ ->.*//;s/.* //"`
     if [ ! -h $HOME/.cache ]
     then
