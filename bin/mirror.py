@@ -243,6 +243,9 @@ class Main:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + target_file + '" link.'
             ) from exception
+        file_stat = file_mod.FileStat(source_file, follow_symlinks=False)
+        file_time = file_stat.get_time()
+        os.utime(target_file, (file_time, file_time), follow_symlinks=False)
 
     def _mirror_file(self, source_file, target_file):
         if os.path.islink(target_file):

@@ -28,7 +28,7 @@ status:
 
 .PHONY: build
 build:
-	../../bin/create-root-tar bash bin vim
+	../../bin/create-root-tar bash bin-sysinfo vim
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir

@@ -10,8 +10,8 @@ import os
 import re
 import time
 
-RELEASE = '2.3.0'
-VERSION = 20201205
+RELEASE = '2.4.0'
+VERSION = 20210419
 
 
 class FileStat:
@@ -22,7 +22,7 @@ class FileStat:
     self._stat = [mode, ino, idev, nlink, uid, gid, size, atime, mtime, ctime]
     """
 
-    def __init__(self, file='', size=None):
+    def __init__(self, file='', size=None, follow_symlinks=True):
         """
         file = filename
 
@@ -31,7 +31,10 @@ class FileStat:
         if file:
             self._file = file
             try:
-                self._stat = list(os.stat(file))
+                if not follow_symlinks and os.path.islink(file):
+                    self._stat = list(os.lstat(file))
+                else:
+                    self._stat = list(os.stat(file))
             except (OSError, TypeError) as exception:
                 if not os.path.islink:
                     raise FileStatNotFoundError(

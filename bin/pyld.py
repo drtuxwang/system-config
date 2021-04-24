@@ -11,8 +11,8 @@ import os
 import signal
 import sys
 
-if sys.version_info < (3, 5) or sys.version_info >= (4, 0):
-    sys.exit(__file__ + ": Requires Python version (>= 3.5, < 4.0).")
+if sys.version_info < (3, 6) or sys.version_info >= (4, 0):
+    sys.exit(__file__ + ": Requires Python version (>= 3.6, < 4.0).")
 if __name__ == '__main__':
     sys.path = sys.path[1:] + sys.path[:1]
 

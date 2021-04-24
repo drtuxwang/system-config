@@ -105,25 +105,34 @@ class Main:
         print('Creating "' + target + '" link...')
         source_link = os.readlink(source)
 
-        if os.path.isfile(target):
+        if os.path.islink(target):
+            target_link = os.readlink(target)
+            if target_link == source_link:
+                return
+        elif os.path.isfile(target):
             try:
                 os.remove(target)
             except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot remove "' + target + '" link.'
                 ) from exception
+
         try:
             os.symlink(source_link, target)
         except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + target + '" link.'
             ) from exception
+        file_stat = file_mod.FileStat(source, follow_symlinks=False)
+        file_time = file_stat.get_time()
+        os.utime(target, (file_time, file_time), follow_symlinks=False)
 
     def _copy_directory(self, source, target):
         print('Creating "' + target + '" directory...')
         try:
             files = sorted(
-                [os.path.join(source, x) for x in os.listdir(source)])
+                [os.path.join(source, x) for x in os.listdir(source)]
+            )
         except PermissionError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot open "' + source + '" directory.'
@@ -139,6 +148,14 @@ class Main:
                 ) from exception
         for file in files:
             self._copy(file, os.path.join(target, os.path.basename(file)))
+        newest = file_mod.FileUtil.newest(
+            [os.path.join(target, x) for x in os.listdir(target)]
+        )
+        if not newest:
+            newest = source
+        file_stat = file_mod.FileStat(newest, follow_symlinks=False)
+        file_time = file_stat.get_time()
+        os.utime(target, (file_time, file_time))
 
     @staticmethod
     def _copy_file(source, target):

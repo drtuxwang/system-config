@@ -28,7 +28,7 @@ status:
 
 .PHONY: build
 build:
-	../../bin/create-root-tar bash bin vim
+	../../bin/create-root-tar bash bin-sysinfo vim
 	../../bin/create-python-requirements 3.5
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .

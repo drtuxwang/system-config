@@ -12,6 +12,7 @@ import signal
 import sys
 
 import command_mod
+import file_mod
 import logging_mod
 import subtask_mod
 
@@ -99,7 +100,7 @@ class Main:
     def _checkfile(isbadfile, directory=os.curdir):
         """
         Look for bad files like core dumps
-        (don't followlinks & onerror do northing)
+        (don't followlinks & onerror do nothing)
         """
         error = False
         for root, _, files in os.walk(directory):
@@ -128,6 +129,24 @@ class Main:
                     sys.argv[0] + ': Cannot create "' +
                     directory + '" directory.'
                 ) from exception
+
+    @staticmethod
+    def _set_time(directory):
+        if not directory:
+            directory = '.'
+        files = [os.path.join(directory, x) for x in os.listdir(directory)]
+        files.remove(os.path.join(directory, '...'))
+        newest = file_mod.FileUtil.newest(files)
+        if not newest:
+            newest = os.path.dirname(directory)
+        file_stat = file_mod.FileStat(newest)
+        file_time = file_stat.get_time()
+
+        directory_3dot = os.path.join(directory, '...')
+        fsum = os.path.join(directory_3dot, 'fsum')
+        for file in (fsum, directory_3dot, directory):
+            if file_time != file_mod.FileStat(file).get_time():
+                os.utime(file, (file_time, file_time))
 
     @classmethod
     def _write_fsums(cls, lines):
@@ -159,6 +178,7 @@ class Main:
                         for line in ifile:
                             lines.append(line.rstrip('\r\n'))
                     if lines == fsums[directory]:
+                        cls._set_time(directory)
                         continue
 
                 logger.info("Writing checksums: %s", file)
@@ -173,6 +193,7 @@ class Main:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + file + '" file.'
                 ) from exception
+            cls._set_time(directory)
 
     def run(self):
         """

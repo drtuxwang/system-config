@@ -11,6 +11,7 @@ import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -94,6 +95,7 @@ class Options:
             '-ms=on',
             '-snh',
             '-snl',
+            '-stl',
             '-y',
         ])
         if self._args.split:
@@ -157,7 +159,8 @@ class Main:
             subtask_mod.Exec(archiver.get_cmdline()).run()
 
         print("Adding SFX code")
-        with open(archive + '-sfx', 'wb') as ofile:
+        archive_sfx = archive + '-sfx'
+        with open(archive_sfx, 'wb') as ofile:
             try:
                 with open(sfx, 'rb') as ifile:
                     cls._copy(ifile, ofile)
@@ -168,13 +171,15 @@ class Main:
             with open(archive, 'rb') as ifile:
                 cls._copy(ifile, ofile)
 
+        file_stat = file_mod.FileStat(archive)
+        os.utime(archive_sfx, (file_stat.get_time(), file_stat.get_time()))
         try:
-            os.chmod(archive + '-sfx', int('755', 8))
-            shutil.move(archive + '-sfx', archive)
+            os.chmod(archive_sfx, int('755', 8))
+            shutil.move(archive_sfx, archive)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot rename "' + archive +
-                '-sfx" file to "' + archive + '".'
+                sys.argv[0] + ': Cannot rename "' + archive_sfx +
+                '" file to "' + archive + '".'
             ) from exception
 
     @staticmethod

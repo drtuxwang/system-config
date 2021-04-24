@@ -173,19 +173,33 @@ class Main:
             print("{0:o}>{1:o}: {2:s}".format(fmod, mod, file))
             os.chmod(file, mod)
 
+    @staticmethod
+    def _setmod_link(link):
+        link_stat = file_mod.FileStat(link, follow_symlinks=False)
+        file_stat = file_mod.FileStat(link)
+        file_time = file_stat.get_time()
+
+        if file_time != link_stat.get_time():
+            print("<utime>: {0:s} -> {1:s}".format(link, os.readlink(link)))
+            os.utime(link, (file_time, file_time), follow_symlinks=False)
+
     def _setmod_directory(self, directory):
+        files = [os.path.join(directory, x) for x in os.listdir(directory)]
+        if self._recursive_flag:
+            try:
+                self._setmod(files)
+            except PermissionError:
+                pass
         try:
             self._chmod(directory, self._xmod)
         except OSError:
             print("Permission denied:", directory + os.sep)
-        if self._recursive_flag:
-            try:
-                self._setmod([
-                    os.path.join(directory, x)
-                    for x in os.listdir(directory)
-                ])
-            except PermissionError:
-                pass
+        if files:
+            file_stat = file_mod.FileStat(file_mod.FileUtil.newest(files))
+            file_time = file_stat.get_time()
+            if file_time != file_mod.FileStat(directory).get_time():
+                print("<utime>: {0:s}/".format(directory))
+                os.utime(directory, (file_time, file_time))
 
     def _setmod_file(self, file):
         try:
@@ -211,14 +225,15 @@ class Main:
 
     def _setmod(self, files):
         for file in sorted(files):
-            if not os.path.islink(file):
-                if os.path.isdir(file):
-                    self._setmod_directory(file)
-                elif os.path.isfile(file):
-                    self._setmod_file(file)
-                else:
-                    raise SystemExit(
-                        sys.argv[0] + ': Cannot find "' + file + '" file.')
+            if os.path.islink(file):
+                self._setmod_link(file)
+            elif os.path.isdir(file):
+                self._setmod_directory(file)
+            elif os.path.isfile(file):
+                self._setmod_file(file)
+            else:
+                raise SystemExit(
+                    sys.argv[0] + ': Cannot find "' + file + '" file.')
 
     def run(self):
         """

@@ -10,6 +10,7 @@ import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -114,7 +115,34 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def set_time(files):
+        """
+        Fix directory and symbolic link modified times
+        """
+        for file in files:
+            if os.path.isfile(file):
+                link_stat = file_mod.FileStat(file, follow_symlinks=False)
+                file_stat = file_mod.FileStat(file)
+                file_time = file_stat.get_time()
+                if file_time != link_stat.get_time():
+                    os.utime(
+                        file,
+                        (file_time, file_time),
+                        follow_symlinks=False,
+                    )
+            elif os.path.isdir(file):
+                newest = file_mod.FileUtil.newest(
+                    [os.path.join(file, x) for x in os.listdir(file)]
+                )
+                if not newest:
+                    newest = os.path.basename(file)
+                file_stat = file_mod.FileStat(newest)
+                file_time = file_stat.get_time()
+                if file_time != file_mod.FileStat(file).get_time():
+                    os.utime(file, (file_time, file_time))
+
+    @classmethod
+    def run(cls):
         """
         Start program
         """
@@ -143,6 +171,13 @@ class Main:
                         str(task.get_exitcode()) + ' received from "' +
                         task.get_file() + '".'
                     )
+
+        archiver.set_args(['l'])
+        task = subtask_mod.Batch(archiver.get_cmdline() + [archive])
+        task.run(pattern=r"\d\d:\d\d:\d\d (D....|....A) ")
+        files = [line[53:] for line in task.get_output()]
+        files.reverse()
+        cls.set_time(files)
 
 
 if __name__ == '__main__':

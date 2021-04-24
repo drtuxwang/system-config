@@ -5,7 +5,6 @@ Wrapper for "gimp" command
 
 import glob
 import os
-import shutil
 import signal
 import sys
 
@@ -34,35 +33,6 @@ class Options:
         """
         return self._gimp
 
-    @staticmethod
-    def _config():
-        home = os.environ.get('HOME', '')
-
-        file = os.path.join(home, '.cache', 'thumbnails')
-        if not os.path.isfile(file):
-            try:
-                if os.path.isdir(file):
-                    shutil.rmtree(file)
-                with open(file, 'wb'):
-                    pass
-            except OSError:
-                pass
-
-        if os.path.isdir(os.path.join(home, '.thumbnails')):
-            try:
-                shutil.rmtree(os.path.join(home, '.thumbnails'))
-            except OSError:
-                pass
-        for file in glob.glob(
-                os.path.join(home, '.gimp*', 'gimprc')):
-            try:
-                with open(file, errors='replace') as ifile:
-                    if '(thumbnail-size none)\n' not in ifile.readlines():
-                        with open(file, 'a', newline='\n') as ofile:
-                            print("(thumbnail-size none)", file=ofile)
-            except OSError:
-                continue
-
     def parse(self, args):
         """
         Parse arguments
@@ -78,7 +48,6 @@ class Options:
             ': using babl for|gimp_pickable_contiguous_region_by_seed:|'
             'librsvg-WARNING'
         )
-        self._config()
 
 
 class Main:

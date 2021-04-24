@@ -43,6 +43,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/2to3-3.5.bat
  * bin/ansible
  * bin/ansible-playbook
+ * bin/ansible-playbook2
  * bin/ansible-vault
  * bin/aws
  * bin/aws.bat
