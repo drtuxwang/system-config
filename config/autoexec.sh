@@ -63,7 +63,7 @@ xset s blank s 0 # Use 300 for CRT
 sleep 4 && xset dpms 0 0 0 &
 
 # Setup audio:
-pactl set-sink-volume 0 100%
+pactl set-sink-volume 0 153%
 
 # Setup keyboard:
 setxkbmap gb
