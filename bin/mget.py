@@ -11,6 +11,7 @@ import shutil
 import signal
 import sys
 import time
+from typing import BinaryIO, List
 
 import command_mod
 import subtask_mod
@@ -21,26 +22,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self._output = None
         self.parse(sys.argv)
 
-    def get_output(self):
+    def get_output(self) -> str:
         """
         Return output file.
         """
         return self._output
 
-    def get_url(self):
+    def get_url(self) -> str:
         """
         Return M3U8 file URL.
         """
         return self._args.url[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='M3U8 streaming video downloader'
+            description='M3U8 streaming video downloader',
         )
         parser.add_argument(
             '-O',
@@ -78,7 +79,7 @@ class Options:
             print("{0:s}: already exists".format(self._output))
             raise SystemExit(0)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -89,7 +90,7 @@ class VideoDownloader:
     """
     M38U video downloader.
     """
-    def __init__(self, options):
+    def __init__(self, options: Options) -> None:
         self._output = options.get_output()
         self._url = options.get_url()
 
@@ -100,7 +101,7 @@ class VideoDownloader:
             os.path.basename(self._url),
         )
 
-    def _write_resume(self):
+    def _write_resume(self) -> None:
         """
         Write download resume script.
         """
@@ -114,7 +115,7 @@ class VideoDownloader:
                 print(line, file=ofile)
         os.chmod(self._m3u8_file + '-resume.sh', int('755', 8))
 
-    def get_m3u8(self):
+    def get_m3u8(self) -> None:
         """
         Download M3U8 file.
         """
@@ -130,13 +131,13 @@ class VideoDownloader:
         if task.get_exitcode():
             raise SystemExit(1)
 
-    def _get_urls(self):
+    def _get_urls(self) -> dict:
         """
         Return dict of containing URLs for video chunks.
         """
         base_url = os.path.dirname(self._url)
 
-        chunks = dict()
+        chunks: dict = {}
         try:
             with open(self._m3u8_file) as ifile:
                 for line in ifile:
@@ -158,7 +159,7 @@ class VideoDownloader:
                 sys.argv[0] + ": Cannot find chunks: " + self._m3u8_file)
         return chunks
 
-    def _get_chunk(self, file, urls):
+    def _get_chunk(self, file: str, urls: List[str]) -> None:
         """
         Download chunk from available URLs.
         """
@@ -172,7 +173,7 @@ class VideoDownloader:
                 return
         time.sleep(2)
 
-    def get_parts(self):
+    def get_parts(self) -> None:
         """
         Download video parts.
         """
@@ -200,14 +201,14 @@ class VideoDownloader:
             time.sleep(10)
 
     @staticmethod
-    def _copy(ifile, ofile):
+    def _copy(ifile: BinaryIO, ofile: BinaryIO) -> None:
         while True:
             chunk = ifile.read(131072)
             if not chunk:
                 break
             ofile.write(chunk)
 
-    def join(self):
+    def join(self) -> None:
         """
         Join video parts.
         """
@@ -258,7 +259,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -268,7 +269,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -285,7 +286,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -295,6 +296,8 @@ class Main:
         video.get_m3u8()
         video.get_parts()
         video.join()
+
+        return 0
 
 
 if __name__ == '__main__':

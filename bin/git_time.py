@@ -8,8 +8,9 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
-import git
+import git  # type: ignore
 
 
 class Options:
@@ -17,25 +18,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_recursive_flag(self):
+    def get_recursive_flag(self) -> bool:
         """
         Return recursive flag.
         """
         return self._args.recursive_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Modify file time to original GIT author time.')
+            description='Modify file time to original GIT author time.',
+        )
 
         parser.add_argument(
             '-r',
@@ -52,7 +54,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -64,7 +66,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -74,7 +76,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -91,7 +93,12 @@ class Main:
             sys.argv = argv
 
     @classmethod
-    def _update(cls, repo, files, recursive):
+    def _update(
+        cls,
+        repo: git.Repo,
+        files: List[str],
+        recursive: bool,
+    ) -> None:
         for file in files:
             if os.path.isfile(file):
                 commit = next(repo.iter_commits(
@@ -110,21 +117,23 @@ class Main:
                     recursive,
                 )
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
         options = Options()
 
-        # pylint: disable = no-member
         try:
             repo = git.Repo('./', search_parent_directories=True)
-        except git.exc.InvalidGitRepositoryError as exception:
+        except (
+            git.exc.InvalidGitRepositoryError  # pylint: disable = no-member
+        ) as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot find .git directory.'
             ) from exception
-        # pylint: enable = no-member
         self._update(repo, options.get_files(), options.get_recursive_flag())
+
+        return 0
 
 
 if __name__ == '__main__':

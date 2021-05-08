@@ -19,7 +19,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -29,7 +29,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -46,7 +46,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _config():
+    def _config() -> None:
         home = os.environ.get('HOME', '')
         configdir = os.path.join(home, '.purple')
         configfile = os.path.join(configdir, 'prefs.xml')
@@ -73,7 +73,7 @@ class Main:
         except OSError:
             pass
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -82,6 +82,8 @@ class Main:
         self._config()
 
         subtask_mod.Background(pidgin.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

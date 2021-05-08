@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import tarfile
+from typing import List
 
 
 class Options:
@@ -16,25 +17,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archives(self):
+    def get_archives(self) -> List[str]:
         """
         Return list of archives.
         """
         return self._args.archives
 
-    def get_view_flag(self):
+    def get_view_flag(self) -> bool:
         """
         Return view flag.
         """
         return self._args.view_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a compressed archive in TAR.BZ2 format.')
+            description='Unpack a compressed archive in TAR.BZ2 format.',
+        )
 
         parser.add_argument(
             '-v',
@@ -58,7 +60,7 @@ class Options:
                     '" archive format.'
                 )
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -70,7 +72,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -80,7 +82,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -96,7 +98,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _unpack(self):
+    def _unpack(self) -> None:
         for file in self._archive.getnames():
             print(file)
             if os.path.isabs(file):
@@ -124,10 +126,10 @@ class Main:
                             file + '" file.'
                         )
 
-    def _view(self):
+    def _view(self) -> None:
         self._archive.list()
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -147,6 +149,8 @@ class Main:
                 self._view()
             else:
                 self._unpack()
+
+        return 0
 
 
 if __name__ == '__main__':

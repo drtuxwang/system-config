@@ -2,16 +2,17 @@
 """
 Python file handling utility module
 
-Copyright GPL v2: 2006-2020 By Dr Colin Kong
+Copyright GPL v2: 2006-2021 By Dr Colin Kong
 """
 
 import getpass
 import os
 import re
 import time
+from typing import List
 
-RELEASE = '2.4.0'
-VERSION = 20210419
+RELEASE = '2.5.0'
+VERSION = 20210508
 
 
 class FileStat:
@@ -19,100 +20,114 @@ class FileStat:
     This class contains file status information.
 
     self._file = Filename
-    self._stat = [mode, ino, idev, nlink, uid, gid, size, atime, mtime, ctime]
+    self._stat = Dictionary of stats
     """
 
-    def __init__(self, file='', size=None, follow_symlinks=True):
+    def __init__(
+        self,
+        file: str = '',
+        size: int = None,
+        follow_symlinks: bool = True,
+    ) -> None:
         """
         file = filename
-
         size = Override file size (useful for zero sizing links)
         """
+        self._file = file
+        self._stat = {}
         if file:
-            self._file = file
             try:
                 if not follow_symlinks and os.path.islink(file):
-                    self._stat = list(os.lstat(file))
+                    file_stat = os.lstat(file)
                 else:
-                    self._stat = list(os.stat(file))
+                    file_stat = os.stat(file)
+                self._stat['mode'] = file_stat[0]
+                self._stat['inode'] = file_stat[1]
+                self._stat['device'] = file_stat[2]
+                self._stat['nlink'] = file_stat[3]
+                self._stat['userid'] = file_stat[4]
+                self._stat['groupid'] = file_stat[5]
+                self._stat['size'] = file_stat[6]
+                self._stat['atime'] = file_stat[7]
+                self._stat['mtime'] = file_stat[8]
+                self._stat['ctime'] = file_stat[9]
             except (OSError, TypeError) as exception:
                 if not os.path.islink:
                     raise FileStatNotFoundError(
                         "Cannot find status: " + file
                     ) from exception
-                self._stat = [0] * 10
             else:
                 if size is not None:
-                    self._stat[6] = size
+                    self._size = size
 
-    def get_file(self):
+    def get_file(self) -> str:
         """
         Return filename
         """
         return self._file
 
-    def get_mode(self):
+    def get_mode(self) -> int:
         """
         Return inode protection mode
         """
-        return self._stat[0]
+        return self._stat.get('mode', 0)
 
-    def get_inode_number(self):
+    def get_inode_number(self) -> int:
         """
         Return inode number
         """
-        return self._stat[1]
+        return self._stat.get('inode', 0)
 
-    def get_inode_device(self):
+    def get_inode_device(self) -> int:
         """
         Return device inode resides on
         """
-        return self._stat[2]
+        return self._stat.get('device', 0)
 
-    def get_number_links(self):
+    def get_number_links(self) -> int:
         """
         Return number of links to the inode
         """
-        return self._stat[3]
+        return self._stat.get('nlink', 0)
 
-    def get_userid(self):
+    def get_userid(self) -> int:
         """
-        Return user ID of the owner
+        Return user ID of the file owner
         """
-        return self._stat[4]
+        return self._stat.get('userid', 0)
 
-    def get_groupid(self):
+    def get_groupid(self) -> int:
         """
-        Return group ID of the owner
+        Return group ID of the file owner
         """
-        return self._stat[5]
+        return self._stat.get('groupid', 0)
 
-    def get_size(self):
+    def get_size(self) -> int:
         """
         Return size in bytes of a file
         """
-        return self._stat[6]
+        return self._stat.get('size', 0)
 
-    def get_time_access(self):
+    def get_time_access(self) -> int:
         """
         Return time of last access
         """
-        return self._stat[7]
+        return self._stat.get('atime', 0)
 
-    def get_time(self):
+    def get_time(self) -> int:
         """
         Return time of last modification
         """
-        return self._stat[8]
+        return self._stat.get('mtime', 0)
 
-    def get_date_local(self):
+    def get_date_local(self) -> str:
         """
         Return date of last modification in ISO local date format
         (ie '2011-12-31')
         """
         return time.strftime('%Y-%m-%d', time.localtime(self.get_time()))
 
-    def get_time_local(self):
+    def get_time_local(self) -> str:
         """
         Return time of last modification in full ISO local time format
         (ie '2011-12-31-12:30:28')
@@ -120,11 +135,11 @@ class FileStat:
         return time.strftime(
             '%Y-%m-%d-%H:%M:%S', time.localtime(self.get_time()))
 
-    def get_time_change(self):
+    def get_time_change(self) -> int:
         """
         Return time of last meta data change.
         """
-        return self._stat[9]
+        return self._stat.get('ctime', 0)
 
 
 class FileUtil:
@@ -133,7 +148,7 @@ class FileUtil:
     """
 
     @staticmethod
-    def newest(files):
+    def newest(files: List[str]) -> str:
         """
         Return newest file or directory.
 
@@ -143,7 +158,7 @@ class FileUtil:
         files = [x for x in files if not os.path.islink(x)]
 
         nfile = ''
-        nfile_time = -1
+        nfile_time = -1.
         for file in files:
             file_time = os.path.getmtime(file)
             if file_time > nfile_time:
@@ -153,7 +168,7 @@ class FileUtil:
         return nfile
 
     @staticmethod
-    def oldest(files):
+    def oldest(files: List[str]) -> str:
         """
         Return oldest file or directory.
 
@@ -172,7 +187,7 @@ class FileUtil:
         return nfile
 
     @staticmethod
-    def strings(file, pattern):
+    def strings(file: str, pattern: str) -> str:
         """
         Return first match of pattern in binary file
         """
@@ -200,7 +215,7 @@ class FileUtil:
         return ''
 
     @staticmethod
-    def tmpdir(name=None):
+    def tmpdir(name: str = None) -> str:
         """
         Return temporary directory with prefix and set permissions.
         """

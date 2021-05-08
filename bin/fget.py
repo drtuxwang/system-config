@@ -5,6 +5,7 @@ Download http/https/ftp/file URLs.
 
 import argparse
 import glob
+import http
 import json
 import os
 import shutil
@@ -13,6 +14,7 @@ import socket
 import sys
 import time
 import urllib.request
+from typing import List, Tuple
 
 import config_mod
 import file_mod
@@ -24,19 +26,19 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self._config()
         self.parse(sys.argv)
 
-    def get_urls(self):
+    def get_urls(self) -> List[str]:
         """
         Return list of urls.
         """
         return self._args.urls
 
     @staticmethod
-    def _config():
+    def _config() -> None:
         if 'REQUESTS_CA_BUNDLE' not in os.environ:
             for file in (
                     # Debian/Ubuntu
@@ -48,9 +50,10 @@ class Options:
                     os.environ['REQUESTS_CA_BUNDLE'] = file
                     break
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Download http/https/ftp/file URLs.')
+            description='Download http/https/ftp/file URLs.',
+        )
 
         parser.add_argument(
             'urls',
@@ -61,7 +64,8 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
+
         """
         Parse arguments
         """
@@ -73,7 +77,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -83,7 +87,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -100,7 +104,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _check_file(file, size, mtime):
+    def _check_file(file: str, size: int, mtime: float) -> bool:
         """
         Check existing file and return True if already downloaded.
         """
@@ -110,7 +114,10 @@ class Main:
         return False
 
     @staticmethod
-    def _get_file_stat(url, conn):
+    def _get_file_stat(
+        url: str,
+        conn: http.client.HTTPResponse,
+    ) -> Tuple[str, int, float]:
         """
         url  = URL to download
         conn = http.client.HTTPResponse class object
@@ -141,7 +148,7 @@ class Main:
         return file, size, mtime
 
     @staticmethod
-    def _check_resume(file, data):
+    def _check_resume(file: str, data: dict) -> str:
         """
         Return 'download', 'resume' or 'skip'
         """
@@ -162,7 +169,7 @@ class Main:
         return 'download'
 
     @staticmethod
-    def _write_resume(file, data):
+    def _write_resume(file: str, data: dict) -> None:
         json_data = {
             'fget': {
                 'lock': {
@@ -184,7 +191,7 @@ class Main:
         except OSError:
             pass
 
-    def _fetch(self, url):
+    def _fetch(self, url: str) -> None:
         try:
             conn = urllib.request.urlopen(url)
         except Exception as exception:
@@ -237,7 +244,7 @@ class Main:
         except OSError:
             pass
 
-    def _get_url(self, url):
+    def _get_url(self, url: str) -> None:
         print(url)
 
         try:
@@ -248,11 +255,11 @@ class Main:
                 raise SystemExit(
                     sys.argv[0] + ': ' + reason.args[1] + '.'
                 ) from exception
-            if 'Not Found' in reason:
+            if 'Not Found' in str(reason):
                 raise SystemExit(
                     sys.argv[0] + ': 404 Not Found.'
                 ) from exception
-            if 'Permission denied' in reason:
+            if 'Permission denied' in str(reason):
                 raise SystemExit(
                     sys.argv[0] + ': 550 Permission denied.'
                 ) from exception
@@ -264,7 +271,7 @@ class Main:
                 sys.argv[0] + ': ' + exception.args[0]
             ) from exception
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -275,6 +282,8 @@ class Main:
 
         for url in self._urls:
             self._get_url(url)
+
+        return 0
 
 
 if __name__ == '__main__':

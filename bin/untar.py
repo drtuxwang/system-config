@@ -10,6 +10,7 @@ import os
 import re
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -20,26 +21,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archives(self):
+    def get_archives(self) -> List[str]:
         """
         Return list of archives.
         """
         return self._args.archives
 
-    def get_view_flag(self):
+    def get_view_flag(self) -> bool:
         """
         Return view flag.
         """
         return self._args.view_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/'
-            'TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.'
+            'TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.',
         )
 
         parser.add_argument(
@@ -66,7 +67,7 @@ class Options:
                     '" archive format.'
                 )
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -78,7 +79,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -88,7 +89,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -104,7 +105,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _unpack(self, archive):
+    def _unpack(self, archive: str) -> None:
         task = subtask_mod.Batch(self._tar.get_cmdline() + ['--help'])
         task.run(pattern='--xattrs')
         has_xattrs = task.has_output()
@@ -123,7 +124,7 @@ class Main:
                 self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
             subtask_mod.Task(self._tar.get_cmdline()).run()
 
-    def _view(self, archive):
+    def _view(self, archive: str) -> None:
         if archive.endswith('.tar.7z'):
             p7zip = command_mod.Command('7z', errors='stop')
             p7zip.set_args(['x', '-y', '-so', archive])
@@ -134,7 +135,7 @@ class Main:
             self._tar.set_args(['tfv', archive])
             subtask_mod.Task(self._tar.get_cmdline()).run()
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -152,6 +153,8 @@ class Main:
                 self._view(archive)
             else:
                 self._unpack(archive)
+
+        return 0
 
 
 if __name__ == '__main__':

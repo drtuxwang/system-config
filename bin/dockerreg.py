@@ -25,6 +25,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List, Tuple
 
 import requests
 
@@ -34,9 +35,7 @@ import config_mod
 # Effects Go array size and huge number can crash Registry
 MAXREPO = "9999"
 
-# pylint: disable = no-member
-requests.packages.urllib3.disable_warnings()
-# pylint: enable = no-member
+requests.packages.urllib3.disable_warnings()  # pylint: disable = no-member
 
 SSL_VERIFY = True
 
@@ -46,25 +45,25 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self._config()
         self.parse(sys.argv)
 
-    def get_remove_flag(self):
+    def get_remove_flag(self) -> bool:
         """
         Return remove flag.
         """
         return self._args.remove_flag
 
-    def get_urls(self):
+    def get_urls(self) -> List[str]:
         """
         Return URls.
         """
         return self._args.urls
 
     @staticmethod
-    def _config():
+    def _config() -> None:
         if 'REQUESTS_CA_BUNDLE' not in os.environ:
             for file in (
                     # Debian/Ubuntu
@@ -76,9 +75,10 @@ class Options:
                     os.environ['REQUESTS_CA_BUNDLE'] = file
                     break
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='List images in Docker registry.')
+            description='List images in Docker registry.',
+        )
 
         parser.add_argument(
             '-rm',
@@ -97,7 +97,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -109,28 +109,28 @@ class DockerRegistry:
     Docker Registry v1 class
     """
 
-    def __init__(self, server):
+    def __init__(self, server: str) -> None:
         self._server = server
         config = config_mod.Config()
         self._user_agent = config.get('user_agent')
         self._config()
 
-    def get_url(self):
+    def get_url(self) -> str:
         """
         Return url.
         """
         return self._url
 
-    def get_repositories(self):
+    def get_repositories(self) -> List[str]:
         """
         Return list repositories.
         """
         return self._repositories
 
-    def _get_url(self, url):
+    def _get_url(self, url: str) -> requests.Response:
         return requests.get(url, headers={'User-Agent': self._user_agent})
 
-    def _config(self):
+    def _config(self) -> None:
         self._url = self._server + '/v1/search'
         try:
             response = self._get_url(self._url)
@@ -149,7 +149,7 @@ class DockerRegistry:
         else:
             self._repositories = None
 
-    def get_digests(self, repository):
+    def get_digests(self, repository: str) -> dict:
         """
         Return digests dictionary for tags.
         """
@@ -170,7 +170,7 @@ class DockerRegistry:
             digests[tag] = digests[tag]
         return digests
 
-    def _delete_url(self, url):
+    def _delete_url(self, url: str) -> None:
         try:
             response = requests.delete(
                 url,
@@ -186,7 +186,13 @@ class DockerRegistry:
                 response.status_code
             ))
 
-    def delete(self, server, repository, tag, digest):
+    def delete(
+        self,
+        server: str,
+        repository: str,
+        tag: str,
+        digest: str,
+    ) -> None:
         """
         Delete image
         """
@@ -202,13 +208,13 @@ class DockerRegistry2(DockerRegistry):
     Docker Registry v2 class
     """
 
-    def _get_url(self, url):
+    def _get_url(self, url: str) -> requests.Response:
         return requests.get(url, headers={
             'User-Agent': self._user_agent,
             'Accept': 'application/vnd.docker.distribution.manifest.v2+json',
         }, verify=False)
 
-    def _config(self):
+    def _config(self) -> None:
         self._url = self._server + '/v2/_catalog?n=' + MAXREPO
         try:
             response = self._get_url(self._url)
@@ -222,7 +228,7 @@ class DockerRegistry2(DockerRegistry):
         else:
             self._repositories = None
 
-    def get_digests(self, repository):
+    def get_digests(self, repository: str) -> dict:
         """
         Return digests dictionary for tags.
         """
@@ -231,7 +237,7 @@ class DockerRegistry2(DockerRegistry):
             response = self._get_url(url)
         except Exception as exception:
             raise SystemExit(str(exception)) from exception
-        digests = {}
+        digests: dict = {}
         if response.status_code != 200:
             if response.status_code == 404:
                 return digests
@@ -254,7 +260,13 @@ class DockerRegistry2(DockerRegistry):
                 digests[tag] = response.headers['docker-content-digest']
         return digests
 
-    def delete(self, server, repository, tag, digest):
+    def delete(
+        self,
+        server: str,
+        repository: str,
+        tag: str,
+        digest: str,
+    ) -> None:
         """
         Delete image by untagging blobs before untagging manifest
         """
@@ -270,7 +282,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -280,7 +292,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -297,7 +309,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_registry(server, url):
+    def _get_registry(server: str, url: str) -> DockerRegistry:
         registry2 = DockerRegistry2(server)
         if registry2.get_repositories() is not None:
             print("\nDocker Registry API v2:", url.split('://')[-1])
@@ -309,7 +321,7 @@ class Main:
         raise SystemExit("Cannot find Docker Registry: " + server)
 
     @staticmethod
-    def _breakup_url(url):
+    def _breakup_url(url: str) -> Tuple[str, str, str]:
         if '://' not in url:
             if url.startswith('localhost'):
                 url = 'http://' + url
@@ -331,7 +343,7 @@ class Main:
         return server, repo_match, tag_match
 
     @classmethod
-    def _check(cls, url, remove=False):
+    def _check(cls, url: str, remove: bool = False) -> None:
         server, repo_match, tag_match = cls._breakup_url(url)
         registry = cls._get_registry(server, url)
         prefix = server.split('://')[-1]
@@ -349,7 +361,7 @@ class Main:
                                 digests[tag], prefix, repository, tag))
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Run check
         """
@@ -363,6 +375,8 @@ class Main:
                     cls._check(url, remove=True)
             else:
                 print("Aborted!")
+
+        return 0
 
 
 if __name__ == '__main__':

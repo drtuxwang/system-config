@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import time
+from typing import List
 
 import task_mod
 
@@ -18,31 +19,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_force_flag(self):
+    def get_force_flag(self) -> bool:
         """
         Return force flag.
         """
         return self._args.force_flag
 
-    def get_time_delay(self):
+    def get_time_delay(self) -> int:
         """
         Return time delay in seconds.
         """
         return self._args.timeDelay[0]
 
-    def get_keywords(self):
+    def get_keywords(self) -> List[str]:
         """
         Return process ID or keyword.
         """
         return self._args.task
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Kill tasks by process ID or name.')
+            description='Kill tasks by process ID or name.',
+        )
 
         parser.add_argument(
             '-delay',
@@ -67,7 +69,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -79,7 +81,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -89,7 +91,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -106,7 +108,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _filter(options):
+    def _filter(options: Options) -> List[int]:
         pids = []
         task = task_mod.Tasks.factory()
         for keyword in options.get_keywords():
@@ -142,7 +144,7 @@ class Main:
         return pids
 
     @staticmethod
-    def _ykill(options, pids):
+    def _ykill(options: Options, pids: List[int]) -> None:
         task = task_mod.Tasks.factory()
         mypid = os.getpid()
         apids = task.get_ancestor_pids(mypid)
@@ -159,7 +161,7 @@ class Main:
                 task.killpids([pid])
                 print("Process", pid, "killed")
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -168,6 +170,8 @@ class Main:
         time.sleep(options.get_time_delay())
         pids = self._filter(options)
         self._ykill(options, pids)
+
+        return 0
 
 
 if __name__ == '__main__':

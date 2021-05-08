@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import time
+from typing import List, Set
 
 import command_mod
 import subtask_mod
@@ -19,19 +20,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_urls(self):
+    def get_urls(self) -> Set[str]:
         """
         Return image urls.
         """
         return self._urls
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Picture downloader for websites.')
+            description='Picture downloader for websites.',
+        )
 
         parser.add_argument(
             'url',
@@ -42,7 +44,7 @@ class Options:
         self._args = parser.parse_args(args)
 
     @staticmethod
-    def _parse_instagram(task):
+    def _parse_instagram(task: subtask_mod.Task) -> Set[str]:
 
         while True:
             task.run()
@@ -57,7 +59,7 @@ class Options:
         return {url.split('"')[0].replace('\\u0026', '&') for url in urls}
 
     @classmethod
-    def _get_images(cls, url):
+    def _get_images(cls, url: str) -> Set[str]:
         wget = command_mod.Command(
             'wget',
             args=['-O', '-', url],
@@ -74,7 +76,7 @@ class Options:
             raise SystemExit(sys.argv[0] + ': Cannot parse images: ' + url)
         return urls
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -88,7 +90,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -98,7 +100,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -115,7 +117,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -126,6 +128,8 @@ class Main:
             file = os.path.basename(url).split('?')[0]
             wget.set_args(['--output-document', file, url])
             subtask_mod.Task(wget.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

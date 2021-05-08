@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from typing import List
 
 
 class Options:
@@ -16,25 +17,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_source(self):
+    def get_source(self) -> str:
         """
         Return source file.
         """
         return self._args.source[0]
 
-    def get_targets(self):
+    def get_targets(self) -> List[str]:
         """
         Return target files.
         """
         return self._args.targets
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Copy a file to multiple target files.')
+            description='Copy a file to multiple target files.',
+        )
 
         parser.add_argument(
             'source',
@@ -56,7 +58,7 @@ class Options:
                 '" file.'
             )
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -68,7 +70,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -78,7 +80,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -95,7 +97,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _copy(source, target):
+    def _copy(source: str, target: str) -> None:
         print('Copying to "' + target + '" file...')
         try:
             shutil.copy2(source, target)
@@ -122,7 +124,7 @@ class Main:
                         sys.argv[0] + ': Cannot create "' + target + '" file.'
                     ) from exception
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -130,6 +132,8 @@ class Main:
         source = options.get_source()
         for target in options.get_targets():
             self._copy(source, target)
+
+        return 0
 
 
 if __name__ == '__main__':

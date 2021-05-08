@@ -3,6 +3,8 @@
 Encode AVI video using ffmpeg (libxvid/libmp3lame).
 """
 
+# Annotation: Fix Class reference run time NameError
+from __future__ import annotations
 import argparse
 import glob
 import logging
@@ -10,16 +12,15 @@ import os
 import re
 import signal
 import sys
+from typing import Generator, List, Tuple
 
 import command_mod
 import config_mod
 import logging_mod
 import subtask_mod
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -30,101 +31,101 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_audio_codec(self):
+    def get_audio_codec(self) -> str:
         """
         Return audio codec.
         """
         return self._audio_codec
 
-    def get_audio_quality(self):
+    def get_audio_quality(self) -> str:
         """
         Return audio quality.
         """
         return self._args.audioQuality[0]
 
-    def get_audio_volume(self):
+    def get_audio_volume(self) -> str:
         """
         Return audio volume.
         """
         return self._args.audioVolume[0]
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._files
 
-    def get_file_new(self):
+    def get_file_new(self) -> str:
         """
         Return new file location.
         """
         return self._file_new
 
-    def get_flags(self):
+    def get_flags(self) -> List[str]:
         """
         Return extra flags.
         """
         return self._args.flags
 
-    def get_noskip_flag(self):
+    def get_noskip_flag(self) -> bool:
         """
         Return noskip flag.
         """
         return self._args.noskip_flag
 
-    def get_run_time(self):
+    def get_run_time(self) -> str:
         """
         Return run time.
         """
         return self._args.runTime[0]
 
-    def get_start_time(self):
+    def get_start_time(self) -> str:
         """
         Return start time.
         """
         return self._args.startTime[0]
 
-    def get_threads(self):
+    def get_threads(self) -> str:
         """
         Return threads.
         """
         return self._args.threads[0]
 
-    def get_video_codec(self):
+    def get_video_codec(self) -> str:
         """
         Return video codec.
         """
         return self._video_codec
 
-    def get_video_crop(self):
+    def get_video_crop(self) -> str:
         """
         Return video cropping.
         """
         return self._args.videoCrop[0]
 
-    def get_video_quality(self):
+    def get_video_quality(self) -> str:
         """
         Return video quality.
         """
         return self._args.videoQuality[0]
 
-    def get_video_rate(self):
+    def get_video_rate(self) -> str:
         """
         Return video rate.
         """
         return self._args.videoRate[0]
 
-    def get_video_size(self):
+    def get_video_size(self) -> str:
         """
         Return video size.
         """
         return self._args.videoSize[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Encode AVI video using ffmpeg (libxvid/libmp3lame).')
 
@@ -215,7 +216,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -242,10 +243,10 @@ class Encoder:
     Encoder class
     """
 
-    def __init__(self, options):
+    def __init__(self, options: Options):
         self.config(options)
 
-    def _config_video(self, media):
+    def _config_video(self, media: Media) -> None:
         if media.has_video():
             changing = (
                 self._options.get_video_crop() or
@@ -286,7 +287,7 @@ class Encoder:
             else:
                 self._ffmpeg.extend_args(['-c:v', 'copy'])
 
-    def _config_audio(self, media):
+    def _config_audio(self, media: Media) -> None:
         if media.has_audio:
             if (not media.has_audio_codec('mp3') or
                     self._options.get_audio_quality() or
@@ -308,7 +309,7 @@ class Encoder:
             else:
                 self._ffmpeg.extend_args(['-c:a', 'copy'])
 
-    def _config(self, file):
+    def _config(self, file: str) -> Media:
         media = Media(file)
         self._ffmpeg.set_args(['-i', file])
 
@@ -325,7 +326,7 @@ class Encoder:
         ] + self._options.get_flags())
         return media
 
-    def _config_images(self, files):
+    def _config_images(self, files: List[str]) -> None:
         convert = command_mod.Command('convert', errors='stop')
         extension = '.tmp' + str(os.getpid()) + '.png'
         frame = 0
@@ -370,11 +371,11 @@ class Encoder:
                 pass
         if self._options.get_start_time():
             self._ffmpeg.extend_args(['-ss', self._options.get_start_time()])
-        if self._options.getrunTime():
+        if self._options.get_run_time():
             self._ffmpeg.extend_args(['-t', self._options.get_run_time()])
         self._ffmpeg.extend_args(['-threads', '1'] + self._options.get_flags())
 
-    def __del__(self):
+    def __del__(self) -> None:
         for file in self._tempfiles:
             try:
                 os.remove(file)
@@ -382,7 +383,7 @@ class Encoder:
                 pass
 
     @staticmethod
-    def _all_images(files):
+    def _all_images(files: List[str]) -> bool:
         image_extensions = config_mod.Config().get('image_extensions')
 
         for file in files:
@@ -390,7 +391,7 @@ class Encoder:
                 return False
         return True
 
-    def _run(self):
+    def _run(self) -> None:
         child = subtask_mod.Child(
             self._ffmpeg.get_cmdline()).run(error2output=True)
         line = ''
@@ -421,7 +422,7 @@ class Encoder:
         if exitcode:
             sys.exit(exitcode)
 
-    def _single(self):
+    def _single(self) -> None:
         if self._all_images(self._options.get_files()):
             self._config_images(self._options.get_files())
             self._ffmpeg.extend_args(
@@ -461,7 +462,7 @@ class Encoder:
             self._run()
         Media(self._options.get_file_new()).show()
 
-    def _multi(self):
+    def _multi(self) -> None:
         for file in self._options.get_files():
             if not file.endswith('.avi'):
                 if self._all_images([file]):
@@ -479,16 +480,16 @@ class Encoder:
                 self._run()
                 Media(file_new).show()
 
-    def config(self, options):
+    def config(self, options: Options) -> None:
         """
         Configure encoder
         """
         self._options = options
         self._ffmpeg = command_mod.Command(
             'ffmpeg', args=options.get_flags(), errors='stop')
-        self._tempfiles = []
+        self._tempfiles: List[str] = []
 
-    def run(self):
+    def run(self) -> None:
         """
         Run encoder
         """
@@ -503,7 +504,7 @@ class Media:
     Media class
     """
 
-    def __init__(self, file):
+    def __init__(self, file: str) -> None:
         self._file = file
         self._length = '0'
         self._stream = {}
@@ -528,14 +529,14 @@ class Media:
                 sys.argv[0] + ': Invalid "' + file + '" media file.'
             ) from exception
 
-    def get_stream(self):
+    def get_stream(self) -> Generator[Tuple[int, str], None, None]:
         """
         Return stream
         """
         for key, value in sorted(self._stream.items()):
             yield (key, value)
 
-    def get_stream_audio(self):
+    def get_stream_audio(self) -> Generator[Tuple[int, str], None, None]:
         """
         Return audio stream
         """
@@ -543,13 +544,13 @@ class Media:
             if value.startswith('Audio: '):
                 yield (key, value)
 
-    def get_type(self):
+    def get_type(self) -> str:
         """
         Return media type
         """
         return self._type
 
-    def has_audio(self):
+    def has_audio(self) -> bool:
         """
         Return True if audio found
         """
@@ -558,7 +559,7 @@ class Media:
                 return True
         return False
 
-    def has_audio_codec(self, codec):
+    def has_audio_codec(self, codec: str) -> bool:
         """
         Return True if audio codec found
         """
@@ -567,7 +568,7 @@ class Media:
                 return True
         return False
 
-    def has_video(self):
+    def has_video(self) -> bool:
         """
         Return True if video found
         """
@@ -576,7 +577,7 @@ class Media:
                 return True
         return False
 
-    def has_video_codec(self, codec):
+    def has_video_codec(self, codec: str) -> bool:
         """
         Return True if video codec found
         """
@@ -585,13 +586,13 @@ class Media:
                 return True
         return False
 
-    def is_valid(self):
+    def is_valid(self) -> bool:
         """
         Return True if valid media
         """
         return self._type != 'Unknown'
 
-    def show(self):
+    def show(self) -> None:
         """
         Show information
         """
@@ -612,7 +613,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -622,7 +623,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -639,13 +640,15 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
         options = Options()
 
         Encoder(options).run()
+
+        return 0
 
 
 if __name__ == '__main__':

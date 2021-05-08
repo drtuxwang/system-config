@@ -10,6 +10,7 @@ import re
 import shutil
 import signal
 import sys
+from typing import List
 
 
 class Options:
@@ -17,31 +18,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_pattern(self):
+    def get_pattern(self) -> str:
         """
         Return regular expression pattern.
         """
         return self._args.pattern[0]
 
-    def get_replacement(self):
+    def get_replacement(self) -> str:
         """
         Return replacement.
         """
         return self._args.replacement[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Rename file/directory by replacing some characters.')
+            description='Rename file/directory by replacing some characters.',
+        )
 
         parser.add_argument(
             'pattern',
@@ -62,7 +64,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -74,7 +76,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -84,7 +86,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -100,7 +102,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -142,6 +144,8 @@ class Main:
                         sys.argv[0] + ': Cannot rename to "' +
                         newfile + '" file.'
                     ) from exception
+
+        return 0
 
 
 if __name__ == '__main__':

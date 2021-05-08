@@ -18,7 +18,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -28,7 +28,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -45,7 +45,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -55,6 +55,8 @@ class Main:
 
         logfile = os.path.join(file_mod.FileUtil.tmpdir(), 'etl.log')
         subtask_mod.Daemon(etl.get_cmdline()).run(file=logfile)
+
+        return 0
 
 
 if __name__ == '__main__':

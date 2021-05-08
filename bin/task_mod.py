@@ -2,17 +2,20 @@
 """
 Python task handling utility module
 
-Copyright GPL v2: 2006-2019 By Dr Colin Kong
+Copyright GPL v2: 2006-2021 By Dr Colin Kong
 """
 
+# Annotation: Fix Class self reference run time NameError
+from __future__ import annotations
 import functools
 import getpass
 import os
 import re
 import subprocess
+from typing import List, Optional
 
-RELEASE = '2.1.3'
-VERSION = 20201013
+RELEASE = '2.2.0'
+VERSION = 20210508
 
 
 class Tasks:
@@ -22,21 +25,21 @@ class Tasks:
     self._process = Dictionary containing process information
     """
 
-    def __init__(self, user=None):
+    def __init__(self, user: Optional[str] = None) -> None:
         """
         user = Username or '<all>'
         """
-        self._process = {}
+        self._process: dict = {}
 
         if not user:
             user = _System.get_username()
         self._config(user)
 
-    def _config(self, user):
+    def _config(self, user: str) -> None:
         raise NotImplementedError
 
     @staticmethod
-    def factory(user=None):
+    def factory(user: Optional[str] = None) -> Tasks:
         """
         Return Tasks sub class object.
         """
@@ -44,7 +47,7 @@ class Tasks:
             return WindowsTasks(user)
         return PosixTasks(user)
 
-    def pgid2pids(self, pgid):
+    def pgid2pids(self, pgid: int) -> List[int]:
         """
         Return process ID list with process group ID.
 
@@ -61,8 +64,7 @@ class Tasks:
                 pids.append(pid)
         return sorted(pids)
 
-    @staticmethod
-    def pname2pids(_):
+    def pname2pids(self, pname: str) -> List[int]:
         """
         Return process ID list with program name.
 
@@ -70,10 +72,14 @@ class Tasks:
         """
         raise NotImplementedError
 
-    def _kill(self, signal, pids):
+    def _kill(self, signal: str, pids: List[int]) -> None:
         raise NotImplementedError
 
-    def killpids(self, pids, signal='KILL'):
+    def killpids(
+        self,
+        pids: Optional[List[int]],
+        signal: str = 'KILL',
+    ) -> None:
         """
         Kill processes by process ID list.
 
@@ -86,7 +92,7 @@ class Tasks:
         if pids:
             self._kill(signal, pids)
 
-    def killpgid(self, pgid, signal='KILL'):
+    def killpgid(self, pgid: int, signal: str = 'KILL') -> None:
         """
         Kill processes by process group ID.
 
@@ -95,7 +101,7 @@ class Tasks:
         """
         raise NotImplementedError
 
-    def killpname(self, pname, signal='KILL'):
+    def killpname(self, pname: str, signal: str = 'KILL') -> None:
         """
         Kill all processes with program name.
 
@@ -104,7 +110,7 @@ class Tasks:
         """
         self.killpids(self.pname2pids(pname), signal=signal)
 
-    def haspgid(self, pgid):
+    def haspgid(self, pgid: int) -> bool:
         """
         Return True if process with <pgid> process group ID exists.
 
@@ -117,7 +123,7 @@ class Tasks:
             )
         return self.pgid2pids(pgid) != []
 
-    def haspid(self, pid):
+    def haspid(self, pid: int) -> bool:
         """
         Return True if process with <pid> process ID exists.
 
@@ -130,7 +136,7 @@ class Tasks:
             )
         return pid in self._process.keys()
 
-    def haspname(self, pname):
+    def haspname(self, pname: str) -> bool:
         """
         Return True if process with program name exists.
 
@@ -138,7 +144,7 @@ class Tasks:
         """
         return self.pname2pids(pname) != []
 
-    def get_ancestor_pids(self, pid):
+    def get_ancestor_pids(self, pid: int) -> List[int]:
         """
         Return list of ancestor process IDs.
 
@@ -151,7 +157,7 @@ class Tasks:
                 apids.extend([ppid] + self.get_ancestor_pids(ppid))
         return apids
 
-    def get_child_pids(self, ppid):
+    def get_child_pids(self, ppid: int) -> List[int]:
         """
         Return list of child process IDs.
 
@@ -164,7 +170,7 @@ class Tasks:
                     cpids.append(pid)
         return cpids
 
-    def get_descendant_pids(self, ppid):
+    def get_descendant_pids(self, ppid: int) -> List[int]:
         """
         Return list of descendant process IDs.
 
@@ -177,7 +183,7 @@ class Tasks:
                     dpids.extend([pid] + self.get_descendant_pids(pid))
         return dpids
 
-    def get_orphan_pids(self, pgid):
+    def get_orphan_pids(self, pgid: int) -> List[int]:
         """
         Return list of orphaned process IDs excluding process group leader.
 
@@ -191,13 +197,13 @@ class Tasks:
                         pids.append(pid)
         return pids
 
-    def get_pids(self):
+    def get_pids(self) -> List[int]:
         """
         Return list of process IDs.
         """
         return sorted(self._process)
 
-    def get_process(self, pid):
+    def get_process(self, pid: int) -> dict:
         """
         Return process dictionary.
         """
@@ -211,7 +217,7 @@ class PosixTasks(Tasks):
     self._process = Dictionary containing process information
     """
 
-    def _config(self, user):
+    def _config(self, user: str) -> None:
         if 'COLUMNS' not in os.environ:
             os.environ['COLUMNS'] = '1024'  # Fix Linux ps width
         command = [
@@ -230,7 +236,7 @@ class PosixTasks(Tasks):
             raise SystemExit(exception) from exception
 
         for line in lines[1:]:
-            process = {}
+            process: dict = {}
             process['USER'] = line.split()[0]
             pid = int(line.split()[1])
             process['PPID'] = int(line.split()[2])
@@ -244,7 +250,7 @@ class PosixTasks(Tasks):
             process['COMMAND'] = ' '.join(line.split()[10:])
             self._process[pid] = process
 
-    def pname2pids(self, pname):
+    def pname2pids(self, pname: str) -> List[int]:
         """
         Return process ID list with program name.
 
@@ -258,7 +264,7 @@ class PosixTasks(Tasks):
                 pids.append(pid)
         return sorted(pids)
 
-    def _kill(self, signal, pids):
+    def _kill(self, signal: str, pids: List[int]) -> None:
         command = ['kill', '-' + signal]
         for pid in pids:
             command.append(str(pid))
@@ -267,7 +273,7 @@ class PosixTasks(Tasks):
         except (CommandNotFoundError, ExecutableCallError) as exception:
             raise SystemExit(exception) from exception
 
-    def killpgid(self, pgid, signal='KILL'):
+    def killpgid(self, pgid: int, signal: str = 'KILL') -> None:
         """
         Kill processes by process group ID.
 
@@ -284,7 +290,7 @@ class WindowsTasks(Tasks):
     self._process = Dictionary containing process information
     """
 
-    def _config(self, user):
+    def _config(self, user: str) -> None:
         try:
             lines = _System.run_program(['tasklist', '/v'])
         except (CommandNotFoundError, ExecutableCallError) as exception:
@@ -296,7 +302,7 @@ class WindowsTasks(Tasks):
             position += len(column) + 1
             indice.append(position)
         for line in lines[3:]:
-            process = {}
+            process: dict = {}
             process['USER'] = line[indice[6]:indice[7]-1].strip()
             if '\\' in process['USER']:
                 process['USER'] = process['USER'].split('\\')[1]
@@ -315,7 +321,7 @@ class WindowsTasks(Tasks):
                 process['COMMAND'] = line[indice[0]:indice[1]-1].strip()
                 self._process[pid] = process
 
-    def pname2pids(self, pname):
+    def pname2pids(self, pname: str) -> List[int]:
         """
         Return process ID list with program name.
 
@@ -329,7 +335,7 @@ class WindowsTasks(Tasks):
                 pids.append(pid)
         return sorted(pids)
 
-    def _kill(self, signal, pids):
+    def _kill(self, signal: str, pids: List[int]) -> None:
         command = ['taskkill', '/f']
         for pid in pids:
             command.extend(['/pid', str(pid)])
@@ -338,7 +344,7 @@ class WindowsTasks(Tasks):
         except (CommandNotFoundError, ExecutableCallError) as exception:
             raise SystemExit(exception) from exception
 
-    def killpgid(self, pgid, signal='KILL'):
+    def killpgid(self, pgid: int, signal: str = 'KILL') -> None:
         """
         Kill processes by process group ID.
 
@@ -351,7 +357,7 @@ class WindowsTasks(Tasks):
 class _System:
 
     @staticmethod
-    def is_windows():
+    def is_windows() -> bool:
         """
         Return True if running on Windows.
         """
@@ -364,7 +370,7 @@ class _System:
         return False
 
     @staticmethod
-    def get_username():
+    def get_username() -> str:
         """
         Return my username.
         """
@@ -372,7 +378,7 @@ class _System:
 
     @staticmethod
     @functools.lru_cache(maxsize=4)
-    def _locate_program(program):
+    def _locate_program(program: str) -> str:
         for directory in os.environ['PATH'].split(os.pathsep):
             file = os.path.join(directory, program)
             if os.path.isfile(file):
@@ -384,7 +390,7 @@ class _System:
         return file
 
     @classmethod
-    def run_program(cls, command):
+    def run_program(cls, command: List[str]) -> List[str]:
         """
         Run program in batch mode and return list of lines.
         """

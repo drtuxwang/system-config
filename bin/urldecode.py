@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import urllib.parse
+from typing import List
 
 
 class Options:
@@ -16,19 +17,19 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_urls(self):
+    def get_urls(self) -> List[str]:
         """
         Return list of URLs.
         """
         return self._args.urls
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Decode URL query strings.'
+            description='Decode URL query strings.',
         )
 
         parser.add_argument(
@@ -40,7 +41,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -52,7 +53,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -63,7 +64,7 @@ class Main:
         sys.exit(0)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -80,7 +81,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -88,6 +89,8 @@ class Main:
 
         for url in options.get_urls():
             print(urllib.parse.unquote(url))
+
+        return 0
 
 
 if __name__ == '__main__':

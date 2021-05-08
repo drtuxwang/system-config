@@ -5,6 +5,8 @@ Wrapper for GNOME/KDE/XFCE/Invisible terminal session
 Use '-i' for invisible terminal
 """
 
+# Annotation: Fix Class reference run time NameError
+from __future__ import annotations
 import glob
 import os
 import re
@@ -12,6 +14,7 @@ import shutil
 import signal
 import socket
 import sys
+from typing import List
 
 import command_mod
 import desktop_mod
@@ -27,35 +30,34 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self._config()
         self.parse(sys.argv)
 
-    def get_columns(self):
+    def get_columns(self) -> str:
         """
         Return number of columns.
         """
         return self._columns
 
-    def get_hosts(self):
+    def get_hosts(self) -> List[str]:
         """
         Return list of hosts.
         """
         return self._hosts
 
-    def get_terminal(self):
+    def get_terminal(self) -> Terminal:
         """
         Return terminal Command class object.
         """
         return self._terminal
 
     @staticmethod
-    def _config():
+    def _config() -> None:
         if "TMUX" in os.environ:
             del os.environ['TMUX']
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -100,31 +102,30 @@ class Terminal:
     Terminal class
     """
 
-    def __init__(self, options):
+    def __init__(self, options: Options) -> None:
         self._options = options
         self._pattern = '^$'
         self._myhost = socket.gethostname().split('.')[0].lower()
         self._config()
 
-    def _config(self):
-        self._command = None
+    def _config(self) -> None:
+        self._command: command_mod.Command = None
 
     @staticmethod
-    def get_label_flags(host):
+    def get_label_flags(host: str) -> List[str]:
         """
         Return list of flags for setting terminal label
         """
         raise NotImplementedError
 
     @staticmethod
-    def get_run_flag():
+    def get_run_flag() -> str:
         """
         Return flag to prefix command
         """
         raise NotImplementedError
 
-    @staticmethod
-    def run():
+    def run(self) -> None:
         """
         Start terminal
         """
@@ -136,24 +137,24 @@ class Iterm(Terminal):
     Iterm class
     """
 
-    def _config(self):
+    def _config(self) -> None:
         self._command = command_mod.Command('iterm', errors='stop')
 
     @staticmethod
-    def get_label_flags(host):
+    def get_label_flags(host: str) -> List[str]:
         """
         Return list of flags for setting terminal label
         """
         raise NotImplementedError
 
     @staticmethod
-    def get_run_flag():
+    def get_run_flag() -> str:
         """
         Return flag to prefix command
         """
         raise NotImplementedError
 
-    def run(self):
+    def run(self) -> None:
         """
         Start terminal
         """
@@ -167,7 +168,7 @@ class Xterm(Terminal):
     Xterm class
     """
 
-    def _config(self):
+    def _config(self) -> None:
         self._command = command_mod.Command('xterm', errors='stop')
         task = subtask_mod.Batch(self._command.get_cmdline() + ['-h'])
         task.run()
@@ -197,21 +198,21 @@ class Xterm(Terminal):
         self._pattern = '^$'
 
     @staticmethod
-    def get_label_flags(host):
+    def get_label_flags(host: str) -> List[str]:
         """
         Return list of flags for setting terminal label
         """
         return ['-T', host.split('@')[-1] + ':']
 
     @staticmethod
-    def get_run_flag():
+    def get_run_flag() -> str:
         """
         Return flag to prefix command
         """
         return '-e'
 
     @staticmethod
-    def _ssh():
+    def _ssh() -> None:
         home = os.environ.get('HOME', '')
         sshdir = os.path.join(home, '.ssh')
         if not os.path.isdir(sshdir):
@@ -235,7 +236,7 @@ class Xterm(Terminal):
             return
 
     @staticmethod
-    def _check_server(host):
+    def _check_server(host: str) -> None:
         try:
             socket.gethostbyname(host)
         except socket.gaierror as exception:
@@ -244,7 +245,7 @@ class Xterm(Terminal):
                 host,
             )) from exception
 
-    def run(self):
+    def run(self) -> None:
         """
         Start terminal
         """
@@ -273,7 +274,7 @@ class XtermInvisible(Xterm):
     Xterm (invisible) class
     """
 
-    def run(self):
+    def run(self) -> None:
         ssh = None
         for host in self._options.get_hosts():
             if host == self._myhost:
@@ -309,19 +310,21 @@ class GnomeTerminal(Xterm):
     Gnome terminal class
     """
 
-    def _config(self):
+    def _config(self) -> None:
         self._command = command_mod.Command('gnome-terminal', errors='stop')
         self._command.set_args(
             ['--geometry=' + self._options.get_columns() + 'x24'])
         self._pattern = '^$|: Gtk-WARNING'
 
-    def get_label_flags(self, host):
+    @staticmethod
+    def get_label_flags(host: str) -> List[str]:
         """
         Return list of flags for setting terminal label
         """
         return ['--title=' + host.split('@')[-1] + ':']
 
-    def get_run_flag(self):
+    @staticmethod
+    def get_run_flag() -> str:
         """
         Return flag to prefix command
         """
@@ -333,13 +336,14 @@ class Konsole(GnomeTerminal):
     Konsole class
     """
 
-    def _config(self):
+    def _config(self) -> None:
         self._command = command_mod.Command('konsole', errors='stop')
         self._command.set_args(
             ['--geometry=' + self._options.get_columns() + 'x24']
         )
 
-    def get_run_flag(self):
+    @staticmethod
+    def get_run_flag() -> str:
         """
         Return flag to prefix command
         """
@@ -351,7 +355,7 @@ class MateTerminal(Konsole):
     MateTerminal class
     """
 
-    def _config(self):
+    def _config(self) -> None:
         self._command = command_mod.Command('mate-terminal', errors='stop')
         self._command.set_args(
             ['--geometry=' + self._options.get_columns() + 'x24']
@@ -363,14 +367,14 @@ class XfceTerminal(GnomeTerminal):
     Xfce terminal class (fallback to gnome-terminal)
     """
 
-    def __init__(self, options):
+    def __init__(self, options: Options) -> None:
         super().__init__(options)
         self._pattern = (
             '^$|: Gtk-WARNING|: Failed to connect to |'
             ': GLib-WARNING |: SESSION_MANAGER'
         )
 
-    def _config(self):
+    def _config(self) -> None:
         file = os.path.join(
             os.environ.get('HOME', ''),
             '.config/xfce4/terminal/accels.scm',
@@ -403,7 +407,8 @@ class XfceTerminal(GnomeTerminal):
         self._command.set_args(
             ['--geometry=' + self._options.get_columns() + 'x24'])
 
-    def get_label_flags(self, host):
+    @staticmethod
+    def get_label_flags(host: str) -> List[str]:
         return ['--title=']  # Must use empty to allow bash/tcsh title changing
 
 
@@ -412,7 +417,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -422,7 +427,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -439,13 +444,15 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
         options = Options()
 
         options.get_terminal().run()
+
+        return 0
 
 
 if __name__ == '__main__':

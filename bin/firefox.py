@@ -12,6 +12,7 @@ import re
 import shutil
 import signal
 import sys
+from typing import List
 
 import command_mod
 import file_mod
@@ -24,31 +25,30 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_pattern(self):
+    def get_pattern(self) -> str:
         """
         Return filter patern.
         """
         return self._pattern
 
-    def get_firefox(self):
+    def get_firefox(self) -> command_mod.Command:
         """
         Return Firefox Command class object.
         """
         return self._firefox
 
     @staticmethod
-    def _get_profiles_dir():
+    def _get_profiles_dir() -> str:
         if command_mod.Platform.get_system() == 'macos':
             return os.path.join(
                 'Library', 'Application Support', 'Firefox', 'Profiles')
         return os.path.join('.mozilla', 'firefox')
 
     @staticmethod
-    def _clean_adobe():
+    def _clean_adobe() -> None:
         adobe = os.path.join(
             os.environ['HOME'],
             '.adobe',
@@ -80,7 +80,7 @@ class Options:
             pass
 
     @staticmethod
-    def _remove_lock(firefoxdir):
+    def _remove_lock(firefoxdir: str) -> None:
         # Remove old session data and lock file (allows multiple instances)
         for file in (
                 glob.glob(os.path.join(firefoxdir, '*', 'sessionstore.js')) +
@@ -94,7 +94,7 @@ class Options:
                 continue
 
     @staticmethod
-    def _remove_junk_files(firefoxdir):
+    def _remove_junk_files(firefoxdir: str) -> None:
         ispattern = re.compile(
             '^(lastDownload|lastSuccess|lastCheck|expires|'
             r'softExpiration)=\d*'
@@ -119,7 +119,7 @@ class Options:
                     continue
 
     @staticmethod
-    def _fix_xulstore(firefoxdir):
+    def _fix_xulstore(firefoxdir: str) -> None:
         for directory in glob.glob(os.path.join(firefoxdir, '*')):
             file = os.path.join(directory, 'xulstore.json')
             try:
@@ -139,7 +139,7 @@ class Options:
                 except OSError:
                     pass
 
-    def _fix_installation(self):
+    def _fix_installation(self) -> None:
         file = self._firefox.get_file()
         if os.path.isfile(file + '-bin'):
             fmod = command_mod.Command('fmod', errors='ignore')
@@ -149,7 +149,7 @@ class Options:
                     ['wa', os.path.dirname(self._firefox.get_file())])
                 subtask_mod.Daemon(fmod.get_cmdline()).run()
 
-    def _config(self):
+    def _config(self) -> None:
         self._clean_adobe()
 
         firefoxdir = os.path.join(
@@ -165,7 +165,7 @@ class Options:
         self._fix_installation()
 
     @classmethod
-    def _copy(cls):
+    def _copy(cls) -> None:
         task = task_mod.Tasks.factory()
         tmpdir = file_mod.FileUtil.tmpdir('.cache')
         for directory in glob.glob(os.path.join(tmpdir, 'firefox.*')):
@@ -212,7 +212,7 @@ class Options:
         os.environ['TMPDIR'] = newhome
 
     @staticmethod
-    def _remove(file):
+    def _remove(file: str) -> None:
         try:
             if os.path.isdir(file):
                 shutil.rmtree(file)
@@ -221,7 +221,7 @@ class Options:
         except OSError:
             pass
 
-    def _reset(self):
+    def _reset(self) -> None:
         home = os.environ.get('HOME', '')
         firefoxdir = os.path.join(home, self._get_profiles_dir())
         if os.path.isdir(firefoxdir):
@@ -252,7 +252,7 @@ class Options:
                         self._remove(file)
 
     @classmethod
-    def _prefs(cls, updates):
+    def _prefs(cls, updates: bool) -> None:
         settings = (
             '"accessibility.typeaheadfind.enablesound", false',
             '"beacon.enabled", false',
@@ -387,7 +387,7 @@ class Options:
                 except OSError:
                     pass
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -440,7 +440,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -450,7 +450,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -467,7 +467,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -484,6 +484,8 @@ class Main:
         )
         if tkill.is_found():
             subtask_mod.Daemon(tkill.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

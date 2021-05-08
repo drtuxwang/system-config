@@ -7,6 +7,7 @@ import argparse
 import itertools
 import signal
 import sys
+from typing import Generator, List
 
 
 class Options:
@@ -14,36 +15,37 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_commas(self):
+    def get_commas(self) -> Generator[str, None, None]:
         """
         Comma generator.
         """
         if self._args.alldays or self._args.weekdays and self._args.weekends:
-            commas = (' ', ' ', ' ', ' ', ',', ' ', ',')
+            commas = [' ', ' ', ' ', ' ', ',', ' ', ',']
         elif self._args.weekdays:
-            commas = (' ', ' ', ' ', ' ', ',')
+            commas = [' ', ' ', ' ', ' ', ',']
         elif self._args.weekends:
-            commas = (' ', ',')
+            commas = [' ', ',']
         else:
-            commas = (' ')
+            commas = [' ']
 
         for comma in itertools.cycle(commas):
             yield comma
 
-    def get_numbers(self):
+    def get_numbers(self) -> Generator[str, None, None]:
         """
         Number generator.
         """
         for number in range(self._args.first[0], self._args.last[0]+1):
             yield str(number)
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Dump the first and last few bytes of a binary file.')
+            description='Dump the first and last few bytes of a binary file.',
+        )
 
         parser.add_argument(
             '-a',
@@ -78,7 +80,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -90,7 +92,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -100,7 +102,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -108,7 +110,7 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Generate list
         """
@@ -117,6 +119,8 @@ class Main:
         for number, comma in zip(options.get_numbers(), options.get_commas()):
             print(number, comma, sep='', end='')
         print()
+
+        return 0
 
 
 if __name__ == '__main__':

@@ -9,6 +9,7 @@ import os
 import re
 import signal
 import sys
+from typing import List
 
 import file_mod
 
@@ -18,35 +19,35 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_fmod(self):
+    def get_fmod(self) -> int:
         """
         Return file permission mode.
         """
         return self._fmod
 
-    def get_recursive_flag(self):
+    def get_recursive_flag(self) -> bool:
         """
         Return recursive flag.
         """
         return self._args.recursive_flag
 
-    def get_xmod(self):
+    def get_xmod(self) -> int:
         """
         Return executable permission mode.
         """
         return self._xmod
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description='Set file access mode.')
 
         parser.add_argument(
@@ -105,7 +106,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -140,7 +141,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -150,7 +151,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -167,14 +168,14 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _chmod(file, mod):
+    def _chmod(file: str, mod: int) -> None:
         fmod = file_mod.FileStat(file).get_mode() % 512
         if fmod != mod:
             print("{0:o}>{1:o}: {2:s}".format(fmod, mod, file))
             os.chmod(file, mod)
 
     @staticmethod
-    def _setmod_link(link):
+    def _setmod_link(link: str) -> None:
         link_stat = file_mod.FileStat(link, follow_symlinks=False)
         file_stat = file_mod.FileStat(link)
         file_time = file_stat.get_time()
@@ -183,7 +184,7 @@ class Main:
             print("<utime>: {0:s} -> {1:s}".format(link, os.readlink(link)))
             os.utime(link, (file_time, file_time), follow_symlinks=False)
 
-    def _setmod_directory(self, directory):
+    def _setmod_directory(self, directory: str) -> None:
         files = [os.path.join(directory, x) for x in os.listdir(directory)]
         if self._recursive_flag:
             try:
@@ -201,7 +202,7 @@ class Main:
                 print("<utime>: {0:s}/".format(directory))
                 os.utime(directory, (file_time, file_time))
 
-    def _setmod_file(self, file):
+    def _setmod_file(self, file: str) -> None:
         try:
             try:
                 with open(file, 'rb') as ifile:
@@ -223,7 +224,7 @@ class Main:
         except OSError:
             print("Permission denied:", file)
 
-    def _setmod(self, files):
+    def _setmod(self, files: List[str]) -> None:
         for file in sorted(files):
             if os.path.islink(file):
                 self._setmod_link(file)
@@ -235,7 +236,7 @@ class Main:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -268,6 +269,8 @@ class Main:
         self._files = options.get_files()
 
         self._setmod(self._files)
+
+        return 0
 
 
 if __name__ == '__main__':

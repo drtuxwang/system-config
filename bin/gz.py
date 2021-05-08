@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -18,19 +19,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_gzip(self):
+    def get_gzip(self) -> command_mod.Command:
         """
         Return gzip Command class object.
         """
         return self._gzip
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Compress a file in GZIP format.')
+            description='Compress a file in GZIP format.',
+        )
 
         parser.add_argument(
             'files',
@@ -41,7 +43,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -56,7 +58,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -66,7 +68,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -83,13 +85,15 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
         options = Options()
 
         subtask_mod.Exec(options.get_gzip().get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

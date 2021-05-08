@@ -9,11 +9,12 @@ import signal
 import socket
 import sys
 import time
+from typing import List
 
 import command_mod
 import subtask_mod
 
-RELEASE = '2.7.8'
+RELEASE = '2.8.0'
 
 
 class Options:
@@ -21,36 +22,36 @@ class Options:
     Options class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._release = RELEASE
         self._args = None
         self.parse(sys.argv)
 
-    def get_jobid(self):
+    def get_jobid(self) -> str:
         """
         Return job ID.
         """
         return self._jobid
 
-    def get_mode(self):
+    def get_mode(self) -> str:
         """
         Return operation mode.
         """
         return self._mode
 
-    def get_myqsdir(self):
+    def get_myqsdir(self) -> str:
         """
         Return myqs directory.
         """
         return self._myqsdir
 
-    def get_release(self):
+    def get_release(self) -> str:
         """
         Return release version.
         """
         return self._release
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -74,7 +75,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -84,7 +85,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -101,12 +102,12 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_command(file):
+    def _get_command(file: str) -> command_mod.Command:
         if os.path.isfile(file):
             return command_mod.CommandFile(os.path.abspath(file))
         return command_mod.Command(file, errors='stop')
 
-    def _spawn(self, options):
+    def _spawn(self, options: Options) -> None:
         try:
             with open(os.path.join(self._myqsdir, self._jobid + '.r'), 'a',
                       newline='\n') as ofile:
@@ -150,7 +151,7 @@ class Main:
         subtask_mod.Exec(command.get_cmdline()).run()
 
     @staticmethod
-    def _sh(command):
+    def _sh(command: command_mod.Command) -> None:
         try:
             with open(command.get_file(), errors='replace') as ifile:
                 line = ifile.readline().rstrip()
@@ -159,7 +160,7 @@ class Main:
         except OSError:
             pass
 
-    def _start(self):
+    def _start(self) -> None:
         try:
             with open(
                     os.path.join(self._myqsdir, self._jobid + '.r'),
@@ -193,7 +194,7 @@ class Main:
         except OSError:
             pass
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -209,6 +210,8 @@ class Main:
             self._spawn(options)
         else:
             self._start()
+
+        return 0
 
 
 if __name__ == '__main__':

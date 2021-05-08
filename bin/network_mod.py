@@ -7,11 +7,12 @@ Copyright GPL v2: 2015-2019 By Dr Colin Kong
 
 import json
 import os
+from typing import Optional
 
 import command_mod
 
-RELEASE = '2.1.0'
-VERSION = 20200721
+RELEASE = '2.2.0'
+VERSION = 20210508
 
 
 class Shaper(command_mod.Command):
@@ -19,7 +20,11 @@ class Shaper(command_mod.Command):
     Shaper network traffic command class
     """
 
-    def __init__(self, drate=None, errors='ignore'):
+    def __init__(
+        self,
+        drate: Optional[int] = None,
+        errors: str = 'ignore',
+    ) -> None:
         super().__init__('trickle', errors=errors)
 
         self._drate = 512
@@ -33,7 +38,7 @@ class Shaper(command_mod.Command):
 
         self.set_rate(self._drate)
 
-    def set_rate(self, drate):
+    def set_rate(self, drate: int) -> None:
         """
         Set rate
 
@@ -42,7 +47,7 @@ class Shaper(command_mod.Command):
         self._drate = drate
         self.set_args(['-d', str(self._drate), '-s'])
 
-    def read(self, file):
+    def read(self, file: str) -> bool:
         """
         Read configuration file
         """
@@ -58,7 +63,7 @@ class Shaper(command_mod.Command):
 
         return False
 
-    def write(self, file):
+    def write(self, file: str) -> None:
         """
         Write configuration file
         """

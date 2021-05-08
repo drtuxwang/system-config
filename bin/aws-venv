@@ -14,4 +14,5 @@ VENV="$PYTHON_DIR-venv/$NAME"
 [[ -d "$VENV" ]] || $PYTHON -m virtualenv $VENV || exit 1
 [[ "$($VENV/bin/$PYTHON -m pip freeze 2>&1 | grep $NAME==$VERSION)" ]] || $VENV/bin/$PYTHON -m pip install $NAME==$VERSION
 
+export PATH="$VENV/bin:$PATH"
 exec $VENV/bin/$PYTHON $VENV/bin/aws "$@"

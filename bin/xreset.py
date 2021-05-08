@@ -11,6 +11,7 @@ import json
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -21,19 +22,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_settings(self):
+    def get_settings(self) -> dict:
         """
         Return settings
         """
         return self._config.get()
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Reset to default screen resolution.')
+            description='Reset to default screen resolution.',
+        )
 
         parser.add_argument(
             'settings',
@@ -44,7 +46,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -80,8 +82,8 @@ class Configuration:
     Configuration class
     """
 
-    def __init__(self, file=''):
-        self._data = {'xreset': {}}
+    def __init__(self, file: str = '') -> None:
+        self._data: dict = {'xreset': {}}
         if file:
             try:
                 with open(file) as ifile:
@@ -89,19 +91,19 @@ class Configuration:
             except (OSError, KeyError, ValueError):
                 pass
 
-    def get(self):
+    def get(self) -> dict:
         """
         Return device mode
         """
         return self._data['xreset'].items()
 
-    def set(self, device, mode):
+    def set(self, device: str, mode: str) -> None:
         """
         Set device mode
         """
         self._data['xreset'][device] = mode
 
-    def write(self, file):
+    def write(self, file: str) -> None:
         """
         Write file
         """
@@ -120,7 +122,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -130,7 +132,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -147,7 +149,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -167,6 +169,8 @@ class Main:
                 xrandr.get_cmdline() +
                 ['--output', device, '--mode', mode]
             ).run()
+
+        return 0
 
 
 if __name__ == '__main__':

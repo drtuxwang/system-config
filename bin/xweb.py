@@ -18,7 +18,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -28,7 +28,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -45,7 +45,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_default():
+    def _get_default() -> str:
         home = os.environ.get('HOME', '')
         file = os.path.join(home, 'software', 'web-data', 'index.xhtml')
         if os.path.isfile(file):
@@ -54,7 +54,7 @@ class Main:
         return config_mod.Config().get('homepage')
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
@@ -65,6 +65,8 @@ class Main:
         else:
             command.set_args([cls._get_default()])
         subtask_mod.Task(command.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

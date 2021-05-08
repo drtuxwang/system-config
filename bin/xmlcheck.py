@@ -10,6 +10,7 @@ import os
 import signal
 import sys
 import xml.sax
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -20,25 +21,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_view_flag(self):
+    def get_view_flag(self) -> bool:
         """
         Return view flag.
         """
         return self._args.view_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Check XML file for errors.')
+            description='Check XML file for errors.',
+        )
 
         parser.add_argument(
             '-v',
@@ -55,7 +57,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -68,13 +70,13 @@ class XmlDataHandler(xml.sax.ContentHandler):  # type: ignore
     XML data handler class
     """
 
-    def __init__(self, view):
+    def __init__(self, view: bool) -> None:
         super().__init__()
-        self._elements = []
+        self._elements: list = []
         self._nelement = 0
         self._view_flag = view
 
-    def startElement(self, name, attrs):
+    def startElement(self, name: str, attrs: dict) -> None:
         self._nelement += 1
         self._elements.append(name + '(' + str(self._nelement) + ')')
         if self._view_flag:
@@ -82,7 +84,7 @@ class XmlDataHandler(xml.sax.ContentHandler):  # type: ignore
                 print(
                     '.'.join(self._elements + [key]), "='", value, "'", sep='')
 
-    def characters(self, content):
+    def characters(self, content: str) -> None:
         if self._view_flag:
             print(
                 '.'.join(self._elements + ['text']),
@@ -91,7 +93,7 @@ class XmlDataHandler(xml.sax.ContentHandler):  # type: ignore
                 sep=''
             )
 
-    def endElement(self, name):
+    def endElement(self, name: str) -> None:
         self._elements.pop()
 
 
@@ -101,7 +103,7 @@ class Main:
     """
     _xmllint = command_mod.Command('xmllint', errors='stop')
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -111,7 +113,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -128,7 +130,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_xml(file):
+    def _get_xml(file: str) -> str:
         """
         Return XML content of file.
 
@@ -147,7 +149,7 @@ class Main:
         return ''.join(lines)
 
     @classmethod
-    def run(cls):
+    def run(cls) -> bool:
         """
         Start program
         """

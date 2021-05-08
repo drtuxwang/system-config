@@ -13,6 +13,7 @@ import shutil
 import signal
 import socket
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -23,17 +24,17 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_hdparm(self):
+    def get_hdparm(self) -> command_mod.Command:
         """
         Return hdparm Command class object.
         """
         return self._hdparm
 
-    def _config_speed(self):
+    def _config_speed(self) -> int:
         if self._args.speed:
             speed = self._args.speed
             if speed < 0:
@@ -70,7 +71,7 @@ class Options:
 
         return speed
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description='Set CD/DVD drive speed.')
 
         parser.add_argument(
@@ -87,7 +88,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -110,8 +111,8 @@ class Configuration:
     Configuration class
     """
 
-    def __init__(self, file=''):
-        self._data = {'cdspeed': {}}
+    def __init__(self, file: str = '') -> None:
+        self._data: dict = {'cdspeed': {}}
         if file:
             try:
                 with open(file) as ifile:
@@ -119,7 +120,7 @@ class Configuration:
             except (KeyError, OSError):
                 pass
 
-    def get_speed(self, device):
+    def get_speed(self, device: str) -> int:
         """
         Get speed
         """
@@ -128,13 +129,13 @@ class Configuration:
         except KeyError:
             return 0
 
-    def set_speed(self, device, speed):
+    def set_speed(self, device: str, speed: int) -> None:
         """
         Set speed
         """
         self._data['cdspeed'][device] = speed
 
-    def write(self, file):
+    def write(self, file: str) -> None:
         """
         Write file
         """
@@ -155,7 +156,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -165,7 +166,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -182,13 +183,15 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
         options = Options()
 
         subtask_mod.Batch(options.get_hdparm().get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

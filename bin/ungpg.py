@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -18,24 +19,24 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_gpg(self):
+    def get_gpg(self) -> command_mod.Command:
         """
         Return gpg Command class object.
         """
         return self._gpg
 
     @staticmethod
-    def _config():
+    def _config() -> None:
         os.umask(int('077', 8))
         home = os.environ.get('HOME', '')
         gpgdir = os.path.join(home, '.gnupg')
@@ -52,7 +53,7 @@ class Options:
             del os.environ['DISPLAY']
 
     @staticmethod
-    def _set_libraries(command):
+    def _set_libraries(command: command_mod.Command) -> None:
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir) and os.name == 'posix':
             if os.uname()[0] == 'Linux':
@@ -62,10 +63,10 @@ class Options:
                 else:
                     os.environ['LD_LIBRARY_PATH'] = libdir
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Unpack an encrypted archive in gpg '
-            '(pgp compatible) format.'
+            '(pgp compatible) format.',
         )
 
         parser.add_argument(
@@ -77,7 +78,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -96,7 +97,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -106,7 +107,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -123,7 +124,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -149,6 +150,8 @@ class Main:
             if os.path.isfile(new_file):
                 file_time = os.path.getmtime(file)
                 os.utime(new_file, (file_time, file_time))
+
+        return 0
 
 
 if __name__ == '__main__':

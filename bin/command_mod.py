@@ -2,7 +2,7 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2019 By Dr Colin Kong
+Copyright GPL v2: 2006-2021 By Dr Colin Kong
 """
 
 import distutils.version
@@ -13,9 +13,10 @@ import platform
 import re
 import subprocess
 import sys
+from typing import Any, List, Optional, Sequence
 
-RELEASE = '2.3.2'
-VERSION = 20201011
+RELEASE = '2.4.0'
+VERSION = 20210508
 
 
 class Command:
@@ -23,7 +24,7 @@ class Command:
     This class stores a command (uses supplied executable)
     """
 
-    def __init__(self, program, **kwargs):
+    def __init__(self, program: str, **kwargs: Any) -> None:
         """
         program = Command program name (ie 'evince', 'bin/acroread')
         args = Optional command arguments list
@@ -43,13 +44,13 @@ class Command:
             pass
 
     @staticmethod
-    def _parse_keys(keys, **kwargs):
+    def _parse_keys(keys: Sequence[str], **kwargs: Any) -> dict:
         if set(kwargs.keys()) - set(keys):
             raise CommandKeywordError(
                 'Unsupported keyword "' +
                 list(set(kwargs.keys()) - set(keys))[0] + '".'
             )
-        info = {}
+        info: dict = {}
         for key in keys:
             try:
                 info[key] = kwargs[key]
@@ -63,7 +64,7 @@ class Command:
         return info
 
     @classmethod
-    def _locate(cls, program, info):
+    def _locate(cls, program: str, info: dict) -> str:
         _platform = info['platform']
         if not _platform:
             _platform = _System.get_platform()
@@ -93,7 +94,7 @@ class Command:
             'Cannot find required "' + program + '" software.')
 
     @staticmethod
-    def _get_extensions(_platform):
+    def _get_extensions(_platform: str) -> List[str]:
         extensions = ['']
         if _platform.startswith('windows-'):
             try:
@@ -104,7 +105,7 @@ class Command:
         return extensions
 
     @staticmethod
-    def _check_glibc(files):
+    def _check_glibc(files: List[str]) -> List[str]:
         has_glibc = re.compile(r'-glibc_\d+[.]\d+([.]\d+)?')
         nfiles = []
         for file in files:
@@ -118,7 +119,13 @@ class Command:
         return nfiles
 
     @classmethod
-    def _search_ports(cls, directory, _platform, program, extensions):
+    def _search_ports(
+        cls,
+        directory: str,
+        _platform: str,
+        program: str,
+        extensions: List[str],
+    ) -> str:
         files = []
         for port_glob in _System.get_port_globs(_platform):
             for extension in extensions:
@@ -146,7 +153,11 @@ class Command:
         return None
 
     @staticmethod
-    def _search_path(pathextra, program, extensions):
+    def _search_path(
+        pathextra: List[str],
+        program: str,
+        extensions: List[str],
+    ) -> Optional[str]:
         program = os.path.basename(program)
 
         # Shake PATH to make it unique
@@ -179,7 +190,7 @@ class Command:
         return None
 
     @staticmethod
-    def args2cmd(args):
+    def args2cmd(args: List[str]) -> str:
         """
         Join list of arguments into a command string.
 
@@ -198,8 +209,8 @@ class Command:
         return ' '.join(nargs)
 
     @staticmethod
-    def _cmd2chars(cmd):
-        chars = []
+    def _cmd2chars(cmd: str) -> List[str]:
+        chars: list = []
         backslashs = ''
         for char in cmd:
             if char == '\\':
@@ -220,7 +231,7 @@ class Command:
         return chars
 
     @staticmethod
-    def _chars2args(chars):
+    def _chars2args(chars: List[str]) -> List[str]:
         args = []
         arg = []
         quoted = False
@@ -241,7 +252,7 @@ class Command:
         return args
 
     @classmethod
-    def cmd2args(cls, cmd):
+    def cmd2args(cls, cmd: str) -> List[str]:
         """
         Split a command string into a list of arguments.
         """
@@ -249,25 +260,25 @@ class Command:
         args = cls._chars2args(chars)
         return args
 
-    def get_cmdline(self):
+    def get_cmdline(self) -> List[str]:
         """
         Return the command line as a list.
         """
         return self._args
 
-    def get_file(self):
+    def get_file(self) -> str:
         """
         Return file location.
         """
         return self._args[0]
 
-    def get_args(self):
+    def get_args(self) -> List[str]:
         """
         Return list of arguments.
         """
         return self._args[1:]
 
-    def append_arg(self, arg):
+    def append_arg(self, arg: str) -> None:
         """
         Append to command line arguments
 
@@ -275,7 +286,7 @@ class Command:
         """
         self._args.append(arg)
 
-    def extend_args(self, args):
+    def extend_args(self, args: List[str]) -> None:
         """
         Extend command line arguments
 
@@ -283,7 +294,7 @@ class Command:
         """
         self._args.extend(args)
 
-    def set_args(self, args):
+    def set_args(self, args: List[str]) -> None:
         """
         Set command line arguments
 
@@ -291,7 +302,7 @@ class Command:
         """
         self._args[1:] = args
 
-    def is_found(self):
+    def is_found(self) -> bool:
         """
         Return True if file is defined.
         """
@@ -304,7 +315,7 @@ class CommandFile(Command):
     """
 
     @staticmethod
-    def _locate(program, info):
+    def _locate(program: str, info: dict) -> str:
         if os.path.isfile(program):
             return program
 
@@ -325,7 +336,7 @@ class Platform:
     """
 
     @staticmethod
-    def _get_arch_linux():
+    def _get_arch_linux() -> str:
         machine = os.uname()[-1]
         arch = 'unknown'
         if machine == 'x86_64':
@@ -345,7 +356,7 @@ class Platform:
         return arch
 
     @staticmethod
-    def _get_arch_macos():
+    def _get_arch_macos() -> str:
         # "/usr/sbin/sysct -a" => "hw.cpu64bit_capable: 1"
         machine = os.uname()[-1]
         arch = 'unknown'
@@ -356,7 +367,7 @@ class Platform:
         return arch
 
     @staticmethod
-    def _get_arch_windows():
+    def _get_arch_windows() -> str:
         arch = 'unknown'
         if 'PROCESSOR_ARCHITECTURE' in os.environ:
             if os.environ['PROCESSOR_ARCHITECTURE'] == 'AMD64':
@@ -369,8 +380,8 @@ class Platform:
         return arch
 
     @staticmethod
-    def _get_arch_windows_cygwin():
-        osname, *_, machine = os.uname()[-1]
+    def _get_arch_windows_cygwin() -> str:
+        osname, *_, machine = os.uname()
         arch = 'unknown'
         if machine == 'x86_64':
             arch = 'x86_64'
@@ -382,7 +393,7 @@ class Platform:
         return arch
 
     @staticmethod
-    def _locate_program(program):
+    def _locate_program(program: str) -> str:
         for directory in os.environ['PATH'].split(os.pathsep):
             file = os.path.join(directory, program)
             if os.path.isfile(file):
@@ -393,7 +404,7 @@ class Platform:
         return file
 
     @classmethod
-    def _run_program(cls, command):
+    def _run_program(cls, command: List[str]) -> List[str]:
         """
         Run program in batch mode and return list of lines.
         """
@@ -422,7 +433,7 @@ class Platform:
 
     @classmethod
     @functools.lru_cache(maxsize=1)
-    def get_glibc(cls):
+    def get_glibc(cls) -> str:
         """
         Return glibc version string
         (based on glibc version used to compile 'ldd' or
@@ -439,7 +450,7 @@ class Platform:
         return '0.0'
 
     @staticmethod
-    def _get_kernel_windows_cygwin():
+    def _get_kernel_windows_cygwin() -> str:
         registry_key = (
             '/proc/registry/HKEY_LOCAL_MACHINE/'
             'SOFTWARE/Microsoft/Windows NT/CurrentVersion'
@@ -461,7 +472,7 @@ class Platform:
 
     @classmethod
     @functools.lru_cache(maxsize=1)
-    def get_kernel(cls):
+    def get_kernel(cls) -> str:
         """
         Return kernel version (ie '4.5', '5.2')
         """
@@ -478,7 +489,7 @@ class Platform:
 
     @staticmethod
     @functools.lru_cache(maxsize=1)
-    def get_system():
+    def get_system() -> str:
         """
         Return system name (ie 'linux', 'windows')
         """
@@ -497,7 +508,7 @@ class Platform:
 
     @classmethod
     @functools.lru_cache(maxsize=1)
-    def get_arch(cls):
+    def get_arch(cls) -> str:
         """
         Return arch name (ie 'x86', 'x86_64')
         """
@@ -515,7 +526,7 @@ class Platform:
         return arch
 
     @classmethod
-    def get_platform(cls):
+    def get_platform(cls) -> str:
         """
         Return platform
        (ie linux-x86, linux-x86_64, macos-x86_64, windows-x86_64).
@@ -526,14 +537,14 @@ class Platform:
 class _System(Platform):
 
     @staticmethod
-    def _get_file_time(file):
+    def _get_file_time(file: str) -> int:
         try:
             return os.stat(file)[8]
         except (OSError, TypeError):
             return 0
 
     @classmethod
-    def newest(cls, files):
+    def newest(cls, files: List[str]) -> str:
         """
         Return newest file or directory.
 
@@ -553,7 +564,7 @@ class _System(Platform):
 
     @staticmethod
     @functools.lru_cache(maxsize=None)
-    def get_port_globs(_platform):
+    def get_port_globs(_platform: str) -> Sequence[str]:
         """
         Return tuple of portname globs
         (ie 'linux64_*-x86*', 'windows64_*-x86*')
@@ -569,10 +580,7 @@ class _System(Platform):
             'windows-x86': ('windows_*-x86*')
         }
 
-        try:
-            return mapping[_platform]
-        except KeyError:
-            return {}
+        return mapping.get(_platform, [])
 
 
 class CommandError(Exception):

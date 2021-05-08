@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -17,23 +18,22 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_mode(self):
+    def get_mode(self) -> str:
         """
         Return operation mode.
         """
         return self._mode
 
-    def get_rpm(self):
+    def get_rpm(self) -> command_mod.Command:
         """
         Return rpm Command class object.
         """
         return self._rpm
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -50,18 +50,18 @@ class Package:
     Package class
     """
 
-    def __init__(self, version, size, description):
+    def __init__(self, version: str, size: int, description: str) -> None:
         self._version = version
         self._size = size
         self._description = description
 
-    def get_description(self):
+    def get_description(self) -> str:
         """
         Return package description.
         """
         return self._description
 
-    def set_description(self, description):
+    def set_description(self, description: str) -> None:
         """
         Set package description.
 
@@ -69,13 +69,13 @@ class Package:
         """
         self._description = description
 
-    def get_size(self):
+    def get_size(self) -> int:
         """
         Return package size.
         """
         return self._size
 
-    def set_size(self, size):
+    def set_size(self, size: int) -> None:
         """
         Set package size.
 
@@ -83,13 +83,13 @@ class Package:
         """
         self._size = size
 
-    def get_version(self):
+    def get_version(self) -> str:
         """
         Return package version.
         """
         return self._version
 
-    def set_version(self, version):
+    def set_version(self, version: str) -> None:
         """
         Set package version.
 
@@ -103,7 +103,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -113,7 +113,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -130,7 +130,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _read_rpm_status(options):
+    def _read_rpm_status(options: Options) -> dict:
         rpm = options.get_rpm()
         rpm.set_args(['-a', '-q', '-i'])
         task = subtask_mod.Batch(rpm.get_cmdline())
@@ -155,17 +155,17 @@ class Main:
             elif line.startswith('Summary '):
                 package.set_description(line.split(': ')[1])
                 packages[name] = package
-                package = Package('', '0', '')
+                package = Package('', 0, '')
         return packages
 
     @staticmethod
-    def _show_packages_info(packages):
+    def _show_packages_info(packages: dict) -> None:
         for name, package in sorted(packages.items()):
             print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(
                 name.split(':')[0], package.get_version(), package.get_size(),
                 package.get_description()))
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -173,6 +173,8 @@ class Main:
 
         packages = self._read_rpm_status(options)
         self._show_packages_info(packages)
+
+        return 0
 
 
 if __name__ == '__main__':

@@ -9,6 +9,7 @@ import hashlib
 import os
 import signal
 import sys
+from typing import List, Tuple
 
 import file_mod
 
@@ -18,35 +19,35 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_check_flag(self):
+    def get_check_flag(self) -> bool:
         """
         Return check flag.
         """
         return self._args.check_flag
 
-    def get_create_flag(self):
+    def get_create_flag(self) -> bool:
         """
         Return create flag.
         """
         return self._args.create_flag
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_recursive_flag(self):
+    def get_recursive_flag(self) -> bool:
         """
         Return recursive flag.
         """
         return self._args.recursive_flag
 
-    def get_update_file(self):
+    def get_update_file(self) -> str:
         """
         Return update file.
         """
@@ -54,10 +55,10 @@ class Options:
             return self._args.update_file[0]
         return None
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Calculate checksum using MD5, file size and '
-            'file modification time.'
+            'file modification time.',
         )
 
         parser.add_argument(
@@ -94,7 +95,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -106,7 +107,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -116,7 +117,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -133,7 +134,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _md5sum(file):
+    def _md5sum(file: str) -> str:
         try:
             with open(file, 'rb') as ifile:
                 md5 = hashlib.md5()
@@ -148,7 +149,7 @@ class Main:
             ) from exception
         return md5.hexdigest()
 
-    def _calc(self, options, files):
+    def _calc(self, options: Options, files: List[str]) -> None:
         for file in files:
             if file.endswith('.../fsum'):
                 self._get_cache(file)
@@ -198,7 +199,7 @@ class Main:
                             '.fsum" file.'
                         ) from exception
 
-    def _check(self, files):
+    def _check(self, files: List[str]) -> None:
         found = []
         nfail = 0
         nmiss = 0
@@ -254,7 +255,7 @@ class Main:
                 )
             )
 
-    def _extra(self, directory, found):
+    def _extra(self, directory: str, found: List[str]) -> List[str]:
         extra = []
         try:
             if directory:
@@ -277,18 +278,16 @@ class Main:
         return extra
 
     @staticmethod
-    def _get_checksum(line):
+    def _get_checksum(line: str) -> Tuple[str, int, int, str]:
         i = line.find('  ')
         try:
             checksum, size, mtime = line[:i].split('/')
-            size = int(size)
-            mtime = int(mtime)
             file = line[i+2:]
-            return checksum, size, mtime, file
+            return checksum, int(size), int(mtime), file
         except ValueError:
             return '', -1, -1, ''
 
-    def _get_cache(self, update_file):
+    def _get_cache(self, update_file: str) -> None:
         if not os.path.isfile(update_file):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + update_file +
@@ -313,7 +312,7 @@ class Main:
                 '" checksum file.'
             ) from exception
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -322,12 +321,14 @@ class Main:
         if options.get_check_flag():
             self._check(options.get_files())
         else:
-            self._cache = {}
+            self._cache: dict = {}
             update_file = options.get_update_file()
             if update_file:
                 self._get_cache(update_file)
 
             self._calc(options, options.get_files())
+
+        return 0
 
 
 if __name__ == '__main__':

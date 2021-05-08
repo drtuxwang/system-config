@@ -10,6 +10,7 @@ import random
 import re
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -26,19 +27,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_xterm(self):
+    def get_xterm(self) -> command_mod.Command:
         """
         Return xterm Command class object.
         """
         return self._xterm
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Run command in a Xterm.')
+            description='Run command in a Xterm.',
+        )
 
         parser.add_argument(
             '-split',
@@ -55,7 +57,7 @@ class Options:
         self._args = parser.parse_args(args)
 
     @staticmethod
-    def _get_wget(url):
+    def _get_wget(url: str) -> List[str]:
         output = os.path.basename(url).split('?', 1)[0]
         if 'pbs.twimg.com/media/' in url:
             if '?format=jpg' in url:
@@ -64,7 +66,7 @@ class Options:
         return ['wget', '-O', output, url]
 
     @staticmethod
-    def _select_urls(args):
+    def _select_urls(args: List[str]) -> List[str]:
         if [x for x in args if 'instagram' in x]:
             # "/e35/p1080x1080" & "/35/\d{4}"
             ispick = re.compile(r'/e\d\d/.?\d\d\d\d.*_n[.]jpg?')
@@ -72,7 +74,7 @@ class Options:
         return args
 
     @classmethod
-    def _generate_cmd(cls, args):
+    def _generate_cmd(cls, args: List[str]) -> List[str]:
         if args[0].startswith(URI):
             nargs = []
             for arg in cls._select_urls(args):
@@ -97,7 +99,7 @@ class Options:
 
         return nargs
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -140,7 +142,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -150,7 +152,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -167,7 +169,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -175,6 +177,8 @@ class Main:
 
         xterm = options.get_xterm()
         subtask_mod.Background(xterm.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

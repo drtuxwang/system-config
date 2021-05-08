@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -18,37 +19,38 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_device(self):
+    def get_device(self) -> str:
         """
         Return device location.
         """
         return self._args.device[0]
 
-    def get_vlc(self):
+    def get_vlc(self) -> command_mod.Command:
         """
         Return vlc Command class object.
         """
         return self._vlc
 
-    def get_speed(self):
+    def get_speed(self) -> int:
         """
         Return DVD speed.
         """
         return self._args.speed[0]
 
-    def get_title(self):
+    def get_title(self) -> str:
         """
         Return DVD title.
         """
         return self._args.title[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Rip Video DVD title to file.')
+            description='Rip Video DVD title to file.',
+        )
 
         parser.add_argument(
             '-speed',
@@ -73,7 +75,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -106,17 +108,17 @@ class Cdrom:
     CDROM class
     """
 
-    def __init__(self):
-        self._devices = {}
+    def __init__(self) -> None:
+        self._devices: dict = {}
         self.detect()
 
-    def get_devices(self):
+    def get_devices(self) -> dict:
         """
         Return list of devices
         """
         return self._devices
 
-    def detect(self):
+    def detect(self) -> None:
         """
         Detect devices
         """
@@ -140,7 +142,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -150,7 +152,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -167,7 +169,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _cdspeed(device, speed):
+    def _cdspeed(device: str, speed: int) -> None:
         cdspeed = command_mod.Command('cdspeed', errors='ignore')
         if cdspeed.is_found():
             if speed:
@@ -179,7 +181,7 @@ class Main:
             hdparm.set_args(['-E', str(speed), device])
             subtask_mod.Batch(hdparm.get_cmdline()).run()
 
-    def _rip(self):
+    def _rip(self) -> None:
         file = 'title-' + str(self._title).zfill(2) + '.mpg'
         self._vlc.set_args([
             'dvdsimple:/' + self._device + ':#' + str(self._title),
@@ -192,14 +194,14 @@ class Main:
         subtask_mod.Task(self._vlc.get_cmdline()).run()
 
     @staticmethod
-    def _scan():
+    def _scan() -> None:
         cdrom = Cdrom()
         print("Scanning for CD/DVD devices...")
         devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
             print("  {0:10s}  {1:s}".format(key, value))
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -215,6 +217,8 @@ class Main:
         else:
             self._cdspeed(self._device, options.get_speed())
             self._rip()
+
+        return 0
 
 
 if __name__ == '__main__':

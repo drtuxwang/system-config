@@ -10,6 +10,7 @@ import os
 import shutil
 import signal
 import sys
+from typing import List
 
 import command_mod
 import logging_mod
@@ -17,10 +18,8 @@ import subtask_mod
 
 IGNORE_EXTENSIONS = ('.fsum', '.md5', '.md5sum', '.par2')
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -31,25 +30,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of file.
         """
         return self._args.files
 
-    def get_par2(self):
+    def get_par2(self) -> command_mod.Command:
         """
         Return par2 Command class object.
         """
         return self._par2
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Parity and repair tool.')
+            description='Parity and repair tool.',
+        )
 
         parser.add_argument(
             'files',
@@ -60,7 +60,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -75,7 +75,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -85,7 +85,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -102,7 +102,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _create_3dot_directory(directory):
+    def _create_3dot_directory(directory: str) -> None:
         if not os.path.isdir(directory):
             try:
                 os.mkdir(directory)
@@ -114,14 +114,14 @@ class Main:
                 ) from exception
 
     @staticmethod
-    def _delete_file(file):
+    def _delete_file(file: str) -> None:
         try:
             os.remove(file)
         except OSError:
             pass
 
     @classmethod
-    def _check_3dot_directory(cls, directory):
+    def _check_3dot_directory(cls, directory: str) -> None:
         if os.path.isdir(directory):
             for par_file in sorted(os.listdir(directory)):
                 if par_file.endswith('.par2'):
@@ -135,7 +135,7 @@ class Main:
                 os.removedirs(directory)
 
     @classmethod
-    def _update(cls, cmdline, files):
+    def _update(cls, cmdline: List[str], files: List[str]) -> None:
         for file in sorted(files):
             directory, name = os.path.split(file)
             if not directory:
@@ -181,7 +181,7 @@ class Main:
                             pass
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
@@ -189,6 +189,8 @@ class Main:
 
         cmdline = options.get_par2().get_cmdline()
         cls._update(cmdline, options.get_files())
+
+        return 0
 
 
 if __name__ == '__main__':

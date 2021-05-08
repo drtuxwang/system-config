@@ -3,6 +3,8 @@
 Check whether installed debian packages in '.debs' list have updated versions.
 """
 
+# Annotation: Fix Class reference run time NameError
+from __future__ import annotations
 import argparse
 import copy
 import distutils.version
@@ -14,13 +16,12 @@ import re
 import signal
 import sre_constants
 import sys
+from typing import List
 
 import logging_mod
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -31,20 +32,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_list_files(self):
+    def get_list_files(self) -> List[str]:
         """
         Return list of installed packages files.
         """
         return self._args.list_files
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Check whether installed debian packages in '
-            '".debs" list have updated versions.'
+            '".debs" list have updated versions.',
         )
 
         parser.add_argument(
@@ -56,7 +57,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -68,18 +69,23 @@ class Package:
     Package class
     """
 
-    def __init__(self, version='0', depends=(), url=''):
+    def __init__(
+        self,
+        version: str = '0',
+        depends: List[str] = None,
+        url: str = '',
+    ) -> None:
         self._version = version
         self._depends = depends
         self._url = url
 
-    def get_depends(self):
+    def get_depends(self) -> List[str]:
         """
         Return list of required dependent packages.
         """
         return self._depends
 
-    def set_depends(self, depends):
+    def set_depends(self, depends: List[str]) -> None:
         """
         Set list of required dependent packages.
 
@@ -87,13 +93,13 @@ class Package:
         """
         self._depends = depends
 
-    def get_url(self):
+    def get_url(self) -> str:
         """
         Return package url.
         """
         return self._url
 
-    def set_url(self, url):
+    def set_url(self, url: str) -> None:
         """
         Set package url.
 
@@ -101,13 +107,13 @@ class Package:
         """
         self._url = url
 
-    def get_version(self):
+    def get_version(self) -> str:
         """
         Return version.
         """
         return self._version
 
-    def set_version(self, version):
+    def set_version(self, version: str) -> None:
         """
         Set package version.
 
@@ -115,7 +121,7 @@ class Package:
         """
         self._version = version
 
-    def is_newer(self, package):
+    def is_newer(self, package: Package) -> bool:
         """
         Return True if version newer than package.
         """
@@ -135,7 +141,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -145,7 +151,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -162,7 +168,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _read_data(file):
+    def _read_data(file: str) -> dict:
         try:
             with open(file) as ifile:
                 data = json.load(ifile)
@@ -174,13 +180,13 @@ class Main:
         return data
 
     @classmethod
-    def _read_distribution_packages(cls, packages_file):
+    def _read_distribution_packages(cls, packages_file: str) -> dict:
         distribution_data = cls._read_data(packages_file)
         lines = []
         for url in distribution_data['urls']:
             lines.extend(distribution_data['data'][url]['text'])
 
-        packages = {}
+        packages: dict = {}
         name = ''
         package = Package()
         for line in lines:
@@ -203,7 +209,7 @@ class Main:
                 package = Package()
         return packages
 
-    def _read_distribution_pin_packages(self, pin_file):
+    def _read_distribution_pin_packages(self, pin_file: str) -> None:
         packages_cache = {}
         try:
             with open(pin_file, errors='replace') as ifile:
@@ -230,7 +236,7 @@ class Main:
         except OSError:
             pass
 
-    def _read_distribution_deny_list(self, file):
+    def _read_distribution_deny_list(self, file: str) -> None:
         try:
             with open(file, errors='replace') as ifile:
                 for line in ifile:
@@ -246,7 +252,11 @@ class Main:
         except OSError:
             return
 
-    def _check_distribution_updates(self, distribution, list_file):
+    def _check_distribution_updates(
+        self,
+        distribution: str,
+        list_file: str,
+    ) -> None:
         try:
             with open(list_file, errors='replace') as ifile:
                 versions = {}
@@ -276,8 +286,8 @@ class Main:
                                 distribution,
                                 self._packages[name].get_url()
                             )
-                            logger.info("%s (Replaces %s)", file, version)
-                            print(file, file=ofile)
+                            logger.info("%s  # Replaces %s", file, version)
+                            print(file, " # Replaces", version, file=ofile)
                             for dependency in sorted(self._depends(
                                     versions,
                                     self._packages[name].get_depends()
@@ -288,7 +298,7 @@ class Main:
                                         self._packages[dependency].get_url()
                                     )
                                     logger.warning(
-                                        "  %s (New dependency)",
+                                        "  %s  # New dependency",
                                         file,
                                     )
                                     print("  " + file, file=ofile)
@@ -299,27 +309,28 @@ class Main:
         if os.path.getsize(urlfile) == 0:
             os.remove(urlfile)
 
-    def _depends(self, versions, depends):
+    def _depends(self, versions: dict, depends: List[str]) -> List[str]:
         names = []
-        for name in depends:
-            if name not in versions:
-                versions[name] = ''
-                names.append(name)
-                if name in self._packages:
-                    names.extend(self._depends(
-                        versions,
-                        self._packages[name].get_depends()
-                    ))
+        if depends:
+            for name in depends:
+                if name not in versions:
+                    versions[name] = ''
+                    names.append(name)
+                    if name in self._packages:
+                        names.extend(self._depends(
+                            versions,
+                            self._packages[name].get_depends()
+                        ))
         return names
 
     @staticmethod
-    def _local(distribution, url):
+    def _local(distribution: str, url: str) -> str:
         file = os.path.join(distribution, os.path.basename(url))
         if os.path.isfile(file):
             return 'file://' + os.path.abspath(file)
         return url
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -343,6 +354,8 @@ class Main:
                             distribution + '.debs:deny')
                         self._check_distribution_updates(
                             distribution, list_file)
+
+        return 0
 
 
 if __name__ == '__main__':

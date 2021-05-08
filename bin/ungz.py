@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import file_mod
@@ -19,25 +20,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archives(self):
+    def get_archives(self) -> List[str]:
         """
         Return archive files.
         """
         return self._args.archives
 
-    def get_command(self):
+    def get_command(self) -> command_mod.Command:
         """
         Return gzip Command class object.
         """
         return self._command
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Uncompress a file in GZIP format.')
+            description='Uncompress a file in GZIP format.',
+        )
 
         parser.add_argument(
             'archives',
@@ -48,7 +50,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -63,7 +65,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -73,7 +75,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -90,7 +92,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -113,6 +115,8 @@ class Main:
                 os.chmod(output, file_stat.get_mode())
                 file_time = file_stat.get_time()
                 os.utime(output, (file_time, file_time))
+
+        return 0
 
 
 if __name__ == '__main__':

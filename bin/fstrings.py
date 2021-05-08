@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import BinaryIO, List
 
 
 class Options:
@@ -15,19 +16,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Print the strings of printable characters in files.')
+            description='Print the strings of printable characters in files.',
+        )
 
         parser.add_argument(
             'files',
@@ -38,7 +40,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -50,7 +52,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -60,7 +62,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -76,7 +78,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _file(self, file):
+    def _file(self, file: str) -> None:
         try:
             with open(file, 'rb') as ifile:
                 self._pipe(ifile)
@@ -86,7 +88,7 @@ class Main:
             ) from exception
 
     @staticmethod
-    def _pipe(pipe):
+    def _pipe(pipe: BinaryIO) -> None:
         string = ''
         while True:
             data = pipe.read(4096)
@@ -102,7 +104,7 @@ class Main:
         if string:
             print(string)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -113,6 +115,8 @@ class Main:
         else:
             for file in options.get_files():
                 self._file(file)
+
+        return 0
 
 
 if __name__ == '__main__':

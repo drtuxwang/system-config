@@ -9,15 +9,14 @@ import logging
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import logging_mod
 import subtask_mod
 
-# pylint: disable = invalid-name
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)   # ylint: disable = invalid-name
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -28,25 +27,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_images(self):
+    def get_images(self) -> str:
         """
         Return list of ISO images.
         """
         return self._args.images
 
-    def get_view_flag(self):
+    def get_view_flag(self) -> bool:
         """
         Return view flag.
         """
         return self._args.view_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a portable CD/DVD archive in ISO9660 format.')
+            description='Unpack a portable CD/DVD archive in ISO9660 format.',
+        )
 
         parser.add_argument(
             '-v',
@@ -63,7 +63,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -75,7 +75,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -85,7 +85,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -102,7 +102,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _isosize(image, size):
+    def _isosize(image: str, size: int) -> None:
         if size > 734003200:
             logger.info(
                 "%s: %4.2f MB (%5.3f salesman's GB)",
@@ -153,7 +153,7 @@ class Main:
                 )
                 logger.warning("==> Please use 700MB/80min CD media instead.")
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -199,6 +199,8 @@ class Main:
                         task.get_file() + '".'
                     )
                 self._isosize(image, os.path.getsize(image))
+
+        return 0
 
 
 if __name__ == '__main__':

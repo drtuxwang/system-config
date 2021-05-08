@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -19,30 +20,30 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_threads(self):
+    def get_threads(self) -> int:
         """
         Return number of threads.
         """
         return self._args.threads[0]
 
-    def get_urls(self):
+    def get_urls(self) -> List[str]:
         """
         Return list of urls.
         """
         return self._args.urls
 
-    def get_aria2c(self):
+    def get_aria2c(self) -> command_mod.Command:
         """
         Return aria2c Command class object.
         """
         return self._aria2c
 
     @staticmethod
-    def _set_libraries(command):
+    def _set_libraries(command: command_mod.Command) -> None:
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir) and os.name == 'posix':
             if os.uname()[0] == 'Linux':
@@ -52,9 +53,10 @@ class Options:
                 else:
                     os.environ['LD_LIBRARY_PATH'] = libdir
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Multi-threaded download accelerator.')
+            description='Multi-threaded download accelerator.',
+        )
 
         parser.add_argument(
             '-threads',
@@ -72,7 +74,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -93,7 +95,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -103,7 +105,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -120,7 +122,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_local(directory, files_local):
+    def _get_local(directory: str, files_local: List[str]) -> None:
         if files_local:
             if not os.path.isdir(directory):
                 try:
@@ -143,7 +145,10 @@ class Main:
                     ) from exception
 
     @staticmethod
-    def _get_remote(aria2c, files_remote):
+    def _get_remote(
+        aria2c: command_mod.Command,
+        files_remote: List[str],
+    ) -> None:
         if files_remote:
             cmdline = []
             for file in files_remote:
@@ -156,7 +161,7 @@ class Main:
                     ' received from "' + task.get_file() + '".'
                 )
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -182,7 +187,7 @@ class Main:
                 try:
                     with open(url, errors='replace') as ifile:
                         for line in ifile:
-                            line = line.strip()
+                            line = line.strip().split('  #')[0]
                             if line and not line.startswith('#'):
                                 if line.startswith('file://'):
                                     if line not in files_local:
@@ -205,6 +210,8 @@ class Main:
                     '--remote-time=true',
                     '--split=' + str(self._options.get_threads())
                 ])
+
+        return 0
 
 
 if __name__ == '__main__':

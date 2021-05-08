@@ -17,7 +17,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -27,7 +27,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -44,7 +44,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _config():
+    def _config() -> None:
         home = os.environ.get('HOME', '')
         audacitydir = os.path.join(home, '.audacity-data')
         if not os.path.isdir(audacitydir):
@@ -62,7 +62,7 @@ class Main:
                         print("PlaybackDevice=ALSA: pulse", file=ofile)
                         print("RecordingDevice=ALSA: pulse", file=ofile)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -76,6 +76,8 @@ class Main:
         self._config()
 
         subtask_mod.Background(audacity.get_cmdline()).run(pattern=pattern)
+
+        return 0
 
 
 if __name__ == '__main__':

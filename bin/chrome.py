@@ -14,6 +14,7 @@ import re
 import shutil
 import signal
 import sys
+from typing import List
 
 import command_mod
 import file_mod
@@ -26,31 +27,30 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_pattern(self):
+    def get_pattern(self) -> str:
         """
         Return filter pattern.
         """
         return self._pattern
 
-    def get_chrome(self):
+    def get_chrome(self) -> command_mod.Command:
         """
         Return chrome Command class object.
         """
         return self._chrome
 
     @staticmethod
-    def _get_profiles_dir():
+    def _get_profiles_dir() -> str:
         if command_mod.Platform.get_system() == 'macos':
             return os.path.join(
                 'Library', 'Application Support', 'Google', 'Chrome')
         return os.path.join('.config', 'google-chrome')
 
     @staticmethod
-    def _clean_adobe():
+    def _clean_adobe() -> None:
         adobe = os.path.join(
             os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
         macromedia = os.path.join(
@@ -89,7 +89,7 @@ class Options:
                     return
 
     @staticmethod
-    def _clean_preferences(configdir):
+    def _clean_preferences(configdir: str) -> None:
         file = os.path.join(configdir, 'Preferences')
         try:
             with open(file) as ifile:
@@ -115,7 +115,7 @@ class Options:
                 pass
 
     @staticmethod
-    def _clean_junk_files(configdir):
+    def _clean_junk_files(configdir: str) -> None:
         for fileglob in ('Archive*', 'Cookies*', 'Current*', 'History*',
                          'Last*', 'Visited*', 'Last*'):
             for file in glob.glob(os.path.join(configdir, fileglob)):
@@ -144,7 +144,7 @@ class Options:
                 except OSError:
                     continue
 
-    def _config(self):
+    def _config(self) -> None:
         home = os.environ.get('HOME', '')
         configdir = os.path.join(home, self._get_profiles_dir(), 'Default')
 
@@ -153,7 +153,7 @@ class Options:
             self._clean_preferences(configdir)
             self._clean_junk_files(configdir)
 
-    def _copy(self):
+    def _copy(self) -> None:
         task = task_mod.Tasks.factory()
         tmpdir = file_mod.FileUtil.tmpdir('.cache')
         for directory in glob.glob(os.path.join(tmpdir + 'chrome.*')):
@@ -199,7 +199,7 @@ class Options:
         os.environ['HOME'] = newhome
 
     @staticmethod
-    def _remove(file):
+    def _remove(file: str) -> None:
         try:
             if os.path.isdir(file):
                 shutil.rmtree(file)
@@ -208,7 +208,7 @@ class Options:
         except OSError:
             pass
 
-    def _reset(self):
+    def _reset(self) -> None:
         home = os.environ.get('HOME', '')
         configdir = os.path.join(home, self._get_profiles_dir())
         if os.path.isdir(configdir):
@@ -239,18 +239,19 @@ class Options:
                     print('Removing "{0:s}"...'.format(file))
                     self._remove(file)
 
-    def _restart(self):
+    def _restart(self) -> None:
         home = os.environ.get('HOME', '')
         configdir = os.path.join(home, self._get_profiles_dir())
         try:
-            pid = os.readlink(
-                os.path.join(configdir, 'SingletonLock')).split('-')[1]
+            pid = int(os.readlink(
+                os.path.join(configdir, 'SingletonLock')
+            ).split('-')[1])
             task_mod.Tasks.factory().killpids([pid])
         except (IndexError, OSError):
             pass
 
     @staticmethod
-    def _set_libraries(command):
+    def _set_libraries(command: command_mod.Command) -> None:
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir) and os.name == 'posix':
             if os.uname()[0] == 'Linux':
@@ -261,7 +262,7 @@ class Options:
                     os.environ['LD_LIBRARY_PATH'] = libdir
 
     @staticmethod
-    def _locate():
+    def _locate() -> command_mod.Command:
         commands = ['google-chrome']
         for command in commands:
             chrome = command_mod.Command(command, errors='ignore')
@@ -269,7 +270,8 @@ class Options:
                 return chrome
         return command_mod.Command('chrome', errors='stop')
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
+
         """
         Parse arguments
         """
@@ -330,7 +332,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -340,7 +342,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -357,7 +359,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -374,6 +376,8 @@ class Main:
         )
         if tkill.is_found():
             subtask_mod.Daemon(tkill.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

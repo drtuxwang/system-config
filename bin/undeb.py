@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import Any, List
 
 import command_mod
 import subtask_mod
@@ -18,25 +19,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archives(self):
+    def get_archives(self) -> List[str]:
         """
         Return list of archives.
         """
         return self._args.archives
 
-    def get_view_flag(self):
+    def get_view_flag(self) -> bool:
         """
         Return view flag.
         """
         return self._args.view_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a compressed archive in DEB format.')
+            description='Unpack a compressed archive in DEB format.',
+        )
 
         parser.add_argument(
             '-v',
@@ -53,7 +55,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -65,7 +67,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -75,7 +77,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -92,14 +94,14 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _remove(*files):
+    def _remove(*files: Any) -> None:
         for file in files:
             try:
                 os.remove(file)
             except OSError:
                 pass
 
-    def _unpack(self, file):
+    def _unpack(self, file: str) -> None:
         task = subtask_mod.Batch(self._ar.get_cmdline() + ['t', file])
         task.run(pattern='(data|control).tar')
         if len(task.get_output()) != 2:
@@ -152,7 +154,7 @@ class Main:
             task2.run(directory='DEBIAN', replace=(os.curdir, 'DEBIAN'))
         self._remove(control_file)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -172,6 +174,8 @@ class Main:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot find "' + file + '" DEB file.')
             self._unpack(file)
+
+        return 0
 
 
 if __name__ == '__main__':

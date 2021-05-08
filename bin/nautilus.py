@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -17,23 +18,22 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_pattern(self):
+    def get_pattern(self) -> str:
         """
         Return filter pattern.
         """
         return self._pattern
 
-    def get_nautilus(self):
+    def get_nautilus(self) -> command_mod.Command:
         """
         Return nautilus Command class object.
         """
         return self._nautilus
 
-    def _config(self):
+    def _config(self) -> None:
         home = os.environ.get('HOME', '')
         configdir = os.path.join(home, '.local', 'share', 'applications')
         if not os.path.isdir(configdir):
@@ -93,7 +93,7 @@ class Options:
         self._userapp(configdir, 'text/html', 'xweb')
 
     @staticmethod
-    def _userapp(configdir, mime_type, app_name):
+    def _userapp(configdir: str, mime_type: str, app_name: str) -> None:
         file = os.path.join(configdir, app_name + '-userapp.desktop')
         if not os.path.isfile(file):
             try:
@@ -122,7 +122,7 @@ class Options:
         except OSError:
             return
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -144,7 +144,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -154,7 +154,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -171,7 +171,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -179,6 +179,8 @@ class Main:
 
         subtask_mod.Background(options.get_nautilus().get_cmdline()).run(
             pattern=options.get_pattern())
+
+        return 0
 
 
 if __name__ == '__main__':

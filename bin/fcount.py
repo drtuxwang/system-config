@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 
 class Options:
@@ -15,20 +16,21 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Count number of lines and maximum '
-            'columns used in file.')
+            'columns used in file.',
+        )
 
         parser.add_argument(
             'files',
@@ -39,7 +41,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -51,7 +53,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -61,7 +63,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -78,7 +80,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -109,6 +111,8 @@ class Main:
                     "{0:s}: {1:d} lines (max length of {2:d} "
                     "on line {3:d})".format(file, nlines, maxcols, lline)
                 )
+
+        return 0
 
 
 if __name__ == '__main__':

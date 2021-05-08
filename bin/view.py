@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List, Tuple
 
 import command_mod
 import config_mod
@@ -19,19 +20,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Open files using default application.')
+            description='Open files using default application.',
+        )
 
         parser.add_argument(
             'files',
@@ -42,7 +44,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -54,7 +56,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -64,7 +66,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -81,14 +83,14 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_program(command):
+    def _get_program(command: List[str]) -> command_mod.Command:
         file = os.path.join(os.path.dirname(sys.argv[0]), command[0])
         if os.path.isfile(file):
             return command_mod.CommandFile(file)
         return command_mod.Command(command[0], errors='stop')
 
     @classmethod
-    def _spawn(cls, action, file):
+    def _spawn(cls, action: Tuple[List[str], bool], file: str) -> None:
         command, daemon = action
         if not command:
             raise SystemExit(sys.argv[0] + ': cannot find action: ' + file)
@@ -100,7 +102,7 @@ class Main:
         else:
             subtask_mod.Task(program.get_cmdline()).run()
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -128,6 +130,8 @@ class Main:
                         subtask_mod.Task(view.get_cmdline()).run()
                         continue
             self._spawn(action, file)
+
+        return 0
 
 
 if __name__ == '__main__':

@@ -11,6 +11,7 @@ import signal
 import socket
 import socketserver
 import sys
+from typing import List
 
 
 class Options:
@@ -18,25 +19,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_directory(self):
+    def get_directory(self) -> str:
         """
         Return directory.
         """
         return self._args.directory[0]
 
-    def get_port(self):
+    def get_port(self) -> int:
         """
         Return port.
         """
         return self._args.port[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Start a simple Python HTTP server.')
+            description='Start a simple Python HTTP server.',
+        )
 
         parser.add_argument('directory', nargs=1, help='Directory to serve.')
         parser.add_argument(
@@ -54,7 +56,7 @@ class Options:
                 'port number.'
             )
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -78,7 +80,7 @@ class MyTCPServer(socketserver.TCPServer):
     Enable immediate port reuse.
     """
 
-    def server_bind(self):
+    def server_bind(self) -> None:
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind(self.server_address)
 
@@ -88,7 +90,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -98,7 +100,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -115,7 +117,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -149,6 +151,8 @@ class Main:
             str(port) + '"...'
         )
         httpd.serve_forever()
+
+        return 0
 
 
 if __name__ == '__main__':

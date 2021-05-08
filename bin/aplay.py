@@ -9,6 +9,7 @@ import random
 import os
 import signal
 import sys
+from typing import Any, List
 
 import command_mod
 import subtask_mod
@@ -19,29 +20,29 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_directories(self):
+    def get_directories(self) -> List[str]:
         """
         Return list of directories.
         """
         return self._args.directories
 
-    def get_shuffle_flag(self):
+    def get_shuffle_flag(self) -> bool:
         """
         Return shuffle flag.
         """
         return self._args.shuffle_flag
 
-    def get_view_flag(self):
+    def get_view_flag(self) -> bool:
         """
         Return view flag.
         """
         return self._args.view_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Play MP3/OGG/WAV audio files in directory.')
 
@@ -70,7 +71,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -82,7 +83,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -92,7 +93,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -109,13 +110,13 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _getfiles(directory, *patterns):
+    def _getfiles(directory: str, *patterns: Any) -> List[str]:
         files = []
         for pattern in patterns:
             files.extend(glob.glob(os.path.join(directory, pattern)))
         return sorted(files)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -142,6 +143,8 @@ class Main:
                 sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
                 ' received from "' + task.get_file() + '".'
             )
+
+        return 0
 
 
 if __name__ == '__main__':

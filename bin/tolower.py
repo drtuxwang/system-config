@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 
 class Options:
@@ -15,25 +16,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_words(self):
+    def get_words(self) -> List[str]:
         """
         Return list of words.
         """
         return self._args.words
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Print arguments in lower case.')
+            description='Print arguments in lower case.',
+        )
 
         parser.add_argument('words', nargs='+', metavar='word', help='A word.')
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -45,7 +47,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -56,7 +58,7 @@ class Main:
         sys.exit(0)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -73,7 +75,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -81,6 +83,8 @@ class Main:
 
         words = options.get_words()
         print(" ".join(words).lower())
+
+        return 0
 
 
 if __name__ == '__main__':

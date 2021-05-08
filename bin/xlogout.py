@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import task_mod
 
@@ -17,19 +18,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_force_flag(self):
+    def get_force_flag(self) -> bool:
         """
         Return force flag.
         """
         return self._args.force_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Logout from X-windows desktop.')
+            description='Logout from X-windows desktop.',
+        )
 
         parser.add_argument(
             '-force',
@@ -40,7 +42,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -52,7 +54,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -62,7 +64,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -78,7 +80,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -105,6 +107,8 @@ class Main:
                 sys.exit(114)
 
         task_mod.Tasks.factory().killpids([self._pid])
+
+        return 0
 
 
 if __name__ == '__main__':

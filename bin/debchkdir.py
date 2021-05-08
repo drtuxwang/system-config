@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import file_mod
 
@@ -17,20 +18,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_distributions(self):
+    def get_distributions(self) -> List[str]:
         """
         Return list of distributions directories.
         """
         return self._args.distributions
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Check debian directory for old, unused or missing '
-            '".deb" packages.'
+            '".deb" packages.',
         )
 
         parser.add_argument(
@@ -42,7 +43,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -54,24 +55,24 @@ class Package:
     Package class
     """
 
-    def __init__(self, file, time, version):
+    def __init__(self, file: str, time: int, version: str) -> None:
         self._file = file
         self._time = time
         self._version = version
 
-    def get_file(self):
+    def get_file(self) -> str:
         """
         Return package file location.
         """
         return self._file
 
-    def get_time(self):
+    def get_time(self) -> int:
         """
         Return package time stamp.
         """
         return self._time
 
-    def get_version(self):
+    def get_version(self) -> str:
         """
         Return version.
         """
@@ -83,7 +84,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -93,12 +94,12 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def _check_files(distribution):
+    def _check_files(distribution: str) -> dict:
         try:
             files = sorted(glob.glob(os.path.join(distribution, '*.deb')))
         except OSError:
             return None
-        packages = {}
+        packages: dict = {}
         for file in files:
             name = os.path.basename(file).split('_')[0]
             file_stat = file_mod.FileStat(file)
@@ -120,7 +121,7 @@ class Main:
         return packages
 
     @staticmethod
-    def _check_used(distribution):
+    def _check_used(distribution: str) -> dict:
         packages = {}
         try:
             file = distribution + '.debs'
@@ -162,7 +163,7 @@ class Main:
         return packages
 
     @staticmethod
-    def _read_distribution_allow_list(file):
+    def _read_distribution_allow(file: str) -> dict:
         packages = {}
         try:
             with open(file, errors='replace') as ifile:
@@ -178,15 +179,19 @@ class Main:
         return packages
 
     @staticmethod
-    def _compare(packages_files, packages_allow_list, packages_used):
+    def _compare(
+        packages_files: dict,
+        packages_allow: dict,
+        packages_used: dict,
+    ) -> None:
         names_files = sorted(packages_files)
-        names_allow_list = sorted(packages_allow_list)
+        names_allow_list = sorted(packages_allow)
         names_used = packages_used.keys()
 
         for name in names_files:
             if name not in names_used:
                 if (name in names_allow_list and
-                        packages_allow_list[name] in
+                        packages_allow[name] in
                         ('*', packages_files[name])):
                     continue
                 print("rm", packages_files[name].get_file(), "# Unused")
@@ -202,7 +207,7 @@ class Main:
                 print("# ", packages_used[name].get_file(), "Missing")
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -218,7 +223,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -227,14 +232,16 @@ class Main:
         for distribution in options.get_distributions():
             packages_files = self._check_files(distribution)
             if packages_files and os.path.isfile(distribution + '.debs'):
-                packages_allow_list = self._read_distribution_allow_list(
+                packages_allow = self._read_distribution_allow(
                     distribution + '.debs:allow')
                 packages_used = self._check_used(distribution)
                 self._compare(
                     packages_files,
-                    packages_allow_list,
+                    packages_allow,
                     packages_used
                 )
+
+        return 0
 
 
 if __name__ == '__main__':

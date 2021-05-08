@@ -8,14 +8,13 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import requests
 
 import config_mod
 
-# pylint: disable = no-member
-requests.packages.urllib3.disable_warnings()
-# pylint: enable = no-member
+requests.packages.urllib3.disable_warnings()  # pylint: disable = no-member
 
 
 class Options:
@@ -23,19 +22,19 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self._config()
         self.parse(sys.argv)
 
-    def get_keywords(self):
+    def get_keywords(self) -> List[str]:
         """
         Return list of keywords.
         """
         return self._args.keywords
 
     @staticmethod
-    def _config():
+    def _config() -> None:
         if 'REQUESTS_CA_BUNDLE' not in os.environ:
             for file in (
                     # Debian/Ubuntu
@@ -47,7 +46,7 @@ class Options:
                     os.environ['REQUESTS_CA_BUNDLE'] = file
                     break
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description='Google search.')
 
         parser.add_argument(
@@ -59,7 +58,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -71,7 +70,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -81,7 +80,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -98,7 +97,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _search(search_for):
+    def _search(search_for: str) -> None:
         url = (
             'http://ajax.googleapis.com/ajax/services/search/web?v=1.0&' +
             search_for
@@ -125,12 +124,14 @@ class Main:
             print("        {0:s}".format(page['titleNoFormatting']))
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
         options = Options()
         cls._search(" ".join(options.get_keywords()))
+
+        return 0
 
 
 if __name__ == '__main__':

@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from typing import List, Tuple
 
 import command_mod
 import subtask_mod
@@ -19,32 +20,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_ffmpeg(self):
+    def get_ffmpeg(self) -> command_mod.Command:
         """
         Return ffmpeg Command class object.
         """
         return self._ffmpeg
 
-    def get_view_flag(self):
+    def get_view_flag(self) -> bool:
         """
         Return view flag.
         """
         return self._args.view_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Normalize volume of wave files '
-            '(-16.0dB rms mean volume).'
+            '(-16.0dB rms mean volume).',
         )
 
         parser.add_argument(
@@ -62,7 +63,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -76,7 +77,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -86,7 +87,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -102,7 +103,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _adjust(self, file, volume):
+    def _adjust(self, file: str, volume: str) -> None:
         change = -16 - float(volume)
         file_new = file + '.part'
 
@@ -131,7 +132,7 @@ class Main:
                 sys.argv[0] + ': Cannot update "' + file + '" file.'
             ) from exception
 
-    def _view(self, file):
+    def _view(self, file: str) -> Tuple[str, str]:
         self._ffmpeg.set_args(
             ['-i', file, "-af", "volumedetect", "-f", "null", "/dev/null"])
         task = subtask_mod.Batch(self._ffmpeg.get_cmdline())
@@ -150,7 +151,7 @@ class Main:
         pvolume = task.get_output()[1].split()[-2]
         return volume, pvolume
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -179,6 +180,8 @@ class Main:
                     if volume.startswith('-16.'):
                         break
             print()
+
+        return 0
 
 
 if __name__ == '__main__':

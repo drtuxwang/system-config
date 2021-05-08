@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -17,17 +18,16 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_vncserver(self):
+    def get_vncserver(self) -> command_mod.Command:
         """
         Return vncserver Command class object.
         """
         return self._vncserver
 
-    def _config(self):
+    def _config(self) -> None:
         if not os.path.isfile(
                 os.path.join(os.environ['HOME'], '.vnc', 'passwd')):
             raise SystemExit(
@@ -63,7 +63,7 @@ class Options:
         ):
             os.environ['PATH'] = directory + os.pathsep + os.environ['PATH']
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -92,7 +92,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -102,7 +102,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -119,13 +119,15 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
         options = Options()
 
         subtask_mod.Exec(options.get_vncserver().get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import Generator, List
 
 import file_mod
 import config_mod
@@ -18,25 +19,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_directory(self):
+    def get_directory(self) -> str:
         """
         Return list of directory.
         """
         return self._args.directory[0]
 
-    def get_height(self):
+    def get_height(self) -> int:
         """
         Return hieght in pixels.
         """
         return self._args.height
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Generate XHTML files to view pictures.')
+            description='Generate XHTML files to view pictures.',
+        )
 
         parser.add_argument(
             '-height',
@@ -63,7 +65,7 @@ class Options:
                 '" directory.'
             )
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -75,7 +77,7 @@ class Gallery:
     Gallery class
     """
 
-    def __init__(self, directory, height):
+    def __init__(self, directory: str, height: int) -> None:
         self._directory = directory
         self._height = height
         images_extensions = config_mod.Config().get('image_extensions')
@@ -92,7 +94,12 @@ class Gallery:
             ) from exception
         self._nfiles = len(self._files)
 
-    def generate(self, number, file, next_file):
+    def generate(
+        self,
+        number: int,
+        file: str,
+        next_file: str,
+    ) -> Generator[str, None, None]:
         """
         Generate XHTML docuement
 
@@ -140,7 +147,7 @@ class Gallery:
         yield ''
         yield '</body></html>'
 
-    def create(self):
+    def create(self) -> int:
         """
         Create gallery
         """
@@ -181,11 +188,11 @@ class Xhtml:
     Xhtml class
     """
 
-    def __init__(self, options):
+    def __init__(self, options: Options) -> None:
         self._height = options.get_height()
         self._directory = options.get_directory()
 
-    def _find(self, directory=''):
+    def _find(self, directory: str = '') -> List[str]:
         if directory:
             directories = [directory]
         else:
@@ -197,7 +204,9 @@ class Xhtml:
         return directories
 
     @staticmethod
-    def generate(file_stats):
+    def generate(
+        file_stats: List[file_mod.FileStat],
+    ) -> Generator[str, None, None]:
         """
         Generate XHTML index file
 
@@ -235,7 +244,7 @@ class Xhtml:
             yield ''
         yield '</body></html>'
 
-    def create(self):
+    def create(self) -> None:
         """
         Create files
         """
@@ -243,7 +252,7 @@ class Xhtml:
             os.chdir(self._directory)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot change to "' + self._directory() +
+                sys.argv[0] + ': Cannot change to "' + self._directory +
                 '" directory.'
             ) from exception
 
@@ -273,7 +282,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -283,7 +292,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -300,13 +309,15 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
         options = Options()
 
         Xhtml(options).create()
+
+        return 0
 
 
 if __name__ == '__main__':

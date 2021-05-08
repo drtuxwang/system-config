@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from typing import List
 
 import config_mod
 import file_mod
@@ -19,37 +20,38 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_directories(self):
+    def get_directories(self) -> List[str]:
         """
         Return list of directories.
         """
         return self._args.directories
 
-    def get_order(self):
+    def get_order(self) -> str:
         """
         Return order method.
         """
         return self._args.order
 
-    def get_reset_flag(self):
+    def get_reset_flag(self) -> bool:
         """
         Return per directory number reset flag
         """
         return self._args.reset_flag
 
-    def get_start(self):
+    def get_start(self) -> int:
         """
         Return start number.
         """
         return self._args.start[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Renumber picture files into a numerical series.')
+            description='Renumber picture files into a numerical series.',
+        )
 
         parser.add_argument(
             '-time',
@@ -81,7 +83,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -100,7 +102,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -110,7 +112,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -127,7 +129,10 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _sorted(options, file_stats):
+    def _sorted(
+        options: Options,
+        file_stats: List[file_mod.FileStat],
+    ) -> List[file_mod.FileStat]:
         order = options.get_order()
         if order == 'time':
             file_stats = sorted(
@@ -138,7 +143,7 @@ class Main:
             file_stats = sorted(file_stats, key=lambda s: s.get_file())
         return file_stats
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -188,6 +193,8 @@ class Main:
                             '" image file.'
                         ) from exception
                 os.chdir(startdir)
+
+        return 0
 
 
 if __name__ == '__main__':

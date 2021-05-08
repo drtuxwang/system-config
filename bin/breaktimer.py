@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import time
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -23,23 +24,23 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_pop(self):
+    def get_pop(self) -> command_mod.Command:
         """
         Return pop Command class object.
         """
         return self._pop
 
-    def get_time(self):
+    def get_time(self) -> int:
         """
         Return time limit.
         """
         return self._args.time[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description='Break reminder timer.')
 
         parser.add_argument(
@@ -63,7 +64,7 @@ class Options:
                 'break time.'
             )
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -99,7 +100,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -109,7 +110,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -125,7 +126,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _alert(self):
+    def _alert(self) -> None:
         if self._alarm < 601:
             sys.stdout.write("\033]11;#ff8888\007")
             sys.stdout.flush()
@@ -135,7 +136,7 @@ class Main:
             subtask_mod.Batch(self._options.get_pop().get_cmdline()).run()
         self._alarm += 60  # One minute reminder
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -163,6 +164,8 @@ class Main:
                     sys.stdout.flush()
             except KeyboardInterrupt:
                 print()
+
+        return 0
 
 
 if __name__ == '__main__':

@@ -2,17 +2,20 @@
 """
 Python power handling module
 
-Copyright GPL v2: 2011-2020 By Dr Colin Kong
+Copyright GPL v2: 2011-2021 By Dr Colin Kong
 """
 
+# Annotation: Fix Class reference run time NameError
+from __future__ import annotations
 import functools
 import glob
 import os
 import re
 import subprocess
+from typing import List, Optional
 
-RELEASE = '2.1.11'
-VERSION = 20201013
+RELEASE = '2.2.0'
+VERSION = 20210508
 
 
 class Battery:
@@ -20,25 +23,26 @@ class Battery:
     Battery base class
     """
 
-    def __init__(self, directory):
-        self._info = {
+    def __init__(self, directory: Optional[str] = None) -> None:
+        self._info: dict = {
             'oem_name': 'Unknown',
             'model_name': 'Unknown',
             'type': 'Unknown',
             'capacity_max': -1,
             'voltage': -1
         }
-        self._state = None
-        self._isjunk = None
-        self._config(directory)
+        self._state = ' '
+        self._isjunk = re.compile('')
+        self._directory = directory
+        self._config()
         self.check()
 
     @staticmethod
-    def factory():
+    def factory() -> List[Battery]:
         """
         Return list of Battery sub class objects
         """
-        devices = []
+        devices: List[Battery] = []
 
         if os.path.isdir('/sys/class/power_supply'):  # New kernels
             for directory in glob.glob('/sys/class/power_supply/BAT*'):
@@ -52,64 +56,64 @@ class Battery:
 
         return devices
 
-    def _config(self, _):
+    def _config(self) -> None:
         self._is_exist = False
 
-    def is_exist(self):
+    def is_exist(self) -> bool:
         """
         Return exist flag.
         """
         return self._is_exist
 
-    def get_capacity(self):
+    def get_capacity(self) -> int:
         """
         Return current capcity
         """
         return self._info['capacity']
 
-    def get_capacity_max(self):
+    def get_capacity_max(self) -> int:
         """
         Return max capcity
         """
         return self._info['capacity_max']
 
-    def get_charge(self):
+    def get_charge(self) -> str:
         """
         Return charge change mode
         """
         return self._info['charge']
 
-    def get_name(self):
+    def get_name(self) -> str:
         """
         Return model name
         """
         return self._info['model_name']
 
-    def get_oem(self):
+    def get_oem(self) -> str:
         """
         Return OEM name
         """
         return self._info['oem_name']
 
-    def get_rate(self):
+    def get_rate(self) -> int:
         """
         Return chargee change rate
         """
         return self._info['rate']
 
-    def get_type(self):
+    def get_type(self) -> str:
         """
         Return battery type
         """
         return self._info['type']
 
-    def get_voltage(self):
+    def get_voltage(self) -> int:
         """
         Return voltage
         """
         return self._info['voltage']
 
-    def check(self):
+    def check(self) -> None:
         """
         Check status
         """
@@ -122,11 +126,11 @@ class BatteryAcpi(Battery):
     Uses old '/proc/acpi/battery/BAT*' interface
     """
 
-    def _config(self, directory):
-        self._state = os.path.join(directory, 'state')
+    def _config(self) -> None:
+        self._state = os.path.join(self._directory, 'state')
         self._isjunk = re.compile('^.*: *| .*$')
         with open(os.path.join(
-                directory,
+                self._directory,
                 'info'
         ), errors='replace') as ifile:
             for line in ifile:
@@ -151,7 +155,7 @@ class BatteryAcpi(Battery):
                         pass
         self.check()
 
-    def check(self):
+    def check(self) -> None:
         """
         Check status
         """
@@ -196,11 +200,11 @@ class BatteryPower(Battery):
     Uses new '/sys/class/power_supply/BAT*' interface
     """
 
-    def _config(self, directory):
-        self._state = os.path.join(directory, 'uevent')
+    def _config(self) -> None:
+        self._state = os.path.join(self._directory, 'uevent')
         self._isjunk = re.compile('^[^=]*=| .*$')
         with open(self._state, errors='replace') as ifile:
-            self._state = os.path.join(directory, 'uevent')
+            self._state = os.path.join(self._directory, 'uevent')
             for line in ifile:
                 line = line.rstrip()
                 try:
@@ -224,7 +228,7 @@ class BatteryPower(Battery):
                 except ValueError:
                     pass
 
-    def check(self):
+    def check(self) -> None:
         """
         Check status
         """
@@ -278,9 +282,13 @@ class BatteryMac(Battery):
     Uses '/usr/sbin/ioreg' utility
     """
 
+    def __init__(self, data: dict) -> None:
+        self._data = data
+        super().__init__()
+
     @staticmethod
-    def factory():
-        devices = []
+    def factory() -> List[Battery]:
+        devices: List[Battery] = []
 
         data = {}
         for line in _System.run_program(['/usr/sbin/ioreg', '-l']):
@@ -298,20 +306,20 @@ class BatteryMac(Battery):
 
         return devices
 
-    def _config(self, data):
+    def _config(self) -> None:
         try:
-            self._info['id'] = data['id']
-            self._info['capacity_max'] = data['DesignCapacity']
-            self._info['model_name'] = data['BatterySerialNumber']
-            self._info['oem_name'] = data.get(
+            self._info['id'] = self._data['id']
+            self._info['capacity_max'] = self._data['DesignCapacity']
+            self._info['model_name'] = self._data['BatterySerialNumber']
+            self._info['oem_name'] = self._data.get(
                 'Manufacturer',
-                data['DeviceName'],
+                self._data['DeviceName'],
             )
-            self._info['type'] = data['type']
+            self._info['type'] = self._data['type']
         except ValueError:
             pass
 
-    def check(self):
+    def check(self) -> None:
         data = {}
         for line in _System.run_program(['/usr/sbin/ioreg', '-l']):
             if "Battery  <" in line and self._info['id'] in line:
@@ -349,7 +357,7 @@ class BatteryMac(Battery):
 class _System:
 
     @staticmethod
-    def is_mac():
+    def is_mac() -> bool:
         """
         Return True if running on MacOS.
         """
@@ -359,7 +367,7 @@ class _System:
 
     @staticmethod
     @functools.lru_cache(maxsize=4)
-    def _locate_program(program):
+    def _locate_program(program: str) -> str:
         for directory in os.environ['PATH'].split(os.pathsep):
             file = os.path.join(directory, program)
             if os.path.isfile(file):
@@ -371,7 +379,7 @@ class _System:
         return file
 
     @classmethod
-    def run_program(cls, command):
+    def run_program(cls, command: List[str]) -> List[str]:
         """
         Run program in batch mode and return list of lines.
         """

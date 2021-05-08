@@ -19,7 +19,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -29,7 +29,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -46,7 +46,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _cache():
+    def _cache() -> None:
         helm2_directory = os.path.join(os.environ['HOME'], '.helm')
         if os.path.isdir(helm2_directory):
             if not os.path.isdir(os.path.join(helm2_directory, 'repository')):
@@ -82,7 +82,7 @@ class Main:
                 subtask_mod.Task(helm.get_cmdline() + ['repo', 'update']).run()
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
@@ -91,6 +91,8 @@ class Main:
         helm = command_mod.Command('helm', errors='stop')
         helm.set_args(sys.argv[1:])
         subtask_mod.Exec(helm.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

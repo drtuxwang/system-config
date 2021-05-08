@@ -6,6 +6,7 @@ Monitor laptop battery
 import argparse
 import signal
 import sys
+from typing import List
 
 import power_mod
 
@@ -15,17 +16,17 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_summary_flag(self):
+    def get_summary_flag(self) -> bool:
         """
         Return summary flag.
         """
         return self._args.summary_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description='Monitor laptop battery.')
 
         parser.add_argument(
@@ -37,7 +38,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -49,7 +50,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -59,7 +60,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -67,7 +68,7 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def _show_battery(battery):
+    def _show_battery(battery: power_mod.Battery) -> None:
         model = (
             battery.get_oem() + ' ' + battery.get_name() + ' ' +
             battery.get_type() + ' ' + str(battery.get_capacity_max()) +
@@ -101,7 +102,7 @@ class Main:
         )
 
     @staticmethod
-    def _show_summary(batteries):
+    def _show_summary(batteries: List[power_mod.Battery]) -> None:
         capacity = 0
         rate = 0
         for battery in batteries:
@@ -118,7 +119,7 @@ class Main:
             else:
                 print("{0:d}mAh [Unused]".format(capacity))
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -131,6 +132,8 @@ class Main:
             for battery in batteries:
                 if battery.is_exist():
                     self._show_battery(battery)
+
+        return 0
 
 
 if __name__ == '__main__':

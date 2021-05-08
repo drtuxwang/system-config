@@ -8,8 +8,10 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import config_mod
+import file_mod
 
 
 class Options:
@@ -17,25 +19,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_depth(self):
+    def get_depth(self) -> int:
         """
         Return directory depth
         """
         return self._args.depth[0]
 
-    def get_directories(self):
+    def get_directories(self) -> List[str]:
         """
         Return list of directories.
         """
         return self._args.directories
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Create links to picture/video files.')
+            description='Create links to picture/video files.',
+        )
 
         parser.add_argument(
             '-depth',
@@ -53,7 +56,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -77,7 +80,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -87,7 +90,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -104,7 +107,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -130,6 +133,15 @@ class Main:
                                 sys.argv[0] + ': Cannot create "' +
                                 link + '" link.'
                             ) from exception
+                        file_stat = file_mod.FileStat(file)
+                        file_time = file_stat.get_time()
+                        os.utime(
+                            link,
+                            (file_time, file_time),
+                            follow_symlinks=False,
+                        )
+
+        return 0
 
 
 if __name__ == '__main__':

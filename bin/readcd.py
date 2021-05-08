@@ -10,15 +10,14 @@ import os
 import signal
 import sys
 import time
+from typing import List
 
 import command_mod
 import logging_mod
 import subtask_mod
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -29,37 +28,38 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_disk_at_once_flag(self):
+    def get_disk_at_once_flag(self) -> bool:
         """
         Return dao flag
         """
         return self._args.dao_flag
 
-    def get_device(self):
+    def get_device(self) -> str:
         """
         Return device location.
         """
         return self._args.device[0]
 
-    def get_image(self):
+    def get_image(self) -> str:
         """
         Return ISO/BIN image location.
         """
         return self._image
 
-    def get_speed(self):
+    def get_speed(self) -> str:
         """
         Return CD/DVD speed.
         """
         return self._args.speed[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Copy CD/DVD data as a portable ISO/BIN image file.')
+            description='Copy CD/DVD data as a portable ISO/BIN image file.',
+        )
 
         parser.add_argument(
             '-dao',
@@ -89,7 +89,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -122,17 +122,17 @@ class Cdrom:
     CDROM class
     """
 
-    def __init__(self):
-        self._devices = {}
+    def __init__(self) -> None:
+        self._devices: dict = {}
         self.detect()
 
-    def get_devices(self):
+    def get_devices(self) -> dict:
         """
         Return list of devices
         """
         return self._devices
 
-    def detect(self):
+    def detect(self) -> None:
         """
         Detect devices
         """
@@ -156,7 +156,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -166,7 +166,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -183,7 +183,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _cdspeed(device, speed):
+    def _cdspeed(device: str, speed: str) -> None:
         cdspeed = command_mod.Command('cdspeed', errors='ignore')
         if cdspeed.is_found():
             if speed:
@@ -196,7 +196,7 @@ class Main:
             subtask_mod.Batch(hdparm.get_cmdline()).run()
 
     @staticmethod
-    def _dao(device, speed, file):
+    def _dao(device: str, speed: str, file: str) -> None:
         cdrdao = command_mod.Command('cdrdao', errors='stop')
 
         cdrdao.set_args(['read-cd', '--device', device, '--read-raw'])
@@ -217,14 +217,14 @@ class Main:
             )
 
     @staticmethod
-    def _scan():
+    def _scan() -> None:
         cdrom = Cdrom()
         print("Scanning for CD/DVD devices...")
         devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
             print("  {0:10s}  {1:s}".format(key, value))
 
-    def _tao(self, device, file):
+    def _tao(self, device: str, file: str) -> None:
         isoinfo = command_mod.Command('isoinfo', errors='stop')
 
         command = command_mod.Command('dd', errors='stop')
@@ -292,7 +292,7 @@ class Main:
         self._isosize(file, os.path.getsize(file))
 
     @staticmethod
-    def _isosize(image, size):
+    def _isosize(image: str, size: int) -> None:
         if size > 734003200:
             logger.info(
                 "%s: %4.2f MB (%5.3f salesman's GB)",
@@ -345,7 +345,7 @@ class Main:
                 )
                 logger.warning("==> Please use 700MB/80min CD media instead.")
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -382,6 +382,8 @@ class Main:
                         str(task.get_exitcode()) + ' received from "' +
                         task.get_file() + '".'
                     )
+
+        return 0
 
 
 if __name__ == '__main__':

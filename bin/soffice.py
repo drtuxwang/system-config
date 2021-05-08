@@ -18,7 +18,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -28,7 +28,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -44,7 +44,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _config(self):
+    def _config(self) -> None:
         for file in glob.glob('.~lock.*#'):  # Remove stupid lock files
             try:
                 os.remove(file)
@@ -87,12 +87,12 @@ class Main:
                 pass
 
     @staticmethod
-    def _setenv():
+    def _setenv() -> None:
         if 'GTK_MODULES' in os.environ:
             # Fix Linux 'gnomebreakpad' problems
             del os.environ['GTK_MODULES']
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -116,6 +116,8 @@ class Main:
 
         task = subtask_mod.Background(self._soffice.get_cmdline())
         task.run(pattern=self._pattern)
+
+        return 0
 
 
 if __name__ == '__main__':

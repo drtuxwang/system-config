@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import file_mod
 
@@ -17,16 +18,40 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def _parse_args(self, args):
+    def get_time_flag(self) -> bool:
+        """
+        Return time flag.
+        """
+        return self._args.time_flag
+
+    def get_directory_1(self) -> str:
+        """
+        Return directory 1.
+        """
+        return self._args.directories[0]
+
+    def get_directory_2(self) -> str:
+        """
+        Return directory 2.
+        """
+        return self._args.directories[1]
+
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Show summary of differences between two '
-            'directories recursively.'
+            'directories recursively.',
         )
 
+        parser.add_argument(
+            '-t',
+            dest='time_flag',
+            action='store_true',
+            help='Compare modified time stamps.'
+        )
         parser.add_argument(
             'directories',
             nargs=2,
@@ -36,19 +61,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def get_directory_1(self):
-        """
-        Return directory 1.
-        """
-        return self._args.directories[0]
-
-    def get_directory_2(self):
-        """
-        Return directory 2.
-        """
-        return self._args.directories[1]
-
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -60,7 +73,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -70,7 +83,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -87,7 +100,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_files(directory):
+    def _get_files(directory: str) -> List[str]:
         try:
             files = sorted(
                 [os.path.join(directory, x) for x in os.listdir(directory)])
@@ -101,26 +114,35 @@ class Main:
             ) from exception
         return files
 
-    def _diffdir(self, directory1, directory2):
+    def _diff_dir(
+        self,
+        directory1: str,
+        directory2: str,
+        time_flag: bool = False,
+    ) -> None:
         files1 = self._get_files(directory1)
         files2 = self._get_files(directory2)
 
         for file in files1:
             if os.path.isdir(file):
                 if os.path.isdir(
-                        os.path.join(directory2, os.path.basename(file))):
-                    self._diffdir(
+                        os.path.join(directory2, os.path.basename(file)),
+                ):
+                    self._diff_dir(
                         file,
-                        os.path.join(directory2, os.path.basename(file))
+                        os.path.join(directory2, os.path.basename(file)),
+                        time_flag,
                     )
                 else:
                     print("only ", file + os.sep)
             elif os.path.isfile(file):
                 if os.path.isfile(
-                        os.path.join(directory2, os.path.basename(file))):
-                    self._difffile(
+                        os.path.join(directory2, os.path.basename(file)),
+                ):
+                    self._diff_file(
                         file,
-                        os.path.join(directory2, os.path.basename(file))
+                        os.path.join(directory2, os.path.basename(file)),
+                        time_flag,
                     )
                 else:
                     print("only ", file)
@@ -128,21 +150,26 @@ class Main:
         for file in files2:
             if os.path.isdir(file):
                 if not os.path.isdir(
-                        os.path.join(directory1, os.path.basename(file))):
+                        os.path.join(directory1, os.path.basename(file)),
+                ):
                     print("only ", file + os.sep)
             elif os.path.isfile(file):
                 if not os.path.isfile(
-                        os.path.join(directory1, os.path.basename(file))):
+                        os.path.join(directory1, os.path.basename(file)),
+                ):
                     print("only ", file)
 
     @staticmethod
-    def _difffile(file1, file2):
+    def _diff_file(file1: str, file2: str, time_flag: bool = False) -> None:
         file_stat1 = file_mod.FileStat(file1)
         file_stat2 = file_mod.FileStat(file2)
 
         if file_stat1.get_size() != file_stat2.get_size():
             print("diff ", file1 + "  " + file2)
         elif file_stat1.get_time() != file_stat2.get_time():
+            if time_flag:
+                print("time ", file1 + '  ' + file2)
+                return
             try:
                 ifile1 = open(file1, 'rb')
             except OSError:
@@ -162,13 +189,18 @@ class Main:
             ifile1.close()
             ifile2.close()
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
         options = Options()
+        directory_1 = options.get_directory_1()
+        directory_2 = options.get_directory_2()
+        time_flag = options.get_time_flag()
 
-        self._diffdir(options.get_directory_1(), options.get_directory_2())
+        self._diff_dir(directory_1, directory_2, time_flag)
+
+        return 0
 
 
 if __name__ == '__main__':

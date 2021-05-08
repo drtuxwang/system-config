@@ -18,7 +18,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -28,7 +28,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -49,7 +49,7 @@ class Main:
         os.environ['HOME'] = newhome
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -60,6 +60,8 @@ class Main:
         )
 
         subtask_mod.Exec(hardinfo.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

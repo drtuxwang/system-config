@@ -10,36 +10,37 @@ import signal
 import socket
 import sys
 import time
+from typing import List
 
 import task_mod
 
-RELEASE = '2.7.10'
+RELEASE = '2.8.0'
 
 
 class Options:
     """
     Options class
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self._release = RELEASE
-        self._args = None
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_release(self):
+    def get_release(self) -> str:
         """
         Return release version.
         """
         return self._release
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='MyQS v' + self._release +
-            ', My Queuing System batch job submission.'
+            ', My Queuing System batch job submission.',
         )
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -51,7 +52,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -61,7 +62,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -77,7 +78,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _myqsd(self):
+    def _myqsd(self) -> None:
         lockfile = os.path.join(self._myqsdir, 'myqsd.pid')
         try:
             with open(lockfile, errors='replace') as ifile:
@@ -93,12 +94,12 @@ class Main:
             pass
         print('MyQS batch job scheduler not running. Run "myqsd" command.')
 
-    def _showjobs(self):
+    def _showjobs(self) -> None:
         print(
             'JOBID  QUEUENAME  JOBNAME                                     '
             'CPUS  STATE  TIME'
         )
-        jobids = []
+        jobids: List[int] = []
         for file in glob.glob(os.path.join(self._myqsdir, '*.[qr]')):
             try:
                 jobids.append(int(os.path.basename(file)[:-2]))
@@ -121,7 +122,7 @@ class Main:
                 state = 'RUN'
             else:
                 state = 'QUEUE'
-            info = {}
+            info: dict = {}
             for line in ifile:
                 line = line.strip()
                 if '=' in line:
@@ -132,8 +133,8 @@ class Main:
         print()
 
     @staticmethod
-    def _show_details(info, jobid, state):
-        output = []
+    def _show_details(info: dict, jobid: int, state: str) -> None:
+        output: List[str] = []
         if 'START' in info:
             try:
                 etime = str(int((time.time() - float(info['START'])) / 60.))
@@ -171,12 +172,12 @@ class Main:
             info['COMMAND'],
             info['NCPUS'],
             state,
-            etime
+            etime,
         ))
         for line in output:
             print(line)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -195,6 +196,8 @@ class Main:
             os.environ['HOME'], '.config', 'myqs', host)
         self._showjobs()
         self._myqsd()
+
+        return 0
 
 
 if __name__ == '__main__':

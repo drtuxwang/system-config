@@ -3,6 +3,8 @@
 Wrapper for Linux/Mac screen locking
 """
 
+# Annotation: Fix Class reference run time NameError
+from __future__ import annotations
 import glob
 import os
 import signal
@@ -20,26 +22,26 @@ class ScreenLocker:
     Screen Locker base class.
     """
 
-    def __init__(self):
-        self._daemon = None
-        self._command = None
+    def __init__(self) -> None:
+        self._daemon: command_mod.Command = None
+        self._command: command_mod.Command = None
         self._setup()
 
-    def _setup(self):
+    def _setup(self) -> None:
         pass
 
-    def detect(self):
+    def detect(self) -> bool:
         """
         Return True if installed.
         """
         return self._command.is_found()
 
     @staticmethod
-    def factory(desktop):
+    def factory(desktop: str) -> ScreenLocker:
         """
         Return ScreenLocker sub class object.
         """
-        screenlockers = {
+        screenlockers: dict = {
            'cinnamon': [CinnamonLocker, GnomeLocker, LightLocker, Xlock],
            'gnome': [GnomeLocker, LightLocker, Xlock],
            'kde': [KdeLocker, LightLocker, Xlock],
@@ -56,7 +58,7 @@ class ScreenLocker:
 
         raise SystemExit(sys.argv[0] + ': Cannot find suitable screen locker.')
 
-    def run(self):
+    def run(self) -> None:
         """
         Run screen locker.
         """
@@ -75,7 +77,7 @@ class CinnamonLocker(ScreenLocker):
     Cinnamon screen locker class.
     """
 
-    def _setup(self):
+    def _setup(self) -> None:
         self._daemon = command_mod.Command(
             'cinnamon-screensaver',
             errors='ignore',
@@ -92,7 +94,7 @@ class GnomeLocker(ScreenLocker):
     Gnome screen locker class.
     """
 
-    def _setup(self):
+    def _setup(self) -> None:
         self._daemon = command_mod.Command(
             'gnome-screensaver',
             errors='ignore',
@@ -109,7 +111,7 @@ class KdeLocker(ScreenLocker):
     KDE screen locker class.
     """
 
-    def _setup(self):
+    def _setup(self) -> None:
         self._command = command_mod.Command(
             'qdbus',
             args=['org.freedesktop.ScreenSaver', '/ScreenSaver', 'Lock'],
@@ -122,7 +124,7 @@ class LightLocker(ScreenLocker):
     Light DM screen locker class.
     """
 
-    def _setup(self):
+    def _setup(self) -> None:
         self._command = command_mod.Command(
             'light-locker-command',
             args=['--lock'],
@@ -135,7 +137,7 @@ class MacLocker(ScreenLocker):
     Mac screen locker class.
     """
 
-    def _setup(self):
+    def _setup(self) -> None:
         self._command = command_mod.Command(
             '/System/Library/CoreServices/Menu Extras/User.menu/'
             'Contents/Resources/CGSession',
@@ -149,7 +151,7 @@ class MateLocker(ScreenLocker):
     Mate screen locker class.
     """
 
-    def _setup(self):
+    def _setup(self) -> None:
         self._daemon = command_mod.Command(
             'mate-screensaver',
             errors='ignore',
@@ -166,7 +168,7 @@ class XfceLocker(ScreenLocker):
     XFCE screen locker class.
     """
 
-    def _setup(self):
+    def _setup(self) -> None:
         self._command = command_mod.Command('xflock4', errors='ignore')
 
 
@@ -175,7 +177,7 @@ class Xlock(ScreenLocker):
     "xlock" screen locker class.
     """
 
-    def _setup(self):
+    def _setup(self) -> None:
         self._command = command_mod.Command('xlock', errors='ignore')
         args = sys.argv[1:]
         if args:
@@ -200,7 +202,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -210,7 +212,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -227,7 +229,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -237,6 +239,8 @@ class Main:
         desktop = desktop_mod.Desktop.detect()
         locker = ScreenLocker.factory(desktop)
         locker.run()
+
+        return 0
 
 
 if __name__ == '__main__':

@@ -17,7 +17,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -28,7 +28,7 @@ class Main:
         sys.exit(0)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -45,7 +45,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_top():
+    def _get_top() -> command_mod.Command:
         if os.name == 'posix' and os.uname()[0] == 'SunOS':
             if os.path.isfile('/bin/prstat'):
                 return command_mod.CommandFile('/bin/prstat', args=['10'])
@@ -54,7 +54,7 @@ class Main:
         return command_mod.Command('top', errors='stop')
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
@@ -62,6 +62,8 @@ class Main:
         top.extend_args(sys.argv[1:])
 
         subtask_mod.Exec(top.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

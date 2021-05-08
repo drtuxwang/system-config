@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import time
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -19,39 +20,40 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_pattern(self):
+    def get_pattern(self) -> str:
         """
         Return filter pattern.
         """
         return self._pattern
 
-    def get_ping(self):
+    def get_ping(self) -> command_mod.Command:
         """
         Return ping Command class object.
         """
         return self._ping
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Ping a host until a connection is made.')
+            description='Ping a host until a connection is made.',
+        )
 
         parser.add_argument('host', nargs=1, help='Host name or IP address.')
 
         self._args = parser.parse_args(args)
 
     @staticmethod
-    def _get_ping():
+    def _get_ping() -> command_mod.Command:
         if os.path.isfile('/usr/sbin/ping'):
             return command_mod.CommandFile('/usr/sbin/ping')
         if os.path.isfile('/usr/etc/ping'):
             return command_mod.CommandFile('/usr/etc/ping')
         return command_mod.Command('ping')
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -80,7 +82,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -90,7 +92,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -107,7 +109,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -120,6 +122,8 @@ class Main:
                 break
             time.sleep(5)
         print(task.get_output()[-1].strip())
+
+        return 0
 
 
 if __name__ == '__main__':

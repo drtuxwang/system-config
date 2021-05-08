@@ -11,10 +11,11 @@ import signal
 import socket
 import sys
 import time
+from typing import List
 
 import task_mod
 
-RELEASE = '2.7.12'
+RELEASE = '2.8.0'
 
 
 class Options:
@@ -22,33 +23,33 @@ class Options:
     Options class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._release = RELEASE
-        self._args = None
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_ncpus(self):
+    def get_ncpus(self) -> int:
         """
         Return number of CPU slots.
         """
         return self._args.ncpus[0]
 
-    def get_queue(self):
+    def get_queue(self) -> str:
         """
         Return queue name.
         """
         return self._args.queue[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='MyQS v' + self._release +
-            ', My Queuing System batch job submission.'
+            ', My Queuing System batch job submission.',
         )
 
         parser.add_argument(
@@ -75,7 +76,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -98,7 +99,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -108,7 +109,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -124,7 +125,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _lastjob(self):
+    def _lastjob(self) -> int:
         lastjob = os.path.join(self._myqsdir, 'myqs.last')
         if os.path.isfile(lastjob):
             try:
@@ -152,7 +153,7 @@ class Main:
             ) from exception
         return jobid
 
-    def _lock(self):
+    def _lock(self) -> str:
         while True:
             lockfile = os.path.join(self._myqsdir, 'myqsub.pid')
             if os.path.isfile(lockfile):
@@ -183,7 +184,7 @@ class Main:
             time.sleep(1)
         return lockfile
 
-    def _myqsd(self):
+    def _myqsd(self) -> None:
         lockfile = os.path.join(self._myqsdir, 'myqsd.pid')
         try:
             with open(lockfile, errors='replace') as ifile:
@@ -199,7 +200,7 @@ class Main:
             pass
         print('MyQS batch job scheduler not running. Run "myqsd" command.')
 
-    def _submit(self, options):
+    def _submit(self, options: Options) -> None:
         tmpfile = os.path.join(self._myqsdir, 'newjob.tmp')
         queue = options.get_queue()
         ncpus = options.get_ncpus()
@@ -229,7 +230,7 @@ class Main:
                 'Batch job with jobid', jobid, 'has been submitted into MyQS.')
             time.sleep(0.5)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -257,6 +258,8 @@ class Main:
         self._submit(options)
         os.remove(lockfile)
         self._myqsd()
+
+        return 0
 
 
 if __name__ == '__main__':

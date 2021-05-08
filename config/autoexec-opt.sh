@@ -56,7 +56,7 @@ start_app() {
 ##pactl set-card-profile 0 output:hdmi-stereo+input:analog-stereo  # HDMI-1
 ##pactl set-card-profile 0 output:hdmi-stereo-extra1+input:analog-stereo  # HDMI-2
 ##pactl set-card-profile 0 off
-##pactl set-sink-volume 0 100%  # Default volume from 0% to 153%
+##pactl set-sink-volume 0 50%  # Default volume from 0% to 153%
 
 # Fix keyboard:
 ##setxkbmap us

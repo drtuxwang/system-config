@@ -15,7 +15,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -25,7 +25,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -33,7 +33,7 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -41,6 +41,8 @@ class Main:
             'wineserver', args=['-k'], errors='stop')
 
         subtask_mod.Task(wineserver.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

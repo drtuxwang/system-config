@@ -17,7 +17,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -28,7 +28,7 @@ class Main:
         sys.exit(0)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -45,7 +45,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _is_windows():
+    def _is_windows() -> bool:
         """
         Return True if running on Windows.
         """
@@ -58,7 +58,7 @@ class Main:
         return False
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
@@ -73,6 +73,8 @@ class Main:
         traceroute.set_args(sys.argv[1:])
 
         subtask_mod.Exec(traceroute.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

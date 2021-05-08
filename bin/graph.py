@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List, Sequence
 
 import command_mod
 import subtask_mod
@@ -18,43 +19,44 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_file(self):
+    def get_file(self) -> str:
         """
         Return file.
         """
         return self._args.file[0]
 
-    def get_gnuplot(self):
+    def get_gnuplot(self) -> command_mod.Command:
         """
         Return gnuplot Command class object.
         """
         return self._gnuplot
 
-    def get_mode(self):
+    def get_mode(self) -> str:
         """
         Return operation mode.
         """
         return self._args.mode
 
-    def get_xcol(self):
+    def get_xcol(self) -> int:
         """
         Return X column.
         """
         return self._args.xcol[0]
 
-    def get_xrange(self):
+    def get_xrange(self) -> str:
         """
         Return X range.
         """
         return self._xrange
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Generate multiple graph files with X/Y plots.')
+            description='Generate multiple graph files with X/Y plots.',
+        )
 
         parser.add_argument(
             '-mode',
@@ -84,7 +86,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -109,7 +111,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -119,7 +121,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -136,7 +138,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _config_labels(file):
+    def _config_labels(file: str) -> List[str]:
         if not os.path.isfile(file):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + file + '" data file.')
@@ -160,7 +162,7 @@ class Main:
             )
         return labels
 
-    def _graph(self):
+    def _graph(self) -> None:
         if self._xcol > len(self._labels):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find column number "' +
@@ -196,7 +198,7 @@ class Main:
                     )
 
     @staticmethod
-    def _writefile(file, lines):
+    def _writefile(file: str, lines: Sequence[str]) -> int:
         try:
             with open(file, 'w', newline='\n') as ofile:
                 for line in lines:
@@ -205,7 +207,7 @@ class Main:
             return 1
         return 0
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -219,6 +221,8 @@ class Main:
 
         self._labels = self._config_labels(self._file)
         self._graph()
+
+        return 0
 
 
 if __name__ == '__main__':

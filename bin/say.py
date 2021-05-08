@@ -10,8 +10,9 @@ import re
 import signal
 import sys
 import time
+from typing import List
 
-import gtts
+import gtts  # type: ignore
 
 import command_mod
 import file_mod
@@ -24,31 +25,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_run_flag(self):
+    def get_run_flag(self) -> bool:
         """
         Return run flag.
         """
         return self._args.run
 
-    def get_tmpfile(self):
+    def get_tmpfile(self) -> str:
         """
         Return tmpfile.
         """
         return self._tmpfile
 
-    def get_words(self):
+    def get_words(self) -> List[str]:
         """
         Return list of words.
         """
         return self._words
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Speak words using Google TTS engine.')
+            description='Speak words using Google TTS engine.',
+        )
 
         parser.add_argument(
             '-run',
@@ -74,7 +76,7 @@ class Options:
         self._args = parser.parse_args(args)
 
     @staticmethod
-    def _xclip():
+    def _xclip() -> List[str]:
         isxclip = re.compile(os.sep + 'python.*[/ ]say(.py)? .*-xclip')
         tasks = task_mod.Tasks.factory()
         for pid in tasks.get_pids():
@@ -93,7 +95,7 @@ class Options:
             )
         return task.get_output()
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -114,7 +116,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -124,7 +126,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -141,7 +143,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def speak(options):
+    def speak(options: Options) -> None:
         """
         Speak message.
         """
@@ -183,13 +185,15 @@ class Main:
         raise SystemExit(exitcode)
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
         options = Options()
 
         cls.speak(options)
+
+        return 0
 
 
 if __name__ == '__main__':

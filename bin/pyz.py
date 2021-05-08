@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import BinaryIO, List
 
 import command_mod
 import subtask_mod
@@ -18,19 +19,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archiver(self):
+    def get_archive(self) -> str:
+        """
+        Return archive location.
+        """
+        return self._args.archive
+
+    def get_archiver(self) -> command_mod.Command:
         """
         Return archiver Command class object.
         """
         return self._archiver
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Make a Python3 ZIP Application in PYZ format.')
+            description='Make a Python3 ZIP Application in PYZ format.',
+        )
 
         parser.add_argument(
             'archive',
@@ -47,7 +55,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -90,19 +98,13 @@ class Options:
                 ': Cannot find "__main__.py" main program file.'
             )
 
-    def get_archive(self):
-        """
-        Return archive location.
-        """
-        return self._args.archive
-
 
 class Main:
     """
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -112,7 +114,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -128,7 +130,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _make_pyz(self, archive):
+    def _make_pyz(self, archive: str) -> None:
         try:
             with open(archive, 'wb') as ofile:
                 ofile.write(b"#!/usr/bin/env python3\n")
@@ -146,14 +148,14 @@ class Main:
         os.chmod(archive, int('755', 8))
 
     @staticmethod
-    def _copy(ifile, ofile):
+    def _copy(ifile: BinaryIO, ofile: BinaryIO) -> None:
         while True:
             chunk = ifile.read(131072)
             if not chunk:
                 break
             ofile.write(chunk)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -169,6 +171,8 @@ class Main:
             )
             raise SystemExit(task.get_exitcode())
         self._make_pyz(options.get_archive())
+
+        return 0
 
 
 if __name__ == '__main__':

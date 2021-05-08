@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import task_mod
 
@@ -17,19 +18,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_task(self):
+    def get_task(self) -> task_mod.Tasks:
         """
         Return task Task class object.
         """
         return self._task
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Show all tasks belonging to an user.')
+            description='Show all tasks belonging to an user.',
+        )
 
         parser.add_argument(
             '-a',
@@ -37,12 +39,11 @@ class Options:
             action='store_true',
             help='Show task list for all users.'
         )
-
         parser.add_argument('username', nargs='?', help='user name.')
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -61,7 +62,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -71,7 +72,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -88,7 +89,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -120,6 +121,8 @@ class Main:
                 )
         except OSError:
             pass
+
+        return 0
 
 
 if __name__ == '__main__':

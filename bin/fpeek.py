@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import file_mod
 
@@ -17,31 +18,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_all_flag(self):
+    def get_all_flag(self) -> bool:
         """
         Return all flag.
         """
         return self._args.all_flag
 
-    def get_ascii_flag(self):
+    def get_ascii_flag(self) -> bool:
         """
         Return ascii flag.
         """
         return self._args.ascii_flag
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Dump the first and last few bytes of a binary file.')
+            description='Dump the first and last few bytes of a binary file.',
+        )
 
         parser.add_argument(
             '-a',
@@ -64,7 +66,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -76,7 +78,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -86,7 +88,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -103,7 +105,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _format(options, data):
+    def _format(options: Options, data: bytes) -> str:
         if options.get_ascii_flag():
             line = ' '
             for byte in data:
@@ -121,7 +123,7 @@ class Main:
                 line += ' ' + str(byte).rjust(3)
         return line
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -159,6 +161,8 @@ class Main:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot read "' + file + '" file.'
                 ) from exception
+
+        return 0
 
 
 if __name__ == '__main__':

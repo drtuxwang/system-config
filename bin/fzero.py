@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import time
+from typing import List
 
 
 class Options:
@@ -16,19 +17,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_location(self):
+    def get_location(self) -> str:
         """
         Return location.
         """
         return self._args.location[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Zero device or create zero file.')
+            description='Zero device or create zero file.',
+        )
 
         parser.add_argument(
             'location',
@@ -52,7 +54,7 @@ class Options:
                 '" device or directory.'
             )
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -64,7 +66,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -74,7 +76,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -91,7 +93,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -119,6 +121,8 @@ class Main:
         elapsed_time = time.time() - start_time
         print(", {0:4.2f} seconds, {1:.0f} MB/s".format(
             elapsed_time, size / elapsed_time))
+
+        return 0
 
 
 if __name__ == '__main__':

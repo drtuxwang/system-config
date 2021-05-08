@@ -8,6 +8,9 @@ import glob
 import os
 import signal
 import sys
+from typing import List
+
+import file_mod
 
 
 class Options:
@@ -15,19 +18,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_directories(self):
+    def get_directories(self) -> List[str]:
         """
         Return list of directories.
         """
         return self._args.directories
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Recursively link all files.')
+            description='Recursively link all files.',
+        )
 
         parser.add_argument(
             'directories',
@@ -50,7 +54,7 @@ class Options:
                     '" cannot be current directory.'
                 )
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -62,7 +66,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -72,7 +76,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -88,7 +92,12 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _link_files(self, source_dir, target_dir, subdir=''):
+    def _link_files(
+        self,
+        source_dir: str,
+        target_dir: str,
+        subdir: str = '',
+    ) -> None:
         try:
             source_files = sorted([
                 os.path.join(source_dir, x)
@@ -129,21 +138,26 @@ class Main:
                         ) from exception
                 else:
                     print('Creating "' + target_file + '" link...')
+                if os.path.isabs(source_file):
+                    file = source_file
+                else:
+                    file = os.path.join(subdir, source_file)
                 try:
-                    if os.path.isabs(source_file):
-                        os.symlink(source_file, target_file)
-                    else:
-                        os.symlink(
-                            os.path.join(subdir, source_file),
-                            target_file
-                        )
+                    os.symlink(file, target_file)
                 except OSError as exception:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot create "' +
                         target_file + '" link.'
                     ) from exception
+                file_stat = file_mod.FileStat(file)
+                file_time = file_stat.get_time()
+                os.utime(
+                    target_file,
+                    (file_time, file_time),
+                    follow_symlinks=False,
+                )
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -151,6 +165,8 @@ class Main:
 
         for directory in options.get_directories():
             self._link_files(directory, '.')
+
+        return 0
 
 
 if '--pydoc' in sys.argv:

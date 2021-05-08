@@ -10,6 +10,7 @@ import shutil
 import signal
 import sys
 import time
+from typing import List
 
 import file_mod
 
@@ -19,25 +20,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_sources(self):
+    def get_sources(self) -> List[str]:
         """
         Return list of source files.
         """
         return self._args.sources
 
-    def get_target(self):
+    def get_target(self) -> str:
         """
         Return target file or directory.
         """
         return self._args.target[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Copy files and directories.')
+            description='Copy files and directories.',
+        )
 
         parser.add_argument(
             'sources',
@@ -54,7 +56,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -66,7 +68,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -76,7 +78,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -93,7 +95,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _automount(directory, wait):
+    def _automount(directory: str, wait: int) -> None:
         if directory.startswith('/media/'):
             for _ in range(0, wait * 10):
                 if os.path.isdir(directory):
@@ -101,7 +103,7 @@ class Main:
                 time.sleep(0.1)
 
     @staticmethod
-    def _copy_link(source, target):
+    def _copy_link(source: str, target: str) -> None:
         print('Creating "' + target + '" link...')
         source_link = os.readlink(source)
 
@@ -127,7 +129,7 @@ class Main:
         file_time = file_stat.get_time()
         os.utime(target, (file_time, file_time), follow_symlinks=False)
 
-    def _copy_directory(self, source, target):
+    def _copy_directory(self, source: str, target: str) -> None:
         print('Creating "' + target + '" directory...')
         try:
             files = sorted(
@@ -158,7 +160,7 @@ class Main:
         os.utime(target, (file_time, file_time))
 
     @staticmethod
-    def _copy_file(source, target):
+    def _copy_file(source: str, target: str) -> None:
         print('Creating "' + target + '" file...')
         try:
             shutil.copy2(source, target)
@@ -184,7 +186,7 @@ class Main:
                         sys.argv[0] + ': Cannot create "' + target + '" file.'
                     ) from exception
 
-    def _copy(self, source, target):
+    def _copy(self, source: str, target: str) -> None:
         if os.path.islink(source):
             self._copy_link(source, target)
         elif os.path.isdir(source):
@@ -192,7 +194,7 @@ class Main:
         elif os.path.isfile(source):
             self._copy_file(source, target)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -205,7 +207,7 @@ class Main:
         if len(sources) == 1:
             if not os.path.isdir(target):
                 self._copy_file(sources[0], target)
-                return
+                return 0
         elif not os.path.isdir(target):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + target +
@@ -247,6 +249,8 @@ class Main:
                             '" directory.'
                         ) from exception
                 self._copy(source, os.path.join(target, source))
+
+        return 0
 
 
 if __name__ == '__main__':

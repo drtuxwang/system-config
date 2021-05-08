@@ -5,6 +5,8 @@ Zhong Hua Speak Chinese TTS software.
 2009-2021 By Dr Colin Kong
 """
 
+# Annotation: Fix Class reference run time NameError
+from __future__ import annotations
 import argparse
 import glob
 import json
@@ -13,13 +15,14 @@ import re
 import signal
 import sys
 import time
+from typing import Generator, List, Tuple
 
 import command_mod
 import file_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '5.1.1'
+RELEASE = '5.2.0'
 
 
 class Options:
@@ -27,48 +30,48 @@ class Options:
     Options class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._release = RELEASE
-        self._args = None
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_dialect(self):
+    def get_dialect(self) -> str:
         """
         Return dialect.
         """
         return self._args.dialect
 
-    def get_language(self):
+    def get_language(self) -> Language:
         """
         Return language Command class object
         """
         return self._language
 
-    def get_phrases(self):
+    def get_phrases(self) -> List[str]:
         """
         Return phrases
         """
         return self._phrases
 
-    def get_pinyin_flag(self):
+    def get_pinyin_flag(self) -> bool:
         """
         Return Pinyin flag.
         """
         return self._args.pinyin
 
-    def get_speak_dir(self):
+    def get_speak_dir(self) -> str:
         """
         Return speak directory
         """
         return self._speak_dir
 
-    def get_tmpfile(self):
+    def get_tmpfile(self) -> str:
         """
         Return tmpfile.
         """
         return self._tmpfile
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Zhong Hua Speak v' + self._release +
             ' - Chinese TTS software.'
@@ -158,7 +161,7 @@ class Options:
         self._args = parser.parse_args(args)
 
     @staticmethod
-    def _xclip():
+    def _xclip() -> List[str]:
         isxclip = re.compile(os.sep + 'python.*[/ ]zhspeak(.py)? .*-xclip')
         tasks = task_mod.Tasks.factory()
         for pid in tasks.get_pids():
@@ -177,7 +180,7 @@ class Options:
             )
         return task.get_output()
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -217,11 +220,11 @@ class Language:
     Language base class
     """
 
-    def __init__(self, _):
+    def __init__(self, _: Options) -> None:
         self._is_found = False
 
     @staticmethod
-    def factory(options):
+    def factory(options: Options) -> Language:
         """
         Return Language sub class object
         """
@@ -236,13 +239,13 @@ class Language:
             sys.argv[0] + ': Cannot find "pico2wave" or "espeak" TTS software.'
         )
 
-    def is_found(self):
+    def is_found(self) -> bool:
         """
         Return True if TTS software found.
         """
         return self._is_found
 
-    def text2speech(self, _):
+    def text2speech(self, text: List[str]) -> None:
         """
         Text to speech conversion
         """
@@ -253,7 +256,7 @@ class Chinese(Language):
     Chinese class
     """
 
-    def __init__(self, options):
+    def __init__(self, options: Options) -> None:
         super().__init__(options)
 
         self._options = options
@@ -271,7 +274,7 @@ class Chinese(Language):
             )
         self._is_found = True
 
-    def _speak(self, sounds):
+    def _speak(self, sounds: List[str]) -> None:
         files = []
         for sound in sounds:
             if os.path.isfile(
@@ -289,11 +292,11 @@ class Chinese(Language):
                     )
                 time.sleep(0.25)
 
-    def text2speech(self, phrases):
+    def text2speech(self, text: List[str]) -> None:
         """
         Text to speech conversion
         """
-        for phrase in phrases:
+        for phrase in text:
             for sounds in self._dictionary.map_speech(phrase):
                 if not self._options.get_pinyin_flag():
                     self._speak(sounds)
@@ -305,7 +308,7 @@ class ChineseDictionary:
     Chinese dictionary class
     """
 
-    def __init__(self, options):
+    def __init__(self, options: Options) -> None:
         self._options = options
         self._isjunk = re.compile('[()| ]')
         self._issound = re.compile(r'[A-Z]$|[a-z]+\d+')
@@ -326,7 +329,7 @@ class ChineseDictionary:
             ) from exception
         self._max_block = max([len(key) for key in self._mappings])
 
-    def create_cache(self):
+    def create_cache(self) -> None:
         """
         Create JSON cache files
         """
@@ -367,7 +370,7 @@ class ChineseDictionary:
                 sys.argv[0] + ': Cannot create "' + file + '" file.'
             ) from exception
 
-    def readmap(self, file):
+    def readmap(self, file: str) -> None:
         """
         Read map
         """
@@ -387,7 +390,7 @@ class ChineseDictionary:
                 sys.argv[0] + ': Cannot open "' + file + '" dialect file.'
             ) from exception
 
-    def map_speech(self, text):
+    def map_speech(self, text: str) -> Generator[List[str], None, None]:
         """
         Map Speech
         """
@@ -413,7 +416,7 @@ class LibttsPico(Language):
     LibttsPico class
     """
 
-    def __init__(self, options):
+    def __init__(self, options: Options) -> None:
         super().__init__(options)
 
         self._tmpfile = options.get_tmpfile()
@@ -425,7 +428,11 @@ class LibttsPico(Language):
         self._is_found = self._command.is_found()
 
     @staticmethod
-    def _speak_sounds(cmdline, text, tmpfile):
+    def _speak_sounds(
+        cmdline: List[str],
+        text: List[str],
+        tmpfile: str,
+    ) -> None:
         mp3_player = AudioPlayer.factory(None)
         if not mp3_player:
             raise SystemExit(
@@ -448,7 +455,7 @@ class LibttsPico(Language):
 
         os.remove(tmpfile)
 
-    def text2speech(self, text):
+    def text2speech(self, text: List[str]) -> None:
         """
         Text to speech conversion
         """
@@ -461,7 +468,7 @@ class Espeak(Language):
     Espeak class
     """
 
-    def __init__(self, options):
+    def __init__(self, options: Options) -> None:
         super().__init__(options)
 
         self._options = options
@@ -475,7 +482,7 @@ class Espeak(Language):
         self._is_found = self._command.is_found()
 
     @staticmethod
-    def _show_sounds(cmdline, text):
+    def _show_sounds(cmdline: List[str], text: List[str]) -> None:
         task = subtask_mod.Task(cmdline + ['-x', '-q', ' '.join(text)])
         task.run(pattern=': Connection refused')
         if task.get_exitcode():
@@ -485,7 +492,7 @@ class Espeak(Language):
             )
 
     @staticmethod
-    def _speak_sounds(cmdline, text):
+    def _speak_sounds(cmdline: List[str], text: List[str]) -> None:
         # Break at '.' and ','
         for phrase in re.sub(r'[^\s\w-]', '.', '.'.join(text)).split('.'):
             if phrase:
@@ -498,7 +505,7 @@ class Espeak(Language):
                         ' received from "' + task.get_file() + '".'
                     )
 
-    def text2speech(self, text):
+    def text2speech(self, text: List[str]) -> None:
         """
         Text to speech conversion
         """
@@ -512,15 +519,16 @@ class AudioPlayer:
     Audio player base class
     """
 
-    def __init__(self, oggdir):
+    def __init__(self, oggdir: str) -> None:
         self._oggdir = oggdir
         self._config()
 
     @staticmethod
-    def factory(ogg_dir):
+    def factory(ogg_dir: str) -> AudioPlayer:
         """
         Return AudioPlayer sub class object
         """
+        audio_players: Tuple
         if ogg_dir:
             audio_players = (Vlc, Ogg123, Avplay, Ffplay)
         else:
@@ -532,22 +540,22 @@ class AudioPlayer:
                 return player
         return None
 
-    def _config(self):
-        self._player = None
+    def _config(self) -> None:
+        self._player: command_mod.Command = None
 
-    def has_player(self):
+    def has_player(self) -> bool:
         """
         Return True if player found
         """
         return self._player.is_found()
 
-    def get_player(self):
+    def get_player(self) -> str:
         """
         Return player file location
         """
         return self._player.get_file()
 
-    def run(self, files):
+    def run(self, files: List[str]) -> int:
         """
         Run player
         """
@@ -562,7 +570,7 @@ class Vlc(AudioPlayer):
     Uses vlc in command-line mode.
     """
 
-    def _config(self):
+    def _config(self) -> None:
         self._player = command_mod.Command('vlc', errors='ignore')
         self._player.set_args([
             '--intf',
@@ -579,8 +587,11 @@ class Ogg123(AudioPlayer):
     Uses 'ogg123' from 'vorbis-tools'.
     """
 
-    def _config(self):
-        self._player = command_mod.Command('ogg123', errors='ignore')
+    def _config(self) -> None:
+        self._player: command_mod.Command = command_mod.Command(
+            'ogg123',
+            errors='ignore',
+        )
 
 
 class Ffplay(Ogg123):
@@ -588,11 +599,11 @@ class Ffplay(Ogg123):
     Uses 'ffplay' from 'ffmpeg'.
     """
 
-    def _config(self):
+    def _config(self) -> None:
         self._player = command_mod.Command('ffplay', errors='ignore')
         self._player.set_args(['-nodisp', '-autoexit', '-i'])
 
-    def run(self, files):
+    def run(self, files: List[str]) -> int:
         """
         Run player
         """
@@ -607,8 +618,11 @@ class Avplay(Ffplay):
     Uses 'avplay' from 'libav-tools'.
     """
 
-    def _config(self):
-        self._player = command_mod.Command('ffplay', errors='ignore')
+    def _config(self) -> None:
+        self._player: command_mod.Command = command_mod.Command(
+            'ffplay',
+            errors='ignore',
+        )
         self._player.set_args(['-nodisp', '-autoexit', '-i'])
 
 
@@ -617,7 +631,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -628,7 +642,7 @@ class Main:
         sys.exit(0)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -645,7 +659,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -655,6 +669,8 @@ class Main:
             options.get_language().text2speech(options.get_phrases())
         except subtask_mod.ExecutableCallError as exception:
             raise SystemExit(exception) from exception
+
+        return 0
 
 
 if __name__ == '__main__':

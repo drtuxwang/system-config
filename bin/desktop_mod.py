@@ -2,22 +2,23 @@
 """
 Python X-windows desktop module
 
-Copyright GPL v2: 2013-2020 By Dr Colin Kong
+Copyright GPL v2: 2013-2021 By Dr Colin Kong
 """
 
 import functools
 import getpass
 import os
 import subprocess
+from typing import List, Optional
 
-RELEASE = '2.4.0'
-VERSION = 20201114
+RELEASE = '2.5.0'
+VERSION = 20210508
 
 
 class _System:
 
     @staticmethod
-    def is_windows():
+    def is_windows() -> bool:
         """
         Return True if running on Windows.
         """
@@ -30,7 +31,7 @@ class _System:
         return False
 
     @staticmethod
-    def _locate_program(program):
+    def _locate_program(program: str) -> Optional[str]:
         for directory in os.environ['PATH'].split(os.pathsep):
             file = os.path.join(directory, program)
             if os.path.isfile(file):
@@ -40,7 +41,7 @@ class _System:
         return file
 
     @classmethod
-    def run_program(cls, command):
+    def run_program(cls, command: List[str]) -> List[str]:
         """
         Run program in batch mode and return list of lines.
         """
@@ -75,7 +76,7 @@ class Desktop:
     """
 
     @staticmethod
-    def has_xfce():
+    def has_xfce() -> bool:
         """
         Return true if running XFCE desktop
         """
@@ -88,7 +89,7 @@ class Desktop:
         return False
 
     @staticmethod
-    def has_gnome():
+    def has_gnome() -> bool:
         """
         Return true if running Gnome desktop
         """
@@ -103,7 +104,7 @@ class Desktop:
         return False
 
     @staticmethod
-    def has_kde():
+    def has_kde() -> bool:
         """
         Return true if running KDE desktop
         """
@@ -116,7 +117,7 @@ class Desktop:
         return False
 
     @staticmethod
-    def has_cinnamon():
+    def has_cinnamon() -> bool:
         """
         Return true if running Cinnamon desktop
         """
@@ -127,7 +128,7 @@ class Desktop:
         return False
 
     @staticmethod
-    def has_mate():
+    def has_mate() -> bool:
         """
         Return true if running Mate desktop
         """
@@ -136,7 +137,7 @@ class Desktop:
         return False
 
     @staticmethod
-    def has_macos():
+    def has_macos() -> bool:
         """
         Return true if running MacOS desktop
         """
@@ -145,7 +146,7 @@ class Desktop:
         return False
 
     @staticmethod
-    def guess_running():
+    def guess_running() -> str:
         """
         Guess desktop based on session user is running. Return name or Unknown.
         """
@@ -169,7 +170,7 @@ class Desktop:
         return 'Unknown'
 
     @staticmethod
-    def guess_installed():
+    def guess_installed() -> str:
         """
         Guess desktop based on what is installed. Return name or Unknown.
         """
@@ -192,7 +193,7 @@ class Desktop:
 
     @classmethod
     @functools.lru_cache(maxsize=1)
-    def detect(cls):
+    def detect(cls) -> str:
         """
         Return desktop name or Unknown)
         """

@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List, TextIO
 
 
 class Options:
@@ -15,23 +16,23 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_lines(self):
+    def get_lines(self) -> int:
         """
         Return number of lines.
         """
         return self._args.lines[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Output the first n lines of a file.')
 
@@ -59,7 +60,7 @@ class Options:
                 'number of lines.'
             )
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -71,7 +72,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -81,7 +82,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -97,7 +98,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _file(self, options, file):
+    def _file(self, options: Options, file: str) -> None:
         try:
             with open(file, errors='replace') as ifile:
                 self._pipe(options, ifile)
@@ -107,7 +108,7 @@ class Main:
             ) from exception
 
     @staticmethod
-    def _pipe(options, pipe):
+    def _pipe(options: Options, pipe: TextIO) -> None:
         for _ in range(options.get_lines()):
             line = pipe.readline()
             if not line:
@@ -117,7 +118,7 @@ class Main:
             except OSError:
                 return
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -131,6 +132,8 @@ class Main:
             self._file(options, options.get_files()[0])
         else:
             self._pipe(options, sys.stdin)
+
+        return 0
 
 
 if __name__ == '__main__':

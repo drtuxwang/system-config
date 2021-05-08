@@ -10,15 +10,14 @@ import re
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import logging_mod
 import subtask_mod
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -29,43 +28,44 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_directory(self):
+    def get_directory(self) -> str:
         """
         Return directory.
         """
         return self._args.directory[0]
 
-    def get_genisoimage(self):
+    def get_genisoimage(self) -> command_mod.Command:
         """
         Return genisoimage Command class object.
         """
         return self._genisoimage
 
-    def get_image(self):
+    def get_image(self) -> str:
         """
         Return ISO image location.
         """
         return self._image
 
-    def get_isoinfo(self):
+    def get_isoinfo(self) -> command_mod.Command:
         """
         Return isoinfo Command class object.
         """
         return self._isoinfo
 
-    def get_volume(self):
+    def get_volume(self) -> str:
         """
         Return volume name.
         """
         return self._args.volume[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Make a portable CD/DVD archive in ISO9660 format.')
+            description='Make a portable CD/DVD archive in ISO9660 format.',
+        )
 
         parser.add_argument(
             '-f',
@@ -88,7 +88,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -131,7 +131,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -141,7 +141,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -157,7 +157,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _bootimg(self, options):
+    def _bootimg(self, options: Options) -> None:
         files = (
             glob.glob(os.path.join(
                 options.get_directory(),
@@ -196,7 +196,7 @@ class Main:
                 ])
 
     @staticmethod
-    def _isosize(image, size):
+    def _isosize(image: str, size: int) -> None:
         if size > 734003200:
             logger.info(
                 "%s: %4.2f MB (%5.3f salesman's GB)",
@@ -247,7 +247,7 @@ class Main:
                 )
                 logger.warning("==> Please use 700MB/80min CD media instead.")
 
-    def _windisk(self, options):
+    def _windisk(self, options: Options) -> None:
         if os.name == 'nt':
             self._genisoimage.extend_args(['-file-mode', '444'])
         else:
@@ -280,7 +280,7 @@ class Main:
                         )
                         self._genisoimage.extend_args(['-file-mode', '444'])
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -333,6 +333,8 @@ class Main:
                     ' received from "' + task.get_file() + '".'
                 )
             self._isosize(image, os.path.getsize(image))
+
+        return 0
 
 
 if __name__ == '__main__':

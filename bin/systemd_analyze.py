@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -17,7 +18,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -27,7 +28,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -44,11 +45,11 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_time(delays):
+    def _get_time(delays: List[str]) -> float:
         """
         Convert delay to seconds.
         """
-        seconds = 0
+        seconds = 0.
         for delay in delays:
             if delay.endswith('min'):
                 seconds += float(delay[:-3]) * 60
@@ -60,7 +61,7 @@ class Main:
         return seconds
 
     @classmethod
-    def _filter_run(cls, command):
+    def _filter_run(cls, command: command_mod.Command) -> None:
         """
         Remove buggy firmware & loader timings.
         """
@@ -69,7 +70,7 @@ class Main:
         for line in task.get_output():
             if line.startswith('Startup finished in '):
                 timings = []
-                boot_time = 0
+                boot_time = 0.
                 for timing in line.split(
                         'Startup finished in '
                 )[-1].split(' = ')[0].split(' + '):
@@ -85,7 +86,7 @@ class Main:
                 print(line)
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
@@ -97,6 +98,8 @@ class Main:
         if sys.argv[1:] not in ([], ['time']):
             subtask_mod.Exec(command.get_cmdline()).run()
         cls._filter_run(command)
+
+        return 0
 
 
 if __name__ == '__main__':

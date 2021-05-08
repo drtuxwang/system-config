@@ -10,6 +10,7 @@ import random
 import signal
 import string
 import sys
+from typing import List
 
 
 class Options:
@@ -17,25 +18,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_symbols_flag(self):
+    def get_symbols_flag(self) -> bool:
         """
         Return symbols flag.
         """
         return self._args.symbols_flag
 
-    def get_length(self):
+    def get_length(self) -> int:
         """
         Return length.
         """
         return self._args.length[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Create secure random password.')
+            description='Create secure random password.',
+        )
 
         parser.add_argument(
             '-s',
@@ -52,7 +54,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -70,7 +72,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -80,7 +82,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -97,7 +99,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -109,6 +111,8 @@ class Main:
 
         print("".join(random.choice(chars) for i in range(
             options.get_length())))
+
+        return 0
 
 
 if __name__ == '__main__':

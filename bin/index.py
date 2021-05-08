@@ -10,16 +10,15 @@ import re
 import shutil
 import signal
 import sys
+from typing import List
 
 import command_mod
 import file_mod
 import logging_mod
 import subtask_mod
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -30,7 +29,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -40,7 +39,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -56,7 +55,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _checksum(self):
+    def _checksum(self) -> None:
 
         fsum = command_mod.Command('fsum', errors='stop')
         files = glob.glob('*')
@@ -97,7 +96,7 @@ class Main:
             ) from exception
 
     @staticmethod
-    def _checkfile(isbadfile, directory=os.curdir):
+    def _checkfile(isbadfile: re.Pattern, directory: str = os.curdir) -> None:
         """
         Look for bad files like core dumps
         (don't followlinks & onerror do nothing)
@@ -120,7 +119,7 @@ class Main:
             raise SystemExit(1)
 
     @staticmethod
-    def _create_directory(directory):
+    def _create_directory(directory: str) -> None:
         if not os.path.isdir(directory):
             try:
                 os.mkdir(directory)
@@ -131,7 +130,7 @@ class Main:
                 ) from exception
 
     @staticmethod
-    def _set_time(directory):
+    def _set_time(directory: str) -> None:
         if not directory:
             directory = '.'
         files = [os.path.join(directory, x) for x in os.listdir(directory)]
@@ -149,8 +148,8 @@ class Main:
                 os.utime(file, (file_time, file_time))
 
     @classmethod
-    def _write_fsums(cls, lines):
-        fsums = {}
+    def _write_fsums(cls, lines: List[str]) -> None:
+        fsums: dict = {}
         for line in lines:
             checksum, file = line.split('  ', 1)
             directory = os.path.dirname(file)
@@ -195,7 +194,7 @@ class Main:
                 ) from exception
             cls._set_time(directory)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -203,6 +202,8 @@ class Main:
 
         self._checkfile(isbadfile)
         self._checksum()
+
+        return 0
 
 
 if __name__ == '__main__':

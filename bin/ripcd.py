@@ -9,6 +9,7 @@ import os
 import re
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -19,37 +20,38 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_device(self):
+    def get_device(self) -> str:
         """
         Return device location.
         """
         return self._args.device[0]
 
-    def get_icedax(self):
+    def get_icedax(self) -> command_mod.Command:
         """
         Return icedax Command class object.
         """
         return self._icedax
 
-    def get_speed(self):
+    def get_speed(self) -> int:
         """
         Return CD speed.
         """
         return self._args.speed[0]
 
-    def get_tracks(self):
+    def get_tracks(self) -> List[str]:
         """
         Return list of track numbers.
         """
         return self._tracks
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Rip CD audio tracks as WAVE sound files.')
+            description='Rip CD audio tracks as WAVE sound files.',
+        )
 
         parser.add_argument(
             '-speed',
@@ -73,7 +75,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -98,7 +100,7 @@ class Options:
         if self._args.tracks:
             self._tracks = self._args.tracks[0].split(',')
         else:
-            self._tracks = None
+            self._tracks = []
 
 
 class Cdrom:
@@ -106,17 +108,17 @@ class Cdrom:
     CDROM class
     """
 
-    def __init__(self):
-        self._devices = {}
+    def __init__(self) -> None:
+        self._devices: dict = {}
         self.detect()
 
-    def get_devices(self):
+    def get_devices(self) -> dict:
         """
         Return list of devices
         """
         return self._devices
 
-    def detect(self):
+    def detect(self) -> None:
         """
         Detect devices
         """
@@ -140,11 +142,11 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
-            self._toc = None
-            self._tracks = None
+            self._toc: list = []
+            self._tracks: list = []
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
@@ -152,7 +154,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -168,7 +170,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _rip_tracks(self, ntracks):
+    def _rip_tracks(self, ntracks: int) -> None:
         tee = command_mod.Command('tee', errors='stop')
 
         for track in self._tracks:
@@ -227,7 +229,7 @@ class Main:
             if not self._hasprob(logfile):
                 os.remove(warnfile)
 
-    def _rip(self):
+    def _rip(self) -> None:
         self._icedax.set_args([
             '-vtrackid',
             '-paranoia',
@@ -256,7 +258,7 @@ class Main:
         self._rip_tracks(ntracks)
 
     @staticmethod
-    def _hasprob(logfile):
+    def _hasprob(logfile: str) -> bool:
         with open(logfile, errors='replace') as ifile:
             for line in ifile:
                 line = line.rstrip('\r\n')
@@ -267,7 +269,7 @@ class Main:
         return False
 
     @staticmethod
-    def _pregap(wavfile):
+    def _pregap(wavfile: str) -> None:
         # 1s = 176400 bytes
         size = os.path.getsize(wavfile)
         with open(wavfile, 'rb+') as ifile:
@@ -286,14 +288,14 @@ class Main:
                     break
 
     @staticmethod
-    def _scan():
+    def _scan() -> None:
         cdrom = Cdrom()
         print("Scanning for CD/DVD devices...")
         devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
             print("  {0:10s}  {1:s}".format(key, value))
 
-    def _read_toc(self):
+    def _read_toc(self) -> None:
         self._icedax.set_args([
             '-info-only',
             '--no-infofile',
@@ -317,7 +319,7 @@ class Main:
         for line in task.get_error(r'[.]\(.*:.*\)|^CD'):
             print(line)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -333,6 +335,8 @@ class Main:
         else:
             self._read_toc()
             self._rip()
+
+        return 0
 
 
 if __name__ == '__main__':

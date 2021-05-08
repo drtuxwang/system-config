@@ -19,7 +19,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -29,7 +29,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -45,7 +45,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _punkbuster(self):
+    def _punkbuster(self) -> None:
         home = os.environ.get('HOME', '')
         pbdir = os.path.join(home, '.etwolf', 'pb')
         linkdir = os.path.join(os.path.dirname(self._et.get_file()), 'pb')
@@ -73,7 +73,7 @@ class Main:
             raise SystemExit(sys.argv[0] + ': Cannot find "' + etkey +
                              '" key file (see http://www.etkey.net).')
 
-    def _config(self):
+    def _config(self) -> None:
         os.chdir(os.path.dirname(self._et.get_file()))
         os.environ['SDL_AUDIODRIVER'] = 'pulse'
         etsdl = (
@@ -100,7 +100,7 @@ class Main:
         if not os.path.isdir(directory):
             os.mkdir(directory)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -116,6 +116,8 @@ class Main:
 
         logfile = os.path.join(file_mod.FileUtil.tmpdir(), 'et.log')
         subtask_mod.Daemon(self._et.get_cmdline()).run(file=logfile)
+
+        return 0
 
 
 if __name__ == '__main__':

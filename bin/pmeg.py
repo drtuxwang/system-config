@@ -9,6 +9,7 @@ import math
 import os
 import signal
 import sys
+from typing import List, Tuple
 
 import command_mod
 import config_mod
@@ -20,41 +21,50 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_convert(self):
+    def get_convert(self) -> command_mod.Command:
         """
         Return convert Command class object.
         """
         return self._convert
 
-    def get_directories(self):
+    def get_directories(self) -> List[str]:
         """
         Return list of directories.
         """
         return self._args.directories
 
-    def get_megs(self):
+    def get_megs(self) -> float:
         """
         Return mega-pixels.
         """
         return self._args.megs[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Resize large picture images to mega-pixels limit.')
+            description='Resize large picture images to mega-pixels limit.',
+        )
 
-        parser.add_argument('-megs', nargs=1, type=float, default=[9],
-                            help='Select mega-pixels. Default is 9.')
-
-        parser.add_argument('directories', nargs='+', metavar='directory',
-                            help='Directory containing JPEG files to resize.')
+        parser.add_argument(
+            '-megs',
+            nargs=1,
+            type=float,
+            default=[9],
+            help='Select mega-pixels. Default is 9.',
+        )
+        parser.add_argument(
+            'directories',
+            nargs='+',
+            metavar='directory',
+            help='Directory containing JPEG files to resize.',
+        )
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -81,7 +91,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -91,7 +101,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -107,7 +117,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _imagesize(self, file):
+    def _imagesize(self, file: str) -> Tuple[int, int]:
         self._convert.set_args(['-verbose', file, '/dev/null'])
         task = subtask_mod.Batch(self._convert.get_cmdline())
         task.run(pattern='^' + file + '=>', error2output=True)
@@ -123,7 +133,7 @@ class Main:
             )[0].split('+')[0].split()[-1].split('x')
         return int(x_size), int(y_size)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -165,6 +175,8 @@ class Main:
                                 task.get_file() + '".'
                             )
                     print()
+
+        return 0
 
 
 if __name__ == '__main__':

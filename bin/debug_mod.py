@@ -2,7 +2,7 @@
 """
 Python debugging tools module
 
-Copyright GPL v2: 2015-2019 By Dr Colin Kong
+Copyright GPL v2: 2015-2021 By Dr Colin Kong
 """
 
 import os
@@ -10,10 +10,11 @@ import sys
 import time
 import traceback
 
-import jsonpickle
+import jsonpickle  # type: ignore
 
-RELEASE = '2.2.4'
-VERSION = 20191019
+
+RELEASE = '2.3.0'
+VERSION = 20210508
 
 
 class Dump:
@@ -22,7 +23,7 @@ class Dump:
     """
 
     @staticmethod
-    def append(data, file):
+    def append(data: bytes, file: str) -> None:
         """
         Append data to file.
 
@@ -33,7 +34,7 @@ class Dump:
             ofile.write(data)
 
     @classmethod
-    def output(cls, message, file=None):
+    def output(cls, message: str, file: str = None) -> None:
         """
         Show debug message with timestamp.
 
@@ -46,7 +47,7 @@ class Dump:
             print(message)
 
     @classmethod
-    def show(cls, message, file=None):
+    def show(cls, message: str, file: str = None) -> None:
         """
         Show debug message with timestamp.
 
@@ -57,7 +58,13 @@ class Dump:
             'Debug: %Y-%m-%d-%H:%M:%S: ') + message, file=file)
 
     @classmethod
-    def list(cls, name, obj, indent=4, file=None):
+    def list(
+        cls,
+        name: str,
+        obj: object,
+        indent: int = 4,
+        file: str = None,
+    ) -> None:
         """
         List object attributes recursively as expanded JSON.
 
@@ -71,7 +78,7 @@ class Dump:
             obj, unpicklable=False), file=file)
 
     @classmethod
-    def trace(cls, file=None):
+    def trace(cls, file: str = None) -> None:
         """
         Trace process information.
 

@@ -9,10 +9,11 @@ import os
 import signal
 import socket
 import sys
+from typing import List
 
 import task_mod
 
-RELEASE = '2.7.9'
+RELEASE = '2.8.0'
 
 
 class Options:
@@ -20,27 +21,27 @@ class Options:
     Options class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._release = RELEASE
-        self._args = None
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_force_flag(self):
+    def get_force_flag(self) -> bool:
         """
         Return force flag.
         """
         return self._args.force_flag
 
-    def get_jobids(self):
+    def get_jobids(self) -> List[str]:
         """
         Return list of job IDs.
         """
         return self._jobids
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='MyQS v' + self._release +
-            ', My Queuing System batch job deletion.'
+            ', My Queuing System batch job deletion.',
         )
 
         parser.add_argument(
@@ -58,7 +59,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -77,7 +78,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -87,7 +88,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -103,7 +104,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _remove(self, jobid):
+    def _remove(self, jobid: str) -> None:
         file = os.path.join(self._myqsdir, jobid + '.q')
         if os.path.isfile(file):
             try:
@@ -153,7 +154,7 @@ class Main:
             except OSError:
                 pass
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -179,6 +180,8 @@ class Main:
                 )
             else:
                 self._remove(jobid)
+
+        return 0
 
 
 if __name__ == '__main__':

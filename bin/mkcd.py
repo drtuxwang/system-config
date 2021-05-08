@@ -9,6 +9,8 @@ import os
 import signal
 import sys
 import time
+import types
+from typing import Any, Callable, List, Union
 
 import command_mod
 import subtask_mod
@@ -19,36 +21,36 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_device(self):
+    def get_device(self) -> str:
         """
         Return device location.
         """
         return self._device
 
-    def get_erase_flag(self):
+    def get_erase_flag(self) -> bool:
         """
         Return erase flag.
         """
         return self._args.erase_flag
 
-    def get_image(self):
+    def get_image(self) -> str:
         """
         Return ISO/BIN image file or audio directory.
         """
         return self._args.image[0]
 
-    def get_speed(self):
+    def get_speed(self) -> int:
         """
         Return CD speed.
         """
         return self._args.speed[0]
 
     @staticmethod
-    def _detect_device(device):
+    def _detect_device(device: str) -> str:
         if not device:
             cdrom = Cdrom()
             if not cdrom.get_devices().keys():
@@ -60,16 +62,29 @@ class Options:
                 sys.argv[0] + ': Cannot find "' + device + '" CD/DVD device.')
         return device
 
-    def _signal_ignore(self, _signal, _frame):
+    @staticmethod
+    def _signal_ignore(
+        _signal: signal.Signals,  # pylint: disable = no-member
+        _frame: types.FrameType,
+    ) -> Union[
+        Callable[[
+            signal.Signals,  # pylint: disable = no-member
+            types.FrameType,
+        ], Any],
+        int,
+        signal.Handlers,  # pylint: disable = no-member
+        None,
+    ]:
         pass
 
-    def _signal_trap(self):
+    def _signal_trap(self) -> None:
         signal.signal(signal.SIGINT, self._signal_ignore)
         signal.signal(signal.SIGTERM, self._signal_ignore)
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Make data/audio/video CD/DVD using CD/DVD writer.')
+            description='Make data/audio/video CD/DVD using CD/DVD writer.',
+        )
 
         parser.add_argument(
             '-dev',
@@ -99,7 +114,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -130,17 +145,17 @@ class Cdrom:
     CDROM class
     """
 
-    def __init__(self):
-        self._devices = {}
+    def __init__(self) -> None:
+        self._devices: dict = {}
         self.detect()
 
-    def get_devices(self):
+    def get_devices(self) -> dict:
         """
         Return list of devices
         """
         return self._devices
 
-    def detect(self):
+    def detect(self) -> None:
         """
         Detect devices
         """
@@ -164,7 +179,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -174,7 +189,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -191,7 +206,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _eject():
+    def _eject() -> None:
         eject = command_mod.Command('eject', errors='ignore')
         if eject.is_found():
             time.sleep(1)
@@ -204,14 +219,14 @@ class Main:
                 )
 
     @staticmethod
-    def _scan():
+    def _scan() -> None:
         cdrom = Cdrom()
         print("Scanning for CD/DVD devices...")
         devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
             print("  {0:10s}  {1:s}".format(key, value))
 
-    def _disk_at_once_data(self, options):
+    def _disk_at_once_data(self, options: Options) -> None:
         cdrdao = command_mod.Command('cdrdao', errors='stop')
         if options.get_erase_flag():
             cdrdao.set_args([
@@ -245,7 +260,7 @@ class Main:
             )
         self._eject()
 
-    def _track_at_once_audio(self):
+    def _track_at_once_audio(self) -> None:
         files = sorted(glob.glob(os.path.join(self._image, '*.wav')))
 
         wodim = command_mod.Command('wodim', errors='stop')
@@ -303,7 +318,7 @@ class Main:
                 print(line)
         self._eject()
 
-    def _track_at_once_data(self, options):
+    def _track_at_once_data(self, options: Options) -> None:
         file = options.get_image()
 
         wodim = command_mod.Command('wodim', errors='stop')
@@ -334,7 +349,7 @@ class Main:
                 ' received from "' + task.get_file() + '".'
             )
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -352,6 +367,8 @@ class Main:
             self._disk_at_once_data(options)
         else:
             self._track_at_once_data(options)
+
+        return 0
 
 
 if __name__ == '__main__':

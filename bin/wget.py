@@ -8,6 +8,7 @@ import os
 import shutil
 import signal
 import sys
+from typing import List
 
 import command_mod
 import network_mod
@@ -19,23 +20,22 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_output(self):
+    def get_output(self) -> str:
         """
         Return output file.
         """
         return self._output
 
-    def get_wget(self):
+    def get_wget(self) -> command_mod.Command:
         """
         Return wget Command class object.
         """
         return self._wget
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -77,7 +77,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -87,7 +87,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -104,7 +104,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -113,6 +113,7 @@ class Main:
         wget = options.get_wget()
 
         shaper = network_mod.Shaper()
+        cmdline: List[str]
         if shaper.is_found():
             cmdline = shaper.get_cmdline() + wget.get_cmdline()
         else:
@@ -136,6 +137,8 @@ class Main:
                 ) from exception
         else:
             subtask_mod.Exec(cmdline).run()
+
+        return 0
 
 
 if __name__ == '__main__':

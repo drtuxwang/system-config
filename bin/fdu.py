@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 
 class Options:
@@ -15,23 +16,23 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_summary_flag(self):
+    def get_summary_flag(self) -> bool:
         """
         Return summary flag.
         """
         return self._args.summary_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description='Show file disk usage.')
 
         parser.add_argument(
@@ -50,7 +51,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -62,7 +63,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -72,7 +73,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -88,7 +89,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _usage(self, options, directory):
+    def _usage(self, options: Options, directory: str) -> int:
         size = 0
         try:
             files = [os.path.join(directory, x) for x in os.listdir(directory)]
@@ -106,7 +107,7 @@ class Main:
             print("{0:7d} {1:s}".format(size, directory))
         return size
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -125,6 +126,8 @@ class Main:
                     print("{0:7d} {1:s}".format(size, file))
                 else:
                     print("{0:7d} {1:s}".format(0, file))
+
+        return 0
 
 
 if __name__ == '__main__':

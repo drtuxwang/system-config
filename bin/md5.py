@@ -9,6 +9,7 @@ import hashlib
 import os
 import signal
 import sys
+from typing import List
 
 
 class Options:
@@ -16,31 +17,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_check_flag(self):
+    def get_check_flag(self) -> bool:
         """
         Return check flag.
         """
         return self._args.check_flag
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_recursive_flag(self):
+    def get_recursive_flag(self) -> bool:
         """
         Return recursive flag.
         """
         return self._args.recursive_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Calculate MD5 checksums of files.')
+            description='Calculate MD5 checksums of files.',
+        )
 
         parser.add_argument(
             '-R',
@@ -63,7 +65,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -75,7 +77,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -85,7 +87,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -101,7 +103,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _calc(self, options, files):
+    def _calc(self, options: Options, files: List[str]) -> None:
         for file in files:
             if os.path.isdir(file):
                 if not os.path.islink(file) and options.get_recursive_flag():
@@ -120,7 +122,7 @@ class Main:
                         sys.argv[0] + ': Cannot read "' + file + '" file.')
                 print(md5sum, file, sep='  ')
 
-    def _check(self, files):
+    def _check(self, files: List[str]) -> None:
         found = []
         nfiles = 0
         nfail = 0
@@ -160,7 +162,7 @@ class Main:
             )
 
     @staticmethod
-    def _md5sum(file):
+    def _md5sum(file: str) -> str:
         try:
             with open(file, 'rb') as ifile:
                 md5 = hashlib.md5()
@@ -175,7 +177,7 @@ class Main:
             ) from exception
         return md5.hexdigest()
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -185,6 +187,8 @@ class Main:
             self._check(options.get_files())
         else:
             self._calc(options, options.get_files())
+
+        return 0
 
 
 if __name__ == '__main__':

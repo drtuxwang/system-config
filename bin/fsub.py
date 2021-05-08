@@ -10,6 +10,7 @@ import re
 import shutil
 import signal
 import sys
+from typing import Any, List
 
 import file_mod
 
@@ -19,31 +20,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_pattern(self):
+    def get_pattern(self) -> str:
         """
         Return regular expression pattern.
         """
         return self._args.pattern[0]
 
-    def get_replacement(self):
+    def get_replacement(self) -> str:
         """
         Return replacement.
         """
         return self._args.replacement[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Substitute patterns on lines in files.')
+            description='Substitute patterns on lines in files.',
+        )
 
         parser.add_argument(
             'pattern',
@@ -64,7 +66,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -76,7 +78,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -86,7 +88,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -103,14 +105,14 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _remove(*files):
+    def _remove(*files: Any) -> None:
         for file in files:
             try:
                 os.remove(file)
             except OSError:
                 pass
 
-    def _replace(self, file):
+    def _replace(self, file: str) -> None:
         newfile = file + '.part'
         nchange = 0
 
@@ -150,7 +152,7 @@ class Main:
         else:
             self._remove(newfile)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -170,6 +172,8 @@ class Main:
         for file in self._files:
             if os.path.isfile(file):
                 self._replace(file)
+
+        return 0
 
 
 if __name__ == '__main__':

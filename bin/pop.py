@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import time
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -19,31 +20,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_run_flag(self):
+    def get_run_flag(self) -> bool:
         """
         Return run flag.
         """
         return self._args.run
 
-    def get_time_delay(self):
+    def get_time_delay(self) -> int:
         """
         Return time delay in minutes.
         """
         return self._args.timeDelay[0]
 
-    def get_words(self):
+    def get_words(self) -> List[str]:
         """
         Return words.
         """
         return self._args.words
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Send popup message to display.')
+            description='Send popup message to display.',
+        )
 
         parser.add_argument(
             '-run',
@@ -70,7 +72,7 @@ class Options:
             args = [args[0], '--'] + args[1:]
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -88,7 +90,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -98,7 +100,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -115,7 +117,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def notify(options):
+    def notify(options: Options) -> int:
         """
         Send notify message.
         """
@@ -164,13 +166,15 @@ class Main:
         raise SystemExit(exitcode)
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
         options = Options()
 
         cls.notify(options)
+
+        return 0
 
 
 if __name__ == '__main__':

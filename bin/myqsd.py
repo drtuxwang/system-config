@@ -11,12 +11,13 @@ import signal
 import socket
 import sys
 import time
+from typing import List
 
 import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '2.7.11'
+RELEASE = '2.8.0'
 
 
 class Options:
@@ -24,33 +25,33 @@ class Options:
     Options class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._release = RELEASE
-        self._args = None
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_daemon_flag(self):
+    def get_daemon_flag(self) -> bool:
         """
         Return daemon flag.
         """
         return self._args.daemon_flag
 
-    def get_myqsdir(self):
+    def get_myqsdir(self) -> str:
         """
         Return myqs directory.
         """
         return self._myqsdir
 
-    def get_slots(self):
+    def get_slots(self) -> int:
         """
         Return CPU core slots.
         """
         return self._args.slots[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='MyQS v' + self._release +
-            ', My Queuing System batch scheduler daemon.'
+            ', My Queuing System batch scheduler daemon.',
         )
 
         parser.add_argument(
@@ -68,7 +69,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -93,7 +94,7 @@ class Lock:
     Lock class
     """
 
-    def __init__(self, file):
+    def __init__(self, file: str) -> None:
         self._file = file
         self._pid = -1
         try:
@@ -105,13 +106,13 @@ class Lock:
         except OSError:
             pass
 
-    def check(self):
+    def check(self) -> int:
         """
         Return True if lock exists
         """
         return task_mod.Tasks.factory().haspid(self._pid)
 
-    def create(self):
+    def create(self) -> None:
         """
         Create lock file
         """
@@ -139,7 +140,7 @@ class Lock:
         except OSError:
             return
 
-    def remove(self):
+    def remove(self) -> None:
         """
         Remove lock file
         """
@@ -158,7 +159,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -168,7 +169,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -184,7 +185,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _restart(self):
+    def _restart(self) -> None:
         for file in sorted(glob.glob(os.path.join(self._myqsdir, '*.r')),
                            key=lambda s: os.path.basename(s)[-2]):
             try:
@@ -207,7 +208,7 @@ class Main:
                           '" being requeued after system restart...')
                     shutil.move(file, file[:-2] + '.q')
 
-    def _schedule_job(self):
+    def _schedule_job(self) -> None:
         running = 0
         for file in glob.glob(os.path.join(self._myqsdir, '*.r')):
             try:
@@ -236,7 +237,7 @@ class Main:
         if free_slots > 0:
             self._attempt(free_slots)
 
-    def _attempt(self, free_slots):
+    def _attempt(self, free_slots: int) -> None:
         for queue in ('express', 'normal'):
             for file in sorted(glob.glob(os.path.join(self._myqsdir, '*.q')),
                                key=lambda s: int(os.path.basename(s)[:-2])):
@@ -280,13 +281,13 @@ class Main:
                                     myqexec.get_cmdline()).run(file=logfile)
                                 return
 
-    def _scheduler_daemon(self):
+    def _scheduler_daemon(self) -> None:
         Lock(os.path.join(self._myqsdir, 'myqsd.pid')).create()
         while True:
             self._schedule_job()
             time.sleep(2)
 
-    def _start_daemon(self):
+    def _start_daemon(self) -> None:
         if not os.path.isdir(self._myqsdir):
             try:
                 os.makedirs(self._myqsdir)
@@ -308,7 +309,7 @@ class Main:
         )
         subtask_mod.Daemon(myqsd.get_cmdline()).run()
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -324,6 +325,8 @@ class Main:
             self._scheduler_daemon()
         else:
             self._start_daemon()
+
+        return 0
 
 
 if __name__ == '__main__':

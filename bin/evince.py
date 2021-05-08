@@ -17,7 +17,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -27,7 +27,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -44,7 +44,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _config():
+    def _config() -> None:
         home = os.environ.get('HOME', '')
         file = os.path.join(home, '.gnome2', 'evince', 'print-settings')
         if os.path.isfile(file):
@@ -54,7 +54,7 @@ class Main:
                 pass
 
     @staticmethod
-    def _setenv():
+    def _setenv() -> None:
         # Default to A4
         os.environ['LC_PAPER'] = os.environ.get('LC_PAPER', 'en_GB.UTF-8')
 
@@ -70,7 +70,7 @@ class Main:
                 if task.has_output():
                     os.environ['PRINTER'] = task.get_output()[0].split()[-1]
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """

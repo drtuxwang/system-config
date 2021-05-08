@@ -9,6 +9,7 @@ import os
 import signal
 import socket
 import sys
+from typing import Any, List
 
 import command_mod
 import subtask_mod
@@ -19,17 +20,16 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_directory(self):
+    def get_directory(self) -> str:
         """
         Return directory.
         """
         return self._directory
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -60,13 +60,13 @@ class Chroot:
     Change root class
     """
 
-    def __init__(self, directory):
+    def __init__(self, directory: str) -> None:
         self._chroot = command_mod.Command('/usr/sbin/chroot', errors='stop')
         self._chroot.set_args([directory, '/bin/bash', '-l'])
         self._directory = directory
         self._mount = command_mod.Command('mount', errors='stop')
 
-        self._mountpoints = []
+        self._mountpoints: List[str] = []
         self.mount_dir(
             '-o',
             'bind',
@@ -103,7 +103,7 @@ class Chroot:
                 os.path.join(self._directory, 'var/run/dbus')
             )
 
-    def mount_dir(self, *args):
+    def mount_dir(self, *args: Any) -> None:
         """
         Mount directory
         """
@@ -111,7 +111,7 @@ class Chroot:
         subtask_mod.Task(self._mount.get_cmdline()).run()
         self._mountpoints.append(args[-1])
 
-    def run(self):
+    def run(self) -> None:
         """
         Start session
         """
@@ -131,7 +131,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -141,7 +141,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -158,13 +158,15 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
         options = Options()
 
         Chroot(options.get_directory()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

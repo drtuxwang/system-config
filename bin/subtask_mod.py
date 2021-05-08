@@ -2,7 +2,7 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2020 By Dr Colin Kong
+Copyright GPL v2: 2006-2021 By Dr Colin Kong
 """
 
 import copy
@@ -11,9 +11,12 @@ import re
 import signal
 import subprocess
 import sys
+import types
+from typing import Any, Callable, Dict, List, Union
 
-RELEASE = '2.1.9'
-VERSION = 20201013
+
+RELEASE = '2.2.0'
+VERSION = 20210508
 
 BUFFER_SIZE = 131072
 
@@ -23,7 +26,7 @@ class Task:
     This class handles running sub process interactively.
     """
 
-    def __init__(self, cmdline):
+    def __init__(self, cmdline: List[str]) -> None:
         """
         cmdline = Command line as a list
         """
@@ -38,27 +41,27 @@ class Task:
                         self._cmdline = [sys.executable, '-B'] + cmdline
             except OSError:
                 pass
-        self._status = {'output': [], 'error': [], 'exitcode': 0}
+        self._status: dict = {'output': [], 'error': [], 'exitcode': 0}
 
-    def get_cmdline(self):
+    def get_cmdline(self) -> List[str]:
         """
         Return the command line as a list.
         """
         return self._cmdline
 
-    def get_file(self):
+    def get_file(self) -> str:
         """
         Return file location
         """
         return self._file
 
-    def has_output(self):
+    def has_output(self) -> bool:
         """
         Return True if stdout used.
         """
         return self._status['output'] != []
 
-    def is_match_output(self, pattern):
+    def is_match_output(self, pattern: str) -> bool:
         """
         Return True if stdout has pattern.
 
@@ -70,7 +73,7 @@ class Task:
                 return True
         return False
 
-    def get_output(self, pattern=''):
+    def get_output(self, pattern: str = '') -> List[str]:
         """
         Return list of lines in stdout that match pattern.
         If no pattern return all.
@@ -87,13 +90,13 @@ class Task:
             output = self._status['output']
         return output
 
-    def has_error(self):
+    def has_error(self) -> bool:
         """
         Return True if stderr used.
         """
         return self._status['error'] != []
 
-    def is_match_error(self, pattern):
+    def is_match_error(self, pattern: str) -> bool:
         """
         Return True if stderr has pattern.
 
@@ -105,7 +108,7 @@ class Task:
                 return True
         return False
 
-    def get_error(self, pattern=''):
+    def get_error(self, pattern: str = '') -> List[str]:
         """
         Return list of lines in stderr that match pattern.
         If no pattern return all.
@@ -122,20 +125,20 @@ class Task:
             error = self._status['error']
         return error
 
-    def get_exitcode(self):
+    def get_exitcode(self) -> int:
         """
         Return exitcode of run.
         """
         return self._status['exitcode']
 
     @staticmethod
-    def _parse_keys(keys, **kwargs):
+    def _parse_keys(keys: Any, **kwargs: Any) -> dict:
         if set(kwargs.keys()) - set(keys):
             raise TaskKeywordError(
                 'Unsupported keyword "' +
                 list(set(kwargs.keys()) - set(keys))[0] + '".'
             )
-        info = {}
+        info: dict = {}
         for key in keys:
             try:
                 info[key] = kwargs[key]
@@ -145,7 +148,7 @@ class Task:
                 else:
                     info[key] = None
         try:
-            env = copy.copy(kwargs['env'])
+            env: Dict[Any, Any] = copy.copy(kwargs['env'])
             for key in os.environ:
                 if key not in env:
                     env[key] = os.environ[key]
@@ -160,7 +163,7 @@ class Task:
         return info
 
     @staticmethod
-    def _send_stdin(child, stdin):
+    def _send_stdin(child: subprocess.Popen, stdin: List[str]) -> None:
         for line in stdin:
             try:
                 child.stdin.write(line.encode("utf-8") + b"\n")
@@ -169,7 +172,11 @@ class Task:
         child.stdin.close()
 
     @staticmethod
-    def _recv_stdout(child, ismatch, replace):
+    def _recv_stdout(
+        child: subprocess.Popen,
+        ismatch: re.Pattern,
+        replace: str,
+    ) -> None:
         while True:
             try:
                 line = child.stdout.readline().decode('utf-8', 'replace')
@@ -181,7 +188,11 @@ class Task:
                 sys.stdout.write(line.replace(replace[0], replace[1]))
 
     @staticmethod
-    def _recv_stderr(child, ismatch, replace):
+    def _recv_stderr(
+        child: subprocess.Popen,
+        ismatch: re.Pattern,
+        replace: str,
+    ) -> None:
         while True:
             try:
                 line = child.stderr.readline().decode('utf-8', 'replace')
@@ -193,23 +204,27 @@ class Task:
                 sys.stderr.write(line.replace(replace[0], replace[1]))
 
     @staticmethod
-    def _interactive_run(cmdline, info):
+    def _interactive_run(cmdline: List[str], info: dict) -> int:
+        command: Union[List[str], str] = cmdline
+
         if '|' in cmdline:
             pipe = True
-            cmdline = subprocess.list2cmdline(cmdline)
+            command = subprocess.list2cmdline(cmdline)
         else:
             pipe = False
 
         try:
-            return subprocess.call(cmdline, env=info['env'], shell=pipe)
+            return subprocess.call(command, env=info['env'], shell=pipe)
         except KeyboardInterrupt:
             return 130
 
     @staticmethod
-    def _start_child(cmdline, info):
+    def _start_child(cmdline: List[str], info: dict) -> subprocess.Popen:
+        command: Union[List[str], str] = cmdline
+
         if '|' in cmdline:
             pipe = True
-            cmdline = subprocess.list2cmdline(cmdline)
+            command = subprocess.list2cmdline(cmdline)
         else:
             pipe = False
 
@@ -218,7 +233,7 @@ class Task:
         else:
             stderr = subprocess.PIPE
         return subprocess.Popen(
-            cmdline,
+            command,
             env=info['env'],
             shell=pipe,
             stdin=subprocess.PIPE,
@@ -226,8 +241,8 @@ class Task:
             stderr=stderr
         )
 
-    def _interactive_child_run(self, cmdline, info):
-        child = self._start_child(cmdline, info)
+    def _interactive_child_run(self, cmdline: List[str], info: dict) -> int:
+        child: subprocess.Popen = self._start_child(cmdline, info)
         if info['stdin']:
             self._send_stdin(child, info['stdin'])
 
@@ -252,7 +267,7 @@ class Task:
                 ) from exception
         return child.wait()
 
-    def run(self, **kwargs):
+    def run(self, **kwargs: Any) -> Any:
         """
         Run process interactively and return exits status.
 
@@ -297,10 +312,12 @@ class Background(Task):
     """
 
     @staticmethod
-    def _start_background_run(cmdline, info):
+    def _start_background_run(cmdline: List[str], info: dict) -> None:
+        command: Union[List[str], str] = cmdline
+
         if '|' in cmdline:
             pipe = True
-            cmdline = subprocess.list2cmdline(cmdline)
+            command = subprocess.list2cmdline(cmdline)
         else:
             pipe = False
 
@@ -313,9 +330,9 @@ class Background(Task):
             )
             del os.environ['_SUBTASK_MOD_BACKGROUND_FILTER']
         else:
-            subprocess.Popen(cmdline, shell=pipe, env=info['env'])
+            subprocess.Popen(command, shell=pipe, env=info['env'])
 
-    def run(self, **kwargs):
+    def run(self, **kwargs: Any) -> None:
         """
         Start background process.
 
@@ -352,7 +369,7 @@ class Batch(Task):
     """
 
     @staticmethod
-    def _write_file(child, file, append):
+    def _write_file(child: subprocess.Popen, file: str, append: bool) -> None:
         if append:
             mode = 'ab'
         else:
@@ -375,7 +392,7 @@ class Batch(Task):
                 'Cannot create "' + file + '" output file.'
             ) from exception
 
-    def _batch_run(self, cmdline, info):
+    def _batch_run(self, cmdline: List[str], info: dict) -> int:
         child = self._start_child(cmdline, info)
         if info['stdin']:
             self._send_stdin(child, info['stdin'])
@@ -409,7 +426,7 @@ class Batch(Task):
                     self._status['error'].append(line.rstrip('\r\n'))
         return child.wait()
 
-    def run(self, **kwargs):
+    def run(self, **kwargs: Any) -> int:
         """
         Run process in batch mode and return exit status.
 
@@ -449,7 +466,7 @@ class Child(Task):
     This class handles running sub process as a child process.
     """
 
-    def run(self, **kwargs):
+    def run(self, **kwargs: Any) -> subprocess.Popen:
         """
         Return child process object with stdin, stdout and stderr pipes.
 
@@ -478,21 +495,26 @@ class Daemon(Task):
     """
 
     @staticmethod
-    def _start_daemon(cmdline, info):
-        if '|' in cmdline:
-            pipe = True
-            cmdline = subprocess.list2cmdline(cmdline)
-        else:
-            pipe = False
-
+    def _start_daemon(cmdline: List[str], info: dict) -> None:
         os.environ['_SUBTASK_MOD_DAEMON_FILE'] = info['file']
-        subprocess.Popen(
-            [sys.executable, '-B', __file__] +
-            cmdline, shell=pipe, env=info['env']
-        )
+
+        if '|' in cmdline:
+            subprocess.Popen(
+                subprocess.list2cmdline(
+                    [sys.executable, '-B', __file__] + cmdline
+                ),
+                shell=True,
+                env=info['env'],
+            )
+        else:
+            subprocess.Popen(
+                [sys.executable, '-B', __file__] + cmdline,
+                env=info['env'],
+            )
+
         del os.environ['_SUBTASK_MOD_DAEMON_FILE']
 
-    def run(self, **kwargs):
+    def run(self, **kwargs: Any) -> None:
         """
         Replace current process with new executable.
 
@@ -521,11 +543,9 @@ class Exec(Task):
     """
 
     @staticmethod
-    def _windows_exec_run(cmdline, info):
-        # pylint: disable = no-member
+    def _windows_exec_run(cmdline: List[str], info: dict) -> None:
         stdout_write = sys.stdout.buffer.write
         stderr_write = sys.stderr.buffer.write
-        # pylint: enable = no-member
         try:
             child = subprocess.Popen(
                 cmdline,
@@ -534,14 +554,17 @@ class Exec(Task):
                 stderr=subprocess.PIPE,
                 env=info['env']
             )
-            byte = True
-            while byte:
+            while True:
                 byte = child.stdout.read(1)
+                if not byte:
+                    break
                 stdout_write(byte)
                 sys.stdout.flush()
-            byte = True
-            while byte:
+            byte = b'True'
+            while True:
                 byte = child.stderr.read(1)
+                if not byte:
+                    break
                 stderr_write(byte)
                 sys.stderr.flush()
             exitcode = child.wait()
@@ -550,7 +573,7 @@ class Exec(Task):
         raise SystemExit(exitcode)
 
     @classmethod
-    def _exec_run(cls, cmdline, info):
+    def _exec_run(cls, cmdline: List[str], info: dict) -> None:
         if '|' in cmdline:
             raise PipeNotSupportedError('Exec does not support pipe.')
 
@@ -559,7 +582,7 @@ class Exec(Task):
         else:
             os.execvpe(cmdline[0], cmdline, env=info['env'])
 
-    def run(self, **kwargs):
+    def run(self, **kwargs: Any) -> None:
         """
         Replace current process with new executable.
 
@@ -619,7 +642,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.config()
         try:
             self.config()
@@ -630,7 +653,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -638,16 +661,27 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def _signal_ignore(sig, frame):
+    def _signal_ignore(
+        _signal: signal.Signals,  # pylint: disable = no-member
+        _frame: types.FrameType,
+    ) -> Union[
+        Callable[[
+            signal.Signals,  # pylint: disable = no-member
+            types.FrameType,
+        ], Any],
+        int,
+        signal.Handlers,  # pylint: disable = no-member
+        None,
+    ]:
         pass
 
     @classmethod
-    def _filter_background(cls, pattern):
+    def _filter_background(cls, pattern: str) -> None:
         signal.signal(signal.SIGINT, cls._signal_ignore)
         Task(sys.argv[1:]).run(pattern=pattern)
 
     @staticmethod
-    def _start_daemon(file):
+    def _start_daemon(file: str) -> None:
         if os.name == 'posix':
             mypid = os.getpid()
             os.setpgid(mypid, mypid)  # New PGID
@@ -669,7 +703,7 @@ class Main:
             while child.stdout.read(BUFFER_SIZE):
                 pass
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -683,6 +717,8 @@ class Main:
             self._start_daemon(file)
         else:
             help(__name__)
+
+        return 0
 
 
 if __name__ == '__main__':

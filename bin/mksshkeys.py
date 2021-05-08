@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -19,32 +20,37 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_logins(self):
+    def get_logins(self) -> List[str]:
         """
         Return list of logins.
         """
         return self._args.logins
 
-    def get_ssh(self):
+    def get_ssh(self) -> command_mod.Command:
         """
         Return ssh Command class object.
         """
         return self._ssh
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Create SSH keys and setup access to remote systems.')
+            description='Create SSH keys and setup access to remote systems.',
+        )
 
         parser.add_argument(
-            'logins', nargs='+', metavar='[user]@host', help='Remote login.')
+            'logins',
+            nargs='+',
+            metavar='[user]@host',
+            help='Remote login.',
+        )
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -58,7 +64,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -68,7 +74,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -84,7 +90,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _check(self, options):
+    def _check(self, options: Options) -> None:
         config = []
         configfile = os.path.join(self._sshdir, 'config')
         try:
@@ -142,9 +148,9 @@ class Main:
                     ' received from "' + task.get_file() + '".'
                 )
 
-    def _add_authorized_key(self, pubkey):
+    def _add_authorized_key(self, pubkey: str) -> None:
         file = os.path.join(self._sshdir, 'authorized_keys')
-        pubkeys = []
+        pubkeys: List[str] = []
         if os.path.isfile(file):
             try:
                 with open(file, errors='replace') as ifile:
@@ -175,7 +181,7 @@ class Main:
                     '" authorised key file.'
                 ) from exception
 
-    def _config(self):
+    def _config(self) -> str:
         os.umask(int('077', 8))
         if os.path.isdir(self._sshdir):
             for file in glob.glob(
@@ -229,7 +235,7 @@ class Main:
 
         return pubkey
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -243,6 +249,8 @@ class Main:
         self._sshdir = os.path.join(os.environ['HOME'], '.ssh')
         self._pubkey = self._config()
         self._check(options)
+
+        return 0
 
 
 if __name__ == '__main__':

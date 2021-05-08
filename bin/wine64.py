@@ -10,6 +10,8 @@ import os
 import signal
 import shutil
 import sys
+import types
+from typing import Any, Callable, Union
 
 import command_mod
 import subtask_mod
@@ -24,19 +26,19 @@ class Options:
         errors='stop'
     )
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._args = None
         self._config()
         self.parse(sys.argv)
 
-    def get_wine(self):
+    def get_wine(self) -> command_mod.Command:
         """
         Return wine Command class object.
         """
         return self._wine
 
     @staticmethod
-    def _reset():
+    def _reset() -> None:
         home = os.environ.get('HOME', '')
         directory = os.path.join(home, '.wine')
         if os.path.isdir(directory):
@@ -46,11 +48,23 @@ class Options:
             except OSError:
                 pass
 
-    def _signal_ignore(self, sig, frame):
+    @staticmethod
+    def _signal_ignore(
+        _signal: signal.Signals,  # pylint: disable = no-member
+        _frame: types.FrameType,
+    ) -> Union[
+        Callable[[
+            signal.Signals,  # pylint: disable = no-member
+            types.FrameType,
+        ], Any],
+        int,
+        signal.Handlers,  # pylint: disable = no-member
+        None,
+    ]:
         pass
 
     @classmethod
-    def _config(cls):
+    def _config(cls) -> None:
         signal.signal(signal.SIGINT, cls._signal_ignore)
         signal.signal(signal.SIGTERM, cls._signal_ignore)
 #        os.environ['WINEDLLOVERRIDES'] = os.environ.get(
@@ -58,7 +72,7 @@ class Options:
 #            'mscoree,mshtml='
 #        )
 
-    def parse(self, args):
+    def parse(self, args: list) -> None:
         """
         Parse arguments
         """
@@ -78,7 +92,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -88,7 +102,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -105,7 +119,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> None:
         """
         Start program
         """

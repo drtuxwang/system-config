@@ -10,8 +10,9 @@ import re
 import shutil
 import signal
 import sys
+from typing import List
 
-import bs4
+import bs4  # type: ignore
 
 import command_mod
 import subtask_mod
@@ -22,17 +23,17 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description='Re-format HTML file.')
 
         parser.add_argument(
@@ -44,7 +45,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -58,7 +59,7 @@ class Main:
     _indent = re.compile(r'^(\s*)', re.MULTILINE)
     _xmllint = command_mod.Command('xmllint', errors='stop')
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -68,7 +69,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -85,7 +86,7 @@ class Main:
             sys.argv = argv
 
     @classmethod
-    def _reformat(cls, file):
+    def _reformat(cls, file: str) -> None:
         lines = []
         try:
             with open(file, errors='replace') as ifile:
@@ -118,7 +119,7 @@ class Main:
             ) from exception
 
     @classmethod
-    def run(cls):
+    def run(cls) -> bool:
         """
         Start program
         """

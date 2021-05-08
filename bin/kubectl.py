@@ -19,7 +19,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -29,7 +29,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -46,7 +46,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _cache():
+    def _cache() -> None:
         kube_directory = os.path.join(os.environ['HOME'], '.kube')
         if not os.path.isdir(kube_directory):
             try:
@@ -68,7 +68,7 @@ class Main:
                     pass
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
@@ -77,6 +77,8 @@ class Main:
         kubectl = command_mod.Command('kubectl', errors='stop')
         kubectl.set_args(sys.argv[1:])
         subtask_mod.Exec(kubectl.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

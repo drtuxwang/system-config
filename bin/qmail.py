@@ -13,12 +13,13 @@ import re
 import signal
 import smtplib
 import sys
+from typing import List
 
 import command_mod
 import file_mod
 import subtask_mod
 
-RELEASE = '3.0.6'
+RELEASE = '3.1.0'
 
 SOCKET_TIMEOUT = 10
 
@@ -28,49 +29,49 @@ class Options:
     Options class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._release = RELEASE
-        self._args = None
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_addresses(self):
+    def get_addresses(self) -> List[str]:
         """
         Return my addresses.
         """
         return self._args.addresses
 
-    def get_editor(self):
+    def get_editor(self) -> command_mod.Command:
         """
         Return editor Command class object.
         """
         return self._editor
 
-    def get_my_address(self):
+    def get_my_address(self) -> str:
         """
         Return my address.
         """
         return self._my_address
 
-    def get_release(self):
+    def get_release(self) -> str:
         """
         Return release version.
         """
         return self._release
 
-    def get_sendmail(self):
+    def get_sendmail(self) -> command_mod.Command:
         """
         Return sendmail Command class object.
         """
         return self._sendmail
 
-    def get_tmpfile(self):
+    def get_tmpfile(self) -> str:
         """
         Return tmpfile.
         """
         return self._tmpfile
 
     @staticmethod
-    def _address():
+    def _address() -> str:
         file = os.path.join(os.environ['HOME'], '.address')
         if os.path.isfile(file):
             try:
@@ -94,10 +95,10 @@ class Options:
                 ) from exception
         return my_address
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Qwikmail v' + self._release +
-            ', Quick commandline E-mailer.'
+            ', Quick commandline E-mailer.',
         )
 
         parser.add_argument(
@@ -109,7 +110,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -141,7 +142,7 @@ class Mailer:
     E-mail using SMTP servers.
     """
 
-    def __init__(self, host):
+    def __init__(self, host: str) -> None:
         """
         host = SMTP server host
         """
@@ -155,13 +156,13 @@ class Mailer:
                 sys.argv[0] + ': Cannot connect to STMP server: ' + host
             ) from exception
 
-    def get_host(self):
+    def get_host(self) -> str:
         """
         Return server.
         """
         return self._host
 
-    def send(self, text):
+    def send(self, text: str) -> None:
         """
         Send E-mail to server.
 
@@ -192,7 +193,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -202,7 +203,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -218,7 +219,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _create(self, options):
+    def _create(self, options: Options) -> List[str]:
         subject = input("Subject: ")
         addresses = self._mail_alias(options.get_addresses())
         email = [
@@ -231,7 +232,7 @@ class Main:
         ]
         return email
 
-    def _edit(self, options):
+    def _edit(self, options: Options) -> List[str]:
         try:
             with open(options.get_tmpfile(), 'w', newline='\n') as ofile:
                 for line in self._email:
@@ -256,13 +257,13 @@ class Main:
             ) from exception
         return email
 
-    def _header(self):
+    def _header(self) -> None:
         for line in self._email:
             print(line)
             if not line:
                 break
 
-    def _mail_alias(self, addresses):
+    def _mail_alias(self, addresses: List[str]) -> List[str]:
         if self._malias.is_found():
             task = subtask_mod.Batch(self._malias.get_cmdline() + addresses)
             task.run(mode='batch')
@@ -270,7 +271,7 @@ class Main:
         return addresses
 
     @staticmethod
-    def _send(options):
+    def _send(options: Options) -> None:
         print("Sending E-mail...")
         lines = []
         with open(options.get_tmpfile(), errors='replace') as ifile:
@@ -283,7 +284,7 @@ class Main:
         except OSError:
             pass
 
-    def _update(self):
+    def _update(self) -> None:
         isemail = re.compile('(To|Cc|Bcc): ', re.IGNORECASE)
         for i in range(len(self._email)):
             if not self._email[i]:
@@ -292,7 +293,7 @@ class Main:
                 self._email[i] = self._email[i].split()[0] + ' ' + ', '.join(
                     self._mail_alias([isemail.sub('', self._email[i])]))
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -311,6 +312,8 @@ class Main:
             answer = input("Do you want to delete E-mail (y/n)? ")
             if answer.lower() == 'y':
                 break
+
+        return 0
 
 
 if __name__ == '__main__':

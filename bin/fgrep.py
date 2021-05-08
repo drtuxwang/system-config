@@ -9,6 +9,7 @@ import os
 import re
 import signal
 import sys
+from typing import List, TextIO
 
 
 class Options:
@@ -16,43 +17,44 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_ignore_case_flag(self):
+    def get_ignore_case_flag(self) -> bool:
         """
         Return ignore case flag.
         """
         return self._args.ignoreCase_flag
 
-    def get_invert_flag(self):
+    def get_invert_flag(self) -> bool:
         """
         Return invert regular expression flag.
         """
         return self._args.invert_flag
 
-    def get_number_flag(self):
+    def get_number_flag(self) -> bool:
         """
         Return line number flag.
         """
         return self._args.number_flag
 
-    def get_pattern(self):
+    def get_pattern(self) -> str:
         """
         Return regular expression pattern.
         """
         return self._args.pattern[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Print lines matching a pattern.')
+            description='Print lines matching a pattern.',
+        )
 
         parser.add_argument(
             '-i',
@@ -86,7 +88,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -98,7 +100,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -108,7 +110,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -124,7 +126,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _file(self, options, file, prefix=''):
+    def _file(self, options: Options, file: str, prefix: str = '') -> None:
         try:
             with open(file, errors='replace') as ifile:
                 self._pipe(options, ifile, prefix)
@@ -133,7 +135,7 @@ class Main:
                 sys.argv[0] + ': Cannot read "' + file + '" file.'
             ) from exception
 
-    def _pipe(self, options, pipe, prefix=''):
+    def _pipe(self, options: Options, pipe: TextIO, prefix: str = '') -> None:
         number = 0
         if options.get_invert_flag():
             for line in pipe:
@@ -158,7 +160,7 @@ class Main:
                     except OSError as exception:
                         raise SystemExit(0) from exception
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -182,6 +184,8 @@ class Main:
             self._file(options, options.get_files()[0])
         else:
             self._pipe(options, sys.stdin)
+
+        return 0
 
 
 if __name__ == '__main__':

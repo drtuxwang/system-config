@@ -10,14 +10,13 @@ import logging
 import os
 import signal
 import sys
+from typing import List
 
 import logging_mod
 import command_mod
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -28,31 +27,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_recursive_flag(self):
+    def get_recursive_flag(self) -> bool:
         """
         Return recursive flag.
         """
         return self._args.recursive_flag
 
-    def get_remove_flag(self):
+    def get_remove_flag(self) -> bool:
         """
         Return remove flag.
         """
         return self._args.remove_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Show files with same MD5 checksums.')
+            description='Show files with same MD5 checksums.',
+        )
 
         parser.add_argument(
             '-rm',
@@ -75,7 +75,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -87,7 +87,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -97,7 +97,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -113,7 +113,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _calc(self, options, files):
+    def _calc(self, options: Options, files: List[str]) -> None:
         for file in files:
             if os.path.isdir(file):
                 if not os.path.islink(file) and options.get_recursive_flag():
@@ -138,7 +138,7 @@ class Main:
                     self._md5files[md5sum] = set([file])
 
     @staticmethod
-    def _md5sum(file):
+    def _md5sum(file: str) -> str:
         try:
             with open(file, 'rb') as ifile:
                 md5 = hashlib.md5()
@@ -154,7 +154,7 @@ class Main:
         return md5.hexdigest()
 
     @staticmethod
-    def _remove(files):
+    def _remove(files: List[str]) -> None:
         for file in files:
             print('  Removing "{0:s}" duplicated file'.format(file))
             try:
@@ -164,13 +164,13 @@ class Main:
                     sys.argv[0] + ': Cannot remove "' + file + '" file.'
                 ) from exception
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
         options = Options()
 
-        self._md5files = {}
+        self._md5files: dict = {}
         files = []
         for file in options.get_files():
             if os.path.isdir(file):

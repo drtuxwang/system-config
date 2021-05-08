@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import config_mod
@@ -20,31 +21,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_convert(self):
+    def get_convert(self) -> command_mod.Command:
         """
         Return convert Command class object.
         """
         return self._convert
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_tesseract(self):
+    def get_tesseract(self) -> command_mod.Command:
         """
         Return tesseract Command class object.
         """
         return self._tesseract
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Convert image file to text using OCR.')
+            description='Convert image file to text using OCR.',
+        )
 
         parser.add_argument(
             'files',
@@ -55,7 +57,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -70,7 +72,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -80,7 +82,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -96,7 +98,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _ocr(self, file, name):
+    def _ocr(self, file: str, name: str) -> None:
         task = subtask_mod.Task(self._tesseract.get_cmdline() + [file, name])
         task.run(pattern='^Tesseract')
         if task.get_exitcode():
@@ -105,7 +107,7 @@ class Main:
                 ' received from "' + task.get_file() + '".'
             )
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -150,6 +152,8 @@ class Main:
                     sys.argv[0] + ': Cannot OCR non image file "' +
                     file + '".'
                 )
+
+        return 0
 
 
 if __name__ == '__main__':

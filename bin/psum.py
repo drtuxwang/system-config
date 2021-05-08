@@ -11,10 +11,11 @@ import os
 import shutil
 import signal
 import sys
+from typing import List, Set, Tuple
 
-import imagehash
-import PIL
-import pybktree
+import imagehash  # type: ignore
+import PIL  # type: ignore
+import pybktree  # type: ignore
 
 import command_mod
 import file_mod
@@ -22,10 +23,8 @@ import logging_mod
 
 MAX_DISTANCE_IDENTICAL = 6
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -36,34 +35,34 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_recursive_flag(self):
+    def get_recursive_flag(self) -> bool:
         """
         Return recursive flag.
         """
         return self._args.recursive_flag
 
-    def get_update_file(self):
+    def get_update_file(self) -> str:
         """
         Return update file.
         """
         if self._args.update_file:
             return self._args.update_file[0]
-        return None
+        return ''
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Calculate checksum lines using imagehash, file size '
-            'and file modification time.'
+            'and file modification time.',
         )
 
         parser.add_argument(
@@ -88,7 +87,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -100,7 +99,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -110,7 +109,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -127,19 +126,17 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_checksum(line):
+    def _get_checksum(line: str) -> Tuple[str, int, int, str]:
         i = line.find('  ')
         try:
             checksum, size, mtime = line[:i].split('/')
-            size = int(size)
-            mtime = int(mtime)
             file = line[i+2:]
-            return checksum, size, mtime, file
+            return checksum, int(size), int(mtime), file
         except ValueError:
             return '', -1, -1, ''
 
     @classmethod
-    def _read(cls, phashes_file):
+    def _read(cls, phashes_file: str) -> dict:
         logger.info("Reading checksum file: %s", phashes_file)
         if not os.path.isfile(phashes_file):
             raise SystemExit(
@@ -170,7 +167,7 @@ class Main:
         return images_phashes
 
     @classmethod
-    def _update(cls, phashes, recursive, files):
+    def _update(cls, phashes: dict, recursive: bool, files: List[str]) -> dict:
         logger.info("Updating checksums...")
         new_phashes = {}
         for file in files:
@@ -202,14 +199,14 @@ class Main:
         return new_phashes
 
     @classmethod
-    def _check(cls, image_phashes, new_phashes):
+    def _check(cls, image_phashes: dict, new_phashes: Set[str]) -> None:
         """
         Using BKTree to speed up check:
         if phash1 - phash2 <= MAX_DISTANCE_IDENTICAL:
         """
         logger.info("Checking checksums...")
 
-        phash_images = {}
+        phash_images: dict = {}
         for key, value in image_phashes.items():
             phash = int(value, 16)
             file, _, _ = key
@@ -237,7 +234,7 @@ class Main:
             raise SystemExit(1)
 
     @staticmethod
-    def _write(phashes_file, image_phashes):
+    def _write(phashes_file: str, image_phashes: dict) -> None:
         logger.info("Writing checksum file: %s", phashes_file)
 
         try:
@@ -267,7 +264,7 @@ class Main:
                 )
             ) from exception
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -291,6 +288,8 @@ class Main:
         self._check(image_phashes, new_phashes)
         if new_keys:
             self._write(update_file, image_phashes)
+
+        return 0
 
 
 if __name__ == '__main__':

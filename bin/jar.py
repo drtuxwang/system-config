@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -17,35 +18,34 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._files
 
-    def get_jar(self):
+    def get_jar(self) -> command_mod.Command:
         """
         Return jar Command class object.
         """
         return self._jar
 
-    def get_jar_file(self):
+    def get_jar_file(self) -> str:
         """
         Return jar file location.
         """
         return self._jar_file
 
-    def get_manifest(self):
+    def get_manifest(self) -> str:
         """
         Return manifest file location.
         """
         return self._manifest
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -61,7 +61,7 @@ class Options:
             subtask_mod.Exec(self._jar.get_cmdline()).run()
 
         self._jar_file = args[1]
-        self._manifest = args[1][:-4]+'.manifest'
+        self._manifest = args[1][:-4] + '.manifest'
         self._files = args[2:]
         self._jar.set_args(['cfvm', args[1], self._manifest])
 
@@ -71,7 +71,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -81,7 +81,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -98,7 +98,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _compile(source):
+    def _compile(source: str) -> None:
         target = source[:-5]+'.class'
         if not os.path.isfile(source):
             raise SystemExit(
@@ -132,7 +132,7 @@ class Main:
                     " Java class file."
                 )
 
-    def _create_manifest(self):
+    def _create_manifest(self) -> None:
         if not os.path.isfile(self._manifest):
             if 'Main.class' in self._jar.get_args():
                 main = 'Main'
@@ -151,7 +151,7 @@ class Main:
                     '" Java manifest file.'
                 ) from exception
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -170,6 +170,8 @@ class Main:
         self._create_manifest()
         print('Building "' + self._jar_file + '" Java archive file.')
         subtask_mod.Exec(self._jar.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

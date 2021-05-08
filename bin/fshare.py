@@ -9,16 +9,15 @@ import os
 import signal
 import sys
 import time
+from typing import List, Optional
 
-import dropbox
+import dropbox  # type: ignore
 import requests
 
 import logging_mod
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -29,25 +28,25 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_command(self):
+    def get_command(self) -> str:
         """
         Return command.
         """
         return self._args.command[0]
 
-    def get_urls(self):
+    def get_urls(self) -> List[str]:
         """
         Return URLs.
         """
         return self._args.urls
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='File sharing utility (currently dropbox only)'
+            description='File sharing utility (currently dropbox only)',
         )
 
         parser.add_argument(
@@ -66,7 +65,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -81,7 +80,7 @@ class DropboxClient:
       Create App & Generated access token
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         key = self._get_key()
         if key:
             self._client = self._connect(key)
@@ -89,7 +88,7 @@ class DropboxClient:
             self._client = None
 
     @staticmethod
-    def _get_key():
+    def _get_key() -> str:
         file = os.environ.get('DROPBOX_KEY_FILE')
         if file:
             try:
@@ -106,7 +105,7 @@ class DropboxClient:
         return None
 
     @staticmethod
-    def _connect(key):
+    def _connect(key: str) -> Optional[dropbox.dropbox.Dropbox]:
         client = dropbox.Dropbox(key)
         logger.info("Connecting to Dropbox server.")
         try:
@@ -127,7 +126,7 @@ class DropboxClient:
             return client
         return None
 
-    def get(self, url):
+    def get(self, url: str) -> bool:
         """
         Download Dropbox path to file.
         """
@@ -157,7 +156,7 @@ class DropboxClient:
         logger.info('Downloaded %d bytes.', len(response.content))
         return True
 
-    def put(self, url):
+    def put(self, url: str) -> bool:
         """
         Upload file to Dropbox path.
         """
@@ -195,7 +194,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -205,7 +204,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -213,8 +212,8 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def _get(urls):
-        clients = {}
+    def _get(urls: List[str]) -> int:
+        clients: dict = {}
         errors = 0
 
         for url in urls:
@@ -229,8 +228,8 @@ class Main:
         return errors
 
     @staticmethod
-    def _put(urls):
-        clients = {}
+    def _put(urls: List[str]) -> int:
+        clients: dict = {}
         errors = 0
 
         for url in urls:
@@ -245,7 +244,7 @@ class Main:
         return errors
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """

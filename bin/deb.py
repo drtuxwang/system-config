@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -18,44 +19,45 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_arch(self):
+    def get_arch(self) -> str:
         """
         Return sub architecture.
         """
         return self._arch
 
-    def get_arch_sub(self):
+    def get_arch_sub(self) -> str:
         """
         Return sub architecture.
         """
         return self._arch_sub
 
-    def get_dpkg(self):
+    def get_dpkg(self) -> command_mod.Command:
         """
         Return dpkg Command class object.
         """
         return self._dpkg
 
-    def get_mode(self):
+    def get_mode(self) -> str:
         """
         Return operation mode.
         """
         return self._args.mode
 
-    def get_package_names(self):
+    def get_package_names(self) -> List[str]:
         """
         Return list of package names.
         """
         return self._package_names
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Make a compressed archive in DEB format or '
-            'query database/files.')
+            'query database/files.',
+        )
 
         parser.add_argument(
             '-l',
@@ -132,7 +134,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -176,13 +178,19 @@ class Package:
     Package class
     """
 
-    def __init__(self, version, size, depends, description):
+    def __init__(
+        self,
+        version: str,
+        size: int,
+        depends: List[str],
+        description: str,
+    ) -> None:
         self._version = version
         self._size = size
         self._depends = depends
         self._description = description
 
-    def append_depends(self, name):
+    def append_depends(self, name: str) -> None:
         """
         Append to dependency list.
 
@@ -190,13 +198,13 @@ class Package:
         """
         self._depends.append(name)
 
-    def get_depends(self):
+    def get_depends(self) -> List[str]:
         """
         Return depends.
         """
         return self._depends
 
-    def set_depends(self, names):
+    def set_depends(self, names: List[str]) -> None:
         """
         Set package dependency list.
 
@@ -204,13 +212,13 @@ class Package:
         """
         self._depends = names
 
-    def get_description(self):
+    def get_description(self) -> str:
         """
         Return description.
         """
         return self._description
 
-    def set_description(self, description):
+    def set_description(self, description: str) -> None:
         """
         Set description.
 
@@ -218,13 +226,13 @@ class Package:
         """
         self._description = description
 
-    def get_size(self):
+    def get_size(self) -> int:
         """
         Return size.
         """
         return self._size
 
-    def set_size(self, size):
+    def set_size(self, size: int) -> None:
         """
         Set size.
 
@@ -232,13 +240,13 @@ class Package:
         """
         self._size = size
 
-    def get_version(self):
+    def get_version(self) -> str:
         """
         Return version.
         """
         return self._version
 
-    def set_version(self, version):
+    def set_version(self, version: str) -> None:
         """
         Set version.
 
@@ -252,7 +260,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -262,7 +270,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -279,7 +287,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _calc_dependencies(packages, names_all):
+    def _calc_dependencies(packages: dict, names_all: List[str]) -> None:
         for name, value in packages.items():
             if ':' in name:
                 depends = []
@@ -290,7 +298,7 @@ class Main:
                         depends.append(depend + ':' + name.split(':')[-1])
                 packages[name].set_depends(depends)
 
-    def _read_dpkg_status(self):
+    def _read_dpkg_status(self) -> dict:
         names_all = []
 
         packages = {}
@@ -338,7 +346,7 @@ class Main:
 
         return packages
 
-    def _show_packages_info(self):
+    def _show_packages_info(self) -> None:
         for name, package in sorted(self._packages.items()):
             if self._options.get_arch_sub():
                 if not name.endswith(self._options.get_arch_sub()):
@@ -352,7 +360,12 @@ class Main:
                 package.get_description()
             ))
 
-    def _show_dependent_packages(self, names, checked=None, ident=''):
+    def _show_dependent_packages(
+        self,
+        names: List[str],
+        checked: List[str] = None,
+        ident: str = '',
+    ) -> None:
         if not checked:
             checked = []
         keys = sorted(self._packages)
@@ -369,7 +382,7 @@ class Main:
                                 ident + '  '
                             )
 
-    def _show_nodependent_packages(self):
+    def _show_nodependent_packages(self) -> None:
         keys = sorted(self._packages)
 
         for name in keys:
@@ -386,7 +399,7 @@ class Main:
                         package.get_description()
                     ))
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -403,6 +416,8 @@ class Main:
             self._show_nodependent_packages()
         else:
             subtask_mod.Exec(self._options.get_dpkg().get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

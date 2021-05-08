@@ -3,6 +3,8 @@
 Check installation dependencies of packages against '.debs' list file.
 """
 
+# Annotation: Fix Class reference run time NameError
+from __future__ import annotations
 import argparse
 import copy
 import distutils.version
@@ -14,13 +16,12 @@ import re
 import signal
 import sre_constants
 import sys
+from typing import List, TextIO
 
 import logging_mod
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -31,32 +32,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_distribution(self):
+    def get_distribution(self) -> str:
         """
         Return distribution name.
         """
         return self._distribution
 
-    def get_list_file(self):
+    def get_list_file(self) -> str:
         """
         Return installed packages '.debs' list file.
         """
         return self._args.list_file[0]
 
-    def get_package_names(self):
+    def get_package_names(self) -> List[str]:
         """
         Return list of package names.
         """
         return self._args.packageNames
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Check installation dependencies of packages '
-            'against ".debs" list file.'
+            'against ".debs" list file.',
         )
 
         parser.add_argument(
@@ -74,7 +75,7 @@ class Options:
 
         self._args = parser.parse_args(args[1:])
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -95,20 +96,20 @@ class Package:
     Package class
     """
 
-    def __init__(self, depends=(), url=''):
+    def __init__(self, depends: List[str] = None, url: str = '') -> None:
         self._checked_flag = False
         self._installed_flag = False
-        self._version = None
-        self._depends = depends
+        self._version: str = None
+        self._depends: List[str] = depends
         self._url = url
 
-    def get_checked_flag(self):
+    def get_checked_flag(self) -> bool:
         """
         Return packaged checked flag.
         """
         return self._checked_flag
 
-    def set_checked_flag(self, checked_flag):
+    def set_checked_flag(self, checked_flag: bool) -> None:
         """
         Set package checked flag.
 
@@ -116,13 +117,13 @@ class Package:
         """
         self._checked_flag = checked_flag
 
-    def get_depends(self):
+    def get_depends(self) -> List[str]:
         """
         Return list of required dependent packages.
         """
         return self._depends
 
-    def set_depends(self, names):
+    def set_depends(self, names: List[str]) -> None:
         """
         Set package dependency list.
 
@@ -130,13 +131,13 @@ class Package:
         """
         self._depends = names
 
-    def get_installed_flag(self):
+    def get_installed_flag(self) -> bool:
         """
         Return package installed flag.
         """
         return self._installed_flag
 
-    def set_installed_flag(self, installed_flag):
+    def set_installed_flag(self, installed_flag: bool) -> None:
         """
         Set package installed flag.
 
@@ -144,13 +145,13 @@ class Package:
         """
         self._installed_flag = installed_flag
 
-    def get_version(self):
+    def get_version(self) -> str:
         """
         Return version.
         """
         return self._version
 
-    def set_version(self, version):
+    def set_version(self, version: str) -> None:
         """
         Set package version.
 
@@ -158,13 +159,13 @@ class Package:
         """
         self._version = version
 
-    def get_url(self):
+    def get_url(self) -> str:
         """
         Return package url.
         """
         return self._url
 
-    def set_url(self, url):
+    def set_url(self, url: str) -> None:
         """
         Set package url.
 
@@ -172,7 +173,7 @@ class Package:
         """
         self._url = url
 
-    def is_newer(self, package):
+    def is_newer(self, package: Package) -> bool:
         """
         Return True if version newer than package.
         """
@@ -192,7 +193,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -202,7 +203,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -219,7 +220,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _read_data(file):
+    def _read_data(file: str) -> dict:
         try:
             with open(file) as ifile:
                 data = json.load(ifile)
@@ -231,13 +232,13 @@ class Main:
         return data
 
     @classmethod
-    def _read_distribution_packages(cls, packages_file):
+    def _read_distribution_packages(cls, packages_file: str) -> dict:
         distribution_data = cls._read_data(packages_file)
         lines = []
         for url in distribution_data['urls']:
             lines.extend(distribution_data['data'][url]['text'])
 
-        packages = {}
+        packages: dict = {}
         name = ''
         package = Package()
         for line in lines:
@@ -261,7 +262,7 @@ class Main:
                 package = Package()
         return packages
 
-    def _read_distribution_pin_packages(self, pin_file):
+    def _read_distribution_pin_packages(self, pin_file: str) -> None:
         packages_cache = {}
         try:
             with open(pin_file, errors='replace') as ifile:
@@ -286,7 +287,7 @@ class Main:
         except OSError:
             pass
 
-    def _read_distribution_installed(self, installed_file):
+    def _read_distribution_installed(self, installed_file: str) -> None:
         try:
             with open(installed_file, errors='replace') as ifile:
                 for line in ifile:
@@ -298,7 +299,13 @@ class Main:
         except OSError:
             return
 
-    def _check_package_install(self, distribution, ofile, indent, name):
+    def _check_package_install(
+        self,
+        distribution: str,
+        ofile: TextIO,
+        indent: str,
+        name: str,
+    ) -> None:
         if name in self._packages:
             self._packages[name].set_checked_flag(True)
             if self._packages[name].get_installed_flag():
@@ -330,7 +337,7 @@ class Main:
                             distribution, ofile, indent + '  ', i)
                     self._packages[i].set_checked_flag(True)
 
-    def _read_distribution_deny_list(self, file):
+    def _read_distribution_deny_list(self, file: str) -> None:
         try:
             with open(file, errors='replace') as ifile:
                 for line in ifile:
@@ -347,7 +354,12 @@ class Main:
         except OSError:
             return
 
-    def _check_distribution_install(self, distribution, list_file, names):
+    def _check_distribution_install(
+        self,
+        distribution: str,
+        list_file: str,
+        names: List[str],
+    ) -> None:
         urlfile = os.path.basename(
             distribution) + list_file.split('.debs')[-1] + '.url'
         try:
@@ -363,13 +375,13 @@ class Main:
             os.remove(urlfile)
 
     @staticmethod
-    def _local(distribution, url):
+    def _local(distribution: str, url: str) -> str:
         file = os.path.join(distribution, os.path.basename(url))
         if os.path.isfile(file):
             return 'file://' + os.path.abspath(file)
         return url
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -390,6 +402,8 @@ class Main:
             options.get_list_file(),
             options.get_package_names()
         )
+
+        return 0
 
 
 if __name__ == '__main__':

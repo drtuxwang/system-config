@@ -10,6 +10,7 @@ import re
 import signal
 import sys
 import time
+from typing import List
 
 
 class Options:
@@ -17,25 +18,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_file(self):
+    def get_file(self) -> str:
         """
         Return html file.
         """
         return self._args.file[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Extract Facebook friends list from saved HTML file.')
+            description='Extract Facebook friends list from saved HTML file.',
+        )
 
         parser.add_argument('file', nargs=1, help='HTML file.')
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -47,17 +49,17 @@ class Profile:
     Profile class
     """
 
-    def __init__(self, name, url):
+    def __init__(self, name: str, url: str) -> None:
         self._name = name
         self._url = url
 
-    def get_name(self):
+    def get_name(self) -> str:
         """
         Return name.
         """
         return self._name
 
-    def get_url(self):
+    def get_url(self) -> str:
         """
         Return url.
         """
@@ -69,7 +71,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -79,7 +81,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -95,7 +97,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _read_html(self, file):
+    def _read_html(self, file: str) -> None:
         isjunk = re.compile('(&amp;|[?])ref=pb$|[?&]fref=.*|&amp;.*')
         try:
             with open(file, errors='replace') as ifile:
@@ -116,13 +118,13 @@ class Main:
                 sys.argv[0] + ': Cannot read "' + file + '" HTML file.'
             ) from exception
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
         options = Options()
 
-        self._profiles = {}
+        self._profiles: dict = {}
         self._read_html(options.get_file())
 
         file = time.strftime('facebook-%Y%m%d.csv', time.localtime())
@@ -149,6 +151,8 @@ class Main:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + file + '" CSV file.'
             ) from exception
+
+        return 0
 
 
 if __name__ == '__main__':

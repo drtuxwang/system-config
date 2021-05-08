@@ -9,6 +9,7 @@ import os
 import pstats
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -19,32 +20,33 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
-        self._module_args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
+        self._module_args: List[str] = []
         self.parse(sys.argv)
 
-    def get_file(self):
+    def get_file(self) -> str:
         """
         Return list of file.
         """
         return self._args.file[0]
 
-    def get_module_args(self):
+    def get_module_args(self) -> List[str]:
         """
         Return module args.
         """
         return self._module_args
 
-    def get_lines(self):
+    def get_lines(self) -> int:
         """
         Return number of lines.
         """
         return self._args.lines[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Profile Python 3.x program.')
+            description='Profile Python 3.x program.',
+        )
 
         parser.add_argument(
             '-n',
@@ -76,7 +78,7 @@ class Options:
 
         self._module_args = args[1:]
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -88,7 +90,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -98,7 +100,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -115,7 +117,10 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_command(module_file, module_args):
+    def _get_command(
+        module_file: str,
+        module_args: List[str],
+    ) -> command_mod.Command:
         if os.path.isfile(module_file):
             return command_mod.CommandFile(module_file, args=module_args)
 
@@ -128,7 +133,7 @@ class Main:
             ) from exception
 
     @classmethod
-    def _profile(cls, module_file, module_args):
+    def _profile(cls, module_file: str, module_args: List[str]) -> str:
         stats_file = os.path.basename(
             module_file.rsplit('.', 1)[0] + '.pstats')
         if os.path.isfile(stats_file):
@@ -152,7 +157,7 @@ class Main:
         return stats_file
 
     @staticmethod
-    def _show(stats_file, lines):
+    def _show(stats_file: str, lines: int) -> None:
         try:
             stats = pstats.Stats(stats_file)
         except OSError as exception:
@@ -162,7 +167,7 @@ class Main:
 
         stats.strip_dirs().sort_stats('tottime', 'cumtime').print_stats(lines)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -184,6 +189,8 @@ class Main:
             file = self._profile(file, self._options.get_module_args())
 
         self._show(file, self._options.get_lines())
+
+        return 0
 
 
 if __name__ == '__main__':

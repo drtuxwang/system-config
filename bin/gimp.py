@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -17,23 +18,22 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_pattern(self):
+    def get_pattern(self) -> str:
         """
         Return filter pattern.
         """
         return self._pattern
 
-    def get_gimp(self):
+    def get_gimp(self) -> command_mod.Command:
         """
         Return gimp Command class object.
         """
         return self._gimp
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -55,7 +55,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -65,7 +65,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -82,7 +82,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -90,6 +90,8 @@ class Main:
 
         subtask_mod.Background(options.get_gimp(
             ).get_cmdline()).run(pattern=options.get_pattern())
+
+        return 0
 
 
 if __name__ == '__main__':

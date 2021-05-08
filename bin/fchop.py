@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import BinaryIO, List
 
 
 class Options:
@@ -15,25 +16,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_file(self):
+    def get_file(self) -> str:
         """
         Return file.
         """
         return self._args.file[0]
 
-    def get_max_size(self):
+    def get_max_size(self) -> int:
         """
         Return max size of file part.
         """
         return self._max_size
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Chop up a file into chunks.')
+            description='Chop up a file into chunks.',
+        )
 
         parser.add_argument(
             'file',
@@ -43,13 +45,14 @@ class Options:
         parser.add_argument(
             'size',
             nargs=1,
-            metavar='bytes|nMB',
+            type=int,
+            metavar='bytes',
             help='Maximum chunk size to break up.'
         )
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -77,7 +80,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -87,7 +90,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -103,7 +106,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _copy(self, ifile, ofile):
+    def _copy(self, ifile: BinaryIO, ofile: BinaryIO) -> None:
         chunks, lchunk = divmod(self._max_size, self._cache_size)
         for i in [self._cache_size]*chunks + [lchunk]:
             chunk = ifile.read(i)
@@ -111,7 +114,7 @@ class Main:
                 break
             ofile.write(chunk)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -141,6 +144,8 @@ class Main:
                 sys.argv[0] + ': Cannot read "' + options.get_file() +
                 '" file.'
             ) from exception
+
+        return 0
 
 
 if __name__ == '__main__':

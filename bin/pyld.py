@@ -10,6 +10,7 @@ import importlib.util
 import os
 import signal
 import sys
+from typing import Any, List, Sequence, Union
 
 if sys.version_info < (3, 6) or sys.version_info >= (4, 0):
     sys.exit(__file__ + ": Requires Python version (>= 3.6, < 4.0).")
@@ -29,7 +30,7 @@ class Options:
     self._verbose_flag = Verbose flag
     """
 
-    def dump(self):
+    def dump(self) -> None:
         """
         Dump object recursively.
         """
@@ -48,59 +49,59 @@ class Options:
         print('        "_verbose_flag":', self._verbose_flag)
         print("    },")
 
-    def __init__(self, args):
+    def __init__(self, args: List[str]) -> None:
         """
         args = Python loader commandline arguments
         """
         self._module_dir = os.path.dirname(args[0])
         self._parse_args(args[1:])
 
-    def get_dump_flag(self):
+    def get_dump_flag(self) -> bool:
         """
         Return dump objects flag.
         """
         return self._dump_flag
 
-    def get_library_path(self):
+    def get_library_path(self) -> List[str]:
         """
         Return Python library path for debug modules.
         """
         return self._library_path
 
-    def get_module(self):
+    def get_module(self) -> str:
         """
         Return module name containing 'Main(args)' class
         """
         return self._args.module[0]
 
-    def get_module_name(self):
+    def get_module_name(self) -> str:
         """
         Return module name.
         """
         return self._module_name
 
-    def get_module_args(self):
+    def get_module_args(self) -> List[str]:
         """
         Return main module arguments.
         """
         return self._module_args
 
-    def get_module_dir(self):
+    def get_module_dir(self) -> str:
         """
         Return main module directory.
         """
         return self._module_dir
 
-    def get_verbose_flag(self):
+    def get_verbose_flag(self) -> bool:
         """
         Return verbose flag.
         """
         return self._verbose_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Load Python main program as module '
-            '(must have Main class).'
+            '(must have Main class).',
         )
 
         parser.add_argument(
@@ -186,16 +187,22 @@ class Options:
             self._library_path = []
 
 
-# pylint: disable = too-few-public-methods,no-value-for-parameter
-class ArgparseVerboseAction(argparse.Action):
+class ArgparseVerboseAction(
+    argparse.Action,
+):  # pylint: disable = too-few-public-methods
     """
     Arg parser verbose action handler class
     """
 
-    def __call__(self, parser, args, values, option_string=None):
+    def __call__(
+        self,
+        parser: argparse.ArgumentParser,
+        args: argparse.Namespace,
+        values: Union[str, Sequence[Any], None],
+        option_string: str = None,
+    ) -> None:
         # option_string must be '-pyldv', '-pyldvv' or '-pldyvvv'
         setattr(args, self.dest, len(option_string[5:]))
-# pylint: enable = too-few-public-methods,no-value-for-parameter
 
 
 class PythonLoader:
@@ -206,7 +213,7 @@ class PythonLoader:
     self._sys_argv = Modified Python system arguments
     """
 
-    def dump(self):
+    def dump(self) -> None:
         """
         Dump object recursively.
         """
@@ -215,7 +222,7 @@ class PythonLoader:
         print('    "_sysArgv":', self._sys_argv)
         print("}")
 
-    def __init__(self, options):
+    def __init__(self, options: Options) -> None:
         """
         options = Options class object
         """
@@ -232,7 +239,7 @@ class PythonLoader:
             os.environ['PATH'] = os.pathsep.join([directory] + path)
 
     @staticmethod
-    def _load_module(file):
+    def _load_module(file: str) -> Any:
         loader = importlib.machinery.SourceFileLoader('module.name', file)
         main = importlib.util.module_from_spec(
             importlib.util.spec_from_loader(loader.name, loader)
@@ -240,7 +247,7 @@ class PythonLoader:
         loader.exec_module(main)
         return main
 
-    def run(self):
+    def run(self) -> None:
         """
         Load main module and run 'Main()' class
         """
@@ -267,13 +274,13 @@ class PythonLoader:
         main = self._load_module(os.path.join(directory, module)+'.py')
         main.Main()
 
-    def get_options(self):
+    def get_options(self) -> Options:
         """
         Return Options class object.
         """
         return self._options
 
-    def get_sys_argv(self):
+    def get_sys_argv(self) -> List[str]:
         """
         Return list sysArgv.
         """
@@ -285,7 +292,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -295,7 +302,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -312,12 +319,14 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
         options = Options(sys.argv)
         PythonLoader(options).run()
+
+        return 0
 
 
 if __name__ == '__main__':

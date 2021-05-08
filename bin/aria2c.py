@@ -18,7 +18,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -28,7 +28,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -45,7 +45,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _set_libraries(command):
+    def _set_libraries(command: command_mod.Command) -> None:
         libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
         if os.path.isdir(libdir):
             if os.name != 'nt' and os.uname()[0] == 'Linux':
@@ -55,7 +55,7 @@ class Main:
                 else:
                     os.environ['LD_LIBRARY_PATH'] = libdir
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -72,6 +72,8 @@ class Main:
             subtask_mod.Exec(shaper.get_cmdline() + aria2c.get_cmdline()).run()
         else:
             subtask_mod.Exec(aria2c.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

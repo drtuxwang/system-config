@@ -9,6 +9,7 @@ import re
 import signal
 import socket
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -19,18 +20,17 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_tmux(self):
+    def get_tmux(self) -> command_mod.Command:
         """
         Return tmux Command class object.
         """
         return self._tmux
 
     @staticmethod
-    def _next(sessions):
+    def _next(sessions: List[str]) -> str:
         hostname = socket.gethostname().split('.')[0].lower()
         ishost = re.compile(r'{0:s}-\d+$'.format(hostname))
         numbers = [int(x.split('-')[-1]) for x in sessions if ishost.match(x)]
@@ -38,7 +38,7 @@ class Options:
 
         return "{0:s}-{1}".format(hostname, max(numbers)+1)
 
-    def _select(self):
+    def _select(self) -> None:
         self._tmux.set_args(['list-sessions'])
         task = subtask_mod.Batch(self._tmux.get_cmdline())
         task.run(pattern=r'\(created')
@@ -60,7 +60,7 @@ class Options:
         else:
             self._tmux.set_args(['new-session', '-s', self._next(sessions)])
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -82,7 +82,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -92,7 +92,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -109,13 +109,15 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
         options = Options()
 
         subtask_mod.Exec(options.get_tmux().get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

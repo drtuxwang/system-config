@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -18,25 +19,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_command(self):
+    def get_command(self) -> command_mod.Command:
         """
         Return command Command class object.
         """
         return self._command
 
-    def get_log_file(self):
+    def get_log_file(self) -> str:
         """
         Return log file.
         """
         return self._args.log_file
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> List[str]:
         parser = argparse.ArgumentParser(
-            description='Run a command immune to terminal hangups.')
+            description='Run a command immune to terminal hangups.',
+        )
 
         parser.add_argument(
             '-q',
@@ -69,7 +71,7 @@ class Options:
         return args[len(my_args):]
 
     @staticmethod
-    def _get_command(directory, command):
+    def _get_command(directory: str, command: str) -> command_mod.Command:
         if os.path.isfile(command):
             return command_mod.CommandFile(os.path.abspath(command))
 
@@ -78,7 +80,7 @@ class Options:
             return command_mod.CommandFile(file)
         return command_mod.Command(command)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -106,7 +108,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -116,7 +118,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -133,7 +135,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -141,6 +143,8 @@ class Main:
 
         subtask_mod.Daemon(options.get_command().get_cmdline()).run(
             file=options.get_log_file())
+
+        return 0
 
 
 if __name__ == '__main__':

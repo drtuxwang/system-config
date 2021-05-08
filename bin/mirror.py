@@ -11,14 +11,13 @@ import shutil
 import signal
 import sys
 import time
+from typing import List
 
 import file_mod
 import logging_mod
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -29,32 +28,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_mirrors(self):
+    def get_mirrors(self) -> List[list]:
         """
         Return list of mirroring directory pair tuples.
         """
         return self._mirrors
 
-    def get_recursive_flag(self):
+    def get_recursive_flag(self) -> bool:
         """
         Return recursive flag.
         """
         return self._args.recursive_flag
 
-    def get_remove_flag(self):
+    def get_remove_flag(self) -> bool:
         """
         Return remove flag.
         """
         return self._args.remove_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Copy all files/directory inside a directory '
-            'into mirror directory.'
+            'into mirror directory.',
         )
 
         parser.add_argument(
@@ -78,7 +77,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -105,7 +104,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -115,7 +114,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -132,7 +131,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _automount(directory, wait):
+    def _automount(directory: str, wait: int) -> None:
         if directory.startswith('/media/'):
             for _ in range(wait * 10):
                 if os.path.isdir(directory):
@@ -140,7 +139,11 @@ class Main:
                 time.sleep(0.1)
 
     @staticmethod
-    def _report_old_files(source_dir, source_files, target_files):
+    def _report_old_files(
+        source_dir: str,
+        source_files: List[str],
+        target_files: List[str],
+    ) -> None:
         for target_file in target_files:
             if os.path.join(
                     source_dir,
@@ -156,7 +159,7 @@ class Main:
                 else:
                     logger.warning('No source for "%s" file.', target_file)
 
-    def _get_stats(self):
+    def _get_stats(self) -> str:
         elapsed = time.time() - self._start
         copied = self._size/1024
         return "{0:d}/{1:d}={2:d}".format(
@@ -165,7 +168,12 @@ class Main:
             int(copied/elapsed)
         )
 
-    def _remove_old_files(self, source_dir, source_files, target_files):
+    def _remove_old_files(
+        self,
+        source_dir: str,
+        source_files: List[str],
+        target_files: List[str],
+    ) -> None:
         for target_file in target_files:
             if os.path.join(
                     source_dir,
@@ -207,7 +215,7 @@ class Main:
                             target_file + '" file.'
                         ) from exception
 
-    def _mirror_link(self, source_file, target_file):
+    def _mirror_link(self, source_file: str, target_file: str) -> None:
         source_link = os.readlink(source_file)
         if (os.path.isfile(target_file) or os.path.isdir(target_file) or
                 os.path.islink(target_file)):
@@ -247,7 +255,7 @@ class Main:
         file_time = file_stat.get_time()
         os.utime(target_file, (file_time, file_time), follow_symlinks=False)
 
-    def _mirror_file(self, source_file, target_file):
+    def _mirror_file(self, source_file: str, target_file: str) -> None:
         if os.path.islink(target_file):
             try:
                 os.remove(target_file)
@@ -308,7 +316,7 @@ class Main:
                     ) from exception
 
     @staticmethod
-    def _mirror_directory_time(source_dir, target_dir):
+    def _mirror_directory_time(source_dir: str, target_dir: str) -> None:
         source_time = os.path.getmtime(source_dir)
         target_time = os.path.getmtime(target_dir)
         if source_time != target_time:
@@ -320,7 +328,7 @@ class Main:
                     target_dir + '" directory modification time.'
                 ) from exception
 
-    def _mirror(self, source_dir, target_dir):
+    def _mirror(self, source_dir: str, target_dir: str) -> None:
         try:
             source_files = [
                 os.path.join(source_dir, x) for x in os.listdir(source_dir)
@@ -381,7 +389,7 @@ class Main:
         else:
             self._report_old_files(source_dir, source_files, target_files)
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -394,6 +402,8 @@ class Main:
             self._automount(mirror[1], 8)
             self._mirror(mirror[0], mirror[1])
         logger.info('[%s] Finished!', self._get_stats())
+
+        return 0
 
 
 if __name__ == '__main__':

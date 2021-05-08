@@ -99,6 +99,8 @@ prune:
 	@echo
 	docker system df
 	df /var/lib/docker
+	@echo
+	docker network ls
 
 .PHONY: load
 load:

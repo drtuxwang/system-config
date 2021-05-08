@@ -9,6 +9,7 @@ import os
 import signal
 import socket
 import sys
+from typing import Dict, List
 
 import command_mod
 import subtask_mod
@@ -19,24 +20,23 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_env(self):
+    def get_env(self) -> Dict[str, str]:
         """
         Return dictionary of environments.
         """
         return self._env
 
-    def get_gitk(self):
+    def get_gitk(self) -> command_mod.Command:
         """
         Return gitk Command class object.
         """
         return self._gitk
 
     @staticmethod
-    def _config():
+    def _config() -> None:
         home = os.environ.get('HOME', '')
         file = os.path.join(home, '.gitconfig')
         if not os.path.isfile(file):
@@ -50,7 +50,7 @@ class Options:
             except OSError:
                 pass
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -77,7 +77,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -87,7 +87,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -104,7 +104,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -112,6 +112,8 @@ class Main:
 
         subtask_mod.Exec(
             options.get_gitk().get_cmdline()).run(env=options.get_env())
+
+        return 0
 
 
 if __name__ == '__main__':

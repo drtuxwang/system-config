@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List, Tuple
 
 
 class Options:
@@ -15,19 +16,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Check for missing sequence in numbered files.')
+            description='Check for missing sequence in numbered files.',
+        )
 
         parser.add_argument(
             'files',
@@ -38,7 +40,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -50,7 +52,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -60,7 +62,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -77,19 +79,19 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _check_missing(seq_name, numbers):
+    def _check_missing(seq_name: Tuple[str, str], numbers: List[int]) -> None:
         sequence = set(range(min(numbers), max(numbers)+1))
         name, ext = seq_name
-        for missing in sorted(sequence - numbers):
-            print("Missing file in sequence: {0:s}_{1:02d}{2:s}".format(
+        for missing in sorted(sequence - set(numbers)):
+            print("Missing file in sequence: {0:s}_{1:03d}{2:s}".format(
                 name,
                 missing,
                 ext
             ))
 
     @classmethod
-    def _check_sequences(cls, files):
-        sequences = {}
+    def _check_sequences(cls, files: List[str]) -> None:
+        sequences: dict = {}
         for file in files:
             if '_' in file and os.path.isfile(file):
                 name, ext = os.path.splitext(file)
@@ -108,13 +110,15 @@ class Main:
                 cls._check_missing(seq_name, numbers)
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
         options = Options()
 
         cls._check_sequences(options.get_files())
+
+        return 0
 
 
 if __name__ == '__main__':

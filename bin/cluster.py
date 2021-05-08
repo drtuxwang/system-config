@@ -14,6 +14,7 @@ import subprocess
 import sys
 import time
 import threading
+from typing import List
 
 import paramiko
 
@@ -23,45 +24,45 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_threads(self):
+    def get_threads(self) -> int:
         """
         Return number of threads.
         """
         return self._args.threads[0]
 
-    def get_timeout(self):
+    def get_timeout(self) -> int:
         """
         Return timeout in seconds.
         """
         return self._args.timeout[0]
 
-    def get_nodes(self):
+    def get_nodes(self) -> List[str]:
         """
-        Return nodes ist.
+        Return nodes list.
         """
         return self._nodes
 
-    def get_cmdline(self):
+    def get_cmdline(self) -> List[str]:
         """
         Return the command line as a list.
         """
         return self._cmdline
 
     @staticmethod
-    def _parse_input():
+    def _parse_input() -> List[str]:
         nodes = []
         for line in sys.stdin:
             nodes.extend(line.split())
         return nodes
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> List[str]:
         parser = argparse.ArgumentParser(
             description='Run command on a list of nodes in parallel '
-            '(supply node list as stdin).\n'
+            '(supply node list as stdin).\n',
         )
 
         parser.add_argument(
@@ -110,7 +111,7 @@ class Options:
         self._args = parser.parse_args(my_args)
         return args
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -123,13 +124,13 @@ class SecureShell:
     SecureShell class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._client = paramiko.SSHClient()
         self._client.load_system_host_keys()
         self._client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self._host = None
+        self._host = ''
 
-    def connect(self, host):
+    def connect(self, host: str) -> None:
         """
         Connect to host
         """
@@ -147,7 +148,7 @@ class SecureShell:
             self.close()
             raise SecureShellError(exception) from exception
 
-    def execute(self, command, timeout):
+    def execute(self, command: str, timeout: int) -> None:
         """
         Execute command on remote node
 
@@ -171,7 +172,7 @@ class SecureShell:
             self.close()
             raise SecureShellError(exception) from exception
 
-    def close(self):
+    def close(self) -> None:
         """
         Disconnect from host
         """
@@ -183,7 +184,7 @@ class WorkQueue:
     WorkQueue class
     """
 
-    def __init__(self, threads, command, timeout):
+    def __init__(self, threads: int, command: List[str], timeout: int) -> None:
         """
         threads = Number of threads
         command = Command list
@@ -191,7 +192,7 @@ class WorkQueue:
         """
         self._time0 = time.time()
         self._nitems = 0
-        self._queue = queue.Queue(maxsize=0)
+        self._queue: queue.Queue = queue.Queue(maxsize=0)
 
         self._workers = []
         for _ in range(threads):
@@ -203,7 +204,7 @@ class WorkQueue:
             worker.start()
             self._workers.append(worker)
 
-    def _do_work(self, command, timeout):
+    def _do_work(self, command: List[str], timeout: int) -> None:
         while True:
             host = self._queue.get()
             if host is None:
@@ -226,7 +227,7 @@ class WorkQueue:
                 int(time.time() - self._time0), host, message))
             self._queue.task_done()
 
-    def add_items(self, hosts):
+    def add_items(self, hosts: List[str]) -> None:
         """
         Add items to queue
         """
@@ -234,7 +235,7 @@ class WorkQueue:
         for host in hosts:
             self._queue.put(host)
 
-    def join(self):
+    def join(self) -> None:
         """
         Close down queue
         """
@@ -255,7 +256,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -265,7 +266,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -282,7 +283,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _config_logging():
+    def _config_logging() -> None:
         formatter = logging.Formatter(
             '%(asctime)s %(levelname)s: %(message)s',
             datefmt='%Y-%m-%d-%H:%M:%S'
@@ -296,7 +297,7 @@ class Main:
         logger.setLevel(logging.INFO)
 
     @staticmethod
-    def _config_directory():
+    def _config_directory() -> None:
         directory = 'cluster.results'
         if not os.path.isdir(directory):
             try:
@@ -312,7 +313,7 @@ class Main:
             logging.error('\033[31m%s\033[0m', message)
             raise SystemExit(sys.argv[0] + ': ' + message) from exception
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -332,6 +333,8 @@ class Main:
         )
         work_queue.add_items(nodes)
         work_queue.join()
+
+        return 0
 
 
 if __name__ == '__main__':

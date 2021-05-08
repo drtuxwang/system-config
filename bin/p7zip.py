@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from typing import BinaryIO, List
 
 import command_mod
 import file_mod
@@ -20,37 +21,53 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archiver(self):
+    def get_archiver(self) -> command_mod.Command:
         """
         Return archiver Command class object.
         """
         return self._archiver
 
-    def get_archive(self):
+    def get_archive(self) -> str:
         """
         Return archive file.
         """
         return self._archive
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Make a compressed archive in 7z format.')
+            description='Make a compressed archive in 7z format.',
+        )
 
         parser.add_argument(
-            '-split', nargs=1, type=int, metavar='bytes',
-            help='Split archive into chucks with selected size.')
+            '-split',
+            nargs=1,
+            type=int,
+            metavar='bytes',
+            help='Split archive into chucks with selected size.',
+        )
         parser.add_argument(
-            '-threads', nargs=1, type=int, default=[2],
-            help='Threads are faster but decrease quality. Default is 2.')
+            '-threads',
+            nargs=1,
+            type=int,
+            default=[2],
+            help='Threads are faster but decrease quality. Default is 2.',
+        )
         parser.add_argument(
-            'archive', nargs=1, metavar='file.7z|file.bin|file.exe|directory',
-            help='Archive file or directory.')
+            'archive',
+            nargs=1,
+            metavar='file.7z|file.bin|file.exe|directory',
+            help='Archive file or directory.',
+        )
         parser.add_argument(
-            'files', nargs='*', metavar='file', help='File or directory.')
+            'files',
+            nargs='*',
+            metavar='file',
+            help='File or directory.',
+        )
 
         self._args = parser.parse_args(args)
 
@@ -66,11 +83,11 @@ class Options:
             )
 
     @staticmethod
-    def _setenv():
+    def _setenv() -> None:
         if 'LANG' in os.environ:
             del os.environ['LANG']  # Avoids locale problems
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -118,7 +135,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -128,7 +145,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def _copy(ifile, ofile):
+    def _copy(ifile: BinaryIO, ofile: BinaryIO) -> None:
         while True:
             chunk = ifile.read(131072)
             if not chunk:
@@ -136,7 +153,7 @@ class Main:
             ofile.write(chunk)
 
     @classmethod
-    def _make_exe(cls, archiver, archive):
+    def _make_exe(cls, archiver: command_mod.Command, archive: str) -> None:
         command = command_mod.Command(
             '7z.sfx',
             platform='windows-x86',
@@ -183,7 +200,7 @@ class Main:
             ) from exception
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -199,7 +216,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -228,6 +245,8 @@ class Main:
                     archive
                 )
             ) from exception
+
+        return 0
 
 
 if __name__ == '__main__':

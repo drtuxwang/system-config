@@ -10,20 +10,19 @@ import logging
 import os
 import signal
 import sys
+from typing import List, Set
 
-import imagehash
-import PIL
-import pybktree
+import imagehash  # type: ignore
+import PIL  # type: ignore
+import pybktree  # type: ignore
 
 import command_mod
 import logging_mod
 
 MAX_DISTANCE_IDENTICAL = 6
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -34,25 +33,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_recursive_flag(self):
+    def get_recursive_flag(self) -> bool:
         """
         Return recursive flag.
         """
         return self._args.recursive_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Show picture files with same finger print.')
+            description='Show picture files with same finger print.',
+        )
 
         parser.add_argument(
             '-R',
@@ -69,7 +69,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -81,7 +81,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -91,7 +91,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -107,7 +107,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _calc(self, options, files):
+    def _calc(self, options: Options, files: List[str]) -> dict:
         image_phash = {}
 
         for file in files:
@@ -130,19 +130,19 @@ class Main:
         return image_phash
 
     @staticmethod
-    def _match(image_phash):
+    def _match(image_phash: dict) -> Set[str]:
         """
         Using BKTree to speed up check:
         if phash1 - phash2 <= MAX_DISTANCE_IDENTICAL:
         """
-        phash_images = {}
+        phash_images: dict = {}
         for image, phash in image_phash.items():
             if phash in phash_images:
                 phash_images[phash].append(image)
             else:
                 phash_images[phash] = [image]
 
-        matched_images = set()
+        matched_images: set = set()
         tree = pybktree.BKTree(pybktree.hamming_distance, phash_images)
         for phash in sorted(phash_images):
             images = frozenset(itertools.chain.from_iterable([
@@ -154,7 +154,7 @@ class Main:
 
         return matched_images
 
-    def run(self):
+    def run(self) -> bool:
         """
         Start program
         """

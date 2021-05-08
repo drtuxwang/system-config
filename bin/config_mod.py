@@ -12,26 +12,35 @@ import os
 import re
 import shutil
 import xml
+from typing import (
+    BinaryIO,
+    Generator,
+    List,
+    Optional,
+    TextIO,
+    Tuple,
+    Union,
+)
 
-import bson
-import xmltodict
+import bson  # type: ignore
+import xmltodict  # type: ignore
 import yaml
 
-RELEASE = '1.6.0'
-VERSION = 20210227
+RELEASE = '1.7.0'
+VERSION = 20210508
 
 
 class Data:
     """
     This class contains de-serialized BSON/JSON/YAML data.
     """
-    def __init__(self, file=None):
-        self._blocks = [{}]
+    def __init__(self, file: Optional[str] = None) -> None:
+        self._blocks: List[dict] = [{}]
         if file:
             self.read(file)
 
     @staticmethod
-    def _unjinja(data):
+    def _unjinja(data: str) -> str:
         """
         Replace Jinja directives.
         """
@@ -54,40 +63,40 @@ class Data:
         return data_new
 
     @staticmethod
-    def _split_jsons(text):
+    def _split_jsons(text: str) -> List[str]:
         """
         Split multiple JSONs in string and return list of JSONs.
         """
         return re.sub('}[ \\n]*{', '}}{{', text).split('}{')
 
     @staticmethod
-    def _split_yamls(text):
+    def _split_yamls(text: str) -> List[str]:
         """
         Split multiple YAMLs in string and return list of YAMLs.
         """
         return re.split('\n--', text)
 
-    def get(self):
+    def get(self) -> Generator[dict, None, None]:
         """
         Yield de-serialized data blocks.
         """
         for block in self._blocks:
             yield block
 
-    def set(self, blocks):
+    def set(self, blocks: List[dict]) -> None:
         """
         Set de-serialized data blocks.
         """
         self._blocks = blocks
 
-    def add(self, block):
+    def add(self, block: dict) -> None:
         """
         Add de-serialized data block.
         """
         self._blocks.append(block)
 
     @classmethod
-    def _decode_json(cls, data):
+    def _decode_json(cls, data: str) -> List[str]:
         try:
             blocks = [json.loads(block) for block in cls._split_jsons(data)]
         except json.decoder.JSONDecodeError as exception:
@@ -95,7 +104,7 @@ class Data:
         return blocks
 
     @classmethod
-    def _decode_yaml(cls, data):
+    def _decode_yaml(cls, data: str) -> List[str]:
         try:
             blocks = [
                 yaml.safe_load(block) for block in cls._split_yamls(data)
@@ -107,10 +116,12 @@ class Data:
             raise ReadConfigError(exception) from exception
         return blocks
 
-    def read(self, file, check=False):
+    def read(self, file: str, check: bool = False) -> None:
         """
         Read or check configuration file.
         """
+        ifile: Union[TextIO, BinaryIO]
+
         try:
             if file.endswith('bson'):
                 try:
@@ -140,16 +151,17 @@ class Data:
                     raise ReadConfigError("Cannot handle configuration file.")
         except OSError as exception:
             raise ReadConfigError(
-                "Cannot read configuration file."
+                "Cannot read configuration file: " + file,
             ) from exception
         if not check:
             self._blocks = blocks
 
-    def write(self, file, compact=False):
+    def write(self, file: str, compact: bool = False) -> None:
         """
         Write configuration file
         """
         tmpfile = file + '.part' + str(os.getpid())
+        ofile: Union[TextIO, BinaryIO]
 
         try:
             if file.endswith('json'):
@@ -200,20 +212,24 @@ class Config:
     """
     This class deals with "config_mod.yaml" configuration file.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         file = os.path.join(os.path.dirname(__file__), 'config_mod.yaml')
         mappings = next(Data(file).get())
         self._apps = mappings.get('apps', {})
         self._bindings = mappings.get('bindings', {})
         self._parameters = mappings.get('parameters', {})
 
-    def get(self, parameter):
+    def get(self, parameter: str) -> str:
         """
         Return parameter or None
         """
         return self._parameters.get(parameter)
 
-    def get_app(self, app_name, view=False):
+    def get_app(
+        self,
+        app_name: str,
+        view: bool = False,
+    ) -> Optional[Tuple[List[str], bool]]:
         """
         Return (command, daemon_flag) or None
         """
@@ -227,7 +243,7 @@ class Config:
 
         return None
 
-    def get_open_app(self, extension):
+    def get_open_app(self, extension: str) -> Optional[Tuple[List[str], bool]]:
         """
         Return (command, daemon_flag) or None
         """
@@ -237,7 +253,7 @@ class Config:
 
         return None
 
-    def get_view_app(self, extension):
+    def get_view_app(self, extension: str) -> Optional[Tuple[List[str], bool]]:
         """
         Return (command, daemon_flag) or None
         """

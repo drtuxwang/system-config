@@ -10,6 +10,7 @@ import os
 import re
 import signal
 import sys
+from typing import List
 
 
 class Options:
@@ -17,26 +18,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_packages_file(self):
+    def get_packages_file(self) -> str:
         """
         Return packages file location.
         """
         return self._args.packages_file[0]
 
-    def get_patterns(self):
+    def get_patterns(self) -> List[str]:
         """
         Return list of regular expression search patterns.
         """
         return self._args.patterns
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Print lines matching a pattern in Debian '
-            'package file.'
+            'package file.',
         )
 
         parser.add_argument(
@@ -54,7 +55,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -66,10 +67,10 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
-            self._packages = {}
+            self._packages: dict = {}
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
@@ -77,7 +78,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def _read_data(file):
+    def _read_data(file: str) -> dict:
         try:
             with open(file) as ifile:
                 data = json.load(ifile)
@@ -89,7 +90,7 @@ class Main:
         return data
 
     @classmethod
-    def _read_distribution_lines(cls, packages_file):
+    def _read_distribution_lines(cls, packages_file: str) -> List[str]:
         distribution_data = cls._read_data(packages_file)
         lines = []
         for url in distribution_data['urls']:
@@ -98,7 +99,10 @@ class Main:
         return lines
 
     @staticmethod
-    def _search_distribution_packages(lines, patterns):
+    def _search_distribution_packages(
+        lines: List[str],
+        patterns: List[str],
+    ) -> None:
         name = None
         for pattern in patterns:
             ispattern = re.compile(pattern, re.IGNORECASE)
@@ -109,7 +113,7 @@ class Main:
                     print("{0:s}: {1:s}".format(name, line))
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -125,7 +129,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -133,6 +137,8 @@ class Main:
 
         lines = self._read_distribution_lines(options.get_packages_file())
         self._search_distribution_packages(lines, options.get_patterns())
+
+        return 0
 
 
 if __name__ == '__main__':

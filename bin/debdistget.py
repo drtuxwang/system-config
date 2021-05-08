@@ -15,16 +15,15 @@ import signal
 import sys
 import time
 import urllib.request
+from typing import List
 
 import command_mod
 import file_mod
 import logging_mod
 import subtask_mod
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -35,19 +34,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_distribution_files(self):
+    def get_distribution_files(self) -> List[str]:
         """
         Return list of distribution files.
         """
         return self._args.distribution_files
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Download Debian packages list files.')
+            description='Download Debian packages list files.',
+        )
 
         parser.add_argument(
             'distribution_files',
@@ -58,7 +58,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -70,7 +70,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -79,7 +79,7 @@ class Main:
         except SystemExit as exception:
             sys.exit(exception)
 
-    def config(self):
+    def config(self) -> None:
         """
         Configure program
         """
@@ -100,7 +100,7 @@ class Main:
         )
 
     @staticmethod
-    def _get_urls(distribution_file):
+    def _get_urls(distribution_file: str) -> List[str]:
         urls = []
         try:
             with open(distribution_file, errors='replace') as ifile:
@@ -121,7 +121,7 @@ class Main:
             ) from exception
         return urls
 
-    def _remove(self):
+    def _remove(self) -> None:
         for file in glob.glob(os.path.join(self.tmpdir, 'Packages*')):
             try:
                 os.remove(file)
@@ -130,13 +130,13 @@ class Main:
 
     @staticmethod
     @functools.lru_cache(maxsize=4)
-    def _get_cmdline(name):
+    def _get_cmdline(name: str) -> List[str]:
         command = command_mod.Command(name, errors='stop')
 
         return command.get_cmdline()
 
     @classmethod
-    def _unpack(cls, file):
+    def _unpack(cls, file: str) -> None:
         directory = os.path.dirname(file)
         if file.endswith('.xz'):
             cmdline = cls._get_cmdline('unxz') + [file]
@@ -150,7 +150,7 @@ class Main:
         subtask_mod.Task(cmdline).run(directory=directory)
 
     @staticmethod
-    def _show_times(old_utime, new_utime):
+    def _show_times(old_utime: float, new_utime: float) -> None:
         new_utc = datetime.datetime.fromtimestamp(new_utime)
         if old_utime:
             old_utc = datetime.datetime.fromtimestamp(old_utime)
@@ -163,7 +163,12 @@ class Main:
             new_utc.strftime('%Y-%m-%d-%H:%M:%S'),
         )
 
-    def _get_packages(self, data, wget, url):
+    def _get_packages(
+        self,
+        data: dict,
+        wget: command_mod.Command,
+        url: str,
+    ) -> dict:
         try:
             conn = urllib.request.urlopen(url)
         except Exception as exception:
@@ -209,7 +214,7 @@ class Main:
         return data
 
     @staticmethod
-    def _read_data(file):
+    def _read_data(file: str) -> dict:
         try:
             with open(file) as ifile:
                 data = json.load(ifile)
@@ -225,7 +230,7 @@ class Main:
         return data
 
     @staticmethod
-    def _write_data(file, data):
+    def _write_data(file: str, data: dict) -> None:
         logger.info('Creating "%s" packages file.', file)
         try:
             with open(file + '.part', 'w', newline='\n') as ofile:
@@ -241,7 +246,7 @@ class Main:
                 sys.argv[0] + ': Cannot create "' + file + '" file.'
             ) from exception
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -290,6 +295,8 @@ class Main:
                 if new_time > old_time or distribution_data['urls'] != urls:
                     distribution_data['urls'] = urls
                     self._write_data(json_file, distribution_data)
+
+        return 0
 
 
 if __name__ == '__main__':

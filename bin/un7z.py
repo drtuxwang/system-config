@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import file_mod
@@ -19,30 +20,31 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archiver(self):
+    def get_archiver(self) -> command_mod.Command:
         """
         Return archiver Command class object.
         """
         return self._archiver
 
-    def get_archives(self):
+    def get_archives(self) -> List[str]:
         """
         Return list of archive files.
         """
         return self._args.archives
 
     @staticmethod
-    def _setenv():
+    def _setenv() -> None:
         if 'LANG' in os.environ:
             del os.environ['LANG']  # Avoids locale problems
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a compressed archive in 7Z format.')
+            description='Unpack a compressed archive in 7Z format.',
+        )
 
         parser.add_argument(
             '-v',
@@ -65,7 +67,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -88,7 +90,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -98,7 +100,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -115,7 +117,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def set_time(files):
+    def set_time(files: List[str]) -> None:
         """
         Fix directory and symbolic link modified times
         """
@@ -142,7 +144,7 @@ class Main:
                     os.utime(file, (file_time, file_time))
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
@@ -178,6 +180,8 @@ class Main:
         files = [line[53:] for line in task.get_output()]
         files.reverse()
         cls.set_time(files)
+
+        return 0
 
 
 if __name__ == '__main__':

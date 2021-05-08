@@ -3,6 +3,8 @@
 Search for packages that match regular expression in Debian package file.
 """
 
+# Annotation: Fix Class reference run time NameError
+from __future__ import annotations
 import argparse
 import distutils.version
 import glob
@@ -11,6 +13,7 @@ import os
 import re
 import signal
 import sys
+from typing import List
 
 
 class Options:
@@ -18,32 +21,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_check_all(self):
+    def get_check_all(self) -> bool:
         """
         Return check all (including description).
         """
         return self._args.check_all
 
-    def get_packages_file(self):
+    def get_packages_file(self) -> str:
         """
         Return packages file location.
         """
         return self._args.packages_file[0]
 
-    def get_patterns(self):
+    def get_patterns(self) -> List[str]:
         """
         Return list of regular expression search patterns.
         """
         return self._args.patterns
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Search for packages that match regular '
-            'expression in Debian package file.'
+            'expression in Debian package file.',
         )
 
         parser.add_argument(
@@ -67,7 +70,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -79,42 +82,42 @@ class Package:
     Package class
     """
 
-    def __init__(self, version, size, description):
+    def __init__(self, version: str, size: int, description: str) -> None:
         self._version = version
         self._size = size
         self._description = description
 
-    def get_description(self):
+    def get_description(self) -> str:
         """
         Return description.
         """
         return self._description
 
-    def set_description(self, description):
+    def set_description(self, description: str) -> None:
         """
         Set package description.
         """
         self._description = description
 
-    def get_size(self):
+    def get_size(self) -> int:
         """
         Return size.
         """
         return self._size
 
-    def set_size(self, size):
+    def set_size(self, size: int) -> None:
         """
         Set package size.
         """
         self._size = size
 
-    def get_version(self):
+    def get_version(self) -> str:
         """
         Return version.
         """
         return self._version
 
-    def set_version(self, version):
+    def set_version(self, version: str) -> None:
         """
         Set package version.
 
@@ -122,7 +125,7 @@ class Package:
         """
         self._version = version
 
-    def is_newer(self, package):
+    def is_newer(self, package: Package) -> bool:
         """
         Return True if version newer than package.
         """
@@ -142,7 +145,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -152,7 +155,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def _read_data(file):
+    def _read_data(file: str) -> dict:
         try:
             with open(file) as ifile:
                 data = json.load(ifile)
@@ -164,13 +167,13 @@ class Main:
         return data
 
     @classmethod
-    def _read_distribution_packages(cls, packages_file):
+    def _read_distribution_packages(cls, packages_file: str) -> dict:
         distribution_data = cls._read_data(packages_file)
         lines = []
         for url in distribution_data['urls']:
             lines.extend(distribution_data['data'][url]['text'])
 
-        packages = {}
+        packages: dict = {}
         name = ''
         package = Package('', -1, '')
         for line in lines:
@@ -199,7 +202,11 @@ class Main:
         return packages
 
     @staticmethod
-    def _search_distribution_packages(packages, patterns, check_all=False):
+    def _search_distribution_packages(
+        packages: dict,
+        patterns: List[str],
+        check_all: bool = False,
+    ) -> None:
         for pattern in patterns:
             ispattern = re.compile(pattern, re.IGNORECASE)
             for name, package in sorted(packages.items()):
@@ -217,7 +224,7 @@ class Main:
                     ))
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -233,7 +240,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -247,6 +254,8 @@ class Main:
             options.get_patterns(),
             options.get_check_all()
         )
+
+        return 0
 
 
 if __name__ == '__main__':

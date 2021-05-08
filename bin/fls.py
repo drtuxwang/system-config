@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import Iterator, List, Union
 
 import file_mod
 
@@ -17,37 +18,38 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._files
 
-    def get_order(self):
+    def get_order(self) -> str:
         """
         Return display order.
         """
         return self._args.order
 
-    def get_recursive_flag(self):
+    def get_recursive_flag(self) -> bool:
         """
         Return recursive flag.
         """
         return self._args.recursive_flag
 
-    def get_reverse_flag(self):
+    def get_reverse_flag(self) -> bool:
         """
         Return reverse flag.
         """
         return self._args.reverse_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Show full list of files.')
+            description='Show full list of files.',
+        )
 
         parser.add_argument(
             '-R',
@@ -94,7 +96,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -111,7 +113,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -121,7 +123,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -137,7 +139,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _list(self, options, files):
+    def _list(self, options: Options, files: List[str]) -> None:
         file_stats = []
         for file in files:
             if os.path.islink(file):
@@ -160,7 +162,10 @@ class Main:
                 ))
 
     @staticmethod
-    def _sorted(options, file_stats):
+    def _sorted(
+        options: Options,
+        file_stats: List[file_mod.FileStat],
+    ) -> Union[Iterator[file_mod.FileStat], List[file_mod.FileStat]]:
         order = options.get_order()
         if order == 'ctime':
             file_stats = sorted(file_stats, key=lambda s: s.get_time_change())
@@ -172,13 +177,15 @@ class Main:
             return reversed(file_stats)
         return file_stats
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
         options = Options()
 
         self._list(options, options.get_files())
+
+        return 0
 
 
 if __name__ == '__main__':

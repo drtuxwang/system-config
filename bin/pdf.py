@@ -12,6 +12,7 @@ import signal
 import sys
 import textwrap
 import time
+from typing import List
 
 import command_mod
 import config_mod
@@ -24,32 +25,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_chars(self):
+    def get_chars(self) -> int:
         """
         Return characters per line.
         """
         return self._args.chars[0]
 
-    def get_archive(self):
+    def get_archive(self) -> str:
         """
         Return PDF archive file.
         """
         return self._archive
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._files
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Create PDF file from text/images/'
-            'postscript/PDF files.'
+            'postscript/PDF files.',
         )
 
         parser.add_argument(
@@ -69,7 +70,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -99,10 +100,10 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
-            self._tempfiles = []
+            self._tempfiles: List[str] = []
             sys.exit(self.run())
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
@@ -110,7 +111,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -126,14 +127,14 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def __del__(self):
+    def __del__(self) -> None:
         for file in self._tempfiles:
             try:
                 os.remove(file)
             except OSError:
                 pass
 
-    def _image(self, file):
+    def _image(self, file: str) -> str:
         if 'convert' not in self._cache:
             self._cache['convert'] = command_mod.Command(
                 'convert',
@@ -165,7 +166,7 @@ class Main:
             )
         return 'IMAGE file "' + file + '"'
 
-    def _postscript(self, file):
+    def _postscript(self, file: str) -> str:
         try:
             with open(file, 'rb') as ifile:
                 try:
@@ -184,7 +185,7 @@ class Main:
                 sys.argv[0] + ': Cannot read "' + file + '" postscript file.'
             ) from exception
 
-    def _postscript_fix(self, file):
+    def _postscript_fix(self, file: str) -> None:
         scaling = None
         try:
             with open(self._tmpfile, errors='replace') as ifile:
@@ -210,7 +211,7 @@ class Main:
                         print(line, file=ofile)
             shutil.move(file + '.part', file)
 
-    def _text(self, options, file):
+    def _text(self, options: Options, file: str) -> str:
         if 'LANG' in os.environ:
             del os.environ['LANG']  # Avoids locale problems
         if 'a2ps' not in self._cache:
@@ -240,10 +241,10 @@ class Main:
         try:
             with open(file, 'rb') as ifile:
                 stdin = []
-                for line in ifile:
+                for bline in ifile:
                     line = is_not_printable.sub(
                         ' ',
-                        line.decode('utf-8', 'replace').rstrip('\r\n\004')
+                        bline.decode('utf-8', 'replace').rstrip('\r\n\004')
                     )
                     lines = textwrap.wrap(line, chars)
                     if not lines:
@@ -263,12 +264,12 @@ class Main:
             )
         return 'text file "' + file + '" with ' + str(chars) + ' columns'
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
         options = Options()
-        self._cache = {}
+        self._cache: dict = {}
 
         tmpdir = file_mod.FileUtil.tmpdir('.cache')
         tmpfile = os.path.join(tmpdir, 'pdf.tmp' + str(os.getpid()))
@@ -314,6 +315,8 @@ class Main:
                 subtask_mod.Task(command.get_cmdline() + args).run()
         if options.get_archive():
             subtask_mod.Task(command.get_cmdline() + args).run()
+
+        return 0
 
 
 if __name__ == '__main__':

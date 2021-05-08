@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from typing import List
 
 
 class Options:
@@ -16,29 +17,29 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_overwrite_flag(self):
+    def get_overwrite_flag(self) -> bool:
         """
         Return overwrite flag.
         """
         return self._args.overwrite_flag
 
-    def get_sources(self):
+    def get_sources(self) -> List[str]:
         """
         Return list of source files.
         """
         return self._args.sources
 
-    def get_target(self):
+    def get_target(self) -> str:
         """
         Return target file or directory.
         """
         return self._args.target[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description='Move or rename files.')
 
         parser.add_argument(
@@ -62,7 +63,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -74,7 +75,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -84,7 +85,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -100,7 +101,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _move(self):
+    def _move(self) -> None:
         if not os.path.isdir(self._options.get_target()):
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + self._options.get_target() +
@@ -136,7 +137,7 @@ class Main:
                     '" source file.'
                 ) from exception
 
-    def _rename(self, source, target):
+    def _rename(self, source: str, target: str) -> None:
         if os.path.isdir(source):
             print('Renaming "' + source + '" directory...')
         elif os.path.isfile(source):
@@ -171,7 +172,7 @@ class Main:
                 '" source file.'
             ) from exception
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -183,6 +184,8 @@ class Main:
             self._move()
         else:
             self._rename(sources[0], target)
+
+        return 0
 
 
 if __name__ == '__main__':

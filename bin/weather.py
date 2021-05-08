@@ -9,6 +9,7 @@ import argparse
 import signal
 import sys
 import time
+from typing import List
 
 import command_mod
 import config_mod
@@ -20,23 +21,23 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_quiet_flag(self):
+    def get_quiet_flag(self) -> bool:
         """
         Return quiet flag.
         """
         return self._args.quiet_flag
 
-    def get_url(self):
+    def get_url(self) -> str:
         """
         Return url.
         """
         return self._args.url[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(description='Current weather search.')
 
         parser.add_argument(
@@ -53,7 +54,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -65,7 +66,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -75,7 +76,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -83,11 +84,11 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def _parse(text):
+    def _parse(text: str) -> str:
         try:
             data = text.split('Current Weather')[1]
         except IndexError:
-            return None
+            return ''
         try:
             temp = data.split('<div class="temp">')[1].split('<')[0]
             condition = data.split('<span class="phrase">')[1].split('<')[0]
@@ -98,10 +99,10 @@ class Main:
                 )
         except IndexError:
             return '???'
-        return None
+        return ''
 
     @classmethod
-    def _search(cls, options):
+    def _search(cls, options: Options) -> str:
         user_agent = config_mod.Config().get('user_agent')
         curl = command_mod.Command('curl', errors='stop')
         curl.set_args(['-A', user_agent, options.get_url()])
@@ -126,12 +127,14 @@ class Main:
         return '???C (???)'
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
         options = Options()
         print(cls._search(options))
+
+        return 0
 
 
 if __name__ == '__main__':

@@ -17,7 +17,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -27,7 +27,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -44,7 +44,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -52,6 +52,8 @@ class Main:
         cmdline = command.get_cmdline() + sys.argv[1:]
 
         subtask_mod.Task(cmdline).run(pattern='dbind-WARNING|^$')
+
+        return 0
 
 
 if __name__ == '__main__':

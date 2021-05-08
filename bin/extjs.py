@@ -8,8 +8,9 @@ import glob
 import os
 import signal
 import sys
+from typing import Generator, List
 
-import jsbeautifier
+import jsbeautifier  # type: ignore
 
 
 class Options:
@@ -17,19 +18,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Extracts Javascript from a HTML file.')
+            description='Extracts Javascript from a HTML file.',
+        )
 
         parser.add_argument(
             'files',
@@ -40,7 +42,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -52,7 +54,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -62,7 +64,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -79,7 +81,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _extract(file):
+    def _extract(file: str) -> Generator[str, None, None]:
         lines = []
         try:
             with open(file, errors='replace') as ifile:
@@ -95,7 +97,7 @@ class Main:
             yield match.split('</script>')[0]
 
     @staticmethod
-    def _write(file, script):
+    def _write(file: str, script: str) -> None:
         lines = jsbeautifier.beautify(script).splitlines()
         print('Writing "{0:s}" with {1:d} lines...'.format(file, len(lines)))
         try:
@@ -109,7 +111,7 @@ class Main:
             ) from exception
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
@@ -125,6 +127,8 @@ class Main:
                 jsfile = '{0:s}-{1:02d}.js'.format(
                     file.rsplit('.', 1)[0], number)
                 cls._write(jsfile, script)
+
+        return 0
 
 
 if __name__ == '__main__':

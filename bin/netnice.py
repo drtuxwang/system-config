@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from typing import List
 
 import command_mod
 import network_mod
@@ -19,25 +20,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_command(self):
+    def get_command(self) -> command_mod.Command:
         """
         Return command Command class object.
         """
         return self._command
 
-    def get_shaper(self):
+    def get_shaper(self) -> command_mod.Command:
         """
         Return shaper Command class object.
         """
         return self._shaper
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> command_mod.Command:
         parser = argparse.ArgumentParser(
-            description='Run a command with limited network bandwidth.')
+            description='Run a command with limited network bandwidth.',
+        )
 
         parser.add_argument(
             '-n',
@@ -86,7 +88,7 @@ class Options:
         return command_mod.Command(
             self._args.command[0], args=args[len(my_args):], errors='stop')
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -99,7 +101,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -109,7 +111,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -126,7 +128,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -136,7 +138,8 @@ class Main:
             ) + options.get_command().get_cmdline()
         task = subtask_mod.Task(cmdline)
         task.run()
-        raise SystemExit(task.get_exitcode())
+
+        return task.get_exitcode()
 
 
 if __name__ == '__main__':

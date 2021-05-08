@@ -10,6 +10,7 @@ import signal
 import shutil
 import sys
 import time
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -20,18 +21,17 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_gqview(self):
+    def get_gqview(self) -> command_mod.Command:
         """
         Return gqview Command class object.
         """
         return self._gqview
 
     @staticmethod
-    def _config_geeqie():
+    def _config_geeqie() -> None:
         home = os.environ.get('HOME', '')
         configdir = os.path.join(home, '.config', 'geeqie')
         if not os.path.isdir(configdir):
@@ -61,7 +61,7 @@ class Options:
                     pass
 
     @staticmethod
-    def _config_gqview():
+    def _config_gqview() -> None:
         home = os.environ.get('HOME', '')
         configdir = os.path.join(home, '.gqview')
         if not os.path.isdir(configdir):
@@ -90,7 +90,7 @@ class Options:
             except OSError:
                 pass
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -119,7 +119,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -129,7 +129,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -146,13 +146,15 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
         options = Options()
         # Geeqie hangs with filter/background
         subtask_mod.Daemon(options.get_gqview().get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':

@@ -3,6 +3,8 @@
 Show information about packages in Debian packages '.debs' list file.
 """
 
+# Annotation: Fix Class reference run time NameError
+from __future__ import annotations
 import argparse
 import distutils.version
 import glob
@@ -10,6 +12,7 @@ import json
 import os
 import signal
 import sys
+from typing import List
 
 
 class Options:
@@ -17,26 +20,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_packages_file(self):
+    def get_packages_file(self) -> str:
         """
         Return packages file location.
         """
         return self._args.packages_file[0]
 
-    def get_package_names(self):
+    def get_package_names(self) -> List[str]:
         """
         Return list of package names.
         """
         return self._args.package_names
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Show information about packages in Debian '
-            'packages ".debs" list file.'
+            'packages ".debs" list file.',
         )
 
         parser.add_argument(
@@ -54,7 +57,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -66,17 +69,17 @@ class Package:
     Package class
     """
 
-    def __init__(self, version='0', info=()):
+    def __init__(self, version: str = '0', info: List[str] = None) -> None:
         self._version = version
         self._info = info
 
-    def get_version(self):
+    def get_version(self) -> str:
         """
         Return version.
         """
         return self._version
 
-    def set_version(self, version):
+    def set_version(self, version: str) -> None:
         """
         Set package version.
 
@@ -84,19 +87,19 @@ class Package:
         """
         self._version = version
 
-    def get_info(self):
+    def get_info(self) -> List[str]:
         """
         Return information.
         """
         return self._info
 
-    def set_info(self, info):
+    def set_info(self, info: List[str]) -> None:
         """
         Set package information.
         """
         self._info = info
 
-    def is_newer(self, package):
+    def is_newer(self, package: Package) -> bool:
         """
         Return True if version newer than package.
         """
@@ -116,7 +119,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -126,7 +129,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -143,7 +146,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _read_data(file):
+    def _read_data(file: str) -> dict:
         try:
             with open(file) as ifile:
                 data = json.load(ifile)
@@ -155,13 +158,13 @@ class Main:
         return data
 
     @classmethod
-    def _read_distribution_packages(cls, packages_file):
+    def _read_distribution_packages(cls, packages_file: str) -> dict:
         distribution_data = cls._read_data(packages_file)
         lines = []
         for url in distribution_data['urls']:
             lines.extend(distribution_data['data'][url]['text'])
 
-        packages = {}
+        packages: dict = {}
         name = ''
         package = Package()
         info = []
@@ -183,7 +186,10 @@ class Main:
         return packages
 
     @staticmethod
-    def _show_distribution_packages(packages, package_names):
+    def _show_distribution_packages(
+        packages: dict,
+        package_names: List[str],
+    ) -> None:
         for name in package_names:
             if name in packages:
                 for line in packages[name].get_info():
@@ -191,7 +197,7 @@ class Main:
                 print()
 
     @classmethod
-    def run(cls):
+    def run(cls) -> int:
         """
         Start program
         """
@@ -199,6 +205,8 @@ class Main:
 
         packages = cls._read_distribution_packages(options.get_packages_file())
         cls._show_distribution_packages(packages, options.get_package_names())
+
+        return 0
 
 
 if __name__ == '__main__':

@@ -5,6 +5,8 @@ System configuration detection tool.
 1996-2021 By Dr Colin Kong
 """
 
+# Annotation: Fix Class reference run time NameError
+from __future__ import annotations
 import functools
 import glob
 import json
@@ -13,9 +15,11 @@ import os
 import re
 import signal
 import socket
+import subprocess
 import sys
 import threading
 import time
+from typing import Any, Generator, List, Tuple
 
 import command_mod
 import file_mod
@@ -23,12 +27,10 @@ import power_mod
 import subtask_mod
 
 if os.name == 'nt':
-    # pylint: disable = import-error
-    import winreg
-    # pylint: enable = import-error
+    import winreg  # pylint: disable = import-error
 
-RELEASE = '5.15.4'
-VERSION = 20210213
+RELEASE = '5.16.0'
+VERSION = 20210508
 
 # pylint: disable = too-many-lines
 
@@ -38,26 +40,26 @@ class Options:
     Options class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._release_date = str(
             VERSION)[:4] + '-' + str(VERSION)[4:6] + '-' + str(VERSION)[6:]
         self._release_version = RELEASE
 
         self._system = OperatingSystem.factory()
 
-    def get_release_date(self):
+    def get_release_date(self) -> str:
         """
         Return release date.
         """
         return self._release_date
 
-    def get_release_version(self):
+    def get_release_version(self) -> str:
         """
         Return release version.
         """
         return self._release_version
 
-    def get_system(self):
+    def get_system(self) -> OperatingSystem:
         """
         Return operating system.
         """
@@ -69,13 +71,13 @@ class CommandThread(threading.Thread):
     Command thread class
     """
 
-    def __init__(self, command):
+    def __init__(self, command: command_mod.Command) -> None:
         threading.Thread.__init__(self, daemon=True)
-        self._child = None
+        self._child: subprocess.Popen = None
         self._command = command
         self._stdout = ''
 
-    def run(self):
+    def run(self) -> None:
         """
         Run thread
         """
@@ -89,7 +91,7 @@ class CommandThread(threading.Thread):
                 break
             self._stdout += byte.decode('utf-8', 'replace')
 
-    def kill(self):
+    def kill(self) -> None:
         """
         Kill thread
         """
@@ -97,7 +99,7 @@ class CommandThread(threading.Thread):
             self._child.kill()
             self._child = None
 
-    def get_output(self):
+    def get_output(self) -> str:
         """
         Return thread output.
         """
@@ -109,7 +111,7 @@ class Detect:
     Detect class
     """
 
-    def __init__(self, options):
+    def __init__(self, options: Options) -> None:
         self._author = (
             'Sysinfo ' + options.get_release_version() +
             ' (' + options.get_release_date() + ')'
@@ -117,7 +119,7 @@ class Detect:
 
         self._system = options.get_system()
 
-    def _network_information(self):
+    def _network_information(self) -> None:
         info = self._system.get_net_info()
         Writer.output(
             name='Hostname',
@@ -137,7 +139,7 @@ class Detect:
             else:
                 Writer.output(name='Net IPv4 DNS', value=address)
 
-    def _operating_system(self):
+    def _operating_system(self) -> None:
         info = self._system.get_os_info()
         Writer.output(name='OS Type', value=info['OS Type'])
         Writer.output(name='OS Name', value=info['OS Name'])
@@ -153,7 +155,7 @@ class Detect:
         )
         Writer.output(name='OS Boot Time', value=info['OS Boot'])
 
-    def _processors(self):
+    def _processors(self) -> None:
         info = self._system.get_cpu_info()
         Writer.output(name='CPU Type', value=info['CPU Type'])
         Writer.output(
@@ -186,7 +188,7 @@ class Detect:
                 comment='KB',
             )
 
-    def _system_status(self):
+    def _system_status(self) -> None:
         info = self._system.get_sys_info()
         Writer.output(name='System Platform', value=info['System Platform'],
                       comment=info['System Platform X'])
@@ -208,7 +210,7 @@ class Detect:
         )
 
     @staticmethod
-    def _xset():
+    def _xset() -> None:
         xset = command_mod.Command(
             'xset',
             pathextra=['/usr/bin/X11', '/usr/openwin/bin'],
@@ -262,7 +264,7 @@ class Detect:
                 pass
 
     @staticmethod
-    def _xdisplay(display):
+    def _xdisplay(display: str) -> None:
         xrandr = command_mod.Command('xrandr', errors='ignore')
         if xrandr.is_found():
             task = subtask_mod.Batch(xrandr.get_cmdline())
@@ -323,19 +325,19 @@ class Detect:
                         )
 
     @classmethod
-    def _xwindows(cls):
+    def _xwindows(cls) -> None:
         display = os.environ.get('DISPLAY')
         if display:
             cls._xset()
             cls._xdisplay(display)
 
     @staticmethod
-    def _software():
+    def _software() -> None:
         software = Software()
         for file, version, comment in software.detect():
             Writer.output('Software', value=file+' '+version, comment=comment)
 
-    def show_banner(self):
+    def show_banner(self) -> None:
         """
         Show banner.
         """
@@ -343,7 +345,7 @@ class Detect:
         print("\n" + self._author, "- System configuration detection tool")
         print("\n*** Detected at", timestamp, "***")
 
-    def show_info(self):
+    def show_info(self) -> None:
         """
         Show information.
         """
@@ -365,7 +367,7 @@ class OperatingSystem:
     """
 
     @staticmethod
-    def detect_loader():
+    def detect_loader() -> None:
         """
         Detect loader
         """
@@ -392,22 +394,27 @@ class OperatingSystem:
         for linker in sorted(glob.glob('/lib*/ld-*so*')):
             Writer.output(name='Dynamic linker', location=linker)
 
+    def detect_devices(self) -> None:
+        """
+        Detect devices
+        """
+
     @staticmethod
-    def has_devices():
+    def has_devices() -> bool:
         """
         Return False
         """
         return False
 
     @staticmethod
-    def has_loader():
+    def has_loader() -> bool:
         """
         Return False
         """
         return False
 
     @staticmethod
-    def get_fqdn():
+    def get_fqdn() -> str:
         """
         Return fully qualified domain name (ie 'hostname.domain.com.').
         """
@@ -422,18 +429,17 @@ class OperatingSystem:
         return fqdn + '.'
 
     @classmethod
-    def get_net_info(cls):
+    def get_net_info(cls) -> dict:
         """
         Return network information dictionary.
         """
-        info = {}
+        info: dict = {}
         info['Net FQDN'] = cls.get_fqdn()
         info['Net IPvx Address'] = []
         info['Net IPvx DNS'] = []
         return info
 
-    @staticmethod
-    def get_os_info():
+    def get_os_info(self) -> dict:  # pylint: disable = no-self-use
         """
         Return operating system information dictionary.
         """
@@ -447,12 +453,11 @@ class OperatingSystem:
         info['OS Boot'] = 'Unknown'
         return info
 
-    @staticmethod
-    def get_cpu_info():
+    def get_cpu_info(self) -> dict:  # pylint: disable = no-self-use
         """
         Return CPU information dictionary.
         """
-        info = {}
+        info: dict = {}
         info['CPU Type'] = command_mod.Platform.get_arch()
         info['CPU Addressability'] = 'Unknown'
         info['CPU Addressability X'] = ''
@@ -471,8 +476,7 @@ class OperatingSystem:
             info['CPU Type'] = 'x86'
         return info
 
-    @staticmethod
-    def get_sys_info():
+    def get_sys_info(self) -> dict:  # pylint: disable = no-self-use
         """
         Return system information dictionary.
         """
@@ -486,20 +490,20 @@ class OperatingSystem:
         return info
 
     @staticmethod
-    def _has_value(values, word):
+    def _has_value(values: dict, word: str) -> bool:
         for value in values.values():
             if word in str(value[0]):
                 return True
         return False
 
     @staticmethod
-    def _isitset(values, name):
+    def _isitset(values: dict, name: str) -> str:
         if name in values:
             return values[name][0]
         return 'Unknown'
 
     @staticmethod
-    def factory():
+    def factory() -> OperatingSystem:
         """
         Return OperatignSystem sub class
         """
@@ -522,7 +526,7 @@ class PosixSystem(OperatingSystem):
     """
 
     @staticmethod
-    def _detect_battery():
+    def _detect_battery() -> None:
         batteries = power_mod.Battery.factory()
 
         for battery in batteries:
@@ -560,19 +564,18 @@ class PosixSystem(OperatingSystem):
                               value=str(battery.get_capacity()) + 'mAh',
                               comment=model + ' [' + state + ']')
 
-    @classmethod
-    def detect_devices(cls):
+    def detect_devices(self) -> None:
         """
         Detect devices
         """
-        cls._detect_battery()
+        self._detect_battery()
 
     @staticmethod
-    def has_devices():
+    def has_devices() -> bool:
         return True
 
     @classmethod
-    def get_fqdn(cls):
+    def get_fqdn(cls) -> str:
         """
         Return fully qualified domain name (ie 'hostname.domain.com.').
         """
@@ -590,7 +593,8 @@ class PosixSystem(OperatingSystem):
             pass
         return super().get_fqdn()
 
-    def get_net_info(self):
+    @classmethod
+    def get_net_info(cls) -> dict:
         """
         Return network information dictionary.
         """
@@ -605,7 +609,7 @@ class PosixSystem(OperatingSystem):
             pass
         return info
 
-    def get_os_info(self):
+    def get_os_info(self) -> dict:
         """
         Return operating system information dictionary.
         """
@@ -614,14 +618,14 @@ class PosixSystem(OperatingSystem):
         info['OS Kernel X'] = os.uname()[3].replace('(', '').replace(')', '')
         return info
 
-    def get_cpu_info(self):
+    def get_cpu_info(self) -> dict:
         """
         Return CPU information dictionary.
         """
         info = super().get_cpu_info()
         return info
 
-    def get_sys_info(self):
+    def get_sys_info(self) -> dict:
         """
         Return system information dictionary.
         """
@@ -645,9 +649,9 @@ class LinuxSystem(PosixSystem):
     Linux system class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         device = None
-        self._devices = {}
+        self._devices: dict = {}
         lspci = command_mod.Command(
             'lspci',
             pathextra=['/sbin'],
@@ -688,7 +692,7 @@ class LinuxSystem(PosixSystem):
                         self._devices[device] = ''
 
     @staticmethod
-    def _scan_vga(line, device, modinfo):
+    def _scan_vga(line: str, device: str, modinfo: command_mod.Command) -> str:
         device = ''
         if 'nvidia' in line.lower():
             try:
@@ -712,7 +716,7 @@ class LinuxSystem(PosixSystem):
         return device
 
     @classmethod
-    def _detect_audio(cls):
+    def _detect_audio(cls) -> None:
         info = {}
         ispattern = re.compile(r' ?\d+ ')
         try:
@@ -755,7 +759,7 @@ class LinuxSystem(PosixSystem):
                 )
 
     @staticmethod
-    def _detect_cd_proc_ide():
+    def _detect_cd_proc_ide() -> None:
         for directory in sorted(glob.glob('/proc/ide/hd*')):
             try:
                 with open(
@@ -780,7 +784,7 @@ class LinuxSystem(PosixSystem):
                 pass
 
     @staticmethod
-    def _detect_cd_sys_scsi():
+    def _detect_cd_sys_scsi() -> None:
         for file in sorted(glob.glob('/sys/block/sr*/device')):  # New kernels
             try:
                 identity = os.path.basename(os.readlink(file))
@@ -806,7 +810,7 @@ class LinuxSystem(PosixSystem):
             Writer.output(name='CD device', device=device, value=model)
 
     @staticmethod
-    def _detect_cd_proc_scsi():
+    def _detect_cd_proc_scsi() -> None:
         model = '???'
         unit = 0
         isjunk = re.compile('.*Vendor: | *Model:| *Rev: .*')
@@ -831,7 +835,7 @@ class LinuxSystem(PosixSystem):
             pass
 
     @classmethod
-    def _detect_cd(cls):
+    def _detect_cd(cls) -> None:
         cls._detect_cd_proc_ide()
 
         if os.path.isdir('/sys/bus/scsi/devices'):
@@ -840,8 +844,8 @@ class LinuxSystem(PosixSystem):
             cls._detect_cd_proc_scsi()
 
     @staticmethod
-    def _get_disk_info():
-        info = {}
+    def _get_disk_info() -> dict:
+        info: dict = {}
         info['partitions'] = []
         info['swaps'] = []
         try:
@@ -860,7 +864,7 @@ class LinuxSystem(PosixSystem):
         return info
 
     @staticmethod
-    def _scan_mounts(info):
+    def _scan_mounts(info: dict) -> None:
         info['mounts'] = {}
         try:
             with open('/proc/mounts', errors='replace') as ifile:
@@ -886,7 +890,12 @@ class LinuxSystem(PosixSystem):
             pass
 
     @staticmethod
-    def _detect_ide_partition(info, model, hdx, partition):
+    def _detect_ide_partition(
+        info: dict,
+        model: str,
+        hdx: str,
+        partition: str,
+    ) -> None:
         if partition.endswith(hdx) or hdx + ' ' in partition:
             try:
                 size = partition.split()[2]
@@ -925,7 +934,7 @@ class LinuxSystem(PosixSystem):
             )
 
     @classmethod
-    def _detect_disk_ide(cls, info, directory):
+    def _detect_disk_ide(cls, info: dict, directory: str) -> None:
         with open(
                 os.path.join(directory, 'driver'),
                 errors='replace'
@@ -940,7 +949,7 @@ class LinuxSystem(PosixSystem):
                         cls._detect_ide_partition(info, model, hdx, partition)
 
     @staticmethod
-    def _get_disk_sys_scsi_model(file):
+    def _get_disk_sys_scsi_model(file: str) -> str:
         try:
             identity = os.path.basename(os.readlink(file))
         except OSError:
@@ -964,7 +973,7 @@ class LinuxSystem(PosixSystem):
         return model
 
     @classmethod
-    def _detect_disk_sys_scsi(cls, info, file):
+    def _detect_disk_sys_scsi(cls, info: dict, file: str) -> None:
         model = cls._get_disk_sys_scsi_model(file)
 
         sdx = os.path.basename(os.path.dirname(file))
@@ -1018,7 +1027,7 @@ class LinuxSystem(PosixSystem):
                 )
 
     @staticmethod
-    def _detect_disk_proc_scsi_part(info, unit, model):
+    def _detect_disk_proc_scsi_part(info: dict, unit: int, model: str) -> None:
         sdx = 'sd' + chr(97 + unit)
         if os.path.exists('/dev/' + sdx):
             for partition in info['partitions']:
@@ -1058,7 +1067,7 @@ class LinuxSystem(PosixSystem):
                     )
 
     @classmethod
-    def _detect_disk_proc_scsi(cls, info):
+    def _detect_disk_proc_scsi(cls, info: dict) -> None:
         model = '???'
         unit = 0
         isjunk = re.compile('.*Vendor: | *Model:| *Rev: .*')
@@ -1075,7 +1084,7 @@ class LinuxSystem(PosixSystem):
             pass
 
     @staticmethod
-    def _detect_mapped_disks(info):
+    def _detect_mapped_disks(info: dict) -> None:
         for directory in glob.glob('/sys/class/block/dm-*'):
             file = os.path.join(directory, 'dm/name')
             try:
@@ -1124,7 +1133,7 @@ class LinuxSystem(PosixSystem):
                     )
 
     @staticmethod
-    def _detect_remote_disks(info):
+    def _detect_remote_disks(info: dict) -> None:
         command = command_mod.Command(
             'df',
             args=['-k'],
@@ -1155,7 +1164,7 @@ class LinuxSystem(PosixSystem):
                 )
 
     @classmethod
-    def _detect_disk(cls):
+    def _detect_disk(cls) -> None:
         info = cls._get_disk_info()
         cls._scan_mounts(info)
 
@@ -1173,7 +1182,7 @@ class LinuxSystem(PosixSystem):
         cls._detect_mapped_disks(info)
         cls._detect_remote_disks(info)
 
-    def _detect_graphics(self):
+    def _detect_graphics(self) -> None:
         if os.path.isdir('/dev/dri'):
             gpus = glob.glob('/sys/bus/pci/devices/*/drm/card*')
         else:
@@ -1211,7 +1220,7 @@ class LinuxSystem(PosixSystem):
                             )
 
     @staticmethod
-    def _detect_input():
+    def _detect_input() -> None:
         info = {}
         model = '???'
         try:
@@ -1237,7 +1246,7 @@ class LinuxSystem(PosixSystem):
                     value=info[device],
                 )
 
-    def _detect_network(self):
+    def _detect_network(self) -> None:
         networks = [
             network.replace('net:', 'net/')
             for network in (
@@ -1260,7 +1269,7 @@ class LinuxSystem(PosixSystem):
             )
 
     @staticmethod
-    def _detect_video():
+    def _detect_video() -> None:
         for directory in sorted(glob.glob('/sys/class/video4linux/*')):
             device = os.path.basename(directory)
             try:
@@ -1282,7 +1291,7 @@ class LinuxSystem(PosixSystem):
             )
 
     @staticmethod
-    def _detect_zram():
+    def _detect_zram() -> None:
         zramctl = command_mod.Command(
             'zramctl',
             pathextra=['/sbin'],
@@ -1306,7 +1315,7 @@ class LinuxSystem(PosixSystem):
                     )
                 )
 
-    def _match_pci(self, pci_id):
+    def _match_pci(self, pci_id: str) -> Tuple[str, str]:
         model = '???'
         comment = ''
         for key, value in self._devices.items():
@@ -1316,7 +1325,7 @@ class LinuxSystem(PosixSystem):
                 break
         return model, comment
 
-    def detect_devices(self):
+    def detect_devices(self) -> None:
         """
         Detect devices
         """
@@ -1330,13 +1339,15 @@ class LinuxSystem(PosixSystem):
         self._detect_video()
         self._detect_zram()
 
-    def has_loader(self):
+    @staticmethod
+    def has_loader() -> bool:
         """
         Return True
         """
         return True
 
-    def get_net_info(self):
+    @classmethod
+    def get_net_info(cls) -> dict:
         """
         Return network information dictionary.
         """
@@ -1359,7 +1370,7 @@ class LinuxSystem(PosixSystem):
         return info
 
     @staticmethod
-    def _scan_etc_release():
+    def _scan_etc_release() -> dict:
         info = {}
 
         if os.path.isfile('/etc/redhat-release'):
@@ -1393,7 +1404,7 @@ class LinuxSystem(PosixSystem):
         return info
 
     @staticmethod
-    def _scan_etc_lsb_release():
+    def _scan_etc_lsb_release() -> dict:
         info = {}
 
         if os.path.isfile('/etc/lsb-release'):
@@ -1420,7 +1431,7 @@ class LinuxSystem(PosixSystem):
         return info
 
     @staticmethod
-    def _scan_etc_version():
+    def _scan_etc_version() -> dict:
         info = {}
 
         if os.path.isfile('/etc/kanotix-version'):
@@ -1465,7 +1476,7 @@ class LinuxSystem(PosixSystem):
         return info
 
     @staticmethod
-    def _scan_dpkg_version():
+    def _scan_dpkg_version() -> dict:
         info = {}
 
         dpkg = command_mod.Command('dpkg', args=['--list'], errors='ignore')
@@ -1502,7 +1513,7 @@ class LinuxSystem(PosixSystem):
         return info
 
     @staticmethod
-    def _scan_os_release():
+    def _scan_os_release() -> dict:
         info = {}
 
         try:
@@ -1517,7 +1528,7 @@ class LinuxSystem(PosixSystem):
         return info
 
     @staticmethod
-    def _scan_clear_version():
+    def _scan_clear_version() -> dict:
         info = {}
 
         try:
@@ -1529,7 +1540,7 @@ class LinuxSystem(PosixSystem):
         return info
 
     @staticmethod
-    def _scan_systemd():
+    def _scan_systemd() -> dict:
         info = {}
 
         systemd_analyze = command_mod.Command(
@@ -1547,7 +1558,7 @@ class LinuxSystem(PosixSystem):
 
         return info
 
-    def get_os_info(self):
+    def get_os_info(self) -> dict:
         """
         Return operating system information dictionary.
         """
@@ -1568,7 +1579,7 @@ class LinuxSystem(PosixSystem):
         return info
 
     @staticmethod
-    def _scan_frequency(info, lines):
+    def _scan_frequency(info: dict, lines: List[str]) -> None:
         try:
             with open('/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq',
                       errors='replace') as ifile:
@@ -1624,7 +1635,7 @@ class LinuxSystem(PosixSystem):
                 info['CPU Clocks'] = 'Unknown'
 
     @staticmethod
-    def _get_proc_cpuinfo():
+    def _get_proc_cpuinfo() -> List[str]:
         lines = []
         try:
             with open('/proc/cpuinfo', errors='replace') as ifile:
@@ -1636,7 +1647,7 @@ class LinuxSystem(PosixSystem):
         return lines
 
     @staticmethod
-    def _scan_cpu_model(info, lines):
+    def _scan_cpu_model(info: dict, lines: List[str]) -> None:
         isspace = re.compile(r'\s+')
 
         try:
@@ -1661,7 +1672,7 @@ class LinuxSystem(PosixSystem):
             pass
 
     @staticmethod
-    def _get_cpu_threads(lines):
+    def _get_cpu_threads(lines: List[str]) -> int:
         try:
             threads = len(glob.glob('/sys/devices/system/cpu/cpu[0-9]*'))
         except (IndexError, ValueError):
@@ -1674,7 +1685,7 @@ class LinuxSystem(PosixSystem):
         return threads
 
     @staticmethod
-    def _get_cpu_physical_packages():
+    def _get_cpu_physical_packages() -> List[str]:
         found = []
 
         for file in glob.glob(
@@ -1691,9 +1702,8 @@ class LinuxSystem(PosixSystem):
 
         return found
 
-    @classmethod
-    def _get_cpu_sockets(cls, lines, threads):
-        found = cls._get_cpu_physical_packages()
+    def _get_cpu_sockets(self, lines: List[str], threads: int) -> int:
+        found = self._get_cpu_physical_packages()
         if found:
             sockets = len(found)
         else:
@@ -1708,14 +1718,19 @@ class LinuxSystem(PosixSystem):
                 for line in lines:
                     if line.startswith('siblings'):
                         try:
-                            sockets = threads / int(line.split()[2])
+                            sockets = int(threads / int(line.split()[2]))
                         except (IndexError, ValueError):
                             pass
                         break
         return sockets
 
     @staticmethod
-    def _get_cpu_cores(info, lines, sockets, threads):
+    def _get_cpu_cores(
+        info: dict,
+        lines: List[str],
+        sockets: int,
+        threads: int,
+    ) -> int:
         try:
             with open(
                     '/sys/devices/system/cpu/cpu0/topology/'
@@ -1748,7 +1763,7 @@ class LinuxSystem(PosixSystem):
         return cpu_cores
 
     @staticmethod
-    def _scan_cache(info, lines):
+    def _scan_cache(info: dict, lines: List[str]) -> None:
         for cache in sorted(glob.glob(
                 '/sys/devices/system/cpu/cpu0/cache/index*')):
             try:
@@ -1784,7 +1799,7 @@ class LinuxSystem(PosixSystem):
                         pass
                     break
 
-    def get_cpu_info(self):
+    def get_cpu_info(self) -> dict:
         """
         Return CPU information dictionary.
         """
@@ -1826,7 +1841,7 @@ class LinuxSystem(PosixSystem):
 
         return info
 
-    def get_sys_info(self):
+    def get_sys_info(self) -> dict:
         """
         Return system information dictionary.
         """
@@ -1848,7 +1863,7 @@ class LinuxSystem(PosixSystem):
         return info
 
     @staticmethod
-    def _get_container():
+    def _get_container() -> str:
         name = None
         try:
             with open('/proc/1/cgroup', errors='replace') as ifile:
@@ -1864,13 +1879,13 @@ class LinuxSystem(PosixSystem):
         return name
 
     @staticmethod
-    def _check_virtual_machine(data, mapping):
+    def _check_virtual_machine(data: str, mapping: dict) -> str:
         for vendor, text in mapping.items():
             if text in data:
                 return vendor
-        return None
+        return ''
 
-    def _get_virtual_machine(self):
+    def _get_virtual_machine(self) -> str:
         mappings = {
             'devices': {
                 'VirtualBox': 'VirtualBox',
@@ -1934,7 +1949,7 @@ class MacSystem(PosixSystem):
     Mac system class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         sysctl = command_mod.CommandFile('/usr/sbin/sysctl', args=['-a'])
         task = subtask_mod.Batch(sysctl.get_cmdline())
         task.run()
@@ -1944,7 +1959,7 @@ class MacSystem(PosixSystem):
             x.replace(' = ', ': ', 1) for x in task.get_output()]
 
     @staticmethod
-    def _detect_disk():
+    def _detect_disk() -> None:
         mount = command_mod.Command('mount', errors='ignore')
         if mount.is_found():
             task = subtask_mod.Batch(mount.get_cmdline())
@@ -1973,15 +1988,15 @@ class MacSystem(PosixSystem):
                     value=size + ' KB', comment=type_ + ' on ' + directory,
                 )
 
-    @classmethod
-    def detect_devices(cls):
+    def detect_devices(self) -> None:
         """
         Detect devices
         """
-        cls._detect_battery()
-        cls._detect_disk()
+        self._detect_battery()
+        self._detect_disk()
 
-    def get_net_info(self):
+    @classmethod
+    def get_net_info(cls) -> dict:
         """
         Return network information dictionary.
         """
@@ -1994,7 +2009,7 @@ class MacSystem(PosixSystem):
             info['Net IPvx Address'].append(isjunk.sub(' ', line).split()[0])
         return info
 
-    def get_os_info(self):
+    def get_os_info(self) -> dict:
         """
         Return operating system information dictionary.
         """
@@ -2008,7 +2023,7 @@ class MacSystem(PosixSystem):
                 )[0].split(': ', 1)[1].split(' (')[0]
         return info
 
-    def _get_cpu_socket_info(self):
+    def _get_cpu_socket_info(self) -> dict:
         for line in self._kernel_settings:
             if line.startswith('machdep.cpu.thread_count: '):
                 threads = int(line.split(': ', 1)[1])
@@ -2029,7 +2044,7 @@ class MacSystem(PosixSystem):
         info['CPU Threads'] = str(threads)
         return info
 
-    def get_cpu_info(self):
+    def get_cpu_info(self) -> dict:
         """
         Return CPU information dictionary.
         """
@@ -2061,7 +2076,7 @@ class MacSystem(PosixSystem):
 
         return info
 
-    def get_sys_info(self):
+    def get_sys_info(self) -> dict:
         """
         Return system information dictionary.
         """
@@ -2084,7 +2099,7 @@ class WindowsSystem(OperatingSystem):
     Windows system class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         pathextra = []
         if 'WINDIR' in os.environ:
             pathextra.append(os.path.join(os.environ['WINDIR'], 'system32'))
@@ -2097,7 +2112,7 @@ class WindowsSystem(OperatingSystem):
 
     @staticmethod
     @functools.lru_cache(maxsize=1)
-    def _get_ipconfig():
+    def _get_ipconfig() -> command_mod.Command:
         pathextra = []
         if 'WINDIR' in os.environ:
             pathextra.append(os.path.join(os.environ['WINDIR'], 'system32'))
@@ -2110,7 +2125,7 @@ class WindowsSystem(OperatingSystem):
         return command
 
     @classmethod
-    def get_fqdn(cls):
+    def get_fqdn(cls) -> str:
         """
         Return fully qualified domain name (ie 'hostname.domain.com.').
         """
@@ -2126,11 +2141,11 @@ class WindowsSystem(OperatingSystem):
         return super().get_fqdn()
 
     @classmethod
-    def get_net_info(cls):
+    def get_net_info(cls) -> dict:
         """
         Return network information dictionary.
         """
-        info = {}
+        info: dict = {}
         info['Net FQDN'] = cls.get_fqdn()
         task = subtask_mod.Batch(cls._get_ipconfig().get_cmdline())
         task.run()
@@ -2148,7 +2163,7 @@ class WindowsSystem(OperatingSystem):
                 info['Net IPvx DNS'].append(line.split()[-1])
         return info
 
-    def get_os_info(self):
+    def get_os_info(self) -> dict:
         """
         Return operating system information dictionary.
         """
@@ -2169,7 +2184,7 @@ class WindowsSystem(OperatingSystem):
             info['OS Patch X'] = patch_number
         return info
 
-    def get_cpu_info(self):
+    def get_cpu_info(self) -> dict:
         """
         Return CPU information dictionary.
         """
@@ -2218,7 +2233,7 @@ class WindowsSystem(OperatingSystem):
         info['CPU Clock'] = str(self._isitset(values, '~MHz'))
         return info
 
-    def get_sys_info(self):
+    def get_sys_info(self) -> dict:
         """
         Return system information dictionary.
         """
@@ -2246,14 +2261,12 @@ class WindowsSystem(OperatingSystem):
         return info
 
     @staticmethod
-    def _reg_read(hive, path):
+    def _reg_read(hive: Any, path: str) -> Tuple:
         subkeys = []
         values = {}
         try:
             key = winreg.OpenKey(hive, path)
-        # pylint: disable = undefined-variable
-        except WindowsError:
-            # pylint: enable = undefined-variable
+        except WindowsError:  # pylint: disable = undefined-variable
             pass
         else:
             nsubkeys, nvalues = winreg.QueryInfoKey(key)[:2]
@@ -2271,7 +2284,7 @@ class Writer:
     """
 
     @staticmethod
-    def dump(name, **kwargs):
+    def dump(name: str, **kwargs: Any) -> None:
         """
         Dump information.
         """
@@ -2279,7 +2292,7 @@ class Writer:
         print(json.dumps(info, ensure_ascii=False, indent=4, sort_keys=True))
 
     @staticmethod
-    def output(name, **kwargs):
+    def output(name: str, **kwargs: Any) -> None:
         """
         Output information.
         """
@@ -2340,7 +2353,7 @@ class Software:
         (['wget', '--version'], 'Wget ', '.*Wget | .*', ''),
     ]
 
-    def __init__(self):
+    def __init__(self) -> None:
         os.environ['KUBECONFIG'] = ''
 
         self._wrapper = []
@@ -2348,7 +2361,7 @@ class Software:
         if command.is_found():
             self._wrapper = command.get_cmdline() + ['-s', 'KILL', '1']
 
-    def get(self, software):
+    def get(self, software: tuple) -> Tuple[str, str, str]:
         """
         Detect software
         """
@@ -2366,7 +2379,7 @@ class Software:
                 )
         return None
 
-    def detect(self):
+    def detect(self) -> Generator[Tuple[str, str, str], None, None]:
         """
         Yield all software versions
         """
@@ -2381,7 +2394,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -2392,7 +2405,7 @@ class Main:
         sys.exit(0)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -2400,7 +2413,7 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -2413,6 +2426,8 @@ class Main:
         except subtask_mod.ExecutableCallError as exception:
             raise SystemExit(exception) from exception
         print()
+
+        return 0
 
 
 if __name__ == '__main__':

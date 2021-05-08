@@ -10,6 +10,7 @@ import signal
 import sys
 import time
 import urllib.request
+from typing import List
 
 import command_mod
 import config_mod
@@ -21,34 +22,34 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
-        self._mtime = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
+        self._mtime: float = 0
         self._output = ''
         self.parse(sys.argv)
 
-    def get_mtime(self):
+    def get_mtime(self) -> float:
         """
         Return output file modification time.
         """
         return self._mtime
 
-    def get_output(self):
+    def get_output(self) -> str:
         """
         Return output file.
         """
         return self._output
 
-    def get_vget(self):
+    def get_vget(self) -> command_mod.Command:
         """
         Return vget Command class object.
         """
         return self._vget
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Streaming video downloader '
-            '(Youtube, m3u8 and compatible websites).'
+            '(Youtube, m3u8 and compatible websites).',
         )
         parser.add_argument(
             '-f',
@@ -78,7 +79,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def _detect_code(self, url):
+    def _detect_code(self, url: str) -> str:
         task = subtask_mod.Batch(
             self._vget.get_cmdline() + ['--list-formats', url]
         )
@@ -97,7 +98,7 @@ class Options:
 
         raise SystemExit(sys.argv[0] + ': No video stream: ' + url)
 
-    def _detect_mtime(self, url):
+    def _detect_mtime(self, url: str) -> float:
         task = subtask_mod.Batch(self._vget.get_cmdline() + ['--get-url', url])
         task.run(pattern=r'^http')
         if task.has_output():
@@ -118,9 +119,9 @@ class Options:
                 except TypeError:
                     pass
 
-        return None
+        return 0
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -160,7 +161,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -170,7 +171,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -187,7 +188,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -203,6 +204,8 @@ class Main:
 
         if mtime and output:
             os.utime(output, (mtime, mtime))
+
+        return 0
 
 
 if __name__ == '__main__':

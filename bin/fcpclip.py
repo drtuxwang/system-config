@@ -8,6 +8,7 @@ import os
 import shutil
 import signal
 import sys
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -18,19 +19,20 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_directory(self):
+    def get_directory(self) -> str:
         """
         Return directory.
         """
         return self._args.directory[0]
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Copy file from clipboard location to directory.')
+            description='Copy file from clipboard location to directory.',
+        )
 
         parser.add_argument(
             'directory',
@@ -40,7 +42,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -52,7 +54,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -62,7 +64,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -70,7 +72,7 @@ class Main:
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     @staticmethod
-    def run():
+    def run() -> int:
         """
         Start program
         """
@@ -94,6 +96,8 @@ class Main:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot copy to "' + target + '" file.'
                 ) from exception
+
+        return 0
 
 
 if __name__ == '__main__':

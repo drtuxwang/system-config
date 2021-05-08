@@ -11,15 +11,14 @@ import re
 import os
 import signal
 import sys
+from typing import Generator, List, Tuple
 
 import command_mod
 import logging_mod
 import subtask_mod
 
-# pylint: disable = invalid-name
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
-# pylint: enable = invalid-name
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
@@ -30,31 +29,32 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_files(self):
+    def get_files(self) -> List[str]:
         """
         Return list of files.
         """
         return self._args.files
 
-    def get_shuffle_flag(self):
+    def get_shuffle_flag(self) -> bool:
         """
         Return shuffle flag.
         """
         return self._args.shuffle_flag
 
-    def get_view_flag(self):
+    def get_view_flag(self) -> bool:
         """
         Return view flag.
         """
         return self._args.view_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Play multimedia file/URL.')
+            description='Play multimedia file/URL.',
+        )
 
         parser.add_argument(
             '-s',
@@ -77,7 +77,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -93,7 +93,7 @@ class Media:
     Media class
     """
 
-    def __init__(self, file):
+    def __init__(self, file: str) -> None:
         self._file = file
         self._length = '0'
         self._stream = {}
@@ -118,14 +118,14 @@ class Media:
                 sys.argv[0] + ': Invalid "' + file + '" media file.'
             ) from exception
 
-    def get_stream(self):
+    def get_stream(self) -> Generator[Tuple[int, str], None, None]:
         """
         Generates (stream-number, information) tuples.
         """
         for key, value in sorted(self._stream.items()):
             yield (key, value)
 
-    def has_audio(self):
+    def has_audio(self) -> bool:
         """
         Return True if audio found
         """
@@ -134,7 +134,7 @@ class Media:
                 return True
         return False
 
-    def has_audio_codec(self, codec):
+    def has_audio_codec(self, codec: str) -> bool:
         """
         Return True if audio codec found
         """
@@ -143,7 +143,7 @@ class Media:
                 return True
         return False
 
-    def has_video(self):
+    def has_video(self) -> bool:
         """
         Return True if video found
         """
@@ -152,7 +152,7 @@ class Media:
                 return True
         return False
 
-    def has_video_codec(self, codec):
+    def has_video_codec(self, codec: str) -> bool:
         """
         Return True if video codec found
         """
@@ -161,13 +161,13 @@ class Media:
                 return True
         return False
 
-    def is_valid(self):
+    def is_valid(self) -> bool:
         """
         Return True if valid
         """
         return self._type != 'Unknown'
 
-    def show(self):
+    def show(self) -> None:
         """
         Show information
         """
@@ -188,7 +188,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -198,7 +198,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -215,13 +215,13 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _view(files):
+    def _view(files: List[str]) -> None:
         for file in files:
             if os.path.isfile(file):
                 Media(file).show()
 
     @staticmethod
-    def _play(files):
+    def _play(files: List[str]) -> None:
         vlc = command_mod.Command(
             'vlc',
             args=['--no-repeat', '--no-loop'] + files,
@@ -239,7 +239,7 @@ class Main:
                 ' received from "' + task.get_file() + '".'
             )
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -252,6 +252,8 @@ class Main:
             if options.get_shuffle_flag():
                 random.shuffle(files)
             self._play(files)
+
+        return 0
 
 
 if __name__ == '__main__':

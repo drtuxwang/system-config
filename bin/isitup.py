@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import time
+from typing import List
 
 import command_mod
 import subtask_mod
@@ -19,37 +20,38 @@ class Options:
     Options class
     """
 
-    def __init__(self):
-        self._args = None
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_pattern(self):
+    def get_pattern(self) -> str:
         """
         Return filter pattern.
         """
         return self._pattern
 
-    def get_host(self):
+    def get_host(self) -> str:
         """
         Return host.
         """
         return self._args.host[0]
 
-    def get_ping(self):
+    def get_ping(self) -> command_mod.Command:
         """
         Return ping Command class object.
         """
         return self._ping
 
-    def get_repeat_flag(self):
+    def get_repeat_flag(self) -> bool:
         """
         Return repeat flag.
         """
         return self._args.repeat_flag
 
-    def _parse_args(self, args):
+    def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Checks whether a host is up.')
+            description='Checks whether a host is up.',
+        )
 
         parser.add_argument(
             '-f',
@@ -62,14 +64,14 @@ class Options:
         self._args = parser.parse_args(args)
 
     @staticmethod
-    def _get_ping():
+    def _get_ping() -> command_mod.Command:
         if os.path.isfile('/usr/sbin/ping'):
             return command_mod.CommandFile('/usr/sbin/ping')
         if os.path.isfile('/usr/etc/ping'):
             return command_mod.CommandFile('/usr/etc/ping')
         return command_mod.Command('ping')
 
-    def parse(self, args):
+    def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
@@ -101,7 +103,7 @@ class Main:
     Main class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             self.config()
             sys.exit(self.run())
@@ -111,7 +113,7 @@ class Main:
             sys.exit(exception)
 
     @staticmethod
-    def config():
+    def config() -> None:
         """
         Configure program
         """
@@ -128,14 +130,14 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _ping(options):
+    def _ping(options: Options) -> str:
         task = subtask_mod.Batch(options.get_ping().get_cmdline())
         task.run(pattern=options.get_pattern())
         if task.has_output():
             return options.get_host() + ' is alive'
         return options.get_host() + ' is dead'
 
-    def run(self):
+    def run(self) -> int:
         """
         Start program
         """
@@ -149,6 +151,8 @@ class Main:
                 stat = test
             time.sleep(5)
         print(self._ping(options))
+
+        return 0
 
 
 if __name__ == '__main__':
