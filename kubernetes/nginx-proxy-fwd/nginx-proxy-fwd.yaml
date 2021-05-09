@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-proxy-fwd
+    matchLabels: nginx-proxy-fwd
+  name: nginx-proxy-fwd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-proxy-fwd
+  template:
+    metadata:
+      labels:
+        app: nginx-proxy-fwd
+    spec:
+      containers:
+      - image: drtuxwang/nginx:stable
+        imagePullPolicy: IfNotPresent
+        name: nginx
+        ports:
+        - containerPort: 80
+          hostPort: 80
+          protocol: TCP
+        - containerPort: 443
+          hostPort: 443
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d/
+          name: config
+          readOnly: true
+        - mountPath: /etc/ssl/private/
+          name: ssl
+          readOnly: true
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+##        kubernetes.io/hostname: koko.local
+      volumes:
+      - configMap:
+          name: nginx-proxy-fwd-config
+        name: config
+      - configMap:
+          name: nginx-proxy-fwd-ssl
+        name: ssl

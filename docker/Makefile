@@ -26,7 +26,8 @@ BUILD_DIRS := \
 	ubuntu-20.04
 PUSH_IMAGES := \
 	drtuxwang/debian-bash:10-slim \
-	drtuxwang/debian-xfce:10-slim
+	drtuxwang/debian-xfce:10-slim \
+	drtuxwang/nginx:1.16-alpine
 TEST_DIRS := \
 	python-3.7-slim-buster
 
