@@ -14,7 +14,7 @@ from typing import List
 
 import task_mod
 
-RELEASE = '2.8.0'
+RELEASE = '2.8.1'
 
 
 class Options:
@@ -105,29 +105,34 @@ class Main:
                 jobids.append(int(os.path.basename(file)[:-2]))
             except ValueError:
                 pass
+
+        info: dict = {}
         for jobid in sorted(jobids):
             try:
-                ifile = open(
+                state = 'QUEUE'
+                with open(
                     os.path.join(self._myqsdir, str(jobid) + '.q'),
                     errors='replace'
-                )
+                ) as ifile:
+                    for line in ifile:
+                        line = line.strip()
+                        if '=' in line:
+                            info[line.split('=')[0]] = line.split('=', 1)[1]
             except OSError:
                 try:
-                    ifile = open(
+                    with open(
                         os.path.join(self._myqsdir, str(jobid) + '.r'),
                         errors='replace'
-                    )
+                    ) as ifile:
+                        for line in ifile:
+                            line = line.strip()
+                            if '=' in line:
+                                info[line.split('=')[0]] = (
+                                    line.split('=', 1)[1]
+                                )
                 except OSError:
                     continue
                 state = 'RUN'
-            else:
-                state = 'QUEUE'
-            info: dict = {}
-            for line in ifile:
-                line = line.strip()
-                if '=' in line:
-                    info[line.strip().split('=')[0]] = line.split('=', 1)[1]
-            ifile.close()
             if 'NCPUS' in info:
                 self._show_details(info, jobid, state)
         print()

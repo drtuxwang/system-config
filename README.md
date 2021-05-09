@@ -8,6 +8,7 @@ the years. Now most of the scripts are written in Python 3.
  * Jenkinsfile            Jenkins pipeline configuration file
  * codefresh.yaml         Codefresh pipeline configuration file
  * Makefile               Makefile for testing
+ * .pylintrc              Python Pylint configuration file
  * bin/command_mod.py     Python command line handling module
  * bin/config_mod.py      Python config module for handling "config_mod.yaml)
  * bin/config_mod.yaml    Configuration file apps, bindings & parameters

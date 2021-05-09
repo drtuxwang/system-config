@@ -109,12 +109,12 @@ class Main:
 
         os.umask(int('022', 8))
         tar = command_mod.Command('tar', errors='stop')
-        for archive in options.get_archives():
-            print(archive + ':')
+        for file in options.get_archives():
+            print(file + ':')
             if options.get_view_flag():
-                tar.set_args(['tfv', archive])
+                tar.set_args(['tfv', file])
             else:
-                tar.set_args(['xfv', archive])
+                tar.set_args(['xfv', file])
             subtask_mod.Task(tar.get_cmdline()).run()
 
         return 0

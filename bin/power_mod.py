@@ -14,8 +14,8 @@ import re
 import subprocess
 from typing import List, Optional
 
-RELEASE = '2.2.0'
-VERSION = 20210508
+RELEASE = '2.2.1'
+VERSION = 20210509
 
 
 class Battery:
@@ -384,26 +384,28 @@ class _System:
         Run program in batch mode and return list of lines.
         """
         program = cls._locate_program(command[0])
+        lines = []
         try:
-            child = subprocess.Popen(
+            with subprocess.Popen(
                 [program] + command[1:],
                 shell=False,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT
-            )
+            ) as child:
+                while True:
+                    try:
+                        bline = child.stdout.readline()
+                    except (KeyboardInterrupt, OSError):
+                        break
+                    if not bline:
+                        break
+                    line = bline.decode('utf-8', 'replace')
+                    lines.append(line.rstrip('\r\n'))
         except OSError as exception:
             raise ExecutableCallError(
                 'Error in calling "' + program + '" program.'
             ) from exception
-        lines = []
-        while True:
-            try:
-                line = child.stdout.readline().decode('utf-8', 'replace')
-            except (KeyboardInterrupt, OSError):
-                break
-            if not line:
-                break
-            lines.append(line.rstrip('\r\n'))
+
         return lines
 
 

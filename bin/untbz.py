@@ -98,8 +98,9 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _unpack(self) -> None:
-        for file in self._archive.getnames():
+    @staticmethod
+    def _unpack(archive: tarfile.TarFile) -> None:
+        for file in archive.getnames():
             print(file)
             if os.path.isabs(file):
                 raise SystemExit(
@@ -112,7 +113,7 @@ class Main:
                     'path outside of current directory.'
                 )
             try:
-                self._archive.extract(self._archive.getmember(file))
+                archive.extract(archive.getmember(file))
             except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Unable to create "' + file +
@@ -126,29 +127,31 @@ class Main:
                             file + '" file.'
                         )
 
-    def _view(self) -> None:
-        self._archive.list()
+    @staticmethod
+    def _view(archive: tarfile.TarFile) -> None:
+        archive.list()
 
-    def run(self) -> int:
+    @classmethod
+    def run(cls) -> int:
         """
         Start program
         """
         options = Options()
 
         os.umask(int('022', 8))
-        for archive in options.get_archives():
-            print(archive + ':')
+        for file in options.get_archives():
+            print(file + ':')
             try:
-                self._archive = tarfile.open(archive, 'r:bz2')
+                with tarfile.open(file, 'r:bz2') as archive:
+                    if options.get_view_flag():
+                        cls._view(archive)
+                    else:
+                        cls._unpack(archive)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot open "' + archive +
+                    sys.argv[0] + ': Cannot open "' + file +
                     '" archive file.'
                 ) from exception
-            if options.get_view_flag():
-                self._view()
-            else:
-                self._unpack()
 
         return 0
 

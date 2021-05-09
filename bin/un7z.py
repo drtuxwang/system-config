@@ -6,6 +6,7 @@ Unpack a compressed archive in 7Z format.
 import argparse
 import glob
 import os
+import re
 import signal
 import sys
 from typing import List
@@ -23,6 +24,12 @@ class Options:
     def __init__(self) -> None:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
+
+    def get_view_flag(self) -> bool:
+        """
+        Return view flag.
+        """
+        return self._args.view_flag
 
     def get_archiver(self) -> command_mod.Command:
         """
@@ -73,7 +80,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._archiver = command_mod.Command('7z', errors='ignore')
+        self._archiver = command_mod.Command('7z', errors='stop')
 
         if self._args.view_flag:
             self._archiver.set_args(['l'])
@@ -143,6 +150,21 @@ class Main:
                 if file_time != file_mod.FileStat(file).get_time():
                     os.utime(file, (file_time, file_time))
 
+    @staticmethod
+    def _untar(archive: str, view_flag: bool) -> None:
+        untar = command_mod.Command('untar', errors='stop')
+        if view_flag:
+            task = subtask_mod.Task(untar.get_cmdline() + ['-v', archive])
+        else:
+            task = subtask_mod.Task(untar.get_cmdline() + [archive])
+
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(
+                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
+                ' received from "' + task.get_file() + '".'
+            )
+
     @classmethod
     def run(cls) -> int:
         """
@@ -164,15 +186,19 @@ class Main:
                         task.get_file() + '".'
                     )
         else:
+            istar = re.compile('[.](tar|tar[.](gz|bz2|lzma|xz|7z)|t[gblx]z)$')
             for archive in options.get_archives():
-                task = subtask_mod.Task(archiver.get_cmdline() + [archive])
-                task.run(replace=('\\', '/'))
-                if task.get_exitcode():
-                    raise SystemExit(
-                        sys.argv[0] + ': Error code ' +
-                        str(task.get_exitcode()) + ' received from "' +
-                        task.get_file() + '".'
-                    )
+                if istar.search(archive):
+                    cls._untar(archive, options.get_view_flag())
+                else:
+                    task = subtask_mod.Task(archiver.get_cmdline() + [archive])
+                    task.run(replace=('\\', '/'))
+                    if task.get_exitcode():
+                        raise SystemExit(
+                            sys.argv[0] + ': Error code ' +
+                            str(task.get_exitcode()) + ' received from "' +
+                            task.get_file() + '".'
+                        )
 
         archiver.set_args(['l'])
         task = subtask_mod.Batch(archiver.get_cmdline() + [archive])

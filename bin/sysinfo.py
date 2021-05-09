@@ -30,7 +30,7 @@ if os.name == 'nt':
     import winreg  # pylint: disable = import-error
 
 RELEASE = '5.16.0'
-VERSION = 20210508
+VERSION = 20210509
 
 # pylint: disable = too-many-lines
 

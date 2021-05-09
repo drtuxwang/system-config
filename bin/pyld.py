@@ -187,9 +187,9 @@ class Options:
             self._library_path = []
 
 
-class ArgparseVerboseAction(
+class ArgparseVerboseAction(  # pylint: disable = too-few-public-methods
     argparse.Action,
-):  # pylint: disable = too-few-public-methods
+):
     """
     Arg parser verbose action handler class
     """

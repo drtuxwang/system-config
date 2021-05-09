@@ -105,34 +105,34 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _unpack(self, archive: str) -> None:
+    def _unpack(self, file: str) -> None:
         task = subtask_mod.Batch(self._tar.get_cmdline() + ['--help'])
         task.run(pattern='--xattrs')
         has_xattrs = task.has_output()
 
-        if archive.endswith('.tar.7z'):
+        if file.endswith('.tar.7z'):
             p7zip = command_mod.Command('7z', errors='stop')
-            p7zip.set_args(['x', '-y', '-so', archive])
+            p7zip.set_args(['x', '-y', '-so', file])
             self._tar.set_args(['xfv', '-'])
             if has_xattrs:
                 self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
             subtask_mod.Task(
                 p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
         else:
-            self._tar.set_args(['xfv', archive])
+            self._tar.set_args(['xfv', file])
             if has_xattrs:
                 self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
             subtask_mod.Task(self._tar.get_cmdline()).run()
 
-    def _view(self, archive: str) -> None:
-        if archive.endswith('.tar.7z'):
+    def _view(self, file: str) -> None:
+        if file.endswith('.tar.7z'):
             p7zip = command_mod.Command('7z', errors='stop')
-            p7zip.set_args(['x', '-y', '-so', archive])
+            p7zip.set_args(['x', '-y', '-so', file])
             self._tar.set_args(['tfv', '-'])
             subtask_mod.Task(
                 p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
         else:
-            self._tar.set_args(['tfv', archive])
+            self._tar.set_args(['tfv', file])
             subtask_mod.Task(self._tar.get_cmdline()).run()
 
     def run(self) -> int:
@@ -147,12 +147,12 @@ class Main:
         else:
             self._tar = command_mod.Command('tar', errors='stop')
 
-        for archive in options.get_archives():
-            print(archive + ':')
+        for file in options.get_archives():
+            print(file + ':')
             if options.get_view_flag():
-                self._view(archive)
+                self._view(file)
             else:
-                self._unpack(archive)
+                self._unpack(file)
 
         return 0
 

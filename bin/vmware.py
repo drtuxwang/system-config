@@ -52,7 +52,8 @@ class Options:
                 ifile.close()
                 return
             try:
-                ofile = open(configfile, 'ab')
+                with open(configfile, 'a') as ofile:
+                    print("xkeymap.nokeycodeMap = true", file=ofile)
             except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot modify "' + configfile +
@@ -69,15 +70,13 @@ class Options:
                         '" directory.'
                     ) from exception
             try:
-                ofile = open(configfile, 'w', newline='\n')
+                with open(configfile, 'w', newline='\n') as ofile:
+                    print("xkeymap.nokeycodeMap = true", file=ofile)
             except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + configfile +
                     '" configuration file.'
                 ) from exception
-        # Workaround VMWare Player 2.5 keymap bug
-        print("xkeymap.nokeycodeMap = true")
-        ofile.close()
 
     def parse(self, args: List[str]) -> None:
         """

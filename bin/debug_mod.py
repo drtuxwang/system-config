@@ -14,7 +14,7 @@ import jsonpickle  # type: ignore
 
 
 RELEASE = '2.3.0'
-VERSION = 20210508
+VERSION = 20210509
 
 
 class Dump:

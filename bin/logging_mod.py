@@ -8,7 +8,7 @@ Copyright GPL v2: 2018-2021 By Dr Colin Kong
 import logging
 
 RELEASE = '1.1.0'
-VERSION = 20210508
+VERSION = 20210509
 
 LOG_FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
 

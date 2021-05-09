@@ -170,14 +170,16 @@ class Main:
         url: str,
     ) -> dict:
         try:
-            conn = urllib.request.urlopen(url)
+            with urllib.request.urlopen(url) as conn:
+                url_time = time.mktime(time.strptime(
+                    conn.info().get('Last-Modified'),
+                    '%a, %d %b %Y %H:%M:%S %Z',
+                ))
         except Exception as exception:
             raise SystemExit(
                 "Error: Cannot fetch URL: " + url
             ) from exception
 
-        url_time = time.mktime(time.strptime(
-            conn.info().get('Last-Modified'), '%a, %d %b %Y %H:%M:%S %Z'))
         if url_time > data['time']:
             self._show_times(data['time'], url_time)
             archive = os.path.join(self.tmpdir, os.path.basename(url))

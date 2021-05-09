@@ -100,17 +100,17 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _unpack(self, archive: str) -> None:
+    def _unpack(self, file: str) -> None:
         p7zip = command_mod.Command('7z', errors='stop')
-        p7zip.set_args(['x', '-y', '-so', archive])
+        p7zip.set_args(['x', '-y', '-so', file])
         self._tar.set_args(['xfv', '-'])
         subtask_mod.Task(
             p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()
         ).run()
 
-    def _view(self, archive: str) -> None:
+    def _view(self, file: str) -> None:
         p7zip = command_mod.Command('7z', errors='stop')
-        p7zip.set_args(['x', '-y', '-so', archive])
+        p7zip.set_args(['x', '-y', '-so', file])
         self._tar.set_args(['tfv', '-'])
         subtask_mod.Task(
             p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()
@@ -128,12 +128,12 @@ class Main:
         else:
             self._tar = command_mod.Command('tar', errors='stop')
 
-        for archive in options.get_archives():
-            print(archive + ':')
+        for file in options.get_archives():
+            print(file + ':')
             if options.get_view_flag():
-                self._view(archive)
+                self._view(file)
             else:
-                self._unpack(archive)
+                self._unpack(file)
 
         return 0
 

@@ -26,8 +26,8 @@ import bson  # type: ignore
 import xmltodict  # type: ignore
 import yaml
 
-RELEASE = '1.7.0'
-VERSION = 20210508
+RELEASE = '1.7.1'
+VERSION = 20210509
 
 
 class Data:
@@ -126,7 +126,9 @@ class Data:
             if file.endswith('bson'):
                 try:
                     with open(file, 'rb') as ifile:
-                        blocks = [bson.loads(ifile.read())]
+                        blocks = [bson.loads(  # pylint: disable = no-member
+                            ifile.read(),
+                        )]
                 except IndexError as exception:
                     raise ReadConfigError(exception) from exception
             elif file.endswith('xml'):
@@ -192,7 +194,9 @@ class Data:
                         'Cannot handle multi-writes to "' + tmpfile + '" file.'
                     )
                 with open(tmpfile, 'wb') as ofile:
-                    ofile.write(bson.dumps(self._blocks[0]))
+                    ofile.write(bson.dumps(  # pylint: disable = no-member
+                        self._blocks[0],
+                    ))
             else:
                 raise WriteConfigError('Cannot handle "' + tmpfile + '" file.')
         except OSError as exception:

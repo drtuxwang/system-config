@@ -1,0 +1,19 @@
+#
+# Use "pylint --generate-rcfile" for template
+#
+
+[MASTER]
+jobs=0
+
+[MESSAGES CONTROL]
+disable=duplicate-code
+
+[REPORTS]
+output-format=parseable
+##reports=yes
+
+[TYPECHECK]
+generated-members=
+
+[FORMAT]
+max-line-length=79

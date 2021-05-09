@@ -109,8 +109,8 @@ class Options:
             except (urllib.error.HTTPError, urllib.error.URLError):
                 pass
             else:
-                conn = urllib.request.urlopen(req)
-                info = conn.info()
+                with urllib.request.urlopen(req) as conn:
+                    info = conn.info()
                 try:
                     return time.mktime(time.strptime(
                         info.get('Last-Modified'),

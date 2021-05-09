@@ -64,15 +64,13 @@ class Options:
 
     @staticmethod
     def _signal_ignore(
-        _signal: signal.Signals,  # pylint: disable = no-member
+        # pylint: disable = no-member
+        _signal: signal.Signals,
         _frame: types.FrameType,
     ) -> Union[
-        Callable[[
-            signal.Signals,  # pylint: disable = no-member
-            types.FrameType,
-        ], Any],
+        Callable[[signal.Signals, types.FrameType], Any],
         int,
-        signal.Handlers,  # pylint: disable = no-member
+        signal.Handlers,
         None,
     ]:
         pass

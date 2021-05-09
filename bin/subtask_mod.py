@@ -15,8 +15,8 @@ import types
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.2.0'
-VERSION = 20210508
+RELEASE = '2.2.1'
+VERSION = 20210509
 
 BUFFER_SIZE = 131072
 
@@ -232,7 +232,7 @@ class Task:
             stderr = subprocess.STDOUT
         else:
             stderr = subprocess.PIPE
-        return subprocess.Popen(
+        return subprocess.Popen(  # pylint: disable = consider-using-with
             command,
             env=info['env'],
             shell=pipe,
@@ -547,27 +547,26 @@ class Exec(Task):
         stdout_write = sys.stdout.buffer.write
         stderr_write = sys.stderr.buffer.write
         try:
-            child = subprocess.Popen(
+            with subprocess.Popen(
                 cmdline,
                 shell=False,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 env=info['env']
-            )
-            while True:
-                byte = child.stdout.read(1)
-                if not byte:
-                    break
-                stdout_write(byte)
-                sys.stdout.flush()
-            byte = b'True'
-            while True:
-                byte = child.stderr.read(1)
-                if not byte:
-                    break
-                stderr_write(byte)
-                sys.stderr.flush()
-            exitcode = child.wait()
+            ) as child:
+                while True:
+                    byte = child.stdout.read(1)
+                    if not byte:
+                        break
+                    stdout_write(byte)
+                    sys.stdout.flush()
+                while True:
+                    byte = child.stderr.read(1)
+                    if not byte:
+                        break
+                    stderr_write(byte)
+                    sys.stderr.flush()
+                exitcode = child.wait()
         except OSError:
             exitcode = 1
         raise SystemExit(exitcode)
@@ -662,15 +661,13 @@ class Main:
 
     @staticmethod
     def _signal_ignore(
-        _signal: signal.Signals,  # pylint: disable = no-member
+        # pylint: disable = no-member
+        _signal: signal.Signals,
         _frame: types.FrameType,
     ) -> Union[
-        Callable[[
-            signal.Signals,  # pylint: disable = no-member
-            types.FrameType,
-        ], Any],
+        Callable[[signal.Signals, types.FrameType], Any],
         int,
-        signal.Handlers,  # pylint: disable = no-member
+        signal.Handlers,
         None,
     ]:
         pass

@@ -193,7 +193,9 @@ class Main:
 
     def _fetch(self, url: str) -> None:
         try:
-            conn = urllib.request.urlopen(url)
+            conn = (  # pylint: disable = consider-using-with
+                urllib.request.urlopen(url)
+            )
         except Exception as exception:
             raise SystemExit(str(exception)) from exception
 
@@ -213,7 +215,9 @@ class Main:
                 'Range': 'bytes='+str(tmpsize)+'-',
                 'User-Agent': config_mod.Config().get('user_agent'),
             })
-            conn = urllib.request.urlopen(req)
+            conn = (  # pylint: disable = consider-using-with
+                urllib.request.urlopen(req)
+            )
             mode = 'ab'
         else:
             tmpsize = 0

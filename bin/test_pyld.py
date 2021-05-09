@@ -11,8 +11,6 @@ from typing import List
 
 import pyld
 
-# pylint: disable = no-member
-
 
 class TestOptions(
     unittest.TestCase,
@@ -128,6 +126,7 @@ class TestOptions(
             pyld.Options(args)
         self.assertEqual(2, context.exception.args[0])
 
+        # pylint: disable = no-member
         result = pyld.sys.stderr.getvalue()  # type: ignore
         self.assertIn(expected, result)
 
@@ -345,6 +344,7 @@ class TestOptions(
         with self.assertRaises(SystemExit):
             pyld.Options(args)
 
+        # pylint: disable = no-member
         result = pyld.sys.stdout.getvalue()  # type: ignore
         for expected in all_expected:
             self.assertIn(expected, result)
@@ -359,6 +359,7 @@ class TestOptions(
         with self.assertRaises(SystemExit):
             pyld.Options(args)
 
+        # pylint: disable = no-member
         result = pyld.sys.stdout.getvalue()  # type: ignore
         for expected in all_expected:
             self.assertIn(expected, result)
@@ -373,6 +374,7 @@ class TestOptions(
         with self.assertRaises(SystemExit):
             pyld.Options(args)
 
+        # pylint: disable = no-member
         result = pyld.sys.stdout.getvalue()  # type: ignore
         for expected in all_expected:
             self.assertIn(expected, result)
@@ -393,6 +395,7 @@ class TestOptions(
 
         self.assertEqual(2, context.exception.args[0])
 
+        # pylint: disable = no-member
         result = pyld.sys.stderr.getvalue()  # type: ignore
         self.assertIn(expected, result)
 
@@ -438,6 +441,7 @@ class TestPythonLoader(unittest.TestCase):
         python_loader = pyld.PythonLoader(self._mock_options)
         python_loader.dump()
 
+        # pylint: disable = no-member
         self.assertTrue(python_loader.dump.called)  # type: ignore
 
     @unittest.mock.patch('pyld.PythonLoader.dump', return_value=None)
@@ -453,6 +457,7 @@ class TestPythonLoader(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             python_loader.run()
 
+        # pylint: disable = no-member
         self.assertTrue(python_loader.dump.called)  # type: ignore
 
     def test_run_import_error(self) -> None:
@@ -507,6 +512,7 @@ class TestPythonLoader(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             python_loader.run()
 
+        # pylint: disable = no-member
         result = pyld.sys.stdout.getvalue()  # type: ignore
         self.assertIn('sys.argv =', result)
 

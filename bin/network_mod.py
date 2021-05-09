@@ -12,7 +12,7 @@ from typing import Optional
 import command_mod
 
 RELEASE = '2.2.0'
-VERSION = 20210508
+VERSION = 20210509
 
 
 class Shaper(command_mod.Command):

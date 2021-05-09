@@ -12,7 +12,7 @@ import time
 from typing import List
 
 RELEASE = '2.5.0'
-VERSION = 20210508
+VERSION = 20210509
 
 
 class FileStat:

@@ -171,23 +171,15 @@ class Main:
                 print("time ", file1 + '  ' + file2)
                 return
             try:
-                ifile1 = open(file1, 'rb')
+                with open(file1, 'rb') as ifile1:
+                    with open(file2, 'rb') as ifile2:
+                        for _ in range(0, file_stat1.get_size(), 131072):
+                            if ifile1.read(131072) != ifile2.read(131072):
+                                print("diff ", file1 + '  ' + file2)
+                                return
             except OSError:
                 print("diff ", file1 + '  ' + file2)
                 return
-            try:
-                ifile2 = open(file2, 'rb')
-            except OSError:
-                print("diff ", file1 + '  ' + file2)
-                return
-            for _ in range(0, file_stat1.get_size(), 131072):
-                chunk1 = ifile1.read(131072)
-                chunk2 = ifile2.read(131072)
-                if chunk1 != chunk2:
-                    print("diff ", file1 + '  ' + file2)
-                    return
-            ifile1.close()
-            ifile2.close()
 
     def run(self) -> int:
         """
