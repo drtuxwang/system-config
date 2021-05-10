@@ -335,6 +335,7 @@ class Options:
             '"network.prefetch-next", false',
             '"network.proxy.socks_remote_dns", true',
             '"nglayout.initialpaint.delay", 0',
+            '"pdfjs.enableScripting", false',
             '"print.print_edge_bottom", 20',
             '"print.print_edge_left", 20',
             '"print.print_edge_right", 20',
