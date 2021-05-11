@@ -29,8 +29,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable = import-error
 
-RELEASE = '5.16.0'
-VERSION = 20210509
+RELEASE = '5.16.1'
+VERSION = 20210511
 
 # pylint: disable = too-many-lines
 
@@ -2327,7 +2327,7 @@ class Software:
         (['convert', '--version'],
             ' ImageMagick ', '.*ImageMagick | .*', 'ImageMagick',),
         (['curl', '--version'], '^curl ', 'curl | .*', ''),
-        (['docker', 'version'], 'Version:', '.* ', ''),
+        (['docker', '--version'], ' version ', '.*version |,.*', ''),
         (['ffmpeg', '-version'],
             '^ffmpeg version ', '.*version | .*', 'FFmpeg'),
         (['gcc', '--version'], '^gcc ', '.* ', 'GCC'),
