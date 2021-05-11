@@ -117,7 +117,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run() -> None:
+    def run() -> int:
         """
         Start program
         """
@@ -145,6 +145,8 @@ class Main:
         if new_resolution != orig_resolution:
             xrandr.set_args(['-s', str(orig_resolution)])
             subtask_mod.Batch(xrandr.get_cmdline()).run()
+
+        return 0
 
 
 if __name__ == '__main__':
