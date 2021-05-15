@@ -7,7 +7,7 @@
 PYTHON=${1-}
 FLAG=${2-}
 
-if [ ! -x "$PYTHON" ]
+if [ ! -f "$PYTHON" ]
 then
     echo "Usage: $0 /path/bin/<python>"
     exit 1

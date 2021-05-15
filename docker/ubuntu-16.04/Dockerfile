@@ -15,6 +15,7 @@ RUN apt-get update --fix-missing && \
 		openssh-client \
 		pciutils \
 		python3 \
+		socat \
 		vim \
 		wget && \
 	apt-get clean && \

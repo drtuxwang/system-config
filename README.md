@@ -1055,6 +1055,8 @@ the years. Now most of the scripts are written in Python 3.
  * kubernetes/nginx-proxy-fwd/nginx-proxy-fwd.yaml
  * kubernetes/nginx-proxy-fwd/proxy-kube-local.crt
  * kubernetes/nginx-proxy-fwd/proxy-kube-local.key
+ * kubernetes/socat-fwd/Makefile         SOCAT forwarding example
+ * kubernetes/socat-fwd/socat-fwd.yaml
  * kubernetes/test-crontab/Makefile      Kubernetes: crontab example (drtuxwang/busybox-bash:stable)
  * kubernetes/test-crontab/batch-crontab.yaml
  * kubernetes/test-servers/Makefile      Kubernetes: examples (drtuxwang/debian-bash:stable)

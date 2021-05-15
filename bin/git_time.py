@@ -101,15 +101,19 @@ class Main:
     ) -> None:
         for file in files:
             if os.path.isfile(file):
-                commit = next(repo.iter_commits(
-                    paths=os.path.abspath(file),
-                    max_count=1,
-                ))
-                author_time = commit.committed_date
                 try:
-                    os.utime(file, (author_time, author_time))
-                except (IndexError, ValueError):
+                    commit = next(repo.iter_commits(
+                        paths=os.path.abspath(file),
+                        max_count=1,
+                    ))
+                except StopIteration:  # Non git file
                     pass
+                else:
+                    author_time = commit.committed_date
+                    try:
+                        os.utime(file, (author_time, author_time))
+                    except (IndexError, ValueError):
+                        pass
             elif recursive and os.path.isdir(file):
                 cls._update(
                     repo,

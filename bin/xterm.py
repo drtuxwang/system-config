@@ -239,7 +239,7 @@ class Xterm(Terminal):
     def _check_server(host: str) -> None:
         try:
             socket.gethostbyname(host)
-        except socket.gaierror as exception:
+        except (socket.gaierror, UnicodeError) as exception:
             raise SystemExit("{0:s}: Could not resolve: {1:s}".format(
                 sys.argv[0],
                 host,

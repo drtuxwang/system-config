@@ -281,13 +281,25 @@ class Main:
             with open(urlfile, 'w', newline='\n') as ofile:
                 for name, version in sorted(versions.items()):
                     if name in self._packages:
-                        if self._packages[name].get_version() != version:
+                        new_version = self._packages[name].get_version()
+                        if new_version != version:
                             file = self._local(
                                 distribution,
                                 self._packages[name].get_url()
                             )
-                            logger.info("%s  # Replaces %s", file, version)
-                            print(file, " # Replaces", version, file=ofile)
+                            logger.info(
+                                "Update: %s (%s => %s)",
+                                name,
+                                version,
+                                new_version,
+                            )
+                            logger.info("  %s", file)
+                            print("# Update: {0:s} ({1:s} => {2:s})".format(
+                                name,
+                                version,
+                                new_version,
+                            ), file=ofile)
+                            print(file, file=ofile)
                             for dependency in sorted(self._depends(
                                     versions,
                                     self._packages[name].get_depends()
@@ -297,10 +309,7 @@ class Main:
                                         distribution,
                                         self._packages[dependency].get_url()
                                     )
-                                    logger.warning(
-                                        "  %s  # New dependency",
-                                        file,
-                                    )
+                                    logger.warning("    %s", file)
                                     print("  " + file, file=ofile)
         except OSError as exception:
             raise SystemExit(

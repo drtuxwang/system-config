@@ -11,5 +11,6 @@ RUN apk update && \
 		iproute2 \
 		openssh-client \
 		python3 \
+		socat \
 		vim \
 		wget

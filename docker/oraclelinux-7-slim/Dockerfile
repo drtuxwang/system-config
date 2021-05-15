@@ -12,6 +12,7 @@ RUN yum -y install oracle-epel-release-el7 && \
 		openssh-clients \
 		pciutils \
 		python36 \
+		socat \
 		vim \
 		wget && \
 	rpm -e --nodeps python3-pip python3-setuptools && \

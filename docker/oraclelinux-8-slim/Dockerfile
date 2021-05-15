@@ -11,6 +11,7 @@ RUN ln -s microdnf /usr/bin/yum && \
 		net-tools \
 		openssh-clients \
 		pciutils \
+		socat \
 		python38 \
 		vim \
 		wget && \

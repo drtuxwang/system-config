@@ -24,7 +24,7 @@ BUILD_DIRS := \
 	ubuntu-16.04 \
 	ubuntu-18.04 \
 	ubuntu-20.04
-PUSH_IMAGES := \
+STABLE_IMAGES := \
 	drtuxwang/debian-bash:10-slim \
 	drtuxwang/debian-xfce:10-slim \
 	drtuxwang/nginx:1.16-alpine
@@ -66,12 +66,16 @@ test:
 		make -C $$DIR test; \
 	done
 
-.PHONY: push
-push:
-	for IMAGE in $(PUSH_IMAGES); do \
-		docker tag $$IMAGE $${IMAGE%:*}:stable ; \
+.PHONY:tag
+tag:
+	for IMAGE in $(STABLE_IMAGES); do \
+		echo docker tag $$IMAGE $${IMAGE%:*}:stable; \
+		docker tag $$IMAGE $${IMAGE%:*}:stable; \
 	done
-	for IMAGE in $(PUSH_IMAGES); do \
+
+.PHONY: push
+push: tag
+	for IMAGE in $(STABLE_IMAGES); do \
 		docker push $$IMAGE ; \
 		docker push $${IMAGE%:*}:stable ; \
 	done

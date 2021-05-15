@@ -37,6 +37,12 @@ class Options:
         )
 
         parser.add_argument(
+            '-rm',
+            dest='remove_flag',
+            action='store_true',
+            help='Delete obsolete files in target directory.'
+        )
+        parser.add_argument(
             '-root',
             action='store_true',
             help='Select Sudo to run remote rsync.'
@@ -103,7 +109,10 @@ class Options:
             '--acls',
             '--xattrs',
             '--append-verify',
-            '--delete-after',
+        ])
+        if self._args.remove_flag:
+            args.append('--delete-after')
+        args.extend([
             '--info=progress2',
             '--verbose',
             self._args.source[0],

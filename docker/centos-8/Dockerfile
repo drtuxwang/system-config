@@ -11,6 +11,7 @@ RUN yum -y install epel-release && \
 		openssh-clients \
 		pciutils \
 		python38 \
+		socat \
 		vim \
 		wget && \
 	rpm -e --nodeps \

@@ -11,6 +11,7 @@ RUN apk update && \
 		iproute2 \
 		openssh-client \
 		python3 \
+		socat \
 		vim \
 		wget && \
 	echo -e '#!/bin/bash\n/bin/uname "$@" | sed -e "s/x86_64/i386/g"' > /usr/local/bin/uname && \

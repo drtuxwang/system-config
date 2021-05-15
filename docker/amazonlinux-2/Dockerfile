@@ -11,6 +11,7 @@ RUN yum -y update && \
 		openssh-clients \
 		pciutils \
 		python3 \
+		socat \
 		vim \
 		wget && \
 	rpm -e --nodeps python3-pip python3-setuptools && \

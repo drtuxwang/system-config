@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: socat-fwd
+    matchLabels: socat-fwd
+  name: socat-fwd
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: socat-fwd
+  template:
+    metadata:
+      labels:
+        app: socat-fwd
+    spec:
+      containers:
+      - args:
+        - socat
+        - TCP-LISTEN:8080,fork,reuseaddr
+        - TCP:www.bbc.co.uk:80
+        image: drtuxwang/debian-bash:stable
+        imagePullPolicy: IfNotPresent
+        name: socat
+        ports:
+        - containerPort: 8080
+          hostPort: 8080
+          protocol: TCP
+      nodeSelector:
+        kubernetes.io/hostname: koko.local
