@@ -686,6 +686,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/twait.py
  * bin/txz                Make a compressed archive in TAR.XZ format
  * bin/txz.py
+ * bin/tzs                Make a compressed archive in TAR.ZSTD format
+ * bin/tzs.py
  * bin/un7z               Unpack a compressed archive in 7Z format
  * bin/un7z.bat
  * bin/un7z.py
@@ -735,6 +737,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/untlz.py
  * bin/untxz              Unpack a compressed archive in TAR.XZ format
  * bin/untxz.py
+ * bin/untzs              Unpack a compressed archive in TAR.ZSTD format
+ * bin/untzs.py
  * bin/unwine             Shuts down WINE and all Windows applications
  * bin/unwine.py
  * bin/unxz               Uncompress a file in XZ format (allowing non systems port)
@@ -845,6 +849,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/zip.py
  * bin/zoom               zoom wrapper (allowing non systems port)
  * bin/zoom.py
+ * bin/zstd
+ * bin/zstd.py
  * bin/cdinst.bat         Windows command prompt batch file or changing directory
  * bin/cdsrc.bat
  * bin/cdtest.bat

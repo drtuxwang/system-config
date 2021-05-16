@@ -55,8 +55,8 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _checksum(self) -> None:
-
+    @classmethod
+    def _checksum(cls) -> None:
         fsum = command_mod.Command('fsum', errors='stop')
         files = glob.glob('*')
         if 'index.fsum' in files:
@@ -67,7 +67,7 @@ class Main:
         task = subtask_mod.Batch(fsum.get_cmdline())
 
         task.run()
-        self._write_fsums(task.get_output())
+        cls._write_fsums(task.get_output())
 
         task.run()
         time_new = 0
@@ -129,23 +129,32 @@ class Main:
                     directory + '" directory.'
                 ) from exception
 
-    @staticmethod
-    def _set_time(directory: str) -> None:
-        if not directory:
-            directory = '.'
+    @classmethod
+    def _set_time(cls, directory: str) -> None:
+        """
+        Fix directory and symbolic link modified times.
+        """
         files = [os.path.join(directory, x) for x in os.listdir(directory)]
-        files.remove(os.path.join(directory, '...'))
-        newest = file_mod.FileUtil.newest(files)
-        if not newest:
-            newest = os.path.dirname(directory)
-        file_stat = file_mod.FileStat(newest)
-        file_time = file_stat.get_time()
+        for file in files:
+            if os.path.islink(file):
+                link_stat = file_mod.FileStat(file, follow_symlinks=False)
+                file_stat = file_mod.FileStat(file)
+                file_time = file_stat.get_time()
+                if file_time != link_stat.get_time():
+                    os.utime(
+                        file,
+                        (file_time, file_time),
+                        follow_symlinks=False,
+                    )
+            elif os.path.isdir(file):
+                cls._set_time(file)
 
-        directory_3dot = os.path.join(directory, '...')
-        fsum = os.path.join(directory_3dot, 'fsum')
-        for file in (fsum, directory_3dot, directory):
-            if file_time != file_mod.FileStat(file).get_time():
-                os.utime(file, (file_time, file_time))
+        if files:
+            newest = file_mod.FileUtil.newest(files)
+            file_stat = file_mod.FileStat(newest)
+            file_time = file_stat.get_time()
+            if file_time != file_mod.FileStat(directory).get_time():
+                os.utime(directory, (file_time, file_time))
 
     @classmethod
     def _write_fsums(cls, lines: List[str]) -> None:
@@ -177,31 +186,33 @@ class Main:
                         for line in ifile:
                             lines.append(line.rstrip('\r\n'))
                     if lines == fsums[directory]:
-                        cls._set_time(directory)
                         continue
 
                 logger.info("Writing checksums: %s", file)
-                with open(file, 'w', newline='\n') as ofile:
+                with open(file+'.part', 'w', newline='\n') as ofile:
                     for line in fsums[directory]:
                         time_new = max(
                             time_new,
                             int(line.split(' ', 1)[0].rsplit('/', 1)[-1])
                         )
                         print(line, file=ofile)
+                os.utime(file+'.part', (time_new, time_new))
+                shutil.move(file+'.part', file)
             except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create "' + file + '" file.'
                 ) from exception
-            cls._set_time(directory)
 
-    def run(self) -> int:
+    @classmethod
+    def run(cls) -> int:
         """
         Start program
         """
         isbadfile = re.compile(r'^core([.]\d+)?$')
 
-        self._checkfile(isbadfile)
-        self._checksum()
+        cls._checkfile(isbadfile)
+        cls._checksum()
+        cls._set_time(os.getcwd())
 
         return 0
 
