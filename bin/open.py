@@ -94,13 +94,14 @@ class Main:
         command, daemon = action
         if not command:
             raise SystemExit(sys.argv[0] + ': cannot find action: ' + file)
-        print(file + ': opening with "' + command[0] + '"...')
         program = cls._get_program(command)
         program.set_args(command[1:] + [file])
+        cmdline = program.get_cmdline()
+        print("Opening:", command_mod.Command.args2cmd(cmdline))
         if daemon:
-            subtask_mod.Daemon(program.get_cmdline()).run()
+            subtask_mod.Daemon(cmdline).run()
         else:
-            subtask_mod.Task(program.get_cmdline()).run()
+            subtask_mod.Task(cmdline).run()
 
     def run(self) -> int:
         """

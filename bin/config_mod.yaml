@@ -72,6 +72,9 @@ apps:
   unxz:
     command:
     - unxz
+  unzst:
+    command:
+    - unzst
   web_browser:
     command:
     - firefox
@@ -192,6 +195,9 @@ bindings:
   tar.xz:
     open: untar
     view: untar
+  tar.zst:
+    open: untar
+    view: untar
   tbz:
     open: untar
     view: untar
@@ -205,6 +211,12 @@ bindings:
     open: text_editor
     view: text_editor
   txz:
+    open: untar
+    view: untar
+  tzs:
+    open: untar
+    view: untar
+  tzst:
     open: untar
     view: untar
   wav:
@@ -230,6 +242,8 @@ bindings:
   yaml:
     open: text_editor
     view: text_editor
+  zst:
+    open: unzst
   zip:
     open: archive_unpacker
     view: archive_unpacker

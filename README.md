@@ -743,6 +743,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/unwine.py
  * bin/unxz               Uncompress a file in XZ format (allowing non systems port)
  * bin/unxz.py
+ * bin/unzst              Uncompress a file in ZST format.
+ * bin/unzst.py
  * bin/unzip              unzip wrapper (allowing non systems port)
  * bin/unzip.py
  * bin/urldecode          Decode URL query strings.
@@ -849,7 +851,9 @@ the years. Now most of the scripts are written in Python 3.
  * bin/zip.py
  * bin/zoom               zoom wrapper (allowing non systems port)
  * bin/zoom.py
- * bin/zstd
+ * bin/zst                Compress a file in ZST format.
+ * bin/zst.py
+ * bin/zstd               Wrapper for "zstd" command
  * bin/zstd.py
  * bin/cdinst.bat         Windows command prompt batch file or changing directory
  * bin/cdsrc.bat

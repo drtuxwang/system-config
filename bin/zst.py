@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unpack a compressed archive in TAR.ZST format.
+Compress a file in ZST format.
 """
 
 import argparse
@@ -23,50 +23,34 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_archives(self) -> List[str]:
+    def get_zstd(self) -> command_mod.Command:
         """
-        Return list of archives.
+        Return zstd Command class object.
         """
-        return self._args.archives
-
-    def get_view_flag(self) -> bool:
-        """
-        Return view flag.
-        """
-        return self._args.view_flag
+        return self._zstd
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a compressed archive in TAR.ZSTD format.',
+            description='Compress a file in ZST format.',
         )
 
         parser.add_argument(
-            '-v',
-            dest='view_flag',
-            action='store_true',
-            help='Show contents of archive.'
-        )
-        parser.add_argument(
-            'archives',
-            nargs='+',
-            metavar='file.tar.zst|file.tzst|file.tzs',
-            help='Archive file.'
+            'files',
+            nargs=1,
+            metavar='file',
+            help='File to compresss to "file.zst".'
         )
 
         self._args = parser.parse_args(args)
-
-        for archive in self._args.archives:
-            if not archive.endswith(('.tar.zst', '.tzst', '.tzs')):
-                raise SystemExit(
-                    sys.argv[0] + ': Unsupported "' + archive +
-                    '" archive format.'
-                )
 
     def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
         self._parse_args(args[1:])
+
+        self._zstd = command_mod.Command('zstd', errors='stop')
+        self._zstd.set_args(['--ultra', '-22', '-T0'] + self._args.files)
 
 
 class Main:
@@ -107,15 +91,7 @@ class Main:
         """
         options = Options()
 
-        os.umask(int('022', 8))
-        tar = command_mod.Command('tar', errors='stop')
-        for file in options.get_archives():
-            print(file + ':')
-            if options.get_view_flag():
-                tar.set_args(['tfv', file])
-            else:
-                tar.set_args(['xfv', file])
-            subtask_mod.Task(tar.get_cmdline()).run()
+        subtask_mod.Exec(options.get_zstd().get_cmdline()).run()
 
         return 0
 

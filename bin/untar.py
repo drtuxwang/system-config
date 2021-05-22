@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/
-TAR.7Z/TGZ/TBZ/TLZ/TXZ format (GNU Tar version).
+Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.ZST/TAR.LZMA/TAR.XZ/
+TAR.7Z/TGZ/TBZ/TZS/TZST/TLZ/TXZ format (GNU Tar version).
 """
 
 import argparse
@@ -40,7 +40,8 @@ class Options:
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description='Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/'
-            'TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.',
+            'TAR.ZSTD/TAR.LZMA/TAR.XZ/TAR.7Z (TGZ/TBZ/TZS|TZST|TLZ/TXZ) '
+            'format.',
         )
 
         parser.add_argument(
@@ -52,14 +53,15 @@ class Options:
         parser.add_argument(
             'archives',
             nargs='+',
-            metavar='file.tar|file.tar.gz|file.tar.bz2|file.tar.lzma|'
-            'file.tar.xz|file.tar.7z|file.tgz|file.tbz|file.tlz|file.txz',
+            metavar='archive',
             help='Archive file.'
         )
 
         self._args = parser.parse_args(args)
 
-        isarchive = re.compile('[.](tar|tar[.](gz|bz2|lzma|xz|7z)|t[gblx]z)$')
+        isarchive = re.compile(
+            '[.](tar|tar[.](gz|bz2|zstd|lzma|xz|7z)|t[bglx7]z|tzst?)$',
+        )
         for archive in self._args.archives:
             if not isarchive.search(archive):
                 raise SystemExit(

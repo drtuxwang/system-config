@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Make a compressed archive in TAR.ZSTD format.
+Make a compressed archive in TAR.ZST format.
 """
 
 import argparse
@@ -44,7 +44,7 @@ class Options:
         parser.add_argument(
             'archive',
             nargs=1,
-            metavar='file.tar.zstd|file.tzst|file.tzs',
+            metavar='file.tar.zst|file.tzst|file.tzs',
             help='Archive file.'
         )
         parser.add_argument(
@@ -65,10 +65,10 @@ class Options:
         if os.path.isdir(self._args.archive[0]):
             self._archive = os.path.abspath(
                 self._args.archive[0]
-            ) + '.tar.zstd'
+            ) + '.tar.zst'
         else:
             self._archive = self._args.archive[0]
-        if not self._archive.endswith(('.tar.zstd', '.tzst', '.tzs')):
+        if not self._archive.endswith(('.tar.zst', '.tzst', '.tzs')):
             raise SystemExit(
                 sys.argv[0] + ': Unsupported "' + self._archive +
                 '" archive format.'

@@ -370,8 +370,8 @@ class XfceTerminal(GnomeTerminal):
     def __init__(self, options: Options) -> None:
         super().__init__(options)
         self._pattern = (
-            '^$|: Gtk-WARNING|: Failed to connect to |'
-            ': GLib-WARNING |: SESSION_MANAGER'
+            '^$|: Gtk-WARNING|: Failed to connect to |: GLib-WARNING |'
+            ': SESSION_MANAGER|: Error retrieving accessibility'
         )
 
     def _config(self) -> None:
