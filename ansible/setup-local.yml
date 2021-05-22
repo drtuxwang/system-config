@@ -1,12 +1,12 @@
-- hosts: owner-nodes
+- hosts: local_owner_nodes
   roles:
-  - role: system-config
-    become: True
+##  - role: system-config
+##    become: True
   - role: user-config
     user: owner
 
-- hosts: guest-nodes
-  roles:
-    - role: user-config
-      user: guest
-      become: True
+##- hosts: local_guest_nodes
+##  roles:
+##    - role: user-config
+##      user: guest
+##      become: True

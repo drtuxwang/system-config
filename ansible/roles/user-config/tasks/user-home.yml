@@ -4,7 +4,7 @@
     state=directory
     owner={{ user }}
     group={{ group }}
-    mode=755
+    mode=0711
 
 - name: "Copy files to {{ home_directory }} directory"
   loop:
@@ -19,14 +19,14 @@
     owner={{ user }}
     group={{ group }}
 
-- name: "Check {{ home_directory }}/.profile-local file"
-  stat: path="{{ home_directory }}/.profile-local"
-  register: profile_local
+- name: "Check {{ home_directory }}/.profile-opt file"
+  stat: path="{{ home_directory }}/.profile-opt"
+  register: profile_opt
 
-- name: "Copy .profile-local file to {{ home_directory }} directory"
-  when: not profile_local.stat.exists
+- name: "Copy .profile-opt file to {{ home_directory }} directory"
+  when: not profile_opt.stat.exists
   copy:
-    src={{ config_directory }}/profile-local
-    dest={{ home_directory }}/.profile-local
+    src={{ config_directory }}/profile-opt
+    dest={{ home_directory }}/.profile-opt
     owner={{ user }}
     group={{ group }}

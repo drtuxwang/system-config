@@ -1,0 +1,12 @@
+[local_owner_nodes]
+koko.local             ansible_user=owner     HOME=/home/owner
+hotdog.local           ansible_user=owner     HOME=/home/owner
+webtv.local            ansible_user=owner     HOME=/home/owner
+xiaobear.local         ansible_user=owner     HOME=/home/owner
+netbook.local          ansible_user=owner     HOME=/home/owner
+
+[local_guest_nodes]
+koko.local             ansible_user=owner     HOME=/home/owwer
+hotdog.local           ansible_user=owner     HOME=/home/owner
+webtv.local            ansible_user=owner     HOME=/home/owner
+xiaobear.local         ansible_user=owner     HOME=/home/owner
