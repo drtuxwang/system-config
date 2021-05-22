@@ -4,7 +4,8 @@ endif
 
 
 default: test
-
+ 
+# Debug: "ANSIBLE_DEBUG=1"  & "-vvv"
 .PHONY: test
 test:
 	ansible-playbook --inventory=inventory/local_hosts setup-local.yml --limit $(HOST) --ask-become-pass --diff --check
