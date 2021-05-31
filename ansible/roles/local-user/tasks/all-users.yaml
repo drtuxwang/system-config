@@ -1,0 +1,52 @@
+- name: 'Ensure "{{ home_directory }}" directory exists'
+  file:
+    path={{ home_directory }}/
+    state=directory
+    mode={{ home_mod }}
+
+- name: Copy files to "{{ home_directory }}" directory
+  loop:
+  - profile
+  - vimrc
+  copy:
+    src={{ config_directory }}/{{ item }}
+    dest={{ home_directory }}/.{{ item }}
+    owner={{ user }}
+
+- name: Ensure "{{ home_directory }}/.bashrc" link to .profile
+  file:
+    src=.profile
+    dest={{ home_directory }}/.bashrc
+    state=link
+
+- name: Check "{{ home_directory }}/.profile-opt" file
+  stat:
+    path={{ home_directory }}/.profile-opt
+  register: profile_opt
+
+- name: Add "{{ home_directory }}/.profile-opt" file to copy
+  when: not profile_opt.stat.exists
+  copy:
+    src={{ config_directory }}/profile-opt
+    dest={{ home_directory }}/.profile-opt
+    owner={{ user }}
+
+- name: Copy additional files "{{ home_directory }}" directory
+  when: user not in ["root", "admin"]
+  loop:
+  - login
+  - tmux.conf
+  - Xresources
+  copy:
+    src={{ config_directory }}/{{ item }}
+    dest={{ home_directory }}/.{{ item }}
+    owner={{ user }}
+
+- name: Remove "{{ home_directory }}" junk files
+  loop:
+  - .bash_history
+  - .kshrc
+  - .viminfo
+  file:
+    path={{ home_directory }}/{{ item }}
+    state=absent

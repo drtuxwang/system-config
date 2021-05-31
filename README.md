@@ -9,6 +9,7 @@ the years. Now most of the scripts are written in Python 3.
  * codefresh.yaml         Codefresh pipeline configuration file
  * Makefile               Makefile for testing
  * .pylintrc              Python Pylint configuration file
+ * bin/__pycache__        Disable "file.cpython-xx.pyc" caching
  * bin/command_mod.py     Python command line handling module
  * bin/config_mod.py      Python config module for handling "config_mod.yaml)
  * bin/config_mod.yaml    Configuration file apps, bindings & parameters
@@ -901,17 +902,19 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/Makefile                      Ansible local hosts playbook
  * ansible/ansible.cfg
  * ansible/inventory/group_vars/all
- * ansible/inventory/group_vars/local-hosts
- * ansible/inventory/local-hosts
- * ansible/roles/system-config/tasks/etc-files.yml
- * ansible/roles/system-config/tasks/main.yml
- * ansible/roles/system-config/tasks/root-home.yml
- * ansible/roles/user-config/tasks/main.yml
- * ansible/roles/user-config/tasks/mimeapps-config.yml
- * ansible/roles/user-config/tasks/ssh-config.yml
- * ansible/roles/user-config/tasks/user-home.yml
- * ansible/roles/user-config/vars/main.yml
- * ansible/setup-local.yml
+ * ansible/inventory/group_vars/local_cluster
+ * ansible/inventory/host_vars/netbook.local
+ * ansible/inventory/local_cluster
+ * ansible/roles/local-system/tasks/main.yaml
+ * ansible/roles/local-user/tasks/all-users.yaml
+ * ansible/roles/local-user/tasks/ansible-user.yaml
+ * ansible/roles/local-user/tasks/main.yaml
+ * ansible/roles/local-user/tasks/normal-users.yaml
+ * ansible/roles/local-user/vars/main.yaml
+ * ansible/roles/setup-local/defaults/main.yml
+ * ansible/roles/setup-local/meta/main.yaml
+ * ansible/roles/setup-local/vars/main.yaml
+ * ansible/setup-local.yaml
  * cloudformation/1pxy/1pxy.json         CloudFormation: 1pxy example
  * cloudformation/1pxy/Makefile
  * cloudformation/1pxy/submit.sh
@@ -1034,7 +1037,7 @@ the years. Now most of the scripts are written in Python 3.
  * docker/python-3.7-slim-buster/devpi/Makefile  python:3.7-slim-buster based devpi server app
  * docker/registry-2.6/Dockerfile
  * docker/registry-2.6/Makefile          registry:2.6 based Docker Registry server app
- * docker/registry-2.6/files/config.yml
+ * docker/registry-2.6/files/config.yaml
  * docker/sudo/Dockerfile
  * docker/sudo/Makefile                  sudo scratch image for jail breaking app
  * docker/ubuntu-16.04/Makefile
@@ -1094,11 +1097,11 @@ the years. Now most of the scripts are written in Python 3.
  * helm/jenkins/values.yaml
  * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 11.7.2 (app-2.5.0)
  * helm/kafka/connect-test.sh
- * helm/kafka/values.yml
+ * helm/kafka/values.yaml
  * helm/ingress-controller/Makefile      Helm Chart: ingress-nginx/ingress-nginx 2.12.1 (app-0.34.1)
  * helm/ingress-controller/values.yaml
  * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 8.3.2 (app-4.2.9)
- * helm/mongodb/values.yml
+ * helm/mongodb/values.yaml
  * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 4.1.2 (app-3.27.0)
  * helm/nexus/values.yaml
  * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 8.5.5 (app-1.16.1)

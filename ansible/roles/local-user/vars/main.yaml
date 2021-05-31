@@ -1,3 +1,2 @@
 home_directory: "/home/{{ user }}"
-
-group: users
+home_mod: 0711

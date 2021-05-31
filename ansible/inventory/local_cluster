@@ -1,0 +1,21 @@
+[local_cluster:children]
+local_hosts
+local_vmhosts
+
+[local_hosts]
+koko.local             ansible_user=admin
+hotdog.local           ansible_user=admin
+webtv.local            ansible_user=admin
+xiaobear.local         ansible_user=admin
+netbook.local          ansible_user=admin
+
+# Virtual Machines
+[local_vmhosts]
+debian4.local          ansible_user=admin
+debian5.local          ansible_user=admin
+debian6.local          ansible_user=admin
+debian7.local          ansible_user=admin
+debian8.local          ansible_user=admin
+debian9.local          ansible_user=admin
+debian9-32.local       ansible_user=admin
+debian10.local         ansible_user=admin

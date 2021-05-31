@@ -10,4 +10,4 @@ ADD tmpdir/root.tar /
 ENV REGISTRY_STORAGE_DELETE_ENABLED=true
 EXPOSE 5000
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/etc/docker/registry/config.yml"]
+CMD ["/etc/docker/registry/config.yaml"]

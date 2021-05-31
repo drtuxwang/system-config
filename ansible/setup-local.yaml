@@ -1,0 +1,5 @@
+- hosts: local_cluster
+  vars:
+  - ansible_python_interpreter: /opt/software/bin/python3
+  roles:
+  - role: setup-local

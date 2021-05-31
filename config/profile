@@ -40,6 +40,7 @@ then
     do
         \ulimit -$_limit `\ulimit -$_limit -H 2> /dev/null` 2> /dev/null
     done
+    unset _limit
 
     # Session control
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
@@ -208,9 +209,9 @@ then
     # Use /tmp (tmpfs) for cache
     export TMPDIR="/tmp/$MYUNAME"
     export TMP="/tmp/$MYUNAME"
-    mkdir -p $TMP/.cache
     rm -f `find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld 2> /dev/null | \
         grep " -> /tmp" | grep -v " -> /tmp/$MYUNAME/" | sed -e "s/ ->.*//;s/.* //"`
+    mkdir -p $TMP/.cache
     if [ ! -h $HOME/.cache ]
     then
         rm -rf $HOME/.cache
@@ -219,7 +220,12 @@ then
     ENV=
 
     # Protect files
-    chmod 711 $HOME
+    if [ "`echo $MYUNAME | egrep '^(root|admin)$'`" ]
+    then
+        ls -ld $HOME | grep -v "rwx------" | awk '{print $NF}' | xargs -n 1 chmod 700 >& /dev/null
+    else
+        ls -ld $HOME | grep -v "rwx--x--x" | awk '{print $NF}' | xargs -n 1 chmod 711 >& /dev/null
+    fi
     ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.???* 2> /dev/null | \
         grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
 
@@ -328,6 +334,7 @@ then
             export cd$_dir="$PWD"
         fi
     done
+    unset _dir
     alias scd='env | egrep "^cd(inst|src|test)=" | sort'
 
     # Platform specific

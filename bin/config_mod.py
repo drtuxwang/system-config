@@ -26,8 +26,8 @@ import bson  # type: ignore
 import xmltodict  # type: ignore
 import yaml
 
-RELEASE = '1.7.1'
-VERSION = 20210509
+RELEASE = '1.7.2'
+VERSION = 20210525
 
 
 class Data:
@@ -75,6 +75,31 @@ class Data:
         Split multiple YAMLs in string and return list of YAMLs.
         """
         return re.split('\n--', text)
+
+    @staticmethod
+    def _reformat_yaml(text: str) -> str:
+        lines = []
+        block = ''
+        for line in text.split('\n'):
+            if not block:
+                if line.endswith('\\') and ': "' in line:
+                    block = line.strip('\\')
+                    indent = len(block) - len(block.lstrip()) + 2
+                    continue
+            elif line.startswith(indent*' '):
+                block += line[indent:].strip('\\')
+                continue
+            else:
+                lines.append(block.split(': "')[0] + ': |')
+                block = block.split(': "')[1].rstrip('"').replace('\\"', '"')
+                if block.endswith('\\n'):
+                    block = block[:-2]
+                lines.extend([indent*' ' + i for i in block.split('\\n')])
+                block = ''
+
+            lines.append(line)
+
+        return '\n'.join(lines)
 
     def get(self) -> Generator[dict, None, None]:
         """
@@ -183,7 +208,11 @@ class Data:
                             ), file=ofile)
             elif file.endswith(('.yml', '.yaml')):
                 yaml_data = [
-                    yaml.dump(block, indent=2, default_flow_style=False)
+                    self._reformat_yaml(yaml.dump(
+                        block,
+                        allow_unicode=True,
+                        indent=2,
+                    ))
                     for block in self._blocks
                 ]
                 with open(tmpfile, 'w', newline='\n') as ofile:

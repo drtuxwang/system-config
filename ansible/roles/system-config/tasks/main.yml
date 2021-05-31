@@ -1,3 +1,0 @@
-- include_tasks: roles/system-config/tasks/etc-files.yml
-
-- include_tasks: roles/system-config/tasks/root-home.yml

@@ -1,5 +1,0 @@
-- include_tasks: roles/user-config/tasks/user-home.yml
-
-- include_tasks: roles/user-config/tasks/ssh-config.yml
-
-- include_tasks: roles/user-config/tasks/mimeapps-config.yml

@@ -18,7 +18,7 @@ temp_dotfiles() {
     fi
 
     case "`basename \"$0\"` $@ " in
-    ansible|ansible\ *)
+    ansible|ansible[\ -]*)
         mkdir -p /tmp/$MYUNAME/.cache/ansible
         if [ ! -h $HOME/.ansible ]
         then

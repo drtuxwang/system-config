@@ -37,6 +37,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
             limit $_limit unlimited
         endif
     end
+    unsetenv _limit
 
     # Session control
     setenv MYHNAME `uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
@@ -98,16 +99,20 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     # Use /tmp (tmpfs) for cache
     setenv TMPDIR "/tmp/$MYUNAME"
     setenv TMP "/tmp/$MYUNAME"
-    mkdir -p $TMP/.cache
     rm -f `find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld | \
         grep " -> /tmp" | grep -v " -> /tmp/$MYUNAME/" | sed -e "s/ ->.*//;s/.* //"`
+    mkdir -p $TMP/.cache
     if ( ! -l $HOME/.cache ) then
         rm -rf $HOME/.cache
         ln -s $TMP/.cache $HOME/.cache
     endif
 
     # Protect files
-    chmod 711 $HOME
+    if ( "`echo $MYUNAME | \egrep '^(root|admin)"'$'"'`" != "" ) then
+        ls -ld $HOME | grep -v "rwx------" | awk '{print $NF}' | xargs -n 1 chmod 700 >& /dev/null
+    else
+        ls -ld $HOME | grep -v "rwx--x--x" | awk '{print $NF}' | xargs -n 1 chmod 711 >& /dev/null
+    endif
     ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* |& \
         grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= >& /dev/null
 
@@ -185,6 +190,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
             setenv cd$_dir "$PWD"
         endif
     end
+    unsetenv _dir
     alias scd 'env | egrep "^cd(inst|src|test)=" | sort'
 
     # Platform specific

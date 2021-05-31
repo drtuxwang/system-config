@@ -5,11 +5,13 @@ Wrapper for "rpm" command (adds 'rpm -l')
 
 import glob
 import os
+import shutil
 import signal
 import sys
 from typing import List
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -128,6 +130,19 @@ class Main:
                 else:
                     argv.append(arg)
             sys.argv = argv
+
+        # Send ".rpmdb" to tmpfs
+        tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache', 'rpmdb'))
+        directory = os.path.join(os.environ.get('HOME'), '.rpmdb')
+        if not os.path.islink(directory):
+            try:
+                shutil.rmtree(directory)
+            except OSError:
+                pass
+            try:
+                os.symlink(tmpdir, directory)
+            except OSError:
+                pass
 
     @staticmethod
     def _read_rpm_status(options: Options) -> dict:
