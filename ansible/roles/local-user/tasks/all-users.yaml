@@ -18,6 +18,7 @@
     src=.profile
     dest={{ home_directory }}/.bashrc
     state=link
+    force=yes
 
 - name: Check "{{ home_directory }}/.profile-opt" file
   stat:
@@ -50,3 +51,4 @@
   file:
     path={{ home_directory }}/{{ item }}
     state=absent
+

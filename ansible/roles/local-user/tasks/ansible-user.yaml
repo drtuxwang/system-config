@@ -16,7 +16,7 @@
     state=absent
 
 - name: Ensure "{{ home_directory }}/.rpmdb" link to "/tmp/{{ ansible_user }}/.cache/rpmdb"
-  when: not rpmdb.stat.islnk
+  when: not rpmdb.stat.isdir
   file:
     src=/tmp/{{ ansible_user }}/.cache/rpmdb
     dest={{ home_directory }}/.rpmdb
