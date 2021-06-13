@@ -9,7 +9,7 @@
 sleep 20
 
 # Mount removable disks
-##mount -t ext4 -o noatime,errors=remount-ro,data=ordered,commit=60 UUID=<uuid-from-blkid> /mnt/data2
+##mount -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=<uuid-from-blkid> /mnt/data2
 ##mount -o bind /mnt/data2/shared /shared
 
 # Setup ZRAM swap (zramctl)

@@ -1,4 +1,4 @@
-[local_cluster:children]
+[local_nodes:children]
 local_hosts
 local_vmhosts
 

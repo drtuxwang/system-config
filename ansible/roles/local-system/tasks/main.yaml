@@ -1,21 +1,5 @@
-- name: Ensure "/etc" directory exists
-  file:
-    path=/etc
-    state=directory
-    mode=0755
-
-- name: Copy "rc.local" file to "/etc" directory
-  copy:
-    src={{ config_directory }}/rc.local
-    dest=/etc/rc.local
-
-- name: Check "/etc/rc.local-opt" file
-  stat:
-    path=/etc/rc.local-opt
-  register: rc_local_opt
-
-- name: Copy "rc.local-opt" file to "/etc" directory
-  when: not rc_local_opt.stat.exists
-  copy:
-    src={{ config_directory }}/rc.local-opt
-    dest=/etc/rc.local-opt
+- name: Import "system-setup.yaml" tasks
+  import_tasks: system-setup.yaml
+  become: yes
+  tags:
+  - local-system

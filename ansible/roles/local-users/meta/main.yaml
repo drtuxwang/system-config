@@ -1,19 +1,16 @@
 dependencies:
-- role: local-system
-  become: true
-  user: root
-- role: local-user
+- role: user-home
   become: true
   user: root
   home_directory: /root
   home_mod: 0700
-- role: local-user
+- role: user-home
   user: admin
   home_mod: 0700
-- role: local-user
+- role: user-home
   become: true
   user: owner
-- role: local-user
+- role: user-home
+  when: has_guest_user
   become: true
   user: guest
-  when: disable_guest == false

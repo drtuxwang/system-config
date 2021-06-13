@@ -1,0 +1,76 @@
+- name: Ensure "{{ home_directory }}" directory exists
+  file:
+    path: "{{ home_directory }}/"
+    state: directory
+    mode: "{{ home_mod }}"
+  tags:
+  - user-home
+
+- name: Copy files to "{{ home_directory }}" directory
+  loop:
+  - profile
+  - vimrc
+  copy:
+    src: "{{ config_directory }}/{{ item }}"
+    dest: "{{ home_directory }}/.{{ item }}"
+  tags:
+  - user-home
+
+- name: Ensure "{{ home_directory }}/.bashrc" link to ".profile"
+  file:
+    src: .profile
+    dest: "{{ home_directory }}/.bashrc"
+    state: link
+    force: yes
+  tags:
+  - user-home
+
+- name: Check "{{ home_directory }}/.profile-opt" file stat
+  stat:
+    path: "{{ home_directory }}/.profile-opt"
+  register: profile_opt
+  tags:
+  - user-home
+
+- name: Copy file to "{{ home_directory }}/.profile-opt"
+  when: not profile_opt.stat.exists
+  copy:
+    src: "{{ config_directory }}/profile-opt"
+    dest: "{{ home_directory }}/.profile-opt"
+  tags:
+  - user-home
+
+- name: Remove "{{ home_directory }}" junk files
+  loop:
+  - .bash_history
+  - .kshrc
+  - .viminfo
+  file:
+    path: "{{ home_directory }}/{{ item }}"
+    state: absent
+  tags:
+  - user-home
+
+- name: Include "cmdline-apps.yaml" tasks
+  when: has_cmdline_apps
+  include_tasks: cmdline-apps.yaml
+  tags:
+  - user-home
+  - htop
+  - tmux
+
+- name: Include "login-user.yaml" tasks
+  when: user not in ["root", ansible_user]
+  include_tasks: login-user.yaml
+  tags:
+  - user-home
+  - ssh
+
+- name: Include "gui-apps.yaml" tasks
+  when: user not in ["root", ansible_user] and has_gui_apps
+  include_tasks: gui-apps.yaml
+  tags:
+  - user-home
+  - autoexec
+  - mimeapps
+  - web-data

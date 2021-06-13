@@ -1,0 +1,7 @@
+data1_uuid: false
+has_zram_swap: false
+has_docker_tmpfs: false
+has_vbox_shared: false
+requires_dhcp_client: false
+
+bin_directory: ../../bin

@@ -1,7 +1,0 @@
-- include_tasks: roles/local-user/tasks/all-users.yaml
-
-- include_tasks: roles/local-user/tasks/ansible-user.yaml
-  when: user == ansible_user
-
-- include_tasks: roles/local-user/tasks/normal-users.yaml
-  when: user not in ["root", ansible_user]

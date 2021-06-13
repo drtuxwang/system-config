@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# VirtualBox
+{% if has_vbox_shared %}
+mount -t vboxsf -o uid=owner,gid=users shared /shared &
+{% else %}
+##mount -t vboxsf -o uid=owner,gid=users shared /shared &
+{% endif %}
+
+# No Network Manager
+{% if requires_dhcp_client %}
+dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
+{% else %}
+##dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
+{% endif %}
+
+sleep 20
+
+# Mount removable disks
+{% if data1_uuid %}
+mount -t ext4 -o noatime,errors=remount-ro,commit=60 UUID={{ data1_uuid }} /mnt/data2
+mount -o bind /mnt/data2/shared /shared
+{% else %}
+##mount -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=<uuid-from-blkid> /mnt/data2
+##mount -o bind /mnt/data2/shared /shared
+{% endif %}
+
+# Setup ZRAM swap (zramctl)
+{% if has_zram_swap %}
+modprobe zram num_devices=1
+RAM=$(awk '/MemTotal/{print $2}' /proc/meminfo)
+echo ${RAM}K > /sys/block/zram0/disksize
+echo $(($RAM/2))K > /sys/block/zram0/mem_limit
+mkswap /dev/zram0
+swapon -p 100 /dev/zram0
+{% else %}
+##modprobe zram num_devices=1
+##RAM=$(awk '/MemTotal/{print $2}' /proc/meminfo)
+##echo ${RAM}K > /sys/block/zram0/disksize
+##echo $(($RAM/2))K > /sys/block/zram0/mem_limit
+##mkswap /dev/zram0
+##swapon -p 100 /dev/zram0
+{% endif %}
+
+# Setup tmpfs for Docker tmp files
+{% if has_docker_tmpfs %}
+mount -t tmpfs -o noatime,nosuid,nodev tmpfs /var/lib/docker/tmp
+{% else %}
+##mount -t tmpfs -o noatime,nosuid,nodev tmpfs /var/lib/docker/tmp
+{% endif %}
+
+exit 0

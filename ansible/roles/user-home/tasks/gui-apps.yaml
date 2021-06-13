@@ -1,0 +1,83 @@
+- name: Copy file to "{{ home_directory }}/.Xresources"
+  copy:
+    src: "{{ config_directory }}/Xresources"
+    dest: "{{ home_directory }}/.Xresources"
+  tags:
+  - user-home
+
+- name: Ensure "{{ home_directory }}/.config" directory exists
+  file:
+    path: "{{ home_directory }}/.config"
+    state: directory
+    mode: "0700"
+  tags:
+  - user-home
+  - autoexec
+
+- name: Copy file to "{{ home_directory }}/.config/autoexec.sh"
+  copy:
+    src: "{{ config_directory }}/autoexec.sh"
+    dest: "{{ home_directory }}/.config/"
+  tags:
+  - user-home
+  - autoexec
+
+- name: Check "{{ home_directory }}/.config/autoexec-opt.sh" file stat
+  stat:
+    path: "{{ home_directory }}/.config/autoexec-opt.sh"
+  register: autoexec_opt_sh
+  tags:
+  - user-home
+  - autoexec
+
+- name: Copy file to "{{ home_directory }}/.config/autoexec-opt.sh"
+  when: not autoexec_opt_sh.stat.exists
+  copy:
+    src: "{{ config_directory }}/autoexec-opt.sh"
+    dest: "{{ home_directory }}/.config/"
+  tags:
+  - user-home
+  - autoexec
+
+- name: Check "{{ home_directory }}/.config/mimeapps.list" file stat
+  stat:
+    path: "{{ home_directory }}/.config/mimeapps.list"
+  register: mimeapps_list
+
+- name: Copy file to "{{ home_directory }}/.config/mimeapps.list"
+  when: not mimeapps_list.stat.exists
+  copy:
+    src: "{{ config_directory }}/mimeapps.list"
+    dest: "{{ home_directory }}/.config/"
+  tags:
+  - user-home
+  - mimeapps
+
+- name: Ensure "{{ home_directory }}/.local/share/applications" directory exists
+  file:
+    path: "{{ home_directory }}/.local/share/applications"
+    state: directory
+  tags:
+  - user-home
+  - mimeapps
+
+- name: Copy files to "{{ home_directory }}.local/share/applications" directory
+  with_fileglob:
+  - "{{ config_directory }}/userapp-*.desktop"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ home_directory }}/.local/share/applications/"
+  tags:
+  - user-home
+  - mimeapps
+
+- name: Cron entry for updating "{{ home_directory }}/software/web-data/pages" web pages
+  when: user == "owner"
+  cron:
+    name: Update "{{ home_directory }}/software/web-data/pages" web pages
+    user: "{{ user }}"
+    special_time: reboot
+    job: sleep 300 && $HOME/software/scripts/pull-web
+  tags:
+  - user-home
+  - web-data

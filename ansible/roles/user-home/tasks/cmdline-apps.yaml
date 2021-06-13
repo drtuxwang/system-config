@@ -1,0 +1,26 @@
+- name: Ensure "{{ home_directory }}/.config/htop" directory exists
+  file:
+    path: "{{ home_directory }}/.config/htop"
+    state: directory
+    mode: "0700"
+    recurse: yes
+  tags:
+  - user-home
+  - htop
+
+- name: Copy file to "{{ home_directory }}/.config/htop/htoprc"
+  copy:
+    src: "{{ config_directory }}/htoprc"
+    dest: "{{ home_directory }}/.config/htop/"
+  tags:
+  - user-home
+  - htop
+
+- name: Copy file to "{{ home_directory }}/.tmux.conf"
+  copy:
+    src: "{{ config_directory }}/tmux.conf"
+    dest: "{{ home_directory }}/.tmux.conf"
+  tags:
+  - user-home
+  - tmux
+

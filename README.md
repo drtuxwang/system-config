@@ -888,7 +888,7 @@ the years. Now most of the scripts are written in Python 3.
  * config/userapp-soffice.desktop        Copy to "$HOME/.local/share/applications" for LibreOffice
  * config/userapp-vlc.desktop            Copy to "$HOME/.local/share/applications" for VLC
  * config/winsetup.bat                   Configure Windows VirtualBox VMs
- * config/winsetupo.sh
+ * config/winsetup.sh
  * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
  * etc/install-python-requirements.sh    Python pip installer (installs minimum requirements)
  * etc/python-requirements.txt           Python default pip requirements file
@@ -901,19 +901,31 @@ the years. Now most of the scripts are written in Python 3.
  * etc/setbin.ps1                        Windows Power shell initialization
  * ansible/Makefile                      Ansible local hosts playbook
  * ansible/ansible.cfg
+ * ansible/bin/check-tags
  * ansible/inventory/group_vars/all
- * ansible/inventory/group_vars/local_cluster
+ * ansible/inventory/group_vars/local_nodes
+ * ansible/inventory/group_vars/local_hosts
+ * ansible/inventory/group_vars/local_vmhosts
+ * ansible/inventory/host_vars/debian10.local
+ * ansible/inventory/host_vars/hotdog.local
+ * ansible/inventory/host_vars/koko.local
  * ansible/inventory/host_vars/netbook.local
+ * ansible/inventory/host_vars/webtv.local
+ * ansible/inventory/host_vars/xiaobear.local
  * ansible/inventory/local_cluster
+ * ansible/roles/ansible-user/tasks/main.yaml
+ * ansible/roles/local-system/defaults/main.yml
  * ansible/roles/local-system/tasks/main.yaml
- * ansible/roles/local-user/tasks/all-users.yaml
- * ansible/roles/local-user/tasks/ansible-user.yaml
- * ansible/roles/local-user/tasks/main.yaml
- * ansible/roles/local-user/tasks/normal-users.yaml
- * ansible/roles/local-user/vars/main.yaml
- * ansible/roles/setup-local/defaults/main.yml
- * ansible/roles/setup-local/meta/main.yaml
- * ansible/roles/setup-local/vars/main.yaml
+ * ansible/roles/local-system/tasks/system-setup.yaml
+ * ansible/roles/local-system/templates/rc.local-opt
+ * ansible/roles/local-users/defaults/main.yml
+ * ansible/roles/local-users/meta/main.yaml
+ * ansible/roles/user-home/defaults/main.yml
+ * ansible/roles/user-home/tasks/cmdline-apps.yaml
+ * ansible/roles/user-home/tasks/gui-apps.yaml
+ * ansible/roles/user-home/tasks/login-user.yaml
+ * ansible/roles/user-home/tasks/main.yaml
+ * ansible/roles/user-home/vars/main.yaml
  * ansible/setup-local.yaml
  * cloudformation/1pxy/1pxy.json         CloudFormation: 1pxy example
  * cloudformation/1pxy/Makefile

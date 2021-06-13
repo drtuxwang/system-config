@@ -1,0 +1,4 @@
+has_cmdline_apps: true
+has_guest_user: true
+has_gui_apps: true
+has_zram_swap: true

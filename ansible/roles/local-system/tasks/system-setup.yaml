@@ -1,0 +1,46 @@
+- name: Ensure "/etc" directory exists
+  file:
+    path: /etc
+    state: directory
+    mode: "0755"
+  tags:
+  - local-system
+  - rc-local
+
+- name: Copy file to "/etc/rc.local"
+  copy:
+    src: "{{ config_directory }}/rc.local"
+    dest: /etc/
+  tags:
+  - local-system
+  - rc-local
+
+- name: Template file to "/etc/rc.local-opt"
+  template:
+    src: rc.local-opt
+    dest: /etc/rc.local-opt
+    mode: 0755
+  tags:
+  - local-system
+  - rc-local
+
+- name: Ensure "/opt/software/bin" directory exists
+  file:
+    path: /opt/software/bin
+    state: directory
+    mode: "0755"
+  tags:
+  - local-system
+  - software-bin
+
+- name: Synchronize "/opt/software/bin" directory
+  synchronize:
+    src: "{{ bin_directory }}/"
+    dest: /opt/software/bin/
+    owner: no
+    group: no
+    delete: yes
+    rsync_path: sudo rsync
+  tags:
+  - local-system
+  - software-bin
