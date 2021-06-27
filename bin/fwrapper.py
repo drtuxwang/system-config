@@ -82,7 +82,7 @@ class Main:
     def _create(file: str, link: str) -> None:
         try:
             with open(link, 'w', newline='\n') as ofile:
-                print("#!/bin/bash", file=ofile)
+                print("#!/usr/bin/env bash", file=ofile)
                 print("#", file=ofile)
                 print("# fwrapper.py generated script", file=ofile)
                 print("#\n", file=ofile)

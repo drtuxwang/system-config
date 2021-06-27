@@ -41,7 +41,7 @@ run:
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) --entrypoint gcc $(IMAGE) --version | grep ^gcc | \
+	@docker run $(DOCKER_RUN_FLAGS) --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
 		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
 
 .PHONY: rmi

@@ -1,7 +1,9 @@
-#!/bin/bash -u
+#!/usr/bin/env bash
 #
 # Connect to ingress/service via http/mongodb/oradb/svnc port
 #
+
+set -u
 
 MONGODB_CLIENT="robo3t"
 ORADB_CLIENT="${0%/*/*/*}../../bin/sqlplus"

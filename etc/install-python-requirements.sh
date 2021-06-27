@@ -15,6 +15,7 @@ fi
 
 
 read_requirements() {
+    REQUIREMENTS=
     while [ $# != 0 ]
     do
         if [ -f "$1" ]
@@ -73,9 +74,17 @@ INSTALL="$PYTHON -m pip install"
 [[ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ]] || INSTALL="$INSTALL --user"
 [[ "$(uname)" = Darwin ]] && export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
 
-REQUIREMENTS=
 PYTHON_VERSION=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
-read_requirements "${0%/*}/python-requirements.txt" "${0%/*}/python-requirements_$PYTHON_VERSION.txt"
+if [ "$(uname -s)" = Darwin ]
+then
+    PLATFORM="_mac"
+else
+    PLATFORM=
+fi
+read_requirements \
+    "${0%/*}/python-requirements.txt" \
+    "${0%/*}/python-requirements_$PYTHON_VERSION.txt" \
+    "${0%/*}/python-requirements_$PYTHON_VERSION$PLATFORM.txt"
 
 install_pip
 [[ "$FLAG" != piponly ]] && install_packages

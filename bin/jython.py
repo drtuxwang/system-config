@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "jython" command
+Wrapper for generic bin/command
 """
 
 import glob
@@ -44,19 +44,18 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run() -> int:
+    def run() -> None:
         """
         Start program
         """
-        jython = command_mod.Command(
-            os.path.join('bin', 'jython'),
-            errors='stop'
+        name = os.path.basename(sys.argv[0]).replace('.py', '')
+
+        command = command_mod.Command(
+            os.path.join('bin', name),
+            errors='stop',
         )
-        jython.set_args(sys.argv[1:])
-
-        subtask_mod.Exec(jython.get_cmdline()).run()
-
-        return 0
+        command.set_args(sys.argv[1:])
+        subtask_mod.Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

@@ -3,16 +3,18 @@
 Wrapper for "gqview" command
 """
 
+import copy
 import glob
+import json
 import os
 import random
 import signal
 import shutil
 import sys
-import time
 from typing import List
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -90,6 +92,23 @@ class Options:
             except OSError:
                 pass
 
+    @staticmethod
+    def select(directories: List[str]) -> str:
+        """
+        Select directory randomly
+        """
+        tmpdir = file_mod.FileUtil.tmpdir('.cache')
+        configfile = os.path.join(tmpdir, 'gqview.json')
+        config = Configuration(configfile)
+        config.set_choices(directories)
+        directory = config.get_choice(directories)
+        config.write(configfile + '.part')
+        try:
+            shutil.move(configfile + '.part', configfile)
+        except OSError:
+            os.remove(configfile + '.part')
+        return directory
+
     def parse(self, args: List[str]) -> None:
         """
         Parse arguments
@@ -107,11 +126,58 @@ class Options:
                 if not os.path.isdir(arg):
                     self._gqview.set_args(args[1:])
                     return
-            directories = args[1:]
-            random.shuffle(directories)
-            print(directories[0])
-            time.sleep(1)
-            self._gqview.set_args(directories[:1])
+            directory = self.select(args[1:])
+            self._gqview.set_args([directory])
+
+
+class Configuration:
+    """
+    Configuration class
+    """
+
+    def __init__(self, file: str = '') -> None:
+        self._data: dict = {'gqview': {}}
+        if file:
+            try:
+                with open(file) as ifile:
+                    self._data = json.load(ifile)
+            except (KeyError, OSError):
+                pass
+
+    def get_choice(self, directories: List[str]) -> str:
+        """
+        Return next choice
+        """
+        key = str(directories)
+        choices = self._data['gqview'][key]
+        choice = choices[0]
+        self._data['gqview'][key] = choices[1:] + [choice]
+        return choice
+
+    def set_choices(self, directories: List[str]) -> None:
+        """
+        If new choices shuffle directory
+        """
+        key = str(directories)
+        if key not in self._data['gqview']:
+            choices = copy.copy(directories)
+            random.shuffle(choices)
+            self._data['gqview'][key] = choices
+
+    def write(self, file: str) -> None:
+        """
+        Write file
+        """
+        try:
+            with open(file, 'w', newline='\n') as ofile:
+                print(json.dumps(
+                    self._data,
+                    ensure_ascii=False,
+                    indent=4,
+                    sort_keys=True,
+                ), file=ofile)
+        except OSError:
+            pass
 
 
 class Main:

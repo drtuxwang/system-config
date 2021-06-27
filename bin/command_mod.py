@@ -15,8 +15,8 @@ import subprocess
 import sys
 from typing import Any, List, Optional, Sequence
 
-RELEASE = '2.4.1'
-VERSION = 20210509
+RELEASE = '2.4.2'
+VERSION = 20210620
 
 
 class Command:
@@ -443,7 +443,9 @@ class Platform:
         if cls.get_platform().startswith('linux'):
             lines = cls._run_program(['ldd', '--version'])
             try:
-                return lines[0].split()[-1]
+                for line in lines:
+                    if 'GLIBC' in line:
+                        return line.split()[-1]
             except IndexError as exception:
                 raise GlibcVersionError(
                     'Cannot determine "glibc" version.'

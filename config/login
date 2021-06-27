@@ -99,8 +99,8 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     # Use /tmp (tmpfs) for cache
     setenv TMPDIR "/tmp/$MYUNAME"
     setenv TMP "/tmp/$MYUNAME"
-    rm -f `find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld | \
-        grep " -> /tmp" | grep -v " -> /tmp/$MYUNAME/" | sed -e "s/ ->.*//;s/.* //"`
+    (rm -f `find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld | \
+        grep " -> /tmp" | grep -v " -> /tmp/$MYUNAME/" | sed -e "s/ ->.*//;s/.* //"`) >& /dev/null
     mkdir -p $TMP/.cache
     if ( ! -l $HOME/.cache ) then
         rm -rf $HOME/.cache
@@ -136,19 +136,16 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
             setenv LD_LIBRARY_PATH :
         endif
         setenv BASE_PATH $PATH
-        setenv BASE_LM_LICENSE_FILE $LM_LICENSE_FILE
         setenv BASE_LD_LIBRARY_PATH $LD_LIBRARY_PATH
         setenv BASE_PYTHONPATH $PYTHONPATH
         setenv BASE_MANPATH $MANPATH
     else
         setenv PATH $BASE_PATH
-        setenv LM_LICENSE_FILE $BASE_LM_LICENSE_FILE
         setenv LD_LIBRARY_PATH $BASE_LD_LIBRARY_PATH
         setenv PYTHONPATH $BASE_PYTHONPATH
         setenv MANPATH $BASE_MANPATH
     endif
-    if ( "$MYUNAME" == root && ! "`echo :${PATH}: | grep :/sbin:`" ) then
-    then
+    if ( "$MYUNAME" == root && "`echo :${PATH}: | grep :/sbin:`" != "" ) then
         setenv PATH /sbin:$PATH
     endif
 

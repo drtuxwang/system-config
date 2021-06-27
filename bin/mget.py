@@ -106,7 +106,7 @@ class VideoDownloader:
         Write download resume script.
         """
         script = (
-            "#!/bin/bash",
+            "#!/usr/bin/env bash",
             "cd ${0%/*}/..",
             'xrun "{0:s}" {1:s}'.format(self._output, self._url),
         )

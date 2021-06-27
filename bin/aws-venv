@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # awscli still requires ancient insecure PyYAML<5.4
 #

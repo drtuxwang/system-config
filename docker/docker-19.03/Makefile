@@ -58,7 +58,7 @@ run:
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) --entrypoint docker $(IMAGE) --version | grep ^Docker | \
+	@docker run $(DOCKER_RUN_FLAGS) --entrypoint docker $(IMAGE) --version 2> /dev/null | grep ^Docker | \
 		sed -e "s/,/ /g" | awk '{printf("'$(shell pwd)': docker %s\n", $$3)}'
 
 .PHONY: rmi

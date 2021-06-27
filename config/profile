@@ -209,7 +209,7 @@ then
     # Use /tmp (tmpfs) for cache
     export TMPDIR="/tmp/$MYUNAME"
     export TMP="/tmp/$MYUNAME"
-    rm -f `find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld 2> /dev/null | \
+    rm -f `find $HOME/.???* -xdev -type l 2> /dev/null | xargs -r -d '\n' ls -ld 2> /dev/null | \
         grep " -> /tmp" | grep -v " -> /tmp/$MYUNAME/" | sed -e "s/ ->.*//;s/.* //"`
     mkdir -p $TMP/.cache
     if [ ! -h $HOME/.cache ]

@@ -1,7 +1,9 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
 #
 # Save Docker images to tar archives
 #
+
+set -eu
 
 if [ $# = 0 ]
 then

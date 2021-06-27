@@ -1,7 +1,9 @@
-#!/bin/bash -u
+#!/usr/bin/env bash
 #
 # Run Docker Debian sandbox (no dri, ipc, net, snd, root & x11 defaults)
 #
+
+set  -u
 
 IMAGE="drtuxwang/debian-xfce:stable"
 NAME="debian10-sandbox"

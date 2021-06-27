@@ -14,8 +14,8 @@ import re
 import subprocess
 from typing import List, Optional
 
-RELEASE = '2.2.1'
-VERSION = 20210509
+RELEASE = '2.2.2'
+VERSION = 20210623
 
 
 class Battery:
@@ -310,7 +310,10 @@ class BatteryMac(Battery):
         try:
             self._info['id'] = self._data['id']
             self._info['capacity_max'] = self._data['DesignCapacity']
-            self._info['model_name'] = self._data['BatterySerialNumber']
+            self._info['model_name'] = self._data.get(
+                'BatterySerialNumber',
+                self._data['Serial'],
+            )
             self._info['oem_name'] = self._data.get(
                 'Manufacturer',
                 self._data['DeviceName'],

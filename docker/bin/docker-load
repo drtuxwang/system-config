@@ -1,7 +1,9 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
 #
 # Load Docker images from "tar|tar.*|t[bgx]z" archives
 #
+
+set -eu
 
 if [ $# = 0 ]
 then

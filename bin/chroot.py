@@ -62,7 +62,7 @@ class Chroot:
 
     def __init__(self, directory: str) -> None:
         self._chroot = command_mod.Command('/usr/sbin/chroot', errors='stop')
-        self._chroot.set_args([directory, '/bin/bash', '-l'])
+        self._chroot.set_args([directory, '/usr/bin/env', 'bash', '-l'])
         self._directory = directory
         self._mount = command_mod.Command('mount', errors='stop')
 

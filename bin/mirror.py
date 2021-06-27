@@ -253,7 +253,14 @@ class Main:
             ) from exception
         file_stat = file_mod.FileStat(source_file, follow_symlinks=False)
         file_time = file_stat.get_time()
-        os.utime(target_file, (file_time, file_time), follow_symlinks=False)
+        try:
+            os.utime(
+                target_file,
+                (file_time, file_time),
+                follow_symlinks=False,
+            )
+        except FileNotFoundError:
+            pass
 
     def _mirror_file(self, source_file: str, target_file: str) -> None:
         if os.path.islink(target_file):

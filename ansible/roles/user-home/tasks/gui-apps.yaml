@@ -71,6 +71,38 @@
   - user-home
   - mimeapps
 
+- name: Ensure "{{ home_directory }}/.config/geeqie" directory exists
+  file:
+    path: "{{ home_directory }}/.config/geeqie"
+    state: directory
+  tags:
+  - user-home
+  - geeqie
+
+- name: Copy file to "{{ home_directory }}/.config/geeqie/geeqierc.xml"
+  copy:
+    src: "{{ config_directory }}/geeqierc.xml"
+    dest: "{{ home_directory }}/.config/geeqie"
+  tags:
+  - user-home
+  - geeqie
+
+- name: Ensure "{{ home_directory }}/.config/xfce4/terminal" directory exists
+  file:
+    path: "{{ home_directory }}/.config/xfce4/terminal"
+    state: directory
+  tags:
+  - user-home
+  - terminal
+
+- name: Copy file to "{{ home_directory }}/.config/xfce4/terminal/terminalrc"
+  copy:
+    src: "{{ config_directory }}/terminalrc"
+    dest: "{{ home_directory }}/.config/xfce4/terminal"
+  tags:
+  - user-home
+  - terminal
+
 - name: Cron entry for updating "{{ home_directory }}/software/web-data/pages" web pages
   when: user == "owner"
   cron:

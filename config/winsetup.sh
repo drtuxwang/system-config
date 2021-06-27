@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 VERSION=$(uname -r | cut -f1-2 -d. | awk '{printf("%s\n", $1*10)}')
 DIR=${0%/config/*}/software

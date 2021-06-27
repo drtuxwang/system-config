@@ -273,7 +273,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/firefox.py
  * bin/fixwav             Normalize volume of wave files (-16.0dB rms mean volume)
  * bin/fixwav.py          (uses normalize-audio)
- * bin/flashgot-term      Firefox Flashgot terminal startup script
  * bin/flink              Recursively link all files
  * bin/flink.py
  * bin/fls                Show full list of files
@@ -448,6 +447,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/k3s                K3S light weight Kubernetes distribution
  * bin/k3s.py
  * bin/keymap.tcl         TCL/TK widget for setting keymaps
+ * bin/keytool            keytool wrapper (allowing non systems port)
+ * bin/keytool.py
  * bin/kmodsign           Wrapper for Kernel's sign-file command
  * bin/kmodsign.py
  * bin/kubectl            kubectl wrapper (allowing non systems port)
@@ -893,8 +894,10 @@ the years. Now most of the scripts are written in Python 3.
  * etc/install-python-requirements.sh    Python pip installer (installs minimum requirements)
  * etc/python-requirements.txt           Python default pip requirements file
  * etc/python-requirements_2.7.txt       Python 2.7 pip requirements file
+ * etc/python-requirements_2.7_mac.txt   Python 2.7 pip requirements file for Mac
  * etc/python-requirements_3.5.txt       Python 3.5 pip requirements file
  * etc/python-requirements_3.6.txt       Python 3.6 pip requirements file
+ * etc/python-requirements_3.7_mac.txt   Python 3.7 pip requirements file for Mac
  * etc/python-requirements_3.9.txt       Python 3.9 pip requirements file
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization

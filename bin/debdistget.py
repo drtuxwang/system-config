@@ -107,7 +107,7 @@ class Main:
                 for url in ifile:
                     url = url.rstrip()
                     if url and not url.startswith('#'):
-                        if (not url.startswith('http://') or
+                        if (not url.startswith(('http://', 'https://')) or
                                 os.path.basename(url) not in (
                                     'Packages.xz', 'Packages.bz2',
                                     'Packages.gz')):
