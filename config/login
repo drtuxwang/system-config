@@ -145,7 +145,8 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
         setenv PYTHONPATH $BASE_PYTHONPATH
         setenv MANPATH $BASE_MANPATH
     endif
-    if ( "$MYUNAME" == root && "`echo :${PATH}: | grep :/sbin:`" != "" ) then
+    if ( "$MYUNAME" == root && "`echo :${PATH}: | grep :/sbin:`" == "") then
+    then
         setenv PATH /sbin:$PATH
     endif
 
@@ -213,7 +214,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
         else
             alias ls "ls -C --color=auto"
         endif
-        if ( "`\grep --help |& \grep '^ *--color'`" != "" ) then
+        if ( "`\grep --help |& \grep ' --color'`" != "" ) then
             alias grep "grep --color=auto"
             alias egrep "egrep --color=auto"
         endif

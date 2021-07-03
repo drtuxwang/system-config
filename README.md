@@ -1106,16 +1106,16 @@ the years. Now most of the scripts are written in Python 3.
  * helm/concourse/values.yaml
  * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 4.11.1 (app-3.4.13)
  * helm/etcd/values.yaml
- * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 3.4.5 (app-7.2.2)
+ * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 5.2.2 (app-7.4.1)
  * helm/grafana/values.yaml
- * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 5.0.28 (app-2.249.3)
+ * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 7.3.5 (app-2.263.4)
  * helm/jenkins/values.yaml
- * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 11.7.2 (app-2.5.0)
+ * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 12.3.2 (2.6.0)
  * helm/kafka/connect-test.sh
  * helm/kafka/values.yaml
- * helm/ingress-controller/Makefile      Helm Chart: ingress-nginx/ingress-nginx 2.12.1 (app-0.34.1)
+ * helm/ingress-controller/Makefile      Helm Chart: ingress-nginx/ingress-nginx 3.22.0 (app-0.43.0)
  * helm/ingress-controller/values.yaml
- * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 8.3.2 (app-4.2.9)
+ * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 10.6.4 (app-4.4.3)
  * helm/mongodb/values.yaml
  * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 4.1.2 (app-3.27.0)
  * helm/nexus/values.yaml
@@ -1133,11 +1133,11 @@ the years. Now most of the scripts are written in Python 3.
  * helm/oracle-xe/oracle-xe/templates/box-service.yaml
  * helm/oracle-xe/oracle-xe/templates/box-statefulset.yaml
  * helm/oracle-xe/values.yaml
- * helm/prometheus/Makefile              Helm Chart: prometheus-community/prometheus 11.14.1 (app-2.20.1)
+ * helm/prometheus/Makefile              Helm Chart: prometheus-community/prometheus 13.0.3 (app-2.22.1)
  * helm/prometheus/values.yaml
- * helm/pushgateway/Makefile             Helm Chart: prometheus-community/prometheus-pushgateway 1.4.2 (app-1.2.0)
+ * helm/pushgateway/Makefile             Helm Chart: prometheus-community/prometheus-pushgateway 1.6.0 (app-1.3.0)
  * helm/pushgateway/values.yaml
- * helm/rabbitmq/Makefile                Helm Chart: bitnami/rabbitmq 6.8.3 (app-3.7.19)
+ * helm/rabbitmq/Makefile                Helm Chart: bitnami/rabbitmq 8.7.2 (app-3.8.9)
  * helm/rabbitmq/values.yaml
  * helm/test-server/Makefile             Helm Chart: drtuxwang/test-server (drtuxwang/debian-bash:stable)
  * helm/test-server/drtuxwang/test-server/Chart.yaml

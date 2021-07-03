@@ -9,7 +9,13 @@
 
 if [ "$TERM" -a "$TERM" != dumb ]
 then
-    if [ ! "$BASH" -a -f $HOME/.profile-2bash -a -f /bin/bash ]
+    if [ "$BASH" ]
+    then
+        if [ "$(cmp $BASH $(which bash))" ]
+        then
+            exec $(which bash) -l
+        fi
+    elif [ -f $HOME/.profile-2bash -a -f /bin/bash ]
     then
         export ENV=$HOME/.profile
         exec /bin/bash -l
@@ -55,7 +61,7 @@ then
         }
         __kube_ps1()
         {
-           [[ -f "$KUBECONFIG" ]] && echo " ⛭${KUBECONFIG##*/}"
+           [[ -f "$KUBECONFIG" ]] && echo " ${KUBECONFIG##*/}"
         }
         __kubeconfig() {
             ls -1 $HOME/.kube/*.yaml 2> /dev/null | sed -e "s@.*/@  Kubeconfig: @"
@@ -222,9 +228,9 @@ then
     # Protect files
     if [ "`echo $MYUNAME | egrep '^(root|admin)$'`" ]
     then
-        ls -ld $HOME | grep -v "rwx------" | awk '{print $NF}' | xargs -n 1 chmod 700 >& /dev/null
+        ls -ld $HOME | grep -v "rwx------" | awk '{print $NF}' | xargs -n 1 chmod 700 2> /dev/null
     else
-        ls -ld $HOME | grep -v "rwx--x--x" | awk '{print $NF}' | xargs -n 1 chmod 711 >& /dev/null
+        ls -ld $HOME | grep -v "rwx--x--x" | awk '{print $NF}' | xargs -n 1 chmod 711 2> /dev/null
     fi
     ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.???* 2> /dev/null | \
         grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
@@ -359,7 +365,7 @@ then
         else
             alias ls="ls -C --color=auto"
         fi
-        if [ "`\grep --help 2>&1 | \grep \\" --color\\" 2> /dev/null`" ]
+        if [ "`\grep --help 2>&1 | \grep ' --color' 2> /dev/null`" ]
         then
             alias grep="grep --color=auto"
             alias egrep="egrep --color=auto"
