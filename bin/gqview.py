@@ -3,10 +3,10 @@
 Wrapper for "gqview" command
 """
 
-import copy
 import glob
 import json
 import os
+import re
 import random
 import signal
 import shutil
@@ -160,8 +160,17 @@ class Configuration:
         """
         key = str(directories)
         if key not in self._data['gqview']:
-            choices = copy.copy(directories)
-            random.shuffle(choices)
+            ismatch = re.compile(r'_\d+$')
+            weights = []
+            for directory in directories:
+                if ismatch.search(directory):
+                    weights.append(int(directory.rsplit('_')[-1]))
+                else:
+                    weights.append(1)
+            choices: List[str] = []
+            while len(choices) < len(directories):
+                choices.extend(random.choices(directories, weights, k=128))
+                choices = list(dict.fromkeys(choices))
             self._data['gqview'][key] = choices
 
     def write(self, file: str) -> None:
