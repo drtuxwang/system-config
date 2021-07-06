@@ -1,7 +1,7 @@
 astroid==1.6.6
 bcrypt==3.1.7
 cachetools==3.1.1
-cffi>=1.14.1
+cffi==1.14.1
 check-manifest==0.41
 cryptography==3.3.2
 docker-compose==1.26.2

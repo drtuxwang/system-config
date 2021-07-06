@@ -76,7 +76,7 @@ class Package:
         url: str = '',
     ) -> None:
         self._version = version
-        self._depends = depends
+        self._depends = depends if depends else []
         self._url = url
 
     def get_depends(self) -> List[str]:

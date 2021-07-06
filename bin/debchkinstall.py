@@ -100,7 +100,7 @@ class Package:
         self._checked_flag = False
         self._installed_flag = False
         self._version: str = None
-        self._depends: List[str] = depends
+        self._depends = depends if depends else []
         self._url = url
 
     def get_checked_flag(self) -> bool:

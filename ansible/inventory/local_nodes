@@ -8,6 +8,7 @@ hotdog.local           ansible_user=admin
 webtv.local            ansible_user=admin
 xiaobear.local         ansible_user=admin
 netbook.local          ansible_user=admin
+netty.local            ansible_user=admin
 
 # Virtual Machines
 [local_vmhosts]
