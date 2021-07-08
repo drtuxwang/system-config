@@ -57,7 +57,7 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-        if not self._args.url[0].endswith('.m3u8'):
+        if '.m3u8' not in self._args.url[0]:
             raise SystemExit(
                 sys.argv[0] + ": Wrong URL extension: " + self._args.output
             )
