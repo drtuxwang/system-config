@@ -15,8 +15,8 @@ import types
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.2.2'
-VERSION = 20210707
+RELEASE = '2.2.3'
+VERSION = 20210708
 
 BUFFER_SIZE = 131072
 
@@ -323,16 +323,18 @@ class Background(Task):
 
         if info['pattern']:
             os.environ['_SUBTASK_MOD_BACKGROUND_FILTER'] = info['pattern']
-            with subprocess.Popen(
+            subprocess.Popen(  # pylint: disable = consider-using-with
                 [sys.executable, '-B', __file__] + cmdline,
                 shell=pipe,
                 env=info['env']
-            ):
-                pass
+            )
             del os.environ['_SUBTASK_MOD_BACKGROUND_FILTER']
         else:
-            with subprocess.Popen(command, shell=pipe, env=info['env']):
-                pass
+            subprocess.Popen(  # pylint: disable = consider-using-with
+                command,
+                shell=pipe,
+                env=info['env'],
+            )
 
     def run(self, **kwargs: Any) -> None:
         """
@@ -501,20 +503,18 @@ class Daemon(Task):
         os.environ['_SUBTASK_MOD_DAEMON_FILE'] = info['file']
 
         if '|' in cmdline:
-            with subprocess.Popen(
+            subprocess.Popen(  # pylint: disable = consider-using-with
                 subprocess.list2cmdline(
                     [sys.executable, '-B', __file__] + cmdline
                 ),
                 shell=True,
                 env=info['env'],
-            ):
-                pass
+            )
         else:
-            with subprocess.Popen(
+            subprocess.Popen(  # pylint: disable = consider-using-with
                 [sys.executable, '-B', __file__] + cmdline,
                 env=info['env'],
-            ):
-                pass
+            )
 
         del os.environ['_SUBTASK_MOD_DAEMON_FILE']
 
