@@ -902,16 +902,18 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/ansible.cfg
  * ansible/bin/check-tags
  * ansible/inventory/group_vars/all
- * ansible/inventory/group_vars/local_nodes
  * ansible/inventory/group_vars/local_hosts
+ * ansible/inventory/group_vars/local_nodes
  * ansible/inventory/group_vars/local_vmhosts
  * ansible/inventory/host_vars/debian10.local
+ * ansible/inventory/host_vars/debianmac.local
  * ansible/inventory/host_vars/hotdog.local
  * ansible/inventory/host_vars/koko.local
  * ansible/inventory/host_vars/netbook.local
  * ansible/inventory/host_vars/webtv.local
  * ansible/inventory/host_vars/xiaobear.local
- * ansible/inventory/local_cluster
+ * ansible/inventory/local_nodes
+ * ansible/local-playbook.yaml
  * ansible/roles/ansible-user/tasks/main.yaml
  * ansible/roles/local-system/defaults/main.yml
  * ansible/roles/local-system/tasks/main.yaml
@@ -925,7 +927,6 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/roles/user-home/tasks/login-user.yaml
  * ansible/roles/user-home/tasks/main.yaml
  * ansible/roles/user-home/vars/main.yaml
- * ansible/setup-local.yaml
  * cloudformation/1pxy/1pxy.json         CloudFormation: 1pxy example
  * cloudformation/1pxy/Makefile
  * cloudformation/1pxy/submit.sh
