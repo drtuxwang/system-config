@@ -27,7 +27,7 @@ import signal
 import sys
 from typing import List, Tuple
 
-import requests
+import requests  # type: ignore
 
 import config_mod
 
@@ -346,7 +346,7 @@ class Main:
     def _check(cls, url: str, remove: bool = False) -> None:
         server, repo_match, tag_match = cls._breakup_url(url)
         registry = cls._get_registry(server, url)
-        prefix = server.split('://')[-1]
+        prefix = server.rsplit('://', 1)[-1]
 
         for repository in sorted(registry.get_repositories()):
             if fnmatch.fnmatch(repository, repo_match):

@@ -1,2 +1,4 @@
 ipython==7.16.1
+numpy==1.19.5
 pip==20.2.4
+scipy==1.5.4

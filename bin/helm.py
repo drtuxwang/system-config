@@ -61,7 +61,7 @@ class Main:
                 directory = file_mod.FileUtil.tmpdir(os.path.join(
                     '.cache',
                     'helm',
-                    cache.split(os.sep)[0],
+                    cache.split(os.sep, 1)[0],
                 ))
                 if not os.path.islink(link):
                     try:

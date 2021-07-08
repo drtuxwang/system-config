@@ -15,23 +15,18 @@ fi
 
 
 read_requirements() {
-    REQUIREMENTS=
-    while [ $# != 0 ]
-    do
-        if [ -f "$1" ]
-        then
-            echo "Processing \"$1\"..."
-            for PACKAGE in $(sed -e "s/#.*//;s/>=/==/g" $1)
-            do
-                NAME=${PACKAGE%==*}
-                VERSION=${PACKAGE#*==}
-                REQUIREMENTS=$(echo "$REQUIREMENTS" | grep -v "^$NAME=="; echo "$NAME==$VERSION")
-            done
-            DISABLED=$(grep "#.*==None" $1 | sed -e "s/.*# *//;s/==.*//" | awk '{printf("%s|", $1)}')
-            REQUIREMENTS=$(echo "$REQUIREMENTS" | egrep -v "^($DISABLED)[>=]")
-        fi
-        shift
-    done
+    if [ -f "$1" ]
+    then
+        echo "Processing \"$1\"..."
+        for PACKAGE in $(sed -e "s/#.*//" "$1")
+        do
+            NAME=${PACKAGE%==*}
+            VERSION=${PACKAGE#*==}
+            REQUIREMENTS=$(echo "$REQUIREMENTS" | grep -v "^$NAME=="; echo "$NAME==$VERSION")
+        done
+        DISABLED=$(grep "#.*==None" $1 | sed -e "s/.*# *//;s/==.*//" | awk '{printf("%s|", $1)}')
+        REQUIREMENTS=$(echo "$REQUIREMENTS" | egrep -v "^($DISABLED)[>=]")
+    fi
 }
 
 
@@ -74,17 +69,11 @@ INSTALL="$PYTHON -m pip install"
 [[ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ]] || INSTALL="$INSTALL --user"
 [[ "$(uname)" = Darwin ]] && export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
 
+REQUIREMENTS=
 PYTHON_VERSION=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
-if [ "$(uname -s)" = Darwin ]
-then
-    PLATFORM="_mac"
-else
-    PLATFORM=
-fi
-read_requirements \
-    "${0%/*}/python-requirements.txt" \
-    "${0%/*}/python-requirements_$PYTHON_VERSION.txt" \
-    "${0%/*}/python-requirements_$PYTHON_VERSION$PLATFORM.txt"
+read_requirements "${0%/*}/python-requirements.txt"
+read_requirements "${0%/*}/python-requirements_$PYTHON_VERSION.txt"
+[[ "$(uname -s)" = Darwin ]] && read_requirements "${0%/*}/python-requirements_${PYTHON_VERSION}_mac.txt"
 
 install_pip
 [[ "$FLAG" != piponly ]] && install_packages

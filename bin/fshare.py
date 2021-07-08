@@ -12,7 +12,7 @@ import time
 from typing import List, Optional
 
 import dropbox  # type: ignore
-import requests
+import requests  # type: ignore
 
 import logging_mod
 

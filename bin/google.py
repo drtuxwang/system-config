@@ -10,7 +10,7 @@ import signal
 import sys
 from typing import List
 
-import requests
+import requests  # type: ignore
 
 import config_mod
 

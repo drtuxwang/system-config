@@ -174,7 +174,8 @@ class Main:
                 if os.path.splitext(file)[1] in ('.htm', '.html', '.xhtml'):
                     xml.sax.parseString(cls._get_xml(file), handler)
                 else:
-                    xml.sax.parse(open(file, errors='replace'), handler)
+                    with open(file, errors='replace') as ifile:
+                        xml.sax.parse(ifile, handler)
             except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot parse "' + file + '" XML file.'

@@ -169,10 +169,10 @@ class Main:
                 str(self._xcol) + '" in data file.'
             )
         xlabel = self._labels[self._xcol - 1]
-        for column in range(0, len(self._labels)):
+        for column, label in enumerate(self._labels):
             if column != self._xcol - 1:
-                ylabel = self._labels[column]
-                output = self._file + '_' + self._labels[column] + '.png'
+                ylabel = label
+                output = self._file + '_' + label + '.png'
                 stdin = (
                     'set terminal png',
                     'set output "' + output + '"',
@@ -183,10 +183,7 @@ class Main:
                     '" u ' + str(self._xcol) + ':' + str(column + 1) +
                     ' t "' + ylabel + '" w ' + self._mode
                 )
-                self._writefile(
-                    self._file + '_' + self._labels[column] + '.plt',
-                    stdin
-                )
+                self._writefile(self._file + '_' + label + '.plt', stdin)
                 print('Plotting "' + output + '"...')
                 task = subtask_mod.Task(self._gnuplot.get_cmdline())
                 task.run(stdin=stdin)

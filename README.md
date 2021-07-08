@@ -573,8 +573,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/pyprof.py
  * bin/pyz                Make a Python3 ZIP Application in PYZ format
  * bin/pyz.py
- * bin/qmail              Qwikmail, commandline E-mailer
- * bin/qmail.py
  * bin/random             Generate random integer from range.
  * bin/random.bat
  * bin/random_.py

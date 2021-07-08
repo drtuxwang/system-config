@@ -10,7 +10,7 @@ import signal
 import sys
 from typing import List
 
-import jinja2
+import jinja2  # type: ignore
 
 import command_mod
 import config_mod

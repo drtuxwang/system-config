@@ -16,7 +16,7 @@ import time
 import threading
 from typing import List
 
-import paramiko
+import paramiko  # type: ignore
 
 
 class Options:

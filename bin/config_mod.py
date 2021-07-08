@@ -24,7 +24,7 @@ from typing import (
 
 import bson  # type: ignore
 import xmltodict  # type: ignore
-import yaml
+import yaml  # type: ignore
 
 RELEASE = '1.7.2'
 VERSION = 20210525

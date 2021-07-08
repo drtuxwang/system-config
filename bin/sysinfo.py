@@ -29,8 +29,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable = import-error
 
-RELEASE = '5.16.2'
-VERSION = 20210511
+RELEASE = '5.16.3'
+VERSION = 20210707
 
 # pylint: disable = too-many-lines
 
@@ -2266,7 +2266,9 @@ class WindowsSystem(OperatingSystem):
         values = {}
         try:
             key = winreg.OpenKey(hive, path)
-        except WindowsError:  # pylint: disable = undefined-variable
+            # pylint: disable = undefined-variable
+        except WindowsError:  # type: ignore
+            # pylint: enable = undefined-variable
             pass
         else:
             nsubkeys, nvalues = winreg.QueryInfoKey(key)[:2]

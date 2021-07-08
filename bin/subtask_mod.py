@@ -15,8 +15,8 @@ import types
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.2.1'
-VERSION = 20210509
+RELEASE = '2.2.2'
+VERSION = 20210707
 
 BUFFER_SIZE = 131072
 
@@ -323,14 +323,16 @@ class Background(Task):
 
         if info['pattern']:
             os.environ['_SUBTASK_MOD_BACKGROUND_FILTER'] = info['pattern']
-            subprocess.Popen(
+            with subprocess.Popen(
                 [sys.executable, '-B', __file__] + cmdline,
                 shell=pipe,
                 env=info['env']
-            )
+            ):
+                pass
             del os.environ['_SUBTASK_MOD_BACKGROUND_FILTER']
         else:
-            subprocess.Popen(command, shell=pipe, env=info['env'])
+            with subprocess.Popen(command, shell=pipe, env=info['env']):
+                pass
 
     def run(self, **kwargs: Any) -> None:
         """
@@ -499,18 +501,20 @@ class Daemon(Task):
         os.environ['_SUBTASK_MOD_DAEMON_FILE'] = info['file']
 
         if '|' in cmdline:
-            subprocess.Popen(
+            with subprocess.Popen(
                 subprocess.list2cmdline(
                     [sys.executable, '-B', __file__] + cmdline
                 ),
                 shell=True,
                 env=info['env'],
-            )
+            ):
+                pass
         else:
-            subprocess.Popen(
+            with subprocess.Popen(
                 [sys.executable, '-B', __file__] + cmdline,
                 env=info['env'],
-            )
+            ):
+                pass
 
         del os.environ['_SUBTASK_MOD_DAEMON_FILE']
 
