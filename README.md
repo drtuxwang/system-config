@@ -1178,4 +1178,7 @@ the years. Now most of the scripts are written in Python 3.
  * terraform-aws/pxy-as/aws_resources.tf
  * terraform-aws/pxy-as/pxy_resources.tf
  * terraform-aws/pxy-as/pxy_variables.tf
+ * wipe/COMPILE
+ * wipe/Makefile
+ * wipe/wipe.c
 ```
