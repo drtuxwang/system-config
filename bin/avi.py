@@ -10,6 +10,7 @@ import glob
 import logging
 import os
 import re
+import shutil
 import signal
 import sys
 from typing import Generator, List, Tuple
@@ -423,11 +424,10 @@ class Encoder:
             sys.exit(exitcode)
 
     def _single(self) -> None:
+        output_file = self._options.get_file_new()
         if self._all_images(self._options.get_files()):
             self._config_images(self._options.get_files())
-            self._ffmpeg.extend_args(
-                ['-f', 'mp4', '-y', self._options.get_file_new()])
-            self._run()
+            self._ffmpeg.extend_args(['-f', 'avi', '-y', output_file+'.part'])
         else:
             if len(self._options.get_files()) == 1:
                 self._config(self._options.get_files()[0])
@@ -455,11 +455,12 @@ class Encoder:
                 '-metadata',
                 'title=',
                 '-f',
-                'mp4',
+                'avi',
                 '-y',
-                self._options.get_file_new()
+                output_file+'.part',
             ])
-            self._run()
+        self._run()
+        shutil.move(output_file+'.part', output_file)
         Media(self._options.get_file_new()).show()
 
     def _multi(self) -> None:
@@ -476,8 +477,9 @@ class Encoder:
                         self._ffmpeg.extend_args(
                             ['-t', self._options.get_run_time()])
                 file_new = file.rsplit('.', 1)[0] + '.mp4'
-                self._ffmpeg.extend_args(['-f', 'mp4', '-y', file_new])
+                self._ffmpeg.extend_args(['-f', 'mp4', '-y', file_new+'.part'])
                 self._run()
+                shutil.move(file_new+'.part', file_new)
                 Media(file_new).show()
 
     def config(self, options: Options) -> None:

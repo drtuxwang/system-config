@@ -9,6 +9,7 @@ import glob
 import logging
 import os
 import re
+import shutil
 import signal
 import sys
 from typing import Generator, List, Tuple
@@ -243,6 +244,7 @@ class Encoder:
             sys.exit(exitcode)
 
     def _single(self) -> None:
+        output_file = self._options.get_file_new()
         self._config(self._options.get_files()[0])
         if len(self._options.get_files()) > 1:
             args = []
@@ -260,9 +262,9 @@ class Encoder:
                 '-map',
                 '[out]'
             ] + self._ffmpeg.get_args()[2:])
-        self._ffmpeg.extend_args(
-            ['-f', 'wav', '-y', self._options.get_file_new()])
+        self._ffmpeg.extend_args(['-f', 'wav', '-y', output_file+'.part'])
         self._run()
+        shutil.move(output_file+'.part', output_file)
         Media(self._options.get_file_new()).show()
 
     def _multi(self) -> None:
@@ -270,8 +272,9 @@ class Encoder:
             if not file.endswith('.wav'):
                 self._config(file)
                 file_new = file.rsplit('.', 1)[0] + '.wav'
-                self._ffmpeg.extend_args(['-f', 'wav', '-y', file_new])
+                self._ffmpeg.extend_args(['-f', 'wav', '-y', file_new+'.part'])
                 self._run()
+                shutil.move(file_new+'.part', file_new)
                 Media(file_new).show()
 
     def config(self, options: Options) -> None:

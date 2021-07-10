@@ -10,6 +10,7 @@ import glob
 import logging
 import os
 import re
+import shutil
 import signal
 import sys
 from typing import Generator, List, Tuple
@@ -418,11 +419,10 @@ class Encoder:
             sys.exit(exitcode)
 
     def _single(self) -> None:
+        output_file = self._options.get_file_new()
         if self._all_images(self._options.get_files()):
             self._config_images(self._options.get_files())
-            self._ffmpeg.extend_args(
-                ['-f', 'mp4', '-y', self._options.get_file_new()])
-            self._run()
+            self._ffmpeg.extend_args(['-f', 'mp4', '-y', output_file+'.part'])
         else:
             if len(self._options.get_files()) == 1:
                 self._config(self._options.get_files()[0])
@@ -452,9 +452,10 @@ class Encoder:
                 '-f',
                 'mp4',
                 '-y',
-                self._options.get_file_new()
+                output_file+'.part',
             ])
-            self._run()
+        self._run()
+        shutil.move(output_file+'.part', output_file)
         Media(self._options.get_file_new()).show()
 
     def _multi(self) -> None:

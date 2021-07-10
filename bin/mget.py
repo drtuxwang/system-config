@@ -71,8 +71,9 @@ class Options:
         else:
             md5 = hashlib.md5()
             md5.update(self._args.url[0].encode())
+            file = os.path.basename(self._args.url[0])
             self._output = (
-                os.path.basename(self._args.url[0]).rsplit('.', 1)[0] +
+                file.rsplit('?', 1)[0].rsplit('.', 1)[0] +
                 '-' + md5.hexdigest()[:9] + '.mp4'
             )
         if os.path.isfile(self._output):
