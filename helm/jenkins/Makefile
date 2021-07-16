@@ -11,7 +11,7 @@ ifndef APP_VERSION
 	APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
 endif
 ifndef INGRESS_ENABLED
-	INGRESS_ENABLED=$(shell kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
+	INGRESS_ENABLED=$(shell timeout 2 kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
 endif
 EXTERNAL_IP=$(shell ping -c 1 $(HOSTNAME) 2> /dev/null | grep "^PING" | sed -e "s/.* (//;s/).*//")
 HELM_FLAGS := \
@@ -25,7 +25,7 @@ HELM_FLAGS := \
 ifdef IMAGE_TAG
 	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
 endif
-ifeq ($(shell helm version | grep -c v2), 1)
+ifeq ($(shell timeout 2 helm version 2> /dev/null | grep -c v2), 1)
 	HELM_RELEASE := $(NAMESPACE)-$(NAME)
 	HELM_LIST := helm list --all $(HELM_RELEASE)
 	HELM_STATUS := helm status $(HELM_RELEASE)

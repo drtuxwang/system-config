@@ -13,7 +13,7 @@ HELM_FLAGS := \
 ifdef IMAGE_TAG
 	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
 endif
-ifeq ($(shell helm version | grep -c v2), 1)
+ifeq ($(shell timeout 2 helm version | grep -c v2), 1)
 	HELM_RELEASE := $(NAMESPACE)-$(NAME)
 	HELM_LIST := helm list --all $(HELM_RELEASE)
 	HELM_STATUS := helm status $(HELM_RELEASE)

@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/i386-alpine:3.12
-IMAGE := drtuxwang/i386-alpine-dev:3.12
-NAME := alpine3-32-dev
-HOSTNAME := alpine3-32-dev
+BASE_IMAGE := drtuxwang/alpine:3.13
+IMAGE := drtuxwang/alpine-bash:3.13
+NAME := alpine313-bash
+HOSTNAME := alpine313-bash
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=
@@ -12,7 +12,7 @@ DOCKER_RUN_FLAGS := \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
-	--memory=2000m \
+	--memory=1000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
@@ -29,7 +29,6 @@ status:
 .PHONY: build
 build:
 	../../bin/create-root-tar bash bin vim
-	../../bin/create-python-requirements
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir
@@ -41,8 +40,8 @@ run:
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
-		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
+	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
+		sed -e "s@^@$(shell pwd): Alpine Linux @"
 
 .PHONY: rmi
 rmi:

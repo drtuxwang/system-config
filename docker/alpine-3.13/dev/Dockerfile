@@ -5,8 +5,7 @@ FROM ${BASE_IMAGE}
 # Install compiler & dev packages
 RUN \
 	# For Python build
-	apk add \
-		gcc \
+	apk add gcc \
 		g++ \
 		gfortran \
 		make \
