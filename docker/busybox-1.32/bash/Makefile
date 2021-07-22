@@ -1,5 +1,5 @@
-BASE_IMAGE := drtuxwang/busybox:1.31
-IMAGE := drtuxwang/busybox-bash:1.31
+BASE_IMAGE := drtuxwang/busybox:1.32
+IMAGE := drtuxwang/busybox-bash:1.32
 NAME := busybox-bash
 HOSTNAME := busybox-bash
 DOCKER_BUILD_FLAGS ?=

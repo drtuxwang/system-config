@@ -5,7 +5,7 @@ BUILD_DIRS := \
 	alpine-3.13 \
 	i386-alpine-3.13 \
 	amazonlinux-2 \
-	busybox-1.31 \
+	busybox-1.32 \
 	centos-7 \
 	centos-8 \
 	clearlinux-latest \
