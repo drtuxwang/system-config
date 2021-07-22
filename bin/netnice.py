@@ -30,11 +30,11 @@ class Options:
         """
         return self._command
 
-    def get_shaper(self) -> command_mod.Command:
+    def get_netnice(self) -> command_mod.Command:
         """
-        Return shaper Command class object.
+        Return NetNice Command class object.
         """
-        return self._shaper
+        return self._netnice
 
     def _parse_args(self, args: List[str]) -> command_mod.Command:
         parser = argparse.ArgumentParser(
@@ -47,7 +47,7 @@ class Options:
             type=int,
             dest='drate',
             default=[0],
-            help='Download rate limit in KB. Default is 512 set in '
+            help='Download rate limit in kps. Default is set in '
             '".config/netnice.json".'
         )
         parser.add_argument(
@@ -93,7 +93,7 @@ class Options:
         Parse arguments
         """
         self._command = self._parse_args(args[1:])
-        self._shaper = network_mod.Shaper(self._args.drate[0], errors='stop')
+        self._netnice = network_mod.NetNice(self._args.drate[0], errors='stop')
 
 
 class Main:
@@ -134,8 +134,10 @@ class Main:
         """
         options = Options()
 
-        cmdline = options.get_shaper().get_cmdline(
-            ) + options.get_command().get_cmdline()
+        cmdline = options.get_command().get_cmdline()
+        netnice = options.get_netnice()
+        if netnice.is_found():
+            cmdline = netnice.get_cmdline() + cmdline
         task = subtask_mod.Task(cmdline)
         task.run()
 

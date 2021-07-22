@@ -112,12 +112,10 @@ class Main:
         output = options.get_output()
         wget = options.get_wget()
 
-        shaper = network_mod.Shaper()
-        cmdline: List[str]
-        if shaper.is_found():
-            cmdline = shaper.get_cmdline() + wget.get_cmdline()
-        else:
-            cmdline = wget.get_cmdline()
+        cmdline = wget.get_cmdline()
+        netnice = network_mod.NetNice()
+        if netnice.is_found():
+            cmdline = netnice.get_cmdline() + cmdline
 
         if output:
             task = subtask_mod.Task(cmdline)

@@ -2,7 +2,7 @@
 """
 Python network handling utility module
 
-Copyright GPL v2: 2015-2019 By Dr Colin Kong
+Copyright GPL v2: 2015-2021 By Dr Colin Kong
 """
 
 import json
@@ -11,13 +11,13 @@ from typing import Optional
 
 import command_mod
 
-RELEASE = '2.2.0'
-VERSION = 20210509
+RELEASE = '3.0.0'
+VERSION = 20210722
 
 
-class Shaper(command_mod.Command):
+class NetNice(command_mod.Command):
     """
-    Shaper network traffic command class
+    NetNice network traffic shaping command class
     """
 
     def __init__(
@@ -27,9 +27,9 @@ class Shaper(command_mod.Command):
     ) -> None:
         super().__init__('trickle', errors=errors)
 
-        self._drate = 512
+        self._drate = 8000
         home = os.environ.get('HOME', '')
-        file = os.path.join(home, '.config', 'trickle.json')
+        file = os.path.join(home, '.config', 'netnice.json')
         if not self.read(file):
             self.write(file)
 

@@ -67,11 +67,11 @@ class Main:
         else:
             aria2c.set_args(args)
 
-        shaper = network_mod.Shaper()
-        if shaper.is_found():
-            subtask_mod.Exec(shaper.get_cmdline() + aria2c.get_cmdline()).run()
-        else:
-            subtask_mod.Exec(aria2c.get_cmdline()).run()
+        cmdline = aria2c.get_cmdline()
+        netnice = network_mod.NetNice()
+        if netnice.is_found():
+            cmdline = netnice.get_cmdline() + cmdline
+        subtask_mod.Exec(cmdline).run()
 
         return 0
 
