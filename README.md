@@ -916,6 +916,7 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/local-playbook.yaml
  * ansible/roles/ansible-user/tasks/main.yaml
  * ansible/roles/local-system/defaults/main.yml
+ * ansible/roles/local-system/files/commands-nopasswd
  * ansible/roles/local-system/tasks/main.yaml
  * ansible/roles/local-system/tasks/system-setup.yaml
  * ansible/roles/local-system/templates/rc.local-opt

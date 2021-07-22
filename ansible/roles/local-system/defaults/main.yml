@@ -1,7 +1,8 @@
-data1_uuid: false
-has_zram_swap: false
 has_docker_tmpfs: false
+has_sudo_commands: false
 has_vbox_shared: false
+has_zram_swap: false
 requires_dhcp_client: false
 
 bin_directory: ../../bin
+data1_uuid: false

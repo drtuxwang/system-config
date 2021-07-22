@@ -24,6 +24,15 @@
   - local-system
   - rc-local
 
+- name: Copy file to "/etc/sudoers.d/commands-nopasswd"
+  when: has_sudo_commands
+  template:
+    src: files/commands-nopasswd
+    dest: /etc/sudoers.d/
+  tags:
+  - local-system
+  - sudoers
+
 - name: Ensure "/opt/software/bin" directory exists
   file:
     path: /opt/software/bin
