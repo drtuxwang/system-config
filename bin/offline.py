@@ -4,6 +4,7 @@ Run a command without network access.
 """
 
 import argparse
+import getpass
 import glob
 import os
 import signal
@@ -64,7 +65,7 @@ class Options:
         file = os.path.join(directory, command)
         if os.path.isfile(file):
             return command_mod.CommandFile(file)
-        return command_mod.Command(command)
+        return command_mod.Command(command, errors='stop')
 
     def parse(self, args: List[str]) -> None:
         """
@@ -111,29 +112,22 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_unshare() -> List[str]:
-        unshare = command_mod.Command('unshare', errors='ignore')
-        if unshare.is_found():
-            task = subtask_mod.Batch(unshare.get_cmdline() + ['--help'])
-            task.run(pattern='--map-root-user')
-            if task.has_output():
-                return unshare.get_cmdline() + ['--net', '--map-root-user']
-        return []
-
-    @classmethod
-    def run(cls) -> int:
+    def run() -> None:
         """
         Start program
         """
         options = Options()
 
-        cmdline = cls._get_unshare()
-        if cmdline:
+        if getpass.getuser() == 'root':
             print('Unsharing network namespace...')
-        task = subtask_mod.Exec(cmdline + options.get_command().get_cmdline())
-        task.run()
+            wrapper = command_mod.Command('unshare', errors='stop')
+            wrapper.set_args(['--net', 'sudo', '-u', os.environ['SUDO_USER']])
+        else:
+            wrapper = command_mod.Command('sudo', errors='stop')
+            wrapper.set_args(['-n', sys.argv[0]])
 
-        return 0
+        cmdline = wrapper.get_cmdline() + options.get_command().get_cmdline()
+        subtask_mod.Exec(cmdline).run()
 
 
 if __name__ == '__main__':
