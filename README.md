@@ -140,6 +140,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/bson_.py
  * bin/breaktimer         Break reminder timer
  * bin/breaktimer.py      (10 min default)
+ * busybox.bat
  * bin/bz2                Compress a file in BZIP2 format (allowing non systems port)
  * bin/bz2_.py
  * bin/calendar           Displays month or year calendar
