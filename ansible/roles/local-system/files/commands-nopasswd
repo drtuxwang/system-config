@@ -1,3 +1,2 @@
 %users ALL=NOPASSWD:/sbin/poweroff,/sbin/reboot
-%users ALL=NOPASSWD:/opt/software/bin/offline
 %users ALL=NOPASSWD:/opt/software/bin/xlight

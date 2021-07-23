@@ -118,15 +118,21 @@ class Main:
         """
         options = Options()
 
-        if getpass.getuser() == 'root':
+        bwrap = command_mod.Command('bwrap', errors='ignore')
+        if bwrap.is_found():
             print('Unsharing network namespace...')
-            wrapper = command_mod.Command('unshare', errors='stop')
-            wrapper.set_args(['--net', 'sudo', '-u', os.environ['SUDO_USER']])
+            cmdline = bwrap.get_cmdline() + [
+                '--bind',
+                '/',
+                '/',
+                '--dev',
+                '/dev',
+                '--unshare-net',
+                '--',
+            ] + options.get_command().get_cmdline()
         else:
-            wrapper = command_mod.Command('sudo', errors='stop')
-            wrapper.set_args(['-n', sys.argv[0]])
+            cmdline = options.get_command().get_cmdline()
 
-        cmdline = wrapper.get_cmdline() + options.get_command().get_cmdline()
         subtask_mod.Exec(cmdline).run()
 
 
