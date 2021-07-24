@@ -7,12 +7,11 @@ Copyright GPL v2: 2015-2021 By Dr Colin Kong
 
 import json
 import os
-from typing import Optional
 
 import command_mod
 
-RELEASE = '3.0.0'
-VERSION = 20210722
+RELEASE = '3.1.0'
+VERSION = 20210724
 
 
 class NetNice(command_mod.Command):
@@ -20,34 +19,24 @@ class NetNice(command_mod.Command):
     NetNice network traffic shaping command class
     """
 
-    def __init__(
-        self,
-        drate: Optional[int] = None,
-        errors: str = 'ignore',
-    ) -> None:
-        super().__init__('trickle', errors=errors)
-
-        self._drate = 8000
-        home = os.environ.get('HOME', '')
-        file = os.path.join(home, '.config', 'netnice.json')
-        if not self.read(file):
-            self.write(file)
-
-        if drate:
-            self._drate = drate
-
-        self.set_rate(self._drate)
-
-    def set_rate(self, drate: int) -> None:
+    def __init__(self, drate: int = 8000, errors: str = 'ignore') -> None:
         """
-        Set rate
-
-        drate = Download rate (KB)
+        drate = Download rate (default 8000kbps)
+        errors = Optional error handling ('stop' or 'ignore')
         """
         self._drate = drate
-        self.set_args(['-d', str(self._drate), '-s'])
 
-    def read(self, file: str) -> bool:
+        home = os.environ.get('HOME', '')
+        file = os.path.join(home, '.config', 'netnice.json')
+        if not self._read(file):
+            self._write(file)
+
+        # Try trickle bandwidth limits
+        super().__init__('trickle', errors=errors)
+        if self.is_found():
+            self.set_args(['-d', str(self._drate), '-s'])
+
+    def _read(self, file: str) -> bool:
         """
         Read configuration file
         """
@@ -63,7 +52,7 @@ class NetNice(command_mod.Command):
 
         return False
 
-    def write(self, file: str) -> None:
+    def _write(self, file: str) -> None:
         """
         Write configuration file
         """
@@ -82,6 +71,29 @@ class NetNice(command_mod.Command):
                 ), file=ofile)
         except OSError:
             pass
+
+
+class Sandbox(command_mod.Command):
+    """
+    Sandbox network command class
+    """
+
+    def __init__(self, errors: str = 'ignore') -> None:
+        """
+        errors = Optional error handling ('stop' or 'ignore')
+        """
+        # Try Bubblewrap network sandboxing
+        super().__init__('bwrap', errors=errors)
+        if self.is_found():
+            self.set_args([
+                '--bind',
+                '/',
+                '/',
+                '--dev',
+                '/dev',
+                '--unshare-net',
+                '--',
+            ])
 
 
 if __name__ == '__main__':

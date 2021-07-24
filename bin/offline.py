@@ -4,7 +4,6 @@ Run a command without network access.
 """
 
 import argparse
-import getpass
 import glob
 import os
 import signal
@@ -12,6 +11,7 @@ import sys
 from typing import List
 
 import command_mod
+import network_mod
 import subtask_mod
 
 
@@ -118,21 +118,8 @@ class Main:
         """
         options = Options()
 
-        bwrap = command_mod.Command('bwrap', errors='ignore')
-        if bwrap.is_found():
-            print('Unsharing network namespace...')
-            cmdline = bwrap.get_cmdline() + [
-                '--bind',
-                '/',
-                '/',
-                '--dev',
-                '/dev',
-                '--unshare-net',
-                '--',
-            ] + options.get_command().get_cmdline()
-        else:
-            cmdline = options.get_command().get_cmdline()
-
+        sandbox = network_mod.Sandbox(errors='stop')
+        cmdline = sandbox.get_cmdline() + options.get_command().get_cmdline()
         subtask_mod.Exec(cmdline).run()
 
 

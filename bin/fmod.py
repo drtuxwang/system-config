@@ -182,7 +182,10 @@ class Main:
 
         if file_time != link_stat.get_time():
             print("<utime>: {0:s} -> {1:s}".format(link, os.readlink(link)))
-            os.utime(link, (file_time, file_time), follow_symlinks=False)
+            try:
+                os.utime(link, (file_time, file_time), follow_symlinks=False)
+            except NotImplementedError:
+                os.utime(link, (file_time, file_time))
 
     def _setmod_directory(self, directory: str) -> None:
         files = [os.path.join(directory, x) for x in os.listdir(directory)]
