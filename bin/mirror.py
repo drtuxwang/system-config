@@ -259,7 +259,7 @@ class Main:
                 (file_time, file_time),
                 follow_symlinks=False,
             )
-        except FileNotFoundError:
+        except (FileNotFoundError, NotImplementedError):
             pass
 
     def _mirror_file(self, source_file: str, target_file: str) -> None:

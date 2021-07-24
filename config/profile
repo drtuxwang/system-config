@@ -15,6 +15,7 @@ then
         then
             exec $(which bash) -l
         fi
+        export TERM=${TERM%-256color}
     elif [ -f $HOME/.profile-2bash -a -f /bin/bash ]
     then
         export ENV=$HOME/.profile

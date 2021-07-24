@@ -92,7 +92,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _link_files(
+    def _link_files(  # pylint: disable = too-many-branches
         self,
         source_dir: str,
         target_dir: str,
@@ -151,11 +151,14 @@ class Main:
                     ) from exception
                 file_stat = file_mod.FileStat(file)
                 file_time = file_stat.get_time()
-                os.utime(
-                    target_file,
-                    (file_time, file_time),
-                    follow_symlinks=False,
-                )
+                try:
+                    os.utime(
+                        target_file,
+                        (file_time, file_time),
+                        follow_symlinks=False,
+                    )
+                except NotImplementedError:
+                    os.utime(target_file, (file_time, file_time))
 
     def run(self) -> int:
         """

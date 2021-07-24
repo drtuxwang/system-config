@@ -141,11 +141,14 @@ class Main:
                 file_stat = file_mod.FileStat(file)
                 file_time = file_stat.get_time()
                 if file_time != link_stat.get_time():
-                    os.utime(
-                        file,
-                        (file_time, file_time),
-                        follow_symlinks=False,
-                    )
+                    try:
+                        os.utime(
+                            file,
+                            (file_time, file_time),
+                            follow_symlinks=False,
+                        )
+                    except NotImplementedError:
+                        pass
             elif os.path.isdir(file):
                 cls._set_time(file)
 

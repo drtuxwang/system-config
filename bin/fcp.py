@@ -127,7 +127,10 @@ class Main:
             ) from exception
         file_stat = file_mod.FileStat(source, follow_symlinks=False)
         file_time = file_stat.get_time()
-        os.utime(target, (file_time, file_time), follow_symlinks=False)
+        try:
+            os.utime(target, (file_time, file_time), follow_symlinks=False)
+        except NotImplementedError:
+            pass
 
     def _copy_directory(self, source: str, target: str) -> None:
         print('Creating "' + target + '" directory...')

@@ -135,11 +135,14 @@ class Main:
                             ) from exception
                         file_stat = file_mod.FileStat(file)
                         file_time = file_stat.get_time()
-                        os.utime(
-                            link,
-                            (file_time, file_time),
-                            follow_symlinks=False,
-                        )
+                        try:
+                            os.utime(
+                                link,
+                                (file_time, file_time),
+                                follow_symlinks=False,
+                            )
+                        except NotImplementedError:
+                            pass
 
         return 0
 
