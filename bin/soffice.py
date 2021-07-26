@@ -10,7 +10,6 @@ import signal
 import sys
 
 import command_mod
-import network_mod
 import subtask_mod
 
 
@@ -116,9 +115,6 @@ class Main:
         self._setenv()
 
         cmdline = self._soffice.get_cmdline()
-        sandbox = network_mod.Sandbox()
-        if sandbox.is_found():
-            cmdline = sandbox.get_cmdline() + cmdline
         subtask_mod.Background(cmdline).run(pattern=self._pattern)
 
         return 0

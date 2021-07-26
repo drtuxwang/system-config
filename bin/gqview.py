@@ -127,6 +127,7 @@ class Options:
                     self._gqview.set_args(args[1:])
                     return
             directory = self.select(args[1:])
+            print("GQView selection:", directory)
             self._gqview.set_args([directory])
 
 

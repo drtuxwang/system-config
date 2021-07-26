@@ -64,6 +64,7 @@
   include_tasks: login-user.yaml
   tags:
   - user-home
+  - netnice
   - ssh
 
 - name: Include "gui-apps.yaml" tasks

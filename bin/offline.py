@@ -112,7 +112,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run() -> None:
+    def run() -> int:
         """
         Start program
         """
@@ -120,7 +120,10 @@ class Main:
 
         sandbox = network_mod.Sandbox(errors='stop')
         cmdline = sandbox.get_cmdline() + options.get_command().get_cmdline()
-        subtask_mod.Exec(cmdline).run()
+        task = subtask_mod.Task(cmdline)
+        task.run()
+
+        return task.get_exitcode()
 
 
 if __name__ == '__main__':

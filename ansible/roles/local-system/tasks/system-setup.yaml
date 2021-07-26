@@ -26,8 +26,8 @@
 
 - name: Copy file to "/etc/sudoers.d/commands-nopasswd"
   when: has_sudo_commands
-  template:
-    src: files/commands-nopasswd
+  copy:
+    src: commands-nopasswd
     dest: /etc/sudoers.d/
   tags:
   - local-system

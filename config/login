@@ -14,7 +14,8 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     if ( -f $HOME/.login-2bash && -f /bin/bash ) then
         setenv ENV $HOME/.profile
         exec /bin/bash -l
-    else if ( "$TERM" == "xterm-256color" ) then
+    endif
+    if ( "$TERM" == "xterm-256color" ) then
         setenv TERM xterm
     endif
 

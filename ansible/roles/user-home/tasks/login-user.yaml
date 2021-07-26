@@ -30,3 +30,12 @@
   tags:
   - user-home
   - ssh
+
+- name: Template file to "{{ home_directory }}/.config/netnice.json"
+  when: download_rate
+  template:
+    src: netnice.json
+    dest: "{{ home_directory }}/.config"
+  tags:
+  - local-system
+  - netnice

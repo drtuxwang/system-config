@@ -9,7 +9,6 @@ import signal
 import sys
 
 import command_mod
-import network_mod
 import subtask_mod
 
 
@@ -72,15 +71,11 @@ class Main:
         pattern = (
             '^$|^HCK OnTimer|: Gtk-WARNING | LIBDBUSMENU-GLIB-WARNING |'
             '^ALSA lib |alsa.c|^Cannot connect to server socket|'
-            '^jack server|Debug: |^JackShmReadWrite|^[01]|^-1|^Cannot connect|'
-            ': IBUS-WARNING'
+            '^jack server|Debug: |^JackShmReadWrite|^[01]|^-1|^Cannot connect'
         )
         self._config()
 
         cmdline = audacity.get_cmdline()
-        sandbox = network_mod.Sandbox()
-        if sandbox.is_found():
-            cmdline = sandbox.get_cmdline() + cmdline
         subtask_mod.Background(cmdline).run(pattern=pattern)
 
         return 0

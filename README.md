@@ -1,4 +1,4 @@
-## 1996-2021 By Dr Colin Kong
+# 1996-2021 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -928,6 +928,7 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/roles/user-home/tasks/gui-apps.yaml
  * ansible/roles/user-home/tasks/login-user.yaml
  * ansible/roles/user-home/tasks/main.yaml
+ * ansible/roles/user-home/templates/netnice.json
  * ansible/roles/user-home/vars/main.yaml
  * cloudformation/1pxy/1pxy.json         CloudFormation: 1pxy example
  * cloudformation/1pxy/Makefile

@@ -3,3 +3,5 @@ has_gui_apps: true
 has_vbox_shared: true
 has_sudo_commands: true
 requires_dhcp_client: false
+
+download_rate: 32000
