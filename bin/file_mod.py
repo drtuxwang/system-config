@@ -5,14 +5,13 @@ Python file handling utility module
 Copyright GPL v2: 2006-2021 By Dr Colin Kong
 """
 
-import getpass
 import os
 import re
 import time
 from typing import List
 
-RELEASE = '2.5.0'
-VERSION = 20210509
+RELEASE = '2.5.1'
+VERSION = 20210730
 
 
 class FileStat:
@@ -219,7 +218,7 @@ class FileUtil:
         """
         Return temporary directory with prefix and set permissions.
         """
-        tmpdir = os.path.join('/tmp', getpass.getuser())
+        tmpdir = os.path.join('/tmp', os.getlogin())
         if name:
             directory = os.path.join(tmpdir, name)
         else:

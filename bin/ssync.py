@@ -4,7 +4,6 @@ Securely synchronize file system using SSH protocol.
 """
 
 import argparse
-import getpass
 import glob
 import os
 import signal
@@ -85,7 +84,7 @@ class Options:
         # -axHAXDv --append-verify --progress --delete-after
         args = ['--archive']  # -rlptgoD
         if sudo_user:
-            if getpass.getuser() != 'root':
+            if os.getlogin() != 'root':
                 # No ownership for non-root to root
                 args = [
                     '--recursive',

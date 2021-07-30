@@ -6,7 +6,6 @@ Desktop screen backlight utility.
 # Annotation: Fix Class reference run time NameError
 from __future__ import annotations
 import argparse
-import getpass
 import glob
 import os
 import signal
@@ -167,7 +166,7 @@ class Backlight:
         """
         file = os.path.join(self._device, 'brightness')
         if os.path.isfile(file):
-            if getpass.getuser() != 'root':
+            if os.getlogin() != 'root':
                 try:
                     os.chmod(file, int('666', 8))
                 except OSError:
@@ -215,7 +214,7 @@ class BacklightIntelSetpci(Backlight):
         """
         Return brightness
         """
-        if getpass.getuser() != 'root':
+        if os.getlogin() != 'root':
             sudo = command_mod.Command('sudo', errors='stop')
             sudo.set_args(['-n', sys.argv[0]])
             task = subtask_mod.Batch(

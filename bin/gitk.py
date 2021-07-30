@@ -3,7 +3,6 @@
 Wrapper for GITK revision control system
 """
 
-import getpass
 import glob
 import os
 import signal
@@ -42,7 +41,7 @@ class Options:
         if not os.path.isfile(file):
             try:
                 with open(file, 'w', newline='\n') as ofile:
-                    user = getpass.getuser()
+                    user = os.getlogin()
                     host = socket.gethostname().split('.')[0].lower()
                     print("[user]", file=ofile)
                     print("        name =", user, file=ofile)
