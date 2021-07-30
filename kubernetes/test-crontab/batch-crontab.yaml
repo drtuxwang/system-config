@@ -30,5 +30,6 @@ spec:
             - date; echo Batch job on Kubernetes cluster
           nodeSelector:
             beta.kubernetes.io/os: linux
+            ##kubernetes.io/hostname: koko.local
           restartPolicy: OnFailure
           terminationGracePeriodSeconds: 10

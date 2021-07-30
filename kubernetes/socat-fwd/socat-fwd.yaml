@@ -28,4 +28,5 @@ spec:
           hostPort: 8080
           protocol: TCP
       nodeSelector:
-        kubernetes.io/hostname: koko.local
+        beta.kubernetes.io/os: linux
+        ##kubernetes.io/hostname: koko.local

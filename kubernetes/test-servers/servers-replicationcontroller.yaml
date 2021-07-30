@@ -37,7 +37,8 @@ spec:
         - mountPath: /shared
           name: shared
       nodeSelector:
-        kubernetes.io/hostname: hotdog.local
+        beta.kubernetes.io/os: linux
+        ##kubernetes.io/hostname: koko.local
       terminationGracePeriodSeconds: 10
       volumes:
       - hostPath:

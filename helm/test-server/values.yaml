@@ -1,5 +1,6 @@
 nodeSelector:
   beta.kubernetes.io/os: linux
+  ##kubernetes.io/hostname: koko.local
 
 app:
   box:

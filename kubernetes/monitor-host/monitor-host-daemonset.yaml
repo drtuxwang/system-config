@@ -84,6 +84,7 @@ spec:
           readOnly: true
       nodeSelector:
         beta.kubernetes.io/os: linux
+        ##kubernetes.io/hostname: koko.local
       terminationGracePeriodSeconds: 10
       volumes:
       - hostPath:
