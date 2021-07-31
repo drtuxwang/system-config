@@ -589,6 +589,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/rpm.py
  * bin/run                Run a command immune to terminal hangups
  * bin/run.py
+ * bin/sandbox            Run a command with restricted writes and no network.
+ * bin/sandbox.py
  * bin/say                Speak words using Google TTS engine
  * bin/say.py             (uses espeak)
  * bin/scp.bat            Windows scp wrapper (uses PuTTY)
@@ -874,6 +876,7 @@ the years. Now most of the scripts are written in Python 3.
  * config/genmon-7.rc                    Copy to "$HOME/.config/xfce4/panel/genmon-7.rc" for XFCE Weather
  * config/gitconfig                      Copy to "$HOME/.gitconfig" and edit
  * config/htoprc                         Copy to "$HOME/.config/htoprc"
+ * config/iptables.conf                  IPTABLES setup script
  * config/login                          Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
  * config/mimeapps.list                  Copy to "$HOME/.local/share/applications" for Mime definitions
  * config/minttyrc                       Copy to "$HOME/.minttyrc" for MSYS2 terminal
@@ -918,8 +921,10 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/roles/ansible-user/tasks/main.yaml
  * ansible/roles/local-system/defaults/main.yml
  * ansible/roles/local-system/files/commands-nopasswd
+ * ansible/roles/local-system/files/iptables
  * ansible/roles/local-system/tasks/main.yaml
  * ansible/roles/local-system/tasks/system-setup.yaml
+ * ansible/roles/local-system/templates/iptables.conf
  * ansible/roles/local-system/templates/rc.local-opt
  * ansible/roles/local-users/defaults/main.yml
  * ansible/roles/local-users/meta/main.yaml

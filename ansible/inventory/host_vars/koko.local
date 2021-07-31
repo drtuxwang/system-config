@@ -1,4 +1,5 @@
-data1_uuid: bbfe36ff-d628-4c1b-be07-4bab505f83b5
-has_docker_tmpfs: true
+docker_daemon: true
+vbox_host: true
 
+data1_uuid: bbfe36ff-d628-4c1b-be07-4bab505f83b5
 download_rate: 32000

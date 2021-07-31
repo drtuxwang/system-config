@@ -52,7 +52,7 @@
   - user-home
 
 - name: Include "cmdline-apps.yaml" tasks
-  when: has_cmdline_apps
+  when: cmdline_apps
   include_tasks: cmdline-apps.yaml
   tags:
   - user-home
@@ -68,7 +68,7 @@
   - ssh
 
 - name: Include "gui-apps.yaml" tasks
-  when: user not in ["root", ansible_user] and has_gui_apps
+  when: user not in ["root", ansible_user] and gui_apps
   include_tasks: gui-apps.yaml
   tags:
   - user-home

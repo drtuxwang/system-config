@@ -1,1 +1,3 @@
+docker_daemon: true
+
 data1_uuid: da1287e9-2ae7-43a0-8c19-dd844638089c

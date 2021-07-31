@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Run a command without network access.
+Run a command with restricted writes and no network
 """
 
 import argparse
@@ -31,7 +31,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> List[str]:
         parser = argparse.ArgumentParser(
-            description='Run a command without network access.',
+            description='Run a command with restricted writes and no network.',
         )
 
         parser.add_argument(
@@ -73,7 +73,7 @@ class Options:
             self._command = self._get_command(self._args.command, command_args)
         else:
             self._command = self._get_command('bash', ['-l'])
-        self._command.sandbox(nonet=True)
+        self._command.sandbox(nonet=True, writes=[os.getcwd()])
 
 
 class Main:
@@ -115,6 +115,7 @@ class Main:
         options = Options()
 
         print("Sandbox: Disabling external network access...")
+        print("Sandbox: Disabling disk writes outside working directory...")
         exitcode = subtask_mod.Task(options.get_command().get_cmdline()).run()
         print("Sandbox: Exiting...")
         return exitcode

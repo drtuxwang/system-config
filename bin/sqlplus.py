@@ -45,7 +45,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run() -> int:
+    def run() -> None:
         """
         Start program
         """
@@ -57,8 +57,6 @@ class Main:
         command = command_mod.Command(name, errors='stop')
         command.set_args(sys.argv[1:])
         subtask_mod.Exec(command.get_cmdline()).run()
-
-        return 0
 
 
 if __name__ == '__main__':

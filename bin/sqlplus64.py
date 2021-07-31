@@ -9,6 +9,7 @@ import signal
 import sys
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -49,6 +50,9 @@ class Main:
         Start program
         """
         name = os.path.basename(sys.argv[0]).replace('.py', '')
+
+        # Re-direct $HOME/oradiag_<user> to /tmp/<user>/oradiag_<user>
+        os.environ['HOME'] = file_mod.FileUtil.tmpdir()
 
         command = command_mod.Command(name, errors='stop')
         command.set_args(sys.argv[1:])

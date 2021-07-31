@@ -1,8 +1,10 @@
-has_docker_tmpfs: false
-has_sudo_commands: false
-has_vbox_shared: false
-has_zram_swap: false
-requires_dhcp_client: false
+docker_daemon: false
+dhclient_call: false
+sudo_commands: false
+vbox_guest: false
+vbox_host: false
+vbox_shared: false
+zram_swap: false
 
 bin_directory: ../../bin
-data1_uuid: false
+data1_uuid: null

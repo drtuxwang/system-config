@@ -25,13 +25,32 @@
   - rc-local
 
 - name: Copy file to "/etc/sudoers.d/commands-nopasswd"
-  when: has_sudo_commands
+  when: sudo_commands
   copy:
     src: commands-nopasswd
     dest: /etc/sudoers.d/
   tags:
   - local-system
   - sudoers
+
+- name: Copy file to "/etc/network/if-pre-up.d/iptables"
+  when: sudo_commands
+  copy:
+    src: iptables
+    dest: /etc/network/if-pre-up.d/iptables
+    mode: 0755
+  tags:
+  - local-system
+  - iptables
+
+- name: Template file to "/etc/iptables.conf"
+  template:
+    src: iptables.conf
+    dest: /etc/iptables.conf
+    mode: 0755
+  tags:
+  - local-system
+  - iptables
 
 - name: Ensure "/opt/software/bin" directory exists
   file:

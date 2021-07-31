@@ -5,13 +5,16 @@ Python network handling utility module
 Copyright GPL v2: 2015-2021 By Dr Colin Kong
 """
 
+import grp
 import json
 import os
+import sys
+from typing import Any, List, Optional
 
 import command_mod
 
-RELEASE = '3.1.0'
-VERSION = 20210724
+RELEASE = '3.2.0'
+VERSION = 20210731
 
 
 class NetNice(command_mod.Command):
@@ -75,25 +78,105 @@ class NetNice(command_mod.Command):
 
 class Sandbox(command_mod.Command):
     """
-    Sandbox network command class
+    This class stores a command (uses supplied executable)
+    Optional sandbox network and disk writes command class
+
+    Requires "nonet" group membership and Firewalling:
+    iptables -I OUTPUT 1 -m <username> --gid-owner nonet -j DROP
+    iptables -A OUTPUT -m <username> --gid-owner nonet -d 127.0.0.0/8 -j ACCEPT
     """
 
-    def __init__(self, errors: str = 'ignore') -> None:
+    def __init__(self, program: str, **kwargs: Any) -> None:
+        super().__init__(program, **kwargs)
+        self._sandbox: List[str] = []
+
+    @staticmethod
+    def _check_nonet(errors: str) -> bool:
+        user = os.getlogin()
+        for name, _, _, members in grp.getgrall():
+            if name == 'nonet':
+                if user in members:
+                    return True
+                break
+
+        if errors == 'stop':
+            raise SystemExit(
+                sys.argv[0] + ': User "' + user +
+                '" is not member of "nonet" group.'
+            )
+        return False
+
+    def sandbox(
+        self,
+        nonet: bool = False,
+        writes: Optional[List[str]] = None,
+        errors: str = 'ignore',
+    ) -> None:
         """
+        Setup sandboxing
+
+        nonet = Disable external network access
+        writes = Restrict disk writes to directory list
         errors = Optional error handling ('stop' or 'ignore')
         """
-        # Try Bubblewrap network sandboxing
-        super().__init__('bwrap', errors=errors)
-        if self.is_found():
-            self.set_args([
-                '--bind',
-                '/',
-                '/',
-                '--dev',
-                '/dev',
-                '--unshare-net',
-                '--',
-            ])
+        if not nonet and not writes:
+            return
+        command = command_mod.Command('bwrap', errors=errors)
+        if not command.is_found():
+            return
+
+        cmdline = command.get_cmdline()
+        if writes:
+            cmdline.extend(['--ro-bind', '/', '/', '--tmpfs', '/tmp'])
+            home = os.getenv('HOME')
+            if home:
+                cmdline.extend(['--tmpfs', home])
+                for directory in ('.bashrc', '.profile'):
+                    path = os.path.join(home, directory)
+                    realpath = os.path.realpath(path)
+                    cmdline.extend(['--ro-bind-try', realpath, path])
+            for directory in writes:
+                realpath = os.path.realpath(directory)
+                cmdline.extend(['--bind', realpath, directory])
+        else:
+            cmdline.extend(['--bind', '/', '/'])
+        cmdline.extend(['--dev', '/dev', '--'])
+
+        if nonet and self._check_nonet(errors):
+            command = command_mod.Command('sg', args=['nonet'], errors=errors)
+            cmdline = command.get_cmdline() + [
+                command_mod.Command.args2cmd(cmdline),
+            ]
+
+        self._sandbox = cmdline
+
+    def get_cmdline(self) -> List[str]:
+        """
+        Return the command line as a list.
+        """
+        if self._sandbox:
+            if self._sandbox[0].endswith('sg'):
+                cmdline = self._sandbox[:-1] + [' '.join([
+                    self._sandbox[-1],
+                    command_mod.Command.args2cmd(self._args),
+                ])]
+            else:
+                cmdline = self._sandbox + self._args
+        else:
+            cmdline = self._args
+
+        return cmdline
+
+
+class SandboxFile(command_mod.CommandFile, Sandbox):
+    """
+    This class stores a command (uses supplied executable location)
+    Optional sandbox network and disk writes command class
+
+    Requires "nonet" group membership and Firewalling:
+    iptables -I OUTPUT 1 -m <username> --gid-owner nonet -j DROP
+    iptables -A OUTPUT -m <username> --gid-owner nonet -d 127.0.0.0/8 -j ACCEPT
+    """
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-has_cmdline_apps: false
-has_gui_apps: false
+cmdline_apps: false
+gui_apps: false
 
-download_rate: false
+download_rate: null

@@ -1,14 +1,14 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # VirtualBox
-{% if has_vbox_shared %}
-mount -t vboxsf -o uid=owner,gid=users shared /shared &
+{% if vbox_shared %}
+mount -t vboxsf -o uid=owner,gid=users Shared /shared &
 {% else %}
-##mount -t vboxsf -o uid=owner,gid=users shared /shared &
+##mount -t vboxsf -o uid=owner,gid=users Shared /shared &
 {% endif %}
 
 # No Network Manager
-{% if requires_dhcp_client %}
+{% if dhclient_call %}
 dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
 {% else %}
 ##dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
@@ -26,7 +26,7 @@ mount -o bind /mnt/data2/shared /shared
 {% endif %}
 
 # Setup ZRAM swap (zramctl)
-{% if has_zram_swap %}
+{% if zram_swap %}
 modprobe zram num_devices=1
 RAM=$(awk '/MemTotal/{print $2}' /proc/meminfo)
 echo ${RAM}K > /sys/block/zram0/disksize
@@ -43,7 +43,7 @@ swapon -p 100 /dev/zram0
 {% endif %}
 
 # Setup tmpfs for Docker tmp files
-{% if has_docker_tmpfs %}
+{% if docker_daemon %}
 mount -t tmpfs -o noatime,nosuid,nodev tmpfs /var/lib/docker/tmp
 {% else %}
 ##mount -t tmpfs -o noatime,nosuid,nodev tmpfs /var/lib/docker/tmp

@@ -11,6 +11,6 @@ dependencies:
   become: true
   user: owner
 - role: user-home
-  when: has_guest_user
+  when: guest_user
   become: true
   user: guest
