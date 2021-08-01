@@ -9,7 +9,7 @@ import shutil
 import signal
 import sys
 
-import command_mod
+import network_mod
 import subtask_mod
 
 
@@ -96,11 +96,12 @@ class Main:
         """
         Start program
         """
-        self._soffice = command_mod.Command(
+        self._soffice = network_mod.Sandbox(
             os.path.join('program', 'soffice'),
             errors='stop'
         )
         self._soffice.set_args(['--nologo'] + sys.argv[1:])
+        self._soffice.sandbox(nonet=True)
         if sys.argv[1:] == ['--version']:
             subtask_mod.Exec(self._soffice.get_cmdline()).run()
         self._pattern = (

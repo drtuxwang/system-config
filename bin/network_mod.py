@@ -13,7 +13,7 @@ from typing import Any, List, Optional
 
 import command_mod
 
-RELEASE = '3.2.0'
+RELEASE = '3.2.1'
 VERSION = 20210731
 
 
@@ -115,7 +115,7 @@ class Sandbox(command_mod.Command):
         """
         Setup sandboxing
 
-        nonet = Disable external network access
+        nonet  = Disable external network access
         writes = Restrict disk writes to directory list
         errors = Optional error handling ('stop' or 'ignore')
         """

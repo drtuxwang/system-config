@@ -8,7 +8,7 @@ import os
 import signal
 import sys
 
-import command_mod
+import network_mod
 import subtask_mod
 
 
@@ -66,8 +66,9 @@ class Main:
         """
         Start program
         """
-        audacity = command_mod.Command('audacity', errors='stop')
+        audacity = network_mod.Sandbox('audacity', errors='stop')
         audacity.set_args(sys.argv[1:])
+        audacity.sandbox(nonet=True)
         pattern = (
             '^$|^HCK OnTimer|: Gtk-WARNING | LIBDBUSMENU-GLIB-WARNING |'
             '^ALSA lib |alsa.c|^Cannot connect to server socket|'
