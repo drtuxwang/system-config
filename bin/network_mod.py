@@ -5,6 +5,7 @@ Python network handling utility module
 Copyright GPL v2: 2015-2021 By Dr Colin Kong
 """
 
+import getpass
 import grp
 import json
 import os
@@ -13,8 +14,8 @@ from typing import Any, List, Optional
 
 import command_mod
 
-RELEASE = '3.2.1'
-VERSION = 20210731
+RELEASE = '3.2.2'
+VERSION = 20210802
 
 
 class NetNice(command_mod.Command):
@@ -92,16 +93,16 @@ class Sandbox(command_mod.Command):
 
     @staticmethod
     def _check_nonet(errors: str) -> bool:
-        user = os.getlogin()
+        username = getpass.getuser()
         for name, _, _, members in grp.getgrall():
             if name == 'nonet':
-                if user in members:
+                if username in members:
                     return True
                 break
 
         if errors == 'stop':
             raise SystemExit(
-                sys.argv[0] + ': User "' + user +
+                sys.argv[0] + ': User "' + username +
                 '" is not member of "nonet" group.'
             )
         return False
