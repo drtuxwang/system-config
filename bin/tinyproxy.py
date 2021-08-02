@@ -3,6 +3,7 @@
 Wrapper for "tinyproxy" command
 """
 
+import getpass
 import glob
 import os
 import signal
@@ -69,7 +70,7 @@ class Options:
         self._tinyproxy = command_mod.Command('tinyproxy', errors='stop')
         if len(args) > 1:
             self._tinyproxy.set_args(args[1:])
-        elif os.getlogin() != 'root':
+        elif getpass.getuser() != 'root':
             if not os.path.isfile('tinyproxy.conf'):
                 self._create_config()
             self._tinyproxy.set_args(['-d', '-c', 'tinyproxy.conf'])

@@ -3,6 +3,7 @@
 Wrapper for "chroot" command
 """
 
+import getpass
 import glob
 import os
 import signal
@@ -39,9 +40,9 @@ class Options:
                 errors='stop'
             )
             subtask_mod.Exec(chroot.get_cmdline()).run()
-        elif os.getlogin() != 'root':
+        elif getpass.getuser() != 'root':
             hostname = socket.gethostname().split('.')[0].lower()
-            username = os.getlogin()
+            username = getpass.getuser()
             prompt = '[sudo] password for {0:s}@{1:s}: '.format(
                 hostname, username)
             sudo = command_mod.Command('sudo', errors='stop')

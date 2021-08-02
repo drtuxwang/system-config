@@ -6,12 +6,13 @@ Copyright GPL v2: 2013-2021 By Dr Colin Kong
 """
 
 import functools
+import getpass
 import os
 import subprocess
 from typing import List, Optional
 
-RELEASE = '2.5.2'
-VERSION = 20210730
+RELEASE = '2.5.1'
+VERSION = 20210509
 
 
 class _System:
@@ -150,7 +151,7 @@ class Desktop:
         """
         Guess desktop based on session user is running. Return name or Unknown.
         """
-        command = ['ps', '-o', 'args', '-u', os.getlogin()]
+        command = ['ps', '-o', 'args', '-u', getpass.getuser()]
         lines = _System.run_program(command)
         names = set(os.path.basename(line.split()[0]) for line in lines)
 

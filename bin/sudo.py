@@ -3,6 +3,7 @@
 Wrapper for "sudo" command
 """
 
+import getpass
 import glob
 import os
 import signal
@@ -54,7 +55,7 @@ class Main:
         command = command_mod.Command('sudo', errors='stop')
         if '-p' not in sys.argv:
             hostname = socket.gethostname().split('.')[0].lower()
-            username = os.getlogin()
+            username = getpass.getuser()
             command.set_args([
                 '-p',
                 '[{0:s}] password for {1:s}@{2:s}: '.format(
