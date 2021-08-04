@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Animate
+TryExec=ffplay
+Exec=ffplay -an -fs %f
+Categories=X-Geeqie;
+OnlyShowIn=X-Geeqie;
