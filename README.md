@@ -929,6 +929,9 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/roles/local-users/defaults/main.yml
  * ansible/roles/local-users/meta/main.yaml
  * ansible/roles/user-home/defaults/main.yml
+ * ansible/roles/user-home/files/animate.desktop
+ * ansible/roles/user-home/files/rotate-270.desktop
+ * ansible/roles/user-home/files/rotate-90.desktop
  * ansible/roles/user-home/tasks/cmdline-apps.yaml
  * ansible/roles/user-home/tasks/gui-apps.yaml
  * ansible/roles/user-home/tasks/login-user.yaml

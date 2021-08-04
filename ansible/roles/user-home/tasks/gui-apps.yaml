@@ -61,7 +61,7 @@
   - user-home
   - mimeapps
 
-- name: Copy files to "{{ home_directory }}.local/share/applications" directory
+- name: Copy files to "{{ home_directory }}/.local/share/applications" directory
   with_fileglob:
   - "{{ config_directory }}/userapp-*.desktop"
   copy:
@@ -83,6 +83,18 @@
   copy:
     src: "{{ config_directory }}/geeqierc.xml"
     dest: "{{ home_directory }}/.config/geeqie"
+  tags:
+  - user-home
+  - geeqie
+
+- name: Copy files to "{{ home_directory }}/.config/geeqie/applications/" directory
+  loop:
+  - animate.desktop
+  - rotate-270.desktop
+  - rotate-90.desktop
+  copy:
+    src: "{{ item }}"
+    dest: "{{ home_directory }}/.config/geeqie/applications/{{ item }}"
   tags:
   - user-home
   - geeqie
