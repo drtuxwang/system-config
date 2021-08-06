@@ -22,6 +22,7 @@ registry garbage-collect /etc/docker/registry/config.yml  # Reqistry restart
 import argparse
 import fnmatch
 import glob
+import json
 import os
 import signal
 import sys
@@ -170,6 +171,16 @@ class DockerRegistry:
             digests[tag] = digests[tag]
         return digests
 
+    def get_time(  # pylint: disable = no-self-use, unused-argument
+        self,
+        repository: str,
+        tag: str,
+    ) -> str:
+        """
+        Return image creation time stamp as empty string (not implemented).
+        """
+        return ''
+
     def _delete_url(self, url: str) -> None:
         try:
             response = requests.delete(
@@ -191,15 +202,16 @@ class DockerRegistry:
         server: str,
         repository: str,
         tag: str,
-        digest: str,
+        _: str,
     ) -> None:
         """
         Delete image
         """
-        print("{0:s}  {1:s}/{2:s}:{3:s}  DELETE".format(
-            digest, server.split('://')[-1], repository, tag))
         url = "{0:s}/v1/repositories/{1:s}/tags/{2:s}".format(
-            server, repository, tag)
+            server,
+            repository,
+            tag,
+        )
         self._delete_url(url)
 
 
@@ -260,6 +272,20 @@ class DockerRegistry2(DockerRegistry):
                 digests[tag] = response.headers['docker-content-digest']
         return digests
 
+    def get_time(self, repository: str, tag: str) -> str:
+        """
+        Return image creation time stamp (uses v1Compatibility mode).
+        """
+        url = self._server + '/v2/' + repository + '/manifests/' + tag
+        response = requests.get(url, headers={
+            'User-Agent': self._user_agent,
+            'Accept': 'application/vnd.docker.distribution.manifest.v1+json',
+        }, verify=False)
+
+        last_layer = response.json()['history'][1]['v1Compatibility']
+        timestamp = json.loads(last_layer)['created']
+        return timestamp.split('.', 1)[0]
+
     def delete(
         self,
         server: str,
@@ -270,10 +296,11 @@ class DockerRegistry2(DockerRegistry):
         """
         Delete image by untagging blobs before untagging manifest
         """
-        print("{0:s}  {1:s}/{2:s}:{3:s}  DELETE".format(
-            digest, server.split('://')[-1], repository, tag))
         url = '{0:s}/v2/{1:s}/manifests/{2:s}'.format(
-            server, repository, digest)
+            server,
+            repository,
+            digest,
+        )
         self._delete_url(url)
 
 
@@ -353,12 +380,27 @@ class Main:
                 digests = registry.get_digests(repository)
                 for tag in sorted(digests):
                     if fnmatch.fnmatch(tag, tag_match):
+                        timestamp = registry.get_time(repository, tag)
                         if remove:
+                            print("{0:s}  {1:s}/{2:s}:{3:s}  DELETE".format(
+                                ' '.join([digests[tag], timestamp]),
+                                prefix,
+                                repository,
+                                tag,
+                            ))
                             registry.delete(
-                                server, repository, tag, digests[tag])
+                                server,
+                                repository,
+                                tag,
+                                digests[tag],
+                            )
                         else:
                             print("{0:s}  {1:s}/{2:s}:{3:s}".format(
-                                digests[tag], prefix, repository, tag))
+                                ' '.join([digests[tag], timestamp]),
+                                prefix,
+                                repository,
+                                tag,
+                            ))
 
     @classmethod
     def run(cls) -> int:
