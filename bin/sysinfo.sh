@@ -4,8 +4,8 @@
 #
 # 1996-2019 By Dr Colin Kong
 #
-VERSION=20210729
-RELEASE="2.6.44"
+VERSION=20210807
+RELEASE="2.6.44-1"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -412,7 +412,7 @@ detect() {
         INETS=`isitset \`/usr/sbin/ifconfig -a 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
         ;;
     Darwin)
-        INETS=`/sbin/ifconfig -a 2> /dev/null | grep "inet[6]* " | awk '{print $2}'`
+        INETS=`/sbin/ifconfig -a 2> /dev/null | grep "inet6* " | awk '{print $2}' | cut -f1 -d% | uniq`
         ;;
     HP-UX)
         INETS=`isitset \`(/usr/sbin/ifconfig lan0; /usr/sbin/ifconfig lan1; /usr/sbin/ifconfig lan2) 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``

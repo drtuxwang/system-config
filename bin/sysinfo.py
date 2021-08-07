@@ -29,8 +29,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable = import-error
 
-RELEASE = '5.16.3'
-VERSION = 20210707
+RELEASE = '5.16.4'
+VERSION = 20210807
 
 # pylint: disable = too-many-lines
 
@@ -2004,9 +2004,10 @@ class MacSystem(PosixSystem):
         ifconfig = command_mod.CommandFile('/sbin/ifconfig', args=['-a'])
         task = subtask_mod.Batch(ifconfig.get_cmdline())
         task.run(pattern='inet[6]? ')
-        isjunk = re.compile('.*inet[6]? ')
-        for line in task.get_output():
-            info['Net IPvx Address'].append(isjunk.sub(' ', line).split()[0])
+        isjunk = re.compile('.*inet[6]? |[% ].*')
+        addresses = [isjunk.sub('', line) for line in task.get_output()]
+        info['Net IPvx Address'] = list(dict.fromkeys(addresses))
+
         return info
 
     def get_os_info(self) -> dict:
