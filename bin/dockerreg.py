@@ -169,7 +169,7 @@ class DockerRegistry:
         digests = response.json()
         for tag in digests:
             digests[tag] = digests[tag]
-        return digests
+        return (digests, digests)
 
     def get_time(  # pylint: disable = no-self-use, unused-argument
         self,
@@ -179,7 +179,8 @@ class DockerRegistry:
         """
         Return image creation time stamp as empty string (not implemented).
         """
-        return ''
+        timestamp = '????-??-??T??:??:??'
+        return timestamp
 
     def _delete_url(self, url: str) -> None:
         try:
@@ -249,7 +250,6 @@ class DockerRegistry2(DockerRegistry):
             response = self._get_url(url)
         except Exception as exception:
             raise SystemExit(str(exception)) from exception
-        digests: dict = {}
         if response.status_code != 200:
             if response.status_code == 404:
                 return digests
@@ -258,6 +258,8 @@ class DockerRegistry2(DockerRegistry):
                 response.status_code
             ))
         tags = response.json()['tags']
+        digests: dict = {}
+        image_ids: dict = {}
         if tags:
             for tag in tags:
                 url = self._server + '/v2/' + repository + '/manifests/' + tag
@@ -270,7 +272,8 @@ class DockerRegistry2(DockerRegistry):
                         'Requests "{0:s}" response code: {1:d}'.format(
                             url, response.status_code))
                 digests[tag] = response.headers['docker-content-digest']
-        return digests
+                image_ids[tag] = response.json()['config']['digest']
+        return (digests, image_ids)
 
     def get_time(self, repository: str, tag: str) -> str:
         """
@@ -282,9 +285,12 @@ class DockerRegistry2(DockerRegistry):
             'Accept': 'application/vnd.docker.distribution.manifest.v1+json',
         }, verify=False)
 
-        last_layer = response.json()['history'][1]['v1Compatibility']
-        timestamp = json.loads(last_layer)['created']
-        return timestamp.split('.', 1)[0]
+        try:
+            last_layer = response.json()['history'][1]['v1Compatibility']
+            timestamp = json.loads(last_layer)['created'].split('.', 1)[0]
+        except IndexError:
+            timestamp = '????-??-??T??:??:??'
+        return timestamp
 
     def delete(
         self,
@@ -377,13 +383,13 @@ class Main:
 
         for repository in sorted(registry.get_repositories()):
             if fnmatch.fnmatch(repository, repo_match):
-                digests = registry.get_digests(repository)
+                digests, image_ids = registry.get_digests(repository)
                 for tag in sorted(digests):
                     if fnmatch.fnmatch(tag, tag_match):
                         timestamp = registry.get_time(repository, tag)
                         if remove:
                             print("{0:s}  {1:s}/{2:s}:{3:s}  DELETE".format(
-                                ' '.join([digests[tag], timestamp]),
+                                ' '.join([image_ids[tag], timestamp]),
                                 prefix,
                                 repository,
                                 tag,
@@ -396,7 +402,7 @@ class Main:
                             )
                         else:
                             print("{0:s}  {1:s}/{2:s}:{3:s}".format(
-                                ' '.join([digests[tag], timestamp]),
+                                ' '.join([image_ids[tag], timestamp]),
                                 prefix,
                                 repository,
                                 tag,
