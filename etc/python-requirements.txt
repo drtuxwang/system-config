@@ -35,7 +35,7 @@ flake8==3.9.2
 Flask==1.1.4
 gitdb2==3.0.3
 GitPython==3.1.18
-Glances==3.1.7
+Glances==3.2.1
 gTTS==2.2.3
 humpty==0.2.1  # Convert whl to egg
 idna==2.10
