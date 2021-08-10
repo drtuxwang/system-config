@@ -35,7 +35,7 @@ flake8==3.9.2
 Flask==1.1.4
 gitdb2==3.0.3
 GitPython==3.1.18
-Glances==3.1.7
+Glances==3.2.2
 gTTS==2.2.3
 humpty==0.2.1  # Convert whl to egg
 idna==2.10
@@ -59,7 +59,7 @@ Pillow==8.2.0
 pip==20.3.4
 pipdeptree==0.13.2
 pipenv==2021.5.29
-pycrypto==2.6.1
+pycrypto==2.6.1  # CVE-2013-7459, CVE-2018-6594
 pycurl==7.43.0.6  # Requires curl-config
 pybktree==1.1
 pycodestyle==2.7.0
