@@ -26,8 +26,8 @@ import bson  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '1.7.2'
-VERSION = 20210525
+RELEASE = '1.7.3'
+VERSION = 20210809
 
 
 class Data:
@@ -57,6 +57,7 @@ class Data:
         data_new = '\n'.join(lines)
 
         data_new = re.sub('{{[^}]*}}: *{{[^}]*}}', '_: _', data_new)
+        data_new = re.sub(':  *{{[^}]*}}', ': 0', data_new)
         data_new = re.sub('{{[^}]*}}', lambda m: ' '*len(m.group()), data_new)
         data_new = re.sub('{%[^}]*}', '', data_new)
 

@@ -38,7 +38,7 @@ MAXREPO = "9999"
 
 requests.packages.urllib3.disable_warnings()  # pylint: disable = no-member
 
-SSL_VERIFY = True
+SSL_VERIFY = False
 
 
 class Options:
@@ -129,7 +129,11 @@ class DockerRegistry:
         return self._repositories
 
     def _get_url(self, url: str) -> requests.Response:
-        return requests.get(url, headers={'User-Agent': self._user_agent})
+        return requests.get(
+            url,
+            headers={'User-Agent': self._user_agent},
+            verify=SSL_VERIFY,
+        )
 
     def _config(self) -> None:
         self._url = self._server + '/v1/search'
@@ -150,37 +154,34 @@ class DockerRegistry:
         else:
             self._repositories = None
 
-    def get_digests(self, repository: str) -> dict:
+    def get_info(self, repository: str, tag_match: str) -> dict:
         """
-        Return digests dictionary for tags.
+        Return repository tags information.
         """
         url = self._server + '/v1/repositories/' + repository + '/tags'
+        info: dict = {}
+
         try:
             response = self._get_url(url)
         except Exception as exception:
             raise SystemExit(str(exception)) from exception
         if response.status_code != 200:
             if response.status_code == 404:
-                return {}
+                return info
             raise SystemExit('Requests "{0:s}" response code: {1:d}'.format(
                 url,
                 response.status_code
             ))
         digests = response.json()
-        for tag in digests:
-            digests[tag] = digests[tag]
-        return (digests, digests)
+        tags = [tag for tag in digests if fnmatch.fnmatch(tag, tag_match)]
 
-    def get_time(  # pylint: disable = no-self-use, unused-argument
-        self,
-        repository: str,
-        tag: str,
-    ) -> str:
-        """
-        Return image creation time stamp as empty string (not implemented).
-        """
-        timestamp = '????-??-??T??:??:??'
-        return timestamp
+        for tag in tags:
+            info[tag]['digest'] = digests[tag]
+            info[tag]['image_id'] = digests[tag]
+            info[tag]['timestamp'] = '????-??-??T??:??:??'
+            info[tag]['size'] = 0
+
+        return info
 
     def _delete_url(self, url: str) -> None:
         try:
@@ -225,7 +226,7 @@ class DockerRegistry2(DockerRegistry):
         return requests.get(url, headers={
             'User-Agent': self._user_agent,
             'Accept': 'application/vnd.docker.distribution.manifest.v2+json',
-        }, verify=False)
+        }, verify=SSL_VERIFY)
 
     def _config(self) -> None:
         self._url = self._server + '/v2/_catalog?n=' + MAXREPO
@@ -241,40 +242,6 @@ class DockerRegistry2(DockerRegistry):
         else:
             self._repositories = None
 
-    def get_digests(self, repository: str) -> dict:
-        """
-        Return digests dictionary for tags.
-        """
-        url = self._server + '/v2/' + repository + '/tags/list'
-        try:
-            response = self._get_url(url)
-        except Exception as exception:
-            raise SystemExit(str(exception)) from exception
-        if response.status_code != 200:
-            if response.status_code == 404:
-                return digests
-            raise SystemExit('Requests "{0:s}" response code: {1:d}'.format(
-                url,
-                response.status_code
-            ))
-        tags = response.json()['tags']
-        digests: dict = {}
-        image_ids: dict = {}
-        if tags:
-            for tag in tags:
-                url = self._server + '/v2/' + repository + '/manifests/' + tag
-                try:
-                    response = self._get_url(url)
-                except Exception as exception:
-                    raise SystemExit(str(exception)) from exception
-                if response.status_code != 200:
-                    raise SystemExit(
-                        'Requests "{0:s}" response code: {1:d}'.format(
-                            url, response.status_code))
-                digests[tag] = response.headers['docker-content-digest']
-                image_ids[tag] = response.json()['config']['digest']
-        return (digests, image_ids)
-
     def get_time(self, repository: str, tag: str) -> str:
         """
         Return image creation time stamp (uses v1Compatibility mode).
@@ -283,7 +250,7 @@ class DockerRegistry2(DockerRegistry):
         response = requests.get(url, headers={
             'User-Agent': self._user_agent,
             'Accept': 'application/vnd.docker.distribution.manifest.v1+json',
-        }, verify=False)
+        }, verify=SSL_VERIFY)
 
         try:
             last_layer = response.json()['history'][1]['v1Compatibility']
@@ -291,6 +258,49 @@ class DockerRegistry2(DockerRegistry):
         except IndexError:
             timestamp = '????-??-??T??:??:??'
         return timestamp
+
+    def get_info(self, repository: str, tag_match: str) -> dict:
+        """
+        Return repository tags information.
+        """
+        url = self._server + '/v2/' + repository + '/tags/list'
+        info: dict = {}
+
+        try:
+            response = self._get_url(url)
+        except Exception as exception:
+            raise SystemExit(str(exception)) from exception
+        if response.status_code != 200:
+            if response.status_code == 404:
+                return info
+            raise SystemExit('Requests "{0:s}" response code: {1:d}'.format(
+                url,
+                response.status_code
+            ))
+        tags = [
+            tag
+            for tag in response.json()['tags']
+            if fnmatch.fnmatch(tag, tag_match)
+        ]
+
+        for tag in tags:
+            info[tag] = {}
+            url = self._server + '/v2/' + repository + '/manifests/' + tag
+            try:
+                response = self._get_url(url)
+            except Exception as exception:
+                raise SystemExit(str(exception)) from exception
+            if response.status_code != 200:
+                raise SystemExit(
+                    'Requests "{0:s}" response code: {1:d}'.format(
+                        url, response.status_code))
+            data = response.json()
+            info[tag]['digest'] = response.headers['docker-content-digest']
+            info[tag]['image_id'] = data['config']['digest']
+            info[tag]['timestamp'] = self.get_time(repository, tag)
+            info[tag]['size'] = sum([x['size'] for x in data['layers']])
+
+        return info
 
     def delete(
         self,
@@ -342,15 +352,12 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_registry(server: str, url: str) -> DockerRegistry:
-        registry2 = DockerRegistry2(server)
-        if registry2.get_repositories() is not None:
-            print("\nDocker Registry API v2:", url.split('://')[-1])
-            return registry2
-        registry = DockerRegistry(server)
-        if registry.get_repositories() is not None:
-            print("\nDocker Registry API v1:", url.split('://')[-1])
-            return registry
+    def _get_registry(server: str) -> DockerRegistry:
+        for Registry in (DockerRegistry2, DockerRegistry):
+            registry = Registry(server)
+            if registry.get_repositories() is not None:
+                return registry
+
         raise SystemExit("Cannot find Docker Registry: " + server)
 
     @staticmethod
@@ -378,35 +385,37 @@ class Main:
     @classmethod
     def _check(cls, url: str, remove: bool = False) -> None:
         server, repo_match, tag_match = cls._breakup_url(url)
-        registry = cls._get_registry(server, url)
+        registry = cls._get_registry(server)
         prefix = server.rsplit('://', 1)[-1]
 
         for repository in sorted(registry.get_repositories()):
             if fnmatch.fnmatch(repository, repo_match):
-                digests, image_ids = registry.get_digests(repository)
-                for tag in sorted(digests):
-                    if fnmatch.fnmatch(tag, tag_match):
-                        timestamp = registry.get_time(repository, tag)
-                        if remove:
-                            print("{0:s}  {1:s}/{2:s}:{3:s}  DELETE".format(
-                                ' '.join([image_ids[tag], timestamp]),
-                                prefix,
-                                repository,
-                                tag,
-                            ))
-                            registry.delete(
-                                server,
-                                repository,
-                                tag,
-                                digests[tag],
-                            )
-                        else:
-                            print("{0:s}  {1:s}/{2:s}:{3:s}".format(
-                                ' '.join([image_ids[tag], timestamp]),
-                                prefix,
-                                repository,
-                                tag,
-                            ))
+                info = registry.get_info(repository, tag_match)
+                for tag in sorted(info):
+                    image_id = info[tag]['image_id'].split(':', 1)[-1][:12]
+                    timestamp = info[tag]['timestamp']
+                    size = info[tag]['size'] / 1048576
+                    image = prefix + '/' + repository + ':' + tag
+                    if remove:
+                        print("{0:s}  {1:s} {2:8.2f}  {3:s}  DELETE".format(
+                            image_id,
+                            timestamp,
+                            size,
+                            image,
+                        ))
+                        registry.delete(
+                            server,
+                            repository,
+                            tag,
+                            info[tag]['digest'],
+                        )
+                    else:
+                        print("{0:s}  {1:s} {2:8.2f}  {3:s}".format(
+                            image_id,
+                            timestamp,
+                            size,
+                            image,
+                        ))
 
     @classmethod
     def run(cls) -> int:
@@ -414,6 +423,8 @@ class Main:
         Run check
         """
         options = Options()
+
+        print("IMAGE ID      CREATED             ZSIZE/MB  REPOSITORY:TAG")
         for url in options.get_urls():
             cls._check(url)
 
