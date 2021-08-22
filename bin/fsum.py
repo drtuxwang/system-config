@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Calculate checksum using MD5, file size and file modification time.
+Calculate checksum using SHA512, file size and file modification time.
 """
 
 import argparse
@@ -149,6 +149,33 @@ class Main:
             ) from exception
         return md5.hexdigest()
 
+    @staticmethod
+    def _sha512sum(file: str) -> str:
+        try:
+            with open(file, 'rb') as ifile:
+                sha512 = hashlib.sha512()
+                while True:
+                    chunk = ifile.read(131072)
+                    if not chunk:
+                        break
+                    sha512.update(chunk)
+        except (OSError, TypeError) as exception:
+            raise SystemExit(
+                sys.argv[0] + ': Cannot read "' + file + '" file.'
+            ) from exception
+        return 'sha512:' + sha512.hexdigest()
+
+    @staticmethod
+    def _get_files(directory: str) -> List[str]:
+        try:
+            files = [os.path.join(directory, x) for x in os.listdir(directory)]
+            if directory.endswith('/...'):
+                files = [x for x in files if not x.startswith('.')]
+        except PermissionError:
+            return []
+
+        return files
+
     def _calc(self, options: Options, files: List[str]) -> None:
         for file in files:
             if file.endswith('.../fsum'):
@@ -156,25 +183,19 @@ class Main:
             elif os.path.isdir(file):
                 if not os.path.islink(file):
                     if options.get_recursive_flag():
-                        try:
-                            self._calc(options, sorted([
-                                os.path.join(file, x)
-                                for x in os.listdir(file)
-                            ]))
-                        except PermissionError:
-                            pass
+                        self._calc(options, sorted(self._get_files(file)))
             elif os.path.isfile(file) and not os.path.islink(file):
                 file_stat = file_mod.FileStat(file)
                 try:
-                    md5sum = self._cache[
+                    checksum = self._cache[
                         (file, file_stat.get_size(), file_stat.get_time())]
                 except KeyError:
-                    md5sum = self._md5sum(file)
-                if not md5sum:
+                    checksum = self._sha512sum(file)
+                if not checksum:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot read "' + file + '" file.')
                 print("{0:s}/{1:010d}/{2:d}  {3:s}".format(
-                    md5sum,
+                    checksum,
                     file_stat.get_size(),
                     file_stat.get_time(),
                     file
@@ -183,7 +204,7 @@ class Main:
                     try:
                         with open(file + '.fsum', 'w', newline='\n') as ofile:
                             print("{0:s}/{1:010d}/{2:d}  {3:s}".format(
-                                md5sum,
+                                checksum,
                                 file_stat.get_size(),
                                 file_stat.get_time(),
                                 os.path.basename(file)
@@ -199,6 +220,16 @@ class Main:
                             '.fsum" file.'
                         ) from exception
 
+    @classmethod
+    def _isdiff(cls, checksum: str, file: str) -> bool:
+        if checksum.startswith('sha512:'):
+            if cls._sha512sum(file) != checksum:
+                return True
+        elif len(checksum) == 32:
+            if cls._md5sum(file) != checksum:
+                return True
+        return False
+
     def _check(self, files: List[str]) -> None:
         found = []
         nfail = 0
@@ -211,7 +242,7 @@ class Main:
                 with open(fsumfile, errors='replace') as ifile:
                     for line in ifile:
                         line = line.rstrip('\r\n')
-                        md5sum, size, mtime, file = self._get_checksum(line)
+                        checksum, size, mtime, file = self._get_checksum(line)
                         file = os.path.join(directory, file)
                         found.append(file)
                         file_stat = file_mod.FileStat(file)
@@ -222,11 +253,11 @@ class Main:
                             elif size != file_stat.get_size():
                                 print(file, '# FAILED checksize')
                                 nfail += 1
-                            elif self._md5sum(file) != md5sum:
-                                print(file, '# FAILED checksum')
-                                nfail += 1
                             elif mtime != file_stat.get_time():
                                 print(file, '# FAILED checkdate')
+                                nfail += 1
+                            elif self._isdiff(checksum, file):
+                                print(file, '# FAILED checksum')
                                 nfail += 1
                         except TypeError as exception:
                             raise SystemExit(
@@ -272,9 +303,12 @@ class Main:
                 if os.path.isdir(file):
                     if not os.path.islink(file):
                         extra.extend(self._extra(file, found))
-                elif file not in found:
-                    if not file.endswith('..fsum'):
-                        extra.append(file)
+                elif (
+                        not os.path.islink(file) and
+                        file not in found and
+                        not file.endswith('fsum')
+                ):
+                    extra.append(file)
         return extra
 
     @staticmethod

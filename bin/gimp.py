@@ -46,7 +46,7 @@ class Options:
             ': LibGimpBase-WARNING |^Traceback |: undefined symbol:|'
             ' XMP metadata:|: No XMP packet found|: GEGL-gegl-operation.c|'
             ': using babl for|gimp_pickable_contiguous_region_by_seed:|'
-            'librsvg-WARNING'
+            'librsvg-WARNING|GEGL-WARNING:'
         )
 
 

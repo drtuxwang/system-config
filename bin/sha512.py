@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Calculate MD5 checksums of files.
+Calculate SHA512 checksums of files.
 """
 
 import argparse
@@ -59,8 +59,8 @@ class Options:
         parser.add_argument(
             'files',
             nargs='+',
-            metavar='file|file.md5sum',
-            help='File to checksum or ".md5sum" checksum file.'
+            metavar='file|file.sha512sum',
+            help='File to checksum or ".sha512sum" checksum file.'
         )
 
         self._args = parser.parse_args(args)
@@ -116,66 +116,66 @@ class Main:
                             file + '" directory.'
                         ) from exception
             elif os.path.isfile(file):
-                md5sum = self._md5sum(file)
-                if not md5sum:
+                sha512sum = self._sha512sum(file)
+                if not sha512sum:
                     raise SystemExit(
                         sys.argv[0] + ': Cannot read "' + file + '" file.')
-                print(md5sum, file, sep='  ')
+                print(sha512sum, file, sep='  ')
 
     def _check(self, files: List[str]) -> None:
         found = []
         nfiles = 0
         nfail = 0
         nmiss = 0
-        for md5file in files:
-            if not os.path.isfile(md5file):
+        for sha512file in files:
+            if not os.path.isfile(sha512file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + md5file +
-                    '" md5sum file.'
+                    sys.argv[0] + ': Cannot find "' + sha512file +
+                    '" sha512sum file.'
                 )
             try:
-                with open(md5file, errors='replace') as ifile:
+                with open(sha512file, errors='replace') as ifile:
                     for line in ifile:
-                        md5sum = line[:32]
+                        sha512sum = line[:32]
                         file = line.rstrip()[34:]
-                        if len(md5sum) == 32 and file:
+                        if len(sha512sum) == 32 and file:
                             found.append(file)
                             nfiles += 1
-                            test = self._md5sum(file)
+                            test = self._sha512sum(file)
                             if not test:
                                 print(file, '# FAILED open or read')
                                 nmiss += 1
-                            elif test != md5sum:
+                            elif test != sha512sum:
                                 print(file, '# FAILED checksum')
                                 nfail += 1
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + md5file +
-                    '" md5sum file.'
+                    sys.argv[0] + ': Cannot read "' + sha512file +
+                    '" sha512sum file.'
                 ) from exception
         if nmiss > 0:
-            print("md5: Cannot find", nmiss, "of", nfiles, "listed files.")
+            print("sha512: Cannot find", nmiss, "of", nfiles, "listed files.")
         if nfail > 0:
             print(
-                "md5: Mismatch in", nfail, "of", nfiles - nmiss,
+                "sha512: Mismatch in", nfail, "of", nfiles - nmiss,
                 "computed checksums."
             )
 
     @staticmethod
-    def _md5sum(file: str) -> str:
+    def _sha512sum(file: str) -> str:
         try:
             with open(file, 'rb') as ifile:
-                md5 = hashlib.md5()
+                sha512 = hashlib.sha512()
                 while True:
                     chunk = ifile.read(131072)
                     if not chunk:
                         break
-                    md5.update(chunk)
+                    sha512.update(chunk)
         except (OSError, TypeError) as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot read "' + file + '" file.'
             ) from exception
-        return md5.hexdigest()
+        return sha512.hexdigest()
 
     def run(self) -> int:
         """

@@ -462,6 +462,12 @@ the years. Now most of the scripts are written in Python 3.
  * bin/md5                Calculate MD5 checksums of files
  * bin/md5.bat
  * bin/md5.py
+ * bin/sha256             Calculate SHA256 checksums of files
+ * bin/sha256.bat
+ * bin/sha256.py
+ * bin/sha512             Calculate SHA512 checksums of files
+ * bin/sha512.bat
+ * bin/sha512.py
  * bin/md5cd              Calculate MD5 checksums for CD/DVD data disk
  * bin/md5cd.py
  * bin/meld               Meld wrapper (allowing non systems port)

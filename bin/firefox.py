@@ -325,6 +325,7 @@ class Options:
             '"media.mediasource.mp4.enabled", true',
             '"media.mediasource.webm.enabled", true',
             '"media.navigator.enabled", false',
+            '"mousewheel.min_line_scroll_amount", 2',
             '"network.captive-portal-service.enabled", false',
             '"network.dns.disablePrefetch", true',
             '"network.http.pipelining.maxrequests", 8',
