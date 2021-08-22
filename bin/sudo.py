@@ -64,7 +64,10 @@ class Main:
                     hostname,
                 ),
             ])
-        command.extend_args(sys.argv[1:])
+        if sys.argv[1:] == ['su']:  # Workaround hanging
+            command.extend_args(['-i'])
+        else:
+            command.extend_args(sys.argv[1:])
 
         if name == 'name':
             subtask_mod.Exec(command.get_cmdline()).run()
