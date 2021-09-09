@@ -61,19 +61,22 @@ menu_document:
     color: "#ffcc00"
     label: Evince
     run: exec evince &
-  check: evince
+  checks:
+  - evince
 - button:
     name: libreoffice
     color: "#ffcc00"
     label: LibreOffice
     run: exec soffice &
-  check: program/soffice
+  checks:
+  - program/soffice
 - button:
     name: xournal
     color: "#ffcc00"
     label: Xournal
     run: exec xournal &
-  check: xournal
+  checks:
+  - xournal
 - button:
     name: xedit
     color: "#ffcc00"
@@ -91,110 +94,136 @@ menu_games:
     color: "#ffcc00"
     label: Billard
     run: exec foobillardplus &
-  check: foobillardplus
+  checks:
+  - foobillardplus
 - button:
     name: chess
     color: "#ffcc00"
     label: Dream Chess
     run: exec dreamchess &
-  check: dreamchess
+  checks:
+  - dreamchess
 - button:
     name: frozenbubble
     color: "#ffcc00"
     label: Frozen Bubble
     run: exec frozen-bubble &
-  check: frozen-bubble
+  checks:
+  - frozen-bubble
 - button:
     name: hearts
     color: "#ffcc00"
     label: Hearts
     run: exec gnome-hearts &
-  check: gnome-hearts
+  checks:
+  - gnome-hearts
 - button:
     name: hexxagon
     color: "#ffcc00"
     label: Hexxagon
     run: exec hexxagon &
-  check: hexxagon
+  checks:
+  - hexxagon
 - button:
     name: mines
     color: "#ffcc00"
     label: Mines
     run: exec gnomine &
-  check: gnome-mines
+  checks:
+  - gnome-mines
 - button:
     name: neverputt
     color: "#ffcc00"
     label: Neverputt
     run: exec neverputt &
-  check: neverputt
+  checks:
+  - neverputt
 - button:
     name: reversi
     color: "#ffcc00"
     label: Iagno
     run: exec iagno &
-  check: iagno
+  checks: iagno
 - button:
     name: sudoku
     color: "#ffcc00"
     label: Sudoku
     run: exec gnome-sudoku &
-  check: gnome-sudoku
+  checks:
+  - gnome-sudoku
 - button:
     name: swellfoop
     color: "#ffcc00"
     label: Swell Foop
     run: exec swell-foop &
-  check: swell-foop
+  checks:
+  - /usr/games/swell-foop
 - button:
     name: etwolf
     color: "#00ff00"
     label: ET
     run: exec et.tcl &
-  check: et.x86
+  checks:
+  - et.x86
 - button:
     name: 0ad
     color: "#ffff00"
     label: 0AD
     run: exec 0ad &
-  check: 0ad
+  checks:
+  - 0ad.desktop
+  - pyrogenesis
 - button:
     name: assaultcube
     color: "#ffff00"
     label: AssaultCube
     run: exec assaultcube &
-  check: assaultcube
+  checks:
+  - assaultcube
 - button:
     name: padman
     button:
     color: "#ffff00"
     label: Padman
     run: exec padman &
-  check: wop.x86_64
+  checks:
+  - wop.x86_64
+- button:
+    name: torcs
+    color: "#ffff00"
+    label: TORCS
+    run: exec torcs &
+  checks:
+  - torcs
 - button:
     name: tuxracer
     color: "#ffff00"
     label: Tux Racer
     run: exec etr &
-  check: etr
+  checks:
+  - etr
 - button:
     name: urban_terror
     color: "#ffff00"
     label: Urban Terror
     run: exec ut &
-  check: Quake3-UrT.x86_64
+  checks:
+  - Quake3-UrT.x86_64
 - button:
     name: warsow
     color: "#ffff00"
     label: Warsow
     run: exec warsow &
-  check: warsow.x86_64
+  checks:
+  - warsow.x86_64
 - button:
     name: wesnoth
     color: "#ffff00"
     label: Wesnoth
     run: exec wesnoth &
-  check: wesnoth
+  checks:
+  - wesnoth.desktop
+  - wesnoth-1.14
 - button:
     name: close
     button:
@@ -208,25 +237,31 @@ menu_graphics:
     color: "#ffcc00"
     label: Gimp
     run: exec gimp &
-  check: gimp
+  checks:
+  - gimp.desktop
+  - gimp-console
 - button:
     name: geeqie
     color: "#ffcc00"
     label: Geeqie
     run: exec gqview &
-  check: geeqie
+  checks:
+  - geeqie
 - button:
     name: inkscape
     color: "#ffcc00"
     label: Inkscape
     run: exec inkscape &
-  check: inkscape
+  checks:
+  - org.videolan.vlc.desktop
+  - inkview
 - button:
     name: xsane
     color: "#ffcc00"
     label: Xsane
     run: exec xsane &
-  check: xsane
+  checks:
+  - xsane
 - button:
     name: screenshot
     color: "#ffff00"
@@ -244,7 +279,9 @@ menu_multimedia:
     color: "#ffcc00"
     label: Audacity
     run: exec audacity &
-  check: audacity
+  checks:
+  - audacity.desktop
+  - /usr/bin/audacity
 - button:
     name: xmixer
     color: "#ffcc00"
@@ -255,19 +292,23 @@ menu_multimedia:
     color: "#ffcc00"
     label: ZHSpeak
     run: exec zhspeak -g &
-  check: zhspeak-data/zh.json
+  checks:
+  - zhspeak-data/zh.json
 - button:
-    name: openshot
+    name: shotcut
     color: "#ffff00"
-    label: Openshot
-    run: exec openshot &
-  check: openshot-qt
+    label: Shotcut
+    run: exec shotcut &
+  checks:
+  - shotcut.desktop
 - button:
     name: vlc
     color: "#ffff00"
     label: VLC
     run: exec vlc &
-  check: vlc
+  checks:
+  - org.videolan.vlc.desktop
+  - vlc
 - button:
     name: close
     color: "#ff0000"
@@ -280,43 +321,50 @@ menu_network:
     color: "#ffcc00"
     label: Chrome
     run: exec chrome &
-  check: chrome
+  checks:
+  - chrome
 - button:
     name: chromium
     color: "#ffcc00"
     label: Chromium
     run: exec chromium &
-  check: chromium
+  checks:
+  - chromium
 - button:
     name: firefox
     color: "#ffcc00"
     label: Firefox
     run: exec firefox &
-  check: firefox-bin
+  checks:
+  - firefox-bin
 - button:
     name: teams
     color: "#ffff00"
     label: Teams
     run: exec teams &
-  check: teams
+  checks:
+  - teams
 - button:
     name: vncviewer
     color: "#ffff00"
     label: VNC Viewer
     run: exec vncviewer &
-  check: vncviewer
+  checks:
+  - vncviewer
 - button:
     name: xfreerdp
     color: "#ffff00"
     label: X FreeRDP
     run: exec xfreerdp.tcl &
-  check: xfreerdp
+  checks:
+  - xfreerdp
 - button:
     name: zoom
     color: "#ffff00"
     label: Zoom
     run: exec zoom &
-  check: zoom
+  checks:
+  - zoom
 - button:
     name: radiotuner
     color: "#00ff00"
@@ -381,7 +429,8 @@ menu_system:
     color: "#ffcc00"
     label: Hardware Info
     run: exec hardinfo &
-  check: hardinfo
+  checks:
+  - hardinfo
 - button:
     name: settimezone
     color: "#ffcc00"
@@ -397,7 +446,8 @@ menu_system:
     color: "#ffcc00"
     label: VirtualBox
     run: exec VirtualBox &
-  check: VirtualBox
+  checks:
+  - VirtualBox
 - button:
     name: logout
     color: "#ffff00"
@@ -440,25 +490,29 @@ menu_utility:
     color: "#ffcc00"
     label: Ibus Input
     run: exec ibus-daemon &
-  check: ibus-daemon
+  checks:
+  - ibus-daemon
 - button:
     name: keyboard
     color: "#ffcc00"
     label: Keyboard
     run: exec xvkbd &
-  check: xvkbd
+  checks:
+  - xvkbd
 - button:
     name: printer
     color: "#ffff00"
     label: Printer
     run: exec system-config-printer &
-  check: system-config-printer
+  checks:
+  - system-config-printer
 - button:
     name: xkill
     color: "#ffff00"
     label: Xkill
     run: exec xkill &
-  check: xkill
+  checks:
+  - xkill
 - button:
     name: xrun
     color: "#ffff00"

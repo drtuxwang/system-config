@@ -1,45 +1,15 @@
 #!/usr/bin/env python3
 """
-Wrapper for "inkscape" command
+Sandbox for "inkscape" launcher
 """
 
 import glob
 import os
 import signal
 import sys
-from typing import List
 
-import command_mod
+import network_mod
 import subtask_mod
-
-
-class Options:
-    """
-    Options class
-    """
-
-    def __init__(self) -> None:
-        self.parse(sys.argv)
-
-    def get_pattern(self) -> str:
-        """
-        Return filter pattern.
-        """
-        return self._pattern
-
-    def get_inkscape(self) -> command_mod.Command:
-        """
-        Return inkscape Command class object.
-        """
-        return self._inkscape
-
-    def parse(self, args: List[str]) -> None:
-        """
-        Parse arguments
-        """
-        self._inkscape = command_mod.Command('inkscape', errors='stop')
-        self._inkscape.set_args(args[1:])
-        self._pattern = '^$|: Gtk-WARNING'
 
 
 class Main:
@@ -78,10 +48,32 @@ class Main:
         """
         Start program
         """
-        options = Options()
+        inkscape = network_mod.Sandbox('inkscape', errors='stop')
+        inkscape.set_args(sys.argv[1:])
+        if os.path.isfile(inkscape.get_file() + '.py'):
+            subtask_mod.Exec(inkscape.get_cmdline()).run()
 
-        subtask_mod.Background(options.get_inkscape(
-            ).get_cmdline()).run(pattern=options.get_pattern())
+        work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
+        if work_dir == os.environ['HOME']:
+            desktop = os.path.join(work_dir, 'Desktop')
+            if os.path.isdir(desktop):
+                os.chdir(desktop)
+                work_dir = desktop
+        configs = [
+            os.path.join(os.getenv('HOME', '/'), '.config/inkscape'),
+            work_dir,
+        ]
+        if len(sys.argv) >= 2:
+            if os.path.isdir(sys.argv[1]):
+                configs.append(os.path.abspath(sys.argv[1]))
+            elif os.path.isfile(sys.argv[1]):
+                configs.append(os.path.dirname(os.path.abspath(sys.argv[1])))
+            if sys.argv[1] == '-net':
+                inkscape.set_args(sys.argv[2:])
+                configs.append('net')
+        inkscape.sandbox(configs)
+
+        subtask_mod.Daemon(inkscape.get_cmdline()).run()
 
         return 0
 

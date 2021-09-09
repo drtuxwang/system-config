@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sandbox for "audacity" launcher
+Sandbox for "shotcut" launcher
 """
 
 import glob
@@ -44,64 +44,42 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _config() -> None:
-        home = os.environ.get('HOME', '')
-        audacitydir = os.path.join(home, '.audacity-data')
-        if not os.path.isdir(audacitydir):
-            try:
-                os.mkdir(audacitydir)
-            except OSError:
-                pass
-            else:
-                if not os.path.isfile(
-                        os.path.join(audacitydir, 'audacity.cfg')
-                ):
-                    with open(os.path.join(audacitydir, 'audacity.cfg'),
-                              'w', newline='\n') as ofile:
-                        print("[AudioIO]", file=ofile)
-                        print("PlaybackDevice=ALSA: pulse", file=ofile)
-                        print("RecordingDevice=ALSA: pulse", file=ofile)
-
-    def run(self) -> int:
+    def run() -> int:
         """
         Start program
         """
-        audacity = network_mod.Sandbox('audacity', errors='stop')
-        audacity.set_args(sys.argv[1:])
+        shotcut = network_mod.Sandbox('shotcut', errors='stop')
+        shotcut.set_args(sys.argv[1:])
+        if os.path.isfile(shotcut.get_file() + '.py'):
+            subtask_mod.Exec(shotcut.get_cmdline()).run()
 
-        if os.path.isfile(audacity.get_file() + '.py'):
-            subtask_mod.Exec(audacity.get_cmdline()).run()
-
+        home = os.environ['HOME']
+        home_videos = os.path.join(home, '.config/Meltytech/Videos')
+        if not os.path.isdir(home_videos):
+            os.makedirs(home_videos)
+        configs = [
+            '/dev/dri',
+            os.path.join(home, '.config/Meltytech'),
+            "{0:s}:{1:s}".format(home_videos, os.path.join(home, 'Videos'))
+        ]
         work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
         if work_dir == os.environ['HOME']:
             desktop = os.path.join(work_dir, 'Desktop')
             if os.path.isdir(desktop):
                 os.chdir(desktop)
                 work_dir = desktop
-        configs = [
-            '/var/tmp',
-            os.path.join(os.getenv('HOME', '/'), '.audacity-data'),
-            work_dir,
-        ]
+        configs.append(work_dir)
         if len(sys.argv) >= 2:
             if os.path.isdir(sys.argv[1]):
                 configs.append(os.path.abspath(sys.argv[1]))
             elif os.path.isfile(sys.argv[1]):
                 configs.append(os.path.dirname(os.path.abspath(sys.argv[1])))
             if sys.argv[1] == '-net':
-                audacity.set_args(sys.argv[2:])
+                shotcut.set_args(sys.argv[2:])
                 configs.append('net')
-        audacity.sandbox(configs)
+        shotcut.sandbox(configs)
 
-        pattern = (
-            '^$|^HCK OnTimer|: Gtk-WARNING | LIBDBUSMENU-GLIB-WARNING |'
-            '^ALSA lib |alsa.c|^Cannot connect to server socket|'
-            '^jack server|Debug: |^JackShmReadWrite|^[01]|^-1|^Cannot connect'
-        )
-        self._config()
-
-        cmdline = audacity.get_cmdline()
-        subtask_mod.Background(cmdline).run(pattern=pattern)
+        subtask_mod.Daemon(shotcut.get_cmdline()).run()
 
         return 0
 

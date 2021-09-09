@@ -1,49 +1,15 @@
 #!/usr/bin/env python3
 """
-Wrapper for "meld" command
+Wrapper for "swell-foop" command
 """
 
 import glob
 import os
 import signal
 import sys
-from typing import List
 
-import command_mod
+import network_mod
 import subtask_mod
-
-
-class Options:
-    """
-    Options class
-    """
-
-    def __init__(self) -> None:
-        self.parse(sys.argv)
-
-    def get_pattern(self) -> str:
-        """
-        Return filter pattern.
-        """
-        return self._pattern
-
-    def get_meld(self) -> command_mod.Command:
-        """
-        Return meld Command class object.
-        """
-        return self._meld
-
-    def parse(self, args: List[str]) -> None:
-        """
-        Parse arguments
-        """
-        self._meld = command_mod.Command('meld', errors='stop')
-        self._meld.set_args(args[1:])
-        self._pattern = (
-            ': Gtk-WARNING |: GtkWarning: | self.recent_manager =| gtk.main()|'
-            'accessibility bus address:|: GLib-GIO-CRITICAL|: dconf-CRITICAL|'
-            '^$'
-        )
 
 
 class Main:
@@ -82,11 +48,25 @@ class Main:
         """
         Start program
         """
-        options = Options()
+        command = network_mod.Sandbox(
+            '/usr/games/swell-foop',
+            args=sys.argv[1:],
+            errors='stop'
+        )
 
-        task = subtask_mod.Task(options.get_meld().get_cmdline())
-        task.run(pattern=options.get_pattern())
-        return task.get_exitcode()
+        # Start slow for very large history (.local/share/swell-foop/)
+        if not os.path.isfile(command.get_file() + '.py'):
+            configs = [
+                '/dev/dri',
+                os.path.join(os.getenv('HOME', '/'), '.config/dconf/user'),
+            ]
+            command.sandbox(configs)
+
+        pattern = ': dconf-CRITICAL |: dbind-WARNING |^$'
+
+        subtask_mod.Background(command.get_cmdline()).run(pattern=pattern)
+
+        return 0
 
 
 if __name__ == '__main__':

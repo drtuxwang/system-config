@@ -1,49 +1,15 @@
 #!/usr/bin/env python3
 """
-Wrapper for "meld" command
+Sandbox for "wesnoth" launcher
 """
 
 import glob
 import os
 import signal
 import sys
-from typing import List
 
-import command_mod
+import network_mod
 import subtask_mod
-
-
-class Options:
-    """
-    Options class
-    """
-
-    def __init__(self) -> None:
-        self.parse(sys.argv)
-
-    def get_pattern(self) -> str:
-        """
-        Return filter pattern.
-        """
-        return self._pattern
-
-    def get_meld(self) -> command_mod.Command:
-        """
-        Return meld Command class object.
-        """
-        return self._meld
-
-    def parse(self, args: List[str]) -> None:
-        """
-        Parse arguments
-        """
-        self._meld = command_mod.Command('meld', errors='stop')
-        self._meld.set_args(args[1:])
-        self._pattern = (
-            ': Gtk-WARNING |: GtkWarning: | self.recent_manager =| gtk.main()|'
-            'accessibility bus address:|: GLib-GIO-CRITICAL|: dconf-CRITICAL|'
-            '^$'
-        )
 
 
 class Main:
@@ -78,15 +44,30 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run() -> int:
+    def run() -> None:
         """
         Start program
         """
-        options = Options()
+        name = os.path.basename(sys.argv[0]).replace('.py', '')
 
-        task = subtask_mod.Task(options.get_meld().get_cmdline())
-        task.run(pattern=options.get_pattern())
-        return task.get_exitcode()
+        wesnoth = network_mod.Sandbox(name, errors='stop')
+        wesnoth.set_args(sys.argv[1:])
+
+        if not os.path.isfile(wesnoth.get_file() + '.py'):
+            configs = [
+                '/dev/dri',
+                '/dev/shm',
+            ]
+            configs.extend(glob.glob(os.path.join(
+                os.getenv('HOME', '/'),
+                '.config/wesnoth*',
+            )))
+            if len(sys.argv) >= 2 and sys.argv[1] == '-net':
+                wesnoth.set_args(sys.argv[2:])
+                configs.append('net')
+            wesnoth.sandbox(configs)
+
+        subtask_mod.Exec(wesnoth.get_cmdline()).run()
 
 
 if __name__ == '__main__':

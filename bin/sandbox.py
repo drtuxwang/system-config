@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Run a command with restricted writes and no network
+Sandbox command/shell with read/write and network restrictions.
 """
 
 import argparse
@@ -31,7 +31,15 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> List[str]:
         parser = argparse.ArgumentParser(
-            description='Run a command with restricted writes and no network.',
+            description='Sandbox command/shell with '
+            'read/write and network restrictions.',
+        )
+
+        parser.add_argument(
+            '-net',
+            dest='allow_net',
+            action='store_true',
+            help='Allow external network access.'
         )
 
         parser.add_argument(
@@ -73,7 +81,17 @@ class Options:
             self._command = self._get_command(self._args.command, command_args)
         else:
             self._command = self._get_command('bash', ['-l'])
-        self._command.sandbox(nonet=True, writes=[os.getcwd()])
+
+        work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
+        if work_dir == os.environ['HOME']:
+            desktop = os.path.join(work_dir, 'Desktop')
+            if os.path.isdir(desktop):
+                os.chdir(desktop)
+                work_dir = desktop
+        configs = [work_dir]
+        if self._args.allow_net:
+            configs.append('net')
+        self._command.sandbox(configs, errors='stop')
 
 
 class Main:
@@ -114,10 +132,9 @@ class Main:
         """
         options = Options()
 
-        print("Sandbox: Disabling external network access...")
-        print("Sandbox: Disabling disk writes outside working directory...")
+        print("\033[1;34mSandbox: Starting...\033[0m")
         exitcode = subtask_mod.Task(options.get_command().get_cmdline()).run()
-        print("Sandbox: Exiting...")
+        print("\033[1;34mSandbox: Shutdown!\033[0m")
         return exitcode
 
 

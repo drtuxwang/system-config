@@ -99,24 +99,24 @@ class Menu:
             self.update(config_file, status_file)
 
     @staticmethod
-    def check_software(check: str) -> bool:
+    def check_software(checks: List[str]) -> bool:
         """
         Return True if software found.
         """
-        if not check:
+        if not checks:
             return True
 
-        for directory in os.environ.get('PATH', '').split(os.pathsep):
-            if glob.glob(
-                    os.path.join(os.path.dirname(directory), '*', '*', check)
-            ):
+        for check in checks:
+            if os.path.isfile(check):
                 return True
-            if os.sep in check:
-                if os.path.exists(os.path.join(directory, check)):
+            for directory in os.environ.get('PATH', '').split(os.pathsep):
+                if glob.glob(os.path.join(
+                        os.path.dirname(directory),
+                        '*',
+                        '*',
+                        check,
+                )):
                     return True
-            file = os.path.join(directory, os.path.basename(check))
-            if os.path.exists(file) and not os.path.exists(file + '.py'):
-                return True
         return False
 
     def generate(self, menu: str) -> List[str]:
@@ -133,7 +133,7 @@ class Menu:
         config: dict = {'buttons': []}
         config['title'] = menu
         for item in items:
-            if self.check_software(item.get('check')):
+            if self.check_software(item.get('checks')):
                 config['buttons'].append(item['button'])
 
         lines = self._template.render(config).split('\n')

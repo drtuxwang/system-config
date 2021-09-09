@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "vlc" command
+Sandbox for "vlc" launcher
 """
 
 import glob
@@ -10,7 +10,7 @@ import signal
 import sys
 from typing import List
 
-import command_mod
+import network_mod
 import subtask_mod
 
 
@@ -28,7 +28,7 @@ class Options:
         """
         return self._pattern
 
-    def get_vlc(self) -> command_mod.Command:
+    def get_vlc(self) -> network_mod.Sandbox:
         """
         Return vlc Command class object.
         """
@@ -64,15 +64,44 @@ class Options:
         """
         Parse arguments
         """
-        self._vlc = command_mod.Command('vlc', errors='stop')
+        self._vlc = network_mod.Sandbox('vlc', errors='stop')
         self._vlc.set_args(args[1:])
+        if os.path.isfile(self._vlc.get_file() + '.py'):
+            subtask_mod.Exec(self._vlc.get_cmdline()).run()
 
-        if len(args) >= 2 and args[1].startswith('-'):
+        configs = [
+            '/dev/dri',
+            '/dev/shm',
+            os.path.join(os.getenv('HOME', '/'), '.config/vlc'),
+        ]
+        work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
+        if os.environ['PWD'] == os.environ['HOME']:
+            desktop = os.path.join(os.environ['HOME'], 'Desktop')
+            if os.path.isdir(desktop):
+                os.chdir(desktop)
+                work_dir = desktop
+        if 'dvdsimple:' in args:
+            configs.append(work_dir)
+        else:
+            configs.append(work_dir + ':ro')
+        if len(args) >= 2:
+            if os.path.isdir(args[1]):
+                configs.append(os.path.abspath(args[1]) + ':ro')
+            elif os.path.isfile(args[1]):
+                configs.append(
+                    os.path.dirname(os.path.abspath(args[1])) + ':ro',
+                )
+            if sys.argv[1] == '-net':
+                self._vlc.set_args(args[2:])
+                configs.append('net')
+        self._vlc.sandbox(configs)
+
+        if len(args) >= 2 and args[1].startswith('-') and args[1] != '-net':
             subtask_mod.Exec(self._vlc.get_cmdline()).run()
 
         self._pattern = (
             ': Paint device returned engine|: playlist is empty|'
-            ': Timers cannot|: Running vlc with the default'
+            ': Timers cannot|: Running vlc with the default|Qt: Session'
         )
         self._config()
 

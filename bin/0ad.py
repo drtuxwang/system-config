@@ -1,49 +1,16 @@
 #!/usr/bin/env python3
 """
-Wrapper for "meld" command
+Sandbox for "0ad" launcher
 """
+# pylint: disable = invalid-name
 
 import glob
 import os
 import signal
 import sys
-from typing import List
 
-import command_mod
+import network_mod
 import subtask_mod
-
-
-class Options:
-    """
-    Options class
-    """
-
-    def __init__(self) -> None:
-        self.parse(sys.argv)
-
-    def get_pattern(self) -> str:
-        """
-        Return filter pattern.
-        """
-        return self._pattern
-
-    def get_meld(self) -> command_mod.Command:
-        """
-        Return meld Command class object.
-        """
-        return self._meld
-
-    def parse(self, args: List[str]) -> None:
-        """
-        Parse arguments
-        """
-        self._meld = command_mod.Command('meld', errors='stop')
-        self._meld.set_args(args[1:])
-        self._pattern = (
-            ': Gtk-WARNING |: GtkWarning: | self.recent_manager =| gtk.main()|'
-            'accessibility bus address:|: GLib-GIO-CRITICAL|: dconf-CRITICAL|'
-            '^$'
-        )
 
 
 class Main:
@@ -78,15 +45,23 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run() -> int:
+    def run() -> None:
         """
         Start program
         """
-        options = Options()
+        command = network_mod.Sandbox("0ad", errors='stop')
+        command.set_args(sys.argv[1:])
+        if not os.path.isfile(command.get_file() + '.py'):
+            configs = [
+                '/dev/dri',
+                os.path.join(os.getenv('HOME', '/'), '.config/0ad'),
+            ]
+            if len(sys.argv) >= 2 and sys.argv[1] == '-net':
+                command.set_args(sys.argv[2:])
+                configs.append('net')
+            command.sandbox(configs)
 
-        task = subtask_mod.Task(options.get_meld().get_cmdline())
-        task.run(pattern=options.get_pattern())
-        return task.get_exitcode()
+        subtask_mod.Exec(command.get_cmdline()).run()
 
 
 if __name__ == '__main__':

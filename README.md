@@ -115,6 +115,10 @@ the years. Now most of the scripts are written in Python 3.
  * bin/virtualenv.bat
  * bin/youtube-dl
  * bin/youtube-dl.bat
+ * bin/0ad                0Sandbox for "0ad" launcher (allowing non systems port)
+ * bin/0ad.py
+ * bin/wesnoth            Sandbox for "wesnoth" launcher (allowing non systems port)
+ * bin/wesnoth.py
  * bin/7z                 Make a compressed archive in 7z format
  * bin/7z.bat             (uses p7zip)
  * bin/7za
@@ -125,7 +129,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/aplay.py           (uses vlc)
  * bin/aria2c             aria2c wrapper (allowing non systems port)
  * bin/aria2c.py          (bandwidth 512KB limit default using "trickle", "$HOME/.config/tickle.json)
- * bin/audacity           audacity wrapper (allowing non systems port)
+ * bin/audacity           Sandbox for "audacity" launcher (allowing non systems port)
  * bin/audacity.bat
  * bin/audacity.py
  * bin/avi                Encode AVI video using avconv (libxvid/libmp3lame)
@@ -374,7 +378,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/getip.py
  * bin/geturl             Multi-threaded download accelerator
  * bin/geturl.py          (use aria2c)
- * bin/gimp               gimp wrapper (allowing non systems port)
+ * bin/gimp               Sandbox for "gimp" launcher (allowing non systems port)
  * bin/gimp.bat
  * bin/gimp.py
  * bin/git                git wrapper (allowing non systems port)
@@ -417,7 +421,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/index              Produce "index.fsum" file and "..fsum" cache files
  * bin/index.bat
  * bin/index.py
- * bin/inkscape           inkscape wrapper (allowing non systems port)
+ * bin/inkscape           Sandbox for "inkscape" launcher (allowing non systems port)
  * bin/inkscape.py
  * bin/isitup             Checks whether a host is up
  * bin/isitup.bat
@@ -517,8 +521,6 @@ the years. Now most of the scripts are written in Python 3.
  * bin/ntpdate.py
  * bin/ocr                Convert image file to text using OCR (uses tesseract)
  * bin/ocr.py
- * bin/offline            Run a command without network access
- * bin/offline.py
  * bin/ogg                Encode OGG audio using avconv (libvorbis)
  * bin/ogg.py
  * bin/open               Open files using hardwired application mapping
@@ -595,7 +597,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/rpm.py
  * bin/run                Run a command immune to terminal hangups
  * bin/run.py
- * bin/sandbox            Run a command with restricted writes and no network.
+ * bin/sandbox            Sandbox command/shell with read/write and network restrictions
  * bin/sandbox.py
  * bin/say                Speak words using Google TTS engine
  * bin/say.py             (uses espeak)
@@ -606,6 +608,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/sequence.bat
  * bin/sequence.py
  * bin/sftp.bat           Windows sftp wrapper (uses PuTTY)
+ * bin/shotcut            Sandbox for "shotcut" launcher (allowing non systems port)
+ * bin/shotcut.py
  * bin/shuffle            Print arguments in random order
  * bin/shuffle.bat
  * bin/shuffle.py
@@ -613,7 +617,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/skype.py
  * bin/smount             Securely mount a file system using SSH protocol
  * bin/smount.py          (uses fuse.sshfs)
- * bin/soffice            soffice wrapper (allowing non systems port)
+ * bin/soffice            Sandbox for "soffice" launcher (allowing non systems port)
  * bin/soffice.bat        (LibreOffice)
  * bin/soffice.py
  * bin/sqlplus            Sqlplus wrapper (for Oracle Instant Client)
@@ -637,6 +641,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/sumount.py
  * bin/svncviewer         Securely connect to VNC server using SSH protocol
  * bin/svncviewer.py
+ * bin/swell-foop         Wrapper for "swell-foop" command
+ * bin/swell_foop.py
  * bin/sysinfo            System configuration detection tool
  * bin/sysinfo.bat
  * bin/sysinfo.py
@@ -771,7 +777,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/vi.py
  * bin/view               View files using hardwired application mapping
  * bin/view.py
- * bin/vlc                vlc wrapper (allowing non systems port)
+ * bin/vlc                Sandbox for "vlc" launcher (allowing non systems port)
  * bin/vlc.bat
  * bin/vlc.py
  * bin/vmware             VMware Player launcher
