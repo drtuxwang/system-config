@@ -55,11 +55,10 @@ nose==1.3.7
 numpy==1.20.3
 paramiko==2.7.2
 pep8==1.7.0  # Replaced by pycodestyle
-Pillow==8.2.0
+Pillow==8.3.2
 pip==20.3.4
 pipdeptree==0.13.2
 pipenv==2021.5.29
-pycrypto==2.6.1  # CVE-2013-7459, CVE-2018-6594
 pycurl==7.43.0.6  # Requires curl-config
 pybktree==1.1
 pycodestyle==2.7.0
