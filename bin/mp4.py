@@ -225,7 +225,7 @@ class Options:
         if self._args.files[0].endswith('.mp4'):
             self._file_new = self._args.files[0]
             self._files = self._args.files[1:]
-            if self._file_new in self._args.files[1:]:
+            if not self._files or self._file_new in self._files:
                 raise SystemExit(
                     sys.argv[0] +
                     ': The input and output files must be different.'
