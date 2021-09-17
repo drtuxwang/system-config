@@ -79,6 +79,7 @@ class Main:
                 os.chdir(desktop)
                 work_dir = desktop
         configs = [
+            '/run/udev/',
             '/var/tmp',
             os.path.join(os.getenv('HOME', '/'), '.audacity-data'),
             work_dir,
@@ -96,7 +97,8 @@ class Main:
         pattern = (
             '^$|^HCK OnTimer|: Gtk-WARNING | LIBDBUSMENU-GLIB-WARNING |'
             '^ALSA lib |alsa.c|^Cannot connect to server socket|'
-            '^jack server|Debug: |^JackShmReadWrite|^[01]|^-1|^Cannot connect'
+            '^jack server|Debug: |^JackShmReadWrite|^[01]|^-1|^Cannot connect|'
+            ': no version info'
         )
         self._config()
 

@@ -43,6 +43,13 @@ class Options:
         )
 
         parser.add_argument(
+            '-mounts',
+            dest='allow_mounts',
+            action='store_true',
+            help='Mount full disk access.'
+        )
+
+        parser.add_argument(
             'command',
             nargs='?',
             help='Command to run.'
@@ -82,13 +89,17 @@ class Options:
         else:
             self._command = self._get_command('bash', ['-l'])
 
-        work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
-        if work_dir == os.environ['HOME']:
-            desktop = os.path.join(work_dir, 'Desktop')
-            if os.path.isdir(desktop):
-                os.chdir(desktop)
-                work_dir = desktop
-        configs = [work_dir]
+        if not self._args.allow_mounts:
+            # "os.getcwd()" returns realpath instead
+            work_dir = os.environ['PWD']
+            if work_dir == os.environ['HOME']:
+                desktop = os.path.join(work_dir, 'Desktop')
+                if os.path.isdir(desktop):
+                    os.chdir(desktop)
+                    work_dir = desktop
+            configs = [work_dir]
+        else:
+            configs = ['/', '/dev/dri', '/dev/shm']
         if self._args.allow_net:
             configs.append('net')
         self._command.sandbox(configs, errors='stop')

@@ -73,6 +73,7 @@ class Options:
             '/dev/dri',
             '/dev/shm',
             os.path.join(os.getenv('HOME', '/'), '.config/vlc'),
+            os.path.join(os.getenv('HOME', '/'), '.local/share/vlc'),
         ]
         work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
         if os.environ['PWD'] == os.environ['HOME']:

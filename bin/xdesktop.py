@@ -67,7 +67,7 @@ class Main:
             command = command_mod.Command(cmdline[0], errors='stop')
 
         command.set_args(cmdline[1:] + sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        subtask_mod.Daemon(command.get_cmdline()).run()
 
         return 0
 

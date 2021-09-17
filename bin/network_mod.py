@@ -14,8 +14,8 @@ from typing import Any, List, Optional, Tuple
 
 import command_mod
 
-RELEASE = '3.3.0'
-VERSION = 20210909
+RELEASE = '3.3.1'
+VERSION = 20210916
 
 
 class NetNice(command_mod.Command):
@@ -148,91 +148,100 @@ class Sandbox(command_mod.Command):
 
     def _config_access(
         self,
-        cmdline: List[str],
+        bwrap: command_mod.Command,
         configs: Optional[List[str]],
-    ) -> None:
+    ) -> List[str]:
 
-        # Disable all write access
-        cmdline.extend(['--ro-bind', '/', '/'])
-        self._show(
-            Sandbox.MAGENTA,
-            "Disable write access to entire file system",
-        )
+        cmdline = bwrap.get_cmdline()
 
-        # Disable read access
-        allow_reads = tuple([
-            '/boot',
-            '/bin',
-            '/dev',
-            '/etc',
-            '/lib',
-            '/lib32',
-            '/lib64',
-            '/libx32',
-            '/lost+found',
-            '/opt',
-            '/proc',
-            '/root',
-            '/run',
-            '/sbin',
-            '/sys',
-            '/usr',
-            '/var',
-        ] + glob.glob('/init*') + glob.glob('/vm*'))
-        directories = sorted(set(glob.glob('/*')) - set(allow_reads))
-        for mount in directories:
-            cmdline.extend(['--tmpfs', mount])
-        self._show(
-            Sandbox.MAGENTA,
-            "Disable read access: {0:s}".format(' '.join(directories)),
-        )
-
-        # Dummy working directory ("os.getcwd()" returns realpath instead
-        directory = os.environ['PWD']
-        if not directory.startswith(allow_reads):
-            cmdline.extend(['--tmpfs', directory])
-
-        # Devices
-        cmdline.extend(['--dev', 'dev'])
-
-        # Application directory
-        directory = os.path.dirname(self.get_file())
-        if not directory.startswith(allow_reads):
-            realpath = os.path.realpath(directory)
-            cmdline.extend(['--ro-bind-try', realpath, directory])
+        if '/' not in configs:
+            # Disable all write access
+            cmdline.extend(['--ro-bind', '/', '/'])
             self._show(
-                Sandbox.YELLOW,
-                "Enable read access to application {0:s}".format(directory),
+                Sandbox.MAGENTA,
+                "Disable write access to entire file system",
             )
 
-        # Home directory
-        home = os.getenv('HOME', '/')
-        mounts = [
-            os.path.join(home, x)
-            for x in ('.bashrc', '.profile', '.tmux.conf', '.vimrc')
-            if os.path.exists(os.path.join(home, x))
-        ]
-        for mount in mounts:
-            realpath = os.path.realpath(mount)
-            cmdline.extend(['--ro-bind-try', realpath, mount])
+            # Disable read access
+            allow_reads = tuple([
+                '/boot',
+                '/bin',
+                '/dev',
+                '/etc',
+                '/lib',
+                '/lib32',
+                '/lib64',
+                '/libx32',
+                '/lost+found',
+                '/opt',
+                '/proc',
+                '/root',
+                '/run',
+                '/sbin',
+                '/sys',
+                '/usr',
+                '/var',
+            ] + glob.glob('/init*') + glob.glob('/vm*'))
+            directories = sorted(set(glob.glob('/*')) - set(allow_reads))
+            for mount in directories:
+                cmdline.extend(['--tmpfs', mount])
             self._show(
-                Sandbox.YELLOW,
-                "Enable read access {0:s}".format(mount),
+                Sandbox.MAGENTA,
+                "Disable read access: {0:s}".format(' '.join(directories)),
             )
+
+            # Dummy working directory ("os.getcwd()" returns realpath instead
+            directory = os.environ['PWD']
+            if not directory.startswith(allow_reads):
+                cmdline.extend(['--tmpfs', directory])
+
+            # Devices
+            cmdline.extend(['--dev', 'dev'])
+
+            # Application directory
+            directory = os.path.dirname(self.get_file())
+            if not directory.startswith(allow_reads):
+                realpath = os.path.realpath(directory)
+                cmdline.extend(['--ro-bind-try', realpath, directory])
+                self._show(
+                    Sandbox.YELLOW,
+                    "Enable read access to application {0:s}".format(
+                        directory,
+                    ),
+                )
+
+            # Home directory
+            home = os.getenv('HOME', '/')
+            mounts = [
+                os.path.join(home, x)
+                for x in ('.bashrc', '.profile', '.tmux.conf', '.vimrc')
+                if os.path.exists(os.path.join(home, x))
+            ]
+            for mount in mounts:
+                realpath = os.path.realpath(mount)
+                cmdline.extend(['--ro-bind-try', realpath, mount])
+                self._show(
+                    Sandbox.YELLOW,
+                    "Enable read access {0:s}".format(mount),
+                )
 
         # Enable access rights
         for config in configs:
             realpath, mount, mode = self._parse_config(config)
             if mode == 'read/write':
+                if not os.path.exists(realpath):
+                    os.makedirs(realpath)
                 cmdline.extend(['--bind-try', realpath, mount])
+                if realpath == '/':
+                    cmdline.extend(['--dev', 'dev'])
                 self._show(
-                    Sandbox.CYAN,
+                    Sandbox.GREEN,
                     "Enable read/write access {0:s}".format(config),
                 )
             elif config.startswith('/dev/'):
                 cmdline.extend(['--dev-bind-try', realpath, mount])
                 self._show(
-                    Sandbox.CYAN,
+                    Sandbox.GREEN,
                     "Enable device access {0:s}".format(config),
                 )
             elif not mount.startswith(allow_reads):
@@ -248,6 +257,8 @@ class Sandbox(command_mod.Command):
             str(os.getpid()),
             '--',
         ])
+
+        return cmdline
 
     def sandbox(
         self,
@@ -275,14 +286,15 @@ class Sandbox(command_mod.Command):
 
         self._show(Sandbox.BLUE, self.get_file())
 
-        if not network:
+        if network:
+            self._show(Sandbox.GREEN, "Enable external network access")
+        else:
             self._show(
                 Sandbox.MAGENTA,
                 "Disable external network access (nonet group / iptables)",
             )
 
-        cmdline = bwrap.get_cmdline()
-        self._config_access(cmdline, configs)
+        cmdline = self._config_access(bwrap, configs)
 
         if not network:
             command = command_mod.Command('sg', args=['nonet'], errors=errors)

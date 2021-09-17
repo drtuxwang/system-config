@@ -58,13 +58,12 @@ class Main:
         if not os.path.isfile(command.get_file() + '.py'):
             configs = [
                 '/dev/dri',
+                '/run/user/{0:d}/dconf'.format(os.getuid()),
                 os.path.join(os.getenv('HOME', '/'), '.config/dconf/user'),
             ]
             command.sandbox(configs)
 
-        pattern = ': dconf-CRITICAL |: dbind-WARNING |^$'
-
-        subtask_mod.Background(command.get_cmdline()).run(pattern=pattern)
+        subtask_mod.Background(command.get_cmdline()).run()
 
         return 0
 
