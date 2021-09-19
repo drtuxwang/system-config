@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=GNU Image Manipulation Program
+TryExec=gimp
+Exec=gimp %U
+Categories=X-Geeqie;
+OnlyShowIn=X-Geeqie;

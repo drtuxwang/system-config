@@ -65,7 +65,7 @@ class Main:
                 ),
             ])
         if sys.argv[1:] == ['su']:  # Workaround hanging
-            command.extend_args(['-i'])
+            command.extend_args(['-s'])
         else:
             command.extend_args(sys.argv[1:])
 

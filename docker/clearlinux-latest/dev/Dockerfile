@@ -5,18 +5,18 @@ FROM ${BASE_IMAGE}
 # Install compiler & dev packages
 # Python missing: _bz2 _dbm _gdbm
 RUN \
-	# For Python build
-	swupd bundle-add \
-		c-basic \
-		make \
-		devpkg-ncurses \
-		devpkg-openssl \
-		devpkg-readline \
-		devpkg-sqlite-autoconf \
-		devpkg-xz && \
-	# For Python packages
-	swupd bundle-add devpkg-curl && \
-	swupd clean
+    # For Python build
+    swupd bundle-add \
+        c-basic \
+        make \
+        devpkg-ncurses \
+        devpkg-openssl \
+        devpkg-readline \
+        devpkg-sqlite-autoconf \
+        devpkg-xz && \
+    # For Python packages
+    swupd bundle-add devpkg-curl && \
+    swupd clean
 
 # Install Python packages
 COPY tmpdir/install-python-requirements.sh tmpdir/python-requirements*.txt* /etc/

@@ -1,6 +1,0 @@
-Command=/opt/software/bin/weather -q https://www.accuweather.com/en/gb/catford/se6-2/weather-forecast/323204
-UseLabel=0
-Text=(genmon)
-UpdatePeriod=300000
-Font=Sans 16
-

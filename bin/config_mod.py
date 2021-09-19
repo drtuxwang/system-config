@@ -26,8 +26,8 @@ import bson  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '1.7.3'
-VERSION = 20210809
+RELEASE = '1.7.4'
+VERSION = 20210912
 
 
 class Data:
@@ -91,7 +91,7 @@ class Data:
                 block += line[indent:].strip('\\')
                 continue
             else:
-                lines.append(block.split(': "')[0] + ': |')
+                lines.append(block.split(': "', 1)[0] + ': |')
                 block = block.split(': "')[1].rstrip('"').replace('\\"', '"')
                 if block.endswith('\\n'):
                     block = block[:-2]

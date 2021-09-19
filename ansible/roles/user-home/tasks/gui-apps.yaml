@@ -2,6 +2,9 @@
   copy:
     src: "{{ config_directory }}/Xresources"
     dest: "{{ home_directory }}/.Xresources"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: "0600"
   tags:
   - user-home
 
@@ -9,6 +12,8 @@
   file:
     path: "{{ home_directory }}/.config"
     state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
     mode: "0700"
   tags:
   - user-home
@@ -18,6 +23,8 @@
   copy:
     src: "{{ config_directory }}/autoexec.sh"
     dest: "{{ home_directory }}/.config/"
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
   - autoexec
@@ -35,6 +42,8 @@
   copy:
     src: "{{ config_directory }}/autoexec-opt.sh"
     dest: "{{ home_directory }}/.config/"
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
   - autoexec
@@ -49,6 +58,8 @@
   copy:
     src: "{{ config_directory }}/mimeapps.list"
     dest: "{{ home_directory }}/.config/"
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
   - mimeapps
@@ -57,6 +68,8 @@
   file:
     path: "{{ home_directory }}/.local/share/applications"
     state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
   - mimeapps
@@ -67,22 +80,31 @@
   copy:
     src: "{{ item }}"
     dest: "{{ home_directory }}/.local/share/applications/"
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
   - mimeapps
 
-- name: Ensure "{{ home_directory }}/.config/geeqie" directory exists
+- name: Ensure "{{ home_directory }}/.config/geeqie/applications" directory exists
   file:
-    path: "{{ home_directory }}/.config/geeqie"
+    path: "{{ home_directory }}/.config/geeqie/applications"
     state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
   - geeqie
 
-- name: Copy file to "{{ home_directory }}/.config/geeqie/geeqierc.xml"
+- name: Copy files to "{{ home_directory }}/.config/geeqie/" directory
+  loop:
+  - accels
+  - geeqierc.xml
   copy:
-    src: "{{ config_directory }}/geeqierc.xml"
-    dest: "{{ home_directory }}/.config/geeqie"
+    src: "{{ item }}"
+    dest: "{{ home_directory }}/.config/geeqie/{{ item }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
   - geeqie
@@ -90,19 +112,44 @@
 - name: Copy files to "{{ home_directory }}/.config/geeqie/applications/" directory
   loop:
   - animate.desktop
+  - gimp.desktop
   - rotate-270.desktop
   - rotate-90.desktop
   copy:
     src: "{{ item }}"
     dest: "{{ home_directory }}/.config/geeqie/applications/{{ item }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
   - geeqie
+
+- name: Ensure "{{ home_directory }}/.config/vlc" directory exists
+  file:
+    path: "{{ home_directory }}/.config/vlc"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  tags:
+  - user-home
+  - vlc
+
+- name: Copy file to "{{ home_directory }}/.config/vlc/vlcrc"
+  copy:
+    src: vlcrc
+    dest: "{{ home_directory }}/.config/vlc"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  tags:
+  - user-home
+  - vlc
 
 - name: Ensure "{{ home_directory }}/.config/xfce4/terminal" directory exists
   file:
     path: "{{ home_directory }}/.config/xfce4/terminal"
     state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
   - terminal
@@ -111,6 +158,8 @@
   copy:
     src: "{{ config_directory }}/terminalrc"
     dest: "{{ home_directory }}/.config/xfce4/terminal"
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
   - terminal

@@ -4,26 +4,26 @@ FROM ${BASE_IMAGE}
 
 # Install compiler & dev packages
 RUN \
-	# For Python build
-	apk add \
-		gcc \
-		g++ \
-		gfortran \
-		make \
-		bzip2-dev \
-		curl-dev \
-		db-dev \
-		gdbm-dev \
-		libevent-dev \
-		libffi-dev \
-		ncurses-dev \
-		openssl-dev \
-		python3-dev \
-		readline-dev \
-		sqlite-dev \
-		xz-dev && \
-	# For Python packages
-	apk add blas-dev curl-dev jpeg-dev lapack-dev
+    # For Python build
+    apk add \
+        gcc \
+        g++ \
+        gfortran \
+        make \
+        bzip2-dev \
+        curl-dev \
+        db-dev \
+        gdbm-dev \
+        libevent-dev \
+        libffi-dev \
+        ncurses-dev \
+        openssl-dev \
+        python3-dev \
+        readline-dev \
+        sqlite-dev \
+        xz-dev && \
+    # For Python packages
+    apk add blas-dev curl-dev jpeg-dev lapack-dev
 
 # Install Python packages
 COPY tmpdir/install-python-requirements.sh tmpdir/python-requirements*.txt* /etc/

@@ -21,8 +21,6 @@ docker-test:
 
 .PHONY: check
 check:
-	@echo "\n*** Running \"${PYTHON}\" requirements check ***"
-	umask 022 && ${PYTHON} -m pip install -q -r etc/python-requirements.txt
 	@echo "\n*** Running \"${PYTHON}\" UNITTEST check ***"
 	${PYTHON} -m unittest discover --buffer bin
 	@echo "\n*** Running BSON/JSON/YAML check ***"

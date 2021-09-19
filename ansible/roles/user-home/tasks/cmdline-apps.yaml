@@ -2,16 +2,19 @@
   file:
     path: "{{ home_directory }}/.config/htop"
     state: directory
-    mode: "0700"
-    recurse: yes
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
   - htop
 
-- name: Copy file to "{{ home_directory }}/.config/htop/htoprc"
-  copy:
-    src: "{{ config_directory }}/htoprc"
+- name: Template file to "{{ home_directory }}/.config/htop/htoprc"
+  template:
+    src: htoprc
     dest: "{{ home_directory }}/.config/htop/"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: "0644"
   tags:
   - user-home
   - htop
@@ -20,6 +23,9 @@
   copy:
     src: "{{ config_directory }}/tmux.conf"
     dest: "{{ home_directory }}/.tmux.conf"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: "0600"
   tags:
   - user-home
   - tmux

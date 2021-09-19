@@ -45,9 +45,9 @@ do
         cp -p files/docker-init tmpdir/root/etc
         ;;
     sudo)
-        echo "Creating \"tmpdir/root/etc/sudoers.d/sudoers\"..."
+        echo "Creating \"tmpdir/root/etc/sudoers.d/allow-owner\"..."
         mkdir -p tmpdir/root/etc/sudoers.d
-        cp -p files/sudoers tmpdir/root/etc/sudoers.d
+        cp -p files/allow-owner tmpdir/root/etc/sudoers.d
         ;;
     tmux)
         echo "Creating \"tmpdir/root/root/.tmux.conf\"..."

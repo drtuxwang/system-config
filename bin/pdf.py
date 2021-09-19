@@ -285,14 +285,20 @@ class Main:
 
         images_extensions = config_mod.Config().get('image_extensions')
 
-        args = ['-sOutputFile=' + options.get_archive(), '-c', '.setpdfwrite']
+        args = [
+            '-sOutputFile=' + options.get_archive(),
+            '-c',
+            '3000000',
+            'setvmthreshold',
+        ]
         for file in options.get_files():
             print("Packing", file)
             if not options.get_archive():
                 args = [
                     '-sOutputFile=' + file.rsplit('.', 1)[0] + '.pdf',
                     '-c',
-                    '.setpdfwrite'
+                    '3000000',
+                    'setvmthreshold',
                 ]
             if not os.path.isfile(file):
                 raise SystemExit(

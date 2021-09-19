@@ -19,15 +19,15 @@
   template:
     src: rc.local-opt
     dest: /etc/rc.local-opt
-    mode: 0755
+    mode: "0755"
   tags:
   - local-system
   - rc-local
 
-- name: Copy file to "/etc/sudoers.d/commands-nopasswd"
+- name: Copy file to "/etc/sudoers.d/nopasswd-users"
   when: sudo_commands
   copy:
-    src: commands-nopasswd
+    src: nopasswd-users
     dest: /etc/sudoers.d/
   tags:
   - local-system
@@ -38,7 +38,7 @@
   copy:
     src: iptables
     dest: /etc/network/if-pre-up.d/iptables
-    mode: 0755
+    mode: "0755"
   tags:
   - local-system
   - iptables
@@ -47,7 +47,7 @@
   template:
     src: iptables.conf
     dest: /etc/iptables.conf
-    mode: 0755
+    mode: "0755"
   tags:
   - local-system
   - iptables

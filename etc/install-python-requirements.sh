@@ -18,13 +18,13 @@ read_requirements() {
     if [ -f "$1" ]
     then
         echo "Processing \"$1\"..."
-        for PACKAGE in $(sed -e "s/#.*//" "$1")
+        for PACKAGE in $(sed -e "s/^#* *//;s/#.*//" "$1" |grep -v "==None")
         do
             NAME=${PACKAGE%==*}
             VERSION=${PACKAGE#*==}
-            REQUIREMENTS=$(echo "$REQUIREMENTS" | grep -v "^$NAME=="; echo "$NAME==$VERSION")
+            REQUIREMENTS=$(echo "$REQUIREMENTS" | grep -v "$NAME=="; echo "$NAME==$VERSION")
         done
-        DISABLED=$(grep "#.*==None" $1 | sed -e "s/.*# *//;s/==.*//" | awk '{printf("%s|", $1)}')
+        DISABLED=$(grep "==None" $1 | sed -e "s/==.*//;s/.* //" | awk '{printf("%s|", $1)}')
         REQUIREMENTS=$(echo "$REQUIREMENTS" | egrep -v "^($DISABLED)[>=]")
     fi
 }

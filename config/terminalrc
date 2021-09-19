@@ -34,4 +34,6 @@ ColorPalette=rgb(51,51,51);rgb(255,85,85);rgb(85,255,85);rgb(255,255,85);rgb(85,
 ColorCursorUseDefault=FALSE
 ColorCursor=#ffff00000000
 ColorCursorForeground=#ffffffff0000
+MiscSearchDialogOpacity=100
+MiscShowUnsafePasteDialog=FALSE
 

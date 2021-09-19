@@ -72,6 +72,7 @@ class Options:
         configs = [
             '/dev/dri',
             '/dev/shm',
+            '/dev/sr0',
             os.path.join(os.getenv('HOME', '/'), '.config/vlc'),
             os.path.join(os.getenv('HOME', '/'), '.local/share/vlc'),
         ]

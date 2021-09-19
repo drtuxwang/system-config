@@ -2,7 +2,7 @@ NAME := grafana
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := grafana
-CHART_VERSION := 5.2.2
+CHART_VERSION := 5.2.19
 NAMESPACE ?= infra
 HOSTNAME ?= grafana.kube.local
 LOCALPORT ?=
@@ -100,7 +100,7 @@ forward:
 .PHONY: connect
 connect:
 	@kubectl --namespace=$(NAMESPACE) get secret grafana-admin -o jsonpath="{.data.GF_SECURITY_ADMIN_PASSWORD}" | \
-		base64 -d |  awk '{printf("Username: admin\nPassword: %s\n", $$1)}'
+		base64 -d | awk '{printf("Username: admin\nPassword: %s\n", $$1)}'
 	@if [ "$(EXTERNAL_IP)" ]; then \
 		../../kubernetes/bin/kube-connect http://${HOSTNAME}; \
 	else \

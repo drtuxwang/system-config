@@ -2,7 +2,7 @@ NAME := etcd
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := etcd
-CHART_VERSION := 5.6.1
+CHART_VERSION := 6.2.8
 NAMESPACE ?= infra
 
 ifndef APP_VERSION
@@ -83,7 +83,7 @@ install: repo-add
 		--install \
 		--wait \
 		$(HELM_FLAGS) \
-		$(HELM_RELEASE)-$(NAME) $(CHART_REPO)/$(CHART_NAME)
+		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: status
 status:

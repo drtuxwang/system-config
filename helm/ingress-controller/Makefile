@@ -2,7 +2,7 @@ NAME := ingress
 CHART_REPO := ingress-nginx
 CHART_URL := https://kubernetes.github.io/ingress-nginx
 CHART_NAME := ingress-nginx
-CHART_VERSION := 3.22.0
+CHART_VERSION := 3.35.0
 NAMESPACE ?= infra
 
 ifndef APP_VERSION

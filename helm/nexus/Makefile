@@ -2,10 +2,10 @@ NAME := nexus
 CHART_REPO := oteemo
 CHART_URL := https://oteemo.github.io/charts
 CHART_NAME := sonatype-nexus
-CHART_VERSION := 4.1.2
+CHART_VERSION := 5.2.2
 NAMESPACE ?= infra
 HOSTNAME ?= nexus.kube.local
-TLS_SECRET ?= nexus.kube.local
+TLS_SECRET ?= kube-local-tls
 LOCALPORT ?=
 
 ifndef APP_VERSION
@@ -20,9 +20,9 @@ HELM_FLAGS := \
 	--values values.yaml \
 	--set fullnameOverride=$(NAME) \
 	--set ingress.enabled=$(INGRESS_ENABLED) \
-	--set ingress.rules[0].host=$(HOSTNAME) \
 	--set ingress.tls.enabled=true \
 	--set ingress.tls.secretName=$(TLS_SECRET) \
+	--set nexusProxy.env.nexusHttpHost=$(HOSTNAME) \
 	--version $(CHART_VERSION)
 ifdef IMAGE_TAG
 	HELM_FLAGS += --set nexus.imageTag=$(IMAGE_TAG)

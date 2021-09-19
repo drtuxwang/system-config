@@ -2,6 +2,9 @@
   copy:
     src: "{{ config_directory }}/login"
     dest: "{{ home_directory }}/.login"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: "0600"
   tags:
   - user-home
 
@@ -9,6 +12,8 @@
   file:
     path: "{{ home_directory }}/.ssh/"
     state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
     mode: "0700"
   tags:
   - user-home
@@ -27,6 +32,8 @@
   copy:
     src: "{{ config_directory }}/config"
     dest: "{{ home_directory }}/.ssh/config"
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
   - ssh
@@ -35,7 +42,9 @@
   when: download_rate
   template:
     src: netnice.json
-    dest: "{{ home_directory }}/.config"
+    dest: "{{ home_directory }}/.config/"
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - local-system
   - netnice

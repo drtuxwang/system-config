@@ -2,6 +2,8 @@
   file:
     path: "{{ home_directory }}/"
     state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
     mode: "{{ home_mod }}"
   tags:
   - user-home
@@ -13,6 +15,9 @@
   copy:
     src: "{{ config_directory }}/{{ item }}"
     dest: "{{ home_directory }}/.{{ item }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: "0600"
   tags:
   - user-home
 
@@ -22,6 +27,8 @@
     dest: "{{ home_directory }}/.bashrc"
     state: link
     force: yes
+    owner: "{{ user }}"
+    group: "{{ group }}"
   tags:
   - user-home
 
@@ -37,6 +44,9 @@
   copy:
     src: "{{ config_directory }}/profile-opt"
     dest: "{{ home_directory }}/.profile-opt"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: "0600"
   tags:
   - user-home
 
@@ -76,4 +86,5 @@
   - mimeapps
   - geeqie
   - terminal
+  - vlc
   - web-data

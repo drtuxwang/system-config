@@ -2,7 +2,7 @@ NAME := rabbitmq
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := rabbitmq
-CHART_VERSION := 8.7.2
+CHART_VERSION := 8.20.5
 NAMESPACE ?= default
 HOSTNAME ?= rabbitmq.kube.local
 LOCALPORT ?=
@@ -109,6 +109,8 @@ forward:
 
 .PHONY: connect
 connect:
+	@kubectl --namespace=$(NAMESPACE) get secret rabbitmq -o jsonpath="{.data.rabbitmq-password}" | \
+		base64 -d | awk '{printf("Username: user\nPassword: %s\n", $$1)}'
 	@if [ "$(EXTERNAL_IP)" ]; then \
 		../../kubernetes/bin/kube-connect http://${HOSTNAME}; \
 	else \

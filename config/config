@@ -17,3 +17,12 @@ UseRoaming no
 #User owner
 #StrictHostKeyChecking no
 #UserKnownHostsFile=/dev/null
+
+#Host localhost *.local
+#User admin
+#IdentityFile=~/.ssh/id_rsa-admin
+#StrictHostKeyChecking no
+#UserKnownHostsFile=/dev/null
+
+#Host debian4.local
+#KexAlgorithms +diffie-hellman-group1-sha1

@@ -47,6 +47,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/ansible-playbook
  * bin/ansible-playbook-venv
  * bin/ansible-vault
+ * bin/appimage-builder
  * bin/aws
  * bin/aws-venv
  * bin/aws.bat
@@ -884,10 +885,7 @@ the years. Now most of the scripts are written in Python 3.
  * config/autoexec-opt.sh                Copy to "$HOME/.config/autoexec-opt.sh" for optional settings
  * config/com.googlecode.iterm2.plist    Copy to "$HOME/Library/Preference" for iTerm2 on Mac
  * config/config                         Copy to "$HOME/.ssh/config"
- * config/geeqierc.xml                   Copy to "$HOME/.config/geeqie" for configuration
- * config/genmon-7.rc                    Copy to "$HOME/.config/xfce4/panel/genmon-7.rc" for XFCE Weather
  * config/gitconfig                      Copy to "$HOME/.gitconfig" and edit
- * config/htoprc                         Copy to "$HOME/.config/htoprc"
  * config/iptables.conf                  IPTABLES setup script
  * config/login                          Copy to "$HOME/.login" for csh/tcsh shells (translated ".profile")
  * config/mimeapps.list                  Copy to "$HOME/.local/share/applications" for Mime definitions
@@ -922,6 +920,7 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/inventory/group_vars/local_nodes
  * ansible/inventory/group_vars/local_vmhosts
  * ansible/inventory/host_vars/debian10.local
+ * ansible/inventory/host_vars/debian11.local
  * ansible/inventory/host_vars/debianmac.local
  * ansible/inventory/host_vars/hotdog.local
  * ansible/inventory/host_vars/koko.local
@@ -932,8 +931,8 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/local-playbook.yaml
  * ansible/roles/ansible-user/tasks/main.yaml
  * ansible/roles/local-system/defaults/main.yml
- * ansible/roles/local-system/files/commands-nopasswd
  * ansible/roles/local-system/files/iptables
+ * ansible/roles/local-system/files/nopasswd-users
  * ansible/roles/local-system/tasks/main.yaml
  * ansible/roles/local-system/tasks/system-setup.yaml
  * ansible/roles/local-system/templates/iptables.conf
@@ -941,13 +940,18 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/roles/local-users/defaults/main.yml
  * ansible/roles/local-users/meta/main.yaml
  * ansible/roles/user-home/defaults/main.yml
+ * ansible/roles/user-home/files/accels
  * ansible/roles/user-home/files/animate.desktop
+ * ansible/roles/user-home/files/geeqierc.xml
+ * ansible/roles/user-home/files/gimp.desktop
  * ansible/roles/user-home/files/rotate-270.desktop
  * ansible/roles/user-home/files/rotate-90.desktop
+ * ansible/roles/user-home/files/vlcrc
  * ansible/roles/user-home/tasks/cmdline-apps.yaml
  * ansible/roles/user-home/tasks/gui-apps.yaml
  * ansible/roles/user-home/tasks/login-user.yaml
  * ansible/roles/user-home/tasks/main.yaml
+ * ansible/roles/user-home/templates/htoprc
  * ansible/roles/user-home/templates/netnice.json
  * ansible/roles/user-home/vars/main.yaml
  * cloudformation/1pxy/1pxy.json         CloudFormation: 1pxy example
@@ -1026,30 +1030,40 @@ the years. Now most of the scripts are written in Python 3.
  * docker/debian-10-slim/bash/Makefile   debian:10-slim based BASH login
  * docker/debian-10-slim/dev/Dockerfile
  * docker/debian-10-slim/dev/Makefile    debian:10-slim based GCC dev shell
- * docker/debian-10-slim/xfce/Dockerfile
- * docker/debian-10-slim/xfce/Makefile    debian:10-slim based XFCE environment
- * docker/debian-10-slim/xfce/files/docker-init
- * docker/debian-10-slim/xfce/files/sudoers
- * docker/debian-10-slim/xfce/files/xstartup
+ * docker/debian-11-slim/Dockerfile
+ * docker/debian-11-slim/Makefile        debian:11-slim based linux
+ * docker/debian-11-slim/bash/Dockerfile
+ * docker/debian-11-slim/bash/Makefile   debian:11-slim based BASH login
+ * docker/debian-11-slim/xfce/Dockerfile
+ * docker/debian-11-slim/xfce/Makefile   debian:11-slim based XFCE environment
+ * docker/debian-11-slim/xfce/files/allow-owner
+ * docker/debian-11-slim/xfce/files/docker-init
+ * docker/debian-11-slim/xfce/files/xstartup
  * docker/i386-debian-10-slim/Dockerfile
- * docker/i386-debian-10-slim/Makefile    i386/debian:10-slim based linux
+ * docker/i386-debian-10-slim/Makefile   i386/debian:10-slim based linux
  * docker/i386-debian-10-slim/bash/Dockerfile
  * docker/i386-debian-10-slim/bash/Makefile  i386/debian:10-slim based BASH login
  * docker/i386-debian-10-slim/dev/Dockerfile
  * docker/i386-debian-10-slim/dev/Makefile  i386/debian:10-slim based GCC dev shell
- * docker/docker-19.03/Dockerfile
- * docker/docker-19.03/Makefile          docker:19.03 (alpine) based docker shell
- * docker/golang-1.15-alpine/Dockerfile
- * docker/golang-1.15-alpine/Makefile    golang:1.15-alpine based compiler app
+ * docker/i386-debian-11-slim/Dockerfile
+ * docker/i386-debian-11-slim/Makefile   i386/debian:11-slim based linux
+ * docker/i386-debian-11-slim/bash/Dockerfile
+ * docker/i386-debian-11-slim/bash/Makefile  i386/debian:11-slim based BASH login
+ * docker/i386-debian-11-slim/dev/Dockerfile
+ * docker/i386-debian-11-slim/dev/Makefile  i386/debian:11-slim based GCC dev shell
+ * docker/docker-20.10/Dockerfile
+ * docker/docker-20.10/Makefile          docker:20.10 (alpine) based docker shell
+ * docker/golang-1.16-alpine/Dockerfile
+ * docker/golang-1.16-alpine/Makefile    golang:1.15-alpine based compiler app
  * docker/httpd-2.4-alpine/Dockerfile
  * docker/httpd-2.4-alpine/Makefile      httpd:2.4-alpine (Apache) based web server
  * docker/httpd-2.4-alpine/files/httpd.conf
  * docker/httpd-2.4-alpine/public-html/index.html
  * docker/httpd-2.4-alpine/public-html/testlcd.js
  * docker/httpd-2.4-alpine/public-html/testlcd.xhtml
- * docker/nginx-1.16-alpine/Dockerfile
- * docker/nginx-1.16-alpine/Makefile     nginx:1.16.1-alpine based reverse proxy server
- * docker/nginx-1.16-alpine/files/nginx-proxy.conf  Proxy pass examples
+ * docker/nginx-1.18-alpine/Dockerfile
+ * docker/nginx-1.18-alpine/Makefile     nginx:1.18-alpine based reverse proxy server
+ * docker/nginx-1.18-alpine/files/nginx-proxy.conf  Proxy pass examples
  * docker/oraclelinux-7-slim/Dockerfile
  * docker/oraclelinux-7-slim/Makefile    oraclelinux:7-slim based linux
  * docker/oraclelinux-7-slim/bash/Dockerfile
@@ -1062,14 +1076,14 @@ the years. Now most of the scripts are written in Python 3.
  * docker/oraclelinux-8-slim/bash/Makefile  oraclelinux:8-slim based BASH login
  * docker/oraclelinux-8-slim/dev/Dockerfile
  * docker/oraclelinux-8-slim/dev/Makefile  oraclelinux:8-slim based GCC dev shel
- * docker/python-3.7-slim-buster/Dockerfile
- * docker/python-3.7-slim-buster/Makefile  python:3.7-slim-buster based Python app
- * docker/python-3.7-slim-buster/bash/Dockerfile
- * docker/python-3.7-slim-buster/bash/Makefile  python:3.7-slim-buster based BASH login
- * docker/python-3.7-slim-buster/dev/Dockerfile
- * docker/python-3.7-slim-buster/dev/Makefile  python:3.7-slim-buster based dev shell
- * docker/python-3.7-slim-buster/devpi/Dockerfile
- * docker/python-3.7-slim-buster/devpi/Makefile  python:3.7-slim-buster based devpi server app
+ * docker/python-3.8-slim-buster/Dockerfile
+ * docker/python-3.8-slim-buster/Makefile  python:3.8-slim-buster based Python app
+ * docker/python-3.8-slim-buster/bash/Dockerfile
+ * docker/python-3.8-slim-buster/bash/Makefile  python:3.8-slim-buster based BASH login
+ * docker/python-3.8-slim-buster/dev/Dockerfile
+ * docker/python-3.8-slim-buster/dev/Makefile  python:3.8-slim-buster based dev shell
+ * docker/python-3.8-slim-buster/devpi/Dockerfile
+ * docker/python-3.8-slim-buster/devpi/Makefile  python:3.8-slim-buster based devpi server app
  * docker/registry-2.6/Dockerfile
  * docker/registry-2.6/Makefile          registry:2.6 based Docker Registry server app
  * docker/registry-2.6/files/config.yaml
@@ -1121,25 +1135,25 @@ the years. Now most of the scripts are written in Python 3.
  * helm/bin/helm-save                    Save Helm release docker images
  * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.14.2 (app-0.12.0)
  * helm/chartmuseum/values.yaml
- * helm/concourse/Makefile               Helm Chart: concourse/concourse 14.5.5 (app-6.7.5)
+ * helm/concourse/Makefile               Helm Chart: concourse/concourse 14.5.6 (app-6.7.5)
  * helm/concourse/concourse-secrets.yaml
  * helm/concourse/values.yaml
- * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 4.11.1 (app-3.4.13)
+ * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 6.2.8 (app-3.4.16)
  * helm/etcd/values.yaml
- * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 5.2.2 (app-7.4.1)
+ * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 5.2.19 (app-7.5.9)
  * helm/grafana/values.yaml
- * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 7.3.5 (app-2.263.4)
+ * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 7.3.17 (app-2.277.4)
  * helm/jenkins/values.yaml
- * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 12.3.2 (2.6.0)
+ * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 12.17.3 (2.7.0)
  * helm/kafka/connect-test.sh
  * helm/kafka/values.yaml
- * helm/ingress-controller/Makefile      Helm Chart: ingress-nginx/ingress-nginx 3.22.0 (app-0.43.0)
+ * helm/ingress-controller/Makefile      Helm Chart: ingress-nginx/ingress-nginx 3.35.0 (app-0.48.1)
  * helm/ingress-controller/values.yaml
- * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 10.6.4 (app-4.4.3)
+ * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 10.21.2 (app-4.4.6)
  * helm/mongodb/values.yaml
- * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 4.1.2 (app-3.27.0)
+ * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 5.2.2 (app-3.27.0)
  * helm/nexus/values.yaml
- * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 8.5.5 (app-1.16.1)
+ * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 9.4.3_ (app-1.18.0)
  * helm/nginx/values.yaml
  * helm/ops-server/Makefile              Helm Chart: drtuxwang/ops-server (drtuxwang/debian-bash:stable)
  * helm/ops-server/drtuxwang/ops-server/Chart.yaml
@@ -1153,11 +1167,11 @@ the years. Now most of the scripts are written in Python 3.
  * helm/oracle-xe/oracle-xe/templates/box-service.yaml
  * helm/oracle-xe/oracle-xe/templates/box-statefulset.yaml
  * helm/oracle-xe/values.yaml
- * helm/prometheus/Makefile              Helm Chart: prometheus-community/prometheus 13.0.3 (app-2.22.1)
+ * helm/prometheus/Makefile              Helm Chart: prometheus-community/prometheus 13.6.0 (app-2.24.0)
  * helm/prometheus/values.yaml
- * helm/pushgateway/Makefile             Helm Chart: prometheus-community/prometheus-pushgateway 1.6.0 (app-1.3.0)
+ * helm/pushgateway/Makefile             Helm Chart: prometheus-community/prometheus-pushgateway 1.10.1 (app-1.3.0)
  * helm/pushgateway/values.yaml
- * helm/rabbitmq/Makefile                Helm Chart: bitnami/rabbitmq 8.7.2 (app-3.8.9)
+ * helm/rabbitmq/Makefile                Helm Chart: bitnami/rabbitmq 8.20.5 (app-3.8.22)
  * helm/rabbitmq/values.yaml
  * helm/test-server/Makefile             Helm Chart: drtuxwang/test-server (drtuxwang/debian-bash:stable)
  * helm/test-server/drtuxwang/test-server/Chart.yaml

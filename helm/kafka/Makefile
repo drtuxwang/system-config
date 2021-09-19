@@ -2,7 +2,7 @@ NAME := kafka
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := kafka
-CHART_VERSION := 12.3.2
+CHART_VERSION := 12.17.3
 NAMESPACE ?= default
 HOSTNAME ?= kafka.kube.local
 

@@ -2,15 +2,19 @@ dependencies:
 - role: user-home
   become: true
   user: root
+  group: root
   home_directory: /root
   home_mod: 0700
 - role: user-home
   user: admin
+  group: users
   home_mod: 0700
 - role: user-home
   become: true
   user: owner
+  group: users
 - role: user-home
   when: guest_user
   become: true
   user: guest
+  group: users

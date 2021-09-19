@@ -42,12 +42,12 @@ class ScreenLocker:
         Return ScreenLocker sub class object.
         """
         screenlockers: dict = {
-           'cinnamon': [CinnamonLocker, GnomeLocker, LightLocker, Xlock],
-           'gnome': [GnomeLocker, LightLocker, Xlock],
-           'kde': [KdeLocker, LightLocker, Xlock],
+           'cinnamon': [LightLocker, CinnamonLocker, GnomeLocker, Xlock],
+           'gnome': [LightLocker, GnomeLocker, Xlock],
+           'kde': [LightLocker, KdeLocker, Xlock],
            'macos': [MacLocker],
-           'mate': [MateLocker, LightLocker, Xlock],
-           'xfce': [GnomeLocker, LightLocker, XfceLocker, Xlock],
+           'mate': [LightLocker, MateLocker, Xlock],
+           'xfce': [LightLocker, GnomeLocker, XfceLocker, Xlock],
         }
         default = [LightLocker, Xlock]
 
@@ -125,6 +125,10 @@ class LightLocker(ScreenLocker):
     """
 
     def _setup(self) -> None:
+        self._daemon = command_mod.Command(
+            'light-locker',
+            errors='ignore',
+        )
         self._command = command_mod.Command(
             'light-locker-command',
             args=['--lock'],

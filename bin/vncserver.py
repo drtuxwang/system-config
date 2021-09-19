@@ -42,15 +42,15 @@ class Options:
             )
             try:
                 with open(xstartup, 'w', newline='\n') as ofile:
-                    print("#!/bin/sh", file=ofile)
+                    print("#!/usr/bin/env bash", file=ofile)
                     print("unset DBUS_SESSION_BUS_ADDRESS", file=ofile)
                     print("unset SESSION_MANAGER", file=ofile)
                     if answer[0].lower() == 'g':
-                        print("dbus-launch gnome-session &", file=ofile)
+                        print("dbus-launch gnome-session", file=ofile)
                     elif answer[0].lower() == 'k':
-                        print("dbus-launch startkde &", file=ofile)
+                        print("dbus-launch startkde", file=ofile)
                     elif answer[0].lower() == 'x':
-                        print("dbus-launch startxfce4 &", file=ofile)
+                        print("dbus-launch startxfce4", file=ofile)
             except OSError as exception:
                 raise SystemExit(
                     sys.argv[0] + ': Cannot create ".vnc/xstartup" file.'
@@ -58,8 +58,8 @@ class Options:
             os.chmod(xstartup, int('755', 8) & ~self._umask)
         directory = os.path.dirname(self._vncserver.get_file())
         if (
-                'PATH' in os.environ and
-                directory not in os.environ['PATH'].split(os.pathsep)
+            'PATH' in os.environ and
+            directory not in os.environ['PATH'].split(os.pathsep)
         ):
             os.environ['PATH'] = directory + os.pathsep + os.environ['PATH']
 
@@ -68,13 +68,13 @@ class Options:
         Parse arguments
         """
         self._vncserver = command_mod.Command(
-            'vncserver',
+            'tigervncserver',
             pathextra=['/usr/bin'],
             errors='stop'
         )
         self._vncserver.set_args([
             '-geometry',
-            '1280x960',
+            '1024x768',
             '-depth',
             '24',
             '-localhost',

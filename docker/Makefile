@@ -11,25 +11,27 @@ BUILD_DIRS := \
 	clearlinux-latest \
 	debian-9-slim \
 	debian-10-slim\
+	debian-11-slim\
 	i386-debian-10-slim \
-	docker-19.03 \
-	golang-1.15-alpine \
+	i386-debian-11-slim \
+	docker-20.10 \
+	golang-1.16-alpine \
 	httpd-2.4-alpine \
-	nginx-1.16-alpine \
+	nginx-1.18-alpine \
 	oraclelinux-7-slim \
 	oraclelinux-8-slim \
-	python-3.7-slim-buster \
+	python-3.8-slim-buster \
 	registry-2.6 \
 	sudo \
 	ubuntu-16.04 \
 	ubuntu-18.04 \
 	ubuntu-20.04
 STABLE_IMAGES := \
-	drtuxwang/debian-bash:10-slim \
-	drtuxwang/debian-xfce:10-slim \
-	drtuxwang/nginx:1.16-alpine
+	drtuxwang/debian-bash:11-slim \
+	drtuxwang/debian-xfce:11-slim \
+	drtuxwang/nginx:1.18-alpine
 TEST_DIRS := \
-	python-3.7-slim-buster
+	python-3.8-slim-buster
 
 
 .PHONY: default

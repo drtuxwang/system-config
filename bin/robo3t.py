@@ -49,10 +49,11 @@ class Main:
         Start program
         """
         name = os.path.basename(sys.argv[0]).replace('.py', '')
+        pattern = "QXcbConnection:|libpng warning:"
 
         command = command_mod.Command(name, errors='stop')
         command.set_args(sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        subtask_mod.Background(command.get_cmdline()).run(pattern=pattern)
 
 
 if __name__ == '__main__':

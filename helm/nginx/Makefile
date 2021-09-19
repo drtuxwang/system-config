@@ -2,9 +2,9 @@ NAME := nginx
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := nginx
-CHART_VERSION := 8.5.5
-APP_VERSION := 1.16.1
-IMAGE_TAG := 1.16.1-debian-10-r63
+CHART_VERSION := 9.4.3
+APP_VERSION := 1.18.0
+IMAGE_TAG := 1.18.0-debian-10-r363
 HOSTNAME ?= nginx.kube.local
 NAMESPACE ?= default
 LOCALPORT ?=
@@ -120,10 +120,6 @@ version:
 	@$(HELM_VERSION) | tail -n +2 | \
 		grep -B 1000 "^$(CHART_REPO)/$(CHART_NAME)[	 ]*$(CHART_VERSION) " | \
 		sed -e "s/	/   /g" -e "s/   */   /g"
-
-.PHONY: forward
-forward:
-	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):80
 
 .PHONY: uninstall
 uninstall:

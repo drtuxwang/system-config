@@ -2,7 +2,7 @@ BASE_IMAGE := debian:10-slim
 IMAGE := drtuxwang/debian:10-slim
 DOCKER_BUILD_FLAGS ?=
 
-BUILD_DIRS := bash dev xfce
+BUILD_DIRS := bash dev
 
 
 .PHONY: default
