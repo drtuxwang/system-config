@@ -30,24 +30,37 @@ endif
 
 default: status
 
+.PHONY: status
+status:       # Status of Helm release
+	@echo "\n*** Checking status ***"
+	$(HELM_STATUS)
+	$(HELM_LIST)
+
+.PHONY: version
+version:      # Helm chart versions
+	@grep "name:" $(CHART_NAME)/Chart.yaml | awk '{printf("./'$(CHART_NAME)'/%s   ", $$2)}'
+	@grep "version:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
+	@grep "appVersion:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
+	@grep "description:" $(CHART_NAME)/Chart.yaml | cut -f2- -d" "
+
 .PHONY: images
-images:
+images:       # Show Docker images
 	@make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
 
 .PHONY: pull
-pull:
+pull:         # Pull Docker images
 
 .PHONY: save
-save:
+save:         # Save Docker images as tar file
 
 .PHONY: template
-template:
+template:     # Show Helm template
 	helm template \
 		$(HELM_FLAGS) \
 		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
-check:
+check:        # Dryrun Helm install
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -56,7 +69,7 @@ check:
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
-install:
+install:      # Install Helm release
 	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
 	helm upgrade \
 		--install \
@@ -64,37 +77,24 @@ install:
 		$(HELM_FLAGS) \
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
-.PHONY: status
-status:
-	@echo "\n*** Checking status ***"
-	$(HELM_STATUS)
-	$(HELM_LIST)
-
 .PHONY: forward
-forward:
+forward:      # Forward traffic to endpoint
 	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME)-box $(LOCALPORT):22
 
 .PHONY: connect
-connect:
-	@../../kubernetes/bin/kube-connect svnc://$(NAMESPACE)/service/${NAME}-box:22
-
-.PHONY: version
-version:
-	@grep "name:" $(CHART_NAME)/Chart.yaml | awk '{printf("./'$(CHART_NAME)'/%s   ", $$2)}'
-	@grep "version:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
-	@grep "appVersion:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
-	@grep "description:" $(CHART_NAME)/Chart.yaml | cut -f2- -d" "
+connect:      # Connect to endpoint
+	@../../kubernetes/bin/kube-connect.sh svnc://$(NAMESPACE)/service/${NAME}-box:22
 
 .PHONY: uninstall
-uninstall:
+uninstall:    # Uninstall Helm release
 	$(HELM_LIST)
 	$(HELM_UNINSTALL) ||:
 
 .PHONY: clean
-clean:
+clean:        # Remove temporary build files
 
 .PHONY: rmi
-rmi:
+rmi:          # Remove Docker images
 
 .PHONY: help
 help:

@@ -28,8 +28,8 @@ status:
 
 .PHONY: build
 build:
-	../../bin/create-root-tar bash bash2ash bin-sysinfo vim
-	../../bin/create-python-requirements
+	../../bin/create-root-tar.sh bash bash2ash bin-sysinfo vim
+	../../bin/python-packages.sh
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir

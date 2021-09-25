@@ -1,29 +1,22 @@
 default: build
 
 .PHONY: test
-test: check lint
-	@echo "\n*** Tests successfull ***"
-
-.PHONY: check
-check:
+test:         # Run test
 	@echo "\n*** Running Python 3 compilation check ***"
 	python3 -m py_compile *.py */*.py
 	rm -rf __pycache__ */__pycache__
 	@echo "\n*** Running Python 3 UNITTEST check ***"
 	python3 -m unittest discover --buffer .
-	@echo "\n*** Check successfull ***"
-
-.PHONY: lint
-lint:
 	@echo "\n*** Running Python 3 PYCODESTYLE (PEP8) check ***"
 	python3 -m pycodestyle --ignore=E402 --max-line-length=79 *.py */*.py
 	@echo "\n*** Running Python 3 PYLINT check ***"
 	python3 -m pylint --disable=locally-disabled,locally-enabled --max-line-length=79 \
 		--rcfile=/dev/null --output-format=parseable --reports=n -j 2 *.py */*.py
 	@echo "*** Lint successfull ***"
+	@echo "\n*** Tests successfull ***"
 
-.PHONY: lint
-build: clean test
+.PHONY: build
+build: clean test # Build package
 	@echo "\n*** Building Python packages ***"
 	python3 setup.py bdist_egg
 	python3 setup.py bdist_wheel
@@ -31,12 +24,12 @@ build: clean test
 	@echo "\n*** Building packages successfull ***"
 
 .PHONY: run
-run:
+run:          # Run Python code
 	@echo "\n*** Running simple package example ***"
 	PYTHONPATH=`pwd`/dist ./run.py
 
 .PHONY: clean
-clean:
+clean:        # Remove temporary build files
 	rm -rf build dist simple.egg-info
 
 .PHONY: help

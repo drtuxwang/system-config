@@ -914,7 +914,7 @@ the years. Now most of the scripts are written in Python 3.
  * etc/setbin.ps1                        Windows Power shell initialization
  * ansible/Makefile                      Ansible local hosts playbook
  * ansible/ansible.cfg
- * ansible/bin/check-tags
+ * ansible/bin/show-tags.sh
  * ansible/inventory/group_vars/all
  * ansible/inventory/group_vars/local_hosts
  * ansible/inventory/group_vars/local_nodes
@@ -968,10 +968,10 @@ the years. Now most of the scripts are written in Python 3.
  * cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
  * docker/Makefile                       Makefile for building all images
  * docker/bin/bash2ash
- * docker/bin/create-python-requirements
- * docker/bin/create-root-tar
- * docker/bin/docker-load                Load docker images
- * docker/bin/docker-save                Save docker images
+ * docker/bin/create-root-tar.sh
+ * docker/bin/docker-load.sh             Load docker images
+ * docker/bin/docker-save.sh             Save docker images
+ * docker/bin/python-packages.sh
  * docker/alpine-3.12/Makefile
  * docker/alpine-3.12/Dockerfile         alpine:3.12 based linux
  * docker/alpine-3.12/bash/Makefile
@@ -1108,8 +1108,8 @@ the years. Now most of the scripts are written in Python 3.
  * docker/ubuntu-20.04/dev/Dockerfile
  * docker/ubuntu-20.04/dev/Makefile      ubuntu:20.04 based GCC dev shell
  * kubernetes/Makefile
- * kubernetes/bin/kube-connect           Connect to Kubernetes ingress/service port
- * kubernetes/bin/kube-save              Save Kubernetes control plane docker images
+ * kubernetes/bin/kube-connect.sh        Connect to Kubernetes ingress/service port
+ * kubernetes/bin/kube-save.sh           Save Kubernetes control plane docker images
  * kubernetes/monitor-host/Makefile      Kubernetes: host monitoring (drtuxwang/debian-bash:stable)
  * kubernetes/monitor-host/monitor-host-daemonset.yaml
  * kubernetes/nginx-proxy-fwd/Makefile   NGINX http/https proxy forwarding example
@@ -1132,7 +1132,7 @@ the years. Now most of the scripts are written in Python 3.
  * kubernetes/test-servers/servers-service.yaml
  * kubernetes/test-servers/servers-statefulset.yaml
  * helm/Makefile
- * helm/bin/helm-save                    Save Helm release docker images
+ * helm/bin/helm-save.sh                 Save Helm release docker images
  * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.14.2 (app-0.12.0)
  * helm/chartmuseum/values.yaml
  * helm/concourse/Makefile               Helm Chart: concourse/concourse 14.5.6 (app-6.7.5)

@@ -37,24 +37,37 @@ endif
 
 default: status
 
+.PHONY: status
+status:       # Status of Helm release
+	$(HELM_STATUS)
+	$(HELM_LIST)
+
+.PHONY: version
+version:      # Helm chart versions
+	@echo "\n*** Checking status ***"
+	@grep "name:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("./'$(CHART_NAME)'/%s   ", $$2)}'
+	@grep "version:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
+	@grep "appVersion:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
+	@grep "description:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | cut -f2- -d" "
+
 .PHONY: images
-images:
+images:       # Show Docker images
 	@make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
 
 .PHONY: pull
-pull:
+pull:         # Pull Docker images
 
 .PHONY: save
-save:
+save:         # Save Docker images as tar file
 
 .PHONY: template
-template:
+template:     # Show Helm template
 	helm template \
 		$(HELM_FLAGS) \
 		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
-check:
+check:        # Dryrun Helm install
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -63,7 +76,7 @@ check:
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
-install:
+install:      # Install Helm release
 	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
 	helm upgrade \
 		--install \
@@ -71,36 +84,24 @@ install:
 		$(HELM_FLAGS) \
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
-.PHONY: status
-status:
-	@echo "\n*** Checking status ***"
-	$(HELM_STATUS)
-	$(HELM_LIST)
-
 .PHONY: connect
-connect:
+connect:      # Connect to endpoint
 	@echo "\n*** Connecting to Test Server box ***"
 	@kubectl --namespace=$(NAMESPACE) exec -it \
 		`kubectl --namespace=$(NAMESPACE) get pod | grep $(NAME)-box | awk 'NR==1 {print $$1}'` \
 		-- bash -l
 
-.PHONY: version
-version:
-	@grep "name:" $(CHART_NAME)/Chart.yaml | awk '{printf("./'$(CHART_NAME)'/%s   ", $$2)}'
-	@grep "version:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
-	@grep "appVersion:" $(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
-	@grep "description:" $(CHART_NAME)/Chart.yaml | cut -f2- -d" "
 
 .PHONY: uninstall
-uninstall:
+uninstall:    # Uninstall Helm release
 	$(HELM_LIST)
 	$(HELM_UNINSTALL) ||:
 
 .PHONY: clean
-clean:
+clean:        # Remove temporary build files
 
 .PHONY: rmi
-rmi:
+rmi:          # Remove Docker images
 
 .PHONY: help
 help:

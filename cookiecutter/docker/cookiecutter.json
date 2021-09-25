@@ -1,8 +1,8 @@
 {
     "project_name": "my_project",
     "base_image_repository": "drtuxwang/alpine",
-    "base_image_tag": "3.12",
-    "image_name": "drtuxwang/alpine-bash:3.12",
-    "name": "alpine312-bash",
-    "hostname": "alpine312-bash"
+    "base_image_tag": "3.13",
+    "image_name": "drtuxwang/alpine-bash:3.13",
+    "name": "alpine313-bash",
+    "hostname": "alpine313-bash"
 }

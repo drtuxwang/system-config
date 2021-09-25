@@ -26,26 +26,26 @@ DOCKER_RUN_FLAGS := \
 default: build status
 
 .PHONY: status
-status:
+status:       # Status of Docker images
 	@make --no-print-directory -C .. status
 
 .PHONY: build
-build:
+build:        # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 
 .PHONY: run
-run:
+run:          # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:
+version:      # Check versions
 	@docker run $(DOCKER_RUN_FLAGS) --entrypoint devpi-server $(IMAGE) --version 2> /dev/null | \
 		   awk '{printf("'$(shell pwd)': devpi-server %s\n", $$1)}'
 
 .PHONY: rmi
-rmi:
+rmi:          # Remove Docker images
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: help

@@ -23,29 +23,39 @@ DOCKER_RUN_FLAGS := \
 default: build status
 
 .PHONY: status
-status:
+status:       # Status of Docker images
 	docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " | sort
 
+.PHONY: pull
+pull:         # Pull Docker base image
+	docker pull $(BASE_IMAGE)
+	docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/:/.* /') "
+
+.PHONY: save
+save:         # Save Docker base image as tar file
+	../bin/docker-save.sh $(BASE_IMAGE)
+
 .PHONY: build
-build:
-	../../bin/create-root-tar bin profile vimrc
+build:        # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
-run:
+run:          # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
-		sed -e "s@^@$(shell pwd): Alpine Linux @"
+version:      # Check versions
 
 .PHONY: rmi
-rmi:
+rmi:          # Remove Docker images
 	docker rmi -f $(IMAGE) ||:
+
+.PHONY: rmi-base
+rmi-base: rmi # Remove Docker images including base image
+	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help
 help:

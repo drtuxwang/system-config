@@ -29,7 +29,7 @@ endif
 default: status
 
 .PHONY: status
-status:
+status:       # Status of Helm release
 	$(HELM_INIT)
 	@echo "\n*** Helm client-server status ***"
 	helm version
@@ -39,7 +39,7 @@ status:
 	$(HELM_LIST)
 
 .PHONY: update
-update:
+update:       # Update Helm chart repository
 	helm repo list | grep -q stable || helm repo add stable https://charts.helm.sh/stable
 	helm repo list | grep -q bitnami || helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm repo list | grep -q concourse || helm repo add concourse https://concourse-charts.storage.googleapis.com
@@ -48,54 +48,55 @@ update:
 	helm repo list | grep -q prometheus-community || helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 	helm repo update
 
+.PHONY: version
+version:      # Helm chart versions
+	@for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR version || exit 1; \
+	done
+
 .PHONY: images
-images:
+images:       # Show Docker images
 	@for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR images || exit 1; \
 	done
 
 .PHONY: pull
-pull:
+pull:         # Pull Docker images
 	@for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR pull || exit 1; \
 	done
 
 .PHONY: save
-save:
+save:         # Save Docker images as tar file
 	@for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR save || exit 1; \
 	done
 
-.PHONY: version
-version:
-	@for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR version || exit 1; \
-	done
-
 .PHONY: install-tiller
-install-tiller:
+install-tiller: # Install legacy Helm 2.x server
 	kubectl --namespace=kube-system create serviceaccount tiller
 	kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
 	helm init --service-account tiller
 
 .PHONY: upgrade-tiller
-upgrade-tiller:
+upgrade-tiller: # Upgrade legacy Helm 2.x server
 	helm init --upgrade
 
 .PHONY: uninstall-tiller
-uninstall-tiller:
+uninstall-tiller: # Uninstall legacy Helm 2.x server
 	kubectl --namespace=kube-system delete serviceaccounts tiller ||:
 	kubectl --namespace=kube-system delete clusterrolebinding tiller ||:
 	kubectl --namespace=kube-system delete deploy tiller-deploy ||:
 
 .PHONY: clean
-clean:
+clean:        # Remove temporary build files
+	rm -f helm-images_*
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR clean; \
 	done
 
 .PHONY: rmi
-rmi:
+rmi:          # Remove Docker images
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR rmi; \
 	done

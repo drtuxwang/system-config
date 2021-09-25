@@ -9,20 +9,20 @@ BUILD_DIRS := bash dev
 default: build status
 
 .PHONY: status
-status:
+status:       # Status of Docker images
 	@docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " ||:
 	@docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/-.*:/:/;s/:/  */') " ||:
 
 .PHONY: pull
-pull:
+pull:         # Pull Docker base image
 	docker pull $(BASE_IMAGE)
 
 .PHONY: save
-save:
-	../bin/docker-save $(BASE_IMAGE)
+save:         # Save Docker base image as tar file
+	../bin/docker-save.sh $(BASE_IMAGE)
 
 .PHONY: build
-build:
+build:        # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf tmpdir
@@ -31,24 +31,24 @@ build:
 	done
 
 .PHONY: run
-run:
+run:          # Run Docker container
 	make -C bash run
 
 .PHONY: version
-version:
+version:      # Check versions
 	@for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory -C $$DIR version ||:; \
 	done
 
 .PHONY: rmi
-rmi:
+rmi:          # Remove Docker images
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR rmi; \
 	done
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: rmi-base
-rmi-base: rmi
+rmi-base: rmi # Remove Docker images including base image
 	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help

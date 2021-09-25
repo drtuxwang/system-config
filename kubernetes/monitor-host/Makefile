@@ -5,18 +5,18 @@ endif
 
 default: status
 
-.PHONY: create
-create:
-	@echo "\n*** Creating pods ***"
-	kubectl --namespace=$(NAMESPACE) create -f monitor-host-daemonset.yaml ||:
-
 .PHONY: status
-status:
+status:       # Show workload status
 	@echo "\n*** Checking status ***"
 	kubectl --namespace=$(NAMESPACE) get pod -o wide | grep ^monitor-host- ||:
 
+.PHONY: create
+create:       # Create workload
+	@echo "\n*** Creating pods ***"
+	kubectl --namespace=$(NAMESPACE) create -f monitor-host-daemonset.yaml ||:
+
 .PHONY: delete
-delete:
+delete:       # Delete workload
 	@echo "\n*** Removing pods ***"
 	kubectl --namespace=$(NAMESPACE) delete -f monitor-host-daemonset.yaml ||:
 

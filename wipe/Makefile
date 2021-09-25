@@ -1,7 +1,7 @@
 default: build
 
 .PHONY: build
-build: build
+build:        # Build executable
 	./COMPILE
 
 .PHONY: help

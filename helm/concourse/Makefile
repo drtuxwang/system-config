@@ -45,42 +45,54 @@ endif
 
 default: status
 
+.PHONY: status
+status:       # Status of Helm release
+	@echo "\n*** Checking status ***"
+	$(HELM_STATUS)
+	$(HELM_LIST)
+
 .PHONY: repo-add
-repo-add:
+repo-add:     # Add Helm repository
 	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
+.PHONY: version
+version:      # Helm chart versions
+	@$(HELM_VERSION) | tail -n +2 | \
+		grep -B 1000 "^$(CHART_REPO)/$(CHART_NAME)[	 ]*$(CHART_VERSION) " | \
+		sed -e "s/	/   /g" -e "s/   */   /g"
+
 .PHONY: fetch
-fetch: repo-add clean
+fetch: repo-add clean  # Fetch Helm chart
 	mkdir $(CHART_REPO) && \
 		cd $(CHART_REPO) && \
 		helm fetch --untar --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: images
-images:
+images:       # Show Docker images
 	@INGRESS_ENABLED=false make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
 
 .PHONY: pull
-pull:
+pull:         # Pull Docker images
 	@for IMAGE in `make --no-print-directory images`; do \
 		docker pull $$IMAGE; \
 	done
 
 .PHONY: save
-save:
-	../bin/helm-save \
+save:         # Save Docker images as tar file
+	../bin/helm-save.sh \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
 		$(APP_VERSION) \
 		$(shell make --no-print-directory images)
 
 .PHONY: template
-template: repo-add
+template: repo-add  # Show Helm template
 	helm template \
 		$(HELM_FLAGS) \
 		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
-check: repo-add
+check: repo-add  # Dryrun Helm install
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -89,7 +101,7 @@ check: repo-add
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
-install: repo-add
+install: repo-add  # Install Helm release
 	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
 	helm upgrade \
 		--install \
@@ -98,44 +110,32 @@ install: repo-add
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward
-forward:
+forward:      # Forward traffic to endpoint
 	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME)-web $(LOCALPORT):8080
 
 .PHONY: connect
-connect:
+connect:      # Connect to endpoint
 	@echo "Username: test"
 	@echo "Password: test"
 	@if [ "$(EXTERNAL_IP)" ]; then \
-		../../kubernetes/bin/kube-connect http://${HOSTNAME}; \
+		../../kubernetes/bin/kube-connect.sh http://${HOSTNAME}; \
 	else \
-		../../kubernetes/bin/kube-connect http://$(NAMESPACE)/service/${NAME}-web:8080; \
+		../../kubernetes/bin/kube-connect.sh http://$(NAMESPACE)/service/${NAME}-web:8080; \
 	fi
 
-.PHONY: status
-status:
-	@echo "\n*** Checking status ***"
-	$(HELM_STATUS)
-	$(HELM_LIST)
-
-.PHONY: version
-version:
-	@$(HELM_VERSION) | tail -n +2 | \
-		grep -B 1000 "^$(CHART_REPO)/$(CHART_NAME)[	 ]*$(CHART_VERSION) " | \
-		sed -e "s/	/   /g" -e "s/   */   /g"
-
 .PHONY: uninstall
-uninstall:
+uninstall:    # Uninstall Helm release
 	$(HELM_LIST)
 	$(HELM_UNINSTALL) ||:
 	sleep 2
 	kubectl delete namespace $(NAME)-main ||:
 
 .PHONY: clean
-clean:
+clean:        # Remove temporary build files
 	rm -rf $(CHART_REPO)
 
 .PHONY: rmi
-rmi:
+rmi:          # Remove Docker images
 	@for IMAGE in `make --no-print-directory images`; do \
 		docker rmi -f $$IMAGE ||:; \
 	done

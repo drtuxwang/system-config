@@ -7,28 +7,12 @@ endif
 
 default: test
 
-.PHONY: install
-install:
-	@echo "\n*** Installing Python 3 requirements ***"
-	etc/install-python-requirements.sh `which ${PYTHON}`
-
 .PHONY: test
-test: check lint
-
-.PHONY: docker-test
-docker-test:
-	make -C docker test
-
-.PHONY: check
-check:
+test:         # Run tests
 	@echo "\n*** Running \"${PYTHON}\" UNITTEST check ***"
 	${PYTHON} -m unittest discover --buffer bin
 	@echo "\n*** Running BSON/JSON/YAML check ***"
 	find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} +
-	@echo "\n*** Check successfull ***"
-
-.PHONY: lint
-lint:
 	@echo "\n*** Running \"${PYTHON}\" PYFLAKES checks ***"
 	${PYTHON} -m flake8 bin/*.py
 	@echo "\n*** Running \"${PYTHON}\" PYCODESTYLE (PEP8) checks ***"
@@ -37,7 +21,16 @@ lint:
 	${PYTHON} -m pylint --rcfile=.pylintrc bin/*.py
 	@echo "*** Running \"${PYTHON}\" MYPY type checks ***"
 	mypy --disallow-untyped-defs --no-strict-optional --cache-dir=/dev/null bin/*.py
-	@echo "\n*** Lint successfull ***"
+	@echo "\n*** Check successfull ***"
+
+.PHONY: docker-test
+docker-test:  # Run tests in docker
+	make -C docker test
+
+.PHONY: install
+install:      # Install Python packages
+	@echo "\n*** Installing Python 3 requirements ***"
+	etc/install-python-requirements.sh `which ${PYTHON}`
 
 .PHONY: help
 help:

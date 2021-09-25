@@ -14,16 +14,16 @@ default: test
 run: play
 
 .PHONY: test
-test:
+test:         # Dryrun Ansible changes
 	ansible-playbook --inventory=inventory/local_nodes local-playbook.yaml --limit $(HOST) $(TAGS) --diff --check
 
 .PHONY: play
-play:
+play:         # Apply Ansible changes
 	ansible-playbook --inventory=inventory/local_nodes local-playbook.yaml --limit $(HOST) $(TAGS) --diff
 
 .PHONY: tags
-tags:
-	@bin/check-tags
+tags:         # Show Ansible tags
+	@bin/show-tags.sh
 
 .PHONY: help
 help:

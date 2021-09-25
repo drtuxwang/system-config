@@ -38,62 +38,68 @@ TEST_DIRS := \
 default: build status
 
 .PHONY: status
-status:
+status:       # Status of Docker images
 	docker images | grep "^$(IMAGES) " | sort
 	docker system df
 
-.PHONY: project
-project:
+.PHONY: new
+new:          # Create new Docker project
 	python3 -m cookiecutter ../cookiecutter/docker
 
 .PHONY: check-base
 check-base:
-	grep "^FROM" */Dockerfile* | sort
+	grep "^BASE_IMAGE" */Makefile
 
 .PHONY: pull
-pull:
+pull:         # Pull Docker base image
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR pull || exit 1; \
 	done
 
+.PHONY: save
+save:         # Save Docker base image as tar file
+	for DIR in $(BUILD_DIRS); do \
+		make -C $$DIR save; \
+	done
+
 .PHONY: build
-build:
+build:        # Build Docker images
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR build || exit 1:; \
 	done
 
+.PHONY: run-sudo
+run-sudo:     # Run sudo docker container
+	make -C sudo run
+
 .PHONY: test
-test:
+test:         # Run tests
 	for DIR in $(TEST_DIRS); do \
 		make -C $$DIR test; \
 	done
 
+.PHONY: version
+version:      # Check versions
+	@for DIR in $(BUILD_DIRS); do \
+		make --no-print-directory -C $$DIR version || exit 1; \
+	done
+
 .PHONY:tag
-tag:
+tag:          # Tag stable Docker images
 	for IMAGE in $(STABLE_IMAGES); do \
 		echo docker tag $$IMAGE $${IMAGE%:*}:stable; \
 		docker tag $$IMAGE $${IMAGE%:*}:stable; \
 	done
 
 .PHONY: push
-push: tag
+push: tag     # Tag and push stable Docker images
 	for IMAGE in $(STABLE_IMAGES); do \
 		docker push $$IMAGE ; \
 		docker push $${IMAGE%:*}:stable ; \
 	done
 
-.PHONY: version
-version:
-	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR version || exit 1; \
-	done
-
-.PHONY: run-sudo
-run-sudo:
-	make -C sudo run
-
 .PHONY: prune
-prune:
+prune:        # Prune Docker images/containers
 	docker system df
 	df /var/lib/docker
 	docker system prune
@@ -109,18 +115,12 @@ prune:
 	@echo
 	docker network ls
 
-.PHONY: load
-load:
-	./docker-load.sh *.tar*
-
-.PHONY: save
-save:
-	for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR save; \
-	done
+.PHONY: clean
+clean:        # Remove temporary build files
+	rm -f docker-image_*
 
 .PHONY: rmi
-rmi:
+rmi:          # Remove Docker images
 	for IMAGE in $(PUSH_IMAGES); do \
 		docker rmi -f $${IMAGE%:*}:stable ||:; \
 	done
@@ -129,7 +129,7 @@ rmi:
 	done
 
 .PHONY: rmi-base
-rmi-base:
+rmi-base: rmi # Remove Docker images including base image
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR rmi-base; \
 	done

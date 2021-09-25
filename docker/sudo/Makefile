@@ -28,38 +28,38 @@ DOCKER_RUN_FLAGS := \
 default: build status
 
 .PHONY: status
-status:
+status:       # Status of Docker images
 	@docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " ||:
 	@docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/-.*:/:/;s/:/  */') " ||:
 
 .PHONY: pull
-pull:
+pull:         # Pull Docker base image
+
+.PHONY: save
+save:         # Save Docker base image as tar file
 
 .PHONY: build
-build:
-	../bin/create-root-tar bash tmux vim
+build:        # Build Docker images
+	../bin/create-root-tar.sh bash tmux vim
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) --force-rm=true -t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
-run:
+run:          # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:
+version:      # Check versions
 	@echo "$(shell pwd): scratch"
 
-.PHONY: save
-save:
-
 .PHONY: rmi
-rmi:
+rmi:          # Remove Docker images
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: rmi-base
-rmi-base: rmi
+rmi-base: rmi # Remove Docker images including base image
 	docker rmi -f $(BASE_IMAGE) ||:
 
 .PHONY: help

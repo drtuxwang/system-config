@@ -1,7 +1,7 @@
 default: help
 
 .PHONY: docker
-docker:
+docker:       # Create new Docker project
 	cookiecutter docker
 
 .PHONY: help
