@@ -179,20 +179,16 @@ the years. Now most of the scripts are written in Python 3.
  * bin/cluster.py
  * bin/deb                Debian package management tools
  * bin/deb.py             (support offline repository searching and update checks
- * bin/debchkdir
- * bin/debchkdir.py
- * bin/debchkinstall
- * bin/debchkinstall.py
- * bin/debchkupdate
- * bin/debchkupdate.py
- * bin/debdistfind
- * bin/debdistfind.py
- * bin/debdistget
- * bin/debdistget.py
- * bin/debdistgrep
- * bin/debdistgrep.py
- * bin/debdistinfo
- * bin/debdistinfo.py
+ * bin/debcheck
+ * bin/debcheck.py
+ * bin/debget
+ * bin/debget.py
+ * bin/debgrep
+ * bin/debgrep.py
+ * bin/debinstall
+ * bin/debinstall.py
+ * bin/debupdate
+ * bin/debupdate.py
  * bin/dep                dep wrapper (for golang)
  * bin/dep.py
  * bin/dockerreg          Docker Registry tool

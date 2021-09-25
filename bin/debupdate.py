@@ -51,7 +51,7 @@ class Options:
         parser.add_argument(
             'list_files',
             nargs='+',
-            metavar='distribution.debs',
+            metavar='distro.debs',
             help='Debian installed packages ".debs" list file.'
         )
 
@@ -180,11 +180,11 @@ class Main:
         return data
 
     @classmethod
-    def _read_distribution_packages(cls, packages_file: str) -> dict:
-        distribution_data = cls._read_data(packages_file)
+    def _read_distro_packages(cls, packages_file: str) -> dict:
+        distro_data = cls._read_data(packages_file)
         lines = []
-        for url in distribution_data['urls']:
-            lines.extend(distribution_data['data'][url]['text'])
+        for url in distro_data['urls']:
+            lines.extend(distro_data['data'][url]['text'])
 
         packages: dict = {}
         name = ''
@@ -209,7 +209,7 @@ class Main:
                 package = Package()
         return packages
 
-    def _read_distribution_pin_packages(self, pin_file: str) -> None:
+    def _read_distro_pin_packages(self, pin_file: str) -> None:
         packages_cache = {}
         try:
             with open(pin_file, errors='replace') as ifile:
@@ -224,7 +224,7 @@ class Main:
                             ) + '.json'
                             if file not in packages_cache:
                                 packages_cache[file] = (
-                                    self._read_distribution_packages(file))
+                                    self._read_distro_packages(file))
                             try:
                                 ispattern = re.compile(pattern.replace(
                                     '?', '.').replace('*', '.*')+'$')
@@ -236,7 +236,7 @@ class Main:
         except OSError:
             pass
 
-    def _read_distribution_deny_list(self, file: str) -> None:
+    def _read_distro_deny_list(self, file: str) -> None:
         try:
             with open(file, errors='replace') as ifile:
                 for line in ifile:
@@ -252,9 +252,9 @@ class Main:
         except OSError:
             return
 
-    def _check_distribution_updates(
+    def _check_distro_updates(
         self,
-        distribution: str,
+        distro: str,
         list_file: str,
     ) -> None:
         try:
@@ -267,7 +267,7 @@ class Main:
                         except ValueError as exception:
                             raise SystemExit(
                                 sys.argv[0] + ': Format error in "' +
-                                os.path.join(distribution, list_file) + '".'
+                                os.path.join(distro, list_file) + '".'
                             ) from exception
                         versions[name] = version
         except OSError as exception:
@@ -275,8 +275,9 @@ class Main:
                 sys.argv[0] + ': Cannot read "' + list_file + '" file.'
             ) from exception
 
-        urlfile = os.path.basename(
-            distribution) + list_file.split('.debs')[-1]+'.url'
+        urlfile = (
+            os.path.basename(distro) + list_file.split('.debs')[-1]+'.url'
+        )
         try:
             with open(urlfile, 'w', newline='\n') as ofile:
                 for name, version in sorted(versions.items()):
@@ -284,7 +285,7 @@ class Main:
                         new_version = self._packages[name].get_version()
                         if new_version != version:
                             file = self._local(
-                                distribution,
+                                distro,
                                 self._packages[name].get_url()
                             )
                             logger.info(
@@ -306,7 +307,7 @@ class Main:
                             )):
                                 if dependency in self._packages:
                                     file = self._local(
-                                        distribution,
+                                        distro,
                                         self._packages[dependency].get_url()
                                     )
                                     logger.warning("    %s", file)
@@ -333,8 +334,8 @@ class Main:
         return names
 
     @staticmethod
-    def _local(distribution: str, url: str) -> str:
-        file = os.path.join(distribution, os.path.basename(url))
+    def _local(distro: str, url: str) -> str:
+        file = os.path.join(distro, os.path.basename(url))
         if os.path.isfile(file):
             return 'file://' + os.path.abspath(file)
         return url
@@ -353,16 +354,16 @@ class Main:
             if os.path.getsize(list_file) > 0:
                 if os.path.isfile(list_file):
                     if ispattern.search(list_file):
-                        distribution = ispattern.sub('', list_file)
+                        distro = ispattern.sub('', list_file)
                         logger.info('Checking "%s" list file.', list_file)
-                        self._packages = self._read_distribution_packages(
-                            distribution + '.json')
-                        self._read_distribution_pin_packages(
-                            distribution + '.debs:select')
-                        self._read_distribution_deny_list(
-                            distribution + '.debs:deny')
-                        self._check_distribution_updates(
-                            distribution, list_file)
+                        self._packages = self._read_distro_packages(
+                            distro + '.json')
+                        self._read_distro_pin_packages(
+                            distro + '.debs:select')
+                        self._read_distro_deny_list(
+                            distro + '.debs:deny')
+                        self._check_distro_updates(
+                            distro, list_file)
 
         return 0
 

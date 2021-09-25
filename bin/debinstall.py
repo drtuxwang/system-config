@@ -36,11 +36,11 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_distribution(self) -> str:
+    def get_distro(self) -> str:
         """
-        Return distribution name.
+        Return distro name.
         """
-        return self._distribution
+        return self._distro
 
     def get_list_file(self) -> str:
         """
@@ -63,7 +63,7 @@ class Options:
         parser.add_argument(
             'list_file',
             nargs=1,
-            metavar='distribution.debs',
+            metavar='distro.debs',
             help='Debian installed packages ".debs" list file.'
         )
         parser.add_argument(
@@ -88,7 +88,7 @@ class Options:
                 sys.argv[0] + ': Invalid "' + list_file +
                 '" installed ".debs" list filename.'
             )
-        self._distribution = ispattern.sub('', list_file)
+        self._distro = ispattern.sub('', list_file)
 
 
 class Package:
@@ -232,11 +232,11 @@ class Main:
         return data
 
     @classmethod
-    def _read_distribution_packages(cls, packages_file: str) -> dict:
-        distribution_data = cls._read_data(packages_file)
+    def _read_distro_packages(cls, packages_file: str) -> dict:
+        distro_data = cls._read_data(packages_file)
         lines = []
-        for url in distribution_data['urls']:
-            lines.extend(distribution_data['data'][url]['text'])
+        for url in distro_data['urls']:
+            lines.extend(distro_data['data'][url]['text'])
 
         packages: dict = {}
         name = ''
@@ -262,7 +262,7 @@ class Main:
                 package = Package()
         return packages
 
-    def _read_distribution_pin_packages(self, pin_file: str) -> None:
+    def _read_distro_pin_packages(self, pin_file: str) -> None:
         packages_cache = {}
         try:
             with open(pin_file, errors='replace') as ifile:
@@ -275,7 +275,7 @@ class Main:
                                 pin_file), columns[1]) + '.json'
                             if file not in packages_cache:
                                 packages_cache[file] = (
-                                    self._read_distribution_packages(file))
+                                    self._read_distro_packages(file))
                             try:
                                 ispattern = re.compile(pattern.replace(
                                     '?', '.').replace('*', '.*')+'$')
@@ -287,7 +287,7 @@ class Main:
         except OSError:
             pass
 
-    def _read_distribution_installed(self, installed_file: str) -> None:
+    def _read_distro_installed(self, installed_file: str) -> None:
         try:
             with open(installed_file, errors='replace') as ifile:
                 for line in ifile:
@@ -301,7 +301,7 @@ class Main:
 
     def _check_package_install(
         self,
-        distribution: str,
+        distro: str,
         ofile: TextIO,
         indent: str,
         name: str,
@@ -315,10 +315,7 @@ class Main:
                     self._packages[name].get_url(),
                 )
             else:
-                file = self._local(
-                    distribution,
-                    self._packages[name].get_url()
-                )
+                file = self._local(distro, self._packages[name].get_url())
                 logger.warning("%s%s", indent, file)
                 print(indent + file, file=ofile)
             for i in self._packages[name].get_depends():
@@ -330,14 +327,18 @@ class Main:
                             self._packages[i].get_url(),
                         )
                     elif (
-                            not self._packages[i].get_checked_flag() and
-                            not self._packages[name].get_installed_flag()
+                        not self._packages[i].get_checked_flag() and
+                        not self._packages[name].get_installed_flag()
                     ):
                         self._check_package_install(
-                            distribution, ofile, indent + '  ', i)
+                            distro,
+                            ofile,
+                            indent + '  ',
+                            i,
+                        )
                     self._packages[i].set_checked_flag(True)
 
-    def _read_distribution_deny_list(self, file: str) -> None:
+    def _read_distro_deny_list(self, file: str) -> None:
         try:
             with open(file, errors='replace') as ifile:
                 for line in ifile:
@@ -347,26 +348,26 @@ class Main:
                         if not line.strip().startswith('#'):
                             if name in self._packages:
                                 if columns[1] == (
-                                        '*',
-                                        self._packages[name].get_version()
+                                    '*',
+                                    self._packages[name].get_version()
                                 ):
                                     del self._packages[name]
         except OSError:
             return
 
-    def _check_distribution_install(
+    def _check_distro_install(
         self,
-        distribution: str,
+        distro: str,
         list_file: str,
         names: List[str],
     ) -> None:
         urlfile = os.path.basename(
-            distribution) + list_file.split('.debs')[-1] + '.url'
+            distro) + list_file.split('.debs')[-1] + '.url'
         try:
             with open(urlfile, 'w', newline='\n') as ofile:
                 indent = ''
                 for i in names:
-                    self._check_package_install(distribution, ofile, indent, i)
+                    self._check_package_install(distro, ofile, indent, i)
         except OSError as exception:
             raise SystemExit(
                 sys.argv[0] + ': Cannot create "' + urlfile + '" file.'
@@ -375,8 +376,8 @@ class Main:
             os.remove(urlfile)
 
     @staticmethod
-    def _local(distribution: str, url: str) -> str:
-        file = os.path.join(distribution, os.path.basename(url))
+    def _local(distro: str, url: str) -> str:
+        file = os.path.join(distro, os.path.basename(url))
         if os.path.isfile(file):
             return 'file://' + os.path.abspath(file)
         return url
@@ -387,18 +388,18 @@ class Main:
         """
         options = Options()
 
-        self._packages = self._read_distribution_packages(
-            options.get_distribution() + '.json')
-        self._read_distribution_pin_packages(
-            options.get_distribution() + '.debs:select')
-        self._read_distribution_installed(options.get_list_file())
+        self._packages = self._read_distro_packages(
+            options.get_distro() + '.json')
+        self._read_distro_pin_packages(
+            options.get_distro() + '.debs:select')
+        self._read_distro_installed(options.get_list_file())
 
         ispattern = re.compile('[.]debs-?.*$')
-        distribution = ispattern.sub('', options.get_list_file())
-        self._read_distribution_deny_list(distribution + '.debs:deny')
+        distro = ispattern.sub('', options.get_list_file())
+        self._read_distro_deny_list(distro + '.debs:deny')
 
-        self._check_distribution_install(
-            options.get_distribution(),
+        self._check_distro_install(
+            options.get_distro(),
             options.get_list_file(),
             options.get_package_names()
         )
