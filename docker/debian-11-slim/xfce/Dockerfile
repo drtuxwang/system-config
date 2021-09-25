@@ -39,7 +39,7 @@ RUN \
         tmux \
         x11-xserver-utils \
         xauth && \
-#    mkdir -p /var/run/sshd && \
+    mkdir -p /run/sshd && \
     # XFCE desktop
     apt-get install --no-install-recommends -y \
         xorg \

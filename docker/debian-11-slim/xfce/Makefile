@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/debian:10-slim
-IMAGE := drtuxwang/debian-xfce:10-slim
-NAME := debian10-xfce
-HOSTNAME := debian10-xfce
+BASE_IMAGE := drtuxwang/debian:11-slim
+IMAGE := drtuxwang/debian-xfce:11-slim
+NAME := debian11-xfce
+HOSTNAME := debian11-xfce
 LOCALPORT ?= 2222
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
