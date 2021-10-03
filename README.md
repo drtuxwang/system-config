@@ -96,6 +96,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/pip3.bat
  * bin/pip3.5
  * bin/pip3.5.bat
+ * bin/poetry
  * bin/pycodestyle
  * bin/pycodestyle.bat
  * bin/pydoc3
@@ -905,6 +906,7 @@ the years. Now most of the scripts are written in Python 3.
  * etc/python-requirements_2.7_mac.txt   Python 2.7 pip requirements file for Mac
  * etc/python-requirements_3.5.txt       Python 3.5 pip requirements file
  * etc/python-requirements_3.6.txt       Python 3.6 pip requirements file
+ * etc/python-requirements_3.7.txt       Python 3.7 pip requirements file
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization

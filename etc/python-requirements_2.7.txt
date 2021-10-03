@@ -1,6 +1,9 @@
+ansible==None
+ansible-core==None
 appimage-builder==None
 astroid==1.6.6
 bcrypt==3.1.7
+build==0.5.1
 cachetools==3.1.1
 cffi==1.14.1
 check-manifest==0.41
@@ -19,9 +22,11 @@ motor==2.1.0
 mutagen==1.43.1
 numpy==None
 pip==20.2.4
+poetry==None
 # pycrypto==2.6.1  # Required by abettersqlplus
 pycurl==7.43.0.5
 pylint==1.9.4
+pyparsing==2.2.2  # New version incompatible
 pytest==4.6.11
 Pillow==None
 scipy==None

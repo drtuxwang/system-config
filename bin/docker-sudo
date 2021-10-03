@@ -14,12 +14,7 @@ else
     exit 1
 fi
 
+export DOCKER_RUN_FLAGS="--workdir=$PWD"
 export DOCKER_RUN_COMMAND="$@"
-if [ "$DOCKER_RUN_COMMAND" ]
-then
-    export DOCKER_RUN_FLAGS="--workdir=$PWD"
-else
-    export DOCKER_RUN_FLAGS=
-fi
 
 exec make --quiet -C $DIR/docker run-sudo

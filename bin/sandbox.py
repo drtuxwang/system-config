@@ -89,7 +89,9 @@ class Options:
         else:
             self._command = self._get_command('bash', ['-l'])
 
-        if not self._args.allow_mounts:
+        if self._args.allow_mounts:
+            configs = ['/']
+        else:
             # "os.getcwd()" returns realpath instead
             work_dir = os.environ['PWD']
             if work_dir == os.environ['HOME']:
@@ -98,8 +100,6 @@ class Options:
                     os.chdir(desktop)
                     work_dir = desktop
             configs = [work_dir]
-        else:
-            configs = ['/', '/dev/dri', '/dev/shm']
         if self._args.allow_net:
             configs.append('net')
         self._command.sandbox(configs, errors='stop')

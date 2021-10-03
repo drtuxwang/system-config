@@ -253,7 +253,7 @@ class DockerRegistry2(DockerRegistry):
         }, verify=SSL_VERIFY)
 
         try:
-            last_layer = response.json()['history'][1]['v1Compatibility']
+            last_layer = response.json()['history'][0]['v1Compatibility']
             timestamp = json.loads(last_layer)['created'].split('.', 1)[0]
         except IndexError:
             timestamp = '????-??-??T??:??:??'

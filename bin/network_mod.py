@@ -14,8 +14,8 @@ from typing import Any, List, Optional, Tuple
 
 import command_mod
 
-RELEASE = '3.3.1'
-VERSION = 20210916
+RELEASE = '3.3.2'
+VERSION = 20210927
 
 
 class NetNice(command_mod.Command):
@@ -205,7 +205,7 @@ class Sandbox(command_mod.Command):
                 cmdline.extend(['--ro-bind-try', realpath, directory])
                 self._show(
                     Sandbox.YELLOW,
-                    "Enable read access to application {0:s}".format(
+                    "Enable access to application {0:s}:ro".format(
                         directory,
                     ),
                 )
@@ -222,7 +222,7 @@ class Sandbox(command_mod.Command):
                 cmdline.extend(['--ro-bind-try', realpath, mount])
                 self._show(
                     Sandbox.YELLOW,
-                    "Enable read access {0:s}".format(mount),
+                    "Enable access {0:s}:ro".format(mount),
                 )
 
         # Enable access rights
@@ -233,16 +233,26 @@ class Sandbox(command_mod.Command):
                     os.makedirs(realpath)
                 cmdline.extend(['--bind-try', realpath, mount])
                 if realpath == '/':
-                    cmdline.extend(['--dev', 'dev'])
-                self._show(
-                    Sandbox.GREEN,
-                    "Enable read/write access {0:s}".format(config),
-                )
+                    cmdline.extend([
+                        '--dev',
+                        'dev',
+                        '--dev-bind-try',
+                        '/dev/dri',
+                        '/dev/dri',
+                        '--dev-bind-try',
+                        '/dev/shm',
+                        '/dev/shm',
+                    ])
+                else:
+                    self._show(
+                        Sandbox.YELLOW,
+                        "Enable access {0:s}".format(config),
+                    )
             elif config.startswith('/dev/'):
                 cmdline.extend(['--dev-bind-try', realpath, mount])
                 self._show(
-                    Sandbox.GREEN,
-                    "Enable device access {0:s}".format(config),
+                    Sandbox.YELLOW,
+                    "Enable access {0:s}".format(config),
                 )
             elif not mount.startswith(allow_reads):
                 cmdline.extend(['--ro-bind-try', realpath, mount])
@@ -286,12 +296,11 @@ class Sandbox(command_mod.Command):
 
         self._show(Sandbox.BLUE, self.get_file())
 
-        if network:
-            self._show(Sandbox.GREEN, "Enable external network access")
-        else:
+        if not network:
             self._show(
                 Sandbox.MAGENTA,
-                "Disable external network access (nonet group / iptables)",
+                "Disable external network access "
+                "(using nonet group & iptables)",
             )
 
         cmdline = self._config_access(bwrap, configs)
