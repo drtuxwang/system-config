@@ -129,6 +129,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/aftp.py
  * bin/aplay              Play MP3/OGG/WAV audio files in directory
  * bin/aplay.py           (uses vlc)
+ * bin/appimagetool       Sandbox for "appimagetool" launcher (allowing non systems port)
+ * bin/appimagetool.py
  * bin/aria2c             aria2c wrapper (allowing non systems port)
  * bin/aria2c.py          (bandwidth 512KB limit default using "trickle", "$HOME/.config/tickle.json)
  * bin/audacity           Sandbox for "audacity" launcher (allowing non systems port)
@@ -923,6 +925,7 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/inventory/host_vars/hotdog.local
  * ansible/inventory/host_vars/koko.local
  * ansible/inventory/host_vars/netbook.local
+ * ansible/inventory/host_vars/netty.local
  * ansible/inventory/host_vars/webtv.local
  * ansible/inventory/host_vars/xiaobear.local
  * ansible/inventory/local_nodes

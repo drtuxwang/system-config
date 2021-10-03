@@ -3,5 +3,3 @@ dhclient_call: false
 gui_apps: true
 sudo_commands: true
 vbox_shared: true
-
-htop_ver: 3

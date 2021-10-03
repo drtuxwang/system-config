@@ -59,7 +59,7 @@
             file_ops.confirm_move_to_trash = "true" 
             file_ops.enable_delete_key = "true" 
             file_ops.use_system_trash = "false" 
-            file_ops.safe_delete_enable = "false" 
+            file_ops.safe_delete_enable = "true" 
             file_ops.safe_delete_path = "/home/owner/.cache/geeqie/trash" 
             file_ops.safe_delete_folder_maxsize = "1" 
             file_ops.no_trash = "true" 

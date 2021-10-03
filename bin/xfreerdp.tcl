@@ -34,4 +34,4 @@ pack .connect -fill x
 set hostname {hostname.local}
 set username {domain\user}
 set password {???}
-set size {1024x768}
+set size {1280x720}

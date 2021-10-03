@@ -74,7 +74,7 @@ class Options:
         )
         self._vncserver.set_args([
             '-geometry',
-            '1024x768',
+            '1280x720',
             '-depth',
             '24',
             '-localhost',
