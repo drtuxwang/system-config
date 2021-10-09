@@ -170,7 +170,7 @@ class Main:
     @staticmethod
     def _read_data(file: str) -> dict:
         try:
-            with open(file) as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 data = json.load(ifile)
         except (OSError, json.decoder.JSONDecodeError) as exception:
             raise SystemExit(
@@ -212,7 +212,7 @@ class Main:
     def _read_distro_pin_packages(self, pin_file: str) -> None:
         packages_cache = {}
         try:
-            with open(pin_file, errors='replace') as ifile:
+            with open(pin_file, encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     if columns:
@@ -238,7 +238,7 @@ class Main:
 
     def _read_distro_deny_list(self, file: str) -> None:
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     if columns:
@@ -258,7 +258,7 @@ class Main:
         list_file: str,
     ) -> None:
         try:
-            with open(list_file, errors='replace') as ifile:
+            with open(list_file, encoding='utf-8', errors='replace') as ifile:
                 versions = {}
                 for line in ifile:
                     if not line.startswith('#'):
@@ -279,7 +279,7 @@ class Main:
             os.path.basename(distro) + list_file.split('.debs')[-1]+'.url'
         )
         try:
-            with open(urlfile, 'w', newline='\n') as ofile:
+            with open(urlfile, 'w', encoding='utf-8', newline='\n') as ofile:
                 for name, version in sorted(versions.items()):
                     if name in self._packages:
                         new_version = self._packages[name].get_version()

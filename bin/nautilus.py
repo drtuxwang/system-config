@@ -44,7 +44,7 @@ class Options:
         file = os.path.join(configdir, 'mimeapps.list')
         if not os.path.isfile(file):
             try:
-                with open(file, 'w', newline='\n') as ofile:
+                with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                     print("[Added Associations]", file=ofile)
                     print("audio/ac3=vlc.desktop;", file=ofile)
                     print("audio/mp4=vlc.desktop;", file=ofile)
@@ -97,7 +97,7 @@ class Options:
         file = os.path.join(configdir, app_name + '-userapp.desktop')
         if not os.path.isfile(file):
             try:
-                with open(file, 'w', newline='\n') as ofile:
+                with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                     print("[Desktop Entry]", file=ofile)
                     print("Name=" + app_name, file=ofile)
                     print("Exec=" + app_name, ' %f', file=ofile)
@@ -109,12 +109,12 @@ class Options:
         file = os.path.join(configdir, 'mimeinfo.cache')
         try:
             if not os.path.isfile(file):
-                with open(file, 'w', newline='\n') as ofile:
+                with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                     print("[MIME Cache]", file=ofile)
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 if mime_type + '=' + app_name + '-userapp.desktop' in ifile:
                     return
-            with open(file, 'a', newline='\n') as ofile:
+            with open(file, 'a', encoding='utf-8', newline='\n') as ofile:
                 print(
                     mime_type + '=' + app_name + '-userapp.desktop',
                     file=ofile

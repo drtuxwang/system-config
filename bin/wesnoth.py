@@ -57,6 +57,7 @@ class Main:
             configs = [
                 '/dev/dri',
                 '/dev/shm',
+                '/run/user/{0:d}/pulse'.format(os.getuid()),
             ]
             configs.extend(glob.glob(os.path.join(
                 os.getenv('HOME', '/'),
@@ -67,7 +68,8 @@ class Main:
                 configs.append('net')
             wesnoth.sandbox(configs)
 
-        subtask_mod.Exec(wesnoth.get_cmdline()).run()
+        pattern = 'deprecation:'
+        subtask_mod.Task(wesnoth.get_cmdline()).run(pattern=pattern)
 
 
 if __name__ == '__main__':

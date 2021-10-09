@@ -29,8 +29,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable = import-error
 
-RELEASE = '5.16.4'
-VERSION = 20210807
+RELEASE = '5.16.5'
+VERSION = 20211006
 
 # pylint: disable = too-many-lines
 
@@ -581,7 +581,11 @@ class PosixSystem(OperatingSystem):
         """
         ispattern = re.compile(r'\s*(domain|search)\s')
         try:
-            with open('/etc/resolv.conf', errors='replace') as ifile:
+            with open(
+                '/etc/resolv.conf',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     if ispattern.match(line):
                         fqdn = socket.gethostname(
@@ -601,7 +605,11 @@ class PosixSystem(OperatingSystem):
         info = super().get_net_info()
         ispattern = re.compile(r'\s*nameserver\s*\d')
         try:
-            with open('/etc/resolv.conf', errors='replace') as ifile:
+            with open(
+                '/etc/resolv.conf',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     if ispattern.match(line):
                         info['Net IPvx DNS'].append(line.split()[1])
@@ -697,8 +705,9 @@ class LinuxSystem(PosixSystem):
         if 'nvidia' in line.lower():
             try:
                 with open(
-                        '/proc/driver/nvidia/version',
-                        errors='replace'
+                    '/proc/driver/nvidia/version',
+                    encoding='utf-8',
+                    errors='replace'
                 ) as ifile:
                     for line2 in ifile:
                         if 'Kernel Module ' in line2:
@@ -720,7 +729,11 @@ class LinuxSystem(PosixSystem):
         info = {}
         ispattern = re.compile(r' ?\d+ ')
         try:
-            with open('/proc/asound/cards', errors='replace') as ifile:
+            with open(
+                '/proc/asound/cards',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     if ispattern.match(line):
                         try:
@@ -735,7 +748,11 @@ class LinuxSystem(PosixSystem):
             for file in sorted(glob.glob(
                     '/proc/asound/card' + card + '/pcm*[cp]/info')):
                 try:
-                    with open(file, errors='replace') as ifile:
+                    with open(
+                        file,
+                        encoding='utf-8',
+                        errors='replace',
+                    ) as ifile:
                         for line in ifile:
                             if line.startswith('name: '):
                                 name = model + ' ' + line.rstrip(
@@ -763,14 +780,16 @@ class LinuxSystem(PosixSystem):
         for directory in sorted(glob.glob('/proc/ide/hd*')):
             try:
                 with open(
-                        os.path.join(directory, 'driver'),
-                        errors='replace'
+                    os.path.join(directory, 'driver'),
+                    encoding='utf-8',
+                    errors='replace'
                 ) as ifile:
                     for line in ifile:
                         if line.startswith('ide-cdrom '):
                             with open(
-                                    os.path.join(directory, 'model'),
-                                    errors='replace'
+                                os.path.join(directory, 'model'),
+                                encoding='utf-8',
+                                errors='replace'
                             ) as ifile:
                                 model = ifile.readline().strip()
                                 Writer.output(
@@ -793,15 +812,23 @@ class LinuxSystem(PosixSystem):
             try:
                 if os.path.isdir('/sys/bus/scsi/devices/' + identity):
                     with open(
-                            os.path.join(
-                                '/sys/bus/scsi/devices', identity, 'vendor'),
-                            errors='replace'
+                        os.path.join(
+                            '/sys/bus/scsi/devices',
+                            identity,
+                            'vendor',
+                        ),
+                        encoding='utf-8',
+                        errors='replace'
                     ) as ifile:
                         model = ifile.readline().strip()
                     with open(
-                            os.path.join(
-                                '/sys/bus/scsi/devices', identity, 'model'),
-                            errors='replace'
+                        os.path.join(
+                            '/sys/bus/scsi/devices',
+                            identity,
+                            'model',
+                        ),
+                        encoding='utf-8',
+                        errors='replace',
                     ) as ifile:
                         model += ' ' + ifile.readline().strip()
             except OSError:
@@ -815,7 +842,11 @@ class LinuxSystem(PosixSystem):
         unit = 0
         isjunk = re.compile('.*Vendor: | *Model:| *Rev: .*')
         try:
-            with open('/proc/scsi/scsi', errors='replace') as ifile:
+            with open(
+                '/proc/scsi/scsi',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     if 'Vendor: ' in line and 'Model: ' in line:
                         model = isjunk.sub('', line.rstrip('\r\n'))
@@ -849,13 +880,21 @@ class LinuxSystem(PosixSystem):
         info['partitions'] = []
         info['swaps'] = []
         try:
-            with open('/proc/partitions', errors='replace') as ifile:
+            with open(
+                '/proc/partitions',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     info['partitions'].append(line.rstrip('\r\n'))
         except OSError:
             pass
         try:
-            with open('/proc/swaps', errors='replace') as ifile:
+            with open(
+                '/proc/swaps',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     if line.startswith('/dev/'):
                         info['swaps'].append(line.split()[0])
@@ -867,7 +906,11 @@ class LinuxSystem(PosixSystem):
     def _scan_mounts(info: dict) -> None:
         info['mounts'] = {}
         try:
-            with open('/proc/mounts', errors='replace') as ifile:
+            with open(
+                '/proc/mounts',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     try:
                         device, mount_point, mount_type = line.split()[:3]
@@ -882,7 +925,11 @@ class LinuxSystem(PosixSystem):
             pass
 
         try:
-            with open('/proc/swaps', errors='replace') as ifile:
+            with open(
+                '/proc/swaps',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     if line.startswith('/dev/'):
                         info['swaps'].append(line.split()[0])
@@ -936,13 +983,18 @@ class LinuxSystem(PosixSystem):
     @classmethod
     def _detect_disk_ide(cls, info: dict, directory: str) -> None:
         with open(
-                os.path.join(directory, 'driver'),
-                errors='replace'
+            os.path.join(directory, 'driver'),
+            encoding='utf-8',
+            errors='replace'
         ) as ifile:
             for line in ifile:
                 if line.startswith('ide-disk '):
                     file = os.path.join(directory, 'model')
-                    with open(file, errors='replace') as ifile2:
+                    with open(
+                        file,
+                        encoding='utf-8',
+                        errors='replace',
+                    ) as ifile2:
                         model = ifile2.readline().rstrip('\r\n')
                     hdx = os.path.basename(directory)
                     for partition in info['partitions']:
@@ -957,15 +1009,25 @@ class LinuxSystem(PosixSystem):
 
         try:
             if os.path.isdir('/sys/bus/scsi/devices/' + identity):
-                with open(os.path.join(
+                with open(
+                    os.path.join(
                         '/sys/bus/scsi/devices',
                         identity,
                         'vendor',
-                ), errors='replace') as ifile:
+                    ),
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     model = ifile.readline().strip()
-                with open(os.path.join(
-                        '/sys/bus/scsi/devices', identity, 'model'
-                ), errors='replace') as ifile:
+                with open(
+                    os.path.join(
+                        '/sys/bus/scsi/devices',
+                        identity,
+                        'model',
+                    ),
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     model += ' ' + ifile.readline().strip()
         except OSError:
             model = '???'
@@ -1072,7 +1134,11 @@ class LinuxSystem(PosixSystem):
         unit = 0
         isjunk = re.compile('.*Vendor: | *Model:| *Rev: .*')
         try:
-            with open('/proc/scsi/scsi', errors='replace') as ifile:
+            with open(
+                '/proc/scsi/scsi',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     if 'Vendor: ' in line and 'Model: ' in line:
                         model = isjunk.sub('', line.rstrip('\r\n'))
@@ -1088,7 +1154,7 @@ class LinuxSystem(PosixSystem):
         for directory in glob.glob('/sys/class/block/dm-*'):
             file = os.path.join(directory, 'dm/name')
             try:
-                with open(file, errors='replace') as ifile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
                     device = '/dev/mapper/' + ifile.readline().strip()
             except OSError:
                 device = '???'
@@ -1100,14 +1166,14 @@ class LinuxSystem(PosixSystem):
 
             file = os.path.join(directory, 'size')
             try:
-                with open(file, errors='replace') as ifile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
                     size = '{0:d} KB'.format(int(ifile.readline()) >> 1)
             except (OSError, ValueError):
                 size = '??? KB'
 
             file = os.path.join(directory, 'dm', 'uuid')
             try:
-                with open(file, errors='replace') as ifile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
                     slaves = ifile.readline().split('-')[0] + ':' + slaves
             except (OSError, ValueError):
                 slaves = '???:' + slaves
@@ -1224,7 +1290,11 @@ class LinuxSystem(PosixSystem):
         info = {}
         model = '???'
         try:
-            with open('/proc/bus/input/devices', errors='replace') as ifile:
+            with open(
+                '/proc/bus/input/devices',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     if line.startswith('N: Name="'):
                         model = line.split('"')[1]
@@ -1274,8 +1344,9 @@ class LinuxSystem(PosixSystem):
             device = os.path.basename(directory)
             try:
                 with open(
-                        os.path.join(directory, 'name'),
-                        errors='replace'
+                    os.path.join(directory, 'name'),
+                    encoding='utf-8',
+                    errors='replace'
                 ) as ifile:
                     Writer.output(
                         name='Video device',
@@ -1375,13 +1446,21 @@ class LinuxSystem(PosixSystem):
 
         if os.path.isfile('/etc/redhat-release'):
             try:
-                with open('/etc/redhat-release', errors='replace') as ifile:
+                with open(
+                    '/etc/redhat-release',
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     info['OS Name'] = ifile.readline().rstrip('\r\n')
             except OSError:
                 pass
         elif os.path.isfile('/etc/SuSE-release'):
             try:
-                with open('/etc/SuSE-release', errors='replace') as ifile:
+                with open(
+                    '/etc/SuSE-release',
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     info['OS Name'] = ifile.readline().rstrip('\r\n')
                     for line in ifile:
                         if 'PATCHLEVEL' in line:
@@ -1394,7 +1473,11 @@ class LinuxSystem(PosixSystem):
                 info['OS Name'] = 'Unknown'
         elif os.path.isfile('/etc/alpine-release'):
             try:
-                with open('/etc/alpine-release', errors='replace') as ifile:
+                with open(
+                    '/etc/alpine-release',
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     info['OS Name'] = (
                         'Alpine ' + ifile.readline().rstrip('\r\n')
                     )
@@ -1409,7 +1492,11 @@ class LinuxSystem(PosixSystem):
 
         if os.path.isfile('/etc/lsb-release'):
             try:
-                with open('/etc/lsb-release', errors='replace') as ifile:
+                with open(
+                    '/etc/lsb-release',
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     lines = []
                     for line in ifile:
                         lines.append(line.rstrip('\r\n'))
@@ -1437,8 +1524,9 @@ class LinuxSystem(PosixSystem):
         if os.path.isfile('/etc/kanotix-version'):
             try:
                 with open(
-                        '/etc/kanotix-version',
-                        errors='replace'
+                    '/etc/kanotix-version',
+                    encoding='utf-8',
+                    errors='replace'
                 ) as ifile:
                     info['OS Name'] = 'Kanotix ' + ifile.readline(
                         ).rstrip('\r\n').split()[1]
@@ -1446,14 +1534,22 @@ class LinuxSystem(PosixSystem):
                 pass
         elif os.path.isfile('/etc/knoppix-version'):
             try:
-                with open('/etc/knoppix-version', errors='replace') as ifile:
+                with open(
+                    '/etc/knoppix-version',
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     info['OS Name'] = 'Knoppix ' + ifile.readline(
                         ).rstrip('\r\n').split()[0]
             except (IndexError, OSError):
                 pass
         elif os.path.isfile('/etc/debian_version'):
             try:
-                with open('/etc/debian_version', errors='replace') as ifile:
+                with open(
+                    '/etc/debian_version',
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     info['OS Name'] = 'Debian ' + ifile.readline().rstrip(
                         '\r\n').split('=')[-1].replace("'", '')
             except OSError:
@@ -1461,7 +1557,11 @@ class LinuxSystem(PosixSystem):
         elif os.path.isfile('/etc/DISTRO_SPECS'):
             try:
                 identity = None
-                with open('/etc/DISTRO_SPECS', errors='replace') as ifile:
+                with open(
+                    '/etc/DISTRO_SPECS',
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     for line in ifile:
                         if line.startswith('DISTRO_NAME'):
                             identity = line.rstrip(
@@ -1517,7 +1617,11 @@ class LinuxSystem(PosixSystem):
         info = {}
 
         try:
-            with open('/etc/os-release', errors='replace') as ifile:
+            with open(
+                '/etc/os-release',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     if line.startswith('PRETTY_NAME="'):
                         info['OS Name'] = line.split('"')[1].split('(')[0]
@@ -1532,7 +1636,11 @@ class LinuxSystem(PosixSystem):
         info = {}
 
         try:
-            with open('/usr/share/clear/version', errors='replace') as ifile:
+            with open(
+                '/usr/share/clear/version',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 info['OS Name'] = 'Clear Linux ' + ifile.readline().strip()
         except OSError:
             pass
@@ -1581,8 +1689,11 @@ class LinuxSystem(PosixSystem):
     @staticmethod
     def _scan_frequency(info: dict, lines: List[str]) -> None:
         try:
-            with open('/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq',
-                      errors='replace') as ifile:
+            with open(
+                '/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 info['CPU Clock'] = str(int(
                     int(ifile.readline().rstrip('\r\n')) / 1000 + 0.5))
         except (OSError, ValueError):
@@ -1607,9 +1718,10 @@ class LinuxSystem(PosixSystem):
         found = []
         try:
             with open(
-                    '/sys/devices/system/cpu/cpu0/cpufreq/'
-                    'scaling_available_frequencies',
-                    errors='replace'
+                '/sys/devices/system/cpu/cpu0/cpufreq/'
+                'scaling_available_frequencies',
+                encoding='utf-8',
+                errors='replace'
             ) as ifile:
                 for clock in ifile.readline().rstrip('\r\n').split():
                     found.append(str(int(int(clock) / 1000 + 0.5)))
@@ -1618,16 +1730,16 @@ class LinuxSystem(PosixSystem):
         except (OSError, ValueError):
             try:
                 with open(
-                        '/sys/devices/system/cpu/cpu0/cpufreq/'
-                        'scaling_max_freq',
-                        errors='replace'
+                    '/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq',
+                    encoding='utf-8',
+                    errors='replace'
                 ) as ifile:
                     info['CPU Clocks'] = str(int(
                         int(ifile.readline()) / 1000 + 0.5))
                 with open(
-                        '/sys/devices/system/cpu/cpu0/cpufreq/'
-                        'scaling_min_freq',
-                        errors='replace'
+                    '/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq',
+                    encoding='utf-8',
+                    errors='replace'
                 ) as ifile:
                     info['CPU Clocks'] += ' ' + str(int(
                         int(ifile.readline()) / 1000 + 0.5))
@@ -1638,7 +1750,11 @@ class LinuxSystem(PosixSystem):
     def _get_proc_cpuinfo() -> List[str]:
         lines = []
         try:
-            with open('/proc/cpuinfo', errors='replace') as ifile:
+            with open(
+                '/proc/cpuinfo',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     lines.append(line.rstrip('\r\n'))
         except OSError:
@@ -1693,7 +1809,7 @@ class LinuxSystem(PosixSystem):
                 'topology/physical_package_id'
         ):
             try:
-                with open(file, errors='replace') as ifile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
                     line = ifile.readline().rstrip('\r\n')
                     if line not in found:
                         found.append(line)
@@ -1733,9 +1849,9 @@ class LinuxSystem(PosixSystem):
     ) -> int:
         try:
             with open(
-                    '/sys/devices/system/cpu/cpu0/topology/'
-                    'thread_siblings_list',
-                    errors='replace'
+                '/sys/devices/system/cpu/cpu0/topology/thread_siblings_list',
+                encoding='utf-8',
+                errors='replace'
             ) as ifile:
                 cpu_cores = int(threads/(int(
                     ifile.readline().rstrip('\r\n').split('-')[-1]) + 1))
@@ -1768,13 +1884,15 @@ class LinuxSystem(PosixSystem):
                 '/sys/devices/system/cpu/cpu0/cache/index*')):
             try:
                 with open(
-                        os.path.join(cache, 'level'),
-                        errors='replace'
+                    os.path.join(cache, 'level'),
+                    encoding='utf-8',
+                    errors='replace'
                 ) as ifile:
                     level = ifile.readline().rstrip('\r\n')
                 with open(
-                        os.path.join(cache, 'type'),
-                        errors='replace'
+                    os.path.join(cache, 'type'),
+                    encoding='utf-8',
+                    errors='replace'
                 ) as ifile:
                     type_ = ifile.readline().rstrip('\r\n')
                 if type_ == 'Data':
@@ -1782,8 +1900,9 @@ class LinuxSystem(PosixSystem):
                 elif type_ == 'Instruction':
                     level += 'i'
                 with open(
-                        os.path.join(cache, 'size'),
-                        errors='replace'
+                    os.path.join(cache, 'size'),
+                    encoding='utf-8',
+                    errors='replace'
                 ) as ifile:
                     info['CPU Cache'][level] = str(int(
                         ifile.readline().rstrip('\r\nK')))
@@ -1847,7 +1966,11 @@ class LinuxSystem(PosixSystem):
         """
         info = super().get_sys_info()
         try:
-            with open('/proc/meminfo', errors='replace') as ifile:
+            with open(
+                '/proc/meminfo',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 try:
                     for line in ifile:
                         if line.startswith('MemTotal:'):
@@ -1866,7 +1989,11 @@ class LinuxSystem(PosixSystem):
     def _get_container() -> str:
         name = None
         try:
-            with open('/proc/1/cgroup', errors='replace') as ifile:
+            with open(
+                '/proc/1/cgroup',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     if '/docker/' in line or '/docker-' in line:
                         name = 'Docker ' + line.rsplit('/', 1)[1][:12]
@@ -1920,7 +2047,11 @@ class LinuxSystem(PosixSystem):
                     glob.glob('/proc/ide/hd?/model')
             ):
                 try:
-                    with open(file, errors='replace') as ifile:
+                    with open(
+                        file,
+                        encoding='utf-8',
+                        errors='replace',
+                    ) as ifile:
                         name = self._check_virtual_machine(
                             ' '.join(ifile.readlines()),
                             mappings['scsi']

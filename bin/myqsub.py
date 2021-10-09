@@ -15,7 +15,7 @@ from typing import List
 
 import task_mod
 
-RELEASE = '2.8.0'
+RELEASE = '2.8.1'
 
 
 class Options:
@@ -129,7 +129,11 @@ class Main:
         lastjob = os.path.join(self._myqsdir, 'myqs.last')
         if os.path.isfile(lastjob):
             try:
-                with open(lastjob, errors='replace') as ifile:
+                with open(
+                    lastjob,
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     try:
                         jobid = int(ifile.readline().strip()) + 1
                     except (OSError, ValueError):
@@ -144,7 +148,7 @@ class Main:
         else:
             jobid = 1
         try:
-            with open(lastjob, 'w', newline='\n') as ofile:
+            with open(lastjob, 'w', encoding='utf-8', newline='\n') as ofile:
                 print(jobid, file=ofile)
         except OSError as exception:
             raise SystemExit(
@@ -158,7 +162,11 @@ class Main:
             lockfile = os.path.join(self._myqsdir, 'myqsub.pid')
             if os.path.isfile(lockfile):
                 try:
-                    with open(lockfile, errors='replace') as ifile:
+                    with open(
+                        lockfile,
+                        encoding='utf-8',
+                        errors='replace',
+                    ) as ifile:
                         try:
                             pid = int(ifile.readline().strip())
                         except (OSError, ValueError):
@@ -173,7 +181,12 @@ class Main:
                     ) from exception
             if not os.path.isfile(lockfile):
                 try:
-                    with open(lockfile, 'w', newline='\n') as ofile:
+                    with open(
+                        lockfile,
+                        'w',
+                        encoding='utf-8',
+                        newline='\n',
+                    ) as ofile:
                         print(os.getpid(), file=ofile)
                 except OSError as exception:
                     raise SystemExit(
@@ -187,7 +200,7 @@ class Main:
     def _myqsd(self) -> None:
         lockfile = os.path.join(self._myqsdir, 'myqsd.pid')
         try:
-            with open(lockfile, errors='replace') as ifile:
+            with open(lockfile, encoding='utf-8', errors='replace') as ifile:
                 try:
                     pid = int(ifile.readline().strip())
                 except (OSError, ValueError):
@@ -211,7 +224,12 @@ class Main:
                 return
             jobid = self._lastjob()
             try:
-                with open(tmpfile, 'w', newline='\n') as ofile:
+                with open(
+                    tmpfile,
+                    'w',
+                    encoding='utf-8',
+                    newline='\n',
+                ) as ofile:
                     print("COMMAND=" + file, file=ofile)
                     print("DIRECTORY=" + os.getcwd(), file=ofile)
                     print("PATH=" + os.environ['PATH'], file=ofile)

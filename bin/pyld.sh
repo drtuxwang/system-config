@@ -26,14 +26,6 @@ temp_dotfiles() {
             ln -s /tmp/$MYUNAME/.cache/ansible $HOME/.ansible
         fi
         ;;
-    pylint|pylint\ *|*\ -m\ pylint\ *)
-        mkdir -p /tmp/$MYUNAME/.cache/pylint.d
-        if [ ! -h $HOME/.pylint.d ]
-        then
-            rm -rf $HOME/.pylint.d
-            ln -s /tmp/$MYUNAME/.cache/pylint.d $HOME/.pylint.d
-        fi
-        ;;
     esac
 }
 

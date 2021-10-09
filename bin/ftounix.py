@@ -92,10 +92,15 @@ class Main:
                     sys.argv[0] + ': Cannot find "' + file + '" file.')
             print('Converting "' + file + '" file to "\\n" newline format...')
             try:
-                with open(file, errors='replace') as ifile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
                     tmpfile = file + '.part'
                     try:
-                        with open(tmpfile, 'w', newline='\n') as ofile:
+                        with open(
+                            tmpfile,
+                            'w',
+                            encoding='utf-8',
+                            newline='\n',
+                        ) as ofile:
                             for line in ifile:
                                 print(line.rstrip('\r\n'), file=ofile)
                     except OSError as exception:

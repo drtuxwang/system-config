@@ -125,7 +125,7 @@ class Main:
         packages = {}
         try:
             file = distribution + '.debs'
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     try:
                         name, version = line.split()[:2]
@@ -143,7 +143,7 @@ class Main:
 
         try:
             file = distribution + '.debs:base'
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     try:
                         name, version = line.split()[:2]
@@ -166,7 +166,7 @@ class Main:
     def _read_distribution_allow(file: str) -> dict:
         packages = {}
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     if not line.strip().startswith('#'):
                         try:

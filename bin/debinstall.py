@@ -222,7 +222,7 @@ class Main:
     @staticmethod
     def _read_data(file: str) -> dict:
         try:
-            with open(file) as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 data = json.load(ifile)
         except (OSError, json.decoder.JSONDecodeError) as exception:
             raise SystemExit(
@@ -265,7 +265,7 @@ class Main:
     def _read_distro_pin_packages(self, pin_file: str) -> None:
         packages_cache = {}
         try:
-            with open(pin_file, errors='replace') as ifile:
+            with open(pin_file, encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     if columns:
@@ -289,7 +289,11 @@ class Main:
 
     def _read_distro_installed(self, installed_file: str) -> None:
         try:
-            with open(installed_file, errors='replace') as ifile:
+            with open(
+                installed_file,
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     columns = line.split()
                     name = columns[0]
@@ -340,7 +344,7 @@ class Main:
 
     def _read_distro_deny_list(self, file: str) -> None:
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     if columns:
@@ -364,7 +368,7 @@ class Main:
         urlfile = os.path.basename(
             distro) + list_file.split('.debs')[-1] + '.url'
         try:
-            with open(urlfile, 'w', newline='\n') as ofile:
+            with open(urlfile, 'w', encoding='utf-8', newline='\n') as ofile:
                 indent = ''
                 for i in names:
                     self._check_package_install(distro, ofile, indent, i)

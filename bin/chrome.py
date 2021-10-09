@@ -63,12 +63,12 @@ class Options:
             try:
                 shutil.rmtree(os.path.join(os.environ['HOME'], '.adobe'))
                 os.makedirs(os.path.dirname(adobe))
-                with open(adobe, 'w', newline='\n'):
+                with open(adobe, 'w', encoding='utf-8', newline='\n'):
                     pass
                 shutil.rmtree(
                     os.path.join(os.environ['HOME'], '.macromedia'))
                 os.makedirs(os.path.dirname(macromedia))
-                with open(macromedia, 'w', newline='\n'):
+                with open(macromedia, 'w', encoding='utf-8', newline='\n'):
                     pass
             except OSError:
                 pass
@@ -92,11 +92,16 @@ class Options:
     def _clean_preferences(configdir: str) -> None:
         file = os.path.join(configdir, 'Preferences')
         try:
-            with open(file) as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 data = json.load(ifile)
             data['profile']['exit_type'] = 'Normal'
             data['partition']['per_host_zoom_levels'] = {}
-            with open(file + '.part', 'w', newline='\n') as ofile:
+            with open(
+                file + '.part',
+                'w',
+                encoding='utf-8',
+                newline='\n',
+            ) as ofile:
                 print(json.dumps(
                     data,
                     ensure_ascii=False,
@@ -128,8 +133,13 @@ class Options:
         for file in glob.glob(
                 os.path.join(configdir, 'File System', '*', 'p', '00', '*')):
             try:
-                with open(file, errors='replace') as ifile:
-                    with open(file + '.part', 'w', newline='\n') as ofile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
+                    with open(
+                        file + '.part',
+                        'w',
+                        encoding='utf-8',
+                        newline='\n',
+                    ) as ofile:
                         for line in ifile:
                             if not ispattern.search(line):
                                 print(line, end='', file=ofile)

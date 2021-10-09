@@ -100,7 +100,7 @@ class Main:
     def _read_html(self, file: str) -> None:
         isjunk = re.compile('(&amp;|[?])ref=pb$|[?&]fref=.*|&amp;.*')
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     for block in line.split('href="'):
                         if '://www.facebook.com/' in block:
@@ -134,7 +134,7 @@ class Main:
             "friends..."
         )
         try:
-            with open(file, 'w', newline='\n') as ofile:
+            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                 print("uid,name,profile_url", file=ofile)
                 for uid, profile in sorted(self._profiles.items()):
                     if uid < 0:

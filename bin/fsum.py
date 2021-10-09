@@ -202,7 +202,12 @@ class Main:
                 ))
                 if options.get_create_flag():
                     try:
-                        with open(file + '.fsum', 'w', newline='\n') as ofile:
+                        with open(
+                            file + '.fsum',
+                            'w',
+                            encoding='utf-8',
+                            newline='\n',
+                        ) as ofile:
                             print("{0:s}/{1:010d}/{2:d}  {3:s}".format(
                                 checksum,
                                 file_stat.get_size(),
@@ -239,7 +244,11 @@ class Main:
             found.append(fsumfile)
             directory = os.path.dirname(fsumfile)
             try:
-                with open(fsumfile, errors='replace') as ifile:
+                with open(
+                    fsumfile,
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     for line in ifile:
                         line = line.rstrip('\r\n')
                         checksum, size, mtime, file = self._get_checksum(line)
@@ -329,7 +338,11 @@ class Main:
             )
         directory = os.path.dirname(update_file)
         try:
-            with open(update_file, errors='replace') as ifile:
+            with open(
+                update_file,
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     try:
                         line = line.rstrip('\r\n')

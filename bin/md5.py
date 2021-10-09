@@ -134,7 +134,11 @@ class Main:
                     '" md5sum file.'
                 )
             try:
-                with open(md5file, errors='replace') as ifile:
+                with open(
+                    md5file,
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     for line in ifile:
                         md5sum = line[:32]
                         file = line.rstrip()[34:]

@@ -14,7 +14,7 @@ from typing import List
 import command_mod
 import subtask_mod
 
-RELEASE = '2.8.0'
+RELEASE = '2.8.1'
 
 
 class Options:
@@ -109,8 +109,12 @@ class Main:
 
     def _spawn(self, options: Options) -> None:
         try:
-            with open(os.path.join(self._myqsdir, self._jobid + '.r'), 'a',
-                      newline='\n') as ofile:
+            with open(
+                os.path.join(self._myqsdir, self._jobid + '.r'),
+                'a',
+                encoding='utf-8',
+                newline='\n',
+            ) as ofile:
                 mypid = os.getpid()
                 os.setpgid(mypid, mypid)  # New PGID
                 pgid = os.getpgid(mypid)
@@ -123,8 +127,9 @@ class Main:
 
         try:
             with open(
-                    os.path.join(self._myqsdir, self._jobid + '.r'),
-                    errors='replace'
+                os.path.join(self._myqsdir, self._jobid + '.r'),
+                encoding='utf-8',
+                errors='replace'
             ) as ifile:
                 info = {}
                 for line in ifile:
@@ -153,7 +158,11 @@ class Main:
     @staticmethod
     def _sh(command: command_mod.Command) -> None:
         try:
-            with open(command.get_file(), errors='replace') as ifile:
+            with open(
+                command.get_file(),
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 line = ifile.readline().rstrip()
                 if line == '#!/bin/sh':
                     command.set_args(['/bin/sh'] + command.get_cmdline())
@@ -163,8 +172,9 @@ class Main:
     def _start(self) -> None:
         try:
             with open(
-                    os.path.join(self._myqsdir, self._jobid + '.r'),
-                    errors='replace'
+                os.path.join(self._myqsdir, self._jobid + '.r'),
+                encoding='utf-8',
+                errors='replace'
             ) as ifile:
                 info = {}
                 for line in ifile:

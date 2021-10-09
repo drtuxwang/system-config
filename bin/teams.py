@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """
-Wrapper for generic command
+Wrapper for "teams" command
+
+Use '-reset' to wipe profile (solves some problems)
 """
 
 import glob
 import os
+import shutil
 import signal
 import sys
 
@@ -62,11 +65,19 @@ class Main:
         """
         Start program
         """
-        name = os.path.basename(sys.argv[0]).replace('.py', '')
+        if '-reset' in sys.argv:
+            home = os.environ['HOME']
+            for directory in glob.glob(
+                os.path.join(home, '.config', 'Microsoft*'),
+            ):
+                if os.path.isdir(directory):
+                    print('Removing "{0:s}"...'.format(directory))
+                    shutil.rmtree(directory)
+            return 0
 
-        command = command_mod.Command(name, errors='stop')
-        command.set_args(sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        teams = command_mod.Command('teams', errors='stop')
+        teams.set_args(sys.argv[1:])
+        subtask_mod.Exec(teams.get_cmdline()).run()
 
         return 0
 

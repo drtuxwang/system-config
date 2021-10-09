@@ -100,7 +100,7 @@ class Main:
 
     def _file(self, options: Options, file: str) -> None:
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 self._pipe(options, ifile)
         except OSError as exception:
             raise SystemExit(

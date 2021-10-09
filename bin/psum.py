@@ -148,7 +148,11 @@ class Main:
 
         images_phashes = {}
         try:
-            with open(phashes_file, errors='replace') as ifile:
+            with open(
+                phashes_file,
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     try:
                         line = line.rstrip('\r\n')
@@ -238,7 +242,12 @@ class Main:
         logger.info("Writing checksum file: %s", phashes_file)
 
         try:
-            with open(phashes_file + '.part', 'w', newline='\n') as ofile:
+            with open(
+                phashes_file + '.part',
+                'w',
+                encoding='utf-8',
+                newline='\n',
+            ) as ofile:
                 for key, phash in image_phashes.items():
                     file, file_size, file_time = key
                     print("{0:s}/{1:010d}/{2:d}  {3:s}".format(

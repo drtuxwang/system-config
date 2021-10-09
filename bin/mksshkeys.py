@@ -94,7 +94,7 @@ class Main:
         config = []
         configfile = os.path.join(self._sshdir, 'config')
         try:
-            with open(configfile, errors='replace') as ifile:
+            with open(configfile, encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     config.append(line.strip())
         except OSError:
@@ -109,9 +109,10 @@ class Main:
                     config.extend(['', 'Host ' + rhost, 'User ' + ruser])
                     try:
                         with open(
-                                configfile + '.part',
-                                'w',
-                                newline='\n'
+                            configfile + '.part',
+                            'w',
+                            encoding='utf-8',
+                            newline='\n',
                         ) as ofile:
                             for line in config:
                                 print(line, file=ofile)
@@ -153,7 +154,7 @@ class Main:
         pubkeys: List[str] = []
         if os.path.isfile(file):
             try:
-                with open(file, errors='replace') as ifile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
                     pubkeys = []
                     for line in ifile:
                         pubkeys.append(line.strip())
@@ -164,7 +165,12 @@ class Main:
                 ) from exception
         if pubkey not in pubkeys:
             try:
-                with open(file + '.part', 'w', newline='\n') as ofile:
+                with open(
+                    file + '.part',
+                    'w',
+                    encoding='utf-8',
+                    newline='\n',
+                ) as ofile:
                     for line in pubkeys:
                         print(line, file=ofile)
                     print(pubkey, file=ofile)
@@ -220,8 +226,9 @@ class Main:
 
         try:
             with open(
-                    os.path.join(self._sshdir, 'id_rsa.pub'),
-                    errors='replace'
+                os.path.join(self._sshdir, 'id_rsa.pub'),
+                encoding='utf-8',
+                errors='replace',
             ) as ifile:
                 pubkey = ifile.readline().strip()
         except OSError as exception:

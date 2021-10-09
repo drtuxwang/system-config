@@ -277,28 +277,27 @@ class DockerRegistry2(DockerRegistry):
                 url,
                 response.status_code
             ))
-        tags = [
-            tag
-            for tag in response.json()['tags']
-            if fnmatch.fnmatch(tag, tag_match)
-        ]
 
-        for tag in tags:
-            info[tag] = {}
-            url = self._server + '/v2/' + repository + '/manifests/' + tag
-            try:
-                response = self._get_url(url)
-            except Exception as exception:
-                raise SystemExit(str(exception)) from exception
-            if response.status_code != 200:
-                raise SystemExit(
-                    'Requests "{0:s}" response code: {1:d}'.format(
-                        url, response.status_code))
-            data = response.json()
-            info[tag]['digest'] = response.headers['docker-content-digest']
-            info[tag]['image_id'] = data['config']['digest']
-            info[tag]['timestamp'] = self.get_time(repository, tag)
-            info[tag]['size'] = sum([x['size'] for x in data['layers']])
+        tags = response.json()['tags']
+        if tags:
+            for tag in [x for x in tags if fnmatch.fnmatch(x, tag_match)]:
+                info[tag] = {}
+                url = self._server + '/v2/' + repository + '/manifests/' + tag
+                try:
+                    response = self._get_url(url)
+                except Exception as exception:
+                    raise SystemExit(str(exception)) from exception
+                if response.status_code != 200:
+                    raise SystemExit(
+                        'Requests "{0:s}" response code: {1:d}'.format(
+                            url,
+                            response.status_code,
+                        ))
+                data = response.json()
+                info[tag]['digest'] = response.headers['docker-content-digest']
+                info[tag]['image_id'] = data['config']['digest']
+                info[tag]['timestamp'] = self.get_time(repository, tag)
+                info[tag]['size'] = sum([x['size'] for x in data['layers']])
 
         return info
 

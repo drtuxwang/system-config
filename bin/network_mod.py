@@ -14,8 +14,8 @@ from typing import Any, List, Optional, Tuple
 
 import command_mod
 
-RELEASE = '3.3.2'
-VERSION = 20210927
+RELEASE = '3.3.3'
+VERSION = 20211009
 
 
 class NetNice(command_mod.Command):
@@ -46,7 +46,7 @@ class NetNice(command_mod.Command):
         """
         if os.path.isfile(file):
             try:
-                with open(file) as ifile:
+                with open(file, encoding='utf-8') as ifile:
                     data = json.load(ifile)
                     self._drate = data['trickle']['download']
             except (KeyError, OSError, ValueError):
@@ -66,7 +66,7 @@ class NetNice(command_mod.Command):
             }
         }
         try:
-            with open(file, 'w', newline='\n') as ofile:
+            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                 print(json.dumps(
                     data,
                     ensure_ascii=False,
@@ -205,24 +205,9 @@ class Sandbox(command_mod.Command):
                 cmdline.extend(['--ro-bind-try', realpath, directory])
                 self._show(
                     Sandbox.YELLOW,
-                    "Enable access to application {0:s}:ro".format(
+                    "Enable application access {0:s}:ro".format(
                         directory,
                     ),
-                )
-
-            # Home directory
-            home = os.getenv('HOME', '/')
-            mounts = [
-                os.path.join(home, x)
-                for x in ('.bashrc', '.profile', '.tmux.conf', '.vimrc')
-                if os.path.exists(os.path.join(home, x))
-            ]
-            for mount in mounts:
-                realpath = os.path.realpath(mount)
-                cmdline.extend(['--ro-bind-try', realpath, mount])
-                self._show(
-                    Sandbox.YELLOW,
-                    "Enable access {0:s}:ro".format(mount),
                 )
 
         # Enable access rights
@@ -246,13 +231,13 @@ class Sandbox(command_mod.Command):
                 else:
                     self._show(
                         Sandbox.YELLOW,
-                        "Enable access {0:s}".format(config),
+                        "Enable write access {0:s}".format(config),
                     )
             elif config.startswith('/dev/'):
                 cmdline.extend(['--dev-bind-try', realpath, mount])
                 self._show(
                     Sandbox.YELLOW,
-                    "Enable access {0:s}".format(config),
+                    "Enable device access {0:s}".format(config),
                 )
             elif not mount.startswith(allow_reads):
                 cmdline.extend(['--ro-bind-try', realpath, mount])

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for generic command
+Wrapper for "robo3t" command
 """
 
 import glob
@@ -8,7 +8,7 @@ import os
 import signal
 import sys
 
-import command_mod
+import network_mod
 import subtask_mod
 
 
@@ -51,9 +51,24 @@ class Main:
         name = os.path.basename(sys.argv[0]).replace('.py', '')
         pattern = "QXcbConnection:|libpng warning:"
 
-        command = command_mod.Command(name, errors='stop')
-        command.set_args(sys.argv[1:])
-        subtask_mod.Background(command.get_cmdline()).run(pattern=pattern)
+        robo3t = network_mod.Sandbox(name, errors='stop')
+        robo3t.set_args(sys.argv[1:])
+
+        configs = [
+            'net',
+            '/run/user/{0:d}'.format(os.getuid()),
+            os.path.join(os.environ['HOME'], '.3T', 'robo-3t'),
+        ]
+        work_dir = os.environ['PWD']
+        if work_dir == os.environ['HOME']:
+            desktop = os.path.join(work_dir, 'Desktop')
+            if os.path.isdir(desktop):
+                os.chdir(desktop)
+                work_dir = desktop
+        configs.append(work_dir)
+        robo3t.sandbox(configs)
+
+        subtask_mod.Background(robo3t.get_cmdline()).run(pattern=pattern)
 
 
 if __name__ == '__main__':

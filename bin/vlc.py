@@ -73,6 +73,7 @@ class Options:
             '/dev/dri',
             '/dev/shm',
             '/dev/sr0',
+            '/run/user/{0:d}'.format(os.getuid()),
             os.path.join(os.getenv('HOME', '/'), '.config/vlc'),
             os.path.join(os.getenv('HOME', '/'), '.local/share/vlc'),
         ]

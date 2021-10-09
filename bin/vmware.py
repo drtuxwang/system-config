@@ -41,7 +41,11 @@ class Options:
 
         if os.path.isfile(configfile):
             try:
-                with open(configfile, errors='replace') as ifile:
+                with open(
+                    configfile,
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     configdata = ifile.readlines()
             except OSError as exception:
                 raise SystemExit(
@@ -52,7 +56,12 @@ class Options:
                 ifile.close()
                 return
             try:
-                with open(configfile, 'a') as ofile:
+                with open(
+                    configfile,
+                    'a',
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ofile:
                     print("xkeymap.nokeycodeMap = true", file=ofile)
             except OSError as exception:
                 raise SystemExit(
@@ -70,7 +79,12 @@ class Options:
                         '" directory.'
                     ) from exception
             try:
-                with open(configfile, 'w', newline='\n') as ofile:
+                with open(
+                    configfile,
+                    'w',
+                    encoding='utf-8',
+                    newline='\n',
+                ) as ofile:
                     print("xkeymap.nokeycodeMap = true", file=ofile)
             except OSError as exception:
                 raise SystemExit(

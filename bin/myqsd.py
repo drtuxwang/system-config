@@ -17,7 +17,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '2.8.0'
+RELEASE = '2.8.1'
 
 
 class Options:
@@ -98,7 +98,7 @@ class Lock:
         self._file = file
         self._pid = -1
         try:
-            with open(self._file, errors='replace') as ifile:
+            with open(self._file, encoding='utf-8', errors='replace') as ifile:
                 try:
                     self._pid = int(ifile.readline().strip())
                 except (OSError, ValueError):
@@ -117,7 +117,12 @@ class Lock:
         Create lock file
         """
         try:
-            with open(self._file, 'w', newline='\n') as ofile:
+            with open(
+                self._file,
+                'w',
+                encoding='utf-8',
+                newline='\n',
+            ) as ofile:
                 print(os.getpid(), file=ofile)
         except OSError as exception:
             raise SystemExit(
@@ -126,7 +131,7 @@ class Lock:
             ) from exception
         time.sleep(1)
         try:
-            with open(self._file, errors='replace') as ifile:
+            with open(self._file, encoding='utf-8', errors='replace') as ifile:
                 try:
                     int(ifile.readline().strip())
                 except (OSError, ValueError) as exception:
@@ -189,7 +194,11 @@ class Main:
         for file in sorted(glob.glob(os.path.join(self._myqsdir, '*.r')),
                            key=lambda s: os.path.basename(s)[-2]):
             try:
-                with open(os.path.join(file), errors='replace') as ifile:
+                with open(
+                    os.path.join(file),
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     info = {}
                     for line in ifile:
                         line = line.strip()
@@ -212,7 +221,7 @@ class Main:
         running = 0
         for file in glob.glob(os.path.join(self._myqsdir, '*.r')):
             try:
-                with open(file, errors='replace') as ifile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
                     info = {}
                     for line in ifile:
                         line = line.strip()
@@ -242,7 +251,11 @@ class Main:
             for file in sorted(glob.glob(os.path.join(self._myqsdir, '*.q')),
                                key=lambda s: int(os.path.basename(s)[:-2])):
                 try:
-                    with open(file, errors='replace') as ifile:
+                    with open(
+                        file,
+                        encoding='utf-8',
+                        errors='replace',
+                    ) as ifile:
                         info = {}
                         for line in ifile:
                             line = line.strip()

@@ -134,7 +134,11 @@ class Main:
                     '" sha512sum file.'
                 )
             try:
-                with open(sha512file, errors='replace') as ifile:
+                with open(
+                    sha512file,
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     for line in ifile:
                         sha512sum = line[:32]
                         file = line.rstrip()[34:]

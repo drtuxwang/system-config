@@ -14,8 +14,8 @@ import re
 import subprocess
 from typing import List, Optional
 
-RELEASE = '2.2.2'
-VERSION = 20210623
+RELEASE = '2.2.3'
+VERSION = 20211006
 
 
 class Battery:
@@ -129,10 +129,11 @@ class BatteryAcpi(Battery):
     def _config(self) -> None:
         self._state = os.path.join(self._directory, 'state')
         self._isjunk = re.compile('^.*: *| .*$')
-        with open(os.path.join(
-                self._directory,
-                'info'
-        ), errors='replace') as ifile:
+        with open(
+            os.path.join(self._directory, 'info'),
+            encoding='utf-8',
+            errors='replace',
+        ) as ifile:
             for line in ifile:
                 line = line.rstrip()
                 if line.startswith('OEM info:'):
@@ -165,7 +166,11 @@ class BatteryAcpi(Battery):
         self._info['rate'] = 0
 
         try:
-            with open(self._state, errors='replace') as ifile:
+            with open(
+                self._state,
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     line = line.rstrip()
                     if line.startswith('present:'):
@@ -203,7 +208,7 @@ class BatteryPower(Battery):
     def _config(self) -> None:
         self._state = os.path.join(self._directory, 'uevent')
         self._isjunk = re.compile('^[^=]*=| .*$')
-        with open(self._state, errors='replace') as ifile:
+        with open(self._state, encoding='utf-8', errors='replace') as ifile:
             self._state = os.path.join(self._directory, 'uevent')
             for line in ifile:
                 line = line.rstrip()
@@ -238,7 +243,11 @@ class BatteryPower(Battery):
         self._info['rate'] = 0
 
         try:
-            with open(self._state, errors='replace') as ifile:
+            with open(
+                self._state,
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     line = line.rstrip()
                     try:

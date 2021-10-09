@@ -143,7 +143,7 @@ class Main:
             raise SystemExit(
                 sys.argv[0] + ': Cannot find "' + file + '" data file.')
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 line = ifile.readline().strip()
                 if line[0] == '#':
                     labels = line[1:].split()
@@ -197,7 +197,7 @@ class Main:
     @staticmethod
     def _writefile(file: str, lines: Sequence[str]) -> int:
         try:
-            with open(file, 'w', newline='\n') as ofile:
+            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                 for line in lines:
                     print(line, file=ofile)
         except OSError:

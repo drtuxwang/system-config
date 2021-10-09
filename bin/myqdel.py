@@ -13,7 +13,7 @@ from typing import List
 
 import task_mod
 
-RELEASE = '2.8.0'
+RELEASE = '2.8.1'
 
 
 class Options:
@@ -121,7 +121,7 @@ class Main:
         file = os.path.join(self._myqsdir, jobid + '.r')
         if os.path.isfile(file):
             try:
-                with open(file, errors='replace') as ifile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
                     if not self._force_flag:
                         print(
                             'MyQS cannot delete batch job with jobid',

@@ -305,7 +305,11 @@ class Main:
         name = ''
         package = Package('', -1, [], '')
         try:
-            with open('/var/lib/dpkg/status', errors='replace') as ifile:
+            with open(
+                '/var/lib/dpkg/status',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     line = line.rstrip('\r\n')
                     if line.startswith('Package: '):

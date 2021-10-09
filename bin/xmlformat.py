@@ -93,7 +93,7 @@ class Main:
 
             lines = []
             try:
-                with open(file, errors='replace') as ifile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
                     for line in ifile:
                         lines.append(line.strip())
             except OSError as exception:
@@ -105,7 +105,12 @@ class Main:
 
             tmpfile = file + '.part'
             try:
-                with open(tmpfile, 'w', newline='\n') as ofile:
+                with open(
+                    tmpfile,
+                    'w',
+                    encoding='utf-8',
+                    newline='\n',
+                ) as ofile:
                     print(xml_text, end='', file=ofile)
             except OSError as exception:
                 raise SystemExit(

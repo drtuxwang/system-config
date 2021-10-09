@@ -22,7 +22,7 @@ import file_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '5.2.0'
+RELEASE = '5.2.1'
 
 
 class Options:
@@ -321,7 +321,7 @@ class ChineseDictionary:
             self.create_cache()
 
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 self._mappings = json.load(ifile)
         except OSError as exception:
             raise SystemExit(
@@ -343,7 +343,7 @@ class ChineseDictionary:
         self.readmap(os.path.join(directory, 'zh_listx'))
         self.readmap(os.path.join(directory, 'zh_listck'))
         try:
-            with open(file, 'w', newline='\n') as ofile:
+            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                 print(
                     json.dumps(self._mappings, ensure_ascii=False),
                     file=ofile,
@@ -360,7 +360,7 @@ class ChineseDictionary:
         self.readmap(os.path.join(directory, 'zhy_list'))
         self.readmap(os.path.join(directory, 'zhy_listck'))
         try:
-            with open(file, 'w', newline='\n') as ofile:
+            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                 print(
                     json.dumps(self._mappings, ensure_ascii=False),
                     file=ofile,
@@ -375,7 +375,7 @@ class ChineseDictionary:
         Read map
         """
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 for line in ifile.readlines():
                     if line.startswith(('//', '$')):
                         continue

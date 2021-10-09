@@ -128,8 +128,9 @@ class Cdrom:
             for file in ('vendor', 'model'):
                 try:
                     with open(
-                            os.path.join(directory, file),
-                            errors='replace'
+                        os.path.join(directory, file),
+                        encoding='utf-8',
+                        errors='replace',
                     ) as ifile:
                         model += ' ' + ifile.readline().strip()
                 except OSError:
@@ -190,7 +191,12 @@ class Main:
                     break
             logfile = track.zfill(2) + '.log'
             try:
-                with open(logfile, 'w', newline='\n') as ofile:
+                with open(
+                    logfile,
+                    'w',
+                    encoding='utf-8',
+                    newline='\n',
+                ) as ofile:
                     line = (
                         '\nRipping track ' + track + '/' + str(ntracks) +
                         ' (' + length + ' seconds)'
@@ -239,7 +245,12 @@ class Main:
             '-H'
         ])
         try:
-            with open('00.log', 'w', newline='\n') as ofile:
+            with open(
+                '00.log',
+                'w',
+                encoding='utf-8',
+                newline='\n',
+            ) as ofile:
                 for line in self._toc:
                     print(line, file=ofile)
         except OSError as exception:
@@ -259,7 +270,7 @@ class Main:
 
     @staticmethod
     def _hasprob(logfile: str) -> bool:
-        with open(logfile, errors='replace') as ifile:
+        with open(logfile, encoding='utf-8', errors='replace') as ifile:
             for line in ifile:
                 line = line.rstrip('\r\n')
                 if line.endswith('problems'):

@@ -14,7 +14,7 @@ from typing import List
 
 import task_mod
 
-RELEASE = '2.8.1'
+RELEASE = '2.8.2'
 
 
 class Options:
@@ -81,7 +81,7 @@ class Main:
     def _myqsd(self) -> None:
         lockfile = os.path.join(self._myqsdir, 'myqsd.pid')
         try:
-            with open(lockfile, errors='replace') as ifile:
+            with open(lockfile, encoding='utf-8', errors='replace') as ifile:
                 try:
                     pid = int(ifile.readline().strip())
                 except (OSError, ValueError):
@@ -112,6 +112,7 @@ class Main:
                 state = 'QUEUE'
                 with open(
                     os.path.join(self._myqsdir, str(jobid) + '.q'),
+                    encoding='utf-8',
                     errors='replace'
                 ) as ifile:
                     for line in ifile:
@@ -122,6 +123,7 @@ class Main:
                 try:
                     with open(
                         os.path.join(self._myqsdir, str(jobid) + '.r'),
+                        encoding='utf-8',
                         errors='replace'
                     ) as ifile:
                         for line in ifile:
@@ -161,7 +163,11 @@ class Main:
                             '.o' + str(jobid)
                         )
                     try:
-                        with open(logfile, errors='replace') as ifile:
+                        with open(
+                            logfile,
+                            encoding='utf-8',
+                            errors='replace',
+                        ) as ifile:
                             output = []
                             for line in ifile:
                                 output = (output + [line.rstrip()])[-5:]

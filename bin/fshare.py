@@ -92,7 +92,7 @@ class DropboxClient:
         file = os.environ.get('DROPBOX_KEY_FILE')
         if file:
             try:
-                with open(file, errors='replace') as ifile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
                     return ifile.readline().strip()
             except OSError:
                 logger.error('Cannot read "%s" file.', file)

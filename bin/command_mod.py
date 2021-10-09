@@ -15,8 +15,8 @@ import subprocess
 import sys
 from typing import Any, List, Optional, Sequence
 
-RELEASE = '2.4.2'
-VERSION = 20210620
+RELEASE = '2.4.3'
+VERSION = 20211006
 
 
 class Command:
@@ -460,13 +460,15 @@ class Platform:
         )
         try:
             with open(
-                    os.path.join(registry_key, 'CurrentVersion'),
-                    errors='replace'
+                os.path.join(registry_key, 'CurrentVersion'),
+                encoding='utf-8',
+                errors='replace'
             ) as ifile:
                 kernel = ifile.readline()
             with open(
-                    os.path.join(registry_key, 'CurrentBuildNumber'),
-                    errors='replace'
+                os.path.join(registry_key, 'CurrentBuildNumber'),
+                encoding='utf-8',
+                errors='replace'
             ) as ifile:
                 kernel += '.' + ifile.readline()
         except OSError:

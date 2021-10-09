@@ -134,7 +134,11 @@ class Main:
                     '" sha256sum file.'
                 )
             try:
-                with open(sha256file, errors='replace') as ifile:
+                with open(
+                    sha256file,
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     for line in ifile:
                         sha256sum = line[:32]
                         file = line.rstrip()[34:]

@@ -311,7 +311,7 @@ class Main:
         except OSError as exception:
             if exception.args != (95, 'Operation not supported'):
                 try:
-                    with open(source_file):
+                    with open(source_file, encoding='utf-8', errors='replace'):
                         raise SystemExit(
                             sys.argv[0] + ': Cannot create "' +
                             target_file + '" file.'

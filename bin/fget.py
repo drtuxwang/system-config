@@ -153,7 +153,11 @@ class Main:
         Return 'download', 'resume' or 'skip'
         """
         try:
-            with open(file + '.part.json') as ifile:
+            with open(
+                file + '.part.json',
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 json_data = json.load(ifile)
                 host = json_data['fget']['lock']['host']
                 pid = json_data['fget']['lock']['pid']
@@ -181,7 +185,12 @@ class Main:
         }
 
         try:
-            with open(file+'.part.json', 'w', newline='\n') as ofile:
+            with open(
+                file+'.part.json',
+                'w',
+                encoding='utf-8',
+                newline='\n',
+            ) as ofile:
                 print(json.dumps(
                     json_data,
                     ensure_ascii=False,

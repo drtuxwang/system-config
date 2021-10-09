@@ -188,7 +188,11 @@ class Main:
     def _postscript_fix(self, file: str) -> None:
         scaling = None
         try:
-            with open(self._tmpfile, errors='replace') as ifile:
+            with open(
+                self._tmpfile,
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     if '/a3 setpagesize' in line:
                         scaling = 0.7071
@@ -196,8 +200,13 @@ class Main:
         except OSError:
             pass
         if scaling:
-            with open(file, errors='replace') as ifile:
-                with open(file + '.part', 'w', newline='\n') as ofile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
+                with open(
+                    file + '.part',
+                    'w',
+                    encoding='utf-8',
+                    newline='\n',
+                ) as ofile:
                     for line in ifile:
                         line = line.rstrip('\r\n')
                         if line.endswith(' setpagesize'):

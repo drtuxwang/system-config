@@ -138,7 +138,7 @@ class Main:
         """
         lines = []
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     if line.startswith('<!DOCTYPE html'):
                         lines.append('\n')
@@ -174,7 +174,11 @@ class Main:
                 if os.path.splitext(file)[1] in ('.htm', '.html', '.xhtml'):
                     xml.sax.parseString(cls._get_xml(file), handler)
                 else:
-                    with open(file, errors='replace') as ifile:
+                    with open(
+                        file,
+                        encoding='utf-8',
+                        errors='replace',
+                    ) as ifile:
                         xml.sax.parse(ifile, handler)
             except OSError as exception:
                 raise SystemExit(

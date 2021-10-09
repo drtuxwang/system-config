@@ -115,7 +115,7 @@ class Configuration:
         self._data: dict = {'cdspeed': {}}
         if file:
             try:
-                with open(file) as ifile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
                     self._data = json.load(ifile)
             except (KeyError, OSError):
                 pass
@@ -140,7 +140,7 @@ class Configuration:
         Write file
         """
         try:
-            with open(file, 'w', newline='\n') as ofile:
+            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                 print(json.dumps(
                     self._data,
                     ensure_ascii=False,

@@ -41,7 +41,12 @@ class Options:
                 "Would you like to use GNOME(g), KDE(k) or XFCE(x)? "
             )
             try:
-                with open(xstartup, 'w', newline='\n') as ofile:
+                with open(
+                    xstartup,
+                    'w',
+                    encoding='utf-8',
+                    newline='\n',
+                ) as ofile:
                     print("#!/usr/bin/env bash", file=ofile)
                     print("unset DBUS_SESSION_BUS_ADDRESS", file=ofile)
                     print("unset SESSION_MANAGER", file=ofile)
@@ -125,7 +130,9 @@ class Main:
         """
         options = Options()
 
-        subtask_mod.Exec(options.get_vncserver().get_cmdline()).run()
+        pattern = 'Cannot write random bytes:|RAND_write_file'
+        task = subtask_mod.Task(options.get_vncserver().get_cmdline())
+        task.run(pattern=pattern)
 
         return 0
 

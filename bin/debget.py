@@ -103,14 +103,22 @@ class Main:
     def _get_urls(distribution_file: str) -> List[str]:
         urls = []
         try:
-            with open(distribution_file, errors='replace') as ifile:
+            with open(
+                distribution_file,
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for url in ifile:
                     url = url.rstrip()
                     if url and not url.startswith('#'):
-                        if (not url.startswith(('http://', 'https://')) or
-                                os.path.basename(url) not in (
-                                    'Packages.xz', 'Packages.bz2',
-                                    'Packages.gz')):
+                        if (
+                            not url.startswith(('http://', 'https://')) or
+                            os.path.basename(url) not in (
+                                'Packages.xz',
+                                'Packages.bz2',
+                                'Packages.gz',
+                            )
+                        ):
                             raise SystemExit(
                                 sys.argv[0] + ': Invalid "' + url + '" URL.')
                         urls.append(url)
@@ -199,7 +207,7 @@ class Main:
             lines = []
             file = archive.rsplit('.', 1)[0]
             try:
-                with open(file, errors='replace') as ifile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
                     for line in ifile:
                         if line.startswith('Filename: '):
                             lines.append(line.rstrip('\r\n').replace(
@@ -218,7 +226,7 @@ class Main:
     @staticmethod
     def _read_data(file: str) -> dict:
         try:
-            with open(file) as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 data = json.load(ifile)
         except json.decoder.JSONDecodeError as exception:
             raise SystemExit(
@@ -235,7 +243,12 @@ class Main:
     def _write_data(file: str, data: dict) -> None:
         logger.info('Creating "%s" packages file.', file)
         try:
-            with open(file + '.part', 'w', newline='\n') as ofile:
+            with open(
+                file + '.part',
+                'w',
+                encoding='utf-8',
+                newline='\n',
+            ) as ofile:
                 print(json.dumps(data, ensure_ascii=False), file=ofile)
         except OSError as exception:
             raise SystemExit(

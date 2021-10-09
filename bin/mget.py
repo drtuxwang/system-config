@@ -111,7 +111,12 @@ class VideoDownloader:
             "cd ${0%/*}/..",
             'xrun "{0:s}" {1:s}'.format(self._output, self._url),
         )
-        with open(self._m3u8_file + '-resume.sh', 'w', newline='\n') as ofile:
+        with open(
+            self._m3u8_file + '-resume.sh',
+            'w',
+            encoding='utf-8',
+            newline='\n',
+        ) as ofile:
             for line in script:
                 print(line, file=ofile)
         os.chmod(self._m3u8_file + '-resume.sh', int('755', 8))
@@ -140,7 +145,11 @@ class VideoDownloader:
 
         chunks: dict = {}
         try:
-            with open(self._m3u8_file) as ifile:
+            with open(
+                self._m3u8_file,
+                encoding='utf-8',
+                errors='replace',
+            ) as ifile:
                 for line in ifile:
                     line = line.strip()
                     if not line.startswith('#'):
@@ -192,7 +201,7 @@ class VideoDownloader:
                 self._get_chunk(file, urls)
                 if os.path.isfile(file):
                     nfiles += 1
-                    with open(status_file, 'w') as ofile:
+                    with open(status_file, 'w', encoding='utf-8') as ofile:
                         print("{0:s}: {1:d}/{2:d}".format(
                             self._output,
                             nfiles,

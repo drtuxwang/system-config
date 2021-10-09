@@ -224,7 +224,12 @@ class Xterm(Terminal):
         sshconfig = os.path.join(sshdir, 'config')
         if not os.path.isfile(sshconfig):
             try:
-                with open(sshconfig, 'w', newline='\n') as ofile:
+                with open(
+                    sshconfig,
+                    'w',
+                    encoding='utf-8',
+                    newline='\n',
+                ) as ofile:
                     print("Protocol 2\n", file=ofile)
                     print("#Host hostname", file=ofile)
                     print("#User username\n", file=ofile)
@@ -380,10 +385,15 @@ class XfceTerminal(GnomeTerminal):
             '.config/xfce4/terminal/accels.scm',
         )
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 data = ifile.read()
                 if '"<Alt>' in data:
-                    with open(file+'.part', 'w', newline='\n') as ofile:
+                    with open(
+                        file+'.part',
+                        'w',
+                        encoding='utf-8',
+                        newline='\n',
+                    ) as ofile:
                         print(re.sub(r'"<Alt>\d+"', '""', data), file=ofile)
                     shutil.move(file+'.part', file)
         except OSError:

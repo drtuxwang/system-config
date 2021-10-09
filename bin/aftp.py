@@ -34,7 +34,7 @@ class Options:
         netrc = os.path.join(os.environ.get('HOME', ''), '.netrc')
         umask = os.umask(int('077', 8))
         try:
-            with open(netrc, 'w', newline='\n') as ofile:
+            with open(netrc, 'w', encoding='utf-8', newline='\n') as ofile:
                 print(
                     "machine",
                     host,

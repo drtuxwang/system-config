@@ -113,8 +113,9 @@ class Backlight:
         """
         try:
             with open(
-                    os.path.join(self._device, 'brightness'),
-                    errors='replace'
+                os.path.join(self._device, 'brightness'),
+                encoding='utf-8',
+                errors='replace',
             ) as ifile:
                 brightness = int(ifile.readline())
         except (OSError, ValueError):
@@ -133,8 +134,9 @@ class Backlight:
         """
         try:
             with open(
-                    os.path.join(self._device, 'max_brightness'),
-                    errors='replace'
+                os.path.join(self._device, 'max_brightness'),
+                encoding='utf-8',
+                errors='replace',
             ) as ifile:
                 brightness = int(ifile.readline())
         except (OSError, ValueError):
@@ -153,9 +155,10 @@ class Backlight:
         """
         try:
             with open(
-                    os.path.join(self._device, 'brightness'),
-                    'w',
-                    newline='\n'
+                os.path.join(self._device, 'brightness'),
+                'w',
+                encoding='utf-8',
+                newline='\n',
             ) as ofile:
                 print(brightness, file=ofile)
         except OSError:

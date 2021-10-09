@@ -84,7 +84,7 @@ class Main:
     def _extract(file: str) -> Generator[str, None, None]:
         lines = []
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     lines.append(line.strip().replace('&gt;', '>').replace(
                         '&lt;', '<').replace('SCRIPT>', 'script>'))
@@ -101,7 +101,7 @@ class Main:
         lines = jsbeautifier.beautify(script).splitlines()
         print('Writing "{0:s}" with {1:d} lines...'.format(file, len(lines)))
         try:
-            with open(file, 'w') as ofile:
+            with open(file, 'w', encoding='utf-8') as ofile:
                 for line in lines:
                     print(line, file=ofile)
         except OSError as exception:

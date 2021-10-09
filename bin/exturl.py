@@ -81,7 +81,7 @@ class Main:
 
     def _extract(self, file: str) -> List[str]:
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 urls = []
                 for line in ifile:
                     line = line.strip()

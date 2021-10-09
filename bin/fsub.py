@@ -117,9 +117,14 @@ class Main:
         nchange = 0
 
         try:
-            with open(file, errors='replace') as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 try:
-                    with open(newfile, 'w', newline='\n') as ofile:
+                    with open(
+                        newfile,
+                        'w',
+                        encoding='utf-8',
+                        newline='\n',
+                    ) as ofile:
                         for line in ifile:
                             line_new = self._is_match.sub(
                                 self._replacement, line)

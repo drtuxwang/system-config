@@ -11,6 +11,7 @@ import sys
 from typing import List
 
 import command_mod
+import network_mod
 import subtask_mod
 
 
@@ -23,7 +24,7 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_vncviewer(self) -> command_mod.Command:
+    def get_vncviewer(self) -> network_mod.Sandbox:
         """
         Return vncviewer Command class object.
         """
@@ -108,7 +109,10 @@ class Options:
                 'for port number.'
             ) from exception
 
-        self._vncviewer = command_mod.Command('vncviewer', errors='stop')
+        self._vncviewer = network_mod.Sandbox('vncviewer', errors='stop')
+        configs = [os.path.join(os.environ['HOME'], '.vnc')]
+        self._vncviewer.sandbox(configs)
+
         if remote_host:
             local_port = self._getport(remote_host, remote_port)
             print(

@@ -94,7 +94,11 @@ class Main:
                 nlines = 0
                 maxcols = 0
                 try:
-                    with open(file, errors='replace') as ifile:
+                    with open(
+                        file,
+                        encoding='utf-8',
+                        errors='replace',
+                    ) as ifile:
                         for line in ifile:
                             nlines += 1
                             ncols = len(line.rstrip('\r\n'))

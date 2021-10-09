@@ -51,12 +51,13 @@ class Main:
         configdir = os.path.join(home, '.purple')
         configfile = os.path.join(configdir, 'prefs.xml')
         try:
-            with open(configfile, errors='replace') as ifile:
+            with open(configfile, encoding='utf-8', errors='replace') as ifile:
                 try:
                     with open(
-                            configfile + '.part',
-                            'w',
-                            newline='\n'
+                        configfile + '.part',
+                        'w',
+                        encoding='utf-8',
+                        newline='\n',
                     ) as ofile:
                         # Disable logging of chats
                         islog = re.compile('log_.*type="bool"')

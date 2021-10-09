@@ -56,8 +56,12 @@ class Main:
                 if not os.path.isfile(
                         os.path.join(audacitydir, 'audacity.cfg')
                 ):
-                    with open(os.path.join(audacitydir, 'audacity.cfg'),
-                              'w', newline='\n') as ofile:
+                    with open(
+                        os.path.join(audacitydir, 'audacity.cfg'),
+                        'w',
+                        encoding='utf-8',
+                        newline='\n',
+                    ) as ofile:
                         print("[AudioIO]", file=ofile)
                         print("PlaybackDevice=ALSA: pulse", file=ofile)
                         print("RecordingDevice=ALSA: pulse", file=ofile)

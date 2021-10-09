@@ -65,11 +65,11 @@ class Options:
             try:
                 shutil.rmtree(os.path.join(os.environ['HOME'], '.adobe'))
                 os.makedirs(os.path.dirname(adobe))
-                with open(adobe, 'w', newline='\n'):
+                with open(adobe, 'w', encoding='utf-8', newline='\n'):
                     pass
                 shutil.rmtree(os.path.join(os.environ['HOME'], '.macromedia'))
                 os.makedirs(os.path.dirname(macromedia))
-                with open(macromedia, 'w', newline='\n'):
+                with open(macromedia, 'w', encoding='utf-8', newline='\n'):
                     pass
             except OSError:
                 pass
@@ -102,8 +102,13 @@ class Options:
         for file in glob.glob(
                 os.path.join(firefoxdir, '*', 'adblockplus', 'patterns.ini')):
             try:
-                with open(file, errors='replace') as ifile:
-                    with open(file + '.part', 'w', newline='\n') as ofile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
+                    with open(
+                        file + '.part',
+                        'w',
+                        encoding='utf-8',
+                        newline='\n',
+                    ) as ofile:
                         for line in ifile:
                             if not ispattern.search(line):
                                 print(line, end='', file=ofile)
@@ -123,8 +128,13 @@ class Options:
         for directory in glob.glob(os.path.join(firefoxdir, '*')):
             file = os.path.join(directory, 'xulstore.json')
             try:
-                with open(file) as ifile:
-                    with open(file + '.part', 'w', newline='\n') as ofile:
+                with open(file, encoding='utf-8', errors='replace') as ifile:
+                    with open(
+                        file + '.part',
+                        'w',
+                        encoding='utf-8',
+                        newline='\n',
+                    ) as ofile:
                         for line in ifile:
                             print(line.replace('"fullscreen"', '"maximized"'),
                                   end='', file=ofile)
@@ -266,7 +276,6 @@ class Options:
             '"browser.display.show_image_placeholders", false',
             '"browser.download.animateNotifications", false',
             '"browser.link.open_external", 3',
-            '"browser.link.open_newwindow", 3',
             '"browser.link.open_newwindow.restriction", 0',
             '"browser.newtabpage.enabled", false',
             '"browser.newtabpage.activity-stream.feeds.telemetry", false',
@@ -296,7 +305,6 @@ class Options:
             '"content.interrupt.parsing", true',
             '"content.notify.backoffcount", 5',
             '"content.notify.interval", 500000',
-            '"content.notify.ontimer", true',
             '"dom.battery.enabled", false',
             '"dom.event.clipboardevents.enabled", true',
             '"dom.event.contextmenu.enabled", false',
@@ -308,8 +316,6 @@ class Options:
             '"geo.wifi.uri", ""',
             '"full-screen-api.approval-required", false',
             '"geo.enabled", false',
-            '"image.animation_mode", normal',
-            '"keyword.enabled", true',
             '"layout.frames.force_resizability", true',
             '"layout.spellcheckDefault", 2',
             '"loop.throttled", false',
@@ -321,9 +327,6 @@ class Options:
             '"media.fragmented-mp4.ffmpeg.enabled", true',
             '"media.fragmented-mp4.gmp.enabled", false',
             '"media.gstreamer.enabled", false',
-            '"media.mediasource.enabled", true',
-            '"media.mediasource.mp4.enabled", true',
-            '"media.mediasource.webm.enabled", true',
             '"media.navigator.enabled", false',
             '"mousewheel.min_line_scroll_amount", 2',
             '"network.captive-portal-service.enabled", false',
@@ -331,7 +334,6 @@ class Options:
             '"network.http.pipelining.maxrequests", 8',
             '"network.http.pipelining", true',
             '"network.http.proxy.pipelining", true',
-            '"network.http.spdy.enabled", true',
             '"network.http.speculative-parallel-limit", 0',
             '"network.prefetch-next", false',
             '"network.proxy.socks_remote_dns", true',
@@ -341,17 +343,12 @@ class Options:
             '"print.print_edge_left", 20',
             '"print.print_edge_right", 20',
             '"print.print_edge_top", 20',
-            '"plugins.click_to_play", true',
             '"privacy.popups.showBrowserMessage", false',
             '"reader.parse-on-load.enabled", false',
             '"security.dialog_enable_delay", 0',
-            '"security.enterprise_roots.enabled", false',
-            '"security.certerrors.mitm.auto_enable_enterprise_roots", true',
             '"toolkit.storage.synchronous", 0',
             '"toolkit.telemetry.archive.enabled", false',
             '"toolkit.telemetry.bhrPing.enabled", false',
-            '"toolkit.telemetry.cachedClientID", false',
-            '"toolkit.telemetry.debugSlowSql", false',
             '"toolkit.telemetry.enabled", false',
             '"toolkit.telemetry.firstShutdownPing.enabled", false',
             '"toolkit.telemetry.hybridContent.enabled", false',
@@ -361,18 +358,25 @@ class Options:
             '"toolkit.telemetry.unified", false',
             '"toolkit.telemetry.updatePing.enabled", false',
             '"ui.submenuDelay", 0',
-            '"webgl.disabled", false',
-            '"xpinstall.signatures.required", true',
         )
 
         firefoxdir = os.path.join(os.environ['HOME'], cls._get_profiles_dir())
         if os.path.isdir(firefoxdir):
             for file in glob.glob(os.path.join(firefoxdir, '*', 'prefs.js')):
                 try:
-                    with open(file, errors='replace') as ifile:
+                    with open(
+                        file,
+                        encoding='utf-8',
+                        errors='replace',
+                    ) as ifile:
                         lines = ifile.readlines()
                     # Workaround 'user.js' dropped support
-                    with open(file, 'a', newline='\n') as ofile:
+                    with open(
+                        file,
+                        'a',
+                        encoding='utf-8',
+                        newline='\n',
+                    ) as ofile:
                         if (not updates and
                                 'user_pref("app.update.enabled", false);\n'
                                 not in lines):

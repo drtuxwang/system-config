@@ -163,7 +163,12 @@ class Gallery:
                     file.rsplit('.', 1)[0]
                 ) + '.xhtml'
                 try:
-                    with open(xhtml_file, 'w', newline='\n') as ofile:
+                    with open(
+                        xhtml_file,
+                        'w',
+                        encoding='utf-8',
+                        newline='\n',
+                    ) as ofile:
                         for line in self.generate(i, file, next_file):
                             print(line, file=ofile)
                 except OSError as exception:
@@ -268,7 +273,12 @@ class Xhtml:
         )
 
         try:
-            with open('index.xhtml', 'w', newline='\n') as ofile:
+            with open(
+                'index.xhtml',
+                'w',
+                encoding='utf-8',
+                newline='\n',
+            ) as ofile:
                 for line in self.generate(file_stats):
                     print(line, file=ofile)
         except OSError as exception:

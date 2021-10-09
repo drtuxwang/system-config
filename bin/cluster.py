@@ -137,7 +137,7 @@ class SecureShell:
         username, self._host = host.split('@', 1)
 
         try:
-            with open(os.devnull, 'w') as sys.stderr:
+            with open(os.devnull, 'w', encoding='utf-8') as sys.stderr:
                 self._client.connect(
                     self._host,
                     username=username,
@@ -161,7 +161,12 @@ class SecureShell:
                 get_pty=True,
                 timeout=timeout
             )
-            with open(self._host + '.txt', 'a', newline='\n') as ofile:
+            with open(
+                self._host + '.txt',
+                'a',
+                encoding='utf-8',
+                newline='\n',
+            ) as ofile:
                 print(
                     time.strftime('%Y-%m-%d-%H:%M:%S: connected'),
                     file=ofile

@@ -74,14 +74,23 @@ class Main:
         try:
             lines = []
             if os.path.isfile('index.fsum'):
-                with open('index.fsum', errors='replace') as ifile:
+                with open(
+                    'index.fsum',
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     for line in ifile:
                         lines.append(line.rstrip('\r\n'))
                 if lines == task.get_output():
                     return
 
             logger.info("Writing checksums: index.fsum")
-            with open('index.fsum.part', 'w', newline='\n') as ofile:
+            with open(
+                'index.fsum.part',
+                'w',
+                encoding='utf-8',
+                newline='\n',
+            ) as ofile:
                 for line in task.get_output():
                     time_new = max(
                         time_new,
@@ -185,14 +194,23 @@ class Main:
             try:
                 lines = []
                 if os.path.isfile(file):
-                    with open(file, errors='replace') as ifile:
+                    with open(
+                        file,
+                        encoding='utf-8',
+                        errors='replace',
+                    ) as ifile:
                         for line in ifile:
                             lines.append(line.rstrip('\r\n'))
                     if lines == fsums[directory]:
                         continue
 
                 logger.info("Writing checksums: %s", file)
-                with open(file+'.part', 'w', newline='\n') as ofile:
+                with open(
+                    file+'.part',
+                    'w',
+                    encoding='utf-8',
+                    newline='\n',
+                ) as ofile:
                     for line in fsums[directory]:
                         time_new = max(
                             time_new,

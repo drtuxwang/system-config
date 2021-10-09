@@ -61,6 +61,7 @@ xhost +si:localuser:$MYUNAME
 xrandr --dpi 96
 xset s blank s 0 # Use 300 for CRT
 sleep 4 && xset dpms 0 0 0 &
+export QT_AUTO_SCREEN_SCALE_FACTOR=0
 
 # Setup audio:
 pactl set-sink-volume 0 100%

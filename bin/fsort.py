@@ -89,7 +89,11 @@ class Main:
         if options.get_files():
             for file in options.get_files():
                 try:
-                    with open(file, errors='replace') as ifile:
+                    with open(
+                        file,
+                        encoding='utf-8',
+                        errors='replace',
+                    ) as ifile:
                         for line in ifile:
                             line = line.rstrip('\r\n')
                             lines.append(line)

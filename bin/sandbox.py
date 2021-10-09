@@ -92,14 +92,21 @@ class Options:
         if self._args.allow_mounts:
             configs = ['/']
         else:
-            # "os.getcwd()" returns realpath instead
+            home = os.getenv('HOME', '/')
+            configs = [
+                os.path.join(home, x) + ':ro'
+                for x in ('.bashrc', '.profile', '.tmux.conf', '.vimrc')
+                if os.path.exists(os.path.join(home, x))
+            ]
+
             work_dir = os.environ['PWD']
             if work_dir == os.environ['HOME']:
                 desktop = os.path.join(work_dir, 'Desktop')
                 if os.path.isdir(desktop):
                     os.chdir(desktop)
                     work_dir = desktop
-            configs = [work_dir]
+            configs.append(work_dir)
+
         if self._args.allow_net:
             configs.append('net')
         self._command.sandbox(configs, errors='stop')

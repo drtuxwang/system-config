@@ -77,7 +77,7 @@ class Menu:
         self._menus = options.get_menus()
 
         template = sys.argv[0].rsplit('.py', 1)[0] + '.tcl.jinja2'
-        with open(template) as ifile:
+        with open(template, encoding='utf-8', errors='replace') as ifile:
             self._template = jinja2.Template(ifile.read())
 
         config_file = sys.argv[0].rsplit('.py', 1)[0] + '.yaml'
@@ -150,7 +150,7 @@ class Menu:
         for menu in self._menus:
             file = os.path.join(tmpdir, menu + '.tcl')
             try:
-                with open(file, 'w', newline='\n') as ofile:
+                with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                     for line in self.generate(menu):
                         if self._view_flag:
                             print(line)

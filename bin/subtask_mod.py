@@ -15,8 +15,8 @@ import types
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.2.3'
-VERSION = 20210708
+RELEASE = '2.2.4'
+VERSION = 20211006
 
 BUFFER_SIZE = 131072
 
@@ -36,7 +36,11 @@ class Task:
             if '|' in cmdline:
                 raise PipeNotSupportedError('Windows does not support pipes.')
             try:
-                with open(cmdline[0], errors='replace') as ifile:
+                with open(
+                    cmdline[0],
+                    encoding='utf-8',
+                    errors='replace',
+                ) as ifile:
                     if ifile.readline().startswith('#!/usr/bin/env python'):
                         self._cmdline = [sys.executable, '-B'] + cmdline
             except OSError:

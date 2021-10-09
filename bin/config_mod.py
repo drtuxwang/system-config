@@ -26,8 +26,8 @@ import bson  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '1.7.4'
-VERSION = 20210912
+RELEASE = '1.7.5'
+VERSION = 20211006
 
 
 class Data:
@@ -167,7 +167,7 @@ class Data:
                 except xml.parsers.expat.ExpatError as exception:
                     raise ReadConfigError(exception) from exception
             else:
-                with open(file) as ifile:
+                with open(file, encoding='utf-8') as ifile:
                     data = ifile.read()
                 if check:
                     data = self._unjinja(data)
@@ -193,7 +193,12 @@ class Data:
 
         try:
             if file.endswith('json'):
-                with open(tmpfile, 'w', newline='\n') as ofile:
+                with open(
+                    tmpfile,
+                    'w',
+                    encoding='utf-8',
+                    newline='\n',
+                ) as ofile:
                     for block in self._blocks:
                         if compact:
                             print(
@@ -216,7 +221,12 @@ class Data:
                     ))
                     for block in self._blocks
                 ]
-                with open(tmpfile, 'w', newline='\n') as ofile:
+                with open(
+                    tmpfile,
+                    'w',
+                    encoding='utf-8',
+                    newline='\n',
+                ) as ofile:
                     print('--\n'.join(yaml_data), end='', file=ofile)
             elif file.endswith('bson'):
                 if len(self._blocks) > 1:

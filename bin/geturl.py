@@ -185,7 +185,11 @@ class Main:
                     '-Z'
                 ])
                 try:
-                    with open(url, errors='replace') as ifile:
+                    with open(
+                        url,
+                        encoding='utf-8',
+                        errors='replace',
+                    ) as ifile:
                         for line in ifile:
                             line = line.strip().split('  #')[0]
                             if line and not line.startswith('#'):

@@ -110,7 +110,7 @@ class Main:
     @staticmethod
     def _read_data(file: str) -> dict:
         try:
-            with open(file) as ifile:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
                 data = json.load(ifile)
         except (OSError, json.decoder.JSONDecodeError) as exception:
             raise SystemExit(
