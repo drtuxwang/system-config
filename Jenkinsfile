@@ -19,8 +19,8 @@ pipeline {
                     stages {
                         stage ("Build") {
                             steps {
-                                sh "make -C docker/alpine-3.12 build"
-                                sh "make -C docker/alpine-3.12 version"
+                                sh "make -C docker/alpine-3.13 build"
+                                sh "make -C docker/alpine-3.13 version"
                             }
                         }
                     }
@@ -30,14 +30,14 @@ pipeline {
                     stages {
                         stage ("Build") {
                             steps {
-                                sh "make -C docker/python-3.7-slim-buster build"
-                                sh "make -C docker/python-3.7-slim-buster version"
+                                sh "make -C docker/python-3.8-slim-buster build"
+                                sh "make -C docker/python-3.8-slim-buster version"
                             }
                         }
                         stage ("Test") {
                             agent {
                                 docker {
-                                    image 'drtuxwang/python:3.7-slim-buster'
+                                    image 'drtuxwang/python:3.8-slim-buster'
                                     args '--network=host'
                                     reuseNode true
                                     alwaysPull false

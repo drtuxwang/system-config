@@ -25,8 +25,8 @@ steps:
     - ls -ld ${{CF_VOLUME_PATH}}/* ${{CF_VOLUME_PATH}}/${{CF_REPO_NAME}}/*
     - env | grep ^CF_ | sort
     - cf_export RELEASE_VERSION=$(git describe --tags --match "v[0-9]*" --long)
-    - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine-3.12/Makefile | sed -e "s/.* //")
-    - cf_export PYTHON_BASE=$(grep "^BASE_IMAGE" docker/python-3.7-slim-buster/Makefile | sed -e "s/.* //")
+    - cf_export ALPINE_BASE=$(grep "^BASE_IMAGE" docker/alpine-3.13/Makefile | sed -e "s/.* //")
+    - cf_export PYTHON_BASE=$(grep "^BASE_IMAGE" docker/python-3.8-slim-buster/Makefile | sed -e "s/.* //")
     - codefresh get contexts
 
   preparations:
@@ -39,39 +39,57 @@ steps:
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - rm -rf docker/alpine-3.12/bash/tmpdir
-        - mkdir -p docker/alpine-3.12/bash/tmpdir/bin docker/alpine-3.12/bash/tmpdir/root
-        - cp -p bin/* docker/alpine-3.12/bash/tmpdir/bin/
-        - cp -p config/profile docker/alpine-3.12/bash/tmpdir/root/.profile
-        - cp -p config/vimrc docker/alpine-3.12/bash/tmpdir/root/.vimrc
+        - cd docker/alpine-3.13/bash && ../../bin/create-root-tar.sh bash bin vim
       create_python_deps:
         title: Build Python dependencies
         image: codefresh/cli:latest
         entry_point: /bin/sh
         commands:
-        - rm -rf docker/python-3.7-slim-buster/tmpdir
-        - mkdir -p docker/python-3.7-slim-buster/tmpdir/bin docker/python-3.7-slim-buster/tmpdir/root
-        - cp -p bin/* docker/python-3.7-slim-buster/tmpdir/bin/
-        - cp -p config/profile docker/python-3.7-slim-buster/tmpdir/root/.profile
-        - cp -p config/vimrc docker/python-3.7-slim-buster/tmpdir/root/.vimrc
+        - cd docker/python-3.8-slim-buster/dev && ../../bin/create-root-tar.sh bash bin vim
+        - cd docker/python-3.8-slim-buster/dev && ../../bin/python-packages.sh
 
-  build_alpine_base:
+  docker_base_builds:
+    title: Package Docker base images
     stage: package
-    title: Build Alpine base image
-    type: build
-    image_name: drtuxwang/alpine-base
-    tag: 'latest'
-    working_directory: docker/alpine-3.12
-    dockerfile: Dockerfile
-    build_arguments:
-    - BASE_IMAGE=${{ALPINE_BASE}}
-  push_alpine:
-    stage: push
-    title: Push Alpine base image
-    type: push
-    registry: dockerhub
-    candidate: ${{build_alpine}}
-    tag: 3.12
+    type: parallel
+    steps:
+      build_alpine_base:
+        title: Build Alpine base image
+        type: build
+        image_name: drtuxwang/alpine
+        tag: '3.13'
+        working_directory: docker/alpine-3.13
+        dockerfile: Dockerfile
+        build_arguments:
+        - BASE_IMAGE=${{ALPINE_BASE}}
+      build_python_base:
+        title: Build Python image
+        type: build
+        image_name: drtuxwang/python
+        tag: 3.8-slim-buster
+        working_directory: docker/python-3.8-slim-buster
+        dockerfile: Dockerfile
+        build_arguments:
+        - BASE_IMAGE=${{PYTHON_BASE}}
+
+  docker_base_pushes:
+    title: Push Docker base images
+    stage: package
+    type: parallel
+    steps:
+      push_alpine:
+        stage: push
+        title: Push Alpine base image
+        type: push
+        registry: dockerhub
+        candidate: ${{build_alpine}}
+        tag: 3.13
+      push_python:
+        title: Push Python base image
+        type: push
+        registry: dockerhub
+        candidate: ${{build_python}}
+        tag: 3.8-slim-buster
 
   docker_builds:
     title: Package Docker images
@@ -79,18 +97,18 @@ steps:
     type: parallel
     steps:
       build_alpine_bash:
-        title: Build Alpine image
+        title: Build Alpine bash image
         type: build
-        image_name: drtuxwang/alpine-base
-        tag: 3.12
-        working_directory: docker/alpine-3.12/bash
+        image_name: drtuxwang/alpine-bash
+        tag: 3.13
+        working_directory: docker/alpine-3.13/bash
         dockerfile: Dockerfile
       build_python:
-        title: Build Python image
+        title: Build Python dev image
         type: build
-        image_name: drtuxwang/python-base
-        tag: 3.7-slim-buster
-        working_directory: docker/python-3.7-slim-buster
+        image_name: drtuxwang/python-dev
+        tag: 3.8-slim-buster
+        working_directory: docker/python-3.8-slim-buster/dev
         dockerfile: Dockerfile
         build_arguments:
         - BASE_IMAGE=${{PYTHON_BASE}}
@@ -101,17 +119,17 @@ steps:
     type: parallel
     steps:
       push_alpine:
-        title: Push Alpine image
+        title: Push Alpine bash image
         type: push
         registry: dockerhub
         candidate: ${{build_alpine_bash}}
-        tag: 3.12
+        tag: 3.13
       push_python:
-        title: Push Python image
+        title: Push Python dev image
         type: push
         registry: dockerhub
         candidate: ${{build_python}}
-        tag: 3.7-slim-buster
+        tag: 3.8-slim-buster
 
   python_tests:
     title: Run Python tests
