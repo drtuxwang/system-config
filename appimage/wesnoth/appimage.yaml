@@ -1,0 +1,47 @@
+version: 1
+
+script:
+  - rm -rf ./AppDir || true
+
+AppDir:
+  path: ./AppDir
+
+  app_info:
+    exec: usr/games/wesnoth-1.14
+    exec_args: $@
+    icon: wesnoth-icon
+    id: wesnoth
+    name: wesnoth
+    version: 1.14.15
+
+  apt:
+    allow_unauthenticated: true
+    arch: amd64
+    exclude:
+    - libthai
+    - libthai-data
+    include:
+    - wesnoth
+    - wesnoth-music
+    sources:
+    - sourceline: deb https://deb.debian.org/debian bullseye main contrib non-free
+    - sourceline: deb https://deb.debian.org/debian bullseye-updates main contrib non-free
+    - sourceline: deb https://security.debian.org bullseye-security main contrib non-free
+
+  files:
+    exclude:
+    - usr/share/bug
+    - usr/share/doc
+    - usr/share/doc-base
+    - usr/share/games/wesnoth/*/locale
+    - usr/share/locale
+    - usr/share/man
+
+  runtime:
+    path_mappings:
+    - /usr/share/games/wesnoth/1.14:$APPDIR/usr/share/games/wesnoth/1.14
+
+AppImage:
+  arch: x86_64
+  sign-key: None
+  update-information: None

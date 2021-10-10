@@ -1,0 +1,38 @@
+version: 1
+
+script:
+  - rm -rf ./AppDir || true
+
+AppDir:
+  path: ./AppDir
+
+  app_info:
+    exec: bin/bash
+    exec_args: $@
+    icon: utilities-terminal
+    id: org.gnu.bash
+    name: bash
+    version: 5.1.4
+
+  apt:
+    allow_unauthenticated: true
+    arch: amd64
+    exclude:
+    - dpkg
+    include:
+    - bash
+    sources:
+    - sourceline: deb https://deb.debian.org/debian bullseye main contrib non-free
+    - sourceline: deb https://deb.debian.org/debian bullseye-updates main contrib non-free
+    - sourceline: deb https://security.debian.org bullseye-security main contrib non-free
+
+  files:
+    exclude:
+    - usr/share/doc
+    - usr/share/locale
+    - usr/share/man
+
+AppImage:
+  arch: x86_64
+  sign-key: None
+  update-information: None

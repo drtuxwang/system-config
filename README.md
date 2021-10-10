@@ -956,6 +956,14 @@ the years. Now most of the scripts are written in Python 3.
  * ansible/roles/user-home/templates/htoprc
  * ansible/roles/user-home/templates/netnice.json
  * ansible/roles/user-home/vars/main.yaml
+ * appimage/Makefile
+ * appimage/bin/build-appimage.sh
+ * appimage/bash/Makefile                Bash 5.1.4 (Debian 11)
+ * appimage/bash/appimage.yaml
+ * appimage/vlc/Makefile                 VLC 3.0.16 (Debian 11)
+ * appimage/vlc/appimage.yaml
+ * appimage/wesnoth/Makefile             Wesnoth 1.14.15 (Debian 11))
+ * appimage/wesnoth/appimage.yaml
  * cloudformation/1pxy/1pxy.json         CloudFormation: 1pxy example
  * cloudformation/1pxy/Makefile
  * cloudformation/1pxy/submit.sh
