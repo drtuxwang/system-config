@@ -1,9 +1,1 @@
-ansible==None
-ansible-core==None
-Django==None
-dropbox==None
-ImageHash==None
-numpy==None
 pip==20.2.4
-scipy==None
-youtube_dl==None

@@ -3,8 +3,6 @@
 Encode MP4 video using ffmpeg (libx264/aac).
 """
 
-# Annotation: Fix Class reference run time NameError
-from __future__ import annotations
 import argparse
 import glob
 import logging
@@ -236,6 +234,114 @@ class Options:
 
         self._audio_codec = 'aac'
         self._video_codec = 'libx264'
+
+
+class Media:
+    """
+    Media class
+    """
+
+    def __init__(self, file: str) -> None:
+        self._file = file
+        self._length = '0'
+        self._stream = {}
+        self._type = 'Unknown'
+        ffprobe = command_mod.Command('ffprobe', args=[file], errors='stop')
+        task = subtask_mod.Batch(ffprobe.get_cmdline())
+        task.run(error2output=True)
+        number = 0
+        isjunk = re.compile('^ *Stream #[^ ]*: ')
+        try:
+            for line in task.get_output():
+                if line.strip().startswith('Duration:'):
+                    self._length = line.replace(',', '').split()[1]
+                elif line.strip().startswith('Stream #0'):
+                    self._stream[number] = isjunk.sub('', line)
+                    number += 1
+                elif line.strip().startswith('Input #'):
+                    self._type = line.replace(', from', '').split()[2]
+        except IndexError as exception:
+            raise SystemExit(
+                sys.argv[0] + ': Invalid "' + file + '" media file.'
+            ) from exception
+
+    def get_stream(self) -> Generator[Tuple[int, str], None, None]:
+        """
+        Return stream
+        """
+        for key, value in sorted(self._stream.items()):
+            yield (key, value)
+
+    def get_stream_audio(self) -> Generator[Tuple[int, str], None, None]:
+        """
+        Return audio stream
+        """
+        for key, value in sorted(self._stream.items()):
+            if value.startswith('Audio: '):
+                yield (key, value)
+
+    def get_type(self) -> str:
+        """
+        Return media type
+        """
+        return self._type
+
+    def has_audio(self) -> bool:
+        """
+        Return True if audio found
+        """
+        for value in self._stream.values():
+            if value.startswith('Audio: '):
+                return True
+        return False
+
+    def has_audio_codec(self, codec: str) -> bool:
+        """
+        Return True if audio codec found
+        """
+        for value in self._stream.values():
+            if value.startswith('Audio: ' + codec):
+                return True
+        return False
+
+    def has_video(self) -> bool:
+        """
+        Return True if video found
+        """
+        for value in self._stream.values():
+            if value.startswith('Video: '):
+                return True
+        return False
+
+    def has_video_codec(self, codec: str) -> bool:
+        """
+        Return True if video codec found
+        """
+        for value in self._stream.values():
+            if value.startswith('Video: ' + codec):
+                return True
+        return False
+
+    def is_valid(self) -> bool:
+        """
+        Return True if valid media
+        """
+        return self._type != 'Unknown'
+
+    def show(self) -> None:
+        """
+        Show information
+        """
+        if self.is_valid():
+            logger.info(
+                "%s    = Type:  %s (%s), %d bytes",
+                self._file,
+                self._type,
+                self._length,
+                os.path.getsize(self._file),
+            )
+            for stream, information in self.get_stream():
+                logger.info("%s[%d] = %s", self._file, stream, information)
 
 
 class Encoder:
@@ -496,114 +602,6 @@ class Encoder:
             self._single()
         else:
             self._multi()
-
-
-class Media:
-    """
-    Media class
-    """
-
-    def __init__(self, file: str) -> None:
-        self._file = file
-        self._length = '0'
-        self._stream = {}
-        self._type = 'Unknown'
-        ffprobe = command_mod.Command('ffprobe', args=[file], errors='stop')
-        task = subtask_mod.Batch(ffprobe.get_cmdline())
-        task.run(error2output=True)
-        number = 0
-        isjunk = re.compile('^ *Stream #[^ ]*: ')
-        try:
-            for line in task.get_output():
-                if line.strip().startswith('Duration:'):
-                    self._length = line.replace(',', '').split()[1]
-                elif line.strip().startswith('Stream #0'):
-                    self._stream[number] = isjunk.sub('', line)
-                    number += 1
-                elif line.strip().startswith('Input #'):
-                    self._type = line.replace(', from', '').split()[2]
-        except IndexError as exception:
-            raise SystemExit(
-                sys.argv[0] + ': Invalid "' + file + '" media file.'
-            ) from exception
-
-    def get_stream(self) -> Generator[Tuple[int, str], None, None]:
-        """
-        Return stream
-        """
-        for key, value in sorted(self._stream.items()):
-            yield (key, value)
-
-    def get_stream_audio(self) -> Generator[Tuple[int, str], None, None]:
-        """
-        Return audio stream
-        """
-        for key, value in sorted(self._stream.items()):
-            if value.startswith('Audio: '):
-                yield (key, value)
-
-    def get_type(self) -> str:
-        """
-        Return media type
-        """
-        return self._type
-
-    def has_audio(self) -> bool:
-        """
-        Return True if audio found
-        """
-        for value in self._stream.values():
-            if value.startswith('Audio: '):
-                return True
-        return False
-
-    def has_audio_codec(self, codec: str) -> bool:
-        """
-        Return True if audio codec found
-        """
-        for value in self._stream.values():
-            if value.startswith('Audio: ' + codec):
-                return True
-        return False
-
-    def has_video(self) -> bool:
-        """
-        Return True if video found
-        """
-        for value in self._stream.values():
-            if value.startswith('Video: '):
-                return True
-        return False
-
-    def has_video_codec(self, codec: str) -> bool:
-        """
-        Return True if video codec found
-        """
-        for value in self._stream.values():
-            if value.startswith('Video: ' + codec):
-                return True
-        return False
-
-    def is_valid(self) -> bool:
-        """
-        Return True if valid media
-        """
-        return self._type != 'Unknown'
-
-    def show(self) -> None:
-        """
-        Show information
-        """
-        if self.is_valid():
-            logger.info(
-                "%s    = Type:  %s (%s), %d bytes",
-                self._file,
-                self._type,
-                self._length,
-                os.path.getsize(self._file),
-            )
-            for stream, information in self.get_stream():
-                logger.info("%s[%d] = %s", self._file, stream, information)
 
 
 class Main:

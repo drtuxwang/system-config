@@ -338,7 +338,10 @@ class TestOptions(
         """
         Test '-h' displays help.
         """
-        all_expected = ('positional arguments:', 'optional arguments:')
+        all_expected = (
+            'positional arguments:',
+            'show this help message and exit',
+        )
         args = ['arg0', '-h']
 
         with self.assertRaises(SystemExit):
@@ -353,7 +356,10 @@ class TestOptions(
         """
         Test '--h' displays help.
         """
-        all_expected = ('positional arguments:', 'optional arguments:')
+        all_expected = (
+            'positional arguments:',
+            'show this help message and exit',
+        )
         args = ['arg0', '--h']
 
         with self.assertRaises(SystemExit):
@@ -368,7 +374,10 @@ class TestOptions(
         """
         Test '--help' displays help.
         """
-        all_expected = ('positional arguments:', 'optional arguments:')
+        all_expected = (
+            'positional arguments:',
+            'show this help message and exit',
+        )
         args = ['arg0', '--help']
 
         with self.assertRaises(SystemExit):

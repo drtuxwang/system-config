@@ -5,8 +5,6 @@ System configuration detection tool.
 1996-2021 By Dr Colin Kong
 """
 
-# Annotation: Fix Class reference run time NameError
-from __future__ import annotations
 import functools
 import glob
 import json
@@ -29,8 +27,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable = import-error
 
-RELEASE = '5.16.5'
-VERSION = 20211006
+RELEASE = '5.16.6'
+VERSION = 20211016
 
 # pylint: disable = too-many-lines
 
@@ -59,7 +57,7 @@ class Options:
         """
         return self._release_version
 
-    def get_system(self) -> OperatingSystem:
+    def get_system(self) -> 'OperatingSystem':
         """
         Return operating system.
         """
@@ -503,7 +501,7 @@ class OperatingSystem:
         return 'Unknown'
 
     @staticmethod
-    def factory() -> OperatingSystem:
+    def factory() -> 'OperatingSystem':
         """
         Return OperatignSystem sub class
         """

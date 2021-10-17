@@ -3,8 +3,6 @@
 Check whether installed debian packages in '.debs' list have updated versions.
 """
 
-# Annotation: Fix Class reference run time NameError
-from __future__ import annotations
 import argparse
 import copy
 import distutils.version
@@ -25,43 +23,6 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
-
-
-class Options:
-    """
-    Options class
-    """
-
-    def __init__(self) -> None:
-        self._args: argparse.Namespace = None
-        self.parse(sys.argv)
-
-    def get_list_files(self) -> List[str]:
-        """
-        Return list of installed packages files.
-        """
-        return self._args.list_files
-
-    def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(
-            description='Check whether installed debian packages in '
-            '".debs" list have updated versions.',
-        )
-
-        parser.add_argument(
-            'list_files',
-            nargs='+',
-            metavar='distro.debs',
-            help='Debian installed packages ".debs" list file.'
-        )
-
-        self._args = parser.parse_args(args)
-
-    def parse(self, args: List[str]) -> None:
-        """
-        Parse arguments
-        """
-        self._parse_args(args[1:])
 
 
 class Package:
@@ -121,7 +82,7 @@ class Package:
         """
         self._version = version
 
-    def is_newer(self, package: Package) -> bool:
+    def is_newer(self, package: 'Package') -> bool:
         """
         Return True if version newer than package.
         """
@@ -134,6 +95,43 @@ class Package:
         except TypeError:  # 5.0.0~buster 5.0~rc1~buster
             pass
         return False
+
+
+class Options:
+    """
+    Options class
+    """
+
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
+        self.parse(sys.argv)
+
+    def get_list_files(self) -> List[str]:
+        """
+        Return list of installed packages files.
+        """
+        return self._args.list_files
+
+    def _parse_args(self, args: List[str]) -> None:
+        parser = argparse.ArgumentParser(
+            description='Check whether installed debian packages in '
+            '".debs" list have updated versions.',
+        )
+
+        parser.add_argument(
+            'list_files',
+            nargs='+',
+            metavar='distro.debs',
+            help='Debian installed packages ".debs" list file.'
+        )
+
+        self._args = parser.parse_args(args)
+
+    def parse(self, args: List[str]) -> None:
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
 
 
 class Main:

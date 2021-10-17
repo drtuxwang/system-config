@@ -5,8 +5,6 @@ Python power handling module
 Copyright GPL v2: 2011-2021 By Dr Colin Kong
 """
 
-# Annotation: Fix Class reference run time NameError
-from __future__ import annotations
 import functools
 import glob
 import os
@@ -14,8 +12,8 @@ import re
 import subprocess
 from typing import List, Optional
 
-RELEASE = '2.2.3'
-VERSION = 20211006
+RELEASE = '2.2.4'
+VERSION = 20211016
 
 
 class Battery:
@@ -38,7 +36,7 @@ class Battery:
         self.check()
 
     @staticmethod
-    def factory() -> List[Battery]:
+    def factory() -> List['Battery']:
         """
         Return list of Battery sub class objects
         """

@@ -1,2 +1,2 @@
 @echo off
-"%~dp0python3.bat" -B -E "%~dp0\pyld.py" -pyldname=pytar tar_ %*
+"%~dp0python3.bat" -B -E "%~dp0\pyld.py" -pyldname=tar tar_py %*

@@ -3,8 +3,6 @@
 Wrapper for Linux/Mac screen locking
 """
 
-# Annotation: Fix Class reference run time NameError
-from __future__ import annotations
 import glob
 import os
 import signal
@@ -37,7 +35,7 @@ class ScreenLocker:
         return self._command.is_found()
 
     @staticmethod
-    def factory(desktop: str) -> ScreenLocker:
+    def factory(desktop: str) -> 'ScreenLocker':
         """
         Return ScreenLocker sub class object.
         """

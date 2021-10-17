@@ -119,13 +119,14 @@ the years. Now most of the scripts are written in Python 3.
  * bin/youtube-dl
  * bin/youtube-dl.bat
  * bin/0ad                0Sandbox for "0ad" launcher (allowing non systems port)
- * bin/0ad.py
+ * bin/_0ad.py
  * bin/wesnoth            Sandbox for "wesnoth" launcher (allowing non systems port)
  * bin/wesnoth.py
  * bin/7z                 Make a compressed archive in 7z format
  * bin/7z.bat             (uses p7zip)
  * bin/7za
- * bin/p7zip.py
+ * bin/_7z.py
+ * bin/_7za.py
  * bin/aftp               Automatic connection to FTP server anonymously
  * bin/aftp.py
  * bin/aplay              Play MP3/OGG/WAV audio files in directory
@@ -390,9 +391,9 @@ the years. Now most of the scripts are written in Python 3.
  * bin/gitk.bat
  * bin/gitk.py
  * bin/git-lfs            git large file storage plugin
- * bin/git_lfs.py
+ * bin/git_lfs_.py
  * bin/git-time           git original author time plugin
- * bin/git_time.py
+ * bin/git_time_.py
  * bin/gnomine            gnome-mines/gnomine wrapper (allowing non systems port)
  * bin/gnomine.py         (can pick using old gnomines name)
  * bin/go                 Go wrapper (golang)
@@ -630,7 +631,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/sonobuoy.py
  * bin/ssh.bat            Windows ssh wrapper (uses PuTTY)
  * bin/ssh-askpass        Wrapper for "ssh-askpass" command
- * bin/ssh_askpass.py
+ * bin/ssh_askpass_.py
  * bin/ssync              Securely synchronize file system using SSH protocol
  * bin/ssync.py           (uses rsync)
  * bin/sudo               Wrapper for "sudo" command
@@ -643,19 +644,19 @@ the years. Now most of the scripts are written in Python 3.
  * bin/svncviewer         Securely connect to VNC server using SSH protocol
  * bin/svncviewer.py
  * bin/swell-foop         Wrapper for "swell-foop" command
- * bin/swell_foop.py
+ * bin/swell_foop_.py
  * bin/sysinfo            System configuration detection tool
  * bin/sysinfo.bat
  * bin/sysinfo.py
  * bin/sysinfo.sh         Old Bourne shell version
  * bin/systemd-analyze    systemd-analyze wrapper (filter buggy firmware/loader timings)
- * bin/systemd_analyze.py
+ * bin/systemd_analyze_.py
  * bin/t7z                Make a compressed archive in TAR.&Z format
  * bin/t7z.py
  * bin/tar                Make a compressed archive in TAR format
  * bin/tar.bat
  * bin/tar.py
- * bin/tar_.py
+ * bin/tar_py.py
  * bin/teams              teams wrapper (allowing non systems port)
  * bin/teams.py
  * bin/terraform          terraform wrapper (allowing non systems port)
@@ -742,7 +743,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/untar              Unpack a compressed archive in
  * bin/untar.bat          TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.
  * bin/untar.py
- * bin/untar_.py
+ * bin/untar_py.py
  * bin/untbz              Unpack a compressed archive in TAR.BZ2 format
  * bin/untbz.bat
  * bin/untbz.py
@@ -771,11 +772,12 @@ the years. Now most of the scripts are written in Python 3.
  * bin/vbox.py            (uses VBoxManage)
  * bin/vget               Streaming video downloader (Youtube, m3u8 and compatible websites)
  * bin/vget.py
- * bin/vi                 vi wrapper (allowing non systems port)
+ * bin/vi                 vim wrapper (allowing non systems port)
  * bin/vi.bat
- * bin/vim                vim wrapper (allowing non systems port)
- * bin/vim.bat
  * bin/vi.py
+ * bin/vim
+ * bin/vim.bat
+ * bin/vim.py
  * bin/view               View files using hardwired application mapping
  * bin/view.py
  * bin/vlc                Sandbox for "vlc" launcher (allowing non systems port)
@@ -910,6 +912,7 @@ the years. Now most of the scripts are written in Python 3.
  * etc/python-requirements_3.5.txt       Python 3.5 pip requirements file
  * etc/python-requirements_3.6.txt       Python 3.6 pip requirements file
  * etc/python-requirements_3.7.txt       Python 3.7 pip requirements file
+ * etc/python-requirements_3.10.txt      Python 3.10 pip requirements file
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization

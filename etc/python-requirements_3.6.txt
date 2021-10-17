@@ -1,10 +1,4 @@
-ansible==None
-ansible-core==None
-Django==None
-dropbox==None
-ImageHash==None
 ipython==7.16.1
-numpy==None
+numpy==1.19.5
 pip==20.2.4
-scipy==None
-youtube_dl==None
+scipy==1.5.4

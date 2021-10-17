@@ -165,25 +165,14 @@ locate_python_tool() {
 # Execute Python or Python tool
 #
 exec_python() {
+    BIN_DIR=`dirname "$0"`
     PYEXE=python3
     PYLD_FLAGS=
     PY_MAIN=`basename "$0"`
     case $PY_MAIN in
-    7z|7za)
+    [0-9]*)
         PYLD_FLAGS="-pyldname=$PY_MAIN"
-        PY_MAIN="p7zip"
-        ;;
-    bson|bz2|calendar|git|gtts|json|random|yaml)
-        PYLD_FLAGS="-pyldname=$PY_MAIN"
-        PY_MAIN="${PY_MAIN}_"
-        ;;
-    g++)
-        PYLD_FLAGS="-pyldname=$PY_MAIN"
-        PY_MAIN="gxx_"
-        ;;
-    git-*|ssh-*|swell-*|systemd-*)
-        PYLD_FLAGS="-pyldname=$PY_MAIN"
-        PY_MAIN=`echo "$PY_MAIN" | sed -e "s/-/_/g"`
+        PY_MAIN="_$PY_MAIN"
         ;;
     ipdb|pip|pydoc)
         PYEXE=python
@@ -195,10 +184,13 @@ exec_python() {
     python*)
         PYEXE="$PY_MAIN"
         ;;
-    vi|vim)
-        PYLD_FLAGS="-pyldname=$PY_MAIN"
-        PY_MAIN="vi"
-        ;;
+    *)
+      if [ -f "$BIN_DIR/"`echo $PY_MAIN | sed -e "s/+/x/g;s/-/_/g"`_.py ]
+      then
+          PYLD_FLAGS="-pyldname=$PY_MAIN"
+          PY_MAIN=`echo $PY_MAIN | sed -e "s/+/x/g;s/-/_/g"`_
+      fi
+      ;;
     esac
 
     if [ "$OSTYPE" = "cygwin" ]
@@ -239,7 +231,6 @@ exec_python() {
     fi
 
     unset PYTHONSTARTUP PYTHONHOME
-    BIN_DIR=`dirname "$0"`
 
     if [ "$PYEXE" = "$PY_MAIN" ]
     then

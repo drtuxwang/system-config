@@ -60,7 +60,8 @@ class Options:
         self._args = parser.parse_args(args)
 
         isarchive = re.compile(
-            '[.](tar|tar[.](gz|bz2|zstd|lzma|xz|7z)|t[bglx7]z|tzst?)$',
+            '[.](tar|tar[.]gz|tar[.]bz2|tar[.]zstd|tar[.]lzma|tar[.]xz|'
+            'tar[.]7z|t[bglx7]z|tzst?)$',
         )
         for archive in self._args.archives:
             if not isarchive.search(archive):

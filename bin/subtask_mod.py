@@ -15,8 +15,8 @@ import types
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.2.4'
-VERSION = 20211006
+RELEASE = '2.2.5'
+VERSION = 20211016
 
 BUFFER_SIZE = 131072
 
@@ -178,7 +178,7 @@ class Task:
     @staticmethod
     def _recv_stdout(
         child: subprocess.Popen,
-        ismatch: re.Pattern,
+        ismatch: 're.Pattern',
         replace: str,
     ) -> None:
         while True:
@@ -194,7 +194,7 @@ class Task:
     @staticmethod
     def _recv_stderr(
         child: subprocess.Popen,
-        ismatch: re.Pattern,
+        ismatch: 're.Pattern',
         replace: str,
     ) -> None:
         while True:

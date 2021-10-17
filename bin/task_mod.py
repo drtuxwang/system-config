@@ -5,8 +5,6 @@ Python task handling utility module
 Copyright GPL v2: 2006-2021 By Dr Colin Kong
 """
 
-# Annotation: Fix Class self reference run time NameError
-from __future__ import annotations
 import functools
 import getpass
 import os
@@ -14,8 +12,8 @@ import re
 import subprocess
 from typing import List, Optional
 
-RELEASE = '2.2.1'
-VERSION = 20210509
+RELEASE = '2.2.2'
+VERSION = 20211016
 
 
 class Tasks:
@@ -39,7 +37,7 @@ class Tasks:
         raise NotImplementedError
 
     @staticmethod
-    def factory(user: Optional[str] = None) -> Tasks:
+    def factory(user: Optional[str] = None) -> 'Tasks':
         """
         Return Tasks sub class object.
         """

@@ -5,8 +5,6 @@ Wrapper for GNOME/KDE/XFCE/Invisible terminal session
 Use '-i' for invisible terminal
 """
 
-# Annotation: Fix Class reference run time NameError
-from __future__ import annotations
 import glob
 import os
 import re
@@ -46,7 +44,7 @@ class Options:
         """
         return self._hosts
 
-    def get_terminal(self) -> Terminal:
+    def get_terminal(self) -> 'Terminal':
         """
         Return terminal Command class object.
         """

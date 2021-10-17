@@ -1,3 +1,5 @@
+ansible==None
+ansible-base==None
 cryptography==None
 paramiko==None
 pyOpenSSL==None

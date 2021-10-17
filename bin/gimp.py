@@ -1,15 +1,53 @@
 #!/usr/bin/env python3
 """
-Sandbox for "gimp" launcher
+Wrapper for "gimp" command
 """
 
 import glob
 import os
 import signal
 import sys
+from typing import List
 
-import network_mod
+import command_mod
 import subtask_mod
+
+
+class Options:
+    """
+    Options class
+    """
+
+    def __init__(self) -> None:
+        self.parse(sys.argv)
+
+    def get_pattern(self) -> str:
+        """
+        Return filter pattern.
+        """
+        return self._pattern
+
+    def get_gimp(self) -> command_mod.Command:
+        """
+        Return gimp Command class object.
+        """
+        return self._gimp
+
+    def parse(self, args: List[str]) -> None:
+        """
+        Parse arguments
+        """
+        self._gimp = command_mod.Command('gimp', errors='stop')
+        self._gimp.set_args(['--no-splash'] + args[1:])
+        self._pattern = (
+            '^$| GLib-WARNING | GLib-GObject-WARNING | Gtk-WARNING |: Gimp-|'
+            ' g_bookmark_file_get_size:|recently-used.xbel|^ sRGB |^lcms: |'
+            'pixmap_path: |in <module>| import |wrong ELF class:|'
+            ': LibGimpBase-WARNING |^Traceback |: undefined symbol:|'
+            ' XMP metadata:|: No XMP packet found|: GEGL-gegl-operation.c|'
+            ': using babl for|gimp_pickable_contiguous_region_by_seed:|'
+            'librsvg-WARNING|Plug-in| deprecated '
+        )
 
 
 class Main:
@@ -48,45 +86,10 @@ class Main:
         """
         Start program
         """
-        gimp = network_mod.Sandbox('gimp', errors='stop')
-        gimp.set_args(['--no-splash'] + sys.argv[1:])
-        if os.path.isfile(gimp.get_file() + '.py'):
-            subtask_mod.Exec(gimp.get_cmdline()).run()
+        options = Options()
 
-        desktopintegration = os.path.join(
-            os.getenv('HOME', '/'),
-            '.local/share/appimagekit',
-            'GNUImageManipulationProgram_no_desktopintegration',
-        )
-        if not os.path.isfile(desktopintegration):
-            if not os.path.isdir(os.path.dirname(desktopintegration)):
-                os.makedirs(os.path.dirname(desktopintegration))
-            with open(desktopintegration, 'wb'):
-                pass
-        configs = [
-            desktopintegration + ':ro',
-            '/run/user/{0:d}'.format(os.getuid()),
-        ]
-        work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
-        if work_dir == os.environ['HOME']:
-            desktop = os.path.join(work_dir, 'Desktop')
-            if os.path.isdir(desktop):
-                os.chdir(desktop)
-                work_dir = desktop
-        configs.extend([
-            os.path.join(os.getenv('HOME', '/'), '.config/GIMP-AppImage'),
-            work_dir,
-        ])
-        if len(sys.argv) >= 2:
-            if os.path.isdir(sys.argv[1]):
-                configs.append(os.path.abspath(sys.argv[1]))
-            elif os.path.isfile(sys.argv[1]):
-                configs.append(os.path.dirname(os.path.abspath(sys.argv[1])))
-            if sys.argv[1] == '-net':
-                gimp.set_args(['--no-splash'] + sys.argv[2:])
-        gimp.sandbox(configs)
-
-        subtask_mod.Daemon(gimp.get_cmdline()).run()
+        subtask_mod.Background(options.get_gimp(
+            ).get_cmdline()).run(pattern=options.get_pattern())
 
         return 0
 

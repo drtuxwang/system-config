@@ -96,7 +96,7 @@ class Main:
             sys.argv = argv
 
         self.tmpdir = file_mod.FileUtil.tmpdir(
-            os.path.join('.cache', 'debdistget')
+            os.path.join('.cache', 'debget')
         )
 
     @staticmethod

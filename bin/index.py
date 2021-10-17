@@ -105,7 +105,10 @@ class Main:
             ) from exception
 
     @staticmethod
-    def _checkfile(isbadfile: re.Pattern, directory: str = os.curdir) -> None:
+    def _checkfile(
+        isbadfile: 're.Pattern',
+        directory: str = os.curdir,
+    ) -> None:
         """
         Look for bad files like core dumps
         (don't followlinks & onerror do nothing)

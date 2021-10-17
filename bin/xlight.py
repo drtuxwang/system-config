@@ -3,8 +3,6 @@
 Desktop screen backlight utility.
 """
 
-# Annotation: Fix Class reference run time NameError
-from __future__ import annotations
 import argparse
 import getpass
 import glob
@@ -32,7 +30,7 @@ class Options:
         """
         return self._args.change
 
-    def get_backlight(self) -> Backlight:
+    def get_backlight(self) -> 'Backlight':
         """
         Return BacklightXXX class object.
         """
@@ -93,7 +91,7 @@ class Backlight:
         self._screens: List[str] = None
 
     @staticmethod
-    def factory() -> Backlight:
+    def factory() -> 'Backlight':
         """
         Return Backlight sub class object
         """

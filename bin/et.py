@@ -11,6 +11,7 @@ import sys
 
 import command_mod
 import file_mod
+import network_mod
 import subtask_mod
 
 
@@ -48,7 +49,7 @@ class Main:
     def _punkbuster(self) -> None:
         home = os.environ.get('HOME', '')
         pbdir = os.path.join(home, '.etwolf', 'pb')
-        linkdir = os.path.join(os.path.dirname(self._et.get_file()), 'pb')
+        linkdir = os.path.join(os.path.dirname(self._command.get_file()), 'pb')
         if not os.path.islink(pbdir):
             if os.path.isdir(pbdir):
                 try:
@@ -74,7 +75,7 @@ class Main:
                              '" key file (see http://www.etkey.net).')
 
     def _config(self) -> None:
-        os.chdir(os.path.dirname(self._et.get_file()))
+        os.chdir(os.path.dirname(self._command.get_file()))
         os.environ['SDL_AUDIODRIVER'] = 'pulse'
         etsdl = (
             glob.glob('/usr/lib/i386-linux-gnu/libSDL-*so*') +
@@ -104,18 +105,21 @@ class Main:
         """
         Start program
         """
-        self._et = command_mod.Command('et.x86', errors='ignore')
-        if not os.path.isfile(self._et.get_file()):
-            self._et = command_mod.Command('et', errors='stop')
-            self._et.set_args(sys.argv[1:])
-            subtask_mod.Exec(self._et.get_cmdline()).run()
+        self._command = network_mod.Sandbox('et.x86', errors='ignore')
+        if not os.path.isfile(self._command.get_file()):
+            command = command_mod.Command('et', errors='stop')
+            command.set_args(sys.argv[1:])
+            subtask_mod.Exec(command.get_cmdline()).run()
+
+        configs = ['net', os.path.join(os.getenv('HOME', '/'), '.etwolf')]
+        self._command.sandbox(configs)
 
         self._config()
         self._punkbuster()
-        self._et.set_args(sys.argv[1:])
+        self._command.set_args(sys.argv[1:])
 
         logfile = os.path.join(file_mod.FileUtil.tmpdir(), 'et.log')
-        subtask_mod.Daemon(self._et.get_cmdline()).run(file=logfile)
+        subtask_mod.Daemon(self._command.get_cmdline()).run(file=logfile)
 
         return 0
 

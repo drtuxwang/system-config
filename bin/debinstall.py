@@ -3,8 +3,6 @@
 Check installation dependencies of packages against '.debs' list file.
 """
 
-# Annotation: Fix Class reference run time NameError
-from __future__ import annotations
 import argparse
 import copy
 import distutils.version
@@ -25,70 +23,6 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(logging_mod.ColoredFormatter())
 logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
-
-
-class Options:
-    """
-    Options class
-    """
-
-    def __init__(self) -> None:
-        self._args: argparse.Namespace = None
-        self.parse(sys.argv)
-
-    def get_distro(self) -> str:
-        """
-        Return distro name.
-        """
-        return self._distro
-
-    def get_list_file(self) -> str:
-        """
-        Return installed packages '.debs' list file.
-        """
-        return self._args.list_file[0]
-
-    def get_package_names(self) -> List[str]:
-        """
-        Return list of package names.
-        """
-        return self._args.packageNames
-
-    def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(
-            description='Check installation dependencies of packages '
-            'against ".debs" list file.',
-        )
-
-        parser.add_argument(
-            'list_file',
-            nargs=1,
-            metavar='distro.debs',
-            help='Debian installed packages ".debs" list file.'
-        )
-        parser.add_argument(
-            'packageNames',
-            nargs='+',
-            metavar='package',
-            help='Debian package name.'
-        )
-
-        self._args = parser.parse_args(args[1:])
-
-    def parse(self, args: List[str]) -> None:
-        """
-        Parse arguments
-        """
-        self._parse_args(args)
-
-        list_file = self._args.list_file[0]
-        ispattern = re.compile('[.]debs-?.*$')
-        if not ispattern.search(list_file):
-            raise SystemExit(
-                sys.argv[0] + ': Invalid "' + list_file +
-                '" installed ".debs" list filename.'
-            )
-        self._distro = ispattern.sub('', list_file)
 
 
 class Package:
@@ -173,7 +107,7 @@ class Package:
         """
         self._url = url
 
-    def is_newer(self, package: Package) -> bool:
+    def is_newer(self, package: 'Package') -> bool:
         """
         Return True if version newer than package.
         """
@@ -186,6 +120,70 @@ class Package:
         except TypeError:  # 5.0.0~buster 5.0~rc1~buster
             pass
         return False
+
+
+class Options:
+    """
+    Options class
+    """
+
+    def __init__(self) -> None:
+        self._args: argparse.Namespace = None
+        self.parse(sys.argv)
+
+    def get_distro(self) -> str:
+        """
+        Return distro name.
+        """
+        return self._distro
+
+    def get_list_file(self) -> str:
+        """
+        Return installed packages '.debs' list file.
+        """
+        return self._args.list_file[0]
+
+    def get_package_names(self) -> List[str]:
+        """
+        Return list of package names.
+        """
+        return self._args.packageNames
+
+    def _parse_args(self, args: List[str]) -> None:
+        parser = argparse.ArgumentParser(
+            description='Check installation dependencies of packages '
+            'against ".debs" list file.',
+        )
+
+        parser.add_argument(
+            'list_file',
+            nargs=1,
+            metavar='distro.debs',
+            help='Debian installed packages ".debs" list file.'
+        )
+        parser.add_argument(
+            'packageNames',
+            nargs='+',
+            metavar='package',
+            help='Debian package name.'
+        )
+
+        self._args = parser.parse_args(args[1:])
+
+    def parse(self, args: List[str]) -> None:
+        """
+        Parse arguments
+        """
+        self._parse_args(args)
+
+        list_file = self._args.list_file[0]
+        ispattern = re.compile('[.]debs-?.*$')
+        if not ispattern.search(list_file):
+            raise SystemExit(
+                sys.argv[0] + ': Invalid "' + list_file +
+                '" installed ".debs" list filename.'
+            )
+        self._distro = ispattern.sub('', list_file)
 
 
 class Main:

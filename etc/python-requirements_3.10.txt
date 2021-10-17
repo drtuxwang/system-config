@@ -1,8 +1,4 @@
-ansible==None
-ansible-core==None
-Django==None
-dropbox==None
 ImageHash==None
 numpy==None
 scipy==None
-youtube_dl==None
+

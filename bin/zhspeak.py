@@ -5,8 +5,6 @@ Zhong Hua Speak Chinese TTS software.
 2009-2021 By Dr Colin Kong
 """
 
-# Annotation: Fix Class reference run time NameError
-from __future__ import annotations
 import argparse
 import glob
 import json
@@ -22,7 +20,7 @@ import file_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '5.2.1'
+RELEASE = '5.2.2'
 
 
 class Options:
@@ -41,7 +39,7 @@ class Options:
         """
         return self._args.dialect
 
-    def get_language(self) -> Language:
+    def get_language(self) -> 'Language':
         """
         Return language Command class object
         """
@@ -224,7 +222,7 @@ class Language:
         self._is_found = False
 
     @staticmethod
-    def factory(options: Options) -> Language:
+    def factory(options: Options) -> 'Language':
         """
         Return Language sub class object
         """
@@ -524,7 +522,7 @@ class AudioPlayer:
         self._config()
 
     @staticmethod
-    def factory(ogg_dir: str) -> AudioPlayer:
+    def factory(ogg_dir: str) -> 'AudioPlayer':
         """
         Return AudioPlayer sub class object
         """
