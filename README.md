@@ -519,8 +519,10 @@ the years. Now most of the scripts are written in Python 3.
  * bin/netnice.py
  * bin/normalize          normalize wrapper (allowing non systems port)
  * bin/normalize.py
- * bin/ntpdate            Run daemon to update time once every 24 hours
+ * bin/ntpdate            Wrapper for "ntpdate" command
  * bin/ntpdate.py
+ * bin/ntplib             Set the date and time via NTP pool
+ * bin/ntplib_.py
  * bin/ocr                Convert image file to text using OCR (uses tesseract)
  * bin/ocr.py
  * bin/ogg                Encode OGG audio using avconv (libvorbis)

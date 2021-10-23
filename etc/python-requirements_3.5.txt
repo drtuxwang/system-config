@@ -22,4 +22,4 @@ scipy==None
 setuptools==50.3.2
 Pillow==None
 PyYAML==None
-youtube_dl==None
+yt-dlp==None

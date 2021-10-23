@@ -6,6 +6,7 @@ cachetools==3.1.1
 cffi==1.14.1
 check-manifest==0.41
 cryptography==3.3.2
+Django==None
 docker-compose==1.26.2
 gitdb2==2.0.6
 GitPython==2.1.15
@@ -29,3 +30,4 @@ scipy==1.2.3
 setuptools==44.1.1
 ujson==2.0.3
 xdis==5.0.11
+yt-dlp==None

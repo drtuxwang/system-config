@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Run daemon to update time once every 24 hours
+Wrapper for "ntpdate" command
 """
 
 import glob
@@ -13,6 +13,8 @@ import time
 import command_mod
 import logging_mod
 import subtask_mod
+
+VERSION = 20211020
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
@@ -60,24 +62,33 @@ class Main:
         ntpdate = command_mod.Command(
             'ntpdate',
             pathextra=['/usr/sbin'],
-            args=['pool.ntp.org'],
             errors='stop'
         )
-        if len(sys.argv) == 1 or sys.argv[1] != '-u':
+        if len(sys.argv) != 3 or sys.argv[1] != '-b':
             subtask_mod.Exec(ntpdate.get_cmdline() + sys.argv[1:]).run()
 
-        task = subtask_mod.Task(ntpdate.get_cmdline())
+        task = subtask_mod.Task(ntpdate.get_cmdline() + sys.argv[1:])
         hwclock = command_mod.Command('hwclock', errors='stop')
+        if int(time.strftime('%Y%m%d')) < VERSION:
+            logger.info(time.strftime(
+                "Current clock is to old (Please check CMOS battery)",
+            ))
+            retry = 10
+        else:
+            retry = 60
+
         while True:
+            logger.info("Updating date and time via NTP...")
             task.run()
-            if task.get_exitcode() == 0:
-                subtask_mod.Task(hwclock.get_cmdline() + ['-w']).run()
+            date = int(time.strftime('%Y%m%d'))
+            if task.get_exitcode() == 0 and date >= VERSION:
+                subtask_mod.Task(hwclock.get_cmdline() + ['--systohc']).run()
                 subtask_mod.Task(hwclock.get_cmdline()).run()
-                logger.info('System & HWClock time updated')
-                time.sleep(3600)
-            else:
-                logger.info('Failed - retrying in 60 seconds')
-                time.sleep(60)
+                logger.info('System & HWClock time updated!')
+                break
+
+            logger.info("Failed - retrying in {0:d} seconds".format(retry))
+            time.sleep(retry)
 
         return 0
 

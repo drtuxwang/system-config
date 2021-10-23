@@ -3,7 +3,7 @@
 export PATH="/opt/software/bin:$PATH"
 export PYTHONDONTWRITEBYTECODE=1
 
-sleep 4 && ntpdate -u  > /dev/null 2>&1 &
+sleep 4 && ntplib pool.ntp.org > /dev/null 2>&1 &
 sleep 4 && xlight -reset > /dev/null 2>&1 &
 rmdir /media/*/* /media/* && rm /media/* > /dev/null 2>&1 &
 sleep 300 && rm /sys/fs/pstore/* > /dev/null 2>&1 &
