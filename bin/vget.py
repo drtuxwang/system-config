@@ -87,7 +87,7 @@ class Options:
 
         codes = {}
         for line in task.get_output():
-            if 'mp4' in line and 'video only' in line:
+            if 'mp4' in line and 'dash' in line:
                 code, _, size = line.split()[:3]
                 codes[int(size.split('x')[1])] = code
         for height in sorted(codes, reverse=True):
@@ -130,8 +130,8 @@ class Options:
         url = self._args.url[0]
         if '&index=' in url:  # Fix download one video for series
             url = url.split('&')[0]
-        self._vget = command_mod.CommandFile(sys.executable)
-        self._vget.set_args(['-m', 'youtube_dl', '--playlist-end', '1'])
+        self._vget = command_mod.Command('yt-dlp')
+        self._vget.set_args(['--playlist-end', '1'])
 
         if self._args.view_flag:
             self._vget.extend_args(['--list-formats', url])

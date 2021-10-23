@@ -116,8 +116,8 @@ the years. Now most of the scripts are written in Python 3.
  * bin/uncompyle6.bat
  * bin/virtualenv
  * bin/virtualenv.bat
- * bin/youtube-dl
- * bin/youtube-dl.bat
+ * bin/yt-dlp
+ * bin/yt-dlp.bat
  * bin/0ad                0Sandbox for "0ad" launcher (allowing non systems port)
  * bin/_0ad.py
  * bin/wesnoth            Sandbox for "wesnoth" launcher (allowing non systems port)
