@@ -18,6 +18,7 @@
 	pull-all = "!f() { git pull ||:; git submodule foreach \"git pull ||:\"; }; f"
 	pull-lfs = "!f() { git lfs pull $(echo \" $*\" | sed -e \"s/ / -I /g\"); }; f"
 	xdiff = difftool --tool=meld --dir-diff
+	status-all = "!f() { (git status; git submodule foreach git status) | egrep -v \"up to date|nothing to commit|^$\"; }; f"
 	xmerge = mergetool --tool=meld
 [color]
 	ui = auto
