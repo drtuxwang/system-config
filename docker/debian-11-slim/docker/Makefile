@@ -1,8 +1,9 @@
 BASE_IMAGE := drtuxwang/debian:11-slim
-IMAGE := drtuxwang/debian-xfce:11-slim
-NAME := debian11-xfce
-HOSTNAME := debian11-xfce
-LOCALPORT ?= 2222
+DOCKER_REPO=https://download.docker.com/linux/debian/dists/bullseye/pool/stable/amd64
+DOCKER_DEB=docker-ce-cli_20.10.9~3-0~debian-bullseye_amd64.deb
+IMAGE := drtuxwang/debian-docker:11-slim
+NAME := debian11-docker
+HOSTNAME := debian11-docker
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=
@@ -13,9 +14,10 @@ DOCKER_RUN_FLAGS := \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
-	--memory=2000m \
+	--memory=1000m \
 	--memory-reservation=50m \
-	--publish $(LOCALPORT):22 \
+	--volume /var/run/docker.sock:/var/run/docker.sock \
+	--privileged=true \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
@@ -30,10 +32,14 @@ status:       # Status of Docker images
 
 .PHONY: build
 build:        # Build Docker images
-	../../bin/create-root-tar.sh bash bin init sudo tmux vim xfce
-	../../bin/python-packages.sh
+	../../bin/create-root-tar.sh bash bin vim
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
+	docker build \
+		$(DOCKER_BUILD_FLAGS) \
+		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
+		--build-arg DOCKER_REPO=$(DOCKER_REPO) \
+		--build-arg DOCKER_DEB=$(DOCKER_DEB) \
+		-t $(IMAGE) .
 	rm -rf tmpdir
 
 .PHONY: run
@@ -43,8 +49,8 @@ run:          # Run Docker container
 
 .PHONY: version
 version:      # Check versions
-	@docker run $(DOCKER_RUN_FLAGS) --entrypoint dpkg $(IMAGE) -s xfce4 | \
-		awk '/^Version: / {printf("'$(shell pwd)': Xfce %s\n", $$2)}'
+	@docker run $(DOCKER_RUN_FLAGS) --entrypoint docker $(IMAGE) --version 2> /dev/null | \
+		grep ^Docker | sed -e "s/,/ /g" | awk '{printf("'$(shell pwd)': docker %s\n", $$3)}'
 
 .PHONY: rmi
 rmi:          # Remove Docker images

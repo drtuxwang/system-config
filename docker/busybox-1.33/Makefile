@@ -1,5 +1,5 @@
-BASE_IMAGE := busybox:1.32
-IMAGE := drtuxwang/busybox:1.32
+BASE_IMAGE := busybox:1.33
+IMAGE := drtuxwang/busybox:1.33
 DOCKER_BUILD_FLAGS ?=
 
 BUILD_DIRS := bash

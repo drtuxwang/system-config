@@ -1012,9 +1012,9 @@ the years. Now most of the scripts are written in Python 3.
  * docker/amazonlinux-2/dev/Dockerfile
  * docker/amazonlinux-2/dev/Makefile     amazonlinux:2 based GCC dev shell
  * docker/busybox-1.32/Dockerfile
- * docker/busybox-1.32/Makefile          busybox:1.32 based linux
+ * docker/busybox-1.32/Makefile          busybox:1.33 based linux
  * docker/busybox-1.32/bash/Dockerfile
- * docker/busybox-1.32/bash/Makefile     busybox:1.32 based BASH login
+ * docker/busybox-1.32/bash/Makefile     busybox:1.33 based BASH login
  * docker/centos-7/Dockerfile
  * docker/centos-7/Makefile              centos:7 based linux
  * docker/centos-7/bash/Dockerfile
@@ -1049,6 +1049,8 @@ the years. Now most of the scripts are written in Python 3.
  * docker/debian-11-slim/Makefile        debian:11-slim based linux
  * docker/debian-11-slim/bash/Dockerfile
  * docker/debian-11-slim/bash/Makefile   debian:11-slim based BASH login
+ * docker/debian-11-slim/docker/Dockerfile
+ * docker/debian-11-slim/docker/Makefile debian:11-slim based DOCKER shell
  * docker/debian-11-slim/xfce/Dockerfile
  * docker/debian-11-slim/xfce/Makefile   debian:11-slim based XFCE environment
  * docker/debian-11-slim/xfce/files/allow-owner
@@ -1066,8 +1068,6 @@ the years. Now most of the scripts are written in Python 3.
  * docker/i386-debian-11-slim/bash/Makefile  i386/debian:11-slim based BASH login
  * docker/i386-debian-11-slim/dev/Dockerfile
  * docker/i386-debian-11-slim/dev/Makefile  i386/debian:11-slim based GCC dev shell
- * docker/docker-20.10/Dockerfile
- * docker/docker-20.10/Makefile          docker:20.10 (alpine) based docker shell
  * docker/golang-1.16-alpine/Dockerfile
  * docker/golang-1.16-alpine/Makefile    golang:1.15-alpine based compiler app
  * docker/httpd-2.4-alpine/Dockerfile

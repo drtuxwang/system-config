@@ -2,7 +2,7 @@ BASE_IMAGE := debian:11-slim
 IMAGE := drtuxwang/debian:11-slim
 DOCKER_BUILD_FLAGS ?=
 
-BUILD_DIRS := bash dev xfce
+BUILD_DIRS := bash docker dev xfce
 
 
 .PHONY: default

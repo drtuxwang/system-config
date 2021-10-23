@@ -5,7 +5,7 @@ BUILD_DIRS := \
 	alpine-3.13 \
 	i386-alpine-3.13 \
 	amazonlinux-2 \
-	busybox-1.32 \
+	busybox-1.33 \
 	centos-7 \
 	centos-8 \
 	clearlinux-latest \
@@ -14,7 +14,6 @@ BUILD_DIRS := \
 	debian-11-slim\
 	i386-debian-10-slim \
 	i386-debian-11-slim \
-	docker-20.10 \
 	golang-1.16-alpine \
 	httpd-2.4-alpine \
 	nginx-1.18-alpine \

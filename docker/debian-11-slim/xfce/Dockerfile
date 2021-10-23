@@ -58,7 +58,10 @@ RUN \
     apt-get install --no-install-recommends -y wine wine64 wine32:i386 libc6-dev:i386 && \
     apt-get clean && \
     # Init for container
-    wget https://github.com/krallin/tini/releases/download/v0.19.0/tini-amd64 -O /tini && \
+    wget \
+        --progress=bar:force \
+        https://github.com/krallin/tini/releases/download/v0.19.0/tini-amd64 \
+        -O /tini && \
     chmod 755 /tini
 
 # Install Python packages
