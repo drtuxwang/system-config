@@ -42,26 +42,26 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Displays month or year calendar.',
+            description="Displays month or year calendar.",
         )
 
         parser.add_argument(
             '-l',
             dest='long_flag',
             action='store_true',
-            help='Select long output.'
+            help="Select long output.",
         )
         parser.add_argument(
             'month',
             nargs='?',
             type=int,
-            help='Select month (1-12 or 0 for year.'
+            help="Select month (1-12) or 0 for year.",
         )
         parser.add_argument(
             'year',
             nargs='?',
             type=int,
-            help='Select year (2-9999).'
+            help="Select year (2-9999).",
         )
 
         self._args = parser.parse_args(args)
@@ -79,15 +79,14 @@ class Options:
             self._month = self._args.month
             if self._month < 0 or self._month > 12:
                 raise SystemExit(
-                    sys.argv[0] + ': Invalid "' + str(self._month) +
-                    '" month. Use 1-12.'
+                    f'{sys.argv[0]}: Invalid "{self._month}" month. Use 1-12.',
                 )
             if self._args.year:
                 self._year = self._args.year
                 if self._year < 2 or self._year > 9999:
                     raise SystemExit(
-                        sys.argv[0] + ': Invalid "' + str(self._year) +
-                        '" year. Use 2-9999.'
+                        f'{sys.argv[0]}: Invalid '
+                        f'"{self._year}" year. Use 2-9999.',
                     )
             elif self._month < now.month:
                 self._year += 1  # Next year
@@ -127,24 +126,23 @@ class Main:
     @staticmethod
     def _long(year: int, month: int) -> None:
         print(
-            "\n" + " "*18 +
-            "[ ", calendar.month_name[month] + " ", year, " ]\n"
+            f"\n{' '*18}[  {calendar.month_name[month]}  {year}  ]\n"
         )
         for line in calendar.TextCalendar(6).formatmonth(
                 year, month).split(os.linesep)[1:]:
-            print("  " + "_"*51 + "  ", line)
+            print(f"  {'_'*51}  ", line)
         print()
-        print("  " + "_"*76 + "  ")
-        print(" " + ("|"+" "*10)*7 + "| ")
-        print(" " + ("|"+" "*10)*7 + "| ")
+        print(f"  {'_'*76}  ")
+        print(f" {('|'+' '*10)*7}| ")
+        print(f" {('|'+' '*10)*7}| ")
         print(
             " | Sunday   | Monday   | Tuesday  | Wednesday| Thursday"
             " | Friday   | Saturday |"
         )
-        print(" " + ("|"+" "*10)*7 + "| ")
-        print(" " + ("|"+"_"*10)*7 + "| ")
+        print(f" {('|'+' '*10)*7}| ")
+        print(f" {('|'+'_'*10)*7}| ")
         for week in calendar.Calendar(6).monthdays2calendar(year, month):
-            print(" " + ("|"+" "*10)*7 + "| ")
+            print(f" {('|'+' '*10)*7}| ")
             line = ''
             for day in week:
                 if day[0] == 0:
@@ -154,8 +152,8 @@ class Main:
             line += ' |'
             print(line)
             for _ in range(5):
-                print(" " + ("|"+" "*10)*7 + "| ")
-            print(" " + ("|"+"_"*10)*7 + "| ")
+                print(f" {('|'+' '*10)*7}| ")
+            print(f" {('|'+'_'*10)*7}| ")
         print()
 
     @staticmethod
@@ -176,11 +174,11 @@ class Main:
         next_month = data.splitlines()+['']
 
         for index in range(8):
-            print("  {0:20s}   {1:20s}   {2:20s}".format(
-                last_month[index],
-                current_month[index],
-                next_month[index]
-            ))
+            print(
+                f"  {last_month[index]:20s}   "
+                f"{current_month[index]:20s}   "
+                f"{next_month[index]:20s}",
+            )
 
     @classmethod
     def run(cls) -> int:
