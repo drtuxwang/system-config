@@ -5,14 +5,16 @@ arrow==0.17.0
 astroid==2.4.2
 build==0.5.1
 CacheControl==None
-cached-property==1.5.2       #   (required by docker-compose for 3.5)
+cached-property==None
 check-manifest==0.44
 contextlib2==None
 crashtest==None
 cryptography==3.2.1
 Django==None
 dnspython==None
+docker-compose==None
 dropbox==None
+emrichen==None
 gitdb==4.0.7
 GitPython==3.1.17
 ImageHash==None
@@ -38,8 +40,9 @@ platformdirs==2.0.2
 poetry==None
 poetry-core==None
 prompt-toolkit==2.0.10
+pyaml==None
 pylint==2.6.2
-PyYAML==5.3.1
+PyYAML==None
 questionary==None
 roam==None
 scipy==None

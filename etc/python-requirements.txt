@@ -108,7 +108,7 @@ poyo==0.5.0                  #   (required by cookiecutter)
 prompt-toolkit==3.0.21       #   (required by ipython/questionary)
 psutil==5.7.3                #   (required by Glances)
 ptyprocess==0.6.0            #   (required by ipdb/poetry)
-py==1.8.2                    #   (required by devpi-client)
+py==1.10.0                   #   (required by devpi-client)
 pyaml==21.8.3                #   (required by appimage-builder)
 pybktree==1.1                # BK-tree for querying of close matches
 pycodestyle==2.7.0           # Python style guide checker
@@ -157,7 +157,7 @@ tox==3.23.1                  #   (required by devpi-client)
 traitlets==5.0.5             #   (required by ipdb)
 typing-extensions==3.10.0.2  #   (required by mypy)
 uncompyle6==3.7.4            # Decompiles Python bytecode back to source code
-urllib3==1.25.11             #   (required by requests)
+urllib3==1.26.7              #   (required by requests)
 virtualenv==20.7.2           # Python Virtual Environments
 wcwidth==0.2.5               #   (required by appimage-builder/ipdb)
 webencodings==0.5.1          #   (required by poetry)

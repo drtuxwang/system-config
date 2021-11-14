@@ -128,8 +128,7 @@ INSTALL="$PYTHON -m pip install"
 REQUIREMENTS=
 PYTHON_VERSION=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
 read_requirements "${0%/*}/python-requirements.txt"
-read_requirements "${0%/*}/python-requirements_$PYTHON_VERSION.txt"
-[[ "$(uname -s)" = Darwin ]] && read_requirements "${0%/*}/python-requirements_${PYTHON_VERSION}_mac.txt"
+read_requirements "${0%/*}/python$PYTHON_VERSION-requirements.txt"
 
 [[ "$MODE" ]] && install_pip
 [[ "$MODE" = install ]] && install_packages

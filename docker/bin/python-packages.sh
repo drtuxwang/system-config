@@ -6,7 +6,7 @@ VERSION=${1:-}
 
 TOPDIR=$(realpath "$0" | sed -e "s|/[^/]*/[^/]*/[^/]*$||")
 umask 022
-rm -rf tmpdir/*python-requirements*
+rm -rf tmpdir/*python*requirements.txt
 
 mkdir -p tmpdir
 echo "Creating \"tmpdir/python-packages.sh\"..."
@@ -14,10 +14,10 @@ cp -p "$TOPDIR"/etc/python-packages.sh tmpdir
 echo "Creating \"tmpdir/python-requirements.txt\"..."
 cp -p "$TOPDIR"/etc/python-requirements.txt tmpdir
 
-if [ -f "$TOPDIR"/etc/python-requirements_$VERSION.txt ]
+if [ -f "$TOPDIR"/etc/python$VERSION-requirements.txt ]
 then
-    echo "Creating \"tmpdir/python-requirements_$VERSION.txt\"..."
-    cp -p "$TOPDIR"/etc/python-requirements_$VERSION.txt tmpdir
+    echo "Creating \"tmpdir/python$VERSION-requirements.txt\"..."
+    cp -p "$TOPDIR"/etc/python$VERSION-requirements.txt tmpdir
 fi
 
 # Fix group and others file/directory read access recursively

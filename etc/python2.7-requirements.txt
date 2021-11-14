@@ -10,7 +10,6 @@ backports.ssl-match-hostname==3.7.0.1  #   (required by docker-compose for 2.7)
 build==0.5.1
 CacheControl==None
 cached-property==1.5.2       #   (required by docker-compose for 2.7)
-scandir==1.10.0              #   (required by docker-compose/ipdb/virtualenv for 2.7)
 cachetools==3.1.1
 cffi==1.14.1
 check-manifest==0.41
@@ -31,6 +30,7 @@ futures==3.3.0               #   (required by pylint for 2.7)
 gitdb==None
 gitdb2==2.0.6                #   (required by GitPython for 2.7)
 GitPython==2.1.15
+ImageHash==None
 importlib-metadata==2.1.1    #   (required by virtualenv for 2.7)
 importlib-resources==3.3.1   #   (required by virtualenv for 2.7)
 inflect==None
@@ -51,7 +51,7 @@ nexus3-cli==None
 numpy==1.16.6
 parso==0.7.1
 pathlib2==2.3.6              #   (required by docker-compose/virtualenv for 2.7)
-Pillow==6.2.2
+Pillow==None
 pip==20.2.4
 platformdirs==2.0.2
 poetry==None
@@ -59,7 +59,7 @@ poetry-core==None
 prompt-toolkit==1.0.18
 # pycrypto==2.6.1            #    (required by abettersqlplus)
 pycurl==7.43.0.5
-Pygments==2.5.2
+# Pygments==2.5.2            #    (required by ipdb)
 pylint==1.9.4
 pyparsing==2.2.2             # New version incompatible
 pyrsistent==0.16.1
@@ -68,7 +68,8 @@ questionary==None
 roam==None
 ruamel.yaml==None
 ruamel.yaml.clib==None
-scipy==1.2.3
+scandir==1.10.0              #   (required by docker-compose/ipdb/virtualenv for 2.7)
+scipy==None
 SecretStorage==None
 setuptools==44.1.1
 simplegeneric==0.8.1         #   (required by ipdb for 2.7)

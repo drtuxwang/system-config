@@ -65,7 +65,7 @@ RUN \
     chmod 755 /tini
 
 # Install Python packages
-COPY tmpdir/python-packages.sh tmpdir/python-requirements*.txt* /etc/
+COPY tmpdir/python-packages.sh tmpdir/python*-requirements.txt /etc/
 RUN /etc/python-packages.sh -pip /usr/bin/python3 && \
     apt-get clean
 
