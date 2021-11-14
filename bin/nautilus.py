@@ -99,8 +99,8 @@ class Options:
             try:
                 with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                     print("[Desktop Entry]", file=ofile)
-                    print("Name=" + app_name, file=ofile)
-                    print("Exec=" + app_name, ' %f', file=ofile)
+                    print(f"Name={app_name}", file=ofile)
+                    print(f"Exec={app_name}", ' %f', file=ofile)
                     print("Type=Application", file=ofile)
                     print("NoDisplay=true", file=ofile)
             except OSError:
@@ -112,13 +112,10 @@ class Options:
                 with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                     print("[MIME Cache]", file=ofile)
             with open(file, encoding='utf-8', errors='replace') as ifile:
-                if mime_type + '=' + app_name + '-userapp.desktop' in ifile:
+                if f'{mime_type}={app_name}-userapp.desktop' in ifile:
                     return
             with open(file, 'a', encoding='utf-8', newline='\n') as ofile:
-                print(
-                    mime_type + '=' + app_name + '-userapp.desktop',
-                    file=ofile
-                )
+                print(f"{mime_type}={app_name}-userapp.desktop", file=ofile)
         except OSError:
             return
 

@@ -38,10 +38,10 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Ping a host until a connection is made.',
+            description="Ping a host until a connection is made.",
         )
 
-        parser.add_argument('host', nargs=1, help='Host name or IP address.')
+        parser.add_argument('host', nargs=1, help="Host name or IP address.")
 
         self._args = parser.parse_args(args)
 

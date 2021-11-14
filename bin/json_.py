@@ -36,20 +36,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Convert BSON/JSON/XML/YAML to JSON file.',
+            description="Convert BSON/JSON/XML/YAML to JSON file.",
         )
 
         parser.add_argument(
             '-c',
             dest='compact_flag',
             action='store_true',
-            help='Compact JSON data on one line.'
+            help="Compact JSON data on one line.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to convert.'
+            help="File to convert.",
         )
 
         self._args = parser.parse_args(args)
@@ -103,28 +103,20 @@ class Main:
         compact = options.get_compact_flag()
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
             if file.endswith(('.bson', '.json', '.xml', '.yaml', '.yml')):
                 try:
                     data.read(file)
                 except config_mod.ReadConfigError as exception:
-                    raise SystemExit(
-                        "{0:s}: {1:s}".format(file, str(exception))
-                    ) from exception
+                    raise SystemExit(f"{file}: {exception}") from exception
 
                 name, _ = os.path.splitext(file)
                 json_file = name + '.json'
-                print('Converting "{0:s}" to "{1:s}"...'.format(
-                    file,
-                    json_file
-                ))
+                print(f'Converting "{file}" to "{json_file}"...')
                 try:
                     data.write(json_file, compact)
                 except config_mod.WriteConfigError as exception:
-                    raise SystemExit(
-                        "{0:s}: {1:s}".format(file, str(exception))
-                    ) from exception
+                    raise SystemExit(f"{file}: {exception}") from exception
 
         return 0
 

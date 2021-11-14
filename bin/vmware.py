@@ -49,8 +49,8 @@ class Options:
                     configdata = ifile.readlines()
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + configfile +
-                    '" configuration file.'
+                    f'{sys.argv[0]}: Cannot read '
+                    f'"{configfile}" configuration file.',
                 ) from exception
             if 'xkeymap.nokeycodeMap = true\n' in configdata:
                 ifile.close()
@@ -65,8 +65,8 @@ class Options:
                     print("xkeymap.nokeycodeMap = true", file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot modify "' + configfile +
-                    '" configuration file.'
+                    f'{sys.argv[0]}: Cannot modify '
+                    f'"{configfile}" configuration file.',
                 ) from exception
         else:
             configdir = os.path.dirname(configfile)
@@ -75,8 +75,8 @@ class Options:
                     os.mkdir(configdir)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + configdir +
-                        '" directory.'
+                        f'{sys.argv[0]}: Cannot create '
+                        f'"{configdir}" directory.',
                     ) from exception
             try:
                 with open(
@@ -88,8 +88,8 @@ class Options:
                     print("xkeymap.nokeycodeMap = true", file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + configfile +
-                    '" configuration file.'
+                    f'{sys.argv[0]}: Cannot create '
+                    f'"{configfile}" configuration file.',
                 ) from exception
 
     def parse(self, args: List[str]) -> None:

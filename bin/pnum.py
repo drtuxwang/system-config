@@ -50,7 +50,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Renumber picture files into a numerical series.',
+            description="Renumber picture files into a numerical series.",
         )
 
         parser.add_argument(
@@ -59,26 +59,26 @@ class Options:
             const='time',
             dest='order',
             default='file',
-            help='Sort using modification time.'
+            help="Sort using modification time.",
         )
         parser.add_argument(
             '-noreset',
             dest='reset_flag',
             action='store_false',
-            help='Use same number sequence for all directories.'
+            help="Use same number sequence for all directories.",
         )
         parser.add_argument(
             '-start',
             nargs=1,
             type=int,
             default=[1],
-            help='Select number to start from.'
+            help="Select number to start from.",
         )
         parser.add_argument(
             'directories',
             nargs='+',
             metavar='directory',
-            help='Directory containing picture/video files.'
+            help="Directory containing picture/video files.",
         )
 
         self._args = parser.parse_args(args)
@@ -92,8 +92,8 @@ class Options:
         for directory in self._args.directories:
             if not os.path.isdir(directory):
                 raise SystemExit(
-                    sys.argv[0] + ': Picture directory "' + directory +
-                    '" does not exist.'
+                    f'{sys.argv[0]}: Picture directory '
+                    f'"{directory}" does not exist.',
                 )
 
 
@@ -168,29 +168,28 @@ class Main:
                         file_stats.append(file_mod.FileStat(file))
                 newfiles = []
                 for file_stat in self._sorted(options, file_stats):
-                    newfile = 'pic{0:05d}{1:s}'.format(
-                        number,
-                        os.path.splitext(file_stat.get_file())[1].lower(
-                            ).replace('.jpeg', '.jpg'))
+                    extension = os.path.splitext(file_stat.get_file())[1]
+                    extension = extension.lower().replace('.jpeg', '.jpg')
+                    newfile = f'pic{number:05d}{extension}'
                     newfiles.append(newfile)
                     try:
                         shutil.move(
                             file_stat.get_file(),
-                            'pnum.tmp-' + newfile
+                            f'pnum.tmp-{newfile}',
                         )
                     except OSError as exception:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot rename "' +
-                            file_stat.get_file() + '" image file.'
+                            f'{sys.argv[0]}: Cannot rename '
+                            f'"{file_stat.get_file()}" image file.',
                         ) from exception
                     number += 1
                 for file in newfiles:
                     try:
-                        shutil.move('pnum.tmp-' + file, file)
+                        shutil.move(f'pnum.tmp-{file}', file)
                     except OSError as exception:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot rename to "' + file +
-                            '" image file.'
+                            f'{sys.argv[0]}: Cannot rename to '
+                            f'"{file}" image file.',
                         ) from exception
                 os.chdir(startdir)
 

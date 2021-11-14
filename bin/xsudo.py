@@ -70,8 +70,11 @@ class Main:
         ssudo = command_mod.Command('ssudo', errors='stop')
 
         if len(sys.argv) > 1:
-            xterm.extend_args(
-                ['-T', 'ssudo ' + xterm.args2cmd(sys.argv[1:]), '-e'])
+            xterm.extend_args([
+                '-T',
+                f'ssudo {xterm.args2cmd(sys.argv[1:])}',
+                '-e',
+            ])
             ssudo.set_args(sys.argv[1:])
         else:
             xterm.extend_args(['-T', 'ssudo su', '-e'])

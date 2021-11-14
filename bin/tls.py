@@ -30,16 +30,16 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Show all tasks belonging to an user.',
+            description="Show all tasks belonging to an user.",
         )
 
         parser.add_argument(
             '-a',
             dest='all_flag',
             action='store_true',
-            help='Show task list for all users.'
+            help="Show task list for all users.",
         )
-        parser.add_argument('username', nargs='?', help='user name.')
+        parser.add_argument('username', nargs='?', help="user name.")
 
         self._args = parser.parse_args(args)
 
@@ -104,20 +104,17 @@ class Main:
             for pid in task.get_pids():
                 process = task.get_process(pid)
                 print(
-                    '{0:8s} {1:5d} {2:5d} {3:5d} {4:>3s} {5:>3s} {6:7s} '
-                    '{7:7d} {8:>8s} {9:>11s} {10:s}'.format(
-                        process['USER'].split()[0],
-                        pid,
-                        process['PPID'],
-                        process['PGID'],
-                        process['PRI'],
-                        process['NICE'],
-                        process['TTY'],
-                        process['MEMORY'],
-                        process['CPUTIME'],
-                        process['ETIME'],
-                        process['COMMAND']
-                    )
+                    f"{process['USER'].split()[0]:8s} "
+                    f"{pid:5d} "
+                    f"{process['PPID']:5d} "
+                    f"{process['PGID']:5d} "
+                    f"{process['PRI']:>3s} "
+                    f"{process['NICE']:>3s} "
+                    f"{process['TTY']:7s} "
+                    f"{process['MEMORY']:7d} "
+                    f"{process['CPUTIME']:>8s} "
+                    f"{process['ETIME']:>11s} "
+                    f"{process['COMMAND']}",
                 )
         except OSError:
             pass

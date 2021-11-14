@@ -34,7 +34,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Reset to default screen resolution.',
+            description="Reset to default screen resolution.",
         )
 
         parser.add_argument(
@@ -54,7 +54,8 @@ class Options:
 
         if 'HOME' not in os.environ:
             raise SystemExit(
-                sys.argv[0] + ': Cannot determine home directory.')
+                f"{sys.argv[0]}: Cannot determine home directory.",
+            )
 
         configdir = os.path.join(os.environ['HOME'], '.config')
         if not os.path.isdir(configdir):
@@ -71,7 +72,7 @@ class Options:
                     device, mode = setting.split('=')
                 except ValueError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Invalid "' + setting + '" settings.'
+                        f'{sys.argv[0]}: Invalid "{setting}" settings.',
                     ) from exception
                 self._config.set(device, mode)
             self._config.write(configfile)

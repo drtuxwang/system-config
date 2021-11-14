@@ -51,20 +51,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Show picture files with same finger print.',
+            description="Show picture files with same finger print.",
         )
 
         parser.add_argument(
             '-R',
             dest='recursive_flag',
             action='store_true',
-            help='Recursive into sub-directories.'
+            help="Recursive into sub-directories.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file|directory',
-            help='File or directory containing files to compare'
+            help="File or directory containing files to compare",
         )
 
         self._args = parser.parse_args(args)

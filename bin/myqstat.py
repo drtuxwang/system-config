@@ -14,7 +14,7 @@ from typing import List
 
 import task_mod
 
-RELEASE = '2.8.2'
+RELEASE = '2.8.3'
 
 
 class Options:
@@ -34,8 +34,8 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='MyQS v' + self._release +
-            ', My Queuing System batch job submission.',
+            description=f"MyQS v{self._release}, "
+            "My Queuing System batch job submission.",
         )
 
         self._args = parser.parse_args(args)
@@ -153,14 +153,12 @@ class Main:
                     if os.path.isdir(info['DIRECTORY']):
                         logfile = os.path.join(
                             info['DIRECTORY'],
-                            os.path.basename(info['COMMAND']) +
-                            '.o' + str(jobid)
+                            f"{os.path.basename(info['COMMAND'])}.o{jobid}",
                         )
                     else:
                         logfile = os.path.join(
                             os.environ['HOME'],
-                            os.path.basename(info['COMMAND']) +
-                            '.o' + str(jobid)
+                            f"{os.path.basename(info['COMMAND'])}.o{jobid}",
                         )
                     try:
                         with open(
@@ -177,14 +175,10 @@ class Main:
                     state = 'STOP'
         else:
             etime = '-'
-        print("{0:5d}  {1:9s}  {2:42s}  {3:>3s}   {4:5s} {5:>5s}".format(
-            jobid,
-            info['QUEUE'],
-            info['COMMAND'],
-            info['NCPUS'],
-            state,
-            etime,
-        ))
+        print(
+            f"{jobid:5d}  {info['QUEUE']:9s}  {info['COMMAND']:42s}  "
+            f"{info['NCPUS']:>3s}   {state:5s} {etime:>5s}",
+        )
         for line in output:
             print(line)
 
@@ -196,13 +190,13 @@ class Main:
 
         host = socket.gethostname().split('.')[0].lower()
         print(
-            '\nMyQS', options.get_release(),
-            ', My Queuing System batch job statistics on HOST "' +
-            host + '".\n'
+            f'\nMyQS {options.get_release()}, '
+            f'My Queuing System batch job statistics on HOST "{host}".\n',
         )
         if 'HOME' not in os.environ:
             raise SystemExit(
-                sys.argv[0] + ': Cannot determine home directory.')
+                f"{sys.argv[0]}: Cannot determine home directory.",
+            )
         self._myqsdir = os.path.join(
             os.environ['HOME'], '.config', 'myqs', host)
         self._showjobs()

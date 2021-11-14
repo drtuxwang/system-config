@@ -38,20 +38,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Make a compressed archive in TAR.LZMA format.',
+            description="Make a compressed archive in TAR.LZMA format.",
         )
 
         parser.add_argument(
             'archive',
             nargs=1,
             metavar='file.tar.lzma|file.tlz',
-            help='Archive file.'
+            help="Archive file.",
         )
         parser.add_argument(
             'files',
             nargs='*',
             metavar='file',
-            help='File or directory.'
+            help="File or directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -70,8 +70,7 @@ class Options:
             self._archive = self._args.archive[0]
         if not self._archive.endswith(('.tar.lzma', '.tlz')):
             raise SystemExit(
-                sys.argv[0] + ': Unsupported "' + self._archive +
-                '" archive format.'
+                f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'
             )
 
         if self._args.files:
@@ -139,10 +138,7 @@ class Main:
             shutil.move(archive+'.part', archive)
         except OSError as exception:
             raise SystemExit(
-                '{0:s}: Cannot create "{1:s}" archive file.'.format(
-                    sys.argv[0],
-                    archive
-                )
+                f'{sys.argv[0]}: Cannot create "{archive}" archive file.',
             ) from exception
 
         return 0

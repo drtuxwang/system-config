@@ -34,13 +34,13 @@ class Options:
         return self._args.files
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description='Re-format HTML file.')
+        parser = argparse.ArgumentParser(description="Re-format HTML file.")
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to change.'
+            help="File to change.",
         )
 
         self._args = parser.parse_args(args)
@@ -94,7 +94,7 @@ class Main:
                     lines.append(line.strip())
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot read "{file}" file.',
             ) from exception
         soup = bs4.BeautifulSoup(
             ''.join(lines).replace('&', '&amp;'),
@@ -108,14 +108,13 @@ class Main:
                 print(html_text.replace('&amp;', '&'), file=ofile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + tmpfile + '" file.'
+                f'{sys.argv[0]}: Cannot create "{tmpfile}" file.',
             ) from exception
         try:
             shutil.move(tmpfile, file)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot rename "' + tmpfile +
-                '" file to "' + file + '".'
+                f'{sys.argv[0]}: Cannot rename "{tmpfile}" file to "{file}".',
             ) from exception
 
     @classmethod
@@ -128,11 +127,10 @@ class Main:
         errors = False
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
 
             if file.endswith(('htm', 'html', 'xhtml')):
-                print('Re-formatting "' + file + '" HTML file...')
+                print(f'Re-formatting "{file}" HTML file...')
 
                 task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [file])
                 task.run()

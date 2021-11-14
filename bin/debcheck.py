@@ -38,7 +38,7 @@ class Options:
             'distributions',
             nargs='+',
             metavar='directory',
-            help='Distribution directory.'
+            help="Distribution directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -131,12 +131,12 @@ class Main:
                         name, version = line.split()[:2]
                     except ValueError as exception:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot read corrupt "' + file +
-                            '" package ".debs" list file.'
+                            f'{sys.argv[0]}: Cannot read corrupt '
+                            f'"{file}" package ".debs" list file.',
                         ) from exception
                     packages[name] = Package(os.path.join(
                         distribution,
-                        name + '_' + version + '_*.deb'
+                        f'{name}_{version}_*.deb',
                     ), -1, version)
         except OSError:
             pass
@@ -149,13 +149,13 @@ class Main:
                         name, version = line.split()[:2]
                     except ValueError as exception:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot read corrupt "' + file +
-                            '" package ".debs" list file.'
+                            f'{sys.argv[0]}: Cannot read corrupt '
+                            f'"{file}" package ".debs" list file.',
                         ) from exception
                     if name in packages:
                         if packages[name].get_file() == os.path.join(
                                 distribution,
-                                name + '_' + version + '_*.deb'
+                                f'{name}_{version}_*.deb',
                         ):
                             del packages[name]
         except OSError:

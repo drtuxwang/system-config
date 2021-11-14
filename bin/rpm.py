@@ -164,8 +164,8 @@ class Main:
                     package.set_size(int((int(line.split()[2]) + 1023) / 1024))
                 except ValueError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Package "' + name +
-                        '" has non integer size.'
+                        f'{sys.argv[0]}: Package '
+                        f'"{name}" has non integer size.',
                     ) from exception
             elif line.startswith('Summary '):
                 package.set_description(line.split(': ')[1])
@@ -176,9 +176,12 @@ class Main:
     @staticmethod
     def _show_packages_info(packages: dict) -> None:
         for name, package in sorted(packages.items()):
-            print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(
-                name.split(':')[0], package.get_version(), package.get_size(),
-                package.get_description()))
+            print(
+                f"{name.split(':')[0]:35s} "
+                f"{package.get_version():15s} "
+                f"{package.get_size():5d}KB "
+                f"{package.get_description()}",
+            )
 
     def run(self) -> int:
         """

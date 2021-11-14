@@ -34,7 +34,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Output the first n lines of a file.')
+            description="Output the first n lines of a file.")
 
         parser.add_argument(
             '-n',
@@ -43,21 +43,21 @@ class Options:
             dest='lines',
             default=[10],
             metavar='K',
-            help='Output first K lines.'
+            help="Output first K lines.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to search.'
+            help="File to search.",
         )
 
         self._args = parser.parse_args(args)
 
         if self._args.lines[0] < 0:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
-                'number of lines.'
+                f'{sys.argv[0]}: You must specific a positive integer for '
+                'number of lines.',
             )
 
     def parse(self, args: List[str]) -> None:
@@ -104,7 +104,7 @@ class Main:
                 self._pipe(options, ifile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot read "{file}" file.',
             ) from exception
 
     @staticmethod

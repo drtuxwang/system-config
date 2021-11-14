@@ -28,13 +28,13 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Create a single lower case directory',
+            description="Create a single lower case directory",
         )
         parser.add_argument(
             'words',
             nargs='+',
             metavar='word',
-            help='Part of directory name.'
+            help="Part of directory name.",
         )
 
         words = parser.parse_args(args).words
@@ -87,12 +87,12 @@ class Main:
         directory = Options().get_directory()
 
         if not os.path.isdir(directory):
-            print('Creating "{0:s}"...'.format(directory))
+            print(f'Creating "{directory}"...')
             try:
                 os.makedirs(directory)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create directory.'
+                    f'{sys.argv[0]}: Cannot create directory.',
                 ) from exception
 
         return 0

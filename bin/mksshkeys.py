@@ -38,14 +38,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Create SSH keys and setup access to remote systems.',
+            description="Create SSH keys and setup access to remote systems.",
         )
 
         parser.add_argument(
             'logins',
             nargs='+',
             metavar='[user]@host',
-            help='Remote login.',
+            help="Remote login.",
         )
 
         self._args = parser.parse_args(args)
@@ -104,9 +104,9 @@ class Main:
             if '@' in login:
                 ruser = login.split('@')[0]
                 rhost = login.split('@')[1]
-                if 'Host ' + rhost not in config:
-                    print('Adding "' + login + '" to "$HOME/.ssh/config"...')
-                    config.extend(['', 'Host ' + rhost, 'User ' + ruser])
+                if f'Host {rhost}' not in config:
+                    print(f'Adding "{login}" to "$HOME/.ssh/config"...')
+                    config.extend(['', f'Host {rhost}', f'User {ruser}'])
                     try:
                         with open(
                             configfile + '.part',
@@ -118,26 +118,26 @@ class Main:
                                 print(line, file=ofile)
                     except OSError as exception:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot create "' +
-                            configfile + '.part' + '" temporary file.'
+                            f'{sys.argv[0]}: Cannot create '
+                            f'"{configfile}.part" temporary file.',
                         ) from exception
                     try:
                         shutil.move(configfile + '.part', configfile)
                     except OSError as exception:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot update "' +
-                            configfile + '" configuration file.'
+                            f'{sys.argv[0]}: Cannot update '
+                            f'"{configfile}" configuration file.',
                         ) from exception
-            print('Checking ssh configuration on "' + login + '"...')
+            print(f'Checking ssh configuration on "{login}"...')
             stdin = (
                 'umask 077; chmod -R go= $HOME/.ssh 2> /dev/null',
-                'PUBKEY="' + self._pubkey + '"',
+                f'PUBKEY="{self._pubkey}"',
                 'mkdir $HOME/.ssh 2> /dev/null',
                 'if [ ! "`grep \"^$PUBKEY$\" '
                 '$HOME/.ssh/authorized_keys 2> /dev/null`" ]',
                 'then',
-                '    echo "Adding public key to \"' + login +
-                ':$HOME/.ssh/authorized_keys\"..."',
+                f'    echo "Adding public key to '
+                f'\"{login}:$HOME/.ssh/authorized_keys\"..."',
                 '    echo "$PUBKEY" >> $HOME/.ssh/authorized_keys',
                 'fi')
             self._ssh.set_args([login, '/bin/sh'])
@@ -145,8 +145,8 @@ class Main:
             task.run(stdin=stdin)
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
                 )
 
     def _add_authorized_key(self, pubkey: str) -> None:
@@ -160,8 +160,7 @@ class Main:
                         pubkeys.append(line.strip())
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + file +
-                    '" authorised key file.'
+                    f'{sys.argv[0]}: Cannot read "{file}" authorised key file.'
                 ) from exception
         if pubkey not in pubkeys:
             try:
@@ -176,15 +175,15 @@ class Main:
                     print(pubkey, file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + file + '.part' +
-                    '" temporary file.'
+                    f'{sys.argv[0]}: Cannot create '
+                    f'"{file}.part" temporary file.',
                 ) from exception
             try:
                 shutil.move(file + '.part', file)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot update "' + file +
-                    '" authorised key file.'
+                    f'{sys.argv[0]}: Cannot update '
+                    f'"{file}" authorised key file.',
                 ) from exception
 
     def _config(self) -> str:
@@ -202,22 +201,30 @@ class Main:
                 os.mkdir(self._sshdir)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + self._sshdir +
-                    '" configuration directory.'
+                    f'{sys.argv[0]}: Cannot create '
+                    f'"{self._sshdir}" configuration directory.',
                 ) from exception
 
         private_key = os.path.join(self._sshdir, 'id_rsa')
         if not os.path.isfile(private_key):
             print("\nGenerating 4096bit RSA private/public key pair...")
             ssh_keygen = command_mod.Command('ssh-keygen', errors='stop')
-            ssh_keygen.set_args(
-                ['-t', 'rsa', '-b', '4096', '-f', private_key, '-N', ''])
+            ssh_keygen.set_args([
+                '-t',
+                'rsa',
+                '-b',
+                '4096',
+                '-f',
+                private_key,
+                '-N',
+                '',
+            ])
             task = subtask_mod.Task(ssh_keygen.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
                 )
             ssh_add = command_mod.Command('ssh-add', errors='ignore')
             if ssh_add.is_found():
@@ -233,8 +240,9 @@ class Main:
                 pubkey = ifile.readline().strip()
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' +
-                os.path.join(self._sshdir, 'id_rsa.pub') + '" public key file.'
+                f"{sys.argv[0]}: Cannot read "
+                f"\"{os.path.join(self._sshdir, 'id_rsa.pub')}\" "
+                "public key file.",
             ) from exception
 
         if pubkey:
@@ -252,7 +260,8 @@ class Main:
 
         if 'HOME' not in os.environ:
             raise SystemExit(
-                sys.argv[0] + ': Cannot determine HOME directory.')
+                f"{sys.argv[0]}: Cannot determine HOME directory.",
+            )
         self._sshdir = os.path.join(os.environ['HOME'], '.ssh')
         self._pubkey = self._config()
         self._check(options)

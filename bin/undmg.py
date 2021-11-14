@@ -37,20 +37,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a compressed DMG disk file.',
+            description="Unpack a compressed DMG disk file.",
         )
 
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='Show contents of disk file.'
+            help="Show contents of disk file.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file.dmg',
-            help='Disk file.'
+            help="Disk file.",
         )
 
         self._args = parser.parse_args(args)
@@ -111,9 +111,9 @@ class Main:
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" disk file.'
+                    f'{sys.argv[0]}: Cannot find "{file}" disk file.',
                 )
-            print(file + ':')
+            print(f"{file}:")
             task = subtask_mod.Task(
                 dmg2img.get_cmdline() + [file, 'dmg2img.img'])
             task.run()
@@ -126,8 +126,8 @@ class Main:
                 pass
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {str(task.get_exitcode())} '
+                    f'received from "{task.get_file()}".',
                 )
         return 0
 

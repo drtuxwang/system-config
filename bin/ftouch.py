@@ -31,15 +31,15 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Modify access times of all files in directory '
-            'recursively.',
+            description="Modify access times of all files in directory "
+            "recursively.",
         )
 
         parser.add_argument(
             'directories',
             nargs='+',
             metavar='directory',
-            help='Directory containing files to touch.'
+            help="Directory containing files to touch.",
         )
 
         self._args = parser.parse_args(args)
@@ -96,8 +96,7 @@ class Main:
                         self._toucher(file)
             except PermissionError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot open "' + directory +
-                    '" directory.'
+                    f'{sys.argv[0]}: Cannot open "{directory}" directory.',
                 ) from exception
 
     def run(self) -> int:

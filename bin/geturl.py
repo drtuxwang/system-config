@@ -55,7 +55,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Multi-threaded download accelerator.',
+            description="Multi-threaded download accelerator.",
         )
 
         parser.add_argument(
@@ -63,13 +63,13 @@ class Options:
             nargs=1,
             type=int,
             default=[4],
-            help='Number of threads. Default is 4.'
+            help="Number of threads. Default is 4.",
         )
         parser.add_argument(
             'urls',
             nargs='+',
             metavar='url|file.url',
-            help='URL or file containing URLs.'
+            help="URL or file containing URLs.",
         )
 
         self._args = parser.parse_args(args)
@@ -85,8 +85,8 @@ class Options:
 
         if self._args.threads[0] < 1:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
-                'number of threads.'
+                f'{sys.argv[0]}: You must specific a positive integer for '
+                'number of threads.',
             )
 
 
@@ -129,11 +129,11 @@ class Main:
                     os.mkdir(directory)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + directory +
-                        '" directory.'
+                        f'{sys.argv[0]}: Cannot create '
+                        f'"{directory}" directory.',
                     ) from exception
             for file in files_local:
-                print("file://" + file)
+                print(f"file://{file}")
                 try:
                     shutil.copy2(
                         file,
@@ -141,7 +141,7 @@ class Main:
                     )
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot find "' + file + '" file.'
+                        f'{sys.argv[0]}: Cannot find "{file}" file.',
                     ) from exception
 
     @staticmethod
@@ -157,8 +157,8 @@ class Main:
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
                 )
 
     def run(self) -> int:
@@ -179,9 +179,9 @@ class Main:
                 aria2c.set_args([
                     '--file-allocation=none',
                     '--remote-time=true',
-                    '--max-concurrent-downloads=' +
-                    str(self._options.get_threads()),
-                    '--dir=' + directory,
+                    '--max-concurrent-downloads='
+                    f'{self._options.get_threads()}',
+                    f'--dir={directory}',
                     '-Z'
                 ])
                 try:
@@ -195,24 +195,28 @@ class Main:
                             if line and not line.startswith('#'):
                                 if line.startswith('file://'):
                                     if line not in files_local:
-                                        files_local.append(
-                                            line.replace('file://', '', 1))
+                                        files_local.append(line.replace(
+                                            'file://',
+                                            '',
+                                            1,
+                                        ))
                                 elif line not in files_remote:
                                     files_remote.append(line)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + url + '" URL file.'
+                        f'{sys.argv[0]}: Cannot read "{url}" URL file.',
                     ) from exception
                 self._get_local(directory, files_local)
                 self._get_remote(aria2c, files_remote)
             elif os.path.isdir(url):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot process "' + url + '" directory.')
+                    f'{sys.argv[0]}: Cannot process "{url}" directory.',
+                )
             else:
                 aria2c.extend_args([
                     '--file-allocation=none',
                     '--remote-time=true',
-                    '--split=' + str(self._options.get_threads())
+                    f'--split={self._options.get_threads()}',
                 ])
 
         return 0

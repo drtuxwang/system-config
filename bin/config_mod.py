@@ -26,8 +26,8 @@ import bson  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '1.7.5'
-VERSION = 20211006
+RELEASE = '1.7.6'
+VERSION = 20211107
 
 
 class Data:
@@ -49,7 +49,7 @@ class Data:
             if line.startswith('{{') and line.endswith('}}'):
                 if ' toYaml ' in line and ' indent ' in line:
                     indent = int(line.split(' indent ')[1].split()[0])
-                    lines.append("{0:s}- {1:s}".format(' '*(indent-2), line))
+                    lines.append(f"{' '*(indent-2)}- {line}")
                 else:
                     lines.append('')
                 continue
@@ -95,7 +95,7 @@ class Data:
                 block = block.split(': "')[1].rstrip('"').replace('\\"', '"')
                 if block.endswith('\\n'):
                     block = block[:-2]
-                lines.extend([indent*' ' + i for i in block.split('\\n')])
+                lines.extend([f"{indent*' '}{i}" for i in block.split('\\n')])
                 block = ''
 
             lines.append(line)
@@ -179,7 +179,7 @@ class Data:
                     raise ReadConfigError("Cannot handle configuration file.")
         except OSError as exception:
             raise ReadConfigError(
-                "Cannot read configuration file: " + file,
+                f"Cannot read configuration file: {file}",
             ) from exception
         if not check:
             self._blocks = blocks
@@ -188,7 +188,7 @@ class Data:
         """
         Write configuration file
         """
-        tmpfile = file + '.part' + str(os.getpid())
+        tmpfile = f'{file}.part{os.getpid()}'
         ofile: Union[TextIO, BinaryIO]
 
         try:
@@ -231,24 +231,24 @@ class Data:
             elif file.endswith('bson'):
                 if len(self._blocks) > 1:
                     raise WriteConfigError(
-                        'Cannot handle multi-writes to "' + tmpfile + '" file.'
+                        f'Cannot handle multi-writes to "{tmpfile}" file.',
                     )
                 with open(tmpfile, 'wb') as ofile:
                     ofile.write(bson.dumps(  # pylint: disable = no-member
                         self._blocks[0],
                     ))
             else:
-                raise WriteConfigError('Cannot handle "' + tmpfile + '" file.')
+                raise WriteConfigError(f'Cannot handle "{tmpfile}" file.')
         except OSError as exception:
             raise WriteConfigError(
-                'Cannot create "' + tmpfile + '" file.'
+                f'Cannot create "{tmpfile}" file.',
             ) from exception
 
         try:
             shutil.move(tmpfile, file)
         except OSError as exception:
             raise WriteConfigError(
-                'Cannot rename "' + tmpfile + '" file to "' + file + '".'
+                f'Cannot rename "{tmpfile}" file to "{file}".',
             ) from exception
 
 

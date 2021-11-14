@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-World Of Padman wrapper (wop)
+Sandbox for "wop" launcher
 """
 
 import glob
@@ -8,7 +8,7 @@ import os
 import signal
 import sys
 
-import command_mod
+import network_mod
 import subtask_mod
 
 
@@ -48,10 +48,13 @@ class Main:
         """
         Start program
         """
-        command = command_mod.Command('wop.x86_64', errors='stop')
-        command.set_args(sys.argv[1:])
+        wop = network_mod.Sandbox('wop.x86_64', errors='stop')
+        wop.set_args(sys.argv[1:])
 
-        subtask_mod.Exec(command.get_cmdline()).run()
+        configs = ['net', os.path.join(os.getenv('HOME', '/'), '.padman')]
+        wop.sandbox(configs)
+
+        subtask_mod.Exec(wop.get_cmdline()).run()
 
         return 0
 

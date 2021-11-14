@@ -31,14 +31,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Compress a file in GZIP format.',
+            description="Compress a file in GZIP format.",
         )
 
         parser.add_argument(
             'files',
             nargs=1,
             metavar='file',
-            help='File to compresss to "file.gz".'
+            help='File to compresss to "file.gz".',
         )
 
         self._args = parser.parse_args(args)

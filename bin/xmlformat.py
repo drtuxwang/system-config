@@ -29,13 +29,13 @@ class Options:
         return self._args.files
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description='Re-format XML file.')
+        parser = argparse.ArgumentParser(description="Re-format XML file.")
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to change.'
+            help="File to change.",
         )
 
         self._args = parser.parse_args(args)
@@ -88,8 +88,9 @@ class Main:
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" file.')
-            print('Re-formatting "' + file + '" XML file...')
+                    f'{sys.argv[0]}: Cannot find "{file}" file.',
+                )
+            print(f'Re-formatting "{file}" XML file...')
 
             lines = []
             try:
@@ -98,7 +99,7 @@ class Main:
                         lines.append(line.strip())
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + file + '" file.'
+                    f'{sys.argv[0]}: Cannot read "{file}" file.',
                 ) from exception
             xml_doc = xml.dom.minidom.parseString(''.join(lines))
             xml_text = xml_doc.toprettyxml(indent='    ', newl='\n')
@@ -114,14 +115,14 @@ class Main:
                     print(xml_text, end='', file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + tmpfile + '" file.'
+                    f'{sys.argv[0]}: Cannot create "{tmpfile}" file.',
                 ) from exception
             try:
                 shutil.move(tmpfile, file)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot rename "' + tmpfile +
-                    '" file to "' + file + '".'
+                    f'{sys.argv[0]}: Cannot rename '
+                    f'"{tmpfile}" file to "{file}".',
                 ) from exception
 
         return 0

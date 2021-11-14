@@ -30,14 +30,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Extracts Javascript from a HTML file.',
+            description="Extracts Javascript from a HTML file.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='HTML file.'
+            help="HTML file.",
         )
 
         self._args = parser.parse_args(args)
@@ -90,7 +90,7 @@ class Main:
                         '&lt;', '<').replace('SCRIPT>', 'script>'))
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read ' + file + ' HTML file.'
+                f'{sys.argv[0]}: Cannot read {file} HTML file.',
             ) from exception
 
         for match in ' '.join(lines).split('<script>')[1:]:
@@ -99,15 +99,14 @@ class Main:
     @staticmethod
     def _write(file: str, script: str) -> None:
         lines = jsbeautifier.beautify(script).splitlines()
-        print('Writing "{0:s}" with {1:d} lines...'.format(file, len(lines)))
+        print(f'Writing "{file}" with {len(lines)} lines...')
         try:
             with open(file, 'w', encoding='utf-8') as ofile:
                 for line in lines:
                     print(line, file=ofile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot write "' + file +
-                '" configuration file.'
+                f'{sys.argv[0]}: Cannot write "{file}" configuration file.',
             ) from exception
 
     @classmethod
@@ -120,12 +119,12 @@ class Main:
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" HTML file.')
+                    f'{sys.argv[0]}: Cannot find "{file}" HTML file.',
+                )
             number = 0
             for script in cls._extract(file):
                 number += 1
-                jsfile = '{0:s}-{1:02d}.js'.format(
-                    file.rsplit('.', 1)[0], number)
+                jsfile = f"{file.rsplit('.', 1)[0]}-{number:02d}.js"
                 cls._write(jsfile, script)
 
         return 0

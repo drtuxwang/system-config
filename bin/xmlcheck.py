@@ -39,20 +39,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Check XML file for errors.',
+            description="Check XML file for errors.",
         )
 
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='View XML data.'
+            help="View XML data.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='XML/XHTML files.'
+            help="XML/XHTML files.",
         )
 
         self._args = parser.parse_args(args)
@@ -65,7 +65,6 @@ class Options:
 
 
 class XmlDataHandler(xml.sax.ContentHandler):  # type: ignore
-
     """
     XML data handler class
     """
@@ -78,7 +77,7 @@ class XmlDataHandler(xml.sax.ContentHandler):  # type: ignore
 
     def startElement(self, name: str, attrs: dict) -> None:
         self._nelement += 1
-        self._elements.append(name + '(' + str(self._nelement) + ')')
+        self._elements.append(f'{name}({self._nelement})')
         if self._view_flag:
             for (key, value) in attrs.items():
                 print(
@@ -86,9 +85,10 @@ class XmlDataHandler(xml.sax.ContentHandler):  # type: ignore
 
     def characters(self, content: str) -> None:
         if self._view_flag:
+            value = content.replace('\\', '\\\\').replace('\n', '\\n')
             print(
                 '.'.join(self._elements + ['text']),
-                "='" + content.replace('\\', '\\\\').replace('\n', '\\n'),
+                f"='{value}",
                 "'",
                 sep=''
             )
@@ -160,7 +160,8 @@ class Main:
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot open "' + file + '" XML file.')
+                    f'{sys.argv[0]}: Cannot open "{file}" XML file.',
+                )
 
             task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [file])
             task.run()
@@ -182,15 +183,15 @@ class Main:
                         xml.sax.parse(ifile, handler)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot parse "' + file + '" XML file.'
+                    f'{sys.argv[0]}: Cannot parse "{file}" XML file.',
                 ) from exception
             except http.client.HTTPException as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': HTTP request failed.'
+                    f"{sys.argv[0]}: HTTP request failed.",
                 ) from exception
             except Exception as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Invalid "' + file + '" XML file.'
+                    f'{sys.argv[0]}: Invalid "{file}" XML file.',
                 ) from exception
 
         return errors

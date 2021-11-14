@@ -37,7 +37,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='VirtualBox virtual machine manager.',
+            description="VirtualBox virtual machine manager.",
         )
 
         parser.add_argument(
@@ -46,7 +46,7 @@ class Options:
             const='poweroff',
             dest='mode',
             default='start',
-            help='Power off virtual machine.'
+            help="Power off virtual machine.",
         )
         parser.add_argument(
             '-s',
@@ -54,7 +54,7 @@ class Options:
             const='shutdown',
             dest='mode',
             default='start',
-            help='Shutdown virtual machine.'
+            help="Shutdown virtual machine.",
         )
         parser.add_argument(
             '-v',
@@ -62,13 +62,13 @@ class Options:
             const='view',
             dest='mode',
             default='start',
-            help='List virtual machine.'
+            help="List virtual machine.",
         )
         parser.add_argument(
             'machines',
             nargs='+',
             metavar='machine',
-            help='Virtual machine.'
+            help="Virtual machine.",
         )
 
         self._args = parser.parse_args(args)
@@ -118,8 +118,9 @@ class Main:
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".')
+                    f'{sys.argv[0]}: Error code {str(task.get_exitcode())} '
+                    f'received from "{task.get_file()}".',
+                )
 
     def _shutdown(self, machines: List[str]) -> None:
         for machine in machines:
@@ -129,8 +130,9 @@ class Main:
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".')
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
+                )
 
     def _start(self, machines: List[str]) -> None:
         for machine in machines:
@@ -140,8 +142,9 @@ class Main:
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".')
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
+                )
 
     def _view(self) -> None:
         self._vboxmanage.set_args(['list', 'vms'])

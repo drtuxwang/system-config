@@ -49,26 +49,26 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Speak words using Google TTS engine.',
+            description="Speak words using Google TTS engine.",
         )
 
         parser.add_argument(
             '-run',
             action='store_true',
             dest='run',
-            help='Run command and announce on completion.'
+            help="Run command and announce on completion.",
         )
         parser.add_argument(
             '-xclip',
             action='store_true',
             dest='xclip_flag',
-            help='Select text from clipboard (enables single session).'
+            help="Select text from clipboard (enables single session).",
         )
         parser.add_argument(
             'words',
             nargs='*',
             metavar='word',
-            help='A word.'
+            help="A word.",
         )
 
         if args[0:1] == ['-run']:
@@ -90,8 +90,8 @@ class Options:
         task.run()
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {str(task.get_exitcode())} '
+                f'received from "{task.get_file()}".',
             )
         return task.get_output()
 
@@ -102,7 +102,7 @@ class Options:
         self._parse_args(args[1:])
 
         tmpdir = file_mod.FileUtil.tmpdir('.cache/say')
-        self._tmpfile = os.path.join(tmpdir, "{0:d}.mp3".format(os.getpid()))
+        self._tmpfile = os.path.join(tmpdir, f"{os.getpid()}.mp3")
 
         if self._args.xclip_flag:
             self._tmpfile = os.path.join(tmpdir, 'xclip.mp3')
@@ -170,7 +170,7 @@ class Main:
                 args = args[:1] + ['not found']
                 exitcode = 1
             elapsed_time = time.time() - start_time
-            print("Elapsed time (s): {0:5.3f} ".format(elapsed_time))
+            print(f"Elapsed time (s): {elapsed_time:5.3f}")
 
         tmpfile = options.get_tmpfile()
         ffplay = command_mod.Command('ffplay', errors='stop')

@@ -28,10 +28,10 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Print arguments in upper case.',
+            description="Print arguments in upper case.",
         )
 
-        parser.add_argument('words', nargs='+', metavar='word', help='A word.')
+        parser.add_argument('words', nargs='+', metavar='word', help="A word.")
 
         self._args = parser.parse_args(args)
 

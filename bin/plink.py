@@ -37,7 +37,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Create links to picture/video files.',
+            description="Create links to picture/video files.",
         )
 
         parser.add_argument(
@@ -45,13 +45,13 @@ class Options:
             nargs=1,
             type=int,
             default=[1],
-            help='Number of directories to ad to link name.'
+            help="Number of directories to ad to link name.",
         )
         parser.add_argument(
             'directories',
             nargs='+',
             metavar='directory',
-            help='Directory containing JPEG files to link.'
+            help="Directory containing JPEG files to link.",
         )
 
         self._args = parser.parse_args(args)
@@ -65,13 +65,13 @@ class Options:
         for directory in self._args.directories:
             if not os.path.isdir(directory):
                 raise SystemExit(
-                    sys.argv[0] + ': Source directory "' + directory +
-                    '" does not exist.'
+                    f'{sys.argv[0]}: Source directory '
+                    f'"{directory}" does not exist.',
                 )
             if os.path.samefile(directory, os.getcwd()):
                 raise SystemExit(
-                    sys.argv[0] + ': Source directory "' + directory +
-                    '" cannot be current directory.'
+                    f'{sys.argv[0]}: Source directory '
+                    f'"{directory}" cannot be current directory.',
                 )
 
 
@@ -122,7 +122,7 @@ class Main:
             linkdir = '_'.join(directory.split(os.sep)[-depth:])
             for file in sorted(glob.glob(os.path.join(directory, '*'))):
                 if os.path.splitext(file)[1].lower() in images_extensions:
-                    link = linkdir + '_' + os.path.basename(file)
+                    link = f'{linkdir}_{os.path.basename(file)}'
                     if link.endswith(('.mp4', '.webm')):
                         link += '.gif'
                     if not os.path.islink(link):
@@ -130,8 +130,7 @@ class Main:
                             os.symlink(file, link)
                         except OSError as exception:
                             raise SystemExit(
-                                sys.argv[0] + ': Cannot create "' +
-                                link + '" link.'
+                                f'{sys.argv[0]}: Cannot create "{link}" link.',
                             ) from exception
                         file_stat = file_mod.FileStat(file)
                         file_time = file_stat.get_time()

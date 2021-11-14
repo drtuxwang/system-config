@@ -27,13 +27,15 @@ class Options:
         return self._args.summary_flag
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description='Monitor laptop battery.')
+        parser = argparse.ArgumentParser(
+            description="Monitor laptop battery.",
+        )
 
         parser.add_argument(
             '-s',
             action='store_true',
             dest='summary_flag',
-            help='Show summary'
+            help="Show summary"
         )
 
         self._args = parser.parse_args(args)
@@ -70,36 +72,28 @@ class Main:
     @staticmethod
     def _show_battery(battery: power_mod.Battery) -> None:
         model = (
-            battery.get_oem() + ' ' + battery.get_name() + ' ' +
-            battery.get_type() + ' ' + str(battery.get_capacity_max()) +
-            'mAh/' + str(battery.get_voltage()) + 'mV'
+            f'{battery.get_oem()} {battery.get_name()} {battery.get_type()} '
+            f'{battery.get_capacity_max()}mAh/{battery.get_voltage()}mV'
         )
         if battery.get_charge() == '-':
             state = '-'
             if battery.get_rate() > 0:
                 state += str(battery.get_rate()) + 'mA'
                 if battery.get_voltage() > 0:
-                    power = '{0:4.2f}'.format(float(
-                        battery.get_rate()*battery.get_voltage()) / 1000000)
-                    state += ', ' + str(power) + 'W'
-                hours = '{0:3.1f}'.format(float(
-                    battery.get_capacity()) / battery.get_rate())
-                state += ', ' + str(hours) + 'h'
+                    power = battery.get_rate() * battery.get_voltage()
+                    state += f', {power / 1000000:4.2f}W'
+                hours = battery.get_capacity() / battery.get_rate()
+                state += f', {hours:3.1f}h'
         elif battery.get_charge() == '+':
             state = '+'
             if battery.get_rate() > 0:
                 state += str(battery.get_rate()) + 'mA'
                 if battery.get_voltage() > 0:
-                    power = '{0:4.2f}'.format(float(
-                        battery.get_rate()*battery.get_voltage()) / 1000000)
-                    state += ', ' + str(power) + 'W'
+                    power = battery.get_rate() * battery.get_voltage()
+                    state += f', {power / 1000000:4.2f}W'
         else:
             state = 'Unused'
-        print(
-            model + " = ", battery.get_capacity(),
-            "mAh [" + state + "]",
-            sep=""
-        )
+        print(f"{model} = {battery.get_capacity()}mAh [{state}]", sep="")
 
     @staticmethod
     def _show_summary(batteries: List[power_mod.Battery]) -> None:
@@ -115,9 +109,9 @@ class Main:
 
         if capacity:
             if rate:
-                print("{0:d}mAh [{1:+d}mAh]".format(capacity, rate))
+                print(f"{capacity:d}mAh [{rate:+d}mAh]")
             else:
-                print("{0:d}mAh [Unused]".format(capacity))
+                print("{capacity:d}mAh [Unused]")
 
     def run(self) -> int:
         """

@@ -37,7 +37,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> List[str]:
         parser = argparse.ArgumentParser(
-            description='Run a command immune to terminal hangups.',
+            description="Run a command immune to terminal hangups.",
         )
 
         parser.add_argument(
@@ -46,18 +46,18 @@ class Options:
             const='',
             dest='log_file',
             default='run.out',
-            help="Do not create 'run.out' output file."
+            help="Do not create 'run.out' output file.",
         )
         parser.add_argument(
             'command',
             nargs=1,
-            help='Command to run.'
+            help="Command to run.",
         )
         parser.add_argument(
             'args',
             nargs='*',
             metavar='arg',
-            help='Command argument.'
+            help="Command argument.",
         )
 
         my_args = []
@@ -98,8 +98,8 @@ class Options:
                     pass
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' +
-                    self._args.log_file + '" logfile file.'
+                    f'{sys.argv[0]}: Cannot create '
+                    f'"{self._args.log_file}" logfile file.',
                 ) from exception
 
 

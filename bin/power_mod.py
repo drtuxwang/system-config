@@ -12,8 +12,8 @@ import re
 import subprocess
 from typing import List, Optional
 
-RELEASE = '2.2.4'
-VERSION = 20211016
+RELEASE = '2.2.5'
+VERSION = 20211107
 
 
 class Battery:
@@ -384,7 +384,7 @@ class _System:
                 break
         else:
             raise CommandNotFoundError(
-                'Cannot find required "' + program + '" software.'
+                f'Cannot find required "{program}" software.',
             )
         return file
 
@@ -413,7 +413,7 @@ class _System:
                     lines.append(line.rstrip('\r\n'))
         except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + program + '" program.'
+                f'Error in calling "{program}" program.',
             ) from exception
 
         return lines

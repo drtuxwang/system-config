@@ -45,14 +45,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Convert image file to text using OCR.',
+            description="Convert image file to text using OCR.",
         )
 
         parser.add_argument(
             'files',
             nargs=1,
             metavar='file',
-            help='Image file to analyse.'
+            help="Image file to analyse.",
         )
 
         self._args = parser.parse_args(args)
@@ -103,8 +103,8 @@ class Main:
         task.run(pattern='^Tesseract')
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
             )
 
     def run(self) -> int:
@@ -117,26 +117,25 @@ class Main:
         convert = options.get_convert()
 
         tmpdir = file_mod.FileUtil.tmpdir('.cache')
-        tmpfile = os.path.join(tmpdir, 'ocr.tmp' + str(os.getpid()))
+        tmpfile = os.path.join(tmpdir, f'ocr.tmp{os.getpid()}')
 
         images_extensions = config_mod.Config().get('image_extensions')
 
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" image file.')
+                    f'{sys.argv[0]}: Cannot find "{file}" image file.',
+                )
             root, ext = os.path.splitext(file.lower())
             if ext in images_extensions:
-                print(
-                    'Converting "' + file + '" to "' + root + '.txt' + '"...')
+                print(f'Converting "{file}" to "{root}.txt"...')
                 task = subtask_mod.Task(
                     convert.get_cmdline() + [file, tmpfile])
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
-                        sys.argv[0] + ': Error code ' +
-                        str(task.get_exitcode()) + ' received from "' +
-                        task.get_file() + '".'
+                        f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                        f'received from "{task.get_file()}".',
                     )
                 self._ocr(tmpfile, root)
                 try:
@@ -144,13 +143,11 @@ class Main:
                 except OSError:
                     pass
             elif ext in ('tif', 'tiff'):
-                print(
-                    'Converting "' + file + '" to "' + root + '.txt' + '"...')
+                print(f'Converting "{file}" to "{root}.txt"...')
                 self._ocr(file, root)
             else:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot OCR non image file "' +
-                    file + '".'
+                    f'{sys.argv[0]}: Cannot OCR non image file "{file}".',
                 )
 
         return 0

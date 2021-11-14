@@ -14,7 +14,7 @@ from typing import List
 import command_mod
 import subtask_mod
 
-RELEASE = '2.8.1'
+RELEASE = '2.8.2'
 
 
 class Options:
@@ -57,8 +57,8 @@ class Options:
         """
         if len(args) != 3 or args[1] not in ('-jobid', '-spawn'):
             raise SystemExit(
-                sys.argv[0] +
-                ': Cannot be started manually. Please run "myqsd" command.'
+                f'{sys.argv[0]}: Cannot be started manually. '
+                'Please run "myqsd" command.',
             )
         self._mode = args[1][1:]
         self._myqsdir = os.path.join(
@@ -118,10 +118,7 @@ class Main:
                 mypid = os.getpid()
                 os.setpgid(mypid, mypid)  # New PGID
                 pgid = os.getpgid(mypid)
-                print(
-                    'PGID=' + str(pgid) + '\nSTART=' + str(time.time()),
-                    file=ofile
-                )
+                print(f"PGID={pgid}\nSTART={time.time()}", file=ofile)
         except OSError:
             return
 
@@ -140,8 +137,8 @@ class Main:
             return
 
         print(
-            '\nMyQS v' + options.get_release() +
-            ', My Queuing System batch job exec.\n'
+            f"\nMyQS v{options.get_release()}, "
+            "My Queuing System batch job exec.\n",
         )
         print("MyQS JOBID  =", self._jobid)
         print("MyQS QUEUE  =", info['QUEUE'])
@@ -215,7 +212,8 @@ class Main:
 
         if 'HOME' not in os.environ:
             raise SystemExit(
-                sys.argv[0] + ': Cannot determine home directory.')
+                f"{sys.argv[0]}: Cannot determine home directory.",
+            )
         if options.get_mode() == 'spawn':
             self._spawn(options)
         else:

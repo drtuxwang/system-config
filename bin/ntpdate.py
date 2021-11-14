@@ -14,7 +14,7 @@ import command_mod
 import logging_mod
 import subtask_mod
 
-VERSION = 20211020
+RELEASE = 20211107
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
@@ -69,7 +69,7 @@ class Main:
 
         task = subtask_mod.Task(ntpdate.get_cmdline() + sys.argv[1:])
         hwclock = command_mod.Command('hwclock', errors='stop')
-        if int(time.strftime('%Y%m%d')) < VERSION:
+        if int(time.strftime('%Y%m%d')) < RELEASE:
             logger.info(time.strftime(
                 "Current clock is to old (Please check CMOS battery)",
             ))
@@ -81,13 +81,13 @@ class Main:
             logger.info("Updating date and time via NTP...")
             task.run()
             date = int(time.strftime('%Y%m%d'))
-            if task.get_exitcode() == 0 and date >= VERSION:
+            if task.get_exitcode() == 0 and date >= RELEASE:
                 subtask_mod.Task(hwclock.get_cmdline() + ['--systohc']).run()
                 subtask_mod.Task(hwclock.get_cmdline()).run()
                 logger.info('System & HWClock time updated!')
                 break
 
-            logger.info("Failed - retrying in {0:d} seconds".format(retry))
+            logger.info("Failed - retrying in %d seconds", retry)
             time.sleep(retry)
 
         return 0

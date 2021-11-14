@@ -29,14 +29,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Generate random integer from range.',
+            description="Generate random integer from range.",
         )
 
         parser.add_argument(
             'values',
             nargs='+',
             metavar='value',
-            help='Maximum integer value.',
+            help="Maximum integer value.",
         )
 
         self._args = parser.parse_args(args)
@@ -94,7 +94,7 @@ class Main:
                 print(random.randint(1, int(value)))
             except ValueError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Not an integer: ' + value
+                    f'{sys.argv[0]}: Not an integer: {value}',
                 ) from exception
 
         return 0

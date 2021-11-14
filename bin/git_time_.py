@@ -10,7 +10,7 @@ import signal
 import sys
 from typing import List
 
-import git  # type: ignore
+import git
 
 
 class Options:
@@ -36,20 +36,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Modify file time to original GIT author time.',
+            description="Modify file time to original GIT author time.",
         )
 
         parser.add_argument(
             '-r',
             dest='recursive_flag',
             action='store_true',
-            help='Recursive into sub-directories.'
+            help="Recursive into sub-directories.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File in a GIT repository.'
+            help="File in a GIT repository.",
         )
 
         self._args = parser.parse_args(args)
@@ -130,10 +130,10 @@ class Main:
         try:
             repo = git.Repo('./', search_parent_directories=True)
         except (
-            git.exc.InvalidGitRepositoryError  # pylint: disable = no-member
+            git.InvalidGitRepositoryError  # pylint: disable = no-member
         ) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot find .git directory.'
+                f'{sys.argv[0]}: Cannot find .git directory.',
             ) from exception
         self._update(repo, options.get_files(), options.get_recursive_flag())
 

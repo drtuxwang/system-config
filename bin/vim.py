@@ -59,8 +59,9 @@ class Main:
         task.run()
         if task.get_exitcode():
             print(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".', file=sys.stderr
+                f'{sys.argv[0]}: Error code '
+                f'{task.get_exitcode()} received from "{task.get_file()}".',
+                file=sys.stderr,
             )
             raise SystemExit(task.get_exitcode())
 

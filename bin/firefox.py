@@ -182,8 +182,7 @@ class Options:
             try:
                 if not task.pgid2pids(int(directory.split('.')[-1])):
                     print(
-                        'Removing copy of Firefox profile in "' +
-                        directory + '"...'
+                        f'Removing copy of Firefox profile in "{directory}"...'
                     )
                     try:
                         shutil.rmtree(directory)
@@ -198,8 +197,8 @@ class Options:
         )
         mypid = os.getpid()
         os.setpgid(mypid, mypid)  # New PGID
-        newhome = os.path.join(tmpdir, 'firefox.' + str(mypid))
-        print('Creating copy of Firefox profile in "' + newhome + '"...')
+        newhome = os.path.join(tmpdir, f'firefox.{mypid}')
+        print(f'Creating copy of Firefox profile in "{newhome}"...')
 
         if not os.path.isdir(newhome):
             try:
@@ -255,7 +254,7 @@ class Options:
                     for file in (glob.glob(os.path.join(directory, '.*')) +
                                  glob.glob(os.path.join(directory, '*'))):
                         if os.path.basename(file) not in keep_list:
-                            print('Removing "{0:s}"...'.format(file))
+                            print(f'Removing "{file}"...')
                             self._remove(file)
                     for file in glob.glob(os.path.join(
                             directory, 'adblockplus', 'patterns-backup*ini')):
@@ -385,11 +384,8 @@ class Options:
                                 file=ofile
                             )
                         for setting in settings:
-                            if 'user_pref(' + setting + ');\n' not in lines:
-                                print(
-                                    "user_pref(" + setting + ");",
-                                    file=ofile
-                                )
+                            if f'user_pref({setting});\n' not in lines:
+                                print(f"user_pref({setting});", file=ofile)
                 except OSError:
                     pass
 
@@ -413,7 +409,8 @@ class Options:
                 raise SystemExit(0)
             else:
                 raise SystemExit(
-                    sys.argv[0] + ': Invalid "' + args[1] + '" option.')
+                    f'{sys.argv[0]}: Invalid "{args[1]}" option.',
+                )
             args.remove(args[1])
 
         # Avoids 'exo-helper-1 firefox http://' prob of clicking text in XFCE
@@ -485,7 +482,7 @@ class Main:
         # Kill filtering process after start up to avoid hang
         tkill = command_mod.Command(
             'tkill',
-            args=['-delay', '60', '-f', 'python3.* {0:s} '.format(cmdline[0])],
+            args=['-delay', '60', '-f', f'python3.* {cmdline[0]} '],
             errors='ignore'
         )
         if tkill.is_found():

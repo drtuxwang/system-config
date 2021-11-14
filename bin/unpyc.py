@@ -31,14 +31,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='De-compile PYC file to Python source file.',
+            description="De-compile PYC file to Python source file.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file.pyc',
-            help='Python PYC file.'
+            help="Python PYC file.",
         )
 
         self._args = parser.parse_args(args)

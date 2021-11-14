@@ -31,14 +31,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Watch file system events.',
+            description="Watch file system events.",
         )
 
         parser.add_argument(
             'directories',
             nargs='+',
             metavar='directory',
-            help='Directory to monitor.'
+            help="Directory to monitor.",
         )
 
         self._args = parser.parse_args(args)

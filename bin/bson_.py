@@ -30,13 +30,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Convert BSON/JSON/YAML to BSON file.')
+            description="Convert BSON/JSON/YAML to BSON file.",
+        )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to convert.'
+            help="File to convert.",
         )
 
         self._args = parser.parse_args(args)
@@ -89,28 +90,20 @@ class Main:
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
             if file.endswith(('.json', 'yaml', 'yml', '.bson')):
                 try:
                     data.read(file)
                 except config_mod.ReadConfigError as exception:
-                    raise SystemExit(
-                        "{0:s}: {1:s}".format(file, str(exception))
-                    ) from exception
+                    raise SystemExit(f"{file}: {exception}") from exception
 
                 name, _ = os.path.splitext(file)
                 bson_file = name + '.bson'
-                print('Converting "{0:s}" to "{1:s}"...'.format(
-                    file,
-                    bson_file
-                ))
+                print(f'Converting "{file}" to "{bson_file}"...')
                 try:
                     data.write(bson_file)
                 except config_mod.WriteConfigError as exception:
-                    raise SystemExit(
-                        "{0:s}: {1:s}".format(file, str(exception))
-                    ) from exception
+                    raise SystemExit(f"{file}: {exception}") from exception
 
         return 0
 

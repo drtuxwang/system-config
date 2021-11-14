@@ -27,8 +27,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable = import-error
 
-RELEASE = '5.16.6'
-VERSION = 20211016
+RELEASE = '5.16.7'
+VERSION = 20211109
 
 # pylint: disable = too-many-lines
 
@@ -39,8 +39,9 @@ class Options:
     """
 
     def __init__(self) -> None:
-        self._release_date = str(
-            VERSION)[:4] + '-' + str(VERSION)[4:6] + '-' + str(VERSION)[6:]
+        self._release_date = (
+            f'{str(VERSION)[:4]}-{str(VERSION)[4:6]}-{str(VERSION)[6:]}'
+        )
         self._release_version = RELEASE
 
         self._system = OperatingSystem.factory()
@@ -111,8 +112,8 @@ class Detect:
 
     def __init__(self, options: Options) -> None:
         self._author = (
-            'Sysinfo ' + options.get_release_version() +
-            ' (' + options.get_release_date() + ')'
+            f'Sysinfo {options.get_release_version()} '
+            f'({options.get_release_date()})'
         )
 
         self._system = options.get_system()
@@ -181,15 +182,18 @@ class Detect:
         )
         for key, value in sorted(info['CPU Cache'].items()):
             Writer.output(
-                name='CPU L' + key + ' Cache',
+                name=f'CPU L{key} Cache',
                 value=value,
                 comment='KB',
             )
 
     def _system_status(self) -> None:
         info = self._system.get_sys_info()
-        Writer.output(name='System Platform', value=info['System Platform'],
-                      comment=info['System Platform X'])
+        Writer.output(
+            name='System Platform',
+            value=info['System Platform'],
+            comment=info['System Platform X'],
+        )
         Writer.output(
             name='System Memory',
             value=info['System Memory'],
@@ -227,7 +231,7 @@ class Detect:
                             ' 0 ', ' Off ').split()
                         Writer.output(
                             name='X-Display Power',
-                            value=standby + ' ' + suspend + ' ' + off,
+                            value=f'{standby} {suspend} {off}',
                             comment='DPMS Standby Suspend Off',
                         )
                         break
@@ -291,8 +295,8 @@ class Detect:
                             size = math.sqrt(
                                 float(width)**2 + float(height)**2) / 25.4
                             comment = (
-                                '{0:s}, {1:s}mm x {2:s}mm, {3:3.1f}"'.format(
-                                    resolution, width, height, size)
+                                f'{resolution}, {width}mm x {height}mm, '
+                                f'{size:3.1f}"'
                             )
                             Writer.output(
                                 name='X-Windows Screen',
@@ -319,7 +323,7 @@ class Detect:
                         Writer.output(
                             name='X-Windows Display',
                             value=display,
-                            comment=width + 'x' + line.split()[-1],
+                            comment=f'{width}x{line.split()[-1]}',
                         )
 
     @classmethod
@@ -340,8 +344,8 @@ class Detect:
         Show banner.
         """
         timestamp = time.strftime('%Y-%m-%d-%H:%M:%S')
-        print("\n" + self._author, "- System configuration detection tool")
-        print("\n*** Detected at", timestamp, "***")
+        print(f"\n{self._author} - System configuration detection tool")
+        print(f"\n*** Detected at {timestamp} ***")
 
     def show_info(self) -> None:
         """
@@ -530,37 +534,34 @@ class PosixSystem(OperatingSystem):
         for battery in batteries:
             if battery.is_exist():
                 model = (
-                    battery.get_oem() + ' ' + battery.get_name() +
-                    ' ' + battery.get_type() + ' ' +
-                    str(battery.get_capacity_max()) + 'mAh/' +
-                    str(battery.get_voltage()) + 'mV'
+                    f'{battery.get_oem()} {battery.get_name()} '
+                    f'{battery.get_type()} ' f'{battery.get_capacity_max()}'
+                    f'mAh/{battery.get_voltage()}mV'
                 )
                 if battery.get_charge() == '-':
                     state = '-'
                     if battery.get_rate() > 0:
                         state += str(battery.get_rate()) + 'mA'
                         if battery.get_voltage() > 0:
-                            mywatts = '{0:4.2f}'.format(float(
-                                battery.get_rate() * battery.get_voltage()
-                            ) / 1000000)
-                            state += ', ' + str(mywatts) + 'W'
-                        hours = '{0:3.1f}'.format(
-                            float(battery.get_capacity()) / battery.get_rate())
-                        state += ', ' + str(hours) + 'h'
+                            power = battery.get_rate() * battery.get_voltage()
+                            state += f', {power / 1000000:4.2f}W'
+                        hours = battery.get_capacity() / battery.get_rate()
+                        state += f', {hours:3.1f}h'
                 elif battery.get_charge() == '+':
                     state = '+'
                     if battery.get_rate() > 0:
                         state += str(battery.get_rate()) + 'mA'
                         if battery.get_voltage() > 0:
-                            mywatts = '{0:4.2f}'.format(float(
-                                battery.get_rate() * battery.get_voltage()
-                            ) / 1000000)
-                            state += ', ' + str(mywatts) + 'W'
+                            power = battery.get_rate() * battery.get_voltage()
+                            state += f', {power / 1000000:4.2f}W'
                 else:
                     state = 'Unused'
-                Writer.output(name='Battery device', device='/dev/???',
-                              value=str(battery.get_capacity()) + 'mAh',
-                              comment=model + ' [' + state + ']')
+                Writer.output(
+                    name='Battery device',
+                    device='/dev/???',
+                    value=f'{battery.get_capacity()}mAh',
+                    comment=f'{model} [{state}]',
+                )
 
     def detect_devices(self) -> None:
         """
@@ -586,8 +587,10 @@ class PosixSystem(OperatingSystem):
             ) as ifile:
                 for line in ifile:
                     if ispattern.match(line):
-                        fqdn = socket.gethostname(
-                            ).split('.')[0].lower() + '.' + line.split()[1]
+                        fqdn = (
+                            f"{socket.gethostname().split('.')[0].lower()}."
+                            f"{line.split()[1]}"
+                        )
                         if fqdn.endswith('.'):
                             return fqdn
                         return fqdn + '.'
@@ -685,8 +688,8 @@ class LinuxSystem(PosixSystem):
                         task2.run(pattern='^(version|vermagic):')
                         if task2.has_output():
                             self._devices[device] = (
-                                driver + ' driver ' +
-                                task2.get_output()[0].split()[1]
+                                f'{driver} driver '
+                                f'{task2.get_output()[0].split()[1]}'
                             )
                             continue
                 elif not line.startswith('\t'):
@@ -709,8 +712,8 @@ class LinuxSystem(PosixSystem):
                 ) as ifile:
                     for line2 in ifile:
                         if 'Kernel Module ' in line2:
-                            device = 'nvidia driver ' + line2.split(
-                                'Kernel Module ')[1].split()[0]
+                            name = line2.split('Kernel Module ')[1].split()[0]
+                            device = f'nvidia driver {name}'
             except OSError:
                 pass
         elif 'VirtualBox' in line and modinfo.is_found():
@@ -718,7 +721,8 @@ class LinuxSystem(PosixSystem):
             task2.run(pattern='^(version|vermagic):')
             if task2.has_output():
                 device = (
-                    'vboxvideo driver ' + task2.get_output()[0].split()[1])
+                    f'vboxvideo driver {task2.get_output()[0].split()[1]}'
+                )
 
         return device
 
@@ -744,7 +748,7 @@ class LinuxSystem(PosixSystem):
 
         for card, model in info.items():
             for file in sorted(glob.glob(
-                    '/proc/asound/card' + card + '/pcm*[cp]/info')):
+                    f'/proc/asound/card{card}/pcm*[cp]/info')):
                 try:
                     with open(
                         file,
@@ -753,14 +757,16 @@ class LinuxSystem(PosixSystem):
                     ) as ifile:
                         for line in ifile:
                             if line.startswith('name: '):
-                                name = model + ' ' + line.rstrip(
-                                    '\r\n').replace('name: ', '', 1)
+                                name = line.rstrip(
+                                    '\r\n',
+                                ).replace('name: ', '', 1)
+                                name = f'{model} {name}'
                 except (IndexError, OSError):
                     continue
 
                 device = (
-                    '/dev/snd/pcmC' + card + 'D' +
-                    os.path.dirname(file).split('pcm')[-1]
+                    f"/dev/snd/pcmC{card}D"
+                    f"{os.path.dirname(file).split('pcm')[-1]}"
                 )
                 if device.endswith('p'):
                     comment = 'SPK'
@@ -792,8 +798,8 @@ class LinuxSystem(PosixSystem):
                                 model = ifile.readline().strip()
                                 Writer.output(
                                     name='CD device',
-                                    device='/dev/' +
-                                    os.path.basename(directory),
+                                    device='/dev/'
+                                    f'{os.path.basename(directory)}',
                                     value=model,
                                 )
                                 break
@@ -808,7 +814,7 @@ class LinuxSystem(PosixSystem):
             except OSError:
                 continue
             try:
-                if os.path.isdir('/sys/bus/scsi/devices/' + identity):
+                if os.path.isdir(f'/sys/bus/scsi/devices/{identity}'):
                     with open(
                         os.path.join(
                             '/sys/bus/scsi/devices',
@@ -828,10 +834,10 @@ class LinuxSystem(PosixSystem):
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
-                        model += ' ' + ifile.readline().strip()
+                        model += f' {ifile.readline().strip()}'
             except OSError:
                 model = '???'
-            device = '/dev/' + os.path.basename(os.path.dirname(file))
+            device = f'/dev/{os.path.basename(os.path.dirname(file))}'
             Writer.output(name='CD device', device=device, value=model)
 
     @staticmethod
@@ -849,10 +855,10 @@ class LinuxSystem(PosixSystem):
                     if 'Vendor: ' in line and 'Model: ' in line:
                         model = isjunk.sub('', line.rstrip('\r\n'))
                     elif 'Type:' in line and 'CD-ROM' in line:
-                        if os.path.exists('/dev/sr' + str(unit)):
-                            device = '/dev/sr' + str(unit)
+                        if os.path.exists(f'/dev/sr{unit}'):
+                            device = f'/dev/sr{unit}'
                         else:
-                            device = '/dev/scd' + str(unit)
+                            device = f'/dev/scd{unit}'
                         Writer.output(
                             name='CD device',
                             device=device,
@@ -948,20 +954,20 @@ class LinuxSystem(PosixSystem):
                 size = '???'
             Writer.output(
                 name='Disk device',
-                device='/dev/' + hdx,
+                device=f'/dev/{hdx}',
                 value=size + ' KB',
                 comment=model,
             )
         elif hdx in partition:
             size, hdxn = partition.split()[2:4]
-            device = '/dev/' + hdxn
+            device = f'/dev/{hdxn}'
             comment = ''
             if device in info['swaps']:
                 comment = 'swap'
             elif device in info['mounts']:
                 for mount_point, mount_type in info[
                         'mounts'][device]:
-                    comment = mount_type + ' on ' + mount_point
+                    comment = f'{mount_type} on {mount_point}'
                     Writer.output(
                         name='Disk device',
                         device=device,
@@ -1006,7 +1012,7 @@ class LinuxSystem(PosixSystem):
             return None
 
         try:
-            if os.path.isdir('/sys/bus/scsi/devices/' + identity):
+            if os.path.isdir(f'/sys/bus/scsi/devices/{identity}'):
                 with open(
                     os.path.join(
                         '/sys/bus/scsi/devices',
@@ -1026,7 +1032,7 @@ class LinuxSystem(PosixSystem):
                     encoding='utf-8',
                     errors='replace',
                 ) as ifile:
-                    model += ' ' + ifile.readline().strip()
+                    model += f' {ifile.readline().strip()}'
         except OSError:
             model = '???'
 
@@ -1043,77 +1049,77 @@ class LinuxSystem(PosixSystem):
                     size = partition.split()[2]
                 except IndexError:
                     size = '???'
-                device = '/dev/' + sdx
+                device = f'/dev/{sdx}'
                 if device in info['mounts']:
                     for mount_point, mount_type in info['mounts'][device]:
-                        comment = mount_type + ' on ' + mount_point
+                        comment = f'{mount_type} on {mount_point}'
                         Writer.output(
                             name='Disk device',
                             device=device,
-                            value=size + ' KB',
-                            comment=comment + ', ' + model,
+                            value=f'{size} KB',
+                            comment=f'{comment}, {model}',
                         )
                     continue
                 Writer.output(
                     name='Disk device',
-                    device='/dev/' + sdx,
-                    value=size + ' KB',
+                    device=f'/dev/{sdx}',
+                    value=f'{size} KB',
                     comment=model,
                 )
             elif sdx in partition:
                 size, sdxn = partition.split()[2:4]
-                device = '/dev/' + sdxn
+                device = f'/dev/{sdxn}'
                 if device in info['swaps']:
                     comment = 'swap'
                 elif device in info['mounts']:
                     for mount_point, mount_type in info['mounts'][device]:
-                        comment = mount_type + ' on ' + mount_point
+                        comment = f'{mount_type} on {mount_point}'
                         Writer.output(
                             name='Disk device',
                             device=device,
-                            value=size + ' KB',
+                            value=f'{size} KB',
                             comment=comment,
                         )
                     continue
-                elif glob.glob('/sys/class/block/dm-*/slaves/' + sdxn):
+                elif glob.glob(f'/sys/class/block/dm-*/slaves/{sdxn}'):
                     comment = 'devicemapper'
                 else:
                     comment = ''
                 Writer.output(
                     name='Disk device',
                     device=device,
-                    value=size + ' KB',
+                    value=f'{size} KB',
                     comment=comment,
                 )
 
     @staticmethod
     def _detect_disk_proc_scsi_part(info: dict, unit: int, model: str) -> None:
-        sdx = 'sd' + chr(97 + unit)
-        if os.path.exists('/dev/' + sdx):
+        sdx = f'sd{chr(97)}{unit}'
+        if os.path.exists(f'/dev/{sdx}'):
             for partition in info['partitions']:
-                if partition.endswith(sdx) or sdx + ' ' in partition:
+                if partition.endswith(sdx) or '{sdx} ' in partition:
                     try:
                         size = partition.split()[2]
                     except IndexError:
                         size = '???'
                     Writer.output(
                         name='Disk device',
-                        device='/dev/' + sdx,
-                        value=size + ' KB',
+                        device=f'/dev/{sdx}',
+                        value=f'{size} KB',
                         comment=model,
                     )
                 elif sdx in partition:
                     size, sdxn = partition.split()[2:4]
-                    device = '/dev/' + sdxn
+                    device = f'/dev/{sdxn}'
                     if device in info['swaps']:
                         comment = 'swap'
                     elif device in info['mounts']:
                         for mount_point, mount_type in info['mounts'][device]:
-                            comment = mount_type + ' on ' + mount_point
+                            comment = f'{mount_type} on {mount_point}'
                             Writer.output(
                                 name='Disk device',
                                 device=device,
-                                value=size + ' KB',
+                                value=f'{size} KB',
                                 comment=comment,
                             )
                         continue
@@ -1122,7 +1128,7 @@ class LinuxSystem(PosixSystem):
                     Writer.output(
                         name='Disk device',
                         device=device,
-                        value=size + ' KB',
+                        value=f'{size} KB',
                         comment=comment,
                     )
 
@@ -1153,7 +1159,7 @@ class LinuxSystem(PosixSystem):
             file = os.path.join(directory, 'dm/name')
             try:
                 with open(file, encoding='utf-8', errors='replace') as ifile:
-                    device = '/dev/mapper/' + ifile.readline().strip()
+                    device = f'/dev/mapper/{ifile.readline().strip()}'
             except OSError:
                 device = '???'
             mount_info = info['mounts'].get(device, ())
@@ -1165,23 +1171,23 @@ class LinuxSystem(PosixSystem):
             file = os.path.join(directory, 'size')
             try:
                 with open(file, encoding='utf-8', errors='replace') as ifile:
-                    size = '{0:d} KB'.format(int(ifile.readline()) >> 1)
+                    size = f'{int(ifile.readline()) >> 1} KB'
             except (OSError, ValueError):
                 size = '??? KB'
 
             file = os.path.join(directory, 'dm', 'uuid')
             try:
                 with open(file, encoding='utf-8', errors='replace') as ifile:
-                    slaves = ifile.readline().split('-')[0] + ':' + slaves
+                    slaves = f"{ifile.readline().split('-')[0]}:{slaves}"
             except (OSError, ValueError):
-                slaves = '???:' + slaves
+                slaves = f'???:{slaves}'
 
-            if '/dev/' + os.path.basename(directory) in info['swaps']:
+            if f'/dev/{os.path.basename(directory)}' in info['swaps']:
                 Writer.output(
                     name='Disk device',
                     device=device,
                     value=size,
-                    comment='swap, ' + slaves,
+                    comment=f'swap, {slaves}',
                 )
             else:
                 for mount_point, mount_type in mount_info:
@@ -1189,11 +1195,7 @@ class LinuxSystem(PosixSystem):
                         name='Disk device',
                         device=device,
                         value=size,
-                        comment='{0:s} on {1:s}, {2:s}'.format(
-                            mount_type,
-                            mount_point,
-                            slaves,
-                        )
+                        comment=f'{mount_type} on {mount_point}, {slaves}',
                     )
 
     @staticmethod
@@ -1224,7 +1226,7 @@ class LinuxSystem(PosixSystem):
                     name='Disk device',
                     device=device,
                     value=size,
-                    comment=mount_type + ' on ' + mount_point,
+                    comment=f'{mount_type} on {mount_point}',
                 )
 
     @classmethod
@@ -1298,7 +1300,7 @@ class LinuxSystem(PosixSystem):
                         model = line.split('"')[1]
                     elif line.startswith('H: Handlers='):
                         event = line.split('event')[-1].split()[0]
-                        info['/dev/input/event' + event] = model
+                        info[f'/dev/input/event{event}'] = model
         except OSError:
             pass
         devices = [
@@ -1323,7 +1325,7 @@ class LinuxSystem(PosixSystem):
             )
         ]
         for network in sorted(networks):
-            device = 'net/' + os.path.basename(network)
+            device = f'net/{os.path.basename(network)}'
             pci_id = network.split('/')[-3].split(':', 1)[-1]
             model, comment = self._match_pci(pci_id)
             model = model.replace(
@@ -1348,7 +1350,7 @@ class LinuxSystem(PosixSystem):
                 ) as ifile:
                     Writer.output(
                         name='Video device',
-                        device='/dev/' + device,
+                        device=f'/dev/{device}',
                         value=ifile.readline().rstrip('\r\n'),
                     )
                     continue
@@ -1356,7 +1358,7 @@ class LinuxSystem(PosixSystem):
                 pass
             Writer.output(
                 name='Video device',
-                device='/dev/' + device, value='???',
+                device=f'/dev/{device}', value='???',
             )
 
     @staticmethod
@@ -1375,12 +1377,12 @@ class LinuxSystem(PosixSystem):
                 Writer.output(
                     name='ZRAM device',
                     device=device,
-                    value='{0:d} KB'.format(int(int(size) / 1024 + 0.5)),
-                    comment='{0:d} KB data, {1:d} KB {2:s}, {3:3.1f}X'.format(
-                        int(int(data) / 1024 + 0.5),
-                        int(int(compress) / 1024 + 0.5),
-                        algorithm,
-                        int(data) / int(compress),
+                    value=f'{int(int(size) / 1024 + 0.5)} KB',
+                    comment=(
+                        f'{int(int(data) / 1024 + 0.5)} KB data, '
+                        f'{int(int(compress) / 1024 + 0.5)} KB '
+                        f'{algorithm}, '
+                        f'{int(data) / int(compress):3.1f}X'
                     )
                 )
 
@@ -1476,9 +1478,8 @@ class LinuxSystem(PosixSystem):
                     encoding='utf-8',
                     errors='replace',
                 ) as ifile:
-                    info['OS Name'] = (
-                        'Alpine ' + ifile.readline().rstrip('\r\n')
-                    )
+                    name = ifile.readline().rstrip('\\r\\n')
+                    info['OS Name'] = f'Alpine {name}'
             except OSError:
                 pass
 
@@ -1509,8 +1510,9 @@ class LinuxSystem(PosixSystem):
                         if line.startswith('DISTRIB_ID='):
                             identity = line.split('=')[1]
                         elif line.startswith('DISTRIB_RELEASE=') and identity:
-                            info['OS Name'] = identity + ' ' + line.split(
-                                '=')[1]
+                            info['OS Name'] = (
+                                f"{identity} {line.split('=')[1]}"
+                            )
                             break
 
         return info
@@ -1526,8 +1528,8 @@ class LinuxSystem(PosixSystem):
                     encoding='utf-8',
                     errors='replace'
                 ) as ifile:
-                    info['OS Name'] = 'Kanotix ' + ifile.readline(
-                        ).rstrip('\r\n').split()[1]
+                    name = ifile.readline().rstrip('\r\n').split()[1]
+                    info['OS Name'] = f'Kanotix {name}'
             except (IndexError, OSError):
                 pass
         elif os.path.isfile('/etc/knoppix-version'):
@@ -1537,8 +1539,8 @@ class LinuxSystem(PosixSystem):
                     encoding='utf-8',
                     errors='replace',
                 ) as ifile:
-                    info['OS Name'] = 'Knoppix ' + ifile.readline(
-                        ).rstrip('\r\n').split()[0]
+                    name = ifile.readline().rstrip('\r\n').split()[0]
+                    info['OS Name'] = f'Knoppix {name}'
             except (IndexError, OSError):
                 pass
         elif os.path.isfile('/etc/debian_version'):
@@ -1548,8 +1550,10 @@ class LinuxSystem(PosixSystem):
                     encoding='utf-8',
                     errors='replace',
                 ) as ifile:
-                    info['OS Name'] = 'Debian ' + ifile.readline().rstrip(
-                        '\r\n').split('=')[-1].replace("'", '')
+                    name = ifile.readline().rstrip(
+                        '\r\n',
+                    ).split('=')[-1].replace("'", '')
+                    info['OS Name'] = f'Debian {name}'
             except OSError:
                 pass
         elif os.path.isfile('/etc/DISTRO_SPECS'):
@@ -1565,8 +1569,8 @@ class LinuxSystem(PosixSystem):
                             identity = line.rstrip(
                                 '\r\n').split('=')[1].replace('"', '')
                         elif line.startswith('DISTRO_VERSION') and identity:
-                            info['OS Name'] = identity + ' ' + line.rstrip(
-                                '\r\n').split('=')[1]
+                            name = line.rstrip('\r\n').split('=')[1]
+                            info['OS Name'] = f'{identity} {name}'
                             break
             except (IndexError, OSError):
                 pass
@@ -1586,15 +1590,17 @@ class LinuxSystem(PosixSystem):
                     package = line.split()[1]
                     if package == 'knoppix-g':
                         info['OS Name'] = (
-                            'Knoppix ' + line.split()[2].split('-')[0])
+                            f"Knoppix {line.split()[2].split('-')[0]}"
+                        )
                         return info
                     if package == 'mepis-auto':
-                        info['OS Name'] = 'MEPIS ' + line.split()[2]
+                        info['OS Name'] = f'MEPIS {line.split()[2]}'
                         return info
                     if ' kernel ' in line and 'MEPIS' in line:
                         isjunk = re.compile('MEPIS.')
-                        info['OS Name'] = 'MEPIS ' + isjunk.sub(
-                            '', line.split()[2])
+                        info['OS Name'] = (
+                            f"MEPIS {isjunk.sub('', line.split()[2])}"
+                        )
                         return info
                 except IndexError:
                     pass
@@ -1602,7 +1608,7 @@ class LinuxSystem(PosixSystem):
                 try:
                     package = line.split()[1]
                     if package == 'base-files':
-                        info['OS Name'] = 'Debian ' + line.split()[2]
+                        info['OS Name'] = f'Debian {line.split()[2]}'
                         return info
                 except IndexError:
                     pass
@@ -1639,7 +1645,7 @@ class LinuxSystem(PosixSystem):
                 encoding='utf-8',
                 errors='replace',
             ) as ifile:
-                info['OS Name'] = 'Clear Linux ' + ifile.readline().strip()
+                info['OS Name'] = f'Clear Linux {ifile.readline().strip()}'
         except OSError:
             pass
 
@@ -1739,8 +1745,9 @@ class LinuxSystem(PosixSystem):
                     encoding='utf-8',
                     errors='replace'
                 ) as ifile:
-                    info['CPU Clocks'] += ' ' + str(int(
-                        int(ifile.readline()) / 1000 + 0.5))
+                    info['CPU Clocks'] += (
+                        f' {int(int(ifile.readline()) / 1000 + 0.5)}'
+                    )
             except (OSError, ValueError):
                 info['CPU Clocks'] = 'Unknown'
 
@@ -1768,8 +1775,11 @@ class LinuxSystem(PosixSystem):
             if command_mod.Platform.get_arch() == 'Power':
                 for line in lines:
                     if line.startswith('cpu'):
-                        info['CPU Model'] = 'PowerPC_' + isspace.sub(
-                            ' ', line.split(': ')[1].split(' ')[0].strip())
+                        name = isspace.sub(
+                            ' ',
+                            line.split(': ')[1].split(' ')[0].strip(),
+                        )
+                        info['CPU Model'] = f'PowerPC_{name}'
                         break
             if info['CPU Model'] == 'Unknown':
                 for line in lines:
@@ -1936,9 +1946,8 @@ class LinuxSystem(PosixSystem):
         if virtual_machine:
             info['CPU Cores'] = str(threads)
             if container:
-                info['CPU Cores X'] = '{0:s} container, {1:s} VM'.format(
-                    container,
-                    virtual_machine
+                info['CPU Cores X'] = (
+                    f'{container} container, {virtual_machine} VM'
                 )
             else:
                 info['CPU Cores X'] = virtual_machine + ' VM'
@@ -1994,7 +2003,7 @@ class LinuxSystem(PosixSystem):
             ) as ifile:
                 for line in ifile:
                     if '/docker/' in line or '/docker-' in line:
-                        name = 'Docker ' + line.rsplit('/', 1)[1][:12]
+                        name = f"Docker {line.rsplit('/', 1)[1][:12]}"
                         break
                     if '/lxc/' in line:
                         name = 'LXC'
@@ -2105,7 +2114,7 @@ class MacSystem(PosixSystem):
                     errors='ignore'
                 )
                 task = subtask_mod.Batch(command.get_cmdline())
-                task.run(pattern='^' + device + ' .* ')
+                task.run(pattern=f'^{device} .* ')
                 for line2 in task.get_output():
                     size = line2.split()[1]
                     break
@@ -2114,7 +2123,8 @@ class MacSystem(PosixSystem):
                 Writer.output(
                     name='Disk device',
                     device=device,
-                    value=size + ' KB', comment=type_ + ' on ' + directory,
+                    value=f'{size} KB',
+                    comment=f'{type_} on {directory}',
                 )
 
     def detect_devices(self) -> None:
@@ -2202,7 +2212,8 @@ class MacSystem(PosixSystem):
         for line in self._kernel_settings:
             if line.startswith('hw.l') and 'cachesize: ' in line:
                 info['CPU Cache'][line[4:].split('cachesize:')[0]] = (
-                    '{0:d}'.format(int(int(line.split(': ', 1)[1]) / 1024)))
+                    f"{int(int(line.split(': ', 1)[1]) / 1024)}"
+                )
 
         return info
 
@@ -2262,8 +2273,10 @@ class WindowsSystem(OperatingSystem):
         task = subtask_mod.Batch(cls._get_ipconfig().get_cmdline())
         task.run()
         for line in task.get_output('Connection-specific DNS Suffix'):
-            fqdn = socket.gethostname(
-                ).split('.')[0].lower() + '.' + line.split()[-1]
+            fqdn = (
+                f"{socket.gethostname().split('.')[0].lower()}."
+                f"{line.split()[-1]}"
+            )
             if fqdn.count('.') > 1:
                 if fqdn.endswith('.'):
                     return fqdn
@@ -2428,7 +2441,7 @@ class Writer:
         """
         Output information.
         """
-        line = ' {0:19s}'.format(name + ':')
+        line = f" {name + ':':19s}"
         if 'device' in kwargs and kwargs['device']:
             device = kwargs['device']
             if (
@@ -2436,15 +2449,15 @@ class Writer:
                     not os.path.exists(device)
             ):
                 return
-            line += ' {0:12s}'.format(device) + ' ' + kwargs['value']
+            line += f" {device:12s} {kwargs['value']}"
         elif 'location' in kwargs and kwargs['location']:
-            line += ' ' + kwargs['location']
+            line += f" {kwargs['location']}"
             if 'value' in kwargs and kwargs['value']:
-                line += '  ' + kwargs['value']
+                line += f"  {kwargs['value']}"
         elif 'value' in kwargs and kwargs['value']:
-            line += ' ' + kwargs['value']
+            line += f" {kwargs['value']}"
         if 'comment' in kwargs and kwargs['comment']:
-            line += ' (' + kwargs['comment'] + ')'
+            line += f" ({kwargs['comment']})"
         print(line)
 
 

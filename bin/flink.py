@@ -30,14 +30,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Recursively link all files.',
+            description="Recursively link all files.",
         )
 
         parser.add_argument(
             'directories',
             nargs='+',
             metavar='directory',
-            help='Directory containing files to link.'
+            help="Directory containing files to link.",
         )
 
         self._args = parser.parse_args(args)
@@ -45,13 +45,13 @@ class Options:
         for directory in self._args.directories:
             if not os.path.isdir(directory):
                 raise SystemExit(
-                    sys.argv[0] + ': Source directory "' + directory +
-                    '" does not exist.'
+                    f'{sys.argv[0]}: Source directory '
+                    f'"{directory}" does not exist.',
                 )
             if os.path.samefile(directory, os.getcwd()):
                 raise SystemExit(
-                    sys.argv[0] + ': Source directory "' + directory +
-                    '" cannot be current directory.'
+                    f'{sys.argv[0]}: Source directory '
+                    f'"{directory}" cannot be current directory.',
                 )
 
     def parse(self, args: List[str]) -> None:
@@ -106,13 +106,12 @@ class Main:
         except PermissionError:
             return
         if not os.path.isdir(target_dir):
-            print('Creating "' + target_dir + '" directory...')
+            print(f'Creating "{target_dir}" directory...')
             try:
                 os.mkdir(target_dir)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + target_dir +
-                    '" directory.'
+                    f'{sys.argv[0]}: Cannot create "{target_dir}" directory.',
                 ) from exception
 
         for source_file in sorted(source_files):
@@ -128,16 +127,16 @@ class Main:
                 )
             else:
                 if os.path.islink(target_file):
-                    print('Updating "' + target_file + '" link...')
+                    print(f'Updating "{target_file}" link...')
                     try:
                         os.remove(target_file)
                     except OSError as exception:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot remove "' + target_file +
-                            '" link.'
+                            f'{sys.argv[0]}: Cannot remove '
+                            f'"{target_file}" link.',
                         ) from exception
                 else:
-                    print('Creating "' + target_file + '" link...')
+                    print(f'Creating "{target_file}" link...')
                 if os.path.isabs(source_file):
                     file = source_file
                 else:
@@ -146,8 +145,7 @@ class Main:
                     os.symlink(file, target_file)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' +
-                        target_file + '" link.'
+                        f'{sys.argv[0]}: Cannot create "{target_file}" link.',
                     ) from exception
                 file_stat = file_mod.FileStat(file)
                 file_time = file_stat.get_time()

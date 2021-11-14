@@ -28,15 +28,15 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Count number of lines and maximum '
-            'columns used in file.',
+            description="Count number of lines and maximum "
+            "columns used in file.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to examine.'
+            help="File to examine.",
         )
 
         self._args = parser.parse_args(args)
@@ -90,7 +90,8 @@ class Main:
             if os.path.isfile(file):
                 if not os.path.isfile(file):
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot find "' + file + '" file.')
+                        f'{sys.argv[0]}: Cannot find "{file}" file.',
+                    )
                 nlines = 0
                 maxcols = 0
                 try:
@@ -107,13 +108,15 @@ class Main:
                                 lline = nlines
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + file + '" file.'
+                        f'{sys.argv[0]}: Cannot read "{file}" file.',
                     ) from exception
                 except UnicodeDecodeError:  # Non text file
                     continue
                 print(
-                    "{0:s}: {1:d} lines (max length of {2:d} "
-                    "on line {3:d})".format(file, nlines, maxcols, lline)
+                    f"{file}: "
+                    f"{nlines} lines (max length of "
+                    f"{maxcols} on line "
+                    f"{lline})",
                 )
 
         return 0

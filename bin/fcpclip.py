@@ -31,13 +31,13 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Copy file from clipboard location to directory.',
+            description="Copy file from clipboard location to directory.",
         )
 
         parser.add_argument(
             'directory',
             nargs=1,
-            help='Directory to copy file.'
+            help="Directory to copy file.",
         )
 
         self._args = parser.parse_args(args)
@@ -87,14 +87,14 @@ class Main:
         if os.path.isfile(source):
             directory = options.get_directory()
             target = os.path.join(directory, os.path.basename(source))
-            print('Copying "{0:s}" file to "{1:s}"...'.format(source, target))
+            print(f'Copying "{source}" file to "{target}"...')
             try:
                 if not os.path.isdir(directory):
                     os.makedirs(directory)
                 shutil.copy2(source, target)
             except (OSError, shutil.Error) as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot copy to "' + target + '" file.'
+                    f'{sys.argv[0]}: Cannot copy to "{target}" file.',
                 ) from exception
 
         return 0

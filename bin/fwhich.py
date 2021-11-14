@@ -40,20 +40,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Locate a program file.',
+            description="Locate a program file.",
         )
 
         parser.add_argument(
             '-a',
             dest='all_flag',
             action='store_true',
-            help='Show the location of all occurances.'
+            help="Show the location of all occurances.",
         )
         parser.add_argument(
             'programs',
             nargs='+',
             metavar='program',
-            help='Command to search.'
+            help="Command to search.",
         )
 
         self._args = parser.parse_args(args)

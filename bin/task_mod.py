@@ -12,8 +12,8 @@ import re
 import subprocess
 from typing import List, Optional
 
-RELEASE = '2.2.2'
-VERSION = 20211016
+RELEASE = '2.2.3'
+VERSION = 20211107
 
 
 class Tasks:
@@ -53,8 +53,7 @@ class Tasks:
         """
         if not isinstance(pgid, int):
             raise InvalidPgidError(
-                '"' + __name__ + '.Tasks" invalid pgid type "' +
-                str(pgid) + '".'
+                f'"{__name__}.Tasks" invalid pgid type "{pgid}".',
             )
         pids = []
         for pid in self.get_pids():
@@ -85,7 +84,7 @@ class Tasks:
         signal = Signal name to send ('CONT', 'KILL', 'STOP', 'TERM')
         """
         if signal not in ('CONT', 'KILL', 'STOP', 'TERM'):
-            raise InvalidSignalError('Invalid "' + signal + '" signal name.')
+            raise InvalidSignalError(f'Invalid "{signal}" signal name.')
 
         if pids:
             self._kill(signal, pids)
@@ -116,8 +115,7 @@ class Tasks:
         """
         if not isinstance(pgid, int):
             raise InvalidPgidError(
-                '"' + __name__ + '.Tasks" invalid pgid type "' +
-                str(pgid) + '".'
+                f'"{__name__}.Tasks" invalid pgid type "{pgid}".',
             )
         return self.pgid2pids(pgid) != []
 
@@ -129,10 +127,9 @@ class Tasks:
         """
         if not isinstance(pid, int):
             raise InvalidPidError(
-                '"' + __name__ + '.Tasks" invalid pid type "' +
-                str(pid) + '".'
+                f'"{__name__}.Tasks" invalid pid type "{pid}".',
             )
-        return pid in self._process.keys()
+        return pid in self._process
 
     def haspname(self, pname: str) -> bool:
         """
@@ -254,7 +251,7 @@ class PosixTasks(Tasks):
 
         pname = Program name
         """
-        isexist = re.compile('^(|[^ ]+/)' + pname + '( |$)')
+        isexist = re.compile(f'^(|[^ ]+/){pname}( |$)')
 
         pids = []
         for pid in self.get_pids():
@@ -263,7 +260,7 @@ class PosixTasks(Tasks):
         return sorted(pids)
 
     def _kill(self, signal: str, pids: List[int]) -> None:
-        command = ['kill', '-' + signal]
+        command = ['kill', f'-{signal}']
         for pid in pids:
             command.append(str(pid))
         try:
@@ -325,7 +322,7 @@ class WindowsTasks(Tasks):
 
         pname = Program name
         """
-        isexist = re.compile('^' + pname + '([.]exe|$)')
+        isexist = re.compile(f'^{pname}([.]exe|$)')
 
         pids = []
         for pid in self.get_pids():
@@ -383,7 +380,7 @@ class _System:
                 break
         else:
             raise CommandNotFoundError(
-                'Cannot find required "' + program + '" software.'
+                f'Cannot find required "{program}" software.',
             )
         return file
 
@@ -411,7 +408,7 @@ class _System:
                     lines.append(line.rstrip('\r\n'))
         except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + program + '" program.'
+                f'Error in calling "{program}" program.',
             ) from exception
 
         return lines

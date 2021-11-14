@@ -44,25 +44,26 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Play MP3/OGG/WAV audio files in directory.')
+            description="Play MP3/OGG/WAV audio files in directory.",
+        )
 
         parser.add_argument(
             '-s',
             dest='shuffle_flag',
             action='store_true',
-            help='Shuffle order of the media files.'
+            help="Shuffle order of the media files.",
         )
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='View information.'
+            help="View information.",
         )
         parser.add_argument(
             'directories',
             nargs='+',
             metavar='directory',
-            help='Audio directory.'
+            help="Audio directory.",
         )
 
         if {'-c', '-f', '-q', '-t'} & set(args):
@@ -128,8 +129,8 @@ class Main:
         for directory in options.get_directories():
             if not os.path.isdir(directory):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + directory +
-                    '" media directory.'
+                    f'{sys.argv[0]}: Cannot find '
+                    f'"{directory}" media directory.',
                 )
             files = self._getfiles(directory, '*.mp3', '*.ogg', '*.wav')
             if options.get_shuffle_flag():
@@ -140,8 +141,8 @@ class Main:
         task.run()
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code '
+                f'{task.get_exitcode()} received from "{task.get_file()}".',
             )
 
         return 0

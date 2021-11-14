@@ -39,8 +39,8 @@ class Options:
             speed = self._args.speed
             if speed < 0:
                 raise SystemExit(
-                    sys.argv[0] + ': You must specific a positive integer for '
-                    'CD/DVD device speed.'
+                    f"{sys.argv[0]}: You must specific a positive integer for "
+                    "CD/DVD device speed.",
                 )
         else:
             speed = 0
@@ -72,7 +72,7 @@ class Options:
         return speed
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description='Set CD/DVD drive speed.')
+        parser = argparse.ArgumentParser(description="Set CD/DVD drive speed.")
 
         parser.add_argument(
             'device',
@@ -83,7 +83,7 @@ class Options:
             'speed',
             nargs='?',
             type=int,
-            help='Select CD/DVD spin speed.'
+            help="Select CD/DVD spin speed.",
         )
 
         self._args = parser.parse_args(args)
@@ -94,8 +94,10 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._device = socket.gethostname(
-            ).split('.')[0].lower() + ':' + self._args.device[0]
+        self._device = (
+            f"{socket.gethostname().split('.')[0].lower()}:"
+            f"{self._args.device[0]}"
+        )
 
         self._speed = self._config_speed()
         if self._speed == 0:

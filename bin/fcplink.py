@@ -29,14 +29,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Replace symbolic link to files with copies.',
+            description="Replace symbolic link to files with copies.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='Symbolic link to file.'
+            help="Symbolic link to file.",
         )
 
         self._args = parser.parse_args(args)
@@ -85,7 +85,7 @@ class Main:
             os.remove(file)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot remove "' + file + '" link.'
+                f'{sys.argv[0]}: Cannot remove "{file}" link.',
             ) from exception
 
         try:
@@ -93,7 +93,7 @@ class Main:
         except OSError as exception:
             if exception.args != (95, 'Operation not supported'):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot copy "' + target + '" file.'
+                    f'{sys.argv[0]}: Cannot copy "{target}" file.',
                 ) from exception
 
     def run(self) -> int:
@@ -112,7 +112,8 @@ class Main:
                     print("Null link:", file, '->', os.readlink(file))
             elif not os.path.exists(file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" file.')
+                    f'{sys.argv[0]}: Cannot find "{file}" file.',
+                )
 
         return 0
 

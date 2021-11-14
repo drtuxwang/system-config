@@ -51,20 +51,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Show files with same MD5 checksums.',
+            description="Show files with same MD5 checksums.",
         )
 
         parser.add_argument(
             '-rm',
             dest='remove_flag',
             action='store_true',
-            help='Delete all extra copies of duplicated files.'
+            help="Delete all extra copies of duplicated files.",
         )
         parser.add_argument(
             '-R',
             dest='recursive_flag',
             action='store_true',
-            help='Recursive into sub-directories.'
+            help="Recursive into sub-directories.",
         )
         parser.add_argument(
             'files',
@@ -124,14 +124,14 @@ class Main:
                         ]))
                     except PermissionError as exception:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot open "' +
-                            file + '" directory.'
+                            f'{sys.argv[0]}: Cannot open "{file}" directory.',
                         ) from exception
             elif os.path.isfile(file):
                 md5sum = self._md5sum(file)
                 if not md5sum:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + file + '" file.')
+                        f'{sys.argv[0]}: Cannot read "{file}" file.',
+                    )
                 if md5sum in self._md5files:
                     self._md5files[md5sum].add(file)
                 else:
@@ -149,19 +149,19 @@ class Main:
                     md5.update(chunk)
         except (OSError, TypeError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot read "{file}" file.',
             ) from exception
         return md5.hexdigest()
 
     @staticmethod
     def _remove(files: List[str]) -> None:
         for file in files:
-            print('  Removing "{0:s}" duplicated file'.format(file))
+            print(f'  Removing "{file}" duplicated file')
             try:
                 os.remove(file)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot remove "' + file + '" file.'
+                    f'{sys.argv[0]}: Cannot remove "{file}" file.',
                 ) from exception
 
     def run(self) -> int:

@@ -39,33 +39,31 @@ class Options:
         task = subtask_mod.Batch(lsof.get_cmdline())
         task.run()
         for local_port in range(5901, 6000):
-            if not task.is_match_output(':' + str(local_port) + '[ -]'):
+            if not task.is_match_output(f':{local_port}[ -]'):
                 ssh = command_mod.Command('ssh', errors='stop')
                 if self._args.ssh_port:
                     ssh.extend_args(['-p', self._args.ssh_port[0]])
                 ssh.extend_args([
                     '-f',
                     '-L',
-                    str(local_port) + ':localhost:' + remote_port,
+                    f'{local_port}:localhost:{remote_port}',
                     remote_host,
                     'sleep',
                     '64'
                 ])
                 print(
-                    'Starting "ssh" port forwarding from "localhost:' +
-                    str(local_port) + '" to "' + remote_host + ':' +
-                    remote_port + '"...'
+                    f'Starting "ssh" port forwarding from "localhost:'
+                    f'{local_port}" to "{remote_host}:{remote_port}"...',
                 )
                 subtask_mod.Task(ssh.get_cmdline()).run()
                 return str(local_port)
         raise SystemExit(
-            sys.argv[0] +
-            ': Cannot find unused local port in range 5901-5999.'
+            f'{sys.argv[0]}: Cannot find unused local port in range 5901-5999.'
         )
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Securely connect to VNC server using SSH protocol.',
+            description="Securely connect to VNC server using SSH protocol.",
         )
 
         parser.add_argument(
@@ -74,14 +72,14 @@ class Options:
             dest='ssh_port',
             default=None,
             metavar='ssh_port',
-            help='Select non-default ssh port.'
+            help="Select non-default ssh port.",
         )
 
         parser.add_argument(
             'server',
             nargs=1,
             metavar='[[user]@host]:vnc_port',
-            help='VNC server location.'
+            help="VNC server location.",
         )
 
         self._args = parser.parse_args(args)
@@ -96,8 +94,8 @@ class Options:
             remote_host, remote_port = self._args.server[0].split(':')
         except ValueError as exception:
             raise SystemExit(
-                sys.argv[0] +
-                ': You must specific a single ":" in VNC server location.'
+                f'{sys.argv[0]}: You must specific a '
+                'single ":" in VNC server location.',
             ) from exception
 
         try:
@@ -105,8 +103,8 @@ class Options:
                 remote_port = str(int(remote_port) + 5900)
         except ValueError as exception:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer '
-                'for port number.'
+                f'{sys.argv[0]}: You must specific a positive integer '
+                'for port number.',
             ) from exception
 
         self._vncviewer = network_mod.Sandbox('vncviewer', errors='stop')
@@ -116,17 +114,16 @@ class Options:
         if remote_host:
             local_port = self._getport(remote_host, remote_port)
             print(
-                'Starting "vncviewer" connection via "localhost:' +
-                local_port + '" to "' + remote_host + ':' + remote_port +
-                '"...'
+                f'Starting "vncviewer" connection via "localhost:{local_port}"'
+                f' to "{remote_host}:{remote_port}"...',
             )
         else:
             local_port = remote_port
             print(
-                'Starting "vncviewer" connection to "localhost:' +
-                local_port + '"...'
+                'Starting "vncviewer" connection to '
+                f'"localhost:{local_port}"...',
             )
-        self._vncviewer.set_args([':' + local_port])
+        self._vncviewer.set_args([f':{local_port}'])
 
 
 class Main:

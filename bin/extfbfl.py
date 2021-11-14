@@ -30,10 +30,10 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Extract Facebook friends list from saved HTML file.',
+            description="Extract Facebook friends list from saved HTML file.",
         )
 
-        parser.add_argument('file', nargs=1, help='HTML file.')
+        parser.add_argument('file', nargs=1, help="HTML file.")
 
         self._args = parser.parse_args(args)
 
@@ -115,7 +115,7 @@ class Main:
                                 self._profiles[uid] = Profile(name, url)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" HTML file.'
+                f'{sys.argv[0]}: Cannot read "{file}" HTML file.',
             ) from exception
 
     def run(self) -> int:
@@ -128,11 +128,7 @@ class Main:
         self._read_html(options.get_file())
 
         file = time.strftime('facebook-%Y%m%d.csv', time.localtime())
-        print(
-            'Writing "' + file + '" with',
-            len(self._profiles.keys()),
-            "friends..."
-        )
+        print(f'Writing "{file}" with {len(self._profiles.keys())} friends...')
         try:
             with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
                 print("uid,name,profile_url", file=ofile)
@@ -142,14 +138,18 @@ class Main:
                     else:
                         print(uid, end='', file=ofile)
                     if ' ' in profile.get_name():
-                        print(',"{0:s}",{1:s}'.format(
-                            profile.get_name(), profile.get_url()), file=ofile)
+                        print(
+                            f',"{profile.get_name()}",{profile.get_url()}',
+                            file=ofile,
+                        )
                     else:
-                        print(",{0:s},{1:s}".format(
-                            profile.get_name(), profile.get_url()), file=ofile)
+                        print(
+                            f",{profile.get_name()},{profile.get_url()}",
+                            file=ofile,
+                        )
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '" CSV file.'
+                f'{sys.argv[0]}: Cannot create "{file}" CSV file.',
             ) from exception
 
         return 0

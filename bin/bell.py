@@ -49,13 +49,12 @@ class Main:
         Start program
         """
         if sys.argv[0].endswith('.py'):
-            sound = sys.argv[0][:-3] + '.ogg'
+            sound = f'{sys.argv[0][:-3]}.ogg'
         else:
-            sound = sys.argv[0] + '.ogg'
+            sound = f'{sys.argv[0]}.ogg'
 
         if not os.path.isfile(sound):
-            raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + sound + '" file.')
+            raise SystemExit(f'{sys.argv[0]}: Cannot find "{sound}" file.')
         bell = command_mod.Command('vlc', args=[
             '--intf',
             'dummy',
@@ -70,8 +69,8 @@ class Main:
             bell = command_mod.Command('ogg123', errors='ignore')
             if not bell.is_found():
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find required "vlc" or '
-                    '"ogg123" software.'
+                    f'{sys.argv[0]}: Cannot find required '
+                    '"vlc" or "ogg123" software.',
                 )
         bell.append_arg(sound)
 

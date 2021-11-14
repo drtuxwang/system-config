@@ -33,20 +33,20 @@ class Options:
         return self._args.summary_flag
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description='Show file disk usage.')
+        parser = argparse.ArgumentParser(description="Show file disk usage.")
 
         parser.add_argument(
             '-s',
             dest='summary_flag',
             action='store_true',
-            help='Show summary only.'
+            help="Show summary only.",
         )
         parser.add_argument(
             'files',
             nargs='*',
             default=[os.curdir],
             metavar='file',
-            help='File or directory.'
+            help="File or directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -95,7 +95,7 @@ class Main:
             files = [os.path.join(directory, x) for x in os.listdir(directory)]
         except PermissionError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot open "' + directory + '" directory.'
+                f'{sys.argv[0]}: Cannot open "{directory}" directory.',
             ) from exception
         for file in sorted(files):
             if not os.path.islink(file):
@@ -104,7 +104,7 @@ class Main:
                 else:
                     size += int((os.path.getsize(file) + 1023) / 1024)
         if not options.get_summary_flag():
-            print("{0:7d} {1:s}".format(size, directory))
+            print(f"{size:7d} {directory}")
         return size
 
     def run(self) -> int:
@@ -115,17 +115,17 @@ class Main:
 
         for file in options.get_files():
             if os.path.islink(file):
-                print("{0:7d} {1:s}".format(0, file))
+                print(f"{0:7d} {file}")
             else:
                 if os.path.isdir(file):
                     size = self._usage(options, file)
                     if options.get_summary_flag():
-                        print("{0:7d} {1:s}".format(size, file))
+                        print(f"{size:7d} {file}")
                 elif os.path.isfile(file):
                     size = int((os.path.getsize(file) + 1023) / 1024)
-                    print("{0:7d} {1:s}".format(size, file))
+                    print(f"{size:7d} {file}")
                 else:
-                    print("{0:7d} {1:s}".format(0, file))
+                    print(f"{0:7d} {file}")
 
         return 0
 

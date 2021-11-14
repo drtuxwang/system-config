@@ -31,7 +31,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Compress a file in ZST format.',
+            description="Compress a file in ZST format.",
         )
 
         parser.add_argument(

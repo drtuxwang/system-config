@@ -13,7 +13,7 @@ from typing import List
 
 import task_mod
 
-RELEASE = '2.8.1'
+RELEASE = '2.8.2'
 
 
 class Options:
@@ -40,21 +40,21 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='MyQS v' + self._release +
-            ', My Queuing System batch job deletion.',
+            description=f"MyQS v{self._release}, "
+            "My Queuing System batch job deletion.",
         )
 
         parser.add_argument(
             '-k',
             action='store_true',
             dest='force_flag',
-            help='Force termination of running jobs.'
+            help="Force termination of running jobs.",
         )
         parser.add_argument(
             'jobIds',
             nargs='+',
             metavar='jobid',
-            help='Batch job ID.'
+            help="Batch job ID.",
         )
 
         self._args = parser.parse_args(args)
@@ -68,8 +68,7 @@ class Options:
         self._jobids = []
         for jobid in self._args.jobIds:
             if not jobid.isdigit():
-                raise SystemExit(
-                    sys.argv[0] + ': Invalid "' + jobid + '" job ID.')
+                raise SystemExit(f'{sys.argv[0]}: Invalid "{jobid}" job ID.')
             self._jobids.append(jobid)
 
 
@@ -164,7 +163,8 @@ class Main:
 
         if 'HOME' not in os.environ:
             raise SystemExit(
-                sys.argv[0] + ': Cannot determine home directory.')
+                f"{sys.argv[0]}: Cannot determine home directory.",
+            )
         self._myqsdir = os.path.join(
             os.environ['HOME'],
             '.config',

@@ -55,11 +55,13 @@ class Options:
             cdrom = Cdrom()
             if not cdrom.get_devices().keys():
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find any CD/DVD device.')
+                    f"{sys.argv[0]}: Cannot find any CD/DVD device.",
+                )
             device = sorted(cdrom.get_devices())[0]
         if not os.path.exists(device):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + device + '" CD/DVD device.')
+                f'{sys.argv[0]}: Cannot find "{device}" CD/DVD device.',
+            )
         return device
 
     @staticmethod
@@ -81,33 +83,33 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Make data/audio/video CD/DVD using CD/DVD writer.',
+            description="Make data/audio/video CD/DVD using CD/DVD writer.",
         )
 
         parser.add_argument(
             '-dev',
             nargs=1,
             dest='device',
-            help='Select device (ie /dev/sr0).'
+            help="Select device (ie /dev/sr0).",
         )
         parser.add_argument(
             '-erase',
             dest='erase_flag',
             action='store_true',
-            help='Erase TOC on CD-RW media before writing in DAO mode.'
+            help="Erase TOC on CD-RW media before writing in DAO mode.",
         )
         parser.add_argument(
             '-speed',
             nargs=1,
             type=int,
             default=[8],
-            help='Select CD/DVD spin speed.'
+            help="Select CD/DVD spin speed.",
         )
         parser.add_argument(
             'image',
             nargs=1,
             metavar='image.iso|image.bin|directory|scan',
-            help='ISO/Bin image file, audio or scan'
+            help="ISO/Bin image file, audio or scan",
         )
 
         self._args = parser.parse_args(args)
@@ -124,17 +126,17 @@ class Options:
 
         if self._args.speed[0] < 1:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
-                'CD/DVD device speed.'
+                f"{sys.argv[0]}: You must specific a positive integer for "
+                "CD/DVD device speed.",
             )
         if (
-                self._args.image[0] != 'scan' and
-                not os.path.isdir(self._args.image[0])
+            self._args.image[0] != 'scan' and
+            not os.path.isdir(self._args.image[0])
         ):
             if not os.path.exists(self._args.image[0]):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + self._args.image[0] +
-                    '" CD/DVD device.'
+                    f'{sys.argv[0]}: Cannot find '
+                    f'"{self._args.image[0]}" CD/DVD device.',
                 )
 
 
@@ -158,7 +160,7 @@ class Cdrom:
         Detect devices
         """
         for directory in glob.glob('/sys/block/sr*/device'):
-            device = '/dev/' + os.path.basename(os.path.dirname(directory))
+            device = f'/dev/{os.path.basename(os.path.dirname(directory))}'
             model = ''
             for file in ('vendor', 'model'):
                 try:
@@ -167,7 +169,7 @@ class Cdrom:
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
-                        model += ' ' + ifile.readline().strip()
+                        model += f' {ifile.readline().strip()}'
                 except OSError:
                     continue
             self._devices[device] = model
@@ -213,8 +215,8 @@ class Main:
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
                 )
 
     @staticmethod
@@ -223,7 +225,7 @@ class Main:
         print("Scanning for CD/DVD devices...")
         devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
-            print("  {0:10s}  {1:s}".format(key, value))
+            print(f"  {key:10s}  {value}")
 
     def _disk_at_once_data(self, options: Options) -> None:
         cdrdao = command_mod.Command('cdrdao', errors='stop')
@@ -241,8 +243,8 @@ class Main:
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
                 )
         cdrdao.set_args(
             ['write', '--device', self._device, '--speed', str(self._speed)])
@@ -254,8 +256,8 @@ class Main:
         task.run()
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
             )
         self._eject()
 
@@ -278,16 +280,16 @@ class Main:
             '-audio',
             '-pad',
             '-copy',
-            'dev=' + self._device,
-            'speed=' + str(self._speed),
+            f'dev={self._device}',
+            f'speed={self._speed}',
             'driveropts=burnfree'
         ] + files)
         task = subtask_mod.Task(wodim.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
             )
 
         time.sleep(1)
@@ -297,21 +299,21 @@ class Main:
                 '-info-only',
                 '--no-infofile',
                 'verbose-level=toc',
-                'dev=' + self._device,
-                'speed=' + str(self._speed)
+                f'dev={self._device}',
+                f'speed={self._speed}',
             ])
             task2 = subtask_mod.Batch(icedax.get_cmdline())
             task2.run()
             toc = task2.get_error(r'[.]\(.*:.*\)|^CD')
             if not toc:
                 raise SystemExit(
-                    sys.argv[0] +
-                    ': Cannot find Audio CD media. Please check drive.'
+                    f"{sys.argv[0]}: Cannot find Audio CD media. "
+                    "Please check drive.",
                 )
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task2.get_exitcode()) +
-                    ' received from "' + task2.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task2.get_exitcode()} '
+                    f'received from "{task2.get_file()}".',
                 )
             for line in toc:
                 print(line)
@@ -336,16 +338,17 @@ class Main:
         if os.path.getsize(file) < 2097152:
             wodim.append_arg('-pad')
         wodim.set_args([
-            'dev=' + self._device,
-            'speed=' + str(self._speed),
+            f'dev={self._device}',
+            f'speed={self._speed}',
             'driveropts=burnfree',
-            file])
+            file,
+        ])
         task = subtask_mod.Task(wodim.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {str(task.get_exitcode())} '
+                f'received from "{task.get_file()}".',
             )
 
     def run(self) -> int:

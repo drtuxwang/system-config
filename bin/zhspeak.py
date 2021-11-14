@@ -13,14 +13,14 @@ import re
 import signal
 import sys
 import time
-from typing import Generator, List, Tuple
+from typing import Generator, List
 
 import command_mod
 import file_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '5.2.2'
+RELEASE = '6.0.1'
 
 
 class Options:
@@ -71,27 +71,27 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Zhong Hua Speak v' + self._release +
-            ' - Chinese TTS software.'
+            description=f"Zhong Hua Speak "
+            f"v{self._release} - Chinese TTS software.",
         )
 
         parser.add_argument(
             '-xclip',
             action='store_true',
             dest='xclip_flag',
-            help='Select text from clipboard (enables single session).'
+            help="Select text from clipboard (enables single session).",
         )
         parser.add_argument(
             '-pinyin',
             action='store_true',
             dest='pinyin',
-            help='Print 拼音(Pinyin) or 粵拼(Jyutping) tones only.'
+            help="Print 拼音(Pinyin) or 粵拼(Jyutping) tones only.",
         )
         parser.add_argument(
             '-g',
             action='store_true',
             dest='gui_flag',
-            help='Start GUI (zhspeak.tcl).'
+            help="Start GUI (zhspeak.tcl).",
         )
         parser.add_argument(
             '-de',
@@ -99,7 +99,7 @@ class Options:
             const='de-DE',
             dest='dialect',
             default='zh',
-            help='Select Deutsch (德語, German) language.'
+            help="Select Deutsch (德語, German) language.",
         )
         parser.add_argument(
             '-en',
@@ -107,7 +107,7 @@ class Options:
             const='en-GB',
             dest='dialect',
             default='zh',
-            help='Select English (英語) language.'
+            help="Select English (英語) language.",
         )
         parser.add_argument(
             '-es',
@@ -115,7 +115,7 @@ class Options:
             const='es-ES',
             dest='dialect',
             default='zh',
-            help='Select Espanol (西班牙語, Spanish) language.'
+            help="Select Espanol (西班牙語, Spanish) language.",
         )
         parser.add_argument(
             '-fr',
@@ -123,7 +123,7 @@ class Options:
             const='fr-FR',
             dest='dialect',
             default='zh',
-            help='Select Francese (法語, French) language.'
+            help="Select Francese (法語, French) language.",
         )
         parser.add_argument(
             '-it',
@@ -131,7 +131,7 @@ class Options:
             const='it-IT',
             dest='dialect',
             default='zh',
-            help='Select Italiana (意大利語, Italian) language.'
+            help="Select Italiana (意大利語, Italian) language.",
         )
         parser.add_argument(
             '-zh',
@@ -139,7 +139,7 @@ class Options:
             const='zh',
             dest='dialect',
             default='zh',
-            help='Select Zhonghua (普通話, Putonghua) dialect (default).'
+            help="Select Zhonghua (普通話, Putonghua) dialect (default).",
         )
         parser.add_argument(
             '-zhy',
@@ -147,13 +147,13 @@ class Options:
             const='zhy',
             dest='dialect',
             default='zh',
-            help='Select Zhonghua Yue (粵語, Cantonese) dialect.'
+            help="Select Zhonghua Yue (粵語, Cantonese) dialect.",
         )
         parser.add_argument(
             'phrases',
             nargs='*',
             metavar='phrase',
-            help='Phrases.'
+            help="Phrases.",
         )
 
         self._args = parser.parse_args(args)
@@ -173,8 +173,8 @@ class Options:
         task.run()
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} received '
+                f'from "{task.get_file()}".',
             )
         return task.get_output()
 
@@ -194,7 +194,8 @@ class Options:
             )
             if not zhspeak.is_found():
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "zhspeak-data" directory.')
+                    f'{sys.argv[0]}: Cannot find "zhspeak-data" directory.',
+                )
             subtask_mod.Exec(zhspeak.get_cmdline()).run()
 
         if self._args.gui_flag:
@@ -202,7 +203,7 @@ class Options:
             subtask_mod.Exec(zhspeaktcl.get_cmdline()).run()
 
         tmpdir = file_mod.FileUtil.tmpdir('.cache/zhspeak')
-        self._tmpfile = os.path.join(tmpdir, "{0:d}.wav".format(os.getpid()))
+        self._tmpfile = os.path.join(tmpdir, f'{os.getpid()}.wav')
 
         if self._args.xclip_flag:
             self._tmpfile = os.path.join(tmpdir, 'xclip.wav')
@@ -234,7 +235,7 @@ class Language:
                 return tts
 
         raise SystemExit(
-            sys.argv[0] + ': Cannot find "pico2wave" or "espeak" TTS software.'
+            f'{sys.argv[0]}: Cannot find "pico2wave" or "espeak" TTS software.'
         )
 
     def is_found(self) -> bool:
@@ -258,35 +259,37 @@ class Chinese(Language):
         super().__init__(options)
 
         self._options = options
-        self._ogg_dir = os.path.join(
+        self._directory = os.path.join(
             options.get_speak_dir(),
-            options.get_dialect() + '_ogg'
+            options.get_dialect() + '_dir'
         )
         self._dictionary = ChineseDictionary(self._options)
 
-        self._ogg_player = AudioPlayer.factory(self._ogg_dir)
-        if not self._ogg_player:
+        self._player = AudioPlayer.factory(self._directory)
+        if not self._player:
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "vlc", "ogg123" (vorbis-tools),'
-                ' "ffplay" (libav-tools) or "avplay" (ffmpeg).'
+                f'{sys.argv[0]}: Cannot find "vlc", '
+                '"ffplay" (libav-tools) or "avplay" (ffmpeg).',
             )
         self._is_found = True
 
     def _speak(self, sounds: List[str]) -> None:
         files = []
         for sound in sounds:
-            if os.path.isfile(
-                    os.path.join(self._ogg_dir, sound + '.ogg')):
+            if os.path.isfile(os.path.join(self._directory, sound + '.mp3')):
+                files.append(sound + '.mp3')
+            elif os.path.isfile(os.path.join(self._directory, sound + '.ogg')):
                 files.append(sound + '.ogg')
+            elif os.path.isfile(os.path.join(self._directory, sound + '.wav')):
+                files.append(sound + '.wav')
         if files:
             # Pause after every 100 words if no punctuation marks
             for i in range(0, len(files), 10):
-                exitcode = self._ogg_player.run(files[i:i + 10])
+                exitcode = self._player.run(files[i:i + 10])
                 if exitcode:
                     raise SystemExit(
-                        sys.argv[0] + ': Error code ' +
-                        str(exitcode) + ' received from "' +
-                        self._ogg_player.get_player() + '".'
+                        f'{sys.argv[0]}: Error code {exitcode} received '
+                        f'from "{self._player.get_player()}".',
                     )
                 time.sleep(0.25)
 
@@ -323,7 +326,7 @@ class ChineseDictionary:
                 self._mappings = json.load(ifile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot open "' + file + '" dialect file.'
+                f'{sys.argv[0]}: Cannot open "{file}" dialect file.',
             ) from exception
         self._max_block = max([len(key) for key in self._mappings])
 
@@ -334,7 +337,7 @@ class ChineseDictionary:
         directory = self._options.get_speak_dir()
 
         file = os.path.join(directory, 'zh.json')
-        print('Creating "{0:s}"...'.format(file))
+        print(f'Creating "{file}"...')
         self._mappings = {}
         self.readmap(os.path.join(directory, 'en_list'))
         self.readmap(os.path.join(directory, 'zh_list'))
@@ -348,11 +351,11 @@ class ChineseDictionary:
                 )
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot create "{file}" file.',
             ) from exception
 
         file = os.path.join(directory, 'zhy.json')
-        print('Creating "{0:s}"...'.format(file))
+        print(f'Creating "{file}"...')
         self._mappings = {}
         self.readmap(os.path.join(directory, 'en_list'))
         self.readmap(os.path.join(directory, 'zhy_list'))
@@ -365,7 +368,7 @@ class ChineseDictionary:
                 )
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot create "{file}" file.',
             ) from exception
 
     def readmap(self, file: str) -> None:
@@ -385,7 +388,7 @@ class ChineseDictionary:
                             self._mappings[text].append(match.group())
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot open "' + file + '" dialect file.'
+                f'{sys.argv[0]}: Cannot open "{file}" dialect file.',
             ) from exception
 
     def map_speech(self, text: str) -> Generator[List[str], None, None]:
@@ -420,9 +423,9 @@ class LibttsPico(Language):
         self._tmpfile = options.get_tmpfile()
         self._command = command_mod.Command('pico2wave', errors='ignore')
         self._command.set_args([
-            '--lang=' + options.get_dialect(),
-            '--wave=' + self._tmpfile]
-        )
+            f'--lang={options.get_dialect()}',
+            f'--wave={self._tmpfile}'
+        ])
         self._is_found = self._command.is_found()
 
     @staticmethod
@@ -431,11 +434,11 @@ class LibttsPico(Language):
         text: List[str],
         tmpfile: str,
     ) -> None:
-        mp3_player = AudioPlayer.factory(None)
-        if not mp3_player:
+        player = AudioPlayer.factory(None)
+        if not player:
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "vlc", "ogg123" (vorbis-tools),'
-                ' "ffplay" (libav-tools) or "avplay" (ffmpeg).'
+                f'{sys.argv[0]}: Cannot find "vlc", '
+                '"ffplay" (libav-tools) or "avplay" (ffmpeg).'
             )
 
         # Break at '.' and ','
@@ -445,11 +448,10 @@ class LibttsPico(Language):
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
-                        sys.argv[0] + ': Error code ' +
-                        str(task.get_exitcode()) +
-                        ' received from "' + task.get_file() + '".'
+                        f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                        f'received from "{task.get_file()}".',
                     )
-                mp3_player.run([tmpfile])
+                player.run([tmpfile])
 
         os.remove(tmpfile)
 
@@ -474,7 +476,7 @@ class Espeak(Language):
         self._command.set_args([
             '-a256',
             '-k30',
-            '-v' + options.get_dialect().split('-')[0] + '+f2',
+            f"-v{options.get_dialect().split('-')[0]}+f2",
             '-s120'
         ])
         self._is_found = self._command.is_found()
@@ -485,8 +487,8 @@ class Espeak(Language):
         task.run(pattern=': Connection refused')
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code '
+                f'{task.get_exitcode()} received from "{task.get_file()}".',
             )
 
     @staticmethod
@@ -498,9 +500,8 @@ class Espeak(Language):
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
-                        sys.argv[0] + ': Error code ' +
-                        str(task.get_exitcode()) +
-                        ' received from "' + task.get_file() + '".'
+                        f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                        f'received from "{task.get_file()}".',
                     )
 
     def text2speech(self, text: List[str]) -> None:
@@ -517,23 +518,17 @@ class AudioPlayer:
     Audio player base class
     """
 
-    def __init__(self, oggdir: str) -> None:
-        self._oggdir = oggdir
+    def __init__(self, voice_dir: str) -> None:
+        self._directory = voice_dir
         self._config()
 
     @staticmethod
-    def factory(ogg_dir: str) -> 'AudioPlayer':
+    def factory(directory: str) -> 'AudioPlayer':
         """
         Return AudioPlayer sub class object
         """
-        audio_players: Tuple
-        if ogg_dir:
-            audio_players = (Vlc, Ogg123, Avplay, Ffplay)
-        else:
-            audio_players = (Vlc, Avplay, Ffplay)
-
-        for audio_player in audio_players:
-            player = audio_player(ogg_dir)
+        for audio_player in (Vlc, Avplay, Ffplay):
+            player = audio_player(directory)
             if player.has_player():
                 return player
         return None
@@ -559,7 +554,7 @@ class AudioPlayer:
         """
         cmdline = self._player.get_cmdline() + files
         task = subtask_mod.Batch(cmdline)
-        task.run(directory=self._oggdir)
+        task.run(directory=self._directory)
         return task.get_exitcode()
 
 
@@ -580,19 +575,7 @@ class Vlc(AudioPlayer):
         ])
 
 
-class Ogg123(AudioPlayer):
-    """
-    Uses 'ogg123' from 'vorbis-tools'.
-    """
-
-    def _config(self) -> None:
-        self._player: command_mod.Command = command_mod.Command(
-            'ogg123',
-            errors='ignore',
-        )
-
-
-class Ffplay(Ogg123):
+class Ffplay(AudioPlayer):
     """
     Uses 'ffplay' from 'ffmpeg'.
     """
@@ -605,9 +588,9 @@ class Ffplay(Ogg123):
         """
         Run player
         """
-        cmdline = self._player.get_cmdline() + ['concat:' + '|'.join(files)]
+        cmdline = self._player.get_cmdline() + [f"concat:{'|'.join(files)}"]
         task = subtask_mod.Batch(cmdline)
-        task.run(directory=self._oggdir)
+        task.run(directory=self._directory)
         return task.get_exitcode()
 
 

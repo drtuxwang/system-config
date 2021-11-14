@@ -38,18 +38,18 @@ class Options:
         return self._args.url[0]
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description='Current weather search.')
+        parser = argparse.ArgumentParser(description="Current weather search.")
 
         parser.add_argument(
             '-q',
             action='store_true',
             dest='quiet_flag',
-            help='Disable error messages'
+            help="Disable error messages",
         )
         parser.add_argument(
             'url',
             nargs=1,
-            help='Weather data URL.'
+            help="Weather data URL.",
         )
 
         self._args = parser.parse_args(args)
@@ -93,9 +93,9 @@ class Main:
             temp = data.split('<div class="temp">')[1].split('<')[0]
             condition = data.split('<span class="phrase">')[1].split('<')[0]
             if temp and condition:
-                return '{0:s}C ({1:s})'.format(
-                    temp.replace('&#xB0;', '°').strip(),
-                    condition.strip(),
+                return (
+                    f"{temp.replace('&#xB0;', '°').strip():s}C "
+                    f"({condition.strip():s})"
                 )
         except IndexError:
             return '???'

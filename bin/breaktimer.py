@@ -41,27 +41,27 @@ class Options:
         return self._args.time[0]
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description='Break reminder timer.')
+        parser = argparse.ArgumentParser(description="Break reminder timer.")
 
         parser.add_argument(
             '-g',
             dest='gui_flag',
             action='store_true',
-            help='Start GUI.'
+            help="Start GUI.",
         )
         parser.add_argument(
             'time',
             nargs=1,
             type=int,
-            help='Time between breaks in minutes.'
+            help="Time between breaks in minutes.",
         )
 
         self._args = parser.parse_args(args)
 
         if self._args.time[0] < 1:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
-                'break time.'
+                f"{sys.argv[0]}: You must specific a positive integer for "
+                "break time.",
             )
 
     def parse(self, args: List[str]) -> None:
@@ -158,8 +158,8 @@ class Main:
                     time.sleep(1)
                     elapsed = int(time.time()) - start
                     sys.stdout.write(
-                        " \r " + time.strftime('%H:%M ') +
-                        str(self._limit - elapsed)
+                        f" \r {time.strftime('%H:%M')} "
+                        f"{self._limit - elapsed}",
                     )
                     sys.stdout.flush()
             except KeyboardInterrupt:

@@ -146,9 +146,9 @@ class Main:
             line = ''
             for day in week:
                 if day[0] == 0:
-                    line += ' |' + ' '*9
+                    line += f' |{" "*9}'
                 else:
-                    line += ' | ' + str(day[0]).ljust(8)
+                    line += f' | {str(day[0]).ljust(8)}'
             line += ' |'
             print(line)
             for _ in range(5):

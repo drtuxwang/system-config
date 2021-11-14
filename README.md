@@ -2,14 +2,14 @@
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
-the years. Now most of the scripts are written in Python 3.
+the years.
+
 ---
-```
+<pre>
  * Jenkinsfile            Jenkins pipeline configuration file
  * codefresh.yaml         Codefresh pipeline configuration file
  * Makefile               Makefile for testing
  * .pylintrc              Python Pylint configuration file
- * bin/__pycache__        Disable "file.cpython-xx.pyc" caching
  * bin/command_mod.py     Python command line handling module
  * bin/config_mod.py      Python config module for handling "config_mod.yaml)
  * bin/config_mod.yaml    Configuration file apps, bindings & parameters
@@ -118,7 +118,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/virtualenv.bat
  * bin/yt-dlp
  * bin/yt-dlp.bat
- * bin/0ad                0Sandbox for "0ad" launcher (allowing non systems port)
+ * bin/0ad                Sandbox for "0ad" launcher (allowing non systems port)
  * bin/_0ad.py
  * bin/wesnoth            Sandbox for "wesnoth" launcher (allowing non systems port)
  * bin/wesnoth.py
@@ -531,7 +531,7 @@ the years. Now most of the scripts are written in Python 3.
  * bin/open.py
  * bin/otool              otool wrapper (allowing non systems port)
  * bin/otool.py
- * bin/padman             World Of Padman (allowing non systems port)
+ * bin/padman             Sandbox for "wop" launcher (allowing non systems port)
  * bin/padman.py
  * bin/par2               par2 wrapper (allowing non systems port)
  * bin/par2.bat
@@ -907,14 +907,13 @@ the years. Now most of the scripts are written in Python 3.
  * config/winsetup.bat                   Configure Windows VirtualBox VMs
  * config/winsetup.sh
  * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
- * etc/install-python-requirements.sh    Python pip installer (installs minimum requirements)
+ * etc/python-packages.sh                Install/check Python packages requirements
  * etc/python-requirements.txt           Python default pip requirements file
  * etc/python-requirements_2.7.txt       Python 2.7 pip requirements file
  * etc/python-requirements_2.7_mac.txt   Python 2.7 pip requirements file for Mac
  * etc/python-requirements_3.5.txt       Python 3.5 pip requirements file
  * etc/python-requirements_3.6.txt       Python 3.6 pip requirements file
  * etc/python-requirements_3.7.txt       Python 3.7 pip requirements file
- * etc/python-requirements_3.10.txt      Python 3.10 pip requirements file
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization
@@ -1233,4 +1232,4 @@ the years. Now most of the scripts are written in Python 3.
  * wipe/COMPILE
  * wipe/Makefile
  * wipe/wipe.c
-```
+</pre>

@@ -27,13 +27,13 @@ class Options:
         return self._args.directories
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description='Find zero sized files.')
+        parser = argparse.ArgumentParser(description="Find zero sized files.")
 
         parser.add_argument(
             'directories',
             nargs='+',
             metavar='directory',
-            help='Directory to search.'
+            help="Directory to search.",
         )
 
         self._args = parser.parse_args(args)

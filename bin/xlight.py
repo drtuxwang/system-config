@@ -38,28 +38,28 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Desktop screen backlight utility.',
+            description="Desktop screen backlight utility.",
         )
 
         parser.add_argument(
             '-dec',
             action='store_const',
             const='-', dest='change',
-            help='Increase brightness.'
+            help="Increase brightness.",
         )
         parser.add_argument(
             '-inc',
             action='store_const',
             const='+',
             dest='change',
-            help='Default brightness.'
+            help="Default brightness.",
         )
         parser.add_argument(
             '-reset',
             action='store_const',
             const='=',
             dest='change',
-            help='Decrease brightness.'
+            help="Decrease brightness.",
         )
 
         self._args = parser.parse_args(args)
@@ -99,7 +99,7 @@ class Backlight:
                 BacklightIntel(), BacklightIntelSetpci(), BacklightXrandr()):
             if backlight.detect():
                 return backlight
-        raise SystemExit(sys.argv[0] + ": Cannot detect backlight device.")
+        raise SystemExit(f"{sys.argv[0]}: Cannot detect backlight device.")
 
     @staticmethod
     def _get_device() -> str:
@@ -189,8 +189,10 @@ class Backlight:
                 brightness = self._default
             self.set_brightness(brightness)
         else:
-            print("{0:3.1f} / {1:3.1f}".format(
-                float(self.get_brightness() + 0.01), float(self._max + 0.01)))
+            print(
+                f"{self.get_brightness() + 0.01:3.1f} / "
+                f"{self._max + 0.01:3.1f}",
+            )
 
 
 class BacklightIntel(Backlight):
@@ -229,7 +231,7 @@ class BacklightIntelSetpci(Backlight):
             return int(int(task.get_output()[0], 16) / 16)  # From 0 - 15
         except (IndexError, ValueError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot detect current brightness setting.'
+                f"{sys.argv[0]}: Cannot detect current brightness setting.",
             ) from exception
 
     def get_brightness_default(self) -> float:
@@ -254,7 +256,7 @@ class BacklightIntelSetpci(Backlight):
         """
         Set brightness
         """
-        self._command.set_args(['F4.B={0:x}'.format(int(brightness*16 + 15))])
+        self._command.set_args(['F4.B={int(brightness*16 + 15):x}'])
         subtask_mod.Exec(self._command.get_cmdline()).run()
 
     def detect(self) -> bool:

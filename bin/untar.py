@@ -39,22 +39,22 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/'
-            'TAR.ZSTD/TAR.LZMA/TAR.XZ/TAR.7Z (TGZ/TBZ/TZS|TZST|TLZ/TXZ) '
-            'format.',
+            description="Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/"
+            "TAR.ZSTD/TAR.LZMA/TAR.XZ/TAR.7Z (TGZ/TBZ/TZS|TZST|TLZ/TXZ) "
+            "format.",
         )
 
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='Show contents of archive.'
+            help="Show contents of archive.",
         )
         parser.add_argument(
             'archives',
             nargs='+',
             metavar='archive',
-            help='Archive file.'
+            help="Archive file.",
         )
 
         self._args = parser.parse_args(args)
@@ -66,8 +66,7 @@ class Options:
         for archive in self._args.archives:
             if not isarchive.search(archive):
                 raise SystemExit(
-                    sys.argv[0] + ': Unsupported "' + archive +
-                    '" archive format.'
+                    f'{sys.argv[0]}: Unsupported "{archive}" archive format.',
                 )
 
     def parse(self, args: List[str]) -> None:
@@ -151,7 +150,7 @@ class Main:
             self._tar = command_mod.Command('tar', errors='stop')
 
         for file in options.get_archives():
-            print(file + ':')
+            print(f"{file}:")
             if options.get_view_flag():
                 self._view(file)
             else:

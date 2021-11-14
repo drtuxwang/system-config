@@ -46,7 +46,7 @@ class Options:
                     host = socket.gethostname().split('.')[0].lower()
                     print("[user]", file=ofile)
                     print("        name =", user, file=ofile)
-                    print("        email =", user + '@' + host, file=ofile)
+                    print("        email =", f'{user}@{host}', file=ofile)
             except OSError:
                 pass
 

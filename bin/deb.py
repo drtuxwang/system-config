@@ -55,8 +55,8 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Make a compressed archive in DEB format or '
-            'query database/files.',
+            description="Make a compressed archive in DEB format or "
+            "query database/files.",
         )
 
         parser.add_argument(
@@ -65,7 +65,7 @@ class Options:
             const='list',
             dest='mode',
             default='dpkg',
-            help='Show all installed packages (optional arch).'
+            help="Show all installed packages (optional arch).",
         )
         parser.add_argument(
             '-d',
@@ -73,7 +73,7 @@ class Options:
             const='depends',
             dest='mode',
             default='dpkg',
-            help='Show dependency tree for selected installed packages.'
+            help="Show dependency tree for selected installed packages.",
         )
         parser.add_argument(
             '-c',
@@ -81,55 +81,55 @@ class Options:
             const='nodepends',
             dest='mode',
             default='dpkg',
-            help='Show only installed packages without dependents.'
+            help="Show only installed packages without dependents.",
         )
         parser.add_argument(
             '-s',
             action='store_const',
             const='-s',
             dest='option',
-            help='Show status of selected installed packages.'
+            help="Show status of selected installed packages.",
         )
         parser.add_argument(
             '-L',
             action='store_const',
             const='-L',
             dest='option',
-            help='Show files owned by selected installed packages.'
+            help="Show files owned by selected installed packages.",
         )
         parser.add_argument(
             '-P',
             action='store_const',
             const='-P',
             dest='option',
-            help='Purge selected installed packages.'
+            help="Purge selected installed packages.",
         )
         parser.add_argument(
             '-S',
             action='store_const',
             const='-S',
             dest='option',
-            help='Locate package which contain file.'
+            help="Locate package which contain file.",
         )
         parser.add_argument(
             '-i',
             action='store_const',
             const='-i',
             dest='option',
-            help='Install selected Debian package files.'
+            help="Install selected Debian package files.",
         )
         parser.add_argument(
             '-I',
             action='store_const',
             const='-I',
             dest='option',
-            help='Show information about selected Debian package files.'
+            help="Show information about selected Debian package files.",
         )
         parser.add_argument(
             'args',
             nargs='*',
             metavar='package.deb|package|arch',
-            help='Debian package file, package name or arch.'
+            help="Debian package file, package name or arch.",
         )
 
         self._args = parser.parse_args(args)
@@ -146,8 +146,8 @@ class Options:
         task.run()
         if len(task.get_output()) != 1:
             raise SystemExit(
-                sys.argv[0] + ": Cannot detect default architecture of "
-                "packages."
+                f"{sys.argv[0]}: Cannot detect default "
+                "architecture of packages.",
             )
         self._arch = task.get_output()[0]
 
@@ -165,8 +165,8 @@ class Options:
             self._dpkg.set_args(['-b', os.curdir, self._args.args[0]])
         elif self._args.args:
             raise SystemExit(
-                sys.argv[0] + ': Invalid Debian package name "' +
-                self._args.args[0] + '".'
+                f'{sys.argv[0]}: Invalid Debian package name '
+                f'"{self._args.args[0]}".',
             )
         else:
             self._parse_args(['-h'])
@@ -295,7 +295,7 @@ class Main:
                     if depend.split(':')[0] in names_all:
                         depends.append(depend)
                     else:
-                        depends.append(depend + ':' + name.split(':')[-1])
+                        depends.append(f"{depend}:{name.split(':')[-1]}")
                 packages[name].set_depends(depends)
 
     def _read_dpkg_status(self) -> dict:
@@ -319,7 +319,7 @@ class Main:
                         if arch == 'all':
                             names_all.append(name)
                         elif arch != self._options.get_arch():
-                            name += ':' + arch
+                            name += f':{arch}'
                     elif line.startswith('Version: '):
                         package.set_version(
                             line.replace('Version: ', '', 1).split(':')[-1])
@@ -329,9 +329,8 @@ class Main:
                                 int(line.replace('Installed-Size: ', '', 1)))
                         except ValueError as exception:
                             raise SystemExit(
-                                sys.argv[0] + ': Package "' + name +
-                                '" in "/var/lib/dpkg/info" has non '
-                                'integer size.'
+                                f'{sys.argv[0]}: Package "{name}" in '
+                                '"/var/lib/dpkg/info" has non integer size.',
                             ) from exception
                     elif line.startswith('Depends: '):
                         for i in line.replace('Depends: ', '', 1).split(', '):
@@ -343,7 +342,7 @@ class Main:
                         package = Package('', -1, [], '')
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "/var/lib/dpkg/status" file.'
+                f'{sys.argv[0]}: Cannot read "/var/lib/dpkg/status" file.',
             ) from exception
 
         self._calc_dependencies(packages, names_all)
@@ -357,12 +356,12 @@ class Main:
                     continue
             elif ':' in name:
                 continue
-            print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(
-                name.split(':')[0],
-                package.get_version(),
-                package.get_size(),
-                package.get_description()
-            ))
+            print(
+                f"{name.split(':')[0]:35s} "
+                f"{package.get_version():15s} "
+                f"{package.get_size():5d}KB "
+                f"{package.get_description()}",
+            )
 
     def _show_dependent_packages(
         self,
@@ -375,7 +374,7 @@ class Main:
         keys = sorted(self._packages)
         for name in names:
             if name in self._packages:
-                print(ident + name)
+                print(f"{ident}{name}")
                 for key in keys:
                     if name in self._packages[key].get_depends():
                         if key not in checked:
@@ -396,12 +395,12 @@ class Main:
                     if name in self._packages[key].get_depends():
                         break
                 else:
-                    print("{0:35s} {1:15s} {2:5d}KB {3:s}".format(
-                        name.split(':')[0],
-                        package.get_version(),
-                        package.get_size(),
-                        package.get_description()
-                    ))
+                    print(
+                        f"{name.split(':')[0]:35s} "
+                        f"{package.get_version():15s} "
+                        f"{package.get_size():5d}KB "
+                        f"{package.get_description()}",
+                    )
 
     def run(self) -> int:
         """

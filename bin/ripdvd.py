@@ -49,7 +49,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Rip Video DVD title to file.',
+            description="Rip Video DVD title to file.",
         )
 
         parser.add_argument(
@@ -57,20 +57,20 @@ class Options:
             nargs=1,
             type=int,
             default=[8],
-            help='Select DVD spin speed.'
+            help="Select DVD spin speed.",
         )
         parser.add_argument(
             '-title',
             nargs=1,
             type=int,
             default=[1],
-            help='Select DVD title to rip (Default is 1).'
+            help="Select DVD title to rip (Default is 1).",
         )
         parser.add_argument(
             'device',
             nargs=1,
             metavar='device|scan',
-            help='DVD device (ie "/dev/sr0" or "scan".'
+            help='DVD device (ie "/dev/sr0" or "scan".',
         )
 
         self._args = parser.parse_args(args)
@@ -85,21 +85,21 @@ class Options:
 
         if self._args.speed[0] < 1:
             raise SystemExit(
-                sys.argv[0] +
-                ': You must specific a positive integer for DVD device speed.'
+                f'{sys.argv[0]}: You must specific a '
+                'positive integer for DVD device speed.',
             )
         if self._args.title[0] < 1:
             raise SystemExit(
-                sys.argv[0] +
-                ': You must specific a positive integer for DVD title.'
+                f'{sys.argv[0]}: You must specific a '
+                'positive integer for DVD title.',
             )
         if (
                 self._args.device[0] != 'scan' and
                 not os.path.exists(self._args.device[0])
         ):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + self._args.device[0] +
-                '" DVD device.'
+                f'{sys.argv[0]}: Cannot find '
+                f'"{self._args.device[0]}" DVD device.',
             )
 
 
@@ -123,7 +123,7 @@ class Cdrom:
         Detect devices
         """
         for directory in glob.glob('/sys/block/sr*/device'):
-            device = '/dev/' + os.path.basename(os.path.dirname(directory))
+            device = f'/dev/{os.path.basename(os.path.dirname(directory))}'
             model = ''
             for file in ('vendor', 'model'):
                 try:
@@ -132,7 +132,7 @@ class Cdrom:
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
-                        model += ' ' + ifile.readline().strip()
+                        model += f' {ifile.readline().strip()}'
                 except OSError:
                     continue
             self._devices[device] = model
@@ -183,11 +183,11 @@ class Main:
             subtask_mod.Batch(hdparm.get_cmdline()).run()
 
     def _rip(self) -> None:
-        file = 'title-' + str(self._title).zfill(2) + '.mpg'
+        file = f'title-{str(self._title).zfill(2)}.mpg'
         self._vlc.set_args([
-            'dvdsimple:/' + self._device + ':#' + str(self._title),
+            f'dvdsimple:/{self._device}:#{self._title}',
             '--sout',
-            '#standard{access=file,mux=ts,dst=' + file + '}',
+            f'#standard{{access=file,mux=ts,dst={file}}}',
             '--no-repeat',
             '--no-loop',
             '--play-and-exit',
@@ -200,7 +200,7 @@ class Main:
         print("Scanning for CD/DVD devices...")
         devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
-            print("  {0:10s}  {1:s}".format(key, value))
+            print(f"  {key:10s}  {value}")
 
     def run(self) -> int:
         """

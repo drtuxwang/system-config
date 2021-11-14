@@ -95,14 +95,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Encode WAV audio using ffmpeg (pcm_s16le).',
+            description="Encode WAV audio using ffmpeg (pcm_s16le).",
         )
 
         parser.add_argument(
             '-noskip',
             dest='noskip_flag',
             action='store_true',
-            help='Disable skipping of encoding when codecs same.'
+            help="Disable skipping of encoding when codecs same.",
         )
         parser.add_argument(
             '-avol',
@@ -116,33 +116,33 @@ class Options:
             nargs=1,
             dest='startTime',
             default=[None],
-            help='Start encoding at time n seconds.'
+            help="Start encoding at time n seconds.",
         )
         parser.add_argument(
             '-time',
             nargs=1,
             dest='runTime',
             default=[None],
-            help='Stop encoding after n seconds.'
+            help="Stop encoding after n seconds.",
         )
         parser.add_argument(
             '-threads',
             nargs=1,
             default=['2'],
-            help='Threads are faster but decrease quality. Default is 2.'
+            help="Threads are faster but decrease quality. Default is 2.",
         )
         parser.add_argument(
             '-flags',
             nargs=1,
             default=[],
-            help="Supply additional flags to ffmpeg."
+            help="Supply additional flags to ffmpeg.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
             help='Multimedia file. A target ".wav" file '
-            'can be given as the first file.'
+            'can be given as the first file.',
         )
 
         self._args = parser.parse_args(args)
@@ -158,8 +158,8 @@ class Options:
             self._files = self._args.files[1:]
             if not self._files or self._file_new in self._files:
                 raise SystemExit(
-                    sys.argv[0] +
-                    ': The input and output files must be different.'
+                    f"{sys.argv[0]}: The input and output files "
+                    "must be different.",
                 )
         else:
             self._file_new = ''
@@ -194,7 +194,7 @@ class Media:
                     self._type = line.replace(', from', '').split()[2]
         except IndexError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Invalid "' + file + '" media file.'
+                f'{sys.argv[0]}: Invalid "{file}" media file.',
             ) from exception
 
     def get_stream(self) -> Generator[Tuple[int, str], None, None]:
@@ -232,7 +232,7 @@ class Media:
         Return True if audio codec found
         """
         for value in self._stream.values():
-            if value.startswith('Audio: ' + codec):
+            if value.startswith(f'Audio: {codec}'):
                 return True
         return False
 
@@ -250,7 +250,7 @@ class Media:
         Return True if video codec found
         """
         for value in self._stream.values():
-            if value.startswith('Video: ' + codec):
+            if value.startswith(f'Video: {codec}'):
                 return True
         return False
 
@@ -295,7 +295,7 @@ class Encoder:
                 if self._options.get_audio_volume():
                     self._ffmpeg.extend_args([
                         '-af',
-                        'volume=' + self._options.get_audio_volume() + 'dB'
+                        f'volume={self._options.get_audio_volume()}dB',
                     ])
             else:
                 self._ffmpeg.extend_args(['-c:a', 'copy'])
@@ -361,11 +361,11 @@ class Encoder:
                 media = Media(file)
                 args.extend(['-i', file])
                 for stream, _ in media.get_stream_audio():
-                    maps += '[' + str(number) + ':' + str(stream) + '] '
+                    maps += f'[{number}:{stream}] '
                 number += 1
             self._ffmpeg.set_args(args + [
                 '-filter_complex',
-                maps + 'concat=n=' + str(number) + ':v=0:a=1 [out]',
+                f'{maps}concat=n={number}:v=0:a=1 [out]',
                 '-map',
                 '[out]'
             ] + self._ffmpeg.get_args()[2:])

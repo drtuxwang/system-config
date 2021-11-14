@@ -43,27 +43,27 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Print lines matching a pattern in Debian '
-            'package files.',
+            description="Print lines matching a pattern in Debian "
+            "package files.",
         )
 
         parser.add_argument(
             '-a',
             dest='full',
             action='store_true',
-            help='Show full info about matched packages.'
+            help="Show full info about matched packages.",
         )
         parser.add_argument(
             'pattern',
             nargs=1,
             metavar='pattern',
-            help='Regular expression.'
+            help="Regular expression.",
         )
         parser.add_argument(
             'packages_files',
             nargs='+',
             metavar='distro.json',
-            help='Debian package file.'
+            help="Debian package file.",
         )
 
         self._args = parser.parse_args(args)
@@ -114,7 +114,7 @@ class Main:
                 data = json.load(ifile)
         except (OSError, json.decoder.JSONDecodeError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" json file.'
+                f'{sys.argv[0]}: Cannot read "{file}" json file.',
             ) from exception
 
         return data
@@ -161,7 +161,7 @@ class Main:
         for file in package_files:
             message = "{0:s}"
             if len(package_files) > 1:
-                message = file + ": " + message
+                message = f"{file}: {message}"
             if full:
                 cls._grep_full(message, pattern, file)
             else:

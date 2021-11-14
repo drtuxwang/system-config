@@ -50,7 +50,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Rip CD audio tracks as WAVE sound files.',
+            description="Rip CD audio tracks as WAVE sound files.",
         )
 
         parser.add_argument(
@@ -58,19 +58,19 @@ class Options:
             nargs=1,
             type=int,
             default=[8],
-            help='Select CD spin speed.'
+            help="Select CD spin speed.",
         )
         parser.add_argument(
             '-tracks',
             nargs=1,
             metavar='n[,n...]',
-            help='Select CD tracks to rip.'
+            help="Select CD tracks to rip.",
         )
         parser.add_argument(
             'device',
             nargs=1,
             metavar='device|scan',
-            help='CD/DVD device (ie "/dev/sr0" or "scan".'
+            help='CD/DVD device (ie "/dev/sr0" or "scan".',
         )
 
         self._args = parser.parse_args(args)
@@ -85,16 +85,16 @@ class Options:
 
         if self._args.speed[0] < 1:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
-                'CD/DVD device speed.'
+                f"{sys.argv[0]}: You must specific a positive integer for "
+                "CD/DVD device speed.",
             )
         if (
                 self._args.device[0] != 'scan' and
                 not os.path.exists(self._args.device[0])
         ):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' +
-                self._args.device[0] + '" CD/DVD device.'
+                f'{sys.argv[0]}: Cannot find '
+                f'"{self._args.device[0]}" CD/DVD device.',
             )
 
         if self._args.tracks:
@@ -123,7 +123,7 @@ class Cdrom:
         Detect devices
         """
         for directory in glob.glob('/sys/block/sr*/device'):
-            device = '/dev/' + os.path.basename(os.path.dirname(directory))
+            device = f'/dev/{os.path.basename(os.path.dirname(directory))}'
             model = ''
             for file in ('vendor', 'model'):
                 try:
@@ -132,7 +132,7 @@ class Cdrom:
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
-                        model += ' ' + ifile.readline().strip()
+                        model += f' {ifile.readline().strip()}'
                 except OSError:
                     continue
             self._devices[device] = model
@@ -175,7 +175,7 @@ class Main:
         tee = command_mod.Command('tee', errors='stop')
 
         for track in self._tracks:
-            istrack = re.compile('^.* ' + track + r'[.]\( *')
+            istrack = re.compile(f'^.* {track}[.]\\( *')
             length = 'Unknown'
             for line in self._toc:
                 if istrack.search(line):
@@ -184,8 +184,7 @@ class Main:
                         line
                     ).split(')')[0].split(':')
                     try:
-                        length = '{0:4.2f}'.format(
-                            int(minutes)*60 + float(seconds))
+                        length = f'{int(minutes)*60 + float(seconds):4.2f}'
                     except ValueError:
                         pass
                     break
@@ -198,14 +197,13 @@ class Main:
                     newline='\n',
                 ) as ofile:
                     line = (
-                        '\nRipping track ' + track + '/' + str(ntracks) +
-                        ' (' + length + ' seconds)'
+                        f'\nRipping track {track}/{ntracks} ({length} seconds)'
                     )
                     print(line)
                     print(line, file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + logfile + '" file.'
+                    f'{sys.argv[0]}: Cannot create "{logfile}" file.',
                 ) from exception
             warnfile = track.zfill(2) + '.warning'
             try:
@@ -213,22 +211,23 @@ class Main:
                     pass
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + warnfile + '" file.'
+                    f'{sys.argv[0]}: Cannot create "{warnfile}" file.',
                 ) from exception
             wavfile = track.zfill(2) + '.wav'
             tee.set_args(['-a', logfile])
             task = subtask_mod.Task(self._icedax.get_cmdline() + [
                 'verbose-level=disable',
-                'track=' + track,
-                'dev=' + self._device, wavfile,
+                f'track={track}',
+                f'dev={self._device}',
+                wavfile,
                 '2>&1',
                 '|'
                 ] + tee.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
                 )
             if os.path.isfile(wavfile):
                 self._pregap(wavfile)
@@ -239,7 +238,7 @@ class Main:
         self._icedax.set_args([
             '-vtrackid',
             '-paranoia',
-            '-S=' + str(self._speed),
+            f'-S={self._speed}',
             '-K',
             'dsp',
             '-H'
@@ -255,13 +254,13 @@ class Main:
                     print(line, file=ofile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "00.log" TOC file.'
+                f'{sys.argv[0]}: Cannot create "00.log" TOC file.',
             ) from exception
         try:
             ntracks = int(self._toc[-1].split('.(')[-2].split()[-1])
         except (IndexError, ValueError) as exception:
             raise SystemExit(
-                sys.argv[0] + ": Unable to detect the number of audio tracks."
+                f"{sys.argv[0]}: Unable to detect the number of audio tracks.",
             ) from exception
         if not self._tracks:
             self._tracks = [str(i) for i in range(1, int(ntracks) + 1)]
@@ -291,8 +290,8 @@ class Main:
                     newsize = size - len(data) + i + 264
                     if newsize < size:
                         line = (
-                            'Track length is ' + str(newsize) +
-                            ' bytes (pregap removed)'
+                            f'Track length is {str(newsize)} '
+                            f'bytes (pregap removed)',
                         )
                         print(line)
                         ifile.truncate(newsize)
@@ -304,28 +303,28 @@ class Main:
         print("Scanning for CD/DVD devices...")
         devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
-            print("  {0:10s}  {1:s}".format(key, value))
+            print(f"  {key:10s}  {value}")
 
     def _read_toc(self) -> None:
         self._icedax.set_args([
             '-info-only',
             '--no-infofile',
             'verbose-level=toc',
-            'dev=' + self._device,
-            'speed=' + str(self._speed)
+            f'dev={self._device}',
+            f'speed={self._speed}',
         ])
         task = subtask_mod.Batch(self._icedax.get_cmdline())
         task.run()
         self._toc = task.get_error(r'[.]\(.*:.*\)')
         if not self._toc:
             raise SystemExit(
-                sys.argv[0] +
-                ': Cannot find Audio CD media. Please check drive.'
+                f'{sys.argv[0]}: Cannot find Audio CD media. '
+                'Please check drive.',
             )
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
             )
         for line in task.get_error(r'[.]\(.*:.*\)|^CD'):
             print(line)

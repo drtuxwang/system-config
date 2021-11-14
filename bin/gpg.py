@@ -44,8 +44,11 @@ class Options:
                     if self._args.recipent:
                         self._gpg.extend_args(
                             ['--recipient', self._args.recipent])
-                    self._gpg.extend_args(
-                        ['--output=' + file + extension, '--encrypt', file])
+                    self._gpg.extend_args([
+                        f'--output={file}{extension}',
+                        '--encrypt',
+                        file,
+                    ])
             else:
                 self._gpg.set_args(file)
 
@@ -74,73 +77,73 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Make an encrypted archive in gpg '
-            '(pgp compatible) format.',
+            description="Make an encrypted archive in gpg "
+            "(pgp compatible) format.",
         )
 
         parser.add_argument(
             '-a',
             dest='ascii_flag',
             action='store_true',
-            help='Select ASCII text encrypted output.'
+            help="Select ASCII text encrypted output.",
         )
         parser.add_argument(
             '-r',
             nargs=1,
             dest='recipient',
-            help='Recipient for encryption.'
+            help="Recipient for encryption.",
         )
         parser.add_argument(
             '-add',
             nargs=1,
             metavar='file.pub',
-            help='Add public key.'
+            help="Add public key.",
         )
         parser.add_argument(
             '-mkkey',
             action='store_true',
             dest='make_flag',
-            help='Generate a new pair of public/private keys.'
+            help="Generate a new pair of public/private keys.",
         )
         parser.add_argument(
             '-passwd',
             nargs=1,
             metavar='keyid',
-            help='Generate a new pair of public/private keys.'
+            help="Set private key passphrase.",
         )
         parser.add_argument(
             '-pub',
             nargs=1,
             metavar='keyid',
-            help='Extract public key.'
+            help="Extract public key.",
         )
         parser.add_argument(
             '-sign',
             action='store_true',
             dest='sign_flag',
-            help='Sign file to prove your identity.'
+            help="Sign file to prove your identity.",
         )
         parser.add_argument(
             '-trust',
             nargs=1,
             metavar='keyid',
-            help='Trust identity of public key owner.'
+            help="Trust identity of public key owner.",
         )
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='Show all public/private keys in keyring.'
+            help="Show all public/private keys in keyring.",
         )
         parser.add_argument(
             'file',
             nargs='?',
-            help='File to encrypt/decrypt.'
+            help="File to encrypt/decrypt.",
         )
         parser.add_argument(
             'recipent',
             nargs='?',
-            help='Recipient name or ID.'
+            help="Recipient name or ID.",
         )
 
         self._args = parser.parse_args(args)
@@ -165,32 +168,33 @@ class Options:
 
         if self._args.add:
             self._gpg.extend_args(['--import', self._args.add[0]])
-
         elif self._args.make_flag:
             self._gpg.extend_args(['--gen-key'])
-
         elif self._args.passwd:
-            self._gpg.extend_args(
-                ['--edit-key', self._args.passwd[0], 'passwd'])
-
+            self._gpg.extend_args([
+                '--edit-key',
+                self._args.passwd[0],
+                'passwd',
+            ])
         elif self._args.pub:
-            self._gpg.extend_args(
-                ['--openpgp', '--export', '--armor', self._args.pub[0]])
-
+            self._gpg.extend_args([
+                '--openpgp',
+                '--export',
+                '--armor',
+                self._args.pub[0],
+            ])
         elif self._args.trust:
             self._gpg.extend_args(['--sign-key', self._args.trust[0]])
-
         elif self._args.view_flag:
             self._gpg.extend_args(['--list-keys'])
             task = subtask_mod.Task(self._gpg.get_cmdline())
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
                 )
             self._gpg.set_args(['--list-secret-keys'])
-
         else:
             self._config_encoder()
 
@@ -237,8 +241,8 @@ class Main:
         task.run()
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
             )
 
         file = task.get_cmdline()[-1]

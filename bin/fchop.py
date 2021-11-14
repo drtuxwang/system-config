@@ -34,20 +34,19 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Chop up a file into chunks.',
+            description="Chop up a file into chunks.",
         )
 
         parser.add_argument(
             'file',
             nargs=1,
-            help='File to break up.'
+            help="File to break up.",
         )
         parser.add_argument(
             'size',
             nargs=1,
-            type=int,
             metavar='bytes',
-            help='Maximum chunk size to break up.'
+            help="Maximum chunk size in bytes or MB.",
         )
 
         self._args = parser.parse_args(args)
@@ -66,12 +65,12 @@ class Options:
                 self._max_size = int(size)
         except ValueError as exception:
             raise SystemExit(
-                sys.argv[0] + ': You must specific an integer for chunksize.'
+                f'{sys.argv[0]}: You must specific an integer for chunksize.',
             ) from exception
         if self._max_size < 1:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer '
-                'for chunksize.'
+                f'{sys.argv[0]}: You must specific a positive integer '
+                'for chunksize.',
             )
 
 
@@ -129,20 +128,18 @@ class Main:
                         options.get_max_size() + 1
                 )):
                     try:
-                        file = options.get_file(
-                            ) + '.' + str(part + 1).zfill(3)
+                        file = f'{options.get_file()}.{str(part + 1).zfill(3)}'
                         with open(file, 'wb') as ofile:
-                            print(file + '...')
+                            print(f"{file}...")
                             self._copy(ifile, ofile)
                     except OSError as exception:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot create "' +
-                            str(part + 1).zfill(3) + '" file.'
+                            f'{sys.argv[0]}: Cannot create '
+                            f'"{str(part + 1).zfill(3)}" file.',
                         ) from exception
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + options.get_file() +
-                '" file.'
+                f'{sys.argv[0]}: Cannot read "{options.get_file()}" file.',
             ) from exception
 
         return 0

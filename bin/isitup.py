@@ -50,16 +50,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Checks whether a host is up.',
+            description="Checks whether a host is up.",
         )
 
         parser.add_argument(
             '-f',
             dest='repeat_flag',
             action='store_true',
-            help='Monitor host every five seconds.'
+            help="Monitor host every five seconds.",
         )
-        parser.add_argument('host', nargs=1, help='Host to monitor.')
+        parser.add_argument(
+            'host',
+            nargs=1,
+            help="Host to monitor.",
+        )
 
         self._args = parser.parse_args(args)
 
@@ -147,7 +151,7 @@ class Main:
         while options.get_repeat_flag():
             test = self._ping(options)
             if test != stat:
-                print(time.strftime('%Y-%m-%d-%H:%M:%S') + ': ' + test)
+                print(f"{time.strftime('%Y-%m-%d-%H:%M:%S')}: {test}")
                 stat = test
             time.sleep(5)
         print(self._ping(options))

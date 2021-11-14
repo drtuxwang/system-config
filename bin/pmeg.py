@@ -45,7 +45,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Resize large picture images to mega-pixels limit.',
+            description="Resize large picture images to mega-pixels limit.",
         )
 
         parser.add_argument(
@@ -53,13 +53,13 @@ class Options:
             nargs=1,
             type=float,
             default=[9],
-            help='Select mega-pixels. Default is 9.',
+            help="Select mega-pixels. Default is 9.",
         )
         parser.add_argument(
             'directories',
             nargs='+',
             metavar='directory',
-            help='Directory containing JPEG files to resize.',
+            help="Directory containing JPEG files to resize.",
         )
 
         self._args = parser.parse_args(args)
@@ -74,15 +74,15 @@ class Options:
 
         if self._args.megs[0] < 1:
             raise SystemExit(
-                sys.argv[0] +
-                ': You must specific a positive number for megabytes.'
+                f'{sys.argv[0]}: You must specific a '
+                f'positive number for megabytes.',
             )
 
         for directory in self._args.directories:
             if not os.path.isdir(directory):
                 raise SystemExit(
-                    sys.argv[0] + ': Image directory "' + directory +
-                    '" does not exist.'
+                    f'{sys.argv[0]}: Image directory '
+                    f'"{directory}" does not exist.',
                 )
 
 
@@ -120,14 +120,15 @@ class Main:
     def _imagesize(self, file: str) -> Tuple[int, int]:
         self._convert.set_args(['-verbose', file, '/dev/null'])
         task = subtask_mod.Batch(self._convert.get_cmdline())
-        task.run(pattern='^' + file + '=>', error2output=True)
+        task.run(pattern=f'^{file}=>', error2output=True)
         if not task.has_output():
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" picture file.')
+                f'{sys.argv[0]}: Cannot read "{file}" picture file.',
+            )
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
             )
         x_size, y_size = task.get_output(
             )[0].split('+')[0].split()[-1].split('x')
@@ -147,32 +148,38 @@ class Main:
                 if os.path.splitext(file)[1].lower() in images_extensions:
                     ix_size, iy_size = self._imagesize(file)
                     imegs = ix_size * iy_size / 1000000
-                    print("{0:s}: {1:d} x {2:d} ({3:4.2f})".format(
-                        file, ix_size, iy_size, imegs), end='')
+                    print(
+                        f"{file}: "
+                        f"{ix_size} x "
+                        f"{iy_size} "
+                        f"({imegs:4.2f})",
+                        end='',
+                    )
                     resize = math.sqrt(megs / imegs)
                     ox_size = int(ix_size*resize + 0.5)
                     oy_size = int(iy_size*resize + 0.5)
                     if ox_size < ix_size and oy_size < iy_size:
-                        print(" => {0:d} x {1:d} ({2:4.2f})".format(
-                            ox_size,
-                            oy_size,
-                            ox_size * oy_size / 1000000
-                        ), end='')
+                        print(
+                            f" => {ox_size} x "
+                            f"{oy_size} "
+                            f"({ox_size * oy_size / 1000000:4.2f})",
+                            end='',
+                        )
                         self._convert.set_args([
                             '-verbose',
                             '-size',
-                            str(ox_size) + 'x' + str(oy_size),
+                            f'{ox_size}x{oy_size}',
                             '-resize',
-                            str(ox_size) + 'x' + str(oy_size) + '!',
+                            f'{ox_size}x{oy_size}!',
                             file, file
                         ])
                         task = subtask_mod.Batch(self._convert.get_cmdline())
                         task.run()
                         if task.get_exitcode():
                             raise SystemExit(
-                                sys.argv[0] + ': Error code ' +
-                                str(task.get_exitcode()) + ' received from "' +
-                                task.get_file() + '".'
+                                f'{sys.argv[0]}: Error code '
+                                f'{task.get_exitcode()} received from '
+                                f'"{task.get_file()}".',
                             )
                     print()
 

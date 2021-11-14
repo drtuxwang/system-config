@@ -7,9 +7,10 @@ import argparse
 import glob
 import os
 import signal
-import socket
 import sys
-from typing import List
+from typing import List, Generator
+
+import dns.resolver
 
 
 class Options:
@@ -29,14 +30,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Get the IP number of hosts.',
+            description="Get the IP number of hosts.",
         )
 
         parser.add_argument(
             'hosts',
             nargs='+',
             metavar='host',
-            help='Host name.'
+            help="Host name.",
         )
 
         self._args = parser.parse_args(args)
@@ -80,18 +81,26 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run() -> int:
+    def resolve(host: str) -> Generator[str, None, None]:
+        """
+        Return list of IP addresses
+        """
+        client = dns.resolver.Resolver()
+        try:
+            for answer in client.resolve(host, 'A'):
+                yield answer.to_text()
+        except dns.exception.DNSException:
+            pass
+
+    @classmethod
+    def run(cls) -> int:
         """
         Start program
         """
         options = Options()
 
         for host in options.get_hosts():
-            try:
-                ip_address = socket.gethostbyname(host)
-            except socket.gaierror:
-                ip_address = ''
-            print(host.lower() + ':', ip_address)
+            print(f"{host.lower()}: {' '.join(cls.resolve(host))}")
 
         return 0
 

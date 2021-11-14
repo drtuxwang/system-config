@@ -122,7 +122,7 @@ class Options:
             'list_files',
             nargs='+',
             metavar='distro.debs',
-            help='Debian installed packages ".debs" list file.'
+            help='Debian installed packages ".debs" list file.',
         )
 
         self._args = parser.parse_args(args)
@@ -172,7 +172,7 @@ class Main:
                 data = json.load(ifile)
         except (OSError, json.decoder.JSONDecodeError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" json file.'
+                f'{sys.argv[0]}: Cannot read "{file}" json file.',
             ) from exception
 
         return data
@@ -264,13 +264,13 @@ class Main:
                             name, version = line.split()[:2]
                         except ValueError as exception:
                             raise SystemExit(
-                                sys.argv[0] + ': Format error in "' +
-                                os.path.join(distro, list_file) + '".'
+                                f'{sys.argv[0]}: Format error in '
+                                f'"{os.path.join(distro, list_file)}".',
                             ) from exception
                         versions[name] = version
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + list_file + '" file.'
+                f'{sys.argv[0]}: Cannot read "{list_file}" file.',
             ) from exception
 
         urlfile = (
@@ -293,11 +293,12 @@ class Main:
                                 new_version,
                             )
                             logger.info("  %s", file)
-                            print("# Update: {0:s} ({1:s} => {2:s})".format(
-                                name,
-                                version,
-                                new_version,
-                            ), file=ofile)
+                            print(
+                                f"# Update: {name} "
+                                f"({version} => "
+                                f"{new_version})",
+                                file=ofile,
+                            )
                             print(file, file=ofile)
                             for dependency in sorted(self._depends(
                                     versions,
@@ -309,10 +310,10 @@ class Main:
                                         self._packages[dependency].get_url()
                                     )
                                     logger.warning("    %s", file)
-                                    print("  " + file, file=ofile)
+                                    print(f"  {file}", file=ofile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + urlfile + '" file.'
+                f'{sys.argv[0]}: Cannot create "{urlfile}" file.',
             ) from exception
         if os.path.getsize(urlfile) == 0:
             os.remove(urlfile)
@@ -335,7 +336,7 @@ class Main:
     def _local(distro: str, url: str) -> str:
         file = os.path.join(distro, os.path.basename(url))
         if os.path.isfile(file):
-            return 'file://' + os.path.abspath(file)
+            return f'file://{os.path.abspath(file)}'
         return url
 
     def run(self) -> int:

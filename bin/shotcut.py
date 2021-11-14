@@ -60,7 +60,7 @@ class Main:
         configs = [
             '/dev/dri',
             os.path.join(home, '.config/Meltytech'),
-            "{0:s}:{1:s}".format(home_videos, os.path.join(home, 'Videos'))
+            f"{home_videos}:{os.path.join(home, 'Videos')}",
         ]
         work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
         if work_dir == os.environ['HOME']:

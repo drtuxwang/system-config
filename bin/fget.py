@@ -52,14 +52,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Download http/https/ftp/file URLs.',
+            description="Download http/https/ftp/file URLs.",
         )
 
         parser.add_argument(
             'urls',
             nargs='+',
             metavar='url',
-            help='http/https/ftp/file URL.'
+            help="http/https/ftp/file URL.",
         )
 
         self._args = parser.parse_args(args)
@@ -135,7 +135,7 @@ class Main:
             # For directories
             file = 'index.html'
             if os.path.isfile(file):
-                file = 'index-' + str(os.getpid()) + '.html'
+                file = f'index-{os.getpid()}.html'
             mtime = time.time()
         else:
             file = os.path.basename(url)
@@ -210,7 +210,7 @@ class Main:
 
         file, size, mtime = self._get_file_stat(url, conn)
         if self._check_file(file, size, mtime):
-            print("  => {0:s} [{1:d}/{1:d}]".format(file, size))
+            print(f"  => {file} [{size}/{size}]")
             return
 
         data = {'size': size, 'time': int(mtime)}
@@ -242,11 +242,10 @@ class Main:
                         break
                     tmpsize += len(chunk)
                     ofile.write(chunk)
-                    print("\r  => {0:s} [{1:d}/{2:d}]".format(
-                        file, tmpsize, size), end='')
+                    print(f"\\r  => {file} [{tmpsize}/{size}]", end='')
         except PermissionError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot create "{file}" file.',
             ) from exception
         print()
 
@@ -266,22 +265,22 @@ class Main:
             reason = exception.reason
             if isinstance(reason, socket.gaierror):
                 raise SystemExit(
-                    sys.argv[0] + ': ' + reason.args[1] + '.'
+                    f'{sys.argv[0]}: {reason.args[1]}.',
                 ) from exception
             if 'Not Found' in str(reason):
                 raise SystemExit(
-                    sys.argv[0] + ': 404 Not Found.'
+                    f'{sys.argv[0]}: 404 Not Found.',
                 ) from exception
             if 'Permission denied' in str(reason):
                 raise SystemExit(
-                    sys.argv[0] + ': 550 Permission denied.'
+                    f'{sys.argv[0]}: 550 Permission denied.',
                 ) from exception
             raise SystemExit(
-               sys.argv[0] + ': ' + exception.args[0]
+               f'{sys.argv[0]}: {exception.args[0]}',
             ) from exception
         except ValueError as exception:
             raise SystemExit(
-                sys.argv[0] + ': ' + exception.args[0]
+                f'{sys.argv[0]}: {exception.args[0]}',
             ) from exception
 
     def run(self) -> int:

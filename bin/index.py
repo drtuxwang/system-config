@@ -101,18 +101,19 @@ class Main:
             shutil.move('index.fsum.part', 'index.fsum')
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "index.fsum" file.'
+                f'{sys.argv[0]}: Cannot create "index.fsum" file.',
             ) from exception
 
     @staticmethod
     def _checkfile(
-        isbadfile: 're.Pattern',
         directory: str = os.curdir,
     ) -> None:
         """
         Look for bad files like core dumps
         (don't followlinks & onerror do nothing)
         """
+        isbadfile = re.compile(r'^core([.]\d+)?$')
+
         error = False
         for root, _, files in os.walk(directory):
             for file in files:
@@ -137,8 +138,7 @@ class Main:
                 os.mkdir(directory)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' +
-                    directory + '" directory.'
+                    f'{sys.argv[0]}: Cannot create "{directory}" directory.',
                 ) from exception
 
     @classmethod
@@ -183,10 +183,10 @@ class Main:
                 if filename == 'fsum':
                     continue
             else:
-                filename = '../' + os.path.basename(file)
+                filename = f'../{os.path.basename(file)}'
             if directory not in fsums:
                 fsums[directory] = []
-            fsums[directory].append(checksum + '  ' + filename)
+            fsums[directory].append(f'{checksum}  {filename}')
 
         for directory in sorted(fsums):
             directory_3dot = os.path.join(directory, '...')
@@ -224,7 +224,7 @@ class Main:
                 shutil.move(file+'.part', file)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + file + '" file.'
+                    f'{sys.argv[0]}: Cannot create "{file}" file.',
                 ) from exception
 
     @classmethod
@@ -232,9 +232,7 @@ class Main:
         """
         Start program
         """
-        isbadfile = re.compile(r'^core([.]\d+)?$')
-
-        cls._checkfile(isbadfile)
+        cls._checkfile()
         cls._checksum()
         cls._set_time(os.getcwd())
 

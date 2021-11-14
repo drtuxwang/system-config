@@ -35,20 +35,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Remove files or directories.',
+            description="Remove files or directories.",
         )
 
         parser.add_argument(
             '-R',
             dest='recursive_flag',
             action='store_true',
-            help='Remove directories recursively.'
+            help="Remove directories recursively.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File or directory.'
+            help="File or directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -93,26 +93,25 @@ class Main:
 
     @staticmethod
     def _rmfile(file: str) -> None:
-        print('Removing "' + file + '" file...')
+        print(f'Removing "{file}" file...')
         try:
             os.remove(file)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot remove "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot remove "{file}" file.',
             ) from exception
 
     def _rmdir(self, directory: str) -> None:
         if self._options.get_recursive_flag():
-            print('Removing "' + directory + '" directory recursively...')
+            print(f'Removing "{directory}" directory recursively...')
             try:
                 shutil.rmtree(directory)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot remove "' +
-                    directory + '" directory.'
+                    f'{sys.argv[0]}: Cannot remove "{directory}" directory.',
                 ) from exception
         else:
-            print(sys.argv[0] + ': Ignoring "' + directory + '" directory.')
+            print(f'{sys.argv[0]}: Ignoring "{directory}" directory.')
 
     def run(self) -> int:
         """
@@ -127,8 +126,7 @@ class Main:
                 self._rmdir(file)
             else:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file +
-                    '" file or directory.'
+                    f'{sys.argv[0]}: Cannot find "{file}" file or directory.',
                 )
 
         return 0

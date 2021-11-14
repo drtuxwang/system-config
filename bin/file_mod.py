@@ -11,8 +11,8 @@ import re
 import time
 from typing import List
 
-RELEASE = '2.5.0'
-VERSION = 20210509
+RELEASE = '2.5.1'
+VERSION = 20211107
 
 
 class FileStat:
@@ -54,7 +54,7 @@ class FileStat:
             except (OSError, TypeError) as exception:
                 if not os.path.islink:
                     raise FileStatNotFoundError(
-                        "Cannot find status: " + file
+                        f"Cannot find status: {file}",
                     ) from exception
             else:
                 if size is not None:
@@ -230,14 +230,14 @@ class FileUtil:
                 os.makedirs(directory)
             except OSError as exception:
                 raise FileTmpdirCreationError(
-                    'Cannot create directory: ' + tmpdir
+                    f'Cannot create directory: {tmpdir}',
                 ) from exception
 
         try:
             os.chmod(tmpdir, int('700', 8))
         except OSError as exception:
             raise FileTmpdirPermissionError(
-                'Permission error: ' + tmpdir
+                f'Permission error: {tmpdir}',
             ) from exception
 
         return directory

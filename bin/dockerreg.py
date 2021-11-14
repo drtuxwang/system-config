@@ -78,14 +78,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='List images in Docker registry.',
+            description="List images in Docker registry.",
         )
 
         parser.add_argument(
             '-rm',
             dest='remove_flag',
             action='store_true',
-            help='Remove images.'
+            help="Remove images.",
         )
         parser.add_argument(
             'urls',
@@ -93,7 +93,7 @@ class Options:
             metavar='url',
             help=(
                 'Registry URL (ie "localhost:5000", "localhost:5000/debian*").'
-            )
+            ),
         )
 
         self._args = parser.parse_args(args)
@@ -158,7 +158,7 @@ class DockerRegistry:
         """
         Return repository tags information.
         """
-        url = self._server + '/v1/repositories/' + repository + '/tags'
+        url = f'{self._server}/v1/repositories/{repository}/tags'
         info: dict = {}
 
         try:
@@ -168,10 +168,9 @@ class DockerRegistry:
         if response.status_code != 200:
             if response.status_code == 404:
                 return info
-            raise SystemExit('Requests "{0:s}" response code: {1:d}'.format(
-                url,
-                response.status_code
-            ))
+            raise SystemExit(
+                f'Requests "{url}" response code: {response.status_code}',
+            )
         digests = response.json()
         tags = [tag for tag in digests if fnmatch.fnmatch(tag, tag_match)]
 
@@ -194,10 +193,9 @@ class DockerRegistry:
             raise SystemExit(str(exception)) from exception
         # v2 returns 202, shared tags can 404
         if response.status_code not in (200, 202, 404):
-            raise SystemExit('Requests "{0:s}" response code: {1:d}'.format(
-                url,
-                response.status_code
-            ))
+            raise SystemExit(
+                f'Requests "{url}" response code: {response.status_code}',
+            )
 
     def delete(
         self,
@@ -209,11 +207,7 @@ class DockerRegistry:
         """
         Delete image
         """
-        url = "{0:s}/v1/repositories/{1:s}/tags/{2:s}".format(
-            server,
-            repository,
-            tag,
-        )
+        url = f"{server}/v1/repositories/{repository}/tags/{tag}"
         self._delete_url(url)
 
 
@@ -229,7 +223,7 @@ class DockerRegistry2(DockerRegistry):
         }, verify=SSL_VERIFY)
 
     def _config(self) -> None:
-        self._url = self._server + '/v2/_catalog?n=' + MAXREPO
+        self._url = f'{self._server}/v2/_catalog?n={MAXREPO}'
         try:
             response = self._get_url(self._url)
         except Exception as exception:
@@ -246,7 +240,7 @@ class DockerRegistry2(DockerRegistry):
         """
         Return image creation time stamp (uses v1Compatibility mode).
         """
-        url = self._server + '/v2/' + repository + '/manifests/' + tag
+        url = f'{self._server}/v2/{repository}/manifests/{tag}'
         response = requests.get(url, headers={
             'User-Agent': self._user_agent,
             'Accept': 'application/vnd.docker.distribution.manifest.v1+json',
@@ -263,7 +257,7 @@ class DockerRegistry2(DockerRegistry):
         """
         Return repository tags information.
         """
-        url = self._server + '/v2/' + repository + '/tags/list'
+        url = f'{self._server}/v2/{repository}/tags/list'
         info: dict = {}
 
         try:
@@ -273,26 +267,24 @@ class DockerRegistry2(DockerRegistry):
         if response.status_code != 200:
             if response.status_code == 404:
                 return info
-            raise SystemExit('Requests "{0:s}" response code: {1:d}'.format(
-                url,
-                response.status_code
-            ))
+            raise SystemExit(
+                f'Requests "{url}" response code: {response.status_code}',
+            )
 
         tags = response.json()['tags']
         if tags:
             for tag in [x for x in tags if fnmatch.fnmatch(x, tag_match)]:
                 info[tag] = {}
-                url = self._server + '/v2/' + repository + '/manifests/' + tag
+                url = f'{self._server}/v2/{repository}/manifests/{tag}'
                 try:
                     response = self._get_url(url)
                 except Exception as exception:
                     raise SystemExit(str(exception)) from exception
                 if response.status_code != 200:
                     raise SystemExit(
-                        'Requests "{0:s}" response code: {1:d}'.format(
-                            url,
-                            response.status_code,
-                        ))
+                        f'Requests "{url}" response code: '
+                        f'{response.status_code}',
+                    )
                 data = response.json()
                 info[tag]['digest'] = response.headers['docker-content-digest']
                 info[tag]['image_id'] = data['config']['digest']
@@ -311,11 +303,7 @@ class DockerRegistry2(DockerRegistry):
         """
         Delete image by untagging blobs before untagging manifest
         """
-        url = '{0:s}/v2/{1:s}/manifests/{2:s}'.format(
-            server,
-            repository,
-            digest,
-        )
+        url = f'{server}/v2/{repository}/manifests/{digest}'
         self._delete_url(url)
 
 
@@ -357,15 +345,15 @@ class Main:
             if registry.get_repositories() is not None:
                 return registry
 
-        raise SystemExit("Cannot find Docker Registry: " + server)
+        raise SystemExit(f"Cannot find Docker Registry: {server}")
 
     @staticmethod
     def _breakup_url(url: str) -> Tuple[str, str, str]:
         if '://' not in url:
             if url.startswith('localhost'):
-                url = 'http://' + url
+                url = f'http://{url}'
             else:
-                url = 'https://' + url
+                url = f'https://{url}'
         columns = url.split('/')
         server = '/'.join(columns[:3])
         repo_match = '/'.join(columns[3:])
@@ -394,14 +382,14 @@ class Main:
                     image_id = info[tag]['image_id'].split(':', 1)[-1][:12]
                     timestamp = info[tag]['timestamp']
                     size = info[tag]['size'] / 1048576
-                    image = prefix + '/' + repository + ':' + tag
+                    image = f'{prefix}/{repository}:{tag}'
                     if remove:
-                        print("{0:s}  {1:s} {2:8.2f}  {3:s}  DELETE".format(
-                            image_id,
-                            timestamp,
-                            size,
-                            image,
-                        ))
+                        print(
+                            f"{image_id}  "
+                            f"{timestamp} "
+                            f"{size:8.2f}  "
+                            f"{image}  DELETE",
+                        )
                         registry.delete(
                             server,
                             repository,
@@ -409,12 +397,7 @@ class Main:
                             info[tag]['digest'],
                         )
                     else:
-                        print("{0:s}  {1:s} {2:8.2f}  {3:s}".format(
-                            image_id,
-                            timestamp,
-                            size,
-                            image,
-                        ))
+                        print(f"{image_id}  {timestamp} {size:8.2f}  {image}")
 
     @classmethod
     def run(cls) -> int:

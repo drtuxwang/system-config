@@ -25,8 +25,8 @@ RUN \
     apt-get clean
 
 # Install Python packages
-COPY tmpdir/install-python-requirements.sh tmpdir/python-requirements*.txt* /etc/
-RUN /etc/install-python-requirements.sh /usr/bin/python3 piponly
+COPY tmpdir/python-packages.sh tmpdir/python-requirements*.txt* /etc/
+RUN /etc/python-packages.sh -pip /usr/bin/python3
 
 ADD tmpdir/root.tar /
 

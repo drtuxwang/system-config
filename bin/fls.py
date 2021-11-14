@@ -48,14 +48,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Show full list of files.',
+            description="Show full list of files.",
         )
 
         parser.add_argument(
             '-R',
             dest='recursive_flag',
             action='store_true',
-            help='Show directories recursively.'
+            help="Show directories recursively.",
         )
         parser.add_argument(
             '-s',
@@ -63,7 +63,7 @@ class Options:
             const='size',
             dest='order',
             default='name',
-            help='Sort by size of file.'
+            help="Sort by size of file.",
         )
         parser.add_argument(
             '-t',
@@ -71,7 +71,7 @@ class Options:
             const='mtime',
             dest='order',
             default='name',
-            help='Sort by modification time of file.'
+            help="Sort by modification time of file.",
         )
         parser.add_argument(
             '-c',
@@ -79,19 +79,19 @@ class Options:
             const='ctime',
             dest='order',
             default='name',
-            help='Sort by meta data change time of file.'
+            help="Sort by meta data change time of file."
         )
         parser.add_argument(
             '-r',
             dest='reverse_flag',
             action='store_true',
-            help='Reverse order.'
+            help="Reverse order."
         )
         parser.add_argument(
             'files',
             nargs='*',
             metavar='file',
-            help='File or directory.'
+            help="File or directory."
         )
 
         self._args = parser.parse_args(args)
@@ -149,11 +149,11 @@ class Main:
             elif os.path.isfile(file):
                 file_stats.append(file_mod.FileStat(file))
         for file_stat in self._sorted(options, file_stats):
-            print("{0:10d} [{1:s}] {2:s}".format(
-                file_stat.get_size(),
-                file_stat.get_time_local(),
-                file_stat.get_file()
-            ))
+            print(
+                f"{file_stat.get_size():10d} "
+                f"[{file_stat.get_time_local()}] "
+                f"{file_stat.get_file()}",
+            )
             if (options.get_recursive_flag() and
                     file_stat.get_file().endswith(os.sep)):
                 self._list(options, sorted(

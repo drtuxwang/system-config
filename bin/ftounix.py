@@ -36,7 +36,7 @@ class Options:
             'files',
             nargs='+',
             metavar='file',
-            help='File to change.'
+            help="File to change.",
         )
 
         self._args = parser.parse_args(args)
@@ -88,9 +88,8 @@ class Main:
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" file.')
-            print('Converting "' + file + '" file to "\\n" newline format...')
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
+            print(f'Converting "{file}" file to "\\n" newline format...')
             try:
                 with open(file, encoding='utf-8', errors='replace') as ifile:
                     tmpfile = file + '.part'
@@ -105,25 +104,24 @@ class Main:
                                 print(line.rstrip('\r\n'), file=ofile)
                     except OSError as exception:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot create "' + tmpfile +
-                            '" file.'
+                            f'{sys.argv[0]}: Cannot create "{tmpfile}" file.',
                         ) from exception
                     except UnicodeDecodeError as exception:
                         os.remove(tmpfile)
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot convert "' + file +
-                            '" binary file.'
+                            f'{sys.argv[0]}: Cannot convert '
+                            f'"{file}" binary file.',
                         ) from exception
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + file + '" file.'
+                    f'{sys.argv[0]}: Cannot read "{file}" file.',
                 ) from exception
             try:
                 shutil.move(tmpfile, file)
             except OSError as exception:
                 os.remove(tmpfile)
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot update "' + file + '" file.'
+                   f'{sys.argv[0]}: Cannot update "{file}" file.',
                 ) from exception
 
         return 0

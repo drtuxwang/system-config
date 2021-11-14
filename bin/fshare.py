@@ -46,21 +46,21 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='File sharing utility (currently dropbox only)',
+            description="File sharing utility (currently dropbox only)",
         )
 
         parser.add_argument(
             'command',
             nargs=1,
             metavar='command',
-            help='get|put.'
+            help="get|put.",
         )
 
         parser.add_argument(
             'urls',
             nargs='+',
             metavar='URL',
-            help='URL (dropbox://file).'
+            help="URL (dropbox://file).",
         )
 
         self._args = parser.parse_args(args)

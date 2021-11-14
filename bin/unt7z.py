@@ -37,20 +37,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a compressed archive in TAR.7Z format.',
+            description="Unpack a compressed archive in TAR.7Z format.",
         )
 
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='Show contents of archive.'
+            help="Show contents of archive.",
         )
         parser.add_argument(
             'archives',
             nargs='+',
             metavar='file.tar.7z|file.t7z',
-            help='Archive file.'
+            help="Archive file.",
         )
 
         self._args = parser.parse_args(args)
@@ -58,8 +58,7 @@ class Options:
         for archive in self._args.archives:
             if not archive.endswith(('.tar.7z', '.t7z')):
                 raise SystemExit(
-                    sys.argv[0] + ': Unsupported "' + archive +
-                    '" archive format.'
+                    f'{sys.argv[0]}: Unsupported "{archive}" archive format.',
                 )
 
     def parse(self, args: List[str]) -> None:
@@ -129,7 +128,7 @@ class Main:
             self._tar = command_mod.Command('tar', errors='stop')
 
         for file in options.get_archives():
-            print(file + ':')
+            print(f"{file}:")
             if options.get_view_flag():
                 self._view(file)
             else:

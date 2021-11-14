@@ -51,7 +51,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Wait for task to finish then launch command.',
+            description="Wait for task to finish then launch command.",
         )
 
         parser.add_argument(
@@ -60,24 +60,24 @@ class Options:
             action='store_const',
             const='<all>',
             default='',
-            help='Monitor any user"s process.'
+            help="Monitor any user's process.",
         )
         parser.add_argument(
             'task',
             nargs=1,
             metavar='pid|pname',
-            help='Process ID or name.'
+            help="Process ID or name.",
         )
         parser.add_argument(
             'command',
             nargs=1,
-            help='Command name.'
+            help="Command name.",
         )
         parser.add_argument(
             'commandArgs',
             nargs='*',
             metavar='arg',
-            help='Command arguments.'
+            help="Command arguments.",
         )
 
         self._args = parser.parse_args(args[:2])

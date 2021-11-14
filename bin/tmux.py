@@ -32,11 +32,11 @@ class Options:
     @staticmethod
     def _next(sessions: List[str]) -> str:
         hostname = socket.gethostname().split('.')[0].lower()
-        ishost = re.compile(r'{0:s}-\d+$'.format(hostname))
+        ishost = re.compile(f'{hostname}-\\d+$')
         numbers = [int(x.split('-')[-1]) for x in sessions if ishost.match(x)]
         numbers.append(-1)
 
-        return "{0:s}-{1}".format(hostname, max(numbers)+1)
+        return f"{hostname}-{max(numbers)+1}"
 
     def _select(self) -> None:
         self._tmux.set_args(['list-sessions'])
@@ -47,7 +47,7 @@ class Options:
         for line in task.get_output():
             session = line.split(':')[0]
             info = line.split('windows ', 1)[1]
-            print("  {0:10s}  {1:s}".format(session, info))
+            print(f"  {session:10s}  {info}")
             sessions.append(session)
 
         selection = input("\nPlease select session name or blank for new: ")

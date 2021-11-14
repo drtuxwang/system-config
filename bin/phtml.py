@@ -37,32 +37,32 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Generate XHTML files to view pictures.',
+            description="Generate XHTML files to view pictures.",
         )
 
         parser.add_argument(
             '-height',
             type=int,
             default=600,
-            help='Select picture height in pixels (default 600).'
+            help="Select picture height in pixels (default 600).",
         )
         parser.add_argument(
             'directory',
             nargs=1,
-            help='Directory containing picture files.'
+            help="Directory containing picture files.",
         )
 
         self._args = parser.parse_args(args)
 
         if self._args.height < 1:
             raise SystemExit(
-                sys.argv[0] +
-                ': You must specific a positive integer for picture height.'
+                f'{sys.argv[0]}: You must specific a '
+                'positive integer for picture height.',
             )
         if not os.path.isdir(self._args.directory[0]):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + self._args.directory[0] +
-                '" directory.'
+                f'{sys.argv[0]}: Cannot find '
+                f'"{self._args.directory[0]}" directory.',
             )
 
     def parse(self, args: List[str]) -> None:
@@ -90,7 +90,7 @@ class Gallery:
             ]
         except PermissionError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot open "' + directory + '" directory.'
+                f'{sys.argv[0]}: Cannot open "{directory}" directory.',
             ) from exception
         self._nfiles = len(self._files)
 
@@ -117,7 +117,7 @@ class Gallery:
         )
         yield ''
         yield '<head>'
-        yield '<title>' + self._directory + '/' + file + '</title>'
+        yield f'<title>{self._directory}/{file}</title>'
         yield (
             '<meta http-equiv="Content-Type" content="text/html; '
             'charset=utf-8"/>'
@@ -131,14 +131,11 @@ class Gallery:
         yield '<table border="0" align="center">'
         yield '<tr>'
         yield '  <td valign="top">'
-        yield '  (' + str(number+1) + '/' + str(self._nfiles) + ')'
+        yield f'  ({number+1}/{self._nfiles})'
         yield '  </td>'
         yield '  <td>'
-        yield '    <a href="' + next_file.rsplit('.', 1)[0] + '.xhtml">'
-        yield (
-            '    <img src="' + file + '" height="' + str(self._height) +
-            '"/></a>'
-        )
+        yield f"    <a href=\"{next_file.rsplit('.', 1)[0]}.xhtml\">"
+        yield f'    <img src="{file}" height="{self._height}"/></a>'
         yield '  </td>'
         yield '  <td>'
         yield '  </td>'
@@ -173,8 +170,7 @@ class Gallery:
                             print(line, file=ofile)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + xhtml_file +
-                        '" file.'
+                        f'{sys.argv[0]}: Cannot create "{xhtml_file}" file.',
                     ) from exception
 
                 file_time = file_mod.FileStat(
@@ -243,8 +239,8 @@ class Xhtml:
             files = glob.glob(os.path.join(directory, '*.xhtml'))
             nfiles = len(files)
             xhtml_file = sorted(files)[0]
-            yield '<a href="' + xhtml_file + '" target="_blank">'
-            yield '{0:s} ({1:d})</a>'.format(directory, nfiles)
+            yield f'<a href="{xhtml_file}" target="_blank">'
+            yield f'{directory} ({nfiles})</a>'
             yield '<br/>'
             yield ''
         yield '</body></html>'
@@ -257,8 +253,8 @@ class Xhtml:
             os.chdir(self._directory)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot change to "' + self._directory +
-                '" directory.'
+                f'{sys.argv[0]}: Cannot change to '
+                f'"{self._directory}" directory.',
             ) from exception
 
         file_stats = []
@@ -283,7 +279,7 @@ class Xhtml:
                     print(line, file=ofile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "index.xhtml" file.'
+                f'{sys.argv[0]}: Cannot create "index.xhtml" file.',
             ) from exception
 
 

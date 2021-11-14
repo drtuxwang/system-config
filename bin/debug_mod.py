@@ -13,8 +13,8 @@ import traceback
 import jsonpickle  # type: ignore
 
 
-RELEASE = '2.3.0'
-VERSION = 20210509
+RELEASE = '2.3.1'
+VERSION = 20211107
 
 
 class Dump:
@@ -74,8 +74,11 @@ class Dump:
         file = Optional output file to append
         """
         jsonpickle.set_encoder_options('json', indent=indent, sort_keys=True)
-        cls.show(name + ' = ' + jsonpickle.encode(
-            obj, unpicklable=False), file=file)
+        cls.show(
+            f'{name} = '
+            f'{jsonpickle.encode(obj, unpicklable=False)}',
+            file=file,
+        )
 
     @classmethod
     def trace(cls, file: str = None) -> None:

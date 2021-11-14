@@ -42,21 +42,21 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Show summary of differences between two '
-            'directories recursively.',
+            description="Show summary of differences between two "
+            "directories recursively.",
         )
 
         parser.add_argument(
             '-t',
             dest='time_flag',
             action='store_true',
-            help='Compare modified time stamps.'
+            help="Compare modified time stamps.",
         )
         parser.add_argument(
             'directories',
             nargs=2,
             metavar='directory',
-            help='Directory to compare.'
+            help="Directory to compare.",
         )
 
         self._args = parser.parse_args(args)
@@ -110,7 +110,7 @@ class Main:
             PermissionError,
         ) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot open "' + directory + '" directory.'
+                f'{sys.argv[0]}: Cannot open "{directory}" directory.'
             ) from exception
         return files
 
@@ -134,7 +134,7 @@ class Main:
                         time_flag,
                     )
                 else:
-                    print("only ", file + os.sep)
+                    print(f"only  {file}{os.sep}")
             elif os.path.isfile(file):
                 if os.path.isfile(
                         os.path.join(directory2, os.path.basename(file)),
@@ -152,7 +152,7 @@ class Main:
                 if not os.path.isdir(
                         os.path.join(directory1, os.path.basename(file)),
                 ):
-                    print("only ", file + os.sep)
+                    print(f"only  {file}{os.sep}")
             elif os.path.isfile(file):
                 if not os.path.isfile(
                         os.path.join(directory1, os.path.basename(file)),
@@ -165,20 +165,20 @@ class Main:
         file_stat2 = file_mod.FileStat(file2)
 
         if file_stat1.get_size() != file_stat2.get_size():
-            print("diff ", file1 + "  " + file2)
+            print(f"diff  {file1}  {file2}")
         elif file_stat1.get_time() != file_stat2.get_time():
             if time_flag:
-                print("time ", file1 + '  ' + file2)
+                print(f"time  {file1}  {file2}")
                 return
             try:
                 with open(file1, 'rb') as ifile1:
                     with open(file2, 'rb') as ifile2:
                         for _ in range(0, file_stat1.get_size(), 131072):
                             if ifile1.read(131072) != ifile2.read(131072):
-                                print("diff ", file1 + '  ' + file2)
+                                print(f"diff  {file1}  {file2}")
                                 return
             except OSError:
-                print("diff ", file1 + '  ' + file2)
+                print(f"diff  {file1}  {file2}")
                 return
 
     def run(self) -> int:

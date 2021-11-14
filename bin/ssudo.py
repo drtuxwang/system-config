@@ -58,11 +58,7 @@ class Main:
             username = getpass.getuser()
             command.set_args([
                 '-p',
-                '[{0:s}] password for {1:s}@{2:s}: '.format(
-                    name,
-                    username,
-                    hostname,
-                ),
+                f'[{name}] password for {username}@{hostname}: ',
             ])
         if sys.argv[1:] == ['su']:  # Workaround hanging
             command.extend_args(['-s'])

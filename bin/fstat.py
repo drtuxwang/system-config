@@ -29,13 +29,13 @@ class Options:
         return self._args.files
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description='Display file status.')
+        parser = argparse.ArgumentParser(description="Display file status.")
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File or directory.'
+            help="File or directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -87,16 +87,16 @@ class Main:
 
         for file in options.get_files():
             file_stat = file_mod.FileStat(file)
-            print('"' + file + '".mode  =', oct(file_stat.get_mode()))
-            print('"' + file + '".ino   =', file_stat.get_inode_number())
-            print('"' + file + '".dev   =', file_stat.get_inode_device())
-            print('"' + file + '".nlink =', file_stat.get_number_links())
-            print('"' + file + '".uid   =', file_stat.get_userid())
-            print('"' + file + '".gid   =', file_stat.get_groupid())
-            print('"' + file + '".size  =', file_stat.get_size())
-            print('"' + file + '".atime =', file_stat.get_time_access())
-            print('"' + file + '".mtime =', file_stat.get_time())
-            print('"' + file + '".ctime =', file_stat.get_time_change())
+            print(f'"{file}".mode  =', oct(file_stat.get_mode()))
+            print(f'"{file}".ino   =', file_stat.get_inode_number())
+            print(f'"{file}".dev   =', file_stat.get_inode_device())
+            print(f'"{file}".nlink =', file_stat.get_number_links())
+            print(f'"{file}".uid   =', file_stat.get_userid())
+            print(f'"{file}".gid   =', file_stat.get_groupid())
+            print(f'"{file}".size  =', file_stat.get_size())
+            print(f'"{file}".atime =', file_stat.get_time_access())
+            print(f'"{file}".mtime =', file_stat.get_time())
+            print(f'"{file}".ctime =', file_stat.get_time_change())
 
         return 0
 

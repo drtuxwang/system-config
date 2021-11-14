@@ -36,20 +36,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Create secure random password.',
+            description="Create secure random password.",
         )
 
         parser.add_argument(
             '-s',
             dest='symbols_flag',
             action='store_true',
-            help='Select additional symbols.'
+            help="Select additional symbols.",
         )
         parser.add_argument(
             'length',
             nargs=1,
             type=int,
-            help='Password length.'
+            help="Password length.",
         )
 
         self._args = parser.parse_args(args)
@@ -62,8 +62,8 @@ class Options:
 
         if self._args.length[0] < 0:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
-                'password length.'
+                f"{sys.argv[0]}: You must specific a positive integer for "
+                "password length.",
             )
 
 

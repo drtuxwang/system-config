@@ -65,14 +65,16 @@ class Main:
                 pass
         if not os.access(os.path.join(pbdir, 'pbcl.so'), os.R_OK):
             raise SystemExit(
-                sys.argv[0] + ': Cannot access "pbcl.so" in "' +
-                pbdir + '" directory.'
+                f'{sys.argv[0]}: Cannot access "pbcl.so" in '
+                f'"{pbdir}" directory.',
             )
         etkey = os.path.join(
             os.environ['HOME'], '.etwolf', 'etmain', 'etkey')
         if not os.path.isfile(etkey):
-            raise SystemExit(sys.argv[0] + ': Cannot find "' + etkey +
-                             '" key file (see http://www.etkey.net).')
+            raise SystemExit(
+                f'{sys.argv[0]}: Cannot find '
+                f'"{etkey}" key file (see http://www.etkey.net).',
+            )
 
     def _config(self) -> None:
         os.chdir(os.path.dirname(self._command.get_file()))
@@ -84,7 +86,8 @@ class Main:
         )
         if not etsdl:
             raise SystemExit(
-                sys.argv[0] + ": Cannot find SDL sound interface library.")
+                f"{sys.argv[0]}: Cannot find SDL sound interface library.",
+            )
         os.environ['ETSDL_SDL_LIB'] = etsdl[0]
         if 'LD_PRELOAD' in os.environ:
             os.environ['LD_PRELOAD'] = (
@@ -111,7 +114,11 @@ class Main:
             command.set_args(sys.argv[1:])
             subtask_mod.Exec(command.get_cmdline()).run()
 
-        configs = ['net', os.path.join(os.getenv('HOME', '/'), '.etwolf')]
+        configs = [
+            'net',
+            f'/run/user/{os.getuid()}/pulse',
+            os.path.join(os.getenv('HOME', '/'), '.etwolf'),
+        ]
         self._command.sandbox(configs)
 
         self._config()

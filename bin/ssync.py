@@ -32,37 +32,37 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Securely synchronize file system using '
-            'SSH protocol.',
+            description="Securely synchronize file system using "
+            "SSH protocol.",
         )
 
         parser.add_argument(
             '-rm',
             dest='remove_flag',
             action='store_true',
-            help='Delete obsolete files in target directory.'
+            help="Delete obsolete files in target directory.",
         )
         parser.add_argument(
             '-root',
             action='store_true',
-            help='Select Sudo to run remote rsync.'
+            help="Select Sudo to run remote rsync.",
         )
         parser.add_argument(
             '-user',
             nargs=1,
-            help='Select Sudo user to run remote rsync.'
+            help="Select Sudo user to run remote rsync.",
         )
         parser.add_argument(
             'source',
             nargs=1,
             metavar='[[user1@]host1:]source',
-            help='Source location.'
+            help="Source location.",
         )
         parser.add_argument(
             'target',
             nargs=1,
             metavar='[[user1@]host1:]target',
-            help='Target location.'
+            help="Target location.",
         )
 
         self._args = parser.parse_args(args)
@@ -96,13 +96,13 @@ class Options:
                     '--specials',
                 ]
             args.append(
-                '--rsync-path=SUDO_ASKPASS=/bin/ssh-askpass sudo -k -A -u ' +
-                sudo_user + ' -p "[sudo] password for `whoami`@'
-                '`uname -n | tr \'[A-Z]\' \'[a-z]\' | cut -f1 -d.`:" rsync',
+                '--rsync-path=SUDO_ASKPASS=/bin/ssh-askpass sudo -k -A -u '
+                f'{sudo_user} -p "[sudo] password for `whoami`@'
+                '`uname -n | tr \'[A-Z]\' \'[a-z]\' | cut -f1 -d.`:" rsync'
             )
-            args.append('--rsh=' + ssh.get_file() + ' -X')
+            args.append(f'--rsh={ssh.get_file()} -X')
         else:
-            args.append('--rsh=' + ssh.get_file())
+            args.append(f'--rsh={ssh.get_file()}')
         args.extend([
             '--one-file-system',
             '--hard-links',

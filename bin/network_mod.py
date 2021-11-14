@@ -14,8 +14,8 @@ from typing import Any, List, Optional, Tuple
 
 import command_mod
 
-RELEASE = '3.3.3'
-VERSION = 20211009
+RELEASE = '3.3.4'
+VERSION = 20211107
 
 
 class NetNice(command_mod.Command):
@@ -94,7 +94,7 @@ class Sandbox(command_mod.Command):
 
     @staticmethod
     def _show(colour: int, message: str) -> None:
-        print("\033[1;3{0:d}mSandbox: {1:s}\033[0m".format(colour, message))
+        print(f"\033[1;3{colour}mSandbox: {message}\033[0m")
 
     @classmethod
     def _check_bwrap(cls, errors: str) -> Optional[command_mod.Command]:
@@ -187,7 +187,7 @@ class Sandbox(command_mod.Command):
                 cmdline.extend(['--tmpfs', mount])
             self._show(
                 Sandbox.MAGENTA,
-                "Disable read access: {0:s}".format(' '.join(directories)),
+                f"Disable read access: {' '.join(directories)}",
             )
 
             # Dummy working directory ("os.getcwd()" returns realpath instead
@@ -205,9 +205,7 @@ class Sandbox(command_mod.Command):
                 cmdline.extend(['--ro-bind-try', realpath, directory])
                 self._show(
                     Sandbox.YELLOW,
-                    "Enable application access {0:s}:ro".format(
-                        directory,
-                    ),
+                    f"Enable application access {directory}:ro",
                 )
 
         # Enable access rights
@@ -231,19 +229,19 @@ class Sandbox(command_mod.Command):
                 else:
                     self._show(
                         Sandbox.YELLOW,
-                        "Enable write access {0:s}".format(config),
+                        f"Enable write access {config}",
                     )
             elif config.startswith('/dev/'):
                 cmdline.extend(['--dev-bind-try', realpath, mount])
                 self._show(
                     Sandbox.YELLOW,
-                    "Enable device access {0:s}".format(config),
+                    f"Enable device access {config}",
                 )
             elif not mount.startswith(allow_reads):
                 cmdline.extend(['--ro-bind-try', realpath, mount])
                 self._show(
                     Sandbox.YELLOW,
-                    "Enable read access {0:s}".format(config),
+                    f"Enable read access {config}",
                 )
 
         cmdline.extend([

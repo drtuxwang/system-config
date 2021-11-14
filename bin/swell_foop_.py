@@ -58,7 +58,7 @@ class Main:
         if not os.path.isfile(command.get_file() + '.py'):
             configs = [
                 '/dev/dri',
-                '/run/user/{0:d}/dconf'.format(os.getuid()),
+                f'/run/user/{os.getuid()}/dconf',
                 os.path.join(os.getenv('HOME', '/'), '.config/dconf/user'),
             ]
             command.sandbox(configs)

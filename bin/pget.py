@@ -32,13 +32,13 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Picture downloader for websites.',
+            description="Picture downloader for websites.",
         )
 
         parser.add_argument(
             'url',
             nargs=1,
-            help='Website URL.'
+            help="Website URL.",
         )
 
         self._args = parser.parse_args(args)
@@ -52,7 +52,7 @@ class Options:
             if "Login • Instagram" not in text:
                 break
             url = task.get_cmdline()[3]
-            print(url + ": Login issue retry in 60s", file=sys.stderr)
+            print(f"{url}: Login issue retry in 60s", file=sys.stderr)
             time.sleep(60)
 
         urls = text.split('display_url":"')[1:]
@@ -70,10 +70,10 @@ class Options:
         if 'www.instagram.com/p/' in url:
             urls = cls._parse_instagram(task)
         else:
-            raise SystemExit(sys.argv[0] + ': Cannot handle website: ' + url)
+            raise SystemExit(f"{sys.argv[0]}: Cannot handle website: {url}")
 
         if not urls:
-            raise SystemExit(sys.argv[0] + ': Cannot parse images: ' + url)
+            raise SystemExit(f"{sys.argv[0]}: Cannot parse images: {url}")
         return urls
 
     def parse(self, args: List[str]) -> None:

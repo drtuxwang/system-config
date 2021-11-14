@@ -17,7 +17,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '2.8.1'
+RELEASE = '2.8.2'
 
 
 class Options:
@@ -50,21 +50,21 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='MyQS v' + self._release +
-            ', My Queuing System batch scheduler daemon.',
+            description=f"MyQS v{self._release}, My Queuing System "
+            f"batch scheduler daemon.",
         )
 
         parser.add_argument(
             '-daemon',
             dest='daemon_flag',
             action='store_true',
-            help='Start batch job daemon.'
+            help="Start batch job daemon.",
         )
         parser.add_argument(
             'slots',
             nargs=1,
             type=int,
-            help='The maximum number of CPU execution slots to create.'
+            help="The maximum number of CPU execution slots to create.",
         )
 
         self._args = parser.parse_args(args)
@@ -84,8 +84,8 @@ class Options:
 
         if self._args.slots[0] < 1:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
-                'the number of slots.'
+                f"{sys.argv[0]}: You must specific a positive integer "
+                "for the number of slots.",
             )
 
 
@@ -126,8 +126,8 @@ class Lock:
                 print(os.getpid(), file=ofile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + self._file +
-                '" MyQS scheduler lock file.'
+                f'{sys.argv[0]}: Cannot create '
+                f'"{self._file}" MyQS scheduler lock file.',
             ) from exception
         time.sleep(1)
         try:
@@ -139,8 +139,8 @@ class Lock:
                 else:
                     if not task_mod.Tasks.factory().haspid(os.getpid()):
                         raise SystemExit(
-                            sys.argv[0] +
-                            ": Cannot obtain MyQS scheduler lock file."
+                            f"{sys.argv[0]}: "
+                            "Cannot obtain MyQS scheduler lock file.",
                         )
         except OSError:
             return
@@ -154,8 +154,7 @@ class Lock:
             os.remove(self._file)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot remove "' + self._file +
-                '" lock file.'
+                f'{sys.argv[0]}: Cannot remove "{self._file}" lock file.',
             ) from exception
 
 
@@ -213,8 +212,10 @@ class Main:
                     pass
                 if not task_mod.Tasks.factory().haspgid(pgid):
                     jobid = os.path.basename(file)[:-2]
-                    print('Batch job with jobid "' + jobid +
-                          '" being requeued after system restart...')
+                    print(
+                        'Batch job with jobid '
+                        f'"{jobid}" being requeued after system restart...',
+                    )
                     shutil.move(file, file[:-2] + '.q')
 
     def _schedule_job(self) -> None:
@@ -272,14 +273,14 @@ class Main:
                                 if os.path.isdir(info['DIRECTORY']):
                                     logfile = os.path.join(
                                         info['DIRECTORY'],
-                                        os.path.basename(info['COMMAND']) +
-                                        '.o' + jobid
+                                        f"{os.path.basename(info['COMMAND'])}"
+                                        f".o{jobid}",
                                     )
                                 else:
                                     logfile = os.path.join(
                                         os.environ['HOME'],
-                                        os.path.basename(info['COMMAND']) +
-                                        '.o' + jobid
+                                        f"{os.path.basename(info['COMMAND'])}"
+                                        f".o{jobid}",
                                     )
                                 try:
                                     shutil.move(file, file[:-2] + '.r')
@@ -306,8 +307,8 @@ class Main:
                 os.makedirs(self._myqsdir)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot created "' +
-                    self._myqsdir + '" directory.'
+                    f'{sys.argv[0]}: Cannot created '
+                    f'"{self._myqsdir}" directory.',
                 ) from exception
         lock = Lock(os.path.join(self._myqsdir, 'myqsd.pid'))
         if lock.check():
@@ -333,7 +334,8 @@ class Main:
 
         if 'HOME' not in os.environ:
             raise SystemExit(
-                sys.argv[0] + ': Cannot determine home directory.')
+                f"{sys.argv[0]}: Cannot determine home directory.",
+            )
         if options.get_daemon_flag():
             self._scheduler_daemon()
         else:

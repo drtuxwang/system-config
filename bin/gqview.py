@@ -126,7 +126,13 @@ class Options:
                 if not os.path.isdir(arg):
                     self._gqview.set_args(args[1:])
                     return
-            directory = self.select(args[1:])
+
+            directories = [
+                x
+                for x in args[1:]
+                if glob.glob(os.path.join(x, '*'))
+            ]
+            directory = self.select(directories)
             print("GQView selection:", directory)
             self._gqview.set_args([directory])
 

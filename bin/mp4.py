@@ -126,28 +126,28 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Encode MP4 video using ffmpeg (libx264/aac).',
+            description="Encode MP4 video using ffmpeg (libx264/aac).",
         )
 
         parser.add_argument(
             '-noskip',
             dest='noskip_flag',
             action='store_true',
-            help='Disable skipping of encoding when codecs same.'
+            help="Disable skipping of encoding when codecs same.",
         )
         parser.add_argument(
             '-vq',
             nargs=1,
             dest='videoQuality',
             default=[None],
-            help='x264 quality (0=loseless, 51=worse). Default is 23.'
+            help="x264 quality (0=loseless, 51=worse). Default is 23.",
         )
         parser.add_argument(
             '-vfps',
             nargs=1,
             dest='videoRate',
             default=[None],
-            help='Select frames per second.'
+            help="Select frames per second.",
         )
         parser.add_argument(
             '-vcrop',
@@ -155,7 +155,7 @@ class Options:
             dest='videoCrop',
             default=[None],
             metavar='w:h:x:y',
-            help='Crop video to W x H with x, y offset from top left.'
+            help="Crop video to W x H with x, y offset from top left.",
         )
         parser.add_argument(
             '-vsize',
@@ -163,14 +163,14 @@ class Options:
             dest='videoSize',
             default=[None],
             metavar='x:y',
-            help='Resize video to width:height in pixels.'
+            help="Resize video to width:height in pixels.",
         )
         parser.add_argument(
             '-aq',
             nargs=1,
             dest='audioQuality',
             default=[None],
-            help='Select audio bitrate in kbps (128kbps default).'
+            help="Select audio bitrate in kbps (128 default).",
         )
         parser.add_argument(
             '-avol',
@@ -184,32 +184,32 @@ class Options:
             nargs=1,
             dest='startTime',
             default=[None],
-            help='Start encoding at time n seconds.'
+            help="Start encoding at time n seconds.",
         )
         parser.add_argument(
             '-time',
             nargs=1,
             dest='runTime',
             default=[None],
-            help='Stop encoding after n seconds.'
+            help="Stop encoding after n seconds.",
         )
         parser.add_argument(
             '-threads',
             nargs=1,
             default=['2'],
-            help='Threads are faster but decrease quality. Default is 2.'
+            help="Threads are faster but decrease quality. Default is 2.",
         )
         parser.add_argument(
             '-flags',
             nargs=1,
             default=[],
-            help="Supply additional flags to ffmpeg."
+            help="Supply additional flags to ffmpeg.",
         )
         parser.add_argument(
             'files',
             nargs='+', metavar='file',
             help='Multimedia file. A target ".mp4" file '
-            'can be given as the first file.'
+            'can be given as the first file.',
         )
 
         self._args = parser.parse_args(args)
@@ -225,8 +225,8 @@ class Options:
             self._files = self._args.files[1:]
             if not self._files or self._file_new in self._files:
                 raise SystemExit(
-                    sys.argv[0] +
-                    ': The input and output files must be different.'
+                    f"{sys.argv[0]}: The input and output files "
+                    "must be different.",
                 )
         else:
             self._file_new = ''
@@ -262,7 +262,7 @@ class Media:
                     self._type = line.replace(', from', '').split()[2]
         except IndexError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Invalid "' + file + '" media file.'
+                f'{sys.argv[0]}: Invalid "{file}" media file.',
             ) from exception
 
     def get_stream(self) -> Generator[Tuple[int, str], None, None]:
@@ -300,7 +300,7 @@ class Media:
         Return True if audio codec found
         """
         for value in self._stream.values():
-            if value.startswith('Audio: ' + codec):
+            if value.startswith(f'Audio: {codec}'):
                 return True
         return False
 
@@ -318,7 +318,7 @@ class Media:
         Return True if video codec found
         """
         for value in self._stream.values():
-            if value.startswith('Video: ' + codec):
+            if value.startswith(f'Video: {codec}'):
                 return True
         return False
 
@@ -377,14 +377,20 @@ class Encoder:
                 else:
                     self._ffmpeg.extend_args(['-crf:v', '23'])
                 if self._options.get_video_rate():
-                    self._ffmpeg.extend_args(
-                        ['-r:v', self._options.get_video_rate()])
+                    self._ffmpeg.extend_args([
+                        '-r:v',
+                        self._options.get_video_rate(),
+                    ])
                 if self._options.get_video_crop():
-                    self._ffmpeg.extend_args(
-                        ['-vf', 'crop=' + self._options.get_video_crop()])
+                    self._ffmpeg.extend_args([
+                        '-vf',
+                        f'crop={self._options.get_video_crop()}',
+                    ])
                 if self._options.get_video_size():
-                    self._ffmpeg.extend_args(
-                        ['-vf', 'scale=' + self._options.get_video_size()])
+                    self._ffmpeg.extend_args([
+                        '-vf',
+                        f'scale={self._options.get_video_size()}',
+                    ])
             else:
                 self._ffmpeg.extend_args(['-c:v', 'copy'])
 
@@ -404,7 +410,7 @@ class Encoder:
                 if self._options.get_audio_volume():
                     self._ffmpeg.extend_args([
                         '-af',
-                        'volume=' + self._options.get_audio_volume() + 'dB'
+                        f'volume={self._options.get_audio_volume()}dB',
                     ])
                 # Required for 'aac' audio
                 self._ffmpeg.extend_args(['-strict', 'experimental'])
@@ -430,11 +436,11 @@ class Encoder:
 
     def _config_images(self, files: List[str]) -> None:
         convert = command_mod.Command('convert', errors='stop')
-        extension = '.tmp' + str(os.getpid()) + '.png'
+        extension = f'.tmp{os.getpid()}.png'
         frame = 0
         for file in files:
             frame += 1
-            tmpfile = 'frame{0:08d}'.format(frame) + extension
+            tmpfile = f'frame{frame:08d}{extension}'
             self._tempfiles.append(tmpfile)
             convert.set_args([file, tmpfile])
             subtask_mod.Task(convert.get_cmdline()).run()
@@ -444,18 +450,22 @@ class Encoder:
             self._ffmpeg.set_args(['-r', '2'])
         self._ffmpeg.extend_args([
             '-i',
-            'frame%8d' + extension,
+            f'frame%8d{extension}',
             '-c:v',
             self._options.get_video_codec(),
             '-pix_fmt',
             'yuv420p'
         ])
         if self._options.get_video_crop():
-            self._ffmpeg.extend_args(
-                ['-vf', 'crop=' + self._options.get_video_crop()])
+            self._ffmpeg.extend_args([
+                '-vf',
+                f'crop={self._options.get_video_crop()}',
+            ])
         if self._options.get_video_size():
-            self._ffmpeg.extend_args(
-                ['-vf', 'scale=' + self._options.get_video_size()])
+            self._ffmpeg.extend_args([
+                '-vf',
+                f'scale={self._options.get_video_size()}',
+            ])
         else:
             convert.set_args(['-verbose', tmpfile, '/dev/null'])
             task = subtask_mod.Batch(convert.get_cmdline())
@@ -465,8 +475,7 @@ class Encoder:
                 xsize, ysize = task.get_output()[0].split()[2].split('x')
                 self._ffmpeg.extend_args([
                     '-vf',
-                    'scale=' + str(int(int(xsize)/2)*2) + ':' +
-                    str(int(int(ysize)/2)*2)
+                    f'scale={int(int(xsize)/2)*2}:{int(int(ysize)/2)*2}'
                 ])
             except (IndexError, ValueError):
                 pass
@@ -533,7 +542,7 @@ class Encoder:
             if len(self._options.get_files()) == 1:
                 self._config(self._options.get_files()[0])
             else:
-                extension = '.tmp' + str(os.getpid()) + '.ts'
+                extension = f'.tmp{os.getpid()}.ts'
                 for file in self._options.get_files():
                     media = self._config(file)
                     if media.has_video():
@@ -544,7 +553,11 @@ class Encoder:
                     self._tempfiles.append(file + extension)
                     self._run()
                 self._ffmpeg.set_args([
-                    '-i', 'concat:' + '|'.join(self._tempfiles), '-c', 'copy'])
+                    '-i',
+                    f"concat:{'|'.join(self._tempfiles)}",
+                    '-c',
+                    'copy',
+                ])
                 if media.has_audio():
                     self._ffmpeg.extend_args(['-bsf:a', 'aac_adtstoasc'])
             if self._options.get_start_time():

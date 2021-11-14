@@ -49,7 +49,7 @@ class Main:
         Start program
         """
         release = command_mod.Platform.get_kernel()
-        file = "/usr/src/linux-headers-{0:s}/scripts/sign-file".format(release)
+        file = f"/usr/src/linux-headers-{release}/scripts/sign-file"
 
         command = command_mod.CommandFile(file, errors='stop')
         command.set_args(sys.argv[1:])

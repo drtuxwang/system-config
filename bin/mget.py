@@ -11,7 +11,7 @@ import shutil
 import signal
 import sys
 import time
-from typing import BinaryIO, List
+from typing import BinaryIO, List, Optional
 
 import command_mod
 import subtask_mod
@@ -24,7 +24,7 @@ class Options:
 
     def __init__(self) -> None:
         self._args: argparse.Namespace = None
-        self._output = None
+        self._output: Optional[str] = None
         self.parse(sys.argv)
 
     def get_output(self) -> str:
@@ -41,31 +41,31 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='M3U8 streaming video downloader',
+            description="M3U8 streaming video downloader",
         )
         parser.add_argument(
             '-O',
             dest='output',
             default=None,
-            help='MP4 output file name.'
+            help="MP4 output file name.",
         )
         parser.add_argument(
             'url',
             nargs=1,
-            help='M3U8 video file URL.'
+            help="M3U8 video file URL.",
         )
 
         self._args = parser.parse_args(args)
 
         if '.m3u8' not in self._args.url[0]:
             raise SystemExit(
-                sys.argv[0] + ": Wrong URL extension: " + self._args.output
+                f"{sys.argv[0]}: Wrong URL extension: {self._args.output}",
             )
         if self._args.output:
             if not self._args.output.endswith('.mp4'):
                 raise SystemExit(
-                    sys.argv[0] + ": Wrong MP4 file extension: " +
-                    self._args.output
+                    f"{sys.argv[0]}: Wrong MP4 file extension: "
+                    f"{self._args.output}",
                 )
             self._output = self._args.output
         else:
@@ -73,11 +73,11 @@ class Options:
             md5.update(self._args.url[0].encode())
             file = os.path.basename(self._args.url[0])
             self._output = (
-                file.rsplit('?', 1)[0].rsplit('.', 1)[0] +
-                '-' + md5.hexdigest()[:9] + '.mp4'
+                f"{file.rsplit('?', 1)[0].rsplit('.', 1)[0]}-"
+                f"{md5.hexdigest()[:9]}.mp4"
             )
         if os.path.isfile(self._output):
-            print("{0:s}: already exists".format(self._output))
+            print(f"{self._output}: already exists")
             raise SystemExit(0)
 
     def parse(self, args: List[str]) -> None:
@@ -109,7 +109,7 @@ class VideoDownloader:
         script = (
             "#!/usr/bin/env bash",
             "cd ${0%/*}/..",
-            'xrun "{0:s}" {1:s}'.format(self._output, self._url),
+            f'xrun "{self._output}" {self._url}',
         )
         with open(
             self._m3u8_file + '-resume.sh',
@@ -161,12 +161,13 @@ class VideoDownloader:
                             chunks[len(chunks)] = [url]
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ": Cannot open file: " + self._m3u8_file
+                f"{sys.argv[0]}: Cannot open file: {self._m3u8_file}",
             ) from exception
 
         if len(chunks) == 0:
             raise SystemExit(
-                sys.argv[0] + ": Cannot find chunks: " + self._m3u8_file)
+                f"{sys.argv[0]}: Cannot find chunks: {self._m3u8_file}",
+            )
         return chunks
 
     def _get_chunk(self, file: str, urls: List[str]) -> None:
@@ -194,7 +195,7 @@ class VideoDownloader:
 
         while nfiles != nchunks:
             for part, urls in sorted(chunks.items()):
-                file = "{0:s}-c{1:05d}.ts".format(self._m3u8_file, part)
+                file = f"{self._m3u8_file}-c{part:05d}.ts"
                 if os.path.isfile(file):
                     continue
 
@@ -202,11 +203,10 @@ class VideoDownloader:
                 if os.path.isfile(file):
                     nfiles += 1
                     with open(status_file, 'w', encoding='utf-8') as ofile:
-                        print("{0:s}: {1:d}/{2:d}".format(
-                            self._output,
-                            nfiles,
-                            nchunks,
-                        ), file=ofile)
+                        print(
+                            f"{self._output}: {nfiles}/{nchunks}",
+                            file=ofile,
+                        )
 
             time.sleep(10)
 
@@ -223,16 +223,16 @@ class VideoDownloader:
         Join video parts.
         """
         chunk_files = sorted(glob.glob(self._m3u8_file + '-c*.ts'))
-        full_file = self._m3u8_file + '-full.ts'
+        full_file = f'{self._m3u8_file}-full.ts'
         with open(full_file, 'wb') as ofile:
             for file in chunk_files:
-                print(file + "...")
+                print(f"{file}...")
                 try:
                     with open(file, 'rb') as ifile:
                         self._copy(ifile, ofile)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ": Cannot read file: " + file
+                        f"{sys.argv[0]}: Cannot read file: {file}",
                     ) from exception
 
         mp4_file = self._m3u8_file + '-full.mp4'
@@ -257,10 +257,7 @@ class VideoDownloader:
         os.utime(mp4_file, (source_time, source_time))
         shutil.move(mp4_file, self._output)
         shutil.move(self._directory, self._output+'.full')
-        print("{0:s}: generated from {1:d} chunks!".format(
-            self._output,
-            len(chunk_files),
-        ))
+        print(f"{self._output}: generated from {len(chunk_files)} chunks!")
         shutil.rmtree(self._output+'.full')
 
 

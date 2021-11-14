@@ -43,15 +43,15 @@ class Options:
         elif getpass.getuser() != 'root':
             hostname = socket.gethostname().split('.')[0].lower()
             username = getpass.getuser()
-            prompt = '[sudo] password for {0:s}@{1:s}: '.format(
-                hostname, username)
+            prompt = f'[sudo] password for {hostname}@{username}: '
             sudo = command_mod.Command('sudo', errors='stop')
             sudo.set_args(
                 ['-p', prompt, 'python3', __file__, os.path.abspath(args[1])])
             subtask_mod.Exec(sudo.get_cmdline()).run()
         if not os.path.isfile(os.path.join(args[1], 'bin', 'bash')):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "/bin/bash" in chroot directory.')
+                f'{sys.argv[0]}: Cannot find "/bin/bash" in chroot directory.',
+            )
         self._directory = os.path.abspath(args[1])
 
 
@@ -115,7 +115,7 @@ class Chroot:
         """
         Start session
         """
-        print('Chroot "' + self._directory + '" starting...')
+        print(f'Chroot "{self._directory}" starting...')
         subtask_mod.Task(self._chroot.get_cmdline()).run()
         umount = command_mod.Command(
             'umount',
@@ -123,7 +123,7 @@ class Chroot:
             errors='stop'
         )
         subtask_mod.Task(umount.get_cmdline()).run()
-        print('Chroot "' + self._directory + '" finished!')
+        print(f'Chroot "{self._directory}" finished!')
 
 
 class Main:

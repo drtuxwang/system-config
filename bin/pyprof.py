@@ -45,7 +45,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Profile Python 3.x program.',
+            description="Profile Python 3.x program.",
         )
 
         parser.add_argument(
@@ -55,13 +55,13 @@ class Options:
             dest='lines',
             default=[20],
             metavar='K',
-            help='Output first K lines.'
+            help="Output first K lines.",
         )
         parser.add_argument(
             'file',
             nargs=1,
             metavar='file[.py]|file.pstats',
-            help='Python module or pstats file.'
+            help="Python module or pstats file.",
         )
 
         my_args = []
@@ -128,8 +128,7 @@ class Main:
             return command_mod.Command(module_file, args=module_args)
         except command_mod.CommandNotFoundError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + module_file +
-                '" module file'
+                f'{sys.argv[0]}: Cannot find "{module_file}" module file',
             ) from exception
 
     @classmethod
@@ -141,8 +140,7 @@ class Main:
                 os.remove(stats_file)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot remove old "' +
-                    stats_file + '" file.'
+                    f'{sys.argv[0]}: Cannot remove old "{stats_file}" file.',
                 ) from exception
 
         python3 = command_mod.CommandFile(sys.executable)
@@ -153,7 +151,7 @@ class Main:
         task = subtask_mod.Task(python3.get_cmdline() + command.get_cmdline())
         task.run()
 
-        print("pyprof:", command.args2cmd([command.get_file()] + module_args))
+        print(f"pyprof: {command.args2cmd([command.get_file()])}{module_args}")
         return stats_file
 
     @staticmethod
@@ -162,7 +160,7 @@ class Main:
             stats = pstats.Stats(stats_file)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + stats_file + '" file.'
+                f'{sys.argv[0]}: Cannot read "{stats_file}" file.',
             ) from exception
 
         stats.strip_dirs().sort_stats('tottime', 'cumtime').print_stats(lines)

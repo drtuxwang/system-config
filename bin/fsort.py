@@ -28,14 +28,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unicode sort lines of a file.',
+            description="Unicode sort lines of a file.",
         )
 
         parser.add_argument(
             'files',
             nargs=1,
             metavar='file',
-            help='File contents to sort.'
+            help="File contents to sort.",
         )
 
         self._args = parser.parse_args(args)
@@ -99,7 +99,7 @@ class Main:
                             lines.append(line)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + file + '" file.'
+                        f'{sys.argv[0]}: Cannot read "{file}" file.',
                     ) from exception
         else:
             for line in sys.stdin:

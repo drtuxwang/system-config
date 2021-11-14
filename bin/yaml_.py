@@ -30,14 +30,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Convert BSON/JSON/XML/YAML to YAML file.',
+            description="Convert BSON/JSON/XML/YAML to YAML file.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to convert.'
+            help="File to convert.",
         )
 
         self._args = parser.parse_args(args)
@@ -90,31 +90,23 @@ class Main:
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
             if file.endswith(('.bson', '.json', '.xml', '.yaml', '.yml')):
                 try:
                     data.read(file)
                 except config_mod.ReadConfigError as exception:
-                    raise SystemExit(
-                        "{0:s}: {1:s}".format(file, str(exception))
-                    ) from exception
+                    raise SystemExit(f"{file}: {exception}") from exception
 
                 if file.endswith(('yaml', 'yml')):
                     yaml_file = file
                 else:
                     name, _ = os.path.splitext(file)
                     yaml_file = name + '.yaml'
-                print('Converting "{0:s}" to "{1:s}"...'.format(
-                    file,
-                    yaml_file
-                ))
+                print(f'Converting "{file}" to "{yaml_file}"...')
                 try:
                     data.write(yaml_file)
                 except config_mod.WriteConfigError as exception:
-                    raise SystemExit(
-                        "{0:s}: {1:s}".format(file, str(exception))
-                    ) from exception
+                    raise SystemExit(f"{file}: {exception}") from exception
         return 0
 
 

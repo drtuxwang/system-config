@@ -31,14 +31,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Check JPEG picture files.',
+            description="Check JPEG picture files.",
         )
 
         parser.add_argument(
             'directories',
             nargs='+',
             metavar='directory',
-            help='Directory containing JPEG files to check.'
+            help="Directory containing JPEG files to check.",
         )
 
         self._args = parser.parse_args(args)
@@ -112,8 +112,7 @@ class Main:
         if errors:
             for line in errors:
                 print(line)
-            raise SystemExit(
-                'Total errors encountered: ' + str(len(errors)) + '.')
+            raise SystemExit(f"Total errors encountered: {len(errors)}.")
 
         return 0
 

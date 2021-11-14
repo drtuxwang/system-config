@@ -38,7 +38,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> command_mod.Command:
         parser = argparse.ArgumentParser(
-            description='Run a command with limited network bandwidth.',
+            description="Run a command with limited network bandwidth.",
         )
 
         parser.add_argument(
@@ -53,13 +53,13 @@ class Options:
         parser.add_argument(
             'command',
             nargs=1,
-            help='Command to run.'
+            help="Command to run.",
         )
         parser.add_argument(
             'args',
             nargs='*',
             metavar='arg',
-            help='Command argument.'
+            help="Command argument.",
         )
 
         my_args = []
@@ -76,8 +76,8 @@ class Options:
 
         if self._args.drate[0] < 0:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
-                'download rate limit.'
+                f'{sys.argv[0]}: You must specific a positive integer for '
+                'download rate limit.',
             )
 
         if os.path.isfile(self._args.command[0]):

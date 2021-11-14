@@ -95,54 +95,54 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Encode MP3 audio using ffmpeg (libmp3lame).',
+            description="Encode MP3 audio using ffmpeg (libmp3lame).",
         )
 
         parser.add_argument(
             '-noskip',
             dest='noskip_flag',
             action='store_true',
-            help='Disable skipping of encoding when codecs same.'
+            help="Disable skipping of encoding when codecs same.",
         )
         parser.add_argument(
             '-aq',
             nargs=1,
             dest='audioQuality',
             default=[None],
-            help='Select audio bitrate in kbps (128kbps default).'
+            help="Select audio bitrate in kbps (128 default).",
         )
         parser.add_argument(
             '-avol',
             nargs=1,
             dest='audioVolume',
             default=[None],
-            help='Select audio volume adjustment in dB (ie "-5", "5").'
+            help='Select audio volume adjustment in dB (ie "-5", "5").',
         )
         parser.add_argument(
             '-start',
             nargs=1,
             dest='startTime',
             default=[None],
-            help='Start encoding at time n seconds.'
+            help="Start encoding at time n seconds.",
         )
         parser.add_argument(
             '-time',
             nargs=1,
             dest='runTime',
             default=[None],
-            help='Stop encoding after n seconds.'
+            help="Stop encoding after n seconds.",
         )
         parser.add_argument(
             '-threads',
             nargs=1,
             default=['2'],
-            help='Threads are faster but decrease quality. Default is 2.'
+            help="Threads are faster but decrease quality. Default is 2.",
         )
         parser.add_argument(
             '-flags',
             nargs=1,
             default=[],
-            help='Supply additional flags to ffmpeg.'
+            help="Supply additional flags to ffmpeg.",
         )
         parser.add_argument(
             'files',
@@ -165,8 +165,8 @@ class Options:
             self._files = self._args.files[1:]
             if not self._files or self._file_new in self._files:
                 raise SystemExit(
-                    sys.argv[0] + ': The input and output files '
-                    'must be different.'
+                    f"{sys.argv[0]}: The input and output files "
+                    "must be different.",
                 )
         else:
             self._file_new = ''
@@ -201,7 +201,7 @@ class Media:
                     self._type = line.replace(', from', '').split()[2]
         except IndexError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Invalid "' + file + '" media file.'
+                f'{sys.argv[0]}: Invalid "{file}" media file.',
             ) from exception
 
     def get_stream(self) -> Generator[Tuple[int, str], None, None]:
@@ -239,7 +239,7 @@ class Media:
         Return True if audio codec found
         """
         for value in self._stream.values():
-            if value.startswith('Audio: ' + codec):
+            if value.startswith(f'Audio: {codec}'):
                 return True
         return False
 
@@ -257,7 +257,7 @@ class Media:
         Return True if video codec found
         """
         for value in self._stream.values():
-            if value.startswith('Video: ' + codec):
+            if value.startswith(f'Video: {codec}'):
                 return True
         return False
 
@@ -301,17 +301,21 @@ class Encoder:
                     self._options.get_noskip_flag() or
                     changing or
                     len(self._options.get_files()) > 1):
-                self._ffmpeg.extend_args(
-                    ['-c:a', self._options.get_audio_codec()])
+                self._ffmpeg.extend_args([
+                    '-c:a',
+                    self._options.get_audio_codec(),
+                ])
                 if self._options.get_audio_quality():
-                    self._ffmpeg.extend_args(
-                        ['-b:a', self._options.get_audio_quality() + 'K'])
+                    self._ffmpeg.extend_args([
+                        '-b:a',
+                        f'{self._options.get_audio_quality()}K',
+                    ])
                 else:
                     self._ffmpeg.extend_args(['-b:a', '128K'])
                 if self._options.get_audio_volume():
                     self._ffmpeg.extend_args([
                         '-af',
-                        'volume=' + self._options.get_audio_volume() + 'dB'
+                        f'volume={self._options.get_audio_volume()}dB'
                     ])
             else:
                 self._ffmpeg.extend_args(['-c:a', 'copy'])
@@ -377,11 +381,11 @@ class Encoder:
                 media = Media(file)
                 args.extend(['-i', file])
                 for stream, _ in media.get_stream_audio():
-                    maps += '[' + str(number) + ':' + str(stream) + '] '
+                    maps += f'[{number}:{stream}] '
                 number += 1
             self._ffmpeg.set_args(args + [
                 '-filter_complex',
-                maps + 'concat=n=' + str(number) + ':v=0:a=1 [out]',
+                f'{maps}concat=n={number}:v=0:a=1 [out]',
                 '-map',
                 '[out]'
             ] + self._ffmpeg.get_args()[2:])

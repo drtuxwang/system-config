@@ -29,15 +29,13 @@ class Options:
         return self._args.files
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(
-            description='determine file type.',
-        )
+        parser = argparse.ArgumentParser(description="determine file type.")
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to view.'
+            help="File to view.",
         )
 
         self._args = parser.parse_args(args)
@@ -89,7 +87,7 @@ class Main:
 
         with magic.Magic() as checker:
             for file in options.get_files():
-                print("{0:s}: {1:s}".format(file, checker.id_filename(file)))
+                print(f"{file}: {checker.id_filename(file)}")
 
         return 0
 

@@ -34,7 +34,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Output the last n lines of a file.',
+            description="Output the last n lines of a file.",
         )
 
         parser.add_argument(
@@ -45,13 +45,13 @@ class Options:
             default=[10],
             metavar='K',
             help='Output last K lines. Use "-n +K" '
-            'to output starting with Kth.'
+            'to output starting with Kth.',
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to search.'
+            help="File to search.",
         )
 
         self._args = parser.parse_args(args)
@@ -62,7 +62,7 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        if ' -n +' in ' ' + ' '.join(args):
+        if ' -n +' in f' {" ".join(args)}':
             self._lines = -self._args.lines[0]
         else:
             self._lines = self._args.lines[0]
@@ -105,7 +105,7 @@ class Main:
                 self._pipe(options, ifile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot read "{file}" file.',
             ) from exception
 
     @staticmethod

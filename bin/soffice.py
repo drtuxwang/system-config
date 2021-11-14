@@ -113,7 +113,8 @@ class Main:
                 os.chdir(desktop)
                 work_dir = desktop
         configs = [
-            '/run/user/{0:d}'.format(os.getuid()),
+            '/tmp',
+            f'/run/user/{os.getuid()}',
             os.path.join(os.getenv('HOME', '/'), '.config', 'libreoffice'),
             work_dir,
         ]

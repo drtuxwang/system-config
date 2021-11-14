@@ -39,7 +39,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Make a compressed archive in 7z format.',
+            description="Make a compressed archive in 7z format.",
         )
 
         parser.add_argument(
@@ -47,38 +47,38 @@ class Options:
             nargs=1,
             type=int,
             metavar='bytes',
-            help='Split archive into chucks with selected size.',
+            help="Split archive into chucks with selected size.",
         )
         parser.add_argument(
             '-threads',
             nargs=1,
             type=int,
             default=[2],
-            help='Threads are faster but decrease quality. Default is 2.',
+            help="Threads are faster but decrease quality. Default is 2.",
         )
         parser.add_argument(
             'archive',
             nargs=1,
             metavar='file.7z|file.bin|file.exe|directory',
-            help='Archive file or directory.',
+            help="Archive file or directory.",
         )
         parser.add_argument(
             'files',
             nargs='*',
             metavar='file',
-            help='File or directory.',
+            help="File or directory.",
         )
 
         self._args = parser.parse_args(args)
 
         if self._args.split and self._args.split[0] < 1:
             raise SystemExit(
-                sys.argv[0] +
-                ': You must specific a positive integer for split size.'
+                f'{sys.argv[0]}: You must specific a '
+                'positive integer for split size.',
             )
         if self._args.threads[0] < 1:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
+                f'{sys.argv[0]}: You must specific a positive integer for '
                 'number of threads.'
             )
 
@@ -103,7 +103,7 @@ class Options:
         if threads == '1':
             self._archiver.set_args(['a', '-m0=lzma', '-mmt=1'])
         else:
-            self._archiver.set_args(['a', '-m0=lzma2', '-mmt=' + threads])
+            self._archiver.set_args(['a', '-m0=lzma2', f'-mmt={threads}'])
         self._archiver.extend_args([
             '-mx=9',
             '-myx=9',
@@ -116,7 +116,7 @@ class Options:
             '-y',
         ])
         if self._args.split:
-            self._archiver.extend_args(['-v' + str(self._args.split[0]) + 'b'])
+            self._archiver.extend_args([f'-v{self._args.split[0]}b'])
 
         if os.path.isdir(self._args.archive[0]):
             self._archive = os.path.abspath(self._args.archive[0]) + '.7z'
@@ -172,7 +172,8 @@ class Main:
                 archiver.get_file(), args=sys.argv[1:], errors='ignore')
             if not archiver.is_found():
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + sfx + '" SFX file.')
+                    f'{sys.argv[0]}: Cannot find "{sfx}" SFX file.',
+                )
             subtask_mod.Exec(archiver.get_cmdline()).run()
 
         print("Adding SFX code")
@@ -183,7 +184,7 @@ class Main:
                     cls._copy(ifile, ofile)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + sfx + '" SFX file.'
+                    f'{sys.argv[0]}: Cannot read "{sfx}" SFX file.',
                 ) from exception
             with open(archive, 'rb') as ifile:
                 cls._copy(ifile, ofile)
@@ -195,8 +196,8 @@ class Main:
             shutil.move(archive_sfx, archive)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot rename "' + archive_sfx +
-                '" file to "' + archive + '".'
+                f'{sys.argv[0]}: Cannot rename '
+                f'"{archive_sfx}" file to "{archive}".',
             ) from exception
 
     @staticmethod
@@ -229,8 +230,11 @@ class Main:
         task = subtask_mod.Task(archiver.get_cmdline())
         task.run()
         if task.get_exitcode():
-            print(sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                  ' received from "' + task.get_file() + '".', file=sys.stderr)
+            print(
+                f'{sys.argv[0]}: Error code '
+                f'{task.get_exitcode()} received from "{task.get_file()}".',
+                file=sys.stderr,
+            )
             raise SystemExit(task.get_exitcode())
 
         if archive.endswith('.exe'):
@@ -240,10 +244,7 @@ class Main:
             shutil.move(archive+'.part', archive)
         except OSError as exception:
             raise SystemExit(
-                '{0:s}: Cannot create "{1:s}" archive file.'.format(
-                    sys.argv[0],
-                    archive
-                )
+                f'{sys.argv[0]}: Cannot create "{archive}" archive file.',
             ) from exception
 
         return 0

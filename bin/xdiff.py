@@ -37,14 +37,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Graphical file comparison and merge tool.',
+            description="Graphical file comparison and merge tool.",
         )
 
         parser.add_argument(
             'files',
             nargs=2,
             metavar='file',
-            help='File to compare.'
+            help="File to compare.",
         )
 
         self._args = parser.parse_args(args)
@@ -66,7 +66,7 @@ class Options:
         elif os.path.isfile(files[0]) and os.path.isfile(files[1]):
             self._meld.set_args(args[1:])
         else:
-            raise SystemExit(sys.argv[0] + ': Cannot compare two directories.')
+            raise SystemExit(f"{sys.argv[0]}: Cannot compare two directories.")
 
         self._pattern = (
             '^$|: Gtk-WARNING |: GtkWarning: |: Gtk-CRITICAL |^  buttons =|'

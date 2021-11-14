@@ -46,14 +46,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Download Debian packages list files.',
+            description="Download Debian packages list files.",
         )
 
         parser.add_argument(
             'distribution_files',
             nargs='+',
             metavar='distribution.dist',
-            help='File containing Debian package URLs.'
+            help="File containing Debian package URLs.",
         )
 
         self._args = parser.parse_args(args)
@@ -120,12 +120,13 @@ class Main:
                             )
                         ):
                             raise SystemExit(
-                                sys.argv[0] + ': Invalid "' + url + '" URL.')
+                                f'{sys.argv[0]}: Invalid "{url}" URL.',
+                            )
                         urls.append(url)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + distribution_file +
-                '" distribution file.'
+                f'{sys.argv[0]}: Cannot read '
+                f'"{distribution_file}" distribution file.',
             ) from exception
         return urls
 
@@ -154,7 +155,8 @@ class Main:
             cmdline = cls._get_cmdline('gzip') + ['-d', file]
         else:
             raise SystemExit(
-                sys.argv[0] + ': Cannot unpack "' + file + '" package file.')
+                f'{sys.argv[0]}: Cannot unpack "{file}" package file.',
+            )
         subtask_mod.Task(cmdline).run(directory=directory)
 
     @staticmethod
@@ -185,7 +187,7 @@ class Main:
                 ))
         except Exception as exception:
             raise SystemExit(
-                "Error: Cannot fetch URL: " + url
+                f"Error: Cannot fetch URL: {url}",
             ) from exception
 
         if url_time > data['time']:
@@ -198,8 +200,8 @@ class Main:
                 print("  [ERROR (", task.get_exitcode, ")]", url)
                 self._remove()
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
                 )
             self._unpack(archive)
             site = url[:url.find('/dists/') + 1]
@@ -211,12 +213,12 @@ class Main:
                     for line in ifile:
                         if line.startswith('Filename: '):
                             lines.append(line.rstrip('\r\n').replace(
-                                'Filename: ', 'Filename: ' + site, 1))
+                                'Filename: ', f'Filename: {site}', 1))
                         else:
                             lines.append(line.rstrip('\r\n'))
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "Packages" packages file.'
+                    f'{sys.argv[0]}: Cannot read "Packages" packages file.',
                 ) from exception
             self._remove()
             data = {'time': url_time, 'text': lines}
@@ -230,11 +232,11 @@ class Main:
                 data = json.load(ifile)
         except json.decoder.JSONDecodeError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Corrupt "' + file + '" json file.'
+                f'{sys.argv[0]}: Corrupt "{file}" json file.',
             ) from exception
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" json file.'
+                f'{sys.argv[0]}: Cannot read "{file}" json file.',
             ) from exception
 
         return data
@@ -252,13 +254,13 @@ class Main:
                 print(json.dumps(data, ensure_ascii=False), file=ofile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '.part" file.'
+                f'{sys.argv[0]}: Cannot create "{file}.part" file.',
             ) from exception
         try:
             shutil.move(file + '.part', file)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot create "{file}" file.',
             ) from exception
 
     def run(self) -> int:

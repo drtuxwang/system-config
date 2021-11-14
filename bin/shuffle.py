@@ -29,10 +29,10 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Print arguments in random order.',
+            description="Print arguments in random order.",
         )
 
-        parser.add_argument('words', nargs='+', metavar='word', help='A word.')
+        parser.add_argument('words', nargs='+', metavar='word', help="A word.")
 
         self._args = parser.parse_args(args)
 

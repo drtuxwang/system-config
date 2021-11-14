@@ -57,40 +57,40 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Calculate checksum using MD5, file size and '
-            'file modification time.',
+            description="Calculate checksum using MD5, file size and "
+            "file modification time.",
         )
 
         parser.add_argument(
             '-R',
             dest='recursive_flag',
             action='store_true',
-            help='Recursive into sub-directories.'
+            help="Recursive into sub-directories.",
         )
         parser.add_argument(
             '-c',
             dest='check_flag',
             action='store_true',
-            help='Check checksums against files.'
+            help="Check checksums against files.",
         )
         parser.add_argument(
             '-f',
             dest='create_flag',
             action='store_true',
-            help='Create ".fsum" file for each file.'
+            help='Create ".fsum" file for each file.',
         )
         parser.add_argument(
             '-update',
             nargs=1,
             dest='update_file',
             metavar='index.fsum',
-            help='Update checksums if file size and date changed.'
+            help="Update checksums if file size and date changed.",
         )
         parser.add_argument(
             'files',
             nargs='*',
             metavar='file|file.fsum',
-            help='File to checksum or ".fsum" checksum file.'
+            help='File to checksum or ".fsum" checksum file.',
         )
 
         self._args = parser.parse_args(args)
@@ -145,7 +145,7 @@ class Main:
                     md5.update(chunk)
         except (OSError, TypeError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot read "{file}" file.',
             ) from exception
         return md5.hexdigest()
 
@@ -161,9 +161,9 @@ class Main:
                     sha512.update(chunk)
         except (OSError, TypeError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot read "{file}" file.',
             ) from exception
-        return 'sha512:' + sha512.hexdigest()
+        return f'sha512:{sha512.hexdigest()}'
 
     @staticmethod
     def _get_files(directory: str) -> List[str]:
@@ -193,13 +193,14 @@ class Main:
                     checksum = self._sha512sum(file)
                 if not checksum:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + file + '" file.')
-                print("{0:s}/{1:010d}/{2:d}  {3:s}".format(
-                    checksum,
-                    file_stat.get_size(),
-                    file_stat.get_time(),
-                    file
-                ))
+                        f'{sys.argv[0]}: Cannot read "{file}" file.',
+                    )
+                print(
+                    f"{checksum}/"
+                    f"{file_stat.get_size():010d}/"
+                    f"{file_stat.get_time()}  "
+                    f"{file}",
+                )
                 if options.get_create_flag():
                     try:
                         with open(
@@ -208,12 +209,13 @@ class Main:
                             encoding='utf-8',
                             newline='\n',
                         ) as ofile:
-                            print("{0:s}/{1:010d}/{2:d}  {3:s}".format(
-                                checksum,
-                                file_stat.get_size(),
-                                file_stat.get_time(),
-                                os.path.basename(file)
-                            ), file=ofile)
+                            print(
+                                f"{checksum}/"
+                                f"{file_stat.get_size():010d}/"
+                                f"{file_stat.get_time()}  "
+                                f"{os.path.basename(file)}",
+                                file=ofile,
+                            )
                         file_stat = file_mod.FileStat(file)
                         os.utime(
                             file + '.fsum',
@@ -221,8 +223,8 @@ class Main:
                         )
                     except OSError as exception:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot create "' + file +
-                            '.fsum" file.'
+                            f'{sys.argv[0]}: Cannot create '
+                            f'"{file}.fsum" file.',
                         ) from exception
 
     @classmethod
@@ -270,29 +272,23 @@ class Main:
                                 nfail += 1
                         except TypeError as exception:
                             raise SystemExit(
-                                sys.argv[0] + ': Corrupt "' + fsumfile +
-                                '" checksum file.'
+                                f'{sys.argv[0]}: Corrupt '
+                                f'"{fsumfile}" checksum file.',
                             ) from exception
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + fsumfile +
-                    '" checksum file.'
+                    f'{sys.argv[0]}: Cannot read "{fsumfile}" checksum file.',
                 ) from exception
 
         if os.path.join(directory, 'index.fsum') in files:
             for file in self._extra(directory, found):
                 print(file, '# EXTRA file found')
         if nmiss > 0:
-            print("fsum: Cannot find {0:d} of {1:d} listed files.".format(
-                nmiss,
-                len(found)
-            ))
+            print(f"fsum: Cannot find {nmiss} of {len(found)} listed files.")
         if nfail > 0:
             print(
-                "fsum: Mismatch in {0:d} of {1:d} computed checksums.".format(
-                    nfail,
-                    len(found) - nmiss
-                )
+                f"fsum: Mismatch in {nfail} of "
+                f"{len(found) - nmiss} computed checksums.",
             )
 
     def _extra(self, directory: str, found: List[str]) -> List[str]:
@@ -333,8 +329,7 @@ class Main:
     def _get_cache(self, update_file: str) -> None:
         if not os.path.isfile(update_file):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + update_file +
-                '" checksum file.'
+                f'{sys.argv[0]}: Cannot find "{update_file}" checksum file.',
             )
         directory = os.path.dirname(update_file)
         try:
@@ -355,8 +350,7 @@ class Main:
                         pass
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + update_file +
-                '" checksum file.'
+                f'{sys.argv[0]}: Cannot read "{update_file}" checksum file.',
             ) from exception
 
     def run(self) -> int:

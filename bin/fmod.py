@@ -48,60 +48,60 @@ class Options:
         return self._xmod
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description='Set file access mode.')
+        parser = argparse.ArgumentParser(description="Set file access mode.")
 
         parser.add_argument(
             '-R',
             dest='recursive_flag',
             action='store_true',
-            help='Set mod of directories recursively.'
+            help="Set mod of directories recursively.",
         )
         parser.add_argument(
             '-r',
             dest='mode',
             action='store_const', const='r',
-            help='Set read-only permission for user.'
+            help="Set read-only permission for user.",
         )
         parser.add_argument(
             '-rg',
             dest='mode',
             action='store_const',
             const='rg',
-            help='Set read-only permission for user and group.'
+            help="Set read-only permission for user and group.",
         )
         parser.add_argument(
             '-ra',
             dest='mode',
             action='store_const',
             const='ra',
-            help='Set read-only permission for everyone.'
+            help="Set read-only permission for everyone.",
         )
         parser.add_argument(
             '-w',
             dest='mode',
             action='store_const',
             const='w',
-            help='Set read-write permission for user.'
+            help="Set read-write permission for user."
         )
         parser.add_argument(
             '-wg',
             dest='mode',
             action='store_const',
             const='wg',
-            help='Set read-write permission for user and read for group.'
+            help="Set read-write permission for user and read for group.",
         )
         parser.add_argument(
             '-wa',
             dest='mode',
             action='store_const',
             const='wa',
-            help='Set read-write permission for user and read for others.'
+            help="Set read-write permission for user and read for others.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File or directory.'
+            help="File or directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -171,7 +171,7 @@ class Main:
     def _chmod(file: str, mod: int) -> None:
         fmod = file_mod.FileStat(file).get_mode() % 512
         if fmod != mod:
-            print("{0:o}>{1:o}: {2:s}".format(fmod, mod, file))
+            print(f"{fmod:o}>{mod:o}: {file}")
             os.chmod(file, mod)
 
     @staticmethod
@@ -181,7 +181,7 @@ class Main:
         file_time = file_stat.get_time()
 
         if file_time != link_stat.get_time():
-            print("<utime>: {0:s} -> {1:s}".format(link, os.readlink(link)))
+            print(f"<utime>: {link} -> {os.readlink(link)}")
             try:
                 os.utime(link, (file_time, file_time), follow_symlinks=False)
             except NotImplementedError:
@@ -197,12 +197,12 @@ class Main:
         try:
             self._chmod(directory, self._xmod)
         except OSError:
-            print("Permission denied:", directory + os.sep)
+            print(f"Permission denied: {directory}{os.sep}")
         if files:
             file_stat = file_mod.FileStat(file_mod.FileUtil.newest(files))
             file_time = file_stat.get_time()
             if file_time != file_mod.FileStat(directory).get_time():
-                print("<utime>: {0:s}/".format(directory))
+                print(f"<utime>: {directory}/")
                 os.utime(directory, (file_time, file_time))
 
     def _setmod_file(self, file: str) -> None:
@@ -237,7 +237,8 @@ class Main:
                 self._setmod_file(file)
             else:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" file.')
+                    f'{sys.argv[0]}: Cannot find "{file}" file.',
+                )
 
     def run(self) -> int:
         """

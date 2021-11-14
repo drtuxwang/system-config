@@ -45,20 +45,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a portable CD/DVD archive in ISO9660 format.',
+            description="Unpack a portable CD/DVD archive in ISO9660 format.",
         )
 
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='Show contents of archive.'
+            help="Show contents of archive.",
         )
         parser.add_argument(
             'images',
             nargs='+',
             metavar='image.iso',
-            help='ISO image file.'
+            help="ISO image file.",
         )
 
         self._args = parser.parse_args(args)
@@ -179,24 +179,22 @@ class Main:
         for image in options.get_images():
             if not os.path.isfile(image):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + image +
-                    '" ISO9660 file.'
+                    f'{sys.argv[0]}: Cannot find "{image}" ISO9660 file.',
                 )
             task = subtask_mod.Task(archiver.get_cmdline() + [image])
             task.run()
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
                 )
             if view_flag:
                 task = subtask_mod.Task(isoinfo.get_cmdline() + [image])
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
-                        sys.argv[0] + ': Error code ' +
-                        str(task.get_exitcode()) + ' received from "' +
-                        task.get_file() + '".'
+                        f'{sys.argv[0]}: Error code {str(task.get_exitcode())}'
+                        f' received from "{task.get_file()}".',
                     )
                 self._isosize(image, os.path.getsize(image))
 

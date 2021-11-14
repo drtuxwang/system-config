@@ -39,19 +39,19 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Run command in a Xterm.',
+            description="Run command in a Xterm.",
         )
 
         parser.add_argument(
             '-split',
             action='store_true',
             dest='split_flag',
-            help='Split command into arguments.'
+            help="Split command into arguments.",
         )
         parser.add_argument(
             'command',
             nargs=1,
-            help='Command with optional arguments.'
+            help="Command with optional arguments.",
         )
 
         self._args = parser.parse_args(args)
@@ -126,12 +126,10 @@ class Options:
             '#ff0000',
             '-ut',
             '-geometry',
-            '100x10+{0:d}+{1:d}'.format(
-                random.randint(20, int(40)),
-                random.randint(20, int(40)),
-            ),
+            '100x10+'
+            f'{random.randint(20, int(40)):d}+{random.randint(20, int(40)):d}',
             '-T',
-            'xrun: ' + command,
+            f'xrun: {command}',
             '-e',
             command
         ])

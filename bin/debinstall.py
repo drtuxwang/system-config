@@ -159,13 +159,13 @@ class Options:
             'list_file',
             nargs=1,
             metavar='distro.debs',
-            help='Debian installed packages ".debs" list file.'
+            help='Debian installed packages ".debs" list file.',
         )
         parser.add_argument(
             'packageNames',
             nargs='+',
             metavar='package',
-            help='Debian package name.'
+            help="Debian package name.",
         )
 
         self._args = parser.parse_args(args[1:])
@@ -180,8 +180,8 @@ class Options:
         ispattern = re.compile('[.]debs-?.*$')
         if not ispattern.search(list_file):
             raise SystemExit(
-                sys.argv[0] + ': Invalid "' + list_file +
-                '" installed ".debs" list filename.'
+                f'{sys.argv[0]}: Invalid "{list_file}" '
+                'installed ".debs" list filename.',
             )
         self._distro = ispattern.sub('', list_file)
 
@@ -224,7 +224,7 @@ class Main:
                 data = json.load(ifile)
         except (OSError, json.decoder.JSONDecodeError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" json file.'
+                f'{sys.argv[0]}: Cannot read "{file}" json file.',
             ) from exception
 
         return data
@@ -319,7 +319,7 @@ class Main:
             else:
                 file = self._local(distro, self._packages[name].get_url())
                 logger.warning("%s%s", indent, file)
-                print(indent + file, file=ofile)
+                print(f"{indent}{file}", file=ofile)
             for i in self._packages[name].get_depends():
                 if i in self._packages:
                     if self._packages[i].get_installed_flag():
@@ -335,7 +335,7 @@ class Main:
                         self._check_package_install(
                             distro,
                             ofile,
-                            indent + '  ',
+                            f"{indent}  ",
                             i,
                         )
                     self._packages[i].set_checked_flag(True)
@@ -372,7 +372,7 @@ class Main:
                     self._check_package_install(distro, ofile, indent, i)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + urlfile + '" file.'
+                f'{sys.argv[0]}: Cannot create "{urlfile}" file.',
             ) from exception
         if os.path.getsize(urlfile) == 0:
             os.remove(urlfile)
@@ -381,7 +381,7 @@ class Main:
     def _local(distro: str, url: str) -> str:
         file = os.path.join(distro, os.path.basename(url))
         if os.path.isfile(file):
-            return 'file://' + os.path.abspath(file)
+            return f'file://{os.path.abspath(file)}'
         return url
 
     def run(self) -> int:

@@ -64,7 +64,7 @@ class Options:
                     not args[2].endswith(('-', '.part'))):
                 self._output = args[2]
                 if os.path.isfile(args[2]):
-                    raise SystemExit("Output file already exists: " + args[2])
+                    raise SystemExit(f"Output file already exists: {args[2]}")
                 self._wget.extend_args([args[1], self._output + '.part'])
                 args = args[2:]
                 continue
@@ -130,8 +130,7 @@ class Main:
                 shutil.move(output + '.part', output)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + output +
-                    '" output file.'
+                    f'{sys.argv[0]}: Cannot create "{output}" output file.',
                 ) from exception
         else:
             subtask_mod.Exec(cmdline).run()

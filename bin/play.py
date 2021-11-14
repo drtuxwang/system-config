@@ -53,26 +53,26 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Play multimedia file/URL.',
+            description="Play multimedia file/URL.",
         )
 
         parser.add_argument(
             '-s',
             dest='shuffle_flag',
             action='store_true',
-            help='Shuffle order of the media files.'
+            help="Shuffle order of the media files.",
         )
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='View information.'
+            help="View information.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='Multimedia file or URL.'
+            help="Multimedia file or URL.",
         )
 
         self._args = parser.parse_args(args)
@@ -115,7 +115,7 @@ class Media:
                     self._type = line.replace(', from', '').split()[2]
         except IndexError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Invalid "' + file + '" media file.'
+                f'{sys.argv[0]}: Invalid "{file}" media file.',
             ) from exception
 
     def get_stream(self) -> Generator[Tuple[int, str], None, None]:
@@ -139,7 +139,7 @@ class Media:
         Return True if audio codec found
         """
         for value in self._stream.values():
-            if value.startswith('Audio: ' + codec):
+            if value.startswith(f'Audio: {codec}'):
                 return True
         return False
 
@@ -157,7 +157,7 @@ class Media:
         Return True if video codec found
         """
         for value in self._stream.values():
-            if value.startswith('Video: ' + codec):
+            if value.startswith(f'Video: {codec}'):
                 return True
         return False
 
@@ -235,8 +235,8 @@ class Main:
             'Failed to open VDPAU backend ')
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code '
+                f'{task.get_exitcode()} received from "{task.get_file()}".',
             )
 
     def run(self) -> int:

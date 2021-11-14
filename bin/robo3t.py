@@ -56,7 +56,7 @@ class Main:
 
         configs = [
             'net',
-            '/run/user/{0:d}'.format(os.getuid()),
+            f'/run/user/{os.getuid()}',
             os.path.join(os.environ['HOME'], '.3T', 'robo-3t'),
         ]
         work_dir = os.environ['PWD']

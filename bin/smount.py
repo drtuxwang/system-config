@@ -31,20 +31,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Securely mount a file system using SSH protocol.',
+            description="Securely mount a file system using SSH protocol.",
         )
 
         parser.add_argument(
             'remote',
             nargs=1,
             metavar='user@host:/remotepath',
-            help='Remote directory.'
+            help="Remote directory.",
         )
         parser.add_argument(
             'local',
             nargs=1,
             metavar='user@host:/localpath',
-            help='Local directory.'
+            help="Local directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -59,8 +59,8 @@ class Options:
             task.run(pattern='type fuse.sshfs ')
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {str(task.get_exitcode())} '
+                    f'received from "{task.get_file()}".',
                 )
             for line in task.get_output():
                 print(line)

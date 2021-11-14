@@ -28,14 +28,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Check for missing sequence in numbered files.',
+            description="Check for missing sequence in numbered files.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to check.'
+            help="File to check.",
         )
 
         self._args = parser.parse_args(args)
@@ -83,11 +83,7 @@ class Main:
         sequence = set(range(min(numbers), max(numbers)+1))
         name, ext = seq_name
         for missing in sorted(sequence - set(numbers)):
-            print("Missing file in sequence: {0:s}_{1:03d}{2:s}".format(
-                name,
-                missing,
-                ext
-            ))
+            print(f"Missing file in sequence: {name}_{missing:03d}{ext}")
 
     @classmethod
     def _check_sequences(cls, files: List[str]) -> None:

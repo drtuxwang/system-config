@@ -32,14 +32,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Open files using default application.',
+            description="Open files using default application.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to open.'
+            help="File to open.",
         )
 
         self._args = parser.parse_args(args)
@@ -93,7 +93,7 @@ class Main:
     def _spawn(cls, action: Tuple[List[str], bool], file: str) -> None:
         command, daemon = action
         if not command:
-            raise SystemExit(sys.argv[0] + ': cannot find action: ' + file)
+            raise SystemExit(f"{sys.argv[0]}: cannot find action: {file}")
         program = cls._get_program(command)
         program.set_args(command[1:] + [file])
         cmdline = program.get_cmdline()
@@ -116,7 +116,7 @@ class Main:
             elif file.split(':', 1)[0] in config.get('web_uri'):
                 action = config.get_app('web_browser')
             elif not os.path.isfile(file):
-                raise SystemExit(sys.argv[0] + ': cannot find file: ' + file)
+                raise SystemExit(f"{sys.argv[0]}: cannot find file: {file}")
             else:
                 action = config.get_open_app(
                     '.'.join(file.rsplit('.', 2)[-2:]).lower()
@@ -127,7 +127,8 @@ class Main:
                     )
                     if not action:
                         raise SystemExit(
-                            sys.argv[0] + ': unknown file extension: ' + file)
+                            f"{sys.argv[0]}: unknown file extension: {file}",
+                        )
             self._spawn(action, file)
 
         return 0

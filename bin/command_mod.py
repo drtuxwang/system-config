@@ -15,8 +15,8 @@ import subprocess
 import sys
 from typing import Any, List, Optional, Sequence
 
-RELEASE = '2.4.3'
-VERSION = 20211006
+RELEASE = '2.4.4'
+VERSION = 20211107
 
 
 class Command:
@@ -47,8 +47,8 @@ class Command:
     def _parse_keys(keys: Sequence[str], **kwargs: Any) -> dict:
         if set(kwargs.keys()) - set(keys):
             raise CommandKeywordError(
-                'Unsupported keyword "' +
-                list(set(kwargs.keys()) - set(keys))[0] + '".'
+                'Unsupported keyword '
+                f'"{list(set(kwargs.keys()) - set(keys))[0]}".',
             )
         info: dict = {}
         for key in keys:
@@ -85,13 +85,13 @@ class Command:
 
         if info['errors'] == 'stop':
             raise SystemExit(
-                sys.argv[0] + ': Cannot find required "' +
-                program + '" software.'
+                f'{sys.argv[0]}: Cannot find required "{program}" software.',
             )
         if info['errors'] == 'ignore':
             return ''
         raise CommandNotFoundError(
-            'Cannot find required "' + program + '" software.')
+            f'Cannot find required "{program}" software.',
+        )
 
     @staticmethod
     def _get_extensions(_platform: str) -> List[str]:
@@ -169,7 +169,7 @@ class Command:
 
         # Prevent recursion
         if (not pathextra and
-                os.path.basename(sys.argv[0]) in (program, program + '.py')):
+                os.path.basename(sys.argv[0]) in (program, f'{program}.py')):
             mydir = os.path.dirname(sys.argv[0])
             if mydir in paths:
                 paths = paths[paths.index(mydir) + 1:]
@@ -177,7 +177,7 @@ class Command:
         if sys.argv[0].endswith('.py'):
             mynames = (sys.argv[0][:-3], sys.argv[0])
         else:
-            mynames = (sys.argv[0], sys.argv[0] + '.py')
+            mynames = (sys.argv[0], f'{sys.argv[0]}.py')
 
         for directory in paths:
             if os.path.isdir(directory):
@@ -201,9 +201,8 @@ class Command:
         nargs = []
         for arg in args:
             if '"' in arg or ' ' in arg or '&' in arg:
-                nargs.append(
-                    '"' + arg.replace('\\', '\\\\').replace('"', '\\"') + '"'
-                )
+                quoted = arg.replace('\\', '\\\\').replace('"', '\\"')
+                nargs.append(f'"{quoted}"')
             else:
                 nargs.append(arg)
         return ' '.join(nargs)
@@ -321,13 +320,13 @@ class CommandFile(Command):
 
         if info['errors'] == 'stop':
             raise SystemExit(
-                sys.argv[0] + ': Cannot find required "' +
-                program + '" software.'
+                f'{sys.argv[0]}: Cannot find required "{program}" software.',
             )
         if info['errors'] == 'ignore':
             return ''
         raise CommandNotFoundError(
-            'Cannot find required "' + program + '" software.')
+            f'Cannot find required "{program}" software.',
+        )
 
 
 class Platform:
@@ -400,7 +399,8 @@ class Platform:
                 break
         else:
             raise CommandNotFoundError(
-                'Cannot find required "' + program + '" software.')
+                f'Cannot find required "{program}" software.',
+            )
         return file
 
     @classmethod
@@ -428,7 +428,7 @@ class Platform:
                     lines.append(line.rstrip('\r\n'))
         except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + program + '" program.'
+                f'Error in calling "{program}" program.',
             ) from exception
         return lines
 
@@ -470,7 +470,7 @@ class Platform:
                 encoding='utf-8',
                 errors='replace'
             ) as ifile:
-                kernel += '.' + ifile.readline()
+                kernel += f'.{ifile.readline()}'
         except OSError:
             kernel = 'unknown'
         return kernel
@@ -536,7 +536,7 @@ class Platform:
         Return platform
        (ie linux-x86, linux-x86_64, macos-x86_64, windows-x86_64).
         """
-        return cls.get_system() + '-' + cls.get_arch()
+        return f'{cls.get_system()}-{cls.get_arch()}'
 
 
 class _System(Platform):

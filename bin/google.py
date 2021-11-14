@@ -47,13 +47,13 @@ class Options:
                     break
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description='Google search.')
+        parser = argparse.ArgumentParser(description="Google search.")
 
         parser.add_argument(
             'keywords',
             nargs='+',
             metavar='keyword',
-            help='Keyword to search.'
+            help="Keyword to search.",
         )
 
         self._args = parser.parse_args(args)
@@ -99,8 +99,8 @@ class Main:
     @staticmethod
     def _search(search_for: str) -> None:
         url = (
-            'http://ajax.googleapis.com/ajax/services/search/web?v=1.0&' +
-            search_for
+            'http://ajax.googleapis.com/ajax/services/search/web?v=1.0&'
+            f'{search_for}',
         )
         user_agent = config_mod.Config().get('user_agent')
 
@@ -115,13 +115,12 @@ class Main:
         except Exception as exception:
             raise SystemExit(str(exception)) from exception
         if response.status_code != 200:
-            raise SystemExit(
-                'Requests response code: ' + str(response.status_code))
+            raise SystemExit(f'Requests response code: {response.status_code}')
 
         print(response.url)
         for page in response.json()['responseData']['results']:
-            print("    {0:s}".format(page['unescapedUrl']))
-            print("        {0:s}".format(page['titleNoFormatting']))
+            print(f"    {page['unescapedUrl']}")
+            print(f"        {page['titleNoFormatting']}")
 
     @classmethod
     def run(cls) -> int:

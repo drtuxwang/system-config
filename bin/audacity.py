@@ -3,6 +3,7 @@
 Sandbox for "audacity" launcher
 """
 
+import getpass
 import glob
 import os
 import signal
@@ -83,8 +84,8 @@ class Main:
                 os.chdir(desktop)
                 work_dir = desktop
         configs = [
-            '/run/udev/',
-            '/var/tmp',
+            f'/tmp/{getpass.getuser()}:/var/tmp',
+            f'/run/user/{os.getuid()}/pulse',
             os.path.join(os.getenv('HOME', '/'), '.audacity-data'),
             work_dir,
         ]

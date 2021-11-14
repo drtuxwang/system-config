@@ -44,16 +44,16 @@ class Options:
                 )
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + netrc +
-                '" configuration file.'
+                f'{sys.argv[0]}: Cannot create "{netrc}" configuration file.'
             ) from exception
         os.umask(umask)
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Automatic connection to FTP server anonymously.')
+            description="Automatic connection to FTP server anonymously.",
+        )
 
-        parser.add_argument('host', nargs=1, help='Ftp host.')
+        parser.add_argument('host', nargs=1, help="Ftp host.")
 
         self._args = parser.parse_args(args)
 

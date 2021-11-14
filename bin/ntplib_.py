@@ -11,9 +11,10 @@ import signal
 import socket
 import sys
 import time
-from typing import List
+from typing import Generator, List
 
-import numpy
+import dns.resolver
+import numpy  # type: ignore
 import ntplib  # type: ignore
 
 import command_mod
@@ -21,7 +22,11 @@ import file_mod
 import logging_mod
 import subtask_mod
 
-CONNECTIONS = 16
+DNS_SERVERS = ['1.1.1.1', '8.8.8.8']
+NTP_SERVER = 'pool.ntp.org'
+NTP_SYNC_MAX = 8
+NTP_SYNC_MIN = 3
+NTP_SYNC_REPEAT = 3600
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
@@ -39,39 +44,34 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
-    def get_delay(self) -> int:
+    def get_repeat_flag(self) -> bool:
         """
-        Return retry delay.
+        Return repeat flag.
         """
-        return self._delay
+        return self._args.repeat_flag
 
-    def get_server(self) -> str:
+    def get_update_flag(self) -> bool:
         """
-        Return list of files.
+        Return update flag.
         """
-        return self._args.server[0]
-
-    def get_view_flag(self) -> bool:
-        """
-        Return view flag.
-        """
-        return self._args.view_flag
+        return self._args.update_flag
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Set the date and time via NTP pool',
+            description="Set the date and time via NTP pool",
         )
 
         parser.add_argument(
-            '-v',
-            dest='view_flag',
+            '-r',
+            dest='repeat_flag',
             action='store_true',
-            help='Do not apply but Show average offset only.'
+            help=f"Repeat time sync every {NTP_SYNC_REPEAT} seconds.",
         )
         parser.add_argument(
-            'server',
-            nargs=1,
-            help='NTP server pool (ie "uk.pool.ntp.org").'
+            '-u',
+            dest='update_flag',
+            action='store_true',
+            help="Apply average offset calculated.",
         )
 
         self._args = parser.parse_args(args)
@@ -81,16 +81,6 @@ class Options:
         Parse arguments
         """
         self._parse_args(args[1:])
-
-        newest = file_mod.FileUtil.newest(glob.glob('/etc/*'))
-        time_stamp = file_mod.FileStat(newest).get_time()
-        if time_stamp - time.time() > 86400:
-            logger.warning(
-                "Current clock is too old (Please check CMOS battery)",
-            )
-            self._delay = 10
-        else:
-            self._delay = 60
 
 
 class Main:
@@ -124,74 +114,124 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
+    def check_clock(self) -> int:
+        """
+        Check clock and apply rough correction. Return retry time.
+        """
+        logger.info("Checking current clock...")
+        newest = file_mod.FileUtil.newest(glob.glob('/etc/*'))
+        time_stamp = file_mod.FileStat(newest).get_time()
+        if time_stamp - time.time() > 86400:
+            logger.info("Updating: System clock setting...")
+            subtask_mod.Task(self._date.get_cmdline() + [
+                '+%Y-%m-%d %H:%M:%S.%N%z',
+                '--set',
+                f'@{time_stamp:f}',
+            ]).run()
+            logger.info("Syncing:  Setting hardware clock...")
+            subtask_mod.Task(self._hwclock.get_cmdline() + ['--systohc']).run()
+            subtask_mod.Task(self._hwclock.get_cmdline() + ['--show']).run()
+            return 10
+
+        return 60
+
     @staticmethod
-    def get_offset(server: str) -> float:
+    def get_server() -> Generator[str, None, None]:
+        """
+        Return NTP server IP address
+        """
+        client = dns.resolver.Resolver(configure=False)
+        client.nameservers = DNS_SERVERS
+        while True:
+            try:
+                for answer in client.resolve(NTP_SERVER, 'A'):
+                    yield answer.to_text()
+            except dns.exception.DNSException:
+                yield 'none'
+
+    @classmethod
+    def get_offset(cls) -> float:
         """
         Determine NTP offset
         """
         client = ntplib.NTPClient()
         offsets = []
-        logger.info("Connecting to NTP servers: {0:s}".format(server))
-        for _ in range(CONNECTIONS):
+        logger.info("Connecting to NTP server...")
+        for _ in range(NTP_SYNC_MAX):
             try:
-                response = client.request(server, version=3)
+                response = client.request(next(cls.get_server()), version=3)
             except (socket.gaierror, ntplib.NTPException):
                 logger.info("Offset:    ?.?????????  (???.???.???.???)")
             else:
-                logger.info("Offset:   {0:12.9f}  ({1:s})".format(
+                logger.info(
+                    "Offset:   %12.9f  (%s)",
                     response.offset,
                     ntplib.ref_id_to_text(response.ref_id),
-                ))
+                )
                 offsets.append(response.offset)
 
-        if len(offsets) >= 4:
+        if len(offsets) >= NTP_SYNC_MIN:
             mean = numpy.mean(offsets)
             stddev = numpy.std(offsets)
             offsets = [x for x in offsets if abs(x - mean) < 2*stddev]
-            if len(offsets) > 4:
+            if len(offsets) > NTP_SYNC_MIN:
                 if abs(max(offsets) - min(offsets) < 60.):
                     average = numpy.mean(offsets)
-                    logger.info("Average:  {0:12.9f}  ({1:d} rejected)".format(
+                    logger.info(
+                        "Average:  %12.9f  (%d rejected)",
                         average,
-                        CONNECTIONS - len(offsets),
-                    ))
+                        NTP_SYNC_MAX - len(offsets),
+                    )
                     return average
                 logger.error("Unstable: offset range is over a minute")
         return None
 
-    @classmethod
-    def run(cls) -> int:
+    def set_clock(self, offset: float) -> None:
         """
-        Start program
+        Check clock and apply rough correction. Return retry time.
         """
-        options = Options()
-        server = options.get_server()
-        delay = options.get_delay()
-        if options.get_view_flag():
-            cls.get_offset(server)
-            return 0
-
-        date = command_mod.Command('date')
-        hwclock = command_mod.Command('hwclock', errors='stop')
-
-        while True:
-            offset = cls.get_offset(server)
-            if offset:
-                break
-            logger.error("Failure:  retrying in {0:d} seconds".format(delay))
-            time.sleep(delay)
-
         logger.info("Updating: System clock with offset...")
-        subtask_mod.Task(date.get_cmdline() + [
+        subtask_mod.Task(self._date.get_cmdline() + [
             '+%Y-%m-%d %H:%M:%S.%N%z',
             '--set',
-            '{0:f} sec'.format(offset),
+            f'{offset} sec',
         ]).run()
 
         logger.info("Syncing:  Setting hardware clock...")
-        subtask_mod.Task(hwclock.get_cmdline() + ['--systohc']).run()
-        subtask_mod.Task(hwclock.get_cmdline() + ['--show']).run()
-        logger.info("DONE!")
+        subtask_mod.Task(self._hwclock.get_cmdline() + ['--systohc']).run()
+        subtask_mod.Task(self._hwclock.get_cmdline() + ['--show']).run()
+
+    def run(self) -> int:
+        """
+        Start program
+        """
+        logger.info("NTPLIB starting...")
+        logger.info("NTPLIB DNS Servers: %s", DNS_SERVERS)
+        logger.info("NTPLIB NTP Server:  %s", NTP_SERVER)
+
+        options = Options()
+        if not options.get_update_flag():
+            self.get_offset()
+            return 0
+
+        self._date = command_mod.Command('date')
+        self._hwclock = command_mod.Command('hwclock', errors='stop')
+        delay = self.check_clock()
+
+        while True:
+            offset = self.get_offset()
+            if offset:
+                self.set_clock(offset)
+                if options.get_repeat_flag():
+                    logger.info(
+                        "Synced:   Resyncing in %d seconds.",
+                        NTP_SYNC_REPEAT,
+                    )
+                    time.sleep(NTP_SYNC_REPEAT)
+                    continue
+                break
+            logger.error("Failure:  retrying in %d seconds", delay)
+            time.sleep(delay)
 
         return 0
 

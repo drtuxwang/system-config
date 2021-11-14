@@ -48,33 +48,33 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Streaming video downloader '
-            '(Youtube, m3u8 and compatible websites).',
+            description="Streaming video downloader "
+            "(Youtube, m3u8 and compatible websites).",
         )
         parser.add_argument(
             '-f',
             nargs=1,
             dest='code',
             default=None,
-            help='Select video format code (default "136+140/mp4" for 720p).'
+            help='Select video format code (default "136+140/mp4" for 720p).',
         )
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='Show video format codes.'
+            help="Show video format codes.",
         )
         parser.add_argument(
             '-O',
             nargs=1,
             dest='output',
             default=None,
-            help='Output file name.'
+            help="Output file name.",
         )
         parser.add_argument(
             'url',
             nargs=1,
-            help='Youtube or compatible video URL.'
+            help="Youtube or compatible video URL.",
         )
 
         self._args = parser.parse_args(args)
@@ -96,7 +96,7 @@ class Options:
         for height in sorted(codes):
             return codes[height] + '+bestaudio[ext=m4a]/mp4'
 
-        raise SystemExit(sys.argv[0] + ': No video stream: ' + url)
+        raise SystemExit(f"{sys.argv[0]}: No video stream: {url}")
 
     def _detect_mtime(self, url: str) -> float:
         task = subtask_mod.Batch(self._vget.get_cmdline() + ['--get-url', url])
@@ -150,7 +150,7 @@ class Options:
         if self._args.output:
             self._output = self._args.output[0]
             if os.path.isfile(self._output):
-                raise SystemExit("Output file already exists: " + self._output)
+                raise SystemExit(f"Output file already exists: {self._output}")
             self._vget.extend_args(['--output', self._output])
 
         self._vget.append_arg(url)

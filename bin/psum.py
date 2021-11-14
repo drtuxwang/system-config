@@ -61,28 +61,28 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Calculate checksum lines using imagehash, file size '
-            'and file modification time.',
+            description="Calculate checksum lines using imagehash, file size "
+            "and file modification time.",
         )
 
         parser.add_argument(
             '-R',
             dest='recursive_flag',
             action='store_true',
-            help='Recursive into sub-directories.'
+            help="Recursive into sub-directories.",
         )
         parser.add_argument(
             '-update',
             nargs=1,
             dest='update_file',
             metavar='index.fsum',
-            help='Update checksums if file size and date changed.'
+            help="Update checksums if file size and date changed.",
         )
         parser.add_argument(
             'files',
             nargs='*',
             metavar='file|file.fsum',
-            help='File to checksum or ".fsum" checksum file.'
+            help='File to checksum or ".fsum" checksum file.',
         )
 
         self._args = parser.parse_args(args)
@@ -140,10 +140,7 @@ class Main:
         logger.info("Reading checksum file: %s", phashes_file)
         if not os.path.isfile(phashes_file):
             raise SystemExit(
-                "{0:s}: Cannot find checksum file: %{1:s}".format(
-                    sys.argv[0],
-                    phashes_file,
-                )
+                f"{sys.argv[0]}: Cannot find checksum file: {phashes_file}",
             )
 
         images_phashes = {}
@@ -163,10 +160,7 @@ class Main:
                         pass
         except OSError as exception:
             raise SystemExit(
-                "{0:s}: Cannot read checksum file: %{1:s}".format(
-                    sys.argv[0],
-                    phashes_file,
-                )
+                f"{sys.argv[0]}: Cannot read checksum file: {phashes_file}",
             ) from exception
         return images_phashes
 
@@ -250,27 +244,23 @@ class Main:
             ) as ofile:
                 for key, phash in image_phashes.items():
                     file, file_size, file_time = key
-                    print("{0:s}/{1:010d}/{2:d}  {3:s}".format(
-                        phash,
-                        file_size,
-                        file_time,
-                        file,
-                    ), file=ofile)
+                    print(
+                        f"{phash}/"
+                        f"{file_size:010d}/"
+                        f"{file_time}  "
+                        f"{file}",
+                        file=ofile,
+                    )
         except OSError as exception:
             raise SystemExit(
-                "{0:s}: Cannot create checksum file: {1:s}".format(
-                    sys.argv[0],
-                    phashes_file + '.part',
-                )
+                f"{sys.argv[0]}: Cannot create checksum file: "
+                f"{phashes_file}.part",
             ) from exception
         try:
             shutil.move(phashes_file + '.part', phashes_file)
         except OSError as exception:
             raise SystemExit(
-                "{0:s}: Cannot create checksum file: {1:s}".format(
-                    sys.argv[0],
-                    phashes_file,
-                )
+                f"{sys.argv[0]}: Cannot create checksum file: {phashes_file}",
             ) from exception
 
     def run(self) -> int:

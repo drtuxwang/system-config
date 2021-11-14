@@ -57,7 +57,7 @@ class Main:
             configs = [
                 '/dev/dri',
                 '/dev/shm',
-                '/run/user/{0:d}/pulse'.format(os.getuid()),
+                f'/run/user/{os.getuid()}/pulse',
             ]
             configs.extend(glob.glob(os.path.join(
                 os.getenv('HOME', '/'),

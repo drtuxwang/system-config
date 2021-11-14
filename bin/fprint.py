@@ -34,14 +34,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Send files to browser for printing.',
+            description="Send files to browser for printing.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='A text/images/postscript/PDF file.'
+            help="A text/images/postscript/PDF file.",
         )
 
         self._args = parser.parse_args(args)
@@ -95,18 +95,18 @@ class Main:
         for number, file in enumerate(files):
             if not os.path.isfile(file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" file.')
+                    f'{sys.argv[0]}: Cannot find "{file}" file.',
+                )
 
-            tmpfile = "{0:s}/{1:02d}.pdf".format(tmpdir, number)
+            tmpfile = f"{tmpdir}/{number:02d}.pdf"
             task = subtask_mod.Batch(pdf.get_cmdline() + [tmpfile, file])
             task.run()
             if task.get_exitcode():
-                raise SystemExit("{0:s}: Cannot convert to PDF: {1:s}".format(
-                    sys.argv[0],
-                    file,
-                ))
+                raise SystemExit(
+                    f"{sys.argv[0]}: Cannot convert to PDF: {file}",
+                )
 
-            print("Sending to browser for printing: {0:s}".format(file))
+            print(f"Sending to browser for printing: {file}")
             task = subtask_mod.Daemon(xweb.get_cmdline() + [tmpfile])
             task.run()
             time.sleep(0.5)

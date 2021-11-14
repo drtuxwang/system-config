@@ -29,14 +29,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Decode URL query strings.',
+            description="Decode URL query strings.",
         )
 
         parser.add_argument(
             'urls',
             nargs='+',
             metavar='url',
-            help='URL query string.',
+            help="URL query string.",
         )
 
         self._args = parser.parse_args(args)

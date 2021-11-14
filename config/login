@@ -225,8 +225,8 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     setenv PATH "$HOME/software/scripts:$HOME/software/bin:/opt/software/bin:$PATH"
 
     # Change to $HOME/Desktop
-    mkdir $HOME/Desktop >& /dev/null
-    if ( "$PWD" == "$HOME" ) then
+    if ( "$PWD" == "$HOME" || "$PWD" == "/" ) then
+        mkdir $HOME/Desktop >& /dev/null
         cd "$HOME/Desktop"
     endif
 

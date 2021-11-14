@@ -43,7 +43,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Kill tasks by process ID or name.',
+            description="Kill tasks by process ID or name.",
         )
 
         parser.add_argument(
@@ -52,19 +52,19 @@ class Options:
             type=int,
             dest='timeDelay',
             default=[0],
-            help='Delay kill in seconds.'
+            help="Delay kill in seconds.",
         )
         parser.add_argument(
             '-f',
             dest='force_flag',
             action='store_true',
-            help='Force termination of tasks.'
+            help="Force termination of tasks.",
         )
         parser.add_argument(
             'task',
             nargs='+',
             metavar='pid|keyword',
-            help='Process ID or keyword.'
+            help="Process ID or keyword.",
         )
 
         self._args = parser.parse_args(args)
@@ -116,7 +116,7 @@ class Main:
                 if task.haspid(int(keyword)):
                     pids.append(int(keyword))
             else:
-                pids.extend(task.pname2pids('.*' + keyword + '.*'))
+                pids.extend(task.pname2pids(f'.*{keyword}.*'))
 
         print(
             'RUSER      PID  PPID  PGID PRI  NI TTY      MEMORY  '
@@ -125,20 +125,17 @@ class Main:
         for pid in pids:
             process = task.get_process(pid)
             print(
-                '{0:8s} {1:5d} {2:5d} {3:5d} {4:>3s} {5:>3s} {6:7s} {7:7d} '
-                '{8:>8s} {9:>11s} {10:s}'.format(
-                    process['USER'].split()[0],
-                    pid,
-                    process['PPID'],
-                    process['PGID'],
-                    process['PRI'],
-                    process['NICE'],
-                    process['TTY'],
-                    process['MEMORY'],
-                    process['CPUTIME'],
-                    process['ETIME'],
-                    process['COMMAND']
-                )
+                f"{process['USER'].split()[0]:8s} "
+                f"{pid:5d} "
+                f"{process['PPID']:5d} "
+                f"{process['PGID']:5d} "
+                f"{process['PRI']:>3s} "
+                f"{process['NICE']:>3s} "
+                f"{process['TTY']:7s} "
+                f"{process['MEMORY']:7d} "
+                f"{process['CPUTIME']:>8s} "
+                f"{process['ETIME']:>11s} "
+                f"{process['COMMAND']}",
             )
         print()
         return pids
@@ -155,7 +152,7 @@ class Main:
                 print("Process", pid, "is my ancestor process")
             else:
                 if not options.get_force_flag():
-                    answer = input("Kill process " + str(pid) + " (y/n): ")
+                    answer = input(f"Kill process {pid} (y/n): ")
                     if answer not in ('y', 'Y'):
                         continue
                 task.killpids([pid])

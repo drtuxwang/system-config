@@ -43,26 +43,26 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a compressed archive in 7Z format.',
+            description="Unpack a compressed archive in 7Z format.",
         )
 
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='Show contents of archive.'
+            help="Show contents of archive.",
         )
         parser.add_argument(
             '-test',
             dest='test_flag',
             action='store_true',
-            help='Test archive data only.'
+            help="Test archive data only.",
         )
         parser.add_argument(
             'archives',
             nargs='+',
             metavar='file.7z',
-            help='Archive file.'
+            help="Archive file.",
         )
 
         self._args = parser.parse_args(args)
@@ -163,9 +163,8 @@ class Main:
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
-                        sys.argv[0] + ': Error code ' +
-                        str(task.get_exitcode()) + ' received from "' +
-                        task.get_file() + '".'
+                        f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                        f'received from "{task.get_file()}".',
                     )
         else:
             for archive in options.get_archives():
@@ -173,9 +172,8 @@ class Main:
                 task.run(replace=('\\', '/'))
                 if task.get_exitcode():
                     raise SystemExit(
-                        sys.argv[0] + ': Error code ' +
-                        str(task.get_exitcode()) + ' received from "' +
-                        task.get_file() + '".'
+                        f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                        f'received from "{task.get_file()}".',
                     )
 
         archiver.set_args(['l'])

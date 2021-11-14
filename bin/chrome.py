@@ -170,8 +170,7 @@ class Options:
             try:
                 if not task.pgid2pids(int(directory.split('.')[-1])):
                     print(
-                        'Removing copy of Chrome profile in "' +
-                        directory + '"...'
+                        f'Removing copy of Chrome profile in "{directory}"...',
                     )
                     try:
                         shutil.rmtree(directory)
@@ -188,9 +187,9 @@ class Options:
         os.setpgid(mypid, mypid)  # New PGID
 
         newhome = file_mod.FileUtil.tmpdir(
-            os.path.join(tmpdir, 'chrome.' + str(mypid))
+            os.path.join(tmpdir, f'chrome.{mypid}'),
         )
-        print('Creating copy of Chrome profile in "' + newhome + '"...')
+        print(f'Creating copy of Chrome profile in "{newhome}"...')
         if not os.path.isdir(newhome):
             try:
                 shutil.copytree(
@@ -234,19 +233,19 @@ class Options:
                 if os.path.isfile(os.path.join(directory, 'Preferences')):
                     for file in glob.glob(os.path.join(directory, '*')):
                         if os.path.basename(file) not in keep_list:
-                            print('Removing "{0:s}"...'.format(file))
+                            print(f'Removing "{file}"...')
                             self._remove(file)
                 elif (
                         os.path.basename(directory) not in
                         {'Extensions', 'First Run', 'Local State'}
                 ):
-                    print('Removing "{0:s}"...'.format(directory))
+                    print(f'Removing "{directory}"...')
                     self._remove(directory)
                 for file in glob.glob(os.path.join(
                         directory, 'Local Storage', 'https*')):
                     self._remove(file)
                 for file in glob.glob(os.path.join(directory, '.???*')):
-                    print('Removing "{0:s}"...'.format(file))
+                    print(f'Removing "{file}"...')
                     self._remove(file)
 
     def _restart(self) -> None:
@@ -381,7 +380,7 @@ class Main:
         # Kill filtering process after start up to avoid hang
         tkill = command_mod.Command(
             'tkill',
-            args=['-delay', '60', '-f', 'python3.* {0:s} '.format(cmdline[0])],
+            args=['-delay', '60', '-f', f'python3.* {cmdline[0]} '],
             errors='ignore'
         )
         if tkill.is_found():

@@ -29,14 +29,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a sqlite database file.',
+            description="Unpack a sqlite database file.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file.sqlite',
-            help='Sqlite database file.'
+            help="Sqlite database file.",
         )
 
         self._args = parser.parse_args(args)
@@ -82,14 +82,12 @@ class Main:
     @staticmethod
     def _show(file: str) -> None:
         with sqlite3.connect(file) as conn:
-            print(file + ':')
+            print(f"{file}:")
             try:
                 for line in conn.iterdump():
                     print("   ", line)
             except sqlite3.DatabaseError as exception:
-                raise SystemExit(
-                    sys.argv[0] + ': ' + str(exception)
-                ) from exception
+                raise SystemExit(f'{sys.argv[0]}: {exception}') from exception
 
     @classmethod
     def run(cls) -> int:
@@ -101,8 +99,7 @@ class Main:
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file +
-                    '" database file.'
+                    f'{sys.argv[0]}: Cannot find "{file}" database file.',
                 )
             cls._show(file)
 

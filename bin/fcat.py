@@ -28,14 +28,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Concatenate files and print on the standard output.',
+            description="Concatenate files and print on the standard output.",
         )
 
         parser.add_argument(
             'files',
             nargs='*',
             metavar='file',
-            help='File to view.'
+            help="File to view."
         )
 
         self._args = parser.parse_args(args)
@@ -67,7 +67,7 @@ class Main:
                 self._pipe(ifile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot read "{file}" file.',
             ) from exception
 
     @staticmethod

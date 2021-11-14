@@ -44,38 +44,38 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Dump the first and last few bytes of a binary file.',
+            description="Dump the first and last few bytes of a binary file.",
         )
 
         parser.add_argument(
             '-a',
             dest='alldays',
             action='store_true',
-            help='Add comma every 5 and 2 numbers'
+            help="Add comma every 5 and 2 numbers",
         )
         parser.add_argument(
             '-d',
             dest='weekdays',
             action='store_true',
-            help='Add comma every 5 numbers'
+            help="Add comma every 5 numbers",
         )
         parser.add_argument(
             '-e',
             dest='weekends',
             action='store_true',
-            help='Add comma every 2 numbers'
+            help="Add comma every 2 numbers",
         )
         parser.add_argument(
             'first',
             type=int,
             nargs=1,
-            help='First number.'
+            help="First number.",
         )
         parser.add_argument(
             'last',
             type=int,
             nargs=1,
-            help='Last number.'
+            help="Last number.",
         )
 
         self._args = parser.parse_args(args)

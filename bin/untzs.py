@@ -37,20 +37,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a compressed archive in TAR.ZSTD format.',
+            description="Unpack a compressed archive in TAR.ZSTD format.",
         )
 
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='Show contents of archive.'
+            help="Show contents of archive.",
         )
         parser.add_argument(
             'archives',
             nargs='+',
             metavar='file.tar.zst|file.tzst|file.tzs',
-            help='Archive file.'
+            help="Archive file.",
         )
 
         self._args = parser.parse_args(args)
@@ -58,8 +58,7 @@ class Options:
         for archive in self._args.archives:
             if not archive.endswith(('.tar.zst', '.tzst', '.tzs')):
                 raise SystemExit(
-                    sys.argv[0] + ': Unsupported "' + archive +
-                    '" archive format.'
+                    f'{sys.argv[0]}: Unsupported "{archive}" archive format.',
                 )
 
     def parse(self, args: List[str]) -> None:
@@ -110,7 +109,7 @@ class Main:
         os.umask(int('022', 8))
         tar = command_mod.Command('tar', errors='stop')
         for file in options.get_archives():
-            print(file + ':')
+            print(f"{file}:")
             if options.get_view_flag():
                 tar.set_args(['tfv', file])
             else:

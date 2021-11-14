@@ -58,33 +58,33 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Copy CD/DVD data as a portable ISO/BIN image file.',
+            description="Copy CD/DVD data as a portable ISO/BIN image file.",
         )
 
         parser.add_argument(
             '-dao',
             dest='dao_flag',
             action='store_true',
-            help='Read data/audio/video CD in disk-at-once mode.'
+            help="Read data/audio/video CD in disk-at-once mode.",
         )
         parser.add_argument(
             '-speed',
             nargs=1,
             type=int,
             default=[8],
-            help='Select CD/DVD spin speed.'
+            help="Select CD/DVD spin speed.",
         )
         parser.add_argument(
             'device',
             nargs=1,
             metavar='device|scan',
-            help='CD/DVD device (ie "/dev/sr0" or "scan".'
+            help='CD/DVD device (ie "/dev/sr0" or "scan".',
         )
         parser.add_argument(
             'image',
             nargs='?',
             metavar='image.iso|image.bin',
-            help='ISO image file or BIN image filie for DAO mode.'
+            help="ISO image file or BIN image filie for DAO mode.",
         )
 
         self._args = parser.parse_args(args)
@@ -97,16 +97,16 @@ class Options:
 
         if self._args.speed[0] < 1:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
-                'CD/DVD device speed.'
+                f'{sys.argv[0]}: You must specific a positive integer for '
+                'CD/DVD device speed.',
             )
         if (
                 self._args.device[0] != 'scan' and
                 not os.path.exists(self._args.device[0])
         ):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + self._args.device[0] +
-                '" CD/DVD device.'
+                f'{sys.argv[0]}: Cannot find '
+                f'"{self._args.device[0]}" CD/DVD device.',
             )
 
         if self._args.image:
@@ -137,7 +137,7 @@ class Cdrom:
         Detect devices
         """
         for directory in glob.glob('/sys/block/sr*/device'):
-            device = '/dev/' + os.path.basename(os.path.dirname(directory))
+            device = f'/dev/{os.path.basename(os.path.dirname(directory))}'
             model = ''
             for file in ('vendor', 'model'):
                 try:
@@ -146,7 +146,7 @@ class Cdrom:
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
-                        model += ' ' + ifile.readline().strip()
+                        model += f' {ifile.readline().strip()}'
                 except OSError:
                     continue
             self._devices[device] = model
@@ -213,8 +213,8 @@ class Main:
         task.run()
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + cdrdao.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{cdrdao.get_file()}".',
             )
 
     @staticmethod
@@ -223,30 +223,33 @@ class Main:
         print("Scanning for CD/DVD devices...")
         devices = cdrom.get_devices()
         for key, value in sorted(devices.items()):
-            print("  {0:10s}  {1:s}".format(key, value))
+            print(f"  {key:10s}  {value}")
 
     def _tao(self, device: str, file: str) -> None:
         isoinfo = command_mod.Command('isoinfo', errors='stop')
 
         command = command_mod.Command('dd', errors='stop')
-        command.set_args(
-            ['if=' + device, 'bs=' + str(2048*4096), 'count=1', 'of=' + file])
+        command.set_args([
+            f'if={device}',
+            f'bs={2048*4096}',
+            'count=1',
+            f'of={file}',
+        ])
         task = subtask_mod.Batch(command.get_cmdline())
         task.run()
         if task.get_error()[0].endswith('Permission denied'):
             raise SystemExit(
-                sys.argv[0] + ': Cannot read from CD/DVD device. '
-                'Please check permissions.'
+                f'{sys.argv[0]}: Cannot read from CD/DVD device. '
+                'Please check permissions.',
             )
         if not os.path.isfile(file):
             raise SystemExit(
-                sys.argv[0] +
-                ': Cannot find CD/DVD media. Please check drive.'
+                f'{sys.argv[0]}: Cannot find CD/DVD media. Please check drive.'
             )
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
             )
 
         isoinfo.set_args(['-d', '-i', file])
@@ -254,13 +257,13 @@ class Main:
         task.run(pattern='^Volume size is: ')
         if not task.has_output():
             raise SystemExit(
-                sys.argv[0] + ': Cannot find TOC on CD/DVD media. '
-                'Disk not recognised.'
+                f'{sys.argv[0]}: Cannot find TOC on CD/DVD media. '
+                'Disk not recognised.',
             )
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {str(task.get_exitcode())} '
+                f'received from "{task.get_file()}".',
             )
         blocks = int(task.get_output()[0].split()[-1])
 
@@ -268,13 +271,17 @@ class Main:
         task2.run(pattern=' id: $')
         if task2.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task2.get_exitcode()) +
-                ' received from "' + task2.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task2.get_exitcode()} '
+                f'received from "{task2.get_file()}".',
             )
 
-        print('Creating ISO image file "' + file + '"...')
-        command.set_args(
-            ['if=' + device, 'bs=2048', 'count=' + str(blocks), 'of=' + file])
+        print(f'Creating ISO image file "{file}"...')
+        command.set_args([
+            f'if={device}',
+            'bs=2048',
+            f'count={blocks}',
+            f'of={file}',
+        ])
 
         nice = command_mod.Command('nice', args=['-20'], errors='stop')
         task2 = subtask_mod.Task(nice.get_cmdline() + command.get_cmdline())
@@ -282,8 +289,7 @@ class Main:
 
         if not os.path.isfile(file):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find CD/DVD media. '
-                'Please check drive.'
+                f'{sys.argv[0]}: Cannot find CD/DVD media. Please check drive.'
             )
         pad = int(blocks * 2048 - os.path.getsize(file))
         if 0 < pad < 16777216:
@@ -365,8 +371,8 @@ class Main:
                     os.remove(file)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot over write "' + file +
-                        '" CD/DVD image file.'
+                        f'{sys.argv[0]}: Cannot over write '
+                        f'"{file}" CD/DVD image file.',
                     ) from exception
             if options.get_disk_at_once_flag():
                 self._dao(device, speed, file)
@@ -379,9 +385,8 @@ class Main:
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
-                        sys.argv[0] + ': Error code ' +
-                        str(task.get_exitcode()) + ' received from "' +
-                        task.get_file() + '".'
+                        f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                        f'received from "{task.get_file()}".',
                     )
 
         return 0

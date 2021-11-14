@@ -37,14 +37,14 @@ class Options:
         print('    "_options": {')
         print('        "_args": {')
         print('            "args":', str(self._args.args), ',')
-        print('            "libpath":', str(self._args.libpath) + ',')
-        print('            "module":' + str(self._args.module) + ',')
+        print(f'            "libpath": {self._args.libpath},')
+        print(f'            "module":{str(self._args.module)},')
         print('            "verbosity":', self._args.verbosity)
         print("        },")
-        print('        "_dump_flag":', str(self._dump_flag) + ',')
-        print('        "_library_path":', str(self._library_path) + ',')
-        print('        "_module_name":', str(self._module_name) + ',')
-        print('        "_module_args":', str(self._module_args) + ',')
+        print(f'        "_dump_flag": {self._dump_flag},')
+        print(f'        "_library_path": {self._library_path},')
+        print(f'        "_module_name": {self._module_name},')
+        print(f'        "_module_args": {self._module_args},')
         print('        "_module_dir": "', self._module_dir, '",')
         print('        "_verbose_flag":', self._verbose_flag)
         print("    },")
@@ -100,8 +100,8 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Load Python main program as module '
-            '(must have Main class).',
+            description="Load Python main program as module "
+            "(must have Main class).",
         )
 
         parser.add_argument(
@@ -112,7 +112,7 @@ class Options:
             action=ArgparseVerboseAction,
             dest='verbosity',
             default=0,
-            help='Select verbosity level 1, 2 or 3.'
+            help="Select verbosity level 1, 2 or 3.",
         )
         parser.add_argument(
             '-pyldverbose',
@@ -120,43 +120,43 @@ class Options:
             const=1,
             dest='verbosity',
             default=0,
-            help='Select verbosity level 1.'
+            help="Select verbosity level 1.",
         )
         parser.add_argument(
             '-pyldname',
             nargs=1,
             dest='name',
             default=None,
-            help='Select module name.'
+            help="Select module name.",
         )
         parser.add_argument(
             '-pyldpath',
             nargs=1,
             dest='libpath',
-            help='Add directories to the python load path.'
+            help="Add directories to the python load path.",
         )
         parser.add_argument(
             'module',
             nargs=1,
-            help='Module to run.'
+            help="Module to run.",
         )
         parser.add_argument(
             'args',
             nargs='*',
             metavar='arg',
-            help='Module argument.'
+            help="Module argument.",
         )
 
         py_args = []
         mod_args = []
         while args:
             if args[0] in {
-                    '-pyldv',
-                    '-pyldvv',
-                    '-pyldvvv',
-                    '-pyldverbose',
-                    '-pyldname',
-                    '-pyldpath'
+                '-pyldv',
+                '-pyldvv',
+                '-pyldvvv',
+                '-pyldverbose',
+                '-pyldname',
+                '-pyldpath'
             }:
                 py_args.append(args[0])
                 if args[0] in ('-pyldname', '-pyldpath') and len(args) >= 2:

@@ -53,37 +53,37 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Print lines matching a pattern.',
+            description="Print lines matching a pattern.",
         )
 
         parser.add_argument(
             '-i',
             dest='ignoreCase_flag',
             action='store_true',
-            help='Ignore case distinctions.'
+            help="Ignore case distinctions.",
         )
         parser.add_argument(
             '-n',
             dest='number_flag',
             action='store_true',
-            help='Prefix each line of output with line number.'
+            help="Prefix each line of output with line number.",
         )
         parser.add_argument(
             '-v',
             dest='invert_flag',
             action='store_true',
-            help='Invert the sense of matching.'
+            help="Invert the sense of matching.",
         )
         parser.add_argument(
             'pattern',
             nargs=1,
-            help='Regular expression.'
+            help="Regular expression.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to search.'
+            help="File to search.",
         )
 
         self._args = parser.parse_args(args)
@@ -132,7 +132,7 @@ class Main:
                 self._pipe(options, ifile, prefix)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot read "{file}" file.',
             ) from exception
 
     def _pipe(self, options: Options, pipe: TextIO, prefix: str = '') -> None:
@@ -143,9 +143,9 @@ class Main:
                 number += 1
                 if not self._is_match.search(line):
                     if options.get_number_flag():
-                        line = str(number) + ':' + line
+                        line = f'{number}:{line}'
                     try:
-                        print(prefix + line)
+                        print(f"{prefix}{line}")
                     except OSError as exception:
                         raise SystemExit(0) from exception
         else:
@@ -154,9 +154,9 @@ class Main:
                 number += 1
                 if self._is_match.search(line):
                     if options.get_number_flag():
-                        line = str(number) + ':' + line
+                        line = f'{number}:{line}'
                     try:
-                        print(prefix + line)
+                        print(f"{prefix}{line}")
                     except OSError as exception:
                         raise SystemExit(0) from exception
 
@@ -174,8 +174,8 @@ class Main:
                 self._is_match = re.compile(options.get_pattern())
         except re.error as exception:
             raise SystemExit(
-                sys.argv[0] + ': Invalid regular expression "' +
-                options.get_pattern() + '".'
+                f'{sys.argv[0]}: Invalid regular expression '
+                f'"{options.get_pattern()}".',
             ) from exception
         if len(options.get_files()) > 1:
             for file in options.get_files():

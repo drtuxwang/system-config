@@ -78,10 +78,10 @@ class Main:
                     if name not in ('(firmware)', '(loader)'):
                         timings.append(timing)
                         boot_time += cls._get_time(delays)
-                print("Startup finished in {0:s} = {1:5.3f}s".format(
-                    ' + '.join(timings),
-                    boot_time
-                ))
+                print(
+                    f"Startup finished in {' + '.join(timings)} = "
+                    f"{boot_time:5.3f}s",
+                )
             else:
                 print(line)
 

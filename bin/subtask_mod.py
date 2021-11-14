@@ -15,8 +15,8 @@ import types
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.2.5'
-VERSION = 20211016
+RELEASE = '2.2.6'
+VERSION = 20211107
 
 BUFFER_SIZE = 131072
 
@@ -139,8 +139,8 @@ class Task:
     def _parse_keys(keys: Any, **kwargs: Any) -> dict:
         if set(kwargs.keys()) - set(keys):
             raise TaskKeywordError(
-                'Unsupported keyword "' +
-                list(set(kwargs.keys()) - set(keys))[0] + '".'
+                'Unsupported keyword '
+                f'"{list(set(kwargs.keys()) - set(keys))[0]}".',
             )
         info: dict = {}
         for key in keys:
@@ -167,8 +167,9 @@ class Task:
         return info
 
     @staticmethod
-    def _send_stdin(child: subprocess.Popen, stdin: List[str]) -> None:
-        for line in stdin:
+    def _send_stdin(child: subprocess.Popen, info: dict) -> None:
+
+        for line in info['stdin']:
             try:
                 child.stdin.write(line.encode("utf-8") + b"\n")
             except OSError:
@@ -176,11 +177,13 @@ class Task:
         child.stdin.close()
 
     @staticmethod
-    def _recv_stdout(
-        child: subprocess.Popen,
-        ismatch: 're.Pattern',
-        replace: str,
-    ) -> None:
+    def _recv_stdout(child: subprocess.Popen, info: dict) -> None:
+        if info['pattern']:
+            ismatch = re.compile(info['pattern'])
+        else:
+            ismatch = None
+        replace = info['replace']
+
         while True:
             try:
                 line = child.stdout.readline().decode('utf-8', 'replace')
@@ -192,11 +195,13 @@ class Task:
                 sys.stdout.write(line.replace(replace[0], replace[1]))
 
     @staticmethod
-    def _recv_stderr(
-        child: subprocess.Popen,
-        ismatch: 're.Pattern',
-        replace: str,
-    ) -> None:
+    def _recv_stderr(child: subprocess.Popen, info: dict) -> None:
+        if info['pattern']:
+            ismatch = re.compile(info['pattern'])
+        else:
+            ismatch = None
+        replace = info['replace']
+
         while True:
             try:
                 line = child.stderr.readline().decode('utf-8', 'replace')
@@ -247,27 +252,23 @@ class Task:
 
     def _interactive_child_run(self, cmdline: List[str], info: dict) -> int:
         child: subprocess.Popen = self._start_child(cmdline, info)
-        if info['stdin']:
-            self._send_stdin(child, info['stdin'])
-
-        if info['pattern']:
-            ismatch = re.compile(info['pattern'])
-        else:
-            ismatch = None
         if not info['replace']:
             info['replace'] = ('', '')
+
+        if info['stdin']:
+            self._send_stdin(child, info)
         try:
-            self._recv_stdout(child, ismatch, info['replace'])
+            self._recv_stdout(child, info)
         except OSError as exception:
             raise OutputWriteError(
-                'Error writing stderr of "' + self._file + '" program.'
+                f'Error writing stderr of "{self._file}" program.',
             ) from exception
         if not info['error2output']:
             try:
-                self._recv_stderr(child, ismatch, info['replace'])
+                self._recv_stderr(child, info)
             except OSError as exception:
                 raise OutputWriteError(
-                    'Error  writing output of "' + self._file + '" program.'
+                    f'Error  writing output of "{self._file}" program.',
                 ) from exception
         return child.wait()
 
@@ -303,7 +304,7 @@ class Task:
                     self._cmdline, info)
         except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + self._file + '" program.'
+                f'Error in calling "{self._file}" program.',
             ) from exception
         if info['directory']:
             os.chdir(pwd)
@@ -365,7 +366,7 @@ class Background(Task):
             self._start_background_run(self._cmdline, info)
         except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + self._file + '" program.'
+                f'Error in calling "{self._file}" program.',
             ) from exception
         if info['directory']:
             os.chdir(pwd)
@@ -394,16 +395,16 @@ class Batch(Task):
         except OSError as exception:
             if append:
                 raise OutputWriteError(
-                    'Cannot append to "' + file + '" output file.'
+                    f'Cannot append to "{file}" output file.',
                 ) from exception
             raise OutputWriteError(
-                'Cannot create "' + file + '" output file.'
+                f'Cannot create "{file}" output file.',
             ) from exception
 
     def _batch_run(self, cmdline: List[str], info: dict) -> int:
         child = self._start_child(cmdline, info)
         if info['stdin']:
-            self._send_stdin(child, info['stdin'])
+            self._send_stdin(child, info)
 
         ismatch = re.compile(info['pattern'])
         file = info['file']
@@ -461,7 +462,7 @@ class Batch(Task):
                 self._cmdline, info)
         except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + self._file + '" program.'
+                f'Error in calling "{self._file}" program.',
             ) from exception
         if info['directory']:
             os.chdir(pwd)
@@ -491,7 +492,7 @@ class Child(Task):
             return self._start_child(self._cmdline, info)
         except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + self._file + '" program.'
+                f'Error in calling "{self._file}" program.',
             ) from exception
         if info['directory']:
             os.chdir(pwd)
@@ -539,7 +540,7 @@ class Daemon(Task):
             self._start_daemon(self._cmdline, info)
         except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + self._file + '" program.'
+                f'Error in calling "{self._file}" program.',
             ) from exception
         if info['directory']:
             os.chdir(pwd)
@@ -604,7 +605,7 @@ class Exec(Task):
             self._exec_run(self._cmdline, info)
         except OSError as exception:
             raise ExecutableCallError(
-                'Error in calling "' + self._file + '" program.'
+                f'Error in calling "{self._file}" program.',
             ) from exception
 
 

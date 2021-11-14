@@ -36,20 +36,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Make a compressed archive in TAR.GZ format.',
+            description="Make a compressed archive in TAR.GZ format.",
         )
 
         parser.add_argument(
             'archive',
             nargs=1,
             metavar='file.tar.gz|file.tgz',
-            help='Archive file.'
+            help="Archive file.",
         )
         parser.add_argument(
             'files',
             nargs='*',
             metavar='file',
-            help='File or directory.'
+            help="File or directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -66,8 +66,7 @@ class Options:
             self._archive = self._args.archive[0]
         if not self._archive.endswith(('.tar.gz', '.tgz')):
             raise SystemExit(
-                sys.argv[0] + ': Unsupported "' + self._archive +
-                '" archive format.'
+                f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'
             )
 
         if self._args.files:
@@ -121,8 +120,7 @@ class Main:
                 ofile.add(file, recursive=False, filter=cls._reset)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot add "' + file +
-                    '" file to archive.'
+                    f'{sys.argv[0]}: Cannot add "{file}" file to archive.',
                 ) from exception
             if os.path.isdir(file) and not os.path.islink(file):
                 try:
@@ -132,8 +130,7 @@ class Main:
                     )
                 except PermissionError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot open "' + file +
-                        '" directory.'
+                        f'{sys.argv[0]}: Cannot open "{file}" directory.',
                     ) from exception
 
     def run(self) -> int:
@@ -149,17 +146,13 @@ class Main:
                 self._addfile(ofile, options.get_files())
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' +
-                archive + '.part" archive file.'
+                f'{sys.argv[0]}: Cannot create "{archive}.part" archive file.',
             ) from exception
         try:
             shutil.move(archive+'.part', archive)
         except OSError as exception:
             raise SystemExit(
-                '{0:s}: Cannot create "{1:s}" archive file.'.format(
-                    sys.argv[0],
-                    archive
-                )
+                f'{sys.argv[0]}: Cannot create "{archive}" archive file.',
             ) from exception
 
         return 0

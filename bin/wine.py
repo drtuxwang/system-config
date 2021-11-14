@@ -42,7 +42,7 @@ class Options:
         home = os.environ.get('HOME', '')
         directory = os.path.join(home, '.wine')
         if os.path.isdir(directory):
-            print('Removing "{0:s}"...'.format(directory))
+            print(f'Removing "{directory}"...')
             try:
                 shutil.rmtree(directory)
             except OSError:

@@ -47,15 +47,13 @@ class Options:
         return self._par2
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(
-            description='Parity and repair tool.',
-        )
+        parser = argparse.ArgumentParser(description="Parity and repair tool.")
 
         parser.add_argument(
             'files',
             nargs='*',
             metavar='file',
-            help='File or directory.'
+            help="File or directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -108,9 +106,7 @@ class Main:
                 os.mkdir(directory)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "{0:s}" directory.'.format(
-                        directory,
-                    )
+                    f'{sys.argv[0]}: Cannot create "{directory}" directory.',
                 ) from exception
 
     @staticmethod
@@ -167,7 +163,7 @@ class Main:
                     cls._create_3dot_directory(fpar_directory)
                     task.run(pattern='^$', replace=(
                         'Opening: ',
-                        'Opening: {0:s}{1:s}'.format(directory, os.sep)
+                        f'Opening: {directory}{os.sep}',
                     ))
                     if task.get_exitcode() == 0:
                         cls._delete_file(tmpfile)

@@ -240,13 +240,15 @@ class Xterm(Terminal):
 
     @staticmethod
     def _check_server(host: str) -> None:
+        """
+        Check hostname can be resolvedto IP address.
+        """
         try:
             socket.gethostbyname(host)
         except (socket.gaierror, UnicodeError) as exception:
-            raise SystemExit("{0:s}: Could not resolve: {1:s}".format(
-                sys.argv[0],
-                host,
-            )) from exception
+            raise SystemExit(
+                f"{sys.argv[0]}: Could not resolve: {host}",
+            ) from exception
 
     def run(self) -> None:
         """
@@ -301,7 +303,7 @@ class XtermInvisible(Xterm):
                         self.get_label_flags(host) + self._command.get_args()
                 ):
                     if '#' in arg:
-                        ssh.append_arg('"' + arg + '"')
+                        ssh.append_arg(f'"{arg}"')
                     else:
                         ssh.append_arg(arg)
                 subtask_mod.Background(
@@ -315,8 +317,9 @@ class GnomeTerminal(Xterm):
 
     def _config(self) -> None:
         self._command = command_mod.Command('gnome-terminal', errors='stop')
-        self._command.set_args(
-            ['--geometry=' + self._options.get_columns() + 'x24'])
+        self._command.set_args([
+            f'--geometry={self._options.get_columns()}x24',
+        ])
         self._pattern = '^$|: Gtk-WARNING'
 
     @staticmethod
@@ -324,7 +327,7 @@ class GnomeTerminal(Xterm):
         """
         Return list of flags for setting terminal label
         """
-        return ['--title=' + host.split('@')[-1] + ':']
+        return [f"--title={host.split('@')[-1]}:"]
 
     @staticmethod
     def get_run_flag() -> str:
@@ -341,9 +344,9 @@ class Konsole(GnomeTerminal):
 
     def _config(self) -> None:
         self._command = command_mod.Command('konsole', errors='stop')
-        self._command.set_args(
-            ['--geometry=' + self._options.get_columns() + 'x24']
-        )
+        self._command.set_args([
+            f'--geometry={self._options.get_columns()}x24',
+        ])
 
     @staticmethod
     def get_run_flag() -> str:
@@ -360,9 +363,9 @@ class MateTerminal(Konsole):
 
     def _config(self) -> None:
         self._command = command_mod.Command('mate-terminal', errors='stop')
-        self._command.set_args(
-            ['--geometry=' + self._options.get_columns() + 'x24']
-        )
+        self._command.set_args([
+            f'--geometry={self._options.get_columns()}x24',
+        ])
 
 
 class XfceTerminal(GnomeTerminal):
@@ -412,8 +415,9 @@ class XfceTerminal(GnomeTerminal):
                     errors='stop'
                 )
 
-        self._command.set_args(
-            ['--geometry=' + self._options.get_columns() + 'x24'])
+        self._command.set_args([
+            f'--geometry={self._options.get_columns()}x24',
+        ])
 
     @staticmethod
     def get_label_flags(host: str) -> List[str]:

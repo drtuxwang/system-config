@@ -54,7 +54,7 @@ class ScreenLocker:
             if locker.detect():
                 return locker
 
-        raise SystemExit(sys.argv[0] + ': Cannot find suitable screen locker.')
+        raise SystemExit(f"{sys.argv[0]}: Cannot find suitable screen locker.")
 
     def run(self) -> None:
         """

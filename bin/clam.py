@@ -32,14 +32,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Run ClamAV anti-virus scanner.',
+            description="Run ClamAV anti-virus scanner.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File or directory.'
+            help="File or directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -105,8 +105,11 @@ class Main:
             directory = '/var/lib/clamav'
         for file in sorted(glob.glob(os.path.join(directory, '*c[lv]d'))):
             file_stat = file_mod.FileStat(file)
-            print("{0:10d} [{1:s}] {2:s}".format(
-                file_stat.get_size(), file_stat.get_time_local(), file))
+            print(
+                f"{file_stat.get_size():10d} "
+                f"[{file_stat.get_time_local()}] "
+                f"{file}",
+            )
 
         return task.get_exitcode()
 

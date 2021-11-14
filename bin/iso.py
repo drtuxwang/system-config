@@ -64,26 +64,30 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Make a portable CD/DVD archive in ISO9660 format.',
+            description="Make a portable CD/DVD archive in ISO9660 format.",
         )
 
         parser.add_argument(
             '-f',
             dest='follow_flag',
             action='store_true',
-            help='Follow symbolic links.'
+            help="Follow symbolic links.",
         )
-        parser.add_argument('volume', nargs=1, help='ISO file volume name.')
+        parser.add_argument(
+            'volume',
+            nargs=1,
+            help="ISO file volume name.",
+        )
         parser.add_argument(
             'directory',
             nargs=1,
-            help='Directory containing files.'
+            help="Directory containing files.",
         )
         parser.add_argument(
             'image',
             nargs='?',
             metavar='image.iso',
-            help='Optional image file.'
+            help="Optional image file.",
         )
 
         self._args = parser.parse_args(args)
@@ -100,15 +104,18 @@ class Options:
         task.run()
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
             )
         self._genisoimage.set_args([
-            '-iso-level', '3',
+            '-iso-level',
+            '3',
             '-joliet-long',
             '-rational-rock',
-            '-input-charset', 'utf-8',
-            '-appid', 'GENISOIMAGE-' + task.get_output()[0].split()[1]
+            '-input-charset',
+            'utf-8',
+            '-appid',
+            f'GENISOIMAGE-{task.get_output()[0].split()[1]}',
         ])
         if self._args.follow_flag:
             self._genisoimage.append_arg('-follow-links')
@@ -117,8 +124,8 @@ class Options:
 
         if not os.path.isdir(self._args.directory[0]):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + self._args.directory[0] +
-                '" directory.'
+                f'{sys.argv[0]}: Cannot find '
+                f'"{self._args.directory[0]}" directory.',
             )
         if self._args.image:
             self._image = self._args.image
@@ -169,7 +176,7 @@ class Main:
         )
         if files:
             bootimg = files[0]
-            print('Adding Eltorito boot image "' + bootimg + '"...')
+            print(f'Adding Eltorito boot image "{bootimg}"...')
             if 'isolinux' in bootimg:
                 self._genisoimage.extend_args([
                     '-eltorito-boot',
@@ -262,21 +269,22 @@ class Main:
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
-                        sys.argv[0] + ': Error code ' +
-                        str(task.get_exitcode()) + ' received from "' +
-                        task.get_file() + '".'
+                        f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                        f'received from "{task.get_file()}".',
                     )
                 if len(task.get_output()) > 1:
                     task2 = subtask_mod.Batch(mount.get_cmdline())
                     task2.run(
-                        pattern='^' + task.get_output()[1].split()[0] +
-                        ' .* (fuseblk|vfat|ntfs) '
+                        pattern=(
+                            f'^{task.get_output()[1].split()[0]} '
+                            f'.* (fuseblk|vfat|ntfs) '
+                        )
                     )
                     if task2.has_output():
                         print(
-                            "Using mode 444 for all plain files (" +
-                            task2.get_output()[0].split()[4] +
-                            " disk detected)..."
+                            "Using mode 444 for all plain files "
+                            f"({task2.get_output()[0].split()[4]} "
+                            "disk detected)...",
                         )
                         self._genisoimage.extend_args(['-file-mode', '444'])
 
@@ -317,8 +325,8 @@ class Main:
         task.run()
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
             )
 
         if os.path.isfile(image):
@@ -329,8 +337,8 @@ class Main:
             task.run(pattern=' id: $')
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
                 )
             self._isosize(image, os.path.getsize(image))
 

@@ -15,7 +15,7 @@ from typing import List
 
 import task_mod
 
-RELEASE = '2.8.1'
+RELEASE = '2.8.2'
 
 
 class Options:
@@ -48,8 +48,8 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='MyQS v' + self._release +
-            ', My Queuing System batch job submission.',
+            description=f"MyQS v{self._release}, My Queuing System "
+            f"batch job submission.",
         )
 
         parser.add_argument(
@@ -58,20 +58,20 @@ class Options:
             type=int,
             dest='ncpus',
             default=[1],
-            help='Select CPU core slots to reserve for job. Default is 1.'
+            help="Select CPU core slots to reserve for job. Default is 1.",
         )
         parser.add_argument(
             '-q',
             nargs=1,
             dest='queue',
             default=['normal'],
-            help='Select "normal" or "express" queue. Default is "normal".'
+            help='Select "normal" or "express" queue. Default is "normal".',
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='batch.sh',
-            help='Batch job file.'
+            help="Batch job file.",
         )
 
         self._args = parser.parse_args(args)
@@ -84,13 +84,13 @@ class Options:
 
         if self._args.ncpus[0] < 1:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
+                f'{sys.argv[0]}: You must specific a positive integer for '
                 'the number of cpus.'
             )
         if self._args.queue[0] not in ('normal', 'express'):
             raise SystemExit(
-                sys.argv[0] + ': Cannot submit to non-existent queue "' +
-                self._args.queue[0] + '".'
+                f'{sys.argv[0]}: Cannot submit to non-existent queue '
+                f'"{self._args.queue[0]}".',
             )
 
 
@@ -140,8 +140,8 @@ class Main:
                         jobid = 1
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + lastjob +
-                    '" MyQS lastjob file.'
+                    f'{sys.argv[0]}: Cannot read '
+                    f'"{lastjob}" MyQS lastjob file.',
                 ) from exception
             if jobid > 32767:
                 jobid = 1
@@ -152,8 +152,8 @@ class Main:
                 print(jobid, file=ofile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot update "' + lastjob +
-                '" MyQS lastjob file.'
+                f'{sys.argv[0]}: Cannot update '
+                f'"{lastjob}" MyQS lastjob file.',
             ) from exception
         return jobid
 
@@ -176,8 +176,8 @@ class Main:
                                 os.remove(lockfile)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' +
-                        lockfile + '" MyQS lock file.'
+                        f'{sys.argv[0]}: Cannot read '
+                        f'"{lockfile}" MyQS lock file.',
                     ) from exception
             if not os.path.isfile(lockfile):
                 try:
@@ -190,8 +190,8 @@ class Main:
                         print(os.getpid(), file=ofile)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' +
-                        lockfile + '" MyQS lock file.'
+                        f'{sys.argv[0]}: Cannot create '
+                        f'"{lockfile}" MyQS lock file.'
                     ) from exception
                 break
             time.sleep(1)
@@ -220,7 +220,7 @@ class Main:
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                print('MyQS cannot find "' + file + '" batch file.')
+                print(f'MyQS cannot find "{file}" batch file.')
                 return
             jobid = self._lastjob()
             try:
@@ -230,15 +230,14 @@ class Main:
                     encoding='utf-8',
                     newline='\n',
                 ) as ofile:
-                    print("COMMAND=" + file, file=ofile)
-                    print("DIRECTORY=" + os.getcwd(), file=ofile)
-                    print("PATH=" + os.environ['PATH'], file=ofile)
-                    print("QUEUE=" + queue, file=ofile)
-                    print("NCPUS=" + str(ncpus), file=ofile)
+                    print(f"COMMAND={file}", file=ofile)
+                    print(f"DIRECTORY={os.getcwd()}", file=ofile)
+                    print(f"PATH={os.environ['PATH']}", file=ofile)
+                    print(f"QUEUE={queue}", file=ofile)
+                    print(f"NCPUS={ncpus}", file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + tmpfile +
-                    '" temporary file.'
+                    f'{sys.argv[0]}: Cannot create "{tmpfile}" temporary file.'
                 ) from exception
             shutil.move(
                 tmpfile,
@@ -256,7 +255,8 @@ class Main:
 
         if 'HOME' not in os.environ:
             raise SystemExit(
-                sys.argv[0] + ': Cannot determine home directory.')
+                f"{sys.argv[0]}: Cannot determine home directory.",
+            )
         self._myqsdir = os.path.join(
             os.environ['HOME'],
             '.config',
@@ -269,8 +269,8 @@ class Main:
                 os.chmod(self._myqsdir, int('700', 8))
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + self._myqsdir +
-                    '" MyQS directory.'
+                    f'{sys.argv[0]}: Cannot create '
+                    f'"{self._myqsdir}" MyQS directory.',
                 ) from exception
         lockfile = self._lock()
         self._submit(options)

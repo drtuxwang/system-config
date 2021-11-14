@@ -41,21 +41,21 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Menu for launching software',
+            description="Menu for launching software",
         )
 
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='Show TCL file.'
+            help="Show TCL file.",
         )
         parser.add_argument(
             'menus',
             nargs='*',
             metavar='menu',
             default=['main'],
-            help='Menu name.'
+            help="Menu name.",
         )
 
         self._args = parser.parse_args(args)
@@ -76,15 +76,15 @@ class Menu:
         self._view_flag = options.get_view_flag()
         self._menus = options.get_menus()
 
-        template = sys.argv[0].rsplit('.py', 1)[0] + '.tcl.jinja2'
+        template = f"{sys.argv[0].rsplit('.py', 1)[0]}.tcl.jinja2"
         with open(template, encoding='utf-8', errors='replace') as ifile:
             self._template = jinja2.Template(ifile.read())
 
-        config_file = sys.argv[0].rsplit('.py', 1)[0] + '.yaml'
+        config_file = f"{sys.argv[0].rsplit('.py', 1)[0]}.yaml"
         status_file = os.path.join(
             os.environ['HOME'],
             '.config',
-            os.path.basename(sys.argv[0]).rsplit('.py', 1)[0] + '.json',
+            f"{os.path.basename(sys.argv[0]).rsplit('.py', 1)[0]}.json",
         )
         if os.path.isfile(status_file):
             file = status_file
@@ -123,12 +123,11 @@ class Menu:
         """
         Render template and return lines.
         """
-        items = self._config.get('menu_' + menu)
+        items = self._config.get(f'menu_{menu}')
         if not items:
-            raise SystemExit("{0:s}: Cannot find in menu.yaml: {1:s}".format(
-                sys.argv[0],
-                menu,
-            ))
+            raise SystemExit(
+                f"{sys.argv[0]}: Cannot find in menu.yaml: {menu}",
+            )
 
         config: dict = {'buttons': []}
         config['title'] = menu
@@ -157,7 +156,7 @@ class Menu:
                         print(line, file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + file + '" file.',
+                    f'{sys.argv[0]}: Cannot create "{file}" file.',
                 ) from exception
 
             subtask_mod.Background(wish.get_cmdline() + [file]).run()

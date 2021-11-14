@@ -49,14 +49,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Uncompress a file in XZ format.',
+            description="Uncompress a file in XZ format.",
         )
 
         parser.add_argument(
             'archives',
             nargs='+',
             metavar='file.xz',
-            help='Archive file.'
+            help="Archive file.",
         )
 
         self._args = parser.parse_args(args)
@@ -113,7 +113,7 @@ class Main:
         cmdline = options.get_command().get_cmdline()
         for file in options.get_archives():
             if file.endswith('.xz') and os.path.isfile(file):
-                print("{0:s}:".format(file))
+                print(f"{file}:")
 
                 output = os.path.basename(file)[:-3]
                 task = subtask_mod.Batch(cmdline + [file])

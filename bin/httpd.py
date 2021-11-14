@@ -37,23 +37,23 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Start a simple Python HTTP server.',
+            description="Start a simple Python HTTP server.",
         )
 
-        parser.add_argument('directory', nargs=1, help='Directory to serve.')
+        parser.add_argument('directory', nargs=1, help="Directory to serve.")
         parser.add_argument(
             'port',
             nargs=1,
             type=int,
-            help='Port number to bind to.'
+            help="Port number to bind to.",
         )
 
         self._args = parser.parse_args(args)
 
         if self._args.port[0] < 1:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
-                'port number.'
+                f'{sys.argv[0]}: You must specific a positive integer for '
+                'port number.',
             )
 
     def parse(self, args: List[str]) -> None:
@@ -65,13 +65,14 @@ class Options:
         directory = self._args.directory[0]
         if not os.path.isdir(directory):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + directory + '" directory.')
+                f'{sys.argv[0]}: Cannot find "{directory}" directory.',
+            )
 
         try:
             self._port = int(args[2])
         except ValueError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Invalid port number "' + args[2] + '".'
+                f'{sys.argv[0]}: Invalid port number "{args[2]}".',
             ) from exception
 
 
@@ -127,8 +128,8 @@ class Main:
             os.chdir(options.get_directory())
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot change to "' +
-                options.get_directory() + '" directory.'
+                f'{sys.argv[0]}: Cannot change to '
+                f'"{options.get_directory()}" directory.',
             ) from exception
 
         port = options.get_port()
@@ -142,14 +143,10 @@ class Main:
             )
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot bind to address "localhost:' +
-                str(port) + '".'
+                f'{sys.argv[0]}: Cannot bind to address "localhost:{port}".',
             ) from exception
 
-        print(
-            'Serving "' + os.getcwd() + '" at "http://localhost:' +
-            str(port) + '"...'
-        )
+        print(f'Serving "{os.getcwd()}" at "http://localhost:{port}"...')
         httpd.serve_forever()
 
         return 0

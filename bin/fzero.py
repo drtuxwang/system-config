@@ -29,14 +29,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Zero device or create zero file.',
+            description="Zero device or create zero file.",
         )
 
         parser.add_argument(
             'location',
             nargs=1,
             metavar='device|directory',
-            help='Device to zero or directory to create "fzero.tmp" file.'
+            help='Device to zero or directory to create "fzero.tmp" file.',
         )
 
         self._args = parser.parse_args(args)
@@ -45,13 +45,11 @@ class Options:
         if os.path.exists(location):
             if os.path.isfile(location):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot zero existing "' +
-                    location + '" file.'
+                    f'{sys.argv[0]}: Cannot zero existing "{location}" file.',
                 )
         else:
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + location +
-                '" device or directory.'
+                f'{sys.argv[0]}: Cannot find "{location}" device or directory.'
             )
 
     def parse(self, args: List[str]) -> None:
@@ -101,10 +99,10 @@ class Main:
 
         if os.path.isdir(options.get_location()):
             file = os.path.join(options.get_location(), 'fzero.tmp')
-            print('Creating "' + file + '" zero file...')
+            print(f'Creating "{file}" zero file...')
         else:
             file = options.get_location()
-            print('Zeroing "' + file + '" device...')
+            print(f'Zeroing "{file}" device...')
         start_time = time.time()
         chunk = 16384 * b'\0'
         size = 0
@@ -114,13 +112,12 @@ class Main:
                     for _ in range(64):
                         ofile.write(chunk)
                     size += 1
-                    sys.stdout.write("\r{0:d} MB".format(size))
+                    sys.stdout.write(f"\\r{size} MB")
                     sys.stdout.flush()
         except (KeyboardInterrupt, OSError):
             pass
         elapsed_time = time.time() - start_time
-        print(", {0:4.2f} seconds, {1:.0f} MB/s".format(
-            elapsed_time, size / elapsed_time))
+        print(f", {elapsed_time:4.2f} seconds, {size / elapsed_time:.0f} MB/s")
 
         return 0
 

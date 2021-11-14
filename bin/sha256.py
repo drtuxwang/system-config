@@ -41,26 +41,26 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Calculate MD5 checksums of files.',
+            description="Calculate MD5 checksums of files.",
         )
 
         parser.add_argument(
             '-R',
             dest='recursive_flag',
             action='store_true',
-            help='Recursive into sub-directories.'
+            help="Recursive into sub-directories.",
         )
         parser.add_argument(
             '-c',
             dest='check_flag',
             action='store_true',
-            help='Check checksums against files.'
+            help="Check checksums against files.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file|file.sha256sum',
-            help='File to checksum or ".sha256sum" checksum file.'
+            help='File to checksum or ".sha256sum" checksum file.',
         )
 
         self._args = parser.parse_args(args)
@@ -112,14 +112,14 @@ class Main:
                             [os.path.join(file, x) for x in os.listdir(file)]))
                     except PermissionError as exception:
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot open "' +
-                            file + '" directory.'
+                            f'{sys.argv[0]}: Cannot open "{file}" directory.',
                         ) from exception
             elif os.path.isfile(file):
                 sha256sum = self._sha256sum(file)
                 if not sha256sum:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot read "' + file + '" file.')
+                        f'{sys.argv[0]}: Cannot read "{file}" file.',
+                    )
                 print(sha256sum, file, sep='  ')
 
     def _check(self, files: List[str]) -> None:
@@ -130,8 +130,8 @@ class Main:
         for sha256file in files:
             if not os.path.isfile(sha256file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + sha256file +
-                    '" sha256sum file.'
+                    f'{sys.argv[0]}: Cannot find '
+                    f'"{sha256file}" sha256sum file.',
                 )
             try:
                 with open(
@@ -154,8 +154,8 @@ class Main:
                                 nfail += 1
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot read "' + sha256file +
-                    '" sha256sum file.'
+                    f'{sys.argv[0]}: Cannot read '
+                    f'"{sha256file}" sha256sum file.',
                 ) from exception
         if nmiss > 0:
             print("sha256: Cannot find", nmiss, "of", nfiles, "listed files.")
@@ -177,7 +177,7 @@ class Main:
                     sha256.update(chunk)
         except (OSError, TypeError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot read "{file}" file.',
             ) from exception
         return sha256.hexdigest()
 

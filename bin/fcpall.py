@@ -35,27 +35,26 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Copy a file to multiple target files.',
+            description="Copy a file to multiple target files.",
         )
 
         parser.add_argument(
             'source',
             nargs=1,
-            help='Source file.'
+            help="Source file.",
         )
         parser.add_argument(
             'targets',
             nargs='+',
             metavar='target',
-            help='Target file.'
+            help="Target file.",
         )
 
         self._args = parser.parse_args(args)
 
         if not os.path.isfile(self._args.source[0]):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + self._args.source[0] +
-                '" file.'
+                f'{sys.argv[0]}: Cannot find "{self._args.source[0]}" file.',
             )
 
     def parse(self, args: List[str]) -> None:
@@ -98,30 +97,27 @@ class Main:
 
     @staticmethod
     def _copy(source: str, target: str) -> None:
-        print('Copying to "' + target + '" file...')
+        print(f'Copying to "{target}" file...')
         try:
             shutil.copy2(source, target)
         except shutil.Error as exception:
             if 'are the same file' in exception.args[0]:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot copy to same "' +
-                    target + '" file.'
+                    f'{sys.argv[0]}: Cannot copy to same "{target}" file.',
                 ) from exception
             raise SystemExit(
-                sys.argv[0] + ': Cannot copy to "' +
-                target + '" file.'
+                f'{sys.argv[0]}: Cannot copy to "{target}" file.',
             ) from exception
         except OSError as exception:
             if exception.args != (95, 'Operation not supported'):
                 try:
                     with open(source, 'rb'):
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot create "' +
-                            target + '" file.'
+                            f'{sys.argv[0]}: Cannot create "{target}" file.',
                         ) from exception
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + target + '" file.'
+                        f'{sys.argv[0]}: Cannot create "{target}" file.',
                     ) from exception
 
     def run(self) -> int:

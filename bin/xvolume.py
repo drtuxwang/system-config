@@ -38,12 +38,12 @@ class Options:
             return int(int(task.get_output()[0].split()[2], 16) / 0x1000)
         except (IndexError, ValueError) as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot detect current Pulseaudio volume.'
+                f'{sys.argv[0]}: Cannot detect current Pulseaudio volume.',
             ) from exception
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Desktop audio volume utility.',
+            description="Desktop audio volume utility.",
         )
 
         parser.add_argument(
@@ -51,21 +51,21 @@ class Options:
             action='store_const',
             const='-',
             dest='change',
-            help='Increase brightness.'
+            help="Increase brightness.",
         )
         parser.add_argument(
             '-inc',
             action='store_const',
             const='+',
             dest='change',
-            help='Default brightness.'
+            help="Default brightness.",
         )
         parser.add_argument(
             '-reset',
             action='store_const',
             const='=',
             dest='change',
-            help='Decrease brightness.'
+            help="Decrease brightness.",
         )
 
         self._args = parser.parse_args(args)
@@ -87,8 +87,7 @@ class Options:
             volume = 10
         else:
             volume = self._getvol()
-        self._pacmd.set_args(
-            ['set-sink-volume', '0', '0x{0:X}'.format(volume * 0x1000)])
+        self._pacmd.set_args(['set-sink-volume', '0', f'0x{volume*0x10000:X}'])
 
 
 class Main:

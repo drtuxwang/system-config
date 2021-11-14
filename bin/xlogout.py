@@ -30,14 +30,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Logout from X-windows desktop.',
+            description="Logout from X-windows desktop.",
         )
 
         parser.add_argument(
             '-force',
             dest='force_flag',
             action='store_true',
-            help='Force login without confirmation.'
+            help="Force login without confirmation.",
         )
 
         self._args = parser.parse_args(args)

@@ -32,7 +32,7 @@ def health_check():
 @app.route('/hello/<name>')
 def hello(name=None):
     """
-    Uses jinja2 tempalte generate greeting
+    Uses jinja2 template generate greeting
     """
     return flask.render_template('hello.html', name=name)
 

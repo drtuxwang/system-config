@@ -37,20 +37,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Make a Python3 ZIP Application in PYZ format.',
+            description="Make a Python3 ZIP Application in PYZ format.",
         )
 
         parser.add_argument(
             'archive',
             nargs=1,
             metavar='file.pyz',
-            help='Archive file.'
+            help="Archive file.",
         )
         parser.add_argument(
             'files',
             nargs='*',
             metavar='file',
-            help='File to archive.'
+            help="File to archive.",
         )
 
         self._args = parser.parse_args(args)
@@ -94,8 +94,7 @@ class Options:
 
         if '__main__.py' not in self._archiver.get_args():
             raise SystemExit(
-                sys.argv[0] +
-                ': Cannot find "__main__.py" main program file.'
+                f'{sys.argv[0]}: Cannot find "__main__.py" main program file.',
             )
 
 
@@ -138,8 +137,8 @@ class Main:
                     self._copy(ifile, ofile)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot create "' + archive +
-                '" Python3 ZIP Application.'
+                f'{sys.argv[0]}: Cannot create '
+                f'"{archive}" Python3 ZIP Application.',
             ) from exception
         try:
             os.remove(archive + '-zip')
@@ -166,8 +165,9 @@ class Main:
         task.run()
         if task.get_exitcode():
             print(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".', file=sys.stderr
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
+                file=sys.stderr,
             )
             raise SystemExit(task.get_exitcode())
         self._make_pyz(options.get_archive())

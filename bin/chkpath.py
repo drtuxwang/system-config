@@ -27,7 +27,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Check PATH and return correct settings.',
+            description="Check PATH and return correct settings.",
         )
 
         self._args = parser.parse_args(args)
@@ -75,11 +75,11 @@ class Main:
         for directory in options.get_path().split(os.pathsep):
             if directory:
                 if not os.path.isdir(directory):
-                    print(directory + ': fail')
+                    print(f"{directory}: fail")
                 elif directory in path:
-                    print(directory + ': repeat')
+                    print(f"{directory}: repeat")
                 else:
-                    print(directory + ': ok')
+                    print(f"{directory}: ok")
                     path.append(directory)
         print("\nThe correct PATH should be:")
         print(os.pathsep.join(path))

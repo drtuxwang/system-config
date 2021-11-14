@@ -30,14 +30,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Remove horrible charcters in filename.',
+            description="Remove horrible characters in filename.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File or directory.'
+            help="File or directory.",
         )
 
         self._args = parser.parse_args(args)

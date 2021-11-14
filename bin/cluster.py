@@ -61,8 +61,8 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> List[str]:
         parser = argparse.ArgumentParser(
-            description='Run command on a list of nodes in parallel '
-            '(supply node list as stdin).\n',
+            description="Run command on a list of nodes in parallel "
+            "(supply node list as stdin).\n",
         )
 
         parser.add_argument(
@@ -72,7 +72,7 @@ class Options:
             dest='threads',
             default=[16],
             metavar='N',
-            help='Select number of threads. Default is 16.'
+            help="Select number of threads. Default is 16.",
         )
         parser.add_argument(
             '-timeout',
@@ -81,18 +81,18 @@ class Options:
             dest='timeout',
             default=[60],
             metavar='seconds',
-            help='Select timeout in seconds. Default is 60.'
+            help="Select timeout in seconds. Default is 60.",
         )
         parser.add_argument(
             'command',
             nargs=1,
-            help='Command to run on all systems.'
+            help="Command to run on all systems.",
         )
         parser.add_argument(
             'args',
             nargs='*',
             metavar='arg',
-            help='Command arguments.'
+            help="Command arguments.",
         )
 
         my_args = []
@@ -215,7 +215,7 @@ class WorkQueue:
             if host is None:
                 break
             if '@' not in host:
-                host = 'root@' + host
+                host = f'root@{host}'
             ssh = SecureShell()
 
             try:
@@ -227,9 +227,13 @@ class WorkQueue:
                 logging.warning('\033[33m%s: %s\033[0m', host, message)
             else:
                 message = 'ok'
-            print("[{0:d}/{1:d},{2:d}] {3:s}: {4:s}".format(
-                self._nitems - self._queue.qsize() + 1, self._nitems,
-                int(time.time() - self._time0), host, message))
+            print(
+                f"[{self._nitems - self._queue.qsize() + 1}/"
+                f"{self._nitems:d},"
+                f"{int(time.time() - self._time0):d}] "
+                f"{host}: "
+                f"{message}",
+            )
             self._queue.task_done()
 
     def add_items(self, hosts: List[str]) -> None:
@@ -308,15 +312,15 @@ class Main:
             try:
                 os.mkdir(directory)
             except OSError as exception:
-                message = 'Cannot create "' + directory + '" directory.'
+                message = f'Cannot create "{directory}" directory.'
                 logging.error('\033[31m%s\033[0m', message)
-                raise SystemExit(sys.argv[0] + ': ' + message) from exception
+                raise SystemExit(f"{sys.argv[0]}: {message}") from exception
         try:
             os.chdir(directory)
         except OSError as exception:
-            message = 'Cannot change to "' + directory + '" directory.'
+            message = f'Cannot change to "{directory}" directory.'
             logging.error('\033[31m%s\033[0m', message)
-            raise SystemExit(sys.argv[0] + ': ' + message) from exception
+            raise SystemExit(f"{sys.argv[0]}: {message}") from exception
 
     def run(self) -> int:
         """

@@ -42,24 +42,24 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Rename file/directory by replacing some characters.',
+            description="Rename file/directory by replacing some characters.",
         )
 
         parser.add_argument(
             'pattern',
             nargs=1,
-            help='Regular expression.'
+            help="Regular expression.",
         )
         parser.add_argument(
             'replacement',
             nargs=1,
-            help='Replacement for matches.'
+            help="Replacement for matches.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File or directory.'
+            help="File or directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -112,8 +112,8 @@ class Main:
             self._is_match = re.compile(options.get_pattern())
         except re.error as exception:
             raise SystemExit(
-                sys.argv[0] + ': Invalid regular expression "' +
-                options.get_pattern() + '".'
+                f'{sys.argv[0]}: Invalid regular expression '
+                f'"{options.get_pattern()}".',
             ) from exception
 
         self._replacement = options.get_replacement()
@@ -131,18 +131,17 @@ class Main:
             else:
                 newfile = self._is_match.sub(self._replacement, file)
             if newfile != file:
-                print('Renaming "' + file + '" to "' + newfile + '"...')
+                print(f'Renaming "{file}" to "{newfile}"...')
                 if os.path.isfile(newfile):
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot rename over existing "' +
-                        newfile + '" file.'
+                        f'{sys.argv[0]}: Cannot rename over existing '
+                        f'"{newfile}" file.',
                     )
                 try:
                     shutil.move(file, newfile)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot rename to "' +
-                        newfile + '" file.'
+                        f'{sys.argv[0]}: Cannot rename to "{newfile}" file.',
                     ) from exception
 
         return 0

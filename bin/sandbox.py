@@ -31,34 +31,34 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> List[str]:
         parser = argparse.ArgumentParser(
-            description='Sandbox command/shell with '
-            'read/write and network restrictions.',
+            description="Sandbox command/shell with "
+            "read/write and network restrictions.",
         )
 
         parser.add_argument(
             '-net',
             dest='allow_net',
             action='store_true',
-            help='Allow external network access.'
+            help="Allow external network access.",
         )
 
         parser.add_argument(
             '-mounts',
             dest='allow_mounts',
             action='store_true',
-            help='Mount full disk access.'
+            help="Mount full disk access.",
         )
 
         parser.add_argument(
             'command',
             nargs='?',
-            help='Command to run.'
+            help="Command to run.",
         )
         parser.add_argument(
             'args',
             nargs='*',
             metavar='arg',
-            help='Command argument.'
+            help="Command argument.",
         )
 
         my_args = []

@@ -35,20 +35,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack a compressed archive in TAR.BZ2 format.',
+            description="npack a compressed archive in TAR.BZ2 format.",
         )
 
         parser.add_argument(
             '-v',
             dest='view_flag',
             action='store_true',
-            help='Show contents of archive.'
+            help="Show contents of archive.",
         )
         parser.add_argument(
             'archives',
             nargs='+',
             metavar='file.tar.bz2|file.tbz',
-            help='Archive file.'
+            help="Archive file.",
         )
 
         self._args = parser.parse_args(args)
@@ -56,8 +56,7 @@ class Options:
         for archive in self._args.archives:
             if not archive.endswith(('.tar.bz2', '.tbz')):
                 raise SystemExit(
-                    sys.argv[0] + ': Unsupported "' + archive +
-                    '" archive format.'
+                    f'{sys.argv[0]}: Unsupported "{archive}" archive format.',
                 )
 
     def parse(self, args: List[str]) -> None:
@@ -104,27 +103,26 @@ class Main:
             print(file)
             if os.path.isabs(file):
                 raise SystemExit(
-                    sys.argv[0] + ': Unsafe to extract file with absolute '
+                    f'{sys.argv[0]}: Unsafe to extract file with absolute '
                     'path outside of current directory.'
                 )
             if file.startswith(os.pardir):
                 raise SystemExit(
-                    sys.argv[0] + ': Unsafe to extract file with relative '
-                    'path outside of current directory.'
+                    f'{sys.argv[0]}: Unsafe to extract file with relative '
+                    'path outside of current directory.',
                 )
             try:
                 archive.extract(archive.getmember(file))
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Unable to create "' + file +
-                    '" extracted.'
+                    f'{sys.argv[0]}: Unable to create "{file}" extracted.',
                 ) from exception
             if not os.path.isfile(file):
                 if not os.path.isdir(file):
                     if not os.path.islink(file):
                         raise SystemExit(
-                            sys.argv[0] + ': Cannot create extracted "' +
-                            file + '" file.'
+                            f'{sys.argv[0]}: Cannot create extracted '
+                            f'"{file}" file.',
                         )
 
     @staticmethod
@@ -140,7 +138,7 @@ class Main:
 
         os.umask(int('022', 8))
         for file in options.get_archives():
-            print(file + ':')
+            print(f"{file}:")
             try:
                 with tarfile.open(file, 'r:bz2') as archive:
                     if options.get_view_flag():
@@ -149,8 +147,7 @@ class Main:
                         cls._unpack(archive)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot open "' + file +
-                    '" archive file.'
+                    f'{sys.argv[0]}: Cannot open "{file}" archive file.',
                 ) from exception
 
         return 0

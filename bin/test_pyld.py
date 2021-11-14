@@ -104,7 +104,7 @@ class TestOptions(
             'arg0',
             'moduleX',
             '-pyldpath',
-            'pathX' + os.path.pathsep + 'pathY'
+            f'pathX{os.path.pathsep}pathY',
         ]
         options = pyld.Options(args)
 
@@ -117,8 +117,8 @@ class TestOptions(
         exit status 2.
         """
         expected = (
-            os.path.basename(sys.argv[0]) +
-            ': error: argument -pyldpath: expected 1 argument'
+            f'{os.path.basename(sys.argv[0])}: '
+            'error: argument -pyldpath: expected 1 argument'
         )
         args = ['arg0', 'moduleX', '-pyldpath', '-pyldv']
 
@@ -205,7 +205,7 @@ class TestOptions(
             'arg0',
             'moduleX',
             '-pyldpath',
-            'pathX' + os.path.pathsep + 'pathY',
+            f'pathX{os.path.pathsep}pathY',
             'moduleYarg1',
             'moduleYarg2'
         ]
@@ -394,8 +394,8 @@ class TestOptions(
         supplied.
         """
         expected = (
-            os.path.basename(sys.argv[0]) +
-            ': error: the following arguments are required: module, arg'
+            f'{os.path.basename(sys.argv[0])}: '
+            'error: the following arguments are required: module, arg'
         )
         args = ['arg0']
 
@@ -550,5 +550,5 @@ if __name__ == '__main__':
     if '--pydoc' in sys.argv:
         help(__name__)
     else:
-        print("\n" + __file__ + ":unittest.main(verbosity=2, buffer=True):")
+        print(f"\n{__file__}:unittest.main(verbosity=2, buffer=True):")
         unittest.main(verbosity=2, buffer=True)

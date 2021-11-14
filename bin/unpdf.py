@@ -37,7 +37,7 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Unpack PDF file into series of JPG files.',
+            description="Unpack PDF file into series of JPG files.",
         )
 
         parser.add_argument(
@@ -45,20 +45,21 @@ class Options:
             nargs=1,
             type=int,
             default=[300],
-            help='Selects DPI resolution (default is 300).'
+            help="Selects DPI resolution (default is 300).",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file.pdf',
-            help='PDF document file.'
+            help="PDF document file.",
         )
 
         self._args = parser.parse_args(args)
 
         if self._args.dpi[0] < 50:
             raise SystemExit(
-                sys.argv[0] + ': DPI resolution must be at least 50.')
+                f'{sys.argv[0]}: DPI resolution must be at least 50.',
+            )
 
     def parse(self, args: List[str]) -> None:
         """
@@ -72,7 +73,7 @@ class Options:
             '-dBATCH',
             '-dSAFER',
             '-sDEVICE=jpeg',
-            '-r' + str(self._args.dpi[0])
+            f'-r{self._args.dpi[0]}',
         ])
 
 
@@ -119,11 +120,12 @@ class Main:
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" PDF file.')
+                    f'{sys.argv[0]}: Cannot find "{file}" PDF file.',
+                )
             prefix = os.path.basename(file).rsplit('.', 1)[0]
-            print('Unpacking "{0:s}-page*.jpg" file...'.format(prefix))
+            print(f'Unpacking "{prefix}-page*.jpg" file...')
             task = subtask_mod.Task(command.get_cmdline() + [
-                '-sOutputFile=' + prefix + '-page%02d.jpg',
+                f'-sOutputFile={prefix}-page%02d.jpg',
                 '-c',
                 'save',
                 'pop',
@@ -133,8 +135,8 @@ class Main:
             task.run(pattern='Ghostscript|^Copyright|WARRANTY:|^Processing')
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
                 )
 
         return 0

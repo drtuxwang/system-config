@@ -30,14 +30,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Check BSON/JSON/YAML configuration files for errors.',
+            description="Check BSON/JSON/YAML configuration files for errors.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to check.'
+            help="File to check.",
         )
 
         self._args = parser.parse_args(args)
@@ -91,13 +91,13 @@ class Main:
 
         for file in options.get_files():
             if not os.path.isfile(file):
-                print("{0:s}: Cannot find file".format(file))
+                print(f"{file}: Cannot find file")
                 error = 1
             elif file.endswith(('.json', 'yaml', 'yml', '.bson')):
                 try:
                     data.read(file, check=True)
                 except config_mod.ReadConfigError as exception:
-                    print("{0:s}: {1:s}".format(file, str(exception)))
+                    print(f"{file}: {exception}")
                     error = 1
 
         return error

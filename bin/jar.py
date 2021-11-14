@@ -102,8 +102,7 @@ class Main:
         target = source[:-5]+'.class'
         if not os.path.isfile(source):
             raise SystemExit(
-                sys.argv[0] + ': Cannot find "' + source +
-                '" Java source file.'
+                f'{sys.argv[0]}: Cannot find "{source}" Java source file.',
             )
         if os.path.isfile(target):
             if os.path.getmtime(source) > os.path.getmtime(target):
@@ -111,25 +110,24 @@ class Main:
                     os.remove(target)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot remove "' + target +
-                        '" Java class file.'
+                        f'{sys.argv[0]}: Cannot remove '
+                        f'"{target}" Java class file.',
                     ) from exception
         if not os.path.isfile(target):
             javac = command_mod.Command('javac', args=[source], errors='stop')
-            print('Building "' + target + '" Java class file.')
+            print(f'Building "{target}" Java class file.')
             task = subtask_mod.Batch(javac.get_cmdline())
             task.run(error2output=True)
             if task.get_exitcode():
                 raise SystemExit(
-                    sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                    ' received from "' + task.get_file() + '".'
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                    f'received from "{task.get_file()}".',
                 )
             for line in task.get_output():
-                print("  " + line)
+                print(f"  {line}")
             if not os.path.isfile(target):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + target +
-                    " Java class file."
+                    f'{sys.argv[0]}: Cannot create "{target}" Java class file.'
                 )
 
     def _create_manifest(self) -> None:
@@ -139,8 +137,8 @@ class Main:
             else:
                 main = self._jar_file[:-4]
             print(
-                'Building "' + self._manifest + '" Java manifest file with "' +
-                main + '" main class.'
+                f'Building "{self._manifest}" Java manifest file with '
+                f'"{main}" main class.',
             )
             try:
                 with open(
@@ -152,8 +150,8 @@ class Main:
                     print("Main-Class:", main, file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create "' + self._manifest +
-                    '" Java manifest file.'
+                    f'{sys.argv[0]}: Cannot create '
+                    f'"{self._manifest}" Java manifest file.',
                 ) from exception
 
     def run(self) -> int:
@@ -173,7 +171,7 @@ class Main:
             else:
                 self._jar.append_arg(file)
         self._create_manifest()
-        print('Building "' + self._jar_file + '" Java archive file.')
+        print(f'Building "{self._jar_file}" Java archive file.')
         subtask_mod.Exec(self._jar.get_cmdline()).run()
 
         return 0

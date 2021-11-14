@@ -44,24 +44,24 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Substitute patterns on lines in files.',
+            description="Substitute patterns on lines in files.",
         )
 
         parser.add_argument(
             'pattern',
             nargs=1,
-            help='Regular expression.'
+            help="Regular expression.",
         )
         parser.add_argument(
             'replacement',
             nargs=1,
-            help='Replacement for matches.'
+            help="Replacement for matches.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File or directory.'
+            help="File or directory.",
         )
 
         self._args = parser.parse_args(args)
@@ -133,18 +133,18 @@ class Main:
                                 nchange += 1
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + newfile + '" file.'
+                        f'{sys.argv[0]}: Cannot create "{newfile}" file.'
                     ) from exception
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" file.'
+                f'{sys.argv[0]}: Cannot read "{file}" file.',
             ) from exception
 
         if nchange:
             if nchange > 1:
-                print(file + ':', nchange, 'lines changed.')
+                print(f"{file}: {nchange} lines changed.")
             else:
-                print(file + ':', nchange, 'line changed.')
+                print(f"{file}: {nchange} line changed.")
 
             try:
                 os.chmod(newfile, file_mod.FileStat(file).get_mode())
@@ -152,7 +152,7 @@ class Main:
             except OSError as exception:
                 self._remove(newfile)
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot update "' + file + '" file.'
+                    f'{sys.argv[0]}: Cannot update "{file}" file.',
                 ) from exception
         else:
             self._remove(newfile)
@@ -167,8 +167,8 @@ class Main:
             self._is_match = re.compile(options.get_pattern())
         except re.error as exception:
             raise SystemExit(
-                sys.argv[0] + ': Invalid regular expression "' +
-                options.get_pattern() + '".'
+                f'{sys.argv[0]}: Invalid regular expression '
+                f'"{options.get_pattern()}".',
             ) from exception
 
         self._replacement = options.get_replacement()

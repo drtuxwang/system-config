@@ -9,8 +9,8 @@ umask 022
 rm -rf tmpdir/*python-requirements*
 
 mkdir -p tmpdir
-echo "Creating \"tmpdir/install-python-requirements.sh\"..."
-cp -p "$TOPDIR"/etc/install-python-requirements.sh tmpdir
+echo "Creating \"tmpdir/python-packages.sh\"..."
+cp -p "$TOPDIR"/etc/python-packages.sh tmpdir
 echo "Creating \"tmpdir/python-requirements.txt\"..."
 cp -p "$TOPDIR"/etc/python-requirements.txt tmpdir
 

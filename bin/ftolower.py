@@ -29,14 +29,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Convert filename to lowercase.',
+            description="Convert filename to lowercase.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='File to change.'
+            help="File to change.",
         )
 
         self._args = parser.parse_args(args)
@@ -89,7 +89,8 @@ class Main:
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" file.')
+                    f'{sys.argv[0]}: Cannot find "{file}" file.',
+                )
             if os.sep not in file:
                 newfile = file.lower()
             elif file.endswith(os.sep):
@@ -99,18 +100,18 @@ class Main:
                 newfile = os.path.join(
                     os.path.dirname(file), os.path.basename(file).lower())
             if newfile != file:
-                print('Converting filename "' + file + '" to lowercase...')
+                print(f'Converting filename "{file}" to lowercase...')
                 if os.path.isfile(newfile):
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot rename over existing "' +
-                        newfile + '" file.'
+                        f'{sys.argv[0]}: Cannot rename over existing '
+                        f'"{newfile}" file.',
                     )
                 try:
                     shutil.move(file, newfile)
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot rename "' + file +
-                        '" file to "' + newfile + '".'
+                        f'{sys.argv[0]}: Cannot rename '
+                        f'"{file}" file to "{newfile}".',
                     ) from exception
 
         return 0

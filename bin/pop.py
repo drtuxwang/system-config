@@ -44,14 +44,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Send popup message to display.',
+            description="Send popup message to display.",
         )
 
         parser.add_argument(
             '-run',
             action='store_true',
             dest='run',
-            help='Run command and notify on completion.'
+            help="Run command and notify on completion.",
         )
         parser.add_argument(
             '-time',
@@ -59,13 +59,13 @@ class Options:
             type=int,
             dest='timeDelay',
             default=[0],
-            help='Delay popup in minutes.'
+            help="Delay popup in minutes.",
         )
         parser.add_argument(
             'words',
             nargs='+',
             metavar='word',
-            help='A word.'
+            help="A word.",
         )
 
         if args[0:1] == ['-run']:
@@ -80,8 +80,8 @@ class Options:
 
         if self._args.timeDelay[0] < 0:
             raise SystemExit(
-                sys.argv[0] +
-                ': You must specific a positive integer for delay time.'
+                f'{sys.argv[0]}: You must specific a '
+                'positive integer for delay time.',
             )
 
 
@@ -142,7 +142,7 @@ class Main:
                 args = args[:1] + ['not found']
                 exitcode = 1
             elapsed_time = time.time() - start_time
-            print("Elapsed time (s): {0:5.3f} ".format(elapsed_time))
+            print(f"Elapsed time (s): {elapsed_time:5.3f} ")
         else:
             args = [' '.join(args)]
 
@@ -159,8 +159,8 @@ class Main:
         task.run()
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
             )
 
         raise SystemExit(exitcode)

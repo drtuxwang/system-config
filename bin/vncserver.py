@@ -31,8 +31,8 @@ class Options:
         if not os.path.isfile(
                 os.path.join(os.environ['HOME'], '.vnc', 'passwd')):
             raise SystemExit(
-                sys.argv[0] +
-                ': ".vnc/passwd" does not exist. Run "vncpasswd".'
+                f'{sys.argv[0]}: ".vnc/passwd" does not exist. '
+                'Run "vncpasswd".',
             )
         os.chdir(os.environ['HOME'])
         xstartup = os.path.join(os.environ['HOME'], '.vnc', 'xstartup')
@@ -58,7 +58,7 @@ class Options:
                         print("dbus-launch startxfce4", file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot create ".vnc/xstartup" file.'
+                    f'{sys.argv[0]}: Cannot create ".vnc/xstartup" file.',
                 ) from exception
             os.chmod(xstartup, int('755', 8) & ~self._umask)
         directory = os.path.dirname(self._vncserver.get_file())

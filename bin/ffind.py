@@ -34,18 +34,18 @@ class Options:
         return self._args.pattern[0]
 
     def _parse_args(self, args: List[str]) -> None:
-        parser = argparse.ArgumentParser(description='Find file or directory.')
+        parser = argparse.ArgumentParser(description="Find file or directory.")
 
         parser.add_argument(
             'pattern',
             nargs=1,
-            help='Regular expression.'
+            help="Regular expression.",
         )
         parser.add_argument(
             'directories',
             nargs='+',
             metavar='directory',
-            help='Directory to search.'
+            help="Directory to search.",
         )
 
         self._args = parser.parse_args(args)
@@ -98,8 +98,7 @@ class Main:
                     ])
                 except PermissionError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot open "' + file +
-                        '" directory.'
+                        f'{sys.argv[0]}: Cannot open "{file}" directory.',
                     ) from exception
 
             elif self._ispattern.search(file):
@@ -115,8 +114,8 @@ class Main:
             self._ispattern = re.compile(options.get_pattern())
         except re.error as exception:
             raise SystemExit(
-                sys.argv[0] + ': Invalid regular expression "' +
-                options.get_pattern() + '".'
+                f'{sys.argv[0]}: Invalid regular expression '
+                f'"{options.get_pattern()}".',
             ) from exception
 
         self._find(options.get_directories())

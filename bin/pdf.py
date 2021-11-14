@@ -49,8 +49,8 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Create PDF file from text/images/'
-            'postscript/PDF files.',
+            description="Create PDF file from text/images/"
+            "postscript/PDF files.",
         )
 
         parser.add_argument(
@@ -58,14 +58,14 @@ class Options:
             nargs=1,
             type=int,
             default=[100],
-            help='Select characters per line.'
+            help="Select characters per line.",
         )
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
             help='Text/images/postscript/PDF file. A target ".pdf" file can '
-            'be given as the first file.'
+            'be given as the first file.',
         )
 
         self._args = parser.parse_args(args)
@@ -78,8 +78,8 @@ class Options:
 
         if self._args.chars[0] < 0:
             raise SystemExit(
-                sys.argv[0] + ': You must specific a positive integer for '
-                'characters per line.'
+                f"{sys.argv[0]}: You must specific a positive integer for "
+                "characters per line.",
             )
 
         if self._args.files[0].endswith('.pdf'):
@@ -87,8 +87,8 @@ class Options:
             self._files = self._args.files[1:]
             if self._archive in self._args.files[1:]:
                 raise SystemExit(
-                    sys.argv[0] +
-                    ': The input and output files must be different.'
+                    f"{sys.argv[0]}: The input and "
+                    "output files must be different.",
                 )
         else:
             self._archive = ''
@@ -144,10 +144,11 @@ class Main:
 
         task = subtask_mod.Batch(
             convert.get_cmdline() + ['-verbose', file, '/dev/null'])
-        task.run(pattern='^' + file + ' ', error2output=True)
+        task.run(pattern=f'^{file} ', error2output=True)
         if not task.has_output():
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" image file.')
+                f'{sys.argv[0]}: Cannot read "{file}" image file.',
+            )
         xsize, ysize = task.get_output(
             )[0].split('+')[0].split()[-1].split('x')
         cmdline = convert.get_cmdline() + ['-page', 'a4']
@@ -155,16 +156,16 @@ class Main:
             cmdline.extend(['-border', '30', '-bordercolor', 'white'])
         if int(xsize) > int(ysize):
             cmdline.extend(['-rotate', '270'])
-        cmdline.extend([file, 'pdf:' + self._tmpfile])
+        cmdline.extend([file, f'pdf:{self._tmpfile}'])
 
         task = subtask_mod.Batch(cmdline)
         task.run()
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {str(task.get_exitcode())} '
+                f'received from "{task.get_file()}".',
             )
-        return 'IMAGE file "' + file + '"'
+        return f'IMAGE file "{file}"'
 
     def _postscript(self, file: str) -> str:
         try:
@@ -175,14 +176,14 @@ class Main:
                             ofile.write(line.rstrip(b"\r\n\004") + b"\n")
                 except OSError as exception:
                     raise SystemExit(
-                        sys.argv[0] + ': Cannot create "' + self._tmpfile +
-                        '" temporary file.'
+                        f'{sys.argv[0]}: Cannot create '
+                        f'"{self._tmpfile}" temporary file.',
                     ) from exception
                 self._postscript_fix(self._tmpfile)
-                return 'Postscript file "' + file + '"'
+                return f'Postscript file "{file}"'
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" postscript file.'
+                f'{sys.argv[0]}: Cannot read "{file}" postscript file.',
             ) from exception
 
     def _postscript_fix(self, file: str) -> None:
@@ -215,8 +216,10 @@ class Main:
                             line = ' '.join(columns)
                         elif line.endswith(' scale'):
                             xsize, ysize, _ = line.split()
-                            line = '{0:6.4f} {1:6.4f} scale'.format(
-                                float(xsize)*scaling, float(ysize)*scaling)
+                            line = (
+                                f'{float(xsize) * scaling:6.4f} '
+                                f'{float(ysize) * scaling:6.4f} scale'
+                            )
                         print(line, file=ofile)
             shutil.move(file + '.part', file)
 
@@ -241,9 +244,9 @@ class Main:
 
         a2ps.extend_args([
             '--portrait',
-            '--chars-per-line=' + str(chars),
-            '--left-title=' + time.strftime('%Y-%m-%d-%H:%M:%S'),
-            '--center-title=' + os.path.basename(file)
+            f'--chars-per-line={chars}',
+            f"--left-title={time.strftime('%Y-%m-%d-%H:%M:%S')}",
+            f'--center-title={os.path.basename(file)}'
         ])
 
         is_not_printable = re.compile('[\000-\037\200-\277]')
@@ -262,16 +265,16 @@ class Main:
                         stdin.extend(lines)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read "' + file + '" text file.'
+                f'{sys.argv[0]}: Cannot read "{file}" text file.',
             ) from exception
         task = subtask_mod.Batch(a2ps.get_cmdline())
         task.run(stdin=stdin, file=self._tmpfile)
         if task.get_exitcode():
             raise SystemExit(
-                sys.argv[0] + ': Error code ' + str(task.get_exitcode()) +
-                ' received from "' + task.get_file() + '".'
+                f'{sys.argv[0]}: Error code {task.get_exitcode()} '
+                f'received from "{task.get_file()}".',
             )
-        return 'text file "' + file + '" with ' + str(chars) + ' columns'
+        return f'text file "{file}" with {chars} columns'
 
     def run(self) -> int:
         """
@@ -281,7 +284,7 @@ class Main:
         self._cache: dict = {}
 
         tmpdir = file_mod.FileUtil.tmpdir('.cache')
-        tmpfile = os.path.join(tmpdir, 'pdf.tmp' + str(os.getpid()))
+        tmpfile = os.path.join(tmpdir, f'pdf.tmp{os.getpid()}')
         command = command_mod.Command('gs', errors='stop')
         command.set_args([
             '-q',
@@ -295,7 +298,7 @@ class Main:
         images_extensions = config_mod.Config().get('image_extensions')
 
         args = [
-            '-sOutputFile=' + options.get_archive(),
+            f'-sOutputFile={options.get_archive()}',
             '-c',
             '3000000',
             'setvmthreshold',
@@ -304,14 +307,13 @@ class Main:
             print("Packing", file)
             if not options.get_archive():
                 args = [
-                    '-sOutputFile=' + file.rsplit('.', 1)[0] + '.pdf',
+                    f"-sOutputFile={file.rsplit('.', 1)[0]}.pdf",
                     '-c',
                     '3000000',
                     'setvmthreshold',
                 ]
             if not os.path.isfile(file):
-                raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" file.')
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
             _, ext = os.path.splitext(file.lower())
             if ext == '.pdf':
                 args.extend(['-f', file])

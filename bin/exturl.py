@@ -29,14 +29,14 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Extracts http references from a HTML file.',
+            description="Extracts http references from a HTML file.",
         )
 
         parser.add_argument(
             'files',
             nargs='+',
             metavar='file',
-            help='HTML file.'
+            help="HTML file.",
         )
 
         self._args = parser.parse_args(args)
@@ -97,7 +97,7 @@ class Main:
                             urls.append(url)
         except OSError as exception:
             raise SystemExit(
-                sys.argv[0] + ': Cannot read ' + file + ' HTML file.'
+                f'{sys.argv[0]}: Cannot read {file} HTML file.',
             ) from exception
         return urls
 
@@ -115,7 +115,8 @@ class Main:
         for file in options.get_files():
             if not os.path.isfile(file):
                 raise SystemExit(
-                    sys.argv[0] + ': Cannot find "' + file + '" HTML file.')
+                    f'{sys.argv[0]}: Cannot find "{file}" HTML file.',
+                )
             urls.extend(self._extract(file))
         for url in sorted(set(urls)):
             print(url)

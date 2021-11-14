@@ -31,20 +31,20 @@ class Options:
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description='Uncompress a file in ZST format.',
+            description="Uncompress a file in ZST format.",
         )
 
         parser.add_argument(
             '-test',
             dest='test_flag',
             action='store_true',
-            help='Test archive data only.'
+            help="Test archive data only.",
         )
         parser.add_argument(
             'archives',
             nargs='+',
             metavar='file.zst',
-            help='Archive file.'
+            help="Archive file.",
         )
 
         self._args = parser.parse_args(args)
