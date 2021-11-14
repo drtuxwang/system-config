@@ -9,7 +9,7 @@ cached-property==None
 check-manifest==0.44
 contextlib2==None
 crashtest==None
-cryptography==3.2.1
+# cryptography==3.2.1        #   (required by paramiko)
 Django==None
 dnspython==None
 docker-compose==None
