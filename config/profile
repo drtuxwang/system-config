@@ -375,7 +375,7 @@ then
         then
             alias test='return 2> /dev/null'
         fi
-        unset CDPATH LS_COLORS
+        unset CDPATH LS_COLORS PROMPT_COMMAND 2> /dev/null
         unset command_not_found_handle
         ;;
     esac
