@@ -21,7 +21,7 @@ BUILD_DIRS := \
 	oraclelinux-8-slim \
 	python-3.8-slim-buster \
 	registry-2.6 \
-	rockylinux \
+	rockylinux-8 \
 	sudo \
 	ubuntu-16.04 \
 	ubuntu-18.04 \
