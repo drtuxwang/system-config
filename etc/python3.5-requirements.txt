@@ -1,56 +1,56 @@
-# ansible==None
-# ansible-core==None
-# appimage-builder==None
+ansible==None
+ansible-core==None
+appimage-builder==None
 arrow==0.17.0
 astroid==2.4.2
 build==0.5.1
-# CacheControl==None
-# cached-property==None
+CacheControl==None
+cached-property==None
 check-manifest==0.44
-# contextlib2==None
-# crashtest==None
-# cryptography==3.2.1        #   (required by paramiko)
-# Django==None
-# dnspython==None
-# docker-compose==None
-# dropbox==None
-# emrichen==None
+contextlib2==None
+crashtest==None
+cryptography                 #   (cryptography==3.2.1 required by paramiko)
+Django==None
+dnspython==None
+docker-compose==None
+dropbox==None
+emrichen==None
 gitdb==4.0.7
 GitPython==3.1.17
-# ImageHash==None
+ImageHash==None
 importlib-metadata==2.1.1    #   (required by virtualenv for 3.5)
 importlib-resources==3.2.1   #   (required by virtualenv for 3.5)
-# inflect==None
+inflect==None
 ipython==7.9.0
 isort==4.3.21
 jedi==0.17.2
 jeepney==0.4.3
-# keyring==None
+keyring==None
 lazy-object-proxy==1.4.3
-# lockfile==None
+lockfile==None
 Markdown==3.2.2
 MarkupSafe==1.1.1
-# nexus3-cli==None
+nexus3-cli==None
 numpy==1.18.5
-# pyOpenSSL==None
+pyOpenSSL==None
 parso==0.7.1
-# Pillow==None
-pip==20.2.4
+Pillow==None
+pip                          #   (pip==20.2.4 last supported)
 platformdirs==2.0.2
-# poetry==None
-# poetry-core==None
+poetry==None
+poetry-core==None
 prompt-toolkit==2.0.10
-# pyaml==None
+pyaml==None
 pylint==2.6.2
-# PyYAML==None
-# questionary==None
-# roam==None
-# scipy==None
+PyYAML==None
+questionary==None
+roam==None
+scipy==None
 setuptools==50.3.2
 smmap2==2.0.5                #   (required by GitPython for 3.5)
-# tomli==None
+tomli==None
 traitlets==4.3.3
 typed-ast==1.4.3             #   (required by pylint/mypy for 3.5)
-# websockets==None
-# yt-dlp==None
+websockets==None
+yt-dlp==None
 zipp==1.2.0                  #   (required by virtualenv for 3.5)
