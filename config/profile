@@ -384,7 +384,7 @@ then
     # Change to $HOME/Desktop
     if [ "$PWD" = "$HOME" -o "$PWD" = "/" ]
     then
-        mkdir $HOME/Desktop 2> /dev/null
+        mkdir -p $HOME/Desktop/Downloads 2> /dev/null
         cd "$HOME/Desktop" 2> /dev/null
         while [ "$PWD" != "$HOME/Desktop" ]
         do
