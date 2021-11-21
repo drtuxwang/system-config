@@ -242,7 +242,7 @@ class Main:
                         break
                     tmpsize += len(chunk)
                     ofile.write(chunk)
-                    print(f"\\r  => {file} [{tmpsize}/{size}]", end='')
+                    print(f"\r  => {file} [{tmpsize}/{size}]", end='')
         except PermissionError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{file}" file.',

@@ -5,6 +5,7 @@ Run command in new terminal session
 
 import argparse
 import glob
+import hashlib
 import os
 import random
 import re
@@ -63,6 +64,14 @@ class Options:
             if '?format=jpg' in url:
                 output += '.jpg'
                 url = url.replace('=medium', '=large')
+        elif url.endswith('/'):
+            md5 = hashlib.md5()
+            md5.update(url.encode())
+            directory = os.path.basename(url[:-1])
+            if 'jpg' in directory:
+                output = f'index-{md5.hexdigest()[:9]}.jpg'
+            else:
+                output = f'index-{md5.hexdigest()[:9]}.html'
         return ['wget', '-O', output, url]
 
     @staticmethod
@@ -127,7 +136,7 @@ class Options:
             '-ut',
             '-geometry',
             '100x10+'
-            f'{random.randint(20, int(40)):d}+{random.randint(20, int(40)):d}',
+            f'{random.randint(20, 40)}+{random.randint(80, 100)}',
             '-T',
             f'xrun: {command}',
             '-e',

@@ -12,8 +12,8 @@ import re
 import subprocess
 from typing import List, Optional
 
-RELEASE = '2.2.5'
-VERSION = 20211107
+RELEASE = '2.2.6'
+VERSION = 20211116
 
 
 class Battery:
@@ -345,7 +345,7 @@ class BatteryMac(Battery):
 
         try:
             self._is_exist = data['BatteryInstalled'] == 'Yes'
-            self._info['capacity'] = data['CurrentCapacity']
+            self._info['capacity'] = int(data['CurrentCapacity'])
             self._info['voltage'] = int(data['Voltage'])
             hours = int(data['TimeRemaining']) / 60
             if hours == 0:

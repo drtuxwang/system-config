@@ -1,6 +1,6 @@
 ansible==4.5.0
 ansible-core==2.11.4
-appimage-builder==None
+# appimage-builder==None
 arrow==0.17.0
 astroid==1.6.6
 backports-abc==0.5           #   (required by tornado for 2.7)
@@ -8,54 +8,54 @@ backports.functools-lru-cache==1.6.4  #   (required by cookiecutter/ipdb for 2.7
 backports.shutil-get-terminal-size==1.0.0  #   (required by docker-compose/ipdb for 2.7)
 backports.ssl-match-hostname==3.7.0.1  #   (required by docker-compose for 2.7)
 build==0.5.1
-CacheControl==None
+# CacheControl==None
 cached-property==1.5.2       #   (required by docker-compose for 2.7)
 cachetools==3.1.1
 cffi==1.14.1
 check-manifest==0.41
-cleo==None
-clikit==None
+# cleo==None
+# clikit==None
 configparser==4.0.2          #   (required by docker-compose/virtualenv  for 2.7)
 contextlib2==0.6.0.post1     #   (required by docker-compose/virtualenv for 2.7)
-crashtest==None
+# crashtest==None
 cryptography==3.3.2
 decorator==4.4.2
-Django==None
-dnspython==None
+# Django==None
+# dnspython==None
 docker-compose==1.26.2
-emrichen==None
+# emrichen==None
 enum34==1.1.10               #   (required by ansible/docker-compose for 2.7)
 functools32==3.2.3.post2     #   (required by docker-compose for 2.7)
 futures==3.3.0               #   (required by pylint for 2.7)
-gitdb==None
+# gitdb==None
 gitdb2==2.0.6                #   (required by GitPython for 2.7)
 GitPython==2.1.15
-ImageHash==None
+# ImageHash==None
 importlib-metadata==2.1.1    #   (required by virtualenv for 2.7)
 importlib-resources==3.3.1   #   (required by virtualenv for 2.7)
-inflect==None
-ipaddress==1.0.23            #   required by cryptography/docker-compose for 2.7)
+# inflect==None
+ipaddress==1.0.23            #   (required by cryptography/docker-compose for 2.7)
 ipython==5.8.0
 isort==4.3.21
 jedi==0.17.2
-jeepney==None
-keyring==None
+# jeepney==None
+# keyring==None
 Markdown==3.1.1
 MarkupSafe==1.1.1
-matplotlib-inline==None
-mypy==None
-mypy-extensions==None
+# matplotlib-inline==None
+# mypy==None
+# mypy-extensions==None
 motor==2.1.0
 mutagen==1.43.1
-nexus3-cli==None
+# nexus3-cli==None
 numpy==1.16.6
 parso==0.7.1
 pathlib2==2.3.6              #   (required by docker-compose/virtualenv for 2.7)
-Pillow==None
+# Pillow==None
 pip==20.2.4
 platformdirs==2.0.2
-poetry==None
-poetry-core==None
+# poetry==None
+# poetry-core==None
 prompt-toolkit==1.0.18
 # pycrypto==2.6.1            #    (required by abettersqlplus)
 pycurl==7.43.0.5
@@ -64,24 +64,24 @@ pylint==1.9.4
 pyparsing==2.2.2             # New version incompatible
 pyrsistent==0.16.1
 PyWavelets==1.0.3
-questionary==None
-roam==None
-ruamel.yaml==None
-ruamel.yaml.clib==None
+# questionary==None
+# roam==None
+# ruamel.yaml==None
+# ruamel.yaml.clib==None
 scandir==1.10.0              #   (required by docker-compose/ipdb/virtualenv for 2.7)
-scipy==None
-SecretStorage==None
+# scipy==None
+# SecretStorage==None
 setuptools==44.1.1
 simplegeneric==0.8.1         #   (required by ipdb for 2.7)
 singledispatch==3.7.0        #   (required by pylint/virtualenv for 2.7)
 smmap2==3.0.1                #   (required by GitPython for 2.7)
 subprocess32==3.5.4          #   (required by docker-compose for 2.7)
-tomli==None
+# tomli==None
 traitlets==4.3.3
 typing==3.10.0.0
 ujson==2.0.3
-websockets==None
+# websockets==None
 whichcraft==0.6.1            #   (required by cookiecutter for 2.7)
 xdis==5.0.11
-yt-dlp==None
+# yt-dlp==None
 zipp==1.2.0

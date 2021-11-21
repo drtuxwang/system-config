@@ -42,14 +42,16 @@ read_requirements() {
     if [ -f "$1" ]
     then
         echo -e "${esc}[34mProcessing \"$1\"...${esc}[0m"
-        for PACKAGE in $(sed -e "s/^#* *//;s/#.*//" "$1" |grep -v "==None")
+        for PACKAGE in $(sed -e "s/^#//;s/#.*//" "$1")
         do
             NAME=${PACKAGE%==*}
-            VERSION=${PACKAGE#*==}
-            REQUIREMENTS=$(echo "$REQUIREMENTS" | grep -v "^$NAME=="; echo "$NAME==$VERSION")
+            if [[ ! $PACKAGE =~ ==None$ ]]
+            then
+                requirements[$NAME]="$PACKAGE"
+            else
+                unset requirements[$NAME]
+            fi
         done
-        DISABLED=$(grep "==None" $1 | sed -e "s/==.*//;s/.* //" | awk '{printf("%s|", $1)}')
-        REQUIREMENTS=$(echo "$REQUIREMENTS" | egrep -v "^($DISABLED)[>=]")
     fi
 }
 
@@ -59,20 +61,20 @@ check_packages() {
     PACKAGES=$($PYTHON -m pip list 2> /dev/null | awk 'NR>=3 {printf("%s==%s\n", $1, $2)}')
     for PACKAGE in $PACKAGES
     do
-        if [ ! "$(echo "$REQUIREMENTS" | grep "^${PACKAGE}$")" ]
+        NAME=${PACKAGE%==*}
+        if [ -v requirements[$NAME] ]
         then
-            echo $PACKAGE | awk '{printf("%-20s  # ", $1)}'
-            REQUIRED=$(echo "$REQUIREMENTS" | grep "^${PACKAGE%==*}[>=]")
-            if [ "$REQUIRED" ]
+            REQUIRED=${requirements[$NAME]}
+            if [ "$REQUIRED" != "$PACKAGE" -a "$(echo "$REQUIRED" |grep "[>=]=")" ]
             then
-                echo "Requirement $REQUIRED"
+                echo $PACKAGE ${REQUIRED#*==} | awk '{printf("%-20s  # Requirement %s\n", $1, $2)}'
                 ERROR=1
-            else
-                echo "Requirement not found"
             fi
+        else
+            echo $PACKAGE | awk '{printf("%-20s  # Requirement not found\n", $1)}'
         fi
     done
-    for PACKAGE in $REQUIREMENTS
+    for PACKAGE in ${requirements[@]}
     do
         if [ ! "$(echo "$PACKAGES" | grep "^${PACKAGE%[>=]=*}==")" ]
         then
@@ -80,8 +82,20 @@ check_packages() {
             ERROR=1
         fi
     done
-    [[ "$ERROR" ]] && echo -e "${esc}[31mError!${esc}[0m" && exit 1
 
+    for DIR in $($PYTHON -m site | grep site-packages | cut -f2 -d"'")
+    do
+        for FILE in $(awk '/^[^_]/ {print $1}' $DIR/*.dist-info/top_level.txt 2> /dev/null)
+        do
+            if [ ! "$(ls $DIR/$FILE $DIR/$FILE.* 2> /dev/null)" ]
+            then
+                grep $FILE $DIR/*.dist-info/top_level.txt
+                ERROR=1
+            fi
+        done
+    done
+
+    [[ "$ERROR" ]] && echo -e "${esc}[31mError!${esc}[0m" && exit 1
     echo -e "${esc}[33mChecked!${esc}[0m"
 }
 
@@ -103,8 +117,8 @@ install_pip() {
         echo "Installed!"
     fi
 
-    echo "$INSTALL --no-warn-script-location "$(echo "$REQUIREMENTS" | egrep "^(pip|wheel)==")
-    $INSTALL $(echo "$REQUIREMENTS" | egrep "^(pip|wheel)==") 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
+    echo "$INSTALL --no-warn-script-location" ${requirements[pip]} ${requirements[setuptools]} ${requirements[wheel]}
+    $INSTALL ${requirements[pip]} ${requirements[setuptools]} ${requirements[wheel]} 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
     [[ ${PIPESTATUS[0]} = 0 ]] || exit 1
     echo -e "${esc}[33mInstalled!${esc}[0m"
 }
@@ -113,8 +127,8 @@ install_pip() {
 install_packages() {
     export CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
-    echo "$INSTALL --no-warn-script-location "$REQUIREMENTS
-    $INSTALL --no-warn-script-location $REQUIREMENTS 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
+    echo "$INSTALL --no-warn-script-location ${requirements[@]}"
+    $INSTALL --no-warn-script-location ${requirements[@]} 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
     [[ ${PIPESTATUS[0]} = 0 ]] || exit 1
     echo -e "${esc}[33mInstalled!${esc}[0m"
 }
@@ -125,7 +139,7 @@ INSTALL="$PYTHON -m pip install"
 [[ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ]] || INSTALL="$INSTALL --user"
 [[ "$(uname)" = Darwin ]] && export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
 
-REQUIREMENTS=
+declare -A requirements
 PYTHON_VERSION=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
 read_requirements "${0%/*}/python-requirements.txt"
 read_requirements "${0%/*}/python$PYTHON_VERSION-requirements.txt"

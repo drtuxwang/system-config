@@ -901,6 +901,8 @@ the years.
  * config/rc.local-opt                   Copy to "/etc/rc.local-opt" for optional system startup commands
  * config/terminalrc                     Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
  * config/vimrc                          Copy to "$HOME/.vimrc" for VIM defaults
+ * config/vm-linux0.vbox                 VirtualBox Linux example
+ * config/vm-win10.vbox                  VirtualBox Windows example
  * config/userapp-gqview.desktop         Copy to "$HOME/.local/share/applications" for Geeqie
  * config/userapp-soffice.desktop        Copy to "$HOME/.local/share/applications" for LibreOffice
  * config/userapp-vlc.desktop            Copy to "$HOME/.local/share/applications" for VLC

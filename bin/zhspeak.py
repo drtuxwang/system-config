@@ -20,7 +20,7 @@ import file_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '6.0.1'
+RELEASE = '6.0.2'
 
 
 class Options:
