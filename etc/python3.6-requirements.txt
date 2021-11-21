@@ -4,7 +4,7 @@ importlib-metadata==4.8.1    #   (required by virtualenv for 3.6)
 importlib-resources==5.4.0   #   (required by virtualenv for 3.6)
 ipython==7.16.1
 numpy==1.19.5
-pip==20.2.4
+pip==21.1
 # poetry==None
 # poetry-core==None
 scipy==1.5.4

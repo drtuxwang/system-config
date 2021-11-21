@@ -52,7 +52,7 @@ numpy==1.16.6
 parso==0.7.1
 pathlib2==2.3.6              #   (required by docker-compose/virtualenv for 2.7)
 # Pillow==None
-pip==20.2.4
+pip==21.1
 platformdirs==2.0.2
 # poetry==None
 # poetry-core==None
