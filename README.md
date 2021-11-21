@@ -1102,6 +1102,12 @@ the years.
  * docker/registry-2.6/Dockerfile
  * docker/registry-2.6/Makefile          registry:2.6 based Docker Registry server app
  * docker/registry-2.6/files/config.yaml
+ * docker/rockylinux-8/Dockerfile
+ * docker/rockylinux-8/Makefile          rockylinux:8 based linux
+ * docker/rockylinux-8/bash/Dockerfile
+ * docker/rockylinux-8/bash/Makefile     rockylinux:8 based BASH login
+ * docker/rockylinux-8/dev/Dockerfile
+ * docker/rockylinux-8/dev/Makefile      rockylinux:8 based GCC dev shell
  * docker/sudo/Dockerfile
  * docker/sudo/Makefile                  sudo scratch image for jail breaking app
  * docker/ubuntu-16.04/Makefile
