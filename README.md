@@ -911,6 +911,7 @@ the years.
  * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
  * etc/python-packages.sh                Install/check Python packages requirements
  * etc/python-requirements.txt           Python default pip requirements file
+ * etc/python-requirements-small.txt     Python small pip requirements file
  * etc/python2.7-requirements.txt        Python 2.7 pip requirements file
  * etc/python3.5-requirements.txt        Python 3.5 pip requirements file
  * etc/python3.6-requirements.txt        Python 3.6 pip requirements file

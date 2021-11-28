@@ -1,15 +1,16 @@
-#!/bin/bash -u
+#!/usr/bin/env bash
 #
 # Install/check Python packages requirements
 #
 
+set -u
+
 # Process options
 help() {
-    echo "Usage: $0 [-pip|-i] <python>"
+    echo "Usage: $0 [-pip|-i] <python-executable> [<requirement-file>]"
     exit 1
 }
 MODE=
-PYTHON=
 while [ $# != 0 ]
 do
     case $1 in
@@ -23,16 +24,14 @@ do
         help
         ;;
     *)
-        PYTHON="$1"
+        break
         ;;
     esac
     shift
 done
-if [[ ! /$PYTHON =~ /python[1-9]* ]]
-then
-    echo "Usage: $0 [-pip|-i] <python>"
-    exit 1
-fi
+PYTHON=${1-}
+REQUIREMENT=${2-}
+[[ ! /$PYTHON =~ /python[1-9]* ]] && help
 
 esc=$'\033'
 export PYTHONPATH=
@@ -71,7 +70,7 @@ check_packages() {
                 ERROR=1
             fi
         else
-            echo $PACKAGE | awk '{printf("%-20s  # Requirement not found\n", $1)}'
+            echo $PACKAGE | awk '{printf("%-27s  # Requirement not found\n", $1)}'
         fi
     done
     for PACKAGE in ${requirements[@]}
@@ -141,8 +140,13 @@ INSTALL="$PYTHON -m pip install"
 
 declare -A requirements
 PYTHON_VERSION=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
-read_requirements "${0%/*}/python-requirements.txt"
-read_requirements "${0%/*}/python$PYTHON_VERSION-requirements.txt"
+if [ "$REQUIREMENT" ]
+then
+    read_requirements "$REQUIREMENT"
+else
+    read_requirements "${0%/*}/python-requirements.txt"
+    read_requirements "${0%/*}/python$PYTHON_VERSION-requirements.txt"
+fi
 
 [[ "$MODE" ]] && install_pip
 [[ "$MODE" = install ]] && install_packages

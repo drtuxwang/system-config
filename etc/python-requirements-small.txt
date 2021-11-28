@@ -1,0 +1,29 @@
+beautifulsoup4==4.9.3        # HTML/XML parser/emitter
+bson==0.5.10                 # BSON parser/emitter
+dnspython==2.1.0             # DNS client
+filemagic==1.6               # Python API for libmagic
+gTTS==2.2.3                  # Google Text-to-Speech
+ntplib==0.4.0                # NTP client
+numpy==1.21.3                # Array computing
+paramiko==2.7.2              # SSH client
+pip==21.3.1                  # Python package manager
+pyOpenSSL==21.0.0            # OpenSSL interface
+PyYAML==5.4.1                # YAML parser/emitter
+requests==2.25.1             # Web client
+setuptools==58.3.0           # Python package manager
+wheel==0.36.2                # Python wheel packaging
+xmltodict==0.11.0            # Convert XML to Python dict
+
+bcrypt==3.1.7                # Requirement
+certifi==2021.10.8           # Requirement
+cffi==1.14.6                 # Requirement
+chardet==3.0.4               # Requirement
+click==7.1.2                 # Requirement
+cryptography==3.4.8          # Requirement
+idna==2.10                   # Requirement
+pycparser==2.19              # Requirement
+PyNaCl==1.2.1                # Requirement
+python-dateutil==2.7.5       # Requirement
+six==1.16.0                  # Requirement
+soupsieve==1.9.6             # Requirement
+urllib3==1.26.7              # Requirement
