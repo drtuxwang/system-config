@@ -41,7 +41,7 @@ docker-compose==1.28.6       # Docker container orchestration
 docker-pycreds==0.4.0        # Docker credentials store API
 dockerpty==0.4.1             #   (required by docker-compose)
 docopt==0.6.2                #   (required by docker-compose)
-dropbox==10.10.0             # Official Dropbox client (10.11.0 API changed)
+dropbox==11.24.0             # Official Dropbox client
 EditorConfig==0.12.3         #   (required by jsbeautifier)
 emrichen==0.2.3              #   (required by appimage-builder)
 filelock==3.2.1              #   (required by devpi-client/virtualenv)
@@ -147,6 +147,7 @@ smmap==3.0.5                 #   (required by GitPython)
 soupsieve==1.9.6             #   (required by beautifulsoup4)
 spark-parser==1.8.9          #   (required by uncompyle6)
 sqlparse==0.3.1              #   (required by Django)
+stone==3.2.1                 #   (required by dropbox)
 text-unidecode==1.3          #   (required by cookiecutter)
 texttable==1.6.4             #   (required by docker-compose/nexus3-cli)
 toml==0.10.2                 #   (required by devpi-client/ipdb/mypy/pylint)

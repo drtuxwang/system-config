@@ -105,7 +105,7 @@ class DropboxClient:
         return None
 
     @staticmethod
-    def _connect(key: str) -> Optional[dropbox.dropbox.Dropbox]:
+    def _connect(key: str) -> Optional[dropbox.dropbox_client.Dropbox]:
         client = dropbox.Dropbox(key)
         logger.info("Connecting to Dropbox server.")
         try:
