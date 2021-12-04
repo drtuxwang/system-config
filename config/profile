@@ -84,7 +84,7 @@ then
         fi
         alias kubeconfig=__kubeconfig
         MYSHELL="${0/-/}"
-        PS1='\[\033[01;32m\][\t] \[\033[01;34m\]`pwd`\[\033[01;31m\]`__git_ps1``__kube_ps1`\n\[\033[01;32m\]\u@\h\[\033[00m\] $ '
+        PS1='\[\033[01;32m\][\t] \[\033[01;34m\]`pwd`\[\033[01;31m\]`__git_ps1``__kube_ps1`\n\[\033[01;32m\]'$MYUNAME'@'$MYHNAME'\[\033[00m\] $ '
 
         # VM/Container detection
         case `uname` in
@@ -92,39 +92,39 @@ then
             HARDWARES=`PATH="$WINDIR/system32:$WINDIR/system32/wbem:$PATH" $WINDIR/system32/systeminfo 2> /dev/null`
             case "$HARDWARES" in
             *VirtualBox*)
-                PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](VirtualBox)/')
+                PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](VirtualBox)/')
                 ;;
             *VMware\ *)
-                PS1=$(echo "$PS1" | sed -e 's/\\h/\\h \\[\\033[01;31m\\](VMware)/')
+                PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](VMware)/')
                 ;;
             esac
             ;;
         *)
             if [ "$(grep ":name=.*/docker[/-]" /proc/1/cgroup 2> /dev/null)" ]
             then
-                PS1=$(echo "$PS1" | sed -e 's/$MYHNAME/$MYHNAME \\[\\033[01;31m\\](Docker '$(grep ":name=.*/docker[/-]" /proc/1/cgroup | sed -e "s@.*/docker[/-]\(.\{12\}\).*@\1@")')/')
+                PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](Docker '$(grep ":name=.*/docker[/-]" /proc/1/cgroup | sed -e "s@.*/docker[/-]\(.\{12\}\).*@\1@")')/')
             elif [ "`grep /lxc/ /proc/1/cgroup 2> /dev/null`" ]
             then
-                PS1=$(echo "$PS1" | sed -e 's/$MYHNAME/$MYHNAME \\[\\033[01;31m\\](LXC)/')
+                PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](LXC)/')
             elif [ "`awk '$5=="/" {print $1}' /proc/1/mountinfo 2> /dev/null`" != "`awk '$5=="/" {print $1}' /proc/$$/mountinfo 2> /dev/null`" ]
             then
-                PS1=$(echo "$PS1" | sed -e 's/$MYHNAME/$MYHNAME \\[\\033[01;31m\\](chroot)/')
+                PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](chroot)/')
             elif [ -d "/proc/xen" ]
             then
-                PS1=$(echo "$PS1" | sed -e 's/$MYHNAME/$MYHNAME \\[\\033[01;31m\\](Xen)/')
+                PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](Xen)/')
             else
                 case $(cat /proc/ide/hd?/model /proc/scsi/scsi 2> /dev/null; /sbin/lsmod 2> /dev/null) in
                 *Hyper-V*|*hv_*)
-                    PS1=$(echo "$PS1" | sed -e 's/$MYHNAME/$MYHNAME \\[\\033[01;31m\\](Hyper-V)/')
+                    PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](Hyper-V)/')
                     ;;
                 *VBOX*|*vboxguest*)
-                    PS1=$(echo "$PS1" | sed -e 's/$MYHNAME/$MYHNAME \\[\\033[01;31m\\](VirtualBox)/')
+                    PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](VirtualBox)/')
                     ;;
                 *VM[Ww]are*|*vmw_*)
-                    PS1=$(echo "$PS1" | sed -e 's/$MYHNAME/$MYHNAME \\[\\033[01;31m\\](VMware)/')
+                    PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](VMware)/')
                     ;;
                 *xen_blkfront*)
-                    PS1=$(echo "$PS1" | sed -e 's/$MYHNAME/$MYHNAME \\[\\033[01;31m\\](Xen)/')
+                    PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](Xen)/')
                     ;;
                 esac
             fi
@@ -133,7 +133,7 @@ then
 
         case $TERM in
         screen|xterm)
-            PS1='\033]0;$MYHNAME:`pwd`\007'"$PS1"
+            PS1='\033]0;'$MYHNAME':`pwd`\007'"$PS1"
             preexec() {
                 \echo -e "\033]0;$MYHNAME:$PWD $ $BASH_COMMAND\007\c"
             }

@@ -910,12 +910,13 @@ the years.
  * config/winsetup.sh
  * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
  * etc/python-packages.sh                Install/check Python packages requirements
- * etc/python-requirements.txt           Python default pip requirements file
- * etc/python-requirements-small.txt     Python small pip requirements file
- * etc/python2.7-requirements.txt        Python 2.7 pip requirements file
- * etc/python3.5-requirements.txt        Python 3.5 pip requirements file
- * etc/python3.6-requirements.txt        Python 3.6 pip requirements file
- * etc/python3.7-requirements.txt        Python 3.7 pip requirements file
+ * etc/python-requirements.txt           Default requirements file for Python
+ * etc/python-requirements_mac.txt       Additional requirements for Python on MacOS
+ * etc/python2.7-requirements.txt        Additional requirements for Python 2.7
+ * etc/python2.7-requirements_mac.txt    Additional requirements for Python 2.7 on MacOS
+ * etc/python3.5-requirements.txt        Additional requirements for Python 3.5
+ * etc/python3.6-requirements.txt        Additional requirements for Python 3.6
+ * etc/python3.7-requirements.txt        Additional requirements for Python 3.7
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization

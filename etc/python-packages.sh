@@ -66,7 +66,7 @@ check_packages() {
             REQUIRED=${requirements[$NAME]}
             if [ "$REQUIRED" != "$PACKAGE" -a "$(echo "$REQUIRED" |grep "[>=]=")" ]
             then
-                echo $PACKAGE ${REQUIRED#*==} | awk '{printf("%-20s  # Requirement %s\n", $1, $2)}'
+                echo $PACKAGE $REQUIRED | awk '{printf("%-20s  # Requirement %s\n", $1, $2)}'
                 ERROR=1
             fi
         else
@@ -93,13 +93,16 @@ check_packages() {
             fi
         done
     done
+    $PYTHON -m pip check 2>&1 | egrep -v "DEPRECATION:"
+    [ ${PIPESTATUS[0]} = 0 ] || ERROR=1
 
-    [[ "$ERROR" ]] && echo -e "${esc}[31mError!${esc}[0m" && exit 1
-    echo -e "${esc}[33mChecked!${esc}[0m"
+    [[ "$ERROR" ]] && echo -e "${esc}[31mERROR!${esc}[0m" && exit 1
+    echo -e "${esc}[33mOK!${esc}[0m"
 }
 
 
-install_pip() {
+install_packages() {
+    MODE=${1:-}
     case $PYTHON_VERSION in
     2.[67]|3.[345])
         GETPIP="https://bootstrap.pypa.io/pip/$PYTHON_VERSION/get-pip.py"
@@ -108,35 +111,38 @@ install_pip() {
         GETPIP="https://bootstrap.pypa.io/pip/get-pip.py"
         ;;
     esac
-
     if [ ! "$($PYTHON -m pip --version 2>&1 | grep "^pip ")" ]
     then
         echo "curl --location --progress-bar $GETPIP | $PYTHON"
         curl --location --progress-bar $GETPIP | $PYTHON || exit 1
-        echo "Installed!"
+        echo -e "${esc}[33mInstalled!${esc}[0m"
     fi
 
-    echo "$INSTALL --no-warn-script-location" ${requirements[pip]} ${requirements[setuptools]} ${requirements[wheel]}
-    $INSTALL ${requirements[pip]} ${requirements[setuptools]} ${requirements[wheel]} 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
-    [[ ${PIPESTATUS[0]} = 0 ]] || exit 1
-    echo -e "${esc}[33mInstalled!${esc}[0m"
-}
+    PACKAGES=$(check_packages | awk '/ # Requirement / {print $NF}')
+    for PACKAGE in $(echo "$PACKAGES" | egrep "^(pip]setuptools|wheel)$")
+    do
+        echo "$INSTALL $PACKAGE"
+        $INSTALL "$PACKAGE" 2>&1 | egrep -v "DEPRECATION:|'root' user|pip version|--upgrade pip"
+        [ ${PIPESTATUS[0]} = 0 ] || exit 1
+        echo -e "${esc}[33m$Installed!${esc}[0m"
+    done
+    [ "$MODE" = "piponly" ] && return
 
-
-install_packages() {
     export CRYPTOGRAPHY_DONT_BUILD_RUST=1
-
-    echo "$INSTALL --no-warn-script-location ${requirements[@]}"
-    $INSTALL --no-warn-script-location ${requirements[@]} 2>&1 | egrep -v "already satisfied:|pip version|--upgrade pip"
-    [[ ${PIPESTATUS[0]} = 0 ]] || exit 1
-    echo -e "${esc}[33mInstalled!${esc}[0m"
+    for PACKAGE in $(echo "$PACKAGES" | egrep -v "^(pip]setuptools|wheel)$")
+    do
+        echo "$INSTALL $PACKAGE"
+        $INSTALL "$PACKAGE" 2>&1 | egrep -v "DEPRECATION:|'root' user|pip version|--upgrade pip"
+        [ ${PIPESTATUS[0]} = 0 ] || continue
+        echo -e "${esc}[33minstalled!${esc}[0m"
+    done
 }
 
 
 umask 022
-INSTALL="$PYTHON -m pip install"
-[[ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ]] || INSTALL="$INSTALL --user"
-[[ "$(uname)" = Darwin ]] && export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
+INSTALL="$PYTHON -m pip install --no-warn-script-location --no-deps"
+[ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ] || INSTALL="$INSTALL --user"
+[ "$(uname)" = Darwin ] && export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
 
 declare -A requirements
 PYTHON_VERSION=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
@@ -146,10 +152,13 @@ then
 else
     read_requirements "${0%/*}/python-requirements.txt"
     read_requirements "${0%/*}/python$PYTHON_VERSION-requirements.txt"
+    case $(uname) in
+    Darwin)
+        read_requirements "${0%/*}/python-requirements_mac.txt"
+        read_requirements "${0%/*}/python$PYTHON_VERSION-requirements_mac.txt"
+        ;;
+    esac
 fi
 
-[[ "$MODE" ]] && install_pip
-[[ "$MODE" = install ]] && install_packages
-[[ "$MODE" != piponly ]] && check_packages
-
-exit 0
+install_packages "$MODE"
+[ "$MODE" != piponly ] && check_packages

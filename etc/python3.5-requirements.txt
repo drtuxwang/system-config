@@ -48,6 +48,7 @@ roam==None
 scipy==None
 setuptools==50.3.2
 smmap2==2.0.5                #   (required by GitPython for 3.5)
+stone==None
 tomli==None
 traitlets==4.3.3
 typed-ast==1.4.3             #   (required by pylint/mypy for 3.5)
