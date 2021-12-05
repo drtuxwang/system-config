@@ -14,7 +14,7 @@ cp -p "$TOPDIR"/etc/python-packages.sh tmpdir
 echo "Creating \"tmpdir/python-requirements.txt\"..."
 cp -p "$TOPDIR"/etc/python-requirements.txt tmpdir
 
-if [ -f "$TOPDIR"/etc/python$VERSION-requirements.txt ]
+if [ "$VERSION" -a -f "$TOPDIR"/etc/python$VERSION-requirements.txt ]
 then
     echo "Creating \"tmpdir/python$VERSION-requirements.txt\"..."
     cp -p "$TOPDIR"/etc/python$VERSION-requirements.txt tmpdir

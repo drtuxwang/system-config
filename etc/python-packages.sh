@@ -97,7 +97,6 @@ check_packages() {
     [ ${PIPESTATUS[0]} = 0 ] || ERROR=1
 
     [[ "$ERROR" ]] && echo -e "${esc}[31mERROR!${esc}[0m" && exit 1
-    echo -e "${esc}[33mOK!${esc}[0m"
 }
 
 
@@ -114,7 +113,8 @@ install_packages() {
     if [ ! "$($PYTHON -m pip --version 2>&1 | grep "^pip ")" ]
     then
         echo "curl --location --progress-bar $GETPIP | $PYTHON"
-        curl --location --progress-bar $GETPIP | $PYTHON || exit 1
+        curl --location --progress-bar $GETPIP | $PYTHON | grep -v "'root' user"
+        [ ${PIPESTATUS[0]} = 0 ] || exit 1
         echo -e "${esc}[33mInstalled!${esc}[0m"
     fi
 
@@ -162,3 +162,4 @@ fi
 
 install_packages "$MODE"
 [ "$MODE" != piponly ] && check_packages
+echo -e "${esc}[33mOK!${esc}[0m"
