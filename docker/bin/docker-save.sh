@@ -23,6 +23,7 @@ do
     docker save "$@" -o "$FILE.part"
     tar xf "$FILE.part" repositories -O | sed -e "s/,/\\n/g;s/\"/:/g" | cut -f2,5 -d: > "$LIST.part"
     touch -d $CREATED "$FILE.part" "$LIST.part"
+    chmod 644 "$FILE.part"
     mv "$FILE.part" "$FILE"
     mv "$LIST.part" "$LIST"
 done

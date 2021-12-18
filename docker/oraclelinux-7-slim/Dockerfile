@@ -9,6 +9,7 @@ RUN yum -y install oracle-epel-release-el7 && \
         bind-utils \
         iproute \
         net-tools \
+        netcat \
         openssh-clients \
         pciutils \
         python36 \

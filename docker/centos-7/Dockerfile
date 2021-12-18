@@ -9,6 +9,7 @@ RUN yum -y install epel-release && \
         bind-utils \
         iproute \
         net-tools \
+        netcat \
         openssh-clients \
         pciutils \
         python36 \

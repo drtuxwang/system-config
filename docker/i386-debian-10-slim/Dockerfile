@@ -11,6 +11,7 @@ RUN apt-get update --fix-missing && \
         iproute2 \
         iputils-ping \
         net-tools \
+        netcat-openbsd \
         openssh-client \
         pciutils \
         python3 \

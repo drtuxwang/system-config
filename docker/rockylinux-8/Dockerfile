@@ -8,6 +8,7 @@ RUN yum -y install epel-release && \
     yum -y install \
         bind-utils \
         net-tools \
+        netcat \
         openssh-clients \
         pciutils \
         python38 \

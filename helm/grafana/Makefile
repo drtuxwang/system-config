@@ -2,7 +2,7 @@ NAME := grafana
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := grafana
-CHART_VERSION := 5.2.19
+CHART_VERSION := 7.2.5
 NAMESPACE ?= infra
 HOSTNAME ?= grafana.kube.local
 LOCALPORT ?=
@@ -64,7 +64,6 @@ fetch: repo-add clean  # Fetch Helm chart
 
 .PHONY: images
 images:       # Show Docker images
-	@echo "\n*** Checking status ***"
 	@make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
 
 .PHONY: pull

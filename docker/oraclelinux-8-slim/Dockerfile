@@ -9,6 +9,7 @@ RUN ln -s microdnf /usr/bin/yum && \
     yum -y install \
         bind-utils \
         net-tools \
+        netcat \
         openssh-clients \
         pciutils \
         socat \
