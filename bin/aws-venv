@@ -8,11 +8,12 @@ NAME="awscli"
 VERSION="1.18.223"
 
 PYTHON_DIR=$(echo "import sys; print(sys.exec_prefix)" | $PYTHON)
-VENV="$PYTHON_DIR-venv/$NAME"
-[[ -d "$VENV" ]] || VENV="$TMP/$PYTHON-venv/$NAME"
+VENV="$PYTHON_DIR-$NAME"
+[ -d "$VENV" ] || [ -w "${VENV%/*}" ] || VENV="$TMP/$PYTHON-$NAME"
 
-[[ -d "$VENV" ]] || $PYTHON -m virtualenv $VENV || exit 1
-[[ "$($VENV/bin/$PYTHON -m pip freeze 2>&1 | grep $NAME==$VERSION)" ]] || $VENV/bin/$PYTHON -m pip install $NAME==$VERSION
+[ -d "$VENV" ] || $PYTHON -m virtualenv $VENV || exit 1
+[ "$($VENV/bin/$PYTHON -m pip freeze 2>&1 | grep $NAME==$VERSION)" ] || $VENV/bin/$PYTHON -m pip install $NAME==$VERSION
 
+MYNAME=${0##*/}
 export PATH="$VENV/bin:$PATH"
-exec $VENV/bin/$PYTHON $VENV/bin/aws "$@"
+exec $VENV/bin/$PYTHON $VENV/bin/${MYNAME%-*} "$@"

@@ -65,16 +65,16 @@ locate_python() {
         GLIBC_VER=`strings "$GLIBC" 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}'`
         case `uname -m` in
         x86_64)
-            LOCATE=`(ls -1 $LOCAL/*/linux64_*-x86*glibc_$GLIBC_VER/bin/$PYEXE; ls -1t $LOCAL/*/linux64_*-x86*/bin/$PYEXE) 2> /dev/null | head -1`
+            LOCATE=`(ls -1t $LOCAL/*/linux64_*-x86*glibc_$GLIBC_VER/bin/$PYEXE; ls -1t $LOCAL/*/linux64_*-x86*/bin/$PYEXE) 2> /dev/null | head -1`
             ;;
         i*86)
-            LOCATE=`(ls -1 $LOCAL/*/linux_*-x86*glibc_$GLIBC_VER/bin/$PYEXE; ls -1t $LOCAL/*/linux_*-x86*/bin/$PYEXE) 2> /dev/null | head -1`
+            LOCATE=`(ls -1t $LOCAL/*/linux_*-x86*glibc_$GLIBC_VER/bin/$PYEXE; ls -1t $LOCAL/*/linux_*-x86*/bin/$PYEXE) 2> /dev/null | head -1`
             ;;
         ppc*)
-            LOCATE=`(ls -1 $LOCAL/*/linux_*-power*$GLIBC_VER/bin/$PYEXE; ls -1t $LOCAL/*/linux_*-power*/bin/$PYEXE) 2> /dev/null | head -1`
+            LOCATE=`(ls -1t $LOCAL/*/linux_*-power*$GLIBC_VER/bin/$PYEXE; ls -1t $LOCAL/*/linux_*-power*/bin/$PYEXE) 2> /dev/null | head -1`
             ;;
         sparc*)
-            LOCATE=`(ls -1 $LOCAL/*/linux_*-sparc*$GLIBC_VER/bin/$PYEXE; ls -1t $LOCAL/*/linux_*-sparc*/bin/$PYEXE) 2> /dev/null | head -1`
+            LOCATE=`(ls -1t $LOCAL/*/linux_*-sparc*$GLIBC_VER/bin/$PYEXE; ls -1t $LOCAL/*/linux_*-sparc*/bin/$PYEXE) 2> /dev/null | head -1`
             ;;
         esac
         if [ ! "$LOCATE" ]

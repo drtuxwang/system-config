@@ -48,6 +48,7 @@ the years.
  * bin/ansible-playbook
  * bin/ansible-playbook-venv
  * bin/ansible-vault
+ * bin/ansible-vault-venv
  * bin/appimage-builder
  * bin/aws
  * bin/aws-venv

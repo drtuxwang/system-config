@@ -14,8 +14,8 @@ from typing import Any, List, Optional, Tuple
 
 import command_mod
 
-RELEASE = '3.3.4'
-VERSION = 20211107
+RELEASE = '3.3.5'
+VERSION = 20211214
 
 
 class NetNice(command_mod.Command):
@@ -182,7 +182,11 @@ class Sandbox(command_mod.Command):
                 '/usr',
                 '/var',
             ] + glob.glob('/init*') + glob.glob('/vm*'))
-            directories = sorted(set(glob.glob('/*')) - set(allow_reads))
+            directories = [
+                x
+                for x in sorted(set(glob.glob('/*')) - set(allow_reads))
+                if os.path.isdir(x)
+            ]
             for mount in directories:
                 cmdline.extend(['--tmpfs', mount])
             self._show(

@@ -113,7 +113,7 @@ class Options:
         if self._args.remove_flag:
             args.append('--delete-after')
         args.extend([
-            '--info=progress2',
+            '--progress',
             '--verbose',
             self._args.source[0],
             self._args.target[0],
