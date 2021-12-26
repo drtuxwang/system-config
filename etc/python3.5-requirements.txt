@@ -10,11 +10,13 @@ check-manifest==0.44
 contextlib2==None
 crashtest==None
 cryptography                 #   (cryptography==3.2.1 required by paramiko)
+cx-Oracle==7.3.0
 Django==None
 dnspython==None
 docker-compose==None
 dropbox==None
 emrichen==None
+filelock==3.2.1
 gitdb==4.0.7
 GitPython==3.1.17
 ImageHash==None
@@ -30,10 +32,11 @@ lazy-object-proxy==1.4.3
 lockfile==None
 Markdown==3.2.2
 MarkupSafe==1.1.1
+mypy==0.910
 nexus3-cli==None
 numpy==1.18.5
-pyOpenSSL==None
 parso==0.7.1
+pluggy==0.13.1
 Pillow==None
 pip                          #   (pip==20.2.4 last supported)
 platformdirs==2.0.2
@@ -42,12 +45,14 @@ poetry-core==None
 prompt-toolkit==2.0.10
 pyaml==None
 pylint==2.6.2
+pyOpenSSL==None
 PyYAML==None
 questionary==None
 roam==None
 scipy==None
 setuptools==50.3.2
 smmap2==2.0.5                #   (required by GitPython for 3.5)
+soupsieve==2.1
 stone==None
 tomli==None
 traitlets==4.3.3

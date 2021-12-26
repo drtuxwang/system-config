@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/python:3.8-slim-buster
-IMAGE := drtuxwang/python-dev:3.8-slim-buster
-NAME := python37-dev
-HOSTNAME := python37-dev
+BASE_IMAGE := drtuxwang/python:3.9-slim-bullseye
+IMAGE := drtuxwang/python-dev:3.9-slim-bullseye
+NAME := python39-dev
+HOSTNAME := python39-dev
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=

@@ -37,8 +37,8 @@ the years.
  * bin/python3.6
  * bin/python3.7
  * bin/python3.8
- * bin/python3.8.bat
  * bin/python3.9
+ * bin/python3.9.bat
  * bin/python3.10
  * bin/2to3               Python 3.x script wrappers (allowing non systems port)
  * bin/2to3.bat
@@ -125,9 +125,7 @@ the years.
  * bin/wesnoth.py
  * bin/7z                 Make a compressed archive in 7z format
  * bin/7z.bat             (uses p7zip)
- * bin/7za
  * bin/_7z.py
- * bin/_7za.py
  * bin/aftp               Automatic connection to FTP server anonymously
  * bin/aftp.py
  * bin/aplay              Play MP3/OGG/WAV audio files in directory
@@ -1094,14 +1092,14 @@ the years.
  * docker/oraclelinux-8-slim/bash/Makefile  oraclelinux:8-slim based BASH login
  * docker/oraclelinux-8-slim/dev/Dockerfile
  * docker/oraclelinux-8-slim/dev/Makefile  oraclelinux:8-slim based GCC dev shel
- * docker/python-3.8-slim-buster/Dockerfile
- * docker/python-3.8-slim-buster/Makefile  python:3.8-slim-buster based Python app
- * docker/python-3.8-slim-buster/bash/Dockerfile
- * docker/python-3.8-slim-buster/bash/Makefile  python:3.8-slim-buster based BASH login
- * docker/python-3.8-slim-buster/dev/Dockerfile
- * docker/python-3.8-slim-buster/dev/Makefile  python:3.8-slim-buster based dev shell
- * docker/python-3.8-slim-buster/devpi/Dockerfile
- * docker/python-3.8-slim-buster/devpi/Makefile  python:3.8-slim-buster based devpi server app
+ * docker/python-3.9-slim-bullseye/Dockerfile
+ * docker/python-3.9-slim-bullseye/Makefile  python:3.9-slim-bullseye based Python app
+ * docker/python-3.9-slim-bullseye/bash/Dockerfile
+ * docker/python-3.9-slim-bullseye/bash/Makefile  python:3.9-slim-bullseye based BASH login
+ * docker/python-3.9-slim-bullseye/dev/Dockerfile
+ * docker/python-3.9-slim-bullseye/dev/Makefile  python:3.9-slim-bullseye based dev shell
+ * docker/python-3.9-slim-bullseye/devpi/Dockerfile
+ * docker/python-3.9-slim-bullseye/devpi/Makefile  python:3.9-slim-bullseye based devpi server app
  * docker/registry-2.6/Dockerfile
  * docker/registry-2.6/Makefile          registry:2.6 based Docker Registry server app
  * docker/registry-2.6/files/config.yaml

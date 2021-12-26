@@ -30,14 +30,14 @@ pipeline {
                     stages {
                         stage ("Build") {
                             steps {
-                                sh "make -C docker/python-3.8-slim-buster build"
-                                sh "make -C docker/python-3.8-slim-buster version"
+                                sh "make -C docker/python-3.9-slim-bullseye build"
+                                sh "make -C docker/python-3.9-slim-bullseye version"
                             }
                         }
                         stage ("Test") {
                             agent {
                                 docker {
-                                    image 'drtuxwang/python:3.8-slim-buster'
+                                    image 'drtuxwang/python:3.9-slim-bullseye'
                                     args '--network=host'
                                     reuseNode true
                                     alwaysPull false

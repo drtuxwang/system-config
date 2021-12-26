@@ -51,7 +51,7 @@ class Options:
     @staticmethod
     def _signal_ignore(
         # pylint: disable = no-member
-        _signal: signal.Signals,
+        _signal: int,
         _frame: types.FrameType,
     ) -> Union[
         Callable[[signal.Signals, types.FrameType], Any],

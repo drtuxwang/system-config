@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/python:3.8-slim-buster
-IMAGE := drtuxwang/python-devpi:3.8-slim-buster
-NAME := python37-devpi
-HOSTNAME := python37-devpi
+BASE_IMAGE := drtuxwang/python:3.9-slim-bullseye
+IMAGE := drtuxwang/python-devpi:3.9-slim-bullseye
+NAME := python39-devpi
+HOSTNAME := python39-devpi
 LOCALPORT ?= 8080
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=

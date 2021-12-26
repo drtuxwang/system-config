@@ -19,7 +19,7 @@ BUILD_DIRS := \
 	nginx-1.18-alpine \
 	oraclelinux-7-slim \
 	oraclelinux-8-slim \
-	python-3.8-slim-buster \
+	python-3.9-slim-bullseye \
 	registry-2.6 \
 	rockylinux-8 \
 	sudo \
@@ -31,7 +31,7 @@ STABLE_IMAGES := \
 	drtuxwang/debian-xfce:11-slim \
 	drtuxwang/nginx:1.18-alpine
 TEST_DIRS := \
-	python-3.8-slim-buster
+	python-3.9-slim-bullseye
 
 
 .PHONY: default

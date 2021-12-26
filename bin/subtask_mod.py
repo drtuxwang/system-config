@@ -15,8 +15,8 @@ import types
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.2.6'
-VERSION = 20211107
+RELEASE = '2.2.7'
+VERSION = 20211224
 
 BUFFER_SIZE = 131072
 
@@ -671,7 +671,7 @@ class Main:
     @staticmethod
     def _signal_ignore(
         # pylint: disable = no-member
-        _signal: signal.Signals,
+        _signal: int,
         _frame: types.FrameType,
     ) -> Union[
         Callable[[signal.Signals, types.FrameType], Any],

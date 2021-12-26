@@ -1,18 +1,18 @@
-ansible==4.6.0               # Ansible IT automation system plugins
-ansible-core==2.11.6         # Ansible IT automation system core
+ansible==4.10.0              # Ansible IT automation system plugins
+ansible-core==2.11.7         # Ansible IT automation system core
 appimage-builder==0.9.2      # Generate portable appimages
 args==0.1.0                  #   (required by nexus3-cli)
 arrow==1.1.1                 #   (required by cookiecutter)
-astroid==2.8.4               #   (required by pylint)
+astroid==2.8.6               #   (required by pylint)
 attrs==20.3.0                #   (required by docker-compose)
 backcall==0.2.0              #   (required by ipdb)
-backports.entry-points-selectable==1.1.0  #   (required by virtualenv)
+backports.entry-points-selectable==1.1.1  #   (required by virtualenv)
 bcrypt==3.1.7                #   (required by paramiko)
 beautifulsoup4==4.9.3        # HTML/XML parser/emitter
 binaryornot==0.4.4           #   (required by cookiecutter)
 bson==0.5.10                 # BSON parser/emitter
 build==0.7.0                 #   (required by devpi-client)
-CacheControl==0.12.8         #   (required by poetry)
+CacheControl==0.12.10        #   (required by poetry)
 cachy==0.3.0                 #   (required by poetry)
 certifi==2021.10.8           #   (required by requests)
 cffi==1.14.6                 #   (required by cryptography)
@@ -25,14 +25,14 @@ clint==0.5.1                 #   (required by nexus3-cli)
 contextlib2==21.6.0          #   (required by appimage-builder)
 cookiecutter==1.7.3          # Creates projects from project templates
 crashtest==0.3.1             #   (required by poetry)
-cryptography==3.4.8          #   (required by ansible/paramiko/pyOpenSSL)
-cx-Oracle==7.3.0             # Oracle DB client
+cryptography==35.0.0         #   (required by ansible/paramiko/pyOpenSSL)
+cx-Oracle==8.2.1             # Oracle DB client
 Cython==0.29.24              # Cython compiler for writing C extensions
 decorator==5.1.0             #   (required by appimage-builder/ipdb)
 defusedxml==0.7.1            #   (required by Glances)
-devpi-client==5.2.2          # Manages devpi-server
+devpi-client==5.2.3          # Manages devpi-server
 devpi-common==3.6.0          #   (required by devpi-client)
-distlib==0.3.3               #   (required by virtualenv)
+distlib==0.3.4               #   (required by virtualenv)
 distro==1.5.0                #   (required by docker-compose)
 Django==2.2.24               # Web server framework
 dnspython==2.1.0             # DNS client
@@ -44,26 +44,27 @@ docopt==0.6.2                #   (required by docker-compose)
 dropbox==11.24.0             # Official Dropbox client
 EditorConfig==0.12.3         #   (required by jsbeautifier)
 emrichen==0.2.3              #   (required by appimage-builder)
-filelock==3.2.1              #   (required by devpi-client/virtualenv)
+filelock==3.3.2              #   (required by devpi-client/virtualenv)
 filemagic==1.6               # Python API for libmagic
 flake8==3.9.2                # Python modular source code checker
 Flask==1.1.4                 # Web server framework
 future==0.18.2               #   (required by Glances)
 gitdb==4.0.9                 #   (required by GitPython)
 GitPython==3.1.24            # Library to interact with Git repositories
-Glances==3.2.3.1             # Cross-platform monitoring tool
+Glances==3.2.4.2             # Cross-platform monitoring tool
 gTTS==2.2.3                  # Google Text-to-Speech
 html5lib==1.1                #   (required by poetry)
 humpty==0.2.1                # Convert whl to egg
 idna==2.10                   #   (required by requests)
 ImageHash==4.2.1             # Image hashing library
+importlib-metadata==4.8.1    #   (required by markdown/poetry/virtualenv
 inflect==4.1.1               #   (required by nexus3-cli)
 ipdb==0.13.9                 # Interactive Python debugger
-ipython==7.27.0              # Interactive Python toolkit
+ipython==7.29.0              # Interactive Python toolkit
 ipython-genutils==0.2.0      # Interactive Python utilities
-isort==5.9.3                 #   (required by pylint)
+isort==5.10.1                #   (required by pylint)
 itsdangerous==1.1.0          #   (required by Flask)
-jedi==0.18.0                 #   (required by ipdb)
+jedi==0.18.1                 #   (required by ipdb)
 jeepney==0.7.1               #   (required by poetry)
 Jinja2==2.11.3               # Stand-alone template engine
 jinja2-time==0.2.0           #   (required by cookiecutter)
@@ -73,23 +74,23 @@ jsonpickle==1.5.2            # Serializing any arbitrary object into JSON
 jsonschema==3.2.0            #   (required by docker-compose)
 keyring==21.8.0              #   (required by poetry)
 lazy==1.4                    #   (required by devpi-client)
-lazy-object-proxy==1.5.2     #   (required by pylint)
+lazy-object-proxy==1.6.0     #   (required by pylint)
 lockfile==0.12.2             # File locking
-Markdown==3.3.4              # Convert Markdown to HTML/XHTML
+Markdown==3.3.6              # Convert Markdown to HTML/XHTML
 MarkupSafe==2.0.1            #   (required by Jinja2)
 matplotlib-inline==0.1.3     #   (required by ipdb)
 mccabe==0.6.1                #   (required by flake8/pylint)
-motor==2.3.1                 # Mongo async client
-msgpack==1.0.2               #   (required by poetry)
+motor==2.4.0                 # Mongo async client
+msgpack==1.0.3               #   (required by poetry)
 mutagen==1.44.0              #   (required by yt-dlp)
-mypy==0.910                  # Python type checker
+mypy==0.921                  # Python type checker
 mypy-extensions==0.4.3       #   (required by mypy)
 nexus3-cli==3.4.0            # Sonatype Nexus client
 ntplib==0.4.0                # NTP client
-numpy==1.21.3                # Array computing
+numpy==1.21.5                # Array computing
 packaging==20.9              #   (required by ansible/appimage-builder/devpi-client/poetry)
 paramiko==2.7.2              # SSH client
-parso==0.8.2                 #   (required by ipdb)
+parso==0.8.3                 #   (required by ipdb)
 pastel==0.2.1                #   (required by poetry)
 pep517==0.11.1               #   (required by devpi-client)
 pep8==1.7.0                  # Python style guide checker (replaced by pycodestyle)
@@ -100,31 +101,31 @@ pip==21.3.1                  # Python package manager
 pipdeptree==2.2.0            # Python package dependency tree
 pkginfo==1.7.1               #   (required by devpi-client/poetry)
 platformdirs==2.3.0          #   (required by pylint/virtualenv)
-pluggy==0.13.1               #   (required by devpi-client)
+pluggy==1.0.0                #   (required by devpi-client)
 ply==3.11                    #   (required by appimage-builder)
-poetry==1.1.11               # Python dependency management
+poetry==1.1.12               # Python dependency management
 poetry-core==1.0.7           #   (required by poetry)
 poyo==0.5.0                  #   (required by cookiecutter)
-prompt-toolkit==3.0.21       #   (required by ipython/questionary)
+prompt-toolkit==3.0.23       #   (required by ipython/questionary)
 psutil==5.7.3                #   (required by Glances)
 ptyprocess==0.6.0            #   (required by ipdb/poetry)
 py==1.10.0                   #   (required by devpi-client)
 pyaml==21.8.3                #   (required by appimage-builder)
 pybktree==1.1                # BK-tree for querying of close matches
 pycodestyle==2.7.0           # Python style guide checker
-pycparser==2.19              #   (required by ansible/paramiko)
-pycryptodomex==3.10.4        #   (required by yt-dlp)
+pycparser==2.20              #   (required by ansible/paramiko)
+pycryptodomex==3.11.0        #   (required by yt-dlp)
 pyflakes==2.3.1              #   (required by flake8)
-Pygments==2.8.1              #   (required by ipdb)
+Pygments==2.9.0              #   (required by ipdb)
 pylev==1.3.0                 #   (required by poetry)
 pylint==2.11.1               # Python code static checker
-pymongo==3.11.4              # MongoDB client
-PyNaCl==1.2.1                #   (required by paramiko)
+pymongo==3.12.3              # MongoDB client
+PyNaCl==1.3.0                #   (required by paramiko)
 pyOpenSSL==21.0.0            # OpenSSL interface
 pyparsing==2.4.7             #   (required by ansible/appimage-builder/poetry etc)
 pyrsistent==0.17.3           #   (required by docker-compose)
 python-dateutil==2.7.5       #   (required by cookiecutter)
-python-dotenv==0.17.1        #   (required by docker-compose)
+python-dotenv==0.18.0        #   (required by docker-compose)
 python-slugify==4.0.1        #   (required by cookiecutter)
 pytz==2021.3                 #   (required by Django)
 PyWavelets==1.1.1            #   (required by numpy)
@@ -132,26 +133,26 @@ PyYAML==5.4.1                # YAML parser/emitter
 questionary==1.10.0          #   (required by appimage-builder)
 requests==2.25.1             # Web client
 requests-toolbelt==0.9.1     #   (required by poetry)
-resolvelib==0.5.3            #   (required by ansible)
+resolvelib==0.5.4            #   (required by ansible, 0.5.5 yanked)
 roam==0.3.1                  #   (required by appimage-builder)
 ruamel.yaml==0.16.13         #   (required by appimage-builder)
 ruamel.yaml.clib==0.2.6      #   (required by appimage-builder)
-schema==0.6.6                #   (required by appimage-builder)
-scipy==1.7.2                 #   (required by ImageHash)
+schema==0.6.8                #   (required by appimage-builder)
+scipy==1.7.3                 #   (required by ImageHash)
 SecretStorage==3.2.0         #   (required by poetry)
-semver==2.10.2               #   (required by nexus3-cli)
-setuptools==58.5.3           # Python package manager
+semver==2.12.0               #   (required by nexus3-cli)
+setuptools==59.8.0           # Python package manager
 shellingham==1.3.2           #   (required by poetry)
 six==1.16.0                  # Python 2 and 3 compatibility utilities
-smmap==3.0.5                 #   (required by GitPython)
-soupsieve==1.9.6             #   (required by beautifulsoup4)
+smmap==4.0.0                 #   (required by GitPython)
+soupsieve==2.2.1             #   (required by beautifulsoup4)
 spark-parser==1.8.9          #   (required by uncompyle6)
 sqlparse==0.3.1              #   (required by Django)
 stone==3.2.1                 #   (required by dropbox)
 text-unidecode==1.3          #   (required by cookiecutter)
 texttable==1.6.4             #   (required by docker-compose/nexus3-cli)
 toml==0.10.2                 #   (required by devpi-client/ipdb/mypy/pylint)
-tomli==1.2.2                 #   (required by devpi-client)
+tomli==1.2.3                 #   (required by devpi-client)
 tomlkit==0.7.2               #   (required by poetry)
 tornado==5.1.1               # Web server framework
 tox==3.23.1                  #   (required by devpi-client)
@@ -159,7 +160,7 @@ traitlets==5.0.5             #   (required by ipdb)
 typing-extensions==3.10.0.2  #   (required by mypy)
 uncompyle6==3.7.4            # Decompiles Python bytecode back to source code
 urllib3==1.26.7              #   (required by requests)
-virtualenv==20.8.1           # Python Virtual Environments
+virtualenv==20.9.0           # Python Virtual Environments
 wcwidth==0.2.5               #   (required by appimage-builder/ipdb)
 webencodings==0.5.1          #   (required by poetry)
 websocket-client==0.59.0     #   (required by appimage-builder/docker-compose)
@@ -170,3 +171,4 @@ wrapt==1.12.1                #   (required by pylint)
 xdis==5.0.13                 #   (required by uncompyle6)
 xmltodict==0.11.0            # Convert XML to Python dict
 yt-dlp==2021.12.1            # Video downloader
+zipp==3.6.0                  #   (required by markdown)
