@@ -2,6 +2,7 @@ ansible==None
 ansible-core==None
 appimage-builder==None
 arrow==0.17.0
+asgiref==None
 astroid==2.4.2
 build==0.5.1
 CacheControl==None
@@ -11,6 +12,7 @@ contextlib2==None
 crashtest==None
 cryptography                 #   (cryptography==3.2.1 required by paramiko)
 cx-Oracle==7.3.0
+Django==None
 dnspython==None
 docker-compose==None
 dropbox==None
