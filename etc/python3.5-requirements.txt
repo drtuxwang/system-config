@@ -11,7 +11,6 @@ contextlib2==None
 crashtest==None
 cryptography                 #   (cryptography==3.2.1 required by paramiko)
 cx-Oracle==7.3.0
-Django==None
 dnspython==None
 docker-compose==None
 dropbox==None
