@@ -89,7 +89,7 @@ class Options:
             self._archive = os.path.abspath(self._args.archive[0]) + '.zip'
         else:
             self._archive = self._args.archive[0]
-        if not self._archive.endswith('.zip'):
+        if '.zip' not in self._archive:
             raise SystemExit(
                 f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'
             )

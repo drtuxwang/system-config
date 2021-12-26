@@ -68,7 +68,7 @@ class Options:
             )
         else:
             self._archive = self._args.archive[0]
-        if not self._archive.endswith(('.tar.lzma', '.tlz')):
+        if '.tar.lzma' not in self._archive and '.tlz' not in self._archive:
             raise SystemExit(
                 f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'
             )

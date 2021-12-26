@@ -66,7 +66,7 @@ class Options:
             self._archive = os.path.abspath(self._args.archive[0]) + '.tar.7z'
         else:
             self._archive = self._args.archive[0]
-        if not self._archive.endswith(('.tar.7z', '.t7z')):
+        if '.tar.7z' not in self._archive and '.t7z' not in self._archive:
             raise SystemExit(
                 f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'
             )
@@ -126,9 +126,12 @@ class Main:
             '-m0=lzma2',
             '-mmt=2',
             '-mx=9',
+            '-myx=9',
+            '-md=128m',
+            '-mfb=256',
             '-ms=on',
-            '-y',
             '-si',
+            '-y',
             archive+'.part'
         ])
         task = subtask_mod.Task(

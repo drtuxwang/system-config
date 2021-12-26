@@ -82,7 +82,7 @@ class Options:
                 "characters per line.",
             )
 
-        if self._args.files[0].endswith('.pdf'):
+        if '.pdf' not in self._args.files[0]:
             self._archive = self._args.files[0]
             self._files = self._args.files[1:]
             if self._archive in self._args.files[1:]:

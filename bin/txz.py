@@ -66,7 +66,7 @@ class Options:
             self._archive = os.path.abspath(self._args.archive[0]) + '.tar.xz'
         else:
             self._archive = self._args.archive[0]
-        if not self._archive.endswith(('.tar.xz', '.txz')):
+        if '.tar.xz' not in self._archive and '.txz' not in self._archive:
             raise SystemExit(
                 f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'
             )
