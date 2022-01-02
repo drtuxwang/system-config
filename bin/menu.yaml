@@ -114,9 +114,9 @@ menu_games:
     name: hearts
     color: "#ffcc00"
     label: Hearts
-    run: exec gnome-hearts &
+    run: exec hearts &
   checks:
-  - gnome-hearts
+  - Hearts
 - button:
     name: hexxagon
     color: "#ffcc00"

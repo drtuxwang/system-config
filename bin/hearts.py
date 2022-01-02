@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for generic command
+Sandbox for "hearts" launcher
 """
 
 import glob
@@ -8,7 +8,7 @@ import os
 import signal
 import sys
 
-import command_mod
+import network_mod
 import subtask_mod
 
 
@@ -50,9 +50,22 @@ class Main:
         """
         name = os.path.basename(sys.argv[0]).replace('.py', '')
 
-        command = command_mod.Command(name, errors='stop')
-        command.set_args(sys.argv[1:])
-        subtask_mod.Exec(command.get_cmdline()).run()
+        hearts = network_mod.Sandbox(name, errors='stop')
+        hearts.set_args(sys.argv[1:])
+
+        if not os.path.isfile(hearts.get_file() + '.py'):
+            configs = [
+                '/dev/dri',
+                '/dev/shm',
+                f'/run/user/{os.getuid()}/pulse',
+            ]
+            if len(sys.argv) >= 2 and sys.argv[1] == '-net':
+                hearts.set_args(sys.argv[2:])
+                configs.append('net')
+            hearts.sandbox(configs)
+
+        pattern = 'deprecation:'
+        subtask_mod.Task(hearts.get_cmdline()).run(pattern=pattern)
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sandbox  for "atril/evince" launcher
+Wrapper for "engrampa/file-roller" command
 """
 
 import glob
@@ -9,7 +9,6 @@ import signal
 import sys
 
 import command_mod
-import network_mod
 import subtask_mod
 
 
@@ -75,40 +74,19 @@ class Main:
         """
         Start program
         """
-        command = network_mod.Sandbox(
-            'atril',
+        command = command_mod.Command(
+            'engrampa',
             args=sys.argv[1:],
             errors='ignore'
         )
         if not command.is_found():
-            command = network_mod.Sandbox(
-                'evince',
+            command = command_mod.Command(
+                'file-roller',
                 args=sys.argv[1:],
                 errors='stop'
             )
 
-        work_dir = os.environ['PWD']
-        if work_dir == os.environ['HOME']:
-            desktop = os.path.join(work_dir, 'Desktop')
-            if os.path.isdir(desktop):
-                os.chdir(desktop)
-                work_dir = desktop
-        configs = [f'/run/user/{os.getuid()}/dconf', work_dir]
-        if len(sys.argv) > 1:
-            configs.append(os.path.dirname(os.path.abspath(sys.argv[1])))
-        command.sandbox(configs)
-
-        pattern = (
-            '^$|: Gtk-WARNING | Gtk-CRITICAL | GLib-CRITICAL |'
-            ' Poppler-WARNING |: Failed to create dbus proxy|'
-            ': invalid matrix |: Page transition|ToUnicode CMap|'
-            ': Illegal character|^undefined|'
-            ': Page additional action object.*is wrong type|'
-            ' Unimplemented annotation:|: No current point in closepath|'
-            ': Invalid Font Weight|: invalid value|accessibility bus address:|'
-            'Error setting file metadata:|no system default destination|'
-            'GLib-GObject-WARNING'
-        )
+        pattern = '^$|dbind-WARNING|Gtk-WARNING'
         self._config()
         self._setenv()
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Securely connect to VNC server using SSH protocol.
+Sandbox for securely connecting to VNC server using SSH protocol.
 """
 
 import argparse

@@ -132,7 +132,7 @@ class Main:
 
         pattern = 'Cannot write random bytes:|RAND_write_file'
         task = subtask_mod.Task(options.get_vncserver().get_cmdline())
-        task.run(pattern=pattern)
+        task.run(directory=os.getenv('HOME', '/'), pattern=pattern)
 
         return 0
 

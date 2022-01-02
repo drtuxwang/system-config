@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "swell-foop" command
+Sandbox for "swell-foop" command
 """
 
 import glob

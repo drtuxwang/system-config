@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WOLFENSTEIN ENEMY TERRITORY game launcher
+Sandbox for ET Wolf launcher
 """
 
 import glob

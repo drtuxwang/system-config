@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "robo3t" command
+Sandbox for "robo3t" launcher
 """
 
 import glob

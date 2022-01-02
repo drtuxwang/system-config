@@ -42,8 +42,6 @@ the years.
  * bin/python3.10
  * bin/2to3               Python 3.x script wrappers (allowing non systems port)
  * bin/2to3.bat
- * bin/2to3-3.5
- * bin/2to3-3.5.bat
  * bin/ansible
  * bin/ansible-playbook
  * bin/ansible-playbook-venv
@@ -96,15 +94,11 @@ the years.
  * bin/pip.bat
  * bin/pip3
  * bin/pip3.bat
- * bin/pip3.5
- * bin/pip3.5.bat
  * bin/poetry
  * bin/pycodestyle
  * bin/pycodestyle.bat
  * bin/pydoc3
  * bin/pydoc3.bat
- * bin/pydoc3.5
- * bin/pydoc3.5.bat
  * bin/pyflakes
  * bin/pyflakes.bat
  * bin/pylint
@@ -206,12 +200,12 @@ the years.
  * bin/eclipse.py
  * bin/espeak             espeak wrapper (allowing non systems port)
  * bin/espeak.py
- * bin/et                 ET Wolf wrapper (allowing non systems port)
+ * bin/et                 Sandbox for ET Wolf launcher (allowing non systems port)
  * bin/et.py
  * bin/et.tcl
  * bin/etl                ET Legacy wrapper (allowing non systems port)
  * bin/etl.py
- * bin/evince             evince wrapper (allowing non systems port)
+ * bin/evince             Sandbox for "atril/evince" launcher (allowing non systems port)
  * bin/evince.bat
  * bin/evince.py
  * bin/extfbfl            Extract Facebook friends list from saved HTML file
@@ -274,11 +268,13 @@ the years.
  * bin/fhead              Output the first n lines of a file
  * bin/fhead.bat          (like head)
  * bin/fhead.py
+ * bin/file-roller        Wrapper for "engrampa/file-roller" command
+ * bin/file_roller_.py
  * bin/firefox            firefox wrapper (allowing non systems port)
  * bin/firefox.bat        (supports "-copy", "-no-remote" and "-reset" enhancements)
  * bin/firefox.py
  * bin/fixwav             Normalize volume of wave files (-16.0dB rms mean volume)
- * bin/fixwav.py          (uses normalize-audio)
+ * bin/fixwav.py
  * bin/flink              Recursively link all files
  * bin/flink.py
  * bin/fls                Show full list of files
@@ -411,6 +407,8 @@ the years.
  * bin/halt               Fast shutdown using "/proc/sysrq-trigger"
  * bin/hardinfo           hardinfo wrapper (allowing non systems port)
  * bin/hardinfo.py
+ * bin/hearts             Sandbox for "hearts" launcher (allowing non systems port)
+ * bin/hearts.py
  * bin/helm               helm wrapper (for Kubernetes)
  * bin/helm.py
  * bin/htmlformat         HTML file re-formatter
@@ -516,8 +514,6 @@ the years.
  * bin/nautilus.py
  * bin/netnice            Run a command with limited network bandwidth (uses trickle)
  * bin/netnice.py
- * bin/normalize          normalize wrapper (allowing non systems port)
- * bin/normalize.py
  * bin/ntpdate            Wrapper for "ntpdate" command
  * bin/ntpdate.py
  * bin/ntplib             Set the date and time via NTP pool
@@ -590,7 +586,7 @@ the years.
  * bin/random_.py
  * bin/readcd             Copy CD/DVD data as a portable ISO/BIN image file
  * bin/readcd.py
- * bin/robo3t             robo3t wrapper (allowing non systems port)
+ * bin/robo3t             Sandbox for robo3t launcher (allowing non systems port)
  * bin/robo3t.py
  * bin/ripcd              Rip CD audio tracks as WAVE sound files
  * bin/ripcd.py
@@ -642,9 +638,9 @@ the years.
  * bin/ssudo.py
  * bin/sumount            Unmount file system securely mounted with SSH protocol
  * bin/sumount.py
- * bin/svncviewer         Securely connect to VNC server using SSH protocol
+ * bin/svncviewer         Sandbox for securely connecting to VNC server using SSH protocol
  * bin/svncviewer.py
- * bin/swell-foop         Wrapper for "swell-foop" command
+ * bin/swell-foop         Sandbox for "swell-foop" command
  * bin/swell_foop_.py
  * bin/sysinfo            System configuration detection tool
  * bin/sysinfo.bat
@@ -668,9 +664,6 @@ the years.
  * bin/tgz                Make a compressed archive in TAR.GZ format
  * bin/tgz.bat
  * bin/tgz.py
- * bin/thunderbird        thunderbird wrapper (allowing non systems port)
- * bin/thunderbird.bat
- * bin/thunderbird.py
  * bin/tiller             Tiller wrapper (for Kubernetes)
  * bin/tiller.py
  * bin/tinyproxy          tinyproxy wrapper (allowing non systems port)
@@ -717,9 +710,6 @@ the years.
  * bin/undeb.py
  * bin/undmg              Unpack a compressed DMG disk file
  * bin/undmg.py
- * bin/unetbootin         unetbootin wrapper (allowing non systems port)
- * bin/unetbootin.bat
- * bin/unetbootin.py
  * bin/ungpg              Unpack an encrypted archive in gpg (pgp compatible) format
  * bin/ungpg.py
  * bin/ungz               Uncompress a file in GZIP format (allowing non systems port)

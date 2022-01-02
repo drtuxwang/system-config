@@ -170,8 +170,6 @@ exec_python() {
     PYLD_FLAGS=
     PY_MAIN=`basename "$0"`
     case $PY_MAIN in
-    2to3)
-        ;;
     [0-9]*)
         PYLD_FLAGS="-pyldname=$PY_MAIN"
         PY_MAIN="_$PY_MAIN"
