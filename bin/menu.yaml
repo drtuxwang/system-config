@@ -322,14 +322,21 @@ menu_network:
     label: Chrome
     run: exec chrome &
   checks:
-  - chrome
+  - google-chrome
 - button:
     name: chromium
     color: "#ffcc00"
     label: Chromium
     run: exec chromium &
   checks:
-  - chromium
+  - chromium-browser
+- button:
+    name: edge
+    color: "#ffcc00"
+    label: Edge
+    run: exec edge &
+  checks:
+  - microsoft-edge
 - button:
     name: firefox
     color: "#ffcc00"

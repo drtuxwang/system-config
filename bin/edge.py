@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Wrapper for "google-chrome" command
+Wrapper for "microsoft-edge" command
 
 Use '-copy' to copy profile to '/tmp'
 Use '-reset' to clean junk from profile
-Use '-restart' to restart chrome
+Use '-restart' to restart edge
 """
 
 import glob
@@ -46,8 +46,8 @@ class Options:
     def _get_profiles_dir() -> str:
         if command_mod.Platform.get_system() == 'macos':
             return os.path.join(
-                'Library', 'Application Support', 'Google', 'Chrome')
-        return os.path.join('.config', 'google-chrome')
+                'Library', 'Application Support', 'Microsoft', 'Edge')
+        return os.path.join('.config', 'microsoft-edge')
 
     @staticmethod
     def _clean_preferences(configdir: str) -> None:
@@ -126,7 +126,7 @@ class Options:
     def _copy(self) -> None:
         task = task_mod.Tasks.factory()
         tmpdir = file_mod.FileUtil.tmpdir('.cache')
-        for directory in glob.glob(os.path.join(tmpdir + 'chrome.*')):
+        for directory in glob.glob(os.path.join(tmpdir + 'edge.*')):
             try:
                 if not task.pgid2pids(int(directory.split('.')[-1])):
                     print(
@@ -147,7 +147,7 @@ class Options:
         os.setpgid(mypid, mypid)  # New PGID
 
         newhome = file_mod.FileUtil.tmpdir(
-            os.path.join(tmpdir, f'chrome.{mypid}'),
+            os.path.join(tmpdir, f'edge.{mypid}'),
         )
         print(f'Creating copy of Chrome profile in "{newhome}"...')
         if not os.path.isdir(newhome):
@@ -232,12 +232,12 @@ class Options:
 
     @staticmethod
     def _locate() -> command_mod.Command:
-        commands = ['google-chrome']
+        commands = ['microsoft-edge']
         for command in commands:
             browser = command_mod.Command(command, errors='ignore')
             if browser.is_found():
                 return browser
-        return command_mod.Command('chrome', errors='stop')
+        return command_mod.Command('edge', errors='stop')
 
     def parse(self, args: List[str]) -> None:
 
@@ -261,7 +261,7 @@ class Options:
                 args = args[1:]
             self._browser.set_args(args[1:])
 
-        # Avoids 'exo-helper-1 chrome http://' problem of clicking text in XFCE
+        # Avoids 'exo-helper-1 edge http://' problem of clicking text in XFCE
         if len(args) > 1:
             ppid = os.getppid()
             if (ppid != 1 and
@@ -281,16 +281,10 @@ class Options:
                 '--site-per-process',
             ])
 
-        # No sandbox workaround
-        if not os.path.isfile('/opt/google/chrome/chrome-sandbox'):
-            self._browser.append_arg('--no-sandbox')
-
         self._pattern = (
-            '^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
-            ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
-            'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|'
-            ': cannot adjust line|^Using PPAPI|--ppapi-flash-path|'
-            '^Created new window|^Unable to revert mtime:'
+            ': /dev/null/|:ERROR:disk_cache|'
+            'multiple threads in process gpu-process|'
+            '.config/microsoft-edge/Default'
         )
         self._config()
         self._set_libraries(self._browser)

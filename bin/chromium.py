@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "chromium" commands
+Wrapper for "chromium" command
 
 Use '-copy' to copy profile to '/tmp'
 Use '-reset' to clean junk from profile
@@ -36,11 +36,11 @@ class Options:
         """
         return self._pattern
 
-    def get_chrome(self) -> command_mod.Command:
+    def get_browser(self) -> command_mod.Command:
         """
-        Return chrome Command class object.
+        Return browser Command class object.
         """
-        return self._chrome
+        return self._browser
 
     @staticmethod
     def _get_profiles_dir() -> str:
@@ -48,45 +48,6 @@ class Options:
             return os.path.join(
                 'Library', 'Application Support', 'Chromium')
         return os.path.join('.config', 'chromium')
-
-    @staticmethod
-    def _clean_adobe() -> None:
-        adobe = os.path.join(
-            os.environ['HOME'], '.adobe', 'Flash_Player', 'AssetCache')
-        macromedia = os.path.join(
-            os.environ['HOME'],
-            '.macromedia',
-            'Flash_Player',
-            'macromedia.com'
-        )
-        if not os.path.isfile(adobe) or not os.path.isfile(macromedia):
-            try:
-                shutil.rmtree(os.path.join(os.environ['HOME'], '.adobe'))
-                os.makedirs(os.path.dirname(adobe))
-                with open(adobe, 'w', encoding='utf-8', newline='\n'):
-                    pass
-                shutil.rmtree(
-                    os.path.join(os.environ['HOME'], '.macromedia'))
-                os.makedirs(os.path.dirname(macromedia))
-                with open(macromedia, 'w', encoding='utf-8', newline='\n'):
-                    pass
-            except OSError:
-                pass
-        try:
-            shutil.rmtree(
-                os.path.join(os.path.dirname(macromedia), '#SharedObjects'))
-        except OSError:
-            pass
-
-        cache_dir = os.path.join(os.environ['HOME'], '.cache', 'chromium')
-        if not os.path.isfile(cache_dir):
-            if os.path.isdir(cache_dir):
-                try:
-                    shutil.rmtree(cache_dir)
-                    with open(cache_dir, 'wb'):
-                        pass
-                except OSError:
-                    return
 
     @staticmethod
     def _clean_preferences(configdir: str) -> None:
@@ -158,7 +119,6 @@ class Options:
         home = os.environ.get('HOME', '')
         configdir = os.path.join(home, self._get_profiles_dir(), 'Default')
 
-        self._clean_adobe()
         if os.path.isdir(configdir):
             self._clean_preferences(configdir)
             self._clean_junk_files(configdir)
@@ -274,9 +234,9 @@ class Options:
     def _locate() -> command_mod.Command:
         commands = ['chromium-browser', 'chromium']
         for command in commands:
-            chrome = command_mod.Command(command, errors='ignore')
-            if chrome.is_found():
-                return chrome
+            browser = command_mod.Command(command, errors='ignore')
+            if browser.is_found():
+                return browser
         return command_mod.Command('chromium', errors='stop')
 
     def parse(self, args: List[str]) -> None:
@@ -284,12 +244,12 @@ class Options:
         """
         Parse arguments
         """
-        self._chrome = self._locate()
+        self._browser = self._locate()
 
         if len(args) > 1:
             if args[1] == '-version':
-                self._chrome.set_args(['-version'])
-                subtask_mod.Exec(self._chrome.get_cmdline()).run()
+                self._browser.set_args(['-version'])
+                subtask_mod.Exec(self._browser.get_cmdline()).run()
             elif args[1] == '-copy':
                 self._copy()
             elif args[1] == '-reset':
@@ -299,7 +259,7 @@ class Options:
             if args[1] == '-restart':
                 self._restart()
                 args = args[1:]
-            self._chrome.set_args(args[1:])
+            self._browser.set_args(args[1:])
 
         # Avoids 'exo-helper-1 chrome http://' problem of clicking text in XFCE
         if len(args) > 1:
@@ -309,8 +269,8 @@ class Options:
                     task_mod.Tasks.factory().get_process(ppid)['COMMAND']):
                 raise SystemExit
 
-        if '--disable-background-mode' not in self._chrome.get_args():
-            self._chrome.extend_args([
+        if '--disable-background-mode' not in self._browser.get_args():
+            self._browser.extend_args([
                 '--disable-background-mode',
                 '--disable-geolocation',
                 '--disable-infobars',
@@ -323,7 +283,7 @@ class Options:
 
         # No sandbox workaround
         if not os.path.isfile('/usr/lib/chromium/chrome-sandbox'):
-            self._chrome.append_arg('--no-sandbox')
+            self._browser.append_arg('--no-sandbox')
 
         self._pattern = (
             '^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
@@ -335,7 +295,7 @@ class Options:
             '^Opening in existing browser'
         )
         self._config()
-        self._set_libraries(self._chrome)
+        self._set_libraries(self._browser)
 
 
 class Main:
@@ -376,7 +336,7 @@ class Main:
         """
         options = Options()
 
-        cmdline = options.get_chrome().get_cmdline()
+        cmdline = options.get_browser().get_cmdline()
         subtask_mod.Background(cmdline).run(pattern=options.get_pattern())
 
         # Kill filtering process after start up to avoid hang

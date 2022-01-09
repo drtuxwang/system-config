@@ -198,6 +198,8 @@ the years.
  * bin/dpkg.py
  * bin/eclipse            eclipse wrapper (allowing non systems port)
  * bin/eclipse.py
+ * bin/edge               edge wrapper (allowing non systems port)
+ * bin/edge.py
  * bin/espeak             espeak wrapper (allowing non systems port)
  * bin/espeak.py
  * bin/et                 Sandbox for ET Wolf launcher (allowing non systems port)
