@@ -1,9 +1,11 @@
 cached-property==1.5.2       #   (required by docker-compose for 3.6)
 GitPython==3.1.20
+ImageHash==None
 importlib-resources==5.4.0   #   (required by virtualenv for 3.6)
 ipython==7.16.1
 numpy==1.19.5
 pip                          #   (pip==20.2.4 last supported)
+Pillow==None
 poetry==None
 poetry-core==None
 scipy==1.5.4
