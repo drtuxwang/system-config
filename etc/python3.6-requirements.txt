@@ -3,7 +3,7 @@ GitPython==3.1.20
 ImageHash==None
 importlib-resources==5.4.0   #   (required by virtualenv for 3.6)
 ipython==7.16.1
-numpy==1.19.5
+numpy                        #   (CVE-2021-33430: 1.19.5 compatible version)
 pip                          #   (pip==20.2.4 last supported)
 Pillow==None
 poetry==None

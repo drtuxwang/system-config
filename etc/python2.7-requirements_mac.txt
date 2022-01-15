@@ -1,8 +1,7 @@
 cryptography==None           # Broken on mac
 ansible==None                # Requires cryptography which is broken
 ansible-core==None           # Requires cryptography which is broken
+Glances==None                # Requires psutil which is broken
+psutil==None                 # Broken on mac
 pyOpenSSL==None              # Requires cryptography which is broken
 paramiko==None               # Requires cryptography which is broken
-
-psutil==None                 # Broken on mac
-Glances==None                # Requires psutil which is broken

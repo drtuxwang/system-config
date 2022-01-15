@@ -35,7 +35,7 @@ Markdown==3.2.2
 MarkupSafe==1.1.1
 mypy==0.910
 nexus3-cli==None
-numpy==1.18.5
+numpy                        #   (CVE-2021-33430: 1.18.5 compatible version)
 parso==0.7.1
 pluggy==0.13.1
 Pillow==None

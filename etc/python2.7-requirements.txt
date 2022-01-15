@@ -51,7 +51,7 @@ mypy-extensions==None
 motor==2.1.0
 mutagen==1.43.1
 nexus3-cli==None
-numpy==1.16.6
+numpy                        #   (CVE-2021-33430: 1.16.6 compatible version)
 parso==0.7.1
 pathlib2==2.3.6              #   (required by docker-compose/virtualenv for 2.7)
 Pillow==None

@@ -35,7 +35,7 @@ devpi-client==5.2.3          # Manages devpi-server
 devpi-common==3.6.0          #   (required by devpi-client)
 distlib==0.3.4               #   (required by virtualenv)
 distro==1.5.0                #   (required by docker-compose)
-Django==3.2.10               # Web server framework
+Django==3.2.11               # Web server framework
 dnspython==2.1.0             # DNS client
 docker==4.4.4                #   (required by appimage-builder/docker-compose)
 docker-compose==1.28.6       # Docker container orchestration
