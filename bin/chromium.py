@@ -147,7 +147,7 @@ class Options:
         os.setpgid(mypid, mypid)  # New PGID
 
         newhome = file_mod.FileUtil.tmpdir(
-            os.path.join(tmpdir, f'chromium.{str(mypid)}'),
+            os.path.join(tmpdir, f'chromium.{mypid}'),
         )
         print(f'Creating copy of Chromium profile in "{newhome}"...')
         if not os.path.isdir(newhome):

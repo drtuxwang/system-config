@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unpack a compressed DMG disk file.
+Compress a file in 7ZIP format.
 """
 
 import argparse
@@ -25,32 +25,19 @@ class Options:
 
     def get_files(self) -> List[str]:
         """
-        Return list of disk files.
+        Return list of files.
         """
         return self._args.files
 
-    def get_view_flag(self) -> bool:
-        """
-        Return view flag.
-        """
-        return self._args.view_flag
-
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="Unpack a compressed DMG disk file.",
-        )
+            description="Compress a file in 7ZIP format.")
 
-        parser.add_argument(
-            '-v',
-            dest='view_flag',
-            action='store_true',
-            help="Show contents of disk file.",
-        )
         parser.add_argument(
             'files',
             nargs='+',
-            metavar='file.dmg',
-            help="Disk file.",
+            metavar='file',
+            help="File to compress.",
         )
 
         self._args = parser.parse_args(args)
@@ -100,35 +87,16 @@ class Main:
         """
         options = Options()
 
-        os.umask(int('022', 8))
-        dmg2img = command_mod.Command('dmg2img', errors='stop')
-        p7zip = command_mod.Command('7z', errors='stop')
-        if options.get_view_flag():
-            p7zip.set_args(['l'])
-        else:
-            p7zip.set_args(['x', '-y'])
-
+        command = command_mod.Command('7z', errors='stop')
         for file in options.get_files():
-            if not os.path.isfile(file):
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" disk file.',
+            if os.path.isfile(file):
+                task = subtask_mod.Task(
+                    command.get_cmdline() + [file+'.7z', file],
                 )
-            print(f"{file}:")
-            task = subtask_mod.Task(
-                dmg2img.get_cmdline() + [file, 'dmg2img.img'])
-            task.run()
+                task.run()
+                if task.get_exitcode():
+                    raise SystemExit(task.get_exitcode())
 
-            task = subtask_mod.Task(p7zip.get_cmdline() + ['dmg2img.img'])
-            task.run()
-            try:
-                os.remove('dmg2img.img')
-            except OSError:
-                pass
-            if task.get_exitcode():
-                raise SystemExit(
-                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
-                    f'received from "{task.get_file()}".',
-                )
         return 0
 
 

@@ -1,4 +1,4 @@
-# 1996-2021 By Dr Colin Kong
+ 1996-2021 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -219,6 +219,8 @@ the years.
  * bin/exturl             Extracts http references from a HTML file
  * bin/exturl.bat
  * bin/exturl.py
+ * bin/f7z                Compress a file in 7ZIP format
+ * bin/f7z.7z
  * bin/fcat               Concatenate files and print on the standard output
  * bin/fcat.bat           (similar to cat)
  * bin/fcat.py
@@ -829,7 +831,7 @@ the years.
  * bin/xmlformat          XML file re-formatter
  * bin/xmlformat.bat
  * bin/xmlformat.py
- * bin/xournal            PDF annotator
+ * bin/xournal            Sandbox for "xournalpp" launcher
  * bin/xournal.bat
  * bin/xournal.py
  * bin/xreset             Reset to default screen resolution

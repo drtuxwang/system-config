@@ -57,7 +57,8 @@ class Main:
         configs = [
             'net',
             f'/run/user/{os.getuid()}',
-            os.path.join(os.environ['HOME'], '.3T', 'robo-3t'),
+            os.path.join(os.getenv('HOME', '/'), '.config/ibus'),
+            os.path.join(os.getenv('HOME', '/'), '.3T/robo-3t'),
         ]
         work_dir = os.environ['PWD']
         if work_dir == os.environ['HOME']:

@@ -59,6 +59,7 @@ class Main:
             os.makedirs(home_videos)
         configs = [
             '/dev/dri',
+            os.path.join(home, '.config/ibus'),
             os.path.join(home, '.config/Meltytech'),
             f"{home_videos}:{os.path.join(home, 'Videos')}",
         ]

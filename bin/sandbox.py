@@ -95,7 +95,13 @@ class Options:
             home = os.getenv('HOME', '/')
             configs = [
                 os.path.join(home, x) + ':ro'
-                for x in ('.bashrc', '.profile', '.tmux.conf', '.vimrc')
+                for x in (
+                    '.bashrc',
+                    '.config/ibus',
+                    '.profile',
+                    '.tmux.conf',
+                    '.vimrc',
+                )
                 if os.path.exists(os.path.join(home, x))
             ]
 

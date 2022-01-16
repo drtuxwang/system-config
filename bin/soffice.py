@@ -115,7 +115,8 @@ class Main:
         configs = [
             '/tmp',
             f'/run/user/{os.getuid()}',
-            os.path.join(os.getenv('HOME', '/'), '.config', 'libreoffice'),
+            os.path.join(os.getenv('HOME', '/'), '.config/ibus'),
+            os.path.join(os.getenv('HOME', '/'), '.config/libreoffice'),
             work_dir,
         ]
         if len(sys.argv) >= 2:

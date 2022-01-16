@@ -5,9 +5,11 @@ metadata:
   # annotations:
   #   nginx.ingress.kubernetes.io/configuration-snippet: |
   #       rewrite "(?i)/{{ include "app.fullname" . }}/(.*)$" /$1 break;
+  #       sub_filter_types *;
   #       sub_filter_once off;
   #       sub_filter_types text/html;
   #       sub_filter '="/' '="/{{ include "app.fullname" . }}/';
+  #       sub_filter "href=/" "href=/path/";
 spec:
   rules:
   - host: {{ include "app.fullname" . }}-box.{{ .Values.ingress.box.domain }}

@@ -76,7 +76,7 @@ menu_document:
     label: Xournal
     run: exec xournal &
   checks:
-  - xournal
+  - xournalpp
 - button:
     name: xedit
     color: "#ffcc00"

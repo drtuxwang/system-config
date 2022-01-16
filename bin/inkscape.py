@@ -60,6 +60,7 @@ class Main:
                 os.chdir(desktop)
                 work_dir = desktop
         configs = [
+            os.path.join(os.getenv('HOME', '/'), '.config/ibus'),
             os.path.join(os.getenv('HOME', '/'), '.config/inkscape'),
             work_dir,
         ]

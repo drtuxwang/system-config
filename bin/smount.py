@@ -59,7 +59,7 @@ class Options:
             task.run(pattern='type fuse.sshfs ')
             if task.get_exitcode():
                 raise SystemExit(
-                    f'{sys.argv[0]}: Error code {str(task.get_exitcode())} '
+                    f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                     f'received from "{task.get_file()}".',
                 )
             for line in task.get_output():

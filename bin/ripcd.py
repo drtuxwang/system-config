@@ -290,7 +290,7 @@ class Main:
                     newsize = size - len(data) + i + 264
                     if newsize < size:
                         line = (
-                            f'Track length is {str(newsize)} '
+                            f'Track length is {newsize} '
                             f'bytes (pregap removed)',
                         )
                         print(line)

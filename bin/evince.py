@@ -93,7 +93,11 @@ class Main:
             if os.path.isdir(desktop):
                 os.chdir(desktop)
                 work_dir = desktop
-        configs = [f'/run/user/{os.getuid()}/dconf', work_dir]
+        configs = [
+            f'/run/user/{os.getuid()}/dconf',
+            os.path.join(os.getenv('HOME', '/'), '.config/ibus'),
+            work_dir,
+        ]
         if len(sys.argv) > 1:
             configs.append(os.path.dirname(os.path.abspath(sys.argv[1])))
         command.sandbox(configs)

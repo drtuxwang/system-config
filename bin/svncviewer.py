@@ -108,7 +108,10 @@ class Options:
             ) from exception
 
         self._vncviewer = network_mod.Sandbox('vncviewer', errors='stop')
-        configs = [os.path.join(os.environ['HOME'], '.vnc')]
+        configs = [
+            os.path.join(os.getenv('HOME', '/'), '.config/ibus'),
+            os.path.join(os.getenv('HOME', '/'), '.vnc'),
+        ]
         self._vncviewer.sandbox(configs)
 
         if remote_host:

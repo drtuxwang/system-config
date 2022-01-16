@@ -38,7 +38,7 @@ class Options:
         print('        "_args": {')
         print('            "args":', str(self._args.args), ',')
         print(f'            "libpath": {self._args.libpath},')
-        print(f'            "module":{str(self._args.module)},')
+        print(f'            "module":{self._args.module},')
         print('            "verbosity":', self._args.verbosity)
         print("        },")
         print(f'        "_dump_flag": {self._dump_flag},')
