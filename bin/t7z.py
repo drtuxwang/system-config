@@ -114,14 +114,21 @@ class Main:
         Start program
         """
         options = Options()
-
-        os.umask(int('022', 8))
-        tar = command_mod.Command('tar', errors='stop')
         archive = options.get_archive()
+        os.umask(int('022', 8))
+
+        tar = command_mod.Command('tar', errors='stop')
         tar.set_args(['cf', '-'] + options.get_files())
         tar.extend_args(['--owner=0:0', '--group=0:0', '--sort=name'])
-        p7zip = command_mod.Command('7z', errors='stop')
-        p7zip.set_args([
+        task: subtask_mod.Task = subtask_mod.Batch(
+            tar.get_cmdline() + ['--help'],
+        )
+        task.run(pattern='--xattrs')
+        if task.has_output():
+            tar.extend_args(['--xattrs', '--xattrs-include=*'])
+
+        unpacker = command_mod.Command('7z', errors='stop')
+        unpacker.set_args([
             'a',
             '-m0=lzma2',
             '-mmt=2',
@@ -135,7 +142,7 @@ class Main:
             archive+'.part'
         ])
         task = subtask_mod.Task(
-            tar.get_cmdline() + ['|'] + p7zip.get_cmdline()
+            tar.get_cmdline() + ['|'] + unpacker.get_cmdline()
         )
 
         task.run()

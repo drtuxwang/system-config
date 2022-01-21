@@ -102,11 +102,11 @@ class Main:
 
         os.umask(int('022', 8))
         dmg2img = command_mod.Command('dmg2img', errors='stop')
-        p7zip = command_mod.Command('7z', errors='stop')
+        unpacker = command_mod.Command('7z', errors='stop')
         if options.get_view_flag():
-            p7zip.set_args(['l'])
+            unpacker.set_args(['l'])
         else:
-            p7zip.set_args(['x', '-y'])
+            unpacker.set_args(['x', '-y'])
 
         for file in options.get_files():
             if not os.path.isfile(file):
@@ -118,7 +118,7 @@ class Main:
                 dmg2img.get_cmdline() + [file, 'dmg2img.img'])
             task.run()
 
-            task = subtask_mod.Task(p7zip.get_cmdline() + ['dmg2img.img'])
+            task = subtask_mod.Task(unpacker.get_cmdline() + ['dmg2img.img'])
             task.run()
             try:
                 os.remove('dmg2img.img')

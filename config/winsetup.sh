@@ -67,13 +67,16 @@ schtasks.exe /delete /tn "\Microsoft\Windows\WindowsUpdate\Scheduled Start" /f
 EOF
         ;;
     esac
+    [ $VERSION -ge 61 ] && tzutil /s "GMT Standard Time"
+    [ $VERSION -ge 100 ] && echo y | powershell Set-WinUserLanguageList -LanguageList en-GB
+
     echo
     echo "Running \"$TMP/winsetup.bat\"..."
     echo "pause" >> "$TMP/winsetup.bat"
     powershell.exe -command start-process "$TMP/winsetup.bat" -verb runas
 
     echo
-    install "$DIR/python-minimal_3.*_win*x86.7z"
+    install "$DIR/python_3.*_win*x86.7z"
     if [ $VERSION -lt 100 ]
     then
         echo

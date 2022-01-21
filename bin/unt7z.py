@@ -100,19 +100,27 @@ class Main:
             sys.argv = argv
 
     def _unpack(self, file: str) -> None:
-        p7zip = command_mod.Command('7z', errors='stop')
-        p7zip.set_args(['x', '-y', '-so', file])
+        unpacker = command_mod.Command('7z', errors='stop')
+        unpacker.set_args(['x', '-y', '-so', file])
         self._tar.set_args(['xfv', '-'])
+        task = subtask_mod.Batch(self._tar.get_cmdline() + ['--help'])
+        task.run(pattern='--xattrs')
+        if task.has_output():
+            self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
         subtask_mod.Task(
-            p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()
+            unpacker.get_cmdline() + ['|'] + self._tar.get_cmdline()
         ).run()
 
     def _view(self, file: str) -> None:
-        p7zip = command_mod.Command('7z', errors='stop')
-        p7zip.set_args(['x', '-y', '-so', file])
+        unpacker = command_mod.Command('7z', errors='stop')
+        unpacker.set_args(['x', '-y', '-so', file])
         self._tar.set_args(['tfv', '-'])
+        task = subtask_mod.Batch(self._tar.get_cmdline() + ['--help'])
+        task.run(pattern='--xattrs')
+        if task.has_output():
+            self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
         subtask_mod.Task(
-            p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()
+            unpacker.get_cmdline() + ['|'] + self._tar.get_cmdline()
         ).run()
 
     def run(self) -> int:

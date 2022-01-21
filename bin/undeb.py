@@ -162,7 +162,6 @@ class Main:
         os.umask(int('022', 8))
         self._options = options
         self._ar = command_mod.Command('ar', errors='stop')
-        self._p7zip = command_mod.Command('7z', args=['x'], errors='stop')
         self._tar = command_mod.Command('tar', errors='stop')
         if options.get_view_flag():
             self._tar.set_args(['tf'])

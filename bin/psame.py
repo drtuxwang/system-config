@@ -168,7 +168,7 @@ class Main:
                 "Identical: %s",
                 command_mod.Command.args2cmd(sorted(images)),
             )
-        return matched_images != []
+        return bool(matched_images)
 
 
 if __name__ == '__main__':

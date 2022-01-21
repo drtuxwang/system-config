@@ -113,13 +113,13 @@ class Main:
         has_xattrs = task.has_output()
 
         if file.endswith('.tar.7z'):
-            p7zip = command_mod.Command('7z', errors='stop')
-            p7zip.set_args(['x', '-y', '-so', file])
+            unpacker = command_mod.Command('7z', errors='stop')
+            unpacker.set_args(['x', '-y', '-so', file])
             self._tar.set_args(['xfv', '-'])
             if has_xattrs:
                 self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
             subtask_mod.Task(
-                p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
+                unpacker.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
         else:
             self._tar.set_args(['xfv', file])
             if has_xattrs:
@@ -128,11 +128,11 @@ class Main:
 
     def _view(self, file: str) -> None:
         if file.endswith('.tar.7z'):
-            p7zip = command_mod.Command('7z', errors='stop')
-            p7zip.set_args(['x', '-y', '-so', file])
+            unpacker = command_mod.Command('7z', errors='stop')
+            unpacker.set_args(['x', '-y', '-so', file])
             self._tar.set_args(['tfv', '-'])
             subtask_mod.Task(
-                p7zip.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
+                unpacker.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
         else:
             self._tar.set_args(['tfv', file])
             subtask_mod.Task(self._tar.get_cmdline()).run()

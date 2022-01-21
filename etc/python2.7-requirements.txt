@@ -13,6 +13,7 @@ CacheControl==None
 cached-property==1.5.2       #   (required by docker-compose for 2.7)
 cachetools==3.1.1
 cffi==1.14.1
+charset-normalizer==None
 check-manifest==0.41
 cleo==None
 clikit==None
@@ -28,17 +29,20 @@ docker-compose==1.26.2
 emrichen==None
 enum34==1.1.10               #   (required by ansible/docker-compose for 2.7)
 filelock==3.2.1
+flake8==3.9.2
 functools32==3.2.3.post2     #   (required by docker-compose for 2.7)
 futures==3.3.0               #   (required by pylint for 2.7)
 gitdb==None
 gitdb2==2.0.6                #   (required by GitPython for 2.7)
 GitPython==2.1.15
+idna==2.10
 ImageHash==None
 importlib-metadata==2.1.1    #   (required by virtualenv for 2.7)
 importlib-resources==3.3.1   #   (required by virtualenv for 2.7)
 inflect==None
 ipaddress==1.0.23            #   (required by cryptography/docker-compose for 2.7)
-ipython==5.8.0
+ipdb==None
+ipython==None
 isort==4.3.21
 jedi==0.17.2
 jeepney==None
@@ -51,19 +55,21 @@ mypy-extensions==None
 motor==2.1.0
 mutagen==1.43.1
 nexus3-cli==None
-numpy                        #   (CVE-2021-33430: 1.16.6 compatible version)
+numpy                        #   (1.16.6 last compatible version)
 parso==0.7.1
 pathlib2==2.3.6              #   (required by docker-compose/virtualenv for 2.7)
 Pillow==None
-pip                          #   (pip==20.2.4 last supported)
+pip                          #   (20.2.4 last compatible version)
 platformdirs==2.0.2
 pluggy==0.13.1
 poetry==None
 poetry-core==None
-prompt-toolkit==1.0.18
-pycrypto                     #   (pycrypto==2.6.1 required by abettersqlplus)
+prompt-toolkit==None
+pycodestyle==2.7.0
+pycrypto                     #   (2.6.1 required by abettersqlplus)
 pycurl==7.43.0.5
-Pygments                     #   (Pygments==2.5.2required by ipdb)
+pyflakes==2.3.1
+Pygments                     #   (2.5.2 required by ipdb)
 pylint==1.9.4
 pyparsing==2.2.2             # New version incompatible
 pyrsistent==0.16.1

@@ -105,16 +105,21 @@ class Main:
         Start program
         """
         options = Options()
-
         os.umask(int('022', 8))
+
         tar = command_mod.Command('tar', errors='stop')
+        if options.get_view_flag():
+            tar.set_args(['tfv'])
+        else:
+            tar.set_args(['xfv'])
+        task = subtask_mod.Batch(tar.get_cmdline() + ['--help'])
+        task.run(pattern='--xattrs')
+        if task.has_output():
+            tar.extend_args(['--xattrs', '--xattrs-include=*'])
+
         for file in options.get_archives():
             print(f"{file}:")
-            if options.get_view_flag():
-                tar.set_args(['tfv', file])
-            else:
-                tar.set_args(['xfv', file])
-            subtask_mod.Task(tar.get_cmdline()).run()
+            subtask_mod.Task(tar.get_cmdline() + [file]).run()
 
         return 0
 

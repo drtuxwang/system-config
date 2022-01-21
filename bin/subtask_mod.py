@@ -15,8 +15,8 @@ import types
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.2.7'
-VERSION = 20211224
+RELEASE = '2.2.8'
+VERSION = 20220117
 
 BUFFER_SIZE = 131072
 
@@ -63,7 +63,7 @@ class Task:
         """
         Return True if stdout used.
         """
-        return self._status['output'] != []
+        return self._status['output']
 
     def is_match_output(self, pattern: str) -> bool:
         """
@@ -98,7 +98,7 @@ class Task:
         """
         Return True if stderr used.
         """
-        return self._status['error'] != []
+        return self._status['error']
 
     def is_match_error(self, pattern: str) -> bool:
         """

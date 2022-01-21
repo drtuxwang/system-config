@@ -119,17 +119,17 @@ install_packages() {
     fi
 
     PACKAGES=$(check_packages | awk '/ # Requirement / {print $NF}')
-    for PACKAGE in $(echo "$PACKAGES" | egrep "^(pip]setuptools|wheel)$")
+    for PACKAGE in $(echo "$PACKAGES" | egrep "^(pip|setuptools|wheel)([>=]=.*|)$")
     do
         echo "$INSTALL $PACKAGE"
         $INSTALL "$PACKAGE" 2>&1 | egrep -v "DEPRECATION:|'root' user|pip version|--upgrade pip"
         [ ${PIPESTATUS[0]} = 0 ] || exit 1
-        echo -e "${esc}[33m$Installed!${esc}[0m"
+        echo -e "${esc}[33mInstalled!${esc}[0m"
     done
     [ "$MODE" = "piponly" ] && return
 
     export CRYPTOGRAPHY_DONT_BUILD_RUST=1
-    for PACKAGE in $(echo "$PACKAGES" | egrep -v "^(pip]setuptools|wheel)$")
+    for PACKAGE in $(echo "$PACKAGES" | egrep -v "^(pip|setuptools|wheel)([>=]=.*|)$")
     do
         echo "$INSTALL $PACKAGE"
         $INSTALL "$PACKAGE" 2>&1 | egrep -v "DEPRECATION:|'root' user|pip version|--upgrade pip"

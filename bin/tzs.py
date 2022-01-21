@@ -87,6 +87,10 @@ class Options:
             '--group=0:0',
             '--sort=name',
         ])
+        task = subtask_mod.Batch([self._tar.get_cmdline()[0], '--help'])
+        task.run(pattern='--xattrs')
+        if task.has_output():
+            self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
 
 
 class Main:

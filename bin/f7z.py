@@ -87,7 +87,7 @@ class Main:
         """
         options = Options()
 
-        command = command_mod.Command('7z', errors='stop')
+        command = command_mod.Command('_7z.py', errors='stop')
         for file in options.get_files():
             if os.path.isfile(file):
                 task = subtask_mod.Task(
