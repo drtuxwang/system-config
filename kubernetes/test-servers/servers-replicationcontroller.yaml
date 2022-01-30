@@ -13,6 +13,17 @@ spec:
       labels:
         app: server
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              ##- key: node-role.kubernetes.io/worker
+              ##  operator: Exists
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
       containers:
       - command:
         - sleep
