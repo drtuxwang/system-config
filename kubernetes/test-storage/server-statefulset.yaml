@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: server
+  name: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  serviceName: server-headless
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              ##- key: node-role.kubernetes.io/worker
+              ##  operator: Exists
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
+      containers:
+      - command:
+        - sleep
+        - infinity
+        env:
+        - name: NAME
+          value: VALUE
+        image: drtuxwang/debian-bash:stable
+        imagePullPolicy: IfNotPresent
+        name: server
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024M
+          requests:
+            cpu: 100m
+            memory: 64M
+        volumeMounts:
+        - mountPath: /shared
+          name: data
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+        ##kubernetes.io/hostname: koko.local
+      terminationGracePeriodSeconds: 10
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - "ReadWriteOnce"
+      resources:
+        requests:
+          storage: 2Gi
+      storageClassName: local-storage

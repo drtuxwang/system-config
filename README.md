@@ -1147,6 +1147,10 @@ the years.
  * kubernetes/test-servers/servers-secret-tls.yaml
  * kubernetes/test-servers/servers-service.yaml
  * kubernetes/test-servers/servers-statefulset.yaml
+ * kubernetes/test-storage/Makefile      Kubernetes: Persistent Volume example
+ * kubernetes/test-storage/data-server-persistentvolume.yaml
+ * kubernetes/test-storage/local-storageclass.yaml
+ * kubernetes/test-storage/server-statefulset.yaml
  * helm/Makefile
  * helm/bin/helm-save.sh                 Save Helm release docker images
  * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.14.2 (app-0.12.0)
