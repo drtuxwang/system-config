@@ -15,6 +15,7 @@ RUN apt-get update --fix-missing && \
         netcat-openbsd \
         openssh-client \
         pciutils \
+        procps \
         python3 \
         socat \
         vim \

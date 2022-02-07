@@ -103,7 +103,7 @@ check_packages() {
 install_packages() {
     MODE=${1:-}
     case $PYTHON_VERSION in
-    2.[67]|3.[345])
+    2.[67]|3.[3456])
         GETPIP="https://bootstrap.pypa.io/pip/$PYTHON_VERSION/get-pip.py"
         ;;
     *)
@@ -113,7 +113,7 @@ install_packages() {
     if [ ! "$($PYTHON -m pip --version 2>&1 | grep "^pip ")" ]
     then
         echo "curl --location --progress-bar $GETPIP | $PYTHON"
-        curl --location --progress-bar $GETPIP | $PYTHON | grep -v "'root' user"
+        curl --location --progress-bar $GETPIP | $PYTHON 2>&1 | grep -v "'root' user"
         [ ${PIPESTATUS[0]} = 0 ] || exit 1
         echo -e "${esc}[33mInstalled!${esc}[0m"
     fi

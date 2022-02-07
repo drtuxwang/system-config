@@ -214,7 +214,7 @@ class Main:
             self.get_offset()
             return 0
 
-        self._date = command_mod.Command('date')
+        self._date = command_mod.Command('date', errors='stop')
         self._hwclock = command_mod.Command('hwclock', errors='stop')
         delay = self.check_clock()
 

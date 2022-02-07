@@ -386,11 +386,6 @@ then
     then
         mkdir -p $HOME/Desktop/Downloads 2> /dev/null
         cd "$HOME/Desktop" 2> /dev/null
-        while [ "$PWD" != "$HOME/Desktop" ]
-        do
-            sleep 1
-            cd "$HOME/Desktop" 2> /dev/null
-        done
     fi
 
     # Applying optional settings

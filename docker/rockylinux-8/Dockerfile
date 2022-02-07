@@ -7,10 +7,12 @@ RUN yum -y install epel-release && \
     yum -y update && \
     yum -y install \
         bind-utils \
+        diffutils \
         net-tools \
         netcat \
         openssh-clients \
         pciutils \
+        procps \
         python38 \
         socat \
         vim \

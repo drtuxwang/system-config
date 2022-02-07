@@ -8,10 +8,12 @@ RUN ln -s microdnf /usr/bin/yum && \
     yum -y update && \
     yum -y install \
         bind-utils \
+        diffutils \
         net-tools \
         netcat \
         openssh-clients \
         pciutils \
+        procps \
         socat \
         python38 \
         vim \

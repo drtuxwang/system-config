@@ -91,7 +91,7 @@ class Options:
         """
         Parse arguments
         """
-        self._archiver = command_mod.Command('7z')
+        self._archiver = command_mod.Command('7z', errors='stop')
 
         if len(args) > 1 and args[1] in ('a', '-bd', 'l', 't', 'x'):
             self._archiver.set_args(args[1:])

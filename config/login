@@ -227,7 +227,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     # Change to $HOME/Desktop
     if ( "$PWD" == "$HOME" || "$PWD" == "/" ) then
         mkdir -p $HOME/Desktop/Downloads >& /dev/null
-        cd "$HOME/Desktop"
+        cd "$HOME/Desktop" >& /dev/null
     endif
 
     # Applying optional settings
