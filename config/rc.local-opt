@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 
-# VirtualBox
-##mount -t vboxsf -o uid=owner,gid=users Shared /shared &
-
 # No Network Manager
 ##dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
 
-sleep 20
+sleep 15
 
 # Mount removable disks
 ##mount -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=<uuid-from-blkid> /mnt/data2
-##mount -o bind /mnt/data2/shared /shared
+
+# Setup /shared
+##mount -t tmpfs -o noatime,nosuid,nodev,uid=owner,gid=users tmpfs /shared
+##mount -t vboxsf -o uid=owner,gid=users Shared /shared &
+
+# Setup tmpfs for Docker tmp files
+##mount -t tmpfs -o noatime,nosuid,nodev tmpfs /var/lib/docker/tmp
 
 # Setup ZRAM swap (zramctl)
 ##modprobe zram num_devices=1
@@ -19,8 +22,5 @@ sleep 20
 ##echo $(($RAM/2))K > /sys/block/zram0/mem_limit
 ##mkswap /dev/zram0
 ##swapon -p 100 /dev/zram0
-
-# Setup tmpfs for Docker tmp files
-##mount -t tmpfs -o noatime,nosuid,nodev tmpfs /var/lib/docker/tmp
 
 exit 0
