@@ -175,6 +175,7 @@ then
     SSH_KEYS=`ssh-add -l 2> /dev/null | grep ".:." | wc -l | awk '{print $1}'`
 
     # Setup terminal
+    alias logout=\\exit  # required by ash
     if [ "$MYTTY" != "`\tty 2> /dev/null`" ]
     then
         export MYTTY=`\tty 2> /dev/null`
@@ -195,14 +196,21 @@ then
             else
                 MYSHELL="$MYSHELL exec"
             fi
+        elif [ "$SUDO_COMMAND" ]
+        then
+            MYSHELL="$MYSHELL sudo"
+        elif [ "$TMUX" ]
+        then
+            MYSHELL="$MYSHELL tmux"
+            unset SSH_CONNECTION
+            alias exit='echo Use \"CTRL+b x\" to kill tmux pane.'
+            alias logout='echo Use \"CTRL+b x\" to kill tmux pane.'
+            set -o ignoreeof
         elif [ "$SSH_CONNECTION" ]
         then
             MYSHELL="$MYSHELL remote"
             alias exit='echo Use \"logout\" to disconnect remote shell.'
             set -o ignoreeof
-        elif [ "$SUDO_COMMAND" ]
-        then
-            MYSHELL="$MYSHELL sudo"
         else
             MYSHELL="$MYSHELL login"
             alias exit='echo Use \"logout\" to close login shell.'
@@ -210,7 +218,6 @@ then
         fi
         alias exec=""
     fi
-    alias logout=\\exit  # required by ash
 
     # Use /tmp (tmpfs) for cache
     export TMPDIR="/tmp/$MYUNAME"
