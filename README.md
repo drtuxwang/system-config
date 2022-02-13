@@ -1162,18 +1162,18 @@ the years.
  * helm/etcd/values.yaml
  * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 7.2.5 (app-8.2.5)
  * helm/grafana/values.yaml
- * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 8.0.10 (app-2.289.3)
+ * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 8.1.6 (app-2.319.3)
  * helm/jenkins/values.yaml
- * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 12.17.3 (2.7.0)
+ * helm/kafka/Makefile                   Helm Chart: bitnami/kafka 14.9.3 (2.8.1)
  * helm/kafka/connect-test.sh
  * helm/kafka/values.yaml
  * helm/ingress-controller/Makefile      Helm Chart: ingress-nginx/ingress-nginx 3.35.0 (app-0.48.1)
  * helm/ingress-controller/values.yaml
- * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 10.27.3 (app-4.4.9)
+ * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 10.31.5 (app-4.4.11)
  * helm/mongodb/values.yaml
  * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 5.2.2 (app-3.27.0)
  * helm/nexus/values.yaml
- * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 9.5.15 (app-1.18.0)
+ * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 9.6.2 (app-1.18.0)
  * helm/nginx/values.yaml
  * helm/ops-server/Makefile              Helm Chart: drtuxwang/ops-server (drtuxwang/debian-bash:stable)
  * helm/ops-server/drtuxwang/ops-server/Chart.yaml
