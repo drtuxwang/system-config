@@ -52,7 +52,7 @@ do
     tmux)
         echo "Creating \"tmpdir/root-disk/root/.tmux.conf\"..."
         mkdir -p tmpdir/root-disk/root
-        cp -p "$TOPDIR"/config/vimrc tmpdir/root-disk/root/.tmux.conf
+        cp -p "$TOPDIR"/config/tmux.conf tmpdir/root-disk/root/.tmux.conf
         ;;
     vim)
         echo "Creating \"tmpdir/root-disk/root/.vimrc\"..."

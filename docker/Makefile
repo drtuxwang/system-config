@@ -1,9 +1,9 @@
 IMAGES := "drtuxwang/.*"
 
 BUILD_DIRS := \
-	alpine-3.12 \
 	alpine-3.13 \
-	i386-alpine-3.13 \
+	alpine-3.14 \
+	i386-alpine-3.14 \
 	amazonlinux-2 \
 	busybox-1.33 \
 	centos-7 \

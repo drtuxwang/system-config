@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/i386-alpine:3.13
-IMAGE := drtuxwang/i386-alpine-dev:3.13
-NAME := alpine313-32-dev
-HOSTNAME := alpine313-32-dev
+BASE_IMAGE := drtuxwang/alpine:3.14
+IMAGE := drtuxwang/alpine-dev:3.14
+NAME := alpine314-dev
+HOSTNAME := alpine314-dev
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=

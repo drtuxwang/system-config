@@ -982,24 +982,24 @@ the years.
  * docker/bin/docker-load.sh             Load docker images
  * docker/bin/docker-save.sh             Save docker images
  * docker/bin/python-packages.sh
- * docker/alpine-3.12/Makefile
- * docker/alpine-3.12/Dockerfile         alpine:3.12 based linux
- * docker/alpine-3.12/bash/Makefile
- * docker/alpine-3.12/bash/Dockerfile    alpine:3.12 based BASH login
- * docker/alpine-3.12/dev/Makefile
- * docker/alpine-3.12/dev/Dockerfile     alpine:3.12 based GCC dev shell
  * docker/alpine-3.13/Dockerfile
  * docker/alpine-3.13/Makefile           alpine:3.13 based linux
  * docker/alpine-3.13/bash/Dockerfile
  * docker/alpine-3.13/bash/Makefile      alpine:3.13 based BASH login
  * docker/alpine-3.13/dev/Dockerfile
  * docker/alpine-3.13/dev/Makefile       alpine:3.13 based GCC dev shell
- * docker/i386-alpine-3.13/Makefile
- * docker/i386-alpine-3.13/Dockerfile    i386/alpine:3.12 based linux
- * docker/i386-alpine-3.13/bash/Makefile
- * docker/i386-alpine-3.13/bash/Dockerfile  i386/alpine:3.12 based BASH login
- * docker/i386-alpine-3.13/dev/Makefile
- * docker/i386-alpine-3.13/dev/Dockerfile  i386/alpine:3.12 based GCC dev shell
+ * docker/alpine-3.14/Makefile
+ * docker/alpine-3.14/Dockerfile         alpine:3.14 based linux
+ * docker/alpine-3.14/bash/Makefile
+ * docker/alpine-3.14/bash/Dockerfile    alpine:3.14 based BASH login
+ * docker/alpine-3.14/dev/Makefile
+ * docker/alpine-3.14/dev/Dockerfile     alpine:3.14 based GCC dev shell
+ * docker/i386-alpine-3.14/Makefile
+ * docker/i386-alpine-3.14/Dockerfile    i386/alpine:3.14 based linux
+ * docker/i386-alpine-3.14/bash/Makefile
+ * docker/i386-alpine-3.14/bash/Dockerfile  i386/alpine:3.14 based BASH login
+ * docker/i386-alpine-3.14/dev/Makefile
+ * docker/i386-alpine-3.14/dev/Dockerfile  i386/alpine:3.14 based GCC dev shell
  * docker/amazonlinux-2/Dockerfile
  * docker/amazonlinux-2/Makefile         amazonlinux:2 based linux
  * docker/amazonlinux-2/bash/Dockerfile

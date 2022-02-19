@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=i386/alpine:latest
+ARG BASE_IMAGE=alpine:latest
 
 FROM ${BASE_IMAGE}
 
@@ -12,7 +12,4 @@ RUN apk update && \
         openssh-client \
         python3 \
         socat \
-        vim \
-        wget && \
-    echo -e '#!/bin/bash\n/bin/uname "$@" | sed -e "s/x86_64/i386/g"' > /usr/local/bin/uname && \
-    chmod ugo+rx /usr/local/bin/uname
+        vim

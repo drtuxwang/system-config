@@ -12,5 +12,4 @@ RUN apk update && \
         openssh-client \
         python3 \
         socat \
-        vim \
-        wget
+        vim

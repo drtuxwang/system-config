@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/i386-alpine:3.13
-IMAGE := drtuxwang/i386-alpine-bash:3.13
-NAME := alpine313-32-bash
-HOSTNAME := alpine313-32-bash
+BASE_IMAGE := drtuxwang/alpine:3.14
+IMAGE := drtuxwang/alpine-bash:3.14
+NAME := alpine314-bash
+HOSTNAME := alpine314-bash
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=
