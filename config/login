@@ -90,11 +90,6 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
             alias exit 'echo Use \"logout\" to disconnect login shell.'
         else if ( $?SUDO_COMMAND ) then
             setenv MYSHELL "$MYSHELL sudo"
-        else if ( $?TMUX ) then
-            setenv MYSHELL "$MYSHELL tmux"
-            unsetenv SSH_CONNECTION
-            alias exit 'echo Use \"CTRL+b x\" to kill tmux pane.'
-            alias logout 'echo Use \"CTRL+b x\" to kill tmux pane.'
         else
             setenv MYSHELL "$MYSHELL login"
             alias exit 'echo Use \"logout\" to close login shell.'
