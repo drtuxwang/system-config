@@ -229,8 +229,8 @@ then
     mkdir -p $TMP/.cache
     if [ ! -h $HOME/.cache ]
     then
-        rm -rf $HOME/.cache
-        ln -s $TMP/.cache $HOME/.cache
+        rm -rf $HOME/.cache 2> /dev/null
+        ln -s $TMP/.cache $HOME/.cache 2> /dev/null
     fi
     ENV=
 

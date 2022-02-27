@@ -18,14 +18,10 @@ run_vnc() {
     vncserver -list | grep ^:
 }
 
-if [ "$XAUTH" ]
-then
-    touch $HOME/.Xauthority
-    xauth add $(uname -n)/${XAUTH#*/}
-fi
-
 if [ "$SSH_PUBKEY" ]
 then
+    mkdir -p $HOME/.ssh
+    chmod 700 $HOME/.ssh
     echo "$SSH_PUBKEY" > $HOME/.ssh/authorized_keys
     echo "$SSH_PUBKEY" > /home/owner/.ssh/authorized_keys
 fi

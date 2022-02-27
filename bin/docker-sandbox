@@ -1,26 +1,21 @@
 #!/usr/bin/env bash
 #
-# Run Docker Debian sandbox (no dri, ipc, net, snd, root & x11 defaults)
+# Run Docker sandbox with current directory mounted
 #
 
 set  -u
 
-IMAGE="drtuxwang/debian-xfce:stable"
-NAME="debian10-sandbox"
-HOSTNAME="debian10-sandbox"
+IMAGE="drtuxwang/debian-dev:stable"
 LOCALPORT="2222"
 
-DOCKER_RUN_FLAGS=" --rm -it --publish $LOCALPORT:22 --name $NAME --hostname $HOSTNAME "
+DOCKER_RUN_FLAGS=" --rm -it --publish $LOCALPORT:22"
 NETWORK=none
-SANDBOX=owner:users
+SANDBOX="$(id -u):$(id -g)"
 while [ $# -gt 0 ]
 do
     case $1 in
-    -dri)
-        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --device=/dev/dri:/dev/dri"
-        ;;
-    -ipc)
-        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --ipc=host"
+    -image=*)
+        IMAGE=${1#*=}
         ;;
     -net)
         if [ "$NETWORK" != "host" ]
@@ -31,38 +26,13 @@ do
     -root)
         SANDBOX="0:0"
         ;;
-    -snd)
-        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --device=/dev/snd:/dev/snd"
-        ;;
-    -ssh)
-        NETWORK="bridge"
-        ;;
-    -user)
-        SANDBOX="$(id -u):$(id -g)"
-        ;;
-    -vnc)
-        NETWORK="bridge"
-        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --env SVNCSERVER=1 "
-        ;;
-    -v=*)
-        MOUNT=${1#*=}
-        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=${MOUNT%:ro}:$MOUNT"
-        ;;
-    -x11)
-        DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=/tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY --env XAUTH=\"$(xauth list $DISPLAY)\""
-        ;;
     -*)
-        echo "usage: $0 [-dri] [-net] [-root] [-snd] [-user] [-vnc] [-v=<path>[:ro]] [-x11] [command]"
+        echo "usage: $0 [-image=<image>] [-net] [-root] [command]"
         echo
         echo "optional arguments:"
-        echo "   -dri                  Enable direct rendering device access."
-        echo "   -ipc                  Enable shmem for internet process communications."
+        echo "   -image=<image>        Docker image (Default \"drtuxwang/debian-xfce:stable\"."
         echo "   -net                  Enable network device access."
-        echo "   -root                 Run as root user (Default sandbox user)."
-        echo "   -snd                  Enable sound device access."
-        echo "   -user                 Run as host user & group (Default sandbox user)."
-        echo "   -v=<path>[:ro]        Bind mount a volume (ie \"-v=/path\" & \"-v=/path:ro\")"
-        echo "   -x11                  Enable X11 display access."
+        echo "   -root                 Run as root user (Default real user and group)."
         exit 1
         ;;
     *)
@@ -72,17 +42,19 @@ do
     shift
 done
 
+# Container name and hostname
+NAME=$(basename $IMAGE | sed -e "s/:/-/")
+HOSTNAME="$NAME"
+DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --name $NAME --hostname $HOSTNAME"
+
 # Share current working directory
-DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=$PWD:/vol/app --workdir=/vol/app"
+DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=$PWD:/vol/sandbox --workdir=/vol/sandbox"
 
 # Network
 DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --network=$NETWORK"
 
 # Sandbox user
-if [ "$SANDBOX" = "sandbox:users" ]
-then
-    DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --user=$SANDBOX"
-elif [ "$SANDBOX" != "0:0" ]
+if [ "$SANDBOX" != "0:0" ]
 then
     DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=/etc/passwd:/etc/passwd:ro --volume=/etc/group:/etc/group:ro --user=$SANDBOX"
 fi

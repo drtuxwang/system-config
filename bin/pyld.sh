@@ -14,7 +14,7 @@ temp_dotfiles() {
     if [ "$HOME" -a ! -h $HOME/.python_history ]
     then
          rm -f $HOME/.python_history
-         ln -s /tmp/$MYUNAME/.cache/python_history $HOME/.python_history
+         ln -s /tmp/$MYUNAME/.cache/python_history $HOME/.python_history 2> /dev/null
     fi
 
     case "`basename \"$0\"` $@ " in

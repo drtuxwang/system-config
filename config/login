@@ -104,8 +104,8 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
         grep " -> /tmp" | grep -v " -> /tmp/$MYUNAME/" | sed -e "s/ ->.*//;s/.* //"`) >& /dev/null
     mkdir -p $TMP/.cache
     if ( ! -l $HOME/.cache ) then
-        rm -rf $HOME/.cache
-        ln -s $TMP/.cache $HOME/.cache
+        rm -rf $HOME/.cache >& /dev/null
+        ln -s $TMP/.cache $HOME/.cache >& /dev/null
     endif
 
     # Protect files
