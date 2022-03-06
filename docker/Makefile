@@ -4,27 +4,30 @@ BUILD_DIRS := \
 	alpine-3.13 \
 	alpine-3.14 \
 	i386-alpine-3.14 \
-	amazonlinux-2 \
-	busybox-1.33 \
-	centos-7 \
-	centos-8 \
-	clearlinux \
+	\
 	debian-9 \
 	debian-10 \
 	debian-11 \
 	i386-debian-11 \
+	ubuntu-16.04 \
+	ubuntu-18.04 \
+	ubuntu-20.04 \
+	\
+	centos-7 \
+	centos-8 \
+	oraclelinux-7 \
+	oraclelinux-8 \
+	rockylinux-8 \
+	amazonlinux-2 \
+	\
+	busybox-1.33 \
+	clearlinux \
 	golang-1.16 \
 	httpd-2.4 \
 	nginx-1.18 \
-	oraclelinux-7 \
-	oraclelinux-8 \
 	python-3.9 \
 	registry-2.6 \
-	rockylinux-8 \
-	sudo \
-	ubuntu-16.04 \
-	ubuntu-18.04 \
-	ubuntu-20.04
+	sudo
 STABLE_IMAGES := \
 	drtuxwang/debian-bash:11-slim \
 	drtuxwang/debian-dev:11-slim \
