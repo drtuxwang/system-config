@@ -28,10 +28,10 @@ status:       # Status of Docker images
 
 .PHONY: build
 build:        # Build Docker images
-	../../bin/create-root-tar.sh bash bin vim
+	../../bin/create-root-disk.sh bash bin vim
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
-	rm -rf tmpdir
+	rm -rf root-disk
 
 .PHONY: run
 run:          # Run Docker container
@@ -40,7 +40,7 @@ run:          # Run Docker container
 
 .PHONY: version
 version:      # Check versions
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
+	@docker run --rm $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
 		sed -e "s@^@$(shell pwd): Alpine Linux @"
 
 .PHONY: rmi

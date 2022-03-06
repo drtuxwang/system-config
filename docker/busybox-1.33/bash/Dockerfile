@@ -2,7 +2,7 @@ ARG BASE_IMAGE=drtuxwang/busybox:latest
 
 FROM ${BASE_IMAGE}
 
-ADD tmpdir/root.tar /
+COPY root-disk/ /
 
 # Configure start
 ENV HOME=/root

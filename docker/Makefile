@@ -8,18 +8,17 @@ BUILD_DIRS := \
 	busybox-1.33 \
 	centos-7 \
 	centos-8 \
-	clearlinux-latest \
-	debian-9-slim \
-	debian-10-slim\
-	debian-11-slim\
-	i386-debian-10-slim \
-	i386-debian-11-slim \
-	golang-1.16-alpine \
-	httpd-2.4-alpine \
-	nginx-1.18-alpine \
-	oraclelinux-7-slim \
-	oraclelinux-8-slim \
-	python-3.9-slim-bullseye \
+	clearlinux \
+	debian-9 \
+	debian-10 \
+	debian-11 \
+	i386-debian-11 \
+	golang-1.16 \
+	httpd-2.4 \
+	nginx-1.18 \
+	oraclelinux-7 \
+	oraclelinux-8 \
+	python-3.9 \
 	registry-2.6 \
 	rockylinux-8 \
 	sudo \
@@ -33,7 +32,7 @@ STABLE_IMAGES := \
 	drtuxwang/nginx:1.18-alpine \
 	drtuxwang/sudo
 TEST_DIRS := \
-	python-3.9-slim-bullseye
+	python-3.9
 
 
 .PHONY: default
@@ -41,7 +40,7 @@ default: build status
 
 .PHONY: status
 status:       # Status of Docker images
-	docker images | grep "^$(IMAGES) " | sort
+	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | grep "^$(IMAGES):" | sort
 	docker system df
 
 .PHONY: new
@@ -63,16 +62,14 @@ save:         # Save Docker base image as tar file
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR save; \
 	done
+	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 docker-image_*.tar
+
 
 .PHONY: build
 build:        # Build Docker images
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR build || exit 1:; \
 	done
-
-.PHONY: run-sudo
-run-sudo:     # Run sudo docker container
-	make -C sudo run
 
 .PHONY: test
 test:         # Run tests
@@ -106,7 +103,7 @@ prune:        # Prune Docker images/containers
 	df /var/lib/docker
 	docker system prune
 	@echo
-	docker images
+	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}"
 	@echo
 	docker volume ls
 	@echo

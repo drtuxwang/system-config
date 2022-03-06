@@ -102,7 +102,7 @@ then
         *)
             if [ "$(grep " /docker[/-]" /proc/1/mountinfo 2> /dev/null)" ]
             then
-                PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](Docker '$(grep -m1 /docker/containers /proc/1/mountinfo | sed -e "s@.*/docker/containers/@@" | cut -c1-12)')/')
+                PS1=$(echo "$PS1" | sed -e 's/'$MYHNAME'/'$MYHNAME' \\[\\033[01;31m\\](Docker '$(grep -m1 " /docker/" /proc/1/mountinfo | sed -e "s@.* /docker/@@;s@^containers/@@" | cut -c1-12)')/')
             elif [ "`awk '$5=="/" {print $1}' /proc/1/mountinfo 2> /dev/null`" != "`awk '$5=="/" {print $1}' /proc/$$/mountinfo 2> /dev/null`" ]
             then
                 if [ ! "$_CHROOT_INIT" ]

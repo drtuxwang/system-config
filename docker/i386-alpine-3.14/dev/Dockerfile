@@ -6,6 +6,8 @@ FROM ${BASE_IMAGE}
 RUN \
     # For Python build
     apk add \
+        automake \
+        bison \
         gcc \
         g++ \
         gfortran \
@@ -25,11 +27,8 @@ RUN \
     # For Python packages
     apk add blas-dev curl-dev jpeg-dev lapack-dev
 
-# Install Python packages
-COPY tmpdir/python-packages.sh tmpdir/python*-requirements.txt /etc/
+COPY root-disk/ /
 RUN /etc/python-packages.sh -pip /usr/bin/python3
-
-ADD tmpdir/root.tar /
 
 # Configure start
 ENV HOME=/root

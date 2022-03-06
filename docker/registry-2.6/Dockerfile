@@ -2,9 +2,8 @@ ARG BASE_IMAGE=registry:latest
 
 FROM ${BASE_IMAGE}
 
+COPY root-disk/ /
 COPY ./files/config.yml /etc/docker/registry/
-
-ADD tmpdir/root.tar /
 
 # Configure start
 ENV REGISTRY_STORAGE_DELETE_ENABLED=true

@@ -28,11 +28,10 @@ status:       # Status of Docker images
 
 .PHONY: build
 build:        # Build Docker images
-	../../bin/create-root-tar.sh bash bin vim
-	../../bin/python-packages.sh
+	../../bin/create-root-disk.sh bash bin python3.9 vim
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
-	rm -rf tmpdir
+	rm -rf root-disk
 
 .PHONY: run
 run:          # Run Docker container
@@ -41,7 +40,7 @@ run:          # Run Docker container
 
 .PHONY: version
 version:      # Check versions
-	@docker run $(DOCKER_RUN_FLAGS) --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
+	@docker run --rm --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
 		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
 
 .PHONY: rmi

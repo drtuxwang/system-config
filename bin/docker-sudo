@@ -2,19 +2,23 @@
 
 set -u
 
-# Locate GIT
-if [ -f "$(readlink -m "$0"/../..)/docker/Makefile" ]
-then
-    DIR="$(readlink -m "$0"/../..)"
-elif [ -f "$HOME/git/system-config/docker/Makefile" ]
-then
-    DIR="$HOME/git/system-config"
-else
-    echo "Error: Cannot locate \"git/system-config/docker/Makefile\""
-    exit 1
-fi
+IMAGE="drtuxwang/sudo:stable"
 
-export DOCKER_RUN_FLAGS="--workdir=$PWD"
-export DOCKER_RUN_COMMAND="$@"
+DOCKER_RUN_FLAGS="
+    --rm \
+    --interactive \
+    --tty \
+    --cpu-quota=1000000 \
+    --cpu-shares=50000 \
+    --memory=1000m \
+    --memory-reservation=50m \
+    --privileged=true \
+    $(ls -1d /* | egrep -v "/(proc|root)$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}') \
+    --volume="/etc/hosts:/etc/hosts" \
+    --volume="/etc/passwd:/etc/passwd:ro" \
+    --volume="/etc/group:/etc/group:ro" \
+    --hostname $(uname -n)-sudo-bash \
+    --workdir=$PWD
+"
 
-exec make --quiet -C $DIR/docker run-sudo
+docker run $DOCKER_RUN_FLAGS $IMAGE "$@"

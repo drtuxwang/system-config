@@ -27,14 +27,14 @@ DOCKER_RUN_FLAGS := \
 default: build status
 
 .PHONY: status
-status:       # Status of Docker images
-	@docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " ||:
-	@docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/-.*:/:/;s/:/  */') " ||:
+status:
+	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | \
+		egrep "^($(shell echo $(IMAGE) | sed -e 's/:/(-.*|):/')|$(BASE_IMAGE)) " ||:
 
 .PHONY: pull
 pull:         # Pull Docker base image
 	docker pull $(BASE_IMAGE)
-	docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/:/.* /') "
+	@make --no-print-directory status
 
 .PHONY: save
 save:         # Save Docker base image as tar file
@@ -42,10 +42,10 @@ save:         # Save Docker base image as tar file
 
 .PHONY: build
 build:        # Build Docker images
-	../bin/create-root-tar.sh bash bash2ash
+	../bin/create-root-disk.sh bash bash2ash
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
-	rm -rf tmpdir
+	rm -rf root-disk
 
 .PHONY: run
 run:          # Run Docker container

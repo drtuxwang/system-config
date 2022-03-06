@@ -28,11 +28,10 @@ status:
 
 .PHONY: build
 build:
-	../../bin/create-root-tar.sh bash bash2ash bin-sysinfo vim
-	../../bin/python-packages.sh
+	../../bin/create-root-disk.sh bash bash2ash bin-sysinfo vim
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
-	rm -rf tmpdir
+	rm -rf root-disk
 
 .PHONY: run
 run:
@@ -41,7 +40,7 @@ run:
 
 .PHONY: version
 version:
-	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) busybox 2> /dev/null | grep "^BusyBox v" | \
+	@docker run --rm $(IMAGE) busybox 2> /dev/null | grep "^BusyBox v" | \
 		sed -e "s@^BusyBox v@$(shell pwd): BusyBox @;s@ (.*@@"
 
 .PHONY: rmi

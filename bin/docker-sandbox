@@ -8,7 +8,17 @@ set  -u
 IMAGE="drtuxwang/debian-dev:stable"
 LOCALPORT="2222"
 
-DOCKER_RUN_FLAGS=" --rm -it --publish $LOCALPORT:22"
+DOCKER_RUN_FLAGS="
+    --rm \
+    --interactive \
+    --tty \
+    --cpu-quota=1000000 \
+    --cpu-shares=50000 \
+    --memory=1000m \
+    --memory-reservation=50m \
+    --publish $LOCALPORT:22
+"
+
 NETWORK=none
 SANDBOX="$(id -u):$(id -g)"
 while [ $# -gt 0 ]
@@ -42,10 +52,8 @@ do
     shift
 done
 
-# Container name and hostname
-NAME=$(basename $IMAGE | sed -e "s/:/-/")
-HOSTNAME="$NAME"
-DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --name $NAME --hostname $HOSTNAME"
+# Container hostname
+DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --hostname $(basename $IMAGE | sed -e "s/:/-/")"
 
 # Share current working directory
 DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=$PWD:/vol/sandbox --workdir=/vol/sandbox"
@@ -53,10 +61,20 @@ DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=$PWD:/vol/sandbox --workdir=/vol/sa
 # Network
 DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --network=$NETWORK"
 
-# Sandbox user
+# Sandbox user (workaround AD passwd/group bug)
 if [ "$SANDBOX" != "0:0" ]
 then
-    DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=/etc/passwd:/etc/passwd:ro --volume=/etc/group:/etc/group:ro --user=$SANDBOX"
+    mkdir -p $TMP/docker/home
+    cp -rp $HOME/.bashrc $HOME/.profile $HOME/.tmux.conf $HOME/.vim* $TMP/docker/home
+    echo "$(id -un):x:$(id -u):$(id -g):$(id -un),,,:/home/$(id -un):/bin/bash" > $TMP/docker/passwd
+    echo "$(id -gn):x:$(id -g):" > $TMP/docker/group
+    DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS
+        --volume=$TMP/docker/passwd:/etc/passwd:ro
+        --volume=$TMP/docker/group:/etc/group:ro
+        --volume=$TMP/docker/home:/home/$(id -un)
+        --user=$SANDBOX
+        --env HOME=/home/$(id -un)
+    "
 fi
 
-docker run $DOCKER_RUN_FLAGS --env SSH_PUBKEY="$(cat ~/.ssh/id_rsa.pub)" $IMAGE "$@"
+docker run $DOCKER_RUN_FLAGS --env SSH_PUBKEY="$(cat ~/.ssh/id_rsa.pub 2> /dev/null)" $IMAGE "$@"

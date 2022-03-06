@@ -6,6 +6,8 @@ FROM ${BASE_IMAGE}
 RUN \
     # For Python build
     apt-get install --no-install-recommends -y \
+        automake \
+        bison \
         g++ \
         gfortran \
         libbz2-dev \
@@ -18,17 +20,16 @@ RUN \
         libreadline6-dev \
         libsqlite3-dev \
         libssl-dev \
+        make \
+        pkg-config \
         python3-dev \
         uuid-dev && \
     # For Python packages
     apt-get install --no-install-recommends -y libcurl4-openssl-dev && \
     apt-get clean
 
-# Install Python packages
-COPY tmpdir/python-packages.sh tmpdir/python*-requirements.txt /etc/
+COPY root-disk/ /
 RUN /etc/python-packages.sh -pip /usr/bin/python3
-
-ADD tmpdir/root.tar /
 
 # Configure start
 ENV HOME=/root

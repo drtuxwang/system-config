@@ -3,7 +3,10 @@ ARG BASE_IMAGE=centos:latest
 FROM ${BASE_IMAGE}
 
 # Install base packages
-RUN yum -y install epel-release && \
+
+RUN sed -i "s/mirrorlist=/#mirrorlist=/g" /etc/yum.repos.d/CentOS-* && \
+    sed -i "s@#baseurl=http://mirror.centos.org@baseurl=http://vault.centos.org@g" /etc/yum.repos.d/CentOS-* && \
+    yum -y install epel-release && \
     yum -y update && \
     yum -y install \
         bind-utils \

@@ -978,10 +978,9 @@ the years.
  * cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
  * docker/Makefile                       Makefile for building all images
  * docker/bin/bash2ash
- * docker/bin/create-root-tar.sh
+ * docker/bin/create-root-disk.sh
  * docker/bin/docker-load.sh             Load docker images
  * docker/bin/docker-save.sh             Save docker images
- * docker/bin/python-packages.sh
  * docker/alpine-3.13/Dockerfile
  * docker/alpine-3.13/Makefile           alpine:3.13 based linux
  * docker/alpine-3.13/bash/Dockerfile
@@ -1022,78 +1021,72 @@ the years.
  * docker/centos-8/bash/Makefile         centos:8 based BASH login
  * docker/centos-8/dev/Dockerfile
  * docker/centos-8/dev/Makefile          centos:8 based GCC dev shell
- * docker/clearlinux-latest/Dockerfile
- * docker/clearlinux-latest/Makefile     clearlinux:latest based linux
- * docker/clearlinux-latest/bash/Makefile  clearlinux:latest based BASH login
- * docker/clearlinux-latest/bash/Dockerfile
- * docker/clearlinux-latest/dev/Makefile  clearlinux:latest based CLANG dev shell
- * docker/clearlinux-latest/dev/Dockerfile
- * docker/debian-9-slim/Dockerfile
- * docker/debian-9-slim/Makefile         debian:9-slim based linux
- * docker/debian-9-slim/bash/Dockerfile
- * docker/debian-9-slim/bash/Makefile    debian:9-slim based BASH login
- * docker/debian-9-slim/dev/Dockerfile
- * docker/debian-9-slim/dev/Makefile     debian:9-slim based GCC dev shell
- * docker/debian-10-slim/Dockerfile
- * docker/debian-10-slim/Makefile        debian:10-slim based linux
- * docker/debian-10-slim/bash/Dockerfile
- * docker/debian-10-slim/bash/Makefile   debian:10-slim based BASH login
- * docker/debian-10-slim/dev/Dockerfile
- * docker/debian-10-slim/dev/Makefile    debian:10-slim based GCC dev shell
- * docker/debian-11-slim/Dockerfile
- * docker/debian-11-slim/Makefile        debian:11-slim based linux
- * docker/debian-11-slim/bash/Dockerfile
- * docker/debian-11-slim/bash/Makefile   debian:11-slim based BASH login
- * docker/debian-11-slim/docker/Dockerfile
- * docker/debian-11-slim/docker/Makefile debian:11-slim based DOCKER shell
- * docker/debian-11-slim/xfce/Dockerfile
- * docker/debian-11-slim/xfce/Makefile   debian:11-slim based XFCE environment
- * docker/debian-11-slim/xfce/files/allow-owner
- * docker/debian-11-slim/xfce/files/docker-init
- * docker/debian-11-slim/xfce/files/xstartup
- * docker/i386-debian-10-slim/Dockerfile
- * docker/i386-debian-10-slim/Makefile   i386/debian:10-slim based linux
- * docker/i386-debian-10-slim/bash/Dockerfile
- * docker/i386-debian-10-slim/bash/Makefile  i386/debian:10-slim based BASH login
- * docker/i386-debian-10-slim/dev/Dockerfile
- * docker/i386-debian-10-slim/dev/Makefile  i386/debian:10-slim based GCC dev shell
- * docker/i386-debian-11-slim/Dockerfile
- * docker/i386-debian-11-slim/Makefile   i386/debian:11-slim based linux
- * docker/i386-debian-11-slim/bash/Dockerfile
- * docker/i386-debian-11-slim/bash/Makefile  i386/debian:11-slim based BASH login
- * docker/i386-debian-11-slim/dev/Dockerfile
- * docker/i386-debian-11-slim/dev/Makefile  i386/debian:11-slim based GCC dev shell
- * docker/golang-1.16-alpine/Dockerfile
- * docker/golang-1.16-alpine/Makefile    golang:1.15-alpine based compiler app
- * docker/httpd-2.4-alpine/Dockerfile
- * docker/httpd-2.4-alpine/Makefile      httpd:2.4-alpine (Apache) based web server
- * docker/httpd-2.4-alpine/files/httpd.conf
- * docker/httpd-2.4-alpine/public-html/index.html
- * docker/httpd-2.4-alpine/public-html/testlcd.js
- * docker/httpd-2.4-alpine/public-html/testlcd.xhtml
- * docker/nginx-1.18-alpine/Dockerfile
- * docker/nginx-1.18-alpine/Makefile     nginx:1.18-alpine based reverse proxy server
- * docker/nginx-1.18-alpine/files/nginx-proxy.conf  Proxy pass examples
- * docker/oraclelinux-7-slim/Dockerfile
- * docker/oraclelinux-7-slim/Makefile    oraclelinux:7-slim based linux
- * docker/oraclelinux-7-slim/bash/Dockerfile
- * docker/oraclelinux-7-slim/bash/Makefile  oraclelinux:7-slim based BASH login
- * docker/oraclelinux-7-slim/dev/Dockerfile
- * docker/oraclelinux-7-slim/dev/Makefile  oraclelinux:7-slim based GCC dev shell
- * docker/oraclelinux-8-slim/Dockerfile
- * docker/oraclelinux-8-slim/Makefile    oraclelinux:8-slim based linux
- * docker/oraclelinux-8-slim/bash/Dockerfile
- * docker/oraclelinux-8-slim/bash/Makefile  oraclelinux:8-slim based BASH login
- * docker/oraclelinux-8-slim/dev/Dockerfile
- * docker/oraclelinux-8-slim/dev/Makefile  oraclelinux:8-slim based GCC dev shel
- * docker/python-3.9-slim-bullseye/Dockerfile
- * docker/python-3.9-slim-bullseye/Makefile  python:3.9-slim-bullseye based Python app
- * docker/python-3.9-slim-bullseye/bash/Dockerfile
- * docker/python-3.9-slim-bullseye/bash/Makefile  python:3.9-slim-bullseye based BASH login
- * docker/python-3.9-slim-bullseye/dev/Dockerfile
- * docker/python-3.9-slim-bullseye/dev/Makefile  python:3.9-slim-bullseye based dev shell
- * docker/python-3.9-slim-bullseye/devpi/Dockerfile
- * docker/python-3.9-slim-bullseye/devpi/Makefile  python:3.9-slim-bullseye based devpi server app
+ * docker/clearlinux/Dockerfile
+ * docker/clearlinux/Makefile            clearlinux:latest based linux
+ * docker/clearlinux/bash/Makefile       clearlinux:latest based BASH login
+ * docker/clearlinux/bash/Dockerfile
+ * docker/clearlinux/dev/Makefile        clearlinux:latest based CLANG dev shell
+ * docker/clearlinux/dev/Dockerfile
+ * docker/debian-9/Dockerfile
+ * docker/debian-9/Makefile              debian:9-slim based linux
+ * docker/debian-9/bash/Dockerfile
+ * docker/debian-9/bash/Makefile         debian:9-slim based BASH login
+ * docker/debian-9/dev/Dockerfile
+ * docker/debian-9/dev/Makefile          debian:9-slim based GCC dev shell
+ * docker/debian-10Dockerfile
+ * docker/debian-10/Makefile             debian:10-slim based linux
+ * docker/debian-10/bash/Dockerfile
+ * docker/debian-10/bash/Makefile        debian:10-slim based BASH login
+ * docker/debian-10/dev/Dockerfile
+ * docker/debian-10/dev/Makefile         debian:10-slim based GCC dev shell
+ * docker/debian-11/Dockerfile
+ * docker/debian-11/Makefile             debian:11-slim based linux
+ * docker/debian-11/bash/Dockerfile
+ * docker/debian-11/bash/Makefile        debian:11-slim based BASH login
+ * docker/debian-11/docker/Dockerfile
+ * docker/debian-11/docker/Makefile      debian:11-slim based DOCKER shell
+ * docker/debian-11/xfce/Dockerfile
+ * docker/debian-11/xfce/Makefile        debian:11-slim based XFCE environment
+ * docker/debian-11/xfce/files/allow-owner
+ * docker/debian-11/xfce/files/docker-init
+ * docker/debian-11/xfce/files/xstartup
+ * docker/i386-debian-11/Dockerfile
+ * docker/i386-debian-11/Makefile        i386/debian:11-slim based linux
+ * docker/i386-debian-11/bash/Dockerfile
+ * docker/i386-debian-11/bash/Makefile   i386/debian:11-slim based BASH login
+ * docker/i386-debian-11/dev/Dockerfile
+ * docker/i386-debian-11/dev/Makefile    i386/debian:11-slim based GCC dev shell
+ * docker/golang-1.16/Dockerfile
+ * docker/golang-1.16/Makefile           golang:1.16-alpine based compiler app
+ * docker/httpd-2.4/Dockerfile
+ * docker/httpd-2.4/Makefile             httpd:2.4-alpine (Apache) based web server
+ * docker/httpd-2.4/files/httpd.conf
+ * docker/httpd-2.4/public-html/index.html
+ * docker/httpd-2.4/public-html/testlcd.js
+ * docker/httpd-2.4/public-html/testlcd.xhtml
+ * docker/nginx-1.18/Dockerfile
+ * docker/nginx-1.18/Makefile            nginx:1.18-alpine based reverse proxy server
+ * docker/nginx-1.18/files/nginx-proxy.conf
+ * docker/oraclelinux-7/Dockerfile
+ * docker/oraclelinux-7/Makefile         oraclelinux:7-slim based linux
+ * docker/oraclelinux-7/bash/Dockerfile
+ * docker/oraclelinux-7/bash/Makefile    oraclelinux:7-slim based BASH login
+ * docker/oraclelinux-7/dev/Dockerfile
+ * docker/oraclelinux-7/dev/Makefile     oraclelinux:7-slim based GCC dev shell
+ * docker/oraclelinux-8/Dockerfile
+ * docker/oraclelinux-8/Makefile         oraclelinux:8-slim based linux
+ * docker/oraclelinux-8/bash/Dockerfile
+ * docker/oraclelinux-8/bash/Makefile    oraclelinux:8-slim based BASH login
+ * docker/oraclelinux-8/dev/Dockerfile
+ * docker/oraclelinux-8/dev/Makefile     oraclelinux:8-slim based GCC dev shel
+ * docker/python-3.9/Dockerfile
+ * docker/python-3.9/Makefile            python:3.9-slim-bullseye based Python app
+ * docker/python-3.9/bash/Dockerfile
+ * docker/python-3.9/bash/Makefile       python:3.9-slim-bullseye based BASH login
+ * docker/python-3.9/dev/Dockerfile
+ * docker/python-3.9/dev/Makefile        python:3.9-slim-bullseye based dev shell
+ * docker/python-3.9/devpi/Dockerfile
+ * docker/python-3.9/devpi/Makefile      python:3.9-slim-bullseye based devpi server app
  * docker/registry-2.6/Dockerfile
  * docker/registry-2.6/Makefile          registry:2.6 based Docker Registry server app
  * docker/registry-2.6/files/config.yaml

@@ -67,6 +67,7 @@ class Main:
             command.set_args([
                 '-9',
                 '-e',
+                '--x86',
                 '--lzma2=dict=128MiB',
                 '--threads=1'
             ])

@@ -6,9 +6,12 @@ FROM ${BASE_IMAGE}
 RUN \
     # For Python build
     yum -y install \
+        automake \
+        bison \
         gcc-c++ \
         gcc-gfortran \
         make \
+        pkg-config \
         bzip2-devel \
         gdbm-devel \
         libcurl-devel \
@@ -25,11 +28,8 @@ RUN \
     yum -y install python38-devel && \
     yum clean all
 
-# Install Python packages
-COPY tmpdir/python-packages.sh tmpdir/python*-requirements.txt /etc/
+COPY root-disk/ /
 RUN /etc/python-packages.sh -pip /usr/bin/python3
-
-ADD tmpdir/root.tar /
 
 # Configure start
 ENV HOME=/root

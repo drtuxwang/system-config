@@ -9,14 +9,14 @@ BUILD_DIRS := bash
 default: build status
 
 .PHONY: status
-status:       # Status of Docker images
-	@docker images | grep "^$(shell echo $(IMAGE) | sed -e 's/-.*:/:/;s/:/.* /') " ||:
-	@docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/-.*:/:/;s/:/  */') " ||:
+status:
+	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | \
+		egrep "^($(shell echo $(IMAGE) | sed -e 's/:/(-.*|):/')|$(BASE_IMAGE)) " ||:
 
 .PHONY: pull
 pull:         # Pull Docker base image
 	docker pull $(BASE_IMAGE)
-	docker images | grep "^$(shell echo $(BASE_IMAGE) | sed -e 's/:/.* /') "
+	@make --no-print-directory status
 
 .PHONY: save
 save:         # Save Docker base image as tar file
