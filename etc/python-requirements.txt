@@ -11,6 +11,7 @@ backports.entry-points-selectable==1.1.1  #   (required by virtualenv)
 bcrypt==3.1.7                #   (required by paramiko)
 beautifulsoup4==4.9.3        # HTML/XML parser/emitter
 binaryornot==0.4.4           #   (required by cookiecutter)
+Brotli==1.0.9                #   (required by yt-dlp)
 bson==0.5.10                 # BSON parser/emitter
 build==0.7.0                 #   (required by devpi-client)
 CacheControl==0.12.10        #   (required by poetry)
@@ -98,8 +99,8 @@ pep517==0.11.1               #   (required by devpi-client)
 pep8==1.7.0                  # Python style guide checker (replaced by pycodestyle)
 pexpect==4.7.0               #   (required by ipdb/poetry)
 pickleshare==0.7.5           #   (required by ipdb)
-Pillow==9.0.0                #   (required by ImageHash)
-pip==21.3.1                  # Python package manager
+Pillow==9.0.1                #   (required by ImageHash)
+pip==22.0.4                  # Python package manager
 pipdeptree==2.2.1            # Python package dependency tree
 pkginfo==1.7.1               #   (required by devpi-client/poetry)
 platformdirs==2.3.0          #   (required by pylint/virtualenv)
@@ -173,5 +174,5 @@ wheel==0.37.1                # Python wheel packaging
 wrapt==1.12.1                #   (required by pylint)
 xdis==5.0.13                 #   (required by uncompyle6)
 xmltodict==0.11.0            # Convert XML to Python dict
-yt-dlp==2021.12.27           # Video downloader
+yt-dlp==2022.3.8.2           # Video downloader
 zipp==3.6.0                  #   (required by markdown)

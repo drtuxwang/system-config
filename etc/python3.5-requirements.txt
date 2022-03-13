@@ -4,6 +4,7 @@ appimage-builder==None
 arrow==0.17.0
 asgiref==None
 astroid==2.4.2
+Brotli==None
 build==0.5.1
 CacheControl==None
 cached-property==None
