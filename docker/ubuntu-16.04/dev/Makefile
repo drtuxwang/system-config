@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/ubuntu:16.04
 IMAGE := drtuxwang/ubuntu-dev:16.04
-NAME := ubuntu16-dev
-HOSTNAME := ubuntu16-dev
+NAME := ubuntu1604-dev
+HOSTNAME := ubuntu1604-dev
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=
@@ -28,10 +28,10 @@ status:       # Status of Docker images
 
 .PHONY: build
 build:        # Build Docker images
-	../../bin/create-root-disk.sh bash bin-sysinfo python3.5 vim
+	../../bin/create-rootfs.sh bash bin-sysinfo python3.5 vim
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
-	rm -rf root-disk
+	rm -rf rootfs
 
 .PHONY: run
 run:          # Run Docker container

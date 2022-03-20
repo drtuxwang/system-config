@@ -32,7 +32,7 @@ status:       # Status of Docker images
 
 .PHONY: build
 build:        # Build Docker images
-	../../bin/create-root-disk.sh bash bin vim
+	../../bin/create-rootfs.sh bash bin vim
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build \
 		$(DOCKER_BUILD_FLAGS) \
@@ -40,7 +40,7 @@ build:        # Build Docker images
 		--build-arg DOCKER_REPO=$(DOCKER_REPO) \
 		--build-arg DOCKER_DEB=$(DOCKER_DEB) \
 		-t $(IMAGE) .
-	rm -rf root-disk
+	rm -rf rootfs
 
 .PHONY: run
 run:          # Run Docker container

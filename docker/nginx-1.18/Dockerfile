@@ -2,7 +2,7 @@ ARG BASE_IMAGE=nginx:latest
 
 FROM ${BASE_IMAGE}
 
-COPY root-disk/ /
+COPY rootfs/ /
 
 # Nginx setup
 COPY files/nginx-proxy.conf /etc/nginx/conf.d/

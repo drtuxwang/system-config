@@ -28,7 +28,7 @@ RUN \
     apt-get install --no-install-recommends -y libcurl4-openssl-dev make && \
     apt-get clean
 
-COPY root-disk/ /
+COPY rootfs/ /
 RUN /etc/python-packages.sh -pip /usr/bin/python3
 
 # Configure start

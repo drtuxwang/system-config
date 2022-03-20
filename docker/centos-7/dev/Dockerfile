@@ -29,7 +29,7 @@ RUN \
     rpm -e --nodeps python3-rpm-generators python3-rpm-macros python3-setuptools && \
     yum clean all
 
-COPY root-disk/ /
+COPY rootfs/ /
 RUN /etc/python-packages.sh -pip /usr/bin/python3
 
 # Configure start

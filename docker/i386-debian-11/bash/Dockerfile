@@ -2,7 +2,7 @@ ARG BASE_IMAGE=drtuxwang/debian-i386:latest
 
 FROM ${BASE_IMAGE}
 
-COPY root-disk/ /
+COPY rootfs/ /
 
 # Configure start
 ENV HOME=/root

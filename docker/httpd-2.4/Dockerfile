@@ -2,7 +2,7 @@ ARG BASE_IMAGE=httpd:latest
 
 FROM ${BASE_IMAGE}
 
-COPY root-disk/ /
+COPY rootfs/ /
 
 # Apache HTTPD setup
 COPY files/httpd.conf /usr/local/apache2/conf/httpd.conf

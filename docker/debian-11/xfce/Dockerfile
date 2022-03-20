@@ -6,12 +6,12 @@ FROM ${BASE_IMAGE} as builder
 ARG USER
 ARG GROUP
 
-RUN mkdir -p /root-disk/home
-COPY root-disk/ /root-disk
+RUN mkdir -p /rootfs/home
+COPY rootfs/ /rootfs
 COPY files/docker-init /etc/
 
 # Create user's home directory
-RUN cd /root-disk && \
+RUN cd /rootfs && \
     cp -rp root home && \
     mv home/root home/${USER} && \
     mkdir home/${USER}/.ssh && \
@@ -87,7 +87,7 @@ RUN \
     # Setup accounts
     useradd --shell /bin/bash --gid ${GROUP} ${USER}
 
-COPY --from=builder /root-disk /
+COPY --from=builder /rootfs /
 RUN /etc/python-packages.sh -pip /usr/bin/python3 && \
     chown -R ${USER}:${GROUP} /home/${USER}
 

@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/busybox:1.33
 IMAGE := drtuxwang/busybox-bash:1.33
-NAME := busybox-bash
-HOSTNAME := busybox-bash
+NAME := busybox133-bash
+HOSTNAME := busybox133-bash
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=
@@ -28,10 +28,10 @@ status:
 
 .PHONY: build
 build:
-	../../bin/create-root-disk.sh bash bash2ash bin-sysinfo vim
+	../../bin/create-rootfs.sh bash bash2ash bin-sysinfo vim
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
-	rm -rf root-disk
+	rm -rf rootfs
 
 .PHONY: run
 run:

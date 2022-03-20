@@ -28,7 +28,7 @@ RUN \
     yum -y install python38-devel && \
     yum clean all
 
-COPY root-disk/ /
+COPY rootfs/ /
 RUN /etc/python-packages.sh -pip /usr/bin/python3
 
 # Configure start

@@ -2,7 +2,7 @@ ARG BASE_IMAGE=registry:latest
 
 FROM ${BASE_IMAGE}
 
-COPY root-disk/ /
+COPY rootfs/ /
 COPY ./files/config.yml /etc/docker/registry/
 
 # Configure start

@@ -18,7 +18,7 @@ RUN \
     swupd bundle-add devpkg-curl && \
     swupd clean
 
-COPY root-disk/ /
+COPY rootfs/ /
 RUN /etc/python-packages.sh -pip /usr/bin/python3
 
 # Configure start

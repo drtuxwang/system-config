@@ -13,7 +13,7 @@ RUN \
         make && \
     apt-get clean
 
-COPY root-disk/ /
+COPY rootfs/ /
 RUN /etc/python-packages.sh -pip /usr/local/bin/python3
 
 # Configure start

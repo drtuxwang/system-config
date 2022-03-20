@@ -2,7 +2,7 @@ ARG BASE_IMAGE=drtuxwang/amazonlinux:latest
 
 FROM ${BASE_IMAGE}
 
-COPY root-disk/ /
+COPY rootfs/ /
 
 # Configure start
 ENV HOME=/root

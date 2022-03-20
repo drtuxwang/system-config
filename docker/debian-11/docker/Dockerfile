@@ -10,7 +10,7 @@ RUN wget --progress=bar:force $DOCKER_REPO/$DOCKER_DEB && \
     dpkg -i $DOCKER_DEB && \
     rm $DOCKER_DEB
 
-COPY root-disk/ /
+COPY rootfs/ /
 
 # Configure start
 ENV HOME=/root

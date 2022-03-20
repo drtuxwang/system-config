@@ -6,7 +6,7 @@ FROM ${BASE_IMAGE}
 RUN apk update && \
     apk add bash openssh-client python3 vim
 
-COPY root-disk/ /
+COPY rootfs/ /
 
 # Configure start
 ENV HOME=/root

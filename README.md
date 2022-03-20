@@ -1,4 +1,4 @@
- 1996-2021 By Dr Colin Kong
+ 1996-2022 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -978,7 +978,7 @@ the years.
  * cookiecutter/docker/{{cookiecutter.project_name}}/Makefile
  * docker/Makefile                       Makefile for building all images
  * docker/bin/bash2ash
- * docker/bin/create-root-disk.sh
+ * docker/bin/create-rootfs.sh
  * docker/bin/docker-load.sh             Load docker images
  * docker/bin/docker-save.sh             Save docker images
  * docker/alpine-3.13/Dockerfile

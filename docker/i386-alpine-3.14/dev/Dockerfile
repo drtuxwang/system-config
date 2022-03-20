@@ -27,7 +27,7 @@ RUN \
     # For Python packages
     apk add blas-dev curl-dev jpeg-dev lapack-dev
 
-COPY root-disk/ /
+COPY rootfs/ /
 RUN /etc/python-packages.sh -pip /usr/bin/python3
 
 # Configure start

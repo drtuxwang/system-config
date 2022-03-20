@@ -1,7 +1,7 @@
 BASE_IMAGE := drtuxwang/ubuntu:18.04
 IMAGE := drtuxwang/ubuntu-bash:18.04
-NAME := ubuntu18-bash
-HOSTNAME := ubuntu18-bash
+NAME := ubuntu1804-bash
+HOSTNAME := ubuntu1804-bash
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=
@@ -28,10 +28,10 @@ status:       # Status of Docker images
 
 .PHONY: build
 build:        # Build Docker images
-	../../bin/create-root-disk.sh bash bin vim
+	../../bin/create-rootfs.sh bash bin vim
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
-	rm -rf root-disk
+	rm -rf rootfs
 
 .PHONY: run
 run:          # Run Docker container

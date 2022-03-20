@@ -2,7 +2,7 @@ ARG BASE_IMAGE=scratch
 
 FROM ${BASE_IMAGE}
 
-COPY root-disk/ /
+COPY rootfs/ /
 
 # Configure start
 ENV HOME=/root
