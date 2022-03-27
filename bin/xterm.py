@@ -80,6 +80,7 @@ class Options:
             'cinnamon': GnomeTerminal,
             'gnome': GnomeTerminal,
             'kde': Konsole,
+            'macos': Iterm,
             'mate': MateTerminal,
             'xfce': XfceTerminal,
         }
@@ -398,7 +399,7 @@ class XfceTerminal(GnomeTerminal):
                         print(re.sub(r'"<Alt>\d+"', '""', data), file=ofile)
                     shutil.move(file+'.part', file)
         except OSError:
-            return
+            pass
 
         self._command = command_mod.Command(
             'xfce4-terminal',

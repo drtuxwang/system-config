@@ -9,6 +9,7 @@ import os
 import re
 import signal
 import sys
+import urllib.parse
 from typing import List
 
 
@@ -119,7 +120,7 @@ class Main:
                 )
             urls.extend(self._extract(file))
         for url in sorted(set(urls)):
-            print(url)
+            print(urllib.parse.unquote(url))
 
         return 0
 

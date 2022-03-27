@@ -16,6 +16,7 @@ PROGRAMS = {
     'cinnamon': ['gedit'],
     'gnome': ['gedit'],
     'kde': ['kate'],
+    'macos': ['/System/Applications/TextEdit.app/Contents/MacOS/TextEdit'],
     'mate': ['pluma'],
     'xfce': ['mousepad'],
 }
@@ -60,7 +61,11 @@ class Main:
         """
         desktop = desktop_mod.Desktop.detect()
         cmdline = PROGRAMS.get(desktop, GENERIC)
-        command = command_mod.Command(cmdline[0], errors='ignore')
+        command: command_mod.Command
+        if os.path.isfile(cmdline[0]):
+            command = command_mod.CommandFile(cmdline[0], errors='ignore')
+        else:
+            command = command_mod.Command(cmdline[0], errors='ignore')
 
         if not command.is_found():
             cmdline = GENERIC

@@ -58,7 +58,18 @@ class Options:
         self._args = parser.parse_args(args)
 
     @staticmethod
-    def _get_wget(url: str) -> List[str]:
+    def _select_urls(args: List[str]) -> List[str]:
+        if [x for x in args if 'cdninstagram.com' in x]:
+            isbad = re.compile('s(150|320|640)x')
+            return [
+                x
+                for x in args
+                if '?stp=dst-jpg' in x and not isbad.search(x)
+            ]
+        return args
+
+    @staticmethod
+    def _get_output(url: str) -> str:
         output = os.path.basename(url).split('?', 1)[0]
         if 'pbs.twimg.com/media/' in url:
             if '?format=jpg' in url:
@@ -72,37 +83,46 @@ class Options:
                 output = f'index-{md5.hexdigest()[:9]}.jpg'
             else:
                 output = f'index-{md5.hexdigest()[:9]}.html'
-        return ['wget', '-O', output, url]
+        return output
 
-    @staticmethod
-    def _select_urls(args: List[str]) -> List[str]:
-        if [x for x in args if 'instagram' in x]:
-            # "/e35/p1080x1080" & "/35/\d{4}"
-            ispick = re.compile(r'/e\d\d/.?\d\d\d\d.*_n[.]jpg?')
-            return [x for x in args if ispick.search(x)]
-        return args
+    @classmethod
+    def _get_args_multiple(cls, args: List[str]) -> List[str]:
+        nargs = []
+        outputs = []
+        for arg in cls._select_urls(args):
+            if '.m3u8' in arg:
+                nargs.extend(['mget', arg, ';'])
+            elif 'www.instagram.com/p/' in arg:
+                nargs.extend(['pget', arg, ';'])
+            elif 'www.youtube.com/watch?' in arg:
+                nargs.extend(['vget', arg, ';'])
+            else:
+                output = cls._get_output(arg)
+                if not os.path.isfile(output):
+                    outputs.append(output)
+                    nargs.extend(['wget', '-O', output, arg, ';'])
+        if outputs:
+            nargs.extend(['fls'] + outputs + [';'])
+        nargs.extend(['sleep', SLEEP])
+        return nargs
+
+    @classmethod
+    def _get_args_single(cls, args: List[str]) -> List[str]:
+        output, url = args
+        if '.m3u8' in url:
+            nargs = ['mget', '-O', output, url, ';', 'sleep', SLEEP]
+        elif 'www.youtube.com/watch?' in url:
+            nargs = ['vget', '-O', output, url, ';', 'sleep', SLEEP]
+        else:
+            nargs = ['wget', '-O', output, url, ';', 'sleep', SLEEP]
+        return nargs
 
     @classmethod
     def _generate_cmd(cls, args: List[str]) -> List[str]:
         if args[0].startswith(URI):
-            nargs = []
-            for arg in cls._select_urls(args):
-                if '.m3u8' in arg:
-                    nargs.extend(['mget', arg, ';'])
-                elif 'www.instagram.com/p/' in arg:
-                    nargs.extend(['pget', arg, ';'])
-                elif 'www.youtube.com/watch?' in arg:
-                    nargs.extend(['vget', arg, ';'])
-                else:
-                    nargs.extend(cls._get_wget(arg) + [';'])
-            nargs.extend(['sleep', SLEEP])
+            nargs = cls._get_args_multiple(args)
         elif len(args) == 2 and args[1].startswith(URI):
-            if '.m3u8' in args[1]:
-                nargs = ['mget', '-O'] + args + [';', 'sleep', SLEEP]
-            elif 'www.youtube.com/watch?' in args[1]:
-                nargs = ['vget', '-O'] + args + [';', 'sleep', SLEEP]
-            else:
-                nargs = ['wget', '-O'] + args + [';', 'sleep', SLEEP]
+            nargs = cls._get_args_single(args)
         else:
             nargs = args + [';', 'sleep', SLEEP]
 

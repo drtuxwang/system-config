@@ -27,13 +27,13 @@ BUILD_DIRS := \
 	nginx-1.18 \
 	python-3.9 \
 	registry-2.6 \
-	sudo
+	scratch
 STABLE_IMAGES := \
 	drtuxwang/debian-bash:11-slim \
 	drtuxwang/debian-dev:11-slim \
 	drtuxwang/debian-xfce:11-slim \
 	drtuxwang/nginx:1.18-alpine \
-	drtuxwang/sudo
+	drtuxwang/scratch
 TEST_DIRS := \
 	python-3.9
 

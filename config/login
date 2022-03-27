@@ -123,7 +123,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     setenv EDITOR vi
     setenv LESSHISTFILE /dev/null
     setenv PYTHONDONTWRITEBYTECODE 1
-    set history=1024
+    set history=256
 
     # Save/load default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
     if ( ! $?BASE_PATH ) then

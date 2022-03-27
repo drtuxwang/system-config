@@ -248,7 +248,10 @@ then
     umask 022
     export LC_COLLATE=C
     export EDITOR=vi
+    export HISTCONTROL=ignoredups
     export HISTFILE=
+    export HISTSIZE=256
+    export HISTTIMEFORMAT=
     export LESSHISTFILE=/dev/null
     export PYTHONDONTWRITEBYTECODE=1
 
@@ -309,9 +312,9 @@ then
     alias ftp="ftp -i -v"
     if [ "$BASH" ]
     then
-        alias h="history 1024"
+        alias h="history 256"
     else
-        alias h='fc -l 1 2> /dev/null | tail -1024'
+        alias h='fc -l 1 2> /dev/null | tail -256'
     fi
     alias ls="ls -C"
     alias quota="quota -v"
@@ -397,12 +400,6 @@ then
         cd "$HOME/Desktop" 2> /dev/null
     fi
 
-    # Applying optional settings
-    if [ -f $HOME/.profile-opt ]
-    then
-        . $HOME/.profile-opt
-    fi
-
     # Shell information
     echo
     MYINFO="$MYSHELL shell (tty=$MYTTY"
@@ -420,6 +417,14 @@ then
 else
     # General stuff (for .bashrc)
     export HISTFILE=
+    export HISTSIZE=256
+    export HISTTIMEFORMAT=
     export LESSHISTFILE=/dev/null
     export PYTHONDONTWRITEBYTECODE=1
+fi
+
+# Applying optional settings
+if [ -f $HOME/.profile-opt ]
+then
+    . $HOME/.profile-opt
 fi

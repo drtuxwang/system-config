@@ -1,7 +1,7 @@
 BASE_IMAGE := scratch
-IMAGE := drtuxwang/sudo:latest
-NAME := sudo-bash
-HOSTNAME := sudo-bash
+IMAGE := drtuxwang/scratch:latest
+NAME := scratch-bash
+HOSTNAME := scratch-bash
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=

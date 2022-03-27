@@ -68,8 +68,9 @@ pactl set-sink-volume 0 100%
 
 # Setup keyboard:
 setxkbmap gb
-setxkbmap -option ctrl:nocaps
-setxkbmap -option terminate:ctrl_alt_bksp
+setxkbmap -option ctrl:nocaps              # Disable Caps Lock
+setxkbmap -option altwin:ctrl_win          # Map Win key to Ctrl (like Mac)
+setxkbmap -option terminate:ctrl_alt_bksp  # Zap with Ctrl+Alt+BackSpace
 xset b off
 xset r rate 500 25
 if [ -x /usr/bin/ibus-daemon ]

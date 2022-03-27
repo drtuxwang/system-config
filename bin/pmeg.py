@@ -120,7 +120,7 @@ class Main:
     def _imagesize(self, file: str) -> Tuple[int, int]:
         self._convert.set_args(['-verbose', file, '/dev/null'])
         task = subtask_mod.Batch(self._convert.get_cmdline())
-        task.run(pattern=f'^{file}=>', error2output=True)
+        task.run(pattern='=>', error2output=True)
         if not task.has_output():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot read "{file}" picture file.',
@@ -131,7 +131,7 @@ class Main:
                 f'received from "{task.get_file()}".',
             )
         x_size, y_size = task.get_output(
-            )[0].split('+')[0].split()[-1].split('x')
+            )[0].split('=>')[1].split('+')[0].split()[-1].split('x')
         return int(x_size), int(y_size)
 
     def run(self) -> int:

@@ -16,6 +16,10 @@ PROGRAMS = {
     'cinnamon': ['gnome-screenshot', '--interactive'],
     'gnome': ['gnome-screenshot', '--interactive'],
     'kde': ['ksnapshot'],
+    'macos': [
+        '/System/Applications/Utilities/Screenshot.app/'
+        'Contents/MacOS/Screenshot',
+    ],
     'mate': ['mate-screenshot'],
     'xfce': ['xfce4-screenshooter'],
 }
@@ -60,7 +64,11 @@ class Main:
         """
         desktop = desktop_mod.Desktop.detect()
         cmdline = PROGRAMS.get(desktop, GENERIC)
-        command = command_mod.Command(cmdline[0], errors='ignore')
+        command: command_mod.Command
+        if os.path.isfile(cmdline[0]):
+            command = command_mod.CommandFile(cmdline[0], errors='ignore')
+        else:
+            command = command_mod.Command(cmdline[0], errors='ignore')
 
         if not command.is_found():
             cmdline = GENERIC

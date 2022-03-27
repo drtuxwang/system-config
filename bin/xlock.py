@@ -141,9 +141,8 @@ class MacLocker(ScreenLocker):
 
     def _setup(self) -> None:
         self._command = command_mod.Command(
-            '/System/Library/CoreServices/Menu Extras/User.menu/'
-            'Contents/Resources/CGSession',
-            args=['-suspend'],
+            'pmset',
+            args=['displaysleepnow'],
             errors='ignore',
         )
 

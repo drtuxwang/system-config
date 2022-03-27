@@ -67,7 +67,7 @@ poetry==None
 poetry-core==None
 prompt-toolkit==None
 pycodestyle==2.7.0
-pycrypto                     #   (2.6.1 required by abettersqlplus)
+pycryptodome==3.14.1         #   (required by abettersqlplus)
 pycurl==7.43.0.5
 pyflakes==2.3.1
 Pygments                     #   (2.5.2 required by ipdb)

@@ -880,6 +880,7 @@ the years.
  * config/adblock.txt                    Adblock filter list
  * config/autoexec.sh                    Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
  * config/autoexec-opt.sh                Copy to "$HOME/.config/autoexec-opt.sh" for optional settings
+ * config/bashrc                         Copy to "$HOME/.bashrc" to always source "$HOME/.profile"
  * config/com.googlecode.iterm2.plist    Copy to "$HOME/Library/Preference" for iTerm2 on Mac
  * config/config                         Copy to "$HOME/.ssh/config"
  * config/gitconfig                      Copy to "$HOME/.gitconfig" and edit
@@ -889,7 +890,7 @@ the years.
  * config/minttyrc                       Copy to "$HOME/.minttyrc" for MSYS2 terminal
  * config/tmux.conf                      Copy to "$HOME/.tmux.conf" fro TMUX terminal
  * config/profile                        Copy to "$HOME/.profile" for ksh/ash/bash shells settings
- * config/profile-opt                    Copy to "$HOME/.profile-optl" for optional ksh/bash shells settings
+ * config/profile-opt                    Copy to "$HOME/.profile-opt" for optional ksh/bash shells settings
  * config/rc.local                       Copy to "/etc/rc.local" for system startup commands
  * config/rc.local-opt                   Copy to "/etc/rc.local-opt" for optional system startup commands
  * config/terminalrc                     Copy to "$HOME/.config/xfce4/terminal" for XFCE terminal
@@ -1096,8 +1097,8 @@ the years.
  * docker/rockylinux-8/bash/Makefile     rockylinux:8 based BASH login
  * docker/rockylinux-8/dev/Dockerfile
  * docker/rockylinux-8/dev/Makefile      rockylinux:8 based GCC dev shell
- * docker/sudo/Dockerfile
- * docker/sudo/Makefile                  sudo scratch image for jail breaking app
+ * docker/scratch/Dockerfile
+ * docker/scrtach/Makefile               scratch image for jail breaking (docker-sudo)
  * docker/ubuntu-16.04/Makefile
  * docker/ubuntu-16.04/Dockerfile        ubuntu:16.04 based linux
  * docker/ubuntu-16.04/bash/Makefile

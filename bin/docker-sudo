@@ -2,7 +2,7 @@
 
 set -u
 
-IMAGE="drtuxwang/sudo:stable"
+IMAGE="drtuxwang/scratch:stable"
 
 DOCKER_RUN_FLAGS="
     --rm \

@@ -53,7 +53,7 @@ do
 done
 
 # Container hostname
-DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --hostname $(basename $IMAGE | sed -e "s/:/-/")"
+DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --hostname $(basename $IMAGE | sed -e "s/:/-/;s/\.//g")-sandbox"
 
 # Share current working directory
 DOCKER_RUN_FLAGS="$DOCKER_RUN_FLAGS --volume=$PWD:/vol/sandbox --workdir=/vol/sandbox"
@@ -74,6 +74,9 @@ then
         --volume=$TMP/docker/home:/home/$(id -un)
         --user=$SANDBOX
         --env HOME=/home/$(id -un)
+        --env cdsrc=/vol/sandbox
+        --env cdinst=/vol/sandbox
+        --env cdtest=/vol/sandbox
     "
 fi
 

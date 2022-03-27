@@ -11,8 +11,8 @@ import os
 import subprocess
 from typing import List, Optional
 
-RELEASE = '2.5.1'
-VERSION = 20210509
+RELEASE = '2.6.0'
+VERSION = 20220317
 
 
 class _System:
@@ -81,12 +81,13 @@ class Desktop:
         """
         Return true if running XFCE desktop
         """
-        if os.environ.get('XDG_CURRENT_DESKTOP') == 'XFCE':
-            return True
-        if os.environ.get('XDG_MENU_PREFIX', '').startswith('xfce-'):
-            return True
-        if os.environ.get('DESKTOP_SESSION') == 'xfce':
-            return True
+        if 'DISPLAY' in os.environ:
+            if os.environ.get('XDG_CURRENT_DESKTOP') == 'XFCE':
+                return True
+            if os.environ.get('XDG_MENU_PREFIX', '').startswith('xfce-'):
+                return True
+            if os.environ.get('DESKTOP_SESSION') == 'xfce':
+                return True
         return False
 
     @staticmethod
@@ -94,14 +95,15 @@ class Desktop:
         """
         Return true if running Gnome desktop
         """
-        if os.environ.get('XDG_CURRENT_DESKTOP') == 'GNOME':
-            return True
-        if os.environ.get('XDG_MENU_PREFIX', '').startswith('gnome-'):
-            return True
-        if os.environ.get('XDG_SESSION_DESKTOP', '').startswith('gnome'):
-            return True
-        if os.environ.get('DESKTOP_SESSION', '') == 'gnome':
-            return True
+        if 'DISPLAY' in os.environ:
+            if os.environ.get('XDG_CURRENT_DESKTOP') == 'GNOME':
+                return True
+            if os.environ.get('XDG_MENU_PREFIX', '').startswith('gnome-'):
+                return True
+            if os.environ.get('XDG_SESSION_DESKTOP', '').startswith('gnome'):
+                return True
+            if os.environ.get('DESKTOP_SESSION', '') == 'gnome':
+                return True
         return False
 
     @staticmethod
@@ -109,12 +111,13 @@ class Desktop:
         """
         Return true if running KDE desktop
         """
-        if os.environ.get('XDG_CURRENT_DESKTOP') == 'KDE':
-            return True
-        if os.environ.get('XDG_SESSION_DESKTOP', '').startswith('KDE'):
-            return True
-        if os.environ.get('DESKTOP_SESSION', '') in ('kde', 'plasma'):
-            return True
+        if 'DISPLAY' in os.environ:
+            if os.environ.get('XDG_CURRENT_DESKTOP') == 'KDE':
+                return True
+            if os.environ.get('XDG_SESSION_DESKTOP', '').startswith('KDE'):
+                return True
+            if os.environ.get('DESKTOP_SESSION', '') in ('kde', 'plasma'):
+                return True
         return False
 
     @staticmethod
@@ -122,10 +125,11 @@ class Desktop:
         """
         Return true if running Cinnamon desktop
         """
-        if os.environ.get('XDG_CURRENT_DESKTOP') == 'X-Cinnamon':
-            return True
-        if os.environ.get('CINNAMON_VERSION', ''):
-            return True
+        if 'DISPLAY' in os.environ:
+            if os.environ.get('XDG_CURRENT_DESKTOP') == 'X-Cinnamon':
+                return True
+            if os.environ.get('CINNAMON_VERSION', ''):
+                return True
         return False
 
     @staticmethod
@@ -133,8 +137,9 @@ class Desktop:
         """
         Return true if running Mate desktop
         """
-        if os.environ.get('XDG_CURRENT_DESKTOP') == 'MATE':
-            return True
+        if 'DISPLAY' in os.environ:
+            if os.environ.get('XDG_CURRENT_DESKTOP') == 'MATE':
+                return True
         return False
 
     @staticmethod
@@ -151,22 +156,23 @@ class Desktop:
         """
         Guess desktop based on session user is running. Return name or Unknown.
         """
-        command = ['ps', '-o', 'args', '-u', getpass.getuser()]
-        lines = _System.run_program(command)
-        names = set(os.path.basename(line.split()[0]) for line in lines)
+        if 'DISPLAY' in os.environ:
+            command = ['ps', '-o', 'args', '-u', getpass.getuser()]
+            lines = _System.run_program(command)
+            names = set(os.path.basename(line.split()[0]) for line in lines)
 
-        if 'xfce4-session' in names:
-            return 'xfce'
-        if (
-                set([
-                    'gnome-panel',
-                    'gnome-session',
-                    'gnome-session-binary',
-                ]) & names
-        ):
-            return 'gnome'
-        if 'startkde' in names:
-            return 'kde'
+            if 'xfce4-session' in names:
+                return 'xfce'
+            if (
+                    set([
+                        'gnome-panel',
+                        'gnome-session',
+                        'gnome-session-binary',
+                    ]) & names
+            ):
+                return 'gnome'
+            if 'startkde' in names:
+                return 'kde'
 
         return 'Unknown'
 
@@ -175,20 +181,21 @@ class Desktop:
         """
         Guess desktop based on what is installed. Return name or Unknown.
         """
-        desktops = [
-            ('cinnamon', 'cinnamon'),
-            ('gnome-panel', 'gnome'),
-            ('gnome-session', 'gnome'),
-            ('gnome-session-binary', 'gnome'),
-            ('marco', 'mate'),
-            ('startkde', 'kde'),
-            ('xfce4-session', 'xfce'),
-        ]
-        for program, name in desktops:
-            for directory in os.environ['PATH'].split(os.pathsep):
-                file = os.path.join(directory, program)
-                if os.path.isfile(file):
-                    return name
+        if 'DISPLAY' in os.environ:
+            desktops = [
+                ('cinnamon', 'cinnamon'),
+                ('gnome-panel', 'gnome'),
+                ('gnome-session', 'gnome'),
+                ('gnome-session-binary', 'gnome'),
+                ('marco', 'mate'),
+                ('startkde', 'kde'),
+                ('xfce4-session', 'xfce'),
+            ]
+            for program, name in desktops:
+                for directory in os.environ['PATH'].split(os.pathsep):
+                    file = os.path.join(directory, program)
+                    if os.path.isfile(file):
+                        return name
 
         return 'Unknown'
 
@@ -199,23 +206,22 @@ class Desktop:
         Return desktop name or Unknown)
         """
         name = 'Unknown'
-        if 'DISPLAY' in os.environ:
-            if cls.has_xfce():
-                name = 'xfce'
-            elif cls.has_gnome():
-                name = 'gnome'
-            elif cls.has_kde():
-                name = 'kde'
-            elif cls.has_cinnamon():
-                name = 'cinnamon'
-            elif cls.has_mate():
-                name = 'mate'
-            elif cls.has_macos():
-                name = 'macos'
-            elif not _System.is_windows():
-                name = cls.guess_running()
-                if name == 'Unknown':
-                    name = cls.guess_installed()
+        if cls.has_xfce():
+            name = 'xfce'
+        elif cls.has_gnome():
+            name = 'gnome'
+        elif cls.has_kde():
+            name = 'kde'
+        elif cls.has_cinnamon():
+            name = 'cinnamon'
+        elif cls.has_mate():
+            name = 'mate'
+        elif cls.has_macos():
+            name = 'macos'
+        elif not _System.is_windows():
+            name = cls.guess_running()
+            if name == 'Unknown':
+                name = cls.guess_installed()
 
         return name
 

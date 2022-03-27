@@ -20,7 +20,7 @@ do
         echo "Creating \"rootfs/root/.profile\"..."
         cp -p "$TOPDIR"/config/profile rootfs/root/.profile
         echo "Creating \"rootfs/root/.bashrc\"..."
-        ln -sf .profile rootfs/root/.bashrc
+        cp -p "$TOPDIR"/config/bashrc rootfs/root/.bashrc
         ;;
     bash2ash)
         mkdir -p rootfs/bin
