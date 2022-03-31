@@ -92,7 +92,7 @@ nexus3-cli==3.4.0            # Sonatype Nexus client
 ntplib==0.4.0                # NTP client
 numpy==1.21.5                # Array computing
 packaging==20.9              #   (required by ansible/appimage-builder/devpi-client/poetry)
-paramiko==2.8.1              # SSH client
+paramiko==2.10.3             # SSH client
 parso==0.8.3                 #   (required by ipdb)
 pastel==0.2.1                #   (required by poetry)
 pep517==0.11.1               #   (required by devpi-client)
