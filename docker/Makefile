@@ -65,7 +65,7 @@ save:         # Save Docker base image as tar file
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR save; \
 	done
-	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 docker-image_*.tar
+	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose docker-image_*.tar
 
 
 .PHONY: build

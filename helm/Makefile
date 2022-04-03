@@ -71,7 +71,7 @@ save:         # Save Docker images as tar file
 	@for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR save || exit 1; \
 	done
-	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 helm-image_*.tar
+	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose helm-image_*.tar
 
 .PHONY: install-tiller
 install-tiller: # Install legacy Helm 2.x server

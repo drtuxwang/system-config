@@ -14,7 +14,7 @@ import requests  # type: ignore
 
 import config_mod
 
-requests.packages.urllib3.disable_warnings()  # pylint: disable = no-member
+requests.packages.urllib3.disable_warnings()  # pylint: disable=no-member
 
 
 class Options:

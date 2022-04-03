@@ -13,6 +13,7 @@ contextlib2==None
 crashtest==None
 cryptography                 #   (3.2.1 required by paramiko)
 cx-Oracle==7.3.0
+dill==None
 Django==None
 dnspython==None
 docker-compose==None
@@ -53,6 +54,8 @@ pycodestyle==2.7.0
 pyflakes==2.3.1
 pylint==2.6.2
 pyOpenSSL==None
+python-slugify==4.0.1
+PyWavelets==1.1.1
 PyYAML==None
 questionary==None
 requests==2.25.1
@@ -63,8 +66,11 @@ smmap2==2.0.5                #   (required by GitPython for 3.5)
 soupsieve==2.1
 stone==None
 tomli==None
+tomlkit==0.7.2
 traitlets==4.3.3
 typed-ast==1.4.3             #   (required by pylint/mypy for 3.5)
+typing_extensions==None      #   (requires hyphen instead of underscore)
+typing-extensions==3.10.0.2
 websockets==None
 yt-dlp==None
 zipp==1.2.0                  #   (required by virtualenv for 3.5)

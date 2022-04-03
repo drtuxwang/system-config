@@ -312,10 +312,10 @@ class Main:
                             f'{sys.argv[0]}: Cannot create '
                             f'"{target_file}" file.',
                         ) from exception
-                except OSError as exception:
+                except OSError as exception2:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot create "{target_file}" file.',
-                    ) from exception
+                    ) from exception2
 
     @staticmethod
     def _mirror_directory_time(source_dir: str, target_dir: str) -> None:

@@ -92,7 +92,7 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    def _link_files(  # pylint: disable = too-many-branches
+    def _link_files(  # pylint: disable=too-many-branches
         self,
         source_dir: str,
         target_dir: str,

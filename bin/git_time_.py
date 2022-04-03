@@ -130,7 +130,7 @@ class Main:
         try:
             repo = git.Repo('./', search_parent_directories=True)
         except (
-            git.InvalidGitRepositoryError  # pylint: disable = no-member
+            git.InvalidGitRepositoryError  # pylint: disable=no-member
         ) as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find .git directory.',

@@ -2,7 +2,7 @@
 """
 System configuration detection tool.
 
-1996-2021 By Dr Colin Kong
+1996-2022 By Dr Colin Kong
 """
 
 import functools
@@ -25,12 +25,12 @@ import power_mod
 import subtask_mod
 
 if os.name == 'nt':
-    import winreg  # pylint: disable = import-error
+    import winreg  # pylint: disable=import-error
 
-RELEASE = '5.16.7'
-VERSION = 20211109
+RELEASE = '5.16.8'
+VERSION = 20220402
 
-# pylint: disable = too-many-lines
+# pylint: disable=too-many-lines
 
 
 class Options:
@@ -441,7 +441,7 @@ class OperatingSystem:
         info['Net IPvx DNS'] = []
         return info
 
-    def get_os_info(self) -> dict:  # pylint: disable = no-self-use
+    def get_os_info(self) -> dict:  # pylint: disable=no-self-use
         """
         Return operating system information dictionary.
         """
@@ -455,7 +455,7 @@ class OperatingSystem:
         info['OS Boot'] = 'Unknown'
         return info
 
-    def get_cpu_info(self) -> dict:  # pylint: disable = no-self-use
+    def get_cpu_info(self) -> dict:  # pylint: disable=no-self-use
         """
         Return CPU information dictionary.
         """
@@ -478,7 +478,7 @@ class OperatingSystem:
             info['CPU Type'] = 'x86'
         return info
 
-    def get_sys_info(self) -> dict:  # pylint: disable = no-self-use
+    def get_sys_info(self) -> dict:  # pylint: disable=no-self-use
         """
         Return system information dictionary.
         """
@@ -2314,7 +2314,7 @@ class WindowsSystem(OperatingSystem):
         info['OS Type'] = 'windows'
         info['OS Kernel X'] = 'NT'
         values = self._reg_read(
-            winreg.HKEY_LOCAL_MACHINE,
+            winreg.HKEY_LOCAL_MACHINE,  # type: ignore
             r'SOFTWARE\Microsoft\Windows NT\CurrentVersion'
         )[1]
         info['OS Name'] = self._isitset(values, 'ProductName')
@@ -2340,13 +2340,15 @@ class WindowsSystem(OperatingSystem):
         else:
             info['CPU Addressability'] = '32bit'
         subkeys, values = self._reg_read(
-            winreg.HKEY_LOCAL_MACHINE,
+            winreg.HKEY_LOCAL_MACHINE,  # type: ignore
             r'HARDWARE\DESCRIPTION\System\CentralProcessor'
         )
         info['CPU Cores'] = str(len(subkeys))
         info['CPU Threads'] = info['CPU Cores']
         subkeys, values = self._reg_read(
-            winreg.HKEY_LOCAL_MACHINE, r'HARDWARE\DESCRIPTION\System\BIOS')
+            winreg.HKEY_LOCAL_MACHINE,  # type: ignore
+            r'HARDWARE\DESCRIPTION\System\BIOS',
+        )
 
         if self._systeminfo.is_found():
             task = subtask_mod.Batch(self._systeminfo.get_cmdline())
@@ -2365,7 +2367,7 @@ class WindowsSystem(OperatingSystem):
                 info['CPU Cores X'] = 'VirtualBox VM'
 
         subkeys, values = self._reg_read(
-            winreg.HKEY_LOCAL_MACHINE,
+            winreg.HKEY_LOCAL_MACHINE,  # type: ignore
             r'HARDWARE\DESCRIPTION\System\CentralProcessor\0'
         )
         info['CPU Model'] = re.sub(
@@ -2408,17 +2410,17 @@ class WindowsSystem(OperatingSystem):
         subkeys = []
         values = {}
         try:
-            key = winreg.OpenKey(hive, path)
-            # pylint: disable = undefined-variable
+            key = winreg.OpenKey(hive, path)  # type: ignore
+            # pylint: disable=undefined-variable
         except WindowsError:  # type: ignore
-            # pylint: enable = undefined-variable
+            # pylint: enable=undefined-variable
             pass
         else:
-            nsubkeys, nvalues = winreg.QueryInfoKey(key)[:2]
+            nsubkeys, nvalues = winreg.QueryInfoKey(key)[:2]  # type: ignore
             for i in range(nsubkeys):
-                subkeys.append(winreg.EnumKey(key, i))
+                subkeys.append(winreg.EnumKey(key, i))  # type: ignore
             for i in range(nvalues):
-                name, value, type_ = winreg.EnumValue(key, i)
+                name, value, type_ = winreg.EnumValue(key, i)  # type: ignore
                 values[name] = [value, type_]
         return subkeys, values
 

@@ -2,7 +2,7 @@
 """
 Python file handling utility module
 
-Copyright GPL v2: 2006-2021 By Dr Colin Kong
+Copyright GPL v2: 2006-2022 By Dr Colin Kong
 """
 
 import getpass
@@ -11,8 +11,8 @@ import re
 import time
 from typing import List
 
-RELEASE = '2.5.1'
-VERSION = 20211107
+RELEASE = '2.5.2'
+VERSION = 20220402
 
 
 class FileStat:
@@ -48,9 +48,9 @@ class FileStat:
                 self._stat['userid'] = file_stat[4]
                 self._stat['groupid'] = file_stat[5]
                 self._stat['size'] = file_stat[6]
-                self._stat['atime'] = file_stat[7]
-                self._stat['mtime'] = file_stat[8]
-                self._stat['ctime'] = file_stat[9]
+                self._stat['atime'] = int(file_stat[7])
+                self._stat['mtime'] = int(file_stat[8])
+                self._stat['ctime'] = int(file_stat[9])
             except (OSError, TypeError) as exception:
                 if not os.path.islink:
                     raise FileStatNotFoundError(

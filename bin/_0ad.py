@@ -2,7 +2,7 @@
 """
 Sandbox for "0ad" launcher
 """
-# pylint: disable = invalid-name
+# pylint: disable=invalid-name
 
 import glob
 import os

@@ -2,7 +2,7 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2021 By Dr Colin Kong
+Copyright GPL v2: 2006-2022 By Dr Colin Kong
 """
 
 import copy
@@ -15,8 +15,8 @@ import types
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.2.8'
-VERSION = 20220117
+RELEASE = '2.2.9'
+VERSION = 20220402
 
 BUFFER_SIZE = 131072
 
@@ -241,7 +241,7 @@ class Task:
             stderr = subprocess.STDOUT
         else:
             stderr = subprocess.PIPE
-        return subprocess.Popen(  # pylint: disable = consider-using-with
+        return subprocess.Popen(  # pylint: disable=consider-using-with
             command,
             env=info['env'],
             shell=pipe,
@@ -328,14 +328,14 @@ class Background(Task):
 
         if info['pattern']:
             os.environ['_SUBTASK_MOD_BACKGROUND_FILTER'] = info['pattern']
-            subprocess.Popen(  # pylint: disable = consider-using-with
+            subprocess.Popen(  # pylint: disable=consider-using-with
                 [sys.executable, '-B', __file__] + cmdline,
                 shell=pipe,
                 env=info['env']
             )
             del os.environ['_SUBTASK_MOD_BACKGROUND_FILTER']
         else:
-            subprocess.Popen(  # pylint: disable = consider-using-with
+            subprocess.Popen(  # pylint: disable=consider-using-with
                 command,
                 shell=pipe,
                 env=info['env'],
@@ -508,7 +508,7 @@ class Daemon(Task):
         os.environ['_SUBTASK_MOD_DAEMON_FILE'] = info['file']
 
         if '|' in cmdline:
-            subprocess.Popen(  # pylint: disable = consider-using-with
+            subprocess.Popen(  # pylint: disable=consider-using-with
                 subprocess.list2cmdline(
                     [sys.executable, '-B', __file__] + cmdline
                 ),
@@ -516,7 +516,7 @@ class Daemon(Task):
                 env=info['env'],
             )
         else:
-            subprocess.Popen(  # pylint: disable = consider-using-with
+            subprocess.Popen(  # pylint: disable=consider-using-with
                 [sys.executable, '-B', __file__] + cmdline,
                 env=info['env'],
             )
@@ -670,7 +670,7 @@ class Main:
 
     @staticmethod
     def _signal_ignore(
-        # pylint: disable = no-member
+        # pylint: disable=no-member
         _signal: int,
         _frame: types.FrameType,
     ) -> Union[

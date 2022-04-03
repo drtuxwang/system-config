@@ -50,7 +50,7 @@ class Options:
 
     @staticmethod
     def _signal_ignore(
-        # pylint: disable = no-member
+        # pylint: disable=no-member
         _signal: int,
         _frame: types.FrameType,
     ) -> Union[

@@ -2,10 +2,9 @@
 """
 Python sub task handling module
 
-Copyright GPL v2: 2006-2021 By Dr Colin Kong
+Copyright GPL v2: 2006-2022 By Dr Colin Kong
 """
 
-import distutils.version
 import functools
 import glob
 import os
@@ -15,8 +14,10 @@ import subprocess
 import sys
 from typing import Any, List, Optional, Sequence
 
-RELEASE = '2.4.4'
-VERSION = 20211107
+import packaging.version
+
+RELEASE = '2.4.5'
+VERSION = 20220402
 
 
 class Command:
@@ -111,8 +112,10 @@ class Command:
         for file in files:
             if has_glibc.search(file):
                 version = file.split('-glibc_')[1].split('-')[0].split('/')[0]
-                if (distutils.version.LooseVersion(_System.get_glibc()) >=
-                        distutils.version.LooseVersion(version)):
+                if (
+                    packaging.version.Version(_System.get_glibc()) >=
+                    packaging.version.Version(version)
+                ):
                     nfiles.append(file)
             else:
                 nfiles.append(file)
@@ -544,7 +547,7 @@ class _System(Platform):
     @staticmethod
     def _get_file_time(file: str) -> int:
         try:
-            return os.stat(file)[8]
+            return int(os.stat(file)[8])
         except (OSError, TypeError):
             return 0
 

@@ -36,7 +36,7 @@ import config_mod
 # Effects Go array size and huge number can crash Registry
 MAXREPO = "9999"
 
-requests.packages.urllib3.disable_warnings()  # pylint: disable = no-member
+requests.packages.urllib3.disable_warnings()  # pylint: disable=no-member
 
 SSL_VERIFY = False
 

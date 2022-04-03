@@ -4,7 +4,7 @@ Python configuration module (uses "config_mod.yaml")
 
 Supports BSON, multi-JSON, XML, multi-YAML files.
 
-Copyright GPL v2: 2017-2021 By Dr Colin Kong
+Copyright GPL v2: 2017-2022 By Dr Colin Kong
 """
 
 import json
@@ -26,8 +26,8 @@ import bson  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '1.7.6'
-VERSION = 20211107
+RELEASE = '1.7.7'
+VERSION = 20220402
 
 
 class Data:
@@ -152,7 +152,7 @@ class Data:
             if file.endswith('bson'):
                 try:
                     with open(file, 'rb') as ifile:
-                        blocks = [bson.loads(  # pylint: disable = no-member
+                        blocks = [bson.loads(  # pylint: disable=no-member
                             ifile.read(),
                         )]
                 except IndexError as exception:
@@ -234,7 +234,7 @@ class Data:
                         f'Cannot handle multi-writes to "{tmpfile}" file.',
                     )
                 with open(tmpfile, 'wb') as ofile:
-                    ofile.write(bson.dumps(  # pylint: disable = no-member
+                    ofile.write(bson.dumps(  # pylint: disable=no-member
                         self._blocks[0],
                     ))
             else:

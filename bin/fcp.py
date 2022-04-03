@@ -181,10 +181,10 @@ class Main:
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot create "{target}" file.',
                         ) from exception
-                except OSError as exception:
+                except OSError as exception2:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot create "{target}" file.',
-                    ) from exception
+                    ) from exception2
 
     def _copy(self, source: str, target: str) -> None:
         if os.path.islink(source):

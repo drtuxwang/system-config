@@ -5,7 +5,6 @@ Check whether installed debian packages in '.debs' list have updated versions.
 
 import argparse
 import copy
-import distutils.version
 import glob
 import json
 import logging
@@ -15,6 +14,8 @@ import signal
 import sre_constants
 import sys
 from typing import List
+
+import packaging.version
 
 import logging_mod
 
@@ -82,18 +83,22 @@ class Package:
         """
         self._version = version
 
+    @staticmethod
+    def _get_loose_version(version: str) -> packaging.version.LegacyVersion:
+        """
+        Return LegacyVersion object
+        """
+        return packaging.version.LegacyVersion(version.replace('+', '.x'))
+
     def is_newer(self, package: 'Package') -> bool:
         """
         Return True if version newer than package.
         """
-        try:
-            if (
-                    distutils.version.LooseVersion(self._version) >
-                    distutils.version.LooseVersion(package.get_version())
-            ):
-                return True
-        except TypeError:  # 5.0.0~buster 5.0~rc1~buster
-            pass
+        if (
+            self._get_loose_version(self._version) >
+            self._get_loose_version(package.get_version())
+        ):
+            return True
         return False
 
 

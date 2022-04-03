@@ -60,7 +60,7 @@ class Options:
     @staticmethod
     def _select_urls(args: List[str]) -> List[str]:
         if [x for x in args if 'cdninstagram.com' in x]:
-            isbad = re.compile('s(150|320|640)x')
+            isbad = re.compile('(p1080|s150|s320|s640|s1080)x')
             return [
                 x
                 for x in args
@@ -102,7 +102,7 @@ class Options:
                     outputs.append(output)
                     nargs.extend(['wget', '-O', output, arg, ';'])
         if outputs:
-            nargs.extend(['fls'] + outputs + [';'])
+            nargs.extend(['fls', '-t'] + outputs + [';'])
         nargs.extend(['sleep', SLEEP])
         return nargs
 
