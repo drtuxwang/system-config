@@ -3,9 +3,9 @@ ARG BASE_IMAGE=oraclelinux:latest
 FROM ${BASE_IMAGE}
 
 # Install base packages
-RUN yum -y install oracle-epel-release-el7 && \
-    yum -y update && \
-    yum -y install \
+RUN yum install -y oracle-epel-release-el7 && \
+    yum update -y && \
+    yum install -y \
         bind-utils \
         iproute \
         net-tools \

@@ -5,7 +5,7 @@ FROM ${BASE_IMAGE}
 # Install compiler & dev packages
 RUN \
     # For Python build
-    yum -y install \
+    yum install -y \
         automake \
         bison \
         gcc-c++ \
@@ -25,7 +25,7 @@ RUN \
         readline-devel \
         xz-devel && \
     # For Python packages
-    yum -y install python38-devel && \
+    yum install -y python38-devel && \
     yum clean all
 
 COPY rootfs/ /

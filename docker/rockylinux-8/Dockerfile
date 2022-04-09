@@ -3,9 +3,9 @@ ARG BASE_IMAGE=rockylinux/rockylinux:latest
 FROM ${BASE_IMAGE}
 
 # Install base packages
-RUN yum -y install epel-release && \
-    yum -y update && \
-    yum -y install \
+RUN yum install -y epel-release && \
+    yum update -y && \
+    yum install -y \
         bind-utils \
         diffutils \
         net-tools \

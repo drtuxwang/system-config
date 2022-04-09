@@ -5,7 +5,7 @@ FROM ${BASE_IMAGE}
 # Install compiler & dev packages
 RUN \
     # For Python build
-    yum -y install \
+    yum install -y \
         automake \
         bison \
         gcc-c++ \
@@ -25,7 +25,7 @@ RUN \
         uuid-devel \
         xz-devel && \
     # For Python packages
-    yum -y install python36-devel && \
+    yum install -y python36-devel && \
     rpm -e --nodeps python3-rpm-generators python3-rpm-macros python3-setuptools && \
     yum clean all
 

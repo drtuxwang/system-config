@@ -3,8 +3,8 @@ ARG BASE_IMAGE=amazonlinux:latest
 FROM ${BASE_IMAGE}
 
 # Install base packages
-RUN yum -y update && \
-    yum -y install \
+RUN yum update -y && \
+    yum install -y \
         bind-utils \
         iproute \
         net-tools \

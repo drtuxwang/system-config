@@ -4,9 +4,9 @@ FROM ${BASE_IMAGE}
 
 # Install base packages
 RUN ln -s microdnf /usr/bin/yum && \
-    yum -y install oracle-epel-release-el8 && \
-    yum -y update && \
-    yum -y install \
+    yum install -y oracle-epel-release-el8 && \
+    yum update -y && \
+    yum install -y \
         bind-utils \
         diffutils \
         net-tools \
