@@ -1099,12 +1099,6 @@ the years.
  * docker/rockylinux-8/dev/Makefile      rockylinux:8 based GCC dev shell
  * docker/scratch/Dockerfile
  * docker/scrtach/Makefile               scratch image for jail breaking (docker-sudo)
- * docker/ubuntu-16.04/Makefile
- * docker/ubuntu-16.04/Dockerfile        ubuntu:16.04 based linux
- * docker/ubuntu-16.04/bash/Makefile
- * docker/ubuntu-16.04/bash/Dockerfile   ubuntu:16.04 based BASH login
- * docker/ubuntu-16.04/dev/Makefile
- * docker/ubuntu-16.04/dev/Dockerfile    ubuntu:16.04 based GCC dev shell
  * docker/ubuntu-18.04/Makefile
  * docker/ubuntu-18.04/Dockerfile        ubuntu:18.04 based linux
  * docker/ubuntu-18.04/bash/Makefile
@@ -1117,6 +1111,12 @@ the years.
  * docker/ubuntu-20.04/bash/Makefile     ubuntu:20.04 based BASH login
  * docker/ubuntu-20.04/dev/Dockerfile
  * docker/ubuntu-20.04/dev/Makefile      ubuntu:20.04 based GCC dev shell
+ * docker/ubuntu-22.04/Makefile
+ * docker/ubuntu-22.04/Dockerfile        ubuntu:22.04 based linux
+ * docker/ubuntu-22.04/bash/Makefile
+ * docker/ubuntu-22.04/bash/Dockerfile   ubuntu:22.04 based BASH login
+ * docker/ubuntu-22.04/dev/Makefile
+ * docker/ubuntu-22.04/dev/Dockerfile    ubuntu:22.04 based GCC dev shell
  * kubernetes/Makefile
  * kubernetes/bin/kube-connect.sh        Connect to Kubernetes ingress/service port
  * kubernetes/bin/kube-save.sh           Save Kubernetes control plane docker images

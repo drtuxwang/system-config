@@ -2,7 +2,7 @@ ARG BASE_IMAGE=drtuxwang/ubuntu:latest
 
 FROM ${BASE_IMAGE}
 
-# Install compiler & dev packages
+# Install compiler & dev packages # DEBIAN_FRONTEND=noninteractive
 RUN \
     # For Python build
     apt-get install --no-install-recommends -y \

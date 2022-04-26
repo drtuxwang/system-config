@@ -8,6 +8,7 @@ RUN apt-get update --fix-missing && \
     apt-get install --no-install-recommends -y \
         ca-certificates \
         curl \
+        dh-python \
         dnsutils \
         iproute2 \
         iputils-ping \

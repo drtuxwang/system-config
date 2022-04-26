@@ -1,22 +1,22 @@
 IMAGES := "drtuxwang/.*"
 
 BUILD_DIRS := \
-	alpine-3.13 \
 	alpine-3.14 \
 	i386-alpine-3.14 \
+	alpine-3.13 \
 	\
-	debian-9 \
-	debian-10 \
 	debian-11 \
 	i386-debian-11 \
-	ubuntu-16.04 \
-	ubuntu-18.04 \
+	debian-10 \
+	debian-9 \
+	ubuntu-22.04 \
 	ubuntu-20.04 \
+	ubuntu-18.04 \
 	\
-	centos-7 \
 	centos-8 \
-	oraclelinux-7 \
+	centos-7 \
 	oraclelinux-8 \
+	oraclelinux-7 \
 	rockylinux-8 \
 	amazonlinux-2 \
 	\

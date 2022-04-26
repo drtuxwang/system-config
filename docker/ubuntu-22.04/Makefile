@@ -1,5 +1,5 @@
-BASE_IMAGE := ubuntu:16.04
-IMAGE := drtuxwang/ubuntu:16.04
+BASE_IMAGE := ubuntu:22.04
+IMAGE := drtuxwang/ubuntu:22.04
 DOCKER_BUILD_FLAGS ?=
 
 BUILD_DIRS := bash dev
