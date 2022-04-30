@@ -62,6 +62,18 @@ install:      # Install Python packages
 	@echo "\n*** Installing Python 3 requirements ***"
 	etc/python-packages.sh -i ${PYTHON}
 
+.PHONY: gc
+gc:           # Run git garbage collection
+	@du -s $(shell pwd)/.git
+	git \
+		-c gc.reflogExpire=0 \
+		-c gc.reflogExpireUnreachable=0 \
+		-c gc.rerereresolved=0 \
+		-c gc.rerereunresolved=0 \
+		-c gc.pruneExpire=now gc \
+		--aggressive
+	@du -s $(shell pwd)/.git
+
 .PHONY: help
 help:
 	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

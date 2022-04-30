@@ -24,7 +24,7 @@ RUN \
         pkg-config \
         python3-dev \
         uuid-dev && \
-# For Python packages
+    # For Python packages
     apt-get install --no-install-recommends -y libcurl4-openssl-dev && \
     apt-get clean
 

@@ -49,7 +49,7 @@ class Options:
         )
         parser.add_argument(
             'files',
-            nargs='+',
+            nargs='*',
             metavar='file',
             help="File to search.",
         )

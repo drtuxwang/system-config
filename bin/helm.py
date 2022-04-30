@@ -47,6 +47,8 @@ class Main:
 
     @staticmethod
     def _cache() -> None:
+        if command_mod.Platform.get_system() == 'macos':
+            return
         helm2_directory = os.path.join(os.environ['HOME'], '.helm')
         if os.path.isdir(helm2_directory):
             if not os.path.isdir(os.path.join(helm2_directory, 'repository')):

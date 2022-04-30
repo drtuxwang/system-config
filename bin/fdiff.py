@@ -179,7 +179,14 @@ class Main:
                                 return
             except OSError:
                 print(f"diff  {file1}  {file2}")
-                return
+        elif file_stat1.get_size() < 65536:
+            try:
+                with open(file1, 'rb') as ifile1:
+                    with open(file2, 'rb') as ifile2:
+                        if ifile1.read(65536) != ifile2.read(65536):
+                            print(f"diff  {file1}  {file2}")
+            except OSError:
+                print(f"diff  {file1}  {file2}")
 
     def run(self) -> int:
         """

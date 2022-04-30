@@ -84,7 +84,7 @@ check_packages() {
 
     for DIR in $($PYTHON -m site | grep site-packages | cut -f2 -d"'")
     do
-        for FILE in $(awk '/^[^_]/ {print $1}' $DIR/*.dist-info/top_level.txt 2> /dev/null)
+        for FILE in $(awk '/^[^_]/ {print $1}' $DIR/*.dist-info/top_level.txt 2> /dev/null | grep -v "^DUMMY$")
         do
             if [ ! "$(ls $DIR/$FILE $DIR/$FILE.* 2> /dev/null)" ]
             then
@@ -151,11 +151,11 @@ then
     read_requirements "$REQUIREMENT"
 else
     read_requirements "${0%/*}/python-requirements.txt"
-    read_requirements "${0%/*}/python$PYTHON_VERSION-requirements.txt"
+    read_requirements "${0%/*}/python-requirements_${PYTHON_VERSION}.txt"
     case $(uname) in
     Darwin)
         read_requirements "${0%/*}/python-requirements_mac.txt"
-        read_requirements "${0%/*}/python$PYTHON_VERSION-requirements_mac.txt"
+        read_requirements "${0%/*}/python-requirements_${PYTHON_VERSION}mac.txt"
         ;;
     esac
 fi

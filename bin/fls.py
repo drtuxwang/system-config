@@ -10,6 +10,7 @@ import signal
 import sys
 from typing import Iterator, List, Union
 
+import command_mod
 import file_mod
 
 
@@ -63,7 +64,7 @@ class Options:
             const='size',
             dest='order',
             default='name',
-            help="Sort by size of file.",
+            help="Sort files by size.",
         )
         parser.add_argument(
             '-t',
@@ -71,7 +72,7 @@ class Options:
             const='mtime',
             dest='order',
             default='name',
-            help="Sort by modification time of file.",
+            help="Sort files by modification time.",
         )
         parser.add_argument(
             '-c',
@@ -79,7 +80,15 @@ class Options:
             const='ctime',
             dest='order',
             default='name',
-            help="Sort by meta data change time of file."
+            help="Sort files by meta data change time."
+        )
+        parser.add_argument(
+            '-v',
+            action='store_const',
+            const='version',
+            dest='order',
+            default='name',
+            help="Sort files as loose versions."
         )
         parser.add_argument(
             '-r',
@@ -173,6 +182,11 @@ class Main:
             file_stats = sorted(file_stats, key=lambda s: s.get_time())
         elif order == 'size':
             file_stats = sorted(file_stats, key=lambda s: s.get_size())
+        elif order == 'version':
+            file_stats = sorted(
+                file_stats,
+                key=lambda s: command_mod.LooseVersion(s.get_file()),
+            )
         if options.get_reverse_flag():
             return reversed(file_stats)
         return file_stats

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Make a Python3 ZIP Application in PYZ format.
+Make a Python 3 ZIP Application in PYZ format.
 """
 
 import argparse

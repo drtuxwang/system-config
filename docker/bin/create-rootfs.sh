@@ -46,16 +46,13 @@ do
         ;;
     python*)
         mkdir -p rootfs/etc
-        echo "Creating \"rootfs/etc/python-packages.sh\"..."
-        cp -p "$TOPDIR"/etc/python-packages.sh rootfs/etc
-        echo "Creating \"rootfs/etc/python-requirements.txt\"..."
-        cp -p "$TOPDIR"/etc/python-requirements.txt rootfs/etc
         VERSION=${1#python}
-        if [ "$VERSION" -a -f "$TOPDIR"/etc/python$VERSION-requirements.txt ]
-        then
-            echo "Creating \"rootfs/etc/python$VERSION-requirements.txt\"..."
-            cp -p "$TOPDIR"/etc/python$VERSION-requirements.txt rootfs/etc
-        fi
+        for FILE in python-packages.sh python-requirements.txt python-requirements_$VERSION.txt
+        do
+            [ ! -f "$TOPDIR/etc/$FILE" ] && continue
+            echo "Creating \"rootfs/etc/$FILE\"..."
+            cp -p "$TOPDIR/etc/$FILE" rootfs/etc
+        done
         ;;
     sudo)
         echo "Creating \"rootfs/etc/sudoers.d/allow-owner\"..."

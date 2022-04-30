@@ -1,4 +1,4 @@
- 1996-2022 By Dr Colin Kong
+# 1996-2022 By Dr Colin Kong
 
 These are production scripts and configuration files that I use and share. Originally the scripts
 were started Bourne shell scripts started during my University days and continuously enhanced over
@@ -6,22 +6,23 @@ the years.
 
 ---
 <pre>
- * Jenkinsfile            Jenkins pipeline configuration file
- * codefresh.yaml         Codefresh pipeline configuration file
- * Makefile               Makefile for testing
- * .pylintrc              Python Pylint configuration file
- * bin/command_mod.py     Python command line handling module
- * bin/config_mod.py      Python config module for handling "config_mod.yaml)
- * bin/config_mod.yaml    Configuration file apps, bindings & parameters
- * bin/debug_mod.py       Python debugging tools module
- * bin/desktop_mod.py     Python X-windows desktop module
- * bin/file_mod.py        Python file handling utility module
- * bin/logging_mod.py     Python logging handling module
- * bin/network_mod.py     Python network handling utility module
- * bin/power_mod.py       Python power handling module
- * bin/subtask_mod.py     Python sub task handling module
- * bin/task_mod.py        Python task handling utility module
- * bin/python             Python startup (allowing non systems port)
+ * Jenkinsfile              Jenkins pipeline configuration file
+ * codefresh.yaml           Codefresh pipeline configuration file
+ * Makefile                 Makefile for testing
+ * .pylintrc                Python Pylint configuration file
+ * bin/command_mod.py       Python command line handling module
+ * bin/test_command_mod.py  Unit testing suite for "command_mod.py"
+ * bin/config_mod.py        Python config module for handling "config_mod.yaml)
+ * bin/config_mod.yaml      Configuration file apps, bindings & parameters
+ * bin/debug_mod.py         Python debugging tools module
+ * bin/desktop_mod.py       Python X-windows desktop module
+ * bin/file_mod.py          Python file handling utility module
+ * bin/logging_mod.py       Python logging handling module
+ * bin/network_mod.py       Python network handling utility module
+ * bin/power_mod.py         Python power handling module
+ * bin/subtask_mod.py       Python sub task handling module
+ * bin/task_mod.py          Python task handling utility module
+ * bin/python               Python startup (allowing non systems port)
  * bin/python.bat
  * bin/python2
  * bin/python2.bat
@@ -40,7 +41,7 @@ the years.
  * bin/python3.9
  * bin/python3.9.bat
  * bin/python3.10
- * bin/2to3               Python 3.x script wrappers (allowing non systems port)
+ * bin/2to3                 Python 3.x script wrappers (allowing non systems port)
  * bin/2to3.bat
  * bin/ansible
  * bin/ansible-playbook
@@ -53,6 +54,7 @@ the years.
  * bin/aws.bat
  * bin/cookiecutter
  * bin/cookiecutter.bat
+ * bin/cqlsh
  * bin/cython
  * bin/cython.bat
  * bin/cythonize
@@ -113,70 +115,70 @@ the years.
  * bin/virtualenv.bat
  * bin/yt-dlp
  * bin/yt-dlp.bat
- * bin/0ad                Sandbox for "0ad" launcher (allowing non systems port)
+ * bin/0ad                  Sandbox for "0ad" launcher (allowing non systems port)
  * bin/_0ad.py
- * bin/wesnoth            Sandbox for "wesnoth" launcher (allowing non systems port)
+ * bin/wesnoth              Sandbox for "wesnoth" launcher (allowing non systems port)
  * bin/wesnoth.py
- * bin/7z                 Make a compressed archive in 7z format
- * bin/7z.bat             (uses p7zip)
+ * bin/7z                   Make a compressed archive in 7z format
+ * bin/7z.bat               (uses p7zip)
  * bin/_7z.py
- * bin/aftp               Automatic connection to FTP server anonymously
+ * bin/aftp                 Automatic connection to FTP server anonymously
  * bin/aftp.py
- * bin/aplay              Play MP3/OGG/WAV audio files in directory
- * bin/aplay.py           (uses vlc)
- * bin/appimagetool       Sandbox for "appimagetool" launcher (allowing non systems port)
+ * bin/aplay                Play MP3/OGG/WAV audio files in directory
+ * bin/aplay.py             (uses vlc)
+ * bin/appimagetoo  l       Sandbox for "appimagetool" launcher (allowing non systems port)
  * bin/appimagetool.py
- * bin/aria2c             aria2c wrapper (allowing non systems port)
- * bin/aria2c.py          (bandwidth 512KB limit default using "trickle", "$HOME/.config/tickle.json)
- * bin/audacity           Sandbox for "audacity" launcher (allowing non systems port)
+ * bin/aria2c               aria2c wrapper (allowing non systems port)
+ * bin/aria2c.py            (bandwidth 512KB limit default using "trickle", "$HOME/.config/tickle.json)
+ * bin/audacity             Sandbox for "audacity" launcher (allowing non systems port)
  * bin/audacity.bat
  * bin/audacity.py
- * bin/avi                Encode AVI video using avconv (libxvid/libmp3lame)
+ * bin/avi                  Encode AVI video using avconv (libxvid/libmp3lame)
  * bin/avi.py
- * bin/battery            Linux battery status utility
+ * bin/battery              Linux battery status utility
  * bin/battery.py
- * bin/bell               Play bell.ogg sound
- * bin/bell.ogg           (uses cvlc or ogg123)
+ * bin/bell                 Play bell.ogg sound
+ * bin/bell.ogg             (uses cvlc or ogg123)
  * bin/bell.py
- * bin/bson               Convert BSON/JSON/YAML to BSON
+ * bin/bson                 Convert BSON/JSON/YAML to BSON
  * bin/bson.bat
  * bin/bson_.py
- * bin/breaktimer         Break reminder timer
- * bin/breaktimer.py      (10 min default)
+ * bin/breaktimer           Break reminder timer
+ * bin/breaktimer.py        (10 min default)
  * busybox.bat
- * bin/bz2                Compress a file in BZIP2 format (allowing non systems port)
+ * bin/bz2                  Compress a file in BZIP2 format (allowing non systems port)
  * bin/bz2_.py
- * bin/calendar           Displays month or year calendar
+ * bin/calendar             Displays month or year calendar
  * bin/calendar.bat
  * bin/calendar_.py
- * bin/cdspeed            Set CD/DVD drive speed
- * bin/cdspeed.py         ("$HOME/.config/cdspeed.json")
- * bin/chkconfig          Check BSON/JSON/YAML configuration files for errors
+ * bin/cdspeed              Set CD/DVD drive speed
+ * bin/cdspeed.py           ("$HOME/.config/cdspeed.json")
+ * bin/chkconfig            Check BSON/JSON/YAML configuration files for errors
  * bin/chkconfig.bat
  * bin/chkconfig.py
- * bin/chkpath            Check PATH and return correct settings
+ * bin/chkpath              Check PATH and return correct settings
  * bin/chkpath.bat
  * bin/chkpath.py
- * bin/chksequence        Check for missing sequence in numbered files
+ * bin/chksequence          Check for missing sequence in numbered files
  * bin/chksequence.bat
  * bin/chksequence.py
- * bin/chrome             chrome wrapper (allowing non systems port)
+ * bin/chrome               chrome wrapper (allowing non systems port)
  * bin/chrome-proxy
  * bin/chrome-proxy.bat
  * bin/chrome.bat
  * bin/chrome.py
- * bin/chromium           chromium wapper (allowing non systems port)
+ * bin/chromium             chromium wapper (allowing non systems port)
  * bin/chromium.bat
  * bin/chromium.py
- * bin/chroot             chroot wrapper (allowing non systems port)
- * bin/chroot.py          (creates /shared mount automatically)
- * bin/clam               Run ClamAV anti-virus scanner
+ * bin/chroot               chroot wrapper (allowing non systems port)
+ * bin/chroot.py            (creates /shared mount automatically)
+ * bin/clam                 Run ClamAV anti-virus scanner
  * bin/clam.bat
  * bin/clam.py
- * bin/cluster            Run command on a subnet in parallel
+ * bin/cluster              Run command on a subnet in parallel
  * bin/cluster.py
- * bin/deb                Debian package management tools
- * bin/deb.py             (support offline repository searching and update checks
+ * bin/deb                  Debian package management tools
+ * bin/deb.py               (support offline repository searching and update checks
  * bin/debcheck
  * bin/debcheck.py
  * bin/debget
@@ -187,181 +189,181 @@ the years.
  * bin/debinstall.py
  * bin/debupdate
  * bin/debupdate.py
- * bin/dep                dep wrapper (for golang)
+ * bin/dep                  dep wrapper (for golang)
  * bin/dep.py
- * bin/dockerreg          Docker Registry tool
+ * bin/dockerreg            Docker Registry tool
  * bin/dockerreg.bat
  * bin/dockerreg.py
- * bin/docker-sandbox     Starts Docker sandbox environment
- * bin/docker-sudo        Starts Docker sudo app
- * bin/dpkg               dpkg wrapper (force system Python)
+ * bin/docker-sandbox       Starts Docker sandbox environment
+ * bin/docker-sudo          Starts Docker sudo app
+ * bin/dpkg                 dpkg wrapper (force system Python)
  * bin/dpkg.py
- * bin/eclipse            eclipse wrapper (allowing non systems port)
+ * bin/eclipse              eclipse wrapper (allowing non systems port)
  * bin/eclipse.py
- * bin/edge               edge wrapper (allowing non systems port)
+ * bin/edge                 edge wrapper (allowing non systems port)
  * bin/edge.py
- * bin/espeak             espeak wrapper (allowing non systems port)
+ * bin/espeak               espeak wrapper (allowing non systems port)
  * bin/espeak.py
- * bin/et                 Sandbox for ET Wolf launcher (allowing non systems port)
+ * bin/et                   Sandbox for ET Wolf launcher (allowing non systems port)
  * bin/et.py
  * bin/et.tcl
- * bin/etl                ET Legacy wrapper (allowing non systems port)
+ * bin/etl                  ET Legacy wrapper (allowing non systems port)
  * bin/etl.py
- * bin/evince             Sandbox for "atril/evince" launcher (allowing non systems port)
+ * bin/evince               Sandbox for "atril/evince" launcher (allowing non systems port)
  * bin/evince.bat
  * bin/evince.py
- * bin/extfbfl            Extract Facebook friends list from saved HTML file
+ * bin/extfbfl              Extract Facebook friends list from saved HTML file
  * bin/extfbfl.bat
  * bin/extfbfl.py
- * bin/extjs              Extracts Javascript from a HTML file
+ * bin/extjs                Extracts Javascript from a HTML file
  * bin/extjs.bat
  * bin/extjs.py
- * bin/exturl             Extracts http references from a HTML file
+ * bin/exturl               Extracts http references from a HTML file
  * bin/exturl.bat
  * bin/exturl.py
- * bin/f7z                Compress a file in 7ZIP format
+ * bin/f7z                  Compress a file in 7ZIP format
  * bin/f7z.7z
- * bin/fcat               Concatenate files and print on the standard output
- * bin/fcat.bat           (similar to cat)
+ * bin/fcat                 Concatenate files and print on the standard output
+ * bin/fcat.bat             (similar to cat)
  * bin/fcat.py
- * bin/fchop              Chop up a file into chunks
+ * bin/fchop                Chop up a file into chunks
  * bin/fchop.bat
  * bin/fchop.py
- * bin/fcount             Count number of lines and maximum columns used in file
+ * bin/fcount               Count number of lines and maximum columns used in file
  * bin/fcount.bat
  * bin/fcount.py
- * bin/fcp                Copy files and directories
- * bin/fcp.bat            (Preserving time stamps)
+ * bin/fcp                  Copy files and directories
+ * bin/fcp.bat              (Preserving time stamps)
  * bin/fcp.py
- * bin/fcpall             Copy a file to multiple target files
+ * bin/fcpall               Copy a file to multiple target files
  * bin/fcpall.bat
  * bin/fcpall.py
- * bin/fcpclip            Copy file from clipboard location
+ * bin/fcpclip              Copy file from clipboard location
  * bin/fcpclip.py
- * bin/fcplink            Replace symbolic link to files with copies
+ * bin/fcplink              Replace symbolic link to files with copies
  * bin/fcplink.py
- * bin/fdiff              Show summary of differences between two directories recursively
+ * bin/fdiff                Show summary of differences between two directories recursively
  * bin/fdiff.bat
  * bin/fdiff.py
- * bin/fdu                Show file disk usage
- * bin/fdu.bat            (like du but same values independent of file system including Windows)
+ * bin/fdu                  Show file disk usage
+ * bin/fdu.bat              (like du but same values independent of file system including Windows)
  * bin/fdu.py
- * bin/ffile              Determine file type
+ * bin/ffile                Determine file type
  * bin/ffile.bat
  * bin/ffile.py
- * bin/ffind              Find file or directory
- * bin/ffind.bat          (uses regular expression)
+ * bin/ffind                Find file or directory
+ * bin/ffind.bat            (uses regular expression)
  * bin/ffind.py
- * bin/ffind0             Find zero sized files
+ * bin/ffind0               Find zero sized files
  * bin/ffind0.bat
  * bin/ffind0.py
- * bin/ffix               Remove horrible characters in filename
- * bin/ffix.bat           (like spaces etc)
+ * bin/ffix                 Remove horrible characters in filename
+ * bin/ffix.bat             (like spaces etc)
  * bin/ffix.py
- * bin/ffmpeg             ffmpeg wrapper (allowing non systems port)
+ * bin/ffmpeg               ffmpeg wrapper (allowing non systems port)
  * bin/ffmpeg.py
- * bin/ffplay             ffplay wrapper (allowing non systems port)
+ * bin/ffplay               ffplay wrapper (allowing non systems port)
  * bin/ffplay.py
- * bin/ffprobe            ffprobe wrapper (allowing non systems port)
+ * bin/ffprobe              ffprobe wrapper (allowing non systems port)
  * bin/ffprobe.py
- * bin/fget               Download http/https/ftp/file URLs
+ * bin/fget                 Download http/https/ftp/file URLs
  * bin/fget.bat
  * bin/fget.py
- * bin/fgrep.bat          Print lines matching a pattern
- * bin/fgrep.py           (Windows only)
- * bin/fhead              Output the first n lines of a file
- * bin/fhead.bat          (like head)
+ * bin/fgrep.bat            Print lines matching a pattern
+ * bin/fgrep.py             (Windows only)
+ * bin/fhead                Output the first n lines of a file
+ * bin/fhead.bat            (like head)
  * bin/fhead.py
- * bin/file-roller        Wrapper for "engrampa/file-roller" command
+ * bin/file-roller          Wrapper for "engrampa/file-roller" command
  * bin/file_roller_.py
- * bin/firefox            firefox wrapper (allowing non systems port)
- * bin/firefox.bat        (supports "-copy", "-no-remote" and "-reset" enhancements)
+ * bin/firefox              firefox wrapper (allowing non systems port)
+ * bin/firefox.bat          (supports "-copy", "-no-remote" and "-reset" enhancements)
  * bin/firefox.py
- * bin/fixwav             Normalize volume of wave files (-16.0dB rms mean volume)
+ * bin/fixwav               Normalize volume of wave files (-16.0dB rms mean volume)
  * bin/fixwav.py
- * bin/flink              Recursively link all files
+ * bin/flink                Recursively link all files
  * bin/flink.py
- * bin/fls                Show full list of files
+ * bin/fls                  Show full list of files
  * bin/fls.bat
  * bin/fls.py
- * bin/fmkdir             Create a single lower case directory
+ * bin/fmkdir               Create a single lower case directory
  * bin/fmkdir.bat
  * bin/fmkdir.py
- * bin/fmod               Set file access mode
+ * bin/fmod                 Set file access mode
  * bin/fmod.bat
  * bin/fmod.py
- * bin/fmv                Move or rename files
+ * bin/fmv                  Move or rename files
  * bin/fmv.bat
  * bin/fmv.py
- * bin/fpar2              Calculate PAR2 parity checksum and repair tool.
+ * bin/fpar2                Calculate PAR2 parity checksum and repair tool.
  * bin/fpar2.bat
  * bin/fpar2.py
- * bin/fpeek              Dump the first and last few bytes of a binary file
+ * bin/fpeek                Dump the first and last few bytes of a binary file
  * bin/fpeek.bat
  * bin/fpeek.py
- * bin/fprint             Sends text/images/postscript/PDF to printer
+ * bin/fprint               Sends text/images/postscript/PDF to printer
  * bin/fprint.py
- * bin/frm                Remove files or directories
+ * bin/frm                  Remove files or directories
  * bin/frm.bat
  * bin/frm.py
- * bin/frn                Rename file/directory by replacing some characters
+ * bin/frn                  Rename file/directory by replacing some characters
  * bin/frn.bat
  * bin/frn.py
- * bin/fsame              Show files with same MD5 checksums
+ * bin/fsame                Show files with same MD5 checksums
  * bin/fsame.bat
  * bin/fsame.py
- * bin/fshare             File sharing utility (currently dropbox only)
+ * bin/fshare               File sharing utility (currently dropbox only)
  * bin/fshare.bat
  * bin/fshare.py
- * bin/fsort              Unicode sort lines of a file
+ * bin/fsort                Unicode sort lines of a file
  * bin/fsort.bat
  * bin/fsort.py
- * bin/fstat              Display file status
+ * bin/fstat                Display file status
  * bin/fstat.bat
  * bin/fstat.py
- * bin/fstrings           Print the strings of printable characters in files
- * bin/fstrings.bat       (like strings)
+ * bin/fstrings             Print the strings of printable characters in files
+ * bin/fstrings.bat         (like strings)
  * bin/fstrings.py
- * bin/fsub               Substitute patterns on lines in files
- * bin/fsub.bat           (uses regular expression to match text)
+ * bin/fsub                 Substitute patterns on lines in files
+ * bin/fsub.bat             (uses regular expression to match text)
  * bin/fsub.py
- * bin/fsum               Calculate checksum using MD5, file size and file modification time
- * bin/fsum.bat           (can produce ".fsum" files)
+ * bin/fsum                 Calculate checksum using MD5, file size and file modification time
+ * bin/fsum.bat             (can produce ".fsum" files)
  * bin/fsum.py
- * bin/ftail              Output the last n lines of a file
- * bin/ftail.bat          (like tail)
+ * bin/ftail                Output the last n lines of a file
+ * bin/ftail.bat            (like tail)
  * bin/ftail.py
- * bin/ftodos             Converts file to "\r\n" newline format
+ * bin/ftodos               Converts file to "\r\n" newline format
  * bin/ftodos.bat
  * bin/ftodos.py
- * bin/ftolower           Convert filename to lowercase
+ * bin/ftolower             Convert filename to lowercase
  * bin/ftolower.bat
  * bin/ftolower.py
- * bin/ftomac             Converts file to "\r" newline format
+ * bin/ftomac               Converts file to "\r" newline format
  * bin/ftomac.bat
  * bin/ftomac.py
- * bin/ftouch             Modify access times of all files in directory recursively
+ * bin/ftouch               Modify access times of all files in directory recursively
  * bin/ftouch.bat
  * bin/ftouch.py
- * bin/ftounix            Converts file to "\n" newline format
+ * bin/ftounix              Converts file to "\n" newline format
  * bin/ftounix.bat
  * bin/ftounix.py
- * bin/ftoupper           Convert filename to uppercase
+ * bin/ftoupper             Convert filename to uppercase
  * bin/ftoupper.bat
  * bin/ftoupper.py
- * bin/ftp ftp wrapper    (allowing non systems port)
+ * bin/ftp ftp wrapper      (allowing non systems port)
  * bin/ftp.py
- * bin/fwatch             Watch file system events
- * bin/fwatch.py          (uses inotifywait)
- * bin/fwhich             Locate a program file
+ * bin/fwatch               Watch file system events
+ * bin/fwatch.py            (uses inotifywait)
+ * bin/fwhich               Locate a program file
  * bin/fwhich.bat
  * bin/fwhich.py
- * bin/fwrapper           Create wrapper to run script/executable
+ * bin/fwrapper             Create wrapper to run script/executable
  * bin/fwrapper.py
- * bin/fzero              Zero device or create zero file
+ * bin/fzero                Zero device or create zero file
  * bin/fzero.bat
  * bin/fzero.py
- * bin/gcc                GNU compiler wrappers (allowing non systems port)
+ * bin/gcc                  GNU compiler wrappers (allowing non systems port)
  * bin/gcc.bat
  * bin/gcc.py
  * bin/g++
@@ -370,141 +372,141 @@ the years.
  * bin/gfortran
  * bin/gfortran.bat
  * bin/gfortran.py
- * bin/gedit              gedit wrapper (allowing non systems port)
+ * bin/gedit                gedit wrapper (allowing non systems port)
  * bin/gedit.py
- * bin/gem                Wrapper to select "umask 022"
+ * bin/gem                  Wrapper to select "umask 022"
  * bin/gem.py
- * bin/getip              Get the IP number of hosts
+ * bin/getip                Get the IP number of hosts
  * bin/getip.bat
  * bin/getip.py
- * bin/geturl             Multi-threaded download accelerator
- * bin/geturl.py          (use aria2c)
- * bin/gimp               Sandbox for "gimp" launcher (allowing non systems port)
+ * bin/geturl               Multi-threaded download accelerator
+ * bin/geturl.py            (use aria2c)
+ * bin/gimp                 Sandbox for "gimp" launcher (allowing non systems port)
  * bin/gimp.bat
  * bin/gimp.py
- * bin/git                git wrapper (allowing non systems port)
+ * bin/git                  git wrapper (allowing non systems port)
  * bin/git.bat
  * bin/git_.py
- * bin/git-bash.bat       git bash shell for Windows
- * bin/gitk               gitk wrapper (allowing non systems port)
+ * bin/git-bash.bat         git bash shell for Windows
+ * bin/gitk                 gitk wrapper (allowing non systems port)
  * bin/gitk.bat
  * bin/gitk.py
- * bin/git-lfs            git large file storage plugin
+ * bin/git-lfs              git large file storage plugin
  * bin/git_lfs_.py
- * bin/git-time           git original author time plugin
+ * bin/git-time             git original author time plugin
  * bin/git_time_.py
- * bin/gnomine            gnome-mines/gnomine wrapper (allowing non systems port)
- * bin/gnomine.py         (can pick using old gnomines name)
- * bin/go                 Go wrapper (golang)
+ * bin/gnomine              gnome-mines/gnomine wrapper (allowing non systems port)
+ * bin/gnomine.py           (can pick using old gnomines name)
+ * bin/go                   Go wrapper (golang)
  * bin/go.py
- * bin/google             Google search engine submission
+ * bin/google               Google search engine submission
  * bin/google.py
- * bin/gpg                gpg wrapper (allowing non systems port)
- * bin/gpg.py             (contains enhanced functions "gpg -h")
- * bin/gqview             gqview wrapper (allowing non systems port)
- * bin/gqview.bat         (uses gqview)
- * bin/gqview.py          (uses geeqie)
- * bin/graph              Generate multiple graph files with X/Y plots (uses gnuplot)
+ * bin/gpg                  gpg wrapper (allowing non systems port)
+ * bin/gpg.py               (contains enhanced functions "gpg -h")
+ * bin/gqview               gqview wrapper (allowing non systems port)
+ * bin/gqview.bat           (uses gqview)
+ * bin/gqview.py            (uses geeqie)
+ * bin/graph                Generate multiple graph files with X/Y plots (uses gnuplot)
  * bin/graph.py
- * bin/gz                 Compress a file in GZIP format (allowing non systems port)
+ * bin/gz                   Compress a file in GZIP format (allowing non systems port)
  * bin/gz.py
- * bin/halt               Fast shutdown using "/proc/sysrq-trigger"
- * bin/hardinfo           hardinfo wrapper (allowing non systems port)
+ * bin/halt                 Fast shutdown using "/proc/sysrq-trigger"
+ * bin/hardinfo             hardinfo wrapper (allowing non systems port)
  * bin/hardinfo.py
- * bin/hearts             Sandbox for "hearts" launcher (allowing non systems port)
+ * bin/hearts               Sandbox for "hearts" launcher (allowing non systems port)
  * bin/hearts.py
- * bin/helm               helm wrapper (for Kubernetes)
+ * bin/helm                 helm wrapper (for Kubernetes)
  * bin/helm.py
- * bin/htmlformat         HTML file re-formatter
+ * bin/htmlformat           HTML file re-formatter
  * bin/htmlformat.bat
  * bin/htmlformat.py
- * bin/httpd              Start a simple Python HTTP server
+ * bin/httpd                Start a simple Python HTTP server
  * bin/httpd.bat
  * bin/httpd.py
- * bin/index              Produce "index.fsum" file and "..fsum" cache files
+ * bin/index                Produce "index.fsum" file and "..fsum" cache files
  * bin/index.bat
  * bin/index.py
- * bin/inkscape           Sandbox for "inkscape" launcher (allowing non systems port)
+ * bin/inkscape             Sandbox for "inkscape" launcher (allowing non systems port)
  * bin/inkscape.py
- * bin/isitup             Checks whether a host is up
+ * bin/isitup               Checks whether a host is up
  * bin/isitup.bat
  * bin/isitup.py
- * bin/iso                Make a portable CD/DVD archive in ISO9660 format
+ * bin/iso                  Make a portable CD/DVD archive in ISO9660 format
  * bin/iso.py
- * bin/iterm              iTerm2 (allowing non systems port)
+ * bin/iterm                iTerm2 (allowing non systems port)
  * bin/iterm.py
- * bin/jar                jar wrapper (allowing non systems port)
- * bin/jar.py             (Java jar archiver)
- * bin/java               java wrapper (allowing non systems port)
- * bin/java.py            (Java run time)
- * bin/javac              javac wrapper (allowing non systems port)
- * bin/javac.py           (Java compiler)
- * bin/jpeg2ps            jpeg2ps wrapper (allowing non systems port)
+ * bin/jar                  jar wrapper (allowing non systems port)
+ * bin/jar.py               (Java jar archiver)
+ * bin/java                 java wrapper (allowing non systems port)
+ * bin/java.py              (Java run time)
+ * bin/javac                javac wrapper (allowing non systems port)
+ * bin/javac.py             (Java compiler)
+ * bin/jpeg2ps              jpeg2ps wrapper (allowing non systems port)
  * bin/jpeg2ps.py
- * bin/jsformat           Javascript file re-formatter
+ * bin/jsformat             Javascript file re-formatter
  * bin/jsformat.bat
  * bin/jsformat.py
- * bin/json               Convert BSON/JSON/YAML to JSON
+ * bin/json                 Convert BSON/JSON/YAML to JSON
  * bin/json.bat
  * bin/json_.py
- * bin/jsonformat         JSON file re-formatter
+ * bin/jsonformat           JSON file re-formatter
  * bin/jsonformat.bat
  * bin/jsonformat.py
- * bin/jython             Jython wrapper
+ * bin/jython               Jython wrapper
  * bin/jython.py
- * bin/k3s                K3S light weight Kubernetes distribution
+ * bin/k3s                  K3S light weight Kubernetes distribution
  * bin/k3s.py
- * bin/keymap.tcl         TCL/TK widget for setting keymaps
- * bin/keytool            keytool wrapper (allowing non systems port)
+ * bin/keymap.tcl           TCL/TK widget for setting keymaps
+ * bin/keytool              keytool wrapper (allowing non systems port)
  * bin/keytool.py
- * bin/kmodsign           Wrapper for Kernel's sign-file command
+ * bin/kmodsign             Wrapper for Kernel's sign-file command
  * bin/kmodsign.py
- * bin/kubectl            kubectl wrapper (allowing non systems port)
+ * bin/kubectl              kubectl wrapper (allowing non systems port)
  * bin/kubectl.bat
  * bin/kubectl.py
- * bin/kubeseal           kubeseal wrapper (allowing non systems port)
+ * bin/kubeseal             kubeseal wrapper (allowing non systems port)
  * bin/kubeseal.py
- * bin/markdown           Markdown wrapper (for markdown_py)
+ * bin/markdown             Markdown wrapper (for markdown_py)
  * bin/markdown.bat
- * bin/md5                Calculate MD5 checksums of files
+ * bin/md5                  Calculate MD5 checksums of files
  * bin/md5.bat
  * bin/md5.py
- * bin/sha256             Calculate SHA256 checksums of files
+ * bin/sha256               Calculate SHA256 checksums of files
  * bin/sha256.bat
  * bin/sha256.py
- * bin/sha512             Calculate SHA512 checksums of files
+ * bin/sha512               Calculate SHA512 checksums of files
  * bin/sha512.bat
  * bin/sha512.py
- * bin/md5cd              Calculate MD5 checksums for CD/DVD data disk
+ * bin/md5cd                Calculate MD5 checksums for CD/DVD data disk
  * bin/md5cd.py
- * bin/meld               Meld wrapper (allowing non systems port)
+ * bin/meld                 Meld wrapper (allowing non systems port)
  * bin/meld.bat
  * bin/meld.py
- * bin/menu               TCL/TK menu system
- * bin/menu.py            (this can be used independent of GNOME/KDE/XFCE menu system)
+ * bin/menu                 TCL/TK menu system
+ * bin/menu.py              (this can be used independent of GNOME/KDE/XFCE menu system)
  * bin/menu.tcl.jinja2
  * bin/menu.yaml
- * bin/mget               M3U8 streaming video downloader
+ * bin/mget                 M3U8 streaming video downloader
  * bin/mget.py
- * bin/mirror             Copy all files/directory inside a directory into mirror directory
+ * bin/mirror               Copy all files/directory inside a directory into mirror directory
  * bin/mirror.bat
  * bin/mirror.py
- * bin/mkcd               Make data/audio/video CD/DVD using CD/DVD writer
- * bin/mkcd.py            (uses wodim, icedax, cdrdao)
- * bin/mkpasswd           Create Create secure random password.
+ * bin/mkcd                 Make data/audio/video CD/DVD using CD/DVD writer
+ * bin/mkcd.py              (uses wodim, icedax, cdrdao)
+ * bin/mkpasswd             Create Create secure random password.
  * bin/mkpasswd.bat
  * bin/mkpasswd.py
- * bin/mksshkeys          Create SSH keys and setup access to remote systems
+ * bin/mksshkeys            Create SSH keys and setup access to remote systems
  * bin/mksshkeys.py
- * bin/mousepad           mousepad wrapper (allowing non systems port)
- * bin/mousepad.py        (XFCE editor)
- * bin/mp3                Encode MP3 audio using avconv (libmp3lame)
+ * bin/mousepad             mousepad wrapper (allowing non systems port)
+ * bin/mousepad.py          (XFCE editor)
+ * bin/mp3                  Encode MP3 audio using avconv (libmp3lame)
  * bin/mp3.py
- * bin/mp4                Encode MP4 video using avconv (libx264/aac)
+ * bin/mp4                  Encode MP4 video using avconv (libx264/aac)
  * bin/mp4.py
- * bin/mvn                mvn wrapper (allowing non systems port)
+ * bin/mvn                  mvn wrapper (allowing non systems port)
  * bin/mvn.py
- * bin/myqdel             MyQS personal batch system for each user
+ * bin/myqdel               MyQS personal batch system for each user
  * bin/myqdel.py
  * bin/myqexec
  * bin/myqexec.py
@@ -514,361 +516,361 @@ the years.
  * bin/myqstat.py
  * bin/myqsub
  * bin/myqsub.py
- * bin/nautilus           nautilus wrapper (allowing non systems port)
+ * bin/nautilus             nautilus wrapper (allowing non systems port)
  * bin/nautilus.py
- * bin/netnice            Run a command with limited network bandwidth (uses trickle)
+ * bin/netnice              Run a command with limited network bandwidth (uses trickle)
  * bin/netnice.py
- * bin/ntpdate            Wrapper for "ntpdate" command
+ * bin/ntpdate              Wrapper for "ntpdate" command
  * bin/ntpdate.py
- * bin/ntplib             Set the date and time via NTP pool
+ * bin/ntplib               Set the date and time via NTP pool
  * bin/ntplib_.py
- * bin/ocr                Convert image file to text using OCR (uses tesseract)
+ * bin/ocr                  Convert image file to text using OCR (uses tesseract)
  * bin/ocr.py
- * bin/ogg                Encode OGG audio using avconv (libvorbis)
+ * bin/ogg                  Encode OGG audio using avconv (libvorbis)
  * bin/ogg.py
- * bin/open               Open files using hardwired application mapping
+ * bin/open                 Open files using hardwired application mapping
  * bin/open.py
- * bin/otool              otool wrapper (allowing non systems port)
+ * bin/otool                otool wrapper (allowing non systems port)
  * bin/otool.py
- * bin/padman             Sandbox for "wop" launcher (allowing non systems port)
+ * bin/padman               Sandbox for "wop" launcher (allowing non systems port)
  * bin/padman.py
- * bin/par2               par2 wrapper (allowing non systems port)
+ * bin/par2                 par2 wrapper (allowing non systems port)
  * bin/par2.bat
  * bin/par2.py
- * bin/pause              Pause until user presses ENTER/RETURN key
+ * bin/pause                Pause until user presses ENTER/RETURN key
  * bin/pause.bat
  * bin/pause.py
- * bin/pbsetup            pbsetup wrapper (allowing non systems port)
- * bin/pbsetup.py         (Punk Buster)
- * bin/pcheck             Check JPEG picture files
+ * bin/pbsetup              pbsetup wrapper (allowing non systems port)
+ * bin/pbsetup.py           (Punk Buster)
+ * bin/pcheck               Check JPEG picture files
  * bin/pcheck.py
- * bin/pcunix.bat         Start PCUNIX on Windows
- * bin/pdf                Create PDF file from text/images/postscript/PDF files
+ * bin/pcunix.bat           Start PCUNIX on Windows
+ * bin/pdf                  Create PDF file from text/images/postscript/PDF files
  * bin/pdf.py
- * bin/pget               Picture downloader for Instagram website
+ * bin/pget                 Picture downloader for Instagram website
  * bin/pget.py
- * bin/pidgin             Pidgin wrapper (allowing non systems port)
+ * bin/pidgin               Pidgin wrapper (allowing non systems port)
  * bin/pidgin.bat
  * bin/pidgin.py
- * bin/play               Play multimedia file/URL
- * bin/play.py            (uses vlc and ffprobe)
- * bin/phtml              Generate XHTML files to view pictures
+ * bin/play                 Play multimedia file/URL
+ * bin/play.py              (uses vlc and ffprobe)
+ * bin/phtml                Generate XHTML files to view pictures
  * bin/phtml.bat
  * bin/phtml.py
- * bin/plink              Create links to JPEG files
+ * bin/plink                Create links to JPEG files
  * bin/plink.py
- * bin/pmeg               Resize large picture images to mega-pixels limit
- * bin/pmeg.py            (uses convert from ImageMagick)
- * bin/pnum               Renumber picture files into a numerical series
+ * bin/pmeg                 Resize large picture images to mega-pixels limit
+ * bin/pmeg.py              (uses convert from ImageMagick)
+ * bin/pnum                 Renumber picture files into a numerical series
  * bin/pnum.bat
  * bin/pnum.py
- * bin/pop                Send popup message to display
- * bin/pop.jar            (uses Java)
+ * bin/pop                  Send popup message to display
+ * bin/pop.jar              (uses Java)
  * bin/pop.py
- * bin/procexp            Windows procexp wrapper (allowing non systems port)
+ * bin/procexp              Windows procexp wrapper (allowing non systems port)
  * bin/procexp.bat
  * bin/procexp.py
- * bin/psame              Show picture files with same finger print
+ * bin/psame                Show picture files with same finger print
  * bin/psame.bat
  * bin/psame.py
- * bin/psum               Calculate checksum using imagehash, file size and file modification time
+ * bin/psum                 Calculate checksum using imagehash, file size and file modification time
  * bin/psum.bat
  * bin/psum.py
- * bin/pyc                Compile Python source file to PYC file
+ * bin/pyc                  Compile Python source file to PYC file
  * bin/pyc.bat
  * bin/pyc.py
- * bin/pyld.sh            Python loading module for sh/ksh/bash wrapper scripts
- * bin/pyld.py            Load Python main program as module (must have Main class)
- * bin/test_pyld.py       Unit testing suite for "pyld.py"
- * bin/pyprof             Profile Python 3.x program
+ * bin/pyld.sh              Python loading module for sh/ksh/bash wrapper scripts
+ * bin/pyld.py              Load Python main program as module (must have Main class)
+ * bin/test_pyld.py         Unit testing suite for "pyld.py"
+ * bin/pyprof               Profile Python 3.x program
  * bin/pyprof.bat
  * bin/pyprof.py
- * bin/pyz                Make a Python3 ZIP Application in PYZ format
+ * bin/pyz                  Make a Python 3 ZIP Application in PYZ format
  * bin/pyz.py
- * bin/random             Generate random integer from range.
+ * bin/random               Generate random integer from range.
  * bin/random.bat
  * bin/random_.py
- * bin/readcd             Copy CD/DVD data as a portable ISO/BIN image file
+ * bin/readcd               Copy CD/DVD data as a portable ISO/BIN image file
  * bin/readcd.py
- * bin/robo3t             Sandbox for robo3t launcher (allowing non systems port)
+ * bin/robo3t               Sandbox for robo3t launcher (allowing non systems port)
  * bin/robo3t.py
- * bin/ripcd              Rip CD audio tracks as WAVE sound files
+ * bin/ripcd                Rip CD audio tracks as WAVE sound files
  * bin/ripcd.py
- * bin/ripdvd             Rip Video DVD title to file
+ * bin/ripdvd               Rip Video DVD title to file
  * bin/ripdvd.py
- * bin/rpm                rpm wrapper (allowing non systems port)
+ * bin/rpm                  rpm wrapper (allowing non systems port)
  * bin/rpm.py
- * bin/run                Run a command immune to terminal hangups
+ * bin/run                  Run a command immune to terminal hangups
  * bin/run.py
- * bin/sandbox            Sandbox command/shell with read/write and network restrictions
+ * bin/sandbox              Sandbox command/shell with read/write and network restrictions
  * bin/sandbox.py
- * bin/say                Speak words using Google TTS engine
- * bin/say.py             (uses espeak)
- * bin/scp.bat            Windows scp wrapper (uses PuTTY)
- * bin/sdd                Securely backup/restore partitions using SSH protocol
+ * bin/say                  Speak words using Google TTS engine
+ * bin/say.py               (uses espeak)
+ * bin/scp.bat              Windows scp wrapper (uses PuTTY)
+ * bin/sdd                  Securely backup/restore partitions using SSH protocol
  * bin/sdd.py
- * bin/sequence           Generate sequences with optional commas
+ * bin/sequence             Generate sequences with optional commas
  * bin/sequence.bat
  * bin/sequence.py
- * bin/sftp.bat           Windows sftp wrapper (uses PuTTY)
- * bin/shotcut            Sandbox for "shotcut" launcher (allowing non systems port)
+ * bin/sftp.bat             Windows sftp wrapper (uses PuTTY)
+ * bin/shotcut              Sandbox for "shotcut" launcher (allowing non systems port)
  * bin/shotcut.py
- * bin/shuffle            Print arguments in random order
+ * bin/shuffle              Print arguments in random order
  * bin/shuffle.bat
  * bin/shuffle.py
- * bin/skype              skype wrapper (allowing non systems port)
+ * bin/skype                skype wrapper (allowing non systems port)
  * bin/skype.py
- * bin/smount             Securely mount a file system using SSH protocol
- * bin/smount.py          (uses fuse.sshfs)
- * bin/soffice            Sandbox for "soffice" launcher (allowing non systems port)
- * bin/soffice.bat        (LibreOffice)
+ * bin/smount               Securely mount a file system using SSH protocol
+ * bin/smount.py            (uses fuse.sshfs)
+ * bin/soffice              Sandbox for "soffice" launcher (allowing non systems port)
+ * bin/soffice.bat          (LibreOffice)
  * bin/soffice.py
- * bin/sqlplus            Sqlplus wrapper (for Oracle Instant Client)
+ * bin/sqlplus              Sqlplus wrapper (for Oracle Instant Client)
  * bin/sqlplus.bat
  * bin/sqlplus.py
  * bin/sqlplus64
  * bin/sqlplus64.py
- * bin/sonobuoy           sonobuoy (allowing non systems port)
+ * bin/sonobuoy             sonobuoy (allowing non systems port)
  * bin/sonobuoy.py
- * bin/ssh.bat            Windows ssh wrapper (uses PuTTY)
- * bin/ssh-askpass        Wrapper for "ssh-askpass" command
+ * bin/ssh.bat              Windows ssh wrapper (uses PuTTY)
+ * bin/ssh-askpass          Wrapper for "ssh-askpass" command
  * bin/ssh_askpass_.py
- * bin/ssync              Securely synchronize file system using SSH protocol
- * bin/ssync.py           (uses rsync)
- * bin/sudo               Wrapper for "sudo" command
+ * bin/ssync                Securely synchronize file system using SSH protocol
+ * bin/ssync.py             (uses rsync)
+ * bin/sudo                 Wrapper for "sudo" command
  * bin/sudo.bat
  * bin/sudo.py
  * bin/ssudo
  * bin/ssudo.py
- * bin/sumount            Unmount file system securely mounted with SSH protocol
+ * bin/sumount              Unmount file system securely mounted with SSH protocol
  * bin/sumount.py
- * bin/svncviewer         Sandbox for securely connecting to VNC server using SSH protocol
+ * bin/svncviewer           Sandbox for securely connecting to VNC server using SSH protocol
  * bin/svncviewer.py
- * bin/swell-foop         Sandbox for "swell-foop" command
+ * bin/swell-foop           Sandbox for "swell-foop" command
  * bin/swell_foop_.py
- * bin/sysinfo            System configuration detection tool
+ * bin/sysinfo              System configuration detection tool
  * bin/sysinfo.bat
  * bin/sysinfo.py
- * bin/sysinfo.sh         Old Bourne shell version
- * bin/systemd-analyze    systemd-analyze wrapper (filter buggy firmware/loader timings)
+ * bin/sysinfo.sh           Old Bourne shell version
+ * bin/systemd-analyze      systemd-analyze wrapper (filter buggy firmware/loader timings)
  * bin/systemd_analyze_.py
- * bin/t7z                Make a compressed archive in TAR.&Z format
+ * bin/t7z                  Make a compressed archive in TAR.&Z format
  * bin/t7z.py
- * bin/tar                Make a compressed archive in TAR format
+ * bin/tar                  Make a compressed archive in TAR format
  * bin/tar.bat
  * bin/tar.py
  * bin/tar_py.py
- * bin/teams              teams wrapper (allowing non systems port)
+ * bin/teams                teams wrapper (allowing non systems port)
  * bin/teams.py
- * bin/terraform          terraform wrapper (allowing non systems port)
+ * bin/terraform            terraform wrapper (allowing non systems port)
  * bin/terraform.py
- * bin/tbz                Make a compressed archive in TAR.BZ2
+ * bin/tbz                  Make a compressed archive in TAR.BZ2
  * bin/tbz.bat
  * bin/tbz.py
- * bin/tgz                Make a compressed archive in TAR.GZ format
+ * bin/tgz                  Make a compressed archive in TAR.GZ format
  * bin/tgz.bat
  * bin/tgz.py
- * bin/tiller             Tiller wrapper (for Kubernetes)
+ * bin/tiller               Tiller wrapper (for Kubernetes)
  * bin/tiller.py
- * bin/tinyproxy          tinyproxy wrapper (allowing non systems port)
+ * bin/tinyproxy            tinyproxy wrapper (allowing non systems port)
  * bin/tinyproxy.py
- * bin/tkill              Kill tasks by process ID or name
+ * bin/tkill                Kill tasks by process ID or name
  * bin/tkill.bat
  * bin/tkill.py
- * bin/tls                Show full list of files
+ * bin/tls                  Show full list of files
  * bin/tls.bat
  * bin/tls.py
- * bin/tlz                Make a compressed archive in TAR.LZMA format
+ * bin/tlz                  Make a compressed archive in TAR.LZMA format
  * bin/tlz.py
- * bin/tmux               tmux wrapper (allowing non systems port)
+ * bin/tmux                 tmux wrapper (allowing non systems port)
  * bin/tmux.py
- * bin/tocapital          Print arguments wth first letter in upper case
+ * bin/tocapital            Print arguments wth first letter in upper case
  * bin/tocapital.bat
  * bin/tocapital.py
- * bin/tolower            Print arguments in lower case
+ * bin/tolower              Print arguments in lower case
  * bin/tolower.bat
  * bin/tolower.py
- * bin/top                top wrapper (allowing non systems port)
+ * bin/top                  top wrapper (allowing non systems port)
  * bin/top.py
- * bin/toupper            Print arguments in upper case
+ * bin/toupper              Print arguments in upper case
  * bin/toupper.bat
  * bin/toupper.py
- * bin/traceroute         traceroute wrapper (allowing non systems port)
+ * bin/traceroute           traceroute wrapper (allowing non systems port)
  * bin/traceroute.bat
  * bin/traceroute.py
- * bin/twait              Wait for task to finish then launch command
+ * bin/twait                Wait for task to finish then launch command
  * bin/twait.bat
  * bin/twait.py
- * bin/txz                Make a compressed archive in TAR.XZ format
+ * bin/txz                  Make a compressed archive in TAR.XZ format
  * bin/txz.py
- * bin/tzs                Make a compressed archive in TAR.ZSTD format
+ * bin/tzs                  Make a compressed archive in TAR.ZSTD format
  * bin/tzs.py
- * bin/un7z               Unpack a compressed archive in 7Z format
+ * bin/un7z                 Unpack a compressed archive in 7Z format
  * bin/un7z.bat
  * bin/un7z.py
- * bin/unace              Unpack a compressed archive in ACE format
+ * bin/unace                Unpack a compressed archive in ACE format
  * bin/unace.py
- * bin/unbz2              Uncompress a file in BZIP2 format (allowing non systems port)
+ * bin/unbz2                Uncompress a file in BZIP2 format (allowing non systems port)
  * bin/unbz2.py
- * bin/undeb              Unpack a compressed archive in DEB format
+ * bin/undeb                Unpack a compressed archive in DEB format
  * bin/undeb.py
- * bin/undmg              Unpack a compressed DMG disk file
+ * bin/undmg                Unpack a compressed DMG disk file
  * bin/undmg.py
- * bin/ungpg              Unpack an encrypted archive in gpg (pgp compatible) format
+ * bin/ungpg                Unpack an encrypted archive in gpg (pgp compatible) format
  * bin/ungpg.py
- * bin/ungz               Uncompress a file in GZIP format (allowing non systems port)
+ * bin/ungz                 Uncompress a file in GZIP format (allowing non systems port)
  * bin/ungz.py
- * bin/uniso              Unpack a portable CD/DVD archive in ISO9660 format
+ * bin/uniso                Unpack a portable CD/DVD archive in ISO9660 format
  * bin/uniso.py
- * bin/unjar              Unpack a compressed JAVA archive in JAR format
+ * bin/unjar                Unpack a compressed JAVA archive in JAR format
  * bin/unjar.py
- * bin/unpdf              Unpack PDF file into series of JPG files
+ * bin/unpdf                Unpack PDF file into series of JPG files
  * bin/unpdf.py
- * bin/unpyc              De-compile PYC file to Python source file
+ * bin/unpyc                De-compile PYC file to Python source file
  * bin/unpyc.bat
  * bin/unpyc.py
- * bin/unrar              Unpack a compressed archive in RAR format
+ * bin/unrar                Unpack a compressed archive in RAR format
  * bin/unrar.py
- * bin/unrpm              Unpack a compressed archive in RPM format
+ * bin/unrpm                Unpack a compressed archive in RPM format
  * bin/unrpm.py
- * bin/unsqlite           Unpack a sqlite database file
+ * bin/unsqlite             Unpack a sqlite database file
  * bin/unsqlite.py
- * bin/unt7z              Unpack a compressed archive in TAR.7Z format
+ * bin/unt7z                Unpack a compressed archive in TAR.7Z format
  * bin/unt7z.py
- * bin/untar              Unpack a compressed archive in
- * bin/untar.bat          TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.
+ * bin/untar                Unpack a compressed archive in
+ * bin/untar.bat            TAR/TAR.GZ/TAR.BZ2/TAR.LZMA/TAR.XZ/TAR.7Z/TGZ/TBZ/TLZ/TXZ format.
  * bin/untar.py
  * bin/untar_py.py
- * bin/untbz              Unpack a compressed archive in TAR.BZ2 format
+ * bin/untbz                Unpack a compressed archive in TAR.BZ2 format
  * bin/untbz.bat
  * bin/untbz.py
- * bin/untgz              Unpack a compressed archive in TAR.GZ format.
+ * bin/untgz                Unpack a compressed archive in TAR.GZ format.
  * bin/untgz.bat
  * bin/untgz.py
- * bin/untlz              Unpack a compressed archive in TAR.LZMA format.
+ * bin/untlz                Unpack a compressed archive in TAR.LZMA format.
  * bin/untlz.py
- * bin/untxz              Unpack a compressed archive in TAR.XZ format
+ * bin/untxz                Unpack a compressed archive in TAR.XZ format
  * bin/untxz.py
- * bin/untzs              Unpack a compressed archive in TAR.ZSTD format
+ * bin/untzs                Unpack a compressed archive in TAR.ZSTD format
  * bin/untzs.py
- * bin/unwine             Shuts down WINE and all Windows applications
+ * bin/unwine               Shuts down WINE and all Windows applications
  * bin/unwine.py
- * bin/unxz               Uncompress a file in XZ format (allowing non systems port)
+ * bin/unxz                 Uncompress a file in XZ format (allowing non systems port)
  * bin/unxz.py
- * bin/unzst              Uncompress a file in ZST format.
+ * bin/unzst                Uncompress a file in ZST format.
  * bin/unzst.py
- * bin/unzip              unzip wrapper (allowing non systems port)
+ * bin/unzip                unzip wrapper (allowing non systems port)
  * bin/unzip.py
- * bin/urldecode          Decode URL query strings.
+ * bin/urldecode            Decode URL query strings.
  * bin/urldecode.py
- * bin/ut                 Urban Terror (allowing non systems port))
+ * bin/ut                   Urban Terror (allowing non systems port))
  * bin/ut.py
- * bin/vbox               VirtualBox virtual machine manager
- * bin/vbox.py            (uses VBoxManage)
- * bin/vget               Streaming video downloader (Youtube, m3u8 and compatible websites)
+ * bin/vbox                 VirtualBox virtual machine manager
+ * bin/vbox.py              (uses VBoxManage)
+ * bin/vget                 Streaming video downloader (Youtube, m3u8 and compatible websites)
  * bin/vget.py
- * bin/vi                 vim wrapper (allowing non systems port)
+ * bin/vi                   vim wrapper (allowing non systems port)
  * bin/vi.bat
  * bin/vi.py
  * bin/vim
  * bin/vim.bat
  * bin/vim.py
- * bin/view               View files using hardwired application mapping
+ * bin/view                 View files using hardwired application mapping
  * bin/view.py
- * bin/vlc                Sandbox for "vlc" launcher (allowing non systems port)
+ * bin/vlc                  Sandbox for "vlc" launcher (allowing non systems port)
  * bin/vlc.bat
  * bin/vlc.py
- * bin/vmware             VMware Player launcher
+ * bin/vmware               VMware Player launcher
  * bin/vmware.py
- * bin/vncpasswd          vncpasswd wrapper (allowing non systems port)
+ * bin/vncpasswd            vncpasswd wrapper (allowing non systems port)
  * bin/vncpasswd.py
- * bin/vncserver          vncserver wrapper (allowing non systems port)
+ * bin/vncserver            vncserver wrapper (allowing non systems port)
  * bin/vncserver.py
- * bin/vncviewer          vncviewer wrapper (allowing non systems port)
+ * bin/vncviewer            vncviewer wrapper (allowing non systems port)
  * bin/vncviewer.bat
  * bin/vncviewer.py
- * bin/vplay              Play AVI/FLV/MP4 video files in directory.
- * bin/vplay.py           (uses vlc)
- * bin/warsow             Warsow (allowing non systems port)
+ * bin/vplay                Play AVI/FLV/MP4 video files in directory.
+ * bin/vplay.py             (uses vlc)
+ * bin/warsow               Warsow (allowing non systems port)
  * bin/warsow.py
- * bin/wav                Encode WAV audio using avconv (pcm_s16le).
+ * bin/wav                  Encode WAV audio using avconv (pcm_s16le).
  * bin/wav.py
- * bin/wget               wget wrapper (allowing non systems port)
- * bin/wget.py            (bandwidth 512KB limit default using "trickle", "$HOME/.config/trickle.json)
- * bin/wine               wine wrapper (allowing non systems port)
+ * bin/wget                 wget wrapper (allowing non systems port)
+ * bin/wget.py              (bandwidth 512KB limit default using "trickle", "$HOME/.config/trickle.json)
+ * bin/wine                 wine wrapper (allowing non systems port)
  * bin/wine.py
- * bin/wine64             wine64 wrapper (allowing non systems port)
+ * bin/wine64               wine64 wrapper (allowing non systems port)
  * bin/wine64.py
  * bin/cmd
- * bin/weather            Current weather search
+ * bin/weather              Current weather search
  * bin/weather.bat
  * bin/weather.py
- * bin/wipe               wipe wrapper (allowing non systems port)
- * bin/wipe.py            (wipe is C disk wiper)
- * bin/xcalc              Start GNOME/KDE/XFCE calculator
+ * bin/wipe                 wipe wrapper (allowing non systems port)
+ * bin/wipe.py              (wipe is C disk wiper)
+ * bin/xcalc                Start GNOME/KDE/XFCE calculator
  * bin/xcalc.py
- * bin/xdesktop           Start GNOME/KDE/XFCE file manager
+ * bin/xdesktop             Start GNOME/KDE/XFCE file manager
  * bin/xdesktop.py
- * bin/xdiff              Graphical file comparison and merge tool
- * bin/xdiff.bat          (uses meld)
+ * bin/xdiff                Graphical file comparison and merge tool
+ * bin/xdiff.bat            (uses meld)
  * bin/xdiff.py
- * bin/xfreerdp.tcl       XFreeRDP TCL/TK panel
- * bin/xedit              Start GNOME/KDE/XFCE graphical editor
+ * bin/xfreerdp.tcl         XFreeRDP TCL/TK panel
+ * bin/xedit                Start GNOME/KDE/XFCE graphical editor
  * bin/xedit.py
- * bin/xlight             Desktop screen backlight utility
+ * bin/xlight               Desktop screen backlight utility
  * bin/xlight.py
- * bin/xlock              Start GNOME/KDE/XFCE screen lock
+ * bin/xlock                Start GNOME/KDE/XFCE screen lock
  * bin/xlock.py
- * bin/xlogout            Shutdown X-windows
+ * bin/xlogout              Shutdown X-windows
  * bin/xlogout.py
- * bin/xmail              Start E-mail in web browser
+ * bin/xmail                Start E-mail in web browser
  * bin/xmail.py
- * bin/xmixer             Start GNOME/KDE/XFCE audio mixer
+ * bin/xmixer               Start GNOME/KDE/XFCE audio mixer
  * bin/xmixer.py
- * bin/xmlcheck           Check XML file for errors
+ * bin/xmlcheck             Check XML file for errors
  * bin/xmlcheck.bat
  * bin/xmlcheck.py
- * bin/xmlformat          XML file re-formatter
+ * bin/xmlformat            XML file re-formatter
  * bin/xmlformat.bat
  * bin/xmlformat.py
- * bin/xournal            Sandbox for "xournalpp" launcher
+ * bin/xournal              Sandbox for "xournalpp" launcher
  * bin/xournal.bat
  * bin/xournal.py
- * bin/xreset             Reset to default screen resolution
+ * bin/xreset               Reset to default screen resolution
  * bin/xreset.py
- * bin/xrun               Run command in new terminal session
+ * bin/xrun                 Run command in new terminal session
  * bin/xrun.py
  * bin/xrun.tcl
- * bin/xsnapshot          Start GNOME/KDE/XFCE screen snapshot
+ * bin/xsnapshot            Start GNOME/KDE/XFCE screen snapshot
  * bin/xsnapshot.py
- * bin/xsudo              Run sudo command in new terminal session
+ * bin/xsudo                Run sudo command in new terminal session
  * bin/xsudo.py
- * bin/xterm              Start GNOME/KDE/XFCE/Invisible terminal session
+ * bin/xterm                Start GNOME/KDE/XFCE/Invisible terminal session
  * bin/xterm.py
- * bin/xvolume            Desktop audio volume utility (uses pacmd)
+ * bin/xvolume              Desktop audio volume utility (uses pacmd)
  * bin/xvolume.py
- * bin/xweb               Start web browser
+ * bin/xweb                 Start web browser
  * bin/xweb.py
- * bin/xz                 Compress a file in XZ format (allowing non systems port)
+ * bin/xz                   Compress a file in XZ format (allowing non systems port)
  * bin/xz.py
- * bin/yaml               Convert BSON/JSON/YAML to YAML
+ * bin/yaml                 Convert BSON/JSON/YAML to YAML
  * bin/yaml.bat
  * bin/yaml_.py
- * bin/yping              Ping a host until a connection is made
+ * bin/yping                Ping a host until a connection is made
  * bin/yping.bat
  * bin/yping.py
- * bin/zhspeak            Zhong Hua Speak, Chinese TTS software
+ * bin/zhspeak              Zhong Hua Speak, Chinese TTS software
  * bin/zhspeak.py
  * bin/zhspeak.tcl
- * bin/zip                zip wrapper (allowing non systems port)
+ * bin/zip                  zip wrapper (allowing non systems port)
  * bin/zip.py
- * bin/zoom               zoom wrapper (allowing non systems port)
+ * bin/zoom                 zoom wrapper (allowing non systems port)
  * bin/zoom.py
- * bin/zst                Compress a file in ZST format.
+ * bin/zst                  Compress a file in ZST format.
  * bin/zst.py
- * bin/zstd               Wrapper for "zstd" command
+ * bin/zstd                 Wrapper for "zstd" command
  * bin/zstd.py
- * bin/cdinst.bat         Windows command prompt batch file or changing directory
+ * bin/cdinst.bat           Windows command prompt batch file or changing directory
  * bin/cdsrc.bat
  * bin/cdtest.bat
  * bin/mkinst.bat
@@ -903,14 +905,15 @@ the years.
  * config/winsetup.bat                   Configure Windows VirtualBox VMs
  * config/winsetup.sh
  * config/xscreensaver                   Copy to "$HOME/.xscreensaver" for XScreenSaver defaults
+ * etc/python-minimum-requirements.txt   Minimum requirements requrid by "*_mod.py" modules.
  * etc/python-packages.sh                Install/check Python packages requirements
  * etc/python-requirements.txt           Default requirements file for Python
- * etc/python-requirements_mac.txt       Additional requirements for Python on MacOS
- * etc/python2.7-requirements.txt        Additional requirements for Python 2.7
- * etc/python2.7-requirements_mac.txt    Additional requirements for Python 2.7 on MacOS
- * etc/python3.5-requirements.txt        Additional requirements for Python 3.5
- * etc/python3.6-requirements.txt        Additional requirements for Python 3.6
- * etc/python3.7-requirements.txt        Additional requirements for Python 3.7
+ * etc/python-requirements_2.7.txt       Additional requirements for Python 2.7
+ * etc/python-requirements_2.7mac.txt    Additional requirements for Python 2.7 on MacOS
+ * etc/python-requirements_3.5.txt       Additional requirements for Python 3.5
+ * etc/python-requirements_3.6.txt       Additional requirements for Python 3.6
+ * etc/python-requirements_3.7.txt       Additional requirements for Python 3.7
+ * etc/python-requirements_3.9mac.txt    Additional requirements for Python 3.9 on MacOS
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization

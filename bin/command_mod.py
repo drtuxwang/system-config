@@ -14,10 +14,8 @@ import subprocess
 import sys
 from typing import Any, List, Optional, Sequence
 
-import packaging.version
-
-RELEASE = '2.4.5'
-VERSION = 20220402
+RELEASE = '2.5.0'
+VERSION = 20220425
 
 
 class Command:
@@ -105,17 +103,14 @@ class Command:
                 pass
         return extensions
 
-    @staticmethod
-    def _check_glibc(files: List[str]) -> List[str]:
+    @classmethod
+    def _check_glibc(cls, files: List[str]) -> List[str]:
         has_glibc = re.compile(r'-glibc_\d+[.]\d+([.]\d+)?')
         nfiles = []
         for file in files:
             if has_glibc.search(file):
                 version = file.split('-glibc_')[1].split('-')[0].split('/')[0]
-                if (
-                    packaging.version.Version(_System.get_glibc()) >=
-                    packaging.version.Version(version)
-                ):
+                if LooseVersion(_System.get_glibc()) >= LooseVersion(version):
                     nfiles.append(file)
             else:
                 nfiles.append(file)
@@ -330,6 +325,60 @@ class CommandFile(Command):
         raise CommandNotFoundError(
             f'Cannot find required "{program}" software.',
         )
+
+
+class LooseVersion:
+    """
+    This class store version as sortable tokens.
+
+    1.1 < 1.2b2 < 1.2rc1 < 1.2 < 1.2+git20220418 < 1.2-2 < 1.2.1 < 1.2a < 1.10
+    """
+
+    def __init__(self, version: str) -> None:
+        self._version = version
+        tokens = re.split(r'([\D]+)', '• '+version.lower())[1:]
+        tokens = [' '+x if x.isalpha() else x for x in tokens]
+        if tokens[-1] == '':
+            tokens[-2] = tokens[-2][1:]
+
+        self._tokens = [int(x) if x.isdigit() else x for x in tokens] + [' •']
+
+    def get_version(self) -> str:
+        """
+        Return version.
+        """
+        return self._version
+
+    def get_tokens(self) -> list:
+        """
+        Return version tokens.
+        """
+        return self._tokens
+
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, LooseVersion):
+            return NotImplemented
+        return self.get_tokens() < other.get_tokens()
+
+    def __le__(self, other: object) -> bool:
+        if not isinstance(other, LooseVersion):
+            return NotImplemented
+        return self.get_tokens() <= other.get_tokens()
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, LooseVersion):
+            return NotImplemented
+        return self.get_tokens() == other.get_tokens()
+
+    def __ge__(self, other: object) -> bool:
+        if not isinstance(other, LooseVersion):
+            return NotImplemented
+        return self.get_tokens() >= other.get_tokens()
+
+    def __gt__(self, other: object) -> bool:
+        if not isinstance(other, LooseVersion):
+            return NotImplemented
+        return self.get_tokens() > other.get_tokens()
 
 
 class Platform:

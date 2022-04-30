@@ -10,6 +10,8 @@ import signal
 import sys
 from typing import List
 
+import command_mod
+
 
 class Options:
     """
@@ -19,6 +21,18 @@ class Options:
     def __init__(self) -> None:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
+
+    def get_order(self) -> str:
+        """
+        Return display order.
+        """
+        return self._args.order
+
+    def get_reverse_flag(self) -> bool:
+        """
+        Return reverse flag.
+        """
+        return self._args.reverse_flag
 
     def get_files(self) -> List[str]:
         """
@@ -32,8 +46,22 @@ class Options:
         )
 
         parser.add_argument(
+            '-v',
+            action='store_const',
+            const='version',
+            dest='order',
+            default='unicode',
+            help="Sort lines as loose versions."
+        )
+        parser.add_argument(
+            '-r',
+            dest='reverse_flag',
+            action='store_true',
+            help="Reverse order."
+        )
+        parser.add_argument(
             'files',
-            nargs=1,
+            nargs='*',
             metavar='file',
             help="File contents to sort.",
         )
@@ -105,7 +133,18 @@ class Main:
             for line in sys.stdin:
                 lines.append(line.rstrip('\r\n'))
 
-        for line in sorted(lines):
+        if options.get_order() == 'version':
+            lines = sorted(
+                lines,
+                key=lambda  # pylint: disable=unnecessary-lambda
+                s: command_mod.LooseVersion(s),
+            )
+        else:
+            lines = sorted(lines)
+        if options.get_reverse_flag():
+            lines = reversed(lines)  # type: ignore
+
+        for line in lines:
             print(line)
 
         return 0
