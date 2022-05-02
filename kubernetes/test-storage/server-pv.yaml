@@ -1,15 +1,22 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: data-server-0
+  name: default-data-server-0
 spec:
-  storageClassName: local-storage
+  storageClassName: persistent-claim
   capacity:
     storage: 5Gi
+  volumeMode: Filesystem
+  local:
+    path: /shared
   accessModes:
   - ReadWriteOnce
-  hostPath:
-    path: /shared
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: data-server-0
+    namespace: default
   nodeAffinity:
     required:
       nodeSelectorTerms:

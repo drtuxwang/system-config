@@ -1145,11 +1145,12 @@ the years.
  * kubernetes/test-servers/servers-service.yaml
  * kubernetes/test-servers/servers-statefulset.yaml
  * kubernetes/test-storage/Makefile      Kubernetes: Persistent Volume example
- * kubernetes/test-storage/data-server-persistentvolume.yaml
- * kubernetes/test-storage/local-storageclass.yaml
+ * kubernetes/test-storage/server-pv.yaml
  * kubernetes/test-storage/server-statefulset.yaml
  * helm/Makefile
  * helm/bin/helm-save.sh                 Save Helm release docker images
+ * helm/cassandra/Makefile               Helm Chart: bitnami/cassandra 7.7.3 )(app-3.11.11)
+ * helm/cassandra/values.yaml
  * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.14.2 (app-0.12.0)
  * helm/chartmuseum/values.yaml
  * helm/concourse/Makefile               Helm Chart: concourse/concourse 15.7.1 (app-7.4.0)

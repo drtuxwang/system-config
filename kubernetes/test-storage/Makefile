@@ -18,16 +18,15 @@ status:       # Show workload status
 create:       # Create workload
 	@echo "\n*** Creating pods ***"
 	kubectl create namespace $(NAMESPACE) ||:
-	kubectl --namespace=$(NAMESPACE) create -f local-storageclass.yaml ||:
-	kubectl --namespace=$(NAMESPACE) create -f data-server-persistentvolume.yaml ||:
+	kubectl --namespace=$(NAMESPACE) create -f server-pv.yaml ||:
 	kubectl --namespace=$(NAMESPACE) create -f server-statefulset.yaml ||:
 
 .PHONY: delete
 delete:       # Delete workload
 	@echo "\n*** Removing pods ***"
 	kubectl --namespace=$(NAMESPACE) delete -f server-statefulset.yaml ||:
-	kubectl --namespace=$(NAMESPACE) delete pvc data-server-0 ||:
-	kubectl --namespace=$(NAMESPACE) delete -f data-server-persistentvolume.yaml ||:
+	kubectl --namespace=$(NAMESPACE) delete pvc data-server-0
+	kubectl --namespace=$(NAMESPACE) delete -f server-pv.yaml ||:
 
 .PHONY: help
 help:

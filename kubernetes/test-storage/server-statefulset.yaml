@@ -65,4 +65,4 @@ spec:
       resources:
         requests:
           storage: 2Gi
-      storageClassName: local-storage
+##      storageClassName: local-storage

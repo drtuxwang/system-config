@@ -7,12 +7,20 @@ set -u
 
 MONGODB_CLIENT="robo3t"
 ORADB_CLIENT="${0%/*/*/*}../../bin/sqlplus"
+CQL_CLIENT="cqlsh"
 SVNC_CLIENT="${0%/*/*/*}../../bin/svncviewer"
 WEB_CLIENT="firefox"
 
 
 connect() {
     case $PROTOCOL in
+    cql)
+        CASSANDRA_SECRET=${CASSANDRA_SECRET:-cassandra}
+        CASSANDRA_PASSWORD=$(kubectl --namespace=$NAMESPACE get secret $CASSANDRA_SECRET -o jsonpath="{.data.cassandra-password}" | base64 -d)
+        echo "Address: $ADDRESS:$PORT"
+        echo "$CASSANDRA_PASSWORD" | awk '{printf("Password: %s\n", $1)}'
+        $CQL_CLIENT -u cassandra -p $CASSANDRA_PASSWORD $ADDRESS $PORT
+        ;;
     http|https)
         echo "$WEB_CLIENT $PROTOCOL://$ADDRESS:$PORT"
         $WEB_CLIENT $PROTOCOL://$ADDRESS:$PORT
@@ -73,7 +81,7 @@ PROTOCOL=${1%://*}
 ADDRESS=$(echo "$1" | sed -e "s@.*://@@;s/:.*//")
 PORT=$(echo "$1:80" | cut -f3 -d:)
 case $PROTOCOL in
-http|https|mongodb|oradb|svnc)
+cql|http|https|mongodb|oradb|svnc)
     if [[ $ADDRESS = */service/* ]]
     then
         NAMESPACE=${ADDRESS%%/*}
