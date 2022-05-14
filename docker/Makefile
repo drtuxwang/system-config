@@ -31,6 +31,7 @@ BUILD_DIRS := \
 STABLE_IMAGES := \
 	drtuxwang/debian-bash:11-slim \
 	drtuxwang/debian-dev:11-slim \
+	drtuxwang/debian-docker:11-slim \
 	drtuxwang/debian-xfce:11-slim \
 	drtuxwang/nginx:1.18-alpine \
 	drtuxwang/scratch

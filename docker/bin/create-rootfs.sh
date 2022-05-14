@@ -30,7 +30,7 @@ do
     bin)
         mkdir -p rootfs/opt/software/bin
         echo "Creating \"rootfs/opt/software/bin/*\"..."
-        cp -p "$TOPDIR"/bin/* rootfs/opt/software/bin
+        cp -p "$TOPDIR"/bin/[A-Za-z0-9]* rootfs/opt/software/bin
         ;;
     bin-sysinfo)
         mkdir -p rootfs/opt/software/bin

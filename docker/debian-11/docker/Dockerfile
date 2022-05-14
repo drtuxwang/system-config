@@ -6,7 +6,9 @@ FROM ${BASE_IMAGE}
 ARG DOCKER_REPO
 ARG DOCKER_DEB
 
-RUN wget --progress=bar:force $DOCKER_REPO/$DOCKER_DEB && \
+RUN apt-get install --no-install-recommends -y make && \
+    apt-get clean && \
+    wget --progress=bar:force $DOCKER_REPO/$DOCKER_DEB && \
     dpkg -i $DOCKER_DEB && \
     rm $DOCKER_DEB
 

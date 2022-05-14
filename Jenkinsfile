@@ -3,6 +3,7 @@
 // Environment variables
 def alpine_version = "3.14"
 def python_version = "3.9"
+def docker_builder_image = "drtuxwang/debian-docker:stable"
 String branch_name = env.JOB_NAME - "system-config-"
 
 // Create jobs pipeline
@@ -19,10 +20,6 @@ pipeline {
     parameters {
         string(name: "DOCKER_REG", description: "Docker Registry to use.", defaultValue: "docker.io")
     }
-
-//    environment {
-//        DOCKER_BUILD_FLAGS = "--network=host"
-//    }
 
     stages {
         stage("Info") {
@@ -45,9 +42,16 @@ pipeline {
 
         stage ("Build") {
             parallel {
-                stage ("Alpine") {
+                stage ("Build_Alpine") {
                     stages {
-                        stage ("Build") {
+                        stage ("Alpine_Image") {
+                            agent {
+                                docker {
+                                    image "${params.DOCKER_REG}/${docker_builder_image}"
+                                    reuseNode true
+                                    alwaysPull false
+                                }
+                            }
                             steps {
                                 sh """
                                     cd system-config
@@ -58,9 +62,16 @@ pipeline {
                         }
                     }
                 }
-                stage ("Python") {
+                stage ("Build_Python") {
                     stages {
-                        stage ("Build") {
+                        stage ("Python_Image") {
+                            agent {
+                                docker {
+                                    image "${params.DOCKER_REG}/${docker_builder_image}"
+                                    reuseNode true
+                                    alwaysPull false
+                                }
+                            }
                             steps {
                                 sh """
                                     cd system-config
@@ -69,11 +80,10 @@ pipeline {
                                 """
                             }
                         }
-                        stage ("Test") {
+                        stage ("Python_Test") {
                             agent {
                                 docker {
-                                    image "${params.DOCKER_REG}/drtuxwang/python:${python_version}-slim-bullseye"
-                                    args "--network=host"
+                                    image "${params.DOCKER_REG}/drtuxwang/python-dev:${python_version}-slim-bullseye"
                                     reuseNode true
                                     alwaysPull false
                                 }
