@@ -65,6 +65,7 @@ class Options:
 
         self._convert = command_mod.Command('convert', errors='stop')
         self._tesseract = command_mod.Command('tesseract', errors='stop')
+        self._tesseract.set_args(['--psm', '11', '-l', 'eng'])
 
 
 class Main:

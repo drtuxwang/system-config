@@ -99,6 +99,7 @@ push: tag     # Tag and push stable Docker images
 		docker push $$IMAGE ; \
 		docker push $${IMAGE%:*}:stable ; \
 	done
+	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
 
 .PHONY: prune
 prune:        # Prune Docker images/containers

@@ -14,8 +14,8 @@ import subprocess
 import sys
 from typing import Any, List, Optional, Sequence
 
-RELEASE = '2.5.0'
-VERSION = 20220425
+RELEASE = '2.5.1'
+VERSION = 20220511
 
 
 class Command:
@@ -198,9 +198,11 @@ class Command:
         """
         nargs = []
         for arg in args:
-            if '"' in arg or ' ' in arg or '&' in arg:
-                quoted = arg.replace('\\', '\\\\').replace('"', '\\"')
-                nargs.append(f'"{quoted}"')
+            for char in '"\' &;':
+                if char in arg and arg != ';':
+                    quoted = arg.replace('\\', '\\\\').replace('"', '\\"')
+                    nargs.append(f'"{quoted}"')
+                    break
             else:
                 nargs.append(arg)
         return ' '.join(nargs)
