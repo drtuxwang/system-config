@@ -21,6 +21,10 @@ pipeline {
         string(name: "DOCKER_REG", description: "Docker Registry to use.", defaultValue: "docker.io")
     }
 
+    environment {
+        PYTHONDONTWRITEBYTECODE = "1"
+    }
+
     stages {
         stage("Info") {
             steps {
