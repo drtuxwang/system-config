@@ -27,6 +27,9 @@ pipeline {
 
     stages {
         stage("Info") {
+            options {
+                timeout(time: 1, unit: 'MINUTES')
+            }
             steps {
                 echo "Job Name:     ${env.JOB_NAME}"
                 echo "Build Number: ${env.BUILD_NUMBER}"
@@ -49,6 +52,9 @@ pipeline {
                 stage ("Build_Alpine") {
                     stages {
                         stage ("Alpine_Image") {
+                            options {
+                                timeout(time: 15, unit: 'MINUTES')
+                            }
                             agent {
                                 docker {
                                     image "${params.DOCKER_REG}/${docker_builder_image}"
@@ -69,6 +75,9 @@ pipeline {
                 stage ("Build_Python") {
                     stages {
                         stage ("Python_Image") {
+                            options {
+                                timeout(time: 45, unit: 'MINUTES')
+                            }
                             agent {
                                 docker {
                                     image "${params.DOCKER_REG}/${docker_builder_image}"
@@ -85,9 +94,12 @@ pipeline {
                             }
                         }
                         stage ("Python_Test") {
+                            options {
+                                timeout(time: 15, unit: 'MINUTES')
+                            }
                             agent {
                                 docker {
-                                    image "${params.DOCKER_REG}/drtuxwang/python-dev:${python_version}-slim-bullseye"
+                                    image "${params.DOCKER_REG}/drtuxwang/python-full:${python_version}-slim-bullseye"
                                     reuseNode true
                                     alwaysPull false
                                 }
@@ -105,6 +117,9 @@ pipeline {
         }
 
         stage ("Push Docker images") {
+            options {
+                timeout(time: 10, unit: 'MINUTES')
+            }
             when { branch "master" }
             steps {
                 sh "sleep 2"

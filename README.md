@@ -1091,6 +1091,8 @@ the years.
  * docker/python-3.9/dev/Makefile        python:3.9-slim-bullseye based dev shell
  * docker/python-3.9/devpi/Dockerfile
  * docker/python-3.9/devpi/Makefile      python:3.9-slim-bullseye based devpi server app
+ * docker/python-3.9/full/Dockerfile
+ * docker/python-3.9/full/Makefile       python-dev:3.9-slim-bullseye based full packages
  * docker/registry-2.6/Dockerfile
  * docker/registry-2.6/Makefile          registry:2.6 based Docker Registry server app
  * docker/registry-2.6/files/config.yaml

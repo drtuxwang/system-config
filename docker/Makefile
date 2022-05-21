@@ -34,6 +34,8 @@ STABLE_IMAGES := \
 	drtuxwang/debian-docker:11-slim \
 	drtuxwang/debian-xfce:11-slim \
 	drtuxwang/nginx:1.18-alpine \
+	drtuxwang/python-dev:3.9-slim-bullseye \
+	drtuxwang/python-full:3.9-slim-bullseye \
 	drtuxwang/scratch
 TEST_DIRS := \
 	python-3.9
@@ -55,19 +57,18 @@ new:          # Create new Docker project
 check-base:
 	grep "^BASE_IMAGE" */Makefile
 
-.PHONY: pull
-pull:         # Pull Docker base image
+.PHONY: pull-all
+pull:         # Pull base Docker images
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR pull || exit 1; \
 	done
 
 .PHONY: save
-save:         # Save Docker base image as tar file
+save:         # Save base Docker images as tar files
 	for DIR in $(BUILD_DIRS); do \
 		make -C $$DIR save; \
 	done
 	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose docker-image_*.tar
-
 
 .PHONY: build
 build:        # Build Docker images
@@ -87,18 +88,23 @@ version:      # Check versions
 		make --no-print-directory -C $$DIR version || exit 1; \
 	done
 
-.PHONY:tag
-tag:          # Tag stable Docker images
+.PHONY: push
+push-stable:  # Tag and push stable Docker images
 	for IMAGE in $(STABLE_IMAGES); do \
 		echo docker tag $$IMAGE $${IMAGE%:*}:stable; \
 		docker tag $$IMAGE $${IMAGE%:*}:stable; \
 	done
-
-.PHONY: push
-push: tag     # Tag and push stable Docker images
 	for IMAGE in $(STABLE_IMAGES); do \
 		docker push $$IMAGE ; \
 		docker push $${IMAGE%:*}:stable ; \
+	done
+	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
+
+.PHONY: pull
+pull-stable:  # Pull stable Docker images
+	for IMAGE in $(STABLE_IMAGES); do \
+		docker pull $$IMAGE ; \
+		docker pull $${IMAGE%:*}:stable ; \
 	done
 	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
 
