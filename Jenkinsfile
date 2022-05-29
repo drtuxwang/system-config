@@ -1,7 +1,7 @@
 #!groovy
 
 // Environment variables
-def alpine_version = "3.14"
+def alpine_version = "3.15"
 def python_version = "3.9"
 def docker_builder_image = "drtuxwang/debian-docker:stable"
 String branch_name = env.JOB_NAME - "system-config-"
@@ -22,6 +22,7 @@ pipeline {
     }
 
     environment {
+        start_time = /${sh(script: "date +%s", returnStdout: true)}/
         PYTHONDONTWRITEBYTECODE = "1"
     }
 
@@ -31,6 +32,7 @@ pipeline {
                 timeout(time: 1, unit: 'MINUTES')
             }
             steps {
+                sh "date +'Pipeline start time: %Y-%m-%d-%H:%M:%S'"
                 echo "Job Name:     ${env.JOB_NAME}"
                 echo "Build Number: ${env.BUILD_NUMBER}"
                 echo "Branch Name:  ${branch_name}"
@@ -130,6 +132,10 @@ pipeline {
     post {
         always {
             sh "echo \"Pipeline cleanup...\" ||:"
+            sh """
+                date +"Pipeline finish time: %Y-%m-%d-%H:%M:%S"
+                echo "Pipeline elapsed time: \$((\$(date +%s) - ${start_time})) seconds"
+            """
         }
     }
 }

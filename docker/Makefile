@@ -1,9 +1,9 @@
 IMAGES := "drtuxwang/.*"
 
 BUILD_DIRS := \
+	alpine-3.15 \
+	i386-alpine-3.15 \
 	alpine-3.14 \
-	i386-alpine-3.14 \
-	alpine-3.13 \
 	\
 	debian-11 \
 	i386-debian-11 \
@@ -22,7 +22,7 @@ BUILD_DIRS := \
 	\
 	busybox-1.33 \
 	clearlinux \
-	golang-1.16 \
+	golang-1.17 \
 	httpd-2.4 \
 	nginx-1.18 \
 	python-3.9 \

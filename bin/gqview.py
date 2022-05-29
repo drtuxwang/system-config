@@ -49,6 +49,18 @@ class Options:
                 os.mkdir(file)
             except OSError:
                 pass
+        file = os.path.join(configdir, 'geeqierc.xml')
+        try:
+            with open(file, 'rb') as ifile:
+                data = ifile.read()
+            if b'hidden = "true"' in data:
+                data = data.replace(b'hidden = "true"', b'hidden = "false"')
+                with open(file+'-new', 'wb') as ofile:
+                    ofile.write(data)
+                shutil.move(file+'-new', file)
+        except OSError:
+            pass
+
         for file in (
                 os.path.join(home, '.cache', 'geeqie', 'thumbnails'),
                 os.path.join(home, '.local', 'share', 'geeqie'),
@@ -61,36 +73,6 @@ class Options:
                         pass
                 except OSError:
                     pass
-
-    @staticmethod
-    def _config_gqview() -> None:
-        home = os.environ.get('HOME', '')
-        configdir = os.path.join(home, '.gqview')
-        if not os.path.isdir(configdir):
-            try:
-                os.makedirs(configdir)
-            except OSError:
-                return
-        for directory in (
-                'collections', 'history', 'metadata', 'thumbnails'
-        ):
-            file = os.path.join(configdir, directory)
-            if not os.path.isfile(file):
-                try:
-                    if os.path.isdir(file):
-                        shutil.rmtree(file)
-                    with open(file, 'wb'):
-                        pass
-                except OSError:
-                    pass
-        file = os.path.join(configdir, 'history')
-        if not os.path.isdir(file):
-            try:
-                if os.path.isfile(file):
-                    os.remove(file)
-                os.mkdir(file)
-            except OSError:
-                pass
 
     @staticmethod
     def select(directories: List[str]) -> str:
@@ -118,7 +100,6 @@ class Options:
             self._config_geeqie()
         else:
             self._gqview = command_mod.Command('gqview', errors='stop')
-            self._config_gqview()
         if len(args) == 1:
             self._gqview.set_args([os.curdir])
         else:

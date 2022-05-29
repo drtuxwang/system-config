@@ -41,7 +41,7 @@ run:          # Run Docker container
 .PHONY: version
 version:      # Check versions
 	@docker run --rm $(IMAGE) cat /etc/system-release 2> /dev/null | \
-		sed -e "s@.*release @$(shell pwd): @" | awk '{printf("%s CentOS Linux %s\n", $$1, $$2)}'
+		sed -e "s@.*release @$(shell pwd): @" | awk '{printf("%s Oracle Linux %s\n", $$1, $$2)}'
 
 .PHONY: rmi
 rmi:          # Remove Docker images

@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/i386-alpine:3.14
-IMAGE := drtuxwang/i386-alpine-bash:3.14
-NAME := alpine314-32-bash
-HOSTNAME := alpine314-32-bash
+BASE_IMAGE := drtuxwang/alpine:3.15
+IMAGE := drtuxwang/alpine-dev:3.15
+NAME := alpine315-dev
+HOSTNAME := alpine315-dev
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=
@@ -12,7 +12,7 @@ DOCKER_RUN_FLAGS := \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
-	--memory=1000m \
+	--memory=2000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
 	--hostname $(HOSTNAME) \
@@ -28,7 +28,7 @@ status:       # Status of Docker images
 
 .PHONY: build
 build:        # Build Docker images
-	../../bin/create-rootfs.sh bash bin vim
+	../../bin/create-rootfs.sh bash bin python vim
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
@@ -40,8 +40,8 @@ run:          # Run Docker container
 
 .PHONY: version
 version:      # Check versions
-	@docker run --rm $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
-		sed -e "s@^@$(shell pwd): Alpine Linux @"
+	@docker run --rm --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
+		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
 
 .PHONY: rmi
 rmi:          # Remove Docker images

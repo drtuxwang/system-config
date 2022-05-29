@@ -1,5 +1,5 @@
-BASE_IMAGE := i386/alpine:3.14
-IMAGE := drtuxwang/i386-alpine:3.14
+BASE_IMAGE := i386/alpine:3.15
+IMAGE := drtuxwang/i386-alpine:3.15
 DOCKER_BUILD_FLAGS ?=
 
 BUILD_DIRS := bash dev

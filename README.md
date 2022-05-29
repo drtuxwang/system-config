@@ -985,24 +985,24 @@ the years.
  * docker/bin/create-rootfs.sh
  * docker/bin/docker-load.sh             Load docker images
  * docker/bin/docker-save.sh             Save docker images
- * docker/alpine-3.13/Dockerfile
- * docker/alpine-3.13/Makefile           alpine:3.13 based linux
- * docker/alpine-3.13/bash/Dockerfile
- * docker/alpine-3.13/bash/Makefile      alpine:3.13 based BASH login
- * docker/alpine-3.13/dev/Dockerfile
- * docker/alpine-3.13/dev/Makefile       alpine:3.13 based GCC dev shell
  * docker/alpine-3.14/Makefile
  * docker/alpine-3.14/Dockerfile         alpine:3.14 based linux
  * docker/alpine-3.14/bash/Makefile
  * docker/alpine-3.14/bash/Dockerfile    alpine:3.14 based BASH login
  * docker/alpine-3.14/dev/Makefile
  * docker/alpine-3.14/dev/Dockerfile     alpine:3.14 based GCC dev shell
- * docker/i386-alpine-3.14/Makefile
- * docker/i386-alpine-3.14/Dockerfile    i386/alpine:3.14 based linux
- * docker/i386-alpine-3.14/bash/Makefile
- * docker/i386-alpine-3.14/bash/Dockerfile  i386/alpine:3.14 based BASH login
- * docker/i386-alpine-3.14/dev/Makefile
- * docker/i386-alpine-3.14/dev/Dockerfile  i386/alpine:3.14 based GCC dev shell
+ * docker/alpine-3.15/Dockerfile
+ * docker/alpine-3.15/Makefile           alpine:3.15 based linux
+ * docker/alpine-3.15/bash/Dockerfile
+ * docker/alpine-3.15/bash/Makefile      alpine:3.15 based BASH login
+ * docker/alpine-3.15/dev/Dockerfile
+ * docker/alpine-3.15/dev/Makefile       alpine:3.15 based GCC dev shell
+ * docker/i386-alpine-3.15/Makefile
+ * docker/i386-alpine-3.15/Dockerfile    i386/alpine:3.15 based linux
+ * docker/i386-alpine-3.15/bash/Makefile
+ * docker/i386-alpine-3.15/bash/Dockerfile  i386/alpine:3.15 based BASH login
+ * docker/i386-alpine-3.15/dev/Makefile
+ * docker/i386-alpine-3.15/dev/Dockerfile  i386/alpine:3.15 based GCC dev shell
  * docker/amazonlinux-2/Dockerfile
  * docker/amazonlinux-2/Makefile         amazonlinux:2 based linux
  * docker/amazonlinux-2/bash/Dockerfile
@@ -1060,8 +1060,8 @@ the years.
  * docker/i386-debian-11/bash/Makefile   i386/debian:11-slim based BASH login
  * docker/i386-debian-11/dev/Dockerfile
  * docker/i386-debian-11/dev/Makefile    i386/debian:11-slim based GCC dev shell
- * docker/golang-1.16/Dockerfile
- * docker/golang-1.16/Makefile           golang:1.16-alpine based compiler app
+ * docker/golang-1.17/Dockerfile
+ * docker/golang-1.17/Makefile           golang:1.17-alpine based compiler app
  * docker/httpd-2.4/Dockerfile
  * docker/httpd-2.4/Makefile             httpd:2.4-alpine (Apache) based web server
  * docker/httpd-2.4/files/httpd.conf
