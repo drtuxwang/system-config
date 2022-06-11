@@ -289,9 +289,8 @@ class Options:
             '^$|^NPP_GetValue|NSS_VersionCheck| Gtk:|: GLib-GObject-CRITICAL|'
             ' GLib-GObject:|: no version information available|:ERROR:.*[.]cc|'
             'Running without renderer sandbox|:Gdk-WARNING |: DEBUG: |^argv|'
-            ': cannot adjust line|^Using PPAPI|--ppapi-flash-path|'
-            '^Created new window|Unable to revert mtime:|internal-pdf-viewer:|'
-            '^PPAPI flash has config|LIBDBUSMENU-GLIB-WARNING|'
+            ': cannot adjust line|^Created new window|Unable to revert mtime:|'
+            'internal-pdf-viewer:|LIBDBUSMENU-GLIB-WARNING|'
             '^Opening in existing browser'
         )
         self._config()

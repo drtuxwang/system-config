@@ -92,6 +92,8 @@ pipeline {
                                     cd system-config
                                     make -C docker/python-${python_version} build
                                     make -C docker/python-${python_version} version
+                                    make -C docker/python-${python_version}/dev/full build
+                                    make -C docker/python-${python_version}/dev/full version
                                 """
                             }
                         }

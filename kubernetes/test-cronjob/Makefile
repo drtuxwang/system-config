@@ -13,12 +13,12 @@ status:       # Show workload status
 .PHONY: create
 create:       # Create workload
 	@echo "\n*** Creating cronjob ***"
-	kubectl --namespace=$(NAMESPACE) create -f batch-crontab.yaml ||:
+	kubectl --namespace=$(NAMESPACE) create -f cronjob.yaml ||:
 
 .PHONY: delete
 delete:       # Delete workload
 	@echo "\n*** Removing cronjob ***"
-	kubectl --namespace=$(NAMESPACE) delete -f batch-crontab.yaml ||:
+	kubectl --namespace=$(NAMESPACE) delete -f cronjob.yaml ||:
 
 .PHONY: help
 help:

@@ -23,6 +23,7 @@ cleo==None
 clikit==None
 configparser==4.0.2          #   (required by docker-compose/virtualenv  for 2.7)
 contextlib2==0.6.0.post1     #   (required by docker-compose/virtualenv for 2.7)
+cookiecutter                 #   (1.7.3 last compatible version)
 cql==None
 cqlsh==None
 crashtest==None
@@ -109,7 +110,6 @@ tomlkit==0.7.2
 traitlets==4.3.3
 typing==3.10.0.0
 typing_extensions==None
-ujson==2.0.3
 uncompyle6==3.7.4
 websockets==None
 whichcraft==0.6.1            #   (required by cookiecutter for 2.7)

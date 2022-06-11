@@ -1,1 +1,6 @@
-. $HOME/.profile
+# Basic setup for non login Bash shells
+export HISTFILE=
+export HISTSIZE=256
+export HISTTIMEFORMAT=
+export LESSHISTFILE=/dev/null
+export PYTHONDONTWRITEBYTECODE=1

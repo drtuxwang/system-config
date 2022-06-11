@@ -142,7 +142,12 @@ install_packages() {
 umask 022
 INSTALL="$PYTHON -m pip install --no-warn-script-location --no-deps"
 [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ] || INSTALL="$INSTALL --user"
-[ "$(uname)" = Darwin ] && export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
+if [ "$(uname)" = Darwin ]
+then
+    # Homebrew
+    export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
+    export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
+fi
 
 declare -A requirements
 PYTHON_VERSION=$($PYTHON --version 2>&1 | awk '/^Python [1-9]/{print $2}' | cut -f1-2 -d.)
@@ -161,5 +166,6 @@ else
 fi
 
 install_packages "$MODE"
+install_packages "$MODE"  # Retry
 [ "$MODE" != piponly ] && check_packages
 echo -e "${esc}[33mOK!${esc}[0m"

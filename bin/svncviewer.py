@@ -33,8 +33,8 @@ class Options:
     def _getport(self, remote_host: str, remote_port: str) -> str:
         lsof = command_mod.Command(
             'lsof',
-            args=['-i', 'tcp:5901-5999'],
-            errors='stop'
+            args=['-b', '-i', 'tcp:5901-5999'],
+            errors='stop',
         )
         task = subtask_mod.Batch(lsof.get_cmdline())
         task.run()

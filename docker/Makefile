@@ -35,7 +35,6 @@ STABLE_IMAGES := \
 	drtuxwang/debian-xfce:11-slim \
 	drtuxwang/nginx:1.18-alpine \
 	drtuxwang/python-dev:3.9-slim-bullseye \
-	drtuxwang/python-full:3.9-slim-bullseye \
 	drtuxwang/scratch
 TEST_DIRS := \
 	python-3.9

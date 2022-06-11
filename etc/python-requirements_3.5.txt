@@ -13,6 +13,7 @@ cassandra-driver==None
 certifi==2021.10.8
 check-manifest==0.44
 contextlib2==None
+cookiecutter                 #   (1.7.3 last compatible version)
 cql==None
 cqlsh==None
 crashtest==None

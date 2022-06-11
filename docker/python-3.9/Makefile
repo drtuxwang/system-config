@@ -2,7 +2,7 @@ BASE_IMAGE := python:3.9-slim-bullseye
 IMAGE := drtuxwang/python:3.9-slim-bullseye
 DOCKER_BUILD_FLAGS ?=
 
-BUILD_DIRS := bash dev devpi full
+BUILD_DIRS := bash dev devpi
 
 
 .PHONY: default

@@ -530,8 +530,6 @@ the years.
  * bin/ogg.py
  * bin/open                 Open files using hardwired application mapping
  * bin/open.py
- * bin/otool                otool wrapper (allowing non systems port)
- * bin/otool.py
  * bin/padman               Sandbox for "wop" launcher (allowing non systems port)
  * bin/padman.py
  * bin/par2                 par2 wrapper (allowing non systems port)
@@ -882,7 +880,6 @@ the years.
  * config/adblock.txt                    Adblock filter list
  * config/autoexec.sh                    Copy to "$HOME/.config/autoexec.sh" & add to desktop auto startup
  * config/autoexec-opt.sh                Copy to "$HOME/.config/autoexec-opt.sh" for optional settings
- * config/bashrc                         Copy to "$HOME/.bashrc" to always source "$HOME/.profile"
  * config/com.googlecode.iterm2.plist    Copy to "$HOME/Library/Preference" for iTerm2 on Mac
  * config/config                         Copy to "$HOME/.ssh/config"
  * config/gitconfig                      Copy to "$HOME/.gitconfig" and edit
@@ -909,7 +906,6 @@ the years.
  * etc/python-packages.sh                Install/check Python packages requirements
  * etc/python-requirements.txt           Default requirements file for Python
  * etc/python-requirements_2.7.txt       Additional requirements for Python 2.7
- * etc/python-requirements_2.7mac.txt    Additional requirements for Python 2.7 on MacOS
  * etc/python-requirements_3.5.txt       Additional requirements for Python 3.5
  * etc/python-requirements_3.6.txt       Additional requirements for Python 3.6
  * etc/python-requirements_3.7.txt       Additional requirements for Python 3.7
@@ -1089,10 +1085,10 @@ the years.
  * docker/python-3.9/bash/Makefile       python:3.9-slim-bullseye based BASH login
  * docker/python-3.9/dev/Dockerfile
  * docker/python-3.9/dev/Makefile        python:3.9-slim-bullseye based dev shell
+ * docker/python-3.9/dev/full/Dockerfile
+ * docker/python-3.9/dev/full/Makefile   python-dev:3.9-slim-bullseye based full packages
  * docker/python-3.9/devpi/Dockerfile
  * docker/python-3.9/devpi/Makefile      python:3.9-slim-bullseye based devpi server app
- * docker/python-3.9/full/Dockerfile
- * docker/python-3.9/full/Makefile       python-dev:3.9-slim-bullseye based full packages
  * docker/registry-2.6/Dockerfile
  * docker/registry-2.6/Makefile          registry:2.6 based Docker Registry server app
  * docker/registry-2.6/files/config.yaml
@@ -1134,8 +1130,8 @@ the years.
  * kubernetes/nginx-proxy-fwd/proxy-kube-local.key
  * kubernetes/socat-fwd/Makefile         SOCAT forwarding example
  * kubernetes/socat-fwd/socat-fwd.yaml
- * kubernetes/test-crontab/Makefile      Kubernetes: crontab example (drtuxwang/busybox-bash:stable)
- * kubernetes/test-crontab/batch-crontab.yaml
+ * kubernetes/test-cronjob/Makefile      Kubernetes: cronjob example (drtuxwang/busybox-bash:stable)
+ * kubernetes/test-cronjob/batch-crontab.yaml
  * kubernetes/test-servers/Makefile      Kubernetes: examples (drtuxwang/debian-bash:stable)
  * kubernetes/test-servers/server-pod.yaml
  * kubernetes/test-servers/servers-daemonset.yaml

@@ -414,13 +414,6 @@ then
     MYINFO="$MYINFO)"
     echo "$MYINFO"
     echo
-else
-    # General stuff (for .bashrc)
-    export HISTFILE=
-    export HISTSIZE=256
-    export HISTTIMEFORMAT=
-    export LESSHISTFILE=/dev/null
-    export PYTHONDONTWRITEBYTECODE=1
 fi
 
 # Applying optional settings

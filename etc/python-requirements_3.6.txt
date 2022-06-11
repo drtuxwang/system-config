@@ -2,6 +2,7 @@ ansible-core==2.11.7
 ansible==4.10.0
 asttokens==None
 cached-property==1.5.2       #   (required by docker-compose for 3.6)
+cookiecutter                 #   (1.7.3 last compatible version)
 executing==None
 filelock==3.4.1
 flake8==3.9.2

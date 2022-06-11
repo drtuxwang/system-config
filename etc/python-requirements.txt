@@ -28,7 +28,7 @@ click==7.1.2                 #   (required by cookiecutter/nexus3-cli/uncompyle6
 clikit==0.6.2                #   (required by poetry)
 clint==0.5.1                 #   (required by nexus3-cli)
 contextlib2==21.6.0          #   (required by appimage-builder)
-cookiecutter==1.7.3          # Creates projects from project templates
+cookiecutter==2.1.1          # Creates projects from project templates
 cql==1.4.0                   #   (required by cqlsh)
 cqlsh==6.0.1                 #   (Cassandra client)
 crashtest==0.3.1             #   (required by poetry)
