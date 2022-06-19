@@ -5,10 +5,11 @@ FLASK_APP = "simple_flask"
 FLAGS =
 
 
-default: test
+.PHONY: default
+default: test        # Default
 
 .PHONY: test
-test:         # Run test
+test:                # Run test
 	@echo "\n*** Running Python 3 compilation check ***"
 	python3 -m py_compile *.py
 	rm -rf __pycache__
@@ -23,10 +24,10 @@ test:         # Run test
 	@echo "\n*** Tests successfull ***"
 
 .PHONY: run
-run:          # Run Python code
+run:                 # Run Python code
 	@echo "\n*** Running Flask app ***"
 	FLASK_APP=$(FLASK_APP) python3 -m flask run $(FLAGS)
 
 .PHONY: help
-help:
+help:                # Show Makefile options
 	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

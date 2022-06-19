@@ -22,33 +22,33 @@ DOCKER_RUN_FLAGS := \
 
 
 .PHONY: default
-default: build status
+default: build status # Default
 
 .PHONY: status
-status:       # Status of Docker images
+status:              # Status of Docker images
 	@make --no-print-directory -C .. status
 
 .PHONY: build
-build:        # Build Docker images
-	../../bin/create-rootfs.sh bash bin init python3.9 sudo tmux vim xfce
+build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
+	../../bin/create-rootfs.sh bash bin init python3.9 sudo tmux vim xfce
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 
 .PHONY: run
-run:          # Run Docker container
+run:                 # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:      # Check versions
+version:             # Check versions
 	@docker run --rm --entrypoint dpkg $(IMAGE) -s xfce4 | \
 		awk '/^Version: / {printf("'$(shell pwd)': Xfce %s\n", $$2)}'
 
 .PHONY: rmi
-rmi:          # Remove Docker images
+rmi:                 # Remove Docker images
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: help
-help:
+help:                # Show Makefile options
 	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

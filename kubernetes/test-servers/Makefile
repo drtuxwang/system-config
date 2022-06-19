@@ -6,10 +6,11 @@ ifndef LOCALPORT
 endif
 
 
-default: status
+.PHONY: default
+default: status      # Default
 
 .PHONY: status
-status:       # Show workload status
+status:              # Show workload status
 	@echo "\n*** Checking status ***"
 	kubectl --namespace=$(NAMESPACE) get all -o wide
 	@echo
@@ -26,7 +27,7 @@ status:       # Show workload status
 	kubectl --namespace=$(NAMESPACE) get sc
 
 .PHONY: create
-create:       # Create workload
+create:              # Create workload
 	@echo "\n*** Creating pods ***"
 	kubectl create namespace $(NAMESPACE) ||:
 	kubectl --namespace=$(NAMESPACE) create -f servers-secret-tls.yaml ||:
@@ -36,12 +37,12 @@ create:       # Create workload
 	kubectl --namespace=$(NAMESPACE) create -f servers-statefulset.yaml ||:
 
 .PHONY: forward
-forward:      # Forward http to service
+forward:             # Forward http to service
 	kubectl --namespace=$(NAMESPACE) describe service/server
 	kubectl --namespace=$(NAMESPACE) port-forward service/server $(LOCALPORT):80
 
 .PHONY: delete
-delete:       # Delete workload
+delete:              # Delete workload
 	@echo "\n*** Removing pods ***"
 	kubectl --namespace=$(NAMESPACE) delete -f servers-statefulset.yaml ||:
 	kubectl --namespace=$(NAMESPACE) delete -f servers-headless-service.yaml ||:
@@ -50,5 +51,5 @@ delete:       # Delete workload
 	kubectl --namespace=$(NAMESPACE) delete -f servers-secret-tls.yaml ||:
 
 .PHONY: help
-help:
+help:                # Show Makefile options
 	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

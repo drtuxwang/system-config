@@ -7,24 +7,25 @@ ifdef TAGS
 endif
 
 
-default: test
+.PHONY: default
+default: test        # Default
 
 # Debug: "ANSIBLE_DEBUG=1" & "-vvv"
 .PHONY: run
-run: play
+run: play            # Run Ansible
 
 .PHONY: test
-test:         # Dryrun Ansible changes
+test:                # Dryrun Ansible changes
 	ansible-playbook --inventory=inventory/local_nodes local-playbook.yaml --limit $(HOST) $(TAGS) --diff --check
 
 .PHONY: play
-play:         # Apply Ansible changes
+play:                # Apply Ansible changes
 	ansible-playbook --inventory=inventory/local_nodes local-playbook.yaml --limit $(HOST) $(TAGS) --diff
 
 .PHONY: tags
-tags:         # Show Ansible tags
+tags:                # Show Ansible tags
 	@bin/show-tags.sh
 
 .PHONY: help
-help:
+help:                # Show Makefile options
 	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

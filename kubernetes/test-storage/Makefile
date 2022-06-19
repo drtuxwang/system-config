@@ -1,10 +1,11 @@
 NAMESPACE := default
 
 
-default: status
+.PHONY: default
+default: status      # Default
 
 .PHONY: status
-status:       # Show workload status
+status:              # Show workload status
 	@echo "\n*** Checking status ***"
 	kubectl --namespace=$(NAMESPACE) get all -o wide
 	@echo
@@ -15,19 +16,19 @@ status:       # Show workload status
 	kubectl --namespace=$(NAMESPACE) get sc
 
 .PHONY: create
-create:       # Create workload
+create:              # Create workload
 	@echo "\n*** Creating pods ***"
 	kubectl create namespace $(NAMESPACE) ||:
 	kubectl --namespace=$(NAMESPACE) create -f server-pv.yaml ||:
 	kubectl --namespace=$(NAMESPACE) create -f server-statefulset.yaml ||:
 
 .PHONY: delete
-delete:       # Delete workload
+delete:              # Delete workload
 	@echo "\n*** Removing pods ***"
 	kubectl --namespace=$(NAMESPACE) delete -f server-statefulset.yaml ||:
 	kubectl --namespace=$(NAMESPACE) delete pvc data-server-0
 	kubectl --namespace=$(NAMESPACE) delete -f server-pv.yaml ||:
 
 .PHONY: help
-help:
+help:                # Show Makefile options
 	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

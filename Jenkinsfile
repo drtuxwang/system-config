@@ -67,8 +67,8 @@ pipeline {
                             steps {
                                 sh """
                                     cd system-config
-                                    make -C docker/alpine-${alpine_version} build
-                                    make -C docker/alpine-${alpine_version} version
+                                    make --no-print-directory -C docker/alpine-${alpine_version} build
+                                    make --no-print-directory -C docker/alpine-${alpine_version} version
                                 """
                             }
                         }
@@ -90,10 +90,10 @@ pipeline {
                             steps {
                                 sh """
                                     cd system-config
-                                    make -C docker/python-${python_version} build
-                                    make -C docker/python-${python_version} version
-                                    make -C docker/python-${python_version}/dev/full build
-                                    make -C docker/python-${python_version}/dev/full version
+                                    make --no-print-directory -C docker/python-${python_version} build
+                                    make --no-print-directory -C docker/python-${python_version} version
+                                    make --no-print-directory -C docker/python-${python_version}/dev/full build
+                                    make --no-print-directory -C docker/python-${python_version}/dev/full version
                                 """
                             }
                         }

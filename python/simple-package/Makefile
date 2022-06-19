@@ -1,7 +1,8 @@
-default: build
+.PHONY: default
+default: build       # Default
 
 .PHONY: test
-test:         # Run test
+test:                # Run test
 	@echo "\n*** Running Python 3 compilation check ***"
 	python3 -m py_compile *.py */*.py
 	rm -rf __pycache__ */__pycache__
@@ -16,7 +17,7 @@ test:         # Run test
 	@echo "\n*** Tests successfull ***"
 
 .PHONY: build
-build: clean test # Build package
+build: clean test    # Build package
 	@echo "\n*** Building Python packages ***"
 	python3 setup.py bdist_egg
 	python3 setup.py bdist_wheel
@@ -24,14 +25,14 @@ build: clean test # Build package
 	@echo "\n*** Building packages successfull ***"
 
 .PHONY: run
-run:          # Run Python code
+run:                 # Run Python code
 	@echo "\n*** Running simple package example ***"
 	PYTHONPATH=`pwd`/dist ./run.py
 
 .PHONY: clean
-clean:        # Remove temporary build files
+clean:               # Remove temporary build files
 	rm -rf build dist simple.egg-info
 
 .PHONY: help
-help:
+help:                # Show Makefile options
 	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

@@ -23,31 +23,31 @@ DOCKER_RUN_FLAGS := \
 
 
 .PHONY: default
-default: build status
+default: build status # Default
 
 .PHONY: status
-status:       # Status of Docker images
+status:              # Status of Docker images
 	@make --no-print-directory -C .. status
 
 .PHONY: build
-build:        # Build Docker images
+build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 
 .PHONY: run
-run:          # Run Docker container
+run:                 # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:      # Check versions
+version:             # Check versions
 	@docker run --rm --entrypoint devpi-server $(IMAGE) --version 2> /dev/null | \
 		   awk '{printf("'$(shell pwd)': devpi-server %s\n", $$1)}'
 
 .PHONY: rmi
-rmi:          # Remove Docker images
+rmi:                 # Remove Docker images
 	docker rmi -f $(IMAGE) ||:
 
 .PHONY: help
-help:
+help:                # Show Makefile options
 	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

@@ -1,7 +1,8 @@
-default: test py_compile pycodestyle pylint unittest build run clean
+.PHONY: default
+default: test        # Default
 
 .PHONY: test
-test:
+test:                # Run tests
 	@echo "\n*** Running Python 3 compilation check ***"
 	python3 -m py_compile *.pyx
 	rm -rf __pycache__
@@ -15,19 +16,19 @@ test:
 	@echo "\n*** Tests successfull ***"
 
 .PHONY: build
-build: clean test # Build package
+build: clean test    # Build package
 	@echo "\n*** Building Cython example ***"
 	python3 -m Cython.Build.Cythonize --build -3 cython_example.pyx
 
 .PHONY: run
-run:          # Run Python code
+run:                 # Run Python code
 	@echo "\n*** Running Cython example ***"
 	./run.py
 
 .PHONY: clean
-clean:        # Remove temporary build files
+clean:               # Remove temporary build files
 	rm -rf build *.c *.so
 
 .PHONY: help
-help:
+help:                # Show Makefile options
 	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

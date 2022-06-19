@@ -37,41 +37,42 @@ else
 endif
 
 
-default: status
+.PHONY: default
+default: status      # Default
 
 .PHONY: status
-status:       # Status of Helm release
+status:              # Status of Helm release
 	$(HELM_STATUS)
 	$(HELM_LIST)
 
 .PHONY: repo-add
-repo-add:     # Add Helm repository
+repo-add:            # Add Helm repository
 	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
 .PHONY: version
-version:      # Helm chart versions
+version:             # Helm chart versions
 	@$(HELM_VERSION) | tail -n +2 | \
 		grep -B 1000 "^$(CHART_REPO)/$(CHART_NAME)[	 ]*$(CHART_VERSION) " | \
 		sed -e "s/	/   /g" -e "s/   */   /g"
 
 .PHONY: fetch
-fetch: repo-add clean  # Fetch Helm chart
+fetch: repo-add clean # Fetch Helm chart
 	mkdir $(CHART_REPO) && \
 		cd $(CHART_REPO) && \
 		helm fetch --untar --version=$(CHART_VERSION) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: images
-images:       # Show Docker images
+images:              # Show Docker images
 	@make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
 
 .PHONY: pull
-pull:         # Pull Docker images
+pull:                # Pull Docker images
 	@for IMAGE in `make --no-print-directory images`; do \
 		docker pull $$IMAGE; \
 	done
 
 .PHONY: save
-save:         # Save Docker images as tar file
+save:                # Save Docker images as tar file
 	../bin/helm-save.sh \
 		$(CHART_REPO)-$(CHART_NAME) \
 		$(CHART_VERSION) \
@@ -79,13 +80,13 @@ save:         # Save Docker images as tar file
 		$(shell make --no-print-directory images)
 
 .PHONY: template
-template: repo-add  # Show Helm template
+template: repo-add   # Show Helm template
 	helm template \
 		$(HELM_FLAGS) \
 		$(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
-check: repo-add  # Dryrun Helm install
+check: repo-add      # Dryrun Helm install
 	helm upgrade \
 		--install \
 		--dry-run \
@@ -94,7 +95,7 @@ check: repo-add  # Dryrun Helm install
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: install
-install: repo-add  # Install Helm release
+install: repo-add    # Install Helm release
 	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
 	helm upgrade \
 		--install \
@@ -103,12 +104,12 @@ install: repo-add  # Install Helm release
 		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward
-forward:      # Forward traffic to endpoint
+forward:             # Forward traffic to endpoint
 	@echo "\n*** Checking status ***"
 	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):27017
 
 .PHONY: connect
-connect:      # Connect to endpoint
+connect:             # Connect to endpoint
 	@if [ "$(EXTERNAL_IP)" ]; then \
 		../../kubernetes/bin/kube-connect.sh mongodb://${HOSTNAME}:27017; \
 	else \
@@ -116,20 +117,20 @@ connect:      # Connect to endpoint
 	fi
 
 .PHONY: uninstall
-uninstall:    # Uninstall Helm release
+uninstall:           # Uninstall Helm release
 	$(HELM_LIST)
 	$(HELM_UNINSTALL) ||:
 
 .PHONY: clean
-clean:        # Remove temporary build files
+clean:               # Remove temporary build files
 	rm -rf $(CHART_REPO)
 
 .PHONY: rmi
-rmi:          # Remove Docker images
+rmi:                 # Remove Docker images
 	@for IMAGE in `make --no-print-directory images`; do \
 		docker rmi -f $$IMAGE ||:; \
 	done
 
 .PHONY: help
-help:
+help:                # Show Makefile options
 	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

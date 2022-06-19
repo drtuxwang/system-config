@@ -26,10 +26,11 @@ else
 endif
 
 
-default: status
+.PHONY: default
+default: status      # Default
 
 .PHONY: status
-status:       # Status of Helm release
+status:              # Status of Helm release
 	$(HELM_INIT)
 	@echo "\n*** Helm client-server status ***"
 	helm version
@@ -39,7 +40,7 @@ status:       # Status of Helm release
 	$(HELM_LIST)
 
 .PHONY: update
-update:       # Update Helm chart repository
+update:              # Update Helm chart repository
 	helm repo list | grep -q stable || helm repo add stable https://charts.helm.sh/stable
 	helm repo list | grep -q bitnami || helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm repo list | grep -q concourse || helm repo add concourse https://concourse-charts.storage.googleapis.com
@@ -49,59 +50,59 @@ update:       # Update Helm chart repository
 	helm repo update
 
 .PHONY: version
-version:      # Helm chart versions
+version:             # Helm chart versions
 	@for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR version || exit 1; \
+		make --no-print-directory -C $$DIR version || exit 1; \
 	done
 
 .PHONY: images
-images:       # Show Docker images
+images:              # Show Docker images
 	@for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR images || exit 1; \
+		make --no-print-directory -C $$DIR images || exit 1; \
 	done
 
 .PHONY: pull
-pull:         # Pull Docker images
+pull:   i            # Pull Docker images
 	@for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR pull || exit 1; \
+		make --no-print-directory -C $$DIR pull || exit 1; \
 	done
 
 .PHONY: save
-save:         # Save Docker images as tar file
+save:                # Save Docker images as tar file
 	@for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR save || exit 1; \
+		make --no-print-directory -C $$DIR save || exit 1; \
 	done
 	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose helm-image_*.tar
 
 .PHONY: install-tiller
-install-tiller: # Install legacy Helm 2.x server
+install-tiller:      # Install legacy Helm 2.x server
 	kubectl --namespace=kube-system create serviceaccount tiller
 	kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
 	helm init --service-account tiller
 
 .PHONY: upgrade-tiller
-upgrade-tiller: # Upgrade legacy Helm 2.x server
+upgrade-tiller:      # Upgrade legacy Helm 2.x server
 	helm init --upgrade
 
 .PHONY: uninstall-tiller
-uninstall-tiller: # Uninstall legacy Helm 2.x server
+uninstall-tiller:    # Uninstall legacy Helm 2.x server
 	kubectl --namespace=kube-system delete serviceaccounts tiller ||:
 	kubectl --namespace=kube-system delete clusterrolebinding tiller ||:
 	kubectl --namespace=kube-system delete deploy tiller-deploy ||:
 
 .PHONY: clean
-clean:        # Remove temporary build files
+clean:               # Remove temporary build files
 	rm -f helm-images_*
 	for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR clean; \
+		make --no-print-directory -C $$DIR clean; \
 	done
 
 .PHONY: rmi
-rmi:          # Remove Docker images
+rmi:                 # Remove Docker images
 	for DIR in $(BUILD_DIRS); do \
-		make -C $$DIR rmi; \
+		make --no-print-directory -C $$DIR rmi; \
 	done
 
 .PHONY: help
-help:
+help:                # Show Makefile options
 	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))
