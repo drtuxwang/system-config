@@ -27,9 +27,10 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '5.16.8'
-VERSION = 20220402
+RELEASE = '5.17.0'
+VERSION = 20220403
 
+# pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
 
 

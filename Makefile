@@ -1,6 +1,5 @@
 PYTHONDONTWRITEBYTECODE := 1
-PYTHONS_OLD := 2.7 3.5
-PYTHONS_NEW := 3.6 3.7 3.8 3.9 3.10
+PYTHONS_VERSIONS := 2.7 3.5 3.6 3.7 3.8 3.9 3.10
 BROWSER := firefox
 
 ifndef PYTHON
@@ -12,21 +11,22 @@ endif
 default: test        # Default
 
 .PHONY: test
-test: check-makefile check-config check-python-pkg check-python # Run tests
+test: check-makefile check-config check-python check-packages # Run tests
 	@echo "\n*** Tests all successfull ***"
 
 .PHONY: test-docker
 test-docker:         # Run tests in docker
 	make --no-print-directory -C docker test
 
-.PHONY: test-python
-test-python:         # Test Python (all versions)
-	@for VERSION in $(PYTHONS_OLD); do \
-		PYTHON=python$$VERSION make --no-print-directory check-python-packages || exit 1; \
-	done
-	@for VERSION in $(PYTHONS_NEW); do \
-		PYTHON=python$$VERSION make --no-print-directory check-python-packages || exit 1; \
-		PYTHON=python$$VERSION make --no-print-directory check-python || exit 1; \
+.PHONY: test-all
+test-all: test       # Run tests for all versions
+	@for VERSION in $(PYTHONS_VERSIONS); do \
+		case $$VERSION in \
+		3.[6-9]|3.??) \
+			PYTHON=python$$VERSION make --no-print-directory check-python || exit 1 \
+			;; \
+		esac; \
+		PYTHON=python$$VERSION make --no-print-directory check-packages || exit 1; \
 	done
 
 .PHONY: check-makefile-help
@@ -38,11 +38,6 @@ check-makefile:      # Check Makefile files
 check-config:        # Check all config files
 	@echo "\n*** Running BSON/JSON/YAML check ***"
 	find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} +
-
-.PHONY: check-python-packages
-check-python-pkg:    # Check Python packages
-	@echo "\n*** Running \"${PYTHON}\" package requirement checks ***"
-	etc/python-packages.sh ${PYTHON}
 
 .PHONY: check-python
 check-python:        # Check Python code
@@ -58,6 +53,11 @@ check-python:        # Check Python code
 	${PYTHON} -m pylint --rcfile=.pylintrc bin/*.py
 	@echo "*** Running \"${PYTHON}\" MYPY type checks ***"
 	${PYTHON} -m mypy --disallow-untyped-defs --no-strict-optional --cache-dir=/dev/null bin/*.py
+
+.PHONY: check-packages
+check-packages:      # Check packages
+	@echo "\n*** Running \"${PYTHON}\" package requirement checks ***"
+	etc/python-packages.sh ${PYTHON}
 
 .PHONY: install
 install:             # Install Python packages

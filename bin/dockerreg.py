@@ -289,7 +289,7 @@ class DockerRegistry2(DockerRegistry):
                 info[tag]['digest'] = response.headers['docker-content-digest']
                 info[tag]['image_id'] = data['config']['digest']
                 info[tag]['timestamp'] = self.get_time(repository, tag)
-                info[tag]['size'] = sum([x['size'] for x in data['layers']])
+                info[tag]['size'] = sum(x['size'] for x in data['layers'])
 
         return info
 

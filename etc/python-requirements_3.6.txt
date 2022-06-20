@@ -11,6 +11,7 @@ importlib-metadata==4.8.3
 importlib-resources==5.4.0   #   (required by virtualenv for 3.6)
 ipdb==None
 ipython==None
+MarkupSafe==2.0.1
 numpy                        #   (1.19.5 last compatible version)
 Pillow                       #   (8.4.0 last compatible version)
 pip                          #   (20.2.4 last compatible version)
@@ -20,6 +21,7 @@ poetry==None
 pure-eval==None
 pycodestyle==2.7.0
 pyflakes==2.3.1
+pylint==2.13.9
 PyWavelets==1.1.1
 scipy==1.5.4
 setuptools==59.6.0

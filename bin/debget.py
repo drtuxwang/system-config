@@ -305,10 +305,10 @@ class Main:
                         url
                     )
 
-                new_time = max([
+                new_time = max(
                     data['time']
                     for data in distribution_data['data'].values()
-                ])
+                )
                 if new_time > old_time or distribution_data['urls'] != urls:
                     distribution_data['urls'] = urls
                     self._write_data(json_file, distribution_data)

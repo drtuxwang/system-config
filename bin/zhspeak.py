@@ -20,7 +20,7 @@ import file_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '6.0.2'
+RELEASE = '6.0.3'
 
 
 class Options:
@@ -328,7 +328,7 @@ class ChineseDictionary:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot open "{file}" dialect file.',
             ) from exception
-        self._max_block = max([len(key) for key in self._mappings])
+        self._max_block = max(len(key) for key in self._mappings)
 
     def create_cache(self) -> None:
         """

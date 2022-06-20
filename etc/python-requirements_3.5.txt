@@ -44,6 +44,7 @@ jedi==0.17.2
 jeepney==0.4.3
 keyring==None
 lazy-object-proxy==1.4.3
+lief==None
 lockfile==None
 Markdown==3.2.2
 MarkupSafe==1.1.1
@@ -64,6 +65,7 @@ pycodestyle==2.7.0
 pyflakes==2.3.1
 pylint==2.6.2
 pyOpenSSL==None
+python-gnupg==None
 python-slugify==4.0.1
 PyWavelets==1.1.1
 PyYAML                       #   (5.3.1 last supported)
