@@ -98,7 +98,7 @@ mypy-extensions==0.4.3       #   (required by mypy)
 mypy==0.961                  # Python type checker
 nexus3-cli==3.4.0            # Sonatype Nexus client
 ntplib==0.4.0                # NTP client
-numpy==1.21.6                # Array computing
+numpy==1.22.4                # Array computing
 packaging==20.9              #   (required by ansible/appimage-builder/devpi-client/poetry)
 paramiko==2.10.5             # SSH client
 parso==0.8.3                 #   (required by ipdb)

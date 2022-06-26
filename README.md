@@ -49,6 +49,8 @@ the years.
  * bin/ansible-vault
  * bin/ansible-vault-venv
  * bin/appimage-builder
+ * bin/asmc
+ * bin/asmc.py
  * bin/aws
  * bin/aws-venv
  * bin/aws.bat

@@ -1,13 +1,18 @@
+ifndef PYTHON
+	PYTHON := python3
+endif
+
+
 .PHONY: default
 default: help        # Default
 
 .PHONY: docker
 docker:              # Create new Docker project
-	cookiecutter docker
+	${PYTHON} -m cookiecutter docker
 
 .PHONY: test
 test:                # Test new Docker project
-	cookiecutter --no-input docker
+	${PYTHON} -m cookiecutter --no-input docker
 	rm -rf my_project
 
 .PHONY: help
