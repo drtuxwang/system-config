@@ -983,6 +983,18 @@ the years.
  * docker/bin/create-rootfs.sh
  * docker/bin/docker-load.sh             Load docker images
  * docker/bin/docker-save.sh             Save docker images
+ * docker/almalinux-8/Dockerfile
+ * docker/almalinux-8/Makefile           almalinux:8 based linux
+ * docker/almalinux-8/bash/Dockerfile
+ * docker/almalinux-8/bash/Makefile      almalinux:8 based BASH login
+ * docker/almalinux-8/dev/Dockerfile
+ * docker/almalinux-8/dev/Makefile       alamlinux:8 based GCC dev shell
+ * docker/almalinux-9/Dockerfile
+ * docker/almalinux-9/Makefile           almalinux:9 based linux
+ * docker/almalinux-9/bash/Dockerfile
+ * docker/almalinux-9/bash/Makefile      almalinux:9 based BASH login
+ * docker/almalinux-9/dev/Dockerfile
+ * docker/almalinux-9/dev/Makefile       alamlinux:9 based GCC dev shell
  * docker/alpine-3.14/Makefile
  * docker/alpine-3.14/Dockerfile         alpine:3.14 based linux
  * docker/alpine-3.14/bash/Makefile

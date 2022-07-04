@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=drtuxwang/rockylinux:latest
+ARG BASE_IMAGE=drtuxwang/almalinux:latest
 
 FROM ${BASE_IMAGE}
 
@@ -10,8 +10,6 @@ RUN \
         bison \
         gcc-c++ \
         gcc-gfortran \
-        libgfortran \
-        libquadmath \
         make \
         pkg-config \
         bzip2-devel \

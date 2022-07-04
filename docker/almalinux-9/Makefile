@@ -1,5 +1,5 @@
-BASE_IMAGE := rockylinux:8
-IMAGE := drtuxwang/rockylinux:8
+BASE_IMAGE := almalinux:9
+IMAGE := drtuxwang/almalinux:9
 DOCKER_BUILD_FLAGS ?=
 
 BUILD_DIRS := bash dev

@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=drtuxwang/rockylinux:latest
+ARG BASE_IMAGE=drtuxwang/almalinux:latest
 
 FROM ${BASE_IMAGE}
 
@@ -10,12 +10,9 @@ RUN \
         bison \
         gcc-c++ \
         gcc-gfortran \
-        libgfortran \
-        libquadmath \
         make \
         pkg-config \
         bzip2-devel \
-        gdbm-devel \
         libcurl-devel \
         libdb-devel \
         libevent-devel \
@@ -25,9 +22,11 @@ RUN \
         ncurses-devel \
         openssl-devel \
         readline-devel \
-        xz-devel && \
+        xz-devel \
+        zlib-devel && \
+    yum install --enablerepo=crb -y gdbm-devel && \
     # For Python packages
-    yum install -y python38-devel && \
+    yum install -y python3-devel && \
     yum clean all
 
 COPY rootfs/ /

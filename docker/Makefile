@@ -13,6 +13,8 @@ BUILD_DIRS := \
 	ubuntu-20.04 \
 	ubuntu-18.04 \
 	\
+	almalinux-9 \
+	almalinux-8 \
 	centos-8 \
 	centos-7 \
 	oraclelinux-8 \
@@ -87,7 +89,7 @@ version:             # Check versions
 		make --no-print-directory -C $$DIR version || exit 1; \
 	done
 
-.PHONY: push
+.PHONY: push-stable
 push-stable:         # Tag and push stable Docker images
 	for IMAGE in $(STABLE_IMAGES); do \
 		echo docker tag $$IMAGE $${IMAGE%:*}:stable; \

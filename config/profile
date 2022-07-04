@@ -58,6 +58,10 @@ then
     [[ ! "$MYUNAME" ]] && export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
     if [ "$BASH" -o "`echo $0 | \grep \"ash$\"`" ]
     then
+        __fcd()
+        {
+            cd $(realpath "$1" 2> /dev/null)
+        }
         __git_ps1()
         {
            local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
@@ -78,6 +82,7 @@ then
                 echo "KUBECONFIG=$KUBECONFIG"
             fi
         }
+        alias fcd=__fcd
         if [ ! "$KUBECONFIG" ]
         then
             KUBECONFIG=$(realpath $HOME/.kube/config 2> /dev/null)
