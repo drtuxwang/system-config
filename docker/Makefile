@@ -15,12 +15,7 @@ BUILD_DIRS := \
 	\
 	almalinux-9 \
 	almalinux-8 \
-	centos-8 \
 	centos-7 \
-	oraclelinux-8 \
-	oraclelinux-7 \
-	rockylinux-8 \
-	amazonlinux-2 \
 	\
 	busybox-1.33 \
 	clearlinux \

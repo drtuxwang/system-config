@@ -1013,12 +1013,6 @@ the years.
  * docker/i386-alpine-3.15/bash/Dockerfile  i386/alpine:3.15 based BASH login
  * docker/i386-alpine-3.15/dev/Makefile
  * docker/i386-alpine-3.15/dev/Dockerfile  i386/alpine:3.15 based GCC dev shell
- * docker/amazonlinux-2/Dockerfile
- * docker/amazonlinux-2/Makefile         amazonlinux:2 based linux
- * docker/amazonlinux-2/bash/Dockerfile
- * docker/amazonlinux-2/bash/Makefile    amazonlinux:2 based BASH login
- * docker/amazonlinux-2/dev/Dockerfile
- * docker/amazonlinux-2/dev/Makefile     amazonlinux:2 based GCC dev shell
  * docker/busybox-1.32/Dockerfile
  * docker/busybox-1.32/Makefile          busybox:1.33 based linux
  * docker/busybox-1.32/bash/Dockerfile
@@ -1029,12 +1023,6 @@ the years.
  * docker/centos-7/bash/Makefile         centos:7 based BASH login
  * docker/centos-7/dev/Dockerfile
  * docker/centos-7/dev/Makefile          centos:7 based GCC dev shell
- * docker/centos-8/Dockerfile
- * docker/centos-8/Makefile              centos:8 based linux
- * docker/centos-8/bash/Dockerfile
- * docker/centos-8/bash/Makefile         centos:8 based BASH login
- * docker/centos-8/dev/Dockerfile
- * docker/centos-8/dev/Makefile          centos:8 based GCC dev shell
  * docker/clearlinux/Dockerfile
  * docker/clearlinux/Makefile            clearlinux:latest based linux
  * docker/clearlinux/bash/Makefile       clearlinux:latest based BASH login
@@ -1081,18 +1069,6 @@ the years.
  * docker/nginx-1.18/Dockerfile
  * docker/nginx-1.18/Makefile            nginx:1.18-alpine based reverse proxy server
  * docker/nginx-1.18/files/nginx-proxy.conf
- * docker/oraclelinux-7/Dockerfile
- * docker/oraclelinux-7/Makefile         oraclelinux:7-slim based linux
- * docker/oraclelinux-7/bash/Dockerfile
- * docker/oraclelinux-7/bash/Makefile    oraclelinux:7-slim based BASH login
- * docker/oraclelinux-7/dev/Dockerfile
- * docker/oraclelinux-7/dev/Makefile     oraclelinux:7-slim based GCC dev shell
- * docker/oraclelinux-8/Dockerfile
- * docker/oraclelinux-8/Makefile         oraclelinux:8-slim based linux
- * docker/oraclelinux-8/bash/Dockerfile
- * docker/oraclelinux-8/bash/Makefile    oraclelinux:8-slim based BASH login
- * docker/oraclelinux-8/dev/Dockerfile
- * docker/oraclelinux-8/dev/Makefile     oraclelinux:8-slim based GCC dev shel
  * docker/python-3.9/Dockerfile
  * docker/python-3.9/Makefile            python:3.9-slim-bullseye based Python app
  * docker/python-3.9/bash/Dockerfile
@@ -1106,14 +1082,8 @@ the years.
  * docker/registry-2.6/Dockerfile
  * docker/registry-2.6/Makefile          registry:2.6 based Docker Registry server app
  * docker/registry-2.6/files/config.yaml
- * docker/rockylinux-8/Dockerfile
- * docker/rockylinux-8/Makefile          rockylinux:8 based linux
- * docker/rockylinux-8/bash/Dockerfile
- * docker/rockylinux-8/bash/Makefile     rockylinux:8 based BASH login
- * docker/rockylinux-8/dev/Dockerfile
- * docker/rockylinux-8/dev/Makefile      rockylinux:8 based GCC dev shell
  * docker/scratch/Dockerfile
- * docker/scrtach/Makefile               scratch image for jail breaking (docker-sudo)
+ * docker/scratch/Makefile               scratch image for jail breaking (docker-sudo)
  * docker/ubuntu-18.04/Makefile
  * docker/ubuntu-18.04/Dockerfile        ubuntu:18.04 based linux
  * docker/ubuntu-18.04/bash/Makefile

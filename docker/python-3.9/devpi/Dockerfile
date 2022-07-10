@@ -3,10 +3,10 @@ ARG BASE_IMAGE=drtuxwang/python:latest
 FROM ${BASE_IMAGE}
 
 RUN python3 -m pip install \
-        devpi-server==4.7.1 \
-        devpi-web==3.4.1 \
-        devpi-common==3.3.2 && \
-    devpi-server --init --serverdir=/var/lib/devpi
+        devpi-server==6.5.1 \
+        devpi-web==4.0.8 \
+        devpi-common==3.6.0 && \
+    devpi-init --serverdir=/var/lib/devpi
 
 # Configure start
 ENV PYTHONDONTWRITEBYTECODE 1

@@ -3,7 +3,6 @@ ARG BASE_IMAGE=almalinux:latest
 FROM ${BASE_IMAGE}
 
 # Install base packages
-## gdbm-devel ????
 RUN dnf install -y epel-release && \
     yum update -y && \
     yum install -y \
