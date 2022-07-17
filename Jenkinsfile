@@ -92,8 +92,8 @@ pipeline {
                                     cd system-config
                                     make --no-print-directory -C docker/python-${python_version} build
                                     make --no-print-directory -C docker/python-${python_version} version
-                                    make --no-print-directory -C docker/python-${python_version}/dev/full build
-                                    make --no-print-directory -C docker/python-${python_version}/dev/full version
+                                    make --no-print-directory -C docker/python-${python_version}/full build
+                                    make --no-print-directory -C docker/python-${python_version}/full version
                                 """
                             }
                         }

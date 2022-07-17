@@ -49,7 +49,7 @@ run:                 # Run Docker container
 	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
 .PHONY: version
-version:   i         # Check versions
+version:             # Check versions
 	@docker run $(DOCKER_RUN_FLAGS) $(IMAGE) go version 2> /dev/null | \
 		sed -e "s@.*go@$(shell pwd): Golang @"
 

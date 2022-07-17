@@ -1,4 +1,4 @@
-BASE_IMAGE := drtuxwang/python-dev:3.9-slim-bullseye
+BASE_IMAGE := drtuxwang/python:3.9-slim-bullseye
 IMAGE := drtuxwang/python-full:3.9-slim-bullseye
 NAME := python39-full
 HOSTNAME := python39-full
@@ -29,7 +29,9 @@ status:              # Status of Docker images
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
+	../../bin/create-rootfs.sh bash bin python3.9 vim
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
+	rm -rf rootfs
 
 .PHONY: run
 run:                 # Run Docker container
@@ -40,7 +42,7 @@ run:                 # Run Docker container
 test:                # Run tests
 	docker run \
 		--rm \
-		--volume=$(shell realpath ../../../..):/vol/app:ro \
+		--volume=$(shell realpath ../../..):/vol/app:ro \
 		--workdir=/vol/app \
 		$(IMAGE) \
 		make test
