@@ -382,12 +382,12 @@ class Main:
             elif os.path.isdir(source_file) and self._recursive:
                 self._mirror(source_file, target_file)
 
-        self._mirror_directory_time(source_dir, target_dir)
-
         if self._options.get_remove_flag():
             self._remove_old_files(source_dir, source_files, target_files)
         else:
             self._report_old_files(source_dir, source_files, target_files)
+
+        self._mirror_directory_time(source_dir, target_dir)
 
     def run(self) -> int:
         """

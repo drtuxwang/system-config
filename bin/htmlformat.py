@@ -97,7 +97,7 @@ class Main:
                 f'{sys.argv[0]}: Cannot read "{file}" file.',
             ) from exception
         soup = bs4.BeautifulSoup(
-            ''.join(lines).replace('&', '&amp;'),
+            '\n'.join(lines).replace('&', '&amp;'),
             'html.parser'
         )
         html_text = cls._indent.sub(r'\1\1', soup.prettify())
