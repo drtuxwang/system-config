@@ -32,6 +32,10 @@ pull:                # Pull Docker base image
 	docker pull $(BASE_IMAGE)
 	@make --no-print-directory status
 
+.PHONY: pull-save
+pull-save:           # Pull Docker base image and save as tar file if changed
+	../bin/docker-pull-save.sh $(BASE_IMAGE)
+
 .PHONY: save
 save:                # Save Docker base image as tar file
 	../bin/docker-save.sh $(BASE_IMAGE)

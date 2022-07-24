@@ -26,4 +26,5 @@ do
     chmod 644 "$FILE.part"
     mv "$FILE.part" "$FILE"
     mv "$LIST.part" "$LIST"
+    xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose "$FILE"
 done

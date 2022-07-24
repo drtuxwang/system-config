@@ -982,6 +982,7 @@ the years.
  * docker/bin/bash2ash
  * docker/bin/create-rootfs.sh
  * docker/bin/docker-load.sh             Load docker images
+ * docker/bin/docker-pull-save.sh        Pull and save docker images if updated
  * docker/bin/docker-save.sh             Save docker images
  * docker/almalinux-8/Dockerfile
  * docker/almalinux-8/Makefile           almalinux:8 based linux

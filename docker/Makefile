@@ -32,6 +32,7 @@ STABLE_IMAGES := \
 	drtuxwang/debian-xfce:11-slim \
 	drtuxwang/nginx:1.18-alpine \
 	drtuxwang/python-dev:3.9-slim-bullseye \
+	drtuxwang/python-full:3.9-slim-bullseye \
 	drtuxwang/scratch
 TEST_DIRS := \
 	python-3.9
@@ -53,18 +54,25 @@ new:                 # Create new Docker project
 check-base:          # Show base Docker images
 	grep "^BASE_IMAGE" */Makefile
 
-.PHONY: pull-all
+.PHONY: pull
 pull:                # Pull base Docker images
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory -C $$DIR pull || exit 1; \
 	done
+
+.PHONY: pull-save
+pull-save:           # Pull base Docker images and save as tar file if changed
+	for DIR in $(BUILD_DIRS); do \
+		make --no-print-directory -C $$DIR pull-save || exit 1; \
+	done
+	ls -l docker-image_* 2> /dev/null ||:
 
 .PHONY: save
 save:                # Save base Docker images as tar files
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory -C $$DIR save; \
 	done
-	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose docker-image_*.tar
+	ls -l docker-image_* 2> /dev/null ||:
 
 .PHONY: build
 build:               # Build Docker images
