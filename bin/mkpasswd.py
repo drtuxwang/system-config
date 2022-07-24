@@ -6,7 +6,7 @@ Create secure random password.
 import argparse
 import glob
 import os
-import random
+import secrets
 import signal
 import string
 import sys
@@ -109,7 +109,7 @@ class Main:
         if options.get_symbols_flag():
             chars += '!@#$%^&*()'
 
-        print("".join(random.choice(chars) for i in range(
+        print("".join(secrets.choice(chars) for i in range(
             options.get_length())))
 
         return 0

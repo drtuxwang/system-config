@@ -6,15 +6,16 @@ Set the date and time via NTP pool
 import argparse
 import glob
 import logging
+import math
 import os
 import signal
 import socket
+import statistics
 import sys
 import time
 from typing import Generator, List
 
 import dns.resolver
-import numpy  # type: ignore
 import ntplib  # type: ignore
 
 import command_mod
@@ -171,12 +172,16 @@ class Main:
                 offsets.append(response.offset)
 
         if len(offsets) >= NTP_SYNC_MIN:
-            mean = numpy.mean(offsets)
-            stddev = numpy.std(offsets)
-            offsets = [x for x in offsets if abs(x - mean) < 2*stddev]
+            mean = statistics.mean(offsets)
+            stddev = statistics.pstdev(offsets)
+            offsets = [
+                x
+                for x in offsets
+                if math.isclose(mean, x, abs_tol=2*stddev)
+            ]
             if len(offsets) > NTP_SYNC_MIN:
-                if abs(max(offsets) - min(offsets) < 60.):
-                    average = numpy.mean(offsets)
+                if math.isclose(min(offsets), max(offsets), abs_tol=60.):
+                    average = statistics.mean(offsets)
                     logger.info(
                         "Average:  %12.9f  (%d rejected)",
                         average,
