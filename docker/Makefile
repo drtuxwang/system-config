@@ -65,14 +65,16 @@ pull-save:           # Pull base Docker images and save as tar file if changed
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory -C $$DIR pull-save || exit 1; \
 	done
-	ls -l docker-image_* 2> /dev/null ||:
+	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose *.tar ||:
+	ls -l *.tar* 2> /dev/null ||:
 
 .PHONY: save
 save:                # Save base Docker images as tar files
 	for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory -C $$DIR save; \
 	done
-	ls -l docker-image_* 2> /dev/null ||:
+	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose *.tar
+	ls -l *.tar*
 
 .PHONY: build
 build:               # Build Docker images
@@ -95,12 +97,14 @@ version:             # Check versions
 .PHONY: push-stable
 push-stable:         # Tag and push stable Docker images
 	for IMAGE in $(STABLE_IMAGES); do \
-		echo docker tag $$IMAGE $${IMAGE%:*}:stable; \
+		echo "docker tag $$IMAGE $${IMAGE%:*}:stable"; \
 		docker tag $$IMAGE $${IMAGE%:*}:stable; \
 	done
 	for IMAGE in $(STABLE_IMAGES); do \
-		docker push $$IMAGE ; \
-		docker push $${IMAGE%:*}:stable ; \
+		echo "docker push $$IMAGE"; \
+		docker push $$IMAGE; \
+		echo "docker push $${IMAGE%:*}:stable"; \
+		docker push $${IMAGE%:*}:stable; \
 	done
 	docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | grep "^drtuxwang/.*:stable " | sort
 

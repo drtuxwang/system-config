@@ -1,4 +1,5 @@
 BUILD_DIRS := \
+	cassandra \
 	chartmuseum \
 	concourse \
 	etcd \
@@ -72,7 +73,8 @@ save:                # Save Docker images as tar file
 	@for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory -C $$DIR save || exit 1; \
 	done
-	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose helm-image_*.tar
+	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose *.tar
+	ls -l *.tar*
 
 .PHONY: install-tiller
 install-tiller:      # Install legacy Helm 2.x server

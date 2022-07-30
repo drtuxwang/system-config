@@ -7,7 +7,7 @@ set -eu
 
 if [ $# = 0 ]
 then
-    echo "Usage: $0 <docker-image>"
+    echo "Usage: $0 <image>"
     exit 1
 fi
 

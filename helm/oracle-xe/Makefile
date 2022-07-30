@@ -1,25 +1,15 @@
 NAME := oracle-xe
 CHART_REPO := ./drtuxwang
 CHART_NAME := oracle-xe
-CHART_VERSION=$(shell awk '/version:/{print $$2}' drtuxwang/oracle-xe/Chart.yaml)
 NAMESPACE ?= infra
 HOSTNAME ?= oracle.kube.local
 LOCALPORT ?=
 
+ifndef CHART_VERSION
+	CHART_VERSION=$(shell make --no-print-directory list | awk 'END {print $$2}')
+endif
 ifndef APP_VERSION
-	APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
-endif
-EXTERNAL_IP=$(shell ping -c 1 $(HOSTNAME) 2> /dev/null | grep "^PING" | sed -e "s/.* (//;s/).*//")
-HELM_FLAGS := \
-	--namespace=$(NAMESPACE) \
-	--values values.yaml \
-	--set image.name=$(APP_IMAGE) \
-	--set fullnameOverride=$(NAME)
-ifeq ($(shell echo ${EXTERNAL_IP} | grep -c "^."), 1)
-	HELM_FLAGS += --set service.externalIPs='{$(EXTERNAL_IP)}'
-endif
-ifdef IMAGE_TAG
-	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
+	APP_VERSION=$(shell make --no-print-directory list | awk 'END {print $$3}')
 endif
 ifeq ($(shell timeout 2 helm version | grep -c v2), 1)
 	HELM_RELEASE := $(NAMESPACE)-$(NAME)
@@ -35,6 +25,19 @@ else
 	HELM_VERSION := helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
+EXTERNAL_IP=$(shell ping -c 1 $(HOSTNAME) 2> /dev/null | grep "^PING" | sed -e "s/.* (//;s/).*//")
+HELM_FLAGS := \
+	--namespace=$(NAMESPACE) \
+	--values values.yaml \
+	--set image.name=$(APP_IMAGE) \
+	--set fullnameOverride=$(NAME)
+ifeq ($(shell echo ${EXTERNAL_IP} | grep -c "^."), 1)
+	HELM_FLAGS += --set service.externalIPs='{$(EXTERNAL_IP)}'
+endif
+ifdef IMAGE_TAG
+	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
+endif
+
 
 .PHONY: default
 default: status      # Default
@@ -45,12 +48,16 @@ status:              # Status of Helm release
 	$(HELM_STATUS)
 	$(HELM_LIST)
 
-.PHONY: version
-version:             # Helm chart versions
+.PHONY: list
+list:                # List Helm chart versions
 	@grep "name:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("./'$(CHART_NAME)'/%s   ", $$2)}'
 	@grep "version:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "appVersion:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "description:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | cut -f2- -d" "
+
+.PHONY: version
+version: list        # Show Helm chart and app version
+	@echo "Helm Chart: $(CHART_REPO)/$(CHART_NAME) $(CHART_VERSION) (app-$(APP_VERSION))"
 
 .PHONY: images
 images:              # Show Docker images

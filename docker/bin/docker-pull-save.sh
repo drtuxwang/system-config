@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 #
-# Save Docker images to tar archives
+# Pull Docker images and save to tar archives
 #
 
 set -eu
 
 if [ $# = 0 ]
 then
-    echo "Usage: $0 <docker-image>"
+    echo "Usage: $0 <image>"
     exit 1
 fi
 

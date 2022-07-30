@@ -2,25 +2,18 @@ NAME := mongodb
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := mongodb
-CHART_VERSION := 10.31.5
+CHART_VERSION := 11.2.0
+APP_VERSION := 4.4.15
+IMAGE_TAG := 4.4.15-debian-10-r8
 NAMESPACE ?= infra
 HOSTNAME ?= mongodb.kube.local
 LOCALPORT ?=
 
+ifndef CHART_VERSION
+	CHART_VERSION=$(shell make --no-print-directory list | awk 'END {print $$2}')
+endif
 ifndef APP_VERSION
-	APP_VERSION=$(shell make --no-print-directory version | awk 'END {print $$3}')
-endif
-EXTERNAL_IP=$(shell ping -c 1 $(HOSTNAME) 2> /dev/null | grep "^PING" | sed -e "s/.* (//;s/).*//")
-HELM_FLAGS := \
-	--namespace=$(NAMESPACE) \
-	--values values.yaml \
-	--set fullnameOverride=$(NAME) \
-	--version $(CHART_VERSION)
-ifeq ($(shell echo ${EXTERNAL_IP} | grep -c "^."), 1)
-	HELM_FLAGS += --set service.externalIPs='{$(EXTERNAL_IP)}'
-endif
-ifdef IMAGE_TAG
-	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
+	APP_VERSION=$(shell make --no-print-directory list | awk 'END {print $$3}')
 endif
 ifeq ($(shell timeout 2 helm version | grep -c v2), 1)
 	HELM_RELEASE := $(NAMESPACE)-$(NAME)
@@ -36,12 +29,26 @@ else
 	HELM_VERSION := helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
+EXTERNAL_IP=$(shell ping -c 1 $(HOSTNAME) 2> /dev/null | grep "^PING" | sed -e "s/.* (//;s/).*//")
+HELM_FLAGS := \
+	--namespace=$(NAMESPACE) \
+	--values values.yaml \
+	--set fullnameOverride=$(NAME) \
+	--version $(CHART_VERSION)
+ifeq ($(shell echo ${EXTERNAL_IP} | grep -c "^."), 1)
+	HELM_FLAGS += --set service.externalIPs='{$(EXTERNAL_IP)}'
+endif
+ifdef IMAGE_TAG
+	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
+endif
+
 
 .PHONY: default
 default: status      # Default
 
 .PHONY: status
 status:              # Status of Helm release
+	@echo "\n*** Checking status ***"
 	$(HELM_STATUS)
 	$(HELM_LIST)
 
@@ -49,11 +56,15 @@ status:              # Status of Helm release
 repo-add:            # Add Helm repository
 	helm repo list | grep -q $(CHART_REPO) || helm repo add $(CHART_REPO) $(CHART_URL)
 
+.PHONY: list
+list:                # List Helm chart versions
+	@$(HELM_VERSION) | grep "^$(CHART_REPO)/$(CHART_NAME)[	 ]" | \
+		sed -e "s/	/   /g;s/   */   /g" | sed '0,/ $(CHART_VERSION) /!d' | \
+		sed -e "s@^$(CHART_REPO)/$(CHART_NAME)   $(CHART_VERSION) @$(CHART_REPO)/$(CHART_NAME)  <$(CHART_VERSION)>@"
+
 .PHONY: version
-version:             # Helm chart versions
-	@$(HELM_VERSION) | tail -n +2 | \
-		grep -B 1000 "^$(CHART_REPO)/$(CHART_NAME)[	 ]*$(CHART_VERSION) " | \
-		sed -e "s/	/   /g" -e "s/   */   /g"
+version: list        # Show Helm chart and app version
+	@echo "Helm Chart: $(CHART_REPO)/$(CHART_NAME) $(CHART_VERSION) (app-$(APP_VERSION))"
 
 .PHONY: fetch
 fetch: repo-add clean # Fetch Helm chart

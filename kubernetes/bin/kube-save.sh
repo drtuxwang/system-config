@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+#
+# Save images used by Kubernetes as tar archives
+#
 
 set -eu
 
@@ -17,7 +20,7 @@ k8s.gcr.io/coredns:$COREDNS_VERSION
 k8s.gcr.io/etcd:$ETCD_VERSION
 k8s.gcr.io/pause:$PAUSE_VERSION
 "
-FILE="kubernetes-images_control-plane_${KUBE_VERSION}.tar"
+FILE="kube-control-plane_${KUBE_VERSION}.tar"
 LIST="${FILE%.tar}.list"
 CREATED=$(docker inspect $IMAGES | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 
@@ -35,7 +38,7 @@ calico/kube-controllers:$CALICO_VERSION
 calico/node:$CALICO_VERSION
 calico/pod2daemon-flexvol:$CALICO_VERSION
 "
-FILE="kubernetes-images_calico-cni_${CALICO_VERSION}.tar"
+FILE="calico-cni_${CALICO_VERSION}.tar"
 LIST="${FILE%.tar}.list"
 CREATED=$(docker inspect $IMAGES | sed -e 's/"/ /g' | sort -r | awk '/Created/ {print $3; exit}')
 

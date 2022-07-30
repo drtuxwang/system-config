@@ -2,15 +2,12 @@ NAME := ops-server
 CHART_REPO := ./drtuxwang
 CHART_NAME := ops-server
 NAMESPACE ?= default
-HELM_FLAGS ?=
 
-HELM_FLAGS := \
-	--namespace=$(NAMESPACE) \
-	--values values.yaml \
-	--set image.name=$(APP_IMAGE) \
-	--set fullnameOverride=$(NAME)
-ifdef IMAGE_TAG
-	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
+ifndef CHART_VERSION
+	CHART_VERSION=$(shell make --no-print-directory list | awk 'END {print $$2}')
+endif
+ifndef APP_VERSION
+	APP_VERSION=$(shell make --no-print-directory list | awk 'END {print $$3}')
 endif
 ifeq ($(shell timeout 2 helm version | grep -c v2), 1)
 	HELM_RELEASE := $(NAMESPACE)-$(NAME)
@@ -26,22 +23,35 @@ else
 	HELM_VERSION := helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
 
+HELM_FLAGS := \
+	--namespace=$(NAMESPACE) \
+	--values values.yaml \
+	--set image.name=$(APP_IMAGE) \
+	--set fullnameOverride=$(NAME)
+ifdef IMAGE_TAG
+	HELM_FLAGS += --set image.tag=$(IMAGE_TAG)
+endif
+
 
 .PHONY: default
 default: status      # Default
 
 .PHONY: status
 status:              # Status of Helm release
+	@echo "\n*** Checking status ***"
 	$(HELM_STATUS)
 	$(HELM_LIST)
 
-.PHONY: version
-version:             # Helm chart versions
-	@echo "\n*** Checking status ***"
+.PHONY: list
+list:                # List Helm chart versions
 	@grep "name:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("./'$(CHART_NAME)'/%s   ", $$2)}'
 	@grep "version:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "appVersion:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | awk '{printf("%s   ", $$2)}'
 	@grep "description:" $(CHART_REPO)/$(CHART_NAME)/Chart.yaml | cut -f2- -d" "
+
+.PHONY: version
+version: list        # Show Helm chart and app version
+	@echo "Helm Chart: $(CHART_REPO)/$(CHART_NAME) $(CHART_VERSION) (app-$(APP_VERSION))"
 
 .PHONY: images
 images:              # Show Docker images
@@ -51,7 +61,7 @@ images:              # Show Docker images
 pull:                # Pull Docker images
 
 .PHONY: save
-save:    i           # Save Docker images as tar file
+save:                # Save Docker images as tar file
 
 .PHONY: template
 template:            # Show Helm template
