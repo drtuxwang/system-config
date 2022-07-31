@@ -8,7 +8,6 @@ import glob
 import hashlib
 import os
 import random
-import re
 import signal
 import sys
 from typing import List
@@ -60,11 +59,10 @@ class Options:
     @staticmethod
     def _select_urls(args: List[str]) -> List[str]:
         if [x for x in args if 'cdninstagram.com' in x]:
-            isbad = re.compile('(p1080|s150|s320|s640|s1080)x')
             return [
                 x
                 for x in args
-                if '?stp=dst-jpg' in x and not isbad.search(x)
+                if '?stp=dst-jpg' in x and 'cache_key=' in x
             ]
         return args
 

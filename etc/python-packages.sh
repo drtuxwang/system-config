@@ -57,7 +57,7 @@ read_requirements() {
 
 check_packages() {
     ERROR=
-    PACKAGES=$($PYTHON -m pip list 2> /dev/null | awk 'NR>=3 {printf("%s==%s\n", $1, $2)}')
+    PACKAGES=$($LIST | awk 'NR>=3 {printf("%s==%s\n", $1, $2)}')
     for PACKAGE in $PACKAGES
     do
         NAME=${PACKAGE%==*}
@@ -122,7 +122,7 @@ install_packages() {
     for PACKAGE in $(echo "$PACKAGES" | egrep "^(pip|setuptools|wheel)([>=]=.*|)$")
     do
         echo "$INSTALL $PACKAGE"
-        $INSTALL "$PACKAGE" 2>&1 | egrep -v "DEPRECATION:|'root' user|pip version|--upgrade pip"
+        $INSTALL "$PACKAGE" 2>&1 | grep -v "'root' user"
         [ ${PIPESTATUS[0]} = 0 ] || exit 1
         echo -e "${esc}[33mInstalled!${esc}[0m"
     done
@@ -132,7 +132,7 @@ install_packages() {
     for PACKAGE in $(echo "$PACKAGES" | egrep -v "^(pip|setuptools|wheel)([>=]=.*|)$")
     do
         echo "$INSTALL $PACKAGE"
-        $INSTALL "$PACKAGE" 2>&1 | egrep -v "DEPRECATION:|'root' user|pip version|--upgrade pip"
+        $INSTALL "$PACKAGE" 2>&1 | grep -v "'root' user"
         [ ${PIPESTATUS[0]} = 0 ] || continue
         echo -e "${esc}[33minstalled!${esc}[0m"
     done
@@ -140,7 +140,8 @@ install_packages() {
 
 
 umask 022
-INSTALL="$PYTHON -m pip install --no-warn-script-location --no-deps"
+LIST="$PYTHON -m pip list --no-python-version-warning --disable-pip-version-check"
+INSTALL="$PYTHON -m pip install --no-python-version-warning --disable-pip-version-check --no-warn-script-location --no-deps"
 [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ] || INSTALL="$INSTALL --user"
 if [ "$(uname)" = Darwin ]
 then

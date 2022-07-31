@@ -53,6 +53,10 @@ class Main:
         wesnoth = network_mod.Sandbox(name, errors='stop')
         wesnoth.set_args(sys.argv[1:])
 
+        config = os.path.join(os.getenv('HOME', '/'), '.config/wesnoth-1.14')
+        if not config:
+            os.mkdir(config)
+
         if not os.path.isfile(wesnoth.get_file() + '.py'):
             configs = [
                 '/dev/dri',

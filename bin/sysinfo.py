@@ -7,6 +7,7 @@ System configuration detection tool.
 
 import functools
 import glob
+import ipaddress
 import json
 import math
 import os
@@ -17,7 +18,9 @@ import subprocess
 import sys
 import threading
 import time
-from typing import Any, Generator, List, Tuple
+from typing import Any, Generator, List, Tuple, Union
+
+import requests  # type: ignore
 
 import command_mod
 import file_mod
@@ -27,8 +30,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '5.17.0'
-VERSION = 20220403
+RELEASE = '5.18.2'
+VERSION = 20220728
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -119,6 +122,36 @@ class Detect:
 
         self._system = options.get_system()
 
+    @staticmethod
+    def _ip_address(address: str, message: str) -> None:
+        ipa: Union[ipaddress.IPv4Address, ipaddress.IPv6Address]
+        try:
+            ipa = ipaddress.IPv6Interface(address).ip
+            ipv = 'IPv6'
+        except ValueError:
+            try:
+                ipa = ipaddress.IPv4Interface(address).ip
+                ipv = 'IPv4'
+            except ipaddress.AddressValueError:
+                Writer.output(name=message, value='Unknown')
+                return
+        ipranges = []
+        if ipa.is_global:
+            ipranges.append('global')
+        if ipa.is_private:
+            ipranges.append('private')
+        if ipa.is_loopback:
+            ipranges.append('loopback')
+        if ipa.is_link_local:
+            ipranges.append('link-local')
+        if ipa.is_reserved:
+            ipranges.append('reserved')
+        Writer.output(
+            name=message.replace('IPvx', ipv),
+            value=address,
+            comment=', '.join(ipranges),
+        )
+
     def _network_information(self) -> None:
         info = self._system.get_net_info()
         Writer.output(
@@ -128,16 +161,18 @@ class Detect:
         Writer.output(name='Net FQDN', value=info['Net FQDN'])
 
         for address in info['Net IPvx Address']:
-            if ':' in address:
-                Writer.output(name='Net IPv6 Address', value=address)
-            else:
-                Writer.output(name='Net IPv4 Address', value=address)
-
+            self._ip_address(address, 'Net IPvx Address')
         for address in info['Net IPvx DNS']:
-            if ':' in address:
-                Writer.output(name='Net IPv6 DNS', value=address)
-            else:
-                Writer.output(name='Net IPv4 DNS', value=address)
+            self._ip_address(address, 'Net IPvx DNS')
+
+        address = ''
+        try:
+            response = requests.get('http://ifconfig.me', timeout=2)
+            if response.status_code == 200:
+                address = response.text
+        except requests.exceptions.ConnectTimeout:
+            pass
+        self._ip_address(address, 'Net IPvx Public')
 
     def _operating_system(self) -> None:
         info = self._system.get_os_info()
