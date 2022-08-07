@@ -3,7 +3,6 @@
 # Python loader for starting system/non system Python or Python tools/modules
 #
 
-
 #
 # Function to redirect Python dot files/directories to temp cache
 #
@@ -43,7 +42,7 @@ locate_python() {
         ;;
     esac
 
-    LOCATE=`ls -1t $LOCAL/*/bin/$PYEXE 2> /dev/null | head -1`
+    LOCATE=`ls -1t $LOCAL/*/bin/$PYLD_EXE 2> /dev/null | head -1`
     if [ "$LOCATE" ]
     then  # Create "$LOCAL/*/bin/python3" wrapper script to pick system Python
         echo "$LOCATE"
@@ -56,7 +55,7 @@ locate_python() {
         i386|x86_64)
             if [ "`/usr/sbin/sysctl -a | grep \"hw.cpu64bit_capable: 1$\"`" ]
             then
-                LOCATE=`ls -1t $LOCAL/*/macos64_*-x86*/bin/$PYEXE 2> /dev/null | head -1`
+                LOCATE=`ls -1t $LOCAL/*/macos64_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1`
             fi
         esac
         ;;
@@ -65,23 +64,23 @@ locate_python() {
         GLIBC_VER=`strings "$GLIBC" 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}'`
         case `uname -m` in
         x86_64)
-            LOCATE=`(ls -1t $LOCAL/*/linux64_*-x86*glibc_$GLIBC_VER/bin/$PYEXE; ls -1t $LOCAL/*/linux64_*-x86*/bin/$PYEXE) 2> /dev/null | head -1`
+            LOCATE=`(ls -1t $LOCAL/*/linux64_*-x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux64_*-x86*/bin/$PYLD_EXE) 2> /dev/null | head -1`
             ;;
         i*86)
-            LOCATE=`(ls -1t $LOCAL/*/linux_*-x86*glibc_$GLIBC_VER/bin/$PYEXE; ls -1t $LOCAL/*/linux_*-x86*/bin/$PYEXE) 2> /dev/null | head -1`
+            LOCATE=`(ls -1t $LOCAL/*/linux_*-x86*glibc_$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-x86*/bin/$PYLD_EXE) 2> /dev/null | head -1`
             ;;
         ppc*)
-            LOCATE=`(ls -1t $LOCAL/*/linux_*-power*$GLIBC_VER/bin/$PYEXE; ls -1t $LOCAL/*/linux_*-power*/bin/$PYEXE) 2> /dev/null | head -1`
+            LOCATE=`(ls -1t $LOCAL/*/linux_*-power*$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-power*/bin/$PYLD_EXE) 2> /dev/null | head -1`
             ;;
         sparc*)
-            LOCATE=`(ls -1t $LOCAL/*/linux_*-sparc*$GLIBC_VER/bin/$PYEXE; ls -1t $LOCAL/*/linux_*-sparc*/bin/$PYEXE) 2> /dev/null | head -1`
+            LOCATE=`(ls -1t $LOCAL/*/linux_*-sparc*$GLIBC_VER/bin/$PYLD_EXE; ls -1t $LOCAL/*/linux_*-sparc*/bin/$PYLD_EXE) 2> /dev/null | head -1`
             ;;
         esac
         if [ ! "$LOCATE" ]
         then
             case `uname -m` in
             ia64|x86_64)
-                LOCATE=`ls -1t $LOCAL/*/linux_*-x86*/bin/$PYEXE 2> /dev/null | head -1`
+                LOCATE=`ls -1t $LOCAL/*/linux_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1`
                 ;;
             esac
         fi
@@ -91,31 +90,31 @@ locate_python() {
         i86pc)
             if [ -d /lib/amd64 ]
             then
-                LOCATE=`ls -1t $LOCAL/*/sunos64_*-x86*/bin/$PYEXE 2> /dev/null | head -1`
+                LOCATE=`ls -1t $LOCAL/*/sunos64_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1`
             fi
             if [ ! "$LOCATE" ]
             then
-                LOCATE=`ls -1t $LOCAL/*/sunos_*-x86*/bin/$PYEXE 2> /dev/null | head -1`
+                LOCATE=`ls -1t $LOCAL/*/sunos_*-x86*/bin/$PYLD_EXE 2> /dev/null | head -1`
             fi
             ;;
         *)
-            LOCATE=`ls -1t $LOCAL/*/sunos64_*-sparc*/bin/$PYEXE 2> /dev/null | head -1`
+            LOCATE=`ls -1t $LOCAL/*/sunos64_*-sparc*/bin/$PYLD_EXE 2> /dev/null | head -1`
             if [ ! "$LOCATE" ]
             then
-                LOCATE=`ls -1t $LOCAL/*/sunos_*-sparc*/bin/$PYEXE 2> /dev/null | head -1`
+                LOCATE=`ls -1t $LOCAL/*/sunos_*-sparc*/bin/$PYLD_EXE 2> /dev/null | head -1`
             fi
             ;;
         esac
         ;;
     *NT*)
-        PYEXE="$PYEXE.exe"
+        PYLD_EXE="$PYLD_EXE.exe"
         if  [ "$PROCESSOR_ARCHITEW6432" = AMD64 ]
         then
-            LOCATE=`ls -1t $LOCAL/*/windows64_*-x86*/$PYEXE 2> /dev/null | head -1`
+            LOCATE=`ls -1t $LOCAL/*/windows64_*-x86*/$PYLD_EXE 2> /dev/null | head -1`
         fi
         if [ ! "$LOCATE" ]
         then
-            LOCATE=`ls -1t $LOCAL/*/windows_*-x86*/$PYEXE 2> /dev/null | head -1`
+            LOCATE=`ls -1t $LOCAL/*/windows_*-x86*/$PYLD_EXE 2> /dev/null | head -1`
         fi
         ;;
     esac
@@ -165,33 +164,18 @@ locate_python_tool() {
 # Execute Python or Python tool
 #
 exec_python() {
-    BIN_DIR=`dirname "$0"`
-    PYEXE=python3
-    PYLD_FLAGS=
-    PY_MAIN=`basename "$0"`
-    case $PY_MAIN in
-    [0-9]*)
-        PYLD_FLAGS="-pyldname=$PY_MAIN"
-        PY_MAIN="_$PY_MAIN"
-        ;;
-    ipdb|pip|pydoc)
-        PYEXE=python
-        ;;
-    mypy)
-        MYPY_CACHE_DIR=/dev/null
-        export MYPY_CACHE_DIR
-        ;;
-    python*)
-        PYEXE="$PY_MAIN"
-        ;;
-    *)
-      if [ -f "$BIN_DIR/"`echo $PY_MAIN | sed -e "s/+/x/g;s/-/_/g"`_.py ]
-      then
-          PYLD_FLAGS="-pyldname=$PY_MAIN"
-          PY_MAIN=`echo $PY_MAIN | sed -e "s/+/x/g;s/-/_/g"`_
-      fi
-      ;;
-    esac
+    PYLD_BIN=`dirname "$0"`
+    if [ ! "$PYLD_EXE" ]
+    then
+        PYLD_EXE=python3
+    fi
+    if [ "$PYLD_MAIN" ]
+    then
+        PYLD_FLAGS="-pyldname="`basename "$0"`
+    else
+        PYLD_MAIN=`basename "$0"`
+        PYLD_FLAGS=
+    fi
 
     if [ "$OSTYPE" = "cygwin" ]
     then
@@ -222,7 +206,7 @@ exec_python() {
     PYTHON=`locate_python "$@"`
     if [ ! "$PYTHON" ]
     then
-        PYTHON=`which $PYEXE`
+        PYTHON=`which $PYLD_EXE`
         if [ ! "$PYTHON" ]
         then
             echo "***ERROR*** Cannot find required \"`basename \"$0\"`\" software." 1>&2
@@ -232,20 +216,20 @@ exec_python() {
 
     unset PYTHONSTARTUP PYTHONHOME
 
-    if [ "$PYEXE" = "$PY_MAIN" ]
+    if [ "$PYLD_EXE" = "$PYLD_MAIN" ]
     then
         exec $PYTHON "$@"
     fi
 
-    if [ -f "$BIN_DIR/$PY_MAIN.py" ]
+    if [ -f "$PYLD_BIN/$PYLD_MAIN.py" ]
     then
-        exec "$PYTHON" -B -E "$BIN_DIR/pyld.py" $PYLD_FLAGS $PY_MAIN "$@"
+        exec "$PYTHON" -B -E "$PYLD_BIN/pyld.py" $PYLD_FLAGS $PYLD_MAIN "$@"
     fi
 
-    if [ "$PYEXE" != "$PY_MAIN" ]
+    if [ "$PYLD_EXE" != "$PYLD_MAIN" ]
     then
-        BIN_DIR=`dirname "$PYTHON"`
-        TOOL=`locate_python_tool "$BIN_DIR" "$PY_MAIN"`
+        PYLD_BIN=`dirname "$PYTHON"`
+        TOOL=`locate_python_tool "$PYLD_BIN" "$PYLD_MAIN"`
         if [ "$TOOL" ]
         then
             case "$TOOL" in
@@ -260,11 +244,11 @@ exec_python() {
             exec $TOOL "$@"
         fi
     fi
-    if [ ! "`which \"$PY_MAIN\"`" ]
+    if [ ! "`which \"$PYLD_MAIN\"`" ]
     then
-        echo "***ERROR*** Cannot find required \"$PY_MAIN\" software." 1>&2
+        echo "***ERROR*** Cannot find required \"$PYLD_MAIN\" software." 1>&2
     fi
-    exec `which "$PY_MAIN"` "$@"
+    exec `which "$PYLD_MAIN"` "$@"
 }
 
 temp_dotfiles "$@"

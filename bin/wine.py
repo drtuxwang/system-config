@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "wine" & "wine64" command
+Wrapper for "wine" command
 
 Use "-reset" to clean ".wine" junk
 """

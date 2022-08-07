@@ -22,7 +22,7 @@ the years.
  * bin/power_mod.py         Python power handling module
  * bin/subtask_mod.py       Python sub task handling module
  * bin/task_mod.py          Python task handling utility module
- * bin/python               Python startup (allowing non systems port)
+ * bin/python               Python startup wrapper
  * bin/python.bat
  * bin/python2
  * bin/python2.bat
@@ -41,7 +41,7 @@ the years.
  * bin/python3.9
  * bin/python3.9.bat
  * bin/python3.10
- * bin/2to3                 Python 3.x script wrappers (allowing non systems port)
+ * bin/2to3                 Python 3.x script wrappers
  * bin/2to3.bat
  * bin/ansible
  * bin/ansible-playbook
@@ -49,8 +49,6 @@ the years.
  * bin/ansible-vault
  * bin/ansible-vault-venv
  * bin/appimage-builder
- * bin/asmc
- * bin/asmc.py
  * bin/aws
  * bin/aws-venv
  * bin/aws.bat
@@ -69,8 +67,6 @@ the years.
  * bin/docker-compose.bat
  * bin/flask
  * bin/flask.bat
- * bin/fly
- * bin/fly.py
  * bin/glances
  * bin/gtts-cli
  * bin/ipdb3
@@ -101,6 +97,7 @@ the years.
  * bin/poetry
  * bin/pycodestyle
  * bin/pycodestyle.bat
+ * bin/pydoc
  * bin/pydoc3
  * bin/pydoc3.bat
  * bin/pyflakes
@@ -117,10 +114,8 @@ the years.
  * bin/virtualenv.bat
  * bin/yt-dlp
  * bin/yt-dlp.bat
- * bin/0ad                  Sandbox for "0ad" launcher (allowing non systems port)
+ * bin/0ad                  Sandbox for "0ad" launcher
  * bin/_0ad.py
- * bin/wesnoth              Sandbox for "wesnoth" launcher (allowing non systems port)
- * bin/wesnoth.py
  * bin/7z                   Make a compressed archive in 7z format
  * bin/7z.bat               (uses p7zip)
  * bin/_7z.py
@@ -128,11 +123,12 @@ the years.
  * bin/aftp.py
  * bin/aplay                Play MP3/OGG/WAV audio files in directory
  * bin/aplay.py             (uses vlc)
- * bin/appimagetoo  l       Sandbox for "appimagetool" launcher (allowing non systems port)
+ * bin/appimagetoo          Sandbox for "appimagetool" launcher
  * bin/appimagetool.py
- * bin/aria2c               aria2c wrapper (allowing non systems port)
+ * bin/aria2c               Wrapper for "aria2c" command
  * bin/aria2c.py            (bandwidth 512KB limit default using "trickle", "$HOME/.config/tickle.json)
- * bin/audacity             Sandbox for "audacity" launcher (allowing non systems port)
+ * bin/asmc                 Wrapper for "asmc" command
+ * bin/audacity             Sandbox for "audacity" launcher
  * bin/audacity.bat
  * bin/audacity.py
  * bin/avi                  Encode AVI video using avconv (libxvid/libmp3lame)
@@ -148,7 +144,7 @@ the years.
  * bin/breaktimer           Break reminder timer
  * bin/breaktimer.py        (10 min default)
  * busybox.bat
- * bin/bz2                  Compress a file in BZIP2 format (allowing non systems port)
+ * bin/bz2                  Compress a file in BZIP2 format
  * bin/bz2_.py
  * bin/calendar             Displays month or year calendar
  * bin/calendar.bat
@@ -164,15 +160,15 @@ the years.
  * bin/chksequence          Check for missing sequence in numbered files
  * bin/chksequence.bat
  * bin/chksequence.py
- * bin/chrome               chrome wrapper (allowing non systems port)
+ * bin/chrome               Wrapper for "google-chrome" command
  * bin/chrome-proxy
  * bin/chrome-proxy.bat
  * bin/chrome.bat
  * bin/chrome.py
- * bin/chromium             chromium wapper (allowing non systems port)
+ * bin/chromium             Wrapper for "chromium" command
  * bin/chromium.bat
  * bin/chromium.py
- * bin/chroot               chroot wrapper (allowing non systems port)
+ * bin/chroot               Wrapper for "chroot" command
  * bin/chroot.py            (creates /shared mount automatically)
  * bin/clam                 Run ClamAV anti-virus scanner
  * bin/clam.bat
@@ -191,8 +187,7 @@ the years.
  * bin/debinstall.py
  * bin/debupdate
  * bin/debupdate.py
- * bin/dep                  dep wrapper (for golang)
- * bin/dep.py
+ * bin/dep                  Wrapper for "dep" Golang command
  * bin/dockerreg            Docker Registry tool
  * bin/dockerreg.bat
  * bin/dockerreg.py
@@ -200,18 +195,18 @@ the years.
  * bin/docker-sudo          Starts Docker sudo app
  * bin/dpkg                 dpkg wrapper (force system Python)
  * bin/dpkg.py
- * bin/eclipse              eclipse wrapper (allowing non systems port)
+ * bin/eclipse              Wrapper for 'eclipse' command
  * bin/eclipse.py
- * bin/edge                 edge wrapper (allowing non systems port)
+ * bin/edge                 Wrapper for "microsoft-edge" command
  * bin/edge.py
- * bin/espeak               espeak wrapper (allowing non systems port)
+ * bin/espeak               Wrapper for "espeak espeak
  * bin/espeak.py
- * bin/et                   Sandbox for ET Wolf launcher (allowing non systems port)
+ * bin/et                   Sandbox for ET Wolf launcher
  * bin/et.py
  * bin/et.tcl
- * bin/etl                  ET Legacy wrapper (allowing non systems port)
+ * bin/etl                  ET Legacy game launcher
  * bin/etl.py
- * bin/evince               Sandbox for "atril/evince" launcher (allowing non systems port)
+ * bin/evince               Sandbox for "atril/evince" launcher
  * bin/evince.bat
  * bin/evince.py
  * bin/extfbfl              Extract Facebook friends list from saved HTML file
@@ -262,12 +257,9 @@ the years.
  * bin/ffix                 Remove horrible characters in filename
  * bin/ffix.bat             (like spaces etc)
  * bin/ffix.py
- * bin/ffmpeg               ffmpeg wrapper (allowing non systems port)
- * bin/ffmpeg.py
- * bin/ffplay               ffplay wrapper (allowing non systems port)
- * bin/ffplay.py
- * bin/ffprobe              ffprobe wrapper (allowing non systems port)
- * bin/ffprobe.py
+ * bin/ffmpeg               Wrapper for "ffmpeg" command
+ * bin/ffplay               Wrapper for "ffplay" command
+ * bin/ffprobe              Wrapper for "ffprobe" command
  * bin/fget                 Download http/https/ftp/file URLs
  * bin/fget.bat
  * bin/fget.py
@@ -278,7 +270,7 @@ the years.
  * bin/fhead.py
  * bin/file-roller          Wrapper for "engrampa/file-roller" command
  * bin/file_roller_.py
- * bin/firefox              firefox wrapper (allowing non systems port)
+ * bin/firefox              Wrapper for "firefox" command
  * bin/firefox.bat          (supports "-copy", "-no-remote" and "-reset" enhancements)
  * bin/firefox.py
  * bin/fixwav               Normalize volume of wave files (-16.0dB rms mean volume)
@@ -288,6 +280,7 @@ the years.
  * bin/fls                  Show full list of files
  * bin/fls.bat
  * bin/fls.py
+ * bin/fly                  Wrapper for "fly" Concourse command
  * bin/fmkdir               Create a single lower case directory
  * bin/fmkdir.bat
  * bin/fmkdir.py
@@ -353,7 +346,7 @@ the years.
  * bin/ftoupper             Convert filename to uppercase
  * bin/ftoupper.bat
  * bin/ftoupper.py
- * bin/ftp ftp wrapper      (allowing non systems port)
+ * bin/ftp                  Wrapper for "ftp" command
  * bin/ftp.py
  * bin/fwatch               Watch file system events
  * bin/fwatch.py            (uses inotifywait)
@@ -365,57 +358,53 @@ the years.
  * bin/fzero                Zero device or create zero file
  * bin/fzero.bat
  * bin/fzero.py
- * bin/gcc                  GNU compiler wrappers (allowing non systems port)
+ * bin/gcc                  Wrapper for "gcc" command
  * bin/gcc.bat
- * bin/gcc.py
- * bin/g++
+ * bin/g++                  Wrapper for "g++" command
  * bin/g++.bat
- * bin/gxx_.py
- * bin/gfortran
+ * bin/gfortran             Wrapper for "gfortran" command
  * bin/gfortran.bat
- * bin/gfortran.py
- * bin/gedit                gedit wrapper (allowing non systems port)
+ * bin/gedit                Wrapper for "gedit" command
  * bin/gedit.py
- * bin/gem                  Wrapper to select "umask 022"
- * bin/gem.py
+ * bin/gem                  Wrapper for "gem" Ruby command
  * bin/getip                Get the IP number of hosts
  * bin/getip.bat
  * bin/getip.py
  * bin/geturl               Multi-threaded download accelerator
  * bin/geturl.py            (use aria2c)
- * bin/gimp                 Sandbox for "gimp" launcher (allowing non systems port)
+ * bin/gimp                 Sandbox for "gimp" launcher
  * bin/gimp.bat
  * bin/gimp.py
- * bin/git                  git wrapper (allowing non systems port)
+ * bin/git                  Wrapper for "git" command
  * bin/git.bat
  * bin/git_.py
  * bin/git-bash.bat         git bash shell for Windows
- * bin/gitk                 gitk wrapper (allowing non systems port)
+ * bin/gitk                 Wrapper for "gitk" commamd
  * bin/gitk.bat
  * bin/gitk.py
  * bin/git-lfs              git large file storage plugin
  * bin/git_lfs_.py
  * bin/git-time             git original author time plugin
  * bin/git_time_.py
- * bin/gnomine              gnome-mines/gnomine wrapper (allowing non systems port)
+ * bin/gnomine              Wrapper for "gnome-mines" command
  * bin/gnomine.py           (can pick using old gnomines name)
  * bin/go                   Go wrapper (golang)
  * bin/go.py
  * bin/google               Google search engine submission
  * bin/google.py
- * bin/gpg                  gpg wrapper (allowing non systems port)
- * bin/gpg.py               (contains enhanced functions "gpg -h")
- * bin/gqview               gqview wrapper (allowing non systems port)
- * bin/gqview.bat           (uses gqview)
- * bin/gqview.py            (uses geeqie)
+ * bin/gpg                  Make an encrypted archive in gpg (pgp compatible) format.
+ * bin/gpg.py
+ * bin/gqview               Wrapper for "geeqie" command
+ * bin/gqview.bat
+ * bin/gqview.py
  * bin/graph                Generate multiple graph files with X/Y plots (uses gnuplot)
  * bin/graph.py
- * bin/gz                   Compress a file in GZIP format (allowing non systems port)
+ * bin/gz                   Compress a file in GZIP format
  * bin/gz.py
  * bin/halt                 Fast shutdown using "/proc/sysrq-trigger"
- * bin/hardinfo             hardinfo wrapper (allowing non systems port)
+ * bin/hardinfo             Wrapper for "hardinfo" command
  * bin/hardinfo.py
- * bin/hearts               Sandbox for "hearts" launcher (allowing non systems port)
+ * bin/hearts               Sandbox for "hearts" launcher
  * bin/hearts.py
  * bin/helm                 helm wrapper (for Kubernetes)
  * bin/helm.py
@@ -428,23 +417,20 @@ the years.
  * bin/index                Produce "index.fsum" file and "..fsum" cache files
  * bin/index.bat
  * bin/index.py
- * bin/inkscape             Sandbox for "inkscape" launcher (allowing non systems port)
+ * bin/inkscape             Sandbox for "inkscape" launcher
  * bin/inkscape.py
  * bin/isitup               Checks whether a host is up
  * bin/isitup.bat
  * bin/isitup.py
  * bin/iso                  Make a portable CD/DVD archive in ISO9660 format
  * bin/iso.py
- * bin/iterm                iTerm2 (allowing non systems port)
- * bin/iterm.py
- * bin/jar                  jar wrapper (allowing non systems port)
- * bin/jar.py               (Java jar archiver)
- * bin/java                 java wrapper (allowing non systems port)
- * bin/java.py              (Java run time)
- * bin/javac                javac wrapper (allowing non systems port)
- * bin/javac.py             (Java compiler)
- * bin/jpeg2ps              jpeg2ps wrapper (allowing non systems port)
- * bin/jpeg2ps.py
+ * bin/iterm                Wrapper for "iterm" Mac command
+ * bin/jar                  JAVA jar tool launcher
+ * bin/jar.py
+ * bin/java                 JAVA launcher
+ * bin/java.py
+ * bin/javac                Wrapper for "javac" command
+ * bin/jpeg2ps              Wrapper for "jpeg2ps" command
  * bin/jsformat             Javascript file re-formatter
  * bin/jsformat.bat
  * bin/jsformat.py
@@ -454,20 +440,16 @@ the years.
  * bin/jsonformat           JSON file re-formatter
  * bin/jsonformat.bat
  * bin/jsonformat.py
- * bin/jython               Jython wrapper
- * bin/jython.py
- * bin/k3s                  K3S light weight Kubernetes distribution
- * bin/k3s.py
+ * bin/jython               Wrapper for "jython" command
+ * bin/k3s                  Wrapper for "k3s" command
  * bin/keymap.tcl           TCL/TK widget for setting keymaps
- * bin/keytool              keytool wrapper (allowing non systems port)
- * bin/keytool.py
+ * bin/keytool              Wrapper for "keytool" Java command
  * bin/kmodsign             Wrapper for Kernel's sign-file command
  * bin/kmodsign.py
- * bin/kubectl              kubectl wrapper (allowing non systems port)
+ * bin/kubectl              Wrapper for "kubectl" command
  * bin/kubectl.bat
  * bin/kubectl.py
- * bin/kubeseal             kubeseal wrapper (allowing non systems port)
- * bin/kubeseal.py
+ * bin/kubeseal             Wrapper for "kubeseal" command
  * bin/markdown             Markdown wrapper (for markdown_py)
  * bin/markdown.bat
  * bin/md5                  Calculate MD5 checksums of files
@@ -481,7 +463,7 @@ the years.
  * bin/sha512.py
  * bin/md5cd                Calculate MD5 checksums for CD/DVD data disk
  * bin/md5cd.py
- * bin/meld                 Meld wrapper (allowing non systems port)
+ * bin/meld                 Wrapper for "meld" command
  * bin/meld.bat
  * bin/meld.py
  * bin/menu                 TCL/TK menu system
@@ -500,13 +482,13 @@ the years.
  * bin/mkpasswd.py
  * bin/mksshkeys            Create SSH keys and setup access to remote systems
  * bin/mksshkeys.py
- * bin/mousepad             mousepad wrapper (allowing non systems port)
- * bin/mousepad.py          (XFCE editor)
+ * bin/mousepad             Wrapper for "mousepad" command
+ * bin/mousepad.py
  * bin/mp3                  Encode MP3 audio using avconv (libmp3lame)
  * bin/mp3.py
  * bin/mp4                  Encode MP4 video using avconv (libx264/aac)
  * bin/mp4.py
- * bin/mvn                  mvn wrapper (allowing non systems port)
+ * bin/mvn                  MAVEN launcher
  * bin/mvn.py
  * bin/myqdel               MyQS personal batch system for each user
  * bin/myqdel.py
@@ -518,10 +500,12 @@ the years.
  * bin/myqstat.py
  * bin/myqsub
  * bin/myqsub.py
- * bin/nautilus             nautilus wrapper (allowing non systems port)
+ * bin/nautilus             Wrapper for "nautilus" command
  * bin/nautilus.py
  * bin/netnice              Run a command with limited network bandwidth (uses trickle)
  * bin/netnice.py
+ * bin/node                 Wrapper for "node" Node.js command
+ * bin/npm                  Wrapper for "npm" Node.js command
  * bin/ntpdate              Wrapper for "ntpdate" command
  * bin/ntpdate.py
  * bin/ntplib               Set the date and time via NTP pool
@@ -532,16 +516,15 @@ the years.
  * bin/ogg.py
  * bin/open                 Open files using hardwired application mapping
  * bin/open.py
- * bin/padman               Sandbox for "wop" launcher (allowing non systems port)
+ * bin/padman               Sandbox for "wop" launcher
  * bin/padman.py
- * bin/par2                 par2 wrapper (allowing non systems port)
+ * bin/par2                 Wrapper for "par2" command
  * bin/par2.bat
- * bin/par2.py
  * bin/pause                Pause until user presses ENTER/RETURN key
  * bin/pause.bat
  * bin/pause.py
- * bin/pbsetup              pbsetup wrapper (allowing non systems port)
- * bin/pbsetup.py           (Punk Buster)
+ * bin/pbsetup              PUNK BUSTER SETUP launcher
+ * bin/pbsetup.py
  * bin/pcheck               Check JPEG picture files
  * bin/pcheck.py
  * bin/pcunix.bat           Start PCUNIX on Windows
@@ -549,7 +532,7 @@ the years.
  * bin/pdf.py
  * bin/pget                 Picture downloader for Instagram website
  * bin/pget.py
- * bin/pidgin               Pidgin wrapper (allowing non systems port)
+ * bin/pidgin               Wrapper for "pidgin" command
  * bin/pidgin.bat
  * bin/pidgin.py
  * bin/play                 Play multimedia file/URL
@@ -567,9 +550,8 @@ the years.
  * bin/pop                  Send popup message to display
  * bin/pop.jar              (uses Java)
  * bin/pop.py
- * bin/procexp              Windows procexp wrapper (allowing non systems port)
+ * bin/procexp              Wrapper for "procexp" Winodws command
  * bin/procexp.bat
- * bin/procexp.py
  * bin/psame                Show picture files with same finger print
  * bin/psame.bat
  * bin/psame.py
@@ -581,6 +563,7 @@ the years.
  * bin/pyc.py
  * bin/pyld.sh              Python loading module for sh/ksh/bash wrapper scripts
  * bin/pyld.py              Load Python main program as module (must have Main class)
+ * bin/pyld_gen.py          Wrapper for generic command
  * bin/test_pyld.py         Unit testing suite for "pyld.py"
  * bin/pyprof               Profile Python 3.x program
  * bin/pyprof.bat
@@ -592,13 +575,13 @@ the years.
  * bin/random_.py
  * bin/readcd               Copy CD/DVD data as a portable ISO/BIN image file
  * bin/readcd.py
- * bin/robo3t               Sandbox for robo3t launcher (allowing non systems port)
+ * bin/robo3t               Sandbox for "robo3t" launcher
  * bin/robo3t.py
  * bin/ripcd                Rip CD audio tracks as WAVE sound files
  * bin/ripcd.py
  * bin/ripdvd               Rip Video DVD title to file
  * bin/ripdvd.py
- * bin/rpm                  rpm wrapper (allowing non systems port)
+ * bin/rpm                  Wrapper for "rpm" command
  * bin/rpm.py
  * bin/run                  Run a command immune to terminal hangups
  * bin/run.py
@@ -613,35 +596,32 @@ the years.
  * bin/sequence.bat
  * bin/sequence.py
  * bin/sftp.bat             Windows sftp wrapper (uses PuTTY)
- * bin/shotcut              Sandbox for "shotcut" launcher (allowing non systems port)
+ * bin/shotcut              Sandbox for "shotcut" launcher
  * bin/shotcut.py
  * bin/shuffle              Print arguments in random order
  * bin/shuffle.bat
  * bin/shuffle.py
- * bin/skype                skype wrapper (allowing non systems port)
+ * bin/skype                Wrapper for "skype" command
  * bin/skype.py
  * bin/smount               Securely mount a file system using SSH protocol
  * bin/smount.py            (uses fuse.sshfs)
- * bin/soffice              Sandbox for "soffice" launcher (allowing non systems port)
+ * bin/soffice              Sandbox for "soffice" launcher
  * bin/soffice.bat          (LibreOffice)
  * bin/soffice.py
  * bin/sqlplus              Sqlplus wrapper (for Oracle Instant Client)
+ * bin/sqlplus64
  * bin/sqlplus.bat
  * bin/sqlplus.py
- * bin/sqlplus64
- * bin/sqlplus64.py
- * bin/sonobuoy             sonobuoy (allowing non systems port)
- * bin/sonobuoy.py
+ * bin/sonobuoy             Wrapper for "sonobuoy" command
  * bin/ssh.bat              Windows ssh wrapper (uses PuTTY)
  * bin/ssh-askpass          Wrapper for "ssh-askpass" command
  * bin/ssh_askpass_.py
  * bin/ssync                Securely synchronize file system using SSH protocol
  * bin/ssync.py             (uses rsync)
  * bin/sudo                 Wrapper for "sudo" command
+ * bin/ssudo
  * bin/sudo.bat
  * bin/sudo.py
- * bin/ssudo
- * bin/ssudo.py
  * bin/sumount              Unmount file system securely mounted with SSH protocol
  * bin/sumount.py
  * bin/svncviewer           Sandbox for securely connecting to VNC server using SSH protocol
@@ -660,19 +640,18 @@ the years.
  * bin/tar.bat
  * bin/tar.py
  * bin/tar_py.py
- * bin/teams                teams wrapper (allowing non systems port)
+ * bin/teams                Wrapper for "teams" command
  * bin/teams.py
- * bin/terraform            terraform wrapper (allowing non systems port)
- * bin/terraform.py
+ * bin/terraform            Wrapper for "terraform" command
  * bin/tbz                  Make a compressed archive in TAR.BZ2
  * bin/tbz.bat
  * bin/tbz.py
  * bin/tgz                  Make a compressed archive in TAR.GZ format
  * bin/tgz.bat
  * bin/tgz.py
- * bin/tiller               Tiller wrapper (for Kubernetes)
+ * bin/tiller               Wrapper for "tiller" Helm 2 command
  * bin/tiller.py
- * bin/tinyproxy            tinyproxy wrapper (allowing non systems port)
+ * bin/tinyproxy            Wrapper for "tinyproxy" command
  * bin/tinyproxy.py
  * bin/tkill                Kill tasks by process ID or name
  * bin/tkill.bat
@@ -682,7 +661,7 @@ the years.
  * bin/tls.py
  * bin/tlz                  Make a compressed archive in TAR.LZMA format
  * bin/tlz.py
- * bin/tmux                 tmux wrapper (allowing non systems port)
+ * bin/tmux                 Wrapper for "tmux" command
  * bin/tmux.py
  * bin/tocapital            Print arguments wth first letter in upper case
  * bin/tocapital.bat
@@ -690,12 +669,12 @@ the years.
  * bin/tolower              Print arguments in lower case
  * bin/tolower.bat
  * bin/tolower.py
- * bin/top                  top wrapper (allowing non systems port)
+ * bin/top                  Wrapper for "top" command
  * bin/top.py
  * bin/toupper              Print arguments in upper case
  * bin/toupper.bat
  * bin/toupper.py
- * bin/traceroute           traceroute wrapper (allowing non systems port)
+ * bin/traceroute           Wrapper for "traceroute" command
  * bin/traceroute.bat
  * bin/traceroute.py
  * bin/twait                Wait for task to finish then launch command
@@ -710,7 +689,7 @@ the years.
  * bin/un7z.py
  * bin/unace                Unpack a compressed archive in ACE format
  * bin/unace.py
- * bin/unbz2                Uncompress a file in BZIP2 format (allowing non systems port)
+ * bin/unbz2                Uncompress a file in BZIP2 format
  * bin/unbz2.py
  * bin/undeb                Unpack a compressed archive in DEB format
  * bin/undeb.py
@@ -718,7 +697,7 @@ the years.
  * bin/undmg.py
  * bin/ungpg                Unpack an encrypted archive in gpg (pgp compatible) format
  * bin/ungpg.py
- * bin/ungz                 Uncompress a file in GZIP format (allowing non systems port)
+ * bin/ungz                 Uncompress a file in GZIP format
  * bin/ungz.py
  * bin/uniso                Unpack a portable CD/DVD archive in ISO9660 format
  * bin/uniso.py
@@ -755,58 +734,56 @@ the years.
  * bin/untzs.py
  * bin/unwine               Shuts down WINE and all Windows applications
  * bin/unwine.py
- * bin/unxz                 Uncompress a file in XZ format (allowing non systems port)
+ * bin/unxz                 Uncompress a file in XZ format
  * bin/unxz.py
  * bin/unzst                Uncompress a file in ZST format.
  * bin/unzst.py
- * bin/unzip                unzip wrapper (allowing non systems port)
+ * bin/unzip                Unpack a compressed archive in ZIP format.
  * bin/unzip.py
  * bin/urldecode            Decode URL query strings.
  * bin/urldecode.py
- * bin/ut                   Urban Terror (allowing non systems port))
+ * bin/ut                   Urban Terror game launcher
  * bin/ut.py
  * bin/vbox                 VirtualBox virtual machine manager
  * bin/vbox.py              (uses VBoxManage)
  * bin/vget                 Streaming video downloader (Youtube, m3u8 and compatible websites)
  * bin/vget.py
- * bin/vi                   vim wrapper (allowing non systems port)
- * bin/vi.bat
- * bin/vi.py
+ * bin/vi                   Wrapper for "vim" command
  * bin/vim
+ * bin/vi.bat
  * bin/vim.bat
  * bin/vim.py
  * bin/view                 View files using hardwired application mapping
  * bin/view.py
- * bin/vlc                  Sandbox for "vlc" launcher (allowing non systems port)
+ * bin/vlc                  Sandbox for "vlc" launcher
  * bin/vlc.bat
  * bin/vlc.py
  * bin/vmware               VMware Player launcher
  * bin/vmware.py
- * bin/vncpasswd            vncpasswd wrapper (allowing non systems port)
+ * bin/vncpasswd            Wrapper for "vncpasswd command
  * bin/vncpasswd.py
- * bin/vncserver            vncserver wrapper (allowing non systems port)
+ * bin/vncserver            Wrapper for "vncserver" command
  * bin/vncserver.py
- * bin/vncviewer            vncviewer wrapper (allowing non systems port)
+ * bin/vncviewer            Wrapper for "vncviewer" command
  * bin/vncviewer.bat
  * bin/vncviewer.py
  * bin/vplay                Play AVI/FLV/MP4 video files in directory.
  * bin/vplay.py             (uses vlc)
- * bin/warsow               Warsow (allowing non systems port)
- * bin/warsow.py
+ * bin/warsow               Wrapper for "warsow" command
  * bin/wav                  Encode WAV audio using avconv (pcm_s16le).
  * bin/wav.py
- * bin/wget                 wget wrapper (allowing non systems port)
- * bin/wget.py              (bandwidth 512KB limit default using "trickle", "$HOME/.config/trickle.json)
- * bin/wine                 wine wrapper (allowing non systems port)
+ * bin/wesnoth              Sandbox for "wesnoth" launcher
+ * bin/wesnoth.py
+ * bin/wget                 Wrapper for "wget" command
+ * bin/wget.py
+ * bin/wine                 Wrapper for "wine" command
+ * bin/wine64
  * bin/wine.py
- * bin/wine64               wine64 wrapper (allowing non systems port)
- * bin/wine64.py
  * bin/cmd
  * bin/weather              Current weather search
  * bin/weather.bat
  * bin/weather.py
- * bin/wipe                 wipe wrapper (allowing non systems port)
- * bin/wipe.py              (wipe is C disk wiper)
+ * bin/wipe                 Wrapper for "wipe" C disk wiper command
  * bin/xcalc                Start GNOME/KDE/XFCE calculator
  * bin/xcalc.py
  * bin/xdesktop             Start GNOME/KDE/XFCE file manager
@@ -851,7 +828,7 @@ the years.
  * bin/xvolume.py
  * bin/xweb                 Start web browser
  * bin/xweb.py
- * bin/xz                   Compress a file in XZ format (allowing non systems port)
+ * bin/xz                   Compress a file in XZ format
  * bin/xz.py
  * bin/yaml                 Convert BSON/JSON/YAML to YAML
  * bin/yaml.bat
@@ -862,10 +839,9 @@ the years.
  * bin/zhspeak              Zhong Hua Speak, Chinese TTS software
  * bin/zhspeak.py
  * bin/zhspeak.tcl
- * bin/zip                  zip wrapper (allowing non systems port)
+ * bin/zip                  Make a compressed archive in ZIP format.
  * bin/zip.py
- * bin/zoom                 zoom wrapper (allowing non systems port)
- * bin/zoom.py
+ * bin/zoom                 Wrapper for "zoom" command
  * bin/zst                  Compress a file in ZST format.
  * bin/zst.py
  * bin/zstd                 Wrapper for "zstd" command

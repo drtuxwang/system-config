@@ -50,7 +50,12 @@ class Main:
         """
         name = os.path.basename(sys.argv[0]).replace('.py', '')
 
-        command = command_mod.Command(name, errors='stop')
+        command = command_mod.Command(
+            os.path.join('bin', name),
+            errors='ignore',
+        )
+        if not command.is_found():
+            command = command_mod.Command(name, errors='stop')
         command.set_args(sys.argv[1:])
         subtask_mod.Exec(command.get_cmdline()).run()
 

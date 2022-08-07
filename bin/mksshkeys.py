@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
 Create SSH keys and setup access to remote systems.
+
+Generate manually:
+ssh-keygen -t rsa -b 4096 -f id_rsa
 """
 
 import argparse

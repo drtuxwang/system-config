@@ -1,2 +1,4 @@
 #!/bin/sh
+
+PYLD_MAIN="sudo"
 . `dirname "$0"`/pyld.sh

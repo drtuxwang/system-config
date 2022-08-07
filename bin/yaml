@@ -1,2 +1,4 @@
 #!/bin/sh
+
+PYLD_MAIN=`basename "$0" | sed -e "s/+/x/g;s/-/_/g"`_
 . `dirname "$0"`/pyld.sh

@@ -1,2 +1,4 @@
 #!/bin/sh
+
+PYLD_EXE="python"
 . `dirname "$0"`/pyld.sh

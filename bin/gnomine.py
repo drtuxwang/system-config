@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Gnome Mines wrapper (gnomine)
+Wrapper for "gnomine" command
 """
 
 import glob

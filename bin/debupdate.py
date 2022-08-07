@@ -230,11 +230,11 @@ class Main:
                                     self._read_distro_packages(file))
                             try:
                                 ispattern = re.compile(pattern.replace(
-                                    '?', '.').replace('*', '.*')+'$')
+                                    '?', '.').replace('*', '.*'))
                             except sre_constants.error:
                                 continue
                             for key, value in packages_cache[file].items():
-                                if ispattern.match(key):
+                                if ispattern.fullmatch(key):
                                     self._packages[key] = copy.copy(value)
         except OSError:
             pass
@@ -350,7 +350,7 @@ class Main:
         """
         options = Options()
 
-        ispattern = re.compile('[.]debs-?.*$')
+        ispattern = re.compile('[.]debs-?.*')
         for list_file in options.get_list_files():
             if not os.path.isfile(list_file):
                 logger.error('Cannot find "%s" list file.', list_file)

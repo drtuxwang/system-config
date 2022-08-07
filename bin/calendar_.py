@@ -128,7 +128,7 @@ class Main:
         print(
             f"\n{' '*18}[  {calendar.month_name[month]}  {year}  ]\n"
         )
-        for line in calendar.TextCalendar(6).formatmonth(
+        for line in calendar.TextCalendar().formatmonth(
                 year, month).split(os.linesep)[1:]:
             print(f"  {'_'*51}  ", line)
         print()
@@ -136,12 +136,12 @@ class Main:
         print(f" {('|'+' '*10)*7}| ")
         print(f" {('|'+' '*10)*7}| ")
         print(
-            " | Sunday   | Monday   | Tuesday  | Wednesday| Thursday"
-            " | Friday   | Saturday |"
+            " | Monday   | Tuesday  | Wednesday| Thursday | Friday  "
+            " | Saturday | Sunday   |"
         )
         print(f" {('|'+' '*10)*7}| ")
         print(f" {('|'+'_'*10)*7}| ")
-        for week in calendar.Calendar(6).monthdays2calendar(year, month):
+        for week in calendar.Calendar(0).monthdays2calendar(year, month):
             print(f" {('|'+' '*10)*7}| ")
             line = ''
             for day in week:
@@ -159,18 +159,18 @@ class Main:
     @staticmethod
     def _short(year: int, month: int) -> None:
         if month == 1:
-            data = calendar.TextCalendar(6).formatmonth(year-1, 12)
+            data = calendar.TextCalendar().formatmonth(year-1, 12)
         else:
-            data = calendar.TextCalendar(6).formatmonth(year, month-1)
+            data = calendar.TextCalendar().formatmonth(year, month-1)
         last_month = data.splitlines()+['']
 
-        data = calendar.TextCalendar(6).formatmonth(year, month)
+        data = calendar.TextCalendar().formatmonth(year, month)
         current_month = data.splitlines()+['']
 
         if month == 12:
-            data = calendar.TextCalendar(6).formatmonth(year+1, 1)
+            data = calendar.TextCalendar().formatmonth(year+1, 1)
         else:
-            data = calendar.TextCalendar(6).formatmonth(year, month+1)
+            data = calendar.TextCalendar().formatmonth(year, month+1)
         next_month = data.splitlines()+['']
 
         for index in range(8):

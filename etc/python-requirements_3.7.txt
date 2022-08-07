@@ -12,6 +12,7 @@ poetry==None
 pure-eval==None
 pycodestyle==2.7.0
 pyflakes==2.3.1
+scipy==1.7.3
 stack-data==None
 typed-ast==1.4.3             #   (required by pylint/mypy for 3.7)
 typing-extensions==4.1.1     #   (required by mypy)

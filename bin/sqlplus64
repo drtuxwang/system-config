@@ -1,2 +1,4 @@
 #!/bin/sh
+
+PYLD_MAIN="sqlplus"
 . `dirname "$0"`/pyld.sh

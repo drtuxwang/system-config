@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for GIT revision control system
+Wrapper for "git" command
 """
 
 import getpass

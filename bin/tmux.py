@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for TMUX terminal multiplexer
+Wrapper for "tmux" command
 """
 
 import glob
@@ -32,8 +32,12 @@ class Options:
     @staticmethod
     def _next(sessions: List[str]) -> str:
         hostname = socket.gethostname().split('.')[0].lower()
-        ishost = re.compile(f'{hostname}-\\d+$')
-        numbers = [int(x.split('-')[-1]) for x in sessions if ishost.match(x)]
+        ishost = re.compile(f'{hostname}-\\d+')
+        numbers = [
+            int(x.split('-')[-1])
+            for x in sessions
+            if ishost.fullmatch(x)
+        ]
         numbers.append(-1)
 
         return f"{hostname}-{max(numbers)+1}"

@@ -53,6 +53,16 @@ class Main:
 
         return config_mod.Config().get('homepage')
 
+    @staticmethod
+    def _get_tabs() -> int:
+        try:
+            tabs = int(os.environ['XWEB_TABS'])
+            if 1 < tabs < 10:
+                return tabs
+        except (KeyError, ValueError):
+            pass
+        return 1
+
     @classmethod
     def run(cls) -> int:
         """
@@ -63,7 +73,7 @@ class Main:
         if len(sys.argv) > 1:
             command.set_args(sys.argv[1:])
         else:
-            command.set_args([cls._get_default()])
+            command.set_args([cls._get_default()] * cls._get_tabs())
         subtask_mod.Task(command.get_cmdline()).run()
 
         return 0

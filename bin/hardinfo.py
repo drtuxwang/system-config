@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-HARDINFO launcher
+Wrapper for "hardinfo" command
 """
 
 import glob

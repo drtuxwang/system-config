@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for GITK revision control system
+Wrapper for "gitk" commamd
 """
 
 import getpass

@@ -1,2 +1,5 @@
 #!/bin/sh
+
+MYPY_CACHE_DIR=/dev/null
+export MYPY_CACHE_DIR
 . `dirname "$0"`/pyld.sh

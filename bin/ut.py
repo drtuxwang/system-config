@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Urban Terror wrapper (wop)
+Urban Terror game launcher
 """
 
 import glob

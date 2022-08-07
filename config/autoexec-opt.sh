@@ -9,42 +9,6 @@ set_vga() {
     xrandr -s $2x${3}_$4
 }
 
-start_app() {
-    NAME=
-    TIMEOUT=10
-    while [[ $1 = -* ]]
-    do
-        case $1 in
-        -pname=*)
-            NAME=`echo "$1" | cut -f2- -d"="`
-            ;;
-        -timeout=*)
-            TIMEOUT=`echo "$1" | cut -f2- -d"="`
-            ;;
-        esac
-        shift
-    done
-    if [ ! "$NAME" ]
-    then
-        NAME=$1
-    fi
-
-    echo "Starting \"$@\"..."
-    "$@" &
-    sleep 10
-    for DELAY in $(seq 11 $TIMEOUT)
-    do
-        if [ ! "$(ps -o "args" | sed -e "s/^/ /" -e "s/\$/ /" | grep "[ /]$NAME ")" ]
-        then
-            echo "Restarting \"$1\" after $DELAY seconds..."
-            "$@" &
-            return
-        fi
-        sleep 1
-    done
-    echo "Running \"$@\"..."
-}
-
 
 # Fix display:
 ##set_vga VGA-0 1024 768 60 &
@@ -65,7 +29,5 @@ start_app() {
 ##xset m 4,16
 
 # Start applications:
-##start_app -pname=chromium-browser -timeout=60 chromium &
-##start_app -pname=google-chrome -timeout=60 chrome &
-##start_app -timeout=60 firefox &
+##XWEB_TABS=3 xweb &
 ##myqsd 1

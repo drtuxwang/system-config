@@ -281,11 +281,11 @@ class Main:
                                     self._read_distro_packages(file))
                             try:
                                 ispattern = re.compile(pattern.replace(
-                                    '?', '.').replace('*', '.*')+'$')
+                                    '?', '.').replace('*', '.*'))
                             except sre_constants.error:
                                 continue
                             for key, value in packages_cache[file].items():
-                                if ispattern.match(key):
+                                if ispattern.fullmatch(key):
                                     self._packages[key] = copy.copy(value)
         except OSError:
             pass

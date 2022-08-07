@@ -12,7 +12,7 @@ menu_main:
 - button:
     name: browser
     color: "#ffff00"
-    label: Browser
+    label: WWW
     run: exec xweb &
 - button:
     name: document

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for generic command
+Wrapper for "sqlplus" command
 """
 
 import glob

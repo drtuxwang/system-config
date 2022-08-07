@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Show dynamic real-time status of a running system
+Wrapper for "top" command
 """
 
 import glob

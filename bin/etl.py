@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WOLFENSTEIN ENEMY TERRITORY LEGACY game launcher
+ET Legacy game launcher
 """
 
 import glob
