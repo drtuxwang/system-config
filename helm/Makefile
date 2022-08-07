@@ -63,7 +63,7 @@ images:              # Show Docker images
 	done
 
 .PHONY: pull
-pull:   i            # Pull Docker images
+pull:                # Pull Docker images
 	@for DIR in $(BUILD_DIRS); do \
 		make --no-print-directory -C $$DIR pull || exit 1; \
 	done

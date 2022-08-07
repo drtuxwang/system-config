@@ -34,7 +34,7 @@ build:               # Build Docker images
 	rm -rf rootfs
 
 .PHONY: run
-run:  i              # Run Docker container
+run:                 # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 

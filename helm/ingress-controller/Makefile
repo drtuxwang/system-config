@@ -119,7 +119,7 @@ uninstall:           # Uninstall Helm release
 	$(HELM_UNINSTALL) ||:
 
 .PHONY: clean
-clean:     i         # Remove temporary build files
+clean:               # Remove temporary build files
 	rm -rf $(CHART_REPO)
 
 .PHONY: rmi
