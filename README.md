@@ -893,8 +893,8 @@ the years.
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization
- * ansible/Makefile                      Ansible local hosts playbook
- * ansible/ansible.cfg
+ * ansible/Makefile
+ * ansible/ansible.cfg                   Ansible local hosts playbook
  * ansible/bin/show-tags.sh
  * ansible/inventory/group_vars/all
  * ansible/inventory/group_vars/local_hosts

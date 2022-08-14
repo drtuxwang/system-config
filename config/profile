@@ -55,7 +55,7 @@ then
     # Session control
     export MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
     export MYUNAME=`whoami 2> /dev/null`
-    [[ ! "$MYUNAME" ]] && export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+    [ ! "$MYUNAME" ] && export MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
     if [ "$BASH" -o "`echo $0 | \grep \"ash$\"`" ]
     then
         __fcd()
@@ -65,11 +65,11 @@ then
         __git_ps1()
         {
            local branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-           [[ "$branch" ]] && echo " ($branch)"
+           [ "$branch" ] && echo " ($branch)"
         }
         __kube_ps1()
         {
-           [[ -f "$KUBECONFIG" ]] && echo " ${KUBECONFIG##*/}"
+           [ -f "$KUBECONFIG" ] && echo " ${KUBECONFIG##*/}"
         }
         __kubeconfig() {
             ls -1 $HOME/.kube/*.yaml 2> /dev/null | sed -e "s@.*/@  Kubeconfig: @"

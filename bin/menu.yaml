@@ -432,6 +432,13 @@ menu_radiotuner:
 
 menu_system:
 - button:
+    name: fullcharge
+    color: "#ffcc00"
+    label: Full Charge
+    run: exec sudo /usr/sbin/tlp fullcharge &
+  checks:
+  - tlp
+- button:
     name: hardinfo
     color: "#ffcc00"
     label: Hardware Info

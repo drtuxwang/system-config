@@ -1,2 +1,3 @@
 %users ALL=NOPASSWD:/sbin/poweroff,/sbin/reboot
+%users ALL=NOPASSWD:/usr/sbin/tlp fullcharge
 %users ALL=NOPASSWD:/opt/software/bin/xlight

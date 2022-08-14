@@ -87,7 +87,7 @@ cql|http|https|mongodb|oradb|svnc)
         NAMESPACE=${ADDRESS%%/*}
         SERVICE=${ADDRESS#*/}
         FORWARD="kubectl.*--namespace=$NAMESPACE.*port-forward.*$SERVICE :$PORT"
-        [[ ! "$(ps -o "pid args" -u $(id -u) | grep "$FORWARD" | grep -v grep)" ]] && port_forward &
+        [ ! "$(ps -o "pid args" -u $(id -u) | grep "$FORWARD" | grep -v grep)" ] && port_forward &
         wait_connect
     else
         connect

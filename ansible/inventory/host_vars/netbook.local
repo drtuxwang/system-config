@@ -1,1 +1,4 @@
 guest_user: false
+
+charge_start: 0
+charge_stop: 60

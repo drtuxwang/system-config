@@ -96,7 +96,7 @@ check_packages() {
     $PYTHON -m pip check 2>&1 | egrep -v "DEPRECATION:"
     [ ${PIPESTATUS[0]} = 0 ] || ERROR=1
 
-    [[ "$ERROR" ]] && echo -e "${esc}[31mERROR!${esc}[0m" && exit 1
+    [ "$ERROR" ] && echo -e "${esc}[31mERROR!${esc}[0m" && exit 1
 }
 
 

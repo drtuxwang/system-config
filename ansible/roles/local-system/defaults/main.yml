@@ -8,3 +8,6 @@ zram_swap: false
 
 bin_directory: ../../bin
 data1_uuid: null
+
+charge_start: 60
+charge_stop: 80

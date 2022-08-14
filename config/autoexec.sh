@@ -4,10 +4,10 @@
 ARG=${1:-}
 
 export MYUNAME=`whoami 2> /dev/null`
-[[ ! "$MYUNAME" ]] && MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
+[ ! "$MYUNAME" ] && MYUNAME=`id | sed -e 's/^[^(]*(\([^)]*\)).*$/\1/'`
 
 # Fix logging
-[[ "$ARG" != "-start" ]] && exec $0 -start > $TMP/.cache/autoexec.log 2>&1
+[ "$ARG" != "-start" ] && exec $0 -start > $TMP/.cache/autoexec.log 2>&1
 
 # Use /tmp (tmpfs) for cache
 export TMPDIR=/tmp/$MYUNAME
@@ -15,24 +15,24 @@ export TMP=/tmp/$MYUNAME
 mkdir -p $TMP/.cache
 rm -f `find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld | \
     grep " -> /tmp" | grep -v " -> /tmp/$MYUNAME/" | sed -e "s/ ->.*//;s/.* //"`
-[[ ! -h $HOME/.cache ]] && rm -rf $HOME/.cache && ln -s $TMP/.cache $HOME/.cache
-[[ ! -h $HOME/.local/share/gvfs-metadata ]] && \
-    rm -rf $HOME/.local/share/gvfs-metadata && \ ln -s $TMP/.cache $HOME/.local/share/gvfs-metadata
-[[ ! -h $HOME/.fontconfig ]] && rm -rf $HOME/.fontconfig &&  ln -s $TMP/.cache $HOME/.fontconfig
-[[ ! -d "$HOME/.local/share/recently-used.xbel" ]] && \
+[ ! -h $HOME/.cache ] && rm -rf $HOME/.cache && ln -s $TMP/.cache $HOME/.cache
+[ ! -h $HOME/.local/share/gvfs-metadata ] && \
+    rm -rf $HOME/.local/share/gvfs-metadata && ln -s $TMP/.cache $HOME/.local/share/gvfs-metadata
+[ ! -h $HOME/.fontconfig ] && rm -rf $HOME/.fontconfig &&  ln -s $TMP/.cache $HOME/.fontconfig
+[ ! -d "$HOME/.local/share/recently-used.xbel" ] && \
     rm -f $HOME/.local/share/recently-used.xbel && mkdir -p $HOME/.local/share/recently-used.xbel
-[[ ! -h $HOME/.pki ]] && rm -rf $HOME/.pki &&  ln -s $TMP/.cache $HOME/.pki
-[[ ! -d "$HOME/.recently-used.xbel" ]] && \
+[ ! -h $HOME/.pki ] && rm -rf $HOME/.pki &&  ln -s $TMP/.cache $HOME/.pki
+[ ! -d "$HOME/.recently-used.xbel" ] && \
     rm -f $HOME/.recently-used.xbel && mkdir -p $HOME/.recently-used.xbel
-[[ ! -d $HOME/.xsession-errors.old ]] && \
+[ ! -d $HOME/.xsession-errors.old ]]&& \
     rm -f $HOME/.xsession-errors.old && mkdir $HOME/.xsession-errors.old
-[[ ! -h $HOME/.xsession-errors ]] && \
+[ ! -h $HOME/.xsession-errors ] && \
     rm -f $HOME/.xsession-errors && ln -s /dev/null $HOME/.xsession-errors
-[[ ! -d $HOME/.xfce4-session.verbose-log.last ]] && \
+[ ! -d $HOME/.xfce4-session.verbose-log.last ] && \
     rm -f $HOME/.xfce4-session.verbose-log.last && mkdir $HOME/.xfce4-session.verbose-log.last
-[[ ! -h $HOME/.xfce4-session.verbose-log ]] && \
+[ ! -h $HOME/.xfce4-session.verbose-log ] && \
     rm -f $HOME/.xfce4-session.verbose-log && ln -s /dev/null $HOME/.xfce4-session.verbose-log
-[[ ! -h $HOME/tmp || ! -w $HOME/tmp ]] && rm -rf $HOME/tmp && ln -s $TMP $HOME/tmp
+[ ! -h $HOME/tmp || ! -w $HOME/tmp ] && rm -rf $HOME/tmp && ln -s $TMP $HOME/tmp
 
 # Protect files
 chmod 711 $HOME
@@ -91,4 +91,4 @@ sleep 2 && xmodmap -e "add mod3 = Scroll_Lock" &
 xset m 4,16
 
 menu
-[[ -f $HOME/.config/autoexec-opt.sh ]] && . $HOME/.config/autoexec-opt.sh
+[ -f $HOME/.config/autoexec-opt.sh ] && . $HOME/.config/autoexec-opt.sh
