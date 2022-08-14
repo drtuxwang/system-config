@@ -34,7 +34,7 @@ import config_mod
 
 # Maximum number of repositories (bug in Registry v2 returns only 100)
 # Effects Go array size and huge number can crash Registry
-MAXREPO = "9999"
+MAXREPO = "99999"
 
 requests.packages.urllib3.disable_warnings()  # pylint: disable=no-member
 

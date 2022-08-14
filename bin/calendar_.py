@@ -124,7 +124,10 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _long(year: int, month: int) -> None:
+    def long(year: int, month: int) -> None:
+        """
+        Generate large page for single month
+        """
         print(
             f"\n{' '*18}[  {calendar.month_name[month]}  {year}  ]\n"
         )
@@ -157,21 +160,34 @@ class Main:
         print()
 
     @staticmethod
-    def _short(year: int, month: int) -> None:
-        if month == 1:
-            data = calendar.TextCalendar().formatmonth(year-1, 12)
-        else:
-            data = calendar.TextCalendar().formatmonth(year, month-1)
-        last_month = data.splitlines()+['']
-
+    def get_month(year: int, month: int) -> List[str]:
+        """
+        Generate single month calendar
+        """
         data = calendar.TextCalendar().formatmonth(year, month)
-        current_month = data.splitlines()+['']
 
-        if month == 12:
-            data = calendar.TextCalendar().formatmonth(year+1, 1)
+        now = datetime.datetime.now()
+        if year == now.year and month == now.month:
+            # Invert colours of today
+            today = f"{now.day:02d}"
+            data = data.replace(today, f"\033[7m{today}\033[m")
+
+        return data.splitlines()+['']
+
+    @classmethod
+    def short(cls, year: int, month: int) -> None:
+        """
+        Generate small three month calendar
+        """
+        if month == 1:
+            last_month = cls.get_month(year-1, 12)
         else:
-            data = calendar.TextCalendar().formatmonth(year, month+1)
-        next_month = data.splitlines()+['']
+            last_month = cls.get_month(year, month-1)
+        current_month = cls.get_month(year, month)
+        if month == 12:
+            next_month = cls.get_month(year+1, 1)
+        else:
+            next_month = cls.get_month(year, month+1)
 
         for index in range(8):
             print(
@@ -189,9 +205,9 @@ class Main:
 
         month = options.get_month()
         if options.get_long_flag() or month == 0:
-            cls._long(options.get_year(), month)
+            cls.long(options.get_year(), month)
         else:
-            cls._short(options.get_year(), month)
+            cls.short(options.get_year(), month)
 
         return 0
 

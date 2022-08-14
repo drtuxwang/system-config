@@ -146,6 +146,8 @@ the years.
  * busybox.bat
  * bin/bz2                  Compress a file in BZIP2 format
  * bin/bz2_.py
+ * bin/cal                  Wrapper for "cal" command
+ * bin/cal.py
  * bin/calendar             Displays month or year calendar
  * bin/calendar.bat
  * bin/calendar_.py

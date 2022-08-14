@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Urban Terror wrapper (wop)
+Wrapper for "cal" command
 """
 
 import glob
@@ -43,17 +43,19 @@ class Main:
                     argv.append(arg)
             sys.argv = argv
 
-    @staticmethod
-    def run() -> int:
+    @classmethod
+    def run(cls) -> None:
         """
         Start program
         """
-        command = command_mod.Command('Quake3-UrT.x86_64', errors='stop')
-        command.set_args(sys.argv[1:])
+        command = command_mod.Command('ncal', errors='ignore')
+        if command.is_found():
+            command.extend_args(['-b', '-M'])
+        else:
+            command = command_mod.Command('cal', errors='stop')
+        command.extend_args(sys.argv[1:])
 
         subtask_mod.Exec(command.get_cmdline()).run()
-
-        return 0
 
 
 if __name__ == '__main__':

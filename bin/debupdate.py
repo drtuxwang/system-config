@@ -190,6 +190,7 @@ class Main:
             lines.extend(distro_data['data'][url]['text'])
 
         packages: dict = {}
+        disable_deps = re.fullmatch(r'.*_\w+-\w+.json', packages_file)
         name = ''
         package = Package()
         for line in lines:
@@ -200,10 +201,11 @@ class Main:
                 package.set_version(
                     line.replace('Version: ', '').split(':')[-1])
             elif line.startswith('Depends: '):
-                depends = []
-                for i in line.replace('Depends: ', '').split(', '):
-                    depends.append(i.split()[0])
-                package.set_depends(depends)
+                if not disable_deps:
+                    depends = []
+                    for i in line.replace('Depends: ', '').split(', '):
+                        depends.append(i.split()[0])
+                    package.set_depends(depends)
             elif line.startswith('Filename: '):
                 if name in packages and not package.is_newer(packages[name]):
                     continue
