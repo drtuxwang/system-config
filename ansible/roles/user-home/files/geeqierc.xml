@@ -293,8 +293,8 @@
 
         main_window.x = "10" 
         main_window.y = "32" 
-        main_window.w = "1000" 
-        main_window.h = "600" 
+        main_window.w = "1400" 
+        main_window.h = "700" 
         main_window.maximized = "false" 
         main_window.hdivider_pos = "300" 
         main_window.vdivider_pos = "300" 

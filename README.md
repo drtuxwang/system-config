@@ -907,6 +907,7 @@ the years.
  * ansible/inventory/host_vars/koko.local
  * ansible/inventory/host_vars/netbook.local
  * ansible/inventory/host_vars/netty.local
+ * ansible/inventory/host_vars/viva.local
  * ansible/inventory/host_vars/webtv.local
  * ansible/inventory/host_vars/xiaobear.local
  * ansible/inventory/local_nodes
