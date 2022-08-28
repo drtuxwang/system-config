@@ -3,7 +3,7 @@ ARG BASE_IMAGE=registry:latest
 FROM ${BASE_IMAGE}
 
 COPY rootfs/ /
-COPY ./files/config.yml /etc/docker/registry/
+COPY ./files/config.yaml /etc/docker/registry/
 
 # Configure start
 ENV REGISTRY_STORAGE_DELETE_ENABLED=true
