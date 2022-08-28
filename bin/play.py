@@ -39,17 +39,17 @@ class Options:
         """
         return self._args.files
 
+    def get_mode(self) -> str:
+        """
+        Return mode.
+        """
+        return self._args.mode
+
     def get_shuffle_flag(self) -> bool:
         """
         Return shuffle flag.
         """
         return self._args.shuffle_flag
-
-    def get_view_flag(self) -> bool:
-        """
-        Return view flag.
-        """
-        return self._args.view_flag
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -63,9 +63,26 @@ class Options:
             help="Shuffle order of the media files.",
         )
         parser.add_argument(
+            '-audio',
+            action='store_const',
+            const='audio',
+            dest='mode',
+            default='full',
+            help="Play audio in media files.",
+        )
+        parser.add_argument(
+            '-video',
+            action='store_const',
+            const='video',
+            dest='mode',
+            help="Play video in media files.",
+        )
+        parser.add_argument(
             '-v',
-            dest='view_flag',
-            action='store_true',
+            action='store_const',
+            const='view',
+            dest='mode',
+            default='full',
             help="View information.",
         )
         parser.add_argument(
@@ -221,12 +238,17 @@ class Main:
                 Media(file).show()
 
     @staticmethod
-    def _play(files: List[str]) -> None:
+    def _play(mode: str, files: List[str]) -> None:
         vlc = command_mod.Command(
             'vlc',
             args=['--no-repeat', '--no-loop'] + files,
             errors='stop',
         )
+        if mode == 'audio':
+            vlc.append_arg('--novideo')
+        elif mode == 'video':
+            vlc.append_arg('--noaudio')
+
         task = subtask_mod.Batch(vlc.get_cmdline())
         task.run(
             pattern="^$|Use 'cvlc'|may be inaccurate|"
@@ -245,13 +267,14 @@ class Main:
         """
         options = Options()
         files = options.get_files()
+        mode = options.get_mode()
 
-        if options.get_view_flag():
+        if mode == 'view':
             self._view(files)
         else:
             if options.get_shuffle_flag():
                 random.shuffle(files)
-            self._play(files)
+            self._play(mode, files)
 
         return 0
 

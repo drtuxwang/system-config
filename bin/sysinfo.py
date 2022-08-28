@@ -30,8 +30,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '5.18.2'
-VERSION = 20220728
+RELEASE = '6.1.0'
+VERSION = 20220828
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -170,7 +170,10 @@ class Detect:
             response = requests.get('http://ifconfig.me', timeout=2)
             if response.status_code == 200:
                 address = response.text
-        except requests.exceptions.ConnectTimeout:
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.ConnectTimeout,
+        ):
             pass
         self._ip_address(address, 'Net IPvx Public')
 
@@ -222,6 +225,8 @@ class Detect:
                 value=value,
                 comment='KB',
             )
+        for name, status in info['CPU Vulnerabilities']:
+            Writer.output(name='CPU Vulnerability', value=name, comment=status)
 
     def _system_status(self) -> None:
         info = self._system.get_sys_info()
@@ -229,6 +234,16 @@ class Detect:
             name='System Platform',
             value=info['System Platform'],
             comment=info['System Platform X'],
+        )
+        Writer.output(
+            name='System Board',
+            value=info['System Board'],
+            comment=info['System Board X'],
+        )
+        Writer.output(
+            name='System BIOS',
+            value=info['System BIOS'],
+            comment=info['System BIOS X'],
         )
         Writer.output(
             name='System Memory',
@@ -508,6 +523,7 @@ class OperatingSystem:
         info['CPU Clock'] = 'Unknown'
         info['CPU Clocks'] = 'Unknown'
         info['CPU Cache'] = {}
+        info['CPU Vulnerabilities'] = []
         if command_mod.Platform.get_arch() == 'x86':
             info['CPU Type'] = 'x86'
         elif command_mod.Platform.get_arch() == 'x86_64':
@@ -521,11 +537,27 @@ class OperatingSystem:
         info = {}
         info['System Platform'] = command_mod.Platform.get_platform()
         info['System Platform X'] = ''
+        info['System Board'] = 'Unknown'
+        info['System Board X'] = ''
+        info['System BIOS'] = 'Unknown'
+        info['System BIOS X'] = ''
         info['System Memory'] = 'Unknown'
         info['System Swap Space'] = 'Unknown'
         info['System Uptime'] = 'Unknown'
         info['System Load'] = 'Unknown'
         return info
+
+    @staticmethod
+    def _read_file(*paths: str) -> List[str]:
+        file = os.path.join(*paths)
+        lines = []
+        try:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
+                for line in ifile:
+                    lines.append(line.rstrip('\r\n'))
+        except OSError:
+            lines = []
+        return lines
 
     @staticmethod
     def _has_value(values: dict, word: str) -> bool:
@@ -592,6 +624,15 @@ class PosixSystem(OperatingSystem):
                             state += f', {power / 1000000:4.2f}W'
                 else:
                     state = 'Unused'
+
+                # Add battery percent and threshold
+                start, stop = battery.get_thresholds()
+                if stop >= 0:
+                    state = f"{start}-{stop}%, {state}"
+                percent = battery.get_capacity_percent()
+                if percent:
+                    state = f"{percent}%, {state}"
+
                 Writer.output(
                     name='Battery device',
                     device='/dev/???',
@@ -615,23 +656,15 @@ class PosixSystem(OperatingSystem):
         Return fully qualified domain name (ie 'hostname.domain.com.').
         """
         ispattern = re.compile(r'\s*(domain|search)\s')
-        try:
-            with open(
-                '/etc/resolv.conf',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    if ispattern.match(line):
-                        fqdn = (
-                            f"{socket.gethostname().split('.')[0].lower()}."
-                            f"{line.split()[1]}"
-                        )
-                        if fqdn.endswith('.'):
-                            return fqdn
-                        return fqdn + '.'
-        except (IndexError, OSError):
-            pass
+        for line in cls._read_file('/etc/resolv.conf'):
+            if ispattern.match(line):
+                fqdn = (
+                    f"{socket.gethostname().split('.')[0].lower()}."
+                    f"{line.split()[1]}"
+                )
+                if fqdn.endswith('.'):
+                    return fqdn
+                return fqdn + '.'
         return super().get_fqdn()
 
     @classmethod
@@ -642,15 +675,10 @@ class PosixSystem(OperatingSystem):
         info = super().get_net_info()
         ispattern = re.compile(r'\s*nameserver\s*\d')
         try:
-            with open(
-                '/etc/resolv.conf',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    if ispattern.match(line):
-                        info['Net IPvx DNS'].append(line.split()[1])
-        except (IndexError, OSError):
+            for line in cls._read_file('/etc/resolv.conf'):
+                if ispattern.match(line):
+                    info['Net IPvx DNS'].append(line.split()[1])
+        except IndexError:
             pass
         return info
 
@@ -736,21 +764,21 @@ class LinuxSystem(PosixSystem):
                     else:
                         self._devices[device] = ''
 
-    @staticmethod
-    def _scan_vga(line: str, device: str, modinfo: command_mod.Command) -> str:
+    @classmethod
+    def _scan_vga(
+        cls,
+        line: str,
+        device: str,
+        modinfo: command_mod.Command,
+    ) -> str:
         device = ''
         if 'nvidia' in line.lower():
             try:
-                with open(
-                    '/proc/driver/nvidia/version',
-                    encoding='utf-8',
-                    errors='replace'
-                ) as ifile:
-                    for line2 in ifile:
-                        if 'Kernel Module ' in line2:
-                            name = line2.split('Kernel Module ')[1].split()[0]
-                            device = f'nvidia driver {name}'
-            except OSError:
+                for line2 in cls._read_file('/proc/driver/nvidia/version'):
+                    if 'Kernel Module ' in line2:
+                        name = line2.split('Kernel Module ')[1].split()[0]
+                        device = f'nvidia driver {name}'
+            except IndexError:
                 pass
         elif 'VirtualBox' in line and modinfo.is_found():
             task2 = subtask_mod.Batch(modinfo.get_cmdline() + ['vboxvideo'])
@@ -766,39 +794,22 @@ class LinuxSystem(PosixSystem):
     def _detect_audio(cls) -> None:
         info = {}
         ispattern = re.compile(r' ?\d+ ')
-        try:
-            with open(
-                '/proc/asound/cards',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    if ispattern.match(line):
-                        try:
-                            card = line.split()[0]
-                            info[card] = line.split('-')[-1].strip()
-                        except IndexError:
-                            continue
-        except OSError:
-            pass
+        for line in cls._read_file('/proc/asound/cards'):
+            if ispattern.match(line):
+                try:
+                    card = line.split()[0]
+                    info[card] = line.split('-')[-1].strip()
+                except IndexError:
+                    continue
 
         for card, model in info.items():
             for file in sorted(glob.glob(
-                    f'/proc/asound/card{card}/pcm*[cp]/info')):
-                try:
-                    with open(
-                        file,
-                        encoding='utf-8',
-                        errors='replace',
-                    ) as ifile:
-                        for line in ifile:
-                            if line.startswith('name: '):
-                                name = line.rstrip(
-                                    '\r\n',
-                                ).replace('name: ', '', 1)
-                                name = f'{model} {name}'
-                except (IndexError, OSError):
-                    continue
+                f'/proc/asound/card{card}/pcm*[cp]/info',
+            )):
+                for line in cls._read_file(file):
+                    if line.startswith('name: '):
+                        name = line.replace('name: ', '', 1)
+                        name = f'{model} {name}'
 
                 device = (
                     f"/dev/snd/pcmC{card}D"
@@ -815,95 +826,64 @@ class LinuxSystem(PosixSystem):
                     comment=comment,
                 )
 
-    @staticmethod
-    def _detect_cd_proc_ide() -> None:
+    @classmethod
+    def _detect_cd_proc_ide(cls) -> None:
         for directory in sorted(glob.glob('/proc/ide/hd*')):
             try:
-                with open(
-                    os.path.join(directory, 'driver'),
-                    encoding='utf-8',
-                    errors='replace'
-                ) as ifile:
-                    for line in ifile:
-                        if line.startswith('ide-cdrom '):
-                            with open(
-                                os.path.join(directory, 'model'),
-                                encoding='utf-8',
-                                errors='replace'
-                            ) as ifile:
-                                model = ifile.readline().strip()
-                                Writer.output(
-                                    name='CD device',
-                                    device='/dev/'
-                                    f'{os.path.basename(directory)}',
-                                    value=model,
-                                )
-                                break
-            except OSError:
+                for line in cls._read_file(directory, 'driver'):
+                    if line.startswith('ide-cdrom '):
+                        model = cls._read_file(directory, 'model')[0]
+                        Writer.output(
+                            name='CD device',
+                            device='/dev/'
+                            f'{os.path.basename(directory)}',
+                            value=model,
+                        )
+                    break
+            except IndexError:
                 pass
 
-    @staticmethod
-    def _detect_cd_sys_scsi() -> None:
+    @classmethod
+    def _detect_cd_sys_scsi(cls) -> None:
         for file in sorted(glob.glob('/sys/block/sr*/device')):  # New kernels
             try:
                 identity = os.path.basename(os.readlink(file))
             except OSError:
                 continue
             try:
-                if os.path.isdir(f'/sys/bus/scsi/devices/{identity}'):
-                    with open(
-                        os.path.join(
-                            '/sys/bus/scsi/devices',
-                            identity,
-                            'vendor',
-                        ),
-                        encoding='utf-8',
-                        errors='replace'
-                    ) as ifile:
-                        model = ifile.readline().strip()
-                    with open(
-                        os.path.join(
-                            '/sys/bus/scsi/devices',
-                            identity,
-                            'model',
-                        ),
-                        encoding='utf-8',
-                        errors='replace',
-                    ) as ifile:
-                        model += f' {ifile.readline().strip()}'
-            except OSError:
+                model = ' '.join(
+                    cls._read_file(
+                        '/sys/bus/scsi/devices',
+                        identity,
+                        'vendor',
+                    )[0].strip() +
+                    cls._read_file(
+                        '/sys/bus/scsi/devices',
+                        identity,
+                        'model',
+                    )[0].strip()
+                )
+            except IndexError:
                 model = '???'
             device = f'/dev/{os.path.basename(os.path.dirname(file))}'
             Writer.output(name='CD device', device=device, value=model)
 
-    @staticmethod
-    def _detect_cd_proc_scsi() -> None:
+    @classmethod
+    def _detect_cd_proc_scsi(cls) -> None:
         model = '???'
         unit = 0
         isjunk = re.compile('.*Vendor: | *Model:| *Rev: .*')
-        try:
-            with open(
-                '/proc/scsi/scsi',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    if 'Vendor: ' in line and 'Model: ' in line:
-                        model = isjunk.sub('', line.rstrip('\r\n'))
-                    elif 'Type:' in line and 'CD-ROM' in line:
-                        if os.path.exists(f'/dev/sr{unit}'):
-                            device = f'/dev/sr{unit}'
-                        else:
-                            device = f'/dev/scd{unit}'
-                        Writer.output(
-                            name='CD device',
-                            device=device,
-                            value=model,
-                        )
-                        model = '???'
-                        unit += 1
-        except OSError:
-            pass
+        for line in cls._read_file('/proc/scsi/scsi'):
+            if 'Vendor: ' in line and 'Model: ' in line:
+                model = isjunk.sub('', line.rstrip('\r\n'))
+            elif 'Type:' in line and 'CD-ROM' in line:
+                if os.path.exists(f'/dev/sr{unit}'):
+                    device = f'/dev/sr{unit}'
+                else:
+                    device = f'/dev/scd{unit}'
+                Writer.output(name='CD device', device=device, value=model)
+                model = '???'
+                unit += 1
 
     @classmethod
     def _detect_cd(cls) -> None:
@@ -914,67 +894,33 @@ class LinuxSystem(PosixSystem):
         else:
             cls._detect_cd_proc_scsi()
 
-    @staticmethod
-    def _get_disk_info() -> dict:
+    @classmethod
+    def _get_disk_info(cls) -> dict:
         info: dict = {}
-        info['partitions'] = []
+        info['partitions'] = cls._read_file('/proc/partitions')
         info['swaps'] = []
-        try:
-            with open(
-                '/proc/partitions',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    info['partitions'].append(line.rstrip('\r\n'))
-        except OSError:
-            pass
-        try:
-            with open(
-                '/proc/swaps',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    if line.startswith('/dev/'):
-                        info['swaps'].append(line.split()[0])
-        except OSError:
-            pass
+        for line in cls._read_file('/proc/swaps'):
+            if line.startswith('/dev/'):
+                info['swaps'].append(line.split()[0])
         return info
 
-    @staticmethod
-    def _scan_mounts(info: dict) -> None:
+    @classmethod
+    def _scan_mounts(cls, info: dict) -> None:
         info['mounts'] = {}
-        try:
-            with open(
-                '/proc/mounts',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    try:
-                        device, mount_point, mount_type = line.split()[:3]
-                        mount_info = (mount_point, mount_type)
-                        if device in info['mounts']:
-                            info['mounts'][device].append(mount_info)
-                        else:
-                            info['mounts'][device] = [mount_info]
-                    except IndexError:
-                        pass
-        except OSError:
-            pass
+        for line in cls._read_file('/proc/mounts'):
+            try:
+                device, mount_point, mount_type = line.split()[:3]
+                mount_info = (mount_point, mount_type)
+                if device in info['mounts']:
+                    info['mounts'][device].append(mount_info)
+                else:
+                    info['mounts'][device] = [mount_info]
+            except IndexError:
+                pass
 
-        try:
-            with open(
-                '/proc/swaps',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    if line.startswith('/dev/'):
-                        info['swaps'].append(line.split()[0])
-        except OSError:
-            pass
+        for line in cls._read_file('/proc/swaps'):
+            if line.startswith('/dev/'):
+                info['swaps'].append(line.split()[0])
 
     @staticmethod
     def _detect_ide_partition(
@@ -1022,70 +968,55 @@ class LinuxSystem(PosixSystem):
 
     @classmethod
     def _detect_disk_ide(cls, info: dict, directory: str) -> None:
-        with open(
-            os.path.join(directory, 'driver'),
-            encoding='utf-8',
-            errors='replace'
-        ) as ifile:
-            for line in ifile:
-                if line.startswith('ide-disk '):
-                    file = os.path.join(directory, 'model')
-                    with open(
-                        file,
-                        encoding='utf-8',
-                        errors='replace',
-                    ) as ifile2:
-                        model = ifile2.readline().rstrip('\r\n')
-                    hdx = os.path.basename(directory)
-                    for partition in info['partitions']:
-                        cls._detect_ide_partition(info, model, hdx, partition)
+        for line in cls._read_file(directory, 'driver'):
+            if line.startswith('ide-disk '):
+                file = os.path.join(directory, 'model')
+                model = cls._read_file(file)[0]
+                hdx = os.path.basename(directory)
+                for partition in info['partitions']:
+                    cls._detect_ide_partition(info, model, hdx, partition)
 
-    @staticmethod
-    def _get_disk_sys_scsi_model(file: str) -> str:
+    @classmethod
+    def _get_disk_sys_block_model(cls, file: str) -> str:
         try:
             identity = os.path.basename(os.readlink(file))
         except OSError:
             return None
 
-        try:
-            if os.path.isdir(f'/sys/bus/scsi/devices/{identity}'):
-                with open(
-                    os.path.join(
-                        '/sys/bus/scsi/devices',
-                        identity,
-                        'vendor',
-                    ),
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
-                    model = ifile.readline().strip()
-                with open(
-                    os.path.join(
-                        '/sys/bus/scsi/devices',
-                        identity,
-                        'model',
-                    ),
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
-                    model += f' {ifile.readline().strip()}'
-        except OSError:
+        if os.path.isdir(f'/sys/bus/scsi/devices/{identity}'):
+            lines = (
+                cls._read_file(
+                    '/sys/bus/scsi/devices',
+                    identity,
+                    'vendor',
+                ) +
+                cls._read_file(
+                    '/sys/bus/scsi/devices',
+                    identity,
+                    'model',
+                )
+            )
+            model = ' '.join([x.strip() for x in lines])
+        elif os.path.isdir(f'/sys/class/nvme/{identity}'):
+            lines = cls._read_file(f"/sys/class/nvme/{identity}/model")
+            model = ' '.join([x.strip() for x in lines])
+        else:
             model = '???'
 
         return model
 
     @classmethod
-    def _detect_disk_sys_scsi(cls, info: dict, file: str) -> None:
-        model = cls._get_disk_sys_scsi_model(file)
+    def _detect_disk_sys_block(cls, info: dict, file: str) -> None:
+        model = cls._get_disk_sys_block_model(file)
 
-        sdx = os.path.basename(os.path.dirname(file))
+        dev = os.path.basename(os.path.dirname(file))
         for partition in info['partitions']:
-            if partition.endswith(sdx) or sdx + ' ' in partition:
+            if partition.endswith(dev) or dev + ' ' in partition:
                 try:
                     size = partition.split()[2]
                 except IndexError:
                     size = '???'
-                device = f'/dev/{sdx}'
+                device = f'/dev/{dev}'
                 if device in info['mounts']:
                     for mount_point, mount_type in info['mounts'][device]:
                         comment = f'{mount_type} on {mount_point}'
@@ -1098,13 +1029,13 @@ class LinuxSystem(PosixSystem):
                     continue
                 Writer.output(
                     name='Disk device',
-                    device=f'/dev/{sdx}',
+                    device=f'/dev/{dev}',
                     value=f'{size} KB',
                     comment=model,
                 )
-            elif sdx in partition:
-                size, sdxn = partition.split()[2:4]
-                device = f'/dev/{sdxn}'
+            elif dev in partition:
+                size, devn = partition.split()[2:4]
+                device = f'/dev/{devn}'
                 if device in info['swaps']:
                     comment = 'swap'
                 elif device in info['mounts']:
@@ -1117,7 +1048,7 @@ class LinuxSystem(PosixSystem):
                             comment=comment,
                         )
                     continue
-                elif glob.glob(f'/sys/class/block/dm-*/slaves/{sdxn}'):
+                elif glob.glob(f'/sys/class/block/dm-*/slaves/{devn}'):
                     comment = 'devicemapper'
                 else:
                     comment = ''
@@ -1173,30 +1104,21 @@ class LinuxSystem(PosixSystem):
         model = '???'
         unit = 0
         isjunk = re.compile('.*Vendor: | *Model:| *Rev: .*')
-        try:
-            with open(
-                '/proc/scsi/scsi',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    if 'Vendor: ' in line and 'Model: ' in line:
-                        model = isjunk.sub('', line.rstrip('\r\n'))
-                    elif 'Type:' in line and 'Direct-Access' in line:
-                        cls._detect_disk_proc_scsi_part(info, unit, model)
-                        model = '???'
-                        unit += 1
-        except OSError:
-            pass
+        for line in cls._read_file('/proc/scsi/scsi'):
+            if 'Vendor: ' in line and 'Model: ' in line:
+                model = isjunk.sub('', line)
+            elif 'Type:' in line and 'Direct-Access' in line:
+                cls._detect_disk_proc_scsi_part(info, unit, model)
+                model = '???'
+                unit += 1
 
-    @staticmethod
-    def _detect_mapped_disks(info: dict) -> None:
+    @classmethod
+    def _detect_mapped_disks(cls, info: dict) -> None:
         for directory in glob.glob('/sys/class/block/dm-*'):
             file = os.path.join(directory, 'dm/name')
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
-                    device = f'/dev/mapper/{ifile.readline().strip()}'
-            except OSError:
+                device = f'/dev/mapper/{cls._read_file(file)[0].strip()}'
+            except IndexError:
                 device = '???'
             mount_info = info['mounts'].get(device, ())
 
@@ -1204,18 +1126,16 @@ class LinuxSystem(PosixSystem):
                 os.path.join(directory, 'slaves', '*')
             )])
 
-            file = os.path.join(directory, 'size')
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
-                    size = f'{int(ifile.readline()) >> 1} KB'
-            except (OSError, ValueError):
+                line = cls._read_file(directory, 'size')[0]
+                size = f'{int(line) >> 1} KB'
+            except (IndexError, ValueError):
                 size = '??? KB'
 
-            file = os.path.join(directory, 'dm', 'uuid')
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
-                    slaves = f"{ifile.readline().split('-')[0]}:{slaves}"
-            except (OSError, ValueError):
+                line = cls._read_file(directory, 'dm', 'uuid')[0]
+                slaves = f"{line.split('-')[0]}:{slaves}"
+            except IndexError:
                 slaves = f'???:{slaves}'
 
             if f'/dev/{os.path.basename(directory)}' in info['swaps']:
@@ -1276,9 +1196,10 @@ class LinuxSystem(PosixSystem):
             except OSError:
                 pass
 
-        if glob.glob('/sys/bus/scsi/devices/*'):  # New kernels has devices
-            for file in sorted(glob.glob('/sys/block/*d[a-z]*/device')):
-                cls._detect_disk_sys_scsi(info, file)
+        devices = glob.glob('/sys/block/*/device')
+        if devices:  # New kernels has devices
+            for device in sorted(devices):
+                cls._detect_disk_sys_block(info, device)
         else:
             cls._detect_disk_proc_scsi(info)
         cls._detect_mapped_disks(info)
@@ -1296,7 +1217,7 @@ class LinuxSystem(PosixSystem):
                 else:
                     device = os.path.join('/dev', os.path.basename(gpu))
                 if os.path.exists(device):
-                    pci_id = gpu.split('/')[-3].split(':', 1)[-1]
+                    pci_id = gpu.split('/')[-3]
                     model, comment = self._match_pci(pci_id)
                     Writer.output(
                         name='Graphics device',
@@ -1321,24 +1242,16 @@ class LinuxSystem(PosixSystem):
                                 comment=comment,
                             )
 
-    @staticmethod
-    def _detect_input() -> None:
+    @classmethod
+    def _detect_input(cls) -> None:
         info = {}
         model = '???'
-        try:
-            with open(
-                '/proc/bus/input/devices',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    if line.startswith('N: Name="'):
-                        model = line.split('"')[1]
-                    elif line.startswith('H: Handlers='):
-                        event = line.split('event')[-1].split()[0]
-                        info[f'/dev/input/event{event}'] = model
-        except OSError:
-            pass
+        for line in cls._read_file('/proc/bus/input/devices'):
+            if line.startswith('N: Name="'):
+                model = line.split('"')[1]
+            elif line.startswith('H: Handlers='):
+                event = line.split('event')[-1].split()[0]
+                info[f'/dev/input/event{event}'] = model
         devices = [
             os.path.join('/dev/input', os.path.basename(os.readlink(file)))
             for file in glob.glob('/dev/input/by-path/*')
@@ -1362,7 +1275,7 @@ class LinuxSystem(PosixSystem):
         ]
         for network in sorted(networks):
             device = f'net/{os.path.basename(network)}'
-            pci_id = network.split('/')[-3].split(':', 1)[-1]
+            pci_id = network.split('/')[-3]
             model, comment = self._match_pci(pci_id)
             model = model.replace(
                 'Semiconductor ', '').replace('Co., ', '').replace(
@@ -1374,28 +1287,21 @@ class LinuxSystem(PosixSystem):
                 comment=comment,
             )
 
-    @staticmethod
-    def _detect_video() -> None:
+    @classmethod
+    def _detect_video(cls) -> None:
         for directory in sorted(glob.glob('/sys/class/video4linux/*')):
             device = os.path.basename(directory)
             try:
-                with open(
-                    os.path.join(directory, 'name'),
-                    encoding='utf-8',
-                    errors='replace'
-                ) as ifile:
-                    Writer.output(
-                        name='Video device',
-                        device=f'/dev/{device}',
-                        value=ifile.readline().rstrip('\r\n'),
-                    )
-                    continue
-            except OSError:
-                pass
-            Writer.output(
-                name='Video device',
-                device=f'/dev/{device}', value='???',
-            )
+                Writer.output(
+                    name='Video device',
+                    device=f'/dev/{device}',
+                    value=cls._read_file(directory, 'name')[0]
+                )
+            except IndexError:
+                Writer.output(
+                    name='Video device',
+                    device=f'/dev/{device}', value='???',
+                )
 
     @staticmethod
     def _detect_zram() -> None:
@@ -1426,7 +1332,7 @@ class LinuxSystem(PosixSystem):
         model = '???'
         comment = ''
         for key, value in self._devices.items():
-            if key.startswith(pci_id):
+            if pci_id in f"0000:{key}":  # lspci can miss "0000:"
                 model = key.split(': ', 1)[-1]
                 comment = value
                 break
@@ -1476,139 +1382,90 @@ class LinuxSystem(PosixSystem):
             info['Net IPvx Address'].append(isjunk.sub(' ', line).split()[0])
         return info
 
-    @staticmethod
-    def _scan_etc_release() -> dict:
+    @classmethod
+    def _scan_etc_release(cls) -> dict:
         info = {}
 
         if os.path.isfile('/etc/redhat-release'):
             try:
-                with open(
-                    '/etc/redhat-release',
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
-                    info['OS Name'] = ifile.readline().rstrip('\r\n')
-            except OSError:
+                info['OS Name'] = cls._read_file('/etc/redhat-release')[0]
+            except IndexError:
                 pass
         elif os.path.isfile('/etc/SuSE-release'):
             try:
-                with open(
-                    '/etc/SuSE-release',
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
-                    info['OS Name'] = ifile.readline().rstrip('\r\n')
-                    for line in ifile:
-                        if 'PATCHLEVEL' in line:
-                            try:
-                                info['OS Patch'] = line.split()[-1]
-                                break
-                            except IndexError:
-                                pass
+                lines = cls._read_file('/etc/SuSE-release')
+                info['OS Name'] = lines[0]
+                for line in lines[1:]:
+                    if 'PATCHLEVEL' in line:
+                        try:
+                            info['OS Patch'] = line.split()[-1]
+                            break
+                        except IndexError:
+                            pass
             except OSError:
                 info['OS Name'] = 'Unknown'
         elif os.path.isfile('/etc/alpine-release'):
             try:
-                with open(
-                    '/etc/alpine-release',
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
-                    name = ifile.readline().rstrip('\\r\\n')
-                    info['OS Name'] = f'Alpine {name}'
-            except OSError:
+                name = cls._read_file('/etc/alpine-release')[0]
+                info['OS Name'] = f'Alpine {name}'
+            except IndexError:
                 pass
 
         return info
 
-    @staticmethod
-    def _scan_etc_lsb_release() -> dict:
+    @classmethod
+    def _scan_etc_lsb_release(cls) -> dict:
         info = {}
 
         if os.path.isfile('/etc/lsb-release'):
-            try:
-                with open(
-                    '/etc/lsb-release',
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
-                    lines = []
-                    for line in ifile:
-                        lines.append(line.rstrip('\r\n'))
-            except OSError:
-                pass
+            lines = cls._read_file('/etc/lsb-release')
+            if lines and lines[-1].startswith('DISTRIB_DESCRIPTION='):
+                info['OS Name'] = lines[-1].split('=')[1].replace('"', '')
             else:
-                if lines and lines[-1].startswith('DISTRIB_DESCRIPTION='):
-                    info['OS Name'] = lines[-1].split('=')[1].replace('"', '')
-                else:
-                    identity = None
-                    for line in lines:
-                        if line.startswith('DISTRIB_ID='):
-                            identity = line.split('=')[1]
-                        elif line.startswith('DISTRIB_RELEASE=') and identity:
-                            info['OS Name'] = (
-                                f"{identity} {line.split('=')[1]}"
-                            )
-                            break
+                identity = None
+                for line in lines:
+                    if line.startswith('DISTRIB_ID='):
+                        identity = line.split('=')[1]
+                    elif line.startswith('DISTRIB_RELEASE=') and identity:
+                        info['OS Name'] = f"{identity} {line.split('=')[1]}"
+                        break
 
         return info
 
-    @staticmethod
-    def _scan_etc_version() -> dict:
+    @classmethod
+    def _scan_etc_version(cls) -> dict:
         info = {}
 
         if os.path.isfile('/etc/kanotix-version'):
             try:
-                with open(
-                    '/etc/kanotix-version',
-                    encoding='utf-8',
-                    errors='replace'
-                ) as ifile:
-                    name = ifile.readline().rstrip('\r\n').split()[1]
-                    info['OS Name'] = f'Kanotix {name}'
-            except (IndexError, OSError):
+                name = cls._read_file('/etc/kanotix-version')[0].split()[1]
+                info['OS Name'] = f'Kanotix {name}'
+            except IndexError:
                 pass
         elif os.path.isfile('/etc/knoppix-version'):
             try:
-                with open(
-                    '/etc/knoppix-version',
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
-                    name = ifile.readline().rstrip('\r\n').split()[0]
-                    info['OS Name'] = f'Knoppix {name}'
-            except (IndexError, OSError):
+                name = cls._read_file('/etc/knoppix-version')[0].split()[0]
+                info['OS Name'] = f'Knoppix {name}'
+            except IndexError:
                 pass
         elif os.path.isfile('/etc/debian_version'):
             try:
-                with open(
-                    '/etc/debian_version',
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
-                    name = ifile.readline().rstrip(
-                        '\r\n',
-                    ).split('=')[-1].replace("'", '')
-                    info['OS Name'] = f'Debian {name}'
-            except OSError:
+                line = cls._read_file('/etc/debian_version')[0]
+                name = line.split('=')[-1].replace("'", '')
+                info['OS Name'] = f'Debian {name}'
+            except IndexError:
                 pass
         elif os.path.isfile('/etc/DISTRO_SPECS'):
             try:
                 identity = None
-                with open(
-                    '/etc/DISTRO_SPECS',
-                    encoding='utf-8',
-                    errors='replace',
-                ) as ifile:
-                    for line in ifile:
-                        if line.startswith('DISTRO_NAME'):
-                            identity = line.rstrip(
-                                '\r\n').split('=')[1].replace('"', '')
-                        elif line.startswith('DISTRO_VERSION') and identity:
-                            name = line.rstrip('\r\n').split('=')[1]
-                            info['OS Name'] = f'{identity} {name}'
-                            break
-            except (IndexError, OSError):
+                for line in cls._read_file('/etc/DISTRO_SPECS'):
+                    if line.startswith('DISTRO_NAME'):
+                        identity = line.split('=')[1].replace('"', '')
+                    elif line.startswith('DISTRO_VERSION') and identity:
+                        name = line.split('=')[1]
+                        info['OS Name'] = f'{identity} {name}'
+                        break
+            except IndexError:
                 pass
 
         return info
@@ -1652,37 +1509,25 @@ class LinuxSystem(PosixSystem):
 
         return info
 
-    @staticmethod
-    def _scan_os_release() -> dict:
+    @classmethod
+    def _scan_os_release(cls) -> dict:
         info = {}
 
-        try:
-            with open(
-                '/etc/os-release',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    if line.startswith('PRETTY_NAME="'):
-                        info['OS Name'] = line.split('"')[1].split('(')[0]
-                        break
-        except OSError:
-            pass
+        for line in cls._read_file('/etc/os-release'):
+            if line.startswith('PRETTY_NAME="'):
+                info['OS Name'] = line.split('"')[1].split('(')[0]
+                break
 
         return info
 
-    @staticmethod
-    def _scan_clear_version() -> dict:
+    @classmethod
+    def _scan_clear_version(cls) -> dict:
         info = {}
 
         try:
-            with open(
-                '/usr/share/clear/version',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                info['OS Name'] = f'Clear Linux {ifile.readline().strip()}'
-        except OSError:
+            line = cls._read_file('/usr/share/clear/version')[0]
+            info['OS Name'] = f'Clear Linux {line}'
+        except IndexError:
             pass
 
         return info
@@ -1726,22 +1571,20 @@ class LinuxSystem(PosixSystem):
         info.update(self._scan_systemd())
         return info
 
-    @staticmethod
-    def _scan_frequency(info: dict, lines: List[str]) -> None:
+    @classmethod
+    def _scan_frequency(cls, info: dict, lines: List[str]) -> None:
         try:
-            with open(
+            line = cls._read_file(
                 '/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                info['CPU Clock'] = str(int(
-                    int(ifile.readline().rstrip('\r\n')) / 1000 + 0.5))
-        except (OSError, ValueError):
+            )[0]
+            info['CPU Clock'] = str(int(int(line) / 1000 + 0.5))
+        except (IndexError, ValueError):
             for line in lines:
                 if line.startswith('cpu MHz'):
                     try:
-                        info['CPU Clock'] = str(int(
-                            float(line.split(': ')[1]) + 0.5))
+                        info['CPU Clock'] = str(
+                            int(float(line.split(': ')[1]) + 0.5),
+                        )
                     except (IndexError, ValueError):
                         pass
                     break
@@ -1749,59 +1592,36 @@ class LinuxSystem(PosixSystem):
                 for line in lines:
                     if line.startswith('clock'):
                         try:
-                            info['CPU Clock'] = str(int(
-                                float(line.split(': ')[1]) + 0.5))
+                            info['CPU Clock'] = str(
+                                int(float(line.split(': ')[1]) + 0.5),
+                            )
                         except (IndexError, ValueError):
                             pass
                         break
 
         found = []
         try:
-            with open(
-                '/sys/devices/system/cpu/cpu0/cpufreq/'
+            lines = cls._read_file(
+                '/sys/devices/system/cpu/cpu0/cpufreq',
                 'scaling_available_frequencies',
-                encoding='utf-8',
-                errors='replace'
-            ) as ifile:
-                for clock in ifile.readline().rstrip('\r\n').split():
-                    found.append(str(int(int(clock) / 1000 + 0.5)))
-                if found:
-                    info['CPU Clocks'] = ' '.join(found)
-        except (OSError, ValueError):
+            )
+            for clock in lines[0].split():
+                found.append(str(int(int(clock) / 1000 + 0.5)))
+            if found:
+                info['CPU Clocks'] = ' '.join(found)
+        except (IndexError, ValueError):
             try:
-                with open(
-                    '/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq',
-                    encoding='utf-8',
-                    errors='replace'
-                ) as ifile:
-                    info['CPU Clocks'] = str(int(
-                        int(ifile.readline()) / 1000 + 0.5))
-                with open(
+                lines = cls._read_file(
+                    '/sys/devices/system/cpu/cpu0/cpufreq',
+                    'scaling_max_freq',
+                )
+                info['CPU Clocks'] = str(int(int(lines[0]) / 1000 + 0.5))
+                lines = cls._read_file(
                     '/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq',
-                    encoding='utf-8',
-                    errors='replace'
-                ) as ifile:
-                    info['CPU Clocks'] += (
-                        f' {int(int(ifile.readline()) / 1000 + 0.5)}'
-                    )
-            except (OSError, ValueError):
+                )
+                info['CPU Clocks'] += (f' {int(int(lines[0]) / 1000 + 0.5)}')
+            except (IndexError, ValueError):
                 info['CPU Clocks'] = 'Unknown'
-
-    @staticmethod
-    def _get_proc_cpuinfo() -> List[str]:
-        lines = []
-        try:
-            with open(
-                '/proc/cpuinfo',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    lines.append(line.rstrip('\r\n'))
-        except OSError:
-            pass
-
-        return lines
 
     @staticmethod
     def _scan_cpu_model(info: dict, lines: List[str]) -> None:
@@ -1844,20 +1664,18 @@ class LinuxSystem(PosixSystem):
 
         return threads
 
-    @staticmethod
-    def _get_cpu_physical_packages() -> List[str]:
+    @classmethod
+    def _get_cpu_physical_packages(cls) -> List[str]:
         found = []
 
         for file in glob.glob(
-                '/sys/devices/system/cpu/cpu[0-9]*/'
-                'topology/physical_package_id'
+            '/sys/devices/system/cpu/cpu[0-9]*/topology/physical_package_id',
         ):
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
-                    line = ifile.readline().rstrip('\r\n')
-                    if line not in found:
-                        found.append(line)
-            except OSError:
+                line = cls._read_file(file)[0]
+                if line not in found:
+                    found.append(line)
+            except IndexError:
                 pass
 
         return found
@@ -1884,22 +1702,21 @@ class LinuxSystem(PosixSystem):
                         break
         return sockets
 
-    @staticmethod
+    @classmethod
     def _get_cpu_cores(
+        cls,
         info: dict,
         lines: List[str],
         sockets: int,
         threads: int,
     ) -> int:
         try:
-            with open(
-                '/sys/devices/system/cpu/cpu0/topology/thread_siblings_list',
-                encoding='utf-8',
-                errors='replace'
-            ) as ifile:
-                cpu_cores = int(threads/(int(
-                    ifile.readline().rstrip('\r\n').split('-')[-1]) + 1))
-        except (OSError, ValueError):
+            file = '/sys/devices/system/cpu/cpu0/topology/thread_siblings_list'
+            if os.path.isfile(file):
+                cpu_cores = int(
+                    threads/(int(cls._read_file(file)[0].split('-')[-1]) + 1),
+                )
+        except (IndexError, ValueError):
             cores_per_socket = None
             if 'Dual Core' in info['CPU Model']:
                 cores_per_socket = 2
@@ -1922,35 +1739,22 @@ class LinuxSystem(PosixSystem):
 
         return cpu_cores
 
-    @staticmethod
-    def _scan_cache(info: dict, lines: List[str]) -> None:
-        for cache in sorted(glob.glob(
-                '/sys/devices/system/cpu/cpu0/cache/index*')):
+    @classmethod
+    def _scan_cache(cls, info: dict, lines: List[str]) -> None:
+        for cache in sorted(
+            glob.glob('/sys/devices/system/cpu/cpu0/cache/index*'),
+        ):
             try:
-                with open(
-                    os.path.join(cache, 'level'),
-                    encoding='utf-8',
-                    errors='replace'
-                ) as ifile:
-                    level = ifile.readline().rstrip('\r\n')
-                with open(
-                    os.path.join(cache, 'type'),
-                    encoding='utf-8',
-                    errors='replace'
-                ) as ifile:
-                    type_ = ifile.readline().rstrip('\r\n')
+                level = cls._read_file(cache, 'level')[0]
+                type_ = cls._read_file(cache, 'type')[0]
                 if type_ == 'Data':
                     level += 'd'
                 elif type_ == 'Instruction':
                     level += 'i'
-                with open(
-                    os.path.join(cache, 'size'),
-                    encoding='utf-8',
-                    errors='replace'
-                ) as ifile:
-                    info['CPU Cache'][level] = str(int(
-                        ifile.readline().rstrip('\r\nK')))
-            except (OSError, ValueError):
+                info['CPU Cache'][level] = str(
+                    int(cls._read_file(cache, 'size')[0].rstrip('K')),
+                )
+            except (IndexError, ValueError):
                 pass
         if not info['CPU Cache']:
             for line in lines:
@@ -1974,7 +1778,7 @@ class LinuxSystem(PosixSystem):
             else:
                 info['CPU Addressability'] = '32bit'
 
-        lines = self._get_proc_cpuinfo()
+        lines = self._read_file('/proc/cpuinfo')
         self._scan_cpu_model(info, lines)
         threads = self._get_cpu_threads(lines)
         virtual_machine = self._get_virtual_machine()
@@ -2001,6 +1805,13 @@ class LinuxSystem(PosixSystem):
         self._scan_frequency(info, lines)
         self._scan_cache(info, lines)
 
+        directory = '/sys/devices/system/cpu/vulnerabilities'
+        if os.path.isdir(directory):
+            for name in sorted(os.listdir(directory)):
+                status = ' '.join(self._read_file(directory, name))
+                if 'Mitigation' in status or 'Vulnerable' in status:
+                    info['CPU Vulnerabilities'].append((name, status))
+
         return info
 
     def get_sys_info(self) -> dict:
@@ -2008,44 +1819,43 @@ class LinuxSystem(PosixSystem):
         Return system information dictionary.
         """
         info = super().get_sys_info()
+
+        dmi = '/sys/devices/virtual/dmi/id'
+        if os.path.isdir(dmi):
+            info['System Board'] = ' '.join(self._read_file(dmi, 'board_name'))
+            info['System Board X'] = ' '.join(
+                self._read_file(dmi, 'board_vendor'),
+            )
+            info['System BIOS'] = ' '.join(
+                self._read_file(dmi, 'bios_version') +
+                self._read_file(dmi, 'bios_date'),
+            )
+            info['System BIOS X'] = ' '.join(
+                self._read_file(dmi, 'bios_vendor'),
+            )
         try:
-            with open(
-                '/proc/meminfo',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                try:
-                    for line in ifile:
-                        if line.startswith('MemTotal:'):
-                            info['System Memory'] = str(int(
-                                float(line.split()[1]) / 1024 + 0.5))
-                        elif line.startswith('SwapTotal:'):
-                            info['System Swap Space'] = str(int(
-                                float(line.split()[1]) / 1024 + 0.5))
-                except (IndexError, ValueError):
-                    pass
-        except OSError:
+            for line in self._read_file('/proc/meminfo'):
+                if line.startswith('MemTotal:'):
+                    info['System Memory'] = str(int(
+                        float(line.split()[1]) / 1024 + 0.5))
+                elif line.startswith('SwapTotal:'):
+                    info['System Swap Space'] = str(
+                        int(float(line.split()[1]) / 1024 + 0.5),
+                    )
+        except (IndexError, ValueError):
             pass
         return info
 
-    @staticmethod
-    def _get_container() -> str:
+    @classmethod
+    def _get_container(cls) -> str:
         name = None
-        try:
-            with open(
-                '/proc/1/cgroup',
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    if '/docker/' in line or '/docker-' in line:
-                        name = f"Docker {line.rsplit('/', 1)[1][:12]}"
-                        break
-                    if '/lxc/' in line:
-                        name = 'LXC'
-                        break
-        except OSError:
-            pass
+        for line in cls._read_file('/proc/1/cgroup'):
+            if '/docker/' in line or '/docker-' in line:
+                name = f"Docker {line.rsplit('/', 1)[1][:12]}"
+                break
+            if '/lxc/' in line:
+                name = 'LXC'
+                break
         return name
 
     @staticmethod
@@ -2085,22 +1895,14 @@ class LinuxSystem(PosixSystem):
 
         if not name:
             for file in (
-                    glob.glob('/sys/bus/scsi/devices/*/model') +
-                    ['/proc/scsi/scsi'] +
-                    glob.glob('/proc/ide/hd?/model')
+                glob.glob('/sys/bus/scsi/devices/*/model') +
+                ['/proc/scsi/scsi'] +
+                glob.glob('/proc/ide/hd?/model')
             ):
-                try:
-                    with open(
-                        file,
-                        encoding='utf-8',
-                        errors='replace',
-                    ) as ifile:
-                        name = self._check_virtual_machine(
-                            ' '.join(ifile.readlines()),
-                            mappings['scsi']
-                        )
-                except OSError:
-                    pass
+                name = self._check_virtual_machine(
+                    ' '.join(self._read_file(file)),
+                    mappings['scsi'],
+                )
 
         if not name:
             lsmod = command_mod.Command(

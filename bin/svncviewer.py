@@ -31,15 +31,11 @@ class Options:
         return self._vncviewer
 
     def _getport(self, remote_host: str, remote_port: str) -> str:
-        lsof = command_mod.Command(
-            'lsof',
-            args=['-b', '-i', 'tcp:5901-5999'],
-            errors='stop',
-        )
-        task = subtask_mod.Batch(lsof.get_cmdline())
-        task.run()
+        command = command_mod.Command('ss', args=['-lpnt'], errors='stop')
+        task = subtask_mod.Batch(command.get_cmdline())
+        task.run(pattern='[::1]:5901 ')
         for local_port in range(5901, 6000):
-            if not task.is_match_output(f':{local_port}[ -]'):
+            if not task.is_match_output(f':{local_port} '):
                 ssh = command_mod.Command('ssh', errors='stop')
                 if self._args.ssh_port:
                     ssh.extend_args(['-p', self._args.ssh_port[0]])

@@ -52,12 +52,12 @@ class Main:
                 pass
         home = os.environ.get('HOME', '')
         for file in glob.glob(os.path.join(
-                home,
-                '.config',
-                'libreoffice',
-                '*',
-                'user',
-                'registrymodifications.xcu'
+            home,
+            '.config',
+            'libreoffice',
+            '*',
+            'user',
+            'registrymodifications.xcu',
         )):
             if os.path.isfile(file):
                 try:
@@ -78,8 +78,8 @@ class Main:
 
         # Disable update nagging
         for file in glob.glob(os.path.join(
-                os.path.dirname(self._soffice.get_file()),
-                'libupd*.so',
+            os.path.dirname(self._soffice.get_file()),
+            'libupd*.so',
         )):
             try:
                 os.remove(file)

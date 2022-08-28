@@ -10,10 +10,10 @@ import glob
 import os
 import re
 import subprocess
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
-RELEASE = '2.2.6'
-VERSION = 20211116
+RELEASE = '2.3.0'
+VERSION = 20220828
 
 
 class Battery:
@@ -27,7 +27,9 @@ class Battery:
             'model_name': 'Unknown',
             'type': 'Unknown',
             'capacity_max': -1,
-            'voltage': -1
+            'charge_max': -1,
+            'voltage': -1,
+            'thresholds': (0, -1),
         }
         self._state = ' '
         self._isjunk = re.compile('')
@@ -54,6 +56,18 @@ class Battery:
 
         return devices
 
+    @staticmethod
+    def _read_file(*paths: str) -> List[str]:
+        file = os.path.join(*paths)
+        lines = []
+        try:
+            with open(file, encoding='utf-8', errors='replace') as ifile:
+                for line in ifile:
+                    lines.append(line.rstrip('\r\n'))
+        except OSError:
+            lines = []
+        return lines
+
     def _config(self) -> None:
         self._is_exist = False
 
@@ -65,19 +79,28 @@ class Battery:
 
     def get_capacity(self) -> int:
         """
-        Return current capcity
+        Return current capacity
         """
         return self._info['capacity']
 
+    def get_capacity_percent(self) -> str:
+        """
+        Return charge percentage of max charge
+        """
+        percent = int(self._info['capacity'] / self._info['charge_max'] * 100)
+        if percent >= 0:
+            return f"{percent}"
+        return ""
+
     def get_capacity_max(self) -> int:
         """
-        Return max capcity
+        Return max design capcity
         """
         return self._info['capacity_max']
 
     def get_charge(self) -> str:
         """
-        Return charge change mode
+        Return current charge
         """
         return self._info['charge']
 
@@ -95,9 +118,15 @@ class Battery:
 
     def get_rate(self) -> int:
         """
-        Return chargee change rate
+        Return charge change rate
         """
         return self._info['rate']
+
+    def get_thresholds(self) -> Tuple[int, int]:
+        """
+        Return tuple of charge thresholds
+        """
+        return self._info['thresholds']
 
     def get_type(self) -> str:
         """
@@ -127,13 +156,8 @@ class BatteryAcpi(Battery):
     def _config(self) -> None:
         self._state = os.path.join(self._directory, 'state')
         self._isjunk = re.compile('^.*: *| .*$')
-        with open(
-            os.path.join(self._directory, 'info'),
-            encoding='utf-8',
-            errors='replace',
-        ) as ifile:
-            for line in ifile:
-                line = line.rstrip()
+        for line in self._read_file(self._directory, 'info'):
+            try:
                 if line.startswith('OEM info:'):
                     self._info['oem_name'] = self._isjunk.sub('', line)
                 elif line.startswith('model number:'):
@@ -141,17 +165,13 @@ class BatteryAcpi(Battery):
                 elif line.startswith('battery type:'):
                     self._info['type'] = self._isjunk.sub('', line)
                 elif line.startswith('design capacity:'):
-                    try:
-                        self._info['capacity_max'] = int(
-                            self._isjunk.sub('', line))
-                    except ValueError:
-                        pass
+                    self._info['capacity_max'] = int(
+                        self._isjunk.sub('', line)
+                    )
                 elif line.startswith('design voltage:'):
-                    try:
-                        self._info['voltage'] = int(
-                            self._isjunk.sub('', line))
-                    except ValueError:
-                        pass
+                    self._info['voltage'] = int(self._isjunk.sub('', line))
+            except ValueError:
+                pass
         self.check()
 
     def check(self) -> None:
@@ -163,37 +183,23 @@ class BatteryAcpi(Battery):
         self._info['charge'] = '='
         self._info['rate'] = 0
 
-        try:
-            with open(
-                self._state,
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    line = line.rstrip()
-                    if line.startswith('present:'):
-                        if self._isjunk.sub('', line) == 'yes':
-                            self._is_exist = True
-                    elif line.startswith('charging state:'):
-                        state = self._isjunk.sub('', line)
-                        if state == 'discharging':
-                            self._info['charge'] = '-'
-                        elif state == 'charging':
-                            self._info['charge'] = '+'
-                    elif line.startswith('present rate:'):
-                        try:
-                            self._info['rate'] = abs(
-                                int(self._isjunk.sub('', line)))
-                        except ValueError:
-                            pass
-                    elif line.startswith('remaining capacity:'):
-                        try:
-                            self._info['capacity'] = int(
-                                self._isjunk.sub('', line))
-                        except ValueError:
-                            pass
-        except OSError:
-            return
+        for line in self._read_file(self._state):
+            try:
+                if line.startswith('present:'):
+                    if self._isjunk.sub('', line) == 'yes':
+                        self._is_exist = True
+                elif line.startswith('charging state:'):
+                    state = self._isjunk.sub('', line)
+                    if state == 'discharging':
+                        self._info['charge'] = '-'
+                    elif state == 'charging':
+                        self._info['charge'] = '+'
+                elif line.startswith('present rate:'):
+                    self._info['rate'] = abs(int(self._isjunk.sub('', line)))
+                elif line.startswith('remaining capacity:'):
+                    self._info['capacity'] = int(self._isjunk.sub('', line))
+            except ValueError:
+                pass
 
 
 class BatteryPower(Battery):
@@ -206,30 +212,113 @@ class BatteryPower(Battery):
     def _config(self) -> None:
         self._state = os.path.join(self._directory, 'uevent')
         self._isjunk = re.compile('^[^=]*=| .*$')
-        with open(self._state, encoding='utf-8', errors='replace') as ifile:
-            self._state = os.path.join(self._directory, 'uevent')
-            for line in ifile:
-                line = line.rstrip()
-                try:
-                    if '_MANUFACTURER=' in line:
-                        self._info['oem_name'] = self._isjunk.sub('', line)
-                    elif '_MODEL_NAME=' in line:
-                        self._info['model_name'] = self._isjunk.sub('', line)
-                    elif '_TECHNOLOGY=' in line:
-                        self._info['type'] = self._isjunk.sub('', line)
-                    elif '_CHARGE_FULL_DESIGN=' in line:
-                        self._info['capacity_max'] = int(
-                            int(self._isjunk.sub('', line)) / 1000)
-                    elif '_ENERGY_FULL_DESIGN=' in line:
-                        self._info['capacity_max'] = int(
-                            int(self._isjunk.sub('', line)) /
-                            self._info['voltage']
-                        )
-                    elif '_VOLTAGE_MIN_DESIGN=' in line:
-                        self._info['voltage'] = int(
-                            int(self._isjunk.sub('', line)) / 1000)
-                except ValueError:
-                    pass
+        for line in self._read_file(self._state):
+            try:
+                if '_MANUFACTURER=' in line:
+                    self._info['oem_name'] = self._isjunk.sub('', line)
+                elif '_MODEL_NAME=' in line:
+                    self._info['model_name'] = self._isjunk.sub('', line)
+                elif '_TECHNOLOGY=' in line:
+                    self._info['type'] = self._isjunk.sub('', line)
+                elif '_CHARGE_FULL_DESIGN=' in line:
+                    self._info['capacity_max'] = int(
+                        int(self._isjunk.sub('', line)) / 1000
+                    )
+                elif '_ENERGY_FULL_DESIGN=' in line:
+                    self._info['capacity_max'] = int(
+                        int(self._isjunk.sub('', line)) / self._info['voltage']
+                    )
+                elif '_CHARGE_FULL=' in line:
+                    self._info['charge_max'] = int(
+                        int(self._isjunk.sub('', line)) / 1000
+                    )
+                elif '_ENERGY_FULL=' in line:
+                    self._info['charge_max'] = int(
+                        int(self._isjunk.sub('', line)) / self._info['voltage']
+                    )
+                elif '_VOLTAGE_MIN_DESIGN=' in line:
+                    self._info['voltage'] = int(
+                        int(self._isjunk.sub('', line)) / 1000
+                    )
+            except ValueError:
+                pass
+
+    def _get_threshold(self) -> Tuple[int, int]:
+        start = '0'
+        stop = '-1'
+
+        # Standard (Lenovo ThinkPads) start threshold
+        value = ' '.join(self._read_file(
+            self._directory,
+            'charge_control_start_threshold',
+        ))
+        if value:
+            start = value
+        # Standard (Asus, Lenovo ThinkPads) stop threshold
+        value = ' '.join(self._read_file(
+            self._directory,
+            'charge_control_end_threshold',
+        ))
+        if value:
+            stop = value
+
+        # IBM legacy ThinkPads start/stop thresholds
+        device = os.path.basename(self._directory)
+        value = ' '.join(self._read_file(
+            '/sys/devices/platform/smapi',
+            device,
+            'start_charge_thresh',
+        ))
+        if value:
+            start = value
+        value = ' '.join(self._read_file(
+            '/sys/devices/platform/smapi',
+            device,
+            'stop_charge_thresh',
+        ))
+        if value:
+            stop = value
+
+        # Huawei start/stop thresholds
+        values = ' '.join(self._read_file(
+            '/sys/devices/platform/huawei-wmi/charge_control_thresholds',
+        ))
+        if values and ' ' in values:
+            start, stop = values.split()
+
+        # Lenovo non-ThinkPad stop threshold
+        value = ' '.join(self._read_file(
+            '/sys/bus/platform/drivers/ideapad_acpi/VPC2004:00',
+            'conservation_mode'
+        ))
+        if value == '1':
+            stop = '60'
+
+        # LG stop threshold
+        value = ' '.join(self._read_file(
+            '/sys/devices/platform/lg-laptop/battery_care_limit'
+        ))
+        if value:
+            stop = value
+
+        # Samsung stop threshold activated
+        value = ' '.join(self._read_file(
+            '/sys/devices/platform/samsung/battery_life_extender'
+        ))
+        if value == '1':
+            stop = '80'
+
+        # Sony stop threshold
+        value = ' '.join(self._read_file(
+            '/sys/devices/platform/sony-laptop/battery_care_limiter'
+        ))
+        if value:
+            stop = value
+
+        try:
+            return (int(start), int(stop))
+        except ValueError:
+            return (0, -1)
 
     def check(self) -> None:
         """
@@ -240,46 +329,37 @@ class BatteryPower(Battery):
         self._info['charge'] = '='
         self._info['rate'] = 0
 
-        try:
-            with open(
-                self._state,
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
-                for line in ifile:
-                    line = line.rstrip()
-                    try:
-                        if '_PRESENT=' in line:
-                            if self._isjunk.sub('', line) == '1':
-                                self._is_exist = True
-                        elif '_STATUS=' in line:
-                            state = self._isjunk.sub('', line)
-                            if state == 'Discharging':
-                                self._info['charge'] = '-'
-                            elif state == 'Charging':
-                                self._info['charge'] = '+'
-                        elif '_CURRENT_NOW=' in line:
-                            self._info['rate'] = abs(
-                                int(int(self._isjunk.sub('', line)) / 1000))
-                        elif '_POWER_NOW=' in line:
-                            self._info['rate'] = abs(int(
-                                int(self._isjunk.sub('', line)) /
-                                self._info['voltage']
-                            ))
-                        elif '_CHARGE_NOW=' in line:
-                            self._info['capacity'] = int(
-                                int(self._isjunk.sub('', line)) /
-                                1000
-                            )
-                        elif '_ENERGY_NOW=' in line:
-                            self._info['capacity'] = int(
-                                int(self._isjunk.sub('', line)) /
-                                self._info['voltage']
-                            )
-                    except ValueError:
-                        pass
-        except OSError:
-            return
+        for line in self._read_file(self._state):
+            try:
+                if '_PRESENT=' in line:
+                    if self._isjunk.sub('', line) == '1':
+                        self._is_exist = True
+                elif '_STATUS=' in line:
+                    state = self._isjunk.sub('', line)
+                    if state == 'Discharging':
+                        self._info['charge'] = '-'
+                    elif state == 'Charging':
+                        self._info['charge'] = '+'
+                elif '_CURRENT_NOW=' in line:
+                    self._info['rate'] = abs(int(
+                        int(self._isjunk.sub('', line)) / 1000
+                    ))
+                elif '_POWER_NOW=' in line:
+                    self._info['rate'] = abs(int(
+                        int(self._isjunk.sub('', line)) / self._info['voltage']
+                    ))
+                elif '_CHARGE_NOW=' in line:
+                    self._info['capacity'] = int(
+                        int(self._isjunk.sub('', line)) / 1000
+                    )
+                elif '_ENERGY_NOW=' in line:
+                    self._info['capacity'] = int(
+                        int(self._isjunk.sub('', line)) / self._info['voltage']
+                    )
+            except ValueError:
+                pass
+
+        self._info['thresholds'] = self._get_threshold()
 
 
 class BatteryMac(Battery):

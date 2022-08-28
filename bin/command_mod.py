@@ -14,8 +14,8 @@ import subprocess
 import sys
 from typing import Any, List, Optional, Sequence
 
-RELEASE = '2.5.1'
-VERSION = 20220511
+RELEASE = '2.5.2'
+VERSION = 20220822
 
 
 class Command:
@@ -131,7 +131,7 @@ class Command:
                     directory,
                     '*',
                     port_glob,
-                    program + extension
+                    program + extension,
                 ))
                 if _platform.startswith('linux'):
                     files = cls._check_glibc(files)
@@ -142,7 +142,8 @@ class Command:
         if not files:
             for extension in extensions:
                 files = glob.glob(
-                    os.path.join(directory, '????*', program + extension))
+                    os.path.join(directory, '????*', program + extension),
+                )
                 if files:
                     break
         if files:
@@ -394,8 +395,8 @@ class Platform:
         arch = 'unknown'
         if machine == 'x86_64':
             if (
-                    glob.glob('/lib*/ld-*') and
-                    not glob.glob('/lib*/ld-*x86[_-]64*')
+                glob.glob('/lib*/ld-*') and
+                not glob.glob('/lib*/ld-*x86[_-]64*')
             ):
                 arch = 'x86'
             else:

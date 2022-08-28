@@ -17,6 +17,10 @@ curl -X DELETE -I http://localhost:5000/v2/<repository>/manifests/<digest>
 curl -X DELETE -I http://localhost:5000/v2/<repository>/blobmanifests/<digest>
 registry garbage-collect --dry-run /etc/docker/registry/config.yml
 registry garbage-collect /etc/docker/registry/config.yml  # Reqistry restart
+
+# Find repo directories with no tags:
+find /var/lib/registry/docker/registry/v2/repositories \
+    -empty -type d -name tags
 """
 
 import argparse

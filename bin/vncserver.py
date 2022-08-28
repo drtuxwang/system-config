@@ -28,14 +28,19 @@ class Options:
         return self._vncserver
 
     def _config(self) -> None:
-        if not os.path.isfile(
-                os.path.join(os.environ['HOME'], '.vnc', 'passwd')):
+        directory = os.path.join(os.getenv('HOME'), '.vnc')
+        if not os.path.isdir(directory):
+            os.mkdir(directory, int('700', 8))
+
+        if len(sys.argv) == 1 and not os.path.isfile(
+            os.path.join(directory, 'passwd')
+        ):
             raise SystemExit(
                 f'{sys.argv[0]}: ".vnc/passwd" does not exist. '
-                'Run "vncpasswd".',
+                'Run "vncpasswd" or use "-SecurityTypes=None".',
             )
         os.chdir(os.environ['HOME'])
-        xstartup = os.path.join(os.environ['HOME'], '.vnc', 'xstartup')
+        xstartup = os.path.join(directory, 'xstartup')
         if not os.path.isfile(xstartup):
             answer = input(
                 "Would you like to use GNOME(g), KDE(k) or XFCE(x)? "
@@ -88,8 +93,7 @@ class Options:
         ] + args[1:])
         self._umask = os.umask(int('077', 8))
         os.umask(self._umask)
-        if len(args) == 1:
-            self._config()
+        self._config()
 
 
 class Main:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sandbox command/shell with read/write and network restrictions.
+Sandbox command/shell with disk, audio and network restrictions.
 """
 
 import argparse
@@ -32,7 +32,7 @@ class Options:
     def _parse_args(self, args: List[str]) -> List[str]:
         parser = argparse.ArgumentParser(
             description="Sandbox command/shell with "
-            "read/write and network restrictions.",
+            "disk, sound and network restrictions.",
         )
 
         parser.add_argument(

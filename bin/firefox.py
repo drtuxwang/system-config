@@ -83,10 +83,10 @@ class Options:
     def _remove_lock(firefoxdir: str) -> None:
         # Remove old session data and lock file (allows multiple instances)
         for file in (
-                glob.glob(os.path.join(firefoxdir, '*', 'sessionstore.js')) +
-                glob.glob(os.path.join(firefoxdir, '*', '.parentlock')) +
-                glob.glob(os.path.join(firefoxdir, '*', 'lock')) +
-                glob.glob(os.path.join(firefoxdir, '*', '*.log'))
+            glob.glob(os.path.join(firefoxdir, '*', 'sessionstore.js')) +
+            glob.glob(os.path.join(firefoxdir, '*', '.parentlock')) +
+            glob.glob(os.path.join(firefoxdir, '*', 'lock')) +
+            glob.glob(os.path.join(firefoxdir, '*', '*.log'))
         ):
             try:
                 os.remove(file)
@@ -100,7 +100,8 @@ class Options:
             r'softExpiration)=\d*'
         )
         for file in glob.glob(
-                os.path.join(firefoxdir, '*', 'adblockplus', 'patterns.ini')):
+            os.path.join(firefoxdir, '*', 'adblockplus', 'patterns.ini'),
+        ):
             try:
                 with open(file, encoding='utf-8', errors='replace') as ifile:
                     with open(
@@ -251,13 +252,18 @@ class Options:
             )
             for directory in glob.glob(os.path.join(firefoxdir, '*')):
                 if os.path.isfile(os.path.join(directory, 'prefs.js')):
-                    for file in (glob.glob(os.path.join(directory, '.*')) +
-                                 glob.glob(os.path.join(directory, '*'))):
+                    for file in (
+                        glob.glob(os.path.join(directory, '.*')) +
+                        glob.glob(os.path.join(directory, '*'))
+                    ):
                         if os.path.basename(file) not in keep_list:
                             print(f'Removing "{file}"...')
                             self._remove(file)
                     for file in glob.glob(os.path.join(
-                            directory, 'adblockplus', 'patterns-backup*ini')):
+                        directory,
+                        'adblockplus',
+                        'patterns-backup*ini',
+                    )):
                         self._remove(file)
 
     @classmethod

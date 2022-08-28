@@ -17,7 +17,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '2.8.2'
+RELEASE = '2.8.3'
 
 
 class Options:
@@ -190,8 +190,10 @@ class Main:
             sys.argv = argv
 
     def _restart(self) -> None:
-        for file in sorted(glob.glob(os.path.join(self._myqsdir, '*.r')),
-                           key=lambda s: os.path.basename(s)[-2]):
+        for file in sorted(
+            glob.glob(os.path.join(self._myqsdir, '*.r')),
+            key=lambda s: os.path.basename(s)[-2],
+        ):
             try:
                 with open(
                     os.path.join(file),
@@ -249,8 +251,10 @@ class Main:
 
     def _attempt(self, free_slots: int) -> None:
         for queue in ('express', 'normal'):
-            for file in sorted(glob.glob(os.path.join(self._myqsdir, '*.q')),
-                               key=lambda s: int(os.path.basename(s)[:-2])):
+            for file in sorted(
+                glob.glob(os.path.join(self._myqsdir, '*.q')),
+                key=lambda s: int(os.path.basename(s)[:-2]),
+            ):
                 try:
                     with open(
                         file,

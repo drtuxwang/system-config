@@ -140,9 +140,9 @@ class Main:
                 cls._check_3dot_directory(os.path.join(file, '...'))
                 cls._update(cmdline, glob.glob(os.path.join(file, '*')))
             elif (
-                    os.path.isfile(file) and
-                    not os.path.islink(file) and
-                    os.path.getsize(file)
+                os.path.isfile(file) and
+                not os.path.islink(file) and
+                os.path.getsize(file)
             ):
                 fpar_directory = os.path.join(directory, '...')
 

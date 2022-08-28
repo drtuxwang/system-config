@@ -296,7 +296,7 @@
         main_window.w = "1400" 
         main_window.h = "700" 
         main_window.maximized = "false" 
-        main_window.hdivider_pos = "300" 
+        main_window.hdivider_pos = "450" 
         main_window.vdivider_pos = "300" 
         workspace = "-1" 
 

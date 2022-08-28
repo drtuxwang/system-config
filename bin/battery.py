@@ -93,6 +93,15 @@ class Main:
                     state += f', {power / 1000000:4.2f}W'
         else:
             state = 'Unused'
+
+        # Add battery percent and threshold
+        start, stop = battery.get_thresholds()
+        if stop >= 0:
+            state = f"{start}-{stop}%, {state}"
+        percent = battery.get_capacity_percent()
+        if percent:
+            state = f"{percent}%, {state}"
+
         print(f"{model} = {battery.get_capacity()}mAh [{state}]", sep="")
 
     @staticmethod

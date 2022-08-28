@@ -46,7 +46,11 @@ class Options:
     def _get_profiles_dir() -> str:
         if command_mod.Platform.get_system() == 'macos':
             return os.path.join(
-                'Library', 'Application Support', 'Google', 'Chrome')
+                'Library',
+                'Application Support',
+                'Google',
+                'Chrome',
+            )
         return os.path.join('.config', 'google-chrome')
 
     @staticmethod
@@ -82,8 +86,15 @@ class Options:
 
     @staticmethod
     def _clean_junk_files(configdir: str) -> None:
-        for fileglob in ('Archive*', 'Cookies*', 'Current*', 'History*',
-                         'Last*', 'Visited*', 'Last*'):
+        for fileglob in (
+            'Archive*',
+            'Cookies*',
+            'Current*',
+            'History*',
+            'Last*',
+            'Visited*',
+            'Last*',
+        ):
             for file in glob.glob(os.path.join(configdir, fileglob)):
                 try:
                     os.remove(file)
@@ -92,7 +103,8 @@ class Options:
         ispattern = re.compile('^(lastDownload|lastSuccess|lastCheck|'
                                r'expires|softExpiration)=\d*')
         for file in glob.glob(
-                os.path.join(configdir, 'File System', '*', 'p', '00', '*')):
+            os.path.join(configdir, 'File System', '*', 'p', '00', '*'),
+        ):
             try:
                 with open(file, encoding='utf-8', errors='replace') as ifile:
                     with open(
@@ -201,8 +213,9 @@ class Options:
                 ):
                     print(f'Removing "{directory}"...')
                     self._remove(directory)
-                for file in glob.glob(os.path.join(
-                        directory, 'Local Storage', 'https*')):
+                for file in glob.glob(
+                    os.path.join(directory, 'Local Storage', 'https*'),
+                ):
                     self._remove(file)
                 for file in glob.glob(os.path.join(directory, '.???*')):
                     print(f'Removing "{file}"...')

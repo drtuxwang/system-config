@@ -193,7 +193,7 @@ class Main:
         os.umask(int('077', 8))
         if os.path.isdir(self._sshdir):
             for file in glob.glob(
-                    os.path.join(os.environ['HOME'], '.ssh', '*')
+                os.path.join(os.environ['HOME'], '.ssh', '*'),
             ):
                 try:
                     os.chmod(file, int('700', 8))

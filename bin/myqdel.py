@@ -13,7 +13,7 @@ from typing import List
 
 import task_mod
 
-RELEASE = '2.8.2'
+RELEASE = '2.8.3'
 
 
 class Options:
@@ -176,7 +176,7 @@ class Main:
                 print(
                     'MyQS cannot delete batch job with jobid',
                     jobid,
-                    'as it does no exist.'
+                    'as it does no exist.',
                 )
             else:
                 self._remove(jobid)

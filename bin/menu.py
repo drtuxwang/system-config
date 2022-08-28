@@ -111,10 +111,10 @@ class Menu:
                 return True
             for directory in os.environ.get('PATH', '').split(os.pathsep):
                 if glob.glob(os.path.join(
-                        os.path.dirname(directory),
-                        '*',
-                        '*',
-                        check,
+                    os.path.dirname(directory),
+                    '*',
+                    '*',
+                    check,
                 )):
                     return True
         return False
