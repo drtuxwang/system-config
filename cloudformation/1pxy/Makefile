@@ -9,4 +9,4 @@ test:                # Run tests
 
 .PHONY: help
 help:                # Show Makefile options
-	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))
+	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

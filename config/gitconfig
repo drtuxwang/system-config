@@ -17,7 +17,7 @@
 	merge = merge --no-ff
 	pull-all = "!f() { git pull ||:; git submodule foreach \"git pull ||:\"; }; f"
 	pull-lfs = "!f() { git lfs pull $(echo \" $*\" | sed -e \"s/ / -I /g\"); }; f"
-	status-all = "!f() { (git status; git submodule foreach git status) | egrep -v \"up to date|nothing to commit|^$\"; }; f"
+	status-all = "!f() { (git status; git submodule foreach git status) | grep -E -v \"up to date|nothing to commit|^$\"; }; f"
 	xdiff = difftool --tool=meld --dir-diff
 	xmerge = mergetool --tool=meld
 [color]

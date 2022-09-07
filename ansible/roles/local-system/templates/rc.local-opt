@@ -2,9 +2,9 @@
 
 # No Network Manager
 {% if dhclient_call %}
-dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
+dhclient `ifconfig -s -a | grep -E "^(eth|enp)" | awk '{print $1}'` &
 {% else %}
-##dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
+##dhclient `ifconfig -s -a | grep -E "^(eth|enp)" | awk '{print $1}'` &
 {% endif %}
 
 sleep 15

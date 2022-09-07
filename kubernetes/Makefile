@@ -5,7 +5,7 @@ default: status      # Default
 status:              # Show Kubernetes status
 	kubectl --namespace=kube-system get pod
 	@echo
-	kubectl --namespace=kube-system get pod -o yaml | egrep " image: " | grep -v "image: docker.io/" | sort | uniq
+	kubectl --namespace=kube-system get pod -o yaml | grep -E " image: " | grep -v "image: docker.io/" | sort | uniq
 	@echo
 	kubectl --namespace=kube-system exec -it `kubectl --namespace=kube-system get pod | grep "^etcd.*Running" | awk 'NR==1{print $1}'` -- etcdctl \
 		--cert /etc/kubernetes/pki/etcd/peer.crt \
@@ -29,4 +29,4 @@ clean:               # Remove temporary build files
 
 .PHONY: help
 help:                # Show Makefile options
-	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))
+	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

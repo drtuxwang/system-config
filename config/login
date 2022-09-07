@@ -33,7 +33,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     endif
 
     # Removing soft shell limit
-    foreach _limit ( `limit | \egrep -v "coredumpsize|unlimited|-" | \awk '{print $1}'` )
+    foreach _limit ( `limit | \grep -E -v "coredumpsize|unlimited|-" | \awk '{print $1}'` )
         if ( "`limit $_limit unlimited`" == "" ) then
             limit $_limit unlimited
         endif
@@ -109,7 +109,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     endif
 
     # Protect files
-    if ( "`echo $MYUNAME | \egrep '^(root|admin)"'$'"'`" != "" ) then
+    if ( "`echo $MYUNAME | \grep -E '^(root|admin)"'$'"'`" != "" ) then
         ls -ld $HOME | grep -v "rwx------" | awk '{print $NF}' | xargs -n 1 chmod 700 >& /dev/null
     else
         ls -ld $HOME | grep -v "rwx--x--x" | awk '{print $NF}' | xargs -n 1 chmod 711 >& /dev/null
@@ -190,7 +190,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
         endif
     end
     unsetenv _dir
-    alias scd 'env | egrep "^cd(inst|src|test)=" | sort'
+    alias scd 'env | grep -E "^cd(inst|src|test)=" | sort'
 
     # Platform specific
     switch (`uname`)
@@ -198,7 +198,6 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
         if ( "`\ls --help |& \grep '^ *--time-style'`" != "" ) then
             alias ls "ls -C --time-style=long-iso --color=auto"
             alias grep "grep --color=auto"
-            alias egrep "egrep --color=auto"
         else
             alias ls "ls -C -G"
         endif
@@ -217,7 +216,6 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
         endif
         if ( "`\grep --help |& \grep ' --color'`" != "" ) then
             alias grep "grep --color=auto"
-            alias egrep "egrep --color=auto"
         endif
         setenv LS_COLORS ""
         breaksw

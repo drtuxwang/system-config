@@ -4,8 +4,8 @@
 #
 # 1996-2019 By Dr Colin Kong
 #
-VERSION=20210807
-RELEASE="2.6.44-1"
+VERSION=20210907
+RELEASE="2.6.45"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -20,6 +20,15 @@ if [ "`(echo | head -1 | tail +1) 2>&1`" ]
 then
     _POSIX2_VERSION=199209
     export _POSIX2_VERSION
+fi
+
+# Avoid GNU egrep usage
+if [ "`grep --version 2> /dev/null | grep 'GNU grep'`" ]
+then
+    egrep () {
+        grep -E "$@"
+        return $?
+    }
 fi
 
 # Avoids Bash cd PATH problems

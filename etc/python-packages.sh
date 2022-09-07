@@ -93,7 +93,7 @@ check_packages() {
             fi
         done
     done
-    $PYTHON -m pip check 2>&1 | egrep -v "DEPRECATION:"
+    $PYTHON -m pip check 2>&1 | grep -v "DEPRECATION:"
     [ ${PIPESTATUS[0]} = 0 ] || ERROR=1
 
     [ "$ERROR" ] && echo -e "${esc}[31mERROR!${esc}[0m" && exit 1
@@ -119,7 +119,7 @@ install_packages() {
     fi
 
     PACKAGES=$(check_packages | awk '/ # Requirement / {print $NF}')
-    for PACKAGE in $(echo "$PACKAGES" | egrep "^(pip|setuptools|wheel)([>=]=.*|)$")
+    for PACKAGE in $(echo "$PACKAGES" | grep -E "^(pip|setuptools|wheel)([>=]=.*|)$")
     do
         echo "$INSTALL $PACKAGE"
         $INSTALL "$PACKAGE" 2>&1 | grep -v "'root' user"
@@ -129,7 +129,7 @@ install_packages() {
     [ "$MODE" = "piponly" ] && return
 
     export CRYPTOGRAPHY_DONT_BUILD_RUST=1
-    for PACKAGE in $(echo "$PACKAGES" | egrep -v "^(pip|setuptools|wheel)([>=]=.*|)$")
+    for PACKAGE in $(echo "$PACKAGES" | grep -E -v "^(pip|setuptools|wheel)([>=]=.*|)$")
     do
         echo "$INSTALL $PACKAGE"
         $INSTALL "$PACKAGE" 2>&1 | grep -v "'root' user"

@@ -15,7 +15,7 @@ DOCKER_RUN_FLAGS := \
 	--memory=1000m \
 	--memory-reservation=50m \
 	--privileged=true \
-	$(shell ls -1d /* | egrep -v "/(proc|root)$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}') \
+	$(shell ls -1d /* | grep -E -v "/(proc|root)$$" | awk '{printf("--volume=%s:%s ",$$1,$$1)}') \
 	--volume="/etc/hosts:/etc/hosts" \
 	--volume="/etc/passwd:/etc/passwd:ro" \
 	--volume="/etc/group:/etc/group:ro" \
@@ -30,7 +30,7 @@ default: build status # Default
 .PHONY: status
 status:              # Status of Docker image
 	@docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | \
-		egrep "^($(shell echo $(IMAGE) | sed -e 's/:/(-.*|):/')|$(BASE_IMAGE)) " ||:
+		grep -E "^($(shell echo $(IMAGE) | sed -e 's/:/(-.*|):/')|$(BASE_IMAGE)) " ||:
 
 .PHONY: pull
 pull:                # Pull Docker base image
@@ -67,4 +67,4 @@ rmi-base: rmi        # Remove Docker images including base image
 
 .PHONY: help
 help:                # Show Makefile options
-	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))
+	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # No Network Manager
-##dhclient `ifconfig -s -a | egrep "^(eth|enp)" | awk '{print $1}'` &
+##dhclient `ifconfig -s -a | grep -E "^(eth|enp)" | awk '{print $1}'` &
 
 sleep 15
 

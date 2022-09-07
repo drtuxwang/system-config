@@ -240,7 +240,7 @@ then
     ENV=
 
     # Protect files
-    if [ "`echo $MYUNAME | egrep '^(root|admin)$'`" ]
+    if [ "`echo $MYUNAME | grep -E '^(root|admin)$'`" ]
     then
         ls -ld $HOME | grep -v "rwx------" | awk '{print $NF}' | xargs -n 1 chmod 700 2> /dev/null
     else
@@ -358,7 +358,7 @@ then
         fi
     done
     unset _dir
-    alias scd='env | egrep "^cd(inst|src|test)=" | sort'
+    alias scd='env | grep -E "^cd(inst|src|test)=" | sort'
 
     # Platform specific
     case `uname` in
@@ -367,7 +367,6 @@ then
         then
             alias ls="ls -C --time-style=long-iso --color=auto"
             alias grep="grep --color=auto"
-            alias egrep="egrep --color=auto"
         else
             alias ls="ls -C -G"
         fi
@@ -385,7 +384,6 @@ then
         if [ "`\grep --help 2>&1 | \grep ' --color' 2> /dev/null`" ]
         then
             alias grep="grep --color=auto"
-            alias egrep="egrep --color=auto"
         fi
         # Defend against stubborn Linux distributions
         if [ -f /etc/ksh.kshrc ]

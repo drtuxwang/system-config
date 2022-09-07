@@ -143,7 +143,7 @@ the years.
  * bin/bson_.py
  * bin/breaktimer           Break reminder timer
  * bin/breaktimer.py        (10 min default)
- * busybox.bat
+ * bin/busybox.bat
  * bin/bz2                  Compress a file in BZIP2 format
  * bin/bz2_.py
  * bin/cal                  Wrapper for "cal" command
@@ -201,6 +201,7 @@ the years.
  * bin/eclipse.py
  * bin/edge                 Wrapper for "microsoft-edge" command
  * bin/edge.py
+ * bin/egrep                Wrapper to avoid GNU egrep usage
  * bin/espeak               Wrapper for "espeak espeak
  * bin/espeak.py
  * bin/et                   Sandbox for ET Wolf launcher

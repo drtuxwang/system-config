@@ -32,8 +32,8 @@ test-all: test       # Run tests for all versions
 .PHONY: check-makefile-help
 check-makefile:      # Check Makefile files
 	@echo "\n*** Running Makefile check ***"
-	find -name Makefile -exec egrep -n "^[A-Za-z0-9_-]+:" {} + | egrep -v ":[^:]*:.{20}..*#" && exit 1 ||:
-	find -name Makefile -exec egrep -n "^[A-Za-z0-9_-]+:  +[a-z]" {} + && exit 1 ||:
+	find -name Makefile -exec grep -E -n "^[A-Za-z0-9_-]+:" {} + | grep -E -v ":[^:]*:.{20}..*#" && exit 1 ||:
+	find -name Makefile -exec grep -E -n "^[A-Za-z0-9_-]+:  +[a-z]" {} + && exit 1 ||:
 
 .PHONY: check-config
 check-config:        # Check all config files
@@ -84,4 +84,4 @@ doc:                 # View README.md as HTML in browser
 
 .PHONY: help
 help:                # Show Makefile options
-	@egrep "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))
+	@grep -E "^[A-Za-z0-9_-]+:" $(lastword $(MAKEFILE_LIST))
