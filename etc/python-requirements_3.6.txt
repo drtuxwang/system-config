@@ -1,5 +1,6 @@
 ansible-core==2.11.7
 ansible==4.10.0
+astroid                      #   (2.11.7 last compatible version)
 asttokens==None
 cached-property==1.5.2       #   (required by docker-compose for 3.6)
 cookiecutter                 #   (1.7.3 last compatible version)
@@ -11,7 +12,9 @@ importlib-metadata==4.8.3
 importlib-resources==5.4.0   #   (required by virtualenv for 3.6)
 ipdb==None
 ipython==None
+keyring                      #   (23.4.1 last compatible version)
 MarkupSafe==2.0.1
+mccabe==0.6.1
 numpy                        #   (1.19.5 last compatible version)
 Pillow                       #   (8.4.0 last compatible version)
 pip                          #   (20.2.4 last compatible version)
@@ -31,4 +34,5 @@ typed-ast==1.4.3             #   (required by pylint/mypy for 3.6)
 typing-extensions==4.1.1     #   (required by mypy)
 typing_extensions==None      #   (requires hyphen instead of underscore)
 websockets==9.1
+yt-dlp                       #   (2022.7.18 last compatible version)
 zipp==3.6.0

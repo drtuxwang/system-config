@@ -201,7 +201,7 @@ class Main:
                     pass
         else:
             try:
-                os.mkdir(self._sshdir)
+                os.mkdir(self._sshdir, int('700', 8))
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create '

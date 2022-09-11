@@ -216,10 +216,9 @@ class Xterm(Terminal):
         sshdir = os.path.join(home, '.ssh')
         if not os.path.isdir(sshdir):
             try:
-                os.mkdir(sshdir)
+                os.mkdir(sshdir, int('700', 8))
             except OSError:
                 return
-        os.chmod(sshdir, int('700', 8))
         sshconfig = os.path.join(sshdir, 'config')
         if not os.path.isfile(sshconfig):
             try:

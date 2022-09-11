@@ -5,8 +5,9 @@ cached-property==1.5.2       #   (required by docker-compose for 3.7)
 executing==None
 flake8==3.9.2
 ipython==7.33.0
+mccabe==0.6.1
 numpy                        #   (1.21.6 last compatible version)
-pip                          #   (20.2.4 last compatible version)
+pip                          #   (20.3.4 last compatible version)
 poetry-core==None
 poetry==None
 pure-eval==None

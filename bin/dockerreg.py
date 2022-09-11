@@ -137,6 +137,7 @@ class DockerRegistry:
             url,
             headers={'User-Agent': self._user_agent},
             verify=SSL_VERIFY,
+            timeout=10,
         )
 
     def _config(self) -> None:
@@ -192,6 +193,7 @@ class DockerRegistry:
                 url,
                 headers={'User-Agent': self._user_agent},
                 verify=SSL_VERIFY,
+                timeout=10,
             )
         except Exception as exception:
             raise SystemExit(str(exception)) from exception
@@ -224,7 +226,7 @@ class DockerRegistry2(DockerRegistry):
         return requests.get(url, headers={
             'User-Agent': self._user_agent,
             'Accept': 'application/vnd.docker.distribution.manifest.v2+json',
-        }, verify=SSL_VERIFY)
+        }, verify=SSL_VERIFY, timeout=10)
 
     def _config(self) -> None:
         self._url = f'{self._server}/v2/_catalog?n={MAXREPO}'
@@ -248,7 +250,7 @@ class DockerRegistry2(DockerRegistry):
         response = requests.get(url, headers={
             'User-Agent': self._user_agent,
             'Accept': 'application/vnd.docker.distribution.manifest.v1+json',
-        }, verify=SSL_VERIFY)
+        }, verify=SSL_VERIFY, timeout=10)
 
         try:
             last_layer = response.json()['history'][0]['v1Compatibility']

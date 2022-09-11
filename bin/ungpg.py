@@ -42,13 +42,9 @@ class Options:
         gpgdir = os.path.join(home, '.gnupg')
         if not os.path.isdir(gpgdir):
             try:
-                os.mkdir(gpgdir)
+                os.mkdir(gpgdir, int('700', 8))
             except OSError:
                 return
-        try:
-            os.chmod(gpgdir, int('700', 8))
-        except OSError:
-            return
         if 'DISPLAY' in os.environ:
             del os.environ['DISPLAY']
 

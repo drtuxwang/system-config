@@ -31,7 +31,8 @@ class Options:
         """
         return self._settings
 
-    def _getvol(self) -> Generator[tuple, None, None]:
+    @staticmethod
+    def _getvol() -> Generator[tuple, None, None]:
         pacmd = command_mod.Command('pacmd', errors='stop')
         task = subtask_mod.Batch(pacmd.get_cmdline() + ['list-sinks'])
         task.run(pattern='index:|\tvolume:.*%')

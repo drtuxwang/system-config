@@ -63,6 +63,7 @@ lief==None
 Markdown==3.1.1
 MarkupSafe==1.1.1
 matplotlib-inline==None
+mccabe                       #   (0.6.1 last compatible version)
 motor==2.1.0
 mutagen==1.43.1
 mypy-extensions==None
@@ -71,6 +72,7 @@ nexus3-cli==None
 numpy                        #   (1.16.6 last compatible version)
 parso==0.7.1
 pathlib2==2.3.6              #   (required by docker-compose/virtualenv for 2.7)
+pep517                       #   (0.12.0 last compatible version)
 Pillow==None
 pip                          #   (20.2.4 last compatible version)
 platformdirs==2.0.2

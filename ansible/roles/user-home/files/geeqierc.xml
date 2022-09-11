@@ -291,8 +291,8 @@
         last_path = "/home/owner/Desktop/Downloads" 
         startup_path = "0" 
 
-        main_window.x = "10" 
-        main_window.y = "32" 
+        main_window.x = "120" 
+        main_window.y = "0" 
         main_window.w = "1400" 
         main_window.h = "700" 
         main_window.maximized = "false" 

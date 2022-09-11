@@ -5,9 +5,10 @@ Wrapper for "systemd-analyze" command
 
 import glob
 import os
+import re
 import signal
 import sys
-from typing import List
+from typing import Generator
 
 import command_mod
 import subtask_mod
@@ -45,20 +46,20 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_time(delays: List[str]) -> float:
+    def _get_timings(line: str) -> Generator[tuple, None, None]:
         """
-        Convert delay to seconds.
+        Return (delay, name) timings
         """
-        seconds = 0.
-        for delay in delays:
+        isjunk = re.compile(r'^Startup finished in |\(|\)| =.*')
+        for timing in isjunk.sub('', line).split(' + '):
+            delay, name = timing.split(' ', 1)
             if delay.endswith('min'):
-                seconds += float(delay[:-3]) * 60
+                seconds = float(delay[:-3]) * 60
             elif delay.endswith('ms'):
-                seconds += float(delay[:-2]) / 1000
+                seconds = float(delay[:-2]) / 1000
             else:
-                seconds += float(delay[:-1])
-
-        return seconds
+                seconds = float(delay[:-1])
+            yield (seconds, name)
 
     @classmethod
     def _filter_run(cls, command: command_mod.Command) -> None:
@@ -71,13 +72,9 @@ class Main:
             if line.startswith('Startup finished in '):
                 timings = []
                 boot_time = 0.
-                for timing in line.split(
-                        'Startup finished in '
-                )[-1].split(' = ')[0].split(' + '):
-                    *delays, name = timing.split()
-                    if name not in ('(firmware)', '(loader)'):
-                        timings.append(timing)
-                        boot_time += cls._get_time(delays)
+                for seconds, name in cls._get_timings(line):
+                    timings.append(f"{seconds:5.3f}s ({name})")
+                    boot_time += seconds
                 print(
                     f"Startup finished in {' + '.join(timings)} = "
                     f"{boot_time:5.3f}s",

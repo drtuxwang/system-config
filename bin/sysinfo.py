@@ -30,8 +30,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.1.0'
-VERSION = 20220828
+RELEASE = '6.2.2'
+VERSION = 20220905
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -263,6 +263,18 @@ class Detect:
         )
 
     @staticmethod
+    def _glxinfo() -> None:
+        glxinfo = command_mod.Command('glxinfo', args=['-B'], errors='ignore')
+        if glxinfo.is_found():
+            task = subtask_mod.Batch(glxinfo.get_cmdline())
+            task.run(pattern='Device: ')
+            for line in task.get_output():
+                Writer.output(
+                    name='X-OpenGL Renderer',
+                    value=line.split('Device: ', 1)[1],
+                )
+
+    @staticmethod
     def _xset() -> None:
         xset = command_mod.Command(
             'xset',
@@ -317,7 +329,7 @@ class Detect:
                 pass
 
     @staticmethod
-    def _xdisplay(display: str) -> None:
+    def _xrandr(display: str) -> None:
         xrandr = command_mod.Command('xrandr', errors='ignore')
         if xrandr.is_found():
             task = subtask_mod.Batch(xrandr.get_cmdline())
@@ -381,8 +393,9 @@ class Detect:
     def _xwindows(cls) -> None:
         display = os.environ.get('DISPLAY')
         if display:
+            cls._glxinfo()
             cls._xset()
-            cls._xdisplay(display)
+            cls._xrandr(display)
 
     @staticmethod
     def _software() -> None:
@@ -856,12 +869,12 @@ class LinuxSystem(PosixSystem):
                         '/sys/bus/scsi/devices',
                         identity,
                         'vendor',
-                    )[0].strip() +
+                    ) +
                     cls._read_file(
                         '/sys/bus/scsi/devices',
                         identity,
                         'model',
-                    )[0].strip()
+                    )
                 )
             except IndexError:
                 model = '???'

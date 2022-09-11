@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sandbox command/shell with disk, audio and network restrictions.
+Sandbox command/shell with disk and network restrictions.
 """
 
 import argparse

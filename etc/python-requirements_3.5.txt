@@ -48,10 +48,12 @@ lief==None
 lockfile==None
 Markdown==3.2.2
 MarkupSafe==1.1.1
+mccabe                       #   (0.6.1 last compatible version)
 mypy==0.910
 nexus3-cli==None
 numpy                        #   (1.18.5 last compatible version)
 parso==0.7.1
+pep517                       #   (0.12.0 last compatible version)
 Pillow==None
 pip                          #   (20.2.4 last supported)
 platformdirs==2.0.2
@@ -63,6 +65,7 @@ pure-eval==None
 pyaml==None
 pycodestyle==2.7.0
 pyflakes==2.3.1
+Pygments                     #   (2.11.2 last compatible version)
 pylint==2.6.2
 pyOpenSSL==None
 python-gnupg==None
@@ -85,6 +88,7 @@ traitlets==4.3.3
 typed-ast==1.4.3             #   (required by pylint/mypy for 3.5)
 typing-extensions==3.10.0.2
 typing_extensions==None      #   (requires hyphen instead of underscore)
+urllib3                      #   (1.26.9 last compatible version)
 websockets==None
 yt-dlp==None
 zipp==1.2.0                  #   (required by virtualenv for 3.5)

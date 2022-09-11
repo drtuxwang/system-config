@@ -110,7 +110,8 @@ class Main:
                 params={'q': search_for},
                 headers={'User-Agent': user_agent},
                 allow_redirects=True,
-                verify=True
+                verify=True,
+                timeout=10,
             )
         except Exception as exception:
             raise SystemExit(str(exception)) from exception
