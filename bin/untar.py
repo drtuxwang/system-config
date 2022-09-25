@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/TAR.ZST/TAR.LZMA/TAR.XZ/
-TAR.7Z/TGZ/TBZ/TZS/TZST/TLZ/TXZ format (GNU Tar version).
+TAR.7Z/TGZ/TBZ/TZS/TZST/TLZ/TXZ/T7Z format (GNU Tar version).
 """
 
 import argparse
@@ -40,7 +40,7 @@ class Options:
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
             description="Unpack a compressed archive in TAR/TAR.GZ/TAR.BZ2/"
-            "TAR.ZSTD/TAR.LZMA/TAR.XZ/TAR.7Z (TGZ/TBZ/TZS|TZST|TLZ/TXZ) "
+            "TAR.ZSTD/TAR.LZMA/TAR.XZ/TAR.7Z (TGZ/TBZ/TZS|TZST|TLZ/TXZ|T7Z) "
             "format.",
         )
 

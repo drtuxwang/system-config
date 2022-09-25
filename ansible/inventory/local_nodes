@@ -10,6 +10,7 @@ netty.local            ansible_user=admin
 snoopy.local           ansible_user=admin
 viva.local             ansible_user=admin
 webtv.local            ansible_user=admin
+wolfdale.local         ansible_user=admin
 xiaobear.local         ansible_user=admin
 
 # Virtual Machines

@@ -9,6 +9,11 @@ export MYUNAME=`whoami 2> /dev/null`
 # Fix logging
 [ "$ARG" != "-start" ] && exec $0 -start > $TMP/.cache/autoexec.log 2>&1
 
+# Protect files
+chmod 711 $HOME
+ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* 2> /dev/null | \
+    grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
+
 # Use /tmp (tmpfs) for cache
 export TMPDIR=/tmp/$MYUNAME
 export TMP=/tmp/$MYUNAME
@@ -34,11 +39,10 @@ rm -f `find $HOME/.???* -xdev -type l | xargs -r -d '\n' ls -ld | \
     rm -f $HOME/.xfce4-session.verbose-log && ln -s /dev/null $HOME/.xfce4-session.verbose-log
 [ ! -h $HOME/tmp || ! -w $HOME/tmp ] && rm -rf $HOME/tmp && ln -s $TMP $HOME/tmp
 
-# Protect files
-chmod 711 $HOME
-ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* 2> /dev/null | \
-    grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
+# Wipe Trash
+rm -rf $HOME/.local/share/Trash/* &
 
+# Save default settings (PATH, MANPATH, LM_LICENSE_FILE, DSOPATH)
 if [ ! "$BASE_PATH" ]
 then
     export BASE_PATH=$PATH
@@ -49,6 +53,7 @@ then
     export PATH="$HOME/software/bin:/opt/software/bin:$HOME/.local/bin:$PATH"
 fi
 
+# Setup SSH agent
 export SSH_AUTH_SOCK=$(ls -1t /tmp/ssh-*/* 2> /dev/null | head -1)
 [[ ! "$SSH_AUTH_SOCK" ]] && eval $(ssh-agent)
 
@@ -75,6 +80,7 @@ xset b off
 xset r rate 500 25
 if [ -x /usr/bin/ibus-daemon ]
 then
+    ibus-daemon --daemonize --replace
     export GTK_IM_MODULE=ibus
     export QT_IM_MODULE=ibus
     export XMODIFIERS=@im=ibus

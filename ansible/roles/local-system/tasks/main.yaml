@@ -3,3 +3,19 @@
   become: yes
   tags:
   - local-system
+
+- name: Check whether "/etc/tlp.conf" file stat
+  stat:
+    path: /etc/tlp.conf
+  register: tlp_conf
+  tags:
+  - local-system
+  - tlp-config
+
+- name: Import "tlp-setup.yaml" tasks
+  when: tlp_conf.stat.exists
+  import_tasks: tlp-setup.yaml
+  become: yes
+  tags:
+  - local-system
+  - tlp-config

@@ -1,7 +1,7 @@
-BASE_IMAGE := golang:1.17-alpine
-IMAGE := drtuxwang/golang:1.17-alpine
-NAME := golang-117-bash
-HOSTNAME := golang-117-bash
+BASE_IMAGE := golang:1.18-alpine
+IMAGE := drtuxwang/golang:1.18-alpine
+NAME := golang-118-bash
+HOSTNAME := golang-118-bash
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=

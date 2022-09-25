@@ -113,6 +113,7 @@
   loop:
   - animate.desktop
   - gimp.desktop
+  - play.desktop
   - rotate-270.desktop
   - rotate-90.desktop
   copy:

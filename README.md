@@ -393,8 +393,6 @@ the years.
  * bin/gnomine.py           (can pick using old gnomines name)
  * bin/go                   Go wrapper (golang)
  * bin/go.py
- * bin/google               Google search engine submission
- * bin/google.py
  * bin/gpg                  Make an encrypted archive in gpg (pgp compatible) format.
  * bin/gpg.py
  * bin/gqview               Wrapper for "geeqie" command
@@ -507,6 +505,9 @@ the years.
  * bin/nautilus.py
  * bin/netnice              Run a command with limited network bandwidth (uses trickle)
  * bin/netnice.py
+ * bin/netroute             Trace network route to host
+ * bin/netroute.bat
+ * bin/netroute.py
  * bin/node                 Wrapper for "node" Node.js command
  * bin/npm                  Wrapper for "npm" Node.js command
  * bin/ntpdate              Wrapper for "ntpdate" command
@@ -615,7 +616,6 @@ the years.
  * bin/sqlplus64
  * bin/sqlplus.bat
  * bin/sqlplus.py
- * bin/sonobuoy             Wrapper for "sonobuoy" command
  * bin/ssh.bat              Windows ssh wrapper (uses PuTTY)
  * bin/ssh-askpass          Wrapper for "ssh-askpass" command
  * bin/ssh_askpass_.py
@@ -677,9 +677,6 @@ the years.
  * bin/toupper              Print arguments in upper case
  * bin/toupper.bat
  * bin/toupper.py
- * bin/traceroute           Wrapper for "traceroute" command
- * bin/traceroute.bat
- * bin/traceroute.py
  * bin/twait                Wait for task to finish then launch command
  * bin/twait.bat
  * bin/twait.py
@@ -739,10 +736,12 @@ the years.
  * bin/unwine.py
  * bin/unxz                 Uncompress a file in XZ format
  * bin/unxz.py
- * bin/unzst                Uncompress a file in ZST format.
- * bin/unzst.py
+ * bin/unz                  Unpack a compressed archive using suitable tool.
+ * bin/unz.py
  * bin/unzip                Unpack a compressed archive in ZIP format.
  * bin/unzip.py
+ * bin/unzst                Uncompress a file in ZST format.
+ * bin/unzst.py
  * bin/urldecode            Decode URL query strings.
  * bin/urldecode.py
  * bin/ut                   Urban Terror game launcher
@@ -919,6 +918,7 @@ the years.
  * ansible/roles/local-system/files/nopasswd-users
  * ansible/roles/local-system/tasks/main.yaml
  * ansible/roles/local-system/tasks/system-setup.yaml
+ * ansible/roles/local-system/tasks/tlp-setup.yaml
  * ansible/roles/local-system/templates/iptables.conf
  * ansible/roles/local-system/templates/rc.local-opt
  * ansible/roles/local-users/defaults/main.yml
@@ -928,6 +928,7 @@ the years.
  * ansible/roles/user-home/files/animate.desktop
  * ansible/roles/user-home/files/geeqierc.xml
  * ansible/roles/user-home/files/gimp.desktop
+ * ansible/roles/user-home/files/play.desktop
  * ansible/roles/user-home/files/rotate-270.desktop
  * ansible/roles/user-home/files/rotate-90.desktop
  * ansible/roles/user-home/files/vlcrc

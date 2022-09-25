@@ -19,8 +19,8 @@ import sys
 import threading
 import time
 from typing import Any, Generator, List, Tuple, Union
-
-import requests  # type: ignore
+import urllib.request
+import urllib.error
 
 import command_mod
 import file_mod
@@ -30,8 +30,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.2.2'
-VERSION = 20220905
+RELEASE = '6.2.3'
+VERSION = 20220919
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -167,13 +167,13 @@ class Detect:
 
         address = ''
         try:
-            response = requests.get('http://ifconfig.me', timeout=2)
-            if response.status_code == 200:
-                address = response.text
-        except (
-            requests.exceptions.ConnectionError,
-            requests.exceptions.ConnectTimeout,
-        ):
+            with urllib.request.urlopen(
+                'http://ifconfig.me',
+                timeout=2,
+            ) as response:
+                if response.getcode() == 200:
+                    address = response.read().decode('utf-8', 'replace')
+        except urllib.error.URLError:
             pass
         self._ip_address(address, 'Net IPvx Public')
 
@@ -1729,6 +1729,8 @@ class LinuxSystem(PosixSystem):
                 cpu_cores = int(
                     threads/(int(cls._read_file(file)[0].split('-')[-1]) + 1),
                 )
+            else:
+                cpu_cores = threads
         except (IndexError, ValueError):
             cores_per_socket = None
             if 'Dual Core' in info['CPU Model']:

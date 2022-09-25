@@ -126,8 +126,6 @@ class Main:
                 ext = os.path.splitext(file)[1].lower()
                 if ext in images_extensions:
                     link = f'{album+1:02d}.{number+1:02d}_{linkdir}{ext}'
-                    if link.endswith(('.mp4', '.webm')):
-                        link += '.gif'
                     if not os.path.islink(link):
                         try:
                             os.symlink(file, link)

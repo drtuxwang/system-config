@@ -101,3 +101,10 @@ fi
 ##fi
 ##echo "Running \"$INSTALLER\" installer..." | sed -e "s/\//\\\\/g"
 ##cmd /r "$INSTALLER"
+
+if [ "${0%/*}/../scripts/index-system" ]
+then
+    cd s:/
+    ${0%/*}/../scripts/index-system
+fi
+

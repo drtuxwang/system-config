@@ -15,6 +15,7 @@ from typing import Generator, List, Tuple
 
 import command_mod
 import config_mod
+import file_mod
 import logging_mod
 import subtask_mod
 
@@ -336,7 +337,7 @@ class Media:
         """
         if self.is_valid():
             logger.info(
-                "%s    = Type:  %d (%s), %d bytes",
+                "%s    = Type:  %s (%s), %d bytes",
                 self._file,
                 self._type,
                 self._length,
@@ -621,6 +622,9 @@ class Encoder:
             self._single()
         else:
             self._multi()
+        newest = file_mod.FileUtil.newest(self._options.get_files())
+        file_time = file_mod.FileStat(newest).get_time()
+        os.utime(self._options.get_file_new(), (file_time, file_time))
 
 
 class Main:

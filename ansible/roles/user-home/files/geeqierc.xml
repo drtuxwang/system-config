@@ -201,7 +201,7 @@
             <file_type key = "tiff" enabled = "true" extensions = ".tiff;.tif" description = "TIFF" file_class = "1" writable = "true" allow_sidecar = "false" />
             <file_type key = "xbm" enabled = "true" extensions = ".xbm" description = "XBM" file_class = "1" writable = "true" allow_sidecar = "false" />
             <file_type key = "xpm" enabled = "true" extensions = ".xpm" description = "XPM" file_class = "1" writable = "true" allow_sidecar = "false" />
-            <file_type key = "ras" enabled = "false" extensions = ".ras" description = "Raster" file_class = "1" writable = "true" allow_sidecar = "false" />
+            <file_type key = "ras" enabled = "true" extensions = ".ras" description = "Raster" file_class = "1" writable = "true" allow_sidecar = "false" />
             <file_type key = "jps" enabled = "true" extensions = ".jps" description = "Stereo side-by-side jpeg" file_class = "1" writable = "true" allow_sidecar = "false" />
             <file_type key = "mpo" enabled = "true" extensions = ".mpo" description = "Stereo multi-image jpeg" file_class = "1" writable = "false" allow_sidecar = "true" />
             <file_type key = "xmp" enabled = "true" extensions = ".xmp" description = "XMP sidecar" file_class = "3" writable = "true" allow_sidecar = "false" />
@@ -227,14 +227,14 @@
             <file_type key = "erf" enabled = "true" extensions = ".erf" description = "Epson raw format" file_class = "2" writable = "false" allow_sidecar = "true" />
             <file_type key = "srw" enabled = "true" extensions = ".srw" description = "Samsung raw format" file_class = "2" writable = "false" allow_sidecar = "true" />
             <file_type key = "rw2" enabled = "true" extensions = ".rw2" description = "Panasonic raw format" file_class = "2" writable = "false" allow_sidecar = "true" />
-            <file_type key = "mp4" enabled = "false" extensions = ".mp4;.m4v;.3gp;.3g2" description = "MP4 video file" file_class = "4" writable = "false" allow_sidecar = "false" />
-            <file_type key = "3gp" enabled = "false" extensions = ".3gp;.3g2" description = "3GP video file" file_class = "4" writable = "false" allow_sidecar = "false" />
-            <file_type key = "mov" enabled = "false" extensions = ".mov;.qt" description = "MOV video file" file_class = "4" writable = "false" allow_sidecar = "false" />
-            <file_type key = "avi" enabled = "false" extensions = ".avi" description = "AVI video file" file_class = "4" writable = "false" allow_sidecar = "false" />
-            <file_type key = "mpg" enabled = "false" extensions = ".mpg;.mpeg;.mts;.m2ts" description = "MPG video file" file_class = "4" writable = "false" allow_sidecar = "false" />
-            <file_type key = "mkv" enabled = "false" extensions = ".mkv;.webm" description = "Matroska video file" file_class = "4" writable = "false" allow_sidecar = "false" />
-            <file_type key = "wmv" enabled = "false" extensions = ".wmv;.asf" description = "Windows Media Video file" file_class = "4" writable = "false" allow_sidecar = "false" />
-            <file_type key = "flv" enabled = "false" extensions = ".flv" description = "Flash Video file" file_class = "4" writable = "false" allow_sidecar = "false" />
+            <file_type key = "mp4" enabled = "true" extensions = ".mp4;.m4v;.3gp;.3g2" description = "MP4 video file" file_class = "4" writable = "false" allow_sidecar = "false" />
+            <file_type key = "3gp" enabled = "true" extensions = ".3gp;.3g2" description = "3GP video file" file_class = "4" writable = "false" allow_sidecar = "false" />
+            <file_type key = "mov" enabled = "true" extensions = ".mov;.qt" description = "MOV video file" file_class = "4" writable = "false" allow_sidecar = "false" />
+            <file_type key = "avi" enabled = "true" extensions = ".avi" description = "AVI video file" file_class = "4" writable = "false" allow_sidecar = "false" />
+            <file_type key = "mpg" enabled = "true" extensions = ".mpg;.mpeg;.mts;.m2ts" description = "MPG video file" file_class = "4" writable = "false" allow_sidecar = "false" />
+            <file_type key = "mkv" enabled = "true" extensions = ".mkv;.webm" description = "Matroska video file" file_class = "4" writable = "false" allow_sidecar = "false" />
+            <file_type key = "wmv" enabled = "true" extensions = ".wmv;.asf" description = "Windows Media Video file" file_class = "4" writable = "false" allow_sidecar = "false" />
+            <file_type key = "flv" enabled = "true" extensions = ".flv" description = "Flash Video file" file_class = "4" writable = "false" allow_sidecar = "false" />
             <file_type key = "dds" enabled = "true" extensions = ".dds" description = "DirectDraw Surface" file_class = "1" writable = "false" allow_sidecar = "false" />
             <file_type key = "pdf" enabled = "true" extensions = ".pdf" description = "Portable Document Format" file_class = "6" writable = "false" allow_sidecar = "false" />
             <file_type key = "HEIF" enabled = "true" extensions = ".heic;.heif" description = "HEIF Format" file_class = "1" writable = "false" allow_sidecar = "false" />

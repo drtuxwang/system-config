@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wrapper for "traceroute" command
+Trace network route to host
 """
 
 import glob
@@ -63,16 +63,16 @@ class Main:
         Start program
         """
         if cls._is_windows():
-            traceroute = command_mod.Command('tracert.exe', errors='stop')
+            command = command_mod.Command('tracert.exe', errors='stop')
         else:
-            traceroute = command_mod.Command(
-                'traceroute',
-                pathextra=['/usr/sbin', '/usr/etc'],
-                errors='stop'
-            )
-        traceroute.set_args(sys.argv[1:])
-
-        subtask_mod.Exec(traceroute.get_cmdline()).run()
+            command= command_mod.Command('tcptraceroute', errors='ignore')
+            if not command.is_found():
+                command = command_mod.Command(
+                    'traceroute',
+                    pathextra=['/usr/sbin', '/usr/etc'],
+                    errors='stop'
+                )
+        subtask_mod.Exec(command.get_cmdline() + sys.argv[1:]).run()
 
         return 0
 
