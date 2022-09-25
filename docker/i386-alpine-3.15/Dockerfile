@@ -12,6 +12,7 @@ RUN apk update && \
         openssh-client \
         python3 \
         socat \
+        tcptraceroute \
         vim && \
     echo -e '#!/bin/bash\n/bin/uname "$@" | sed -e "s/x86_64/i386/g"' > /usr/local/bin/uname && \
     chmod ugo+rx /usr/local/bin/uname

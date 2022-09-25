@@ -18,8 +18,7 @@ BUILD_DIRS := \
 	centos-7 \
 	\
 	busybox-1.33 \
-	clearlinux \
-	golang-1.17 \
+	golang-1.18 \
 	httpd-2.4 \
 	nginx-1.18 \
 	python-3.9 \

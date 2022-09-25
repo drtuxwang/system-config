@@ -14,6 +14,7 @@ RUN yum install -y epel-release && \
         pciutils \
         python36 \
         socat \
+        traceroute \
         vim \
         wget && \
     rpm -e --nodeps python3-pip python3-setuptools && \

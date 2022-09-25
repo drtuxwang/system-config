@@ -1004,12 +1004,6 @@ the years.
  * docker/centos-7/bash/Makefile         centos:7 based BASH login
  * docker/centos-7/dev/Dockerfile
  * docker/centos-7/dev/Makefile          centos:7 based GCC dev shell
- * docker/clearlinux/Dockerfile
- * docker/clearlinux/Makefile            clearlinux:latest based linux
- * docker/clearlinux/bash/Makefile       clearlinux:latest based BASH login
- * docker/clearlinux/bash/Dockerfile
- * docker/clearlinux/dev/Makefile        clearlinux:latest based CLANG dev shell
- * docker/clearlinux/dev/Dockerfile
  * docker/debian-9/Dockerfile
  * docker/debian-9/Makefile              debian:9-slim based linux
  * docker/debian-9/bash/Dockerfile

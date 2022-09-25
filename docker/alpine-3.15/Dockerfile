@@ -12,4 +12,5 @@ RUN apk update && \
         openssh-client \
         python3 \
         socat \
+        tcptraceroute \
         vim

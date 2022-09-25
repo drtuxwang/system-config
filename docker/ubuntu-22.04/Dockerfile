@@ -18,6 +18,7 @@ RUN apt-get update --fix-missing && \
         pciutils \
         python3 \
         socat \
+        tcptraceroute \
         vim \
         wget && \
     apt-get clean

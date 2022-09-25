@@ -15,6 +15,7 @@ RUN dnf install -y epel-release && \
         procps \
         python38 \
         socat \
+        traceroute \
         vim \
         wget && \
     rpm -e --nodeps \
