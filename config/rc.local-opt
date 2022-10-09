@@ -9,11 +9,14 @@ sleep 15
 ##mount -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=<uuid-from-blkid> /mnt/data2
 
 # Setup /shared
-##mount -t tmpfs -o noatime,nosuid,nodev,uid=owner,gid=users tmpfs /shared
+##sudo -u owner mkdir -p /tmp/.shared && mount -o bind /tmp/.shared /shared
 ##mount -t vboxsf -o uid=owner,gid=users Shared /shared &
 
 # Setup tmpfs for Docker tmp files
-##mount -t tmpfs -o noatime,nosuid,nodev tmpfs /var/lib/docker/tmp
+##mkdir -p -m 700 /tmp/.docker && mount -o bind /tmp/.docker /var/lib/docker/tmp
+
+# Setup /var/lib/clamav
+##mount -o bind /mnt/data1/var/lib/clamav /var/lib/clamav
 
 # Setup ZRAM swap (zramctl)
 ##modprobe zram num_devices=1

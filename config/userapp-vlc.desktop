@@ -2,7 +2,7 @@
 # .local/share/applications/userapp-vlc.desktop
 #
 [Desktop Entry]
-Name=vlc
+Name=vlc.py
 Exec=/opt/software/bin/vlc %f
 Type=Application
 NoDisplay=true

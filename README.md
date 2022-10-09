@@ -639,7 +639,7 @@ the years.
  * bin/systemd_analyze_.py
  * bin/t7z                  Make a compressed archive in TAR.&Z format
  * bin/t7z.py
- * bin/tar                  Make a compressed archive in TAR format
+ * bin/tar                  Make uncompressed archive in TAR format
  * bin/tar.bat
  * bin/tar.py
  * bin/tar_py.py
@@ -876,7 +876,8 @@ the years.
  * config/vimrc                          Copy to "$HOME/.vimrc" for VIM defaults
  * config/vm-linux0.vbox                 VirtualBox Linux example
  * config/vm-win10.vbox                  VirtualBox Windows example
- * config/userapp-gqview.desktop         Copy to "$HOME/.local/share/applications" for Geeqie
+ * config/userapp-evince.desktop         Copy to "$HOME/.local/share/applications" for Evince/Atril
+ * config/userapp-gqview.desktop         Copy to "$HOME/.local/share/applications" for GQview/Geeqie
  * config/userapp-soffice.desktop        Copy to "$HOME/.local/share/applications" for LibreOffice
  * config/userapp-vlc.desktop            Copy to "$HOME/.local/share/applications" for VLC
  * config/winsetup.bat                   Configure Windows VirtualBox VMs
@@ -931,6 +932,7 @@ the years.
  * ansible/roles/user-home/files/play.desktop
  * ansible/roles/user-home/files/rotate-270.desktop
  * ansible/roles/user-home/files/rotate-90.desktop
+ * ansible/roles/user-home/files/thunar.xml
  * ansible/roles/user-home/files/vlcrc
  * ansible/roles/user-home/tasks/cmdline-apps.yaml
  * ansible/roles/user-home/tasks/gui-apps.yaml

@@ -166,6 +166,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     alias quota "quota -v"
     if ( -x /usr/bin/vim ) then
         alias vi "vim -N -n -i NONE -T xterm"
+        rm -f $HOME/.viminfo
     endif
     if ( -x /usr/sbin/ping ) then
         alias ping "/usr/sbin/ping"

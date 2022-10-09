@@ -2,7 +2,7 @@
 # .local/share/applications/userapp-gqview.desktop
 #
 [Desktop Entry]
-Name=gqview
+Name=gqview.py
 Exec=/opt/software/bin/gqview %f
 Type=Application
 NoDisplay=true

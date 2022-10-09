@@ -2,7 +2,7 @@
 # .local/share/applications/userapp-soffice.desktop
 #
 [Desktop Entry]
-Name=soffice
+Name=soffice.py
 Exec=/opt/software/bin/soffice %f
 Type=Application
 NoDisplay=true

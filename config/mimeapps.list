@@ -1,6 +1,6 @@
 [Added Associations]
 application/ogg=userapp-vlc.desktop
-application/pdf=chromium-browser.desktop
+application/pdf=userapp-evince.desktop
 application/vnd.oasis.opendocument.chart-template=userapp-soffice.desktop
 application/vnd.oasis.opendocument.chart=userapp-soffice.desktop
 application/vnd.oasis.opendocument.formula-template=userapp-soffice.desktop

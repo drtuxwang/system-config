@@ -48,13 +48,28 @@
   - user-home
   - autoexec
 
-- name: Check "{{ home_directory }}/.config/mimeapps.list" file stat
-  stat:
-    path: "{{ home_directory }}/.config/mimeapps.list"
-  register: mimeapps_list
+- name: Ensure "{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml" directory exists
+  file:
+    path: "{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml"
+    state: directory
+    recurse: true
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  tags:
+  - user-home
+  - thunar
+
+- name: Copy file to "{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml"
+  copy:
+    src: "thunar.xml"
+    dest: "{{ home_directory }}/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  tags:
+  - user-home
+  - thunar
 
 - name: Copy file to "{{ home_directory }}/.config/mimeapps.list"
-  when: not mimeapps_list.stat.exists
   copy:
     src: "{{ config_directory }}/mimeapps.list"
     dest: "{{ home_directory }}/.config/"

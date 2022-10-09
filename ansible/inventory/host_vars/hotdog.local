@@ -1,4 +1,5 @@
 docker_daemon: true
 
+clamav_directory: /mnt/data1/var/lib/clamav
 data1_uuid: d208fbda-e79e-4bb3-9444-0430c882c7ca
 download_rate: 32000

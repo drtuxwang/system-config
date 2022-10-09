@@ -1,0 +1,8 @@
+#
+# .local/share/applications/userapp-evince.desktop
+#
+[Desktop Entry]
+Name=evince.py
+Exec=/opt/software/bin/evince %f
+Type=Application
+NoDisplay=true

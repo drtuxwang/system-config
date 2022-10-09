@@ -18,18 +18,25 @@ mount -t ext4 -o noatime,errors=remount-ro,commit=60 UUID={{ data1_uuid }} /mnt/
 
 # Setup /shared
 {% if vbox_shared %}
-##mount -t tmpfs -o noatime,nosuid,nodev,uid=owner,gid=users tmpfs /shared
+##sudo -u owner mkdir -p /tmp/.shared && mount -o bind /tmp/.shared /shared
 mount -t vboxsf -o uid=owner,gid=users Shared /shared &
 {% else %}
-mount -t tmpfs -o noatime,nosuid,nodev,uid=owner,gid=users tmpfs /shared
+sudo -u owner mkdir -p /tmp/.shared && mount -o bind /tmp/.shared /shared
 ##mount -t vboxsf -o uid=owner,gid=users Shared /shared &
 {% endif %}
 
 # Setup tmpfs for Docker tmp files
 {% if docker_daemon %}
-mount -t tmpfs -o noatime,nosuid,nodev tmpfs /var/lib/docker/tmp
+mkdir -p -m 700 /tmp/.docker && mount -o bind /tmp/.docker /var/lib/docker/tmp
 {% else %}
-##mount -t tmpfs -o noatime,nosuid,nodev tmpfs /var/lib/docker/tmp
+##mkdir -p -m 700 /tmp/.docker && mount -o bind /tmp/.docker /var/lib/docker/tmp
+{% endif %}
+
+# Setup /var/lib/clamav
+{% if clamav_directory is defined %}
+mount -o bind {{ clamav_directory }} /var/lib/clamav
+{% else %}
+##mount -o bind /mnt/data1/var/lib/clamav /var/lib/clamav
 {% endif %}
 
 # Setup ZRAM swap (zramctl)

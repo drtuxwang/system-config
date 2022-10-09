@@ -318,6 +318,7 @@ then
     if [ "$BASH" ]
     then
         alias h="history 256"
+        rm -f $HOME/.bash_history
     else
         alias h='fc -l 1 2> /dev/null | tail -256'
     fi
@@ -328,6 +329,7 @@ then
     if [ -x /usr/bin/vim ]
     then
         alias vi="vim -N -n -i NONE -T xterm"
+        rm -f $HOME/.viminfo
     fi
     if [ -x /usr/sbin/ping ]
     then
