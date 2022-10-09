@@ -65,7 +65,7 @@ class Main:
         if cls._is_windows():
             command = command_mod.Command('tracert.exe', errors='stop')
         else:
-            command= command_mod.Command('tcptraceroute', errors='ignore')
+            command = command_mod.Command('tcptraceroute', errors='ignore')
             if not command.is_found():
                 command = command_mod.Command(
                     'traceroute',

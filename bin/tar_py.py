@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Make a compressed archive in TAR format (Python version).
+Make uncompressed archive in TAR format (Python version).
 """
 
 import argparse

@@ -164,15 +164,21 @@ class Main:
         """
         Generate single month calendar
         """
-        data = calendar.TextCalendar().formatmonth(year, month)
-
+        rows = [
+            f"{x:20s}"
+            for x in
+            calendar.TextCalendar().formatmonth(year, month).split('\n')
+        ]
         now = datetime.datetime.now()
         if year == now.year and month == now.month:
             # Invert colours of today
             today = f"{now.day:02d}"
-            data = data.replace(today, f"\033[7m{today}\033[m")
+            rows = [
+                x.replace(today, f"\033[7m{today}\033[m")
+                for x in rows
+            ]
 
-        return data.splitlines()+['']
+        return rows+['']
 
     @classmethod
     def short(cls, year: int, month: int) -> None:
@@ -191,9 +197,9 @@ class Main:
 
         for index in range(8):
             print(
-                f"  {last_month[index]:20s}   "
-                f"{current_month[index]:20s}   "
-                f"{next_month[index]:20s}",
+                f"  {last_month[index]}   "
+                f"{current_month[index]}   "
+                f"{next_month[index]}"
             )
 
     @classmethod

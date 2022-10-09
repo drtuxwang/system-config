@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Make a compressed archive in TAR format (GNU Tar version).
+Make uncompressed archive in TAR format (GNU Tar version).
 """
 
 import argparse
@@ -12,6 +12,7 @@ import sys
 from typing import List
 
 import command_mod
+import file_mod
 import subtask_mod
 
 
@@ -109,7 +110,44 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def run() -> int:
+    def _get_cmdline(archive: str, files: List[str]) -> List[str]:
+        if os.name == 'nt':
+            tar = command_mod.Command('tar.exe', errors='stop')
+        else:
+            tar = command_mod.Command('tar', errors='stop')
+        task = subtask_mod.Batch(tar.get_cmdline() + ['--help'])
+        task.run(pattern='--xattrs')
+        has_xattrs = task.has_output()
+        monitor = command_mod.Command('pv', errors='ignore')
+
+        cmdline = tar.get_cmdline()
+        if monitor.is_found():
+            cmdline.extend(['cf', '-'] + files)
+            monitor.set_args(['>', archive+'.part'])
+        else:
+            cmdline.extend(['cfv', archive+'.part'] + files)
+        if has_xattrs:
+            cmdline.extend(['--xattrs', '--xattrs-include=*'])
+        if monitor.is_found():
+            cmdline.extend(['|'] + monitor.get_cmdline())
+
+        return cmdline
+
+    @staticmethod
+    def _check_tar(archive: str) -> None:
+        size = file_mod.FileStat(archive).get_size()
+        if size % 1024:
+            raise SystemExit(f'{sys.argv[0]}: Truncated tar file: {archive}')
+
+        with open(archive, 'rb') as ifile:
+            ifile.seek(size - 1024)
+            if ifile.read(1024) != 1024*b'\0':
+                raise SystemExit(
+                    f'{sys.argv[0]}: Missing tar file EOF records: {archive}'
+                )
+
+    @classmethod
+    def run(cls) -> int:
         """
         Start program
         """
@@ -118,28 +156,18 @@ class Main:
 
         os.umask(int('022', 8))
         archive = options.get_archive()
-        if os.name == 'nt':
-            tar = command_mod.Command('tar.exe', errors='stop')
-        else:
-            tar = command_mod.Command('tar', errors='stop')
-        task = subtask_mod.Batch(tar.get_cmdline() + ['--help'])
-        task.run(pattern='--xattrs')
-        has_xattrs = task.has_output()
-
-        tar.set_args(['cfv', archive+'.part'])
-        tar.extend_args(options.get_files())
-        if has_xattrs:
-            tar.extend_args(['--xattrs', '--xattrs-include=*'])
-        task = subtask_mod.Task(tar.get_cmdline())
+        task = subtask_mod.Task(cls._get_cmdline(archive, options.get_files()))
         task.run()
         if task.get_exitcode():
             raise SystemExit(task.get_exitcode())
+        cls._check_tar(archive + '.part')
         try:
             shutil.move(archive+'.part', archive)
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{archive}" archive file.',
             ) from exception
+        print("Completed!")
 
         return 0
 

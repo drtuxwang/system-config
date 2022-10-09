@@ -108,23 +108,38 @@ class Main:
             sys.argv = argv
 
     def _unpack(self, file: str) -> None:
+        task: subtask_mod.Task
+
+        if file.endswith(('.tar.7z', 't7z')):
+            unpacker = command_mod.Command('7z', args=['x', '-y', '-so'])
+        elif file.endswith(('.tar.lzma', 'tlz')):
+            unpacker = command_mod.Command('lzma', args=['-d', '-c'])
+        elif file.endswith(('.tar.xz', 'txz')):
+            unpacker = command_mod.Command('xz', args=['-d', '-c'])
+        elif file.endswith(('.tar.zstd', 'tzst', 'tzs')):
+            unpacker = command_mod.Command('zstd', args=['-d', '-c'])
+        elif file.endswith(('.tar.bz2', 'tbz')):
+            unpacker = command_mod.Command('bzip2', args=['-d', '-c'])
+        elif file.endswith(('.tar.gz', 'tgz')):
+            unpacker = command_mod.Command('gzip', args=['-d', '-c'])
+        else:
+            unpacker = command_mod.Command('cat')
+        cmdline = unpacker.get_cmdline() + [file]
+
+        monitor = command_mod.Command('pv', errors='ignore')
+        if monitor.is_found():
+            cmdline.extend(['|'] + monitor.get_cmdline())
+
+        cmdline.extend(['|'] + self._tar.get_cmdline() + ['xf', '-'])
         task = subtask_mod.Batch(self._tar.get_cmdline() + ['--help'])
         task.run(pattern='--xattrs')
-        has_xattrs = task.has_output()
+        if task.has_output():
+            cmdline.extend(['--xattrs', '--xattrs-include=*'])
 
-        if file.endswith('.tar.7z'):
-            unpacker = command_mod.Command('7z', errors='stop')
-            unpacker.set_args(['x', '-y', '-so', file])
-            self._tar.set_args(['xfv', '-'])
-            if has_xattrs:
-                self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
-            subtask_mod.Task(
-                unpacker.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()
-        else:
-            self._tar.set_args(['xfv', file])
-            if has_xattrs:
-                self._tar.extend_args(['--xattrs', '--xattrs-include=*'])
-            subtask_mod.Task(self._tar.get_cmdline()).run()
+        task = subtask_mod.Task(cmdline)
+        task.run()
+        if task.get_exitcode():
+            raise SystemExit(task.get_exitcode())
 
     def _view(self, file: str) -> None:
         if file.endswith('.tar.7z'):
@@ -155,6 +170,7 @@ class Main:
                 self._view(file)
             else:
                 self._unpack(file)
+        print("Completed!")
 
         return 0
 

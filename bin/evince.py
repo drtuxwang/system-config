@@ -97,7 +97,7 @@ class Main:
             f'/run/user/{os.getuid()}/dconf',
             os.path.join(os.getenv('HOME', '/'), '.config/ibus'),
             work_dir,
-        ]
+        ] + glob.glob('/tmp/dbus*')
         if len(sys.argv) > 1:
             configs.append(os.path.dirname(os.path.abspath(sys.argv[1])))
         command.sandbox(configs)
@@ -111,7 +111,7 @@ class Main:
             ' Unimplemented annotation:|: No current point in closepath|'
             ': Invalid Font Weight|: invalid value|accessibility bus address:|'
             'Error setting file metadata:|no system default destination|'
-            'GLib-GObject-WARNING'
+            'GLib-GObject-WARNING|accessibility bus'
         )
         self._config()
         self._setenv()
