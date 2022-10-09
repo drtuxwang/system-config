@@ -12,6 +12,7 @@ then
 fi
 
 cd $(dirname $0)
+umask 022
 
 for IMAGE in $*;
 do
@@ -19,11 +20,20 @@ do
     FILE=../$(echo $IMAGE | sed -e "s/\//-/g;s/:/_/")_$(echo $CREATED | sed -e "s/-//g;s/T.*//").tar
     LIST="${FILE%.tar}.list"
 
-    echo "docker save $@ -o $FILE"
-    docker save "$@" -o "$FILE.part"
-    tar xf "$FILE.part" repositories -O | sed -e "s/,/\\n/g;s/\"/:/g" | cut -f2,5 -d: > "$LIST.part"
-    touch -d $CREATED "$FILE.part" "$LIST.part"
-    chmod 644 "$FILE.part"
-    mv "$FILE.part" "$FILE"
-    mv "$LIST.part" "$LIST"
+    if [ -f "$FILE.7z" ]
+    then
+        echo "Skipping existing file: $(realpath $FILE.7z)"
+    else
+        echo "docker save $@ -o $FILE"
+        docker save "$@" -o "$FILE.part"
+        tar xf "$FILE.part" repositories -O | sed -e "s/,/\\n/g;s/\"/:/g" | cut -f2,5 -d: > "$LIST.part"
+        touch -d $CREATED "$FILE.part" "$LIST.part"
+        mv "$FILE.part" "$FILE"
+        mv "$LIST.part" "$LIST"
+        7z a -m0=lzma2 -mmt=2 -mx=9 -myx=9 -md=128m -mfb=256 -ms=on -snh -snl -stl -y "$FILE.7z.part" "$FILE"
+        mv "$FILE.7z.part" "$FILE.7z"
+        rm "$FILE"
+        echo "Created archive file: $(realpath $FILE.7z)"
+    fi
+    shift
 done

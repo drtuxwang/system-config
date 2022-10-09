@@ -56,41 +56,40 @@ check-base:          # Show base Docker images
 .PHONY: pull
 pull:                # Pull base Docker images
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR pull || exit 1; \
+		make --no-print-directory --directory $$DIR pull || exit 1; \
 	done
 
 .PHONY: pull-save
 pull-save:           # Pull base Docker images and save as tar file if changed
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR pull-save || exit 1; \
+		make --no-print-directory --directory $$DIR pull-save || exit 1; \
 	done
-	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose *.tar ||:
 	ls -l *.tar* 2> /dev/null ||:
 
 .PHONY: save
 save:                # Save base Docker images as tar files
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR save; \
+		make --no-print-directory --directory $$DIR save; \
 	done
-	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose *.tar
-	ls -l *.tar*
+	ls -l *.tar* 2> /dev/null ||:
 
 .PHONY: build
-build:               # Build Docker images
-	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR build || exit 1:; \
-	done
+build: $(BUILD_DIRS) # Build Docker images
+
+.PHONY: $(BUILD_DIRS)
+$(BUILD_DIRS):       # Build Docker images in parallel
+	make --no-print-directory --directory=$@
 
 .PHONY: test
 test:                # Run tests
 	for DIR in $(TEST_DIRS); do \
-		make --no-print-directory -C $$DIR test; \
+		make --no-print-directory --directory $$DIR test; \
 	done
 
 .PHONY: version
 version:             # Check versions
 	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR version || exit 1; \
+		make --no-print-directory --directory $$DIR version || exit 1; \
 	done
 
 .PHONY: push-stable
@@ -142,13 +141,13 @@ rmi:                 # Remove Docker images
 		docker rmi -f $${IMAGE%:*}:stable ||:; \
 	done
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR rmi; \
+		make --no-print-directory --directory $$DIR rmi; \
 	done
 
 .PHONY: rmi-base
 rmi-base: rmi        # Remove Docker images including base image
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR rmi-base; \
+		make --no-print-directory --directory $$DIR rmi-base; \
 	done
 
 .PHONY: help

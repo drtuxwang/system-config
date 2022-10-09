@@ -53,27 +53,26 @@ update:              # Update Helm chart repository
 .PHONY: version
 version:             # Helm chart versions
 	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR version || exit 1; \
+		make --no-print-directory --directory $$DIR version || exit 1; \
 	done
 
 .PHONY: images
 images:              # Show Docker images
 	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR images || exit 1; \
+		make --no-print-directory --directory $$DIR images || exit 1; \
 	done
 
 .PHONY: pull
 pull:                # Pull Docker images
 	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR pull || exit 1; \
+		make --no-print-directory --directory $$DIR pull || exit 1; \
 	done
 
 .PHONY: save
 save:                # Save Docker images as tar file
 	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR save || exit 1; \
+		make --no-print-directory --directory $$DIR save || exit 1; \
 	done
-	xz -9 -e --x86 --lzma2=dict=128MiB --threads=1 --verbose *.tar
 	ls -l *.tar*
 
 .PHONY: install-tiller
@@ -96,13 +95,13 @@ uninstall-tiller:    # Uninstall legacy Helm 2.x server
 clean:               # Remove temporary build files
 	rm -f helm-images_*
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR clean; \
+		make --no-print-directory --directory $$DIR clean; \
 	done
 
 .PHONY: rmi
 rmi:                 # Remove Docker images
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR rmi; \
+		make --no-print-directory --directory $$DIR rmi; \
 	done
 
 .PHONY: help

@@ -15,6 +15,10 @@ while [ $# != 0 ]
 do
     FILE="$1"
     case "$FILE" in
+    *.tar.7z|*.t7z)
+        echo "7z x -so \"$FILE\" | docker load"
+        7z x -so "$FILE" | docker load
+        ;;
     *.tar|*.tar.*|*.t[bgx]z)
         echo "docker load -i \"$FILE\""
         docker load -i "$FILE"

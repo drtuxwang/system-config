@@ -24,7 +24,7 @@ default: build status # Default
 
 .PHONY: status
 status:              # Status of Docker images
-	@make --no-print-directory -C .. status
+	@make --no-print-directory --directory .. status
 
 .PHONY: build
 build:               # Build Docker images

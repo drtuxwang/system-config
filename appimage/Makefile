@@ -16,13 +16,13 @@ status:              # Status of Appimage builds
 .PHONY: build
 build:                # Build Appimage images
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR build || exit 1:; \
+		make --no-print-directory --directory $$DIR build || exit 1:; \
 	done
 
 .PHONY: clean
 clean:                # Remove temporary build files
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR clean; \
+		make --no-print-directory --directory $$DIR clean; \
 	done
 
 .PHONY: help

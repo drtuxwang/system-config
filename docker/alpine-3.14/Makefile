@@ -31,23 +31,23 @@ build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR build || exit 1; \
+		make --no-print-directory --directory $$DIR build || exit 1; \
 	done
 
 .PHONY: run
 run:                 # Run Docker container
-	make --no-print-directory -C bash run
+	make --no-print-directory --directory bash run
 
 .PHONY: version
 version:             # Check versions
 	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR version || exit 1; \
+		make --no-print-directory --directory $$DIR version || exit 1; \
 	done
 
 .PHONY: rmi
 rmi:                 # Remove Docker images
 	for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory -C $$DIR rmi; \
+		make --no-print-directory --directory $$DIR rmi; \
 	done
 	docker rmi -f $(IMAGE) ||:
 

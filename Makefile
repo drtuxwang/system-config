@@ -16,7 +16,7 @@ test: check-makefile check-config check-python check-packages # Run tests
 
 .PHONY: test-docker
 test-docker:         # Run tests in docker
-	make --no-print-directory -C docker test
+	make --no-print-directory --directory docker test
 
 .PHONY: test-all
 test-all: test       # Run tests for all versions
@@ -45,7 +45,7 @@ check-python:        # Check Python code
 	@echo "\n*** Running \"${PYTHON}\" UNITTEST check ***"
 	${PYTHON} -m unittest discover --buffer bin
 	@echo "\n*** Running \"${PYTHON}\" COOKIECUTTER check ***"
-	make --no-print-directory -C cookiecutter test
+	make --no-print-directory --directory cookiecutter test
 	@echo "\n*** Running \"${PYTHON}\" PYFLAKES checks ***"
 	${PYTHON} -m flake8 bin/*.py
 	@echo "\n*** Running \"${PYTHON}\" PYCODESTYLE (PEP8) checks ***"
