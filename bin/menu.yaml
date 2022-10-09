@@ -159,6 +159,13 @@ menu_games:
   checks:
   - /usr/games/swell-foop
 - button:
+    name: steam
+    color: "#00ff00"
+    label: Steam
+    run: exec steam &
+  checks:
+  - steam
+- button:
     name: etwolf
     color: "#00ff00"
     label: ET
