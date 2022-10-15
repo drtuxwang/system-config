@@ -39,4 +39,5 @@ MiscShowUnsafePasteDialog=FALSE
 ShortcutsNoHelpkey=TRUE
 ShortcutsNoMenukey=TRUE
 ShortcutsNoMnemonics=TRUE
+WordChars=-A-Za-z0-9,./?%&#:_=+@~–
 
