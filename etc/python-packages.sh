@@ -86,11 +86,17 @@ check_packages() {
     do
         for FILE in $(awk '/^[^_]/ {print $1}' $DIR/*.dist-info/top_level.txt 2> /dev/null | grep -v "^DUMMY$")
         do
-            if [ ! "$(ls $DIR/$FILE $DIR/$FILE.* 2> /dev/null)" ]
-            then
-                grep $FILE $DIR/*.dist-info/top_level.txt
-                ERROR=1
-            fi
+            case $FILE in
+            pvectorc)  # Ignore missing
+                ;;
+            *)
+                if [ ! "$(ls $DIR/$FILE $DIR/$FILE.* 2> /dev/null)" ]
+                then
+                    grep $FILE $DIR/*.dist-info/top_level.txt | \
+                    ERROR=1
+                fi
+                ;;
+            esac
         done
     done
     $PYTHON -m pip check 2>&1 | grep -v "DEPRECATION:"

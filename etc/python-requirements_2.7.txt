@@ -9,6 +9,7 @@ backports-abc==0.5           #   (required by tornado for 2.7)
 backports.functools-lru-cache==1.6.4  #   (required by cookiecutter/ipdb for 2.7)
 backports.shutil-get-terminal-size==1.0.0  #   (required by docker-compose/ipdb for 2.7)
 backports.ssl-match-hostname==3.7.0.1  #   (required by docker-compose for 2.7)
+bcrypt==3.1.7
 Brotli==None
 build==0.5.1
 CacheControl==None
@@ -102,6 +103,7 @@ scandir==1.10.0              #   (required by docker-compose/ipdb/virtualenv for
 scipy==None
 SecretStorage==None
 setuptools==44.1.1
+shellingham==1.4.0
 simplegeneric==0.8.1         #   (required by ipdb for 2.7)
 singledispatch==3.7.0        #   (required by pylint/virtualenv for 2.7)
 smmap2==3.0.1                #   (required by GitPython for 2.7)
