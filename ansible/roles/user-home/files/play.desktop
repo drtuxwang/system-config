@@ -3,6 +3,6 @@ Version=1.0
 Type=Application
 Name=Play
 TryExec=vlc
-Exec=vlc --no-repeat --no-loop --fullscreen %f
+Exec=vlc --no-repeat --no-loop %f
 Categories=X-Geeqie;
 OnlyShowIn=X-Geeqie;

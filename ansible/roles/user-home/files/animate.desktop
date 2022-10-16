@@ -3,6 +3,6 @@ Version=1.0
 Type=Application
 Name=Animate
 TryExec=vlc
-Exec=vlc --no-repeat --no-loop --fullscreen --noaudio %f
+Exec=vlc --no-repeat --no-loop --noaudio %f
 Categories=X-Geeqie;
 OnlyShowIn=X-Geeqie;
