@@ -104,3 +104,6 @@ x-content/video-vcd=userapp-vlc.desktop
 x-scheme-handler/mms=userapp-vlc.desktop
 x-scheme-handler/rtmp=userapp-vlc.desktop
 x-scheme-handler/rtsp=userapp-vlc.desktop
+
+[Default Applications]
+x-scheme-handler/msteams=teams.desktop
