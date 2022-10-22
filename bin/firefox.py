@@ -307,6 +307,7 @@ class Options:
             '"browser.sessionstore.max_resumed_crashes", 0',
             '"browser.sessionstore.max_tabs_undo", 0',
             '"browser.shell.checkDefaultBrowser", false',
+            '"browser.tabs.tabmanager.enabled", false',
             '"browser.zoom.siteSpecific", false',
             '"content.interrupt.parsing", true',
             '"content.notify.backoffcount", 5',
