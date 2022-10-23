@@ -30,8 +30,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.2.3'
-VERSION = 20220919
+RELEASE = '6.3.0'
+VERSION = 20221023
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -1468,6 +1468,9 @@ class LinuxSystem(PosixSystem):
                 info['OS Name'] = f'Debian {name}'
             except IndexError:
                 pass
+            file_stat = file_mod.FileStat('/var/lib/dpkg/info')
+            if file_stat.get_time():
+                info['OS Patch'] = file_stat.get_date_local()
         elif os.path.isfile('/etc/DISTRO_SPECS'):
             try:
                 identity = None

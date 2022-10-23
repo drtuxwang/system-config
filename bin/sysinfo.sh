@@ -530,7 +530,7 @@ detect() {
                 MYOSX="MEPIS "`dpkg --list | grep "ii  kernel.*MEPIS" | head -1 | awk '{print $3}' | sed -e "s/MEPIS.//"`
             elif [ -f "/etc/debian_version" ]
             then
-                MYOSX="Debian "`cat /etc/debian_version`
+                MYOSX="Debian `cat /etc/debian_version` `stat /var/lib/dpkg/info 2> /dev/null | awk '/Modify/ {print $2}'`"
             elif [ "`dpkg --list 2> /dev/null`" ]
             then
                 MYOSX="Debian "`dpkg --list | grep "ii  base-files" | awk '{print $3}'`
