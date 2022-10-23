@@ -240,12 +240,14 @@ then
     ENV=
 
     # Protect files
-    if [ "`echo $MYUNAME | grep -E '^(root|admin)$'`" ]
-    then
+    case $MYUNAME in
+    root|admin)
         ls -ld $HOME | grep -v "rwx------" | awk '{print $NF}' | xargs -n 1 chmod 700 2> /dev/null
-    else
+        ;;
+    *)
         ls -ld $HOME | grep -v "rwx--x--x" | awk '{print $NF}' | xargs -n 1 chmod 711 2> /dev/null
-    fi
+        ;;
+    esac
     ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.???* 2> /dev/null | \
         grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= 2> /dev/null
 
@@ -360,7 +362,6 @@ then
         fi
     done
     unset _dir
-    alias scd='env | grep -E "^cd(inst|src|test)=" | sort'
 
     # Platform specific
     case `uname` in
@@ -405,8 +406,9 @@ then
         cd "$HOME/Desktop" 2> /dev/null
     fi
 
-    # Shell information
+    # Show information
     echo
+    sysinfo.sh -s 2> /dev/null
     MYINFO="$MYSHELL shell (tty=$MYTTY"
     if [ "$SSH_KEYS" != 0 ]
     then

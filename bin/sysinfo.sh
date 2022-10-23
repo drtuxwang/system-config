@@ -2,7 +2,7 @@
 #
 # System configuration detection tool
 #
-# 1996-2019 By Dr Colin Kong
+# 1996-2022 By Dr Colin Kong
 #
 VERSION=20221023
 RELEASE="2.6.46"
@@ -352,7 +352,7 @@ scanbus() {
             fi
             if [ -e "$DEVICE" ]
             then
-                MODEL=`echo "$LSPCI" | grep "^\`echo "$GPU" | sed -e "s@.*/[^:]*:@@;s@/.*@@"\` " | sed -e "s/.*controller: //"`
+                MODEL=`echo "$LSPCI" | grep "^\`echo \"$GPU\" | sed -e \"s@.*/[^:]*:@@;s@/.*@@\"\` " | sed -e "s/.*controller: //"`
                 write_output name="Graphics device" device="$DEVICE" value="$MODEL"
             fi
         done
@@ -408,57 +408,60 @@ scanbus() {
 # Function to detect configurations
 #
 detect() {
-    AUTHOR="Sysinfo $RELEASE (`echo $VERSION | cut -c1-4`-`echo $VERSION | cut -c5-6`-`echo $VERSION | cut -c7-8`)"
-    TIME=`date +'%Y-%m-%d-%H:%M:%S'`
-    $ECHO "\n$AUTHOR - System configuration detection tool"
-    $ECHO "\n*** Detected at $TIME ***"
+    if [ "$ALL" ]
+    then
+        AUTHOR="Sysinfo $RELEASE (`echo $VERSION | cut -c1-4`-`echo $VERSION | cut -c5-6`-`echo $VERSION | cut -c7-8`)"
+        TIME=`date +'%Y-%m-%d-%H:%M:%S'`
+        $ECHO "$AUTHOR - System configuration detection tool"
+        $ECHO "\n*** Detected at $TIME ***"
 
-    # Detect host information
-    MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
-    MYFQDN=`isitset \`host $MYHNAME 2> /dev/null | grep "has address" | awk '{printf("%s.", $1)}'\``
-    case `uname` in
-    AIX)
-        INETS=`isitset \`/usr/sbin/ifconfig -a 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
+        # Detect host information
+        MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
+        MYFQDN=`isitset \`host $MYHNAME 2> /dev/null | grep "has address" | awk '{printf("%s.", $1)}'\``
+        case `uname` in
+        AIX)
+            INETS=`isitset \`/usr/sbin/ifconfig -a 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
+            ;;
+        Darwin)
+            INETS=`/sbin/ifconfig -a 2> /dev/null | grep "inet6* " | awk '{print $2}' | cut -f1 -d% | uniq`
+            ;;
+        HP-UX)
+            INETS=`isitset \`(/usr/sbin/ifconfig lan0; /usr/sbin/ifconfig lan1; /usr/sbin/ifconfig lan2) 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
+            ;;
+        IRIX*)
+            INETS=`isitset \`/usr/etc/ifconfig -a 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
+            if [ "$INETS" = Unknown ]
+            then
+                INETS=`/usr/etc/ping -c 1 $MYHNAME 2>&1 | grep "([.0-9]*)" | head -1 | cut -f2 -d"(" | cut -f1 -d")"`
+            fi
+            ;;
+        Linux)
+            if [ -x "/bin/ip" ]
+            then
+                INETS=`/bin/ip address 2> /dev/null | grep "^ *inet[6]* " | awk '{print $2}'`
+            else
+                INETS=`LANG=en_GB isitset \`/sbin/ifconfig -a 2> /dev/null | grep "^ *inet6* " | sed -e "s/ addr[a-z]*://;s/inet[6]*/ /" | awk '{print $1}' | uniq\``
+            fi
+            ;;
+        *NT*)
+            INETS=`isitset \`$WINDIR/system32/ipconfig 2> /dev/null | grep "IP.* Address" | sed -e "s/.*: //"\``
         ;;
-    Darwin)
-        INETS=`/sbin/ifconfig -a 2> /dev/null | grep "inet6* " | awk '{print $2}' | cut -f1 -d% | uniq`
-        ;;
-    HP-UX)
-        INETS=`isitset \`(/usr/sbin/ifconfig lan0; /usr/sbin/ifconfig lan1; /usr/sbin/ifconfig lan2) 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
-        ;;
-    IRIX*)
-        INETS=`isitset \`/usr/etc/ifconfig -a 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
-        if [ "$INETS" = Unknown ]
-        then
-            INETS=`/usr/etc/ping -c 1 $MYHNAME 2>&1 | grep "([.0-9]*)" | head -1 | cut -f2 -d"(" | cut -f1 -d")"`
-        fi
-        ;;
-    Linux)
-        if [ -x "/bin/ip" ]
-        then
-            INETS=`/bin/ip address 2> /dev/null | grep "^ *inet[6]* " | awk '{print $2}'`
-        else
-            INETS=`LANG=en_GB isitset \`/sbin/ifconfig -a 2> /dev/null | grep "^ *inet6* " | sed -e "s/ addr[a-z]*://;s/inet[6]*/ /" | awk '{print $1}' | uniq\``
-        fi
-        ;;
-    *NT*)
-        INETS=`isitset \`$WINDIR/system32/ipconfig 2> /dev/null | grep "IP.* Address" | sed -e "s/.*: //"\``
-        ;;
-    OSF1|SunOS|*)
-        INETS=`isitset \`/sbin/ifconfig -a 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
-        ;;
-    esac
+        OSF1|SunOS|*)
+            INETS=`isitset \`/sbin/ifconfig -a 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
+            ;;
+        esac
 
-    write_output name="Hostname" value="$MYHNAME"
-    write_output name="Net FQDN" value="$MYFQDN"
-    for INET in $INETS
-    do
-        write_output name="INET Address" value="$INET"
-    done
-    for HOST in `grep "^[     ]*nameserver[     ]*[1-9]" /etc/resolv.conf 2> /dev/null | awk '{print $2}'`
-    do
-        write_output name="INET Nameserver" value="$HOST"
-    done
+        write_output name="Hostname" value="$MYHNAME"
+        write_output name="Net FQDN" value="$MYFQDN"
+        for INET in $INETS
+        do
+            write_output name="INET Address" value="$INET"
+        done
+        for HOST in `grep "^[     ]*nameserver[     ]*[1-9]" /etc/resolv.conf 2> /dev/null | awk '{print $2}'`
+        do
+            write_output name="INET Nameserver" value="$HOST"
+        done
+    fi
 
     # Detect hardware information
     MYTYPE=Unknown
@@ -1107,66 +1110,69 @@ EOF
 
     # Report hardware information
     write_output name="Operating System" value="$MYOS" comment="$MYOSX"
-    write_output name="Boot Time" value="$(systemd-analyze 2> /dev/null | grep "^Startup finished in " | sed -e "s/Startup finished in //")"
+    write_output name="System Boot" value="$(systemd-analyze 2> /dev/null | grep "^Startup finished in " | sed -e "s/Startup finished in //")"
     write_output name="System Uptime" value="$MYUPTIME"
     write_output name="Average Load" value="$MYLOAD" comment="average over last 1min, 5min & 15min"
-    write_output name="CPU Type" value="$MYTYPE" comment="$MYTYPEX"
-    write_output name="CPU Addressability" value="$MYBIT" comment="$MYBITSX"
-    write_output name="CPU Count" value="$MYCPUS" architecture="$MYCPUSX"
-    write_output name="CPU Clock" value="$MYCLOCK"
-    if [ "$MYCACHE" = "Unknown" ]
+    if [ "$ALL" ]
     then
-        write_output name="CPU Cache" value="$MYCACHE"
-    else
-        write_output name="CPU Cache" value="$MYCACHE" comment="$MYCACHEX"
-    fi
-    write_output name="Physical Memory" value="$MYRAM"
-    write_output name="Swap Space" value="$MYSWAP"
-    if [ "`uname`" = Linux ]
-    then
-        scanbus
-    fi
+        write_output name="CPU Type" value="$MYTYPE" comment="$MYTYPEX"
+        write_output name="CPU Addressability" value="$MYBIT" comment="$MYBITSX"
+        write_output name="CPU Count" value="$MYCPUS" architecture="$MYCPUSX"
+        write_output name="CPU Clock" value="$MYCLOCK"
+        if [ "$MYCACHE" = "Unknown" ]
+        then
+            write_output name="CPU Cache" value="$MYCACHE"
+        else
+            write_output name="CPU Cache" value="$MYCACHE" comment="$MYCACHEX"
+        fi
+        write_output name="Physical Memory" value="$MYRAM"
+        write_output name="Swap Space" value="$MYSWAP"
+        if [ "`uname`" = Linux ]
+        then
+            scanbus
+        fi
 
-    # Detect loaders
-    case `uname` in
-    Linux)
-        GLIBC=`ldd /bin/sh | grep libc | sed -e "s/.*=>//" | awk '{print $1}'`
-        if [ "$GLIBC" ]
-        then
-            show_software name="GNU C library" location="$GLIBC" value="`strings $GLIBC 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}'`"
-        fi
-        for LINKER in $(ls -1 /lib*/ld-*so* 2> /dev/null)
-        do
-            show_software name="Dynamic linker" location="$LINKER"
-        done
-        ;;
-    esac
+        # Detect loaders
+        case `uname` in
+        Linux)
+            GLIBC=`ldd /bin/sh | grep libc | sed -e "s/.*=>//" | awk '{print $1}'`
+            if [ "$GLIBC" ]
+            then
+                show_software name="GNU C library" location="$GLIBC" value="`strings $GLIBC 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}'`"
+            fi
+            for LINKER in $(ls -1 /lib*/ld-*so* 2> /dev/null)
+            do
+                show_software name="Dynamic linker" location="$LINKER"
+            done
+            ;;
+        esac
 
-    # Detect X-Windows
-    XSET=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xset -q 2> /dev/null`
-    if [ "$XSET" ]
-    then
-        show_software name="X-Display Power" value="`echo \"$XSET\" | grep \" Standby:.* Suspend:.* Off:\" | sed -e "s/.*Standby://" | awk '{printf(\" %ss %ss %ss\n\", $1, $3, $5)}' | sed -e \"s/ 0s/ Off/g\" -e \"s/^ //\"`" comment="DPMS Standby Suspend Off"
-        show_software name="X-Keyboard Repeat" value="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%sms\n\",$4)}'`" comment="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%s characters per second\n\",$7)}'`"
-        show_software name="X-Mouse Speed" value="`echo \"$XSET\" | grep \" acceleration:.* threshold: \" | awk '{print $2}'`" comment="acceleration factor"
-        XSCREENSAVER=`echo "$XSET" | grep " timeout:.* cycle:" | awk '{print $2}'`
-        if [ "$XSCREENSAVER" != 0 ]
+        # Detect X-Windows
+        XSET=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xset -q 2> /dev/null`
+        if [ "$XSET" ]
         then
-            show_software name="X-Screensaver" value="$XSCREENSAVER" comment="no power saving for LCD but can keep CPU busy"
+            show_software name="X-Display Power" value="`echo \"$XSET\" | grep \" Standby:.* Suspend:.* Off:\" | sed -e "s/.*Standby://" | awk '{printf(\" %ss %ss %ss\n\", $1, $3, $5)}' | sed -e \"s/ 0s/ Off/g\" -e \"s/^ //\"`" comment="DPMS Standby Suspend Off"
+            show_software name="X-Keyboard Repeat" value="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%sms\n\",$4)}'`" comment="`echo \"$XSET\" | grep \" auto repeat delay:.* repeat rate:\" | awk '{printf(\"%s characters per second\n\",$7)}'`"
+            show_software name="X-Mouse Speed" value="`echo \"$XSET\" | grep \" acceleration:.* threshold: \" | awk '{print $2}'`" comment="acceleration factor"
+            XSCREENSAVER=`echo "$XSET" | grep " timeout:.* cycle:" | awk '{print $2}'`
+            if [ "$XSCREENSAVER" != 0 ]
+            then
+                show_software name="X-Screensaver" value="$XSCREENSAVER" comment="no power saving for LCD but can keep CPU busy"
+            fi
         fi
-    fi
-    XRANDR=`xrandr 2> /dev/null`
-    if [ "$XRANDR" ]
-    then
-        show_software name="X-Windows Display" value="$DISPLAY" comment=`echo "$XRANDR" | grep "^Screen .* current " | sed -e "s/.*current //;s/,.*//;s/ //g"`
-    else
-        XWININFO=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xwininfo -root 2> /dev/null`
-        if [ "$XWININFO" ]
+        XRANDR=`xrandr 2> /dev/null`
+        if [ "$XRANDR" ]
         then
-            show_software name="X-Windows Display" value="$DISPLAY" comment="`echo \"$XWININFO\" | grep Width: | awk '{print $2}'`x`echo \"$XWININFO\" | grep Height: | awk '{print $2}'`"
+            show_software name="X-Windows Display" value="$DISPLAY" comment=`echo "$XRANDR" | grep "^Screen .* current " | sed -e "s/.*current //;s/,.*//;s/ //g"`
+        else
+            XWININFO=`PATH=/usr/bin/X11:/usr/openwin/bin:$PATH; xwininfo -root 2> /dev/null`
+            if [ "$XWININFO" ]
+            then
+                show_software name="X-Windows Display" value="$DISPLAY" comment="`echo \"$XWININFO\" | grep Width: | awk '{print $2}'`x`echo \"$XWININFO\" | grep Height: | awk '{print $2}'`"
+            fi
         fi
+        echo
     fi
-    echo
 }
 
 
@@ -1221,4 +1227,11 @@ $1"
 #
 # Main program
 #
+if [ "$1" = "-s" ]
+then
+    ALL=
+else
+    ALL=1
+fi
 (detect) 2> /dev/null
+echo

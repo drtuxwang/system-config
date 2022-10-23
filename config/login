@@ -109,13 +109,15 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
     endif
 
     # Protect files
-    if ( "`echo $MYUNAME | \grep -E '^(root|admin)"'$'"'`" != "" ) then
+    switch ($MYUNAME)
+    case root:
+    case admin:
         ls -ld $HOME | grep -v "rwx------" | awk '{print $NF}' | xargs -n 1 chmod 700 >& /dev/null
-    else
+        breaksw
+    default:
         ls -ld $HOME | grep -v "rwx--x--x" | awk '{print $NF}' | xargs -n 1 chmod 711 >& /dev/null
-    endif
-    ls -ld $TMP $HOME/Desktop $HOME/Desktop/private $HOME/.ssh $HOME/.??*/* |& \
-        grep -v "[-]----- " | awk '{print $NF}' | xargs -n 1 chmod go= >& /dev/null
+        breaksw
+    endsw
 
     # General stuff
     umask 022
@@ -191,7 +193,6 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
         endif
     end
     unsetenv _dir
-    alias scd 'env | grep -E "^cd(inst|src|test)=" | sort'
 
     # Platform specific
     switch (`uname`)
@@ -234,8 +235,9 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
         source $HOME/.login-opt
     endif
 
-    # Shell information
+    # Show information
     echo
+    sysinfo.sh -s |& grep -v "Command not found"
     setenv MYINFO "$MYSHELL shell (tty=$MYTTY)"
     if ( "$SSH_KEYS" != 0 ) then
         setenv MYINFO "$MYINFO, ssh-add=$SSH_KEYS"
