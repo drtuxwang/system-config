@@ -4,8 +4,8 @@
 #
 # 1996-2019 By Dr Colin Kong
 #
-VERSION=20210907
-RELEASE="2.6.45"
+VERSION=20221023
+RELEASE="2.6.46"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -1107,6 +1107,7 @@ EOF
 
     # Report hardware information
     write_output name="Operating System" value="$MYOS" comment="$MYOSX"
+    write_output name="Boot Time" value="$(systemd-analyze 2> /dev/null | grep "^Startup finished in " | sed -e "s/Startup finished in //")"
     write_output name="System Uptime" value="$MYUPTIME"
     write_output name="Average Load" value="$MYLOAD" comment="average over last 1min, 5min & 15min"
     write_output name="CPU Type" value="$MYTYPE" comment="$MYTYPEX"
