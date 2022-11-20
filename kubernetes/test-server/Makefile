@@ -1,5 +1,10 @@
-NAME := test-storage
+NAME := test-server
 NAMESPACE := default
+
+# Default local port
+ifndef LOCALPORT
+	LOCALPORT := 8080
+endif
 
 
 .PHONY: default
@@ -15,22 +20,34 @@ status:              # Show workload status
 status-kube:         # Show Kube workload status
 	@kubectl get PersistentVolumes -o wide 2> /dev/null | grep $(NAME) | sed -e "s@^@PersistentVolumes/@" ||:
 	@kubectl get StorageClass -o wide 2> /dev/null | sed -e "s@^@$$StorageClass/@" ||:
-	@kubectl --namespace=$(NAMESPACE) get PersistentVolumeClaims -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s@^@$(NAMESPACE)   PersistentVolumeClaims/@" ||:
+	@for RESOURCE in Ingress PersistentVolumeClaims Secrets Serviceaccount; do \
+		kubectl --namespace=$(NAMESPACE) get $$RESOURCE -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s@^@$(NAMESPACE)   $$RESOURCE/@" ||:; \
+	done
 	@kubectl --namespace=$(NAMESPACE) get all -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s/^/$(NAMESPACE)   /" ||:
 
 .PHONY: create
 create:              # Create workload
 	@echo "\n*** Creating pods ***"
 	kubectl create namespace $(NAMESPACE) ||:
-	kubectl --namespace=$(NAMESPACE) create -f $(NAME)-pv.yaml ||:
+	kubectl --namespace=$(NAMESPACE) create -f $(NAME)-secret-tls.yaml ||:
+	kubectl --namespace=$(NAMESPACE) create -f $(NAME)-ingress.yaml ||:
+	kubectl --namespace=$(NAMESPACE) create -f $(NAME)-service.yaml ||:
+	kubectl --namespace=$(NAMESPACE) create -f $(NAME)-headless-service.yaml ||:
 	kubectl --namespace=$(NAMESPACE) create -f $(NAME)-statefulset.yaml ||:
+
+.PHONY: forward
+forward:             # Forward http to service
+	kubectl --namespace=$(NAMESPACE) describe service/$(NAME)
+	kubectl --namespace=$(NAMESPACE) port-forward service/$(NAME) $(LOCALPORT):80
 
 .PHONY: delete
 delete:              # Delete workload
 	@echo "\n*** Removing pods ***"
 	kubectl --namespace=$(NAMESPACE) delete -f $(NAME)-statefulset.yaml ||:
-	kubectl --namespace=$(NAMESPACE) delete pvc data-$(NAME)-0
-	kubectl --namespace=$(NAMESPACE) delete -f $(NAME)-pv.yaml ||:
+	kubectl --namespace=$(NAMESPACE) delete -f $(NAME)-headless-service.yaml ||:
+	kubectl --namespace=$(NAMESPACE) delete -f $(NAME)-service.yaml ||:
+	kubectl --namespace=$(NAMESPACE) delete -f $(NAME)-ingress.yaml ||:
+	kubectl --namespace=$(NAMESPACE) delete -f $(NAME)-secret-tls.yaml ||:
 
 .PHONY: help
 help:                # Show Makefile options

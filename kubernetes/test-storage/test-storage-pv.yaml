@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: default-data-server-0
+  name: default-data-test-storage-0
 spec:
   storageClassName: persistent-claim
   capacity:
@@ -15,7 +15,7 @@ spec:
   claimRef:
     apiVersion: v1
     kind: PersistentVolumeClaim
-    name: data-server-0
+    name: data-test-storage-0
     namespace: default
   nodeAffinity:
     required:

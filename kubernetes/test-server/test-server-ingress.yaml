@@ -1,15 +1,15 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: server
+  name: test-server
 spec:
   rules:
-  - host: server.example.com
+  - host: test-server.example.com
     http:
       paths:
       - path: /
         backend:
-          serviceName: server
+          serviceName: test-server
           servicePort: 80
   tls:
   - secretName: example.com

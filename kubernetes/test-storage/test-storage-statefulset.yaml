@@ -2,18 +2,18 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: server
-  name: server
+    app: test-storage
+  name: test-storage
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: server
-  serviceName: server-headless
+      app: test-storage
+  serviceName: test-storage-headless
   template:
     metadata:
       labels:
-        app: server
+        app: test-storage
     spec:
       affinity:
         nodeAffinity:
@@ -35,7 +35,7 @@ spec:
           value: VALUE
         image: drtuxwang/debian-bash:stable
         imagePullPolicy: IfNotPresent
-        name: server
+        name: test-storage
         ports:
         - name: http
           containerPort: 80

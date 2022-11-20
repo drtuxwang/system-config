@@ -11,19 +11,20 @@ endif
 ifndef APP_VERSION
 	APP_VERSION=$(shell make --no-print-directory list | awk 'END {print $$3}')
 endif
-ifeq ($(shell timeout 2 helm version | grep -c v2), 1)
+ifeq ($(shell timeout 2 helm version 2> /dev/null | grep -c v2), 1)
 	HELM_RELEASE := $(NAMESPACE)-$(NAME)
 	HELM_LIST := helm list --all $(HELM_RELEASE)
+	HELM_VERSION := helm search -l $(CHART_REPO)/$(CHART_NAME)
 	HELM_STATUS := helm status $(HELM_RELEASE)
 	HELM_UNINSTALL := helm delete --purge $(HELM_RELEASE)
-	HELM_VERSION := helm search -l $(CHART_REPO)/$(CHART_NAME)
 else
-	HELM_RELEASE :=$(NAME)
+	HELM_RELEASE := $(NAME)
 	HELM_LIST := helm --namespace=$(NAMESPACE) list --all | grep $(HELM_RELEASE)
+	HELM_VERSION := helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 	HELM_STATUS := helm --namespace=$(NAMESPACE) status $(HELM_RELEASE)
 	HELM_UNINSTALL := helm --namespace=$(NAMESPACE) uninstall $(HELM_RELEASE)
-	HELM_VERSION := helm search repo -l $(CHART_REPO)/$(CHART_NAME)
 endif
+HELM_INSTALL := helm upgrade --install --wait
 
 EXTERNAL_IP=$(shell ping -c 1 $(HOSTNAME) 2> /dev/null | grep "^PING" | sed -e "s/.* (//;s/).*//")
 HELM_FLAGS := \
@@ -43,10 +44,21 @@ endif
 default: status      # Default
 
 .PHONY: status
-status:              # Status of Helm release
-	@echo "\n*** Checking status ***"
-	$(HELM_STATUS)
+status:              # Show workload status
+	@echo "\n*** Checking Helm release status ***"
+	@make --no-print-directory status-helm
+	@echo "\n*** Checking Kube status ***"
+	@make --no-print-directory status-kube | sort
+	@echo
+
+.PHONY: status-helm
+status-helm:         # Show Helm release status
+	$(HELM_STATUS) ||:
 	$(HELM_LIST)
+
+.PHONY: status-kube
+status-kube:         # Show Kube workload status
+	@kubectl --namespace=$(NAMESPACE) get all -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s/^/$(NAMESPACE)   /" ||:
 
 .PHONY: list
 list:                # List Helm chart versions
@@ -79,27 +91,16 @@ save:                # Save Docker images as tar file
 
 .PHONY: template
 template:            # Show Helm template
-	helm template \
-		$(HELM_FLAGS) \
-		$(CHART_REPO)/$(CHART_NAME)
+	helm template $(HELM_FLAGS) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: check
-check:               # Dryrun Helm install
-	helm upgrade \
-		--install \
-		--dry-run \
-		--debug \
-		$(HELM_FLAGS) \
-		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
+check:               # Install Helm release dryrun
+	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME) --dry-run --debug
 
 .PHONY: install
 install:             # Install Helm release
 	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
-	helm upgrade \
-		--install \
-		--wait \
-		$(HELM_FLAGS) \
-		$(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
+	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward
 forward:             # Forward traffic to endpoint

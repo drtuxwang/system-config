@@ -1,19 +1,19 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   labels:
-    app: server
-    matchLabels: server
-  name: server
+    app: test-server
+  name: test-server
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: server
+      app: test-server
+  serviceName: test-server-headless
   template:
     metadata:
       labels:
-        app: server
+        app: test-server
     spec:
       affinity:
         nodeAffinity:
@@ -35,9 +35,10 @@ spec:
           value: VALUE
         image: drtuxwang/debian-bash:stable
         imagePullPolicy: IfNotPresent
-        name: server
+        name: test-server
         ports:
-        - containerPort: 80
+        - name: http
+          containerPort: 80
           protocol: TCP
         resources:
           limits:
@@ -57,3 +58,5 @@ spec:
       - hostPath:
           path: /shared
         name: shared
+  updateStrategy:
+    type: RollingUpdate

@@ -2,8 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: servers
-  name: servers-headless
+    app: test-server
+  name: test-server-headless
 spec:
   clusterIP: None
   ports:
@@ -12,5 +12,5 @@ spec:
     protocol: TCP
     targetPort: 80
   selector:
-    app: server
+    app: test-server
   type: ClusterIP

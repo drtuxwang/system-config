@@ -395,9 +395,9 @@ the years.
  * bin/gpg                  Make an encrypted archive in gpg (pgp compatible) format.
  * bin/gpg.py
  * bin/gqview               Wrapper for "geeqie" command
- * bin/gqview.bat
  * bin/gqview.py
  * bin/graph                Generate multiple graph files with X/Y plots (uses gnuplot)
+ * bin/gqview.bat
  * bin/graph.py
  * bin/gz                   Compress a file in GZIP format
  * bin/gz.py
@@ -1086,20 +1086,20 @@ the years.
  * kubernetes/nginx-proxy-fwd/nginx-proxy-fwd.yaml
  * kubernetes/nginx-proxy-fwd/proxy-kube-local.crt
  * kubernetes/nginx-proxy-fwd/proxy-kube-local.key
+ * kubernetes/test-server/Makefile       Kubernetes: examples (drtuxwang/debian-bash:stable)
+ * kubernetes/test-server/test-server-daemonset.yaml
+ * kubernetes/test-server/test-server-deployment.yaml
+ * kubernetes/test-server/test-server-headless-service.yaml
+ * kubernetes/test-server/test-server-ingress.yaml
+ * kubernetes/test-server/test-server-pod.yaml
+ * kubernetes/test-server/test-server-replicationcontroller.yaml
+ * kubernetes/test-server/test-server-secret-tls.yaml
+ * kubernetes/test-server/test-server-service.yaml
+ * kubernetes/test0server/test-server-statefulset.yaml
  * kubernetes/socat-fwd/Makefile         SOCAT forwarding example
  * kubernetes/socat-fwd/socat-fwd.yaml
  * kubernetes/test-cronjob/Makefile      Kubernetes: cronjob example (drtuxwang/busybox-bash:stable)
  * kubernetes/test-cronjob/batch-crontab.yaml
- * kubernetes/test-servers/Makefile      Kubernetes: examples (drtuxwang/debian-bash:stable)
- * kubernetes/test-servers/server-pod.yaml
- * kubernetes/test-servers/servers-daemonset.yaml
- * kubernetes/test-servers/servers-deployment.yaml
- * kubernetes/test-servers/servers-headless-service.yaml
- * kubernetes/test-servers/servers-ingress.yaml
- * kubernetes/test-servers/servers-replicationcontroller.yaml
- * kubernetes/test-servers/servers-secret-tls.yaml
- * kubernetes/test-servers/servers-service.yaml
- * kubernetes/test-servers/servers-statefulset.yaml
  * kubernetes/test-storage/Makefile      Kubernetes: Persistent Volume example
  * kubernetes/test-storage/server-pv.yaml
  * kubernetes/test-storage/server-statefulset.yaml
@@ -1109,9 +1109,6 @@ the years.
  * helm/cassandra/values.yaml
  * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.14.1 (app-0.12.0)
  * helm/chartmuseum/values.yaml
- * helm/concourse/Makefile               Helm Chart: concourse/concourse 15.7.1 (app-7.4.0)
- * helm/concourse/concourse-secrets.yaml
- * helm/concourse/values.yaml
  * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 7.0.6 (app-3.4.18)
  * helm/etcd/values.yaml
  * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 7.9.11 (app-8.5.9)

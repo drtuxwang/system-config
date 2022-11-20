@@ -1,7 +1,6 @@
 BUILD_DIRS := \
 	cassandra \
 	chartmuseum \
-	concourse \
 	etcd \
 	grafana \
 	ingress-controller \

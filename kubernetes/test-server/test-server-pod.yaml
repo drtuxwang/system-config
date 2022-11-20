@@ -2,8 +2,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    app: server
-  name: server
+    app: test-server
+  name: test-server
 spec:
   affinity:
     nodeAffinity:
@@ -25,7 +25,7 @@ spec:
       value: VALUE
     image: drtuxwang/debian-bash:stable
     imagePullPolicy: IfNotPresent
-    name: server
+    name: test-server
     ports:
     - containerPort: 80
       protocol: TCP
