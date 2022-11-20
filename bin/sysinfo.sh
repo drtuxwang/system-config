@@ -4,8 +4,8 @@
 #
 # 1996-2022 By Dr Colin Kong
 #
-VERSION=20221023
-RELEASE="2.6.46"
+VERSION=20221106
+RELEASE="2.6.47-2"
 
 # Test for bash echo bug
 if [ "`echo \"\n\"`" = "\n" ]
@@ -417,7 +417,6 @@ detect() {
 
         # Detect host information
         MYHNAME=`uname -n | tr '[A-Z]' '[a-z]' | cut -f1 -d"."`
-        MYFQDN=`isitset \`host $MYHNAME 2> /dev/null | grep "has address" | awk '{printf("%s.", $1)}'\``
         case `uname` in
         AIX)
             INETS=`isitset \`/usr/sbin/ifconfig -a 2> /dev/null | grep "inet[6]* " | sed -e "s/inet[6]*/ /" | awk '{print $1}'\``
@@ -452,7 +451,6 @@ detect() {
         esac
 
         write_output name="Hostname" value="$MYHNAME"
-        write_output name="Net FQDN" value="$MYFQDN"
         for INET in $INETS
         do
             write_output name="INET Address" value="$INET"
@@ -465,115 +463,128 @@ detect() {
 
     # Detect hardware information
     MYTYPE=Unknown
-    MYCPUS=Unknown  # Init to unknown
+    MYCPUS=Unknown
     MYBIT=Unknown
     MYCLOCK=Unknown
     MYCACHE=Unknown
     MYRAM=Unknown
     MYSWAP=Unknown
-    MYOSX=
+    MYOSNAME=Unknown
+    MYOSKERNEL=Unknown
+    MYOSPATCH=Unknown
+    MYOSBOOT=Unknown
     MYTYPEX=
     MYCPUSX=
     MYBITSX=
     MYCACHEX=
+    MYRAMX=
+    MYSWAPX=
     case `uname` in
     AIX)
-        MYOS="AIX $(oslevel)`oslevel -s 2>&1 | head -1 | grep \"^....-\" | sed -e "s/5380-00/5300-08/" -e \"s/^[^-]*-/-/\"`"
+        MYOSTYPE="aix"
+        MYOSNAME="AIX $(oslevel)`oslevel -s 2>&1 | head -1 | grep \"^....-\" | sed -e "s/5380-00/5300-08/" -e \"s/^[^-]*-/-/\"`"
         ;;
-
     IRIX*)
+        MYOSTYPE="irix"
         if [ "`/bin/uname -R | sed -e 's/.* //' | grep \"^[1-9]\"`" ]
         then
-            MYOS="IRIX `/bin/uname -R | sed -e 's/.* //'`"
+            MYOSNAME="IRIX `/bin/uname -R | sed -e 's/.* //'`"
         else
-            MYOS="IRIX `/bin/uname -r`"
+            MYOSNAME="IRIX `/bin/uname -r`"
         fi
         ;;
 
     Linux)
-        MYOSX=
+        MYOSTYPE="linux"
+        MYOSNAME=
         for FILE in `ls -1 /etc/*release 2> /dev/null | egrep -v "/etc/(lsb|os)-release"`
         do
-            MYOSX="$MYOSX
+            MYOSNAME="$MYOSNAME
 `head -2 $FILE 2> /dev/null | paste - - | sed -e \"s/Linux //\" -e \"s/release //\" -e \"s/[(].*[uU]pdate/update/\" -e \"s/[()].*//\" -e \"s/ .*=/ /\" -e \"s/ for.*//\" -e \"s/	/ /g\"`"
         done
-        MYOS=`uname -s -r`
-        MYOSX=`echo "$MYOSX" | sort | uniq | paste - - - - | sed -e "s/ *	/, /g" -e "s/^, //" -e "s/[, ]*$//"`
-        if [ ! "$MYOSX" ]
+        MYOSNAME=`echo "$MYOSNAME" | sort | uniq | paste - - - - | sed -e "s/ *	/, /g" -e "s/^, //" -e "s/[, ]*$//"`
+        if [ ! "$MYOSNAME" ]
         then
             if [ "`dpkg --list 2> /dev/null | grep \"ii  mepis-auto\"`" ]
             then
-                MYOSX="MEPIS "`dpkg --list | grep "ii  mepis-auto" | head -1 | awk '{print $3}'`
+                MYOSNAME="MEPIS "`dpkg --list | grep "ii  mepis-auto" | head -1 | awk '{print $3}'`
             elif [ "`grep \"^DISTRIB_DESCRIPTION=\" /etc/lsb-release 2> /dev/null`" ]
             then
-                MYOSX=`grep "^DISTRIB_DESCRIPTION=" /etc/lsb-release | cut -f2 -d"=" | sed -e "s/\"//g"`
+                MYOSNAME=`grep "^DISTRIB_DESCRIPTION=" /etc/lsb-release | cut -f2 -d"=" | sed -e "s/\"//g"`
             elif [ "`egrep \"^DISTRIB_ID=|^DISTRIB_RELEASE=\" /etc/lsb-release 2> /dev/null | wc -l | awk '{print $1}'`" = 2 ]
             then
-                MYOSX="`grep \"^DISTRIB_ID=\" /etc/lsb-release | cut -f2 -d\"=\"` `grep \"^DISTRIB_RELEASE=\" /etc/lsb-release | cut -f2 -d\"=\"`"
+                MYOSNAME="`grep \"^DISTRIB_ID=\" /etc/lsb-release | cut -f2 -d\"=\"` `grep \"^DISTRIB_RELEASE=\" /etc/lsb-release | cut -f2 -d\"=\"`"
             elif [ -f /etc/kanotix-version ]
             then
-                MYOSX="Kanotix `awk '{print $2}' /etc/kanotix-version`"
+                MYOSNAME="Kanotix `awk '{print $2}' /etc/kanotix-version`"
             elif [ -f /etc/knoppix-version ]
             then
-                MYOSX="Knoppix `awk '{print $1}' /etc/knoppix-version`"
+                MYOSNAME="Knoppix `awk '{print $1}' /etc/knoppix-version`"
             elif [ -f /etc/DISTRO_SPECS ]
             then
-                MYOSX="`grep ^DISTRO_NAME /etc/DISTRO_SPECS | cut -f2 -d= | sed -e \"s/\'//g\"` `grep ^DISTRO_VERSION /etc/DISTRO_SPECS | cut -f2 -d=`"
+                MYOSNAME="`grep ^DISTRO_NAME /etc/DISTRO_SPECS | cut -f2 -d= | sed -e \"s/\'//g\"` `grep ^DISTRO_VERSION /etc/DISTRO_SPECS | cut -f2 -d=`"
             elif [ -f /etc/alpine-release ]
             then
-                MYOSX="Alpine `cat /etc/alpine-release`"
+                MYOSNAME="Alpine `cat /etc/alpine-release`"
             elif [ "`dpkg --list 2> /dev/null | grep \"ii  knoppix\"`" ]
             then
-                MYOSX="Knoppix "`dpkg --list | grep "ii  knoppix-g" | awk '{print $3}' | sed -e "s/-.*//"`
+                MYOSNAME="Knoppix "`dpkg --list | grep "ii  knoppix-g" | awk '{print $3}' | sed -e "s/-.*//"`
             elif [ "`dpkg --list 2> /dev/null | grep \"ii  kernel.*MEPIS\"`" ]
             then
-                MYOSX="MEPIS "`dpkg --list | grep "ii  kernel.*MEPIS" | head -1 | awk '{print $3}' | sed -e "s/MEPIS.//"`
+                MYOSNAME="MEPIS "`dpkg --list | grep "ii  kernel.*MEPIS" | head -1 | awk '{print $3}' | sed -e "s/MEPIS.//"`
             elif [ -f "/etc/debian_version" ]
             then
-                MYOSX="Debian `cat /etc/debian_version` `stat /var/lib/dpkg/info 2> /dev/null | awk '/Modify/ {print $2}'`"
+                MYOSNAME="Debian `cat /etc/debian_version`"
+                MYOSPATCH=`stat /var/lib/dpkg/info 2> /dev/null | awk '/Modify/ {print $2}'`
             elif [ "`dpkg --list 2> /dev/null`" ]
             then
-                MYOSX="Debian "`dpkg --list | grep "ii  base-files" | awk '{print $3}'`
+                MYOSNAME="Debian "`dpkg --list | grep "ii  base-files" | awk '{print $3}'`
             elif [ "`grep "^PRETTY_NAME=" /etc/os-release 2> /dev/null`" ]
             then
-                MYOSX=`grep "^PRETTY_NAME=" /etc/os-release | cut -f2 -d'"' | sed -e "s/ *[(].*//"`
+                MYOSNAME=`grep "^PRETTY_NAME=" /etc/os-release | cut -f2 -d'"' | sed -e "s/ *[(].*//"`
             elif [ -f "/usr/share/clear/version" ]
             then
-                MYOSX="Clear Linux `cat /usr/share/clear/version`"
+                MYOSNAME="Clear Linux `cat /usr/share/clear/version`"
             fi
         fi
+        MYOSKERNEL="`uname -r` (`uname -v | sed -e 's/ (.*)//g'`)"
+        MYOSBOOT=`isitset \`systemd-analyze 2> /dev/null | grep "^Startup finished in " | sed -e "s/Startup finished in //"\``
         ;;
 
     *NT*)
+        MYOSTYPE="nt"
         if [ ! "`echo \"$WINDIR\" | grep \":/\"`" ]
         then
             WINDIR=`echo "/$WINDIR" | sed -e "s@:\\\\\\@/@"`
         fi
         HARDWARES=`PATH="$WINDIR/system32:$WINDIR/system32/wbem:$PATH" $WINDIR/system32/systeminfo 2> /dev/null`
-        MYOS="NT "`echo "$HARDWARES" | grep "^OS Version:" | awk '{print $3}'`
-        SP=`echo "$HARDWARES" | grep "^OS Version:.*Service Pack" | sed -e "s/.*Service Pack //" | awk '{printf(" SP%s\n",$1)}'`
         MYWINDOW=`echo "$HARDWARES" | grep "^OS Name:" | sed -e "s/^.*: *//" -e "s/(R)//g" -e "s/Microsoft //" -e "s/ $//"`
+        SP=`echo "$HARDWARES" | grep "^OS Version:.*Service Pack" | sed -e "s/.*Service Pack //" | awk '{printf(" SP%s\n",$1)}'`
         if [ "$MYWINDOW" ]
         then
-            MYOS="$MYOS ($MYWINDOW$SP)"
+            MYOSNAME="$MYWINDOW$SP"
         fi
+        MYOSKERNAL="NT "`echo "$HARDWARES" | grep "^OS Version:" | awk '{print $3}'`
         ;;
 
     OSF1)
-        MYOS="`uname -s -r | sed -e "s/V//"` (Tru64)"
+        MYOSTYPE="tru64"
+        MYOSNAME=`uname -s -r | sed -e "s/V//"`
         ;;
 
     SunOS)
-        MYOS=`uname -s -r`
-        case $MYOS in
+        MYOSTYPE="solaris"
+        MYOSNAME=`uname -s -r`
+        case $MYOSNAME in
         SunOS\ 5.*)
-            MYOS="$MYOS (Solaris `uname -r | cut -f2 -d\".\"`)"
+            MYOS="$MYOSNAME (Solaris `uname -r | cut -f2 -d\".\"`)"
             ;;
         esac
         ;;
 
     *)
-        MYOS="`uname -s -r`"
+        MYOSTYPE=`uname -s | tr ^[A-Z] ^[a-z]`
+        MYOSNAME="`uname -s -r`"
         ;;
     esac
 
@@ -591,7 +602,7 @@ detect() {
 
     *)  # Avoid buggy uptime
         MYUPTIME=`isitset \`w -u 2> /dev/null | head -1 | cut -f1-2 -d"," | sed -e "s/.*up //" -e "s/(s)//" -e "s/  */ /g"\``
-        MYLOAD=`isitset \`w -u 2> /dev/null | head -1 | sed -e "s/^.*load average: //" -e "s/,//g"\``
+        MYLOAD=`isitset \`w -u 2> /dev/null | head -1 | sed -e "s/^.*load average: //"\``
         ;;
     esac
 
@@ -969,7 +980,9 @@ EOF
             MYCACHEX="L2"
         fi
         MYRAM=`isitset \`grep ^MemTotal /proc/meminfo 2> /dev/null | awk '{printf ("%d\n",$2/1024+0.5)}'\``" MB"
-        MYSWAP=`grep SwapTotal: /proc/meminfo | grep SwapTotal | awk '{printf("%d\n",$2/1024+0.5)}'`" MB"
+        MYRAMX=`grep ^MemAvailable /proc/meminfo 2> /dev/null | awk '{printf ("%d\n",$2/1024+0.5)}'`" available"
+        MYSWAP=`grep SwapTotal /proc/meminfo 2> /dev/null | awk '{printf("%d\n",$2/1024+0.5)}'`" MB"
+        MYSWAPX=`grep SwapFree /proc/meminfo 2> /dev/null | awk '{printf("%d\n",$2/1024+0.5)}'`" free"
         ;;
 
     *NT*)
@@ -1109,10 +1122,14 @@ EOF
     esac
 
     # Report hardware information
-    write_output name="Operating System" value="$MYOS" comment="$MYOSX"
-    write_output name="System Boot" value="$(systemd-analyze 2> /dev/null | grep "^Startup finished in " | sed -e "s/Startup finished in //")"
-    write_output name="System Uptime" value="$MYUPTIME"
-    write_output name="Average Load" value="$MYLOAD" comment="average over last 1min, 5min & 15min"
+    if [ "$ALL" ]
+    then
+        write_output name="OS Type" value="$MYOSTYPE"
+    fi
+    write_output name="OS Name" value="$MYOSNAME"
+    write_output name="OS Kernel" value="$MYOSKERNEL"
+    write_output name="OS Patch" value="$MYOSPATCH"
+    write_output name="OS Boot Time" value="$MYOSBOOT"
     if [ "$ALL" ]
     then
         write_output name="CPU Type" value="$MYTYPE" comment="$MYTYPEX"
@@ -1125,8 +1142,13 @@ EOF
         else
             write_output name="CPU Cache" value="$MYCACHE" comment="$MYCACHEX"
         fi
-        write_output name="Physical Memory" value="$MYRAM"
-        write_output name="Swap Space" value="$MYSWAP"
+    fi
+    write_output name="System Memory" value="$MYRAM" comment="$MYRAMX"
+    write_output name="System Swap Space" value="$MYSWAP" comment="$MYSWAPX"
+    write_output name="System Uptime" value="$MYUPTIME"
+    write_output name="System Load" value="$MYLOAD" comment="average over last 1min, 5min & 15min"
+    if [ "$ALL" ]
+    then
         if [ "`uname`" = Linux ]
         then
             scanbus
@@ -1140,7 +1162,7 @@ EOF
             then
                 show_software name="GNU C library" location="$GLIBC" value="`strings $GLIBC 2> /dev/null | grep 'GNU C Library' | head -1 | sed -e 's/.*version//;s/,//;s/[.]$//' | awk '{print $1}'`"
             fi
-            for LINKER in $(ls -1 /lib*/ld-*so* 2> /dev/null)
+            for LINKER in `ls -1 /lib*/ld-*so* 2> /dev/null`
             do
                 show_software name="Dynamic linker" location="$LINKER"
             done

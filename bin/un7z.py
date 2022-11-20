@@ -82,7 +82,7 @@ class Options:
         elif self._args.test_flag:
             self._archiver.set_args(['t'])
         else:
-            self._archiver.set_args(['x', '-y'])
+            self._archiver.set_args(['x', '-y', '-snld'])
 
         self._setenv()
 
@@ -99,7 +99,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:

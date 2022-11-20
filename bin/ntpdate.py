@@ -14,7 +14,7 @@ import command_mod
 import logging_mod
 import subtask_mod
 
-RELEASE = 20211107
+RELEASE = 20221119
 
 logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
@@ -35,7 +35,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:

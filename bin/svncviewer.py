@@ -31,11 +31,22 @@ class Options:
         return self._vncviewer
 
     def _getport(self, remote_host: str, remote_port: str) -> str:
-        command = command_mod.Command('ss', args=['-lpnt'], errors='stop')
+        command = command_mod.Command('ss', args=['-lpnt'], errors='ignore')
+        pattern = '[::1]:5901 '
+        if not command.is_found():
+            command = command_mod.Command(
+                'lsof',
+                args=['-i', 'tcp:5901-5999'],
+                errors='ignore'
+            )
+            pattern = ''
+            if not command.is_found():
+                command = command_mod.Command('ss', errors='stop')
+
         task = subtask_mod.Batch(command.get_cmdline())
-        task.run(pattern='[::1]:5901 ')
+        task.run(pattern=pattern)
         for local_port in range(5901, 6000):
-            if not task.is_match_output(f':{local_port} '):
+            if not task.is_match_output(f':{local_port}[ -]'):
                 ssh = command_mod.Command('ssh', errors='stop')
                 if self._args.ssh_port:
                     ssh.extend_args(['-p', self._args.ssh_port[0]])
@@ -137,7 +148,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:

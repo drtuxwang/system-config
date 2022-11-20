@@ -75,14 +75,19 @@ EOF
     echo "pause" >> "$TMP/winsetup.bat"
     powershell.exe -command start-process "$TMP/winsetup.bat" -verb runas
 
-    echo
-    install "$DIR/python_3.*_win*x86.7z"
-    if [ $VERSION -lt 100 ]
+    if [ $VERSION -ge 61 ]
     then
         echo
-        echo "Running \"$DIR/vc-redist_14.0.23026_win51x86.exe\"..."
-        "$DIR/vc-redist_14.0.23026_win51x86.exe"
-    else
+        if [ $VERSION -lt 100 ]
+        then
+            echo "Running \"$DIR/vc-redist_14.0.23026_win51x86.exe\"..."
+            "$DIR/vc-redist_14.0.23026_win51x86.exe"
+        fi
+        install "$DIR/python_3.*_win*x86.7z"
+    fi
+
+    if [ $VERSION -ge 100 ]
+    then
         echo
         echo "Running \"netplwiz\" to remove \"Users must enter user and password\"..."
         if [ -f "c:/Program Files/Oracle/VirtualBox Guest Additions/VBoxGuest.inf" ]
@@ -107,4 +112,3 @@ then
     cd s:/
     ${0%/*}/../scripts/index-system
 fi
-

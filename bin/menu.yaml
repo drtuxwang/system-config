@@ -485,11 +485,6 @@ menu_system:
     label: Shut Down
     run: exec sudo /sbin/poweroff &
 - button:
-    name: lock
-    color: "#ff0000"
-    label: Lock Screen
-    run: exec xlock &
-- button:
     name: close
     color: "#ff0000"
     label: Close

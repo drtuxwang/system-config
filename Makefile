@@ -53,12 +53,12 @@ check-python:        # Check Python code
 	@echo "\n*** Running \"${PYTHON}\" PYLINT checks ***"
 	${PYTHON} -m pylint --rcfile=.pylintrc bin/*.py
 	@echo "*** Running \"${PYTHON}\" MYPY type checks ***"
-	${PYTHON} -m mypy --disallow-untyped-defs --no-strict-optional --cache-dir=/dev/null bin/*.py
+	${PYTHON} -m mypy --disallow-untyped-defs --no-strict-optional --follow-imports=error --cache-dir=/dev/null bin/*.py
 
 .PHONY: check-packages
 check-packages:      # Check packages
 	@echo "\n*** Running \"${PYTHON}\" package requirement checks ***"
-	etc/python-packages.sh ${PYTHON}
+	etc/python-packages.sh -c ${PYTHON}
 
 .PHONY: install
 install:             # Install Python packages

@@ -102,7 +102,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -193,6 +193,7 @@ class Main:
                         for line in ifile:
                             line = line.strip().split('  #')[0]
                             if line and not line.startswith('#'):
+                                line = line.split(' #', 1)[0]
                                 if line.startswith('file://'):
                                     if line not in files_local:
                                         files_local.append(line.replace(

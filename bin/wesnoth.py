@@ -24,7 +24,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -58,15 +58,18 @@ class Main:
             os.mkdir(config)
 
         if not os.path.isfile(wesnoth.get_file() + '.py'):
+            # Maps $HOME/.config/wesnoth => $HOME/.config
+            config_directory = os.path.join(os.getenv('HOME', '/'), '.config')
+            wesnoth_directory = os.path.join(config_directory, 'wesnoth')
+            if not os.path.isdir(wesnoth_directory):
+                os.makedirs(wesnoth_directory)
+
             configs = [
                 '/dev/dri',
                 '/dev/shm',
                 f'/run/user/{os.getuid()}/pulse',
+                f'{wesnoth_directory}:{config_directory}',
             ]
-            configs.extend(glob.glob(os.path.join(
-                os.getenv('HOME', '/'),
-                '.config/wesnoth*',
-            )))
             if len(sys.argv) >= 2 and sys.argv[1] == '-net':
                 wesnoth.set_args(sys.argv[2:])
                 configs.append('net')

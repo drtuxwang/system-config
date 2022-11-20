@@ -20,6 +20,9 @@ do
     -i)
         MODE="install"
         ;;
+    -c)
+        MODE="check"
+        ;;
     -*)
         help
         ;;
@@ -66,7 +69,7 @@ check_packages() {
             REQUIRED=${requirements[$NAME]}
             if [ "$REQUIRED" != "$PACKAGE" -a "$(echo "$REQUIRED" |grep "[>=]=")" ]
             then
-                echo $PACKAGE $REQUIRED | awk '{printf("%-20s  # Requirement %s\n", $1, $2)}'
+                echo $PACKAGE $REQUIRED | awk '{printf("%-27s  # Requirement %s\n", $1, $2)}'
                 ERROR=1
             fi
         else
@@ -99,7 +102,7 @@ check_packages() {
             esac
         done
     done
-    $PYTHON -m pip check 2>&1 | grep -v "DEPRECATION:"
+    $PYTHON -m pip check 2>&1 | grep -Ev "DEPRECATION:|No broken requirements"
     [ ${PIPESTATUS[0]} = 0 ] || ERROR=1
 
     [ "$ERROR" ] && echo -e "${esc}[31mERROR!${esc}[0m" && exit 1
@@ -124,7 +127,7 @@ install_packages() {
         echo -e "${esc}[33mInstalled!${esc}[0m"
     fi
 
-    PACKAGES=$(check_packages | awk '/ # Requirement / {print $NF}')
+    PACKAGES=$(check_packages | grep -v "not found" | awk '/ # Requirement / {print $NF}')
     for PACKAGE in $(echo "$PACKAGES" | grep -E "^(pip|setuptools|wheel)([>=]=.*|)$")
     do
         echo "$INSTALL $PACKAGE"
@@ -149,11 +152,16 @@ umask 022
 LIST="$PYTHON -m pip list --no-python-version-warning --disable-pip-version-check"
 INSTALL="$PYTHON -m pip install --no-python-version-warning --disable-pip-version-check --no-warn-script-location --no-deps"
 [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ] || INSTALL="$INSTALL --user"
+
+PY_EXE=$(echo "import sys; print(sys.executable)" | $PYTHON 2> /dev/null)
+PY_INC=$($PY_EXE-config --includes 2> /dev/null)  # "Python.h" etc
 if [ "$(uname)" = Darwin ]
 then
     # Homebrew
-    export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
+    export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include $PY_INC ${CPPFLAGS:-}"
     export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/zlib/lib/pkgconfig"
+else
+    export CFLAGS="$PY_INC ${CFLAGS:-}"
 fi
 
 declare -A requirements
@@ -172,7 +180,6 @@ else
     esac
 fi
 
-install_packages "$MODE"
-install_packages "$MODE"  # Retry
+[ "$MODE" != check ] && install_packages "$MODE" && install_packages "$MODE"  # Retry
 [ "$MODE" != piponly ] && check_packages
 echo -e "${esc}[33mOK!${esc}[0m"

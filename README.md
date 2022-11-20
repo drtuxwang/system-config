@@ -41,6 +41,7 @@ the years.
  * bin/python3.9
  * bin/python3.9.bat
  * bin/python3.10
+ * bin/python3.11
  * bin/2to3                 Python 3.x script wrappers
  * bin/2to3.bat
  * bin/ansible
@@ -97,6 +98,7 @@ the years.
  * bin/poetry
  * bin/pycodestyle
  * bin/pycodestyle.bat
+ * bin/pydisasm
  * bin/pydoc
  * bin/pydoc3
  * bin/pydoc3.bat
@@ -129,7 +131,6 @@ the years.
  * bin/aria2c.py            (bandwidth 512KB limit default using "trickle", "$HOME/.config/tickle.json)
  * bin/asmc                 Wrapper for "asmc" command
  * bin/audacity             Sandbox for "audacity" launcher
- * bin/audacity.bat
  * bin/audacity.py
  * bin/avi                  Encode AVI video using avconv (libxvid/libmp3lame)
  * bin/avi.py
@@ -210,7 +211,6 @@ the years.
  * bin/etl                  ET Legacy game launcher
  * bin/etl.py
  * bin/evince               Sandbox for "atril/evince" launcher
- * bin/evince.bat
  * bin/evince.py
  * bin/extfbfl              Extract Facebook friends list from saved HTML file
  * bin/extfbfl.bat
@@ -283,7 +283,6 @@ the years.
  * bin/fls                  Show full list of files
  * bin/fls.bat
  * bin/fls.py
- * bin/fly                  Wrapper for "fly" Concourse command
  * bin/fmkdir               Create a single lower case directory
  * bin/fmkdir.bat
  * bin/fmkdir.py
@@ -431,7 +430,6 @@ the years.
  * bin/java                 JAVA launcher
  * bin/java.py
  * bin/javac                Wrapper for "javac" command
- * bin/jpeg2ps              Wrapper for "jpeg2ps" command
  * bin/jsformat             Javascript file re-formatter
  * bin/jsformat.bat
  * bin/jsformat.py
@@ -554,8 +552,6 @@ the years.
  * bin/pop                  Send popup message to display
  * bin/pop.jar              (uses Java)
  * bin/pop.py
- * bin/procexp              Wrapper for "procexp" Winodws command
- * bin/procexp.bat
  * bin/psame                Show picture files with same finger print
  * bin/psame.bat
  * bin/psame.py
@@ -605,8 +601,6 @@ the years.
  * bin/shuffle              Print arguments in random order
  * bin/shuffle.bat
  * bin/shuffle.py
- * bin/skype                Wrapper for "skype" command
- * bin/skype.py
  * bin/smount               Securely mount a file system using SSH protocol
  * bin/smount.py            (uses fuse.sshfs)
  * bin/soffice              Sandbox for "soffice" launcher
@@ -891,6 +885,7 @@ the years.
  * etc/python-requirements_3.6.txt       Additional requirements for Python 3.6
  * etc/python-requirements_3.7.txt       Additional requirements for Python 3.7
  * etc/python-requirements_3.9mac.txt    Additional requirements for Python 3.9 on MacOS
+ * etc/python-requirements_3.11.txt      Additional requirements for Python 3.11
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
  * etc/setbin.ps1                        Windows Power shell initialization
@@ -908,6 +903,7 @@ the years.
  * ansible/inventory/host_vars/koko.local
  * ansible/inventory/host_vars/netbook.local
  * ansible/inventory/host_vars/netty.local
+ * ansible/inventory/host_vars/ryzen.local
  * ansible/inventory/host_vars/viva.local
  * ansible/inventory/host_vars/webtv.local
  * ansible/inventory/host_vars/xiaobear.local

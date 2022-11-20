@@ -77,7 +77,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     def config(self) -> None:
         """
@@ -179,26 +179,31 @@ class Main:
         wget: command_mod.Command,
         url: str,
     ) -> dict:
-        try:
-            with urllib.request.urlopen(url) as conn:
-                url_time = time.mktime(time.strptime(
-                    conn.info().get('Last-Modified'),
-                    '%a, %d %b %Y %H:%M:%S %Z',
-                ))
-        except Exception as exception:
-            raise SystemExit(
-                f"Error: Cannot fetch URL: {url}",
-            ) from exception
+        for _ in range(3):
+            try:
+                with urllib.request.urlopen(url, timeout=1) as conn:
+                    url_time = time.mktime(time.strptime(
+                        conn.info().get('Last-Modified'),
+                        '%a, %d %b %Y %H:%M:%S %Z',
+                    ))
+                break
+            except urllib.error.URLError:
+                pass
+        else:
+            raise SystemExit(f"Error: Cannot fetch URL: {url}")
 
         if url_time > data['time']:
             self._show_times(data['time'], url_time)
             archive = os.path.join(self.tmpdir, os.path.basename(url))
             self._remove()
             task = subtask_mod.Task(wget.get_cmdline() + ['-O', archive, url])
-            task.run()
-            if task.get_exitcode() != 0:
-                print("  [ERROR (", task.get_exitcode, ")]", url)
+            for _ in range(3):
+                task.run()
+                if task.get_exitcode() == 0:
+                    break
                 self._remove()
+            else:
+                print("  [ERROR (", task.get_exitcode, ")]", url)
                 raise SystemExit(
                     f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                     f'received from "{task.get_file()}".',
@@ -273,7 +278,7 @@ class Main:
 
         wget = command_mod.Command(
             'wget',
-            args=['--timestamping'],
+            args=['--timestamping', '--connect-timeout=1'],
             errors='stop'
         )
 

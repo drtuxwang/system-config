@@ -15,8 +15,8 @@ import types
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.2.9'
-VERSION = 20220402
+RELEASE = '2.2.10'
+VERSION = 20221119
 
 BUFFER_SIZE = 131072
 
@@ -658,7 +658,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:

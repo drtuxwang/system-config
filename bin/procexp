@@ -1,4 +1,0 @@
-#!/bin/sh
-
-PYLD_MAIN="pyld_gen"
-. `dirname "$0"`/pyld.sh

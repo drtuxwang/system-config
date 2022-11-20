@@ -117,7 +117,6 @@ tomlkit==0.7.2
 traitlets==4.3.3
 typing==3.10.0.0
 typing_extensions==None
-uncompyle6==3.7.4
 websockets==None
 whichcraft==0.6.1            #   (required by cookiecutter for 2.7)
 xdis==5.0.11

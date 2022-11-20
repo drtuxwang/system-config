@@ -60,7 +60,7 @@ class Options:
         self._args = parser.parse_args(args)
 
         isarchive = re.compile(
-            '[.](tar|tar[.]gz|tar[.]bz2|tar[.]zstd|tar[.]lzma|tar[.]xz|'
+            '[.](tar|tar[.]gz|tar[.]bz2|tar[.]zstd?|tar[.]lzma|tar[.]xz|'
             'tar[.]7z|t[bglx7]z|tzst?)$',
         )
         for archive in self._args.archives:
@@ -88,7 +88,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -111,12 +111,12 @@ class Main:
         task: subtask_mod.Task
 
         if file.endswith(('.tar.7z', 't7z')):
-            unpacker = command_mod.Command('7z', args=['x', '-y', '-so'])
+            unpacker = command_mod.Command('7z', args=['x', '-so'])
         elif file.endswith(('.tar.lzma', 'tlz')):
             unpacker = command_mod.Command('lzma', args=['-d', '-c'])
         elif file.endswith(('.tar.xz', 'txz')):
             unpacker = command_mod.Command('xz', args=['-d', '-c'])
-        elif file.endswith(('.tar.zstd', 'tzst', 'tzs')):
+        elif file.endswith(('.tar.zst', '.tar.zstd', 'tzst', 'tzs')):
             unpacker = command_mod.Command('zstd', args=['-d', '-c'])
         elif file.endswith(('.tar.bz2', 'tbz')):
             unpacker = command_mod.Command('bzip2', args=['-d', '-c'])
@@ -144,7 +144,7 @@ class Main:
     def _view(self, file: str) -> None:
         if file.endswith('.tar.7z'):
             unpacker = command_mod.Command('7z', errors='stop')
-            unpacker.set_args(['x', '-y', '-so', file])
+            unpacker.set_args(['x', '-so', file])
             self._tar.set_args(['tfv', '-'])
             subtask_mod.Task(
                 unpacker.get_cmdline() + ['|'] + self._tar.get_cmdline()).run()

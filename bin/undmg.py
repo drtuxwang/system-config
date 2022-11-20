@@ -74,7 +74,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -106,7 +106,7 @@ class Main:
         if options.get_view_flag():
             unpacker.set_args(['l'])
         else:
-            unpacker.set_args(['x', '-y'])
+            unpacker.set_args(['x', '-y', '-snld'])
 
         for file in options.get_files():
             if not os.path.isfile(file):

@@ -87,7 +87,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -125,7 +125,7 @@ class Main:
             ):
                 ext = os.path.splitext(file)[1].lower()
                 if ext in images_extensions:
-                    link = f'{album+1:02d}.{number+1:02d}_{linkdir}{ext}'
+                    link = f'{album+1:02d}.{number+1:03d}_{linkdir}{ext}'
                     if not os.path.islink(link):
                         try:
                             os.symlink(file, link)

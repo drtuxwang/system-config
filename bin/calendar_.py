@@ -104,7 +104,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -165,16 +165,16 @@ class Main:
         Generate single month calendar
         """
         rows = [
-            f"{x:20s}"
+            f" {x:20s}"
             for x in
             calendar.TextCalendar().formatmonth(year, month).split('\n')
         ]
         now = datetime.datetime.now()
         if year == now.year and month == now.month:
             # Invert colours of today
-            today = f"{now.day:02d}"
+            today = f"{now.day:2d}"
             rows = [
-                x.replace(today, f"\033[7m{today}\033[m")
+                x.replace(' '+today, f" \033[7m{today}\033[m")
                 for x in rows
             ]
 
@@ -197,8 +197,8 @@ class Main:
 
         for index in range(8):
             print(
-                f"  {last_month[index]}   "
-                f"{current_month[index]}   "
+                f" {last_month[index]}  "
+                f"{current_month[index]}  "
                 f"{next_month[index]}"
             )
 

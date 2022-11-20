@@ -80,23 +80,20 @@ class Menu:
         with open(template, encoding='utf-8', errors='replace') as ifile:
             self._template = jinja2.Template(ifile.read())
 
-        config_file = f"{sys.argv[0].rsplit('.py', 1)[0]}.yaml"
-        status_file = os.path.join(
+        self._config_file = f"{sys.argv[0].rsplit('.py', 1)[0]}.yaml"
+        self._status_file = os.path.join(
             os.environ['HOME'],
             '.config',
             f"{os.path.basename(sys.argv[0]).rsplit('.py', 1)[0]}.json",
         )
-        if os.path.isfile(status_file):
-            file = status_file
+        if os.path.isfile(self._status_file):
+            file = self._status_file
         else:
-            file = config_file
+            file = self._config_file
 
         data = config_mod.Data()
         data.read(file)
         self._config = next(data.get())
-
-        if self._menus == ['main']:
-            self.update(config_file, status_file)
 
     @staticmethod
     def check_software(checks: List[str]) -> bool:
@@ -161,6 +158,9 @@ class Menu:
 
             subtask_mod.Background(wish.get_cmdline() + [file]).run()
 
+        if self._menus == ['main']:
+            self.update(self._config_file, self._status_file)
+
     @classmethod
     def update(cls, config_file: str, status_file: str) -> None:
         """
@@ -206,7 +206,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:

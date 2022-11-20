@@ -62,7 +62,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -89,8 +89,8 @@ class Main:
         options = Options()
 
         os.umask(int('022', 8))
-        command = command_mod.Command('uncompyle6', errors='stop')
-        command.set_args(['-o', '.'] + options.get_files())
+        command = command_mod.Command('pydisasm', errors='stop')
+        command.set_args(['--format=bytes'] + options.get_files())
         subtask_mod.Exec(command.get_cmdline()).run()
 
         return 0

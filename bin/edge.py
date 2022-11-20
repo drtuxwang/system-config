@@ -291,9 +291,9 @@ class Options:
             ])
 
         self._pattern = (
-            ': /dev/null/|:ERROR:disk_cache|'
+            ': /dev/null/|:ERROR:disk_cache|implemented in both|'
             'multiple threads in process gpu-process|'
-            '.config/microsoft-edge/Default'
+            '.config/microsoft-edge/Default|ERROR:edge_install_updater'
         )
         self._config()
         self._set_libraries(self._browser)
@@ -311,7 +311,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:

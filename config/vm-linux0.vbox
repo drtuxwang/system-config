@@ -5,8 +5,8 @@
 ** is running, your changes will be overwritten later, without taking effect.
 ** Use VBoxManage or the VirtualBox Manager GUI to make changes.
 -->
-<VirtualBox xmlns="http://www.virtualbox.org/" version="1.16-linux">
-  <Machine uuid="{131cd5c7-4b7f-45e7-b23a-194c585a5fef}" name="vm-linux0" OSType="Debian_64" snapshotFolder="Snapshots" lastStateChange="2021-11-16T08:13:06Z">
+<VirtualBox xmlns="http://www.virtualbox.org/" version="1.19-linux">
+  <Machine uuid="{131cd5c7-4b7f-45e7-b23a-194c585a5fef}" name="vm-linux0" OSType="Debian_64" snapshotFolder="Snapshots" lastStateChange="2022-10-26T12:03:01Z">
     <MediaRegistry>
       <HardDisks>
         <HardDisk uuid="{3de3e682-bfb4-4d3b-9ee9-bab943bade59}" location="vm-linux0.vdi" format="VDI" type="Normal"/>
@@ -29,22 +29,22 @@
         <Order position="3" device="None"/>
         <Order position="4" device="None"/>
       </Boot>
-      <Display controller="VBoxSVGA" VRAMSize="64"/>
-      <VideoCapture screens="1" options="ac_enabled=false" file="." fps="25"/>
+      <Display controller="VMSVGA" VRAMSize="64"/>
       <BIOS>
         <IOAPIC enabled="true"/>
       </BIOS>
       <Network>
-        <Adapter slot="0" enabled="true" MACAddress="0800275F6D79" cable="false" type="82540EM">
+        <Adapter slot="0" enabled="true" MACAddress="0800275F6D79" type="82540EM">
           <DisabledModes>
             <BridgedInterface name="enp3s0"/>
             <InternalNetwork name="intnet"/>
             <NATNetwork name="NatNetwork"/>
           </DisabledModes>
-          <NAT/>
+          <NAT localhost-reachable="true"/>
         </Adapter>
         <Adapter slot="1" enabled="true" MACAddress="08002706FA7F" type="82540EM">
           <DisabledModes>
+            <NAT localhost-reachable="true"/>
             <InternalNetwork name="intnet"/>
             <NATNetwork name="NatNetwork"/>
           </DisabledModes>
@@ -57,20 +57,17 @@
         <Adapter slot="6" MACAddress="080027E0AC1F" type="82540EM"/>
         <Adapter slot="7" MACAddress="08002723850C" type="82540EM"/>
       </Network>
-      <AudioAdapter codec="AD1980" driver="Pulse" enabled="true" enabledIn="false"/>
+      <AudioAdapter codec="AD1980" useDefault="true" driver="Pulse" enabled="true"/>
       <RTC localOrUTC="UTC"/>
       <SharedFolders>
         <SharedFolder name="shared" hostPath="/shared" writable="true" autoMount="false"/>
       </SharedFolders>
       <Clipboard mode="Bidirectional"/>
+      <StorageControllers>
+        <StorageController name="IDE" type="PIIX4" PortCount="2" useHostIOCache="true" Bootable="true">
+          <AttachedDevice passthrough="false" type="DVD" hotpluggable="false" port="1" device="0"/>
+        </StorageController>
+      </StorageControllers>
     </Hardware>
-    <StorageControllers>
-      <StorageController name="IDE" type="PIIX4" PortCount="2" useHostIOCache="true" Bootable="true">
-        <AttachedDevice type="HardDisk" hotpluggable="false" port="0" device="0">
-          <Image uuid="{3de3e682-bfb4-4d3b-9ee9-bab943bade59}"/>
-        </AttachedDevice>
-        <AttachedDevice passthrough="false" type="DVD" hotpluggable="false" port="1" device="1"/>
-      </StorageController>
-    </StorageControllers>
   </Machine>
 </VirtualBox>

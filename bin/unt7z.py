@@ -80,7 +80,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -101,7 +101,7 @@ class Main:
 
     def _unpack(self, file: str) -> None:
         unpacker = command_mod.Command('7z', errors='stop')
-        unpacker.set_args(['x', '-y', '-so', file])
+        unpacker.set_args(['x', '-so', file])
         self._tar.set_args(['xfv', '-'])
         task = subtask_mod.Batch(self._tar.get_cmdline() + ['--help'])
         task.run(pattern='--xattrs')
@@ -113,7 +113,7 @@ class Main:
 
     def _view(self, file: str) -> None:
         unpacker = command_mod.Command('7z', errors='stop')
-        unpacker.set_args(['x', '-y', '-so', file])
+        unpacker.set_args(['x', '-so', file])
         self._tar.set_args(['tfv', '-'])
         task = subtask_mod.Batch(self._tar.get_cmdline() + ['--help'])
         task.run(pattern='--xattrs')

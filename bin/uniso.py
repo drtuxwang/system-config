@@ -82,7 +82,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -172,7 +172,7 @@ class Main:
         else:
             archiver = command_mod.Command(
                 '7z',
-                args=['x', '-y'],
+                args=['x', '-y', '-snld'],
                 errors='stop'
             )
 

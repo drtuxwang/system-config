@@ -5,6 +5,7 @@ Wrapper for generic command
 
 import glob
 import os
+import pathlib
 import signal
 import sys
 
@@ -24,7 +25,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -54,7 +55,8 @@ class Main:
             os.path.join('bin', name),
             errors='ignore',
         )
-        if not command.is_found():
+        directory = str(pathlib.Path(sys.argv[0]).absolute().parents[1])
+        if not command.is_found() or directory not in command.get_file():
             command = command_mod.Command(name, errors='stop')
         command.set_args(sys.argv[1:])
         subtask_mod.Exec(command.get_cmdline()).run()

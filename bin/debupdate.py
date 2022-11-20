@@ -15,7 +15,7 @@ import sre_constants
 import sys
 from typing import List
 
-import packaging.version
+import packaging.version  # type: ignore
 
 import logging_mod
 
@@ -151,7 +151,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -300,13 +300,7 @@ class Main:
                                 new_version,
                             )
                             logger.info("  %s", file)
-                            print(
-                                f"# Update: {name} "
-                                f"({version} => "
-                                f"{new_version})",
-                                file=ofile,
-                            )
-                            print(file, file=ofile)
+                            print(f"{file}  # {version}", file=ofile)
                             for dependency in sorted(self._depends(
                                     versions,
                                     self._packages[name].get_depends()

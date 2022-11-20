@@ -237,7 +237,7 @@ if ( "$TERM" != "" && "$TERM" != dumb ) then
 
     # Show information
     echo
-    sysinfo.sh -s |& grep -v "Command not found"
+    sysinfo -s |& grep -v "Command not found"
     setenv MYINFO "$MYSHELL shell (tty=$MYTTY)"
     if ( "$SSH_KEYS" != 0 ) then
         setenv MYINFO "$MYINFO, ssh-add=$SSH_KEYS"

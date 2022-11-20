@@ -5,6 +5,7 @@ System configuration detection tool.
 1996-2022 By Dr Colin Kong
 """
 
+import argparse
 import functools
 import glob
 import ipaddress
@@ -30,8 +31,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.3.0'
-VERSION = 20221023
+RELEASE = '6.4.2'
+VERSION = 20221119
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -48,7 +49,8 @@ class Options:
         )
         self._release_version = RELEASE
 
-        self._system = OperatingSystem.factory()
+        self._args: argparse.Namespace = None
+        self.parse(sys.argv)
 
     def get_release_date(self) -> str:
         """
@@ -62,11 +64,38 @@ class Options:
         """
         return self._release_version
 
+    def get_full(self) -> bool:
+        """
+        Return full flag.
+        """
+        return self._args.full
+
     def get_system(self) -> 'OperatingSystem':
         """
         Return operating system.
         """
         return self._system
+
+    def _parse_args(self, args: List[str]) -> None:
+        parser = argparse.ArgumentParser(
+            description="Show system information.")
+
+        parser.add_argument(
+            '-s',
+            dest='full',
+            action='store_false',
+            help="Show short summary.",
+        )
+
+        self._args = parser.parse_args(args)
+
+    def parse(self, args: List[str]) -> None:
+        """
+        Parse arguments
+        """
+        self._parse_args(args[1:])
+
+        self._system = OperatingSystem.factory()
 
 
 class CommandThread(threading.Thread):
@@ -177,9 +206,10 @@ class Detect:
             pass
         self._ip_address(address, 'Net IPvx Public')
 
-    def _operating_system(self) -> None:
+    def _operating_system(self, full: bool) -> None:
         info = self._system.get_os_info()
-        Writer.output(name='OS Type', value=info['OS Type'])
+        if full:
+            Writer.output(name='OS Type', value=info['OS Type'])
         Writer.output(name='OS Name', value=info['OS Name'])
         Writer.output(
             name='OS Kernel',
@@ -228,32 +258,33 @@ class Detect:
         for name, status in info['CPU Vulnerabilities']:
             Writer.output(name='CPU Vulnerability', value=name, comment=status)
 
-    def _system_status(self) -> None:
+    def _system_status(self, full: bool) -> None:
         info = self._system.get_sys_info()
-        Writer.output(
-            name='System Platform',
-            value=info['System Platform'],
-            comment=info['System Platform X'],
-        )
-        Writer.output(
-            name='System Board',
-            value=info['System Board'],
-            comment=info['System Board X'],
-        )
-        Writer.output(
-            name='System BIOS',
-            value=info['System BIOS'],
-            comment=info['System BIOS X'],
-        )
+        if full:
+            Writer.output(
+                name='System Platform',
+                value=info['System Platform'],
+                comment=info['System Platform X'],
+            )
+            Writer.output(
+                name='System Board',
+                value=info['System Board'],
+                comment=info['System Board X'],
+            )
+            Writer.output(
+                name='System BIOS',
+                value=info['System BIOS'],
+                comment=info['System BIOS X'],
+            )
         Writer.output(
             name='System Memory',
-            value=info['System Memory'],
-            comment='MB',
+            value=info['System Memory'] + ' MB',
+            comment=info['System Memory X'],
         )
         Writer.output(
             name='System Swap Space',
-            value=info['System Swap Space'],
-            comment='MB',
+            value=info['System Swap Space'] + ' MB',
+            comment=info['System Swap Space X'],
         )
         Writer.output(name='System Uptime', value=info['System Uptime'])
         Writer.output(
@@ -411,20 +442,23 @@ class Detect:
         print(f"\n{self._author} - System configuration detection tool")
         print(f"\n*** Detected at {timestamp} ***")
 
-    def show_info(self) -> None:
+    def show_info(self, full: bool) -> None:
         """
         Show information.
         """
-        self._network_information()
-        self._operating_system()
-        self._processors()
-        self._system_status()
-        if self._system.has_devices():
-            self._system.detect_devices()
-        if self._system.has_loader():
-            self._system.detect_loader()
-        self._xwindows()
-        self._software()
+        if full:
+            self._network_information()
+        self._operating_system(full)
+        if full:
+            self._processors()
+        self._system_status(full)
+        if full:
+            if self._system.has_devices():
+                self._system.detect_devices()
+            if self._system.has_loader():
+                self._system.detect_loader()
+            self._xwindows()
+            self._software()
 
 
 class OperatingSystem:
@@ -555,7 +589,9 @@ class OperatingSystem:
         info['System BIOS'] = 'Unknown'
         info['System BIOS X'] = ''
         info['System Memory'] = 'Unknown'
+        info['System Memory X'] = ''
         info['System Swap Space'] = 'Unknown'
+        info['System Swap Space X'] = ''
         info['System Uptime'] = 'Unknown'
         info['System Load'] = 'Unknown'
         return info
@@ -701,7 +737,7 @@ class PosixSystem(OperatingSystem):
         """
         info = super().get_os_info()
         info['OS Kernel'] = command_mod.Platform.get_kernel()
-        info['OS Kernel X'] = os.uname()[3].replace('(', '').replace(')', '')
+        info['OS Kernel X'] = os.uname()[3].split(' (')[0]
         return info
 
     def get_cpu_info(self) -> dict:
@@ -1856,10 +1892,18 @@ class LinuxSystem(PosixSystem):
                 if line.startswith('MemTotal:'):
                     info['System Memory'] = str(int(
                         float(line.split()[1]) / 1024 + 0.5))
+                elif line.startswith('MemAvailable:'):
+                    info['System Memory X'] = str(int(
+                        float(line.split()[1]) / 1024 + 0.5)
+                    ) + ' available'
                 elif line.startswith('SwapTotal:'):
-                    info['System Swap Space'] = str(
-                        int(float(line.split()[1]) / 1024 + 0.5),
+                    info['System Swap Space'] = str(int(
+                        float(line.split()[1]) / 1024 + 0.5)
                     )
+                elif line.startswith('SwapFree:'):
+                    info['System Swap Space X'] = str(int(
+                        float(line.split()[1]) / 1024 + 0.5),
+                    ) + ' free'
         except (IndexError, ValueError):
             pass
         return info
@@ -2404,8 +2448,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
-        sys.exit(0)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -2421,11 +2464,13 @@ class Main:
         Start program
         """
         options = Options()
+        full = options.get_full()
 
         detect = Detect(options)
-        detect.show_banner()
+        if full:
+            detect.show_banner()
         try:
-            Detect(options).show_info()
+            Detect(options).show_info(full)
         except subtask_mod.ExecutableCallError as exception:
             raise SystemExit(exception) from exception
         print()

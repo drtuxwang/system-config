@@ -17,7 +17,7 @@ import command_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '2.8.3'
+RELEASE = '2.8.4'
 
 
 class Options:
@@ -170,7 +170,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:

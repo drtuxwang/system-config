@@ -15,7 +15,7 @@ import sre_constants
 import sys
 from typing import List, TextIO
 
-import packaging.version
+import packaging.version  # type: ignore
 
 import logging_mod
 
@@ -203,7 +203,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:

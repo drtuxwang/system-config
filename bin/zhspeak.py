@@ -2,7 +2,7 @@
 """
 Zhong Hua Speak Chinese TTS software.
 
-2009-2021 By Dr Colin Kong
+2009-2022 By Dr Colin Kong
 """
 
 import argparse
@@ -20,7 +20,7 @@ import file_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '6.0.3'
+RELEASE = '6.0.4'
 
 
 class Options:
@@ -619,7 +619,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
         sys.exit(0)
 
     @staticmethod

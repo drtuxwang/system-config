@@ -1,4 +1,4 @@
 #!/bin/sh
 
-PYLD_MAIN="pyld_gen"
+PYLD_EXE=`basename "$0"`
 . `dirname "$0"`/pyld.sh

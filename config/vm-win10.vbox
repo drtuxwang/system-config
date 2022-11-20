@@ -5,10 +5,10 @@
 ** is running, your changes will be overwritten later, without taking effect.
 ** Use VBoxManage or the VirtualBox Manager GUI to make changes.
 -->
-<VirtualBox xmlns="http://www.virtualbox.org/" version="1.16-linux">
-  <Machine uuid="{e5185a9b-2a94-4c8b-938b-57022bf69960}" name="vm-win10" OSType="Windows10_64" currentSnapshot="{b36d0871-112c-486a-a347-02ce3cf7d826}" snapshotFolder="Snapshots" lastStateChange="2021-03-13T14:06:44Z">
+<VirtualBox xmlns="http://www.virtualbox.org/" version="1.19-linux">
+  <Machine uuid="{e5185a9b-2a94-4c8b-938b-57022bf69960}" name="vm-win10" OSType="Windows10_64" snapshotFolder="Snapshots" lastStateChange="2022-10-30T12:33:59Z">
     <ExtraData>
-      <ExtraDataItem name="GUI/LastCloseAction" value="PowerOffRestoringSnapshot"/>
+      <ExtraDataItem name="GUI/LastCloseAction" value="PowerOff"/>
     </ExtraData>
     <Hardware>
       <CPU count="2">
@@ -25,7 +25,6 @@
         <Order position="4" device="None"/>
       </Boot>
       <Display controller="VBoxSVGA" VRAMSize="64"/>
-      <VideoCapture screens="1" options="ac_enabled=false" file="." fps="25"/>
       <BIOS>
         <IOAPIC enabled="true"/>
       </BIOS>
@@ -36,10 +35,11 @@
             <InternalNetwork name="intnet"/>
             <NATNetwork name="NatNetwork"/>
           </DisabledModes>
-          <NAT/>
+          <NAT localhost-reachable="true"/>
         </Adapter>
         <Adapter slot="1" enabled="true" MACAddress="0800278AF9D2" type="82540EM">
           <DisabledModes>
+            <NAT localhost-reachable="true"/>
             <InternalNetwork name="intnet"/>
             <NATNetwork name="NatNetwork"/>
           </DisabledModes>
@@ -52,15 +52,17 @@
         <Adapter slot="6" MACAddress="0800279C5DFC" type="82540EM"/>
         <Adapter slot="7" MACAddress="080027604847" type="82540EM"/>
       </Network>
-      <AudioAdapter codec="AD1980" driver="Pulse" enabled="true" enabledIn="false"/>
+      <AudioAdapter codec="AD1980" driver="Pulse" enabled="true" enabledOut="true"/>
       <RTC localOrUTC="UTC"/>
       <SharedFolders>
         <SharedFolder name="shared" hostPath="/shared" writable="true" autoMount="false"/>
       </SharedFolders>
       <Clipboard mode="Bidirectional"/>
+      <StorageControllers>
+        <StorageController name="IDE" type="PIIX4" PortCount="2" useHostIOCache="true" Bootable="true">
+          <AttachedDevice passthrough="false" type="DVD" hotpluggable="false" port="1" device="0"/>
+        </StorageController>
+      </StorageControllers>
     </Hardware>
-    <StorageControllers>
-      <StorageController name="IDE" type="PIIX4" PortCount="2" useHostIOCache="true" Bootable="true"/>
-    </StorageControllers>
   </Machine>
 </VirtualBox>

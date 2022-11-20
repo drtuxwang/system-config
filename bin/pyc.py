@@ -23,6 +23,12 @@ class Options:
         self._args: argparse.Namespace = None
         self.parse(sys.argv)
 
+    def get_version(self) -> str:
+        """
+        Return python version.
+        """
+        return self._args.version[0]
+
     def get_files(self) -> List[str]:
         """
         Return list of files.
@@ -34,6 +40,13 @@ class Options:
             description="Compile Python source file to PYC file.",
         )
 
+        parser.add_argument(
+            '-v',
+            nargs=1,
+            dest='version',
+            default=[None],
+            help="Use different Python version (2, 3.9, 3.10).",
+        )
         parser.add_argument(
             'files',
             nargs='+',
@@ -62,7 +75,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -87,11 +100,18 @@ class Main:
         Start program
         """
         options = Options()
+        version = options.get_version()
 
         os.umask(int('022', 8))
-        command = command_mod.CommandFile(sys.executable)
-        command.set_args(['-m', 'compileall'] + options.get_files())
-        subtask_mod.Exec(command.get_cmdline()).run()
+        if version:
+            command = command_mod.Command(f'python{version}', errors='stop')
+            executable = command.get_file()
+        else:
+            executable = sys.executable
+
+        for file in options.get_files():
+            print(f"{os.path.basename(executable)} -m compileall {file}")
+            subtask_mod.Task([executable, '-m', 'compileall', file]).run()
 
         return 0
 

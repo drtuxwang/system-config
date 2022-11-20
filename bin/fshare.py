@@ -13,6 +13,7 @@ from typing import List, Optional
 
 import dropbox  # type: ignore
 import requests  # type: ignore
+import stone.backends.python_rsrc.stone_validators  # type: ignore
 
 import logging_mod
 
@@ -126,6 +127,37 @@ class DropboxClient:
             return client
         return None
 
+    def list(self, url: str) -> bool:
+        """
+        List Dropbox path.
+        """
+        if self._client is None:
+            logger.warning("No dropbox connection: %s", url)
+            return False
+
+        path = url.split('dropbox://', 1)[1]
+        logger.info('Listing "%s".', url)
+
+        try:
+            entries = self._client.files_list_folder(
+                path,
+                recursive=True,
+            ).entries
+            for entry in sorted(entries, key=lambda s: s.name):
+                print(
+                    f"{entry.size:10d} "
+                    f"[{entry.client_modified}] "
+                    f"{entry.name}",
+                )
+        except (dropbox.exceptions.ApiError, dropbox.exceptions.HttpError):
+            logger.error('Unable to list "%s".', url)
+            return False
+        except stone.backends.python_rsrc.stone_validators.ValidationError:
+            logger.info('Found 0 files.')
+        else:
+            logger.info('Found %d files.', len(entries))
+        return True
+
     def get(self, url: str) -> bool:
         """
         Download Dropbox path to file.
@@ -141,7 +173,7 @@ class DropboxClient:
         try:
             metadata, response = self._client.files_download(path)
         except (dropbox.exceptions.ApiError, dropbox.exceptions.HttpError):
-            logger.error('Unable to download "dropbox:%s".', path)
+            logger.error('Unable to download "%s".', url)
             return False
 
         try:
@@ -181,11 +213,40 @@ class DropboxClient:
                 path,
                 mode=dropbox.files.WriteMode('overwrite')
             )
-        except dropbox.exceptions.ApiError:
-            logger.error('Unable to upload "dropbox:%s".', path)
+        except (dropbox.exceptions.ApiError, dropbox.exceptions.HttpError):
+            logger.error('Unable to upload "%s".', url)
             return False
 
         logger.info('Uploaded %d bytes.', len(data))
+        return True
+
+    def remove(self, url: str) -> bool:
+        """
+        Remove Dropbox path.
+        """
+        if self._client is None:
+            logger.warning("No dropbox connection: %s", url)
+            return False
+
+        path = url.split('dropbox:/', 1)[1]
+        logger.info('Removing "%s".', url)
+
+        if path == '/':
+            logger.error('Unsafe to remove all files "%s".', url)
+            return False
+
+        try:
+            entry = self._client.files_delete(path)
+        except (dropbox.exceptions.ApiError, dropbox.exceptions.HttpError):
+            logger.error('Unable to remove "%s".', url)
+            return False
+
+        print(
+            f"{entry.size:10d} "
+            f"[{entry.client_modified}] "
+            f"{entry.name}  # Removed",
+        )
+
         return True
 
 
@@ -201,7 +262,7 @@ class Main:
         except (EOFError, KeyboardInterrupt):
             sys.exit(114)
         except SystemExit as exception:
-            sys.exit(exception)
+            sys.exit(exception)  # type: ignore
 
     @staticmethod
     def config() -> None:
@@ -210,6 +271,22 @@ class Main:
         """
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+    @staticmethod
+    def _list(urls: List[str]) -> int:
+        clients: dict = {}
+        errors = 0
+
+        for url in urls:
+            if url.startswith('dropbox://'):
+                if not clients.get('dropbox'):
+                    clients['dropbox'] = DropboxClient()
+                if not clients['dropbox'].list(url):
+                    errors += 1
+            else:
+                logger.error("Unsupported URL: %s", url)
+                errors += 1
+        return errors
 
     @staticmethod
     def _get(urls: List[str]) -> int:
@@ -243,6 +320,22 @@ class Main:
                 errors += 1
         return errors
 
+    @staticmethod
+    def _remove(urls: List[str]) -> int:
+        clients: dict = {}
+        errors = 0
+
+        for url in urls:
+            if url.startswith('dropbox://'):
+                if not clients.get('dropbox'):
+                    clients['dropbox'] = DropboxClient()
+                if not clients['dropbox'].remove(url):
+                    errors += 1
+            else:
+                logger.error("Unsupported URL: %s", url)
+                errors += 1
+        return errors
+
     @classmethod
     def run(cls) -> int:
         """
@@ -251,10 +344,14 @@ class Main:
         options = Options()
 
         command = options.get_command()
-        if command == 'get':
+        if command == 'ls':
+            errors = cls._list(options.get_urls())
+        elif command == 'get':
             errors = cls._get(options.get_urls())
         elif command == 'put':
             errors = cls._put(options.get_urls())
+        elif command == 'rm':
+            errors = cls._remove(options.get_urls())
         else:
             logger.error("Invalid command: %s", command)
             return 1
