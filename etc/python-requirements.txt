@@ -107,7 +107,7 @@ pep517==0.13.0               #   (required by devpi-client)
 pep8==1.7.0                  # Python style guide checker (replaced by pycodestyle)
 pexpect==4.7.0               #   (required by ipdb/poetry)
 pickleshare==0.7.5           #   (required by ipdb)
-Pillow==9.2.0                #   (required by ImageHash)
+Pillow==9.3.0                #   (required by ImageHash)
 pip==22.2.2                  # Python package manager
 pipdeptree==2.2.1            # Python package dependency tree
 pkginfo==1.7.1               #   (required by devpi-client/poetry)
