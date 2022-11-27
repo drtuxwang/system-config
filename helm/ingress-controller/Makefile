@@ -28,7 +28,7 @@ HELM_INSTALL := helm upgrade --install --wait
 
 EXTERNAL_IP=$(shell kubectl get nodes -o wide | awk 'NR==2{print $$6}')
 ifndef INGRESS_ENABLED
-	INGRESS_ENABLED=$(shell timeout 2 kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
+	INGRESS_ENABLED=$(shell timeout 2 kubectl get ClusterRoleBinding 2> /dev/null | grep -Eq "^ingress|traefik" && echo true || echo false)
 endif
 HELM_FLAGS := \
 	--namespace=$(NAMESPACE) \
@@ -117,7 +117,7 @@ check: repo-add      # Install Helm release dryrun
 
 .PHONY: install
 install: repo-add    # Install Helm release
-	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
+	kubectl get namespace $(NAMESPACE) 2> /dev/null || kubectl create namespace $(NAMESPACE)
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: uninstall

@@ -51,8 +51,8 @@ spec:
         - mountPath: /shared
           name: data
       nodeSelector:
-        beta.kubernetes.io/os: linux
-        ##kubernetes.io/hostname: koko.local
+        kubernetes.io/os: linux
+        ##kubernetes.io/hostname: ryzen.local
       terminationGracePeriodSeconds: 10
   updateStrategy:
     type: RollingUpdate

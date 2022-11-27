@@ -81,7 +81,7 @@ fetch: repo-add clean # Fetch Helm chart
 
 .PHONY: images
 images:              # Show Docker images
-	@ make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
+	@make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
 
 .PHONY: pull
 pull:                # Pull Docker images
@@ -107,7 +107,7 @@ check: repo-add      # Install Helm release dryrun
 
 .PHONY: install
 install: repo-add    # Install Helm release
-	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
+	kubectl get namespace $(NAMESPACE) 2> /dev/null || kubectl create namespace $(NAMESPACE)
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: connect

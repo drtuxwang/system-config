@@ -34,5 +34,5 @@ spec:
         resources:
 {{ toYaml .Values.resources | indent 10 }}
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       terminationGracePeriodSeconds: 10

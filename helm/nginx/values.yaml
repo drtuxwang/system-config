@@ -1,6 +1,6 @@
 nodeSelector:
-  beta.kubernetes.io/os: linux
-  ##kubernetes.io/hostname: koko.local
+  kubernetes.io/os: linux
+  ##kubernetes.io/hostname: ryzen.local
 
 serverBlock: |-
   server {

@@ -32,7 +32,7 @@ HELM_INSTALL := helm upgrade --install --wait
 
 EXTERNAL_IP=$(shell ping -c 1 $(HOSTNAME) 2> /dev/null | grep "^PING" | sed -e "s/.* (//;s/).*//")
 ifndef INGRESS_ENABLED
-	INGRESS_ENABLED=$(shell timeout 2 kubectl get ClusterRoleBinding 2> /dev/null | grep -q ^ingress && echo true || echo false)
+	INGRESS_ENABLED=$(shell timeout 2 kubectl get ClusterRoleBinding 2> /dev/null | grep -Eq "^ingress|traefik" && echo true || echo false)
 endif
 HELM_FLAGS := \
 	--namespace=$(NAMESPACE) \
@@ -94,7 +94,7 @@ fetch: repo-add clean # Fetch Helm chart
 
 .PHONY: images
 images:              # Show Docker images
-	@INGRESS_ENABLED=false make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
+	@make template | grep image: | sed -e 's/.* //;s/"//g' | sort | uniq
 
 .PHONY: pull
 pull:                # Pull Docker images
@@ -121,7 +121,7 @@ check: repo-add      # Install Helm release dryrun
 
 .PHONY: install
 install: repo-add    # Install Helm release
-	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
+	kubectl get namespace $(NAMESPACE) 2> /dev/null || kubectl create namespace $(NAMESPACE)
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward

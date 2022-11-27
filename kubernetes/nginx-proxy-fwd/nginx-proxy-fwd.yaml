@@ -34,8 +34,8 @@ spec:
           name: ssl
           readOnly: true
       nodeSelector:
-        beta.kubernetes.io/os: linux
-        ##kubernetes.io/hostname: koko.local
+        kubernetes.io/os: linux
+        ##kubernetes.io/hostname: ryzen.local
       volumes:
       - configMap:
           name: nginx-proxy-fwd-config

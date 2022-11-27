@@ -40,8 +40,8 @@ spec:
     - mountPath: /shared
       name: shared
   nodeSelector:
-    beta.kubernetes.io/os: linux
-    ##kubernetes.io/hostname: koko.local
+    kubernetes.io/os: linux
+    ##kubernetes.io/hostname: ryzen.local
   restartPolicy: Never
   volumes:
   - hostPath:

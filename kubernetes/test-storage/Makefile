@@ -21,7 +21,7 @@ status-kube:         # Show Kube workload status
 .PHONY: create
 create:              # Create workload
 	@echo "\n*** Creating pods ***"
-	kubectl create namespace $(NAMESPACE) ||:
+	kubectl get namespace $(NAMESPACE) 2> /dev/null || kubectl create namespace $(NAMESPACE)
 	kubectl --namespace=$(NAMESPACE) create -f $(NAME)-pv.yaml ||:
 	kubectl --namespace=$(NAMESPACE) create -f $(NAME)-statefulset.yaml ||:
 

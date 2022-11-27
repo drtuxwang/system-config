@@ -99,7 +99,7 @@ check:               # Install Helm release dryrun
 
 .PHONY: install
 install:             # Install Helm release
-	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
+	kubectl get namespace $(NAMESPACE) 2> /dev/null || kubectl create namespace $(NAMESPACE)
 	$(HELM_INSTALL) $(HELM_FLAGS) $(HELM_RELEASE) $(CHART_REPO)/$(CHART_NAME)
 
 .PHONY: forward

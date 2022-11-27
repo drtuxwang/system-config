@@ -29,7 +29,7 @@ spec:
             - -c
             - date; echo Batch job on Kubernetes cluster
           nodeSelector:
-            beta.kubernetes.io/os: linux
-            ##kubernetes.io/hostname: koko.local
+            kubernetes.io/os: linux
+            ##kubernetes.io/hostname: ryzen.local
           restartPolicy: OnFailure
           terminationGracePeriodSeconds: 10
