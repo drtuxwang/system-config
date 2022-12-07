@@ -46,7 +46,7 @@ futures==3.3.0               #   (required by pylint for 2.7)
 geomet==None
 gitdb2==2.0.6                #   (required by GitPython for 2.7)
 gitdb==None
-GitPython==2.1.15
+GitPython                    #   (2.1.15 last compatible version)
 gTTS==None
 idna==2.10
 ImageHash==None
