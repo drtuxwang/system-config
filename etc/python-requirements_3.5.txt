@@ -11,7 +11,7 @@ build==0.5.1
 CacheControl==None
 cached-property==None
 cassandra-driver==None
-certifi==2021.10.8
+certifi                      #   (2021.10.8 last compatible version)
 check-manifest==0.44
 contextlib2==None
 cookiecutter                 #   (1.7.3 last compatible version)

@@ -16,7 +16,7 @@ CacheControl==None
 cached-property==1.5.2       #   (required by docker-compose for 2.7)
 cachetools==3.1.1
 cassandra-driver==None
-certifi==2021.10.8
+certifi                      #   (2021.10.8 last compatible version)
 cffi==1.14.1
 charset-normalizer==None
 check-manifest==0.41
