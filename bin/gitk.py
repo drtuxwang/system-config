@@ -9,6 +9,7 @@ import os
 import signal
 import socket
 import sys
+from pathlib import Path
 from typing import Dict, List
 
 import command_mod
@@ -37,16 +38,15 @@ class Options:
 
     @staticmethod
     def _config() -> None:
-        home = os.environ.get('HOME', '')
-        file = os.path.join(home, '.gitconfig')
-        if not os.path.isfile(file):
+        path = Path(Path.home(), '.gitconfig')
+        if not path.is_file():
             try:
-                with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+                with path.open('w', encoding='utf-8', newline='\n') as ofile:
                     user = getpass.getuser()
                     host = socket.gethostname().split('.')[0].lower()
                     print("[user]", file=ofile)
-                    print("        name =", user, file=ofile)
-                    print("        email =", f'{user}@{host}', file=ofile)
+                    print(f"        name = {user}", file=ofile)
+                    print(f"        email = {user}@{host}", file=ofile)
             except OSError:
                 pass
 
@@ -54,21 +54,23 @@ class Options:
         """
         Parse arguments
         """
-        self._gitk = command_mod.Command(
-            os.path.join('bin', 'gitk'), errors='stop')
+        self._gitk = command_mod.Command(Path('bin', 'gitk'), errors='stop')
         self._gitk.set_args(args[1:])
 
         self._env = {}
         if os.name == 'nt':
-            os.environ['PATH'] = os.path.join(
-                os.environ['PATH'], os.path.dirname(self._gitk.get_file()))
-        elif not os.path.isfile(self._gitk.get_cmdline()[0] + '.py'):
-            git_home = os.path.dirname(os.path.dirname(self._gitk.get_file()))
-            if git_home not in ('/usr', '/usr/local', '/opt/software'):
-                self._env['GIT_EXEC_PATH'] = os.path.join(
-                    git_home, 'libexec', 'git-core')
-                self._env['GIT_TEMPLATE_DIR'] = os.path.join(
-                    git_home, 'share', 'git-core', 'templates')
+            os.environ['PATH'] = str(
+                Path(os.environ['PATH'], Path(self._gitk.get_file()).parent)
+            )
+        elif not Path(f'{self._gitk.get_cmdline()[0]}.py').is_file():
+            git_home = Path(self._gitk.get_file()).parents[1]
+            if str(git_home) not in ('/usr', '/usr/local', '/opt/software'):
+                self._env['GIT_EXEC_PATH'] = str(
+                    Path(git_home, 'libexec', 'git-core')
+                )
+                self._env['GIT_TEMPLATE_DIR'] = str(
+                    Path(git_home, 'share', 'git-core', 'templates')
+                )
         self._config()
 
 
@@ -96,7 +98,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -80,7 +81,7 @@ class Options:
                 'download rate limit.',
             )
 
-        if os.path.isfile(self._args.command[0]):
+        if Path(self._args.command[0]).is_file():
             return command_mod.CommandFile(
                 self._args.command[0],
                 args=args[len(my_args):]
@@ -120,7 +121,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

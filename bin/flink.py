@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import file_mod
@@ -42,16 +43,16 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-        for directory in self._args.directories:
-            if not os.path.isdir(directory):
+        for path in [Path(x) for x in self._args.directories]:
+            if not path.is_dir():
                 raise SystemExit(
                     f'{sys.argv[0]}: Source directory '
-                    f'"{directory}" does not exist.',
+                    f'"{path}" does not exist.',
                 )
-            if os.path.samefile(directory, os.getcwd()):
+            if path.samefile(Path.cwd()):
                 raise SystemExit(
                     f'{sys.argv[0]}: Source directory '
-                    f'"{directory}" cannot be current directory.',
+                    f'"{path}" cannot be current directory.',
                 )
 
     def parse(self, args: List[str]) -> None:
@@ -85,7 +86,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -94,69 +95,63 @@ class Main:
 
     def _link_files(  # pylint: disable=too-many-branches
         self,
-        source_dir: str,
-        target_dir: str,
-        subdir: str = '',
+        path1: Path,
+        path2: Path,
+        subdir: Path = Path(''),
     ) -> None:
         try:
-            source_files = sorted([
-                os.path.join(source_dir, x)
-                for x in os.listdir(source_dir)
-            ])
+            source_paths = sorted(path1.iterdir())
         except PermissionError:
             return
-        if not os.path.isdir(target_dir):
-            print(f'Creating "{target_dir}" directory...')
+        if not path2.is_dir():
+            print(f'Creating "{path2}" directory...')
             try:
-                os.mkdir(target_dir)
+                path2.mkdir()
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{target_dir}" directory.',
+                    f'{sys.argv[0]}: Cannot create "{path2}" directory.',
                 ) from exception
 
-        for source_file in sorted(source_files):
-            target_file = os.path.join(
-                target_dir,
-                os.path.basename(source_file)
-            )
-            if os.path.isdir(source_file):
+        for source_path in source_paths:
+            target_path = Path(path2, source_path.name)
+            if source_path.is_dir():
                 self._link_files(
-                    source_file,
-                    target_file,
-                    os.path.join(os.pardir, subdir)
+                    source_path,
+                    target_path,
+                    Path(os.pardir, subdir)
                 )
             else:
-                if os.path.islink(target_file):
-                    print(f'Updating "{target_file}" link...')
+                if target_path.is_symlink():
+                    print(f'Updating "{target_path}" link...')
                     try:
-                        os.remove(target_file)
+                        target_path.unlink()
                     except OSError as exception:
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot remove '
-                            f'"{target_file}" link.',
+                            f'"{target_path}" link.',
                         ) from exception
                 else:
-                    print(f'Creating "{target_file}" link...')
-                if os.path.isabs(source_file):
-                    file = source_file
+                    print(f'Creating "{target_path}" link...')
+                if source_path.is_absolute():
+                    path = source_path
                 else:
-                    file = os.path.join(subdir, source_file)
+                    path = Path(subdir, source_path)
                 try:
-                    os.symlink(file, target_file)
+                    path.symlink_to(target_path)
                 except OSError as exception:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot create "{target_file}" link.',
+                        f'{sys.argv[0]}: Cannot create "{target_path}" link.',
                     ) from exception
-                file_stat = file_mod.FileStat(file)
+                file_stat = file_mod.FileStat(path)
                 file_time = file_stat.get_time()
                 try:
                     os.utime(
-                        target_file,
+                        target_path,
                         (file_time, file_time),
                         follow_symlinks=False,
                     )
                 except NotImplementedError:
-                    os.utime(target_file, (file_time, file_time))
+                    os.utime(target_path, (file_time, file_time))
 
     def run(self) -> int:
         """
@@ -164,8 +159,8 @@ class Main:
         """
         options = Options()
 
-        for directory in options.get_directories():
-            self._link_files(directory, '.')
+        for path in [Path(x) for x in options.get_directories()]:
+            self._link_files(path, Path('.'))
 
         return 0
 

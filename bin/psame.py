@@ -10,6 +10,7 @@ import logging
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List, Set
 
 import imagehash  # type: ignore
@@ -100,32 +101,32 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
                     argv.append(arg)
             sys.argv = argv
 
-    def _calc(self, options: Options, files: List[str]) -> dict:
+    def _calc(self, options: Options, paths: List[Path]) -> dict:
         image_phash = {}
 
-        for file in files:
-            if os.path.isdir(file):
-                if options.get_recursive_flag() and not os.path.islink(file):
+        for path in paths:
+            if path.is_dir():
+                if options.get_recursive_flag() and not path.is_symlink():
                     try:
-                        image_phash.update(self._calc(options, sorted([
-                            os.path.join(file, x)
-                            for x in os.listdir(file)
-                        ])))
+                        image_phash.update(self._calc(
+                            options,
+                            sorted(path.iterdir()),
+                        ))
                     except PermissionError:
                         pass
-            elif os.path.isfile(file):
+            elif path.is_file():
                 try:
-                    phash = int(str(imagehash.phash(PIL.Image.open(file))), 16)
+                    phash = int(str(imagehash.phash(PIL.Image.open(path))), 16)
                 except OSError:
                     continue
-                image_phash[file] = phash
+                image_phash[path] = phash
 
         return image_phash
 
@@ -160,7 +161,9 @@ class Main:
         """
         options = Options()
 
-        image_phash = self._calc(options, options.get_files())
+        image_phash = self._calc(options, [
+            Path(x) for x in options.get_files()]
+        )
         matched_images = self._match(image_phash)
 
         for images in sorted(matched_images):

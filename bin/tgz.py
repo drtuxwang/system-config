@@ -10,6 +10,7 @@ import shutil
 import signal
 import sys
 import tarfile
+from pathlib import Path
 from typing import List
 
 
@@ -60,8 +61,8 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        if os.path.isdir(self._args.archive[0]):
-            self._archive = os.path.abspath(self._args.archive[0]) + '.tar.gz'
+        if Path(self._args.archive[0]).is_dir():
+            self._archive = f'{Path(self._args.archive[0]).resolve()}.tar.gz'
         else:
             self._archive = self._args.archive[0]
         if '.tar.gz' not in self._archive and '.tgz' not in self._archive:
@@ -99,7 +100,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -113,24 +114,21 @@ class Main:
         return tarinfo
 
     @classmethod
-    def _addfile(cls, ofile: tarfile.TarFile, files: List[str]) -> None:
-        for file in sorted(files):
-            print(file)
+    def _addfile(cls, ofile: tarfile.TarFile, paths: List[Path]) -> None:
+        for path in paths:
+            print(path)
             try:
-                ofile.add(file, recursive=False, filter=cls._reset)
+                ofile.add(str(path), recursive=False, filter=cls._reset)
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot add "{file}" file to archive.',
+                    f'{sys.argv[0]}: Cannot add "{path}" file to archive.',
                 ) from exception
-            if os.path.isdir(file) and not os.path.islink(file):
+            if path.is_dir() and not path.is_symlink():
                 try:
-                    cls._addfile(
-                        ofile,
-                        [os.path.join(file, x) for x in os.listdir(file)]
-                    )
+                    cls._addfile(ofile, sorted(path.iterdir()))
                 except PermissionError as exception:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot open "{file}" directory.',
+                        f'{sys.argv[0]}: Cannot open "{path}" directory.',
                     ) from exception
 
     def run(self) -> int:
@@ -139,11 +137,11 @@ class Main:
         """
         options = Options()
 
-        os.umask(int('022', 8))
+        os.umask(0o022)
         archive = options.get_archive()
         try:
             with tarfile.open(options.get_archive()+'.part', 'w:gz') as ofile:
-                self._addfile(ofile, options.get_files())
+                self._addfile(ofile, [Path(x) for x in options.get_files()])
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{archive}.part" archive file.',

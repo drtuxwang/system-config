@@ -10,11 +10,12 @@ import signal
 import socket
 import sys
 import time
+from pathlib import Path
 from typing import List
 
 import task_mod
 
-RELEASE = '2.8.4'
+RELEASE = '2.8.6'
 
 
 class Options:
@@ -71,7 +72,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -79,9 +80,9 @@ class Main:
             sys.argv = argv
 
     def _myqsd(self) -> None:
-        lockfile = os.path.join(self._myqsdir, 'myqsd.pid')
+        path = Path(self._myqsdir, 'myqsd.pid')
         try:
-            with open(lockfile, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 try:
                     pid = int(ifile.readline().strip())
                 except (OSError, ValueError):
@@ -89,7 +90,7 @@ class Main:
                 else:
                     if task_mod.Tasks.factory().haspid(pid):
                         return
-                    os.remove(lockfile)
+                    path.unlink()
         except OSError:
             pass
         print('MyQS batch job scheduler not running. Run "myqsd" command.')
@@ -100,9 +101,9 @@ class Main:
             'CPUS  STATE  TIME'
         )
         jobids: List[int] = []
-        for file in glob.glob(os.path.join(self._myqsdir, '*.[qr]')):
+        for path in self._myqsdir.glob('*.[qr]'):
             try:
-                jobids.append(int(os.path.basename(file)[:-2]))
+                jobids.append(int(path.stem))
             except ValueError:
                 pass
 
@@ -110,8 +111,7 @@ class Main:
         for jobid in sorted(jobids):
             try:
                 state = 'QUEUE'
-                with open(
-                    os.path.join(self._myqsdir, str(jobid) + '.q'),
+                with Path(self._myqsdir, f'{jobid}.q').open(
                     encoding='utf-8',
                     errors='replace'
                 ) as ifile:
@@ -121,8 +121,7 @@ class Main:
                             info[line.split('=')[0]] = line.split('=', 1)[1]
             except OSError:
                 try:
-                    with open(
-                        os.path.join(self._myqsdir, str(jobid) + '.r'),
+                    with Path(self._myqsdir, f'{jobid}.r').open(
                         encoding='utf-8',
                         errors='replace'
                     ) as ifile:
@@ -150,19 +149,18 @@ class Main:
                 etime = '0'
             else:
                 if task_mod.Tasks.factory().haspgid(pgid):
-                    if os.path.isdir(info['DIRECTORY']):
-                        logfile = os.path.join(
+                    if Path(info['DIRECTORY']).is_dir():
+                        log_path = Path(
                             info['DIRECTORY'],
-                            f"{os.path.basename(info['COMMAND'])}.o{jobid}",
+                            f"{Path(info['COMMAND']).name}.o{jobid}",
                         )
                     else:
-                        logfile = os.path.join(
-                            os.environ['HOME'],
-                            f"{os.path.basename(info['COMMAND'])}.o{jobid}",
+                        log_path = Path(
+                            Path.home(),
+                            f"{Path(info['COMMAND']).name}.o{jobid}",
                         )
                     try:
-                        with open(
-                            logfile,
+                        with log_path.open(
                             encoding='utf-8',
                             errors='replace',
                         ) as ifile:
@@ -197,8 +195,7 @@ class Main:
             raise SystemExit(
                 f"{sys.argv[0]}: Cannot determine home directory.",
             )
-        self._myqsdir = os.path.join(
-            os.environ['HOME'], '.config', 'myqs', host)
+        self._myqsdir = Path(Path.home(), '.config', 'myqs', host)
         self._showjobs()
         self._myqsd()
 

@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import file_mod
@@ -92,7 +93,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -100,104 +101,84 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_files(directory: str) -> List[str]:
+    def _get_files(path: Path) -> List[Path]:
         try:
-            files = sorted(
-                [os.path.join(directory, x) for x in os.listdir(directory)])
+            paths = sorted(path.iterdir())
         except (
             FileNotFoundError,
             NotADirectoryError,
             PermissionError,
         ) as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot open "{directory}" directory.'
+                f'{sys.argv[0]}: Cannot open "{path}" directory.'
             ) from exception
-        return files
+        return paths
 
     def _diff_dir(
         self,
-        directory1: str,
-        directory2: str,
+        path1: Path,
+        path2: Path,
         time_flag: bool = False,
     ) -> None:
-        files1 = self._get_files(directory1)
-        files2 = self._get_files(directory2)
-
-        for file in files1:
-            if os.path.isdir(file):
-                if os.path.isdir(
-                        os.path.join(directory2, os.path.basename(file)),
-                ):
-                    self._diff_dir(
-                        file,
-                        os.path.join(directory2, os.path.basename(file)),
-                        time_flag,
-                    )
+        for path in self._get_files(path1):
+            if path.is_dir():
+                if Path(path2, path.name).is_dir():
+                    self._diff_dir(path, Path(path2, path.name), time_flag)
                 else:
-                    print(f"only  {file}{os.sep}")
-            elif os.path.isfile(file):
-                if os.path.isfile(
-                        os.path.join(directory2, os.path.basename(file)),
-                ):
-                    self._diff_file(
-                        file,
-                        os.path.join(directory2, os.path.basename(file)),
-                        time_flag,
-                    )
+                    print(f"only  {path}/")
+            elif path.is_file():
+                if Path(path2, path.name).is_file():
+                    self._diff_file(path, Path(path2, path.name), time_flag)
                 else:
-                    print("only ", file)
+                    print(f"only  {path}")
 
-        for file in files2:
-            if os.path.isdir(file):
-                if not os.path.isdir(
-                        os.path.join(directory1, os.path.basename(file)),
-                ):
-                    print(f"only  {file}{os.sep}")
-            elif os.path.isfile(file):
-                if not os.path.isfile(
-                        os.path.join(directory1, os.path.basename(file)),
-                ):
-                    print("only ", file)
+        for path in self._get_files(path2):
+            if path.is_dir():
+                if not Path(path1, path.name).is_dir():
+                    print(f"only  {path}/")
+            elif path.is_file():
+                if not Path(path1, path.name).is_file():
+                    print(f"only  {path}")
 
     @staticmethod
-    def _diff_file(file1: str, file2: str, time_flag: bool = False) -> None:
-        file_stat1 = file_mod.FileStat(file1)
-        file_stat2 = file_mod.FileStat(file2)
+    def _diff_file(path1: Path, path2: Path, time_flag: bool = False) -> None:
+        file_stat1 = file_mod.FileStat(path1)
+        file_stat2 = file_mod.FileStat(path2)
 
         if file_stat1.get_size() != file_stat2.get_size():
-            print(f"diff  {file1}  {file2}")
+            print(f"diff  {path1}  {path2}")
         elif file_stat1.get_time() != file_stat2.get_time():
             if time_flag:
-                print(f"time  {file1}  {file2}")
+                print(f"time  {path1}  {path2}")
                 return
             try:
-                with open(file1, 'rb') as ifile1:
-                    with open(file2, 'rb') as ifile2:
+                with path1.open('rb') as ifile1:
+                    with path2.open('rb') as ifile2:
                         for _ in range(0, file_stat1.get_size(), 131072):
                             if ifile1.read(131072) != ifile2.read(131072):
-                                print(f"diff  {file1}  {file2}")
+                                print(f"diff  {path1}  {path2}")
                                 return
             except OSError:
-                print(f"diff  {file1}  {file2}")
+                print(f"diff  {path1}  {path2}")
         elif file_stat1.get_size() < 65536:
             try:
-                with open(file1, 'rb') as ifile1:
-                    with open(file2, 'rb') as ifile2:
+                with path1.open('rb') as ifile1:
+                    with path2.open('rb') as ifile2:
                         if ifile1.read(65536) != ifile2.read(65536):
-                            print(f"diff  {file1}  {file2}")
+                            print(f"diff  {path1}  {path2}")
             except OSError:
-                print(f"diff  {file1}  {file2}")
+                print(f"diff  {path1}  {path2}")
 
     def run(self) -> int:
         """
         Start program
         """
         options = Options()
-        directory_1 = options.get_directory_1()
-        directory_2 = options.get_directory_2()
+        path1 = Path(options.get_directory_1())
+        path2 = Path(options.get_directory_2())
         time_flag = options.get_time_flag()
 
-        self._diff_dir(directory_1, directory_2, time_flag)
+        self._diff_dir(path1, path2, time_flag)
 
         return 0
 

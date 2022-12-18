@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import file_mod
@@ -37,7 +38,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -51,10 +52,10 @@ class Main:
         """
         etl = command_mod.Command('etl', errors='stop')
         etl.set_args(sys.argv[1:])
-        os.chdir(os.path.dirname(etl.get_file()))
+        os.chdir(Path(etl.get_file()).parent)
 
-        logfile = os.path.join(file_mod.FileUtil.tmpdir(), 'etl.log')
-        subtask_mod.Daemon(etl.get_cmdline()).run(file=logfile)
+        log_path = Path(file_mod.FileUtil.tmpdir(), 'etl.log')
+        subtask_mod.Daemon(etl.get_cmdline()).run(file=log_path)
 
         return 0
 

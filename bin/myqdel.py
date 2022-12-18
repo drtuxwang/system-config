@@ -9,11 +9,12 @@ import os
 import signal
 import socket
 import sys
+from pathlib import Path
 from typing import List
 
 import task_mod
 
-RELEASE = '2.8.4'
+RELEASE = '2.8.7'
 
 
 class Options:
@@ -96,7 +97,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -104,10 +105,10 @@ class Main:
             sys.argv = argv
 
     def _remove(self, jobid: str) -> None:
-        file = os.path.join(self._myqsdir, jobid + '.q')
-        if os.path.isfile(file):
+        path = Path(self._myqsdir, f'{jobid}.q')
+        if path.is_file():
             try:
-                os.remove(file)
+                path.unlink()
             except OSError:
                 pass
             else:
@@ -117,10 +118,10 @@ class Main:
                     'has been deleted from MyQS.'
                 )
                 return
-        file = os.path.join(self._myqsdir, jobid + '.r')
-        if os.path.isfile(file):
+        path = Path(self._myqsdir, f'{jobid}.r')
+        if path.is_file():
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
+                with path.open(encoding='utf-8', errors='replace') as ifile:
                     if not self._force_flag:
                         print(
                             'MyQS cannot delete batch job with jobid',
@@ -142,7 +143,7 @@ class Main:
                             task_mod.Tasks.factory(
                                 ).killpgid(pgid, signal='TERM')
                         try:
-                            os.remove(file)
+                            path.unlink()
                         except OSError:
                             pass
                         print(
@@ -165,14 +166,14 @@ class Main:
             raise SystemExit(
                 f"{sys.argv[0]}: Cannot determine home directory.",
             )
-        self._myqsdir = os.path.join(
-            os.environ['HOME'],
+        self._myqsdir = Path(
+            Path.home(),
             '.config',
             'myqs',
             socket.gethostname().split('.')[0].lower()
         )
         for jobid in options.get_jobids():
-            if not glob.glob(os.path.join(self._myqsdir, jobid + '.[qr]')):
+            if not Path(self._myqsdir).glob(f'{jobid}.[qr]'):
                 print(
                     'MyQS cannot delete batch job with jobid',
                     jobid,

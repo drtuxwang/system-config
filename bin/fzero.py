@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import time
+from pathlib import Path
 from typing import List
 
 
@@ -41,9 +42,9 @@ class Options:
 
         self._args = parser.parse_args(args)
 
-        location = self._args.location[0]
-        if os.path.exists(location):
-            if os.path.isfile(location):
+        location = Path(self._args.location[0])
+        if location.exists():
+            if location.is_file():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot zero existing "{location}" file.',
                 )
@@ -83,7 +84,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -97,17 +98,17 @@ class Main:
         """
         options = Options()
 
-        if os.path.isdir(options.get_location()):
-            file = os.path.join(options.get_location(), 'fzero.tmp')
-            print(f'Creating "{file}" zero file...')
+        if Path(options.get_location()).is_dir():
+            path = Path(options.get_location(), 'fzero.tmp')
+            print(f'Creating "{path}" zero file...')
         else:
-            file = options.get_location()
-            print(f'Zeroing "{file}" device...')
+            path = Path(options.get_location())
+            print(f'Zeroing "{path}" device...')
         start_time = time.time()
         chunk = 16384 * b'\0'
         size = 0
         try:
-            with open(file, 'wb') as ofile:
+            with path.open('wb') as ofile:
                 while True:
                     for _ in range(64):
                         ofile.write(chunk)

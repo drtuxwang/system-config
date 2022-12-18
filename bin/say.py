@@ -10,6 +10,7 @@ import re
 import signal
 import sys
 import time
+from pathlib import Path
 from typing import List
 
 import gtts  # type: ignore
@@ -39,7 +40,7 @@ class Options:
         """
         Return tmpfile.
         """
-        return self._tmpfile
+        return str(self._tmp_path)
 
     def get_words(self) -> List[str]:
         """
@@ -102,10 +103,10 @@ class Options:
         self._parse_args(args[1:])
 
         tmpdir = file_mod.FileUtil.tmpdir('.cache/say')
-        self._tmpfile = os.path.join(tmpdir, f"{os.getpid()}.mp3")
+        self._tmp_path = Path(tmpdir, f"{os.getpid()}.mp3")
 
         if self._args.xclip_flag:
-            self._tmpfile = os.path.join(tmpdir, 'xclip.mp3')
+            self._tmp_path = Path(tmpdir, 'xclip.mp3')
             self._words = self._xclip()
         else:
             self._words = self._args.words
@@ -135,7 +136,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -153,7 +154,7 @@ class Main:
         if options.get_run_flag():
             start_time = time.time()
             command: command_mod.Command
-            if os.path.isfile(args[0]):
+            if Path(args[0]).is_file():
                 command = command_mod.CommandFile(args[0])
             else:
                 command = command_mod.Command(args[0], errors='ignore')
@@ -182,7 +183,7 @@ class Main:
                 tts.save(tmpfile)
                 subtask_mod.Batch(ffplay.get_cmdline()).run()
         try:
-            os.remove(tmpfile)
+            Path(tmpfile).unlink()
         except FileNotFoundError:
             pass
 

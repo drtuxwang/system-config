@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import network_mod
 import subtask_mod
@@ -36,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -48,12 +49,12 @@ class Main:
         """
         Start program
         """
-        name = os.path.basename(sys.argv[0]).replace('.py', '')
+        name = Path(sys.argv[0]).stem
 
         hearts = network_mod.Sandbox(name, errors='stop')
         hearts.set_args(sys.argv[1:])
 
-        if not os.path.isfile(hearts.get_file() + '.py'):
+        if not Path(f'{hearts.get_file()}.py').is_file():
             configs = [
                 '/dev/dri',
                 '/dev/shm',

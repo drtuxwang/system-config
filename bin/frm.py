@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -84,7 +85,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -92,26 +93,26 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _rmfile(file: str) -> None:
-        print(f'Removing "{file}" file...')
+    def _rmfile(path: Path) -> None:
+        print(f'Removing "{path}" file...')
         try:
-            os.remove(file)
+            path.unlink()
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot remove "{file}" file.',
+                f'{sys.argv[0]}: Cannot remove "{path}" file.',
             ) from exception
 
-    def _rmdir(self, directory: str) -> None:
+    def _rmdir(self, path: Path) -> None:
         if self._options.get_recursive_flag():
-            print(f'Removing "{directory}" directory recursively...')
+            print(f'Removing "{path}" directory recursively...')
             try:
-                shutil.rmtree(directory)
+                shutil.rmtree(path)
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot remove "{directory}" directory.',
+                    f'{sys.argv[0]}: Cannot remove "{path}" directory.',
                 ) from exception
         else:
-            print(f'{sys.argv[0]}: Ignoring "{directory}" directory.')
+            print(f'{sys.argv[0]}: Ignoring "{path}" directory.')
 
     def run(self) -> int:
         """
@@ -119,14 +120,14 @@ class Main:
         """
         self._options = Options()
 
-        for file in self._options.get_files():
-            if os.path.isfile(file):
-                self._rmfile(file)
-            elif os.path.isdir(file):
-                self._rmdir(file)
+        for path in [Path(x) for x in self._options.get_files()]:
+            if path.is_file():
+                self._rmfile(path)
+            elif path.is_dir():
+                self._rmdir(path)
             else:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" file or directory.',
+                    f'{sys.argv[0]}: Cannot find "{path}" file or directory.',
                 )
 
         return 0

@@ -13,6 +13,7 @@ import re
 import signal
 import sys
 import time
+from pathlib import Path
 from typing import Generator, List
 
 import command_mod
@@ -20,7 +21,7 @@ import file_mod
 import subtask_mod
 import task_mod
 
-RELEASE = '6.0.4'
+RELEASE = '6.1.0'
 
 
 class Options:
@@ -57,17 +58,17 @@ class Options:
         """
         return self._args.pinyin
 
-    def get_speak_dir(self) -> str:
+    def get_speak_dir(self) -> Path:
         """
         Return speak directory
         """
         return self._speak_dir
 
-    def get_tmpfile(self) -> str:
+    def get_tmpfile(self) -> Path:
         """
         Return tmpfile.
         """
-        return self._tmpfile
+        return self._tmp_path
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -184,9 +185,11 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        self._speak_dir = os.path.abspath(
-            os.path.join(os.path.dirname(args[0]), os.pardir, 'zhspeak-data'))
-        if not os.path.isdir(self._speak_dir):
+        self._speak_dir = Path(
+            Path(args[0]).resolve().parents[1],
+            'zhspeak-data',
+        )
+        if not self._speak_dir.is_dir():
             zhspeak = command_mod.Command(
                 'zhspeak',
                 args=args[1:],
@@ -203,10 +206,10 @@ class Options:
             subtask_mod.Exec(zhspeaktcl.get_cmdline()).run()
 
         tmpdir = file_mod.FileUtil.tmpdir('.cache/zhspeak')
-        self._tmpfile = os.path.join(tmpdir, f'{os.getpid()}.wav')
+        self._tmp_path = Path(tmpdir, f'{os.getpid()}.wav')
 
         if self._args.xclip_flag:
-            self._tmpfile = os.path.join(tmpdir, 'xclip.wav')
+            self._tmp_path = Path(tmpdir, 'xclip.wav')
             self._phrases = self._xclip()
         else:
             self._phrases = self._args.phrases
@@ -259,9 +262,9 @@ class Chinese(Language):
         super().__init__(options)
 
         self._options = options
-        self._directory = os.path.join(
+        self._directory = Path(
             options.get_speak_dir(),
-            options.get_dialect() + '_dir'
+            f'{options.get_dialect()}_dir',
         )
         self._dictionary = ChineseDictionary(self._options)
 
@@ -276,12 +279,12 @@ class Chinese(Language):
     def _speak(self, sounds: List[str]) -> None:
         files = []
         for sound in sounds:
-            if os.path.isfile(os.path.join(self._directory, sound + '.mp3')):
-                files.append(sound + '.mp3')
-            elif os.path.isfile(os.path.join(self._directory, sound + '.ogg')):
-                files.append(sound + '.ogg')
-            elif os.path.isfile(os.path.join(self._directory, sound + '.wav')):
-                files.append(sound + '.wav')
+            if Path(self._directory, f'{sound}.mp3').is_file():
+                files.append(f'{sound}.mp3')
+            elif Path(self._directory, f'{sound}.ogg').is_file():
+                files.append(f'{sound}.ogg')
+            elif Path(self._directory, f'{sound}.wav').is_file():
+                files.append(f'{sound}.wav')
         if files:
             # Pause after every 100 words if no punctuation marks
             for i in range(0, len(files), 10):
@@ -315,18 +318,18 @@ class ChineseDictionary:
         self._issound = re.compile(r'[A-Z]$|[a-z]+\d+')
 
         if options.get_dialect() == 'zhy':
-            file = os.path.join(options.get_speak_dir(), 'zhy.json')
+            path = Path(options.get_speak_dir(), 'zhy.json')
         else:
-            file = os.path.join(options.get_speak_dir(), 'zh.json')
-        if not os.path.isfile(file):
+            path = Path(options.get_speak_dir(), 'zh.json')
+        if not path.is_file():
             self.create_cache()
 
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 self._mappings = json.load(ifile)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot open "{file}" dialect file.',
+                f'{sys.argv[0]}: Cannot open "{path}" dialect file.',
             ) from exception
         self._max_block = max(len(key) for key in self._mappings)
 
@@ -336,47 +339,47 @@ class ChineseDictionary:
         """
         directory = self._options.get_speak_dir()
 
-        file = os.path.join(directory, 'zh.json')
-        print(f'Creating "{file}"...')
+        path = Path(directory, 'zh.json')
+        print(f'Creating "{path}"...')
         self._mappings = {}
-        self.readmap(os.path.join(directory, 'en_list'))
-        self.readmap(os.path.join(directory, 'zh_list'))
-        self.readmap(os.path.join(directory, 'zh_listx'))
-        self.readmap(os.path.join(directory, 'zh_listck'))
+        self.readmap(Path(directory, 'en_list'))
+        self.readmap(Path(directory, 'zh_list'))
+        self.readmap(Path(directory, 'zh_listx'))
+        self.readmap(Path(directory, 'zh_listck'))
         try:
-            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w', encoding='utf-8', newline='\n') as ofile:
                 print(
                     json.dumps(self._mappings, ensure_ascii=False),
                     file=ofile,
                 )
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{file}" file.',
+                f'{sys.argv[0]}: Cannot create "{path}" file.',
             ) from exception
 
-        file = os.path.join(directory, 'zhy.json')
-        print(f'Creating "{file}"...')
+        path = Path(directory, 'zhy.json')
+        print(f'Creating "{path}"...')
         self._mappings = {}
-        self.readmap(os.path.join(directory, 'en_list'))
-        self.readmap(os.path.join(directory, 'zhy_list'))
-        self.readmap(os.path.join(directory, 'zhy_listck'))
+        self.readmap(Path(directory, 'en_list'))
+        self.readmap(Path(directory, 'zhy_list'))
+        self.readmap(Path(directory, 'zhy_listck'))
         try:
-            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w', encoding='utf-8', newline='\n') as ofile:
                 print(
                     json.dumps(self._mappings, ensure_ascii=False),
                     file=ofile,
                 )
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{file}" file.',
+                f'{sys.argv[0]}: Cannot create "{path}" file.',
             ) from exception
 
-    def readmap(self, file: str) -> None:
+    def readmap(self, path: Path) -> None:
         """
         Read map
         """
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 for line in ifile.readlines():
                     if line.startswith(('//', '$')):
                         continue
@@ -388,7 +391,7 @@ class ChineseDictionary:
                             self._mappings[text].append(match.group())
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot open "{file}" dialect file.',
+                f'{sys.argv[0]}: Cannot open "{path}" dialect file.',
             ) from exception
 
     def map_speech(self, text: str) -> Generator[List[str], None, None]:
@@ -420,11 +423,11 @@ class LibttsPico(Language):
     def __init__(self, options: Options) -> None:
         super().__init__(options)
 
-        self._tmpfile = options.get_tmpfile()
+        self._tmp_path = options.get_tmpfile()
         self._command = command_mod.Command('pico2wave', errors='ignore')
         self._command.set_args([
             f'--lang={options.get_dialect()}',
-            f'--wave={self._tmpfile}'
+            f'--wave={self._tmp_path}'
         ])
         self._is_found = self._command.is_found()
 
@@ -432,7 +435,7 @@ class LibttsPico(Language):
     def _speak_sounds(
         cmdline: List[str],
         text: List[str],
-        tmpfile: str,
+        tmp_path: Path,
     ) -> None:
         player = AudioPlayer.factory(None)
         if not player:
@@ -451,16 +454,16 @@ class LibttsPico(Language):
                         f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                         f'received from "{task.get_file()}".',
                     )
-                player.run([tmpfile])
+                player.run([str(tmp_path)])
 
-        os.remove(tmpfile)
+        os.remove(tmp_path)
 
     def text2speech(self, text: List[str]) -> None:
         """
         Text to speech conversion
         """
         cmdline = self._command.get_cmdline()
-        self._speak_sounds(cmdline, text, self._tmpfile)
+        self._speak_sounds(cmdline, text, self._tmp_path)
 
 
 class Espeak(Language):
@@ -518,12 +521,12 @@ class AudioPlayer:
     Audio player base class
     """
 
-    def __init__(self, voice_dir: str) -> None:
+    def __init__(self, voice_dir: Path) -> None:
         self._directory = voice_dir
         self._config()
 
     @staticmethod
-    def factory(directory: str) -> 'AudioPlayer':
+    def factory(directory: Path) -> 'AudioPlayer':
         """
         Return AudioPlayer sub class object
         """
@@ -632,7 +635,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

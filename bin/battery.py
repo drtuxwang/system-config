@@ -120,7 +120,7 @@ class Main:
             if rate:
                 print(f"{capacity:d}mAh [{rate:+d}mAh]")
             else:
-                print("{capacity:d}mAh [Unused]")
+                print(f"{capacity:d}mAh [Unused]")
 
     def run(self) -> int:
         """

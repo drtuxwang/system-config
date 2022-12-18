@@ -7,10 +7,10 @@ import argparse
 import glob
 import os
 import re
-import shutil
 import signal
 import sys
-from typing import Any, List
+from pathlib import Path
+from typing import List
 
 import file_mod
 
@@ -97,7 +97,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -105,22 +105,21 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _remove(*files: Any) -> None:
-        for file in files:
+    def _remove(*paths: Path) -> None:
+        for path in paths:
             try:
-                os.remove(file)
+                path.unlink()
             except OSError:
                 pass
 
-    def _replace(self, file: str) -> None:
-        newfile = file + '.part'
+    def _replace(self, path: Path) -> None:
+        path_new = Path(f'{path}.part')
         nchange = 0
 
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 try:
-                    with open(
-                        newfile,
+                    with path_new.open(
                         'w',
                         encoding='utf-8',
                         newline='\n',
@@ -133,29 +132,29 @@ class Main:
                                 nchange += 1
                 except OSError as exception:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot create "{newfile}" file.'
+                        f'{sys.argv[0]}: Cannot create "{path_new}" file.'
                     ) from exception
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" file.',
+                f'{sys.argv[0]}: Cannot read "{path}" file.',
             ) from exception
 
         if nchange:
             if nchange > 1:
-                print(f"{file}: {nchange} lines changed.")
+                print(f"{path}: {nchange} lines changed.")
             else:
-                print(f"{file}: {nchange} line changed.")
+                print(f"{path}: {nchange} line changed.")
 
             try:
-                os.chmod(newfile, file_mod.FileStat(file).get_mode())
-                shutil.move(newfile, file)
+                os.chmod(path_new, file_mod.FileStat(path).get_mode())
+                path_new.replace(path)
             except OSError as exception:
-                self._remove(newfile)
+                self._remove(path_new)
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot update "{file}" file.',
+                    f'{sys.argv[0]}: Cannot update "{path}" file.',
                 ) from exception
         else:
-            self._remove(newfile)
+            self._remove(path_new)
 
     def run(self) -> int:
         """
@@ -174,9 +173,9 @@ class Main:
         self._replacement = options.get_replacement()
         self._files = options.get_files()
 
-        for file in self._files:
-            if os.path.isfile(file):
-                self._replace(file)
+        for path in [Path(x) for x in self._files]:
+            if path.is_file():
+                self._replace(path)
 
         return 0
 

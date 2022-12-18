@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import config_mod
@@ -62,16 +63,16 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        for directory in self._args.directories:
-            if not os.path.isdir(directory):
+        for path in [Path(x) for x in self._args.directories]:
+            if not path.is_dir():
                 raise SystemExit(
                     f'{sys.argv[0]}: Source directory '
-                    f'"{directory}" does not exist.',
+                    f'"{path}" does not exist.',
                 )
-            if os.path.samefile(directory, os.getcwd()):
+            if path.samefile(Path.cwd()):
                 raise SystemExit(
                     f'{sys.argv[0]}: Source directory '
-                    f'"{directory}" cannot be current directory.',
+                    f'"{path}" cannot be current directory.',
                 )
 
 
@@ -99,7 +100,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -120,15 +121,13 @@ class Main:
 
         for album, directory in enumerate(options.get_directories()):
             linkdir = '_'.join(directory.split(os.sep)[-depth:])
-            for number, file in enumerate(
-                sorted(glob.glob(os.path.join(directory, '*'))),
-            ):
-                ext = os.path.splitext(file)[1].lower()
+            for number, file in enumerate(sorted(Path(directory).glob('*'))):
+                ext = Path(file).suffix.lower()
                 if ext in images_extensions:
-                    link = f'{album+1:02d}.{number+1:03d}_{linkdir}{ext}'
-                    if not os.path.islink(link):
+                    link = Path(f'{album+1:02d}.{number+1:03d}_{linkdir}{ext}')
+                    if not link.is_symlink():
                         try:
-                            os.symlink(file, link)
+                            link.symlink_to(file)
                         except OSError as exception:
                             raise SystemExit(
                                 f'{sys.argv[0]}: Cannot create "{link}" link.',

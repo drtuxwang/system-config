@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import BinaryIO, List
 
 
@@ -98,7 +99,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -124,8 +125,8 @@ class Main:
         try:
             with open(options.get_file(), 'rb') as ifile:
                 for part in range(int(
-                        os.path.getsize(options.get_file()) /
-                        options.get_max_size() + 1
+                    Path(options.get_file()).stat().st_size /
+                    options.get_max_size() + 1
                 )):
                     try:
                         file = f'{options.get_file()}.{str(part + 1).zfill(3)}'

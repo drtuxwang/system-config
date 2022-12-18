@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import config_mod
@@ -85,7 +86,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -101,22 +102,21 @@ class Main:
         data = config_mod.Data()
 
         compact = options.get_compact_flag()
-        for file in options.get_files():
-            if not os.path.isfile(file):
-                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
-            if file.endswith(('.bson', '.json', '.xml', '.yaml', '.yml')):
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
+            if path.suffix in ('.bson', '.json', '.yaml', '.yml', '.xml'):
                 try:
-                    data.read(file)
+                    data.read(path)
                 except config_mod.ReadConfigError as exception:
-                    raise SystemExit(f"{file}: {exception}") from exception
+                    raise SystemExit(f"{path}: {exception}") from exception
 
-                name, _ = os.path.splitext(file)
-                json_file = name + '.json'
-                print(f'Converting "{file}" to "{json_file}"...')
+                json_path = path.with_suffix('.json')
+                print(f'Converting "{path}" to "{json_path}"...')
                 try:
-                    data.write(json_file, compact)
+                    data.write(json_path, compact)
                 except config_mod.WriteConfigError as exception:
-                    raise SystemExit(f"{file}: {exception}") from exception
+                    raise SystemExit(f"{path}: {exception}") from exception
 
         return 0
 

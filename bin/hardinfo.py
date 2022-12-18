@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import file_mod
@@ -37,7 +38,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -45,7 +46,7 @@ class Main:
             sys.argv = argv
 
         # Send ".hardinfo" to tmpfs
-        newhome = file_mod.FileUtil.tmpdir(os.path.join('.cache', 'hardinfo'))
+        newhome = file_mod.FileUtil.tmpdir(Path('.cache', 'hardinfo'))
         os.environ['HOME'] = newhome
 
     @staticmethod
@@ -54,7 +55,7 @@ class Main:
         Start program
         """
         hardinfo = command_mod.Command(
-            os.path.join('bin', 'hardinfo'),
+            Path('bin', 'hardinfo'),
             errors='stop',
             args=sys.argv[1:],
         )

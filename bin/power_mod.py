@@ -2,18 +2,18 @@
 """
 Python power handling module
 
-Copyright GPL v2: 2011-2021 By Dr Colin Kong
+Copyright GPL v2: 2011-2022 By Dr Colin Kong
 """
 
 import functools
-import glob
 import os
 import re
 import subprocess
-from typing import List, Optional, Tuple
+from pathlib import Path
+from typing import List, Tuple
 
-RELEASE = '2.3.0'
-VERSION = 20220828
+RELEASE = '2.4.0'
+VERSION = 20221218
 
 
 class Battery:
@@ -21,7 +21,8 @@ class Battery:
     Battery base class
     """
 
-    def __init__(self, directory: Optional[str] = None) -> None:
+    def __init__(self, path: Path = None) -> None:
+        self._path = path
         self._info: dict = {
             'oem_name': 'Unknown',
             'model_name': 'Unknown',
@@ -31,9 +32,7 @@ class Battery:
             'voltage': -1,
             'thresholds': (0, -1),
         }
-        self._state = ' '
         self._isjunk = re.compile('')
-        self._directory = directory
         self._config()
         self.check()
 
@@ -44,24 +43,23 @@ class Battery:
         """
         devices: List[Battery] = []
 
-        if os.path.isdir('/sys/class/power_supply'):  # New kernels
-            for directory in glob.glob('/sys/class/power_supply/BAT*'):
-                devices.append(BatteryPower(directory))
-        elif os.path.isdir('/proc/acpi/battery'):
-            for directory in glob.glob('/proc/acpi/battery/BAT*'):
-                devices.append(BatteryAcpi(directory))
+        if Path('/sys/class/power_supply').is_dir():  # New kernels
+            for path in Path('/sys/class/power_supply').glob('BAT*'):
+                devices.append(BatteryPower(path))
+        elif Path('/proc/acpi/battery').is_dir():
+            for path in Path('/proc/acpi/battery').glob('BAT*'):
+                devices.append(BatteryAcpi(path))
         elif _System.is_mac():
-            if os.path.isfile('/usr/sbin/ioreg'):
+            if Path('/usr/sbin/ioreg').is_file():
                 devices = BatteryMac.factory()
 
         return devices
 
     @staticmethod
-    def _read_file(*paths: str) -> List[str]:
-        file = os.path.join(*paths)
+    def _read_file(path: Path) -> List[str]:
         lines = []
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     lines.append(line.rstrip('\r\n'))
         except OSError:
@@ -154,9 +152,8 @@ class BatteryAcpi(Battery):
     """
 
     def _config(self) -> None:
-        self._state = os.path.join(self._directory, 'state')
         self._isjunk = re.compile('^.*: *| .*$')
-        for line in self._read_file(self._directory, 'info'):
+        for line in self._read_file(Path(self._path, 'info')):
             try:
                 if line.startswith('OEM info:'):
                     self._info['oem_name'] = self._isjunk.sub('', line)
@@ -183,7 +180,7 @@ class BatteryAcpi(Battery):
         self._info['charge'] = '='
         self._info['rate'] = 0
 
-        for line in self._read_file(self._state):
+        for line in self._read_file(Path(self._path, 'state')):
             try:
                 if line.startswith('present:'):
                     if self._isjunk.sub('', line) == 'yes':
@@ -210,9 +207,8 @@ class BatteryPower(Battery):
     """
 
     def _config(self) -> None:
-        self._state = os.path.join(self._directory, 'uevent')
         self._isjunk = re.compile('^[^=]*=| .*$')
-        for line in self._read_file(self._state):
+        for line in self._read_file(Path(self._path, 'uevent')):
             try:
                 if '_MANUFACTURER=' in line:
                     self._info['oem_name'] = self._isjunk.sub('', line)
@@ -249,69 +245,67 @@ class BatteryPower(Battery):
 
         # Standard (Lenovo ThinkPads) start threshold
         value = ' '.join(self._read_file(
-            self._directory,
-            'charge_control_start_threshold',
-        ))
+            Path(self._path, 'charge_control_start_threshold'))
+        )
         if value:
             start = value
         # Standard (Asus, Lenovo ThinkPads) stop threshold
         value = ' '.join(self._read_file(
-            self._directory,
-            'charge_control_end_threshold',
-        ))
+            Path(self._path, 'charge_control_end_threshold'))
+        )
         if value:
             stop = value
 
         # IBM legacy ThinkPads start/stop thresholds
-        device = os.path.basename(self._directory)
-        value = ' '.join(self._read_file(
+        device = Path(self._path).name
+        value = ' '.join(self._read_file(Path(
             '/sys/devices/platform/smapi',
             device,
             'start_charge_thresh',
-        ))
+        )))
         if value:
             start = value
-        value = ' '.join(self._read_file(
+        value = ' '.join(self._read_file(Path(
             '/sys/devices/platform/smapi',
             device,
             'stop_charge_thresh',
-        ))
+        )))
         if value:
             stop = value
 
         # Huawei start/stop thresholds
-        values = ' '.join(self._read_file(
+        values = ' '.join(self._read_file(Path(
             '/sys/devices/platform/huawei-wmi/charge_control_thresholds',
-        ))
+        )))
         if values and ' ' in values:
             start, stop = values.split()
 
         # Lenovo non-ThinkPad stop threshold
-        value = ' '.join(self._read_file(
+        value = ' '.join(self._read_file(Path(
             '/sys/bus/platform/drivers/ideapad_acpi/VPC2004:00',
             'conservation_mode'
-        ))
+        )))
         if value == '1':
             stop = '60'
 
         # LG stop threshold
-        value = ' '.join(self._read_file(
+        value = ' '.join(self._read_file(Path(
             '/sys/devices/platform/lg-laptop/battery_care_limit'
-        ))
+        )))
         if value:
             stop = value
 
         # Samsung stop threshold activated
-        value = ' '.join(self._read_file(
+        value = ' '.join(self._read_file(Path(
             '/sys/devices/platform/samsung/battery_life_extender'
-        ))
+        )))
         if value == '1':
             stop = '80'
 
         # Sony stop threshold
-        value = ' '.join(self._read_file(
+        value = ' '.join(self._read_file(Path(
             '/sys/devices/platform/sony-laptop/battery_care_limiter'
-        ))
+        )))
         if value:
             stop = value
 
@@ -329,7 +323,7 @@ class BatteryPower(Battery):
         self._info['charge'] = '='
         self._info['rate'] = 0
 
-        for line in self._read_file(self._state):
+        for line in self._read_file(Path(self._path, 'uevent')):
             try:
                 if '_PRESENT=' in line:
                     if self._isjunk.sub('', line) == '1':
@@ -457,16 +451,16 @@ class _System:
 
     @staticmethod
     @functools.lru_cache(maxsize=4)
-    def _locate_program(program: str) -> str:
+    def _locate_program(program: str) -> Path:
         for directory in os.environ['PATH'].split(os.pathsep):
-            file = os.path.join(directory, program)
-            if os.path.isfile(file):
+            path = Path(directory, program)
+            if path.is_file():
                 break
         else:
             raise CommandNotFoundError(
                 f'Cannot find required "{program}" software.',
             )
-        return file
+        return path
 
     @classmethod
     def run_program(cls, command: List[str]) -> List[str]:
@@ -477,7 +471,7 @@ class _System:
         lines = []
         try:
             with subprocess.Popen(
-                [program] + command[1:],
+                [str(program)] + command[1:],
                 shell=False,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT

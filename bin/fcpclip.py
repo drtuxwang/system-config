@@ -4,10 +4,10 @@ Copy file from clipboard location.
 """
 
 import argparse
-import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -84,17 +84,17 @@ class Main:
         task.run()
 
         source = ''.join(task.get_output())
-        if os.path.isfile(source):
-            directory = options.get_directory()
-            target = os.path.join(directory, os.path.basename(source))
-            print(f'Copying "{source}" file to "{target}"...')
+        if Path(source).is_file():
+            directory = Path(options.get_directory())
+            target_path = Path(directory, Path(source).name)
+            print(f'Copying "{source}" file to "{target_path}"...')
             try:
-                if not os.path.isdir(directory):
-                    os.makedirs(directory)
-                shutil.copy2(source, target)
+                if not directory.is_dir():
+                    directory.mkdir(parents=True)
+                shutil.copy2(source, target_path)
             except (OSError, shutil.Error) as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot copy to "{target}" file.',
+                    f'{sys.argv[0]}: Cannot copy to "{target_path}" file.',
                 ) from exception
 
         return 0

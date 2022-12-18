@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import network_mod
 import subtask_mod
@@ -36,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -55,11 +56,11 @@ class Main:
         )
 
         # Start slow for very large history (.local/share/swell-foop/)
-        if not os.path.isfile(command.get_file() + '.py'):
+        if not Path(f'{command.get_file()}.py').is_file():
             configs = [
                 '/dev/dri',
                 f'/run/user/{os.getuid()}/dconf',
-                os.path.join(os.getenv('HOME', '/'), '.config/dconf/user'),
+                Path(Path.home(), '.config/dconf/user'),
             ]
             command.sandbox(configs)
 

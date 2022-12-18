@@ -7,9 +7,9 @@ import argparse
 import glob
 import re
 import os
-import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -76,7 +76,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -91,12 +91,12 @@ class Main:
         options = Options()
 
         is_bad_char = re.compile(r'^-|[ !\'$&`"()*<>?\[\]\\\\|]')
-        for file in options.get_files():
-            newfile = is_bad_char.sub('_', file)
-            if newfile != file and not os.path.isfile(newfile):
-                if not os.path.isdir(newfile) and not os.path.islink(newfile):
+        for path in [Path(x) for x in options.get_files()]:
+            path_new = Path(is_bad_char.sub('_', str(path)))
+            if path_new != path and not path_new.is_file():
+                if not path_new.is_dir() and not path_new.is_symlink():
                     try:
-                        shutil.move(file, newfile)
+                        path.replace(path_new)
                     except OSError:
                         pass
 

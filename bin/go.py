@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import subtask_mod
@@ -36,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -48,12 +49,12 @@ class Main:
         """
         Start program
         """
-        golang = command_mod.Command(os.path.join('bin', 'go'), errors='stop')
+        golang = command_mod.Command(Path('bin', 'go'), errors='stop')
         golang.extend_args(sys.argv[1:])
 
-        goroot = os.path.dirname(os.path.dirname(golang.get_file()))
-        if os.path.isdir(os.path.join(goroot, 'pkg')):
-            os.environ['GOROOT'] = goroot
+        goroot = Path(golang.get_file()).parents[1]
+        if Path(goroot, 'pkg').is_dir():
+            os.environ['GOROOT'] = str(goroot)
 
         subtask_mod.Exec(golang.get_cmdline()).run()
 

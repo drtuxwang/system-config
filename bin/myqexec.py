@@ -9,12 +9,13 @@ import signal
 import socket
 import sys
 import time
+from pathlib import Path
 from typing import List
 
 import command_mod
 import subtask_mod
 
-RELEASE = '2.8.3'
+RELEASE = '2.8.5'
 
 
 class Options:
@@ -39,7 +40,7 @@ class Options:
         """
         return self._mode
 
-    def get_myqsdir(self) -> str:
+    def get_myqsdir(self) -> Path:
         """
         Return myqs directory.
         """
@@ -61,8 +62,8 @@ class Options:
                 'Please run "myqsd" command.',
             )
         self._mode = args[1][1:]
-        self._myqsdir = os.path.join(
-            os.environ['HOME'],
+        self._myqsdir = Path(
+            Path.home(),
             '.config',
             'myqs',
             socket.gethostname().split('.')[0].lower()
@@ -94,7 +95,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -103,14 +104,13 @@ class Main:
 
     @staticmethod
     def _get_command(file: str) -> command_mod.Command:
-        if os.path.isfile(file):
-            return command_mod.CommandFile(os.path.abspath(file))
+        if Path(file).is_file():
+            return command_mod.CommandFile(Path(file).resolve())
         return command_mod.Command(file, errors='stop')
 
     def _spawn(self, options: Options) -> None:
         try:
-            with open(
-                os.path.join(self._myqsdir, self._jobid + '.r'),
+            with Path(self._myqsdir, f'{self._jobid}.r').open(
                 'a',
                 encoding='utf-8',
                 newline='\n',
@@ -123,8 +123,7 @@ class Main:
             return
 
         try:
-            with open(
-                os.path.join(self._myqsdir, self._jobid + '.r'),
+            with Path(self._myqsdir, f'{self._jobid}.r').open(
                 encoding='utf-8',
                 errors='replace'
             ) as ifile:
@@ -168,8 +167,7 @@ class Main:
 
     def _start(self) -> None:
         try:
-            with open(
-                os.path.join(self._myqsdir, self._jobid + '.r'),
+            with Path(self._myqsdir, f'{self._jobid}.r').open(
                 encoding='utf-8',
                 errors='replace'
             ) as ifile:
@@ -180,13 +178,13 @@ class Main:
                         info[line.split('=')[0]] = line.split('=', 1)[1]
         except OSError:
             return
-        if os.path.isdir(info['DIRECTORY']):
+        if Path(info['DIRECTORY']).is_dir():
             os.chdir(info['DIRECTORY'])
         else:
-            os.chdir(os.environ['HOME'])
+            os.chdir(Path.home())
         renice = command_mod.Command('renice', errors='ignore')
         if renice.is_found():
-            renice.set_args(['100', str(os.getpid())])
+            renice.set_args(['100', os.getpid()])
             subtask_mod.Batch(renice.get_cmdline()).run()
         myqexec = command_mod.CommandFile(
             __file__,
@@ -197,7 +195,7 @@ class Main:
         print("MyQS FINISH =", time.strftime('%Y-%m-%d-%H:%M:%S'))
         time.sleep(1)
         try:
-            os.remove(os.path.join(self._myqsdir, self._jobid + '.r'))
+            Path(self._myqsdir, f'{self._jobid}.r').unlink()
         except OSError:
             pass
 

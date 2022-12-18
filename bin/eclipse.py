@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import subtask_mod
@@ -36,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -50,13 +51,17 @@ class Main:
         """
         eclipse = command_mod.Command('eclipse', errors='stop')
         if len(sys.argv) == 1:
-            java = command_mod.Command(
-                os.path.join('bin', 'java'),
-                errors='stop'
-            )
-            args = ['-vm', java.get_file(), '-vmargs', '-Xms2048m',
-                    '-Xmx2048m', '-XX:PermSize=8192m', '-XX:MaxPermSize=8192m',
-                    '-XX:-UseCompressedOops']
+            java = command_mod.Command(Path('bin', 'java'), errors='stop')
+            args = [
+                '-vm',
+                java.get_file(),
+                '-vmargs',
+                '-Xms2048m',
+                '-Xmx2048m',
+                '-XX:PermSize=8192m',
+                '-XX:MaxPermSize=8192m',
+                '-XX:-UseCompressedOops',
+            ]
         else:
             args = sys.argv[1:]
 

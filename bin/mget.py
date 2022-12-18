@@ -11,7 +11,8 @@ import shutil
 import signal
 import sys
 import time
-from typing import BinaryIO, List, Optional
+from pathlib import Path
+from typing import BinaryIO, List
 
 import command_mod
 import subtask_mod
@@ -24,7 +25,7 @@ class Options:
 
     def __init__(self) -> None:
         self._args: argparse.Namespace = None
-        self._output: Optional[str] = None
+        self._output: str = None
         self.parse(sys.argv)
 
     def get_output(self) -> str:
@@ -71,12 +72,12 @@ class Options:
         else:
             md5 = hashlib.md5()
             md5.update(self._args.url[0].encode())
-            file = os.path.basename(self._args.url[0])
+            path = Path(self._args.url[0]).name
             self._output = (
-                f"{file.rsplit('?', 1)[0].rsplit('.', 1)[0]}-"
+                f"{path.rsplit('?', 1)[0].rsplit('.', 1)[0]}-"
                 f"{md5.hexdigest()[:9]}.mp4"
             )
-        if os.path.isfile(self._output):
+        if Path(self._output).is_file():
             print(f"{self._output}: already exists")
             raise SystemExit(0)
 
@@ -97,10 +98,7 @@ class VideoDownloader:
 
         self._wget = command_mod.Command('wget', errors='stop')
         self._directory = self._output + '.parts'
-        self._m3u8_file = os.path.join(
-            self._directory,
-            os.path.basename(self._url),
-        )
+        self._m3u8_file = Path(self._directory, Path(self._url).name)
 
     def _write_resume(self) -> None:
         """
@@ -111,23 +109,23 @@ class VideoDownloader:
             "cd ${0%/*}/..",
             f'xrun "{self._output}" {self._url}',
         )
-        with open(
-            self._m3u8_file + '-resume.sh',
+        resume_file = Path(f'{self._m3u8_file}-resume.sh')
+        with resume_file.open(
             'w',
             encoding='utf-8',
             newline='\n',
         ) as ofile:
             for line in script:
                 print(line, file=ofile)
-        os.chmod(self._m3u8_file + '-resume.sh', int('755', 8))
+        resume_file.chmod(0o755)
 
     def get_m3u8(self) -> None:
         """
         Download M3U8 file.
         """
-        if os.path.isfile(self._m3u8_file):
+        if self._m3u8_file.is_file():
             return
-        if not os.path.isdir(self._directory):
+        if not Path(self._directory).is_dir():
             os.makedirs(self._directory)
         self._write_resume()
 
@@ -141,7 +139,7 @@ class VideoDownloader:
         """
         Return dict of containing URLs for video chunks.
         """
-        base_url = os.path.dirname(self._url)
+        base_url = self._url.rsplit('/', 1)[0]
 
         chunks: dict = {}
         try:
@@ -170,14 +168,14 @@ class VideoDownloader:
             )
         return chunks
 
-    def _get_chunk(self, file: str, urls: List[str]) -> None:
+    def _get_chunk(self, path: Path, urls: List[str]) -> None:
         """
         Download chunk from available URLs.
         """
         for url in urls:
-            if os.path.isfile(file + '.part'):
-                os.remove(file + '.part')
-            self._wget.set_args(['-O', file, url])
+            if Path(f'{path}.part').is_file():
+                Path(f'{path}.part').unlink()
+            self._wget.set_args(['-O', path, url])
             task = subtask_mod.Task(self._wget.get_cmdline())
             task.run()
             if task.get_exitcode() == 0:
@@ -190,19 +188,19 @@ class VideoDownloader:
         """
         chunks = self._get_urls()
         nchunks = len(chunks)
-        nfiles = len(glob.glob(self._m3u8_file + '-c*.ts'))
-        status_file = self._m3u8_file + '-status.txt'
+        nfiles = len(glob.glob(f'{self._m3u8_file}-c*.ts'))
+        status_file = Path(f'{self._m3u8_file}-status.txt')
 
         while nfiles != nchunks:
             for part, urls in sorted(chunks.items()):
-                file = f"{self._m3u8_file}-c{part:05d}.ts"
-                if os.path.isfile(file):
+                path = Path(f"{self._m3u8_file}-c{part:05d}.ts")
+                if path.is_file():
                     continue
 
-                self._get_chunk(file, urls)
-                if os.path.isfile(file):
+                self._get_chunk(path, urls)
+                if path.is_file():
                     nfiles += 1
-                    with open(status_file, 'w', encoding='utf-8') as ofile:
+                    with status_file.open('w', encoding='utf-8') as ofile:
                         print(
                             f"{self._output}: {nfiles}/{nchunks}",
                             file=ofile,
@@ -222,7 +220,7 @@ class VideoDownloader:
         """
         Join video parts.
         """
-        chunk_files = sorted(glob.glob(self._m3u8_file + '-c*.ts'))
+        chunk_files = sorted(glob.glob(f'{self._m3u8_file}-c*.ts'))
         full_file = f'{self._m3u8_file}-full.ts'
         with open(full_file, 'wb') as ofile:
             for file in chunk_files:
@@ -235,9 +233,9 @@ class VideoDownloader:
                         f"{sys.argv[0]}: Cannot read file: {file}",
                     ) from exception
 
-        mp4_file = self._m3u8_file + '-full.mp4'
-        if os.path.isfile(mp4_file):
-            os.remove(mp4_file)
+        mp4_file = Path(f'{self._m3u8_file}-full.mp4')
+        if mp4_file.is_file():
+            mp4_file.unlink()
         ffmpeg = command_mod.Command('ffmpeg', errors='stop')
         ffmpeg.set_args([
             '-i',
@@ -246,14 +244,14 @@ class VideoDownloader:
             'copy',
             '-vcodec',
             'copy',
-            mp4_file,
+            str(mp4_file),
         ])
         task = subtask_mod.Task(ffmpeg.get_cmdline())
         task.run()
         if task.get_exitcode():
             raise SystemExit(1)
 
-        source_time = os.path.getmtime(self._m3u8_file)
+        source_time = self._m3u8_file.stat().st_mtime
         os.utime(mp4_file, (source_time, source_time))
         shutil.move(mp4_file, self._output)
         shutil.move(self._directory, self._output+'.full')
@@ -285,7 +283,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -28,26 +29,23 @@ class Options:
         return self._vncserver
 
     def _config(self) -> None:
-        directory = os.path.join(os.getenv('HOME'), '.vnc')
-        if not os.path.isdir(directory):
-            os.mkdir(directory, int('700', 8))
+        directory_path = Path(Path.home(), '.vnc')
+        if not directory_path.is_dir():
+            directory_path.mkdir(mode=0o700)
 
-        if len(sys.argv) == 1 and not os.path.isfile(
-            os.path.join(directory, 'passwd')
-        ):
+        if len(sys.argv) == 1 and not Path(directory_path, 'passwd').is_file():
             raise SystemExit(
                 f'{sys.argv[0]}: ".vnc/passwd" does not exist. '
                 'Run "vncpasswd" or use "-SecurityTypes=None".',
             )
-        os.chdir(os.environ['HOME'])
-        xstartup = os.path.join(directory, 'xstartup')
-        if not os.path.isfile(xstartup):
+        os.chdir(Path.home())
+        path = Path(directory_path, 'xstartup')
+        if not path.is_file():
             answer = input(
                 "Would you like to use GNOME(g), KDE(k) or XFCE(x)? "
             )
             try:
-                with open(
-                    xstartup,
+                with path.open(
                     'w',
                     encoding='utf-8',
                     newline='\n',
@@ -65,13 +63,15 @@ class Options:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create ".vnc/xstartup" file.',
                 ) from exception
-            os.chmod(xstartup, int('755', 8) & ~self._umask)
-        directory = os.path.dirname(self._vncserver.get_file())
+            path.chmod(0o755 & ~self._umask)
+        directory_path = Path(self._vncserver.get_file()).parent
         if (
             'PATH' in os.environ and
-            directory not in os.environ['PATH'].split(os.pathsep)
+            str(directory_path) not in os.environ['PATH'].split(os.pathsep)
         ):
-            os.environ['PATH'] = directory + os.pathsep + os.environ['PATH']
+            os.environ['PATH'] = (
+                f"{directory_path}{os.pathsep}{os.environ['PATH']}"
+            )
 
     def parse(self, args: List[str]) -> None:
         """
@@ -91,7 +91,7 @@ class Options:
             '-SecurityTypes',
             'X509Vnc,TLSVnc',
         ] + args[1:])
-        self._umask = os.umask(int('077', 8))
+        self._umask = os.umask(0o077)
         os.umask(self._umask)
         self._config()
 
@@ -120,7 +120,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

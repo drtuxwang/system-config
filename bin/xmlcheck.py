@@ -10,6 +10,7 @@ import os
 import signal
 import sys
 import xml.sax
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -122,7 +123,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -130,7 +131,7 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _get_xml(file: str) -> str:
+    def _get_xml(path: Path) -> str:
         """
         Return XML content of file.
 
@@ -138,14 +139,14 @@ class Main:
         """
         lines = []
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     if line.startswith('<!DOCTYPE html'):
                         lines.append('\n')
                     else:
                         lines.append(line.replace('&', '.'))
         except OSError:
-            print(sys.argv[0], ': Cannot parse "', file, '" XML file.', sep='')
+            print(f'{sys.argv[0]}: Cannot parse "{path}" XML file.')
         return ''.join(lines)
 
     @classmethod
@@ -157,13 +158,13 @@ class Main:
 
         errors = False
         handler = XmlDataHandler(options.get_view_flag())
-        for file in options.get_files():
-            if not os.path.isfile(file):
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot open "{file}" XML file.',
+                    f'{sys.argv[0]}: Cannot open "{path}" XML file.',
                 )
 
-            task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [file])
+            task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [path])
             task.run()
             if task.has_error():
                 for line in task.get_error():
@@ -172,18 +173,17 @@ class Main:
                 continue
 
             try:
-                if os.path.splitext(file)[1] in ('.htm', '.html', '.xhtml'):
-                    xml.sax.parseString(cls._get_xml(file), handler)
+                if path.suffix in ('.htm', '.html', '.xhtml'):
+                    xml.sax.parseString(cls._get_xml(path), handler)
                 else:
-                    with open(
-                        file,
+                    with path.open(
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
                         xml.sax.parse(ifile, handler)
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot parse "{file}" XML file.',
+                    f'{sys.argv[0]}: Cannot parse "{path}" XML file.',
                 ) from exception
             except http.client.HTTPException as exception:
                 raise SystemExit(
@@ -191,7 +191,7 @@ class Main:
                 ) from exception
             except Exception as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Invalid "{file}" XML file.',
+                    f'{sys.argv[0]}: Invalid "{path}" XML file.',
                 ) from exception
 
         return errors

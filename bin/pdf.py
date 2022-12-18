@@ -7,11 +7,11 @@ import argparse
 import glob
 import os
 import re
-import shutil
 import signal
 import sys
 import textwrap
 import time
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -82,10 +82,10 @@ class Options:
                 "characters per line.",
             )
 
-        if '.pdf' not in self._args.files[0]:
+        if self._args.files[0].endswith('.pdf'):
             self._archive = self._args.files[0]
             self._files = self._args.files[1:]
-            if self._archive in self._args.files[1:]:
+            if self._archive in self._files:
                 raise SystemExit(
                     f"{sys.argv[0]}: The input and "
                     "output files must be different.",
@@ -120,7 +120,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -134,7 +134,7 @@ class Main:
             except OSError:
                 pass
 
-    def _image(self, file: str) -> str:
+    def _image(self, path: Path) -> str:
         if 'convert' not in self._cache:
             self._cache['convert'] = command_mod.Command(
                 'convert',
@@ -143,20 +143,20 @@ class Main:
         convert = self._cache['convert']
 
         task = subtask_mod.Batch(
-            convert.get_cmdline() + ['-verbose', file, '/dev/null'])
-        task.run(pattern=f'^{file} ', error2output=True)
+            convert.get_cmdline() + ['-verbose', path, '/dev/null'])
+        task.run(pattern=f'^{path} ', error2output=True)
         if not task.has_output():
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" image file.',
+                f'{sys.argv[0]}: Cannot read "{path}" image file.',
             )
         xsize, ysize = task.get_output(
             )[0].split('+')[0].split()[-1].split('x')
         cmdline = convert.get_cmdline() + ['-page', 'a4']
-        if 'page' not in file:
+        if 'page' not in str(path):
             cmdline.extend(['-border', '30', '-bordercolor', 'white'])
         if int(xsize) > int(ysize):
             cmdline.extend(['-rotate', '270'])
-        cmdline.extend([file, f'pdf:{self._tmpfile}'])
+        cmdline.extend([path, f'pdf:{self._tmpfile}'])
 
         task = subtask_mod.Batch(cmdline)
         task.run()
@@ -165,11 +165,11 @@ class Main:
                 f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                 f'received from "{task.get_file()}".',
             )
-        return f'IMAGE file "{file}"'
+        return f'IMAGE file "{path}"'
 
-    def _postscript(self, file: str) -> str:
+    def _postscript(self, path: Path) -> str:
         try:
-            with open(file, 'rb') as ifile:
+            with path.open('rb') as ifile:
                 try:
                     with open(self._tmpfile, 'wb') as ofile:
                         for line in ifile:
@@ -179,14 +179,14 @@ class Main:
                         f'{sys.argv[0]}: Cannot create '
                         f'"{self._tmpfile}" temporary file.',
                     ) from exception
-                self._postscript_fix(self._tmpfile)
-                return f'Postscript file "{file}"'
+                self._postscript_fix(Path(self._tmpfile))
+                return f'Postscript file "{path}"'
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" postscript file.',
+                f'{sys.argv[0]}: Cannot read "{path}" postscript file.',
             ) from exception
 
-    def _postscript_fix(self, file: str) -> None:
+    def _postscript_fix(self, path: Path) -> None:
         scaling = None
         try:
             with open(
@@ -201,9 +201,9 @@ class Main:
         except OSError:
             pass
         if scaling:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
-                with open(
-                    file + '.part',
+            with path.open(encoding='utf-8', errors='replace') as ifile:
+                path_new = Path(f'{path}.part')
+                with path_new.open(
                     'w',
                     encoding='utf-8',
                     newline='\n',
@@ -221,9 +221,9 @@ class Main:
                                 f'{float(ysize) * scaling:6.4f} scale'
                             )
                         print(line, file=ofile)
-            shutil.move(file + '.part', file)
+            path_new.replace(path)
 
-    def _text(self, options: Options, file: str) -> str:
+    def _text(self, options: Options, path: Path) -> str:
         if 'LANG' in os.environ:
             del os.environ['LANG']  # Avoids locale problems
         if 'a2ps' not in self._cache:
@@ -246,12 +246,12 @@ class Main:
             '--portrait',
             f'--chars-per-line={chars}',
             f"--left-title={time.strftime('%Y-%m-%d-%H:%M:%S')}",
-            f'--center-title={os.path.basename(file)}'
+            f'--center-title={path.name}'
         ])
 
         is_not_printable = re.compile('[\000-\037\200-\277]')
         try:
-            with open(file, 'rb') as ifile:
+            with path.open('rb') as ifile:
                 stdin = []
                 for bline in ifile:
                     line = is_not_printable.sub(
@@ -265,7 +265,7 @@ class Main:
                         stdin.extend(lines)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" text file.',
+                f'{sys.argv[0]}: Cannot read "{path}" text file.',
             ) from exception
         task = subtask_mod.Batch(a2ps.get_cmdline())
         task.run(stdin=stdin, file=self._tmpfile)
@@ -274,7 +274,7 @@ class Main:
                 f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                 f'received from "{task.get_file()}".',
             )
-        return f'text file "{file}" with {chars} columns'
+        return f'text file "{path}" with {chars} columns'
 
     def run(self) -> int:
         """
@@ -284,7 +284,7 @@ class Main:
         self._cache: dict = {}
 
         tmpdir = file_mod.FileUtil.tmpdir('.cache')
-        tmpfile = os.path.join(tmpdir, f'pdf.tmp{os.getpid()}')
+        tmp_path = Path(tmpdir, f'pdf.tmp{os.getpid()}')
         command = command_mod.Command('gs', errors='stop')
         command.set_args([
             '-q',
@@ -303,29 +303,29 @@ class Main:
             '3000000',
             'setvmthreshold',
         ]
-        for file in options.get_files():
-            print("Packing", file)
+        for path in [Path(x) for x in options.get_files()]:
+            print("Packing", path)
             if not options.get_archive():
                 args = [
-                    f"-sOutputFile={file.rsplit('.', 1)[0]}.pdf",
+                    f"-sOutputFile={path.with_suffix('.pdf')}",
                     '-c',
                     '3000000',
                     'setvmthreshold',
                 ]
-            if not os.path.isfile(file):
-                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
-            _, ext = os.path.splitext(file.lower())
+            if not path.is_file():
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
+            ext = path.suffix.lower()
             if ext == '.pdf':
-                args.extend(['-f', file])
+                args.extend(['-f', str(path)])
             else:
-                self._tmpfile = tmpfile + str(len(self._tempfiles) + 1)
+                self._tmpfile = f'{tmp_path}{len(self._tempfiles) + 1}'
                 if ext in images_extensions:
-                    self._image(file)
+                    self._image(path)
                     self._tempfiles.append(self._tmpfile + '.jpg')
                 elif ext in ('ps', 'eps'):
-                    self._postscript(file)
+                    self._postscript(path)
                 else:
-                    self._text(options, file)
+                    self._text(options, path)
                 self._tempfiles.append(self._tmpfile)
                 args.extend(['-f', self._tmpfile])
             if not options.get_archive():

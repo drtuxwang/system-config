@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -116,8 +117,8 @@ class Options:
 
         self._vncviewer = network_mod.Sandbox('vncviewer', errors='stop')
         configs = [
-            os.path.join(os.getenv('HOME', '/'), '.config/ibus'),
-            os.path.join(os.getenv('HOME', '/'), '.vnc'),
+            Path(Path.home(), '.config/ibus'),
+            Path(Path.home(), '.vnc'),
         ]
         self._vncviewer.sandbox(configs)
 
@@ -160,7 +161,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

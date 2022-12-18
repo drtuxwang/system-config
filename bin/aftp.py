@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -31,10 +32,10 @@ class Options:
 
     @staticmethod
     def _netrc(host: str) -> None:
-        netrc = os.path.join(os.environ.get('HOME', ''), '.netrc')
-        umask = os.umask(int('077', 8))
+        netrc = Path(Path.home(), '.netrc')
+        umask = os.umask(0o077)
         try:
-            with open(netrc, 'w', encoding='utf-8', newline='\n') as ofile:
+            with netrc.open('w', encoding='utf-8', newline='\n') as ofile:
                 print(
                     "machine",
                     host,
@@ -93,7 +94,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

@@ -9,7 +9,8 @@ import os
 import signal
 import sys
 import time
-from typing import List, Optional
+from pathlib import Path
+from typing import List
 
 import dropbox  # type: ignore
 import requests  # type: ignore
@@ -106,7 +107,7 @@ class DropboxClient:
         return None
 
     @staticmethod
-    def _connect(key: str) -> Optional[dropbox.dropbox_client.Dropbox]:
+    def _connect(key: str) -> dropbox.dropbox_client.Dropbox:
         client = dropbox.Dropbox(key)
         logger.info("Connecting to Dropbox server.")
         try:
@@ -135,12 +136,12 @@ class DropboxClient:
             logger.warning("No dropbox connection: %s", url)
             return False
 
-        path = url.split('dropbox://', 1)[1]
+        file = url.split('dropbox://', 1)[1]
         logger.info('Listing "%s".', url)
 
         try:
             entries = self._client.files_list_folder(
-                path,
+                file,
                 recursive=True,
             ).entries
             for entry in sorted(entries, key=lambda s: s.name):
@@ -166,24 +167,24 @@ class DropboxClient:
             logger.warning("No dropbox connection: %s", url)
             return False
 
-        path = url.split('dropbox:/', 1)[1]
-        file = os.path.basename(url)
-        logger.info('Downloading "%s" to "%s".', url, file)
+        file = url.split('dropbox:/', 1)[1]
+        name = Path(url).name
+        logger.info('Downloading "{url}%s" to "{name}%s".')
 
         try:
-            metadata, response = self._client.files_download(path)
+            metadata, response = self._client.files_download(file)
         except (dropbox.exceptions.ApiError, dropbox.exceptions.HttpError):
             logger.error('Unable to download "%s".', url)
             return False
 
         try:
-            with open(file, 'wb') as ofile:
+            with Path(name).open('wb') as ofile:
                 ofile.write(response.content)
         except OSError:
-            logger.error('Cannot write "%s" file.', file)
+            logger.error('Cannot write "{name}" file.')
             return False
         file_time = time.mktime(metadata.server_modified.timetuple())
-        os.utime(file, (file_time, file_time))
+        os.utime(name, (file_time, file_time))
 
         logger.info('Downloaded %d bytes.', len(response.content))
         return True
@@ -196,22 +197,20 @@ class DropboxClient:
             logger.warning("No dropbox connection: %s", url)
             return False
 
-        path = url.split('dropbox:/', 1)[1]
-        file = os.path.basename(url)
-        logger.info('Uploading "%s" to "%s".', file, url)
+        file = url.split('dropbox:/', 1)[1]
+        name = Path(url).name
+        logger.info('Uploading "{name}" to "{url}".')
 
         try:
-            with open(file, 'rb') as ifile:
+            with Path(name).open('rb') as ifile:
                 data = ifile.read()
         except OSError:
-            logger.error('Cannot read "%s" file.', file)
+            logger.error('Cannot read "{name}" file.')
             return False
 
         try:
-            self._client.files_upload(
-                data,
-                path,
-                mode=dropbox.files.WriteMode('overwrite')
+            self._client.files_upload(data, file, mode=dropbox.files.WriteMode(
+                'overwrite')
             )
         except (dropbox.exceptions.ApiError, dropbox.exceptions.HttpError):
             logger.error('Unable to upload "%s".', url)
@@ -228,15 +227,15 @@ class DropboxClient:
             logger.warning("No dropbox connection: %s", url)
             return False
 
-        path = url.split('dropbox:/', 1)[1]
+        file = url.split('dropbox:/', 1)[1]
         logger.info('Removing "%s".', url)
 
-        if path == '/':
+        if file == '/':
             logger.error('Unsafe to remove all files "%s".', url)
             return False
 
         try:
-            entry = self._client.files_delete(path)
+            entry = self._client.files_delete(file)
         except (dropbox.exceptions.ApiError, dropbox.exceptions.HttpError):
             logger.error('Unable to remove "%s".', url)
             return False

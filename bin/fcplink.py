@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -72,7 +73,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -80,20 +81,20 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _copy(file: str, target: str) -> None:
+    def _copy(path: Path, target_path: Path) -> None:
         try:
-            os.remove(file)
+            path.unlink()
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot remove "{file}" link.',
+                f'{sys.argv[0]}: Cannot remove "{path}" link.',
             ) from exception
 
         try:
-            shutil.copy2(target, file)
+            shutil.copy2(target_path, path)
         except OSError as exception:
             if exception.args != (95, 'Operation not supported'):
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot copy "{target}" file.',
+                    f'{sys.argv[0]}: Cannot copy "{target_path}" file.',
                 ) from exception
 
     def run(self) -> int:
@@ -102,18 +103,16 @@ class Main:
         """
         options = Options()
 
-        for file in options.get_files():
-            if os.path.islink(file):
-                target = os.path.realpath(file)
-                if os.path.isfile(target):
-                    print("Copy file:", file, '->', target)
-                    self._copy(file, target)
-                elif not os.path.isdir(target):
-                    print("Null link:", file, '->', os.readlink(file))
-            elif not os.path.exists(file):
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" file.',
-                )
+        for path in [Path(x) for x in options.get_files()]:
+            if path.is_symlink():
+                target_path = path.resolve()
+                if target_path.is_file():
+                    print(f"Copy file: {path} -> {target_path}")
+                    self._copy(path, target_path)
+                elif not target_path.is_dir():
+                    print(f"Null link: { path} -> {path.readlink()}")
+            elif not path.exists():
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
 
         return 0
 

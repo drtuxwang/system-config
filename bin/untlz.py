@@ -92,7 +92,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -105,7 +105,7 @@ class Main:
         Start program
         """
         options = Options()
-        os.umask(int('022', 8))
+        os.umask(0o022)
 
         tar = command_mod.Command('tar', errors='stop')
         if options.get_view_flag():

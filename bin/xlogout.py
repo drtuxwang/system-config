@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import task_mod
@@ -73,7 +74,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -89,8 +90,7 @@ class Main:
         self._pid = 0
         if 'SESSION_MANAGER' in os.environ:
             try:
-                self._pid = int(
-                    os.path.basename(os.environ['SESSION_MANAGER']))
+                self._pid = int(Path(os.environ['SESSION_MANAGER']).name)
             except ValueError:
                 pass
 

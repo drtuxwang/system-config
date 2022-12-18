@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import time
+from pathlib import Path
 from typing import List, Set
 
 import command_mod
@@ -109,7 +110,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -125,7 +126,7 @@ class Main:
 
         wget = command_mod.Command('wget', errors='stop')
         for url in options.get_urls():
-            file = os.path.basename(url).split('?')[0]
+            file = Path(url).name.split('?')[0]
             wget.set_args(['--output-document', file, url])
             subtask_mod.Task(wget.get_cmdline()).run()
 

@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import subtask_mod
@@ -36,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -53,7 +54,7 @@ class Main:
         else:
             sound = f'{sys.argv[0]}.ogg'
 
-        if not os.path.isfile(sound):
+        if not Path(sound).is_file():
             raise SystemExit(f'{sys.argv[0]}: Cannot find "{sound}" file.')
         bell = command_mod.Command('vlc', args=[
             '--intf',

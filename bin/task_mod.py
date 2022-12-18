@@ -2,7 +2,7 @@
 """
 Python task handling utility module
 
-Copyright GPL v2: 2006-2021 By Dr Colin Kong
+Copyright GPL v2: 2006-2022 By Dr Colin Kong
 """
 
 import functools
@@ -10,10 +10,11 @@ import getpass
 import os
 import re
 import subprocess
-from typing import List, Optional
+from pathlib import Path
+from typing import List
 
-RELEASE = '2.2.3'
-VERSION = 20211107
+RELEASE = '2.3.0'
+VERSION = 20221218
 
 
 class Tasks:
@@ -23,7 +24,7 @@ class Tasks:
     self._process = Dictionary containing process information
     """
 
-    def __init__(self, user: Optional[str] = None) -> None:
+    def __init__(self, user: str = None) -> None:
         """
         user = Username or '<all>'
         """
@@ -37,7 +38,7 @@ class Tasks:
         raise NotImplementedError
 
     @staticmethod
-    def factory(user: Optional[str] = None) -> 'Tasks':
+    def factory(user: str = None) -> 'Tasks':
         """
         Return Tasks sub class object.
         """
@@ -74,7 +75,7 @@ class Tasks:
 
     def killpids(
         self,
-        pids: Optional[List[int]],
+        pids: List[int],
         signal: str = 'KILL',
     ) -> None:
         """
@@ -373,16 +374,16 @@ class _System:
 
     @staticmethod
     @functools.lru_cache(maxsize=4)
-    def _locate_program(program: str) -> str:
+    def _locate_program(program: str) -> Path:
         for directory in os.environ['PATH'].split(os.pathsep):
-            file = os.path.join(directory, program)
-            if os.path.isfile(file):
+            path = Path(directory, program)
+            if path.is_file():
                 break
         else:
             raise CommandNotFoundError(
                 f'Cannot find required "{program}" software.',
             )
-        return file
+        return path
 
     @classmethod
     def run_program(cls, command: List[str]) -> List[str]:
@@ -393,7 +394,7 @@ class _System:
         lines = []
         try:
             with subprocess.Popen(
-                [program] + command[1:],
+                [str(program)] + command[1:],
                 shell=False,
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT
             ) as child:

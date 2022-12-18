@@ -8,6 +8,7 @@ import os
 import signal
 import sys
 import time
+from pathlib import Path
 
 import desktop_mod
 import command_mod
@@ -63,7 +64,7 @@ class ScreenLocker:
         if self._daemon:
             tasks = task_mod.Tasks.factory()
             cmdline = self._daemon.get_cmdline()
-            if not tasks.haspname(os.path.basename(cmdline[0])):
+            if not tasks.haspname(Path(cmdline[0]).name):
                 subtask_mod.Background(cmdline).run()
                 time.sleep(1)
 
@@ -222,7 +223,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

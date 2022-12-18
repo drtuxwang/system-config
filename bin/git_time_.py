@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import git  # type: ignore
@@ -85,7 +86,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -99,11 +100,11 @@ class Main:
         files: List[str],
         recursive: bool,
     ) -> None:
-        for file in files:
-            if os.path.isfile(file):
+        for path in [Path(x) for x in files]:
+            if path.is_file():
                 try:
                     commit = next(repo.iter_commits(
-                        paths=os.path.abspath(file),
+                        paths=str(path.resolve()),
                         max_count=1,
                     ))
                 except StopIteration:  # Non git file
@@ -111,13 +112,13 @@ class Main:
                 else:
                     author_time = commit.committed_date
                     try:
-                        os.utime(file, (author_time, author_time))
+                        os.utime(path, (author_time, author_time))
                     except (IndexError, ValueError):
                         pass
-            elif recursive and os.path.isdir(file):
+            elif recursive and path.is_dir():
                 cls._update(
                     repo,
-                    glob.glob(os.path.join(file, '*')),
+                    [str(x) for x in path.glob('*')],
                     recursive,
                 )
 

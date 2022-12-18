@@ -10,6 +10,7 @@ import importlib.util
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import Any, List, Sequence, Union
 
 if sys.version_info < (3, 6) or sys.version_info >= (4, 0):
@@ -53,7 +54,7 @@ class Options:
         """
         args = Python loader commandline arguments
         """
-        self._module_dir = os.path.dirname(args[0])
+        self._module_dir = str(Path(args[0]).parent)
         self._parse_args(args[1:])
 
     def get_dump_flag(self) -> bool:
@@ -182,7 +183,7 @@ class Options:
             self._module_name = self._args.module[0]
         self._module_args = mod_args[1:]
         if self._args.libpath:
-            self._library_path = self._args.libpath[0].split(os.path.pathsep)
+            self._library_path = self._args.libpath[0].split(os.pathsep)
         else:
             self._library_path = []
 
@@ -230,13 +231,13 @@ class PythonLoader:
 
         name = options.get_module_name()
         self._sys_argv = [
-            os.path.join(options.get_module_dir(), name)
+            str(Path(options.get_module_dir(), name))
         ] + options.get_module_args()
 
-        directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-        path = os.environ.get('PATH', '').split(os.pathsep)
-        if directory not in path:
-            os.environ['PATH'] = os.pathsep.join([directory] + path)
+        path = Path(sys.argv[0]).resolve().parent
+        directories = os.environ.get('PATH', '').split(os.pathsep)
+        if str(path) not in directories:
+            os.environ['PATH'] = os.pathsep.join([str(path)] + directories)
 
     @staticmethod
     def _load_module(file: str) -> Any:
@@ -271,7 +272,7 @@ class PythonLoader:
             print("sys.argv =", sys.argv)
             print()
 
-        main = self._load_module(os.path.join(directory, module)+'.py')
+        main = self._load_module(f'{Path(directory, module)}.py')
         main.Main()
 
     def get_options(self) -> Options:
@@ -311,7 +312,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

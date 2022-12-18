@@ -9,6 +9,7 @@ import re
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -81,28 +82,25 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
                     argv.append(arg)
             sys.argv = argv
 
-    def _find(self, files: List[str]) -> None:
-        for file in sorted(files):
-            if os.path.isdir(file) and not os.path.islink(file):
+    def _find(self, paths: List[Path]) -> None:
+        for path in paths:
+            if path.is_dir() and not path.is_symlink():
                 try:
-                    self._find([
-                        os.path.join(file, x)
-                        for x in os.listdir(file)
-                    ])
+                    self._find(sorted(path.iterdir()))
                 except PermissionError as exception:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot open "{file}" directory.',
+                        f'{sys.argv[0]}: Cannot open "{path}" directory.',
                     ) from exception
 
-            elif self._ispattern.search(file):
-                print(file)
+            elif self._ispattern.search(str(path)):
+                print(path)
 
     def run(self) -> int:
         """
@@ -118,7 +116,7 @@ class Main:
                 f'"{options.get_pattern()}".',
             ) from exception
 
-        self._find(options.get_directories())
+        self._find([Path(x) for x in options.get_directories()])
 
         return 0
 

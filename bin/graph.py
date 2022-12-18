@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List, Sequence
 
 import command_mod
@@ -130,7 +131,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -139,7 +140,7 @@ class Main:
 
     @staticmethod
     def _config_labels(file: str) -> List[str]:
-        if not os.path.isfile(file):
+        if not Path(file).is_file():
             raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" data file.')
         try:
             with open(file, encoding='utf-8', errors='replace') as ifile:

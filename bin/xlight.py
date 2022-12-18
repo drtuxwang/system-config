@@ -9,6 +9,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -110,8 +111,7 @@ class Backlight:
         Return brightness
         """
         try:
-            with open(
-                os.path.join(self._device, 'brightness'),
+            with Path(self._device, 'brightness').open(
                 encoding='utf-8',
                 errors='replace',
             ) as ifile:
@@ -131,8 +131,7 @@ class Backlight:
         Return brightness max
         """
         try:
-            with open(
-                os.path.join(self._device, 'max_brightness'),
+            with Path(self._device, 'max_brightness').open(
                 encoding='utf-8',
                 errors='replace',
             ) as ifile:
@@ -152,8 +151,7 @@ class Backlight:
         set brightness
         """
         try:
-            with open(
-                os.path.join(self._device, 'brightness'),
+            with Path(self._device, 'brightness').open(
                 'w',
                 encoding='utf-8',
                 newline='\n',
@@ -166,11 +164,11 @@ class Backlight:
         """
         Detect status
         """
-        file = os.path.join(self._device, 'brightness')
-        if os.path.isfile(file):
+        path = Path(self._device, 'brightness')
+        if path.is_file():
             if getpass.getuser() != 'root':
                 try:
-                    os.chmod(file, int('666', 8))
+                    path.chmod(0o666)
                 except OSError:
                     pass
             return True
@@ -367,7 +365,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

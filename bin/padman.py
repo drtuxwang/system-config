@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import network_mod
 import subtask_mod
@@ -36,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -51,7 +52,7 @@ class Main:
         wop = network_mod.Sandbox('wop.x86_64', errors='stop')
         wop.set_args(sys.argv[1:])
 
-        configs = ['net', os.path.join(os.getenv('HOME', '/'), '.padman')]
+        configs = ['net', Path(Path.home(), '.padman')]
         wop.sandbox(configs)
 
         subtask_mod.Exec(wop.get_cmdline()).run()

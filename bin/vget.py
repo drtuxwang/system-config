@@ -10,6 +10,7 @@ import signal
 import sys
 import time
 import urllib.request
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -149,7 +150,7 @@ class Options:
 
         if self._args.output:
             self._output = self._args.output[0]
-            if os.path.isfile(self._output):
+            if Path(self._output).is_file():
                 raise SystemExit(f"Output file already exists: {self._output}")
             self._vget.extend_args(['--output', self._output])
 
@@ -180,7 +181,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

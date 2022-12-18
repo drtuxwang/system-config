@@ -11,6 +11,7 @@ import random
 import signal
 import shutil
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -34,43 +35,43 @@ class Options:
 
     @staticmethod
     def _config_geeqie() -> None:
-        home = os.environ.get('HOME', '')
-        configdir = os.path.join(home, '.config', 'geeqie')
-        if not os.path.isdir(configdir):
+        home = Path.home()
+        configdir = Path(home, '.config', 'geeqie')
+        if not configdir.is_dir():
             try:
                 os.makedirs(configdir)
             except OSError:
                 return
-        file = os.path.join(configdir, 'history')
-        if not os.path.isdir(file):
+        path = Path(configdir, 'history')
+        if not path.is_dir():
             try:
-                if os.path.isfile(file):
-                    os.remove(file)
-                os.mkdir(file)
+                if Path(path).is_file():
+                    path.unlink()
+                path.mkdir()
             except OSError:
                 pass
-        file = os.path.join(configdir, 'geeqierc.xml')
+        path = Path(configdir, 'geeqierc.xml')
         try:
-            with open(file, 'rb') as ifile:
+            with path.open('rb') as ifile:
                 data = ifile.read()
             if b'hidden = "true"' in data:
                 data = data.replace(b'hidden = "true"', b'hidden = "false"')
-                with open(file+'-new', 'wb') as ofile:
+                path_new = Path(f'{path}-new')
+                with path_new.open('wb') as ofile:
                     ofile.write(data)
-                shutil.move(file+'-new', file)
+                path_new.replace(path)
         except OSError:
             pass
 
-        for file in (
-                os.path.join(home, '.cache', 'geeqie', 'thumbnails'),
-                os.path.join(home, '.local', 'share', 'geeqie'),
+        for path in (
+            Path(home, '.cache', 'geeqie', 'thumbnails'),
+            Path(home, '.local', 'share', 'geeqie'),
         ):
-            if not os.path.isfile(file):
+            if not path.is_file():
                 try:
-                    if os.path.isdir(file):
-                        shutil.rmtree(file)
-                    with open(file, 'wb'):
-                        pass
+                    if path.is_dir():
+                        shutil.rmtree(path)
+                    path.touch()
                 except OSError:
                     pass
 
@@ -80,15 +81,17 @@ class Options:
         Select directory randomly
         """
         tmpdir = file_mod.FileUtil.tmpdir('.cache')
-        configfile = os.path.join(tmpdir, 'gqview.json')
-        config = Configuration(configfile)
+        path = Path(tmpdir, 'gqview.json')
+        config = Configuration(path)
         config.set_choices(directories)
         directory = config.get_choice(directories)
-        config.write(configfile + '.part')
+
+        path_new = Path(f'{path}.part')
+        config.write(path_new)
         try:
-            shutil.move(configfile + '.part', configfile)
+            path_new.replace(path)
         except OSError:
-            os.remove(configfile + '.part')
+            path_new.unlink()
         return directory
 
     def parse(self, args: List[str]) -> None:
@@ -104,15 +107,11 @@ class Options:
             self._gqview.set_args([os.curdir])
         else:
             for arg in args[1:]:
-                if not os.path.isdir(arg):
+                if not Path(arg).is_dir():
                     self._gqview.set_args(args[1:])
                     return
 
-            directories = [
-                x
-                for x in args[1:]
-                if glob.glob(os.path.join(x, '*'))
-            ]
+            directories = [x for x in args[1:] if Path(x).glob('*')]
             directory = self.select(directories)
             print("GQView selection:", directory)
             self._gqview.set_args([directory])
@@ -123,11 +122,11 @@ class Configuration:
     Configuration class
     """
 
-    def __init__(self, file: str = '') -> None:
+    def __init__(self, path: Path = None) -> None:
         self._data: dict = {'gqview': {}}
-        if file:
+        if path:
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
+                with path.open(encoding='utf-8', errors='replace') as ifile:
                     self._data = json.load(ifile)
             except (KeyError, OSError):
                 pass
@@ -161,12 +160,12 @@ class Configuration:
                 choices = list(dict.fromkeys(choices))
             self._data['gqview'][key] = choices
 
-    def write(self, file: str) -> None:
+    def write(self, path: Path) -> None:
         """
         Write file
         """
         try:
-            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w', encoding='utf-8', newline='\n') as ofile:
                 print(json.dumps(
                     self._data,
                     ensure_ascii=False,
@@ -201,7 +200,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

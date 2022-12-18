@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import Generator, List
 
 import file_mod
@@ -59,7 +60,7 @@ class Options:
                 f'{sys.argv[0]}: You must specific a '
                 'positive integer for picture height.',
             )
-        if not os.path.isdir(self._args.directory[0]):
+        if not Path(self._args.directory[0]).is_dir():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find '
                 f'"{self._args.directory[0]}" directory.',
@@ -77,20 +78,20 @@ class Gallery:
     Gallery class
     """
 
-    def __init__(self, directory: str, height: int) -> None:
-        self._directory = directory
+    def __init__(self, path: Path, height: int) -> None:
+        self._path = path
         self._height = height
         images_extensions = config_mod.Config().get('image_extensions')
 
         try:
             self._files = [
-                x
-                for x in sorted(os.listdir(directory))
-                if os.path.splitext(x)[1].lower() in images_extensions
+                str(x.name)
+                for x in path.iterdir()
+                if x.suffix.lower() in images_extensions
             ]
         except PermissionError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot open "{directory}" directory.',
+                f'{sys.argv[0]}: Cannot open "{path}" directory.',
             ) from exception
         self._nfiles = len(self._files)
 
@@ -117,7 +118,7 @@ class Gallery:
         )
         yield ''
         yield '<head>'
-        yield f'<title>{self._directory}/{file}</title>'
+        yield f'<title>{self._path}/{file}</title>'
         yield (
             '<meta http-equiv="Content-Type" content="text/html; '
             'charset=utf-8"/>'
@@ -155,13 +156,9 @@ class Gallery:
 
                 next_file = self._files[(i+1) % self._nfiles]
 
-                xhtml_file = os.path.join(
-                    self._directory,
-                    file.rsplit('.', 1)[0]
-                ) + '.xhtml'
+                xhtml_file = Path(self._path, file).with_suffix('.xhtml')
                 try:
-                    with open(
-                        xhtml_file,
+                    with xhtml_file.open(
                         'w',
                         encoding='utf-8',
                         newline='\n',
@@ -173,12 +170,11 @@ class Gallery:
                         f'{sys.argv[0]}: Cannot create "{xhtml_file}" file.',
                     ) from exception
 
-                file_time = file_mod.FileStat(
-                    os.path.join(self._directory, file)).get_time()
+                file_time = int(Path(self._path, file).stat().st_mtime)
                 os.utime(xhtml_file, (file_time, file_time))
                 directory_time = max(directory_time, file_time)
 
-            os.utime(self._directory, (directory_time, directory_time))
+            os.utime(self._path, (directory_time, directory_time))
             return directory_time
 
         return None
@@ -191,18 +187,18 @@ class Xhtml:
 
     def __init__(self, options: Options) -> None:
         self._height = options.get_height()
-        self._directory = options.get_directory()
+        self._path = Path(options.get_directory())
 
-    def _find(self, directory: str = '') -> List[str]:
-        if directory:
-            directories = [directory]
+    def _find(self, directory_path: Path = None) -> List[Path]:
+        if directory_path:
+            paths = [directory_path]
         else:
-            directories = []
+            paths = []
 
-        for file in glob.glob(os.path.join(directory, '*')):
-            if os.path.isdir(file):
-                directories.extend(self._find(file))
-        return directories
+        for path in directory_path.glob('*'):
+            if path.is_dir():
+                paths.extend(self._find(path))
+        return paths
 
     @staticmethod
     def generate(
@@ -236,10 +232,10 @@ class Xhtml:
         yield ''
         for file_stat in file_stats:
             directory = file_stat.get_file()
-            files = glob.glob(os.path.join(directory, '*.xhtml'))
-            nfiles = len(files)
-            xhtml_file = sorted(files)[0]
-            yield f'<a href="{xhtml_file}" target="_blank">'
+            paths = list(Path(directory).glob('*.xhtml'))
+            nfiles = len(paths)
+            path = sorted(paths)[0]
+            yield f'<a href="{path}" target="_blank">'
             yield f'{directory} ({nfiles})</a>'
             yield '<br/>'
             yield ''
@@ -250,18 +246,17 @@ class Xhtml:
         Create files
         """
         try:
-            os.chdir(self._directory)
+            os.chdir(self._path)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot change to '
-                f'"{self._directory}" directory.',
+                f'{sys.argv[0]}: Cannot change to "{self._path}" directory.',
             ) from exception
 
         file_stats = []
-        for directory in self._find():
-            gallery = Gallery(directory, self._height)
+        for path in self._find():
+            gallery = Gallery(path, self._height)
             if gallery.create():
-                file_stats.append(file_mod.FileStat(directory))
+                file_stats.append(file_mod.FileStat(path))
         file_stats = sorted(
             file_stats,
             key=lambda s: s.get_time(),
@@ -269,8 +264,7 @@ class Xhtml:
         )
 
         try:
-            with open(
-                'index.xhtml',
+            with Path('index.xhtml').open(
                 'w',
                 encoding='utf-8',
                 newline='\n',
@@ -307,7 +301,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

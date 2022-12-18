@@ -10,13 +10,12 @@ Copyright GPL v2: 2017-2022 By Dr Colin Kong
 import json
 import os
 import re
-import shutil
 import xml
+from pathlib import Path
 from typing import (
     BinaryIO,
     Generator,
     List,
-    Optional,
     TextIO,
     Tuple,
     Union,
@@ -26,18 +25,18 @@ import bson  # type: ignore
 import xmltodict  # type: ignore
 import yaml  # type: ignore
 
-RELEASE = '1.7.7'
-VERSION = 20220402
+RELEASE = '2.0.0'
+VERSION = 20221218
 
 
 class Data:
     """
     This class contains de-serialized BSON/JSON/YAML data.
     """
-    def __init__(self, file: Optional[str] = None) -> None:
+    def __init__(self, file: Union[str, Path] = None) -> None:
         self._blocks: List[dict] = [{}]
         if file:
-            self.read(file)
+            self.read(Path(file))
 
     @staticmethod
     def _unjinja(data: str) -> str:
@@ -53,10 +52,10 @@ class Data:
                 else:
                     lines.append('')
                 continue
-            lines.append(line)
+            lines.append(re.sub(':.*{{.*:.*}}.*', ': 0', line))
         data_new = '\n'.join(lines)
 
-        data_new = re.sub('{{[^}]*}}: *{{[^}]*}}', '_: _', data_new)
+        data_new = re.sub('{{[^}]*}}: *{{[^}]*}}', '_: 0', data_new)
         data_new = re.sub(':  *{{[^}]*}}', ': 0', data_new)
         data_new = re.sub('{{[^}]*}}', lambda m: ' '*len(m.group()), data_new)
         data_new = re.sub('{%[^}]*}', '', data_new)
@@ -142,24 +141,24 @@ class Data:
             raise ReadConfigError(exception) from exception
         return blocks
 
-    def read(self, file: str, check: bool = False) -> None:
+    def read(self, path: Path, check: bool = False) -> None:
         """
         Read or check configuration file.
         """
         ifile: Union[TextIO, BinaryIO]
 
         try:
-            if file.endswith('bson'):
+            if path.suffix == '.bson':
                 try:
-                    with open(file, 'rb') as ifile:
-                        blocks = [bson.loads(  # pylint: disable=no-member
+                    with path.open('rb') as ifile:
+                        blocks = [bson.decode(  # pylint: disable=no-member
                             ifile.read(),
                         )]
                 except IndexError as exception:
                     raise ReadConfigError(exception) from exception
-            elif file.endswith('xml'):
+            elif path.suffix == '.xml':
                 try:
-                    with open(file, 'rb') as ifile:
+                    with path.open('rb') as ifile:
                         blocks = [xmltodict.parse(
                             ifile.read(),
                             dict_constructor=dict,
@@ -167,34 +166,33 @@ class Data:
                 except xml.parsers.expat.ExpatError as exception:
                     raise ReadConfigError(exception) from exception
             else:
-                with open(file, encoding='utf-8') as ifile:
+                with path.open(encoding='utf-8') as ifile:
                     data = ifile.read()
                 if check:
                     data = self._unjinja(data)
-                if file.endswith(('.json')):
+                if path.suffix == '.json':
                     blocks = self._decode_json(data)
-                elif file.endswith(('.yml', '.yaml')):
+                elif path.suffix in ('.yaml', '.yml'):
                     blocks = self._decode_yaml(data)
                 else:
                     raise ReadConfigError("Cannot handle configuration file.")
         except OSError as exception:
             raise ReadConfigError(
-                f"Cannot read configuration file: {file}",
+                f"Cannot read configuration file: {path}",
             ) from exception
         if not check:
             self._blocks = blocks
 
-    def write(self, file: str, compact: bool = False) -> None:
+    def write(self, path: Path, compact: bool = False) -> None:
         """
         Write configuration file
         """
-        tmpfile = f'{file}.part{os.getpid()}'
+        tmp_path = Path(f'{path}.part{os.getpid()}')
         ofile: Union[TextIO, BinaryIO]
 
         try:
-            if file.endswith('json'):
-                with open(
-                    tmpfile,
+            if path.suffix == '.json':
+                with tmp_path.open(
                     'w',
                     encoding='utf-8',
                     newline='\n',
@@ -212,7 +210,7 @@ class Data:
                                 indent=4,
                                 sort_keys=True,
                             ), file=ofile)
-            elif file.endswith(('.yml', '.yaml')):
+            elif path.suffix in ('.yaml', '.yml'):
                 yaml_data = [
                     self._reformat_yaml(yaml.dump(
                         block,
@@ -221,35 +219,29 @@ class Data:
                     ))
                     for block in self._blocks
                 ]
-                with open(
-                    tmpfile,
+                with tmp_path.open(
                     'w',
                     encoding='utf-8',
                     newline='\n',
                 ) as ofile:
                     print('--\n'.join(yaml_data), end='', file=ofile)
-            elif file.endswith('bson'):
+            elif path.suffix == '.bson':
                 if len(self._blocks) > 1:
                     raise WriteConfigError(
-                        f'Cannot handle multi-writes to "{tmpfile}" file.',
+                        f'Cannot handle multi-writes to "{tmp_path}" file.',
                     )
-                with open(tmpfile, 'wb') as ofile:
-                    ofile.write(bson.dumps(  # pylint: disable=no-member
+                with tmp_path.open('wb') as ofile:
+                    ofile.write(bson.encode(  # pylint: disable=no-member
                         self._blocks[0],
                     ))
             else:
-                raise WriteConfigError(f'Cannot handle "{tmpfile}" file.')
+                raise WriteConfigError(f'Cannot handle "{tmp_path}" file.')
         except OSError as exception:
             raise WriteConfigError(
-                f'Cannot create "{tmpfile}" file.',
+                f'Cannot create "{tmp_path}" file.',
             ) from exception
 
-        try:
-            shutil.move(tmpfile, file)
-        except OSError as exception:
-            raise WriteConfigError(
-                f'Cannot rename "{tmpfile}" file to "{file}".',
-            ) from exception
+        tmp_path.replace(path)
 
 
 class Config:
@@ -257,8 +249,8 @@ class Config:
     This class deals with "config_mod.yaml" configuration file.
     """
     def __init__(self) -> None:
-        file = os.path.join(os.path.dirname(__file__), 'config_mod.yaml')
-        mappings = next(Data(file).get())
+        path = Path(Path(__file__).parent, 'config_mod.yaml')
+        mappings = next(Data(path).get())
         self._apps = mappings.get('apps', {})
         self._bindings = mappings.get('bindings', {})
         self._parameters = mappings.get('parameters', {})
@@ -273,7 +265,7 @@ class Config:
         self,
         app_name: str,
         view: bool = False,
-    ) -> Optional[Tuple[List[str], bool]]:
+    ) -> Tuple[List[str], bool]:
         """
         Return (command, daemon_flag) or None
         """
@@ -287,7 +279,7 @@ class Config:
 
         return None
 
-    def get_open_app(self, extension: str) -> Optional[Tuple[List[str], bool]]:
+    def get_open_app(self, extension: str) -> Tuple[List[str], bool]:
         """
         Return (command, daemon_flag) or None
         """
@@ -297,7 +289,7 @@ class Config:
 
         return None
 
-    def get_view_app(self, extension: str) -> Optional[Tuple[List[str], bool]]:
+    def get_view_app(self, extension: str) -> Tuple[List[str], bool]:
         """
         Return (command, daemon_flag) or None
         """

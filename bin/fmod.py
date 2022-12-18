@@ -9,6 +9,7 @@ import os
 import re
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import file_mod
@@ -114,26 +115,26 @@ class Options:
 
         mode = self._args.mode
         if mode == 'r':
-            self._xmod = int('500', 8)
-            self._fmod = int('400', 8)
+            self._xmod = 0o500
+            self._fmod = 0o400
         elif mode == 'rg':
-            self._xmod = int('550', 8)
-            self._fmod = int('440', 8)
+            self._xmod = 0o550
+            self._fmod = 0o440
         elif mode == 'ra':
-            self._xmod = int('555', 8)
-            self._fmod = int('444', 8)
+            self._xmod = 0o555
+            self._fmod = 0o444
         elif mode == 'w':
-            self._xmod = int('700', 8)
-            self._fmod = int('600', 8)
+            self._xmod = 0o700
+            self._fmod = 0o600
         elif mode == 'wg':
-            self._xmod = int('750', 8)
-            self._fmod = int('640', 8)
+            self._xmod = 0o750
+            self._fmod = 0o640
         elif mode == 'wa':
-            self._xmod = int('755', 8)
-            self._fmod = int('644', 8)
+            self._xmod = 0o755
+            self._fmod = 0o644
         else:
-            self._xmod = int('755', 8)
-            self._fmod = int('644', 8)
+            self._xmod = 0o755
+            self._fmod = 0o644
 
 
 class Main:
@@ -160,7 +161,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -168,76 +169,81 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _chmod(file: str, mod: int) -> None:
-        fmod = file_mod.FileStat(file).get_mode() % 512
+    def _chmod(path: Path, mod: int) -> None:
+        fmod = file_mod.FileStat(path).get_mode() % 512
         if fmod != mod:
-            print(f"{fmod:o}>{mod:o}: {file}")
-            os.chmod(file, mod)
+            print(f"{fmod:o}>{mod:o}: {path}")
+            path.chmod(mod)
 
     @staticmethod
-    def _setmod_link(link: str) -> None:
-        link_stat = file_mod.FileStat(link, follow_symlinks=False)
-        file_stat = file_mod.FileStat(link)
+    def _setmod_link(path: Path) -> None:
+        link_stat = file_mod.FileStat(path, follow_symlinks=False)
+        file_stat = file_mod.FileStat(path)
         file_time = file_stat.get_time()
 
         if file_time != link_stat.get_time():
-            print(f"<utime>: {link} -> {os.readlink(link)}")
+            print(f"<utime>: {path} -> {path.readlink()}")
             try:
-                os.utime(link, (file_time, file_time), follow_symlinks=False)
+                os.utime(path, (file_time, file_time), follow_symlinks=False)
             except NotImplementedError:
-                os.utime(link, (file_time, file_time))
+                os.utime(path, (file_time, file_time))
 
-    def _setmod_directory(self, directory: str) -> None:
-        files = [os.path.join(directory, x) for x in os.listdir(directory)]
+    def _setmod_directory(self, path: Path) -> None:
+        paths = list(path.iterdir())
         if self._recursive_flag:
             try:
-                self._setmod(files)
+                self._setmod(paths)
             except PermissionError:
                 pass
         try:
-            self._chmod(directory, self._xmod)
+            self._chmod(path, self._xmod)
         except OSError:
-            print(f"Permission denied: {directory}{os.sep}")
-        if files:
-            file_stat = file_mod.FileStat(file_mod.FileUtil.newest(files))
+            print(f"Permission denied: {path}{os.sep}")
+        if paths:
+            file_stat = file_mod.FileStat(file_mod.FileUtil.newest(
+                [str(x) for x in paths]
+            ))
             file_time = file_stat.get_time()
-            if file_time != file_mod.FileStat(directory).get_time():
-                print(f"<utime>: {directory}/")
-                os.utime(directory, (file_time, file_time))
+            if file_time != file_mod.FileStat(path).get_time():
+                print(f"<utime>: {path}/")
+                os.utime(path, (file_time, file_time))
 
-    def _setmod_file(self, file: str) -> None:
+    def _setmod_file(self, path: Path) -> None:
         try:
             try:
-                with open(file, 'rb') as ifile:
+                with path.open('rb') as ifile:
                     magic = ifile.read(4)
             except OSError:
-                self._chmod(file, self._fmod)
-                with open(file, 'rb') as ifile:
+                path.chmod(self._fmod)
+                with path.open('rb') as ifile:
                     magic = ifile.read(4)
 
-            if (magic.startswith(b'#!') or magic in self._exe_magics or
-                    self._is_exe_ext.search(file)):
-                self._chmod(file, self._xmod)
-            elif self._is_not_exe_ext.search(file):
-                self._chmod(file, self._fmod)
-            elif os.access(file, os.X_OK):
-                self._chmod(file, self._xmod)
+            if (
+                magic.startswith(b'#!') or
+                magic in self._exe_magics or
+                self._is_exe_ext.search(str(path))
+            ):
+                path.chmod(self._xmod)
+            elif self._is_not_exe_ext.search(str(path)):
+                path.chmod(self._fmod)
+            elif os.access(path, os.X_OK):
+                path.chmod(self._xmod)
             else:
-                self._chmod(file, self._fmod)
+                path.chmod(self._fmod)
         except OSError:
-            print("Permission denied:", file)
+            print(f"Permission denied: {path}")
 
-    def _setmod(self, files: List[str]) -> None:
-        for file in sorted(files):
-            if os.path.islink(file):
-                self._setmod_link(file)
-            elif os.path.isdir(file):
-                self._setmod_directory(file)
-            elif os.path.isfile(file):
-                self._setmod_file(file)
+    def _setmod(self, paths: List[Path]) -> None:
+        for path in sorted(paths):
+            if path.is_symlink():
+                self._setmod_link(path)
+            elif path.is_dir():
+                self._setmod_directory(path)
+            elif path.is_file():
+                self._setmod_file(path)
             else:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" file.',
+                    f'{sys.argv[0]}: Cannot find "{path}" file.',
                 )
 
     def run(self) -> int:
@@ -270,9 +276,8 @@ class Main:
         self._recursive_flag = options.get_recursive_flag()
         self._fmod = options.get_fmod()
         self._xmod = options.get_xmod()
-        self._files = options.get_files()
 
-        self._setmod(self._files)
+        self._setmod([Path(x) for x in options.get_files()])
 
         return 0
 

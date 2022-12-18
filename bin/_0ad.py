@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import network_mod
 import subtask_mod
@@ -37,7 +38,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -51,11 +52,8 @@ class Main:
         """
         command = network_mod.Sandbox("0ad", errors='stop')
         command.set_args(sys.argv[1:])
-        if not os.path.isfile(command.get_file() + '.py'):
-            configs = [
-                '/dev/dri',
-                os.path.join(os.getenv('HOME', '/'), '.config/0ad'),
-            ]
+        if not Path(f'{command.get_file()}.py').is_file():
+            configs = ['/dev/dri', Path(Path.home(), '.config/0ad')]
             if len(sys.argv) >= 2 and sys.argv[1] == '-net':
                 command.set_args(sys.argv[2:])
                 configs.append('net')

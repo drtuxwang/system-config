@@ -13,6 +13,7 @@ import re
 import signal
 import sre_constants
 import sys
+from pathlib import Path
 from typing import List, TextIO
 
 import packaging.version  # type: ignore
@@ -215,7 +216,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -223,24 +224,24 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _read_data(file: str) -> dict:
+    def _read_data(path: Path) -> dict:
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 data = json.load(ifile)
         except (OSError, json.decoder.JSONDecodeError) as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" json file.',
+                f'{sys.argv[0]}: Cannot read "{path}" json file.',
             ) from exception
 
         return data
 
     @classmethod
-    def _read_distro_packages(cls, packages_file: str) -> dict:
-        distro_data = cls._read_data(packages_file)
+    def _read_distro_packages(cls, path: Path) -> dict:
+        distro_data = cls._read_data(path)
         lines = []
         for url in distro_data['urls']:
             lines.extend(distro_data['data'][url]['text'])
-        disable_deps = re.fullmatch(r'.*_\w+-\w+.json', packages_file)
+        disable_deps = re.fullmatch(r'.*_\w+-\w+.json', str(path))
 
         packages: dict = {}
         name = ''
@@ -267,26 +268,26 @@ class Main:
                 package = Package()
         return packages
 
-    def _read_distro_pin_packages(self, pin_file: str) -> None:
+    def _read_distro_pin_packages(self, pin_path: Path) -> None:
         packages_cache = {}
         try:
-            with open(pin_file, encoding='utf-8', errors='replace') as ifile:
+            with pin_path.open(encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     if columns:
                         pattern = columns[0]
                         if not pattern.startswith('#'):
-                            file = os.path.join(os.path.dirname(
-                                pin_file), columns[1]) + '.json'
-                            if file not in packages_cache:
-                                packages_cache[file] = (
-                                    self._read_distro_packages(file))
+                            path = Path(pin_path.parent, f'{columns[1]}.json')
+                            if path not in packages_cache:
+                                packages_cache[path] = (
+                                    self._read_distro_packages(path)
+                                )
                             try:
                                 ispattern = re.compile(pattern.replace(
                                     '?', '.').replace('*', '.*'))
                             except sre_constants.error:
                                 continue
-                            for key, value in packages_cache[file].items():
+                            for key, value in packages_cache[path].items():
                                 if ispattern.fullmatch(key):
                                     self._packages[key] = copy.copy(value)
         except OSError:
@@ -370,8 +371,7 @@ class Main:
         list_file: str,
         names: List[str],
     ) -> None:
-        urlfile = os.path.basename(
-            distro) + list_file.split('.debs')[-1] + '.url'
+        urlfile = Path(distro).name + list_file.split('.debs')[-1] + '.url'
         try:
             with open(urlfile, 'w', encoding='utf-8', newline='\n') as ofile:
                 indent = ''
@@ -381,14 +381,14 @@ class Main:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{urlfile}" file.',
             ) from exception
-        if os.path.getsize(urlfile) == 0:
+        if Path(urlfile).stat().st_size == 0:
             os.remove(urlfile)
 
     @staticmethod
     def _local(distro: str, url: str) -> str:
-        file = os.path.join(distro, os.path.basename(url))
-        if os.path.isfile(file):
-            return f'file://{os.path.abspath(file)}'
+        path = Path(distro, Path(url).name)
+        if path.is_file():
+            return f'file://{path.resolve()}'
         return url
 
     def run(self) -> int:
@@ -398,9 +398,11 @@ class Main:
         options = Options()
 
         self._packages = self._read_distro_packages(
-            options.get_distro() + '.json')
+            Path(f'{options.get_distro()}.json')
+        )
         self._read_distro_pin_packages(
-            options.get_distro() + '.debs:select')
+            Path(f'{options.get_distro()}.debs:select')
+        )
         self._read_distro_installed(options.get_list_file())
 
         ispattern = re.compile('[.]debs-?.*$')

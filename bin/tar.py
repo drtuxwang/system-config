@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -63,8 +64,8 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        if os.path.isdir(self._args.archive[0]):
-            self._archive = os.path.abspath(self._args.archive[0]) + '.tar'
+        if Path(self._args.archive[0]).is_dir():
+            self._archive = f'{Path(self._args.archive[0]).resolve()}.tar'
         else:
             self._archive = self._args.archive[0]
         if '.tar' not in self._archive:
@@ -102,7 +103,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -154,7 +155,7 @@ class Main:
         options = Options()
         task: subtask_mod.Task
 
-        os.umask(int('022', 8))
+        os.umask(0o022)
         archive = options.get_archive()
         task = subtask_mod.Task(cls._get_cmdline(archive, options.get_files()))
         task.run()

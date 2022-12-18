@@ -9,10 +9,10 @@ import argparse
 import glob
 import json
 import os
-import shutil
 import signal
 import socket
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -45,15 +45,15 @@ class Options:
         else:
             speed = 0
 
-        configdir = os.path.join(os.environ.get('HOME', ''), '.config')
-        if not os.path.isdir(configdir):
+        path = Path(Path.home(), '.config')
+        if not path.is_dir():
             try:
-                os.mkdir(configdir)
+                path.mkdir()
             except OSError:
                 return None
-        configfile = os.path.join(configdir, 'cdspeed.json')
-        if os.path.isfile(configfile):
-            config = Configuration(configfile)
+        path = Path(path, 'cdspeed.json')
+        if path.is_file():
+            config = Configuration(path)
             old_speed = config.get_speed(self._device)
             if old_speed:
                 if speed == 0:
@@ -63,11 +63,13 @@ class Options:
         else:
             config = Configuration()
         config.set_speed(self._device, speed)
-        config.write(configfile + '.part')
+
+        path_new = Path(f'{path}.part')
+        config.write(path_new)
         try:
-            shutil.move(configfile + '.part', configfile)
+            path_new.replace(path)
         except OSError:
-            os.remove(configfile + '.part')
+            os.remove(path_new)
 
         return speed
 
@@ -113,11 +115,11 @@ class Configuration:
     Configuration class
     """
 
-    def __init__(self, file: str = '') -> None:
+    def __init__(self, path: Path = None) -> None:
         self._data: dict = {'cdspeed': {}}
-        if file:
+        if path:
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
+                with path.open(encoding='utf-8', errors='replace') as ifile:
                     self._data = json.load(ifile)
             except (KeyError, OSError):
                 pass
@@ -137,12 +139,12 @@ class Configuration:
         """
         self._data['cdspeed'][device] = speed
 
-    def write(self, file: str) -> None:
+    def write(self, path: Path) -> None:
         """
         Write file
         """
         try:
-            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w', encoding='utf-8', newline='\n') as ofile:
                 print(json.dumps(
                     self._data,
                     ensure_ascii=False,
@@ -177,7 +179,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

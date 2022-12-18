@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import config_mod
@@ -73,7 +74,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -88,22 +89,21 @@ class Main:
         options = Options()
         data = config_mod.Data()
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
-                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
-            if file.endswith(('.json', 'yaml', 'yml', '.bson')):
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
+            if path.suffix in ('.json', '.yaml', 'yml', '.bson'):
                 try:
-                    data.read(file)
+                    data.read(path)
                 except config_mod.ReadConfigError as exception:
-                    raise SystemExit(f"{file}: {exception}") from exception
+                    raise SystemExit(f"{path}: {exception}") from exception
 
-                name, _ = os.path.splitext(file)
-                bson_file = name + '.bson'
-                print(f'Converting "{file}" to "{bson_file}"...')
+                bson_path = path.with_suffix('.bson')
+                print(f'Converting "{path}" to "{bson_path}"...')
                 try:
-                    data.write(bson_file)
+                    data.write(bson_path)
                 except config_mod.WriteConfigError as exception:
-                    raise SystemExit(f"{file}: {exception}") from exception
+                    raise SystemExit(f"{path}: {exception}") from exception
 
         return 0
 

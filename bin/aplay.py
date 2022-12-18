@@ -9,6 +9,7 @@ import random
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import Any, List
 
 import command_mod
@@ -103,7 +104,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -111,11 +112,11 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _getfiles(directory: str, *patterns: Any) -> List[str]:
-        files = []
+    def _get_files(directory: str, *patterns: Any) -> List[str]:
+        files: list = []
         for pattern in patterns:
-            files.extend(glob.glob(os.path.join(directory, pattern)))
-        return sorted(files)
+            files.extend(Path(directory).glob(pattern))
+        return sorted([str(x) for x in files])
 
     def run(self) -> int:
         """
@@ -127,12 +128,12 @@ class Main:
         if options.get_view_flag():
             play.set_args(['-v'])
         for directory in options.get_directories():
-            if not os.path.isdir(directory):
+            if not Path(directory).is_dir():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find '
                     f'"{directory}" media directory.',
                 )
-            files = self._getfiles(directory, '*.mp3', '*.ogg', '*.wav')
+            files = self._get_files(directory, '*.mp3', '*.ogg', '*.wav')
             if options.get_shuffle_flag():
                 random.shuffle(files)
             play.extend_args(files)

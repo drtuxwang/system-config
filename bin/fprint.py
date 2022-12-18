@@ -10,6 +10,7 @@ import shutil
 import signal
 import sys
 import time
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -78,7 +79,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -87,13 +88,13 @@ class Main:
 
     @staticmethod
     def _print(files: List[str]) -> None:
-        tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache', 'fprint'))
+        tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'fprint'))
         pdf = command_mod.Command('pdf', errors='stop')
         xweb = command_mod.Command('xweb', errors='stop')
         task: subtask_mod.Task
 
         for number, file in enumerate(files):
-            if not os.path.isfile(file):
+            if not Path(file).is_file():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find "{file}" file.',
                 )

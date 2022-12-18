@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -111,7 +112,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -123,31 +124,29 @@ class Main:
         """
         Fix directory and symbolic link modified times
         """
-        for file in files:
-            if os.path.islink(file):
-                link_stat = file_mod.FileStat(file, follow_symlinks=False)
-                file_stat = file_mod.FileStat(file)
+        for path in [Path(x) for x in files]:
+            if path.is_symlink():
+                link_stat = file_mod.FileStat(path, follow_symlinks=False)
+                file_stat = file_mod.FileStat(path)
                 file_time = file_stat.get_time()
                 if file_time != link_stat.get_time():
                     try:
                         os.utime(
-                            file,
+                            path,
                             (file_time, file_time),
                             follow_symlinks=False,
                         )
                     except NotImplementedError:
                         pass
 
-            elif os.path.isdir(file):
-                newest = file_mod.FileUtil.newest(
-                    [os.path.join(file, x) for x in os.listdir(file)]
-                )
+            elif path.is_dir():
+                newest = file_mod.FileUtil.newest(list(path.iterdir()))
                 if not newest:
-                    newest = os.path.basename(file)
+                    newest = path.name
                 file_stat = file_mod.FileStat(newest)
                 file_time = file_stat.get_time()
-                if file_time != file_mod.FileStat(file).get_time():
-                    os.utime(file, (file_time, file_time))
+                if file_time != file_mod.FileStat(path).get_time():
+                    os.utime(path, (file_time, file_time))
 
     @classmethod
     def run(cls) -> int:
@@ -156,7 +155,7 @@ class Main:
         """
         options = Options()
 
-        os.umask(int('022', 8))
+        os.umask(0o022)
         archiver = options.get_archiver()
 
         if os.name == 'nt':

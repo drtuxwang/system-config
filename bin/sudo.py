@@ -9,6 +9,7 @@ import os
 import signal
 import socket
 import sys
+from pathlib import Path
 
 import command_mod
 import subtask_mod
@@ -38,7 +39,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -50,7 +51,7 @@ class Main:
         """
         Start program
         """
-        name = os.path.basename(sys.argv[0]).split('.')[0]
+        name = Path(sys.argv[0]).name.split('.')[0]
 
         command = command_mod.Command('sudo', errors='stop')
         if '-p' not in sys.argv:

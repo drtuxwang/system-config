@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import time
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -47,9 +48,9 @@ class Options:
 
     @staticmethod
     def _get_ping() -> command_mod.Command:
-        if os.path.isfile('/usr/sbin/ping'):
+        if Path('/usr/sbin/ping').is_file():
             return command_mod.CommandFile('/usr/sbin/ping')
-        if os.path.isfile('/usr/etc/ping'):
+        if Path('/usr/etc/ping').is_file():
             return command_mod.CommandFile('/usr/etc/ping')
         return command_mod.Command('ping')
 
@@ -101,7 +102,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

@@ -6,9 +6,9 @@ Converts file to '\r\n' newline format.
 import argparse
 import glob
 import os
-import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -72,7 +72,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -86,16 +86,15 @@ class Main:
         """
         options = Options()
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
-                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
-            print(f'Converting "{file}" file to "\\r\\n" newline format...')
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
+            print(f'Converting "{path}" file to "\\r\\n" newline format...')
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
-                    tmpfile = file + '.part'
+                with path.open(encoding='utf-8', errors='replace') as ifile:
+                    path_new = Path(f'{path}.part')
                     try:
-                        with open(
-                            tmpfile,
+                        with path_new.open(
                             'w',
                             encoding='utf-8',
                             newline='\r\n',
@@ -104,24 +103,24 @@ class Main:
                                 print(line.rstrip('\r\n'), file=ofile)
                     except OSError as exception:
                         raise SystemExit(
-                            f'{sys.argv[0]}: Cannot create "{tmpfile}" file.',
+                            f'{sys.argv[0]}: Cannot create "{path_new}" file.',
                         ) from exception
                     except UnicodeDecodeError as exception:
-                        os.remove(tmpfile)
+                        path_new.unlink()
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot convert '
-                            f'"{file}" binary file.',
+                            f'"{path}" binary file.',
                         ) from exception
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot read "{file}" file.',
+                    f'{sys.argv[0]}: Cannot read "{path}" file.',
                 ) from exception
             try:
-                shutil.move(tmpfile, file)
+                path_new.replace(path)
             except OSError as exception:
-                os.remove(tmpfile)
+                path_new.unlink()
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot update "{file}" file.',
+                    f'{sys.argv[0]}: Cannot update "{path}" file.',
                 ) from exception
 
         return 0

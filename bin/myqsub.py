@@ -6,16 +6,16 @@ MyQS, My Queuing System batch job submission.
 import argparse
 import glob
 import os
-import shutil
 import signal
 import socket
 import sys
 import time
+from pathlib import Path
 from typing import List
 
 import task_mod
 
-RELEASE = '2.8.3'
+RELEASE = '2.8.6'
 
 
 class Options:
@@ -118,7 +118,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -126,8 +126,8 @@ class Main:
             sys.argv = argv
 
     def _lastjob(self) -> int:
-        lastjob = os.path.join(self._myqsdir, 'myqs.last')
-        if os.path.isfile(lastjob):
+        lastjob = Path(self._myqsdir, 'myqs.last')
+        if lastjob.is_file():
             try:
                 with open(
                     lastjob,
@@ -157,13 +157,12 @@ class Main:
             ) from exception
         return jobid
 
-    def _lock(self) -> str:
+    def _lock(self) -> Path:
         while True:
-            lockfile = os.path.join(self._myqsdir, 'myqsub.pid')
-            if os.path.isfile(lockfile):
+            path = Path(self._myqsdir, 'myqsub.pid')
+            if path.is_file():
                 try:
-                    with open(
-                        lockfile,
+                    with path.open(
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
@@ -173,16 +172,15 @@ class Main:
                             pass
                         else:
                             if not task_mod.Tasks.factory().haspid(pid):
-                                os.remove(lockfile)
+                                path.unlink()
                 except OSError as exception:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot read '
-                        f'"{lockfile}" MyQS lock file.',
+                        f'"{path}" MyQS lock file.',
                     ) from exception
-            if not os.path.isfile(lockfile):
+            if not path.is_file():
                 try:
-                    with open(
-                        lockfile,
+                    with path.open(
                         'w',
                         encoding='utf-8',
                         newline='\n',
@@ -191,16 +189,16 @@ class Main:
                 except OSError as exception:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot create '
-                        f'"{lockfile}" MyQS lock file.'
+                        f'"{path}" MyQS lock file.'
                     ) from exception
                 break
             time.sleep(1)
-        return lockfile
+        return path
 
     def _myqsd(self) -> None:
-        lockfile = os.path.join(self._myqsdir, 'myqsd.pid')
+        path = Path(self._myqsdir, 'myqsd.pid')
         try:
-            with open(lockfile, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 try:
                     pid = int(ifile.readline().strip())
                 except (OSError, ValueError):
@@ -208,43 +206,42 @@ class Main:
                 else:
                     if task_mod.Tasks.factory().haspid(pid):
                         return
-                    os.remove(lockfile)
+                    path.unlink()
         except OSError:
             pass
         print('MyQS batch job scheduler not running. Run "myqsd" command.')
 
     def _submit(self, options: Options) -> None:
-        tmpfile = os.path.join(self._myqsdir, 'newjob.tmp')
+        path_new = Path(self._myqsdir, 'newjob.tmp')
         queue = options.get_queue()
         ncpus = options.get_ncpus()
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
-                print(f'MyQS cannot find "{file}" batch file.')
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
+                print(f'MyQS cannot find "{path}" batch file.')
                 return
             jobid = self._lastjob()
             try:
-                with open(
-                    tmpfile,
+                with path_new.open(
                     'w',
                     encoding='utf-8',
                     newline='\n',
                 ) as ofile:
-                    print(f"COMMAND={file}", file=ofile)
+                    print(f"COMMAND={path}", file=ofile)
                     print(f"DIRECTORY={os.getcwd()}", file=ofile)
                     print(f"PATH={os.environ['PATH']}", file=ofile)
                     print(f"QUEUE={queue}", file=ofile)
                     print(f"NCPUS={ncpus}", file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{tmpfile}" temporary file.'
+                    f'{sys.argv[0]}: Cannot create "{path_new}" '
+                    'temporary file.'
                 ) from exception
-            shutil.move(
-                tmpfile,
-                os.path.join(self._myqsdir, str(jobid) + '.q')
-            )
+            path_new.replace(Path(self._myqsdir, f'{jobid}.q'))
             print(
-                'Batch job with jobid', jobid, 'has been submitted into MyQS.')
+                f'Batch job with jobid {jobid} has been submitted into MyQS.',
+            )
+
             time.sleep(0.5)
 
     def run(self) -> int:
@@ -257,24 +254,24 @@ class Main:
             raise SystemExit(
                 f"{sys.argv[0]}: Cannot determine home directory.",
             )
-        self._myqsdir = os.path.join(
-            os.environ['HOME'],
+        self._myqsdir = Path(
+            Path.home(),
             '.config',
             'myqs',
             socket.gethostname().split('.')[0].lower()
         )
-        if not os.path.isdir(self._myqsdir):
+        if not self._myqsdir.is_dir():
             try:
                 os.makedirs(self._myqsdir)
-                os.chmod(self._myqsdir, int('700', 8))
+                os.chmod(self._myqsdir, 0o700)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create '
                     f'"{self._myqsdir}" MyQS directory.',
                 ) from exception
-        lockfile = self._lock()
+        lock_path = self._lock()
         self._submit(options)
-        os.remove(lockfile)
+        lock_path.unlink()
         self._myqsd()
 
         return 0

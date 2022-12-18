@@ -8,6 +8,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 
 import network_mod
 import subtask_mod
@@ -37,7 +38,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -50,26 +51,21 @@ class Main:
                 os.remove(file)
             except OSError:
                 pass
-        home = os.environ.get('HOME', '')
-        for file in glob.glob(os.path.join(
-            home,
-            '.config',
-            'libreoffice',
-            '*',
-            'user',
-            'registrymodifications.xcu',
-        )):
-            if os.path.isfile(file):
+        home = Path.home()
+        for path in home.glob(
+            '.config/libreoffice/*/user/egistrymodifications.xcu'
+        ):
+            if path.is_file():
                 try:
-                    os.remove(file)
-                    os.mkdir(file)
+                    path.unlink()
+                    path.mkdir()
                 except OSError:
                     pass
 
         # Remove insecure macros scripting
         try:
-            shutil.rmtree(os.path.join(
-                os.path.dirname(os.path.dirname(self._soffice.get_file())),
+            shutil.rmtree(Path(
+                Path(self._soffice.get_file()).parents[1],
                 'share',
                 'Scripts',
             ))
@@ -77,12 +73,9 @@ class Main:
             pass
 
         # Disable update nagging
-        for file in glob.glob(os.path.join(
-            os.path.dirname(self._soffice.get_file()),
-            'libupd*.so',
-        )):
+        for path in Path(self._soffice.get_file()).parent.glob('libupd*.so'):
             try:
-                os.remove(file)
+                os.remove(path)
             except OSError:
                 pass
 
@@ -97,33 +90,35 @@ class Main:
         Start program
         """
         self._soffice = network_mod.Sandbox(
-            os.path.join('program', 'soffice'),
+            Path('program', 'soffice'),
             errors='stop'
         )
         self._soffice.set_args(['--nologo'] + sys.argv[1:])
-        if os.path.isfile(self._soffice.get_file() + '.py'):
+        if Path(f'{self._soffice.get_file()}.py').is_file():
             subtask_mod.Exec(self._soffice.get_cmdline()).run()
         if sys.argv[1:] == ['--version']:
             subtask_mod.Exec(self._soffice.get_cmdline()).run()
 
         work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
-        if work_dir == os.environ['HOME']:
-            desktop = os.path.join(work_dir, 'Desktop')
-            if os.path.isdir(desktop):
+        home = str(Path.home())
+        if work_dir == home:
+            desktop = Path(work_dir, 'Desktop')
+            if desktop.is_dir():
                 os.chdir(desktop)
-                work_dir = desktop
+                work_dir = str(desktop)
+
         configs = [
             '/tmp',
             f'/run/user/{os.getuid()}',
-            os.path.join(os.getenv('HOME', '/'), '.config/ibus'),
-            os.path.join(os.getenv('HOME', '/'), '.config/libreoffice'),
+            Path(home, '.config/ibus'),
+            Path(home, '.config/libreoffice'),
             work_dir,
         ]
         if len(sys.argv) >= 2:
-            if os.path.isdir(sys.argv[1]):
-                configs.append(os.path.abspath(sys.argv[1]))
-            elif os.path.isfile(sys.argv[1]):
-                configs.append(os.path.dirname(os.path.abspath(sys.argv[1])))
+            if Path(sys.argv[1]).is_dir():
+                configs.append(Path(sys.argv[1]).resolve())
+            elif Path(sys.argv[1]).is_file():
+                configs.append(Path(sys.argv[1]).resolve().parent)
             if sys.argv[1] == '-net':
                 self._soffice.set_args(['--nologo'] + sys.argv[2:])
                 configs.append('net')

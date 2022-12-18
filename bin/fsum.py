@@ -9,6 +9,7 @@ import hashlib
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List, Tuple
 
 import file_mod
@@ -126,7 +127,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -134,9 +135,9 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _md5sum(file: str) -> str:
+    def _md5sum(path: Path) -> str:
         try:
-            with open(file, 'rb') as ifile:
+            with path.open('rb') as ifile:
                 md5 = hashlib.md5()
                 while True:
                     chunk = ifile.read(131072)
@@ -145,14 +146,14 @@ class Main:
                     md5.update(chunk)
         except (OSError, TypeError) as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" file.',
+                f'{sys.argv[0]}: Cannot read "{path}" file.',
             ) from exception
         return md5.hexdigest()
 
     @staticmethod
-    def _sha512sum(file: str) -> str:
+    def _sha512sum(path: Path) -> str:
         try:
-            with open(file, 'rb') as ifile:
+            with path.open('rb') as ifile:
                 sha512 = hashlib.sha512()
                 while True:
                     chunk = ifile.read(131072)
@@ -161,50 +162,55 @@ class Main:
                     sha512.update(chunk)
         except (OSError, TypeError) as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" file.',
+                f'{sys.argv[0]}: Cannot read "{path}" file.',
             ) from exception
         return f'sha512:{sha512.hexdigest()}'
 
     @staticmethod
-    def _get_files(directory: str) -> List[str]:
+    def _get_files(directory_path: Path) -> List[Path]:
         try:
-            files = [os.path.join(directory, x) for x in os.listdir(directory)]
-            if directory.endswith('/...'):
-                files = [x for x in files if not x.startswith('.')]
+            paths = list(directory_path.iterdir())
+            if directory_path.name == '...':
+                paths = [
+                    x
+                    for x in directory_path.iterdir()
+                    if not str(x).startswith('.')
+                ]
         except PermissionError:
-            return []
+            pass
 
-        return files
+        return paths
 
-    def _calc(self, options: Options, files: List[str]) -> None:
-        for file in files:
-            if file.endswith('.../fsum'):
-                self._get_cache(file)
-            elif os.path.isdir(file):
-                if not os.path.islink(file):
+    def _calc(self, options: Options, paths: List[Path]) -> None:
+        for path in paths:
+            if str(path).endswith('.../fsum'):
+                self._get_cache(path)
+            elif path.is_dir():
+                if not path.is_symlink():
                     if options.get_recursive_flag():
-                        self._calc(options, sorted(self._get_files(file)))
-            elif os.path.isfile(file) and not os.path.islink(file):
-                file_stat = file_mod.FileStat(file)
+                        self._calc(options, sorted(self._get_files(path)))
+            elif path.is_file() and not path.is_symlink():
+                file_stat = file_mod.FileStat(path)
                 try:
                     checksum = self._cache[
-                        (file, file_stat.get_size(), file_stat.get_time())]
+                        (str(path), file_stat.get_size(), file_stat.get_time())
+                    ]
                 except KeyError:
-                    checksum = self._sha512sum(file)
+                    checksum = self._sha512sum(path)
                 if not checksum:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot read "{file}" file.',
+                        f'{sys.argv[0]}: Cannot read "{path}" file.',
                     )
                 print(
                     f"{checksum}/"
                     f"{file_stat.get_size():010d}/"
                     f"{file_stat.get_time()}  "
-                    f"{file}",
+                    f"{path}",
                 )
                 if options.get_create_flag():
+                    fsum_path = Path(f'{path}.fsum')
                     try:
-                        with open(
-                            file + '.fsum',
+                        with fsum_path.open(
                             'w',
                             encoding='utf-8',
                             newline='\n',
@@ -213,27 +219,27 @@ class Main:
                                 f"{checksum}/"
                                 f"{file_stat.get_size():010d}/"
                                 f"{file_stat.get_time()}  "
-                                f"{os.path.basename(file)}",
+                                f"{path.name}",
                                 file=ofile,
                             )
-                        file_stat = file_mod.FileStat(file)
+                        file_stat = file_mod.FileStat(path)
                         os.utime(
-                            file + '.fsum',
+                            fsum_path,
                             (file_stat.get_time(), file_stat.get_time())
                         )
                     except OSError as exception:
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot create '
-                            f'"{file}.fsum" file.',
+                            f'"{fsum_path}" file.',
                         ) from exception
 
     @classmethod
-    def _isdiff(cls, checksum: str, file: str) -> bool:
+    def _isdiff(cls, checksum: str, path: Path) -> bool:
         if checksum.startswith('sha512:'):
-            if cls._sha512sum(file) != checksum:
+            if cls._sha512sum(path) != checksum:
                 return True
         elif len(checksum) == 32:
-            if cls._md5sum(file) != checksum:
+            if cls._md5sum(path) != checksum:
                 return True
         return False
 
@@ -242,45 +248,44 @@ class Main:
         nfail = 0
         nmiss = 0
 
-        for fsumfile in files:
-            found.append(fsumfile)
-            directory = os.path.dirname(fsumfile)
+        for fsum_path in [Path(x) for x in files]:
+            found.append(str(fsum_path))
+            directory = fsum_path.parent
             try:
-                with open(
-                    fsumfile,
+                with fsum_path.open(
                     encoding='utf-8',
                     errors='replace',
                 ) as ifile:
                     for line in ifile:
                         line = line.rstrip('\r\n')
                         checksum, size, mtime, file = self._get_checksum(line)
-                        file = os.path.join(directory, file)
+                        file = f'{directory}/{file}'
                         found.append(file)
                         file_stat = file_mod.FileStat(file)
                         try:
-                            if not os.path.isfile(file):
-                                print(file, '# FAILED open or read')
+                            if not Path(file).is_file():
+                                print(f'{file} # FAILED open or read')
                                 nmiss += 1
                             elif size != file_stat.get_size():
-                                print(file, '# FAILED checksize')
+                                print(f'{file} # FAILED checksize')
                                 nfail += 1
                             elif mtime != file_stat.get_time():
-                                print(file, '# FAILED checkdate')
+                                print(f'{file} # FAILED checkdate')
                                 nfail += 1
-                            elif self._isdiff(checksum, file):
-                                print(file, '# FAILED checksum')
+                            elif self._isdiff(checksum, Path(file)):
+                                print(f'{file} # FAILED checksum')
                                 nfail += 1
                         except TypeError as exception:
                             raise SystemExit(
                                 f'{sys.argv[0]}: Corrupt '
-                                f'"{fsumfile}" checksum file.',
+                                f'"{fsum_path}" checksum file.',
                             ) from exception
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot read "{fsumfile}" checksum file.',
+                    f'{sys.argv[0]}: Cannot read "{fsum_path}" checksum file.',
                 ) from exception
 
-        if os.path.join(directory, 'index.fsum') in files:
+        if f'{directory}/index.fsum' in files:
             for file in self._extra(directory, found):
                 print(file, '# EXTRA file found')
         if nmiss > 0:
@@ -291,29 +296,26 @@ class Main:
                 f"{len(found) - nmiss} computed checksums.",
             )
 
-    def _extra(self, directory: str, found: List[str]) -> List[str]:
+    def _extra(self, directory_path: Path, found: List[str]) -> List[str]:
         extra = []
         try:
-            if directory:
-                files = [
-                    os.path.join(directory, x)
-                    for x in os.listdir(directory)
-                ]
+            if directory_path:
+                paths = list(directory_path.iterdir())
             else:
-                files = [os.path.join(directory, x) for x in os.listdir()]
+                paths = [Path(x) for x in os.listdir()]
         except PermissionError:
             pass
         else:
-            for file in files:
-                if os.path.isdir(file):
-                    if not os.path.islink(file):
-                        extra.extend(self._extra(file, found))
+            for path in paths:
+                if path.is_dir():
+                    if not path.is_symlink():
+                        extra.extend(self._extra(path, found))
                 elif (
-                        not os.path.islink(file) and
-                        file not in found and
-                        not file.endswith('fsum')
+                    not path.is_symlink() and
+                    str(path) not in found and
+                    path.suffix != '.fsum'
                 ):
-                    extra.append(file)
+                    extra.append(str(path))
         return extra
 
     @staticmethod
@@ -326,31 +328,28 @@ class Main:
         except ValueError:
             return '', -1, -1, ''
 
-    def _get_cache(self, update_file: str) -> None:
-        if not os.path.isfile(update_file):
+    def _get_cache(self, cache_path: Path) -> None:
+        if not cache_path.is_file():
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot find "{update_file}" checksum file.',
+                f'{sys.argv[0]}: Cannot find "{cache_path}" checksum file.',
             )
-        directory = os.path.dirname(update_file)
+
+        directory_path = cache_path.parent
         try:
-            with open(
-                update_file,
-                encoding='utf-8',
-                errors='replace',
-            ) as ifile:
+            with cache_path.open(encoding='utf-8', errors='replace',) as ifile:
                 for line in ifile:
                     try:
                         line = line.rstrip('\r\n')
                         checksum, size, mtime, file = self._get_checksum(line)
-                        file = os.path.join(directory, file)
-                        file = file.replace('/.../../', '/')
+                        path = Path(directory_path, file)
+                        file = str(path).replace('/.../../', '/')
                         if (file, size, mtime) not in self._cache:
                             self._cache[(file, size, mtime)] = checksum
                     except IndexError:
                         pass
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{update_file}" checksum file.',
+                f'{sys.argv[0]}: Cannot read "{path}" checksum file.',
             ) from exception
 
     def run(self) -> int:
@@ -365,9 +364,9 @@ class Main:
             self._cache: dict = {}
             update_file = options.get_update_file()
             if update_file:
-                self._get_cache(update_file)
+                self._get_cache(Path(update_file))
 
-            self._calc(options, options.get_files())
+            self._calc(options, [Path(x) for x in options.get_files()])
 
         return 0
 

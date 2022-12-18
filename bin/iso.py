@@ -10,6 +10,7 @@ import re
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -122,7 +123,7 @@ class Options:
 
         self._isoinfo = command_mod.Command('isoinfo', errors='stop')
 
-        if not os.path.isdir(self._args.directory[0]):
+        if not Path(self._args.directory[0]).is_dir():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find '
                 f'"{self._args.directory[0]}" directory.',
@@ -157,7 +158,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -166,28 +167,24 @@ class Main:
 
     def _bootimg(self, options: Options) -> None:
         files = (
-            glob.glob(os.path.join(
-                options.get_directory(),
-                'isolinux',
-                '*.bin'
-            )) +
-            glob.glob(os.path.join(options.get_directory(), '*.bin')) +
-            glob.glob(os.path.join(options.get_directory(), '*.img'))
+            list(Path(options.get_directory(), 'isolinux').glob('*.bin')) +
+            list(Path(options.get_directory()).glob('*.bin')) +
+            list(Path(options.get_directory()).glob('*.img'))
         )
         if files:
             bootimg = files[0]
             print(f'Adding Eltorito boot image "{bootimg}"...')
-            if 'isolinux' in bootimg:
+            if 'isolinux' in str(bootimg):
                 self._genisoimage.extend_args([
                     '-eltorito-boot',
-                    os.path.join('isolinux', os.path.basename(bootimg)),
+                    Path('isolinux', Path(bootimg).name),
                     '-no-emul-boot',
                     '-boot-info-table'
                 ])
-            elif os.path.getsize(bootimg) == 2048:
+            elif Path(bootimg).stat().st_size == 2048:
                 self._genisoimage.extend_args([
                     '-eltorito-boot',
-                    os.path.basename(bootimg),
+                    Path(bootimg).name,
                     '-no-emul-boot',
                     '-boot-load-size',
                     '4',
@@ -197,7 +194,7 @@ class Main:
             else:
                 self._genisoimage.extend_args([
                     '-eltorito-boot',
-                    os.path.basename(bootimg),
+                    Path(bootimg).name,
                     '-hide',
                     'boot.catalog'
                 ])
@@ -329,7 +326,7 @@ class Main:
                 f'received from "{task.get_file()}".',
             )
 
-        if os.path.isfile(image):
+        if Path(image).is_file():
             print()
             isoinfo = options.get_isoinfo()
             isoinfo.set_args(['-d', '-i', image])
@@ -340,7 +337,7 @@ class Main:
                     f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                     f'received from "{task.get_file()}".',
                 )
-            self._isosize(image, os.path.getsize(image))
+            self._isosize(image, Path(image).stat().st_size)
 
         return 0
 

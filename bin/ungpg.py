@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -37,12 +38,11 @@ class Options:
 
     @staticmethod
     def _config() -> None:
-        os.umask(int('077', 8))
-        home = os.environ.get('HOME', '')
-        gpgdir = os.path.join(home, '.gnupg')
-        if not os.path.isdir(gpgdir):
+        os.umask(0o077)
+        gpgdir = Path(Path.home(), '.gnupg')
+        if not gpgdir.is_dir():
             try:
-                os.mkdir(gpgdir, int('700', 8))
+                gpgdir.mkdir()
             except OSError:
                 return
         if 'DISPLAY' in os.environ:
@@ -50,14 +50,15 @@ class Options:
 
     @staticmethod
     def _set_libraries(command: command_mod.Command) -> None:
-        libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
-        if os.path.isdir(libdir) and os.name == 'posix':
+        libdir = Path(Path(command.get_file()).parent, 'lib')
+        if libdir.is_dir() and os.name == 'posix':
             if os.uname()[0] == 'Linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
                     os.environ['LD_LIBRARY_PATH'] = (
-                        libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
+                        f"{libdir}{os.pathsep}{os.environ['LD_LIBRARY_PATH']}"
+                    )
                 else:
-                    os.environ['LD_LIBRARY_PATH'] = libdir
+                    os.environ['LD_LIBRARY_PATH'] = str(libdir)
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -112,7 +113,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -128,11 +129,11 @@ class Main:
 
         gpg = options.get_gpg()
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
-                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
 
-            gpg.set_args([file])
+            gpg.set_args([path])
             task = subtask_mod.Task(gpg.get_cmdline())
             task.run()
             if task.get_exitcode():
@@ -141,10 +142,10 @@ class Main:
                     f'received from "{task.get_file()}".',
                 )
 
-            new_file = file.rsplit('.gpg', 1)[0]
-            if os.path.isfile(new_file):
-                file_time = os.path.getmtime(file)
-                os.utime(new_file, (file_time, file_time))
+            path_new = Path(path.parent, path.stem)
+            if path_new.is_file():
+                file_time = path.stat().st_mtime
+                os.utime(path_new, (file_time, file_time))
 
         return 0
 

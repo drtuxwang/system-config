@@ -10,6 +10,7 @@ import signal
 import sys
 import time
 import types
+from pathlib import Path
 from typing import Any, Callable, List, Union
 
 import command_mod
@@ -58,7 +59,7 @@ class Options:
                     f"{sys.argv[0]}: Cannot find any CD/DVD device.",
                 )
             device = sorted(cdrom.get_devices())[0]
-        if not os.path.exists(device):
+        if not Path(device).exists():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find "{device}" CD/DVD device.',
             )
@@ -131,9 +132,9 @@ class Options:
             )
         if (
             self._args.image[0] != 'scan' and
-            not os.path.isdir(self._args.image[0])
+            not Path(self._args.image[0]).is_dir()
         ):
-            if not os.path.exists(self._args.image[0]):
+            if not Path(self._args.image[0]).exists():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find '
                     f'"{self._args.image[0]}" CD/DVD device.',
@@ -160,12 +161,11 @@ class Cdrom:
         Detect devices
         """
         for directory in glob.glob('/sys/block/sr*/device'):
-            device = f'/dev/{os.path.basename(os.path.dirname(directory))}'
+            device = f'/dev/{Path(directory).parent.name}'
             model = ''
             for file in ('vendor', 'model'):
                 try:
-                    with open(
-                        os.path.join(directory, file),
+                    with Path(directory, file).open(
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
@@ -199,7 +199,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -248,7 +248,7 @@ class Main:
                 )
         cdrdao.set_args(
             ['write', '--device', self._device, '--speed', str(self._speed)])
-        if os.path.isfile(self._image[:-4]+'.toc'):
+        if Path(self._image).with_suffix('.toc').is_file():
             cdrdao.extend_args([self._image[:-4]+'.toc'])
         else:
             cdrdao.extend_args([self._image[:-4]+'.cue'])
@@ -262,7 +262,7 @@ class Main:
         self._eject()
 
     def _track_at_once_audio(self) -> None:
-        files = sorted(glob.glob(os.path.join(self._image, '*.wav')))
+        files = sorted([str(x) for x in Path(self._image).glob('*.wav')])
 
         wodim = command_mod.Command('wodim', errors='stop')
         print(
@@ -335,7 +335,7 @@ class Main:
         wodim.set_args(['-v', '-shorttrack', '-eject'])
 
         # Pad to avoid dd read problem
-        if os.path.getsize(file) < 2097152:
+        if Path(file).stat().st_size < 2097152:
             wodim.append_arg('-pad')
         wodim.set_args([
             f'dev={self._device}',
@@ -363,9 +363,9 @@ class Main:
 
         if self._image == 'scan':
             self._scan()
-        elif os.path.isdir(self._image):
+        elif Path(self._image).is_dir():
             self._track_at_once_audio()
-        elif self._image.endswith('.bin'):
+        elif Path(self._image).suffix == '.bin':
             self._disk_at_once_data(options)
         else:
             self._track_at_once_data(options)

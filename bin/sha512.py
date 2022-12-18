@@ -9,6 +9,7 @@ import hashlib
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -96,31 +97,30 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
                     argv.append(arg)
             sys.argv = argv
 
-    def _calc(self, options: Options, files: List[str]) -> None:
-        for file in files:
-            if os.path.isdir(file):
-                if not os.path.islink(file) and options.get_recursive_flag():
+    def _calc(self, options: Options, paths: List[Path]) -> None:
+        for path in paths:
+            if path.is_dir():
+                if not path.is_symlink() and options.get_recursive_flag():
                     try:
-                        self._calc(options, sorted(
-                            [os.path.join(file, x) for x in os.listdir(file)]))
+                        self._calc(options, sorted(path.iterdir()))
                     except PermissionError as exception:
                         raise SystemExit(
-                            f'{sys.argv[0]}: Cannot open "{file}" directory.',
+                            f'{sys.argv[0]}: Cannot open "{path}" directory.',
                         ) from exception
-            elif os.path.isfile(file):
-                sha512sum = self._sha512sum(file)
+            elif path.is_file():
+                sha512sum = self._sha512sum(path)
                 if not sha512sum:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot read "{file}" file.',
+                        f'{sys.argv[0]}: Cannot read "{path}" file.',
                     )
-                print(sha512sum, file, sep='  ')
+                print(sha512sum, path, sep='  ')
 
     def _check(self, files: List[str]) -> None:
         found = []
@@ -128,7 +128,7 @@ class Main:
         nfail = 0
         nmiss = 0
         for sha512file in files:
-            if not os.path.isfile(sha512file):
+            if not Path(sha512file).is_file():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find '
                     f'"{sha512file}" sha512sum file.',
@@ -145,7 +145,7 @@ class Main:
                         if len(sha512sum) == 32 and file:
                             found.append(file)
                             nfiles += 1
-                            test = self._sha512sum(file)
+                            test = self._sha512sum(Path(file))
                             if not test:
                                 print(file, '# FAILED open or read')
                                 nmiss += 1
@@ -166,9 +166,9 @@ class Main:
             )
 
     @staticmethod
-    def _sha512sum(file: str) -> str:
+    def _sha512sum(path: Path) -> str:
         try:
-            with open(file, 'rb') as ifile:
+            with path.open('rb') as ifile:
                 sha512 = hashlib.sha512()
                 while True:
                     chunk = ifile.read(131072)
@@ -177,7 +177,7 @@ class Main:
                     sha512.update(chunk)
         except (OSError, TypeError) as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" file.',
+                f'{sys.argv[0]}: Cannot read "{path}" file.',
             ) from exception
         return sha512.hexdigest()
 
@@ -190,7 +190,7 @@ class Main:
         if options.get_check_flag():
             self._check(options.get_files())
         else:
-            self._calc(options, options.get_files())
+            self._calc(options, [Path(x) for x in options.get_files()])
 
         return 0
 

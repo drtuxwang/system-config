@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import Generator, List
 
 import jsbeautifier  # type: ignore
@@ -73,7 +74,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -81,32 +82,32 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _extract(file: str) -> Generator[str, None, None]:
+    def _extract(path: Path) -> Generator[str, None, None]:
         lines = []
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     lines.append(line.strip().replace('&gt;', '>').replace(
                         '&lt;', '<').replace('SCRIPT>', 'script>'))
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read {file} HTML file.',
+                f'{sys.argv[0]}: Cannot read {path} HTML file.',
             ) from exception
 
         for match in ' '.join(lines).split('<script>')[1:]:
             yield match.split('</script>')[0]
 
     @staticmethod
-    def _write(file: str, script: str) -> None:
+    def _write(path: Path, script: str) -> None:
         lines = jsbeautifier.beautify(script).splitlines()
-        print(f'Writing "{file}" with {len(lines)} lines...')
+        print(f'Writing "{path}" with {len(lines)} lines...')
         try:
-            with open(file, 'w', encoding='utf-8') as ofile:
+            with path.open('w', encoding='utf-8') as ofile:
                 for line in lines:
                     print(line, file=ofile)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot write "{file}" configuration file.',
+                f'{sys.argv[0]}: Cannot write "{path}" configuration file.',
             ) from exception
 
     @classmethod
@@ -116,16 +117,16 @@ class Main:
         """
         options = Options()
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" HTML file.',
+                    f'{sys.argv[0]}: Cannot find "{path}" HTML file.',
                 )
             number = 0
-            for script in cls._extract(file):
+            for script in cls._extract(path):
                 number += 1
-                jsfile = f"{file.rsplit('.', 1)[0]}-{number:02d}.js"
-                cls._write(jsfile, script)
+                jsfile = f"{str(path).rsplit('.', 1)[0]}-{number:02d}.js"
+                cls._write(Path(jsfile), script)
 
         return 0
 

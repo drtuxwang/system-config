@@ -11,6 +11,7 @@ import signal
 import socket
 import socketserver
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -63,7 +64,7 @@ class Options:
         self._parse_args(args[1:])
 
         directory = self._args.directory[0]
-        if not os.path.isdir(directory):
+        if not Path(directory).is_dir():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find "{directory}" directory.',
             )
@@ -110,7 +111,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

@@ -9,6 +9,7 @@ import os
 import re
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -89,8 +90,8 @@ class Options:
                 "CD/DVD device speed.",
             )
         if (
-                self._args.device[0] != 'scan' and
-                not os.path.exists(self._args.device[0])
+            self._args.device[0] != 'scan' and
+            not Path(self._args.device[0]).exists()
         ):
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find '
@@ -123,12 +124,11 @@ class Cdrom:
         Detect devices
         """
         for directory in glob.glob('/sys/block/sr*/device'):
-            device = f'/dev/{os.path.basename(os.path.dirname(directory))}'
+            device = f'/dev/{Path(directory).parent.name}'
             model = ''
             for file in ('vendor', 'model'):
                 try:
-                    with open(
-                        os.path.join(directory, file),
+                    with Path(directory, file).open(
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
@@ -164,7 +164,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -229,7 +229,7 @@ class Main:
                     f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                     f'received from "{task.get_file()}".',
                 )
-            if os.path.isfile(wavfile):
+            if Path(wavfile).is_file():
                 self._pregap(wavfile)
             if not self._hasprob(logfile):
                 os.remove(warnfile)
@@ -281,7 +281,7 @@ class Main:
     @staticmethod
     def _pregap(wavfile: str) -> None:
         # 1s = 176400 bytes
-        size = os.path.getsize(wavfile)
+        size = Path(wavfile).stat().st_size
         with open(wavfile, 'rb+') as ifile:
             ifile.seek(size - 2097152)
             data = ifile.read(2097152)

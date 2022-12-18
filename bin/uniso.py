@@ -9,6 +9,7 @@ import logging
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -94,7 +95,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -159,7 +160,7 @@ class Main:
         """
         options = Options()
 
-        os.umask(int('022', 8))
+        os.umask(0o022)
         view_flag = options.get_view_flag()
 
         if view_flag:
@@ -177,7 +178,7 @@ class Main:
             )
 
         for image in options.get_images():
-            if not os.path.isfile(image):
+            if not Path(image).is_file():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find "{image}" ISO9660 file.',
                 )
@@ -196,7 +197,7 @@ class Main:
                         f'{sys.argv[0]}: Error code {task.get_exitcode()}'
                         f' received from "{task.get_file()}".',
                     )
-                self._isosize(image, os.path.getsize(image))
+                self._isosize(image, Path(image).stat().st_size)
 
         return 0
 

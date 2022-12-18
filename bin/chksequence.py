@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List, Tuple
 
 
@@ -71,7 +72,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -88,9 +89,9 @@ class Main:
     @classmethod
     def _check_sequences(cls, files: List[str]) -> None:
         sequences: dict = {}
-        for file in files:
-            if '_' in file and os.path.isfile(file):
-                name, ext = os.path.splitext(file)
+        for path in [Path(x) for x in files]:
+            if '_' in str(path) and path.is_file():
+                name, ext = os.path.splitext(str(path))
                 name, number = name.rsplit('_', 1)
                 seq_name = (name, ext)
                 sequences[seq_name] = sequences.get(seq_name, set())
@@ -98,8 +99,8 @@ class Main:
                     sequences[seq_name].add(int(number))
                 except ValueError:
                     pass
-            elif os.path.isdir(file):
-                cls._check_sequences(glob.glob(os.path.join(file, '*')))
+            elif path.is_dir():
+                cls._check_sequences([str(x) for x in path.glob('*')])
 
         for seq_name, numbers in sorted(sequences.items()):
             if len(numbers) > 1:

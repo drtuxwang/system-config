@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import network_mod
@@ -73,8 +74,8 @@ class Options:
 
     @staticmethod
     def _get_command(command: str, args: List[str]) -> network_mod.Sandbox:
-        if os.path.isfile(os.path.abspath(command)):
-            return network_mod.SandboxFile(os.path.abspath(command))
+        if Path(command).is_file():
+            return network_mod.SandboxFile(Path(command).resolve())
 
         return network_mod.Sandbox(command, args=args, errors='stop')
 
@@ -92,9 +93,9 @@ class Options:
         if self._args.allow_mounts:
             configs = ['/']
         else:
-            home = os.getenv('HOME', '/')
+            home = str(Path.home())
             configs = [
-                os.path.join(home, x) + ':ro'
+                f'{Path(home, x)}:ro'
                 for x in (
                     '.bashrc',
                     '.config/ibus',
@@ -102,15 +103,15 @@ class Options:
                     '.tmux.conf',
                     '.vimrc',
                 )
-                if os.path.exists(os.path.join(home, x))
+                if Path(home, x).exists()
             ]
 
             work_dir = os.environ['PWD']
-            if work_dir == os.environ['HOME']:
-                desktop = os.path.join(work_dir, 'Desktop')
-                if os.path.isdir(desktop):
+            if work_dir == home:
+                desktop = Path(work_dir, 'Desktop')
+                if desktop.is_dir():
                     os.chdir(desktop)
-                    work_dir = desktop
+                    work_dir = str(desktop)
             configs.append(work_dir)
 
         if self._args.allow_net:
@@ -142,7 +143,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

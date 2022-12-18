@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import subtask_mod
@@ -36,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -45,11 +46,10 @@ class Main:
 
     @staticmethod
     def _config() -> None:
-        home = os.environ.get('HOME', '')
-        file = os.path.join(home, '.gnome2', 'evince', 'print-settings')
-        if os.path.isfile(file):
+        path = Path(Path.home(), '.gnome2', 'evince', 'print-settings')
+        if path.is_file():
             try:
-                os.remove(file)
+                path.unlink()
             except OSError:
                 pass
 

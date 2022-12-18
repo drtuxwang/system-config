@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import file_mod
@@ -96,28 +97,32 @@ class Main:
     @staticmethod
     def _check_files(distribution: str) -> dict:
         try:
-            files = sorted(glob.glob(os.path.join(distribution, '*.deb')))
+            paths = sorted(Path(distribution).glob('*.deb'))
         except OSError:
             return None
         packages: dict = {}
-        for file in files:
-            name = os.path.basename(file).split('_')[0]
-            file_stat = file_mod.FileStat(file)
-            version = os.path.basename(file).split('_')[1]
+        for path in paths:
+            name = path.name.split('_')[0]
+            file_stat = file_mod.FileStat(path)
+            version = path.name.split('_')[1]
             if name in packages:
                 if file_stat.get_time() > packages[name].get_time():
-                    print("rm", packages[name].get_file())
-                    print("# ", file)
+                    print(f"rm {packages[name].get_file()}")
+                    print(f"#  {path}")
                     packages[name] = Package(
-                        file,
+                        str(path),
                         file_stat.get_time(),
                         version
                     )
                 else:
-                    print("rm", file)
-                    print("# ", packages[name].get_file())
+                    print(f"rm {path}")
+                    print(f"#  {packages[name].get_file()}")
             else:
-                packages[name] = Package(file, file_stat.get_time(), version)
+                packages[name] = Package(
+                    str(path),
+                    file_stat.get_time(),
+                    version,
+                )
         return packages
 
     @staticmethod
@@ -134,10 +139,11 @@ class Main:
                             f'{sys.argv[0]}: Cannot read corrupt '
                             f'"{file}" package ".debs" list file.',
                         ) from exception
-                    packages[name] = Package(os.path.join(
-                        distribution,
-                        f'{name}_{version}_*.deb',
-                    ), -1, version)
+                    packages[name] = Package(
+                        f'{distribution}/{name}_{version}_*.deb',
+                        -1,
+                        version,
+                    )
         except OSError:
             pass
 
@@ -153,9 +159,8 @@ class Main:
                             f'"{file}" package ".debs" list file.',
                         ) from exception
                     if name in packages:
-                        if packages[name].get_file() == os.path.join(
-                                distribution,
-                                f'{name}_{version}_*.deb',
+                        if packages[name].get_file() == str(
+                            Path(distribution, f'{name}_{version}_*.deb')
                         ):
                             del packages[name]
         except OSError:
@@ -216,7 +221,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -231,9 +236,10 @@ class Main:
 
         for distribution in options.get_distributions():
             packages_files = self._check_files(distribution)
-            if packages_files and os.path.isfile(distribution + '.debs'):
+            if packages_files and Path(f'{distribution}.debs').is_file():
                 packages_allow = self._read_distribution_allow(
-                    distribution + '.debs:allow')
+                    f'{distribution}.debs:allow'
+                )
                 packages_used = self._check_used(distribution)
                 self._compare(
                     packages_files,

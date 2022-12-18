@@ -19,9 +19,10 @@ import subprocess
 import sys
 import threading
 import time
-from typing import Any, Generator, List, Tuple, Union
 import urllib.request
 import urllib.error
+from pathlib import Path
+from typing import Any, Generator, List, Tuple, Union
 
 import command_mod
 import file_mod
@@ -31,8 +32,8 @@ import subtask_mod
 if os.name == 'nt':
     import winreg  # pylint: disable=import-error
 
-RELEASE = '6.4.2'
-VERSION = 20221119
+RELEASE = '6.5.0'
+VERSION = 20221218
 
 # pylint: disable=bad-option-value, useless-option-value
 # pylint: disable=too-many-lines
@@ -597,11 +598,11 @@ class OperatingSystem:
         return info
 
     @staticmethod
-    def _read_file(*paths: str) -> List[str]:
-        file = os.path.join(*paths)
+    def _read_file(*paths: Union[str, Path]) -> List[str]:
+        path = Path(*paths)
         lines = []
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     lines.append(line.rstrip('\r\n'))
         except OSError:
@@ -862,7 +863,7 @@ class LinuxSystem(PosixSystem):
 
                 device = (
                     f"/dev/snd/pcmC{card}D"
-                    f"{os.path.dirname(file).split('pcm')[-1]}"
+                    f"{str(Path(file).parent).rsplit('pcm', 1)[-1]}"
                 )
                 if device.endswith('p'):
                     comment = 'SPK'
@@ -885,7 +886,7 @@ class LinuxSystem(PosixSystem):
                         Writer.output(
                             name='CD device',
                             device='/dev/'
-                            f'{os.path.basename(directory)}',
+                            f'{Path(directory).name}',
                             value=model,
                         )
                     break
@@ -893,10 +894,10 @@ class LinuxSystem(PosixSystem):
                 pass
 
     @classmethod
-    def _detect_cd_sys_scsi(cls) -> None:
-        for file in sorted(glob.glob('/sys/block/sr*/device')):  # New kernels
+    def _detect_cd_sys_scsi(cls) -> None:  # New kernels
+        for path in sorted(Path('/sys/block').glob('sr*/device')):
             try:
-                identity = os.path.basename(os.readlink(file))
+                identity = path.readlink().name  # pylint: disable=no-member
             except OSError:
                 continue
             try:
@@ -914,7 +915,7 @@ class LinuxSystem(PosixSystem):
                 )
             except IndexError:
                 model = '???'
-            device = f'/dev/{os.path.basename(os.path.dirname(file))}'
+            device = f'/dev/{path.parent.name}'
             Writer.output(name='CD device', device=device, value=model)
 
     @classmethod
@@ -926,7 +927,7 @@ class LinuxSystem(PosixSystem):
             if 'Vendor: ' in line and 'Model: ' in line:
                 model = isjunk.sub('', line.rstrip('\r\n'))
             elif 'Type:' in line and 'CD-ROM' in line:
-                if os.path.exists(f'/dev/sr{unit}'):
+                if Path(f'/dev/sr{unit}').exists():
                     device = f'/dev/sr{unit}'
                 else:
                     device = f'/dev/scd{unit}'
@@ -938,7 +939,7 @@ class LinuxSystem(PosixSystem):
     def _detect_cd(cls) -> None:
         cls._detect_cd_proc_ide()
 
-        if os.path.isdir('/sys/bus/scsi/devices'):
+        if Path('/sys/bus/scsi/devices').is_dir():
             cls._detect_cd_sys_scsi()
         else:
             cls._detect_cd_proc_scsi()
@@ -1019,20 +1020,20 @@ class LinuxSystem(PosixSystem):
     def _detect_disk_ide(cls, info: dict, directory: str) -> None:
         for line in cls._read_file(directory, 'driver'):
             if line.startswith('ide-disk '):
-                file = os.path.join(directory, 'model')
-                model = cls._read_file(file)[0]
-                hdx = os.path.basename(directory)
+                path = Path(directory, 'model')
+                model = cls._read_file(path)[0]
+                hdx = Path(directory).name
                 for partition in info['partitions']:
                     cls._detect_ide_partition(info, model, hdx, partition)
 
     @classmethod
     def _get_disk_sys_block_model(cls, file: str) -> str:
         try:
-            identity = os.path.basename(os.readlink(file))
+            identity = Path(os.readlink(file)).name
         except OSError:
             return None
 
-        if os.path.isdir(f'/sys/bus/scsi/devices/{identity}'):
+        if Path(f'/sys/bus/scsi/devices/{identity}').is_dir():
             lines = (
                 cls._read_file(
                     '/sys/bus/scsi/devices',
@@ -1046,7 +1047,7 @@ class LinuxSystem(PosixSystem):
                 )
             )
             model = ' '.join([x.strip() for x in lines])
-        elif os.path.isdir(f'/sys/class/nvme/{identity}'):
+        elif Path(f'/sys/class/nvme/{identity}').is_dir():
             lines = cls._read_file(f"/sys/class/nvme/{identity}/model")
             model = ' '.join([x.strip() for x in lines])
         else:
@@ -1058,7 +1059,7 @@ class LinuxSystem(PosixSystem):
     def _detect_disk_sys_block(cls, info: dict, file: str) -> None:
         model = cls._get_disk_sys_block_model(file)
 
-        dev = os.path.basename(os.path.dirname(file))
+        dev = Path(file).parent.name
         for partition in info['partitions']:
             if partition.endswith(dev) or dev + ' ' in partition:
                 try:
@@ -1111,7 +1112,7 @@ class LinuxSystem(PosixSystem):
     @staticmethod
     def _detect_disk_proc_scsi_part(info: dict, unit: int, model: str) -> None:
         sdx = f'sd{chr(97)}{unit}'
-        if os.path.exists(f'/dev/{sdx}'):
+        if Path(f'/dev/{sdx}').exists():
             for partition in info['partitions']:
                 if partition.endswith(sdx) or '{sdx} ' in partition:
                     try:
@@ -1164,16 +1165,17 @@ class LinuxSystem(PosixSystem):
     @classmethod
     def _detect_mapped_disks(cls, info: dict) -> None:
         for directory in glob.glob('/sys/class/block/dm-*'):
-            file = os.path.join(directory, 'dm/name')
+            path = Path(directory, 'dm/name')
             try:
-                device = f'/dev/mapper/{cls._read_file(file)[0].strip()}'
+                device = f'/dev/mapper/{cls._read_file(path)[0].strip()}'
             except IndexError:
                 device = '???'
             mount_info = info['mounts'].get(device, ())
 
-            slaves = '+'.join([os.path.basename(file) for file in glob.glob(
-                os.path.join(directory, 'slaves', '*')
-            )])
+            slaves = '+'.join([
+                Path(path).name
+                for file in Path(directory, 'slaves').glob('*')
+            ])
 
             try:
                 line = cls._read_file(directory, 'size')[0]
@@ -1187,7 +1189,7 @@ class LinuxSystem(PosixSystem):
             except IndexError:
                 slaves = f'???:{slaves}'
 
-            if f'/dev/{os.path.basename(directory)}' in info['swaps']:
+            if f'/dev/{Path(directory).name}' in info['swaps']:
                 Writer.output(
                     name='Disk device',
                     device=device,
@@ -1255,22 +1257,22 @@ class LinuxSystem(PosixSystem):
         cls._detect_remote_disks(info)
 
     def _detect_graphics(self) -> None:
-        if os.path.isdir('/dev/dri'):
+        if Path('/dev/dri').is_dir():
             gpus = glob.glob('/sys/bus/pci/devices/*/drm/card*')
         else:
             gpus = glob.glob('/sys/bus/pci/devices/*/graphics/fb*')
         if gpus:
             for gpu in sorted(gpus):
-                if os.path.isdir('/dev/dri'):
-                    device = os.path.join('/dev/dri', os.path.basename(gpu))
+                if Path('/dev/dri').is_dir():
+                    device = Path('/dev/dri', Path(gpu).name)
                 else:
-                    device = os.path.join('/dev', os.path.basename(gpu))
-                if os.path.exists(device):
+                    device = Path('/dev', Path(gpu).name)
+                if device.exists():
                     pci_id = gpu.split('/')[-3]
                     model, comment = self._match_pci(pci_id)
                     Writer.output(
                         name='Graphics device',
-                        device=device,
+                        device=str(device),
                         value=model,
                         comment=comment,
                     )
@@ -1302,16 +1304,16 @@ class LinuxSystem(PosixSystem):
                 event = line.split('event')[-1].split()[0]
                 info[f'/dev/input/event{event}'] = model
         devices = [
-            os.path.join('/dev/input', os.path.basename(os.readlink(file)))
-            for file in glob.glob('/dev/input/by-path/*')
-            if 'event' in file
+            Path('/dev/input', x.readlink().name)  # pylint: disable=no-member
+            for x in Path('/dev/input/by-path').glob('*')
+            if 'event' in str(x)
         ]
         for device in sorted(devices):
-            if os.path.exists(device):
+            if device.exists():
                 Writer.output(
                     name='Input device',
-                    device=device,
-                    value=info[device],
+                    device=str(device),
+                    value=info[str(device)],
                 )
 
     def _detect_network(self) -> None:
@@ -1323,7 +1325,7 @@ class LinuxSystem(PosixSystem):
             )
         ]
         for network in sorted(networks):
-            device = f'net/{os.path.basename(network)}'
+            device = f'net/{Path(network).name}'
             pci_id = network.split('/')[-3]
             model, comment = self._match_pci(pci_id)
             model = model.replace(
@@ -1339,7 +1341,7 @@ class LinuxSystem(PosixSystem):
     @classmethod
     def _detect_video(cls) -> None:
         for directory in sorted(glob.glob('/sys/class/video4linux/*')):
-            device = os.path.basename(directory)
+            device = Path(directory).name
             try:
                 Writer.output(
                     name='Video device',
@@ -1435,12 +1437,12 @@ class LinuxSystem(PosixSystem):
     def _scan_etc_release(cls) -> dict:
         info = {}
 
-        if os.path.isfile('/etc/redhat-release'):
+        if Path('/etc/redhat-release').is_file():
             try:
                 info['OS Name'] = cls._read_file('/etc/redhat-release')[0]
             except IndexError:
                 pass
-        elif os.path.isfile('/etc/SuSE-release'):
+        elif Path('/etc/SuSE-release').is_file():
             try:
                 lines = cls._read_file('/etc/SuSE-release')
                 info['OS Name'] = lines[0]
@@ -1453,7 +1455,7 @@ class LinuxSystem(PosixSystem):
                             pass
             except OSError:
                 info['OS Name'] = 'Unknown'
-        elif os.path.isfile('/etc/alpine-release'):
+        elif Path('/etc/alpine-release').is_file():
             try:
                 name = cls._read_file('/etc/alpine-release')[0]
                 info['OS Name'] = f'Alpine {name}'
@@ -1466,7 +1468,7 @@ class LinuxSystem(PosixSystem):
     def _scan_etc_lsb_release(cls) -> dict:
         info = {}
 
-        if os.path.isfile('/etc/lsb-release'):
+        if Path('/etc/lsb-release').is_file():
             lines = cls._read_file('/etc/lsb-release')
             if lines and lines[-1].startswith('DISTRIB_DESCRIPTION='):
                 info['OS Name'] = lines[-1].split('=')[1].replace('"', '')
@@ -1485,19 +1487,19 @@ class LinuxSystem(PosixSystem):
     def _scan_etc_version(cls) -> dict:
         info = {}
 
-        if os.path.isfile('/etc/kanotix-version'):
+        if Path('/etc/kanotix-version').is_file():
             try:
                 name = cls._read_file('/etc/kanotix-version')[0].split()[1]
                 info['OS Name'] = f'Kanotix {name}'
             except IndexError:
                 pass
-        elif os.path.isfile('/etc/knoppix-version'):
+        elif Path('/etc/knoppix-version').is_file():
             try:
                 name = cls._read_file('/etc/knoppix-version')[0].split()[0]
                 info['OS Name'] = f'Knoppix {name}'
             except IndexError:
                 pass
-        elif os.path.isfile('/etc/debian_version'):
+        elif Path('/etc/debian_version').is_file():
             try:
                 line = cls._read_file('/etc/debian_version')[0]
                 name = line.split('=')[-1].replace("'", '')
@@ -1507,7 +1509,7 @@ class LinuxSystem(PosixSystem):
             file_stat = file_mod.FileStat('/var/lib/dpkg/info')
             if file_stat.get_time():
                 info['OS Patch'] = file_stat.get_date_local()
-        elif os.path.isfile('/etc/DISTRO_SPECS'):
+        elif Path('/etc/DISTRO_SPECS').is_file():
             try:
                 identity = None
                 for line in cls._read_file('/etc/DISTRO_SPECS'):
@@ -1764,7 +1766,7 @@ class LinuxSystem(PosixSystem):
     ) -> int:
         try:
             file = '/sys/devices/system/cpu/cpu0/topology/thread_siblings_list'
-            if os.path.isfile(file):
+            if Path(file).is_file():
                 cpu_cores = int(
                     threads/(int(cls._read_file(file)[0].split('-')[-1]) + 1),
                 )
@@ -1860,11 +1862,11 @@ class LinuxSystem(PosixSystem):
         self._scan_cache(info, lines)
 
         directory = '/sys/devices/system/cpu/vulnerabilities'
-        if os.path.isdir(directory):
-            for name in sorted(os.listdir(directory)):
-                status = ' '.join(self._read_file(directory, name))
+        if Path(directory).is_dir():
+            for path in sorted(Path(directory).iterdir()):
+                status = ' '.join(self._read_file(directory, str(path)))
                 if 'Mitigation' in status or 'Vulnerable' in status:
-                    info['CPU Vulnerabilities'].append((name, status))
+                    info['CPU Vulnerabilities'].append((str(path), status))
 
         return info
 
@@ -1875,7 +1877,7 @@ class LinuxSystem(PosixSystem):
         info = super().get_sys_info()
 
         dmi = '/sys/devices/virtual/dmi/id'
-        if os.path.isdir(dmi):
+        if Path(dmi).is_dir():
             info['System Board'] = ' '.join(self._read_file(dmi, 'board_name'))
             info['System Board X'] = ' '.join(
                 self._read_file(dmi, 'board_vendor'),
@@ -1947,7 +1949,7 @@ class LinuxSystem(PosixSystem):
         }
         name = None
 
-        if os.path.isdir('/proc/xen'):
+        if Path('/proc/xen').is_dir():
             name = 'Xen'
         elif not name:
             name = self._check_virtual_machine(
@@ -2143,7 +2145,7 @@ class WindowsSystem(OperatingSystem):
     def __init__(self) -> None:
         pathextra = []
         if 'WINDIR' in os.environ:
-            pathextra.append(os.path.join(os.environ['WINDIR'], 'system32'))
+            pathextra.append(Path(os.environ['WINDIR'], 'system32'))
         # Except for WIndows XP Home
         self._systeminfo = command_mod.Command(
             'systeminfo',
@@ -2156,7 +2158,7 @@ class WindowsSystem(OperatingSystem):
     def _get_ipconfig() -> command_mod.Command:
         pathextra = []
         if 'WINDIR' in os.environ:
-            pathextra.append(os.path.join(os.environ['WINDIR'], 'system32'))
+            pathextra.append(Path(os.environ['WINDIR'], 'system32'))
         command = command_mod.Command(
             'ipconfig',
             pathextra=pathextra,
@@ -2347,8 +2349,8 @@ class Writer:
         if 'device' in kwargs and kwargs['device']:
             device = kwargs['device']
             if (
-                    not device.startswith(('/dev/', 'net')) and
-                    not os.path.exists(device)
+                not device.startswith(('/dev/', 'net')) and
+                not Path(device).exists()
             ):
                 return
             line += f" {device:12s} {kwargs['value']}"

@@ -8,6 +8,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import file_mod
@@ -38,7 +39,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -46,15 +47,15 @@ class Main:
             sys.argv = argv
 
         # Send ".m2" to tmpfs
-        tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache', 'm2'))
-        directory = os.path.join(os.environ.get('HOME'), '.m2')
-        if not os.path.islink(directory):
+        tmpdir_path = Path(file_mod.FileUtil.tmpdir(Path('.cache', 'm2')))
+        path = Path(Path.home(), '.m2')
+        if not path.is_symlink():
             try:
-                shutil.rmtree(directory)
+                shutil.rmtree(path)
             except OSError:
                 pass
             try:
-                os.symlink(tmpdir, directory)
+                tmpdir_path.symlink_to(path)
             except OSError:
                 pass
 
@@ -63,7 +64,7 @@ class Main:
         """
         Start program
         """
-        mvn = command_mod.Command(os.path.join('bin', 'mvn'), errors='stop')
+        mvn = command_mod.Command(Path('bin', 'mvn'), errors='stop')
         mvn.extend_args(sys.argv[1:])
 
         subtask_mod.Exec(mvn.get_cmdline()).run()

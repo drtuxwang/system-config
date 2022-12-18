@@ -12,11 +12,12 @@ import signal
 import subprocess
 import sys
 import types
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Union
 
 
-RELEASE = '2.2.10'
-VERSION = 20221119
+RELEASE = '2.3.0'
+VERSION = 20221218
 
 BUFFER_SIZE = 131072
 
@@ -26,12 +27,12 @@ class Task:
     This class handles running sub process interactively.
     """
 
-    def __init__(self, cmdline: List[str]) -> None:
+    def __init__(self, cmdline: list) -> None:
         """
         cmdline = Command line as a list
         """
-        self._file = cmdline[0]
-        self._cmdline = cmdline
+        self._file = str(cmdline[0])
+        self._cmdline = [str(x) for x in cmdline]
         if os.name == 'nt':
             if '|' in cmdline:
                 raise PipeNotSupportedError('Windows does not support pipes.')
@@ -284,24 +285,36 @@ class Task:
         stdin = List of str for stdin input
         """
         info = self._parse_keys((
-            'directory', 'env', 'error2output', 'pattern',
-            'replace', 'stdin'), **kwargs)
+            'directory',
+            'env',
+            'error2output',
+            'pattern',
+            'replace',
+            'stdin',
+        ), **kwargs)
 
         if not sys.stdout.isatty():
             sys.stdout.flush()
         if not sys.stderr.isatty():
             sys.stderr.flush()
         if info['directory']:
-            pwd = os.getcwd()
+            pwd = Path.cwd()
             os.chdir(info['directory'])
         try:
-            if (info['error2output'] or info['pattern'] or
-                    info['replace'] or info['stdin']):
+            if (
+                info['error2output'] or
+                info['pattern'] or
+                info['replace'] or
+                info['stdin']
+            ):
                 self._status['exitcode'] = self._interactive_child_run(
-                    self._cmdline, info)
+                    self._cmdline, info
+                )
             else:
                 self._status['exitcode'] = self._interactive_run(
-                    self._cmdline, info)
+                    self._cmdline,
+                    info,
+                )
         except OSError as exception:
             raise ExecutableCallError(
                 f'Error in calling "{self._file}" program.',
@@ -378,13 +391,13 @@ class Batch(Task):
     """
 
     @staticmethod
-    def _write_file(child: subprocess.Popen, file: str, append: bool) -> None:
+    def _write_file(child: subprocess.Popen, path: Path, append: bool) -> None:
         if append:
             mode = 'ab'
         else:
             mode = 'wb'
         try:
-            with open(file, mode) as ofile:
+            with path.open(mode) as ofile:
                 while True:
                     chunk = child.stdout.read(4096)
                     if not chunk:
@@ -395,10 +408,10 @@ class Batch(Task):
         except OSError as exception:
             if append:
                 raise OutputWriteError(
-                    f'Cannot append to "{file}" output file.',
+                    f'Cannot append to "{path}" output file.',
                 ) from exception
             raise OutputWriteError(
-                f'Cannot create "{file}" output file.',
+                f'Cannot create "{path}" output file.',
             ) from exception
 
     def _batch_run(self, cmdline: List[str], info: dict) -> int:
@@ -409,7 +422,7 @@ class Batch(Task):
         ismatch = re.compile(info['pattern'])
         file = info['file']
         if file:
-            self._write_file(child, info['file'], info['append'])
+            self._write_file(child, Path(file), info['append'])
         else:
             while True:
                 try:
@@ -450,16 +463,20 @@ class Batch(Task):
         self._status['output'] = []
         self._status['error'] = []
         info = self._parse_keys((
-            'append', 'directory', 'env', 'error2output',
-            'file', 'pattern', 'stdin'
+            'append',
+            'directory',
+            'env',
+            'error2output',
+            'file',
+            'pattern',
+            'stdin',
         ), **kwargs)
 
         if info['directory']:
             pwd = os.getcwd()
             os.chdir(info['directory'])
         try:
-            self._status['exitcode'] = self._batch_run(
-                self._cmdline, info)
+            self._status['exitcode'] = self._batch_run(self._cmdline, info)
         except OSError as exception:
             raise ExecutableCallError(
                 f'Error in calling "{self._file}" program.',
@@ -486,7 +503,7 @@ class Child(Task):
         info = self._parse_keys(('directory', 'env', 'error2output'), **kwargs)
 
         if info['directory']:
-            pwd = os.getcwd()
+            pwd = Path.cwd()
             os.chdir(info['directory'])
         try:
             return self._start_child(self._cmdline, info)
@@ -505,7 +522,7 @@ class Daemon(Task):
 
     @staticmethod
     def _start_daemon(cmdline: List[str], info: dict) -> None:
-        os.environ['_SUBTASK_MOD_DAEMON_FILE'] = info['file']
+        os.environ['_SUBTASK_MOD_DAEMON_FILE'] = str(info['file'])
 
         if '|' in cmdline:
             subprocess.Popen(  # pylint: disable=consider-using-with
@@ -534,7 +551,7 @@ class Daemon(Task):
         info = self._parse_keys(('directory', 'env', 'file'), **kwargs)
 
         if info['directory']:
-            pwd = os.getcwd()
+            pwd = Path.cwd()
             os.chdir(info['directory'])
         try:
             self._start_daemon(self._cmdline, info)

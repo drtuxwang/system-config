@@ -2,17 +2,18 @@
 """
 Python X-windows desktop module
 
-Copyright GPL v2: 2013-2021 By Dr Colin Kong
+Copyright GPL v2: 2013-2022 By Dr Colin Kong
 """
 
 import functools
 import getpass
 import os
 import subprocess
-from typing import List, Optional
+from pathlib import Path
+from typing import List
 
-RELEASE = '2.6.0'
-VERSION = 20220317
+RELEASE = '2.7.0'
+VERSION = 20221218
 
 
 class _System:
@@ -31,14 +32,16 @@ class _System:
         return False
 
     @staticmethod
-    def _locate_program(program: str) -> Optional[str]:
-        for directory in os.environ['PATH'].split(os.pathsep):
-            file = os.path.join(directory, program)
-            if os.path.isfile(file):
+    def _locate_program(program: str) -> str:
+        for path in [
+            Path(x, program)
+            for x in os.environ['PATH'].split(os.pathsep)
+        ]:
+            if path.is_file():
                 break
         else:
             return None
-        return file
+        return str(path)
 
     @classmethod
     def run_program(cls, command: List[str]) -> List[str]:
@@ -159,17 +162,13 @@ class Desktop:
         if 'DISPLAY' in os.environ:
             command = ['ps', '-o', 'args', '-u', getpass.getuser()]
             lines = _System.run_program(command)
-            names = set(os.path.basename(line.split()[0]) for line in lines)
+            names = set(Path(line.split()[0]).name for line in lines)
 
             if 'xfce4-session' in names:
                 return 'xfce'
-            if (
-                    set([
-                        'gnome-panel',
-                        'gnome-session',
-                        'gnome-session-binary',
-                    ]) & names
-            ):
+            if (set(
+                ['gnome-panel', 'gnome-session', 'gnome-session-binary']
+            ) & names):
                 return 'gnome'
             if 'startkde' in names:
                 return 'kde'
@@ -193,8 +192,8 @@ class Desktop:
             ]
             for program, name in desktops:
                 for directory in os.environ['PATH'].split(os.pathsep):
-                    file = os.path.join(directory, program)
-                    if os.path.isfile(file):
+                    path = Path(directory, program)
+                    if path.is_file():
                         return name
 
         return 'Unknown'

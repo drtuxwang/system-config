@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -92,15 +93,15 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
                     argv.append(arg)
             sys.argv = argv
 
-    def _ocr(self, file: str, name: str) -> None:
-        task = subtask_mod.Task(self._tesseract.get_cmdline() + [file, name])
+    def _ocr(self, path: Path, name: str) -> None:
+        task = subtask_mod.Task(self._tesseract.get_cmdline() + [path, name])
         task.run(pattern='^Tesseract')
         if task.get_exitcode():
             raise SystemExit(
@@ -118,37 +119,37 @@ class Main:
         convert = options.get_convert()
 
         tmpdir = file_mod.FileUtil.tmpdir('.cache')
-        tmpfile = os.path.join(tmpdir, f'ocr.tmp{os.getpid()}')
+        tmp_path = Path(tmpdir, f'ocr.tmp{os.getpid()}')
 
         images_extensions = config_mod.Config().get('image_extensions')
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" image file.',
+                    f'{sys.argv[0]}: Cannot find "{path}" image file.',
                 )
-            root, ext = os.path.splitext(file.lower())
+            ext = path.suffix.lower()
             if ext in images_extensions:
-                print(f'Converting "{file}" to "{root}.txt"...')
+                print(f'Converting "{path}" to "{path.stem}.txt"...')
                 task = subtask_mod.Task(
-                    convert.get_cmdline() + [file, tmpfile])
+                    convert.get_cmdline() + [str(path), str(tmp_path)])
                 task.run()
                 if task.get_exitcode():
                     raise SystemExit(
                         f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                         f'received from "{task.get_file()}".',
                     )
-                self._ocr(tmpfile, root)
+                self._ocr(tmp_path, path.stem)
                 try:
-                    os.remove(tmpfile)
+                    tmp_path.unlink()
                 except OSError:
                     pass
             elif ext in ('tif', 'tiff'):
-                print(f'Converting "{file}" to "{root}.txt"...')
-                self._ocr(file, root)
+                print(f'Converting "{path}" to "{path.stem}.txt"...')
+                self._ocr(path, path.stem)
             else:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot OCR non image file "{file}".',
+                    f'{sys.argv[0]}: Cannot OCR non image file "{path}".',
                 )
 
         return 0

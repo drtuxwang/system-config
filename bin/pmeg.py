@@ -9,6 +9,7 @@ import math
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List, Tuple
 
 import command_mod
@@ -78,11 +79,11 @@ class Options:
                 f'positive number for megabytes.',
             )
 
-        for directory in self._args.directories:
-            if not os.path.isdir(directory):
+        for path in [Path(x) for x in self._args.directories]:
+            if not path.is_dir():
                 raise SystemExit(
                     f'{sys.argv[0]}: Image directory '
-                    f'"{directory}" does not exist.',
+                    f'"{path}" does not exist.',
                 )
 
 
@@ -110,20 +111,20 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
                     argv.append(arg)
             sys.argv = argv
 
-    def _imagesize(self, file: str) -> Tuple[int, int]:
-        self._convert.set_args(['-verbose', file, '/dev/null'])
+    def _imagesize(self, path: Path) -> Tuple[int, int]:
+        self._convert.set_args(['-verbose', path, '/dev/null'])
         task = subtask_mod.Batch(self._convert.get_cmdline())
         task.run(pattern='=>', error2output=True)
         if not task.has_output():
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" picture file.',
+                f'{sys.argv[0]}: Cannot read "{path}" picture file.',
             )
         if task.get_exitcode():
             raise SystemExit(
@@ -144,12 +145,12 @@ class Main:
         images_extensions = config_mod.Config().get('image_extensions')
 
         for directory in options.get_directories():
-            for file in sorted(glob.glob(os.path.join(directory, '*'))):
-                if os.path.splitext(file)[1].lower() in images_extensions:
-                    ix_size, iy_size = self._imagesize(file)
+            for path in sorted(Path(directory).glob('*')):
+                if path.suffix.lower() in images_extensions:
+                    ix_size, iy_size = self._imagesize(path)
                     imegs = ix_size * iy_size / 1000000
                     print(
-                        f"{file}: "
+                        f"{path}: "
                         f"{ix_size} x "
                         f"{iy_size} "
                         f"({imegs:4.2f})",
@@ -171,7 +172,8 @@ class Main:
                             f'{ox_size}x{oy_size}',
                             '-resize',
                             f'{ox_size}x{oy_size}!',
-                            file, file
+                            str(path),
+                            str(path),
                         ])
                         task = subtask_mod.Batch(self._convert.get_cmdline())
                         task.run()

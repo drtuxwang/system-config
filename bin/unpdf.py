@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -101,7 +102,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -117,12 +118,12 @@ class Main:
 
         command = options.get_gs()
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" PDF file.',
+                    f'{sys.argv[0]}: Cannot find "{path}" PDF file.',
                 )
-            prefix = os.path.basename(file).rsplit('.', 1)[0]
+            prefix = path.name.rsplit('.', 1)[0]
             print(f'Unpacking "{prefix}-page*.jpg" file...')
             task = subtask_mod.Task(command.get_cmdline() + [
                 f'-sOutputFile={prefix}-page%02d.jpg',
@@ -130,7 +131,7 @@ class Main:
                 'save',
                 'pop',
                 '-f',
-                file
+                str(path),
             ])
             task.run(pattern='Ghostscript|^Copyright|WARRANTY:|^Processing')
             if task.get_exitcode():

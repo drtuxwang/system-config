@@ -10,6 +10,7 @@ import re
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -48,7 +49,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -73,9 +74,9 @@ class Main:
         time_new = 0
         try:
             lines = []
-            if os.path.isfile('index.fsum'):
-                with open(
-                    'index.fsum',
+            path = Path('index.fsum')
+            if path.is_file():
+                with path.open(
                     encoding='utf-8',
                     errors='replace',
                 ) as ifile:
@@ -85,8 +86,9 @@ class Main:
                     return
 
             logger.info("Writing checksums: index.fsum")
-            with open(
-                'index.fsum.part',
+
+            path_new = Path('index.fsum.part')
+            with path_new.open(
                 'w',
                 encoding='utf-8',
                 newline='\n',
@@ -98,7 +100,7 @@ class Main:
                     )
                     print(line, file=ofile)
             os.utime('index.fsum.part', (time_new, time_new))
-            shutil.move('index.fsum.part', 'index.fsum')
+            path_new.replace(path)
         except OSError as exception:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "index.fsum" file.',
@@ -117,12 +119,12 @@ class Main:
         error = False
         for root, _, files in os.walk(directory):
             for file in files:
-                file_path = os.path.abspath(os.path.join(root, file))
+                file_path = Path(root, file).resolve()
                 if isbadfile.search(file):
                     print("Error: Found bad file:", file_path)
                     error = True
                 try:
-                    if os.path.getsize(file_path) == 0:
+                    if Path(file_path).stat().st_size == 0:
                         print("Error: Found zero size file:", file_path)
                         error = True
                 except OSError:
@@ -132,73 +134,72 @@ class Main:
             raise SystemExit(1)
 
     @staticmethod
-    def _create_directory(directory: str) -> None:
-        if not os.path.isdir(directory):
+    def _create_directory(path: Path) -> None:
+        if not path.is_dir():
             try:
-                os.mkdir(directory)
+                path.mkdir()
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{directory}" directory.',
+                    f'{sys.argv[0]}: Cannot create "{path}" directory.',
                 ) from exception
 
     @classmethod
-    def _set_time(cls, directory: str) -> None:
+    def _set_time(cls, directory_path: Path) -> None:
         """
         Fix directory and symbolic link modified times.
         """
-        files = [os.path.join(directory, x) for x in os.listdir(directory)]
-        for file in files:
-            if os.path.islink(file):
-                link_stat = file_mod.FileStat(file, follow_symlinks=False)
-                file_stat = file_mod.FileStat(file)
+        paths = list(directory_path.iterdir())
+        for path in paths:
+            if path.is_symlink():
+                link_stat = file_mod.FileStat(path, follow_symlinks=False)
+                file_stat = file_mod.FileStat(path)
                 file_time = file_stat.get_time()
                 if file_time != link_stat.get_time():
                     try:
                         os.utime(
-                            file,
+                            path,
                             (file_time, file_time),
                             follow_symlinks=False,
                         )
                     except NotImplementedError:
                         pass
-            elif os.path.isdir(file):
-                cls._set_time(file)
+            elif path.is_dir():
+                cls._set_time(path)
 
-        if files:
-            newest = file_mod.FileUtil.newest(files)
+        if paths:
+            newest = file_mod.FileUtil.newest([str(x) for x in paths])
             file_stat = file_mod.FileStat(newest)
             file_time = file_stat.get_time()
-            if file_time != file_mod.FileStat(directory).get_time():
-                os.utime(directory, (file_time, file_time))
+            if file_time != file_mod.FileStat(directory_path).get_time():
+                os.utime(directory_path, (file_time, file_time))
 
     @classmethod
     def _write_fsums(cls, lines: List[str]) -> None:
         fsums: dict = {}
         for line in lines:
             checksum, file = line.split('  ', 1)
-            directory = os.path.dirname(file)
-            if os.path.basename(directory) == '...':
-                directory = os.path.dirname(directory)
-                filename = os.path.basename(file)
-                if filename == 'fsum':
+            path = Path(file).parent
+            if path.name == '...':
+                path = path.parent
+                file = Path(file).name
+                if file == 'fsum':
                     continue
             else:
-                filename = f'../{os.path.basename(file)}'
-            if directory not in fsums:
-                fsums[directory] = []
-            fsums[directory].append(f'{checksum}  {filename}')
+                file = f'../{Path(file).name}'
+            if path not in fsums:
+                fsums[path] = []
+            fsums[path].append(f'{checksum}  {file}')
 
         for directory in sorted(fsums):
-            directory_3dot = os.path.join(directory, '...')
-            cls._create_directory(directory_3dot)
-            file = os.path.join(directory_3dot, 'fsum')
+            directory_path = Path(directory, '...')
+            cls._create_directory(directory_path)
+            path = Path(directory_path, 'fsum')
 
             time_new = 0
             try:
                 lines = []
-                if os.path.isfile(file):
-                    with open(
-                        file,
+                if path.is_file():
+                    with path.open(
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
@@ -207,9 +208,9 @@ class Main:
                     if lines == fsums[directory]:
                         continue
 
-                logger.info("Writing checksums: %s", file)
-                with open(
-                    file+'.part',
+                logger.info("Writing checksums: %s", path)
+                path_new = Path(f'{path}.part')
+                with path_new.open(
                     'w',
                     encoding='utf-8',
                     newline='\n',
@@ -220,8 +221,8 @@ class Main:
                             int(line.split(' ', 1)[0].rsplit('/', 1)[-1])
                         )
                         print(line, file=ofile)
-                os.utime(file+'.part', (time_new, time_new))
-                shutil.move(file+'.part', file)
+                os.utime(path_new, (time_new, time_new))
+                shutil.move(path_new, path)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create "{file}" file.',
@@ -234,7 +235,7 @@ class Main:
         """
         cls._checkfile()
         cls._checksum()
-        cls._set_time(os.getcwd())
+        cls._set_time(Path.cwd())
 
         return 0
 

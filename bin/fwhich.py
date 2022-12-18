@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -66,8 +67,7 @@ class Options:
 
         if os.name == 'nt':
             self._extensions = (
-                os.environ['PATHEXT'].lower().split(os.pathsep) +
-                ['.py', '']
+                os.environ['PATHEXT'].lower().split(os.pathsep) + ['.py', '']
             )
         else:
             self._extensions = ['']
@@ -97,7 +97,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -106,13 +106,13 @@ class Main:
 
     def _locate(self, program: str) -> None:
         found = []
-        for directory in self._path.split(os.pathsep):
-            if os.path.isdir(directory):
+        for path in [Path(x) for x in self._path.split(os.pathsep)]:
+            if path.is_dir():
                 for extension in self._options.get_extensions():
-                    file = os.path.join(directory, program) + extension
-                    if file not in found and os.path.isfile(file):
-                        found.append(file)
-                        print(file)
+                    path = Path(f'{Path(path, program)}{extension}')
+                    if path not in found and path.is_file():
+                        found.append(path)
+                        print(path)
                         if not self._options.get_all_flag():
                             return
 

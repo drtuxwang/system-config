@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import network_mod
 import subtask_mod
@@ -36,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -50,25 +51,27 @@ class Main:
         """
         inkscape = network_mod.Sandbox('inkscape', errors='stop')
         inkscape.set_args(sys.argv[1:])
-        if os.path.isfile(inkscape.get_file() + '.py'):
+        if Path(f'{inkscape.get_file()}.py').is_file():
             subtask_mod.Exec(inkscape.get_cmdline()).run()
 
-        work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
-        if work_dir == os.environ['HOME']:
-            desktop = os.path.join(work_dir, 'Desktop')
-            if os.path.isdir(desktop):
+        # "os.getcwd()" returns realpath instead
+        work_dir = Path(os.environ['PWD'])
+        if work_dir == Path.home():
+            desktop = Path(work_dir, 'Desktop')
+            if desktop.is_dir():
                 os.chdir(desktop)
                 work_dir = desktop
-        configs = [
-            os.path.join(os.getenv('HOME', '/'), '.config/ibus'),
-            os.path.join(os.getenv('HOME', '/'), '.config/inkscape'),
+
+        configs: list = [
+            Path(Path.home(), '.config/ibus'),
+            Path(Path.home(), '.config/inkscape'),
             work_dir,
         ]
         if len(sys.argv) >= 2:
-            if os.path.isdir(sys.argv[1]):
-                configs.append(os.path.abspath(sys.argv[1]))
-            elif os.path.isfile(sys.argv[1]):
-                configs.append(os.path.dirname(os.path.abspath(sys.argv[1])))
+            if Path(sys.argv[1]).is_dir():
+                configs.append(Path(sys.argv[1]).resolve())
+            elif Path(sys.argv[1]).is_file():
+                configs.append(Path(sys.argv[1]).resolve().parent)
             if sys.argv[1] == '-net':
                 inkscape.set_args(sys.argv[2:])
                 configs.append('net')

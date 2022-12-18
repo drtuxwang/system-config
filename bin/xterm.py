@@ -8,10 +8,10 @@ Use '-i' for invisible terminal
 import glob
 import os
 import re
-import shutil
 import signal
 import socket
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -212,18 +212,17 @@ class Xterm(Terminal):
 
     @staticmethod
     def _ssh() -> None:
-        home = os.environ.get('HOME', '')
-        sshdir = os.path.join(home, '.ssh')
-        if not os.path.isdir(sshdir):
+        sshdir = Path(Path.home(), '.ssh')
+        if not sshdir.is_dir():
             try:
-                os.mkdir(sshdir, int('700', 8))
+                sshdir.mkdir(mode=0o700)
             except OSError:
                 return
-        sshconfig = os.path.join(sshdir, 'config')
-        if not os.path.isfile(sshconfig):
+        sshconfig = Path(sshdir, 'config')
+        if not sshconfig.is_file():
             try:
                 with open(
-                    sshconfig,
+                    str(sshconfig),
                     'w',
                     encoding='utf-8',
                     newline='\n',
@@ -234,7 +233,7 @@ class Xterm(Terminal):
             except OSError:
                 return
         try:
-            os.chmod(sshconfig, int('600', 8))
+            sshconfig.chmod(0o600)
         except OSError:
             return
 
@@ -381,22 +380,19 @@ class XfceTerminal(GnomeTerminal):
         )
 
     def _config(self) -> None:
-        file = os.path.join(
-            os.environ.get('HOME', ''),
-            '.config/xfce4/terminal/accels.scm',
-        )
+        path = Path(Path.home(), '.config/xfce4/terminal/accels.scm')
+        path_new = Path('{path}.part')
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 data = ifile.read()
                 if '"<Alt>' in data:
-                    with open(
-                        file+'.part',
+                    with path_new.open(
                         'w',
                         encoding='utf-8',
                         newline='\n',
                     ) as ofile:
                         print(re.sub(r'"<Alt>\d+"', '""', data), file=ofile)
-                    shutil.move(file+'.part', file)
+                    path_new.replace(path)
         except OSError:
             pass
 
@@ -448,7 +444,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

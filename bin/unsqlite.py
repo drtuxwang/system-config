@@ -9,6 +9,7 @@ import os
 import signal
 import sqlite3
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -72,7 +73,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -97,7 +98,7 @@ class Main:
         options = Options()
 
         for file in options.get_files():
-            if not os.path.isfile(file):
+            if not Path(file).is_file():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find "{file}" database file.',
                 )

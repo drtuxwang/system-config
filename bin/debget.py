@@ -12,9 +12,11 @@ import logging
 import os
 import shutil
 import signal
+import socket
 import sys
 import time
 import urllib.request
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -88,16 +90,14 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
                     argv.append(arg)
             sys.argv = argv
 
-        self.tmpdir = file_mod.FileUtil.tmpdir(
-            os.path.join('.cache', 'debget')
-        )
+        self.tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'debget'))
 
     @staticmethod
     def _get_urls(distribution_file: str) -> List[str]:
@@ -113,7 +113,7 @@ class Main:
                     if url and not url.startswith('#'):
                         if (
                             not url.startswith(('http://', 'https://')) or
-                            os.path.basename(url) not in (
+                            str(Path(url).name) not in (
                                 'Packages.xz',
                                 'Packages.bz2',
                                 'Packages.gz',
@@ -131,9 +131,9 @@ class Main:
         return urls
 
     def _remove(self) -> None:
-        for file in glob.glob(os.path.join(self.tmpdir, 'Packages*')):
+        for path in Path(self.tmpdir).glob('Packages*'):
             try:
-                os.remove(file)
+                path.unlink()
             except OSError:
                 pass
 
@@ -145,19 +145,18 @@ class Main:
         return command.get_cmdline()
 
     @classmethod
-    def _unpack(cls, file: str) -> None:
-        directory = os.path.dirname(file)
-        if file.endswith('.xz'):
-            cmdline = cls._get_cmdline('unxz') + [file]
-        elif file.endswith('.bz2'):
-            cmdline = cls._get_cmdline('bzip2') + ['-d', file]
-        elif file.endswith('.gz'):
-            cmdline = cls._get_cmdline('gzip') + ['-d', file]
+    def _unpack(cls, path: Path) -> None:
+        if path.suffix == '.xz':
+            cmdline = cls._get_cmdline('unxz') + [str(path)]
+        elif path.suffix == '.bz2':
+            cmdline = cls._get_cmdline('bzip2') + ['-d', str(path)]
+        elif path.suffix == '.gz':
+            cmdline = cls._get_cmdline('gzip') + ['-d', str(path)]
         else:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot unpack "{file}" package file.',
+                f'{sys.argv[0]}: Cannot unpack "{path}" package file.',
             )
-        subtask_mod.Task(cmdline).run(directory=directory)
+        subtask_mod.Task(cmdline).run(directory=path.parent)
 
     @staticmethod
     def _show_times(old_utime: float, new_utime: float) -> None:
@@ -187,16 +186,18 @@ class Main:
                         '%a, %d %b %Y %H:%M:%S %Z',
                     ))
                 break
-            except urllib.error.URLError:
+            except (socket.timeout, urllib.error.URLError):
                 pass
         else:
             raise SystemExit(f"Error: Cannot fetch URL: {url}")
 
         if url_time > data['time']:
             self._show_times(data['time'], url_time)
-            archive = os.path.join(self.tmpdir, os.path.basename(url))
+            archive_path = Path(self.tmpdir, Path(url).name)
             self._remove()
-            task = subtask_mod.Task(wget.get_cmdline() + ['-O', archive, url])
+            task = subtask_mod.Task(
+                wget.get_cmdline() + ['-O', str(archive_path), url]
+            )
             for _ in range(3):
                 task.run()
                 if task.get_exitcode() == 0:
@@ -208,13 +209,13 @@ class Main:
                     f'{sys.argv[0]}: Error code {task.get_exitcode()} '
                     f'received from "{task.get_file()}".',
                 )
-            self._unpack(archive)
+            self._unpack(archive_path)
             site = url[:url.find('/dists/') + 1]
 
             lines = []
-            file = archive.rsplit('.', 1)[0]
+            path = Path(archive_path.parent, archive_path.stem)
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
+                with path.open(encoding='utf-8', errors='replace') as ifile:
                     for line in ifile:
                         if line.startswith('Filename: '):
                             lines.append(line.rstrip('\r\n').replace(
@@ -272,7 +273,7 @@ class Main:
         """
         Start program
         """
-        os.umask(int('022', 8))
+        os.umask(0o022)
 
         options = Options()
 
@@ -290,7 +291,7 @@ class Main:
                 )
 
                 json_file = distribution_file[:-4] + 'json'
-                if os.path.isfile(json_file):
+                if Path(json_file).is_file():
                     distribution_data = self._read_data(json_file)
                 else:
                     distribution_data = {

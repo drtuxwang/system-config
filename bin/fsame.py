@@ -10,6 +10,7 @@ import logging
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import logging_mod
@@ -106,41 +107,40 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
                     argv.append(arg)
             sys.argv = argv
 
-    def _calc(self, options: Options, files: List[str]) -> None:
-        for file in files:
-            if os.path.isdir(file):
-                if not os.path.islink(file) and options.get_recursive_flag():
+    def _calc(self, options: Options, paths: List[Path]) -> None:
+        for path in paths:
+            if path.is_dir():
+                if not path.is_symlink() and options.get_recursive_flag():
                     try:
-                        self._calc(options, sorted([
-                            os.path.join(file, x)
-                            for x in os.listdir(file)
-                        ]))
+                        self._calc(options, sorted(
+                            [Path(path, x.name) for x in path.iterdir()]
+                        ))
                     except PermissionError as exception:
                         raise SystemExit(
-                            f'{sys.argv[0]}: Cannot open "{file}" directory.',
+                            f'{sys.argv[0]}: Cannot open "{path}" directory.',
                         ) from exception
-            elif os.path.isfile(file):
-                md5sum = self._md5sum(file)
+            elif path.is_file():
+                md5sum = self._md5sum(path)
                 if not md5sum:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot read "{file}" file.',
+                        f'{sys.argv[0]}: Cannot read "{path}" file.',
                     )
                 if md5sum in self._md5files:
-                    self._md5files[md5sum].add(file)
+                    self._md5files[md5sum].add(path)
                 else:
-                    self._md5files[md5sum] = set([file])
+                    self._md5files[md5sum] = set([path])
 
     @staticmethod
-    def _md5sum(file: str) -> str:
+    def _md5sum(path: Path) -> str:
         try:
-            with open(file, 'rb') as ifile:
+            with path.open('rb') as ifile:
                 md5 = hashlib.md5()
                 while True:
                     chunk = ifile.read(131072)
@@ -149,19 +149,19 @@ class Main:
                     md5.update(chunk)
         except (OSError, TypeError) as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" file.',
+                f'{sys.argv[0]}: Cannot read "{path}" file.',
             ) from exception
         return md5.hexdigest()
 
     @staticmethod
-    def _remove(files: List[str]) -> None:
-        for file in files:
-            print(f'  Removing "{file}" duplicated file')
+    def _remove(paths: List[Path]) -> None:
+        for path in paths:
+            print(f'  Removing "{path}" duplicated file')
             try:
-                os.remove(file)
+                path.unlink()
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot remove "{file}" file.',
+                    f'{sys.argv[0]}: Cannot remove "{path}" file.',
                 ) from exception
 
     def run(self) -> int:
@@ -171,26 +171,26 @@ class Main:
         options = Options()
 
         self._md5files: dict = {}
-        files = []
-        for file in options.get_files():
-            if os.path.isdir(file):
-                files.extend(sorted(
-                    [os.path.join(file, x) for x in os.listdir(file)]
-                ))
+        paths = []
+        for path in [Path(x) for x in options.get_files()]:
+            if path.is_dir():
+                paths.extend(sorted(path.iterdir()))
             else:
-                files.append(file)
-        self._calc(options, files)
+                paths.append(path)
+        self._calc(options, paths)
 
         exitcode = 0
-        for files in sorted(self._md5files.values()):
-            if len(files) > 1:
-                sorted_files = sorted(files)
+        for paths in sorted(self._md5files.values()):
+            if len(paths) > 1:
+                sorted_paths = sorted(paths)
                 logger.warning(
                     "Identical: %s",
-                    command_mod.Command.args2cmd(sorted_files)
+                    command_mod.Command.args2cmd([
+                        str(x) for x in sorted_paths
+                    ])
                 )
                 if options.get_remove_flag():
-                    self._remove(sorted_files[1:])
+                    self._remove(sorted_paths[1:])
                 else:
                     exitcode = 1
         return exitcode

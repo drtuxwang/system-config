@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -74,7 +75,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -95,14 +96,14 @@ class Main:
             args=['--info', '--check'],
             errors='stop'
         )
-        for directory in directories:
-            if os.path.isdir(directory):
-                files = []
-                for file in glob.glob(os.path.join(directory, '*.*')):
-                    if os.path.splitext(file)[1].lower() in ('.jpg', '.jpeg'):
-                        files.append(file)
-                if files:
-                    task = subtask_mod.Batch(jpeginfo.get_cmdline() + files)
+        for directory_path in [Path(x) for x in directories]:
+            if directory_path.is_dir():
+                paths = []
+                for path in Path(directory_path).glob('*.*'):
+                    if path.suffix.lower() in ('.jpg', '.jpeg'):
+                        paths.append(path)
+                if paths:
+                    task = subtask_mod.Batch(jpeginfo.get_cmdline() + paths)
                     task.run()
                     for line in task.get_output():
                         if '[ERROR]' in line:

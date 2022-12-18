@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -87,7 +88,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -102,7 +103,7 @@ class Main:
         options = Options()
         version = options.get_version()
 
-        os.umask(int('022', 8))
+        os.umask(0o022)
         if version:
             command = command_mod.Command(f'python{version}', errors='stop')
             executable = command.get_file()
@@ -110,7 +111,7 @@ class Main:
             executable = sys.executable
 
         for file in options.get_files():
-            print(f"{os.path.basename(executable)} -m compileall {file}")
+            print(f"{Path(executable).name} -m compileall {file}")
             subtask_mod.Task([executable, '-m', 'compileall', file]).run()
 
         return 0

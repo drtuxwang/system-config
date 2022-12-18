@@ -7,9 +7,9 @@ import argparse
 import glob
 import os
 import re
-import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import bs4  # type: ignore
@@ -78,7 +78,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -86,15 +86,15 @@ class Main:
             sys.argv = argv
 
     @classmethod
-    def _reformat(cls, file: str) -> None:
+    def _reformat(cls, path: Path) -> None:
         lines = []
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     lines.append(line.strip())
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" file.',
+                f'{sys.argv[0]}: Cannot read "{path}" file.',
             ) from exception
         soup = bs4.BeautifulSoup(
             '\n'.join(lines).replace('&', '&amp;'),
@@ -102,19 +102,19 @@ class Main:
         )
         html_text = cls._indent.sub(r'\1\1', soup.prettify())
 
-        tmpfile = file + '.part'
+        path_new = Path(f'{path}.part')
         try:
-            with open(tmpfile, 'w', encoding='utf-8', newline='\n') as ofile:
+            with path_new.open('w', encoding='utf-8', newline='\n') as ofile:
                 print(html_text.replace('&amp;', '&'), file=ofile)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{tmpfile}" file.',
+                f'{sys.argv[0]}: Cannot create "{path_new}" file.',
             ) from exception
         try:
-            shutil.move(tmpfile, file)
+            path_new.replace(path)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot rename "{tmpfile}" file to "{file}".',
+                f'{sys.argv[0]}: Cannot rename "{path_new}" file to "{path}".',
             ) from exception
 
     @classmethod
@@ -125,21 +125,23 @@ class Main:
         options = Options()
 
         errors = False
-        for file in options.get_files():
-            if not os.path.isfile(file):
-                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
 
-            if file.endswith(('htm', 'html', 'xhtml')):
-                print(f'Re-formatting "{file}" HTML file...')
+            if path.suffix in ('.htm', '.html', '.xhtml'):
+                print(f'Re-formatting "{path}" HTML file...')
 
-                task = subtask_mod.Batch(cls._xmllint.get_cmdline() + [file])
+                task = subtask_mod.Batch(
+                    cls._xmllint.get_cmdline() + [str(path)]
+                )
                 task.run()
                 if task.has_error():
                     for line in task.get_error():
                         print(line, file=sys.stderr)
                     errors = True
                 else:
-                    cls._reformat(file)
+                    cls._reformat(path)
 
         return errors
 

@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -76,7 +77,7 @@ class Options:
         if len(args) > 1:
             self._tinyproxy.set_args(args[1:])
         elif getpass.getuser() != 'root':
-            if not os.path.isfile('tinyproxy.conf'):
+            if not Path('tinyproxy.conf').is_file():
                 self._create_config()
             self._tinyproxy.set_args(['-d', '-c', 'tinyproxy.conf'])
 
@@ -105,7 +106,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

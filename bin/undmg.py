@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -86,7 +87,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -100,7 +101,7 @@ class Main:
         """
         options = Options()
 
-        os.umask(int('022', 8))
+        os.umask(0o022)
         dmg2img = command_mod.Command('dmg2img', errors='stop')
         unpacker = command_mod.Command('7z', errors='stop')
         if options.get_view_flag():
@@ -108,14 +109,14 @@ class Main:
         else:
             unpacker.set_args(['x', '-y', '-snld'])
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" disk file.',
+                    f'{sys.argv[0]}: Cannot find "{path}" disk file.',
                 )
-            print(f"{file}:")
+            print(f"{path}:")
             task = subtask_mod.Task(
-                dmg2img.get_cmdline() + [file, 'dmg2img.img'])
+                dmg2img.get_cmdline() + [str(path), 'dmg2img.img'])
             task.run()
 
             task = subtask_mod.Task(unpacker.get_cmdline() + ['dmg2img.img'])

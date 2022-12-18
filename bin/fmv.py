@@ -6,9 +6,9 @@ Move or rename files.
 import argparse
 import glob
 import os
-import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -94,7 +94,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -102,73 +102,75 @@ class Main:
             sys.argv = argv
 
     def _move(self) -> None:
-        if not os.path.isdir(self._options.get_target()):
+        if not Path(self._options.get_target()).is_dir():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find '
                 f'"{self._options.get_target()}" target directory.',
             )
-        for source in self._options.get_sources():
-            if os.path.isdir(source):
-                print(f'Moving "{source}" directory...')
-            elif os.path.isfile(source):
-                print(f'Moving "{source}" file...')
+        for source_path in [Path(x) for x in self._options.get_sources()]:
+            if source_path.is_dir():
+                print(f'Moving "{source_path}" directory...')
+            elif source_path.is_file():
+                print(f'Moving "{source_path}" file...')
             else:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find '
-                    f'"{source}" source file or directory.',
+                    f'"{source_path}" source file or directory.',
                 )
-            target = os.path.join(
-                self._options.get_target(), os.path.basename(source))
-            if os.path.isdir(target):
+            target_path = Path(
+                self._options.get_target(),
+                Path(source_path).name,
+            )
+            if target_path.is_dir():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot safely overwrite '
-                    f'"{target}" target directory.',
+                    f'"{target_path}" target directory.',
                 )
-            if os.path.isfile(target):
+            if target_path.is_file():
                 if not self._options.get_overwrite_flag():
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot safely overwrite '
-                        f'"{target}" target file.',
+                        f'"{target_path}" target file.',
                     )
             try:
-                shutil.move(source, target)
+                source_path.replace(target_path)
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot move "{source}" source file.',
+                    f'{sys.argv[0]}: Cannot move "{source_path}" source file.',
                 ) from exception
 
-    def _rename(self, source: str, target: str) -> None:
-        if os.path.isdir(source):
-            print(f'Renaming "{source}" directory...')
-        elif os.path.isfile(source):
-            print(f'Renaming "{source}" file...')
+    def _rename(self, source_path: Path, target_path: Path) -> None:
+        if source_path.is_dir():
+            print(f'Renaming "{source_path}" directory...')
+        elif source_path.is_file():
+            print(f'Renaming "{source_path}" file...')
         else:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find '
-                f'"{source}" source file or directory.',
+                f'"{source_path}" source file or directory.',
             )
-        if os.path.isdir(target):
+        if target_path.is_dir():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot safely overwrite '
-                f'"{target}" target directory.',
+                f'"{target_path}" target directory.',
             )
-        if os.path.isfile(target):
+        if target_path.is_file():
             if not self._options.get_overwrite_flag():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot safely overwrite '
-                    f'"{target}" target file.',
+                    f'"{target_path}" target file.',
                 )
 
         try:
-            shutil.move(source, target)
+            source_path.replace(target_path)
         except OSError as exception:
-            if os.path.isdir(source):
+            if source_path.is_dir():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot rename '
-                    f'"{source}" source directory.',
+                    f'"{source_path}" source directory.',
                 ) from exception
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot rename "{source}" source file.',
+                f'{sys.argv[0]}: Cannot rename "{source_path}" source file.',
             ) from exception
 
     def run(self) -> int:
@@ -177,12 +179,12 @@ class Main:
         """
         self._options = Options()
         sources = self._options.get_sources()
-        target = self._options.get_target()
+        target_path = Path(self._options.get_target())
 
-        if len(sources) > 1 or os.path.isdir(target):
+        if len(sources) > 1 or target_path.is_dir():
             self._move()
         else:
-            self._rename(sources[0], target)
+            self._rename(Path(sources[0]), target_path)
 
         return 0
 

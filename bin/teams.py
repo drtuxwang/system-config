@@ -8,6 +8,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import file_mod
@@ -38,7 +39,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -47,40 +48,39 @@ class Main:
 
     @staticmethod
     def _config_teams() -> None:
-        home = os.environ['HOME']
-        file = os.path.join(home, '.config', 'autostart', 'teams.desktop')
-        if not os.path.isdir(file):
+        path = Path(Path.home(), '.config', 'autostart', 'teams.desktop')
+        if not path.is_dir():
             try:
-                if os.path.isfile(file):
-                    os.remove(file)
-                os.makedirs(file)
+                if path.is_dir():
+                    path.unlink()
+                path.mkdir(parents=True)
             except OSError:
                 pass
 
         # Use /tmp cache (keep "Cookies" & "desktop-config.json")
-        config_dir = os.path.join(
-            home,
+        config_dir = Path(
+            Path.home(),
             '.config',
             'Microsoft',
             'Microsoft Teams Config',
         )
-        if not os.path.isdir(config_dir):
-            os.makedirs(config_dir)
+        if not config_dir.is_dir():
+            config_dir.mkdir(parents=True)
         tmpdir = file_mod.FileUtil.tmpdir('.cache/teams')
-        for file in ('Cookies', 'desktop-config.json'):
-            link = os.path.join(tmpdir, file)
-            if not os.path.islink(link):
-                os.symlink(os.path.join(config_dir, file), link)
-        cache_link = os.path.join(
-            home,
+        for name in ('Cookies', 'desktop-config.json'):
+            link = Path(tmpdir, name)
+            if not link.is_symlink():
+                link.symlink_to(Path(config_dir, name))
+        cache_link = Path(
+            Path.home(),
             '.config',
             'Microsoft',
             'Microsoft Teams',
         )
-        if not os.path.islink(cache_link):
-            if os.path.isdir(cache_link):
+        if not cache_link.is_symlink():
+            if cache_link.is_dir():
                 shutil.rmtree(cache_link)
-            os.symlink(tmpdir, cache_link)
+            cache_link.symlink_to(tmpdir)
 
     @classmethod
     def run(cls) -> int:

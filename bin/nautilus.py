@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -34,17 +35,16 @@ class Options:
         return self._nautilus
 
     def _config(self) -> None:
-        home = os.environ.get('HOME', '')
-        configdir = os.path.join(home, '.local', 'share', 'applications')
-        if not os.path.isdir(configdir):
+        config_path = Path(Path.home(), '.local', 'share', 'applications')
+        if not config_path.is_dir():
             try:
-                os.makedirs(configdir)
+                config_path.mkdir(parents=True)
             except OSError:
                 return
-        file = os.path.join(configdir, 'mimeapps.list')
-        if not os.path.isfile(file):
+        path = Path(config_path, 'mimeapps.list')
+        if not path.is_file():
             try:
-                with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+                with path.open('w', encoding='utf-8', newline='\n') as ofile:
                     print("[Added Associations]", file=ofile)
                     print("audio/ac3=vlc.desktop;", file=ofile)
                     print("audio/mp4=vlc.desktop;", file=ofile)
@@ -85,19 +85,19 @@ class Options:
             except OSError:
                 return
         self._userapp(
-            configdir,
+            config_path,
             'application/vnd.oasis.opendocument.text',
             'soffice'
         )
-        self._userapp(configdir, 'image/jpeg', 'gqview')
-        self._userapp(configdir, 'text/html', 'xweb')
+        self._userapp(config_path, 'image/jpeg', 'gqview')
+        self._userapp(config_path, 'text/html', 'xweb')
 
     @staticmethod
-    def _userapp(configdir: str, mime_type: str, app_name: str) -> None:
-        file = os.path.join(configdir, app_name + '-userapp.desktop')
-        if not os.path.isfile(file):
+    def _userapp(config_path: Path, mime_type: str, app_name: str) -> None:
+        path = Path(config_path, f'{app_name}-userapp.desktop')
+        if not path.is_dir():
             try:
-                with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+                with path.open('w', encoding='utf-8', newline='\n') as ofile:
                     print("[Desktop Entry]", file=ofile)
                     print(f"Name={app_name}", file=ofile)
                     print(f"Exec={app_name}", ' %f', file=ofile)
@@ -106,15 +106,15 @@ class Options:
             except OSError:
                 return
 
-        file = os.path.join(configdir, 'mimeinfo.cache')
+        path = Path(config_path, 'mimeinfo.cache')
         try:
-            if not os.path.isfile(file):
-                with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+            if not path.is_file():
+                with path.open('w', encoding='utf-8', newline='\n') as ofile:
                     print("[MIME Cache]", file=ofile)
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 if f'{mime_type}={app_name}-userapp.desktop' in ifile:
                     return
-            with open(file, 'a', encoding='utf-8', newline='\n') as ofile:
+            with path.open('a', encoding='utf-8', newline='\n') as ofile:
                 print(f"{mime_type}={app_name}-userapp.desktop", file=ofile)
         except OSError:
             return
@@ -160,7 +160,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

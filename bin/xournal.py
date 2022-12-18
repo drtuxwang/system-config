@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import network_mod
 import subtask_mod
@@ -36,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -51,23 +52,25 @@ class Main:
         xournal = network_mod.Sandbox('xournalpp', errors='stop')
         xournal.set_args(sys.argv[1:])
 
-        work_dir = os.environ['PWD']  # "os.getcwd()" returns realpath instead
-        if work_dir == os.environ['HOME']:
-            desktop = os.path.join(work_dir, 'Desktop')
-            if os.path.isdir(desktop):
+        work_dir = Path.cwd()  # "os.getcwd()" returns realpath instead
+        home = str(Path.home())
+        if work_dir == home:
+            desktop = Path(work_dir, 'Desktop')
+            if desktop.is_dir():
                 os.chdir(desktop)
                 work_dir = desktop
+
         configs = [
             f'/run/user/{os.getuid()}/pulse',
-            os.path.join(os.getenv('HOME', '/'), '.config/ibus'),
-            os.path.join(os.getenv('HOME', '/'), '.config/xournalpp'),
+            Path(home, '.config/ibus'),
+            Path(home, '.config/xournalpp'),
             work_dir,
         ]
         if len(sys.argv) >= 2:
-            if os.path.isdir(sys.argv[1]):
-                configs.append(os.path.abspath(sys.argv[1]))
-            elif os.path.isfile(sys.argv[1]):
-                configs.append(os.path.dirname(os.path.abspath(sys.argv[1])))
+            if Path(sys.argv[1]).is_dir():
+                configs.append(Path(sys.argv[1]).resolve())
+            elif Path(sys.argv[1]).is_file():
+                configs.append(Path(sys.argv[1]).resolve().parent)
             if sys.argv[1] == '-net':
                 xournal.set_args(sys.argv[2:])
                 configs.append('net')

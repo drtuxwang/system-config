@@ -10,6 +10,7 @@ import os
 import signal
 import sys
 import time
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -65,15 +66,17 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        os.umask(int('077', 8))
+        os.umask(0o077)
 
         if self._args.speed[0] < 1:
             raise SystemExit(
                 f'{sys.argv[0]}: You must specific a positive integer for '
                 'CD/DVD device speed.',
             )
-        if self._args.device[0] != 'scan' and not (
-                os.path.exists(self._args.device[0])):
+        if (
+            self._args.device[0] != 'scan' and
+            not Path(self._args.device[0]).exists()
+        ):
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find '
                 f'"{self._args.device[0]}" CD/DVD device.',
@@ -100,12 +103,11 @@ class Cdrom:
         Detect devices
         """
         for directory in glob.glob('/sys/block/sr*/device'):
-            device = f'/dev/{os.path.basename(os.path.dirname(directory))}'
+            device = f'/dev/{Path(directory).parent.name}'
             model = ''
             for file in ('vendor', 'model'):
                 try:
-                    with open(
-                        os.path.join(directory, file),
+                    with Path(directory, file).open(
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
@@ -139,7 +141,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -151,12 +153,12 @@ class Main:
         cdspeed = command_mod.Command('cdspeed', errors='ignore')
         if cdspeed.is_found():
             if speed:
-                cdspeed.set_args([device, str(speed)])
+                cdspeed.set_args([device, speed])
             # If CD/DVD spin speed change fails its okay
             subtask_mod.Task(cdspeed.get_cmdline()).run()
-        elif speed and os.path.isfile('/sbin/hdparm'):
+        elif speed and Path('/sbin/hdparm').is_file():
             hdparm = command_mod.Command('/sbin/hdparm', errors='ignore')
-            hdparm.set_args(['-E', str(speed), device])
+            hdparm.set_args(['-E', speed, device])
             subtask_mod.Batch(hdparm.get_cmdline()).run()
 
     @staticmethod
@@ -164,13 +166,13 @@ class Main:
         isoinfo = command_mod.Command('isoinfo', errors='stop')
 
         tmpdir = file_mod.FileUtil.tmpdir('.cache')
-        tmpfile = os.path.join(tmpdir, f'md5cd.tmp{os.getpid()}')
+        tmp_path = Path(tmpdir, f'md5cd.tmp{os.getpid()}')
         command = command_mod.Command('dd', errors='stop')
         command.set_args([
             f'if={device}',
             'bs=2048',
             'count=4096',
-            f'of={tmpfile}',
+            f'of={tmp_path}',
         ])
         task = subtask_mod.Batch(command.get_cmdline())
         task.run()
@@ -179,12 +181,12 @@ class Main:
                 f"{sys.argv[0]}: Cannot read from CD/DVD device. "
                 "Please check permissions.",
             )
-        if not os.path.isfile(tmpfile):
+        if not tmp_path.is_file():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find CD/DVD media. Please check drive.'
             )
 
-        isoinfo.set_args(['-d', '-i', tmpfile])
+        isoinfo.set_args(['-d', '-i', tmp_path])
         task2 = subtask_mod.Batch(isoinfo.get_cmdline())
         task2.run(pattern='^Volume size is: ')
         if not task2.has_output():

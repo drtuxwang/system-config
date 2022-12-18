@@ -7,6 +7,7 @@ import os
 import sys
 import unittest
 import unittest.mock
+from pathlib import Path
 from typing import List
 
 import pyld
@@ -104,7 +105,7 @@ class TestOptions(
             'arg0',
             'moduleX',
             '-pyldpath',
-            f'pathX{os.path.pathsep}pathY',
+            f'pathX{os.pathsep}pathY',
         ]
         options = pyld.Options(args)
 
@@ -117,8 +118,8 @@ class TestOptions(
         exit status 2.
         """
         expected = (
-            f'{os.path.basename(sys.argv[0])}: '
-            'error: argument -pyldpath: expected 1 argument'
+            f'{Path(sys.argv[0]).name}: error: '
+            'argument -pyldpath: expected 1 argument'
         )
         args = ['arg0', 'moduleX', '-pyldpath', '-pyldv']
 
@@ -205,7 +206,7 @@ class TestOptions(
             'arg0',
             'moduleX',
             '-pyldpath',
-            f'pathX{os.path.pathsep}pathY',
+            f'pathX{os.pathsep}pathY',
             'moduleYarg1',
             'moduleYarg2'
         ]
@@ -276,8 +277,8 @@ class TestOptions(
         """
         expected = 'myDir'
         args = [
-            os.path.join('myDir', 'myFile'),
-            os.path.join('moduleDir', 'moduleX')
+            str(Path('myDir', 'myFile')),
+            str(Path('moduleDir', 'moduleX')),
         ]
         options = pyld.Options(args)
 
@@ -394,8 +395,8 @@ class TestOptions(
         supplied.
         """
         expected = (
-            f'{os.path.basename(sys.argv[0])}: '
-            'error: the following arguments are required: module, arg'
+            f'{Path(sys.argv[0]).name}: error: '
+            'the following arguments are required: module, arg'
         )
         args = ['arg0']
 
@@ -420,7 +421,7 @@ class TestPythonLoader(unittest.TestCase):
         """
         self.maxDiff = None  # pylint: disable=invalid-name
         self._start_directory = os.getcwd()
-        os.chdir(os.path.dirname(__file__))
+        os.chdir(Path(__file__).parent)
 
         self._mock_options = unittest.mock.MagicMock('mock_options')
         self._mock_options.get_dump_flag = unittest.mock.MagicMock(
@@ -538,7 +539,7 @@ class TestPythonLoader(unittest.TestCase):
         """
         Test getting Python system arguments (faked by pyld).
         """
-        expected = [os.path.join('directory', 'arg0'), 'args1', 'args2']
+        expected = [str(Path('directory', 'arg0')), 'args1', 'args2']
 
         python_loader = pyld.PythonLoader(self._mock_options)
 

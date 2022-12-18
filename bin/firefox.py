@@ -12,6 +12,7 @@ import re
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -41,71 +42,41 @@ class Options:
         return self._firefox
 
     @staticmethod
-    def _get_profiles_dir() -> str:
+    def _get_profiles_dir() -> Path:
         if command_mod.Platform.get_system() == 'macos':
-            return os.path.join(
-                'Library', 'Application Support', 'Firefox', 'Profiles')
-        return os.path.join('.mozilla', 'firefox')
+            return Path(
+                'Library',
+                'Application Support',
+                'Firefox',
+                'Profiles',
+            )
+        return Path('.mozilla', 'firefox')
 
     @staticmethod
-    def _clean_adobe() -> None:
-        adobe = os.path.join(
-            os.environ['HOME'],
-            '.adobe',
-            'Flash_Player',
-            'AssetCache'
-        )
-        macromedia = os.path.join(
-            os.environ['HOME'],
-            '.macromedia',
-            'Flash_Player',
-            'macromedia.com'
-        )
-        if not os.path.isfile(adobe) or not os.path.isfile(macromedia):
-            try:
-                shutil.rmtree(os.path.join(os.environ['HOME'], '.adobe'))
-                os.makedirs(os.path.dirname(adobe))
-                with open(adobe, 'w', encoding='utf-8', newline='\n'):
-                    pass
-                shutil.rmtree(os.path.join(os.environ['HOME'], '.macromedia'))
-                os.makedirs(os.path.dirname(macromedia))
-                with open(macromedia, 'w', encoding='utf-8', newline='\n'):
-                    pass
-            except OSError:
-                pass
-        try:
-            shutil.rmtree(
-                os.path.join(os.path.dirname(macromedia), '#SharedObjects'))
-        except OSError:
-            pass
-
-    @staticmethod
-    def _remove_lock(firefoxdir: str) -> None:
+    def _remove_lock(firefox_path: Path) -> None:
         # Remove old session data and lock file (allows multiple instances)
-        for file in (
-            glob.glob(os.path.join(firefoxdir, '*', 'sessionstore.js')) +
-            glob.glob(os.path.join(firefoxdir, '*', '.parentlock')) +
-            glob.glob(os.path.join(firefoxdir, '*', 'lock')) +
-            glob.glob(os.path.join(firefoxdir, '*', '*.log'))
+        for path in (
+            list(firefox_path.glob('*/sessionstore.js')) +
+            list(firefox_path.glob('*/.parentlock')) +
+            list(firefox_path.glob('*/lock')) +
+            list(firefox_path.glob('*/*.log'))
         ):
             try:
-                os.remove(file)
+                path.unlink()
             except OSError:
                 continue
 
     @staticmethod
-    def _remove_junk_files(firefoxdir: str) -> None:
+    def _remove_junk_files(firefox_path: Path) -> None:
         ispattern = re.compile(
             '^(lastDownload|lastSuccess|lastCheck|expires|'
             r'softExpiration)=\d*'
         )
-        for file in glob.glob(
-            os.path.join(firefoxdir, '*', 'adblockplus', 'patterns.ini'),
-        ):
+        for path in firefox_path.glob('*/adblockplus/patterns.ini'):
+            path_new = Path(f'{path}.part')
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
-                    with open(
-                        file + '.part',
+                with path.open(encoding='utf-8', errors='replace') as ifile:
+                    with path_new.open(
                         'w',
                         encoding='utf-8',
                         newline='\n',
@@ -115,73 +86,70 @@ class Options:
                                 print(line, end='', file=ofile)
             except OSError:
                 try:
-                    os.remove(file + '.part')
+                    path_new.unlink()
                 except OSError:
                     continue
             else:
                 try:
-                    shutil.move(file + '.part', file)
+                    path_new.replace(path)
                 except OSError:
                     continue
 
     @staticmethod
-    def _fix_xulstore(firefoxdir: str) -> None:
-        for directory in glob.glob(os.path.join(firefoxdir, '*')):
-            file = os.path.join(directory, 'xulstore.json')
+    def _fix_xulstore(firefox_path: Path) -> None:
+        for directory in firefox_path.glob('*'):
+            path = Path(directory, 'xulstore.json')
+            path_new = Path(f'{path}.part')
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
-                    with open(
-                        file + '.part',
+                with path.open(encoding='utf-8', errors='replace') as ifile:
+                    with path_new.open(
                         'w',
                         encoding='utf-8',
                         newline='\n',
                     ) as ofile:
                         for line in ifile:
-                            print(line.replace('"fullscreen"', '"maximized"'),
-                                  end='', file=ofile)
+                            print(
+                                line.replace('"fullscreen"', '"maximized"'),
+                                end='',
+                                file=ofile,
+                            )
             except OSError:
                 try:
-                    os.remove(file + '.part')
+                    path_new.unlink()
                 except OSError:
                     pass
             else:
                 try:
-                    shutil.move(file + '.part', file)
+                    path_new.replace(path)
                 except OSError:
                     pass
 
     def _fix_installation(self) -> None:
         file = self._firefox.get_file()
-        if os.path.isfile(file + '-bin'):
+        if Path(f'{file}-bin').is_file():
             fmod = command_mod.Command('fmod', errors='ignore')
             if fmod.is_found():
                 # Fix permissions if owner and updated
-                fmod.set_args(
-                    ['wa', os.path.dirname(self._firefox.get_file())])
+                fmod.set_args(['wa', Path(self._firefox.get_file()).parent])
                 subtask_mod.Daemon(fmod.get_cmdline()).run()
 
     def _config(self) -> None:
-        self._clean_adobe()
-
-        firefoxdir = os.path.join(
-            os.environ['HOME'],
-            self._get_profiles_dir()
-        )
-        if os.path.isdir(firefoxdir):
-            os.chmod(firefoxdir, int('700', 8))
-            self._remove_lock(firefoxdir)
-            self._remove_junk_files(firefoxdir)
-            self._fix_xulstore(firefoxdir)
+        path = Path(Path.home(), self._get_profiles_dir())
+        if path.is_dir():
+            path.chmod(0o700)
+            self._remove_lock(path)
+            self._remove_junk_files(path)
+            self._fix_xulstore(path)
 
         self._fix_installation()
 
     @classmethod
     def _copy(cls) -> None:
         task = task_mod.Tasks.factory()
-        tmpdir = file_mod.FileUtil.tmpdir('.cache')
-        for directory in glob.glob(os.path.join(tmpdir, 'firefox.*')):
+        tmp_path = Path(file_mod.FileUtil.tmpdir('.cache'))
+        for directory in tmp_path.glob('firefox.*'):
             try:
-                if not task.pgid2pids(int(directory.split('.')[-1])):
+                if not task.pgid2pids(int(directory.suffix)):
                     print(
                         f'Removing copy of Firefox profile in "{directory}"...'
                     )
@@ -192,49 +160,42 @@ class Options:
             except ValueError:
                 pass
 
-        firefoxdir = os.path.join(
-            os.environ['HOME'],
-            cls._get_profiles_dir()
-        )
+        firefox_path = Path(Path.home(), cls._get_profiles_dir())
         mypid = os.getpid()
         os.setpgid(mypid, mypid)  # New PGID
-        newhome = os.path.join(tmpdir, f'firefox.{mypid}')
+        newhome = Path(tmp_path, f'firefox.{mypid}')
         print(f'Creating copy of Firefox profile in "{newhome}"...')
 
-        if not os.path.isdir(newhome):
+        if not newhome.is_dir():
             try:
                 shutil.copytree(
-                    firefoxdir,
-                    os.path.join(newhome, '.mozilla', 'firefox')
+                    firefox_path,
+                    Path(newhome, '.mozilla', 'firefox'),
                 )
             except (OSError, shutil.Error):  # Ignore 'lock' file error
                 pass
-        home = os.environ.get('HOME', '')
-        for directory in ('Desktop', '.cups'):
+        home = Path.home()
+        for name in ('Desktop', '.cups'):
             try:
-                os.symlink(
-                    os.path.join(home, directory),
-                    os.path.join(newhome, directory)
-                )
+                Path(newhome, name).symlink_to(Path(home, name))
             except OSError:
                 pass
-        os.environ['HOME'] = newhome
-        os.environ['TMPDIR'] = newhome
+        os.environ['HOME'] = str(newhome)
+        os.environ['TMPDIR'] = str(newhome)
 
     @staticmethod
-    def _remove(file: str) -> None:
+    def _remove(path: Path) -> None:
         try:
-            if os.path.isdir(file):
-                shutil.rmtree(file)
+            if path.is_dir():
+                shutil.rmtree(path)
             else:
-                os.remove(file)
+                path.unlink()
         except OSError:
             pass
 
     def _reset(self) -> None:
-        home = os.environ.get('HOME', '')
-        firefoxdir = os.path.join(home, self._get_profiles_dir())
-        if os.path.isdir(firefoxdir):
+        firefox_path = Path(Path.home(), self._get_profiles_dir())
+        if firefox_path.is_dir():
             keep_list = (
                 'addonStartup.json.lz4',
                 'content-prefs.sqlite',
@@ -250,21 +211,18 @@ class Options:
                 'user.js',
                 'xulstore.json'
             )
-            for directory in glob.glob(os.path.join(firefoxdir, '*')):
-                if os.path.isfile(os.path.join(directory, 'prefs.js')):
-                    for file in (
-                        glob.glob(os.path.join(directory, '.*')) +
-                        glob.glob(os.path.join(directory, '*'))
+            for directory in firefox_path.glob('*'):
+                if Path(directory, 'prefs.js').is_file():
+                    for path in (
+                        list(directory.glob('.*')) + list(directory.glob('*'))
                     ):
-                        if os.path.basename(file) not in keep_list:
-                            print(f'Removing "{file}"...')
-                            self._remove(file)
-                    for file in glob.glob(os.path.join(
-                        directory,
-                        'adblockplus',
-                        'patterns-backup*ini',
-                    )):
-                        self._remove(file)
+                        if path.name not in keep_list:
+                            print(f'Removing "{path}"...')
+                            path.unlink()
+                    for path in directory.glob(
+                        'adblockplus/patterns-backup*ini'
+                    ):
+                        path.unlink()
 
     @classmethod
     def _prefs(cls, updates: bool) -> None:
@@ -367,26 +325,26 @@ class Options:
             '"ui.submenuDelay", 0',
         )
 
-        firefoxdir = os.path.join(os.environ['HOME'], cls._get_profiles_dir())
-        if os.path.isdir(firefoxdir):
-            for file in glob.glob(os.path.join(firefoxdir, '*', 'prefs.js')):
+        firefox_path = Path(Path.home(), cls._get_profiles_dir())
+        if firefox_path.is_dir():
+            for path in firefox_path.glob('*/prefs.js'):
                 try:
-                    with open(
-                        file,
+                    with path.open(
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
                         lines = ifile.readlines()
                     # Workaround 'user.js' dropped support
-                    with open(
-                        file,
+                    with path.open(
                         'a',
                         encoding='utf-8',
                         newline='\n',
                     ) as ofile:
-                        if (not updates and
-                                'user_pref("app.update.enabled", false);\n'
-                                not in lines):
+                        if (
+                            not updates and
+                            'user_pref("app.update.enabled", false);\n'
+                            not in lines
+                        ):
                             print(
                                 'user_pref("app.update.enabled", false);',
                                 file=ofile
@@ -402,7 +360,9 @@ class Options:
         Parse arguments
         """
         self._firefox = command_mod.Command(
-            os.path.basename(args[0]).replace('.py', ''), errors='stop')
+            Path(args[0]).name.replace('.py', ''),
+            errors='stop',
+        )
         updates = os.access(self._firefox.get_file(), os.W_OK)
 
         while len(args) > 1:
@@ -470,7 +430,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

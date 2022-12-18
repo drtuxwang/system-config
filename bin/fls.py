@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import Iterator, List, Union
 
 import command_mod
@@ -141,7 +142,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -150,21 +151,23 @@ class Main:
 
     def _list(self, options: Options, files: List[str]) -> None:
         file_stats = []
-        for file in files:
-            if os.path.islink(file):
-                file_stats.append(file_mod.FileStat(file, size=0))
-            elif os.path.isdir(file):
-                file_stats.append(file_mod.FileStat(file + os.sep))
-            elif os.path.isfile(file):
-                file_stats.append(file_mod.FileStat(file))
+        for path in [Path(x) for x in files]:
+            if path.is_symlink():
+                file_stats.append(file_mod.FileStat(path, size=0))
+            elif path.is_dir():
+                file_stats.append(file_mod.FileStat(f'{path}/'))
+            elif path.is_file():
+                file_stats.append(file_mod.FileStat(path))
         for file_stat in self._sorted(options, file_stats):
             print(
                 f"{file_stat.get_size():10d} "
                 f"[{file_stat.get_time_local()}] "
                 f"{file_stat.get_file()}",
             )
-            if (options.get_recursive_flag() and
-                    file_stat.get_file().endswith(os.sep)):
+            if (
+                options.get_recursive_flag() and
+                file_stat.get_file().endswith(os.sep)
+            ):
                 self._list(options, sorted(
                     glob.glob(file_stat.get_file() + '.*') +
                     glob.glob(file_stat.get_file() + '*')

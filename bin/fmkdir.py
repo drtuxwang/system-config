@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -72,7 +73,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -84,12 +85,12 @@ class Main:
         """
         Start program
         """
-        directory = Options().get_directory()
+        path = Path(Options().get_directory())
 
-        if not os.path.isdir(directory):
-            print(f'Creating "{directory}"...')
+        if not path.is_dir():
+            print(f'Creating "{path}"...')
             try:
-                os.makedirs(directory)
+                path.mkdir(parents=True)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create directory.',

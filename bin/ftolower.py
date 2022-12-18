@@ -6,9 +6,9 @@ Convert filename to lowercase.
 import argparse
 import glob
 import os
-import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -72,7 +72,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -86,32 +86,28 @@ class Main:
         """
         options = Options()
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
-                raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" file.',
-                )
-            if os.sep not in file:
-                newfile = file.lower()
-            elif file.endswith(os.sep):
-                newfile = os.path.join(
-                    os.path.dirname(file), os.path.basename(file[:-1]).lower())
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.exists():
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
+            if os.sep not in str(path):
+                path_new = Path(str(path).lower())
+            elif path.is_dir():
+                path_new = Path(path.parent, path.name.lower())
             else:
-                newfile = os.path.join(
-                    os.path.dirname(file), os.path.basename(file).lower())
-            if newfile != file:
-                print(f'Converting filename "{file}" to lowercase...')
-                if os.path.isfile(newfile):
+                path_new = Path(path.parent, path.name.lower())
+            if path_new != path:
+                print(f'Converting filename "{path}" to lowercase...')
+                if path_new.exists():
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot rename over existing '
-                        f'"{newfile}" file.',
+                        f'"{path_new}" file.',
                     )
                 try:
-                    shutil.move(file, newfile)
+                    path.replace(path_new)
                 except OSError as exception:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot rename '
-                        f'"{file}" file to "{newfile}".',
+                        f'"{path}" file to "{path_new}".',
                     ) from exception
 
         return 0

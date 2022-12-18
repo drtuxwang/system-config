@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -82,29 +83,29 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
                     argv.append(arg)
             sys.argv = argv
 
-    def _usage(self, options: Options, directory: str) -> int:
+    def _usage(self, options: Options, directory_path: Path) -> int:
         size = 0
         try:
-            files = [os.path.join(directory, x) for x in os.listdir(directory)]
+            paths = sorted(directory_path.iterdir())
         except PermissionError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot open "{directory}" directory.',
+                f'{sys.argv[0]}: Cannot open "{directory_path}" directory.',
             ) from exception
-        for file in sorted(files):
-            if not os.path.islink(file):
-                if os.path.isdir(file):
-                    size += self._usage(options, file)
+        for path in paths:
+            if not path.is_symlink():
+                if path.is_dir():
+                    size += self._usage(options, path)
                 else:
-                    size += int((os.path.getsize(file) + 1023) / 1024)
+                    size += int((path.stat().st_size + 1023) / 1024)
         if not options.get_summary_flag():
-            print(f"{size:7d} {directory}")
+            print(f"{size:7d} {directory_path}")
         return size
 
     def run(self) -> int:
@@ -113,19 +114,19 @@ class Main:
         """
         options = Options()
 
-        for file in options.get_files():
-            if os.path.islink(file):
-                print(f"{0:7d} {file}")
+        for path in [Path(x) for x in options.get_files()]:
+            if path.is_symlink():
+                print(f"{0:7d} {path}")
             else:
-                if os.path.isdir(file):
-                    size = self._usage(options, file)
+                if path.is_dir():
+                    size = self._usage(options, path)
                     if options.get_summary_flag():
-                        print(f"{size:7d} {file}")
-                elif os.path.isfile(file):
-                    size = int((os.path.getsize(file) + 1023) / 1024)
-                    print(f"{size:7d} {file}")
+                        print(f"{size:7d} {path}")
+                elif path.is_file():
+                    size = int((path.stat().st_size + 1023) / 1024)
+                    print(f"{size:7d} {path}")
                 else:
-                    print(f"{0:7d} {file}")
+                    print(f"{0:7d} {path}")
 
         return 0
 

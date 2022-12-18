@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import network_mod
 import subtask_mod
@@ -36,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -48,21 +49,17 @@ class Main:
         """
         Start program
         """
-        name = os.path.basename(sys.argv[0]).replace('.py', '')
+        name = Path(sys.argv[0]).name.replace('.py', '')
 
         wesnoth = network_mod.Sandbox(name, errors='stop')
         wesnoth.set_args(sys.argv[1:])
 
-        config = os.path.join(os.getenv('HOME', '/'), '.config/wesnoth-1.14')
-        if not config:
-            os.mkdir(config)
-
-        if not os.path.isfile(wesnoth.get_file() + '.py'):
+        if not Path(f'{wesnoth.get_file()}.py').is_file():
             # Maps $HOME/.config/wesnoth => $HOME/.config
-            config_directory = os.path.join(os.getenv('HOME', '/'), '.config')
-            wesnoth_directory = os.path.join(config_directory, 'wesnoth')
-            if not os.path.isdir(wesnoth_directory):
-                os.makedirs(wesnoth_directory)
+            config_directory = Path(Path.home(), '.config')
+            wesnoth_directory = Path(config_directory, 'wesnoth')
+            if not wesnoth_directory.is_dir():
+                wesnoth_directory.mkdir(parents=True)
 
             configs = [
                 '/dev/dri',

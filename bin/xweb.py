@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import config_mod
@@ -37,7 +38,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -46,10 +47,9 @@ class Main:
 
     @staticmethod
     def _get_default() -> str:
-        home = os.environ.get('HOME', '')
-        file = os.path.join(home, 'software', 'web-data', 'index.xhtml')
-        if os.path.isfile(file):
-            return file
+        path = Path(Path.home(), 'software', 'web-data', 'index.xhtml')
+        if path.is_file():
+            return str(path)
 
         return config_mod.Config().get('homepage')
 

@@ -6,10 +6,10 @@ Re-format XML file.
 import argparse
 import glob
 import os
-import shutil
 import signal
 import sys
 import xml.dom.minidom
+from pathlib import Path
 from typing import List
 
 
@@ -71,7 +71,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -85,29 +85,28 @@ class Main:
         """
         options = Options()
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" file.',
+                    f'{sys.argv[0]}: Cannot find "{path}" file.',
                 )
-            print(f'Re-formatting "{file}" XML file...')
+            print(f'Re-formatting "{path}" XML file...')
 
             lines = []
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
+                with path.open(encoding='utf-8', errors='replace') as ifile:
                     for line in ifile:
                         lines.append(line.strip())
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot read "{file}" file.',
+                    f'{sys.argv[0]}: Cannot read "{path}" file.',
                 ) from exception
             xml_doc = xml.dom.minidom.parseString(''.join(lines))
             xml_text = xml_doc.toprettyxml(indent='    ', newl='\n')
 
-            tmpfile = file + '.part'
+            path_new = Path(f'{path}.part')
             try:
-                with open(
-                    tmpfile,
+                with path_new.open(
                     'w',
                     encoding='utf-8',
                     newline='\n',
@@ -115,14 +114,14 @@ class Main:
                     print(xml_text, end='', file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{tmpfile}" file.',
+                    f'{sys.argv[0]}: Cannot create "{path_new}" file.',
                 ) from exception
             try:
-                shutil.move(tmpfile, file)
+                path_new.replace(path)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot rename '
-                    f'"{tmpfile}" file to "{file}".',
+                    f'"{path_new}" file to "{path}".',
                 ) from exception
 
         return 0

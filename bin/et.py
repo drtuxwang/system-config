@@ -8,6 +8,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import file_mod
@@ -39,7 +40,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -47,37 +48,35 @@ class Main:
             sys.argv = argv
 
     def _punkbuster(self) -> None:
-        home = os.environ.get('HOME', '')
-        pbdir = os.path.join(home, '.etwolf', 'pb')
-        linkdir = os.path.join(os.path.dirname(self._command.get_file()), 'pb')
-        if not os.path.islink(pbdir):
-            if os.path.isdir(pbdir):
+        path = Path(Path.home(), '.etwolf', 'pb')
+        link_path = Path(Path(self._command.get_file()).parent, 'pb')
+        if not path.is_symlink():
+            if path.is_dir():
                 try:
-                    shutil.rmtree(pbdir)
+                    shutil.rmtree(path)
                 except OSError:
                     return
-        elif os.readlink(pbdir) != linkdir:
-            os.remove(pbdir)
-        if not os.path.islink(pbdir):
+        elif path.readlink() != link_path:  # pylint: disable=no-member
+            path.unlink()
+        if not path.is_symlink():
             try:
-                os.symlink(linkdir, pbdir)
+                path.symlink_to(link_path)
             except OSError:
                 pass
-        if not os.access(os.path.join(pbdir, 'pbcl.so'), os.R_OK):
+        if not os.access(Path(path, 'pbcl.so'), os.R_OK):
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot access "pbcl.so" in '
-                f'"{pbdir}" directory.',
+                f'"{path}" directory.',
             )
-        etkey = os.path.join(
-            os.environ['HOME'], '.etwolf', 'etmain', 'etkey')
-        if not os.path.isfile(etkey):
+        path = Path(Path.home(), '.etwolf', 'etmain', 'etkey')
+        if not path.is_file():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find '
-                f'"{etkey}" key file (see http://www.etkey.net).',
+                f'"{path}" key file (see http://www.etkey.net).',
             )
 
     def _config(self) -> None:
-        os.chdir(os.path.dirname(self._command.get_file()))
+        os.chdir(Path(self._command.get_file()).parent)
         os.environ['SDL_AUDIODRIVER'] = 'pulse'
         etsdl = (
             glob.glob('/usr/lib/i386-linux-gnu/libSDL-*so*') +
@@ -91,33 +90,30 @@ class Main:
         os.environ['ETSDL_SDL_LIB'] = etsdl[0]
         if 'LD_PRELOAD' in os.environ:
             os.environ['LD_PRELOAD'] = (
-                os.environ['LD_PRELOAD'] + os.pathsep + os.path.join(
-                    os.getcwd(), 'et-sdl-sound-r29', 'et-sdl-sound.so')
+                f"{os.environ['LD_PRELOAD']}{os.pathsep}"
+                f"{Path(os.getcwd(), 'et-sdl-sound-r29', 'et-sdl-sound.so')}"
             )
         else:
-            os.environ['LD_PRELOAD'] = os.path.join(
-                os.getcwd(),
-                'et-sdl-sound-r29',
-                'et-sdl-sound.so'
+            os.environ['LD_PRELOAD'] = str(
+                Path(os.getcwd(), 'et-sdl-sound-r29', 'et-sdl-sound.so')
             )
-        directory = os.path.join(os.environ.get('HOME', ''), '.etwolf')
-        if not os.path.isdir(directory):
-            os.mkdir(directory)
+        path = Path(Path.home(), '.etwolf')
+        if not path.is_dir():
+            path.mkdir()
 
     def run(self) -> int:
         """
         Start program
         """
         self._command = network_mod.Sandbox('et.x86', errors='ignore')
-        if not os.path.isfile(self._command.get_file()):
+        if not Path(self._command.get_file()).is_file():
             command = command_mod.Command('et', errors='stop')
             command.set_args(sys.argv[1:])
             subtask_mod.Exec(command.get_cmdline()).run()
 
         configs = [
             'net',
-            f'/run/user/{os.getuid()}/pulse',
-            os.path.join(os.getenv('HOME', '/'), '.etwolf'),
+            f"/run/user/{os.getuid()}/pulse{Path(Path.home(), '.etwolf')}",
         ]
         self._command.sandbox(configs)
 
@@ -125,8 +121,8 @@ class Main:
         self._punkbuster()
         self._command.set_args(sys.argv[1:])
 
-        logfile = os.path.join(file_mod.FileUtil.tmpdir(), 'et.log')
-        subtask_mod.Daemon(self._command.get_cmdline()).run(file=logfile)
+        log_path = Path(file_mod.FileUtil.tmpdir(), 'et.log')
+        subtask_mod.Daemon(self._command.get_cmdline()).run(file=log_path)
 
         return 0
 

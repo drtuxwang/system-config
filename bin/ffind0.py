@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -69,29 +70,26 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
                     argv.append(arg)
             sys.argv = argv
 
-    def _findzero(self, files: List[str]) -> None:
-        for file in sorted(files):
-            if os.path.isdir(file):
+    def _findzero(self, paths: List[Path]) -> None:
+        for path in paths:
+            if path.is_dir():
                 try:
-                    self._findzero([
-                        os.path.join(file, x)
-                        for x in os.listdir(file)
-                    ])
+                    self._findzero(sorted(path.iterdir()))
                 except PermissionError:
                     pass
             else:
                 try:
-                    if os.path.getsize(file) == 0:
-                        print(file)
+                    if path.stat().st_size == 0:
+                        print(path)
                 except OSError:
-                    print(file)
+                    print(path)
 
     def run(self) -> int:
         """
@@ -99,7 +97,7 @@ class Main:
         """
         options = Options()
 
-        self._findzero(options.get_directories())
+        self._findzero([Path(x) for x in options.get_directories()])
 
         return 0
 

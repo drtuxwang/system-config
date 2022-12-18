@@ -8,6 +8,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -55,7 +56,7 @@ class Options:
             for arg in args:
                 if arg.startswith('--user-agent=') and 'Firefox/' in arg:
                     self._wget.extend_args(
-                        ['--output-document', os.path.basename(args[-1])])
+                        ['--output-document', Path(args[-1]).name])
                     break
 
         self._output = ''
@@ -63,7 +64,7 @@ class Options:
             if (len(args) > 2 and args[1] in ('--output-document', '-O') and
                     not args[2].endswith(('-', '.part'))):
                 self._output = args[2]
-                if os.path.isfile(args[2]):
+                if Path(args[2]).is_file():
                     raise SystemExit(f"Output file already exists: {args[2]}")
                 self._wget.extend_args([args[1], self._output + '.part'])
                 args = args[2:]
@@ -96,7 +97,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -122,8 +123,8 @@ class Main:
             task.run()
             if (
                     task.get_exitcode() or
-                    not os.path.isfile(output + '.part') or
-                    os.path.getsize(output + '.part') == 0
+                    not Path(f'{output}.part').is_file() or
+                    Path(f'{output}.part').stat().st_size == 0
             ):
                 raise SystemExit(task.get_exitcode())
             try:

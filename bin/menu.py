@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import jinja2  # type: ignore
@@ -80,13 +81,13 @@ class Menu:
         with open(template, encoding='utf-8', errors='replace') as ifile:
             self._template = jinja2.Template(ifile.read())
 
-        self._config_file = f"{sys.argv[0].rsplit('.py', 1)[0]}.yaml"
-        self._status_file = os.path.join(
-            os.environ['HOME'],
+        self._config_file = Path(sys.argv[0]).with_suffix('.yaml')
+        self._status_file = Path(
+            Path.home(),
             '.config',
-            f"{os.path.basename(sys.argv[0]).rsplit('.py', 1)[0]}.json",
+            Path(sys.argv[0]).with_suffix('.json').name,
         )
-        if os.path.isfile(self._status_file):
+        if self._status_file.is_file():
             file = self._status_file
         else:
             file = self._config_file
@@ -104,15 +105,10 @@ class Menu:
             return True
 
         for check in checks:
-            if os.path.isfile(check):
+            if Path(check).is_file():
                 return True
             for directory in os.environ.get('PATH', '').split(os.pathsep):
-                if glob.glob(os.path.join(
-                    os.path.dirname(directory),
-                    '*',
-                    '*',
-                    check,
-                )):
+                if Path(directory).parent.glob('*/*/{check}'):
                     return True
         return False
 
@@ -141,28 +137,28 @@ class Menu:
         Open menus
         """
         wish = command_mod.Command('wish', errors='stop')
-        tmpdir = file_mod.FileUtil.tmpdir(os.path.join('.cache', 'menu'))
+        tmpdir = file_mod.FileUtil.tmpdir(Path('.cache', 'menu'))
 
         for menu in self._menus:
-            file = os.path.join(tmpdir, menu + '.tcl')
+            path = Path(tmpdir, f'{menu}.tcl')
             try:
-                with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+                with path.open('w', encoding='utf-8', newline='\n') as ofile:
                     for line in self.generate(menu):
                         if self._view_flag:
                             print(line)
                         print(line, file=ofile)
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{file}" file.',
+                    f'{sys.argv[0]}: Cannot create "{path}" file.',
                 ) from exception
 
-            subtask_mod.Background(wish.get_cmdline() + [file]).run()
+            subtask_mod.Background(wish.get_cmdline() + [path]).run()
 
         if self._menus == ['main']:
             self.update(self._config_file, self._status_file)
 
     @classmethod
-    def update(cls, config_file: str, status_file: str) -> None:
+    def update(cls, config_file: Path, status_file: Path) -> None:
         """
         Update status file
         """
@@ -181,7 +177,7 @@ class Menu:
                 found.append(item)
             config[menu] = found
 
-        if os.path.isfile(status_file):
+        if status_file.is_file():
             data.read(status_file)
             status = next(data.get())
             if config == status:
@@ -218,7 +214,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

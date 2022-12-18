@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -89,7 +90,7 @@ class Options:
                     f'{sys.argv[0]}: Source or target cannot both be '
                     'local device/file.',
                 )
-            if not os.path.exists(source):
+            if not Path(source).exists():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot find "{source}" device or file.',
                 )
@@ -132,7 +133,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

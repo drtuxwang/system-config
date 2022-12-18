@@ -9,6 +9,7 @@ import os
 import pstats
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -109,7 +110,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -121,7 +122,7 @@ class Main:
         module_file: str,
         module_args: List[str],
     ) -> command_mod.Command:
-        if os.path.isfile(module_file):
+        if Path(module_file).is_file():
             return command_mod.CommandFile(module_file, args=module_args)
 
         try:
@@ -133,9 +134,8 @@ class Main:
 
     @classmethod
     def _profile(cls, module_file: str, module_args: List[str]) -> str:
-        stats_file = os.path.basename(
-            module_file.rsplit('.', 1)[0] + '.pstats')
-        if os.path.isfile(stats_file):
+        stats_file = Path(module_file).with_suffix('.pstats').name
+        if Path(stats_file).is_file():
             try:
                 os.remove(stats_file)
             except OSError as exception:

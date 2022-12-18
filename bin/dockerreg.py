@@ -30,6 +30,7 @@ import json
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List, Tuple
 
 import requests  # type: ignore
@@ -71,12 +72,12 @@ class Options:
     def _config() -> None:
         if 'REQUESTS_CA_BUNDLE' not in os.environ:
             for file in (
-                    # Debian/Ubuntu
-                    '/etc/ssl/certs/ca-certificates.crt',
-                    # RHEL/CentOS
-                    '/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt'
+                # Debian/Ubuntu
+                '/etc/ssl/certs/ca-certificates.crt',
+                # RHEL/CentOS
+                '/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt'
             ):
-                if os.path.isfile(file):
+                if Path(file).is_file():
                     os.environ['REQUESTS_CA_BUNDLE'] = file
                     break
 
@@ -337,7 +338,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

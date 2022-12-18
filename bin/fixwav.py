@@ -6,9 +6,9 @@ Normalize volume of wave files (-16.0dB rms mean volume).
 import argparse
 import glob
 import os
-import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List, Tuple
 
 import command_mod
@@ -96,26 +96,26 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
                     argv.append(arg)
             sys.argv = argv
 
-    def _adjust(self, file: str, volume: str) -> None:
+    def _adjust(self, path: Path, volume: str) -> None:
         change = -16 - float(volume)
-        file_new = file + '.part'
+        path_new = Path(f'{path}.part')
 
         self._ffmpeg.set_args([
             '-i',
-            file,
+            path,
             '-af',
             f'volume={change}dB',
             '-y',
             '-f',
             'wav',
-            file_new
+            path_new
         ])
         task = subtask_mod.Batch(self._ffmpeg.get_cmdline())
         task.run()
@@ -125,21 +125,22 @@ class Main:
                 f'{task.get_exitcode()} received from "{task.get_file()}".',
             )
         try:
-            shutil.move(file_new, file)
+            path_new.replace(path)
         except OSError as exception:
-            os.remove(file_new)
+            path_new.unlink()
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot update "{file}" file.',
+                f'{sys.argv[0]}: Cannot update "{path}" file.',
             ) from exception
 
-    def _view(self, file: str) -> Tuple[str, str]:
+    def _view(self, path: Path) -> Tuple[str, str]:
         self._ffmpeg.set_args(
-            ['-i', file, "-af", "volumedetect", "-f", "null", "/dev/null"])
+            ['-i', path, "-af", "volumedetect", "-f", "null", "/dev/null"]
+        )
         task = subtask_mod.Batch(self._ffmpeg.get_cmdline())
         task.run(pattern=' (mean|max)_volume: .* dB$', error2output=True)
         if len(task.get_output()) != 2:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read corrupt "{file}" wave file.',
+                f'{sys.argv[0]}: Cannot read corrupt "{path}" wave file.',
             )
         if task.get_exitcode():
             raise SystemExit(
@@ -158,20 +159,20 @@ class Main:
 
         self._ffmpeg = options.get_ffmpeg()
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
-                raise SystemExit(f'{sys.argv[0]}: Cannot find "{file}" file.')
-            if file[-4:] != '.wav':
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
+                raise SystemExit(f'{sys.argv[0]}: Cannot find "{path}" file.')
+            if path.suffix != '.wav':
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot handle "{file}" non-wave file.',
+                    f'{sys.argv[0]}: Cannot handle "{path}" non-wave file.',
                 )
-            volume, pvolume = self._view(file)
-            sys.stdout.write(f"{file}: {volume} dB ({pvolume} dB peak)")
+            volume, pvolume = self._view(path)
+            sys.stdout.write(f"{path}: {volume} dB ({pvolume} dB peak)")
             if not options.get_view_flag():
                 for npass in range(4):
-                    self._adjust(file, volume)
+                    self._adjust(path, volume)
                     sys.stdout.write(f" {npass}>> ")
-                    volume, pvolume = self._view(file)
+                    volume, pvolume = self._view(path)
                     sys.stdout.write(f"{volume} dB ({pvolume} dB peak)")
                     if volume.startswith('-16.'):
                         break

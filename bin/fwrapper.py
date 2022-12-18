@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -71,7 +72,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -79,32 +80,32 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _create(file: str, link: str) -> None:
+    def _create(path: Path, link_path: Path) -> None:
         try:
-            with open(link, 'w', encoding='utf-8', newline='\n') as ofile:
+            with link_path.open('w', encoding='utf-8', newline='\n') as ofile:
                 print("#!/usr/bin/env bash", file=ofile)
                 print("#", file=ofile)
                 print("# fwrapper.py generated script", file=ofile)
                 print("#\n", file=ofile)
                 print('MYDIR=$(dirname "$0")', file=ofile)
-                if file == os.path.abspath(file):
-                    directory = os.path.dirname(file)
+                if path == path.resolve():
+                    path = path.parent
                     print(
                         'PATH=$(echo "$PATH" | '
-                        f'sed -e "s@$MYDIR@{directory}@")',
+                        f'sed -e "s@$MYDIR@{path}@")',
                         file=ofile,
                     )
                     print("export PATH\n", file=ofile)
-                    print(f'exec "{file}" "$@"', file=ofile)
+                    print(f'exec "{path}" "$@"', file=ofile)
                 else:
-                    print(f'exec "$MYDIR/{file}" "$@"', file=ofile)
+                    print(f'exec "$MYDIR/{path}" "$@"', file=ofile)
 
-            os.chmod(link, int('755', 8))
-            file_time = os.path.getmtime(file)
-            os.utime(link, (file_time, file_time))
+            link_path.chmod(0o755)
+            file_time = path.stat().st_mtime
+            os.utime(link_path, (file_time, file_time))
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{link}" wrapper file.',
+                f'{sys.argv[0]}: Cannot create "{link_path}" wrapper file.',
             ) from exception
 
     def run(self) -> int:
@@ -114,18 +115,18 @@ class Main:
         options = Options()
 
         self._files = options.get_files()
-        for file in self._files:
-            if not os.path.isfile(file):
+        for path in [Path(x) for x in self._files]:
+            if not path.is_file():
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" file.',
+                    f'{sys.argv[0]}: Cannot find "{path}" file.',
                 )
 
-            link = os.path.basename(file)
-            if os.path.exists(link):
-                print(f'Updating "{link}" wrapper for "{file}"...')
+            link = Path(path.name)
+            if link.exists():
+                print(f'Updating "{link}" wrapper for "{path}"...')
             else:
-                print(f'Creating "{link}" wrapper for "{file}"...')
-            self._create(file, link)
+                print(f'Creating "{link}" wrapper for "{path}"...')
+            self._create(path, link)
 
         return 0
 

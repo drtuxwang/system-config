@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -44,14 +45,15 @@ class Options:
 
     @staticmethod
     def _set_libraries(command: command_mod.Command) -> None:
-        libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
-        if os.path.isdir(libdir) and os.name == 'posix':
+        libdir = Path(Path(command.get_file()).parent, 'lib')
+        if libdir.is_dir() and os.name == 'posix':
             if os.uname()[0] == 'Linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
                     os.environ['LD_LIBRARY_PATH'] = (
-                        libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
+                        f"{libdir}{os.pathsep}{os.environ['LD_LIBRARY_PATH']}"
+                    )
                 else:
-                    os.environ['LD_LIBRARY_PATH'] = libdir
+                    os.environ['LD_LIBRARY_PATH'] = str(libdir)
 
     def _parse_args(self, args: List[str]) -> None:
         parser = argparse.ArgumentParser(
@@ -114,7 +116,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -124,7 +126,7 @@ class Main:
     @staticmethod
     def _get_local(directory: str, files_local: List[str]) -> None:
         if files_local:
-            if not os.path.isdir(directory):
+            if not Path(directory).is_dir():
                 try:
                     os.mkdir(directory)
                 except OSError as exception:
@@ -135,10 +137,7 @@ class Main:
             for file in files_local:
                 print(f"file://{file}")
                 try:
-                    shutil.copy2(
-                        file,
-                        os.path.join(directory, os.path.basename(file))
-                    )
+                    shutil.copy2(file, Path(directory, Path(file).name))
                 except OSError as exception:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot find "{file}" file.',
@@ -167,13 +166,13 @@ class Main:
         """
         self._options = Options()
 
-        os.umask(int('022', 8))
+        os.umask(0o022)
         aria2c = self._options.get_aria2c()
 
         for url in self._options.get_urls():
             files_local = []
             files_remote = [url]
-            if url.endswith('.url') and os.path.isfile(url):
+            if url.endswith('.url') and Path(url).is_file():
                 directory = url[:-4]
                 files_remote = []
                 aria2c.set_args([
@@ -209,7 +208,7 @@ class Main:
                     ) from exception
                 self._get_local(directory, files_local)
                 self._get_remote(aria2c, files_remote)
-            elif os.path.isdir(url):
+            elif Path(url).is_dir():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot process "{url}" directory.',
                 )

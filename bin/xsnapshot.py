@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import desktop_mod
@@ -50,7 +51,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -65,7 +66,7 @@ class Main:
         desktop = desktop_mod.Desktop.detect()
         cmdline = PROGRAMS.get(desktop, GENERIC)
         command: command_mod.Command
-        if os.path.isfile(cmdline[0]):
+        if Path(cmdline[0]).is_file():
             command = command_mod.CommandFile(cmdline[0], errors='ignore')
         else:
             command = command_mod.Command(cmdline[0], errors='ignore')

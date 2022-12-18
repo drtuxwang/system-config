@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -85,10 +86,11 @@ class Options:
 
         self._parse_args(args[1:])
 
-        if os.path.isdir(self._args.archive[0]):
-            self._archive = os.path.abspath(self._args.archive[0]) + '.zip'
+        path = Path(self._args.archive[0])
+        if path.is_dir():
+            self._archive = f'{path.resolve()}.zip'
         else:
-            self._archive = self._args.archive[0]
+            self._archive = str(path)
         if '.zip' not in self._archive:
             raise SystemExit(
                 f'{sys.argv[0]}: Unsupported "{self._archive}" archive format.'
@@ -125,7 +127,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -140,7 +142,7 @@ class Main:
         options = Options()
         archive = options.get_archive()
 
-        os.umask(int('022', 8))
+        os.umask(0o022)
 
         task = subtask_mod.Exec(options.get_archiver().get_cmdline())
         task.run()

@@ -9,6 +9,7 @@ import os
 import signal
 import sys
 import tarfile
+from pathlib import Path
 from typing import List
 
 
@@ -90,7 +91,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -99,31 +100,28 @@ class Main:
 
     @staticmethod
     def _unpack(archive: tarfile.TarFile) -> None:
-        for file in archive.getnames():
-            print(file)
-            if os.path.isabs(file):
+        for path in [Path(x) for x in archive.getnames()]:
+            print(path)
+            if path.is_absolute():
                 raise SystemExit(
                     f'{sys.argv[0]}: Unsafe to extract file with absolute '
                     'path outside of current directory.'
                 )
-            if file.startswith(os.pardir):
+            if str(path).startswith(os.pardir):
                 raise SystemExit(
                     f'{sys.argv[0]}: Unsafe to extract file with relative '
                     'path outside of current directory.'
                 )
             try:
-                archive.extract(archive.getmember(file))
+                archive.extract(archive.getmember(str(path)))
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Unable to create "{file}" extracted.',
+                    f'{sys.argv[0]}: Unable to create "{path}" extracted.',
                 ) from exception
-            if not os.path.isfile(file):
-                if not os.path.isdir(file):
-                    if not os.path.islink(file):
-                        raise SystemExit(
-                            f'{sys.argv[0]}: Cannot create extracted '
-                            f'"{file}" file.',
-                        )
+            if not path.exists():
+                raise SystemExit(
+                    f'{sys.argv[0]}: Cannot create extracted "{path}" file.',
+                )
 
     @staticmethod
     def _view(archive: tarfile.TarFile) -> None:
@@ -136,7 +134,7 @@ class Main:
         """
         options = Options()
 
-        os.umask(int('022', 8))
+        os.umask(0o022)
         for file in options.get_archives():
             print(f"{file}:")
             try:

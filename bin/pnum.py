@@ -6,9 +6,9 @@ Renumber picture/video files into a numerical series.
 import argparse
 import glob
 import os
-import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import config_mod
@@ -89,11 +89,11 @@ class Options:
         """
         self._parse_args(args[1:])
 
-        for directory in self._args.directories:
-            if not os.path.isdir(directory):
+        for path in [Path(x) for x in self._args.directories]:
+            if not path.is_dir():
                 raise SystemExit(
                     f'{sys.argv[0]}: Picture directory '
-                    f'"{directory}" does not exist.',
+                    f'"{path}" does not exist.',
                 )
 
 
@@ -121,7 +121,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -157,25 +157,24 @@ class Main:
             config.get('image_extensions') + config.get('video_extensions')
         )
 
-        for directory in options.get_directories():
+        for path in [Path(x) for x in options.get_directories()]:
             if reset_flag:
                 number = options.get_start()
-            if os.path.isdir(directory):
-                os.chdir(directory)
+            if path.is_dir():
+                os.chdir(path)
                 file_stats = []
                 for file in glob.glob('*.*'):
-                    if os.path.splitext(file)[1].lower() in images_extensions:
+                    if Path(file).suffix.lower() in images_extensions:
                         file_stats.append(file_mod.FileStat(file))
                 newfiles = []
                 for file_stat in self._sorted(options, file_stats):
-                    extension = os.path.splitext(file_stat.get_file())[1]
+                    extension = Path(file_stat.get_file()).suffix
                     extension = extension.lower().replace('.jpeg', '.jpg')
                     newfile = f'pic{number:05d}{extension}'
                     newfiles.append(newfile)
                     try:
-                        shutil.move(
-                            file_stat.get_file(),
-                            f'pnum.tmp-{newfile}',
+                        Path(file_stat.get_file()).replace(
+                            f'pnum.tmp-{newfile}'
                         )
                     except OSError as exception:
                         raise SystemExit(
@@ -185,7 +184,7 @@ class Main:
                     number += 1
                 for file in newfiles:
                     try:
-                        shutil.move(f'pnum.tmp-{file}', file)
+                        Path(f'pnum.tmp-{file}').replace(file)
                     except OSError as exception:
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot rename to '

@@ -14,6 +14,7 @@ import re
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -43,26 +44,21 @@ class Options:
         return self._browser
 
     @staticmethod
-    def _get_profiles_dir() -> str:
+    def _get_profiles_dir() -> Path:
         if command_mod.Platform.get_system() == 'macos':
-            return os.path.join(
-                'Library', 'Application Support', 'Microsoft', 'Edge')
-        return os.path.join('.config', 'microsoft-edge')
+            return Path('Library', 'Application Support', 'Microsoft', 'Edge')
+        return Path('.config', 'microsoft-edge')
 
     @staticmethod
-    def _clean_preferences(configdir: str) -> None:
-        file = os.path.join(configdir, 'Preferences')
+    def _clean_preferences(config_path: Path) -> None:
+        path = Path(config_path, 'Preferences')
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 data = json.load(ifile)
             data['profile']['exit_type'] = 'Normal'
             data['partition']['per_host_zoom_levels'] = {}
-            with open(
-                file + '.part',
-                'w',
-                encoding='utf-8',
-                newline='\n',
-            ) as ofile:
+            path_new = Path(f'{path}.part')
+            with path_new.open('w', encoding='utf-8', newline='\n') as ofile:
                 print(json.dumps(
                     data,
                     ensure_ascii=False,
@@ -71,17 +67,17 @@ class Options:
                 ), file=ofile)
         except (KeyError, OSError, ValueError):
             try:
-                os.remove(file + '.part')
+                path_new.unlink()
             except OSError:
                 pass
         else:
             try:
-                shutil.move(file + '.part', file)
+                path_new.replace(path)
             except OSError:
                 pass
 
     @staticmethod
-    def _clean_junk_files(configdir: str) -> None:
+    def _clean_junk_files(config_path: Path) -> None:
         for fileglob in (
             'Archive*',
             'Cookies*',
@@ -91,20 +87,19 @@ class Options:
             'Visited*',
             'Last*',
         ):
-            for file in glob.glob(os.path.join(configdir, fileglob)):
+            for path in config_path.glob(fileglob):
                 try:
-                    os.remove(file)
+                    path.unlink()
                 except OSError:
                     pass
-        ispattern = re.compile('^(lastDownload|lastSuccess|lastCheck|'
-                               r'expires|softExpiration)=\d*')
-        for file in glob.glob(
-            os.path.join(configdir, 'File System', '*', 'p', '00', '*'),
-        ):
+        ispattern = re.compile(
+            r'^(lastDownload|lastSuccess|lastCheck|expires|softExpiration)=\d*'
+        )
+        for path in config_path.glob('File System/*/p/00/*'):
+            path_new = Path(f'{path}.part')
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
-                    with open(
-                        file + '.part',
+                with path.open(encoding='utf-8', errors='replace') as ifile:
+                    with path_new.open(
                         'w',
                         encoding='utf-8',
                         newline='\n',
@@ -114,81 +109,72 @@ class Options:
                                 print(line, end='', file=ofile)
             except OSError:
                 try:
-                    os.remove(file + '.part')
+                    path_new.unlink()
                 except OSError:
                     continue
             else:
                 try:
-                    shutil.move(file + '.part', file)
+                    path_new.replace(path)
                 except OSError:
                     continue
 
     def _config(self) -> None:
-        home = os.environ.get('HOME', '')
-        configdir = os.path.join(home, self._get_profiles_dir(), 'Default')
+        path = Path(Path.home(), self._get_profiles_dir(), 'Default')
 
-        if os.path.isdir(configdir):
-            self._clean_preferences(configdir)
-            self._clean_junk_files(configdir)
+        if path.is_dir():
+            self._clean_preferences(path)
+            self._clean_junk_files(path)
 
     def _copy(self) -> None:
         task = task_mod.Tasks.factory()
         tmpdir = file_mod.FileUtil.tmpdir('.cache')
-        for directory in glob.glob(os.path.join(tmpdir + 'edge.*')):
+        for path in Path(tmpdir).glob('chrome.*'):
             try:
-                if not task.pgid2pids(int(directory.split('.')[-1])):
+                if not task.pgid2pids(int(path.suffix)):
                     print(
-                        f'Removing copy of Chrome profile in "{directory}"...',
+                        f'Removing copy of Chrome profile in "{path}"...',
                     )
                     try:
-                        shutil.rmtree(directory)
+                        shutil.rmtree(path)
                     except OSError:
                         pass
             except ValueError:
                 pass
 
-        configdir = os.path.join(
-            os.environ['HOME'],
-            self._get_profiles_dir()
-        )
+        home = Path.home()
+        config_path = Path(home, self._get_profiles_dir())
         mypid = os.getpid()
         os.setpgid(mypid, mypid)  # New PGID
 
-        newhome = file_mod.FileUtil.tmpdir(
-            os.path.join(tmpdir, f'edge.{mypid}'),
-        )
+        newhome = file_mod.FileUtil.tmpdir(Path(tmpdir, f'chrome.{mypid}'))
         print(f'Creating copy of Chrome profile in "{newhome}"...')
-        if not os.path.isdir(newhome):
+        if not Path(newhome).is_dir():
             try:
                 shutil.copytree(
-                    configdir,
-                    os.path.join(newhome, self._get_profiles_dir())
+                    config_path,
+                    Path(newhome, self._get_profiles_dir())
                 )
             except (OSError, shutil.Error):  # Ignore 'lock' file error
                 pass
         try:
-            os.symlink(
-                os.path.join(os.environ.get('HOME', ''), 'Desktop'),
-                os.path.join(newhome, 'Desktop')
-            )
+            Path(newhome, 'Desktop').symlink_to(Path(home, 'Desktop'))
         except OSError:
             pass
         os.environ['HOME'] = newhome
 
     @staticmethod
-    def _remove(file: str) -> None:
+    def _remove(path: Path) -> None:
         try:
-            if os.path.isdir(file):
-                shutil.rmtree(file)
+            if path.is_dir():
+                shutil.rmtree(path)
             else:
-                os.remove(file)
+                path.unlink()
         except OSError:
             pass
 
     def _reset(self) -> None:
-        home = os.environ.get('HOME', '')
-        configdir = os.path.join(home, self._get_profiles_dir())
-        if os.path.isdir(configdir):
+        config_path = Path(Path.home(), self._get_profiles_dir())
+        if config_path.is_dir():
             keep_list = (
                 'Extensions',
                 'File System',
@@ -197,32 +183,29 @@ class Options:
                 'Preferences',
                 'Secure Preferences'
             )
-            for directory in glob.glob(os.path.join(configdir, '*')):
-                if os.path.isfile(os.path.join(directory, 'Preferences')):
-                    for file in glob.glob(os.path.join(directory, '*')):
-                        if os.path.basename(file) not in keep_list:
-                            print(f'Removing "{file}"...')
-                            self._remove(file)
+            for directory in config_path.glob('*'):
+                if Path(directory, 'Preferences').is_file():
+                    for path in directory.glob('*'):
+                        if path.name not in keep_list:
+                            print(f'Removing "{path}"...')
+                            self._remove(path)
                 elif (
-                        os.path.basename(directory) not in
-                        {'Extensions', 'First Run', 'Local State'}
+                    directory.name not in
+                    {'Extensions', 'First Run', 'Local State'}
                 ):
                     print(f'Removing "{directory}"...')
                     self._remove(directory)
-                for file in glob.glob(
-                    os.path.join(directory, 'Local Storage', 'https*'),
-                ):
-                    self._remove(file)
-                for file in glob.glob(os.path.join(directory, '.???*')):
-                    print(f'Removing "{file}"...')
-                    self._remove(file)
+                for path in directory.glob('Local Storage/https*'):
+                    self._remove(path)
+                for path in directory.glob('.???*'):
+                    print(f'Removing "{path}"...')
+                    self._remove(path)
 
     def _restart(self) -> None:
-        home = os.environ.get('HOME', '')
-        configdir = os.path.join(home, self._get_profiles_dir())
+        path = Path(Path.home(), self._get_profiles_dir(), 'SingletonLock')
         try:
-            pid = int(os.readlink(
-                os.path.join(configdir, 'SingletonLock')
+            pid = int(str(
+                path.readlink()  # pylint: disable=no-member
             ).split('-')[1])
             task_mod.Tasks.factory().killpids([pid])
         except (IndexError, OSError):
@@ -230,14 +213,15 @@ class Options:
 
     @staticmethod
     def _set_libraries(command: command_mod.Command) -> None:
-        libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
-        if os.path.isdir(libdir) and os.name == 'posix':
+        path = Path(Path(command.get_file()).parent, 'lib')
+        if path.is_dir() and os.name == 'posix':
             if os.uname()[0] == 'Linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
                     os.environ['LD_LIBRARY_PATH'] = (
-                        libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
+                        f"{path}{os.pathsep}{os.environ['LD_LIBRARY_PATH']}"
+                    )
                 else:
-                    os.environ['LD_LIBRARY_PATH'] = libdir
+                    os.environ['LD_LIBRARY_PATH'] = str(path)
 
     @staticmethod
     def _locate() -> command_mod.Command:
@@ -323,7 +307,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

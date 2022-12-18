@@ -2,7 +2,7 @@
 """
 Python network handling utility module
 
-Copyright GPL v2: 2015-2021 By Dr Colin Kong
+Copyright GPL v2: 2015-2022 By Dr Colin Kong
 """
 
 import getpass
@@ -10,12 +10,13 @@ import glob
 import grp
 import json
 import os
-from typing import Any, List, Optional, Tuple
+from pathlib import Path
+from typing import Any, List, Tuple, Union
 
 import command_mod
 
-RELEASE = '3.3.5'
-VERSION = 20211214
+RELEASE = '3.4.0'
+VERSION = 20221218
 
 
 class NetNice(command_mod.Command):
@@ -30,23 +31,22 @@ class NetNice(command_mod.Command):
         """
         self._drate = drate
 
-        home = os.environ.get('HOME', '')
-        file = os.path.join(home, '.config', 'netnice.json')
-        if not self._read(file):
-            self._write(file)
+        path = Path(Path.home(), '.config', 'netnice.json')
+        if not self._read(path):
+            self._write(path)
 
         # Try trickle bandwidth limits
         super().__init__('trickle', errors=errors)
         if self.is_found():
-            self.set_args(['-d', str(self._drate), '-s'])
+            self.set_args(['-d', self._drate, '-s'])
 
-    def _read(self, file: str) -> bool:
+    def _read(self, path: Path) -> bool:
         """
         Read configuration file
         """
-        if os.path.isfile(file):
+        if path.is_file():
             try:
-                with open(file, encoding='utf-8') as ifile:
+                with path.open(encoding='utf-8') as ifile:
                     data = json.load(ifile)
                     self._drate = data['trickle']['download']
             except (KeyError, OSError, ValueError):
@@ -56,7 +56,7 @@ class NetNice(command_mod.Command):
 
         return False
 
-    def _write(self, file: str) -> None:
+    def _write(self, path: Path) -> None:
         """
         Write configuration file
         """
@@ -66,7 +66,7 @@ class NetNice(command_mod.Command):
             }
         }
         try:
-            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w', encoding='utf-8', newline='\n') as ofile:
                 print(json.dumps(
                     data,
                     ensure_ascii=False,
@@ -88,7 +88,7 @@ class Sandbox(command_mod.Command):
     """
     BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
-    def __init__(self, program: str, **kwargs: Any) -> None:
+    def __init__(self, program: Union[str, Path], **kwargs: Any) -> None:
         super().__init__(program, **kwargs)
         self._sandbox: List[str] = []
 
@@ -97,7 +97,7 @@ class Sandbox(command_mod.Command):
         print(f"\033[1;3{colour}mSandbox: {message}\033[0m")
 
     @classmethod
-    def _check_bwrap(cls, errors: str) -> Optional[command_mod.Command]:
+    def _check_bwrap(cls, errors: str) -> command_mod.Command:
         bwrap = command_mod.Command('bwrap', errors='ignore')
         if not bwrap.is_found():
             if errors == 'stop':
@@ -142,14 +142,14 @@ class Sandbox(command_mod.Command):
             realpath, mount = config.split(':', 1)
         else:
             mount = config
-            realpath = os.path.realpath(mount)
+            realpath = str(Path(mount).resolve())
 
         return (realpath, mount, mode)
 
     def _config_access(
         self,
         bwrap: command_mod.Command,
-        configs: Optional[List[str]],
+        configs: List[str],
     ) -> List[str]:
 
         cmdline = bwrap.get_cmdline()
@@ -185,7 +185,7 @@ class Sandbox(command_mod.Command):
             directories = [
                 x
                 for x in sorted(set(glob.glob('/*')) - set(allow_reads))
-                if os.path.isdir(x)
+                if Path(x).is_dir()
             ]
             for mount in directories:
                 cmdline.extend(['--tmpfs', mount])
@@ -195,31 +195,31 @@ class Sandbox(command_mod.Command):
             )
 
             # Dummy working directory ("os.getcwd()" returns realpath instead
-            directory = os.environ['PWD']
+            directory = str(Path.cwd())
             if not directory.startswith(allow_reads):
                 cmdline.extend(['--tmpfs', directory])
-
             # Devices
             cmdline.extend(['--dev', 'dev'])
 
             # Application directory
-            directory = os.path.dirname(self.get_file())
-            if not directory.startswith(allow_reads):
-                realpath = os.path.realpath(directory)
-                cmdline.extend(['--ro-bind-try', realpath, directory])
+            path = Path(self.get_file()).parent
+            if not str(path).startswith(allow_reads):
+                cmdline.extend(
+                   ['--ro-bind-try', str(path.resolve), str(directory)],
+                )
                 self._show(
                     Sandbox.YELLOW,
-                    f"Enable application access {directory}:ro",
+                    f"Enable application access {path}:ro",
                 )
 
         # Enable access rights
         for config in configs:
             realpath, mount, mode = self._parse_config(config)
             if mode == 'read/write':
-                if not os.path.exists(realpath):
-                    os.makedirs(realpath)
+                if not Path(realpath).exists():
+                    Path(realpath).mkdir(parents=True)
                 cmdline.extend(['--bind-try', realpath, mount])
-                if realpath == '/':
+                if str(realpath) == '/':
                     cmdline.extend([
                         '--dev',
                         'dev',
@@ -248,20 +248,13 @@ class Sandbox(command_mod.Command):
                     f"Enable read access {config}",
                 )
 
-        cmdline.extend([
-            '--setenv',
-            '_SANDBOX_PARENT',
-            str(os.getpid()),
-            '--',
-        ])
+        cmdline.extend(
+            ['--setenv', '_SANDBOX_PARENT', str(os.getpid()), '--'],
+        )
 
         return cmdline
 
-    def sandbox(
-        self,
-        configs: Optional[List[str]],
-        errors: str = 'ignore',
-    ) -> None:
+    def sandbox(self, configs: list, errors: str = 'ignore') -> None:
         """
         Setup sandboxing
 
@@ -290,7 +283,7 @@ class Sandbox(command_mod.Command):
                 "(using nonet group & iptables)",
             )
 
-        cmdline = self._config_access(bwrap, configs)
+        cmdline = self._config_access(bwrap, [str(x) for x in configs])
 
         if not network:
             command = command_mod.Command('sg', args=['nonet'], errors=errors)

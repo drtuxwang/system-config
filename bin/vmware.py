@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import BinaryIO, List, TextIO, Union
 
 import command_mod
@@ -35,14 +36,13 @@ class Options:
 
     @staticmethod
     def _config() -> None:
-        home = os.environ.get('HOME', '')
-        configfile = os.path.join(home, '.vmware', 'config')
+        home = Path.home()
+        path = Path(home, '.vmware', 'config')
         ofile: Union[BinaryIO, TextIO]
 
-        if os.path.isfile(configfile):
+        if path.is_file():
             try:
-                with open(
-                    configfile,
+                with path.open(
                     encoding='utf-8',
                     errors='replace',
                 ) as ifile:
@@ -50,14 +50,13 @@ class Options:
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot read '
-                    f'"{configfile}" configuration file.',
+                    f'"{path}" configuration file.',
                 ) from exception
             if 'xkeymap.nokeycodeMap = true\n' in configdata:
                 ifile.close()
                 return
             try:
-                with open(
-                    configfile,
+                with path.open(
                     'a',
                     encoding='utf-8',
                     errors='replace',
@@ -66,21 +65,19 @@ class Options:
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot modify '
-                    f'"{configfile}" configuration file.',
+                    f'"{path}" configuration file.',
                 ) from exception
         else:
-            configdir = os.path.dirname(configfile)
-            if not os.path.isdir(configdir):
+            if not path.parent.is_dir():
                 try:
-                    os.mkdir(configdir)
+                    path.parent.mkdir()
                 except OSError as exception:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot create '
-                        f'"{configdir}" directory.',
+                        f'"{path.parent}" directory.',
                     ) from exception
             try:
-                with open(
-                    configfile,
+                with path.open(
                     'w',
                     encoding='utf-8',
                     newline='\n',
@@ -89,7 +86,7 @@ class Options:
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create '
-                    f'"{configfile}" configuration file.',
+                    f'"{path}" configuration file.',
                 ) from exception
 
     def parse(self, args: List[str]) -> None:
@@ -126,7 +123,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

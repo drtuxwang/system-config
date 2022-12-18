@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -72,12 +73,12 @@ class Options:
 
     @staticmethod
     def _get_command(directory: str, command: str) -> command_mod.Command:
-        if os.path.isfile(command):
-            return command_mod.CommandFile(os.path.abspath(command))
+        if Path(command).is_file():
+            return command_mod.CommandFile(Path(command).resolve())
 
-        file = os.path.join(directory, command)
-        if os.path.isfile(file):
-            return command_mod.CommandFile(file)
+        path = Path(directory, command)
+        if path.is_file():
+            return command_mod.CommandFile(path)
         return command_mod.Command(command)
 
     def parse(self, args: List[str]) -> None:
@@ -87,7 +88,7 @@ class Options:
         command_args = self._parse_args(args[1:])
 
         self._command = self._get_command(
-            os.path.dirname(args[0]),
+            str(Path(args[0]).parent),
             self._args.command[0]
         )
         self._command.set_args(command_args)
@@ -127,7 +128,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

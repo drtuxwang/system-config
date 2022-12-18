@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import network_mod
 import subtask_mod
@@ -36,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -48,22 +49,23 @@ class Main:
         """
         Start program
         """
-        name = os.path.basename(sys.argv[0]).replace('.py', '')
+        name = Path(sys.argv[0]).stem
         pattern = "QXcbConnection:|libpng warning:"
 
         robo3t = network_mod.Sandbox(name, errors='stop')
         robo3t.set_args(sys.argv[1:])
+        home = Path.home()
 
         configs = [
             'net',
             f'/run/user/{os.getuid()}',
-            os.path.join(os.getenv('HOME', '/'), '.config/ibus'),
-            os.path.join(os.getenv('HOME', '/'), '.3T/robo-3t'),
+            Path(home, '.config/ibus'),
+            Path(home, '.3T/robo-3t'),
         ]
-        work_dir = os.environ['PWD']
-        if work_dir == os.environ['HOME']:
-            desktop = os.path.join(work_dir, 'Desktop')
-            if os.path.isdir(desktop):
+        work_dir = Path(os.environ['PWD'])
+        if work_dir == home:
+            desktop = Path(work_dir, 'Desktop')
+            if desktop.is_dir():
                 os.chdir(desktop)
                 work_dir = desktop
         configs.append(work_dir)

@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -72,7 +73,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -86,17 +87,12 @@ class Main:
         """
         options = Options()
 
-        for file in options.get_files():
-            if os.path.isfile(file):
-                if not os.path.isfile(file):
-                    raise SystemExit(
-                        f'{sys.argv[0]}: Cannot find "{file}" file.',
-                    )
+        for path in [Path(x) for x in options.get_files()]:
+            if path.is_file():
                 nlines = 0
                 maxcols = 0
                 try:
-                    with open(
-                        file,
+                    with path.open(
                         encoding='utf-8',
                         errors='replace',
                     ) as ifile:
@@ -108,15 +104,13 @@ class Main:
                                 lline = nlines
                 except OSError as exception:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot read "{file}" file.',
+                        f'{sys.argv[0]}: Cannot read "{path}" file.',
                     ) from exception
                 except UnicodeDecodeError:  # Non text file
                     continue
                 print(
-                    f"{file}: "
-                    f"{nlines} lines (max length of "
-                    f"{maxcols} on line "
-                    f"{lline})",
+                    f"{path}: {nlines} lines (max length of {maxcols} "
+                    f"on line {lline})",
                 )
 
         return 0

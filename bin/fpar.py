@@ -7,9 +7,9 @@ import argparse
 import glob
 import logging
 import os
-import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -92,7 +92,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -100,79 +100,81 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _create_3dot_directory(directory: str) -> None:
-        if not os.path.isdir(directory):
+    def _create_3dot_directory(path: Path) -> None:
+        if not path.is_dir():
             try:
-                os.mkdir(directory)
+                path.mkdir()
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{directory}" directory.',
+                    f'{sys.argv[0]}: Cannot create "{path}" directory.',
                 ) from exception
 
     @staticmethod
-    def _delete_file(file: str) -> None:
+    def _delete_file(path: Path) -> None:
         try:
-            os.remove(file)
+            path.unlink()
         except OSError:
             pass
 
     @classmethod
-    def _check_3dot_directory(cls, directory: str) -> None:
-        if os.path.isdir(directory):
-            for par_file in sorted(os.listdir(directory)):
-                if par_file.endswith('.par2'):
-                    file = os.path.join(directory, os.pardir, par_file[:-5])
-                    if os.path.isfile(file):
+    def _check_3dot_directory(cls, directory_path: Path) -> None:
+        if directory_path.is_dir():
+            paths = sorted([Path(x.name) for x in directory_path.iterdir()])
+            for par_path in paths:
+                if par_path.suffix == '.par2':
+                    path = Path(directory_path, os.pardir, str(par_path)[:-5])
+                    if path.is_file():
                         continue
-                    file = os.path.join(directory, par_file)
-                    logger.warning("Deleting old: %s", file)
-                    cls._delete_file(file)
-            if not os.listdir(directory):
-                os.removedirs(directory)
+                    path = Path(directory_path, par_path)
+                    logger.warning("Deleting old: %s", path)
+                    cls._delete_file(path)
+            if not paths:
+                os.removedirs(directory_path)
 
     @classmethod
-    def _update(cls, cmdline: List[str], files: List[str]) -> None:
-        for file in sorted(files):
-            directory, name = os.path.split(file)
-            if not directory:
-                directory = os.curdir
-            if os.path.isdir(file):
-                cls._check_3dot_directory(os.path.join(file, '...'))
-                cls._update(cmdline, glob.glob(os.path.join(file, '*')))
+    def _update(cls, cmdline: List[str], paths: List[Path]) -> None:
+        for path in sorted(paths):
+            if path.name == '...':
+                continue
+            directory_path = path.parent
+            name = path.name
+            if not directory_path:
+                directory_path = Path(os.curdir)
+            if path.is_dir():
+                cls._check_3dot_directory(Path(path, '...'))
+                cls._update(cmdline, list(path.glob('*')))
             elif (
-                os.path.isfile(file) and
-                not os.path.islink(file) and
-                os.path.getsize(file)
+                path.is_file() and
+                not path.is_symlink() and
+                path.stat().st_size
             ):
-                fpar_directory = os.path.join(directory, '...')
-
                 if name.endswith(IGNORE_EXTENSIONS):
                     continue
 
-                file_time = os.path.getmtime(file)
-                par_file = os.path.join(directory, '...', name+'.par2')
+                fpar_path = Path(directory_path, '...')
+                file_time = path.stat().st_mtime
+                par_path = Path(directory_path, '...', f'{name}.par2')
                 if (
-                        not os.path.isfile(par_file) or
-                        file_time != os.path.getmtime(par_file)
+                    not par_path.is_file() or
+                    file_time != par_path.stat().st_mtime
                 ):
-                    tmpfile = os.path.join(directory, '....par2')
-                    size = os.path.getsize(file) // 400 * 4 + 4
+                    tmp_path = Path(directory_path, '....par2')
+                    size = path.stat().st_size // 400 * 4 + 4
                     task = subtask_mod.Task(
-                        cmdline + ['-s'+str(size), tmpfile, file]
+                        cmdline + ['-s'+str(size), str(tmp_path), str(path)]
                     )
-                    cls._create_3dot_directory(fpar_directory)
+                    cls._create_3dot_directory(fpar_path)
                     task.run(pattern='^$', replace=(
                         'Opening: ',
-                        f'Opening: {directory}{os.sep}',
+                        f'Opening: {directory_path}/',
                     ))
                     if task.get_exitcode() == 0:
-                        cls._delete_file(tmpfile)
+                        cls._delete_file(tmp_path)
                         try:
-                            shutil.move(
-                                os.path.join(directory, '....vol0+1.par2'),
-                                par_file
+                            Path(directory_path, '....vol0+1.par2').replace(
+                                par_path
                             )
-                            os.utime(par_file, (file_time, file_time))
+                            os.utime(par_path, (file_time, file_time))
                         except OSError:
                             pass
 
@@ -184,7 +186,7 @@ class Main:
         options = Options()
 
         cmdline = options.get_par2().get_cmdline()
-        cls._update(cmdline, options.get_files())
+        cls._update(cmdline, [Path(x) for x in options.get_files()])
 
         return 0
 

@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -75,28 +76,28 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
                     argv.append(arg)
             sys.argv = argv
 
-    def _toucher(self, directory: str) -> None:
-        print(directory)
-        if os.path.isdir(directory):
+    def _toucher(self, directory_path: Path) -> None:
+        print(directory_path)
+        if directory_path.is_dir():
             try:
-                files = [
-                    os.path.join(directory, x)
-                    for x in os.listdir(directory)
-                ]
-                subtask_mod.Batch(self._touch.get_cmdline() + files).run()
-                for file in files:
-                    if os.path.isdir(file) and not os.path.islink(file):
-                        self._toucher(file)
+                paths = list(directory_path.iterdir())
+                subtask_mod.Batch(
+                    self._touch.get_cmdline() + [str(x) for x in paths]
+                ).run()
+                for path in paths:
+                    if path.is_dir() and not path.is_symlink():
+                        self._toucher(path)
             except PermissionError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot open "{directory}" directory.',
+                    f'{sys.argv[0]}: Cannot open '
+                    f'"{directory_path}" directory.',
                 ) from exception
 
     def run(self) -> int:
@@ -107,7 +108,7 @@ class Main:
 
         self._touch = command_mod.Command('touch', args=['-a'], errors='stop')
         for directory in options.get_directories():
-            self._toucher(directory)
+            self._toucher(Path(directory))
 
         return 0
 

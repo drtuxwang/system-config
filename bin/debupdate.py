@@ -13,6 +13,7 @@ import re
 import signal
 import sre_constants
 import sys
+from pathlib import Path
 from typing import List
 
 import packaging.version  # type: ignore
@@ -163,7 +164,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -171,26 +172,26 @@ class Main:
             sys.argv = argv
 
     @staticmethod
-    def _read_data(file: str) -> dict:
+    def _read_data(path: Path) -> dict:
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 data = json.load(ifile)
         except (OSError, json.decoder.JSONDecodeError) as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{file}" json file.',
+                f'{sys.argv[0]}: Cannot read "{path}" json file.',
             ) from exception
 
         return data
 
     @classmethod
-    def _read_distro_packages(cls, packages_file: str) -> dict:
-        distro_data = cls._read_data(packages_file)
+    def _read_distro_packages(cls, path: Path) -> dict:
+        distro_data = cls._read_data(path)
         lines = []
         for url in distro_data['urls']:
             lines.extend(distro_data['data'][url]['text'])
 
         packages: dict = {}
-        disable_deps = re.fullmatch(r'.*_\w+-\w+.json', packages_file)
+        disable_deps = re.fullmatch(r'.*_\w+-\w+.json', str(path))
         name = ''
         package = Package()
         for line in lines:
@@ -214,36 +215,34 @@ class Main:
                 package = Package()
         return packages
 
-    def _read_distro_pin_packages(self, pin_file: str) -> None:
+    def _read_distro_pin_packages(self, pin_path: Path) -> None:
         packages_cache = {}
         try:
-            with open(pin_file, encoding='utf-8', errors='replace') as ifile:
+            with pin_path.open(encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     if columns:
                         pattern = columns[0]
                         if not pattern.startswith('#'):
-                            file = os.path.join(
-                                os.path.dirname(pin_file),
-                                columns[1]
-                            ) + '.json'
-                            if file not in packages_cache:
-                                packages_cache[file] = (
-                                    self._read_distro_packages(file))
+                            path = Path(pin_path.parent, f'{columns[1]}.json')
+                            if path not in packages_cache:
+                                packages_cache[path] = (
+                                    self._read_distro_packages(path)
+                                )
                             try:
                                 ispattern = re.compile(pattern.replace(
                                     '?', '.').replace('*', '.*'))
                             except sre_constants.error:
                                 continue
-                            for key, value in packages_cache[file].items():
+                            for key, value in packages_cache[path].items():
                                 if ispattern.fullmatch(key):
                                     self._packages[key] = copy.copy(value)
         except OSError:
             pass
 
-    def _read_distro_deny_list(self, file: str) -> None:
+    def _read_distro_deny_list(self, path: Path) -> None:
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     columns = line.split()
                     if columns:
@@ -260,10 +259,10 @@ class Main:
     def _check_distro_updates(
         self,
         distro: str,
-        list_file: str,
+        path: Path,
     ) -> None:
         try:
-            with open(list_file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 versions = {}
                 for line in ifile:
                     if not line.startswith('#'):
@@ -272,17 +271,15 @@ class Main:
                         except ValueError as exception:
                             raise SystemExit(
                                 f'{sys.argv[0]}: Format error in '
-                                f'"{os.path.join(distro, list_file)}".',
+                                f'"{Path(distro, path)}".',
                             ) from exception
                         versions[name] = version
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read "{list_file}" file.',
+                f'{sys.argv[0]}: Cannot read "{path}" file.',
             ) from exception
 
-        urlfile = (
-            os.path.basename(distro) + list_file.split('.debs')[-1]+'.url'
-        )
+        urlfile = Path(distro).name + str(path).rsplit('.debs', 1)[-1]+'.url'
         try:
             with open(urlfile, 'w', encoding='utf-8', newline='\n') as ofile:
                 for name, version in sorted(versions.items()):
@@ -316,7 +313,7 @@ class Main:
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot create "{urlfile}" file.',
             ) from exception
-        if os.path.getsize(urlfile) == 0:
+        if Path(urlfile).stat().st_size == 0:
             os.remove(urlfile)
 
     def _depends(self, versions: dict, depends: List[str]) -> List[str]:
@@ -335,9 +332,9 @@ class Main:
 
     @staticmethod
     def _local(distro: str, url: str) -> str:
-        file = os.path.join(distro, os.path.basename(url))
-        if os.path.isfile(file):
-            return f'file://{os.path.abspath(file)}'
+        path = Path(distro, Path(url).name)
+        if path.is_file():
+            return f'file://{path.resolve()}'
         return url
 
     def run(self) -> int:
@@ -347,23 +344,22 @@ class Main:
         options = Options()
 
         ispattern = re.compile('[.]debs-?.*')
-        for list_file in options.get_list_files():
-            if not os.path.isfile(list_file):
-                logger.error('Cannot find "%s" list file.', list_file)
+        for path in [Path(x) for x in options.get_list_files()]:
+            if not path.is_file():
+                logger.error('Cannot find "%s" list file.', path)
                 continue
-            if os.path.getsize(list_file) > 0:
-                if os.path.isfile(list_file):
-                    if ispattern.search(list_file):
-                        distro = ispattern.sub('', list_file)
-                        logger.info('Checking "%s" list file.', list_file)
-                        self._packages = self._read_distro_packages(
-                            distro + '.json')
-                        self._read_distro_pin_packages(
-                            distro + '.debs:select')
-                        self._read_distro_deny_list(
-                            distro + '.debs:deny')
-                        self._check_distro_updates(
-                            distro, list_file)
+            if path.stat().st_size > 0:
+                if ispattern.search(str(path)):
+                    distro = ispattern.sub('', str(path))
+                    logger.info('Checking "%s" list file.', path)
+                    self._packages = self._read_distro_packages(
+                        Path(f'{distro}.json')
+                    )
+                    self._read_distro_pin_packages(
+                        Path(f'{distro}.debs:select')
+                    )
+                    self._read_distro_deny_list(Path(f'{distro}.debs:deny'))
+                    self._check_distro_updates(distro, path)
 
         return 0
 

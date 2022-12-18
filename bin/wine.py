@@ -11,6 +11,7 @@ import signal
 import shutil
 import sys
 import types
+from pathlib import Path
 from typing import Any, Callable, Union
 
 import command_mod
@@ -21,10 +22,7 @@ class Options:
     """
     Options class
     """
-    _wine = command_mod.Command(
-        os.path.basename(sys.argv[0]),
-        errors='stop'
-    )
+    _wine = command_mod.Command(Path(sys.argv[0]).name, errors='stop')
 
     def __init__(self) -> None:
         self._args = None
@@ -39,12 +37,11 @@ class Options:
 
     @staticmethod
     def _reset() -> None:
-        home = os.environ.get('HOME', '')
-        directory = os.path.join(home, '.wine')
-        if os.path.isdir(directory):
-            print(f'Removing "{directory}"...')
+        path = Path(Path.home(), '.wine')
+        if path.is_dir():
+            print(f'Removing "{path}"...')
             try:
-                shutil.rmtree(directory)
+                shutil.rmtree(path)
             except OSError:
                 pass
 
@@ -109,7 +106,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -143,7 +140,7 @@ class Main:
                 break
             new_resolution += 1
         if new_resolution != orig_resolution:
-            xrandr.set_args(['-s', str(orig_resolution)])
+            xrandr.set_args(['-s', orig_resolution])
             subtask_mod.Batch(xrandr.get_cmdline()).run()
 
         return 0

@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import network_mod
@@ -37,7 +38,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -46,14 +47,15 @@ class Main:
 
     @staticmethod
     def _set_libraries(command: command_mod.Command) -> None:
-        libdir = os.path.join(os.path.dirname(command.get_file()), 'lib')
-        if os.path.isdir(libdir):
+        libdir = Path(Path(command.get_file()).parent, 'lib')
+        if libdir.is_dir():
             if os.name != 'nt' and os.uname()[0] == 'Linux':
                 if 'LD_LIBRARY_PATH' in os.environ:
                     os.environ['LD_LIBRARY_PATH'] = (
-                        libdir + os.pathsep + os.environ['LD_LIBRARY_PATH'])
+                        f"{libdir}{os.pathsep}{os.environ['LD_LIBRARY_PATH']}"
+                    )
                 else:
-                    os.environ['LD_LIBRARY_PATH'] = libdir
+                    os.environ['LD_LIBRARY_PATH'] = str(libdir)
 
     def run(self) -> int:
         """

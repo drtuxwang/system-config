@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -49,10 +50,7 @@ class Options:
         """
         Parse arguments
         """
-        self._jar = command_mod.Command(
-            os.path.join('bin', 'jar'),
-            errors='stop'
-        )
+        self._jar = command_mod.Command(Path('bin', 'jar'), errors='stop')
 
         if len(args) == 1:
             subtask_mod.Exec(self._jar.get_cmdline()).run()
@@ -90,7 +88,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -99,21 +97,21 @@ class Main:
 
     @staticmethod
     def _compile(source: str) -> None:
-        target = source[:-5]+'.class'
-        if not os.path.isfile(source):
+        target = Path(f'{source[:-5]}.class')
+        if not Path(source).is_file():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find "{source}" Java source file.',
             )
-        if os.path.isfile(target):
-            if os.path.getmtime(source) > os.path.getmtime(target):
+        if target.is_file():
+            if Path(source).stat().st_mtime > target.stat().st_mtime:
                 try:
-                    os.remove(target)
+                    target.unlink()
                 except OSError as exception:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot remove '
                         f'"{target}" Java class file.',
                     ) from exception
-        if not os.path.isfile(target):
+        if not target.is_file():
             javac = command_mod.Command('javac', args=[source], errors='stop')
             print(f'Building "{target}" Java class file.')
             task = subtask_mod.Batch(javac.get_cmdline())
@@ -125,13 +123,13 @@ class Main:
                 )
             for line in task.get_output():
                 print(f"  {line}")
-            if not os.path.isfile(target):
+            if not target.is_file():
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create "{target}" Java class file.'
                 )
 
     def _create_manifest(self) -> None:
-        if not os.path.isfile(self._manifest):
+        if not Path(self._manifest).is_file():
             if 'Main.class' in self._jar.get_args():
                 main = 'Main'
             else:

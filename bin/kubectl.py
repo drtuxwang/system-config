@@ -8,6 +8,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import file_mod
@@ -38,7 +39,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -47,23 +48,21 @@ class Main:
 
     @staticmethod
     def _cache() -> None:
-        kube_directory = os.path.join(os.environ['HOME'], '.kube')
-        if not os.path.isdir(kube_directory):
+        kube_directory = Path(Path.home(), '.kube')
+        if not kube_directory.is_dir():
             try:
                 os.mkdir(kube_directory)
             except OSError:
                 return
 
         for cache in ('cache', 'http-cache'):
-            link = os.path.join(kube_directory, cache)
-            directory = file_mod.FileUtil.tmpdir(
-                os.path.join('.cache', 'kube', cache)
-            )
-            if not os.path.islink(link):
+            link = Path(kube_directory, cache)
+            directory = file_mod.FileUtil.tmpdir(Path('.cache', 'kube', cache))
+            if not link.is_symlink():
                 try:
-                    if os.path.exists(link):
+                    if link.exists():
                         shutil.rmtree(link)
-                    os.symlink(directory, link)
+                    link.symlink_to(directory)
                 except OSError:
                     pass
 

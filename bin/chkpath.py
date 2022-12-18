@@ -7,6 +7,7 @@ import argparse
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -74,7 +75,7 @@ class Main:
         print()
         for directory in options.get_path().split(os.pathsep):
             if directory:
-                if not os.path.isdir(directory):
+                if not Path(directory).is_dir():
                     print(f"{directory}: fail")
                 elif directory in path:
                     print(f"{directory}: repeat")

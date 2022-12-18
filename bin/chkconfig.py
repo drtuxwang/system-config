@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import config_mod
@@ -73,7 +74,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -89,15 +90,15 @@ class Main:
         data = config_mod.Data()
         error = 0
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
-                print(f"{file}: Cannot find file")
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
+                print(f"{path}: Cannot find file")
                 error = 1
-            elif file.endswith(('.json', 'yaml', 'yml', '.bson')):
+            elif path.suffix in ('.bson', '.json', '.yaml', '.yml'):
                 try:
-                    data.read(file, check=True)
+                    data.read(path, check=True)
                 except config_mod.ReadConfigError as exception:
-                    print(f"{file}: {exception}")
+                    print(f"{path}: {exception}")
                     error = 1
 
         return error

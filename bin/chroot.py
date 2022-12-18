@@ -9,6 +9,7 @@ import os
 import signal
 import socket
 import sys
+from pathlib import Path
 from typing import Any, List
 
 import command_mod
@@ -23,17 +24,17 @@ class Options:
     def __init__(self) -> None:
         self.parse(sys.argv)
 
-    def get_directory(self) -> str:
+    def get_directory(self) -> Path:
         """
         Return directory.
         """
-        return self._directory
+        return self._path
 
     def parse(self, args: List[str]) -> None:
         """
         Parse arguments
         """
-        if len(args) != 2 or not os.path.isdir(args[1]):
+        if len(args) != 2 or not Path(args[1]).is_dir():
             chroot = command_mod.Command(
                 'chroot',
                 args=args[1:],
@@ -45,14 +46,19 @@ class Options:
             username = getpass.getuser()
             prompt = f'[sudo] password for {hostname}@{username}: '
             sudo = command_mod.Command('sudo', errors='stop')
-            sudo.set_args(
-                ['-p', prompt, 'python3', __file__, os.path.abspath(args[1])])
+            sudo.set_args([
+                '-p',
+                prompt,
+                'python3',
+                __file__,
+                Path(args[1]).resolve(),
+            ])
             subtask_mod.Exec(sudo.get_cmdline()).run()
-        if not os.path.isfile(os.path.join(args[1], 'bin', 'bash')):
+        if not Path(args[1], 'bin', 'bash').is_file():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find "/bin/bash" in chroot directory.',
             )
-        self._directory = os.path.abspath(args[1])
+        self._path = Path(args[1]).resolve()
 
 
 class Chroot:
@@ -60,10 +66,10 @@ class Chroot:
     Change root class
     """
 
-    def __init__(self, directory: str) -> None:
+    def __init__(self, path: Path) -> None:
         self._chroot = command_mod.Command('/usr/sbin/chroot', errors='stop')
-        self._chroot.set_args([directory, '/usr/bin/env', 'bash', '-l'])
-        self._directory = directory
+        self._chroot.set_args([path, '/usr/bin/env', 'bash', '-l'])
+        self._path = path
         self._mount = command_mod.Command('mount', errors='stop')
 
         self._mountpoints: List[str] = []
@@ -71,21 +77,23 @@ class Chroot:
             '-o',
             'bind',
             '/dev',
-            os.path.join(self._directory, 'dev')
+            Path(path, 'dev'),
         )
         self.mount_dir(
             '-o',
             'bind',
             '/proc',
-            os.path.join(self._directory, 'proc')
+            Path(path, 'proc'),
         )
-        if (os.path.isdir('/shared') and
-                os.path.isdir(os.path.join(self._directory, 'shared'))):
+        if (
+            Path('/shared').is_dir() and
+            Path(path, 'shared').is_dir()
+        ):
             self.mount_dir(
                 '-o',
                 'bind',
                 '/shared',
-                os.path.join(self._directory, 'shared')
+                Path(path, 'shared'),
             )
         self.mount_dir(
             '-t',
@@ -93,14 +101,16 @@ class Chroot:
             '-o',
             'size=256m,noatime,nosuid,nodev',
             'tmpfs',
-            os.path.join(self._directory, 'tmp')
+            Path(path, 'tmp'),
         )
-        if (os.path.isdir('/var/run/dbus') and
-                os.path.isdir(os.path.join(self._directory, 'var/run/dbus'))):
+        if (
+            Path('/var/run/dbus').is_dir() and
+            Path(path, 'var/run/dbus').is_dir()
+        ):
             self.mount_dir(
                 '-o',
                 'bind', '/var/run/dbus',
-                os.path.join(self._directory, 'var/run/dbus')
+                Path(path, 'var/run/dbus'),
             )
 
     def mount_dir(self, *args: Any) -> None:
@@ -115,7 +125,7 @@ class Chroot:
         """
         Start session
         """
-        print(f'Chroot "{self._directory}" starting...')
+        print(f'Chroot "{self._path}" starting...')
         subtask_mod.Task(self._chroot.get_cmdline()).run()
         umount = command_mod.Command(
             'umount',
@@ -123,7 +133,7 @@ class Chroot:
             errors='stop'
         )
         subtask_mod.Task(umount.get_cmdline()).run()
-        print(f'Chroot "{self._directory}" finished!')
+        print(f'Chroot "{self._path}" finished!')
 
 
 class Main:
@@ -150,7 +160,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

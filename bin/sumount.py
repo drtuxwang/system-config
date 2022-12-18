@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -51,8 +52,8 @@ class Options:
         self._parse_args(args[1:])
 
         self._directories = []
-        for directory in args[1:]:
-            self._directories.append(os.path.abspath(directory))
+        for path in [Path(x) for x in args[1:]]:
+            self._directories.append(str(path.resolve()))
 
 
 class Main:
@@ -79,7 +80,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

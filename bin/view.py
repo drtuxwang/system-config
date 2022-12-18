@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List, Tuple
 
 import command_mod
@@ -75,7 +76,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -84,9 +85,9 @@ class Main:
 
     @staticmethod
     def _get_program(command: List[str]) -> command_mod.Command:
-        file = os.path.join(os.path.dirname(sys.argv[0]), command[0])
-        if os.path.isfile(file):
-            return command_mod.CommandFile(file)
+        path = Path(Path(sys.argv[0]).parent, command[0])
+        if path.is_file():
+            return command_mod.CommandFile(path)
         return command_mod.Command(command[0], errors='stop')
 
     @classmethod
@@ -110,27 +111,25 @@ class Main:
         options = Options()
         config = config_mod.Config()
 
-        for file in options.get_files():
-            if os.path.isdir(file):
+        for path in [Path(x) for x in options.get_files()]:
+            if path.is_dir():
                 action = config.get_app('file_manager')
-            elif file.split(':', 1)[0] in config.get('web_uri'):
+            elif str(path).split(':', 1)[0] in config.get('web_uri'):
                 action = config.get_app('web_browser')
-            elif not os.path.isfile(file):
-                raise SystemExit(f"{sys.argv[0]}: cannot find file: {file}")
+            elif not path.is_file():
+                raise SystemExit(f"{sys.argv[0]}: cannot find file: {path}")
             else:
                 action = config.get_view_app(
-                    '.'.join(file.rsplit('.', 2)[-2:]).lower()
+                    '.'.join(path.name.rsplit('.', 2)[-2:]).lower()
                 )
                 if not action:
-                    action = config.get_view_app(
-                        file.rsplit('.', 1)[-1].lower()
-                    )
+                    action = config.get_view_app(path.suffix.lower())
                     if not action:
                         view = command_mod.Command('view', errors='stop')
-                        view.set_args([file])
+                        view.set_args([path])
                         subtask_mod.Task(view.get_cmdline()).run()
                         continue
-            self._spawn(action, file)
+            self._spawn(action, str(path))
 
         return 0
 

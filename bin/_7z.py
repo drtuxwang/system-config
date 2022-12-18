@@ -9,6 +9,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import BinaryIO, List
 
 import command_mod
@@ -123,8 +124,8 @@ class Options:
         if self._args.split:
             self._archiver.extend_args([f'-v{self._args.split[0]}b'])
 
-        if os.path.isdir(self._args.archive[0]):
-            self._archive = os.path.abspath(self._args.archive[0]) + '.7z'
+        if Path(self._args.archive[0]).is_dir():
+            self._archive = str(Path(f'{self._args.archive[0]}.7z').resolve())
         else:
             self._archive = self._args.archive[0]
         self._archiver.append_arg(self._archive+'.part')
@@ -167,12 +168,12 @@ class Main:
         if not command.is_found():
             command = command_mod.Command(
                 '7z.sfx',
-                directory=os.path.dirname(archiver.get_file()),
+                directory=Path(archiver.get_file()).parent,
                 platform='windows-x86',
                 errors='ignore'
             )
         sfx = command.get_file()
-        if not os.path.isfile(sfx):
+        if not Path(sfx).is_file():
             archiver = command_mod.Command(
                 archiver.get_file(), args=sys.argv[1:], errors='ignore')
             if not archiver.is_found():
@@ -197,7 +198,7 @@ class Main:
         file_stat = file_mod.FileStat(archive)
         os.utime(archive_sfx, (file_stat.get_time(), file_stat.get_time()))
         try:
-            os.chmod(archive_sfx, int('755', 8))
+            os.chmod(archive_sfx, 0o755)
             shutil.move(archive_sfx, archive)
         except OSError as exception:
             raise SystemExit(
@@ -215,7 +216,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -226,7 +227,7 @@ class Main:
         """
         Start program
         """
-        os.umask(int('022', 8))
+        os.umask(0o022)
 
         options = Options()
         archiver = options.get_archiver()

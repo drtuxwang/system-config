@@ -7,9 +7,9 @@ import argparse
 import glob
 import os
 import re
-import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 
@@ -95,7 +95,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -119,29 +119,28 @@ class Main:
         self._replacement = options.get_replacement()
         self._files = options.get_files()
 
-        for file in self._files:
-            if os.sep in file:
-                newfile = os.path.join(
-                    os.path.dirname(file),
-                    self._is_match.sub(
-                        self._replacement,
-                        os.path.basename(file)
-                    )
+        for path in [Path(x) for x in self._files]:
+            if os.sep in str(path):
+                path_new = Path(
+                    path.parent,
+                    self._is_match.sub(self._replacement, path.name)
                 )
             else:
-                newfile = self._is_match.sub(self._replacement, file)
-            if newfile != file:
-                print(f'Renaming "{file}" to "{newfile}"...')
-                if os.path.isfile(newfile):
+                path_new = Path(
+                    self._is_match.sub(self._replacement, str(path))
+                )
+            if path_new != path:
+                print(f'Renaming "{path}" to "{path_new}"...')
+                if path_new.is_file():
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot rename over existing '
-                        f'"{newfile}" file.',
+                        f'"{path_new}" file.',
                     )
                 try:
-                    shutil.move(file, newfile)
+                    path.replace(path_new)
                 except OSError as exception:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot rename to "{newfile}" file.',
+                        f'{sys.argv[0]}: Cannot rename to "{path_new}" file.',
                     ) from exception
 
         return 0

@@ -9,9 +9,9 @@ ssh-keygen -t rsa -b 4096 -f id_rsa
 import argparse
 import glob
 import os
-import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -86,7 +86,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -95,9 +95,9 @@ class Main:
 
     def _check(self, options: Options) -> None:
         config = []
-        configfile = os.path.join(self._sshdir, 'config')
+        path = Path(self._sshdir, 'config')
         try:
-            with open(configfile, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 for line in ifile:
                     config.append(line.strip())
         except OSError:
@@ -110,9 +110,9 @@ class Main:
                 if f'Host {rhost}' not in config:
                     print(f'Adding "{login}" to "$HOME/.ssh/config"...')
                     config.extend(['', f'Host {rhost}', f'User {ruser}'])
+                    path_new = Path(f'{path}.part')
                     try:
-                        with open(
-                            configfile + '.part',
+                        with path_new.open(
                             'w',
                             encoding='utf-8',
                             newline='\n',
@@ -122,14 +122,14 @@ class Main:
                     except OSError as exception:
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot create '
-                            f'"{configfile}.part" temporary file.',
+                            f'"{path_new}" temporary file.',
                         ) from exception
                     try:
-                        shutil.move(configfile + '.part', configfile)
+                        path_new.replace(path)
                     except OSError as exception:
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot update '
-                            f'"{configfile}" configuration file.',
+                            f'"{path}" configuration file.',
                         ) from exception
             print(f'Checking ssh configuration on "{login}"...')
             stdin = (
@@ -153,22 +153,23 @@ class Main:
                 )
 
     def _add_authorized_key(self, pubkey: str) -> None:
-        file = os.path.join(self._sshdir, 'authorized_keys')
+        path = Path(self._sshdir, 'authorized_keys')
         pubkeys: List[str] = []
-        if os.path.isfile(file):
+        if path.is_file():
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
+                with path.open(encoding='utf-8', errors='replace') as ifile:
                     pubkeys = []
                     for line in ifile:
                         pubkeys.append(line.strip())
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot read "{file}" authorised key file.'
+                    f'{sys.argv[0]}: Cannot read "{path}" authorised key file.'
                 ) from exception
+
+        path_new = Path(f'{path}.part')
         if pubkey not in pubkeys:
             try:
-                with open(
-                    file + '.part',
+                with path_new.open(
                     'w',
                     encoding='utf-8',
                     newline='\n',
@@ -179,37 +180,35 @@ class Main:
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create '
-                    f'"{file}.part" temporary file.',
+                    f'"{path_new}" temporary file.',
                 ) from exception
             try:
-                shutil.move(file + '.part', file)
+                path_new.replace(path)
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot update '
-                    f'"{file}" authorised key file.',
+                    f'"{path}" authorised key file.',
                 ) from exception
 
     def _config(self) -> str:
-        os.umask(int('077', 8))
-        if os.path.isdir(self._sshdir):
-            for file in glob.glob(
-                os.path.join(os.environ['HOME'], '.ssh', '*'),
-            ):
+        os.umask(0o077)
+        if self._sshdir.is_dir():
+            for file in Path(Path.home(), '.ssh').glob('*'):
                 try:
-                    os.chmod(file, int('700', 8))
+                    file.chmod(0o700)
                 except OSError:
                     pass
         else:
             try:
-                os.mkdir(self._sshdir, int('700', 8))
+                self._sshdir.mkdir()
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot create '
                     f'"{self._sshdir}" configuration directory.',
                 ) from exception
 
-        private_key = os.path.join(self._sshdir, 'id_rsa')
-        if not os.path.isfile(private_key):
+        private_key = Path(self._sshdir, 'id_rsa')
+        if not private_key.is_file():
             print("\nGenerating 4096bit RSA private/public key pair...")
             ssh_keygen = command_mod.Command('ssh-keygen', errors='stop')
             ssh_keygen.set_args([
@@ -218,7 +217,7 @@ class Main:
                 '-b',
                 '4096',
                 '-f',
-                private_key,
+                str(private_key),
                 '-N',
                 '',
             ])
@@ -235,8 +234,7 @@ class Main:
                 subtask_mod.Batch(ssh_add.get_cmdline()).run()
 
         try:
-            with open(
-                os.path.join(self._sshdir, 'id_rsa.pub'),
+            with Path(self._sshdir, 'id_rsa.pub').open(
                 encoding='utf-8',
                 errors='replace',
             ) as ifile:
@@ -244,7 +242,7 @@ class Main:
         except OSError as exception:
             raise SystemExit(
                 f"{sys.argv[0]}: Cannot read "
-                f"\"{os.path.join(self._sshdir, 'id_rsa.pub')}\" "
+                f"\"{Path(self._sshdir, 'id_rsa.pub')}\" "
                 "public key file.",
             ) from exception
 
@@ -265,7 +263,7 @@ class Main:
             raise SystemExit(
                 f"{sys.argv[0]}: Cannot determine HOME directory.",
             )
-        self._sshdir = os.path.join(os.environ['HOME'], '.ssh')
+        self._sshdir = Path(Path.home(), '.ssh')
         self._pubkey = self._config()
         self._check(options)
 

@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -36,30 +37,30 @@ class Options:
             self._gpg.append_arg('--sign')
 
         if self._args.file:
-            file = self._args.file
-            if os.path.isfile(file):
-                if file.endswith('.gpg') or file.endswith('.pgp'):
-                    self._gpg.set_args([file])
+            path = Path(self._args.file)
+            if path.is_file():
+                if path.suffix in ('.gpg', '.pgp'):
+                    self._gpg.set_args([path])
                 else:
                     if self._args.recipent:
                         self._gpg.extend_args(
-                            ['--recipient', self._args.recipent])
+                            ['--recipient', self._args.recipent]
+                        )
                     self._gpg.extend_args([
-                        f'--output={file}{extension}',
+                        f'--output={path}{extension}',
                         '--encrypt',
-                        file,
+                        str(path),
                     ])
             else:
-                self._gpg.set_args(file)
+                self._gpg.set_args([path])
 
     @staticmethod
     def _config() -> None:
-        os.umask(int('077', 8))
-        home = os.environ.get('HOME', '')
-        gpgdir = os.path.join(home, '.gnupg')
-        if not os.path.isdir(gpgdir):
+        os.umask(0o077)
+        gpgdir = Path(Path.home(), '.gnupg')
+        if not gpgdir.is_dir():
             try:
-                os.mkdir(gpgdir, int('700', 8))
+                gpgdir.mkdir()
             except OSError:
                 return
         if 'DISPLAY' in os.environ:
@@ -219,7 +220,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -241,12 +242,12 @@ class Main:
                 f'received from "{task.get_file()}".',
             )
 
-        file = task.get_cmdline()[-1]
-        if os.path.isfile(file) and len(task.get_cmdline()) > 3:
-            new_file = task.get_cmdline()[-3].split('--output=')[-1]
-            if os.path.isfile(new_file):
-                file_time = os.path.getmtime(file)
-                os.utime(new_file, (file_time, file_time))
+        path = Path(task.get_cmdline()[-1])
+        if path.is_file() and len(task.get_cmdline()) > 3:
+            path_new = Path(task.get_cmdline()[-3].split('--output=')[-1])
+            if path_new.is_file():
+                file_time = path.stat().st_mtime
+                os.utime(path_new, (file_time, file_time))
 
         return 0
 

@@ -14,6 +14,7 @@ import subprocess
 import sys
 import time
 import threading
+from pathlib import Path
 from typing import List
 
 import paramiko  # type: ignore
@@ -284,7 +285,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -307,18 +308,18 @@ class Main:
 
     @staticmethod
     def _config_directory() -> None:
-        directory = 'cluster.results'
-        if not os.path.isdir(directory):
+        path = Path('cluster.results')
+        if not path.is_dir():
             try:
-                os.mkdir(directory)
+                path.mkdir()
             except OSError as exception:
-                message = f'Cannot create "{directory}" directory.'
+                message = f'Cannot create "{path}" directory.'
                 logging.error('\033[31m%s\033[0m', message)
                 raise SystemExit(f"{sys.argv[0]}: {message}") from exception
         try:
-            os.chdir(directory)
+            os.chdir(path)
         except OSError as exception:
-            message = f'Cannot change to "{directory}" directory.'
+            message = f'Cannot change to "{path}" directory.'
             logging.error('\033[31m%s\033[0m', message)
             raise SystemExit(f"{sys.argv[0]}: {message}") from exception
 

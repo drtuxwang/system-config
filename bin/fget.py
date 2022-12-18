@@ -14,6 +14,7 @@ import socket
 import sys
 import time
 import urllib.request
+from pathlib import Path
 from typing import List, Tuple
 
 import config_mod
@@ -46,7 +47,7 @@ class Options:
                     # RHEL/CentOS
                     '/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt'
             ):
-                if os.path.isfile(file):
+                if Path(file).is_file():
                     os.environ['REQUESTS_CA_BUNDLE'] = file
                     break
 
@@ -96,7 +97,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -133,19 +134,19 @@ class Main:
             ))
         except TypeError:
             # For directories
-            file = 'index.html'
-            if os.path.isfile(file):
-                file = f'index-{os.getpid()}.html'
+            path = Path('index.html')
+            if path.is_file():
+                path = Path(f'index-{os.getpid()}.html')
             mtime = time.time()
         else:
-            file = os.path.basename(url)
+            path = Path(Path(url).name)
 
         try:
             size = int(info.get('Content-Length'))
         except TypeError:
             size = -1
 
-        return file, size, mtime
+        return str(path), size, mtime
 
     @staticmethod
     def _check_resume(file: str, data: dict) -> str:
@@ -219,7 +220,7 @@ class Main:
         if check == 'skip':
             return
         if 'Accept-Ranges' in conn.info() and check == 'resume':
-            tmpsize = os.path.getsize(file + '.part')
+            tmpsize = Path(f'{file}.part').stat().st_size
             req = urllib.request.Request(url, headers={
                 'Range': 'bytes='+str(tmpsize)+'-',
                 'User-Agent': config_mod.Config().get('user_agent'),

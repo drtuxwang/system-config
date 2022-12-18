@@ -11,6 +11,7 @@ import json
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -57,14 +58,14 @@ class Options:
                 f"{sys.argv[0]}: Cannot determine home directory.",
             )
 
-        configdir = os.path.join(os.environ['HOME'], '.config')
-        if not os.path.isdir(configdir):
+        configdir = Path(Path.home(), '.config')
+        if not configdir.is_dir():
             try:
-                os.mkdir(configdir)
+                configdir.mkdir()
             except OSError:
                 return
-        configfile = os.path.join(configdir, 'xreset.json')
-        self._config = Configuration(configfile)
+        path = Path(configdir, 'xreset.json')
+        self._config = Configuration(path)
 
         if self._args.settings:
             for setting in self._args.settings:
@@ -75,7 +76,7 @@ class Options:
                         f'{sys.argv[0]}: Invalid "{setting}" settings.',
                     ) from exception
                 self._config.set(device, mode)
-            self._config.write(configfile)
+            self._config.write(path)
 
 
 class Configuration:
@@ -83,11 +84,11 @@ class Configuration:
     Configuration class
     """
 
-    def __init__(self, file: str = '') -> None:
+    def __init__(self, path: Path = None) -> None:
         self._data: dict = {'xreset': {}}
-        if file:
+        if path:
             try:
-                with open(file, encoding='utf-8', errors='replace') as ifile:
+                with path.open(encoding='utf-8', errors='replace') as ifile:
                     self._data = json.load(ifile)
             except (OSError, KeyError, ValueError):
                 pass
@@ -104,12 +105,12 @@ class Configuration:
         """
         self._data['xreset'][device] = mode
 
-    def write(self, file: str) -> None:
+    def write(self, path: Path) -> None:
         """
         Write file
         """
         try:
-            with open(file, 'w', encoding='utf-8', newline='\n') as ofile:
+            with path.open('w', encoding='utf-8', newline='\n') as ofile:
                 print(
                     json.dumps(self._data, indent=4, sort_keys=True),
                     file=ofile
@@ -142,7 +143,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

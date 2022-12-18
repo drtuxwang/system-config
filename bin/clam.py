@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -78,7 +79,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -97,18 +98,18 @@ class Main:
         task.run()
         print("---------- VIRUS DATABASE ----------")
         if os.name == 'nt':
-            os.chdir(os.path.join(os.path.dirname(task.get_file())))
-            directory = 'database'
-        elif os.path.isdir('/var/clamav'):
-            directory = '/var/clamav'
+            os.chdir(Path(task.get_file()).parent)
+            directory_path = Path('database')
+        elif Path('/var/clamav').is_dir():
+            directory_path = Path('/var/clamav')
         else:
-            directory = '/var/lib/clamav'
-        for file in sorted(glob.glob(os.path.join(directory, '*c[lv]d'))):
-            file_stat = file_mod.FileStat(file)
+            directory_path = Path('/var/lib/clamav')
+        for path in sorted(directory_path.glob('*c[lv]d')):
+            file_stat = file_mod.FileStat(path)
             print(
                 f"{file_stat.get_size():10d} "
                 f"[{file_stat.get_time_local()}] "
-                f"{file}",
+                f"{path}",
             )
 
         return task.get_exitcode()

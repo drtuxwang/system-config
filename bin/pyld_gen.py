@@ -5,9 +5,9 @@ Wrapper for generic command
 
 import glob
 import os
-import pathlib
 import signal
 import sys
+from pathlib import Path
 
 import command_mod
 import subtask_mod
@@ -37,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -49,14 +49,11 @@ class Main:
         """
         Start program
         """
-        name = os.path.basename(sys.argv[0]).replace('.py', '')
+        name = Path(sys.argv[0]).stem
 
-        command = command_mod.Command(
-            os.path.join('bin', name),
-            errors='ignore',
-        )
-        directory = str(pathlib.Path(sys.argv[0]).absolute().parents[1])
-        if not command.is_found() or directory not in command.get_file():
+        command = command_mod.Command(Path('bin', name), errors='ignore')
+        path = Path(sys.argv[0]).absolute().parents[1]
+        if not command.is_found() or str(path) not in command.get_file():
             command = command_mod.Command(name, errors='stop')
         command.set_args(sys.argv[1:])
         subtask_mod.Exec(command.get_cmdline()).run()

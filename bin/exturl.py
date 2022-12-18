@@ -10,6 +10,7 @@ import re
 import signal
 import sys
 import urllib.parse
+from pathlib import Path
 from typing import List
 
 
@@ -73,16 +74,16 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
                     argv.append(arg)
             sys.argv = argv
 
-    def _extract(self, file: str) -> List[str]:
+    def _extract(self, path: Path) -> List[str]:
         try:
-            with open(file, encoding='utf-8', errors='replace') as ifile:
+            with path.open(encoding='utf-8', errors='replace') as ifile:
                 urls = []
                 for line in ifile:
                     line = line.strip()
@@ -98,7 +99,7 @@ class Main:
                             urls.append(url)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot read {file} HTML file.',
+                f'{sys.argv[0]}: Cannot read {path} HTML file.',
             ) from exception
         return urls
 
@@ -113,12 +114,12 @@ class Main:
         self._is_ignore = re.compile('mailto:|#', re.IGNORECASE)
         self._is_url = re.compile(r'href=.*[\'">]|onclick=.*\(', re.IGNORECASE)
 
-        for file in options.get_files():
-            if not os.path.isfile(file):
+        for path in [Path(x) for x in options.get_files()]:
+            if not path.is_file():
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" HTML file.',
+                    f'{sys.argv[0]}: Cannot find "{path}" HTML file.',
                 )
-            urls.extend(self._extract(file))
+            urls.extend(self._extract(path))
         for url in sorted(set(urls)):
             print(urllib.parse.unquote(url))
 

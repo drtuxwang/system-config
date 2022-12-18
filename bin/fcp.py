@@ -10,6 +10,7 @@ import shutil
 import signal
 import sys
 import time
+from pathlib import Path
 from typing import List
 
 import file_mod
@@ -87,7 +88,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -98,101 +99,99 @@ class Main:
     def _automount(directory: str, wait: int) -> None:
         if directory.startswith('/media/'):
             for _ in range(0, wait * 10):
-                if os.path.isdir(directory):
+                if Path(directory).is_dir():
                     break
                 time.sleep(0.1)
 
     @staticmethod
-    def _copy_link(source: str, target: str) -> None:
-        print(f'Creating "{target}" link...')
-        source_link = os.readlink(source)
+    def _copy_link(path1: Path, path2: Path) -> None:
+        print(f'Creating "{path2}" link...')
+        source_link = path1.readlink()
 
-        if os.path.islink(target):
-            target_link = os.readlink(target)
+        if path2.is_symlink():
+            target_link = path2.readlink()
             if target_link == source_link:
                 return
-        elif os.path.isfile(target):
+        elif path2.is_file():
             try:
-                os.remove(target)
+                path2.unlink()
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot remove "{target}" link.',
+                    f'{sys.argv[0]}: Cannot remove "{path2}" link.',
                 ) from exception
 
         try:
-            os.symlink(source_link, target)
+            path2.symlink_to(source_link)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{target}" link.',
+                f'{sys.argv[0]}: Cannot create "{path2}" link.',
             ) from exception
-        file_stat = file_mod.FileStat(source, follow_symlinks=False)
+        file_stat = file_mod.FileStat(path1, follow_symlinks=False)
         file_time = file_stat.get_time()
         try:
-            os.utime(target, (file_time, file_time), follow_symlinks=False)
+            os.utime(path2, (file_time, file_time), follow_symlinks=False)
         except NotImplementedError:
             pass
 
-    def _copy_directory(self, source: str, target: str) -> None:
-        print(f'Creating "{target}" directory...')
+    def _copy_directory(self, path1: Path, path2: Path) -> None:
+        print(f'Creating "{path2}" directory...')
         try:
-            files = sorted(
-                [os.path.join(source, x) for x in os.listdir(source)]
-            )
+            paths = sorted(path1.iterdir())
         except PermissionError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot open "{source}" directory.',
+                f'{sys.argv[0]}: Cannot open "{path1}" directory.',
             ) from exception
-        if not os.path.isdir(target):
+        if not path2.is_dir():
             try:
-                os.makedirs(target)
-                os.chmod(target, file_mod.FileStat(source).get_mode())
+                path2.mkdir(
+                    mode=file_mod.FileStat(path1).get_mode(),
+                    parents=True,
+                )
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{target}" directory.',
+                    f'{sys.argv[0]}: Cannot create "{path2}" directory.',
                 ) from exception
-        for file in files:
-            self._copy(file, os.path.join(target, os.path.basename(file)))
-        newest = file_mod.FileUtil.newest(
-            [os.path.join(target, x) for x in os.listdir(target)]
-        )
+        for path in paths:
+            self._copy(path, Path(path2, path.name))
+        newest = file_mod.FileUtil.newest(list(path2.iterdir()))
         if not newest:
-            newest = source
+            newest = str(path1)
         file_stat = file_mod.FileStat(newest, follow_symlinks=False)
         file_time = file_stat.get_time()
-        os.utime(target, (file_time, file_time))
+        os.utime(path2, (file_time, file_time))
 
     @staticmethod
-    def _copy_file(source: str, target: str) -> None:
-        print(f'Creating "{target}" file...')
+    def _copy_file(path1: Path, path2: Path) -> None:
+        print(f'Creating "{path2}" file...')
         try:
-            shutil.copy2(source, target)
+            shutil.copy2(path1, path2)
         except shutil.Error as exception:
             if 'are the same file' in exception.args[0]:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot copy to same "{target}" file.',
+                    f'{sys.argv[0]}: Cannot copy to same "{path2}" file.',
                 ) from exception
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot copy to "{target}" file.',
+                f'{sys.argv[0]}: Cannot copy to "{path2}" file.',
             ) from exception
         except OSError as exception:
             if exception.args != (95, 'Operation not supported'):
                 try:
-                    with open(source, 'rb'):
+                    with path1.open('rb'):
                         raise SystemExit(
-                            f'{sys.argv[0]}: Cannot create "{target}" file.',
+                            f'{sys.argv[0]}: Cannot create "{path2}" file.',
                         ) from exception
                 except OSError as exception2:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot create "{target}" file.',
+                        f'{sys.argv[0]}: Cannot create "{path2}" file.',
                     ) from exception2
 
-    def _copy(self, source: str, target: str) -> None:
-        if os.path.islink(source):
-            self._copy_link(source, target)
-        elif os.path.isdir(source):
-            self._copy_directory(source, target)
-        elif os.path.isfile(source):
-            self._copy_file(source, target)
+    def _copy(self, path1: Path, path2: Path) -> None:
+        if path1.is_symlink():
+            self._copy_link(path1, path2)
+        elif path1.is_dir():
+            self._copy_directory(path1, path2)
+        elif path1.is_file():
+            self._copy_file(path1, path2)
 
     def run(self) -> int:
         """
@@ -205,49 +204,46 @@ class Main:
         self._automount(target, 8)
 
         if len(sources) == 1:
-            if not os.path.isdir(target):
-                self._copy_file(sources[0], target)
+            if not Path(target).is_dir():
+                self._copy_file(Path(sources[0]), Path(target))
                 return 0
-        elif not os.path.isdir(target):
+        elif not Path(target).is_dir():
             raise SystemExit(
                 f'{sys.argv[0]}: Cannot find "{target}" target directory.',
             )
 
         for source in sources:
-            if os.path.isdir(source):
-                if (os.path.isabs(source) or
-                        source.split(os.sep)[0] in (os.curdir, os.pardir)):
-                    targetdir = target
-                    self._copy(
-                        source,
-                        os.path.join(target, os.path.basename(source))
-                    )
+            if Path(source).is_dir():
+                if (
+                    Path(source).is_absolute or
+                    source.split(os.sep)[0] in (os.curdir, os.pardir)
+                ):
+                    self._copy(Path(source), Path(target, Path(source).name))
                 else:
-                    targetdir = os.path.dirname(os.path.join(target, source))
-                    if not os.path.isdir(targetdir):
+                    path = Path(target, source).parent
+                    if not path.is_dir():
                         try:
-                            os.makedirs(targetdir)
-                            os.chmod(
-                                targetdir,
-                                file_mod.FileStat(source).get_mode()
+                            path.mkdir(
+                                mode=file_mod.FileStat(source).get_mode(),
+                                parents=True,
                             )
                         except OSError as exception:
                             raise SystemExit(
                                 f'{sys.argv[0]}: Cannot create '
-                                f'"{targetdir}" directory.',
+                                f'"{path}" directory.',
                             ) from exception
-                    self._copy(source, os.path.join(target, source))
+                    self._copy(Path(source), Path(target, source))
             else:
-                directory = os.path.join(target, os.path.dirname(source))
-                if not os.path.isdir(directory):
+                path = Path(target, Path(source).parent)
+                if not path.is_dir():
                     try:
-                        os.makedirs(directory)
+                        path.mkdir(parents=True)
                     except OSError as exception:
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot create '
-                            f'"{directory}" directory.',
+                            f'"{path}" directory.',
                         ) from exception
-                self._copy(source, os.path.join(target, source))
+                self._copy(Path(source), Path(target, source))
 
         return 0
 

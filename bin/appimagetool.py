@@ -7,6 +7,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 
 import network_mod
 import subtask_mod
@@ -36,7 +37,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -48,21 +49,22 @@ class Main:
         """
         Start program
         """
-        name = os.path.basename(sys.argv[0]).replace('.py', '')
+        name = Path(sys.argv[0]).stem
 
         appimagetool = network_mod.Sandbox(name, errors='stop')
         appimagetool.set_args(sys.argv[1:])
 
-        if not os.path.isfile(appimagetool.get_file() + '.py'):
-            work_dir = os.environ['PWD']
-            if work_dir == os.environ['HOME']:
-                desktop = os.path.join(work_dir, 'Desktop')
-                if os.path.isdir(desktop):
+        if not Path(f'{appimagetool.get_file()}.py').is_file():
+            work_dir = Path(os.environ['PWD'])
+            if work_dir == Path.home():
+                desktop = Path(work_dir, 'Desktop')
+                if desktop.is_dir():
                     os.chdir(desktop)
                     work_dir = desktop
-            configs = [work_dir]
-            if os.path.realpath(work_dir) != work_dir:
-                configs.append(os.path.realpath(work_dir))
+
+            configs: list = [work_dir]
+            if Path(work_dir).resolve() != work_dir:
+                configs.append(Path(work_dir).resolve())
             if len(sys.argv) >= 2 and sys.argv[1] == '-net':
                 appimagetool.set_args(sys.argv[2:])
                 configs.append('net')

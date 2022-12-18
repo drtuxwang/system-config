@@ -441,6 +441,7 @@ the years.
  * bin/jsonformat.py
  * bin/jython               Wrapper for "jython" command
  * bin/k3s                  Wrapper for "k3s" command
+ * bin/k3s-server
  * bin/keymap.tcl           TCL/TK widget for setting keymaps
  * bin/keytool              Wrapper for "keytool" Java command
  * bin/kmodsign             Wrapper for Kernel's sign-file command

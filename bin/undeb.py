@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import Any, List
 
 import command_mod
@@ -86,7 +87,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -140,16 +141,16 @@ class Main:
             task2 = subtask_mod.Task(self._tar.get_cmdline() + [control_file])
             task2.run(replace=(os.curdir, 'DEBIAN'))
         else:
-            if not os.path.isdir('DEBIAN'):
+            if not Path('DEBIAN').is_dir():
                 try:
-                    os.mkdir('DEBIAN')
+                    Path('DEBIAN').mkdir()
                 except OSError as exception:
                     raise SystemExit(
                         f'{sys.argv[0]}: Cannot create "DEBIAN" directory.',
                     ) from exception
-            task2 = subtask_mod.Task(self._tar.get_cmdline() + [
-                os.path.join(os.pardir, control_file)
-            ])
+            task2 = subtask_mod.Task(
+                self._tar.get_cmdline() + [Path(os.pardir, control_file)]
+            )
             task2.run(directory='DEBIAN', replace=(os.curdir, 'DEBIAN'))
         self._remove(control_file)
 
@@ -159,7 +160,7 @@ class Main:
         """
         options = Options()
 
-        os.umask(int('022', 8))
+        os.umask(0o022)
         self._options = options
         self._ar = command_mod.Command('ar', errors='stop')
         self._tar = command_mod.Command('tar', errors='stop')
@@ -167,12 +168,12 @@ class Main:
             self._tar.set_args(['tf'])
         else:
             self._tar.set_args(['xf'])
-        for file in options.get_archives():
-            if not os.path.isfile(file):
+        for path in [Path(x) for x in options.get_archives()]:
+            if not path.is_file():
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot find "{file}" DEB file.',
+                    f'{sys.argv[0]}: Cannot find "{path}" DEB file.',
                 )
-            self._unpack(file)
+            self._unpack(str(path))
 
         return 0
 

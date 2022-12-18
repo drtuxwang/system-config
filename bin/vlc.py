@@ -8,6 +8,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -36,23 +37,23 @@ class Options:
 
     @staticmethod
     def _config() -> None:
-        home = os.environ.get('HOME', '')
-
-        file = os.path.join(home, '.cache', 'vlc')
-        if not os.path.isfile(file):
+        path = Path(Path.home(), '.cache', 'vlc')
+        if not path.is_file():
             try:
-                if os.path.isdir(file):
-                    shutil.rmtree(file)
-                with open(file, 'wb'):
-                    pass
+                if path.is_dir():
+                    shutil.rmtree(path)
+                path.touch()
             except OSError:
                 pass
 
         # Corrupt QT config file nags startup
         try:
-            os.remove(
-                os.path.join(home, '.config', 'vlc', 'vlc-qt-interface.conf')
-            )
+            Path(
+                Path.home(),
+                '.config',
+                'vlc',
+                'vlc-qt-interface.conf',
+            ).unlink()
         except OSError:
             pass
 
@@ -101,7 +102,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

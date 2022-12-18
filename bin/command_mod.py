@@ -12,10 +12,11 @@ import platform
 import re
 import subprocess
 import sys
-from typing import Any, List, Optional, Sequence
+from pathlib import Path
+from typing import Any, List, Sequence, Union
 
-RELEASE = '2.5.2'
-VERSION = 20220822
+RELEASE = '2.6.0'
+VERSION = 20221218
 
 
 class Command:
@@ -23,7 +24,7 @@ class Command:
     This class stores a command (uses supplied executable)
     """
 
-    def __init__(self, program: str, **kwargs: Any) -> None:
+    def __init__(self, program: Union[str, Path], **kwargs: Any) -> None:
         """
         program = Command program name (ie 'evince', 'bin/acroread')
         args = Optional command arguments list
@@ -36,9 +37,9 @@ class Command:
             ('args', 'directory', 'errors', 'pathextra', 'platform'),
             **kwargs
         )
-        self._args = [self._locate(program, info)]
+        self._args = [self._locate(str(program), info)]
         try:
-            self._args.extend(kwargs['args'])
+            self._args.extend([str(x) for x in kwargs['args']])
         except KeyError:
             pass
 
@@ -69,18 +70,28 @@ class Command:
             _platform = _System.get_platform()
         extensions = cls._get_extensions(_platform)
 
-        directory = info['directory']
-        if not directory:
-            directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-        if os.path.basename(directory) == 'bin':
-            directory = os.path.dirname(directory)
-            file = cls._search_ports(directory, _platform, program, extensions)
-            if file:
-                return file
+        if info['directory']:
+            directory_path = Path(info['directory'])
+        else:
+            directory_path = Path(sys.argv[0]).resolve().parent
+        if directory_path.name == 'bin':
+            directory_path = directory_path.parent
+            path = cls._search_ports(
+                str(directory_path),
+                _platform,
+                program,
+                extensions,
+            )
+            if path:
+                return str(path)
 
-        file = cls._search_path(info['pathextra'], program, extensions)
-        if file:
-            return file
+        path = cls._search_path(
+            [str(x) for x in info['pathextra']],
+            program,
+            extensions,
+        )
+        if path:
+            return str(path)
 
         if info['errors'] == 'stop':
             raise SystemExit(
@@ -104,17 +115,19 @@ class Command:
         return extensions
 
     @classmethod
-    def _check_glibc(cls, files: List[str]) -> List[str]:
+    def _check_glibc(cls, paths: List[Path]) -> List[Path]:
         has_glibc = re.compile(r'-glibc_\d+[.]\d+([.]\d+)?')
-        nfiles = []
-        for file in files:
-            if has_glibc.search(file):
-                version = file.split('-glibc_')[1].split('-')[0].split('/')[0]
+        paths_new = []
+        for path in paths:
+            if has_glibc.search(str(path)):
+                version = str(
+                    path
+                ).split('-glibc_')[1].split('-')[0].split('/')[0]
                 if LooseVersion(_System.get_glibc()) >= LooseVersion(version):
-                    nfiles.append(file)
+                    paths_new.append(path)
             else:
-                nfiles.append(file)
-        return nfiles
+                paths_new.append(path)
+        return paths_new
 
     @classmethod
     def _search_ports(
@@ -123,31 +136,28 @@ class Command:
         _platform: str,
         program: str,
         extensions: List[str],
-    ) -> str:
-        files = []
+    ) -> Path:
+        paths = []
         for port_glob in _System.get_port_globs(_platform):
             for extension in extensions:
-                files = glob.glob(os.path.join(
-                    directory,
-                    '*',
-                    port_glob,
-                    program + extension,
+                paths = list(Path(directory).glob(
+                    f'*/{port_glob}/{program}{extension}'
                 ))
                 if _platform.startswith('linux'):
-                    files = cls._check_glibc(files)
-                if files:
-                    return _System.newest(files)
+                    paths = cls._check_glibc(paths)
+                if paths:
+                    return _System.newest(paths)
 
         # Search directories with 4 or more char as fall back for local port
-        if not files:
+        if not paths:
             for extension in extensions:
-                files = glob.glob(
-                    os.path.join(directory, '????*', program + extension),
-                )
-                if files:
+                paths = list(Path(directory).glob(
+                    f'????*/{program}{extension}'
+                ))
+                if paths:
                     break
-        if files:
-            return _System.newest(files)
+        if paths:
+            return _System.newest(paths)
 
         return None
 
@@ -156,35 +166,39 @@ class Command:
         pathextra: List[str],
         program: str,
         extensions: List[str],
-    ) -> Optional[str]:
-        program = os.path.basename(program)
+    ) -> Path:
+        program = Path(program).name
 
         # Shake PATH to make it unique
-        paths = []
-        for path in list(pathextra) + os.environ['PATH'].split(os.pathsep):
-            if path:
-                if path not in paths:
-                    paths.append(path)
+        directories = []
+        for directory in (
+            list(pathextra) + os.environ['PATH'].split(os.pathsep)
+        ):
+            if directory:
+                if directory not in directories:
+                    directories.append(directory)
 
         # Prevent recursion
-        if (not pathextra and
-                os.path.basename(sys.argv[0]) in (program, f'{program}.py')):
-            mydir = os.path.dirname(sys.argv[0])
-            if mydir in paths:
-                paths = paths[paths.index(mydir) + 1:]
+        if (
+            not pathextra and
+            Path(sys.argv[0]).name in (program, f'{program}.py')
+        ):
+            mydir = str(Path(sys.argv[0]).parent)
+            if mydir in directories:
+                directories = directories[directories.index(mydir) + 1:]
 
         if sys.argv[0].endswith('.py'):
             mynames = (sys.argv[0][:-3], sys.argv[0])
         else:
             mynames = (sys.argv[0], f'{sys.argv[0]}.py')
 
-        for directory in paths:
-            if os.path.isdir(directory):
+        for directory in directories:
+            if Path(directory).is_dir():
                 for extension in extensions:
-                    file = os.path.join(directory, program) + extension
-                    if os.path.isfile(file):
-                        if file not in mynames:
-                            return file
+                    path = Path(directory, program + extension)
+                    if path.is_file():
+                        if str(path) not in mynames:
+                            return path
 
         return None
 
@@ -278,29 +292,29 @@ class Command:
         """
         return self._args[1:]
 
-    def append_arg(self, arg: str) -> None:
+    def append_arg(self, arg: Any) -> None:
         """
         Append to command line arguments
 
         arg = Argument
         """
-        self._args.append(arg)
+        self._args.append(str(arg))
 
-    def extend_args(self, args: List[str]) -> None:
+    def extend_args(self, args: list) -> None:
         """
         Extend command line arguments
 
         args = List of arguments
         """
-        self._args.extend(args)
+        self._args.extend([str(x) for x in args])
 
-    def set_args(self, args: List[str]) -> None:
+    def set_args(self, args: list) -> None:
         """
         Set command line arguments
 
         args = List of arguments
         """
-        self._args[1:] = args
+        self._args[1:] = [str(x) for x in args]
 
     def is_found(self) -> bool:
         """
@@ -316,7 +330,7 @@ class CommandFile(Command):
 
     @staticmethod
     def _locate(program: str, info: dict) -> str:
-        if os.path.isfile(program):
+        if Path(program).is_file():
             return program
 
         if info['errors'] == 'stop':
@@ -449,14 +463,14 @@ class Platform:
     @staticmethod
     def _locate_program(program: str) -> str:
         for directory in os.environ['PATH'].split(os.pathsep):
-            file = os.path.join(directory, program)
-            if os.path.isfile(file):
+            path = Path(directory, program)
+            if path.is_file():
                 break
         else:
             raise CommandNotFoundError(
                 f'Cannot find required "{program}" software.',
             )
-        return file
+        return str(path)
 
     @classmethod
     def _run_program(cls, command: List[str]) -> List[str]:
@@ -514,14 +528,12 @@ class Platform:
             'SOFTWARE/Microsoft/Windows NT/CurrentVersion'
         )
         try:
-            with open(
-                os.path.join(registry_key, 'CurrentVersion'),
+            with Path(registry_key, 'CurrentVersion').open(
                 encoding='utf-8',
                 errors='replace'
             ) as ifile:
                 kernel = ifile.readline()
-            with open(
-                os.path.join(registry_key, 'CurrentBuildNumber'),
+            with Path(registry_key, 'CurrentBuildNumber').open(
                 encoding='utf-8',
                 errors='replace'
             ) as ifile:
@@ -597,30 +609,30 @@ class Platform:
 class _System(Platform):
 
     @staticmethod
-    def _get_file_time(file: str) -> int:
+    def _get_file_time(file: Path) -> int:
         try:
-            return int(os.stat(file)[8])
+            return int(file.stat()[8])
         except (OSError, TypeError):
             return 0
 
     @classmethod
-    def newest(cls, files: List[str]) -> str:
+    def newest(cls, paths: List[Path]) -> Path:
         """
         Return newest file or directory.
 
         files = List of files
         """
-        nfile = ''
-        nfile_time = -1
+        path_new = None
+        new_time = -1
 
-        for file in files:
-            if os.path.isfile(file) or os.path.isdir(file):
-                file_time = cls._get_file_time(file)
-                if file_time > nfile_time:
-                    nfile = file
-                    nfile_time = file_time
+        for path in paths:
+            if path.is_file() or path.is_dir():
+                file_time = cls._get_file_time(path)
+                if file_time > new_time:
+                    path_new = path
+                    new_time = file_time
 
-        return nfile
+        return path_new
 
     @staticmethod
     @functools.lru_cache(maxsize=None)

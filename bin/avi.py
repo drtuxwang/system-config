@@ -11,6 +11,7 @@ import re
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import Generator, List, Tuple
 
 import command_mod
@@ -341,7 +342,7 @@ class Media:
                 self._file,
                 self._type,
                 self._length,
-                os.path.getsize(self._file),
+                Path(self._file).stat().st_size,
             )
             for stream, information in self.get_stream():
                 logger.info("%s[%d] = %s", self._file, stream, information)
@@ -507,7 +508,7 @@ class Encoder:
         image_extensions = config_mod.Config().get('image_extensions')
 
         for file in files:
-            if os.path.splitext(file)[1] not in image_extensions:
+            if Path(file).suffix not in image_extensions:
                 return False
         return True
 
@@ -651,7 +652,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

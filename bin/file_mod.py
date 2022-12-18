@@ -6,13 +6,13 @@ Copyright GPL v2: 2006-2022 By Dr Colin Kong
 """
 
 import getpass
-import os
 import re
 import time
-from typing import List
+from pathlib import Path
+from typing import Any, Union
 
-RELEASE = '2.5.2'
-VERSION = 20220402
+RELEASE = '2.6.0'
+VERSION = 20221218
 
 
 class FileStat:
@@ -25,7 +25,7 @@ class FileStat:
 
     def __init__(
         self,
-        file: str = '',
+        file: Any = None,
         size: int = None,
         follow_symlinks: bool = True,
     ) -> None:
@@ -33,28 +33,29 @@ class FileStat:
         file = filename
         size = Override file size (useful for zero sizing links)
         """
-        self._file = file
+        self._file = str(file)
         self._stat = {}
         if file:
+            path = Path(file)
             try:
-                if not follow_symlinks and os.path.islink(file):
-                    file_stat = os.lstat(file)
+                if not follow_symlinks and path.is_symlink():
+                    file_stat = path.lstat()
                 else:
-                    file_stat = os.stat(file)
-                self._stat['mode'] = file_stat[0]
-                self._stat['inode'] = file_stat[1]
-                self._stat['device'] = file_stat[2]
-                self._stat['nlink'] = file_stat[3]
-                self._stat['userid'] = file_stat[4]
-                self._stat['groupid'] = file_stat[5]
-                self._stat['size'] = file_stat[6]
-                self._stat['atime'] = int(file_stat[7])
-                self._stat['mtime'] = int(file_stat[8])
-                self._stat['ctime'] = int(file_stat[9])
+                    file_stat = path.stat()
+                self._stat['mode'] = file_stat.st_mode
+                self._stat['inode'] = file_stat.st_ino
+                self._stat['device'] = file_stat.st_dev
+                self._stat['nlink'] = file_stat.st_nlink
+                self._stat['userid'] = file_stat.st_uid
+                self._stat['groupid'] = file_stat.st_gid
+                self._stat['size'] = file_stat.st_size
+                self._stat['atime'] = int(file_stat.st_atime)
+                self._stat['mtime'] = int(file_stat.st_mtime)
+                self._stat['ctime'] = int(file_stat.st_ctime)
             except (OSError, TypeError) as exception:
-                if not os.path.islink:
+                if path.exists() and not path.is_symlink():
                     raise FileStatNotFoundError(
-                        f"Cannot find status: {file}",
+                        f"Cannot find status: {path}",
                     ) from exception
             else:
                 if size is not None:
@@ -148,43 +149,40 @@ class FileUtil:
     """
 
     @staticmethod
-    def newest(files: List[str]) -> str:
+    def newest(files: list) -> str:
         """
         Return newest file or directory.
 
         files = List of files
         """
+        path_new = None
+        new_time = -1.
+        paths = [Path(x) for x in files]
+        for path in [x for x in paths if x.exists() and not x.is_symlink()]:
+            file_time = path.stat().st_mtime
+            if file_time > new_time:
+                path_new = path
+                new_time = file_time
 
-        files = [x for x in files if not os.path.islink(x)]
-
-        nfile = ''
-        nfile_time = -1.
-        for file in files:
-            file_time = os.path.getmtime(file)
-            if file_time > nfile_time:
-                nfile = file
-                nfile_time = file_time
-
-        return nfile
+        return str(path_new)
 
     @staticmethod
-    def oldest(files: List[str]) -> str:
+    def oldest(files: list) -> str:
         """
         Return oldest file or directory.
 
         files = List of files
         """
-        files = [x for x in files if not os.path.islink(x)]
+        path_new = None
+        new_time = float('inf')
+        paths = [Path(x) for x in files]
+        for path in [x for x in paths if x.exists() and not x.is_symlink()]:
+            file_time = path.stat().st_mtime
+            if file_time < new_time:
+                path_new = path
+                new_time = file_time
 
-        nfile = ''
-        nfile_time = float('inf')
-        for file in files:
-            file_time = os.path.getmtime(file)
-            if file_time < nfile_time:
-                nfile = file
-                nfile_time = file_time
-
-        return nfile
+        return str(path_new)
 
     @staticmethod
     def strings(file: str, pattern: str) -> str:
@@ -215,32 +213,30 @@ class FileUtil:
         return ''
 
     @staticmethod
-    def tmpdir(name: str = None) -> str:
+    def tmpdir(name: Union[str, Path] = None) -> str:
         """
         Return temporary directory with prefix and set permissions.
         """
-        tmpdir = os.path.join('/tmp', getpass.getuser())
+        path = Path('/tmp', getpass.getuser())
         if name:
-            directory = os.path.join(tmpdir, name)
-        else:
-            directory = tmpdir
+            path = Path(path, name)
 
-        if not os.path.isdir(directory):
+        if not path.is_dir():
             try:
-                os.makedirs(directory)
+                path.mkdir(parents=True)
             except OSError as exception:
                 raise FileTmpdirCreationError(
-                    f'Cannot create directory: {tmpdir}',
+                    f'Cannot create directory: {path}',
                 ) from exception
 
         try:
-            os.chmod(tmpdir, int('700', 8))
+            path.chmod(0o700)
         except OSError as exception:
             raise FileTmpdirPermissionError(
-                f'Permission error: {tmpdir}',
+                f'Permission error: {path}',
             ) from exception
 
-        return directory
+        return str(path)
 
 
 class FileError(Exception):

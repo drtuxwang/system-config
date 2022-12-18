@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -56,14 +57,16 @@ class Options:
         self._parse_args(args[1:])
 
         self._meld = command_mod.Command('meld', errors='stop')
-        files = self._args.files
-        if os.path.isdir(files[0]) and os.path.isfile(files[1]):
+        paths = [Path(x) for x in self._args.files]
+        if paths[0].is_dir() and paths[1].is_file():
             self._meld.set_args(
-                [os.path.join(files[0], os.path.basename(files[1])), files[1]])
-        elif os.path.isfile(files[0]) and os.path.isdir(files[1]):
+                [Path(paths[0], Path(paths[1]).name, paths[1])],
+            )
+        elif Path(paths[0]).is_file() and Path(paths[1]).is_dir():
             self._meld.set_args(
-                [files[0], os.path.join(files[1], os.path.basename(files[0]))])
-        elif os.path.isfile(files[0]) and os.path.isfile(files[1]):
+                [paths[0], Path(paths[1], Path(paths[0]).name)],
+            )
+        elif Path(paths[0]).is_file() and Path(paths[1]).is_file():
             self._meld.set_args(args[1:])
         else:
             raise SystemExit(f"{sys.argv[0]}: Cannot compare two directories.")
@@ -99,7 +102,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

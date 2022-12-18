@@ -11,6 +11,7 @@ import os
 import shutil
 import signal
 import sys
+from pathlib import Path
 from typing import List, Set, Tuple
 
 import imagehash  # type: ignore
@@ -118,7 +119,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -138,7 +139,7 @@ class Main:
     @classmethod
     def _read(cls, phashes_file: str) -> dict:
         logger.info("Reading checksum file: %s", phashes_file)
-        if not os.path.isfile(phashes_file):
+        if not Path(phashes_file).is_file():
             raise SystemExit(
                 f"{sys.argv[0]}: Cannot find checksum file: {phashes_file}",
             )
@@ -165,31 +166,33 @@ class Main:
         return images_phashes
 
     @classmethod
-    def _update(cls, phashes: dict, recursive: bool, files: List[str]) -> dict:
+    def _update(
+        cls,
+        phashes: dict,
+        recursive: bool,
+        paths: List[Path],
+    ) -> dict:
         logger.info("Updating checksums...")
         new_phashes = {}
-        for file in files:
-            if os.path.isdir(file):
-                if recursive and not os.path.islink(file):
+        for path in paths:
+            if path.is_dir():
+                if recursive and not path.is_symlink():
                     try:
                         new_phashes.update(cls._update(
                             phashes,
                             recursive,
-                            sorted([
-                                os.path.join(file, x)
-                                for x in os.listdir(file)
-                            ])
+                            sorted(path.iterdir()),
                         ))
                     except PermissionError:
                         pass
-            elif os.path.isfile(file):
-                file_stat = file_mod.FileStat(file)
-                key = (file, file_stat.get_size(), file_stat.get_time())
+            elif path.is_file():
+                file_stat = file_mod.FileStat(path)
+                key = (path, file_stat.get_size(), file_stat.get_time())
                 if key in phashes:
                     phash = phashes[key]
                 else:
                     try:
-                        phash = str(imagehash.phash(PIL.Image.open(file)))
+                        phash = str(imagehash.phash(PIL.Image.open(path)))
                     except OSError:
                         continue
                 new_phashes[key] = phash
@@ -279,7 +282,7 @@ class Main:
         image_phashes = self._update(
              image_phashes,
              options.get_recursive_flag(),
-             options.get_files(),
+             [Path(x) for x in options.get_files()],
         )
 
         new_keys = set(image_phashes) - old_keys

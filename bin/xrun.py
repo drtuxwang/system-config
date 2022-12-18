@@ -10,6 +10,7 @@ import os
 import random
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -68,7 +69,7 @@ class Options:
 
     @staticmethod
     def _get_output(url: str) -> str:
-        output = os.path.basename(url).split('?', 1)[0]
+        output = Path(url).name.split('?', 1)[0]
         if 'pbs.twimg.com/media/' in url:
             if '?format=jpg' in url:
                 output += '.jpg'
@@ -76,7 +77,7 @@ class Options:
         elif url.endswith('/'):
             md5 = hashlib.md5()
             md5.update(url.encode())
-            directory = os.path.basename(url[:-1])
+            directory = Path(url[:-1]).name
             if 'jpg' in directory:
                 output = f'index-{md5.hexdigest()[:9]}.jpg'
             else:
@@ -96,7 +97,7 @@ class Options:
                 nargs.extend(['vget', arg, ';'])
             else:
                 output = cls._get_output(arg)
-                if not os.path.isfile(output):
+                if not Path(output).is_file():
                     outputs.append(output)
                     nargs.extend(['wget', '-O', output, arg, ';'])
         if outputs:
@@ -186,7 +187,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:

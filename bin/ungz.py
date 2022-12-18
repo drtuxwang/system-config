@@ -8,6 +8,7 @@ import glob
 import os
 import signal
 import sys
+from pathlib import Path
 from typing import List
 
 import command_mod
@@ -84,7 +85,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -99,19 +100,19 @@ class Main:
         options = Options()
 
         cmdline = options.get_command().get_cmdline()
-        for file in options.get_archives():
-            if file.endswith('.gz') and os.path.isfile(file):
-                print(f"{file}:")
+        for path in [Path(x) for x in options.get_archives()]:
+            if path.suffix == '.gz' and path.is_file():
+                print(f"{path}:")
 
-                output = os.path.basename(file)[:-3]
-                task = subtask_mod.Batch(cmdline + [file])
+                output = path.stem
+                task = subtask_mod.Batch(cmdline + [path])
                 task.run(file=output)
                 if task.get_exitcode():
                     for line in task.get_error():
                         print(line, file=sys.stderr)
                     raise SystemExit(1)
 
-                file_stat = file_mod.FileStat(file)
+                file_stat = file_mod.FileStat(path)
                 os.chmod(output, file_stat.get_mode())
                 file_time = file_stat.get_time()
                 os.utime(output, (file_time, file_time))

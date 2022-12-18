@@ -11,6 +11,7 @@ import shutil
 import signal
 import sys
 import time
+from pathlib import Path
 from typing import List
 
 import file_mod
@@ -91,7 +92,7 @@ class Options:
             )
         self._mirrors = []
         for i in range(0, len(directories), 2):
-            if not os.path.isdir(directories[i]):
+            if not Path(directories[i]).is_dir():
                 raise SystemExit(
                     f'{sys.argv[0]}: Source directory '
                     f'"{directories[i]}" does not exist.',
@@ -123,7 +124,7 @@ class Main:
         if os.name == 'nt':
             argv = []
             for arg in sys.argv:
-                files = glob.glob(arg)  # Fixes Windows globbing bug
+                files = sorted(glob.glob(arg))  # Fixes Windows globbing bug
                 if files:
                     argv.extend(files)
                 else:
@@ -134,30 +135,27 @@ class Main:
     def _automount(directory: str, wait: int) -> None:
         if directory.startswith('/media/'):
             for _ in range(wait * 10):
-                if os.path.isdir(directory):
+                if Path(directory).is_dir():
                     break
                 time.sleep(0.1)
 
     @staticmethod
     def _report_old_files(
-        source_dir: str,
-        source_files: List[str],
-        target_files: List[str],
+        source_path: Path,
+        source_paths: List[Path],
+        target_paths: List[Path],
     ) -> None:
-        for target_file in target_files:
-            if os.path.join(
-                    source_dir,
-                    os.path.basename(target_file)
-            ) not in source_files:
-                if os.path.islink(target_file):
-                    logger.warning('No source for "%s" link.', target_file)
-                elif os.path.isdir(target_file):
+        for target_path in target_paths:
+            if Path(source_path, target_path.name) not in source_paths:
+                if target_path.is_symlink():
+                    logger.warning('No source for "%s" link.', target_path)
+                elif target_path.is_dir():
                     logger.warning(
                         'No source for "%s" directory.',
-                        target_file
+                        target_path
                     )
                 else:
-                    logger.warning('No source for "%s" file.', target_file)
+                    logger.warning('No source for "%s" file.', target_path)
 
     def _get_stats(self) -> str:
         elapsed = time.time() - self._start
@@ -166,228 +164,208 @@ class Main:
 
     def _remove_old_files(
         self,
-        source_dir: str,
-        source_files: List[str],
-        target_files: List[str],
+        source_path: Path,
+        source_paths: List[Path],
+        target_paths: List[Path],
     ) -> None:
-        for target_file in target_files:
-            if os.path.join(
-                    source_dir,
-                    os.path.basename(target_file)
-            ) not in source_files:
-                if os.path.islink(target_file):
+        for target_path in target_paths:
+            if Path(source_path, target_path.name) not in source_paths:
+                if target_path.is_symlink():
                     try:
-                        os.remove(target_file)
+                        os.remove(target_path)
                     except OSError as exception:
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot remove '
-                            f'"{target_file}" link.',
+                            f'"{target_path}" link.',
                         ) from exception
-                elif os.path.isdir(target_file):
+                elif target_path.is_dir():
                     if self._recursive:
                         logger.warning(
                             '[%s] Removing "%s" directory',
                             self._get_stats(),
-                            target_file,
+                            target_path,
                         )
                         try:
-                            shutil.rmtree(target_file)
+                            shutil.rmtree(target_path)
                         except OSError as exception:
                             raise SystemExit(
                                 f'{sys.argv[0]}: Cannot remove '
-                                f'"{target_file}" directory.',
+                                f'"{target_path}" directory.',
                             ) from exception
                 else:
                     logger.warning(
                         '[%s] Removing "%s" file.',
                         self._get_stats(),
-                        target_file,
+                        target_path,
                     )
                     try:
-                        os.remove(target_file)
+                        target_path.unlink()
                     except OSError as exception:
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot remove '
-                            f'"{target_file}" file.',
+                            f'"{target_path}" file.',
                         ) from exception
 
-    def _mirror_link(self, source_file: str, target_file: str) -> None:
-        source_link = os.readlink(source_file)
-        if (os.path.isfile(target_file) or os.path.isdir(target_file) or
-                os.path.islink(target_file)):
-            if os.path.islink(target_file):
-                target_link = os.readlink(target_file)
+    def _mirror_link(self, source_path: Path, target_path: Path) -> None:
+        source_link = source_path.readlink()
+        if target_path.exists():
+            if target_path.is_symlink():
+                target_link = target_path.readlink()
                 if target_link == source_link:
                     return
             logger.info(
                 '[%s] Updating "%s" link.',
                 self._get_stats(),
-                target_file,
+                target_path,
             )
             try:
-                if (
-                    os.path.isdir(target_file) and
-                    not os.path.islink(target_file)
-                ):
-                    shutil.rmtree(target_file)
+                if target_path.is_dir() and not target_path.is_symlink():
+                    shutil.rmtree(target_path)
                 else:
-                    os.remove(target_file)
+                    target_path.unlink()
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot remove "{target_file}" link.',
+                    f'{sys.argv[0]}: Cannot remove "{target_path}" link.',
                 ) from exception
         else:
             logger.info(
                 '[%s] Creating "%s" link.',
                 self._get_stats(),
-                target_file,
+                target_path,
             )
         try:
-            os.symlink(source_link, target_file)
+            target_path.symlink_to(source_link)
         except OSError as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot create "{target_file}" link.',
+                f'{sys.argv[0]}: Cannot create "{target_path}" link.',
             ) from exception
-        file_stat = file_mod.FileStat(source_file, follow_symlinks=False)
+        file_stat = file_mod.FileStat(source_path, follow_symlinks=False)
         file_time = file_stat.get_time()
         try:
             os.utime(
-                target_file,
+                target_path,
                 (file_time, file_time),
                 follow_symlinks=False,
             )
         except (FileNotFoundError, NotImplementedError):
             pass
 
-    def _mirror_file(self, source_file: str, target_file: str) -> None:
-        if os.path.islink(target_file):
+    def _mirror_file(self, source_path: Path, target_path: Path) -> None:
+        if target_path.is_symlink():
             try:
-                os.remove(target_file)
+                target_path.unlink()
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot remove "{target_file}" link.',
+                    f'{sys.argv[0]}: Cannot remove "{target_path}" link.',
                 ) from exception
-        elif os.path.isfile(target_file):
-            source_stat = file_mod.FileStat(source_file)
-            target_stat = file_mod.FileStat(target_file)
+        elif target_path.is_file():
+            source_stat = file_mod.FileStat(source_path)
+            target_stat = file_mod.FileStat(target_path)
             if source_stat.get_size() == target_stat.get_size():
                 # Allow FAT16/FAT32/NTFS 1h daylight saving
                 # and 1 sec rounding error
                 if int(
-                        abs(source_stat.get_time() - target_stat.get_time())
+                    abs(source_stat.get_time() - target_stat.get_time())
                 ) in (0, 1, 3599, 3600, 3601):
                     if source_stat.get_mode() != target_stat.get_mode():
                         logger.info(
                             '[%s] Updating "%s" permissions.',
                             self._get_stats(),
-                            target_file,
+                            target_path,
                         )
                         try:
-                            os.chmod(target_file, source_stat.get_mode())
+                            target_path.chmod(source_stat.get_mode())
                         except OSError as exception:
                             raise SystemExit(
                                 f'{sys.argv[0]}: Cannot update '
-                                f'"{target_file}" permissions.',
+                                f'"{target_path}" permissions.',
                             ) from exception
                     return
             logger.info(
                 '[%s] Updating "%s" file.',
                 self._get_stats(),
-                target_file,
+                target_path,
             )
         else:
             logger.info(
                 '[%s] Creating "%s" file.',
                 self._get_stats(),
-                target_file,
+                target_path,
             )
-        self._size += int((os.path.getsize(source_file) + 1023) / 1024)
+        self._size += int((source_path.stat().st_size + 1023) / 1024)
         try:
-            shutil.copy2(source_file, target_file)
+            shutil.copy2(source_path, target_path)
         except OSError as exception:
             if exception.args != (95, 'Operation not supported'):
                 try:
-                    with open(source_file, encoding='utf-8', errors='replace'):
+                    with source_path.open(encoding='utf-8', errors='replace'):
                         raise SystemExit(
                             f'{sys.argv[0]}: Cannot create '
-                            f'"{target_file}" file.',
+                            f'"{target_path}" file.',
                         ) from exception
                 except OSError as exception2:
                     raise SystemExit(
-                        f'{sys.argv[0]}: Cannot create "{target_file}" file.',
+                        f'{sys.argv[0]}: Cannot create "{target_path}" file.',
                     ) from exception2
 
     @staticmethod
-    def _mirror_directory_time(source_dir: str, target_dir: str) -> None:
-        source_time = os.path.getmtime(source_dir)
-        target_time = os.path.getmtime(target_dir)
+    def _mirror_directory_time(source_path: Path, target_path: Path) -> None:
+        source_time = Path(source_path).stat().st_mtime
+        target_time = Path(target_path).stat().st_mtime
         if source_time != target_time:
             try:
-                os.utime(target_dir, (source_time, source_time))
+                os.utime(target_path, (source_time, source_time))
             except OSError as exception:
                 raise SystemExit(
                     f'{sys.argv[0]}: Cannot update '
-                    f'"{target_dir}" directory modification time.',
+                    f'"{target_path}" directory modification time.',
                 ) from exception
 
-    def _mirror(self, source_dir: str, target_dir: str) -> None:
+    def _mirror(self, path1: Path, path2: Path) -> None:
         try:
-            source_files = [
-                os.path.join(source_dir, x) for x in os.listdir(source_dir)
-            ]
+            source_paths = sorted(path1.iterdir())
         except (OSError, PermissionError) as exception:
             raise SystemExit(
-                f'{sys.argv[0]}: Cannot open "{source_dir}" source directory.',
+                f'{sys.argv[0]}: Cannot open "{path1}" source directory.',
             ) from exception
-        if os.path.isdir(target_dir) and not os.path.islink(target_dir):
+        if path2.is_dir() and not path2.is_symlink():
             try:
-                target_files = [
-                    os.path.join(target_dir, x)
-                    for x in os.listdir(target_dir)
-                ]
+                target_paths = sorted(path2.iterdir())
             except (OSError, PermissionError) as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot open '
-                    f'"{target_dir}" target directory.',
+                    f'{sys.argv[0]}: Cannot open "{path2}" target directory.',
                 ) from exception
         else:
-            target_files = []
+            target_paths = []
             logger.info(
                 '[%s] Creating "%s" directory.',
                 self._get_stats(),
-                target_dir,
+                path2,
             )
             try:
-                if os.path.islink(target_dir):
-                    os.remove(target_dir)
-                os.mkdir(target_dir)
-                os.chmod(
-                    target_dir,
-                    file_mod.FileStat(source_dir).get_mode()
-                )
+                if path2.is_symlink():
+                    path2.unlink()
+                path2.mkdir(mode=file_mod.FileStat(path1).get_mode())
             except OSError as exception:
                 raise SystemExit(
-                    f'{sys.argv[0]}: Cannot create "{target_dir}" directory.',
+                    f'{sys.argv[0]}: Cannot create "{path2}" directory.',
                 ) from exception
 
-        for source_file in sorted(source_files):
-            target_file = os.path.join(
-                target_dir,
-                os.path.basename(source_file)
-            )
-            if os.path.islink(source_file):
-                self._mirror_link(source_file, target_file)
-            elif os.path.isfile(source_file):
-                self._mirror_file(source_file, target_file)
-            elif os.path.isdir(source_file) and self._recursive:
-                self._mirror(source_file, target_file)
+        for source_path in source_paths:
+            target_path = Path(path2, Path(source_path).name)
+            if source_path.is_symlink():
+                self._mirror_link(source_path, target_path)
+            elif source_path.is_file():
+                self._mirror_file(source_path, target_path)
+            elif source_path.is_dir() and self._recursive:
+                self._mirror(source_path, target_path)
 
         if self._options.get_remove_flag():
-            self._remove_old_files(source_dir, source_files, target_files)
+            self._remove_old_files(path1, source_paths, target_paths)
         else:
-            self._report_old_files(source_dir, source_files, target_files)
+            self._report_old_files(path1, source_paths, target_paths)
 
-        self._mirror_directory_time(source_dir, target_dir)
+        self._mirror_directory_time(path1, path2)
 
     def run(self) -> int:
         """
@@ -400,7 +378,7 @@ class Main:
         self._start = int(time.time())
         for mirror in self._options.get_mirrors():
             self._automount(mirror[1], 8)
-            self._mirror(mirror[0], mirror[1])
+            self._mirror(Path(mirror[0]), Path(mirror[1]))
         logger.info('[%s] Finished!', self._get_stats())
 
         return 0
