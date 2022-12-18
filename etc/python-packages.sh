@@ -44,7 +44,7 @@ read_requirements() {
     if [ -f "$1" ]
     then
         echo -e "${esc}[34mProcessing \"$1\"...${esc}[0m"
-        for PACKAGE in $(sed -e "s/#.*//" "$1")
+        for PACKAGE in $(sed -e "s/ *# ==/==/;s/ .*//" "$1")
         do
             NAME=${PACKAGE%==*}
             if [[ ! $PACKAGE =~ ==None$ ]]

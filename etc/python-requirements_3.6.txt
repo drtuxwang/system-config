@@ -1,39 +1,53 @@
 ansible-core==2.11.7
 ansible==4.10.0
-astroid                      #   (2.11.7 last compatible version)
+astroid                      # ==2.11.7 (last compatible version)
 asttokens==None
-cached-property==1.5.2       #   (required by docker-compose for 3.6)
-cookiecutter                 #   (1.7.3 last compatible version)
+cached-property==1.5.2
+charset-normalizer==2.0.0
+click                        # ==8.0.4 (last compatible version)
+cookiecutter                 # ==1.7.3 (last compatible version)
+dill                         # ==0.3.4 (last compatible version)
 executing==None
 filelock==3.4.1
 flake8==3.9.2
-GitPython                    #   (3.1.20 last compatible version)
+GitPython                    # ==3.1.20 (last compatible version)
 importlib-metadata==4.8.3
 importlib-resources==5.4.0   #   (required by virtualenv for 3.6)
+inflect                      # ==5.3.0 (last compatible version)
 ipdb==None
 ipython==None
-keyring                      #   (23.4.1 last compatible version)
+jaraco.classes==None
+jedi==None
+Jinja2                       # ==3.0.3 (last compatible version)
+keyring                      # ==23.4.1 (last compatible version)
 MarkupSafe==2.0.1
+matplotlib-inline==None
 mccabe==0.6.1
-mypy==0.971
-numpy                        #   (1.19.5 last compatible version)
-Pillow                       #   (8.4.0 last compatible version)
-pip                          #   (20.2.4 last compatible version)
+motor                        # ==2.5.1 (last compatible version)
+mypy==None
+numpy                        # ==1.19.5 (last compatible version)
+parso==None
+Pillow                       # ==8.4.0 (last compatible version)
+pip                          # ==20.2.4 (last compatible version)
 platformdirs==2.4.0
-poetry-core==None
-poetry==None
+poyo==0.5.0                  #   (required by cookiecutter for 3.6)
 pure-eval==None
 pycodestyle==2.7.0
 pyflakes==2.3.1
 pylint==2.13.9
+pymongo==3.13.0
 PyWavelets==1.1.1
+requests                     # ==2.27.1 (last compatible version)
+resolvelib==0.5.5
+ruamel.yaml.clib==0.2.7      #   (required by ruamel.yaml for 3.6)
 scipy==1.5.4
 setuptools==59.6.0
 stack-data==None
-traitlets==4.3.3
+tomli                        # ==1.2.3 (last compatible version)
+traitlets==None
 typed-ast==1.4.3             #   (required by pylint/mypy for 3.6)
-typing-extensions==4.1.1     #   (required by mypy)
+typing-extensions            # ==4.1.1 (last compatible version)
 typing_extensions==None      #   (requires hyphen instead of underscore)
 websockets==9.1
-yt-dlp                       #   (2022.7.18 last compatible version)
+yt-dlp                       # ==2022.7.18 (last compatible version)
 zipp==3.6.0

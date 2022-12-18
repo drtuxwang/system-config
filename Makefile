@@ -40,6 +40,16 @@ check-config:        # Check all config files
 	@echo "\n*** Running BSON/JSON/YAML check ***"
 	find -regex '.*[.]\(bson\|json\|ya?ml\)' -exec bin/chkconfig {} +
 
+.PHONY: check-python-lint
+check-python-lint:   # Check Python code linting
+	@echo "\n*** Running \"${PYTHON}\" PYLINT checks ***"
+	${PYTHON} -m pylint --rcfile=.pylintrc bin/*.py
+
+.PHONY: check-python-types
+check-python-types:  # Check Python code types
+	@echo "*** Running \"${PYTHON}\" MYPY type checks ***"
+	${PYTHON} -m mypy --disallow-untyped-defs --no-strict-optional --follow-imports=error --cache-dir=/dev/null bin/*.py
+
 .PHONY: check-python
 check-python:        # Check Python code
 	@echo "\n*** Running \"${PYTHON}\" UNITTEST check ***"
@@ -50,10 +60,12 @@ check-python:        # Check Python code
 	${PYTHON} -m flake8 bin/*.py
 	@echo "\n*** Running \"${PYTHON}\" PYCODESTYLE (PEP8) checks ***"
 	${PYTHON} -m pycodestyle --max-line-length=79 bin/*.py
-	@echo "\n*** Running \"${PYTHON}\" PYLINT checks ***"
-	${PYTHON} -m pylint --rcfile=.pylintrc bin/*.py
-	@echo "*** Running \"${PYTHON}\" MYPY type checks ***"
-	${PYTHON} -m mypy --disallow-untyped-defs --no-strict-optional --follow-imports=error --cache-dir=/dev/null bin/*.py
+	make check-python-lint
+	@case ${PYTHON} in \
+	python3|python3.9|python3.1?) \
+		make check-python-types \
+		;; \
+	esac
 
 .PHONY: check-packages
 check-packages:      # Check packages

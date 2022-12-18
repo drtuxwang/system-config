@@ -12,6 +12,7 @@ docker:              # Create new Docker project
 
 .PHONY: test
 test:                # Test new Docker project
+	rm -rf my_project
 	${PYTHON} -m cookiecutter --no-input docker
 	rm -rf my_project
 

@@ -885,7 +885,8 @@ the years.
  * etc/python-requirements_3.5.txt       Additional requirements for Python 3.5
  * etc/python-requirements_3.6.txt       Additional requirements for Python 3.6
  * etc/python-requirements_3.7.txt       Additional requirements for Python 3.7
- * etc/python-requirements_3.9mac.txt    Additional requirements for Python 3.9 on MacOS
+ * etc/python-requirements_3.8.txt       Additional requirements for Python 3.8
+ * etc/python-requirements_3.9.txt       Additional requirements for Python 3.9
  * etc/python-requirements_3.11.txt      Additional requirements for Python 3.11
  * etc/setbin                            Hybrid Bourne/C-shell script for sh/ksh/bash/csh/tcsh initialization
  * etc/setbin.bat                        Windows Command prompt initialization
@@ -911,7 +912,7 @@ the years.
  * ansible/inventory/local_nodes
  * ansible/local-playbook.yaml
  * ansible/roles/ansible-user/tasks/main.yaml
- * ansible/roles/local-system/defaults/main.yml
+ * ansible/roles/local-system/defaults/main.yaml
  * ansible/roles/local-system/files/iptables
  * ansible/roles/local-system/files/nopasswd-users
  * ansible/roles/local-system/tasks/main.yaml
@@ -919,9 +920,9 @@ the years.
  * ansible/roles/local-system/tasks/tlp-setup.yaml
  * ansible/roles/local-system/templates/iptables.conf
  * ansible/roles/local-system/templates/rc.local-opt
- * ansible/roles/local-users/defaults/main.yml
+ * ansible/roles/local-users/defaults/main.yaml
  * ansible/roles/local-users/meta/main.yaml
- * ansible/roles/user-home/defaults/main.yml
+ * ansible/roles/user-home/defaults/main.yaml
  * ansible/roles/user-home/files/accels
  * ansible/roles/user-home/files/animate.desktop
  * ansible/roles/user-home/files/geeqierc.xml
