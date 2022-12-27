@@ -101,5 +101,6 @@ urllib3                      # ==1.26.9 (last compatible version)
 virtualenv                   # ==20.15.1 (last compatible version)
 websocket-client==None
 websockets==None
+wheel                        # ==0.37.1 (last compatible version)
 yt-dlp==None
 zipp==1.2.0                  #   (required by virtualenv for 3.5)

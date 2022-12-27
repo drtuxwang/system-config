@@ -87,6 +87,8 @@ pyOpenSSL==21.0.0
 pyparsing==2.2.2             # New version incompatible
 python-gnupg==None
 PyWavelets==1.0.3
+PyYAML                       # ==5.4.1 (last compatible version)
+pyzstd==None
 questionary==None
 readme-renderer==None
 requests==2.27.1
@@ -111,6 +113,7 @@ typing_extensions==None
 virtualenv                   # ==20.15.1 (last compatible version)
 websocket-client==None
 websockets==None
+wheel                        # ==0.37.1 (last compatible version)
 whichcraft==0.6.1            #   (required by cookiecutter for 2.7)
 xdis==5.0.11
 yt-dlp==None

@@ -33,7 +33,7 @@ decorator==5.1.1             #   (required by ipdb/ipython)
 defusedxml==0.7.1            #   (required by Glances)
 devpi-client==5.2.3          # Manages devpi-server
 devpi-common==3.6.0          #   (required by devpi-client)
-dill==0.3.5.1                #   (required by pylint)
+dill==0.3.6                  #   (required by pylint)
 distlib==0.3.6               #   (required by humpty/virtualenv)
 dnspython==2.1.0             # DNS client
 docker==5.0.3                #   (required by appimage-builder)
@@ -56,7 +56,7 @@ idna==3.3                    #   (required by requests)
 ImageHash==4.3.1             # Image hashing library
 importlib-metadata==4.13.0   #   (required by twine)
 inflect==5.6.2               #   (required by nexus3-cli)
-ipdb==0.13.9                 # Interactive Python debugger
+ipdb==0.13.10                # Interactive Python debugger
 ipython==8.6.0               #   (required by ipdb)
 isort==5.10.1                #   (required by pylint)
 jaraco.classes==3.2.3        #   (required by keyring)
@@ -67,7 +67,7 @@ Jinja2==3.1.2                # Stand-alone template engine
 jsbeautifier==1.13.13        # JavaScript unobfuscator/beautifier
 jsonpath-rw==1.4.0           #   (required by emrichen)
 jsonpickle==2.2.0            # Serializing any arbitrary object into JSON
-keyring==23.9.3              #   (required by twine)
+keyring==23.12.1             #   (required by twine)
 lazy-object-proxy==1.7.1     #   (required by astroid)
 lazy==1.4                    #   (required by devpi-client)
 lief==0.12.3                 #   (required by appimage-builder)
@@ -83,7 +83,7 @@ mypy-extensions==0.4.3       #   (required by mypy)
 mypy==0.991                  # Python type checker
 nexus3-cli==4.1.8            # Sonatype Nexus client
 ntplib==0.4.0                # NTP client
-numpy==1.22.4                # Array computing
+numpy==1.23.5                # Array computing
 packaging==21.1              #   (required by ansible-core/appimage-builder/glances)
 paramiko==2.11.1             # SSH client
 parso==0.8.3                 #   (required by jedi)
@@ -102,7 +102,7 @@ prompt-toolkit==3.0.35       #   (required by ipython/questionary)
 psutil==5.9.4                #   (required by Glances)
 ptyprocess==0.6.0            #   (required by pexpect)
 pure-eval==0.1.1             #   (required by stack-data)
-py==1.10.0                   #   (required by devpi-client)
+py==1.11.0                   #   (required by devpi-client)
 pyaml==21.8.3                #   (required by emrichen)
 pybktree==1.1                # BK-tree for querying of close matches
 pycodestyle==2.10.0          # Python style guide checker
@@ -110,7 +110,7 @@ pycparser==2.21              #   (required by cffi)
 pycryptodomex==3.15.0        #   (required by yt-dlp)
 pyflakes==3.0.1              #   (required by flake8)
 Pygments==2.12.0             #   (required by ipython/readme-renderer)
-pylint==2.15.8               # Python code static checker
+pylint==2.15.9               # Python code static checker
 pymongo==4.2.0               # MongoDB client
 PyNaCl==1.4.0                #   (required by paramiko)
 pyOpenSSL==22.1.0            # OpenSSL interface
@@ -119,7 +119,8 @@ python-dateutil==2.7.5       #   (required by bson)
 python-gnupg==0.4.9          #   (required by appimage-builder)
 python-slugify==6.1.2        #   (required by cookiecutter)
 PyWavelets==1.3.0            #   (required by numpy)
-PyYAML==5.4.1                # YAML parser/emitter
+PyYAML==6.0                  # YAML parser/emitter
+pyzstd==0.15.3               # ZSTD compression/decompression
 questionary==1.10.0          #   (required by appimage-builder)
 readme-renderer              #   (required by twine)
 requests-toolbelt==0.9.1     #   (required by twine)
@@ -132,8 +133,8 @@ schema==0.6.8                #   (required by appimage-builder)
 scipy==1.9.3                 #   (required by ImageHash)
 SecretStorage==3.3.3         #   (required by keyring)
 semver==2.12.0               #   (required by nexus3-cli)
-sentry-sdk==1.10.1           # Sentry SDK
-setuptools==65.5.1           # Python package manager
+sentry-sdk==1.11.1           # Sentry SDK
+setuptools==65.6.3           # Python package manager
 six==1.16.0                  # Python 2 and 3 compatibility utilities
 smmap==4.0.0                 #   (required by gitdb)
 soupsieve==2.2.1             #   (required by beautifulsoup4)
@@ -147,18 +148,18 @@ tomlkit==0.11.5              #   (required by pylint)
 tornado==5.1.1               # Web server framework
 tox==3.27.1                  #   (required by devpi-client)
 tqdm==4.63.2                 #   (required by twine)
-traitlets==5.6.0             #   (required by ipython)
+traitlets==5.7.1             #   (required by ipython)
 twine==3.8.0                 #   (required by nexus3-cli)
 typing_extensions==4.4.0     #   (required by mypy)
 urllib3==1.26.12             #   (required by appimage-builder/requests/sentry-sdk)
-virtualenv==20.16.6          # Python Virtual Environments
+virtualenv==20.16.7          # Python Virtual Environments
 wcwidth==0.2.5               #   (required by prompt-toolkit)
 webencodings==0.5.1          #   (required by bleach)
 websocket-client==0.59.0     #   (required by docker)
 websockets==10.3             #   (required by yt-dlp)
-wheel==0.37.1                # Python wheel packaging
+wheel==0.38.4                # Python wheel packaging
 wrapt==1.14.1                #   (required by astroid)
-xdis==6.0.4                  # Python disassembler
+xdis==6.0.5                  # Python disassembler
 xmltodict==0.12.0            # Convert XML to Python dict
 yt-dlp==2022.11.11           # Video downloader
-zipp==3.9.1                  #   (required by importlib-metadata)
+zipp==3.10.0                 #   (required by importlib-metadata)

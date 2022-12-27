@@ -7,10 +7,10 @@ set -u
 
 # Process options
 help() {
-    echo "Usage: $0 [-pip|-i] <python-executable> [<requirement-file>]"
+    echo "Usage: $0 [-pip|-i|-c|-u] <python-executable> [<requirement-file>]"
     exit 1
 }
-MODE=
+MODE=install
 while [ $# != 0 ]
 do
     case $1 in
@@ -21,7 +21,10 @@ do
         MODE="install"
         ;;
     -c)
-        MODE="check"
+        MODE="checkonly"
+        ;;
+    -u)
+        MODE="uninstall"
         ;;
     -*)
         help
@@ -44,7 +47,7 @@ read_requirements() {
     if [ -f "$1" ]
     then
         echo -e "${esc}[34mProcessing \"$1\"...${esc}[0m"
-        for PACKAGE in $(sed -e "s/ *# ==/==/;s/ .*//" "$1")
+        for PACKAGE in $(sed -e "s/ *# ==/==/;s/#.*//;s/ .*//" "$1")
         do
             NAME=${PACKAGE%==*}
             if [[ ! $PACKAGE =~ ==None$ ]]
@@ -72,6 +75,9 @@ check_packages() {
                 echo $PACKAGE $REQUIRED | awk '{printf("%-27s  # Requirement %s\n", $1, $2)}'
                 ERROR=1
             fi
+        elif [ "$MODE" = "uninstall" ]
+        then
+            echo y | $UNINSTALL $PACKAGE
         else
             echo $PACKAGE | awk '{printf("%-27s  # Requirement not found\n", $1)}'
         fi
@@ -151,6 +157,7 @@ install_packages() {
 umask 022
 LIST="$PYTHON -m pip list --no-python-version-warning --disable-pip-version-check"
 INSTALL="$PYTHON -m pip install --no-python-version-warning --disable-pip-version-check --no-warn-script-location --no-deps"
+UNINSTALL="$PYTHON -m pip uninstall --no-python-version-warning --disable-pip-version-check"
 [ -w "$($PYTHON -help 2>&1 | grep usage: | awk '{print $2}')" ] || INSTALL="$INSTALL --user"
 
 PY_EXE=$(echo "import sys; print(sys.executable)" | $PYTHON 2> /dev/null)
@@ -180,6 +187,6 @@ else
     esac
 fi
 
-[ "$MODE" != check ] && install_packages "$MODE" && install_packages "$MODE"  # Retry
+[ "$MODE" = install ] && install_packages "$MODE" && install_packages "$MODE"  # Retry
 [ "$MODE" != piponly ] && check_packages
 echo -e "${esc}[33mOK!${esc}[0m"
