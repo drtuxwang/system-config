@@ -2,7 +2,7 @@ NAME := rabbitmq
 CHART_REPO := bitnami
 CHART_URL := https://charts.bitnami.com/bitnami
 CHART_NAME := rabbitmq
-CHART_VERSION := 9.1.4
+CHART_VERSION := 10.3.9
 APP_VERSION := 3.8.35
 IMAGE_TAG := 3.8.35-debian-11-r5
 NAMESPACE ?= default
@@ -66,7 +66,7 @@ status-helm:         # Show Helm release status
 
 .PHONY: status-kube
 status-kube:         # Show Kube workload status
-    @kubectl get ValidatingWebhookConfiguration -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s@^@ValidatingWebhookConfiguration/@" ||:
+	@kubectl get ValidatingWebhookConfiguration -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s@^@ValidatingWebhookConfiguration/@" ||:
 	@for RESOURCE in ConfigMap Ingress Role RoleBinding Secrets ServiceAccount; do \
 		kubectl --namespace=$(NAMESPACE) get $$RESOURCE -o wide 2> /dev/null | grep "$(NAME)" | sed -e "s@^@$(NAMESPACE)   $$RESOURCE/@" ||:; \
 	done

@@ -1,5 +1,5 @@
-BASE_IMAGE := python:3.9-slim-bullseye
-IMAGE := drtuxwang/python:3.9-slim-bullseye
+BASE_IMAGE := python:3.10-slim-bullseye
+IMAGE := drtuxwang/python:3.10-slim-bullseye
 DOCKER_BUILD_FLAGS ?=
 
 BUILD_DIRS := bash dev devpi full

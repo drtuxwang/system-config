@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/alpine:3.14
-IMAGE := drtuxwang/alpine-dev:3.14
-NAME := alpine314-dev
-HOSTNAME := alpine314-dev
+BASE_IMAGE := drtuxwang/i386-alpine:3.16
+IMAGE := drtuxwang/i386-alpine-dev:3.16
+NAME := alpine316-32-dev
+HOSTNAME := alpine316-32-dev
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=
@@ -29,7 +29,7 @@ status:              # Status of Docker images
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../../bin/create-rootfs.sh bash bin python3.9 vim
+	../../bin/create-rootfs.sh bash bin python3.10 vim
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 

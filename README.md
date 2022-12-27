@@ -977,24 +977,24 @@ the years.
  * docker/almalinux-9/bash/Makefile      almalinux:9 based BASH login
  * docker/almalinux-9/dev/Dockerfile
  * docker/almalinux-9/dev/Makefile       alamlinux:9 based GCC dev shell
- * docker/alpine-3.14/Makefile
- * docker/alpine-3.14/Dockerfile         alpine:3.14 based linux
- * docker/alpine-3.14/bash/Makefile
- * docker/alpine-3.14/bash/Dockerfile    alpine:3.14 based BASH login
- * docker/alpine-3.14/dev/Makefile
- * docker/alpine-3.14/dev/Dockerfile     alpine:3.14 based GCC dev shell
  * docker/alpine-3.15/Dockerfile
  * docker/alpine-3.15/Makefile           alpine:3.15 based linux
  * docker/alpine-3.15/bash/Dockerfile
  * docker/alpine-3.15/bash/Makefile      alpine:3.15 based BASH login
  * docker/alpine-3.15/dev/Dockerfile
  * docker/alpine-3.15/dev/Makefile       alpine:3.15 based GCC dev shell
- * docker/i386-alpine-3.15/Makefile
- * docker/i386-alpine-3.15/Dockerfile    i386/alpine:3.15 based linux
- * docker/i386-alpine-3.15/bash/Makefile
- * docker/i386-alpine-3.15/bash/Dockerfile  i386/alpine:3.15 based BASH login
- * docker/i386-alpine-3.15/dev/Makefile
- * docker/i386-alpine-3.15/dev/Dockerfile  i386/alpine:3.15 based GCC dev shell
+ * docker/alpine-3.16/Makefile
+ * docker/alpine-3.16/Dockerfile         alpine:3.16 based linux
+ * docker/alpine-3.16/bash/Makefile
+ * docker/alpine-3.16/bash/Dockerfile    alpine:3.16 based BASH login
+ * docker/alpine-3.16/dev/Makefile
+ * docker/alpine-3.16/dev/Dockerfile     alpine:3.16 based GCC dev shell
+ * docker/i386-alpine-3.16/Makefile
+ * docker/i386-alpine-3.16/Dockerfile    i386/alpine:3.16 based linux
+ * docker/i386-alpine-3.16/bash/Makefile
+ * docker/i386-alpine-3.16/bash/Dockerfile  i386/alpine:3.16 based BASH login
+ * docker/i386-alpine-3.16/dev/Makefile
+ * docker/i386-alpine-3.16/dev/Dockerfile  i386/alpine:3.16 based GCC dev shell
  * docker/busybox-1.32/Dockerfile
  * docker/busybox-1.32/Makefile          busybox:1.33 based linux
  * docker/busybox-1.32/bash/Dockerfile
@@ -1045,16 +1045,16 @@ the years.
  * docker/nginx-1.18/Dockerfile
  * docker/nginx-1.18/Makefile            nginx:1.18-alpine based reverse proxy server
  * docker/nginx-1.18/files/nginx-proxy.conf
- * docker/python-3.9/Dockerfile
- * docker/python-3.9/Makefile            python:3.9-slim-bullseye based Python app
- * docker/python-3.9/bash/Dockerfile
- * docker/python-3.9/bash/Makefile       python:3.9-slim-bullseye based BASH login
- * docker/python-3.9/dev/Dockerfile
- * docker/python-3.9/dev/Makefile        python:3.9-slim-bullseye based dev shell
- * docker/python-3.9/devpi/Dockerfile
- * docker/python-3.9/devpi/Makefile      python:3.9-slim-bullseye based devpi server app
- * docker/python-3.9/full/Dockerfile
- * docker/python-3.9/full/Makefile       python:3.9-slim-bullseye based shell with full packages
+ * docker/python-3.10/Dockerfile
+ * docker/python-3.10/Makefile           python:3.10-slim-bullseye based Python app
+ * docker/python-3.10/bash/Dockerfile
+ * docker/python-3.10/bash/Makefile      python:3.10-slim-bullseye based BASH login
+ * docker/python-3.10/dev/Dockerfile
+ * docker/python-3.10/dev/Makefile       python:3.10-slim-bullseye based dev shell
+ * docker/python-3.10/devpi/Dockerfile
+ * docker/python-3.10/devpi/Makefile     python:3.10-slim-bullseye based devpi server app
+ * docker/python-3.10/full/Dockerfile
+ * docker/python-3.10/full/Makefile      python:3.10-slim-bullseye based shell with full packages
  * docker/registry-2.6/Dockerfile
  * docker/registry-2.6/Makefile          registry:2.6 based Docker Registry server app
  * docker/registry-2.6/files/config.yaml
@@ -1107,26 +1107,26 @@ the years.
  * kubernetes/test-storage/server-statefulset.yaml
  * helm/Makefile
  * helm/bin/helm-save.sh                 Save Helm release docker images
- * helm/cassandra/Makefile               Helm Chart: bitnami/cassandra 9.1.23 (app-3.11.13)
+ * helm/cassandra/Makefile               Helm Chart: bitnami/cassandra 9.7.7 (app-3.11.13)
  * helm/cassandra/values.yaml
  * helm/chartmuseum/Makefile             Helm Chart: stable/chartmuseum 2.14.1 (app-0.12.0)
  * helm/chartmuseum/values.yaml
- * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 7.0.6 (app-3.4.18)
+ * helm/etcd/Makefile                    Helm Chart: bitnami/etcd 8.4.5 (app-3.4.19)
  * helm/etcd/values.yaml
- * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 7.9.11 (app-8.5.9)
+ * helm/grafana/Makefile                 Helm Chart: bitnami/grafana 8.1.1 (app-8.5.9)
  * helm/grafana/values.yaml
- * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 9.0.12 (app-2.319.3)
+ * helm/jenkins/Makefile                 Helm Chart: bitnami/jenkins 10.3.1 (app-2.319.3)
  * helm/jenkins/values.yaml
- * helm/kafka/Makefile                   Helm Chart: bitnami/16.3.2 (app-2.8.1)
+ * helm/kafka/Makefile                   Helm Chart: bitnami/19.1.5 (app-2.8.1)
  * helm/kafka/connect-test.sh
  * helm/kafka/values.yaml
  * helm/ingress-controller/Makefile      Helm Chart: ingress-nginx/ingress-nginx 3.35.0 (app-0.48.1)
  * helm/ingress-controller/values.yaml
- * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 11.2.0 (app-4.4.15)
+ * helm/mongodb/Makefile                 Helm Chart: bitnami/mongodb 12.1.31 (app-4.4.15)
  * helm/mongodb/values.yaml
  * helm/nexus/Makefile                   Helm Chart: oteemo/sonatype-nexus 5.2.2 (app-3.27.0)
  * helm/nexus/values.yaml
- * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 11.1.5 (app-1.18.0)
+ * helm/nginx/Makefile                   Helm Chart: bitnami/nginx 13.1.8 (app-1.18.0)
  * helm/nginx/values.yaml
  * helm/ops-server/Makefile              Helm Chart: drtuxwang/ops-server (drtuxwang/debian-bash:stable)
  * helm/ops-server/drtuxwang/ops-server/Chart.yaml

@@ -1,7 +1,8 @@
-BASE_IMAGE := drtuxwang/python:3.9-slim-bullseye
-IMAGE := drtuxwang/python-bash:3.9-slim-bullseye
-NAME := python39-bash
-HOSTNAME := python39-bash
+BASE_IMAGE := drtuxwang/python:3.10-slim-bullseye
+IMAGE := drtuxwang/python-devpi:3.10-slim-bullseye
+NAME := python310-devpi
+HOSTNAME := python310-devpi
+LOCALPORT ?= 8080
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=
@@ -14,8 +15,10 @@ DOCKER_RUN_FLAGS := \
 	--cpu-shares=50000 \
 	--memory=1000m \
 	--memory-reservation=50m \
+	--workdir /var/lib/devpi \
+	--publish $(LOCALPORT):8080 \
 	--name $(NAME) \
-	--hostname $(NAME) \
+	--hostname $(HOSTNAME) \
 	$(DOCKER_RUN_FLAGS)
 
 
@@ -29,9 +32,7 @@ status:              # Status of Docker images
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../../bin/create-rootfs.sh bash bin vim
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
-	rm -rf rootfs
 
 .PHONY: run
 run:                 # Run Docker container
@@ -40,12 +41,12 @@ run:                 # Run Docker container
 
 .PHONY: version
 version:             # Check versions
-	@docker run --rm --entrypoint=python3 $(IMAGE) --version 2> /dev/null | \
-		sed -e "s@^@$(shell pwd): @"
+	@docker run --rm --entrypoint devpi-server $(IMAGE) --version 2> /dev/null | \
+		   awk '{printf("'$(shell pwd)': devpi-server %s\n", $$1)}'
 
 .PHONY: rmi
 rmi:                 # Remove Docker images
-	docker rmi -f $(IMAGE) $(BASE_IMAGE) ||:
+	docker rmi -f $(IMAGE) ||:
 
 .PHONY: help
 help:                # Show Makefile options

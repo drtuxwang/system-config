@@ -52,7 +52,7 @@ update:              # Update Helm chart repository
 .PHONY: version
 version:             # Helm chart versions
 	@for DIR in $(BUILD_DIRS); do \
-		make --no-print-directory --directory $$DIR version || exit 1; \
+		echo "($$DIR)  `make --no-print-directory --directory $$DIR list | grep '<.*>'`"; \
 	done
 
 .PHONY: images

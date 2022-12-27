@@ -1,9 +1,9 @@
 IMAGES := "drtuxwang/.*"
 
 BUILD_DIRS := \
+	alpine-3.16 \
+	i386-alpine-3.16 \
 	alpine-3.15 \
-	i386-alpine-3.15 \
-	alpine-3.14 \
 	\
 	debian-11 \
 	i386-debian-11 \
@@ -21,7 +21,7 @@ BUILD_DIRS := \
 	golang-1.18 \
 	httpd-2.4 \
 	nginx-1.18 \
-	python-3.9 \
+	python-3.10 \
 	registry-2.6 \
 	scratch
 STABLE_IMAGES := \
@@ -34,7 +34,7 @@ STABLE_IMAGES := \
 	drtuxwang/python-full:3.9-slim-bullseye \
 	drtuxwang/scratch
 TEST_DIRS := \
-	python-3.9
+	python-3.10
 
 
 .PHONY: default

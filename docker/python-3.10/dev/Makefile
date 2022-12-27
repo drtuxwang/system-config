@@ -1,7 +1,7 @@
-BASE_IMAGE := drtuxwang/i386-alpine:3.15
-IMAGE := drtuxwang/i386-alpine-bash:3.15
-NAME := alpine315-32-bash
-HOSTNAME := alpine315-32-bash
+BASE_IMAGE := drtuxwang/python:3.10-slim-bullseye
+IMAGE := drtuxwang/python-dev:3.10-slim-bullseye
+NAME := python310-dev
+HOSTNAME := python310-dev
 DOCKER_BUILD_FLAGS ?=
 DOCKER_RUN_FLAGS ?=
 DOCKER_RUN_COMMAND ?=
@@ -12,10 +12,10 @@ DOCKER_RUN_FLAGS := \
 	--tty \
 	--cpu-quota=1000000 \
 	--cpu-shares=50000 \
-	--memory=1000m \
+	--memory=2000m \
 	--memory-reservation=50m \
 	--name $(NAME) \
-	--hostname $(HOSTNAME) \
+	--hostname $(NAME) \
 	$(DOCKER_RUN_FLAGS)
 
 
@@ -29,7 +29,7 @@ status:              # Status of Docker images
 .PHONY: build
 build:               # Build Docker images
 	@echo "\n*** Building \"$(IMAGE)\" Docker image ***"
-	../../bin/create-rootfs.sh bash bin vim
+	../../bin/create-rootfs.sh bash bin python3.10 vim
 	docker build $(DOCKER_BUILD_FLAGS) --build-arg BASE_IMAGE=$(BASE_IMAGE) -t $(IMAGE) .
 	rm -rf rootfs
 
@@ -38,10 +38,19 @@ run:                 # Run Docker container
 	@echo "\n*** Running \"$(IMAGE)\" Docker container ***"
 	docker run $(DOCKER_RUN_FLAGS) $(IMAGE) $(DOCKER_RUN_COMMAND) ||:
 
+.PHONY: test
+test:                # Run tests
+	docker run \
+		--rm \
+		--volume=$(shell realpath ../../..):/vol/app:ro \
+		--workdir=/vol/app \
+		$(IMAGE) \
+		make install test
+
 .PHONY: version
 version:             # Check versions
-	@docker run --rm $(IMAGE) cat /etc/alpine-release 2> /dev/null | \
-		sed -e "s@^@$(shell pwd): Alpine Linux @"
+	@docker run --rm --entrypoint gcc $(IMAGE) --version 2> /dev/null | grep ^gcc | \
+		sed -e "s/([^)]*)//" | awk '{printf("'$(shell pwd)': gcc %s\n", $$2)}'
 
 .PHONY: rmi
 rmi:                 # Remove Docker images

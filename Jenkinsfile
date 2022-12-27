@@ -1,8 +1,8 @@
 #!groovy
 
 // Environment variables
-def alpine_version = "3.15"
-def python_version = "3.9"
+def alpine_version = "3.16"
+def python_version = "3.10"
 def docker_builder_image = "drtuxwang/debian-docker:stable"
 String branch_name = env.JOB_NAME - "system-config-"
 
