@@ -3,7 +3,12 @@
 # No Network Manager
 ##dhclient `ifconfig -s -a | grep -E "^(eth|enp)" | awk '{print $1}'` &
 
-sleep 15
+sleep 10
+
+# Rescan USB for storage devices
+##for SCAN in $(grep usb-storage /sys/class/scsi_host/host*/proc_name | sed -e "s@/proc_name.*@/scan@"); do
+##    echo - - - > $SCAN
+##done
 
 # Mount removable disks
 ##mount -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=<uuid-from-blkid> /mnt/data2

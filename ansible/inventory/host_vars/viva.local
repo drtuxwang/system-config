@@ -1,4 +1,5 @@
 guest_user: false
+portable: true
 
 charge_start: 0
 charge_stop: 60

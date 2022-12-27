@@ -1,13 +1,15 @@
 docker_daemon: false
 dhclient_call: false
+portable: false
 sudo_commands: false
+usb_rescan: false
 vbox_guest: false
 vbox_host: false
 vbox_shared: false
 zram_swap: false
 
 bin_directory: ../../bin
-data1_uuid: null
+data2_uuid: null
 
 charge_start: 60
 charge_stop: 80

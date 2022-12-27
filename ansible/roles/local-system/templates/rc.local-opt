@@ -7,11 +7,22 @@ dhclient `ifconfig -s -a | grep -E "^(eth|enp)" | awk '{print $1}'` &
 ##dhclient `ifconfig -s -a | grep -E "^(eth|enp)" | awk '{print $1}'` &
 {% endif %}
 
-sleep 15
+sleep 10
+
+# Rescan USB for storage devices
+{% if usb_rescan %}
+for SCAN in $(grep usb-storage /sys/class/scsi_host/host*/proc_name | sed -e "s@/proc_name.*@/scan@"); do
+    echo - - - > $SCAN
+done
+{% else %}
+##for SCAN in $(grep usb-storage /sys/class/scsi_host/host*/proc_name | sed -e "s@/proc_name.*@/scan@"); do
+##    echo - - - > $SCAN
+##done
+{% endif %}
 
 # Mount removable disks
-{% if data1_uuid %}
-mount -t ext4 -o noatime,errors=remount-ro,commit=60 UUID={{ data1_uuid }} /mnt/data2
+{% if data2_uuid %}
+mount -t ext4 -o noatime,errors=remount-ro,commit=60 UUID={{ data2_uuid }} /mnt/data2
 {% else %}
 ##mount -t ext4 -o noatime,errors=remount-ro,commit=60 UUID=<uuid-from-blkid> /mnt/data2
 {% endif %}
