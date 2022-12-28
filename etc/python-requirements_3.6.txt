@@ -41,7 +41,7 @@ requests                     # ==2.27.1 (last compatible version)
 resolvelib==0.5.5
 ruamel.yaml.clib==0.2.7      #   (required by ruamel.yaml for 3.6)
 scipy==1.5.4
-setuptools==59.6.0
+setuptools                   # ==59.6.0 (last compatible version)
 stack-data==None
 tomli                        # ==1.2.3 (last compatible version)
 traitlets==None

@@ -98,7 +98,7 @@ ruamel.yaml==None
 scandir==1.10.0              #   (required by pathlib2 for 2.7)
 scipy==None
 SecretStorage==None
-setuptools==44.1.1
+setuptools                   # ==44.1.1 (last compatible version)
 singledispatch==3.7.0        #   (required by astroid for 2.7)
 smmap2==3.0.1                #   (required by gitdb2 for 2.7)
 smmap==3.0.5                 #   (required by smmap2 for 2.7)
